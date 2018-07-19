@@ -37,6 +37,7 @@ describe('DataGrid tests,', () => {
     var editCellMock = jest.fn();
     var sortMock = jest.fn();
     var sortDirectionMock = jest.fn()
+    var duplicateColumnMock = jest.fn()
 
     const tree = mount(
       <DataGrid
@@ -50,6 +51,7 @@ describe('DataGrid tests,', () => {
         setSortDirection={sortDirectionMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
         isReadOnly={false}
+        duplicateColumn={duplicateColumnMock}
       />
     );
 
@@ -92,6 +94,7 @@ describe('DataGrid tests,', () => {
   it('matches snapshot without data', () => {
 
     var sortDirectionMock = jest.fn()
+    var duplicateColumnMock = jest.fn()
 
     const tree = mount(
       <DataGrid
@@ -103,6 +106,7 @@ describe('DataGrid tests,', () => {
         getRow={() => {}}
         isReadOnly={false}
         setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
       />
     );
     expect(tree.find('HeaderCell')).toHaveLength(0);
@@ -115,6 +119,7 @@ describe('DataGrid tests,', () => {
   it('Shows/hides letters in the header according to props', () => {
 
     var sortDirectionMock = jest.fn()
+    var duplicateColumnMock = jest.fn()
 
     const treeWithLetter = mount(
       <DataGrid
@@ -127,6 +132,7 @@ describe('DataGrid tests,', () => {
           showLetter={true}
           isReadOnly={false}
           setSortDirection={sortDirectionMock}
+          duplicateColumn={duplicateColumnMock}
       />
     );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
@@ -148,6 +154,7 @@ describe('DataGrid tests,', () => {
         showLetter={false}
         isReadOnly={false}
         setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
       />);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
 
@@ -157,6 +164,7 @@ describe('DataGrid tests,', () => {
   it('Calls column rename upon editing a column header', (done) => {
     var mockRenameColumn = jest.fn();
     var sortDirectionMock = jest.fn();
+    var duplicateColumnMock = jest.fn();
 
     var tree = mount(
       <DataGrid
@@ -169,6 +177,7 @@ describe('DataGrid tests,', () => {
           onRenameColumn={mockRenameColumn}
           isReadOnly={false}
           setSortDirection={sortDirectionMock}
+          duplicateColumn={duplicateColumnMock}
       />
     );
 
@@ -198,6 +207,7 @@ describe('DataGrid tests,', () => {
 
   it('Respects isReadOnly setting for rename columns', (done) => {
     var sortDirectionMock = jest.fn();
+    var duplicateColumnMock = jest.fn();
 
     var tree = mount(
       <DataGrid
@@ -209,6 +219,7 @@ describe('DataGrid tests,', () => {
           getRow={getRow}
           isReadOnly={true}
           setSortDirection={sortDirectionMock}
+          duplicateColumn={duplicateColumnMock}
       />
     );
 

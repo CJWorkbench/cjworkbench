@@ -213,6 +213,7 @@ export class ColumnHeader extends React.PureComponent {
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
     onRenameColumn: PropTypes.func,
+    duplicateColumn: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -226,6 +227,10 @@ export class ColumnHeader extends React.PureComponent {
 
   onSetSortDirection = (sortDirection) => {
     this.props.setSortDirection(this.props.columnKey, this.props.columnType, sortDirection);
+  }
+
+  onDuplicateColumn = () => {
+    this.props.duplicateColumn(this.props.columnKey)
   }
 
   onMouseEnter = () => {
@@ -264,7 +269,7 @@ export class ColumnHeader extends React.PureComponent {
     }
     
     return (
-      <ColumnContextMenu setSortDirection={this.onSetSortDirection} sortDirection={this.props.isSorted == true
+      <ColumnContextMenu duplicateColumn={this.onDuplicateColumn} setSortDirection={this.onSetSortDirection} sortDirection={this.props.isSorted == true
         ? this.props.sortDirection : sortDirectionNone}/>
       );
   }
@@ -376,6 +381,7 @@ function makeFormattedCols(props) {
         isSorted={props.sortColumn === columnKey}
         sortDirection={props.sortDirection}
         setSortDirection={props.setSortDirection}
+        duplicateColumn={props.duplicateColumn}
         showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
         onDragEnd={props.onDragEnd}
@@ -407,6 +413,7 @@ export default class DataGrid extends React.Component {
     setSortDirection:   PropTypes.func.isRequired,
     sortColumn:         PropTypes.string,
     sortDirection:      PropTypes.number,
+    duplicateColumn:    PropTypes.func.isRequired,
     showLetter:         PropTypes.bool,
     onReorderColumns:   PropTypes.func,
     onRenameColumn:     PropTypes.func,

@@ -22,6 +22,7 @@ from .modules.scrapetable import ScrapeTable
 from .modules.sortfromtable import SortFromTable
 from .modules.reorder import ReorderFromTable
 from .modules.rename import RenameFromTable
+from .modules.duplicatecolumnfromtable import DuplicateColumnFromTable
 
 # ---- Test Support ----
 
@@ -58,6 +59,7 @@ module_dispatch_tbl = {
     'sort-from-table':  SortFromTable,
     'reorder-columns':  ReorderFromTable,
     'rename-columns':   RenameFromTable,
+    'duplicate-column-from-table': DuplicateColumnFromTable,
 
     # For testing
     'NOP':          NOP,

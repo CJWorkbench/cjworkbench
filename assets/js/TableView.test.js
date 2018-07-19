@@ -7,9 +7,11 @@ import DataGrid from './DataGrid';
 jest.mock('./EditCells');
 jest.mock('./SortFromTable');
 jest.mock('./ReorderColumns');
+jest.mock('./DuplicateFromTable');
 import { addCellEdit } from './EditCells';
 import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateSort } from './SortFromTable'
 import { updateReorder } from './ReorderColumns';
+import { updateDuplicate } from './DuplicateFromTable'
 
 describe('TableView', () => {
   const defaultProps = {
@@ -22,6 +24,7 @@ describe('TableView', () => {
     addCellEdit.mockReset()
     updateSort.mockReset()
     updateReorder.mockReset()
+    updateDuplicate.mockReset()
   })
 
   // Mocks json response (promise) returning part of a larger table
@@ -43,7 +46,7 @@ describe('TableView', () => {
   }
 
 
-  it('Fetches, renders, edits cells, sorts columns and reorders columns', (done) => {
+  it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', (done) => {
     var api = {
       render: makeRenderResponse(0, 2, 1000)
     };
@@ -79,9 +82,14 @@ describe('TableView', () => {
       tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
       expect(updateSort).toHaveBeenCalledWith(100, 'a', 'Number', sortDirectionAsc);
 
+      // Calls DuplicateColumns
+      tree.find(TableView).instance().duplicateColumn('a');
+      expect(updateDuplicate).toHaveBeenCalledWith(100, 'a');
+
       // Calls ReorderColumns
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
       expect(updateReorder).toHaveBeenCalledWith(100, { column: 'a', from: 0, to: 1 });
+
 
       done();
     });

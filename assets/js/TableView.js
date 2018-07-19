@@ -11,6 +11,7 @@ import * as EditCells from './EditCells'
 import * as SortFromTable from './SortFromTable'
 import * as ReorderColumns from './ReorderColumns'
 import * as RenameColumns from './RenameColumns'
+import * as DuplicateFromTable from './DuplicateFromTable'
 import {findParamValByIdName} from "./utils";
 
 // Constants to control loading behaviour. Exported so they are accessible to tests
@@ -47,6 +48,7 @@ export default class TableView extends React.PureComponent {
     this.onEditCell = this.onEditCell.bind(this);
     this.setSortDirection = this.setSortDirection.bind(this);
     this.toggleExportModal = this.toggleExportModal.bind(this);
+    this.duplicateColumn = this.duplicateColumn.bind(this);
 
     this.loading = false;
     this.highestRowRequested = 0;
@@ -187,6 +189,11 @@ export default class TableView extends React.PureComponent {
       this.refreshTable();
   }
 
+  duplicateColumn(colName) {
+    DuplicateFromTable.updateDuplicate(this.props.selectedWfModuleId, colName);
+      this.refreshTable();
+  }
+
   render() {
     // Make a table component if we have the data
     var nrows = 0;
@@ -216,6 +223,7 @@ export default class TableView extends React.PureComponent {
             sortColumn={sortColumn}
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
+            duplicateColumn={this.duplicateColumn}
             onReorderColumns={ReorderColumns.updateReorder}
             onRenameColumn={RenameColumns.updateRename}
             isReadOnly={this.props.isReadOnly}
@@ -236,6 +244,7 @@ export default class TableView extends React.PureComponent {
             getRow={() => {return {}}}
             isReadOnly={this.props.isReadOnly}
             setSortDirection={this.setSortDirection}
+            duplicateColumn={this.duplicateColumn}
           />
       </div>
     }
