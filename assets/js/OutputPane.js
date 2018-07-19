@@ -251,8 +251,6 @@ function mapStateToProps(state, ownProps) {
     sortDirection = directionParam || sortDirectionNone
   }
 
-  console.log(workflow)
-
   return {
     workflowId: workflow.id,
     revision: workflow.revision,
