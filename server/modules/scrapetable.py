@@ -7,14 +7,42 @@ from urllib.error import URLError, HTTPError
 from .types import ProcessResult
 
 
+def merge_colspan_headers_in_place(table) -> None:
+    """
+    Pandas read_html() returns tuples for column names when scraping tables with colspan.
+    This collapses duplicate entries and reformats to be human readable.
+    E.g. ('year', 'year') -> 'year' and ('year', 'month') -> 'year - month'
+
+    Alters the table in place, no return value.
+    """
+
+    newcols = []
+    for c in table.columns:
+        if isinstance(c, tuple):
+            # collapse all runs of duplicate values: 'a','a','b','c','c','c' -> 'a','b','c'
+            vals = list(c)
+            idx = 0
+            while idx < len(vals)-1:
+                if vals[idx]==vals[idx+1]:
+                    vals.pop(idx)
+                else:
+                    idx += 1
+            # put dashes between all remaining header values
+            newcols.append(' - '.join(vals))
+        else:
+            newcols.append(c)
+    table.columns = newcols
+
+
 class ScrapeTable(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
         table = wf_module.retrieve_fetched_table()
         first_row_is_header = wf_module.get_param_checkbox('first_row_is_header')
-        if first_row_is_header:
-            table.columns = list(table.iloc[0, :])
-            table = table[1:]
+        if table is not None:
+            if first_row_is_header:
+                table.columns = list(table.iloc[0, :])
+                table = table[1:]
         return table
 
     @staticmethod
@@ -43,11 +71,11 @@ class ScrapeTable(ModuleImpl):
             tables = pd.read_html(url, flavor='html5lib')
         except ValueError as e:
             result = ProcessResult(
-                error='Did not find any <table> tags on that page'
+                error=_('Did not find any <table> tags on that page')
             )
         except HTTPError as err:  # subclass of URLError
             if err.code == 404:
-                result = ProcessResult(error='Page not found (404)')
+                result = ProcessResult(error=_('Page not found (404)'))
             else:
                 result = ProcessResult(error=str(err))
         except URLError as err:
@@ -56,15 +84,16 @@ class ScrapeTable(ModuleImpl):
         if not result:
             if len(tables) == 0:
                 result = ProcessResult(
-                    error='Did not find any <table> tags on that page'
+                    error=_('Did not find any <table> tags on that page')
                 )
             if tablenum >= len(tables):
                 result = ProcessResult(error=(
-                    'The maximum table number on this page is '
-                    f'{len(tables)}'
+                    _('The maximum table number on this page is %d') % len(tables)
                 ))
 
-            result = ProcessResult(dataframe=tables[tablenum])
+            table = tables[tablenum]
+            merge_colspan_headers_in_place(table)
+            result = ProcessResult(dataframe=table)
 
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
