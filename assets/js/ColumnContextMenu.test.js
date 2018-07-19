@@ -2,7 +2,7 @@
 import React from 'react'
 import ColumnContextMenu from './ColumnContextMenu'
 import { shallow } from 'enzyme'
-import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc } from './SortFromTable'
+import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc } from './UpdateTableAction'
 import { tick } from './test-utils'
 
 describe('ColumnContextMenu', () => {

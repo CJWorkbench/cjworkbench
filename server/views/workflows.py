@@ -31,7 +31,7 @@ edit_cells_module_id.id = None
 def duplicate_module_id():
     if duplicate_module_id.id is None:
         try:
-            duplicate_module_id.id = Module.objects.get(id_name='duplicate-column-from-table').id
+            duplicate_module_id.id = Module.objects.get(id_name='duplicate-column').id
         except Module.DoesNotExist:
             return None
 

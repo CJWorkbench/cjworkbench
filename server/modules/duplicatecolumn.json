@@ -1,6 +1,6 @@
 {
  "name": "Duplicate Columns",
- "id_name": "duplicate-column-from-table",
+ "id_name": "duplicate-column",
  "category" : "Clean",
  "description" : "Duplicate a column from the table or from the module",
  "icon" : "duplicate",

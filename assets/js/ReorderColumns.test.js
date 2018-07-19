@@ -1,4 +1,4 @@
-import {updateReorder } from './ReorderColumns'
+import { updateTableActionModule } from './UpdateTableAction'
 import { tick } from './test-utils'
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
@@ -7,6 +7,7 @@ jest.mock('./workflow-reducer')
 describe('ReorderColumns actions', () => {
 
   // A few parameter id constants for better readability
+  const idName = 'reorder-columns'
   const LOADURL_WFM_ID = 35
 
   const FILTER_WFM_ID = 50
@@ -45,7 +46,7 @@ describe('ReorderColumns actions', () => {
           id: REORDER_WFM_ID,
           module_version: {
             module: {
-              id_name: 'reorder-columns'
+              id_name: idName
             },
           },
           parameter_vals: [
@@ -70,7 +71,7 @@ describe('ReorderColumns actions', () => {
     id: NEW_REORDER_WFM_ID,
     module_version: {
       module: {
-        id_name: 'reorder-columns'
+        id_name: idName
       }
     },
     parameter_vals: [
@@ -106,10 +107,12 @@ describe('ReorderColumns actions', () => {
 
 
   it('Adds a new reorder module', async () => {
-    updateReorder(LOADURL_WFM_ID, {
-      column: 'test_col',
-      from: 3,
-      to: 0
+    updateTableActionModule(LOADURL_WFM_ID, idName, {
+      reorderInfo: {
+        column: 'test_col',
+        from: 3,
+        to: 0
+      }
     })
 
     await tick()
@@ -125,10 +128,12 @@ describe('ReorderColumns actions', () => {
 
 
   it('Updates the parameter values of an adjacent reorder module correctly', async () => {
-    updateReorder(FILTER_WFM_ID, {
-      column: 'test_col',
-      from: 3,
-      to: 0
+    updateTableActionModule(FILTER_WFM_ID, idName, {
+      reorderInfo: {
+        column: 'test_col',
+        from: 3,
+        to: 0
+      }
     });
 
     await tick()
@@ -148,11 +153,13 @@ describe('ReorderColumns actions', () => {
   })
 
   it('Updates the parameter values of the currently selected reorder module correctly', async () => {
-    updateReorder(REORDER_WFM_ID, {
-      column: 'test_col',
-      from: 3,
-      to: 0
-    })
+    updateTableActionModule(REORDER_WFM_ID, idName, {
+      reorderInfo: {
+        column: 'test_col',
+        from: 3,
+        to: 0
+      }
+    });
 
     await tick()
 

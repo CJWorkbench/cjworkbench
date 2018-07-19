@@ -8,10 +8,7 @@ import DataGrid from "./DataGrid";
 import ExportModal from "./ExportModal"
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
-import * as SortFromTable from './SortFromTable'
-import * as ReorderColumns from './ReorderColumns'
-import * as RenameColumns from './RenameColumns'
-import * as DuplicateFromTable from './DuplicateFromTable'
+import * as UpdateTableAction from './UpdateTableAction'
 import {findParamValByIdName} from "./utils";
 
 // Constants to control loading behaviour. Exported so they are accessible to tests
@@ -185,12 +182,22 @@ export default class TableView extends React.PureComponent {
   }
 
   setSortDirection(sortCol, sortType, sortDirection) {
-    SortFromTable.updateSort(this.props.selectedWfModuleId, sortCol, sortType, sortDirection);
+    let moduleParams = {
+      sortColumn: sortCol,
+      sortType: sortType,
+      sortDirection: sortDirection
+    }
+
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'sort-from-table', moduleParams);
       this.refreshTable();
   }
 
   duplicateColumn(colName) {
-    DuplicateFromTable.updateDuplicate(this.props.selectedWfModuleId, colName);
+    let moduleParams = {
+      duplicateColumnName: colName
+    }
+
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'duplicate-column', moduleParams);
       this.refreshTable();
   }
 
@@ -224,8 +231,8 @@ export default class TableView extends React.PureComponent {
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
             duplicateColumn={this.duplicateColumn}
-            onReorderColumns={ReorderColumns.updateReorder}
-            onRenameColumn={RenameColumns.updateRename}
+            onReorderColumns={UpdateTableAction.updateTableActionModule}
+            onRenameColumn={UpdateTableAction.updateTableActionModule}
             isReadOnly={this.props.isReadOnly}
           />
         </div>
