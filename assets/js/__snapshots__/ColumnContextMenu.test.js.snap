@@ -28,6 +28,24 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
       tag="div"
     >
       <DropdownItem
+        className="duplicate-column"
+        onClick={[MockFunction]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-duplicate"
+        />
+        <span>
+          Duplicate
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        divider={true}
+        tag="button"
+        toggle={true}
+      />
+      <DropdownItem
         className="sort-ascending"
         onClick={[Function]}
         tag="button"
