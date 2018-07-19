@@ -18,11 +18,17 @@ class PythonFeatureDisabledError(Exception):
     def __init__(self, name):
         super().__init__(self)
         self.name = name
-        self.message = f'{name} disabled in Python Code module'
+        self.message = f'builtins.{name} is disabled'
+
+    def __str__(self):
+        return self.message
 
 
-def build_globals_for_eval() -> Dict[str, Any]:
-    """Builds a __globals__ for use in custom code.
+def build_builtins_for_eval() -> Dict[str, Any]:
+    """
+    Build a __builtins__ for use in custom code.
+
+    Call ``exec(code, {'__builtins__': retval}, {})`` to use it.
     """
     # Start with _this_ module's __builtins__
     eval_builtins = dict(builtins.__dict__)
@@ -44,6 +50,14 @@ def build_globals_for_eval() -> Dict[str, Any]:
     ]
     for name in to_disable:
         eval_builtins[name] = disable_func(name)
+
+    return eval_builtins
+
+
+def build_globals_for_eval() -> Dict[str, Any]:
+    """Builds a __globals__ for use in custom code.
+    """
+    eval_builtins = build_builtins_for_eval()
 
     # Hard-code modules we provide the user
     import math

@@ -14,6 +14,8 @@ class ProcessResult:
 
     All these outputs may be empty (and Workbench treats empty values
     specially).
+
+    A ProcessResult object may be pickled.
     """
     def __init__(self, dataframe: DataFrame=None, error: str='',
                  json: Dict[str, Any]=None):

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.test import TestCase
 from server.sanitizedataframe import *
 from pandas.util import hash_pandas_object

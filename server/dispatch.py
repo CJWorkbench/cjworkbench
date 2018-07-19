@@ -10,7 +10,7 @@ from .modules.formula import Formula
 from .modules.loadurl import LoadURL
 from .modules.moduleimpl import ModuleImpl
 from .modules.pastecsv import PasteCSV
-from .modules.pythoncode import PythonCode
+import server.modules.pythoncode
 from .modules.selectcolumns import SelectColumns
 from .modules.twitter import Twitter
 from .modules.uploadfile import UploadFile
@@ -47,7 +47,7 @@ module_dispatch_tbl = {
     'pastecsv':         PasteCSV,
     'formula':          Formula,
     'selectcolumns':    SelectColumns,
-    'pythoncode':       PythonCode,
+    'pythoncode':       server.modules.pythoncode,
     'twitter':          Twitter,
     'countbydate':      CountByDate,
     'uploadfile':       UploadFile,

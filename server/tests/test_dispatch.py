@@ -62,7 +62,8 @@ class DispatchTests(TestCase):
 
         result = module_dispatch_render(wfm, self.test_table)
         self.assertEqual(result, ProcessResult(
-            error='Line 1: invalid syntax (<string>, line 1)'
+            error='Line 1: invalid syntax (<string>, line 1)',
+            json={'output': ''}  # not part of this test
         ))
 
         wfm.refresh_from_db()

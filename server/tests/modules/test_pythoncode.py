@@ -1,47 +1,168 @@
+import numpy
 import pandas
-from server.tests.utils import create_testdata_workflow, load_and_add_module, get_param_by_id_name, LoggedInTestCase
-from server.modules.pythoncode import PythonCode
+from server.modules.pythoncode import safe_eval_process
+from server.modules.types import ProcessResult
+import unittest
 
 
-class PythonCodeTest(LoggedInTestCase):
-    def setUp(self):
-        super(PythonCodeTest, self).setUp()  # log in
-        workflow = create_testdata_workflow()
-        self.wf_module = load_and_add_module('pythoncode', workflow=workflow)
-        self.code_pval = get_param_by_id_name('code')
+EMPTY_DATAFRAME = pandas.DataFrame()
+EMPTY_OUTPUT = {'output': ''}
 
-    def _run_code(self, code):
-        self.code_pval.value = code
-        self.code_pval.save()
 
-        return PythonCode.render(self.wf_module, pandas.DataFrame())
-
-    def test_render(self):
-        out = self._run_code("""
+class SafeEvalProcessTest(unittest.TestCase):
+    def test_pickle(self):
+        dataframe = pandas.DataFrame({'a': [1, 2]})
+        result = safe_eval_process("""
 def process(table):
-    columns = ['A','B', 'C']
-    data = np.array([np.arange(5)]*3).T
-    return pd.DataFrame(columns=columns, data=data)
-        """)
+    return table
+""", dataframe)
+        self.assertEqual(result, ProcessResult(dataframe, json=EMPTY_OUTPUT))
 
-        self.assertEqual(str(out), "   A  B  C\n0  0  0  0\n1  1  1  1\n2  2  2  2\n3  3  3  3\n4  4  4  4")
+    def test_return_str_for_error(self):
+        result = safe_eval_process("""
+def process(table):
+    return 'hi'
+""", EMPTY_DATAFRAME)
+        self.assertEqual(result, ProcessResult(error='hi', json=EMPTY_OUTPUT))
 
     def test_builtins(self):
-        # Use `list`, `str` and `int` to test they exist and work as intended
-        out = self._run_code("""
+        # spot-check: do `list`, `sum` and `str` work the way we expect?
+        result = safe_eval_process("""
 def process(table):
-    return pd.DataFrame({'data': list([str('foo'), int('3')])})
-        """)
+    return str(sum(list([1, 2, 3])))
+""", EMPTY_DATAFRAME)
 
-        self.assertEqual(str(out), "  data\n0  foo\n1    3")
+        self.assertEqual(result, ProcessResult(error='6', json=EMPTY_OUTPUT))
 
-    def test_no_import(self):
-        out = self._run_code("""
+    def test_has_math(self):
+        result = safe_eval_process("""
+def process(table):
+    return str(math.sqrt(4))
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(error='2.0', json=EMPTY_OUTPUT))
+
+    def test_has_pandas_as_pd(self):
+        result = safe_eval_process("""
+def process(table):
+    return pd.DataFrame({'a': [1, 2]})
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            dataframe=pandas.DataFrame({'a': [1, 2]}),
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_has_numpy_as_np(self):
+        result = safe_eval_process("""
+def process(table):
+    return pd.DataFrame({'a': np.array([1, 2])})
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            dataframe=pandas.DataFrame({'a': numpy.array([1, 2])}),
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_import_disabled(self):
+        result = safe_eval_process("""
 import typing
 
 def process(table):
-    return table
-        """)
+    return 'should not arrive here'
+""", EMPTY_DATAFRAME)
 
-        self.assertEqual(out,
-                         'Line 1: __import__ disabled in Python Code module')
+        self.assertEqual(result, ProcessResult(
+            error=(
+                'Line 2: PythonFeatureDisabledError: '
+                'builtins.__import__ is disabled'
+            ),
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_builtins_disabled(self):
+        result = safe_eval_process("""
+def process(table):
+    return eval('foo')
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            error=(
+                'Line 3: PythonFeatureDisabledError: builtins.eval is disabled'
+            ),
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_print_is_captured(self):
+        result = safe_eval_process("""
+def process(table):
+    print('hello')
+    print('world')
+    return table
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            json={'output': 'hello\nworld\n'}
+        ))
+
+    def test_syntax_error(self):
+        result = safe_eval_process("""
+def process(table):
+    return ta(
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            error=(
+                'Line 3: unexpected EOF while parsing '
+                '(<string>, line 3)'
+            ),
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_missing_process(self):
+        result = safe_eval_process("""
+def xprocess(table):
+    return table
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            error='You must define a "process" function',
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_bad_process_signature(self):
+        result = safe_eval_process("""
+def process(table, params):
+    return table
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            error='Your "process" function must accept exactly one argument',
+            json=EMPTY_OUTPUT
+        ))
+
+    def test_kill_after_timeout(self):
+        result = safe_eval_process("""
+def process(table, params):
+    while True:
+        pass  # infinite loop!
+""", EMPTY_DATAFRAME, timeout=0.0001)
+
+        self.assertEqual(result, ProcessResult(
+            error='Python subprocess did not respond in 0.0001s',
+            json=EMPTY_OUTPUT
+        ))
+
+#     def test_builtins_disabled_within_pandas(self):
+#         result = safe_eval_process("""
+# def process(table):
+#     return pd.read_csv('/some/file')
+# """, EMPTY_DATAFRAME)
+#
+#         self.assertEqual(result, ProcessResult(
+#             error=(
+#                 'Line 3: PythonFeatureDisabledError: '
+#                 'builtins.open is disabled'
+#             ),
+#             json=EMPTY_OUTPUT
+#         ))
