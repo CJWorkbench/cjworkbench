@@ -8,7 +8,7 @@ import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
 import { findParamValByIdName} from './utils'
-import { sortDirectionNone } from './SortFromTable'
+import { sortDirectionNone } from './UpdateTableAction'
 
 export class OutputPane extends React.Component {
 
