@@ -1,6 +1,7 @@
 import capybara
 from capybara.session import Session
 from contextlib import contextmanager
+from typing import Any
 
 # for Browser.send_keys
 from selenium.webdriver.common.keys import Keys  # noqa: F401
@@ -79,6 +80,10 @@ class Browser:
         if url[0] == '/':
             url = self.base_url + url
         self.page.visit(url)
+
+    def exec_js(self, js: str, *args: Any) -> Any:
+        """Execute the given JavaScript on the page."""
+        self.page.execute_script(js, *args)
 
     def fill_in(self, locator: str, text: str, **kwargs) -> None:
         """Type 'text' into field with name/label/id 'locator'.
@@ -311,6 +316,22 @@ class Browser:
                 browser.assert_element('h2')
         """
         with self.page.scope(selector):
+            yield
+
+    @contextmanager
+    def iframe(self, *selector, **kwargs) -> None:
+        """
+        Within the given block, `window` is the chosen iframe.
+
+        Example:
+
+            with browser.iframe('#root', wait=True):
+                browser.assert_element('h2')
+        """
+        # There's a race here: the iframe can disappear before we switch to it.
+        # If this becomes an issue, find a fix.
+        el = self.page.find(*selector, **kwargs)
+        with self.page.frame(el):
             yield
 
     def clear_cookies(self) -> None:

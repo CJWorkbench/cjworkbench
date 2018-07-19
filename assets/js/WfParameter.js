@@ -385,7 +385,7 @@ export default class WfParameter extends React.Component {
       case 'button':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
-            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{name}</div>
+            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.click}>{name}</button>
           </div>
         );
       case 'statictext':
