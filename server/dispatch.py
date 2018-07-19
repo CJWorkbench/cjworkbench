@@ -121,7 +121,9 @@ def module_dispatch_event(wf_module, **kwargs):
         # Clear errors on every new event. (The other place they are cleared is
         # on parameter change)
         wf_module.set_ready(notify=False)
-        return module_dispatch_tbl[dispatch].event(wf_module, **kwargs)
+        module_dispatch = module_dispatch_tbl[dispatch]
+        if hasattr(module_dispatch, 'event'):
+            return module_dispatch.event(wf_module, **kwargs)
     else:
         dynamic_module = wf_module_to_dynamic_module(wf_module)
         dynamic_module.fetch(wf_module)
@@ -130,8 +132,15 @@ def module_dispatch_event(wf_module, **kwargs):
 def module_get_html_bytes(wf_module) -> Optional[bytes]:
     dispatch = wf_module.module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
-        # No internal modules have HTML outputs
-        return None
+        try:
+            # Store _path_, not _bytes_, in the module. Django's autoreload
+            # won't notice when the HTML changes in dev mode, so it's hard to
+            # develop if the module stores the bytes themselves.
+            html_path = module_dispatch_tbl[dispatch].html_path
+            with open(html_path, 'rb') as f:
+                return f.read()
+        except AttributeError:
+            return None
 
     html_file_path = get_module_html_path(wf_module)
     with open(html_file_path, 'rb') as f:

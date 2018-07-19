@@ -361,7 +361,11 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
             'token_url': d['web']['token_uri'],
             'refresh_url': d['web']['token_uri'],
             'redirect_url': d['web']['redirect_uris'][0],
-            'scope': 'email https://www.googleapis.com/auth/drive.readonly',
+            'scope': ' '.join([
+                'https://www.googleapis.com/auth/drive.readonly',
+                'https://www.googleapis.com/auth/userinfo.email',
+                'https://www.googleapis.com/auth/plus.me',
+            ])
         }
 
 

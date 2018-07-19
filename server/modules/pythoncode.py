@@ -3,26 +3,20 @@ import importlib
 from inspect import signature
 import io
 import multiprocessing
+import os.path
 import sys
 import traceback
 import math
 import numpy
 import pandas
 from .types import ProcessResult
-from .utils import build_globals_for_eval
+from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
 
 TIMEOUT = 30.0  # seconds
 
 
-class PythonFeatureDisabledError(Exception):
-    def __init__(self, name):
-        super().__init__(self)
-        self.name = name
-        self.message = f'{name} disabled in Python Code module'
-
-    def __str__(self):
-        return self.message
+html_path = os.path.join(os.path.dirname(__file__), 'pythoncode.html')
 
 
 # Disable dangerous builtins. Imported modules may hold references to them;
@@ -92,14 +86,9 @@ def _scrub_globals_for_safety():
 def inner_eval(code, table, sender):
     """Within a subprocess, run code's "process(table)" and exit."""
     result = ProcessResult(json={'output': ''})
-
     output = io.StringIO()
-    sys.stdout = sys.stderr = sys.__stdout__ = sys.__stderr__ = output
 
     def sending_return(*, error=None, tb=None):
-        if tb is not None:
-            traceback.print_tb(tb)
-
         result.json['output'] = output.getvalue()
 
         if error is not None:
@@ -107,11 +96,21 @@ def inner_eval(code, table, sender):
 
         return sender.send(result)
 
+    try:
+        compiled_code = compile(code, 'user input', 'exec')
+    except SyntaxError as err:
+        return sending_return(error=f'Line {err.lineno}: {err}')
+    except ValueError as err:
+        # Apparently this is another thing that compile() can raise
+        return sending_return(error=f'User input contains null bytes')
+
+    sys.stdout = sys.stderr = sys.__stdout__ = sys.__stderr__ = output
+
     code_globals = build_globals_for_eval()
 
     # Catch errors with the code and display to user
     try:
-        exec(code, code_globals)
+        exec(compiled_code, code_globals)
 
         if 'process' not in code_globals:
             return sending_return(error='You must define a "process" function')
@@ -125,28 +124,39 @@ def inner_eval(code, table, sender):
             ))
 
         out_table = process(table)
-
-    except SyntaxError as err:
-        return sending_return(error=f'Line {err.lineno}: {err}')
     except PythonFeatureDisabledError as err:
-        tb = sys.exc_info()[2]
-        lineno = traceback.extract_tb(tb)[1][1]
-        return sending_return(error=f'Line {lineno}: {err.message}')
-    except Exception as err:
-        tb = sys.exc_info()[2]
-        lineno = traceback.extract_tb(tb)[1][1]
+        # This is an error _we_ throw. Hide our internals.
+        etype, value, tb = sys.exc_info()
+        tb = tb.tb_next  # omit _this_ method from the stack trace
+        limit = len(traceback.extract_tb(tb)) - 1  # omit _disabled()
+
+        # Now, print the stack trace ... but "rename" the exception so we don't
+        # expose its namespace
+        # traceback.print_exception(etype, value, tb, limit=limit)
+        print('Traceback (most recent call last):')
+        traceback.print_tb(tb, limit=limit)
+        print(f'{etype.__name__}: {value}')
+
         return sending_return(error=(
-            f'Line {lineno}: {type(err).__name__}: {err}'
+            f'Line {tb.tb_lineno}: {etype.__name__}: {value}'
+        ))
+    except Exception as err:
+        # An error in the code
+        etype, value, tb = sys.exc_info()
+        tb = tb.tb_next  # omit this method from the stack trace
+        traceback.print_exception(etype, value, tb)
+        return sending_return(error=(
+            f'Line {tb.tb_lineno}: {etype.__name__}: {value}'
         ))
 
     if isinstance(out_table, code_globals['pd'].DataFrame):
         result.dataframe = out_table
+    elif isinstance(out_table, str):
+        return sending_return(error=out_table)
     else:
-        try:
-            return sending_return(error=str(out_table))
-        except Exception as err:
-            # The str() method failed
-            return sending_return(error=str(err))
+        message = 'process(table) did not return a pd.DataFrame or a str'
+        print(message)  # to show it in JSON output
+        return sending_return(error=message)
 
     return sending_return()
 
@@ -189,9 +199,8 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
 def render(wf_module: 'WfModule', table: pandas.DataFrame) -> ProcessResult:
     code = wf_module.get_param_raw('code', 'custom')
 
-    # empty code, NOP
-    code = code.strip()
-    if code == '':
+    if not code.strip():
+        # empty code, NOP
         return ProcessResult(table)
 
     return safe_eval_process(code, table)

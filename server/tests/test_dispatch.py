@@ -62,7 +62,7 @@ class DispatchTests(TestCase):
 
         result = module_dispatch_render(wfm, self.test_table)
         self.assertEqual(result, ProcessResult(
-            error='Line 1: invalid syntax (<string>, line 1)',
+            error='Line 1: invalid syntax (user input, line 1)',
             json={'output': ''}  # not part of this test
         ))
 
@@ -70,7 +70,7 @@ class DispatchTests(TestCase):
         self.assertEqual(wfm.status, 'error')
         self.assertEqual(
             wfm.error_msg,
-            'Line 1: invalid syntax (<string>, line 1)'
+            'Line 1: invalid syntax (user input, line 1)'
         )
 
     @override_settings(MAX_ROWS_PER_TABLE=2)

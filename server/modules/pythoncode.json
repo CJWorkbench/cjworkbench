@@ -4,6 +4,7 @@
   "category" : "Code",
   "icon" : "code",
   "description" : "Write a 'render' function that takes a Pandas dataframe called 'table' and returns a dataframe.",
+  "html_output": true,
   "help_url":"modules/code/python-editor",
   "parameters": [
     {

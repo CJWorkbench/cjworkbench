@@ -24,7 +24,56 @@ export class OutputIframe extends React.PureComponent {
   }
 
   state = {
+    heightFromIframe: null, // if set, the iframe told us how tall it wants to be
+    gotInitFromIframe: null, // if set, iframe told us it will send messages
     isModalOpen: false,
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.selectedWfModuleId !== this.props.selectedWfModuleId) {
+      this.setState({
+        heightFromIframe: null,
+        gotInitFromIframe: null,
+      })
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('message', this.onMessage)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('message', this.onMessage)
+  }
+
+  onMessage = (ev) => {
+    const data = ev.data
+    if (data && data.from === 'outputIframe') {
+      if (data.wfModuleId !== this.props.selectedWfModuleId) {
+        // This message isn't from the iframe we created.
+        //
+        // This check works around a race:
+        //
+        // 1. Show an iframe
+        //    ... it sends a 'resize' event
+        //    ... it keeps sending 'resize' events whenever its size changes
+        // 2. Switch to a different iframe src
+        //    ... this resets size and sets new iframe src; BUT before the new
+        //        iframe can load, the _old_ iframe's JS sends a 'resize' event
+        //
+        // By forcing the iframe to send its identity, we can make sure this
+        // message isn't spurious.
+        return
+      }
+
+      switch (data.type) {
+        case 'resize':
+          this.setState({ heightFromIframe: data.height })
+          break
+        default:
+          console.error('Unhandled message from iframe', data)
+      }
+    }
   }
 
   toggleSetPublicModal = () => {
@@ -99,10 +148,13 @@ export class OutputIframe extends React.PureComponent {
 
   render () {
     const { selectedWfModuleId, revision } = this.props
+    const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${selectedWfModuleId}/output#revision=${revision}`
 
+    const height = heightFromIframe === null ? '100%' : `${Math.ceil(heightFromIframe)}px`
+
     return (
-      <div className='outputpane-iframe'>
+      <div className='outputpane-iframe' style={{ height }}>
         <iframe ref={this.hackySetIframe} src={src} />
         <div className='outputpane-iframe-control-overlay'>
           <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.openModal}>

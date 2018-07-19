@@ -77,7 +77,10 @@ def process(table):
                 'Line 2: PythonFeatureDisabledError: '
                 'builtins.__import__ is disabled'
             ),
-            json=EMPTY_OUTPUT
+            json={'output': """Traceback (most recent call last):
+  File "user input", line 2, in <module>
+PythonFeatureDisabledError: builtins.__import__ is disabled
+"""}
         ))
 
     def test_builtins_disabled(self):
@@ -90,7 +93,10 @@ def process(table):
             error=(
                 'Line 3: PythonFeatureDisabledError: builtins.eval is disabled'
             ),
-            json=EMPTY_OUTPUT
+            json={'output': """Traceback (most recent call last):
+  File "user input", line 3, in process
+PythonFeatureDisabledError: builtins.eval is disabled
+"""}
         ))
 
     def test_print_is_captured(self):
@@ -114,7 +120,7 @@ def process(table):
         self.assertEqual(result, ProcessResult(
             error=(
                 'Line 3: unexpected EOF while parsing '
-                '(<string>, line 3)'
+                '(user input, line 3)'
             ),
             json=EMPTY_OUTPUT
         ))
@@ -143,7 +149,7 @@ def process(table, params):
 
     def test_kill_after_timeout(self):
         result = safe_eval_process("""
-def process(table, params):
+def process(table):
     while True:
         pass  # infinite loop!
 """, EMPTY_DATAFRAME, timeout=0.0001)
@@ -152,6 +158,20 @@ def process(table, params):
             error='Python subprocess did not respond in 0.0001s',
             json=EMPTY_OUTPUT
         ))
+
+    def test_invalid_retval(self):
+        result = safe_eval_process("""
+def process(table):
+    return None
+""", EMPTY_DATAFRAME)
+
+        self.assertEqual(result, ProcessResult(
+            error='process(table) did not return a pd.DataFrame or a str',
+            json={'output': (
+                'process(table) did not return a pd.DataFrame or a str\n'
+            )}
+        ))
+
 
 #     def test_builtins_disabled_within_pandas(self):
 #         result = safe_eval_process("""
