@@ -1,4 +1,4 @@
-import {updateRename} from "./RenameColumns";
+import { updateTableActionModule } from './UpdateTableAction'
 import {tick} from "./test-utils"
 
 jest.mock('./workflow-reducer');
@@ -7,6 +7,8 @@ import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction 
 
 describe('RenameColumns actions', () => {
   // A few parameter id constants for readability
+  const idName = 'rename-columns'
+
   const LOADURL_WFM_ID = 35;
 
   const FILTER_WFM_ID = 50;
@@ -45,7 +47,7 @@ describe('RenameColumns actions', () => {
           id: RENAME_WFM_ID,
           module_version: {
             module: {
-              id_name: 'rename-columns'
+              id_name: idName
             }
           },
           parameter_vals: [
@@ -69,7 +71,7 @@ describe('RenameColumns actions', () => {
     id: NEW_RENAME_WFM_ID,
     module_version: {
       module: {
-        id_name: 'rename-columns'
+        id_name: idName
       }
     },
     parameter_vals: [
@@ -102,9 +104,11 @@ describe('RenameColumns actions', () => {
 
   it('adds a new rename module after the current non-rename module', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateRename(LOADURL_WFM_ID, {
-      prevName: 'cornerstone',
-      newName: 'cs'
+    updateTableActionModule(LOADURL_WFM_ID, idName, {
+      renameInfo: {
+        prevName: 'cornerstone',
+        newName: 'cs'
+      }
     });
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.renameModuleId, 1);
@@ -112,18 +116,22 @@ describe('RenameColumns actions', () => {
   });
 
   it('adds a new column to an existing rename module', async () => {
-    updateRename(FILTER_WFM_ID, {
-      prevName: 'cornerstone',
-      newName: 'cs'
+    updateTableActionModule(FILTER_WFM_ID, idName, {
+      renameInfo: {
+        prevName: 'cornerstone',
+        newName: 'cs'
+      }
     });
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', RENAME_ENTRIES_ID, JSON.stringify({ name: 'host_name', narrative: 'nrtv', cornerstone: 'cs' }) ]);
   });
 
   it('renames an already-renamed column', async () => {
-    updateRename(FILTER_WFM_ID, {
-      prevName: 'host_name',
-      newName: 'host'
+    updateTableActionModule(FILTER_WFM_ID, idName, {
+      renameInfo: {
+        prevName: 'host_name',
+        newName: 'host'
+      }
     });
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', RENAME_ENTRIES_ID, JSON.stringify({ name: 'host', narrative: 'nrtv' }) ]);
   });

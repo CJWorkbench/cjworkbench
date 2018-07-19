@@ -5,13 +5,9 @@ import TableView, { initialRows, preloadRows, deltaRows } from './TableView';
 import DataGrid from './DataGrid';
 
 jest.mock('./EditCells');
-jest.mock('./SortFromTable');
-jest.mock('./ReorderColumns');
-jest.mock('./DuplicateFromTable');
+jest.mock('./UpdateTableAction');
 import { addCellEdit } from './EditCells';
-import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateSort } from './SortFromTable'
-import { updateReorder } from './ReorderColumns';
-import { updateDuplicate } from './DuplicateFromTable'
+import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateTableActionModule } from './UpdateTableAction'
 
 describe('TableView', () => {
   const defaultProps = {
@@ -22,9 +18,7 @@ describe('TableView', () => {
 
   beforeEach(() => {
     addCellEdit.mockReset()
-    updateSort.mockReset()
-    updateReorder.mockReset()
-    updateDuplicate.mockReset()
+    updateTableActionModule.mockReset()
   })
 
   // Mocks json response (promise) returning part of a larger table
@@ -80,16 +74,27 @@ describe('TableView', () => {
 
       // Calls SortFromTable
       tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
-      expect(updateSort).toHaveBeenCalledWith(100, 'a', 'Number', sortDirectionAsc);
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', {
+        sortColumn: 'a',
+        sortType: 'Number',
+        sortDirection: sortDirectionAsc
+      });
 
       // Calls DuplicateColumns
       tree.find(TableView).instance().duplicateColumn('a');
-      expect(updateDuplicate).toHaveBeenCalledWith(100, 'a');
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', {
+        duplicateColumnName:'a'
+      });
 
       // Calls ReorderColumns
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
-      expect(updateReorder).toHaveBeenCalledWith(100, { column: 'a', from: 0, to: 1 });
-
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', {
+        reorderInfo: {
+          column: 'a',
+          from: 0,
+          to: 1
+        }
+      });
 
       done();
     });

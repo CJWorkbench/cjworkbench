@@ -8,7 +8,7 @@ import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
 import DropdownToggle from 'reactstrap/lib/DropdownToggle'
 import DropdownMenu from 'reactstrap/lib/DropdownMenu'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
-import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc} from './SortFromTable'
+import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc} from './UpdateTableAction'
 
 // Modifiers disabled to prevent menu flipping (occurs even when flip=false)
 var dropdownModifiers = {

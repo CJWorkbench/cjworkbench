@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import io
 from server.tests.modules.test_refine import MockModule
-from server.modules.duplicatecolumnfromtable import DuplicateColumnFromTable
+from server.modules.duplicatecolumn import DuplicateColumn
 
 duplicate_column_prefix = 'Copy of'
 
@@ -52,7 +52,7 @@ class DuplicateColumnFromTableTests(LoggedInTestCase):
         # WF does not parse dates
         self.table = reference_table.copy()
         self.workflow = create_testdata_workflow(csv_text=test_csv)
-        self.wf_module = load_and_add_module('duplicatecolumnfromtable', workflow=self.workflow)
+        self.wf_module = load_and_add_module('duplicatecolumn', workflow=self.workflow)
         self.colnames_pval = get_param_by_id_name('colnames')
 
     def test_duplicate_column(self):

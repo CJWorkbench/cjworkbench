@@ -29,7 +29,7 @@ def _do_render(table, columns):
     return ProcessResult(table)
 
 
-class DuplicateColumnFromTable(ModuleImpl):
+class DuplicateColumn(ModuleImpl):
     def render(wf_module, table):
         columns = wf_module.get_param_string('colnames')
 
