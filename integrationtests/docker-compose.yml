@@ -2,7 +2,7 @@ version: '3'
 
 services:
   db:
-    image: postgres:9
+    image: postgres:10
     networks:
       default:
         aliases: [ 'workbench-db' ]
@@ -10,8 +10,6 @@ services:
       POSTGRES_USER: 'cjworkbench'
       POSTGRES_PASSWORD: 'cjworkbench'
       POSTGRES_DB: 'cjworkbench'
-    volumes:
-      - dbdata:/var/lib/postgresql/data
 
   redis:
     image: redis:4.0.10
@@ -76,7 +74,6 @@ services:
       CJW_MOCK_EMAIL: 'True'
 
 volumes:
-  dbdata: {}
   importedmodules: {}
   saveddata: {}
 
