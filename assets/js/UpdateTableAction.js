@@ -5,22 +5,10 @@ import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId,
 
 // Map Module id_name to update function and moduleId in workflows.py
 const updateModuleMapping = {
-  'duplicate-column': {
-    updateFunction: updateDuplicateModule,
-    moduleId: 'duplicateModuleId'
-  },
-  'rename-columns': {
-    updateFunction: updateRenameModule,
-    moduleId: 'renameModuleId'
-  },
-  'reorder-columns': {
-    updateFunction: updateReorderModule,
-    moduleId: 'reorderModuleId'
-  },
-  'sort-from-table': {
-    updateFunction: updateSortModule,
-    moduleId: 'sortModuleId'
-  }
+  'duplicate-column': updateDuplicateModule,
+  'rename-columns': updateRenameModule,
+  'reorder-columns': updateReorderModule,
+  'sort-from-table': updateSortModule
 }
 
 // Constants for sort module
@@ -35,13 +23,13 @@ export function updateTableActionModule (wfModuleId, idName, ...params) {
   const existingModule = findModuleWithIdAndIdName(state, wfModuleId, idName)
   if (existingModule) {
     DEPRECATED_ensureSelectedWfModule(store, existingModule) // before state's existingModule changes
-    updateModuleMapping[idName].updateFunction(existingModule, params) // ... changing state's existingModule
+    updateModuleMapping[idName](existingModule, params) // ... changing state's existingModule
   } else {
     const wfModuleIndex = getWfModuleIndexfromId(state, wfModuleId)
-    store.dispatch(addModuleAction(state[updateModuleMapping[idName].moduleId], wfModuleIndex + 1))
+    store.dispatch(addModuleAction(state.updateTableModuleIds[idName], wfModuleIndex + 1))
       .then(fulfilled => {
         const newWfm = fulfilled.value
-        updateModuleMapping[idName].updateFunction(newWfm, params)
+        updateModuleMapping[idName](newWfm, params)
       })
   }
 }
