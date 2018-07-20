@@ -4,8 +4,6 @@ from server.execute import execute_nocache
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         create_testdata_workflow, get_param_by_id_name
 from server.modules.types import ProcessResult
-from server.modules.formula import letter_ref_to_number
-from server.sanitizedataframe import sanitize_dataframe
 
 # ---- Formula ----
 mock_csv_text = '\n'.join([
@@ -36,7 +34,11 @@ class FormulaTests(LoggedInTestCase):
         if wf_module is None:
             wf_module = self.wfmodule
         result = execute_nocache(wf_module)
+        result.sanitize_in_place()
+
         expected = ProcessResult(table)
+        expected.sanitize_in_place()
+
         self.assertEqual(result, expected)
 
     def _assertRendersError(self, message):
@@ -51,8 +53,7 @@ class FormulaTests(LoggedInTestCase):
         self.syntax_pval.set_value(1)
         self.syntax_pval.save()
         table = mock_csv_table.copy()
-        table['output'] = table['Amount']*2
-        table['output'] = table['output'].astype(object)
+        table['output'] = pandas.Series([20, 1332], dtype=object)
 
         self._assertRendersTable(table)
 
@@ -60,8 +61,7 @@ class FormulaTests(LoggedInTestCase):
         self.outcol_pval.set_value('')
         self.outcol_pval.save()
         table = mock_csv_table.copy()
-        table['result'] = table['Amount']*2
-        table['result'] = table['result'].astype(object)
+        table['result'] = pandas.Series([20, 1332], dtype=object)
         self._assertRendersTable(table)
 
         # formula with missing column name should error
@@ -88,15 +88,8 @@ class FormulaTests(LoggedInTestCase):
         sval.set_value(1)
 
         table = underscore_table.copy()
-        table['formula output'] = table['The Amount']*2
-        table['formula output'] = table['formula output'].astype(object)
+        table['formula output'] = pandas.Series([20, 1332], dtype=object)
         self._assertRendersTable(table, wf_module=wfm)
-
-    def test_ref_to_number(self):
-        self.assertTrue(letter_ref_to_number('A') == 0)
-        self.assertTrue(letter_ref_to_number('AA') == 26)
-        self.assertTrue(letter_ref_to_number('AZ') == 51)
-        self.assertTrue(letter_ref_to_number('BA') == 52)
 
     def _set_excel_formula(self, formula, all_rows=True):
         self.syntax_pval.set_value(0)
@@ -113,43 +106,39 @@ class FormulaTests(LoggedInTestCase):
         self.outcol_pval.save()
 
         table = mock_csv_table.copy()
-        table['result'] = table['Amount'] * 2
+        table['result'] = [20.0, 1332.0]
         self._assertRendersTable(table)
 
     # --- Formulas which write to all rows ---
-    def test_excel_all_rows(self):
-        table = mock_csv_table.copy()
-        table['output'] = table['Amount'] * 2
-
-        # formula: single-column reference
+    def test_excel_all_rows_single_column(self):
         self._set_excel_formula('=B1*2', all_rows=True)
+        table = mock_csv_table.copy()
+        table['output'] = pandas.Series([20.0, 1332.0], dtype=float)
         self._assertRendersTable(table)
 
-        # formula: horizontal range
+    def test_excel_all_rows_column_range(self):
         self._set_excel_formula('=SUM(B1:C1)', all_rows=True)
-        table['output'] = table['Amount'] + table['Amount2']
+        table = mock_csv_table.copy()
+        table['output'] = pandas.Series([21, 999], dtype=int)
         self._assertRendersTable(table)
 
     def test_excel_text_formula(self):
         self._set_excel_formula('=LEFT(D1,5)', all_rows=True)
         table = mock_csv_table.copy()
-        table['output'] = table['Name'].apply(lambda x: x[:5])
-        table['output'] = table['output'].astype(object)
+        table['output'] = ['Alici', 'Fred ']
         self._assertRendersTable(table)
 
     # --- Formulas which write only to a single row ---
     def test_excel_divide_two_rows(self):
         self._set_excel_formula('=B1/B2', all_rows=False)
         table = mock_csv_table.copy()
-        table['output'] = [table['Amount'][0]/table['Amount'][1], None]
-        table = sanitize_dataframe(table)
+        table['output'] = pandas.Series([(10.0/666), None], dtype=float)
         self._assertRendersTable(table)
 
     def test_excel_add_two_columns(self):
         self._set_excel_formula('=B1+C1', all_rows=False)
         table = mock_csv_table.copy()
-        table['output'] = [table['Amount'][0]+table['Amount2'][0], None]
-        table = sanitize_dataframe(table)
+        table['output'] = pandas.Series([21.0, None], dtype=float)
         self._assertRendersTable(table)
 
     def test_excel_sum_column(self):
@@ -158,7 +147,6 @@ class FormulaTests(LoggedInTestCase):
         table['output'] = [sum(table['Amount']), None]
         # force representation of [int,None] to be same as what we get from
         # rendering (could be [10, None] or ["10",None]  or [10.0, NaN])
-        sanitize_dataframe(table)
         self._assertRendersTable(table)
 
     def test_bad_excel_formulas(self):

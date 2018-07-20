@@ -13,7 +13,7 @@ Django = "==1.11"
 djangorestframework = "==3.5.4"
 "django-user-accounts" = "==2.0.3"
 "django-webpack-loader" = "==0.4.1"
-formulas = {git = "https://github.com/CJWorkbench/formulas.git"}
+formulas = "==0.1.0"
 gitpython = "==2.1.3"
 "html5lib" = "==1.0.1"
 "httplib2" = "==0.10.3"
