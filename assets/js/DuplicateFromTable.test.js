@@ -112,7 +112,7 @@ describe("DuplicateFromTable actions", () => {
 
   it('adds new duplicate module after the given module and sets column parameter', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(19, idName, {duplicateColumnName: 'col_1'});
+    updateTableActionModule(19, idName, 'col_1');
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.duplicateModuleId, 3);
@@ -121,14 +121,14 @@ describe("DuplicateFromTable actions", () => {
 
   it('selects the existing duplicate module and adds a new column to duplicate', async () => {
     store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
-    updateTableActionModule(17, idName, {duplicateColumnName: 'col_2'});
+    updateTableActionModule(17, idName, 'col_2');
 
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'colnames', 'col_1,col_2' ]);
   })
 
   it('selects the existing duplicate module and tries to duplicate the same column', async () => {
     store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
-    updateTableActionModule(17, idName, {duplicateColumnName: 'col_1'});
+    updateTableActionModule(17, idName, 'col_1');
 
     // Sets selected module (no change)
     expect(store.dispatch).toHaveBeenCalledWith(["setSelectedWfModuleAction", 1]);

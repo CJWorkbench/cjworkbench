@@ -534,15 +534,13 @@ export default class DataGrid extends React.Component {
 
   onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
     const sourceKey = this.props.columns[fromIndex];
-    let moduleParams = {
-      reorderInfo: {
+    let reorderInfo = {
         column: sourceKey,
         from: fromIndex,
         to: toIndex,
       }
-    }
 
-    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', moduleParams);
+    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', reorderInfo);
   };
 
   onDragStartColumnIndex = (index) => {
@@ -558,11 +556,7 @@ export default class DataGrid extends React.Component {
   };
 
   onRename = (renameInfo) => {
-    let moduleParams = {
-      renameInfo: renameInfo
-    }
-
-    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', moduleParams);
+    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', renameInfo);
   };
 
   render() {

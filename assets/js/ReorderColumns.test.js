@@ -107,34 +107,21 @@ describe('ReorderColumns actions', () => {
 
 
   it('Adds a new reorder module', async () => {
-    updateTableActionModule(LOADURL_WFM_ID, idName, {
-      reorderInfo: {
-        column: 'test_col',
-        from: 3,
-        to: 0
-      }
-    })
+    updateTableActionModule(LOADURL_WFM_ID, idName, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
-
     expect(addModuleAction).toHaveBeenCalledWith(initialState.reorderModuleId, 1)
     let newParamVal = JSON.stringify([{
       column: 'test_col',
       from: 3,
       to: 0
     }])
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', NEW_REORDER_HISTORY_PAR_ID, newParamVal ]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', NEW_REORDER_HISTORY_PAR_ID, newParamVal ])
   })
 
 
   it('Updates the parameter values of an adjacent reorder module correctly', async () => {
-    updateTableActionModule(FILTER_WFM_ID, idName, {
-      reorderInfo: {
-        column: 'test_col',
-        from: 3,
-        to: 0
-      }
-    });
+    updateTableActionModule(FILTER_WFM_ID, idName, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
 
@@ -153,13 +140,7 @@ describe('ReorderColumns actions', () => {
   })
 
   it('Updates the parameter values of the currently selected reorder module correctly', async () => {
-    updateTableActionModule(REORDER_WFM_ID, idName, {
-      reorderInfo: {
-        column: 'test_col',
-        from: 3,
-        to: 0
-      }
-    });
+    updateTableActionModule(REORDER_WFM_ID, idName, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
 
