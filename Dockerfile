@@ -4,6 +4,7 @@ FROM python:3.6.6-slim-stretch AS pybase
 # We probably don't want these, long-term.
 # nano: because we edit files on production
 # postgresql-client: because we poll the DB on prod before ./manage.py migrate
+# git: because sometimes we throw git revisions in the Pipfile -- which is always lazy
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
