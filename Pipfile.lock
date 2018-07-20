@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "346d67b3e62fcd461b52c4b2a1defd339113bee727ae8abc6405073b4a0b2eb6"
+            "sha256": "15a4e73d0f09d070002077ce4020a5cb3544c010e157aab8c13a8dcd2726a438"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -654,10 +654,12 @@
         },
         "workbenchdata-pandas": {
             "hashes": [
-                "sha256:9792ec74ec9c3394a55459166a405c4b7b37cb5336cdeacc01894018f867eabb"
+                "sha256:3b118f50e807b3128c30dec6aee0b09d313ff6db8ba12fc02da7315d64b38fb6",
+                "sha256:7063b7d168624551e4c21a1d6bdeb2eba8e7ebe6e784f672dac571a21d4d2e4e",
+                "sha256:730e06a68d76b155e6d6c2a510ee5ee42fa44ae5e698dd1cb0fc6d628401127b"
             ],
             "index": "pypi",
-            "version": "==0.24.0a2"
+            "version": "==0.24.0a3"
         },
         "xlrd": {
             "hashes": [
@@ -714,10 +716,10 @@
         },
         "capybara-py": {
             "hashes": [
-                "sha256:68aa7e1c83ded6c017aff222682b0a244724b8faf306499aa42a9c4289d26b89"
+                "sha256:4aae0ce525ae723bf6da78866c1a4d99aa272d2a47d009b47308ec90dbb12eaf"
             ],
             "index": "pypi",
-            "version": "==0.1.4"
+            "version": "==0.1.5"
         },
         "certifi": {
             "hashes": [

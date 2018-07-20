@@ -22,11 +22,14 @@ WORKDIR /app
 # 0.1 Pydev: just for the development environment
 FROM pybase AS pydev
 
+# Need build-essential for:
+# * hiredis - https://github.com/redis/hiredis-py/issues/38
+# * regex (TODO nix the dep or make it support manylinux .whl)
+# * Twisted - https://twistedmatrix.com/trac/ticket/7945
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
-      libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -35,18 +38,22 @@ RUN mkdir -p /root/.local/share/virtualenvs \
 FROM pybase AS pybuild
 
 # Install Python dependencies. They rarely change.
-# We install them to the local system, not to a virtualenv. That means in
-# production, we don't use pipenv.
+# For Docker images we install them to the local system, not to a virtualenv.
+# Containers don't use pipenv.
 COPY Pipfile Pipfile.lock /app/
-RUN apt-get update \
+
+# Need build-essential for:
+# * hiredis - https://github.com/redis/hiredis-py/issues/38
+# * regex (TODO nix the dep or make it support manylinux .whl)
+# * Twisted - https://twistedmatrix.com/trac/ticket/7945
+RUN true \
+    && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
-      libpq-dev \
     && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
-      libpq-dev \
       build-essential \
-    && apt-get autoremove -y \
+    && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
 # nltk models (for sentiment)

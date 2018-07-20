@@ -31,7 +31,7 @@ requests = "*"
 requests-oauthlib = "*"
 pyjwt = "*"
 channels-redis = "*"
-workbenchdata-pandas = "==0.24.0a2"
+workbenchdata-pandas = "==0.24.0a3"
 cchardet = "*"
 
 [dev-packages]
