@@ -189,7 +189,7 @@ export default class MapLayerEditor extends React.Component {
                 data: newData
             });
 
-            if(updateData) {
+            if(updateData && (!this.props.isReadOnly)) {
                 console.log('Data updated');
                 api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
             }
