@@ -5,8 +5,6 @@ import PropTypes from 'prop-types'
 import GJV from 'geojson-validation'
 import WorkBenchAPI from '../../WorkbenchAPI'
 
-import 'react-fine-uploader/gallery/gallery.css'
-import DropZone from "../DropZone";
 
 var api = WorkBenchAPI();
 
@@ -44,9 +42,6 @@ export default class MapLocationDropZone extends Component {
             filename: paramVal.filename,
             modified: paramVal.modified
         };
-    }
-
-    componentDidMount() {
     }
 
     componentWillReceiveProps(nextProps) {
