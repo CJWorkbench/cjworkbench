@@ -151,7 +151,7 @@ start_redis() {
 }
 
 start_webpack() {
-  echo 'Starting backend…' >&2
+  echo 'Starting webpack…' >&2
   run_node \
     --detach \
     --name "${PREFIX}_webpack" \
@@ -175,7 +175,7 @@ start_frontend() {
     -- python ./manage.py runserver --insecure 0.0.0.0:8080
 }
 
-get_pybase_image_id() {
+get_pydev_image_id() {
   if [ -z "$PYBASE_IMAGE_ID" ]; then
     PYBASE_IMAGE_ID="$(docker build -q . --target=pydev)"
   fi
@@ -240,7 +240,7 @@ run_pipenv() {
     --network "$NETWORK_NAME" \
     --volume "$VIRTUALENV_VOLUME_NAME":/root/.local/share/virtualenvs:rw \
     "${docker_args[@]}" \
-    $(get_pybase_image_id) \
+    $(get_pydev_image_id) \
     "$@"
 }
 
