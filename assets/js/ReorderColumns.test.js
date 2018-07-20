@@ -22,7 +22,7 @@ describe('ReorderColumns actions', () => {
   const WF_ID = 10
 
   var initialState = {
-    reorderModuleId: REORDER_MODULE_ID,
+    updateTableModuleIds: { reorderModuleId: REORDER_MODULE_ID },
     workflow: {
       id: WF_ID,
       wf_modules: [

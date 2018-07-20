@@ -12,7 +12,7 @@ describe("DuplicateFromTable actions", () => {
   const COLUMN_PAR_ID_3 = 140;
 
   var initialState = {
-    duplicateModuleId: 77,
+    updateTableModuleIds: { duplicateModuleId: 77 },
     workflow: {
       id: 127,
       wf_modules: [
