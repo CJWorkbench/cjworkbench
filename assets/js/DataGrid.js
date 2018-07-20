@@ -10,7 +10,7 @@ import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import ColumnContextMenu from './ColumnContextMenu'
-import { sortDirectionNone } from './SortFromTable'
+import { sortDirectionNone } from './UpdateTableAction'
 
 // --- Row and column formatting ---
 
@@ -534,12 +534,13 @@ export default class DataGrid extends React.Component {
 
   onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
     const sourceKey = this.props.columns[fromIndex];
+    let reorderInfo = {
+        column: sourceKey,
+        from: fromIndex,
+        to: toIndex,
+      }
 
-    this.props.onReorderColumns(this.props.wfModuleId, {
-      column: sourceKey,
-      from: fromIndex,
-      to: toIndex,
-    });
+    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', reorderInfo);
   };
 
   onDragStartColumnIndex = (index) => {
@@ -555,7 +556,7 @@ export default class DataGrid extends React.Component {
   };
 
   onRename = (renameInfo) => {
-    this.props.onRenameColumn(this.props.wfModuleId, renameInfo);
+    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', renameInfo);
   };
 
   render() {

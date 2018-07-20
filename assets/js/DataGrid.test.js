@@ -28,6 +28,9 @@ describe('DataGrid tests,', () => {
     ]
   };
 
+  var sortDirectionMock = jest.fn()
+  var duplicateColumnMock = jest.fn()
+
   function getRow(i) {
     return testData.rows[i];
   }
@@ -36,8 +39,6 @@ describe('DataGrid tests,', () => {
 
     var editCellMock = jest.fn();
     var sortMock = jest.fn();
-    var sortDirectionMock = jest.fn()
-    var duplicateColumnMock = jest.fn()
 
     const tree = mount(
       <DataGrid
@@ -93,9 +94,6 @@ describe('DataGrid tests,', () => {
 
   it('matches snapshot without data', () => {
 
-    var sortDirectionMock = jest.fn()
-    var duplicateColumnMock = jest.fn()
-
     const tree = mount(
       <DataGrid
         wfModuleId={100}
@@ -117,9 +115,6 @@ describe('DataGrid tests,', () => {
   });
 
   it('Shows/hides letters in the header according to props', () => {
-
-    var sortDirectionMock = jest.fn()
-    var duplicateColumnMock = jest.fn()
 
     const treeWithLetter = mount(
       <DataGrid
@@ -163,8 +158,6 @@ describe('DataGrid tests,', () => {
 
   it('Calls column rename upon editing a column header', (done) => {
     var mockRenameColumn = jest.fn();
-    var sortDirectionMock = jest.fn();
-    var duplicateColumnMock = jest.fn();
 
     var tree = mount(
       <DataGrid
@@ -197,8 +190,8 @@ describe('DataGrid tests,', () => {
         // First argument should be wfModuleId (100)
         expect(mockRenameColumn.mock.calls[0][0]).toBe(100);
         // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(mockRenameColumn.mock.calls[0][1].prevName).toBe('aaa');
-        expect(mockRenameColumn.mock.calls[0][1].newName).toBe('aaaa');
+        expect(mockRenameColumn.mock.calls[0][2].prevName).toBe('aaa');
+        expect(mockRenameColumn.mock.calls[0][2].newName).toBe('aaaa');
         tree.unmount();
         done();
       });
@@ -206,9 +199,6 @@ describe('DataGrid tests,', () => {
   });
 
   it('Respects isReadOnly setting for rename columns', (done) => {
-    var sortDirectionMock = jest.fn();
-    var duplicateColumnMock = jest.fn();
-
     var tree = mount(
       <DataGrid
           wfModuleId={100}

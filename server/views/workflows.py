@@ -15,72 +15,27 @@ from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflo
 from server.serializers import WorkflowSerializer, ModuleSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 from server.versions import WorkflowUndo, WorkflowRedo
 
-# Cache this because we need it on every Workflow page load, and it never changes
-def edit_cells_module_id():
-    if edit_cells_module_id.id is None:
+# Add module name to expected Id alias {module_name: module_alias?}
+module_id_mapping = {
+    'editcells': 'editCellsModuleId',
+    'sort-from-table': 'sortModuleId',
+    'reorder-columns': 'reorderModuleId',
+    'rename-columns': 'renameModuleId',
+    'duplicate-column': 'duplicateModuleId'
+}
+
+# Cache module Ids dynamically per keys in module_name_to_id
+# because we need it on every Workflow page load, and it never changes
+def module_id(id_name):
+    if module_ids[id_name] is None:
         try:
-            edit_cells_module_id.id = Module.objects.get(id_name='editcells').id
-        except Module.DoesNotExist:
-            return None     # should only happen in testing
-
-    return edit_cells_module_id.id
-
-edit_cells_module_id.id = None
-
-# Deal with duplicate from table the same way we deal with EditCells
-def duplicate_module_id():
-    if duplicate_module_id.id is None:
-        try:
-            duplicate_module_id.id = Module.objects.get(id_name='duplicate-column-from-table').id
+            module_ids[id_name] = Module.objects.get(id_name=id_name).id
         except Module.DoesNotExist:
             return None
 
-    return duplicate_module_id.id
+    return module_ids[id_name]
 
-
-duplicate_module_id.id = None
-
-# Deal with sort from table the same way we deal with EditCells
-def sort_module_id():
-    if sort_module_id.id is None:
-        try:
-            sort_module_id.id = Module.objects.get(id_name='sort-from-table').id
-        except Module.DoesNotExist:
-            return None
-
-    return sort_module_id.id
-
-
-sort_module_id.id = None
-
-
-# Deal with reorder from table the same way we deal with EditCells
-def reorder_module_id():
-    if reorder_module_id.id is None:
-        try:
-            reorder_module_id.id = Module.objects.get(id_name='reorder-columns').id
-        except Module.DoesNotExist:
-            return None
-
-    return reorder_module_id.id
-
-
-reorder_module_id.id = None
-
-
-# Deal with rename from table the same way we deal with EditCells
-def rename_module_id():
-    if rename_module_id.id is None:
-        try:
-            rename_module_id.id = Module.objects.get(id_name='rename-columns').id
-        except Module.DoesNotExist:
-            return None
-
-    return rename_module_id.id
-
-
-rename_module_id.id = None
-
+module_ids = {id: None for id in module_id_mapping.keys()}
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request, workflow=None, modules=None):
@@ -99,11 +54,12 @@ def make_init_state(request, workflow=None, modules=None):
         ret['loggedInUser'] = UserSerializer(request.user).data
 
     if workflow and not workflow.request_read_only(request):
-        ret['editCellsModuleId'] = edit_cells_module_id()
-        ret['sortModuleId'] = sort_module_id()
-        ret['reorderModuleId'] = reorder_module_id()
-        ret['renameModuleId'] = rename_module_id()
-        ret['duplicateModuleId'] = duplicate_module_id()
+        ret['updateTableModuleIds'] = {}
+        for id_name, id_alias in module_id_mapping.items():
+            # Numerous dependencies, keeping ModuleId keys
+            ret[id_alias] = module_id(id_name)
+            # Simplify for front end retrieval by module name
+            ret['updateTableModuleIds'][id_name] = ret[id_alias]
 
     return ret
 
