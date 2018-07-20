@@ -23,7 +23,7 @@ describe('RenameColumns actions', () => {
   const WF_ID = 18;
 
   var initialState = {
-    renameModuleId: RENAME_MODULE_ID,
+    updateTableModuleIds: { 'renameModuleId': RENAME_MODULE_ID },
     workflow: {
       id: WF_ID,
       wf_modules: [

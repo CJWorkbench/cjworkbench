@@ -20,7 +20,7 @@ describe("SortFromTable actions", () => {
   const DIRECTION_PAR_ID_3 = 540;
 
   var initialState = {
-    sortModuleId: 77,
+    updateTableModuleIds: { sortModuleId: 77 },
     workflow: {
       id: 127,
       wf_modules: [
