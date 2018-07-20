@@ -7,7 +7,6 @@ import PropTypes from 'prop-types'
 import DataGrid from "./DataGrid";
 import ExportModal from "./ExportModal"
 import update from 'immutability-helper'
-import * as EditCells from './EditCells'
 import * as UpdateTableAction from './UpdateTableAction'
 import {findParamValByIdName} from "./utils";
 
@@ -176,7 +175,7 @@ export default class TableView extends React.PureComponent {
         const newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
         this.setState({tableData: newTableData});
 
-        EditCells.addCellEdit(this.props.selectedWfModuleId, {row: row, col: colName, value: newVal})
+        UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'editcells', {row: row, col: colName, value: newVal})
       }
     }
   }

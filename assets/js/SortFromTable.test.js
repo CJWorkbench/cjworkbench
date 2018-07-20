@@ -20,7 +20,7 @@ describe("SortFromTable actions", () => {
   const DIRECTION_PAR_ID_3 = 540;
 
   var initialState = {
-    updateTableModuleIds: { sortModuleId: 77 },
+    updateTableModuleIds: { 'sort-from-table': 77 },
     workflow: {
       id: 127,
       wf_modules: [
@@ -159,7 +159,7 @@ describe("SortFromTable actions", () => {
     updateTableActionModule(19, idName, 'num_col', 'Number', sortDirectionNone);
 
     await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.sortModuleId, 3);
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'column', 'num_col' ]);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'dtype', 1 ]);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'direction', sortDirectionNone ]);

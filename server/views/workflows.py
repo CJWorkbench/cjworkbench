@@ -16,13 +16,13 @@ from server.serializers import WorkflowSerializer, ModuleSerializer, WorkflowSer
 from server.versions import WorkflowUndo, WorkflowRedo
 
 # Add module name to expected Id alias {module_name: module_alias?}
-module_id_mapping = {
-    'editcells': 'editCellsModuleId',
-    'sort-from-table': 'sortModuleId',
-    'reorder-columns': 'reorderModuleId',
-    'rename-columns': 'renameModuleId',
-    'duplicate-column': 'duplicateModuleId'
-}
+modules_from_table = [
+    'editcells',
+    'sort-from-table',
+    'reorder-columns',
+    'rename-columns',
+    'duplicate-column'
+]
 
 # Cache module Ids dynamically per keys in module_name_to_id
 # because we need it on every Workflow page load, and it never changes
@@ -35,7 +35,7 @@ def module_id(id_name):
 
     return module_ids[id_name]
 
-module_ids = {id: None for id in module_id_mapping.keys()}
+module_ids = {id: None for id in modules_from_table}
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request, workflow=None, modules=None):
@@ -55,11 +55,9 @@ def make_init_state(request, workflow=None, modules=None):
 
     if workflow and not workflow.request_read_only(request):
         ret['updateTableModuleIds'] = {}
-        for id_name, id_alias in module_id_mapping.items():
-            # Numerous dependencies, keeping ModuleId keys
-            ret[id_alias] = module_id(id_name)
+        for id_name in modules_from_table:
             # Simplify for front end retrieval by module name
-            ret['updateTableModuleIds'][id_name] = ret[id_alias]
+            ret['updateTableModuleIds'][id_name] = module_id(id_name)
 
     return ret
 

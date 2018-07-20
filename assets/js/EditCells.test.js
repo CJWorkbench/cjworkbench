@@ -1,9 +1,10 @@
-import { addCellEdit } from "./EditCells"
+import {updateTableActionModule} from './UpdateTableAction'
 
 jest.mock('./workflow-reducer')
 import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from './workflow-reducer'
 
 describe('Edit Cell actions', () => {
+  const idName = 'editcells'
   const Edit1 = { row: 3, col: 'foo', value: 'bar' }
   const Edit2 = { row: 10, col: 'bar', value: 'yippee!' }
 
@@ -24,7 +25,7 @@ describe('Edit Cell actions', () => {
         id: 20,
         module_version : {
           module : {
-            id_name: 'editcells'
+            id_name: idName
           }
         },
         parameter_vals: [
@@ -59,7 +60,7 @@ describe('Edit Cell actions', () => {
     id: 99,
     module_version : {
       module : {
-        id_name: 'editcells'
+        id_name: idName
       }
     },
     parameter_vals: [
@@ -73,7 +74,7 @@ describe('Edit Cell actions', () => {
 
   const initialState = {
     workflow: test_workflow,
-    editCellsModuleId: 5000
+    updateTableModuleIds: {'editcells': 5000}
   }
 
   beforeEach(() => {
@@ -94,25 +95,25 @@ describe('Edit Cell actions', () => {
   })
 
   it('adds edit to existing Edit Cell module', () => {
-    addCellEdit(20, Edit2)
+    updateTableActionModule(20, idName, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
   })
 
   it('selects the Edit Cell module it is editing', () => {
-    addCellEdit(20, Edit2)
+    updateTableActionModule(20, idName, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 1 ])
   })
 
   it('adds edit to immediately-following Edit Cell module', () => {
-    addCellEdit(10, Edit2)
+    updateTableActionModule(10, idName, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
   })
 
   it('adds new Edit Cells module before end of stack', (done) => {
     addModuleAction.mockImplementation(() => () => addModuleResponse)
-    addCellEdit(30, Edit2)
+    updateTableActionModule(30, idName, Edit2)
 
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.editCellsModuleId, 3)
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3)
 
     // let addModule promise resolve
     setImmediate(() => {
@@ -123,7 +124,7 @@ describe('Edit Cell actions', () => {
 
   it('add new Edit Cells module to end of stack', () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse)
-    addCellEdit(40, {row: 10, col:'bar', 'value':'yippee!'})
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.editCellsModuleId, 4)
+    updateTableActionModule(40, idName, {row: 10, col:'bar', 'value':'yippee!'})
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 4)
   })
 })

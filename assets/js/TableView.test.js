@@ -4,9 +4,7 @@ import { jsonResponseMock } from './test-utils';
 import TableView, { initialRows, preloadRows, deltaRows } from './TableView';
 import DataGrid from './DataGrid';
 
-jest.mock('./EditCells');
 jest.mock('./UpdateTableAction');
-import { addCellEdit } from './EditCells';
 import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateTableActionModule } from './UpdateTableAction'
 
 describe('TableView', () => {
@@ -17,7 +15,6 @@ describe('TableView', () => {
   }
 
   beforeEach(() => {
-    addCellEdit.mockReset()
     updateTableActionModule.mockReset()
   })
 
@@ -64,23 +61,23 @@ describe('TableView', () => {
       let headerText = tree.find('.outputpane-header').text();
       expect(headerText).toContain('1,000');  
 
-      // Test calls to EditCells.addCellEdit
-      // Don't call addCellEdit if the cell value has not changed
+      // Test calls to UpdateTableAction
+      // Don't call updateTableActionModule if the cell value has not changed
       tree.find(TableView).instance().onEditCell(0, 'c', '3');
-      expect(addCellEdit).not.toHaveBeenCalled();
-      // Do call addCellEdit if the cell value has changed
+      expect(updateTableActionModule).not.toHaveBeenCalled();
+      // Do call updateTableActionModule if the cell value has changed
       tree.find(TableView).instance().onEditCell(1, 'b', '1000');
-      expect(addCellEdit).toHaveBeenCalledWith(100, { row: 1, col: 'b', value: '1000' });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', { row: 1, col: 'b', value: '1000' });
 
-      // Calls SortFromTable
+      // Calls updateTableActionModule for sorting
       tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
       expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', 'a', 'Number', sortDirectionAsc);
 
-      // Calls DuplicateColumns
+      // Calls updateTableActionModule for duplicating column
       tree.find(TableView).instance().duplicateColumn('a');
       expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', 'a');
 
-      // Calls ReorderColumns
+      // Calls updateTableActionModule for column reorder
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
       expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', { column: 'a', from: 0, to: 1 });
 

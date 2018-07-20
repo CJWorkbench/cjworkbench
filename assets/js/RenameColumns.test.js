@@ -23,7 +23,7 @@ describe('RenameColumns actions', () => {
   const WF_ID = 18;
 
   var initialState = {
-    updateTableModuleIds: { 'renameModuleId': RENAME_MODULE_ID },
+    updateTableModuleIds: { 'rename-columns': RENAME_MODULE_ID },
     workflow: {
       id: WF_ID,
       wf_modules: [
@@ -107,7 +107,7 @@ describe('RenameColumns actions', () => {
     updateTableActionModule(LOADURL_WFM_ID, idName, { prevName: 'cornerstone', newName: 'cs' })
 
     await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.renameModuleId, 1);
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', NEW_RENAME_ENTRIES_ID, JSON.stringify({ cornerstone: 'cs' }) ]);
   });
 

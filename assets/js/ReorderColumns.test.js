@@ -22,7 +22,7 @@ describe('ReorderColumns actions', () => {
   const WF_ID = 10
 
   var initialState = {
-    updateTableModuleIds: { reorderModuleId: REORDER_MODULE_ID },
+    updateTableModuleIds: { 'reorder-columns': REORDER_MODULE_ID },
     workflow: {
       id: WF_ID,
       wf_modules: [
@@ -110,7 +110,7 @@ describe('ReorderColumns actions', () => {
     updateTableActionModule(LOADURL_WFM_ID, idName, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.reorderModuleId, 1)
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1)
     let newParamVal = JSON.stringify([{
       column: 'test_col',
       from: 3,

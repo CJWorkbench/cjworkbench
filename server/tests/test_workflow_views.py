@@ -162,7 +162,7 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, user_display(self.user))
             self.assertContains(response, self.user.email)
 
-            self.assertContains(response, '"editCellsModuleId": ' + str(edit_cells_module_id))
+            self.assertContains(response, '"editcells": ' + str(edit_cells_module_id))
             self.assertContains(response, '"workflow"')
             self.assertContains(response, '"modules"')
             self.assertNotContains(response, '"reorder-column"')

@@ -6,6 +6,7 @@ import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId,
 // Map Module id_name to update function and moduleId in workflows.py
 const updateModuleMapping = {
   'duplicate-column': updateDuplicateModule,
+  'editcells': addEditToEditCellsModule,
   'rename-columns': updateRenameModule,
   'reorder-columns': updateReorderModule,
   'sort-from-table': updateSortModule
@@ -32,6 +33,27 @@ export function updateTableActionModule (wfModuleId, idName, ...params) {
         updateModuleMapping[idName](newWfm, params)
       })
   }
+}
+
+function addEditToEditCellsModule (wfm, params) {
+  const param = findParamValByIdName(wfm, 'celledits')
+  const edit = params[0]
+  let edits
+
+  if (param.value) {
+    try {
+      edits = JSON.parse(param.value)
+    } catch (err) {
+      console.error(err)
+      edits = []
+    }
+  } else {
+    edits = []
+  }
+
+  // Add this edit and update the server
+  edits.push(edit)
+  store.dispatch(setParamValueAction(param.id, JSON.stringify(edits)))
 }
 
 function updateDuplicateModule (wfm, params) {

@@ -12,7 +12,7 @@ describe("DuplicateFromTable actions", () => {
   const COLUMN_PAR_ID_3 = 140;
 
   var initialState = {
-    updateTableModuleIds: { duplicateModuleId: 77 },
+    updateTableModuleIds: { 'duplicate-column': 77 },
     workflow: {
       id: 127,
       wf_modules: [
@@ -115,7 +115,7 @@ describe("DuplicateFromTable actions", () => {
     updateTableActionModule(19, idName, 'col_1');
 
     await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.duplicateModuleId, 3);
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'colnames', 'col_1' ]);
   });
 
