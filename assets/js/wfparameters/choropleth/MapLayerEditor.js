@@ -17,7 +17,8 @@ export class SingleMapLayerEditor extends React.Component {
         levels: PropTypes.number.isRequired,
         color: PropTypes.string.isRequired,
         selected: PropTypes.bool.isRequired,
-        onEdit: PropTypes.func.isRequired
+        onEdit: PropTypes.func.isRequired,
+        isReadOnly: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
@@ -26,6 +27,7 @@ export class SingleMapLayerEditor extends React.Component {
         this.state = {
             selected: this.props.selected,
             levels: this.props.levels,
+            color: this.props.color,
         }
     }
 
@@ -70,11 +72,18 @@ export class SingleMapLayerEditor extends React.Component {
 
     handleColorChangeComplete = (color, event) => {
         console.log("New color: " + color.hex);
-        this.props.onEdit(this.props.column, {
-            color: color.hex,
-            levels: parseInt(this.state.levels),
-            selected: this.props.selected,
-        });
+        if(this.props.isReadOnly) {
+            this.setState({color: this.props.color});
+        } else {
+            this.setState({color: color.hex}, () => {
+                this.props.onEdit(this.props.column, {
+                    color: color.hex,
+                    levels: parseInt(this.state.levels),
+                    selected: this.props.selected,
+                });
+            });
+        }
+
     };
 
     render() {
@@ -86,6 +95,7 @@ export class SingleMapLayerEditor extends React.Component {
                         checked={this.state.selected}
                         onChange={this.handleCheckboxClick}
                         className={"map-layer-checkbox"}
+                        disabled={this.props.isReadOnly}
                     />
                     <span>{this.props.column}</span>
                     <input
@@ -96,12 +106,13 @@ export class SingleMapLayerEditor extends React.Component {
                         onFocus={this.handleInputFocus}
                         onKeyPress={this.handleInputKeyPress}
                         className={"map-layer-levels-input"}
+                        disabled={this.props.isReadOnly}
                     />
                     <span className={"map-layer-levels-label"}>levels</span>
                 </div>
                 <CirclePicker
                     width={"240px"}
-                    color={this.props.color}
+                    color={this.state.color}
                     colors={['#F44336', '#FF9800', '#FFEB3B', '#4CAF50', '#009688', '#2196F3', '#9C27B0', '#607D8B']}
                     circleSpacing={6}
                     circleSize={24}
@@ -210,6 +221,7 @@ export default class MapLayerEditor extends React.Component {
                     levels={this.state.data.layers[col].levels}
                     selected={this.state.data.layers[col].selected}
                     onEdit={this.handleLayerEdit}
+                    isReadOnly={this.props.isReadOnly}
                 />
             )
         });
