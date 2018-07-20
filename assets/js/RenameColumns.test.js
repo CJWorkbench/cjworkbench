@@ -104,35 +104,23 @@ describe('RenameColumns actions', () => {
 
   it('adds a new rename module after the current non-rename module', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(LOADURL_WFM_ID, idName, {
-      renameInfo: {
-        prevName: 'cornerstone',
-        newName: 'cs'
-      }
-    });
+    updateTableActionModule(LOADURL_WFM_ID, idName, { prevName: 'cornerstone', newName: 'cs' })
+
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.renameModuleId, 1);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', NEW_RENAME_ENTRIES_ID, JSON.stringify({ cornerstone: 'cs' }) ]);
   });
 
   it('adds a new column to an existing rename module', async () => {
-    updateTableActionModule(FILTER_WFM_ID, idName, {
-      renameInfo: {
-        prevName: 'cornerstone',
-        newName: 'cs'
-      }
-    });
+    updateTableActionModule(FILTER_WFM_ID, idName, { prevName: 'cornerstone', newName: 'cs' })
+
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', RENAME_ENTRIES_ID, JSON.stringify({ name: 'host_name', narrative: 'nrtv', cornerstone: 'cs' }) ]);
   });
 
   it('renames an already-renamed column', async () => {
-    updateTableActionModule(FILTER_WFM_ID, idName, {
-      renameInfo: {
-        prevName: 'host_name',
-        newName: 'host'
-      }
-    });
+    updateTableActionModule(FILTER_WFM_ID, idName, { prevName: 'host_name', newName: 'host' })
+
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', RENAME_ENTRIES_ID, JSON.stringify({ name: 'host', narrative: 'nrtv' }) ]);
   });
 });

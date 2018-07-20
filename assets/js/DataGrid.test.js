@@ -190,8 +190,8 @@ describe('DataGrid tests,', () => {
         // First argument should be wfModuleId (100)
         expect(mockRenameColumn.mock.calls[0][0]).toBe(100);
         // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(mockRenameColumn.mock.calls[0][2].renameInfo.prevName).toBe('aaa');
-        expect(mockRenameColumn.mock.calls[0][2].renameInfo.newName).toBe('aaaa');
+        expect(mockRenameColumn.mock.calls[0][2].prevName).toBe('aaa');
+        expect(mockRenameColumn.mock.calls[0][2].newName).toBe('aaaa');
         tree.unmount();
         done();
       });

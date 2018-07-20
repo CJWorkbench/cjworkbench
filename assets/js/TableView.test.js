@@ -74,27 +74,15 @@ describe('TableView', () => {
 
       // Calls SortFromTable
       tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', {
-        sortColumn: 'a',
-        sortType: 'Number',
-        sortDirection: sortDirectionAsc
-      });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', 'a', 'Number', sortDirectionAsc);
 
       // Calls DuplicateColumns
       tree.find(TableView).instance().duplicateColumn('a');
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', {
-        duplicateColumnName:'a'
-      });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', 'a');
 
       // Calls ReorderColumns
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', {
-        reorderInfo: {
-          column: 'a',
-          from: 0,
-          to: 1
-        }
-      });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', { column: 'a', from: 0, to: 1 });
 
       done();
     });

@@ -182,22 +182,12 @@ export default class TableView extends React.PureComponent {
   }
 
   setSortDirection(sortCol, sortType, sortDirection) {
-    let moduleParams = {
-      sortColumn: sortCol,
-      sortType: sortType,
-      sortDirection: sortDirection
-    }
-
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'sort-from-table', moduleParams);
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'sort-from-table', sortCol, sortType, sortDirection);
       this.refreshTable();
   }
 
   duplicateColumn(colName) {
-    let moduleParams = {
-      duplicateColumnName: colName
-    }
-
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'duplicate-column', moduleParams);
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'duplicate-column', colName);
       this.refreshTable();
   }
 
