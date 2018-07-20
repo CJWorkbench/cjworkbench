@@ -1,23 +1,12 @@
 import itertools
-import re
+from formulas import Parser
+import pandas as pd
+import numpy as np
 from .moduleimpl import ModuleImpl
 from .utils import build_globals_for_eval
-import pandas as pd
-from formulas import Parser
 from django.utils.translation import gettext as _
 
 # ---- Formula ----
-
-def letter_ref_to_number(letter_ref):
-    if re.search(r"[^a-zA-Z]+", letter_ref):
-        raise ValueError(_("%s is not a valid reference" % letter_ref))
-
-    return_number = 0
-
-    for idx, letter in enumerate(reversed(letter_ref)):
-        return_number += (ord(letter.upper()) - 64) * (26**idx)
-
-    return return_number - 1  # 0-indexed
 
 
 def python_formula(table, formula):
@@ -42,6 +31,16 @@ def flatten_single_element_lists(x):
     else:
         return x
 
+
+def eval_excel(code, args):
+    """Return result of running Excel code with args."""
+    ret = code(*args)
+    if isinstance(ret, np.ndarray):
+        return ret.item()
+    else:
+        return ret
+
+
 def eval_excel_one_row(code, table):
 
     # Generate a list of input table values for each range in the expression
@@ -65,12 +64,14 @@ def eval_excel_one_row(code, table):
             # expression references non-existent data
             return '#REF!'
 
+        # retval of code() is OperatorArray:
+        # https://github.com/vinci1it2000/formulas/issues/12
         table_part = list(table.iloc[r1:r2, c1:c2].values.flat)
         formula_args.append(flatten_single_element_lists(table_part))
 
     # evaluate the formula just once
     try:
-        val = code(*formula_args)
+        val = eval_excel(code, formula_args)
     except Exception as e:
         if type(e).__name__ == 'DispatcherError':
             raise ValueError('Unknown function: {e.args[1]}')
@@ -110,7 +111,7 @@ def eval_excel_all_rows(code, table):
             args_to_excel.append(
                 flatten_single_element_lists([row[idx] for idx in col])
             )
-        newcol.append(code(*args_to_excel))
+        newcol.append(eval_excel(code, args_to_excel))
 
     return newcol
 
