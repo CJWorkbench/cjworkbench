@@ -11,7 +11,8 @@ export default class MapLocationPresets extends React.Component {
     static propTypes = {
         paramData: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
+        isReadOnly: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
@@ -80,6 +81,7 @@ export default class MapLocationPresets extends React.Component {
                     name={this.props.name}
                     value={this.state.preset}
                     onChange={this.onPresetSelectionChange}
+                    disabled={this.props.isReadOnly}
                 >
                     <option key={'select'} value={'select'} className={'dropdown-menu-item t-d-gray content-3'}>Select</option>
                     {presetOptions}

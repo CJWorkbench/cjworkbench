@@ -18,7 +18,8 @@ export default class MapLocationDropZone extends Component {
     static propTypes = {
         name: PropTypes.string.isRequired,
         paramData: PropTypes.string.isRequired,
-        paramId: PropTypes.number.isRequired
+        paramId: PropTypes.number.isRequired,
+        isReadOnly: PropTypes.bool.isRequired
     };
 
     constructor(props) {
@@ -112,11 +113,17 @@ export default class MapLocationDropZone extends Component {
         return (
             <div>
                 <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
-                <Dropzone
-                    onDrop={this.onDrop}
-                >
-                    {dropZoneContent}
-                </Dropzone>
+                {this.props.isReadOnly ? (
+                        <div>
+                            {dropZoneContent}
+                        </div>
+                    ) : (
+                        <Dropzone
+                            onDrop={this.onDrop}
+                        >
+                            {dropZoneContent}
+                        </Dropzone>
+                )}
             </div>
         );
     }

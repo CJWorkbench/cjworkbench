@@ -301,6 +301,7 @@ export default class WfParameter extends React.Component {
               name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
+              isReadOnly={this.props.isReadOnly}
           />
       )
     } else if (id_name == 'map-presets') {
@@ -309,6 +310,7 @@ export default class WfParameter extends React.Component {
               name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
+              isReadOnly={this.props.isReadOnly}
           />
       )
     } else if (id_name == 'map-layers') {

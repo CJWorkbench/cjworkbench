@@ -9,8 +9,7 @@ import {CirclePicker} from 'react-color'
 // If they are changed, please update the tests here accordingly.
 
 
-const tick = async() => new Promise(resolve => setTimeout(resolve, 0))
-
+const tick = async() => new Promise(resolve => setTimeout(resolve, 0));
 
 describe('MapLayerEditor rendering and interactions', () => {
     const PARAM_ID = 17;
