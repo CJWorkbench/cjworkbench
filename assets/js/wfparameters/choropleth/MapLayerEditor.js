@@ -28,6 +28,7 @@ export class SingleMapLayerEditor extends React.Component {
             selected: this.props.selected,
             levels: this.props.levels,
             color: this.props.color,
+            showLevelsError: false
         }
     }
 
@@ -54,15 +55,46 @@ export class SingleMapLayerEditor extends React.Component {
         });
     };
 
-    handleInputBlur = () => {
-        if(this.state.levels !== this.props.levels) {
-            this.commitInputValue();
+    abortInputValue = () => {
+        this.setState({levels: this.props.levels});
+    };
+
+    abortInputValueWithError = () => {
+        this.setState({levels: this.props.levels, showLevelsError: true});
+        setTimeout(() => {
+            this.setState({showLevelsError: false})
+        }, 2000);
+    };
+
+    levelsIsValid = (val) => {
+        // We only accept positive integer for the levels input
+        let valIsInteger = /^\d+$/.test(val);
+        if(valIsInteger) {
+            return parseInt(val) > 0;
+        } else {
+            return false;
         }
     };
 
-    handleInputKeyPress = (event) => {
-        if((event.key == 'Enter') && (this.state.levels !== this.props.levels)) {
-            this.commitInputValue();
+    handleInputBlur = () => {
+        if(parseInt(this.state.levels) !== this.props.levels) {
+            if(this.levelsIsValid(this.state.levels)) {
+                this.commitInputValue();
+            } else {
+                this.abortInputValueWithError();
+            }
+        }
+    };
+
+    handleInputKeyDown = (event) => {
+        if((event.key === 'Enter') && (parseInt(this.state.levels) !== this.props.levels)) {
+            if(this.levelsIsValid(this.state.levels)) {
+                this.commitInputValue();
+            } else {
+                this.abortInputValueWithError();
+            }
+        } else if(event.key === 'Escape') {
+            this.abortInputValue();
         }
     };
 
@@ -104,12 +136,13 @@ export class SingleMapLayerEditor extends React.Component {
                         onChange={this.handleInputChange}
                         onBlur={this.handleInputBlur}
                         onFocus={this.handleInputFocus}
-                        onKeyPress={this.handleInputKeyPress}
+                        onKeyDown={this.handleInputKeyDown}
                         className={"map-layer-levels-input"}
                         disabled={this.props.isReadOnly}
                     />
                     <span className={"map-layer-levels-label"}>levels</span>
                 </div>
+                {this.state.showLevelsError ? (<div className={"map-levels-invalid"}>Levels can only be a positive integer</div>) : ''}
                 <CirclePicker
                     width={"240px"}
                     color={this.state.color}
@@ -206,8 +239,8 @@ export default class MapLayerEditor extends React.Component {
 
     render() {
         // We don't render anything visible if no location column is selected
-        if(this.props.keyColumn.trim() == '') {
-            return (<div></div>);
+        if(this.props.keyColumn.trim() === '') {
+            return (<div/>);
         }
 
         const columns = this.state.columns.filter((col) => {

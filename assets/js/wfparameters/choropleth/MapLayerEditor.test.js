@@ -359,7 +359,7 @@ describe('MapLayerEditor rendering and interactions', () => {
         let newLevelsVal = 11;
 
         targetInput.simulate('change', {target: {value: newLevelsVal}});
-        targetInput.simulate('keypress', {key: 'Enter'});
+        targetInput.simulate('keydown', {key: 'Enter'});
         await tick();
         tree.update();
 
@@ -480,5 +480,37 @@ describe('MapLayerEditor rendering and interactions', () => {
         expect(tree.find(SingleMapLayerEditor).first().find(CirclePicker).first().prop('color')).toEqual(beforeColor);
 
         tree.unmount();
+    });
+
+    it('Only accepts positive integers for the levels field', async () => {
+        let tree = mount(
+            <MapLayerEditor
+                name={PARAM_NAME}
+                paramId={PARAM_ID}
+                keyColumn={'location'}
+                wfModuleId={WFM_ID}
+                isReadOnly={false}
+                paramData={JSON.stringify(mockExistingParamData)}
+            />
+        );
+
+        await tick();
+        tree.update();
+
+        // We test an invalid input on the first "levels" field
+        let firstLevelsInput = tree.find(SingleMapLayerEditor).first().find('input.map-layer-levels-input').first();
+        expect(firstLevelsInput).toHaveLength(1);
+        let originalValue = firstLevelsInput.prop('value');
+
+        firstLevelsInput.simulate('change', {target: {value: 'this is a test'}});
+        firstLevelsInput.simulate('blur');
+        await tick();
+
+        // The component should not call onParamChanged as the input is not valid
+        expect(api.onParamChanged.mock.calls).toHaveLength(0);
+        // The value should be reset to its original
+        expect(firstLevelsInput.prop('value')).toEqual(originalValue);
+        // A brief error message should show up
+        expect(tree.find('div.map-levels-invalid')).toHaveLength(1);
     });
 });

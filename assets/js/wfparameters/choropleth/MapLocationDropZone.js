@@ -109,7 +109,7 @@ export default class MapLocationDropZone extends Component {
             <div>
                 <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
                 {this.props.isReadOnly ? (
-                        <div>
+                        <div className={'map-geojson-readonly'}>
                             {dropZoneContent}
                         </div>
                     ) : (
