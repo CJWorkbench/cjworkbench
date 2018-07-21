@@ -39,7 +39,8 @@ export default class MapLocationDropZone extends Component {
         return {
             isEmpty: isEmpty,
             filename: paramVal.filename,
-            modified: paramVal.modified
+            modified: paramVal.modified,
+            alertInvalidFormat: false,
         };
     }
 
@@ -50,7 +51,7 @@ export default class MapLocationDropZone extends Component {
     }
 
     alertInvalidFormat() {
-        console.log("Uploaded file is not valid geoJSON.");
+        this.setState({alertInvalidFormat: true});
     }
 
     refreshIframe() {
@@ -67,8 +68,10 @@ export default class MapLocationDropZone extends Component {
             geojson: geoJSON,
             modified: file.lastModifiedDate
         };
-        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)})
+        this.setState({alertInvalidFormat: false}, () => {
+            this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)})
             .then(() => {this.refreshIframe()});
+        });
     }
 
     onDrop(acceptedFiles, rejectedFiles) {
@@ -98,8 +101,21 @@ export default class MapLocationDropZone extends Component {
 
     renderDropZoneContent() {
         if(this.state.isEmpty) {
-            return 'Drop a GeoJSON file here, or click this area to browse and upload from your computer.\n' +
-                'GeoJSON files defines the map areas for the choropleth map.'
+            return (
+                <div>
+                    Drop a GeoJSON file here, or click this area to browse and upload from your computer.
+                    <br/>
+                    GeoJSON files defines the map areas for the choropleth map.
+                </div>
+            );
+        }
+        if(this.state.alertInvalidFormat) {
+            return (
+                <div>
+                    <div className={'map-upload-invalid'}>The file you uploaded is not a valid GeoJSON file</div>
+                    <div className={'map-upload-invalid-new'}>Click to upload a new file</div>
+                </div>
+            );
         }
         return (
             <div>
@@ -121,7 +137,7 @@ export default class MapLocationDropZone extends Component {
                             {dropZoneContent}
                         </div>
                     ) : (
-                        <Dropzone
+                        <Dropzone className={'map-geojson-dropzone'}
                             onDrop={this.onDrop}
                         >
                             {dropZoneContent}
