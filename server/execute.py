@@ -1,29 +1,25 @@
 # Run the workflow, generating table output
 
-from server.models.StoredObject import *
 from server.dispatch import module_dispatch_render
-from server.websockets import *
-from server.modules.urlscraper import urlscraper_execute_callbacks
-import pandas as pd
+from server.websockets import ws_client_rerender_workflow
+from server.modules.types import ProcessResult
 
 
 # Tell client to reload (we've finished rendering)
 def notify_client_workflow_version_changed(workflow):
     ws_client_rerender_workflow(workflow)
 
-def get_render_cache(wfm, revision):
-    # There can be more than one cached table for the same rev, if we did simultaneous renders
-    # on two different threads. This is inefficient, but not harmful. So filter().first() not get()
-    try:
-        return StoredObject.objects.filter(wf_module=wfm,
-                                            type=StoredObject.CACHED_TABLE,
-                                            metadata=revision).first()
-    except StoredObject.DoesNotExist:
+
+def get_render_cache(wfm, revision) -> ProcessResult:
+    cached_result = wfm.get_cached_render_result()
+    if cached_result and cached_result.workflow_revision == revision:
+        return cached_result.result
+    else:
         return None
 
 
 # Return the output of a particular module. Gets from cache if possible
-def execute_wfmodule(wfmodule, nocache=False):
+def execute_wfmodule(wfmodule, nocache=False) -> ProcessResult:
     workflow = wfmodule.workflow
     target_rev = workflow.revision()
 
@@ -32,43 +28,37 @@ def execute_wfmodule(wfmodule, nocache=False):
     if not nocache:
         cache = get_render_cache(wfmodule, target_rev)
     if cache:
-        return cache.get_table()
+        return cache
 
     # No, let's render from the top, shortcutting with cache whenever possible
-    table = pd.DataFrame()
+    result = ProcessResult()
 
     # Start from the top, re-rendering any modules which do not have a cache at the current revision
     # Assumes not possible to have later revision cache after a module which has an earlier revision cache
     # (i.e. module stack always rendered in order)
     # If everything is rendered already, this will just return the cache
     for wfm in workflow.wf_modules.all():
-
         # Get module output from cache, if available and desired
-        cache = None
-        if not nocache:
+        if nocache:
+            cache = None
+        else:
             cache = get_render_cache(wfm, target_rev)
 
         # if we did not find an available cache, render
-        if cache is None:
-            # previous revisions are dead to us now (well, maybe good for undo, but we can re-render)
-            StoredObject.objects.filter(wf_module=wfm, type=StoredObject.CACHED_TABLE).delete()
-            table = module_dispatch_render(wfm, table)
-            StoredObject.create_table(wfm, StoredObject.CACHED_TABLE, table, metadata=target_rev)
+        if cache:
+            result = cache
         else:
-            table = cache.get_table()
+            result = module_dispatch_render(wfm, result.dataframe)
+            wfm.cache_render_result(target_rev, result)
+            wfm.save()
 
         # found the module we were looking for, all done
         if wfm == wfmodule:
             break
 
-    return table
+    return result
 
 
 # shortcut to execute without cache, handy for testing
 def execute_nocache(wfm):
     return execute_wfmodule(wfm, nocache=True)
-
-
-# Resolve circular import: execute -> dispatch -> urlscraper -> execute
-# So we create an object with callbacks in urlscraper, which we then fill out here
-urlscraper_execute_callbacks.execute_wfmodule = execute_wfmodule

@@ -43,6 +43,7 @@
         font-size: 1.8rem;
         margin-right:.5rem;
       }
+      span {margin-top: .1rem;}
     }
 
     &.lesson-highlight button.search {
@@ -88,7 +89,7 @@
 
       i {
         position: absolute;
-        left: -1.8rem;
+        left: 12.5rem;
         top: -.6rem;
         font-size: 1.2rem;
         line-height: 1;
@@ -98,6 +99,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 5;
       }
 
       &:hover {
@@ -145,6 +147,65 @@
       bottom: -2.5rem;
       left: 0;
       right: 0;
+    }
+  }
+
+  &.zen-mode {
+    .wf-module:not(.zen-mode),
+    .in-between-modules {
+      display: none;
+    }
+
+    .wf-module.zen-mode {
+      .wf-card {
+        width: 50rem;
+      }
+
+      &::after {
+        display: none; // nix the little line after each module
+      }
+
+      // No need to collapse the epxanded python module - this is solo module display
+      .context-collapse-button {display: none;}
+
+      .module-card-header {height: 4.5rem;}
+
+      // Notes are the same width as module-stack
+
+      textarea[name="notes"], .editable-notes-read-only {
+        width: 50rem;
+      }
+
+
+      /* a dummy div around output status bar, for positioning purposes  */
+      .output-bar-container {
+        position: absolute;
+        height: 100%;
+        width:100%;
+
+        /* all good & selected */
+        .module-output--selected {
+          &:after {
+          margin-left: 50.2rem
+          }
+        }
+
+        /* standby  */
+        .module-output-bar-orange {
+          :after {
+          margin-left: 50.3rem
+          }
+        }
+
+        /* error  */
+        .module-output--error, .module-output--error-selected {
+          &:after {
+            margin-left: 50.5rem;
+            height: 4rem;
+          }
+        }
+      }
+
     }
   }
 }

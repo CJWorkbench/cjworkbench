@@ -9,13 +9,13 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
     src="/api/wfmodules/1/output"
   />
   <div
-    className="embed-info"
+    className="embed-footer"
   >
     <div
-      className="d-flex align-items-center"
+      className="metadata-stack"
     >
       <div
-        className="embed-info-logo"
+        className="embed-footer-logo"
       >
         <a
           href="/"
@@ -27,10 +27,10 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         </a>
       </div>
       <div
-        className="embed-info-meta"
+        className="embed-footer-meta"
       >
         <div
-          className="t-d-gray mb-1 title-4"
+          className="title"
         >
           <a
             href="/workflows/1"
@@ -55,7 +55,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
               </a>
             </div>
             <li
-              className="content-3 metadataSeparator t-m-gray"
+              className="separator"
             >
               -
             </li>
@@ -77,11 +77,11 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       </div>
     </div>
     <div
-      className="embed-info-button"
+      className="embed-footer-button"
       onClick={[Function]}
     >
       <i
-        className="icon icon-share"
+        className="icon icon-code"
       />
     </div>
   </div>
@@ -94,15 +94,20 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
     >
       <h1>
-        Embed live chart using this code:
+        EMBED THIS CHART
       </h1>
-      <pre>
+      <h2>
+        Paste this code into any webpage HTML
+      </h2>
+      <div
+        className="code-snippet"
+      >
         <code
           className="embed--share-code"
         >
           &lt;iframe src="about:///embed/1" width="560" height="315" frameborder="0" /&gt;
         </code>
-      </pre>
+      </div>
     </div>
   </div>
 </div>
@@ -120,10 +125,10 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     </h1>
   </div>
   <div
-    className="embed-info"
+    className="embed-footer"
   >
     <div
-      className="embed-info-logo"
+      className="embed-footer-logo"
     >
       <img
         src="/static/images/logo.png"
@@ -131,14 +136,14 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       />
     </div>
     <div
-      className="embed-info-meta"
+      className="embed-footer-meta"
     >
       <h1>
         WORKBENCH
       </h1>
     </div>
     <div
-      className="embed-info-button"
+      className="embed-footer-button"
     >
       <i
         className="icon icon-share"

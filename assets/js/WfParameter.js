@@ -1,12 +1,12 @@
 // WfParameter - a single editable parameter
 
 import React from 'react'
+import PropTypes from 'prop-types'
 import MenuParam from './wfparameters/MenuParam'
 import ChartEditor from './wfparameters/charts/ChartEditor'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
-import PropTypes from 'prop-types'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
@@ -20,10 +20,6 @@ import RenameEntries from './wfparameters/RenameEntries'
 import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
-import { csrfToken } from './utils'
-import { store, setWfModuleStatusAction } from './workflow-reducer'
-import lessonSelector from './lessons/lessonSelector'
-import { connect } from 'react-redux'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -141,10 +137,6 @@ export default class WfParameter extends React.Component {
     this.props.api.postParamEvent(this.props.getParamId('version_select'), {})
   }
 
-  changeRenameColumnsLoadAll = (val) => {
-    this.props.setParamText('display-all', val);
-  };
-
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
     const { id, value } = this.props.p
@@ -194,14 +186,7 @@ export default class WfParameter extends React.Component {
             isReadOnly={this.props.isReadOnly}
           />
           <div className="d-flex justify-content-between mt-2">
-            <DataVersionSelect
-              isReadOnly={this.props.isReadOnly}
-              wfModuleId={this.props.wf_module_id}
-              revision={this.props.revision}
-              api={this.props.api}
-              setClickNotification={this.props.setClickNotification}
-              notifications={this.props.notifications}
-            />
+            <DataVersionSelect wfModuleId={this.props.wf_module_id} />
             {button}
           </div>
 
@@ -211,14 +196,7 @@ export default class WfParameter extends React.Component {
 
       return (
         <div className='versionSelect--uploadFile'>
-          <DataVersionSelect
-            isReadOnly={this.props.isReadOnly}
-            wfModuleId={this.props.wf_module_id}
-            revision={this.props.revision}
-            api={this.props.api}
-            setClickNotification={this.props.setClickNotification}
-            notifications={this.props.notifications}
-          />
+          <DataVersionSelect wfModuleId={this.props.wf_module_id} />
         </div>
       );
     } else if (id_name == 'colrename') {
@@ -257,23 +235,27 @@ export default class WfParameter extends React.Component {
       return (
         <WorkbenchAceEditor
           name={this.props.p.parameter_spec.name}
-          onSave={ (val) => { this.paramChanged( val ) } }
-          defaultValue={this.props.p.value} />
+          isZenMode={this.props.isZenMode}
+          wfModuleError={this.props.wfModuleError}
+          save={this.paramChanged}
+          defaultValue={this.props.p.value}
+          />
       )
     } else if (id_name == 'celledits') {
       return (
         <CellEditor
           edits={this.props.p.value}
-          onSave={(val) => { this.paramChanged(val) }}
+          onSave={this.paramChanged}
         />
       )
     } else if (id_name == 'refine') {
         return (
           <Refine
+            api={this.props.api}
             wfModuleId={this.props.wf_module_id}
             selectedColumn={this.props.getParamText('column')}
             existingEdits={this.props.p.value}
-            saveEdits={(val) => this.paramChanged(val)}
+            saveEdits={this.paramChanged}
             revision={this.props.revision}
             />
         )
@@ -286,9 +268,8 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'rename-entries') {
       return (
           <RenameEntries
-              loadAll={this.props.getParamText('display-all')}
-              changeLoadAll={this.changeRenameColumnsLoadAll}
-              entries={this.props.p.value}
+              api={this.props.api}
+              entriesJsonString={this.props.p.value}
               wfModuleId={this.props.wf_module_id}
               paramId={this.props.p.id}
               revision={this.props.revision}
@@ -298,6 +279,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-geojson') {
       return (
           <MapLocationDropZone
+              api={this.props.api}
               name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
@@ -307,6 +289,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-presets') {
       return (
           <MapLocationPresets
+              api={this.props.api}
               name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
@@ -316,6 +299,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-layers') {
       return (
           <MapLayerEditor
+              api={this.props.api}
               name={this.props.p.parameter_spec.name}
               paramId={this.props.p.id}
               keyColumn={this.props.getParamText("key-column")}
@@ -436,7 +420,7 @@ export default class WfParameter extends React.Component {
       case 'button':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
-            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{name}</div>
+            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.click}>{name}</button>
           </div>
         );
       case 'statictext':
@@ -470,7 +454,7 @@ export default class WfParameter extends React.Component {
               items={this.props.p.menu_items}
               selectedIdx={parseInt(this.props.p.value)}
               isReadOnly={this.props.isReadOnly}
-              onChange={ idx => { this.paramChanged(idx) }}
+              onChange={this.paramChanged}
             />
           </div> );
 
@@ -485,7 +469,7 @@ export default class WfParameter extends React.Component {
               noSelectionText={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
               revision={this.props.revision}
-              onChange={ col => { this.paramChanged(col) }}
+              onChange={this.paramChanged}
             />
           </div> );
 
@@ -524,10 +508,13 @@ WfParameter.propTypes = {
     }).isRequired,
   }).isRequired,
   moduleName:     PropTypes.string.isRequired,
+  wfModuleError:  PropTypes.string, // module-level error message
   wf_module_id:   PropTypes.number.isRequired,
   revision:       PropTypes.number.isRequired,
   api:            PropTypes.object.isRequired,
   updateSettings: PropTypes.object,             // only for modules that load data
+  isReadOnly:     PropTypes.bool.isRequired,
+  isZenMode:      PropTypes.bool.isRequired,
   changeParam:    PropTypes.func.isRequired,
   getParamId:     PropTypes.func.isRequired,
   getParamText:   PropTypes.func.isRequired,

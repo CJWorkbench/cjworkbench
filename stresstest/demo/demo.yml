@@ -1,0 +1,74 @@
+config:
+  target: 'https://staging.workbenchdata.com'
+  http:
+    timeout: 60
+    maxSockets: 3
+  environments:
+    staging:
+      target: 'https://staging.workbenchdata.com'
+    dev:
+      target: 'http://localhost:8000'
+  phases:
+    - duration: 10
+      arrivalRate: 10
+  processor: './helpers.js'
+scenarios:
+  - name: 'User loads demo workflow'
+    flow:
+    - get:
+        url: '/workflows/{{ DemoWorkflowId }}/'
+        afterResponse: 'loadVarsFromWorkflowHtml'
+    #- log: 'Workflow {{ WorkflowId }}: loading...'
+    - get:
+        url: '/static/images/logo.svg'
+    - get:
+        url: '{{ JsPath }}'
+    - get:
+        url: '{{ CssPath }}'
+    - get:
+        url: '/api/wfmodules/{{ ColumnChartId }}/output?rev={{ Revision }}'
+    - get:
+        url: '/api/wfmodules/{{ FilterId }}/input?startrow=0&endrow=0'
+    - get:
+        url: '/api/wfmodules/{{ SortFromTableId }}/input?startrow=0&endrow=0'
+    - get:
+        url: '/api/wfmodules/{{ ColumnChartId }}/input'
+    - get:
+        url: '/api/wfmodules/{{ ColumnChartId }}/render?endrow=200'
+    - get:
+        url: '/static/images/app-icons/favicon-32x32.png'
+    - get:
+        url: '/static/images/app-icons/favicon-16x16.png'
+    #- log: 'Workflow {{ WorkflowId }}: changing sort column...'
+    - post:
+        url: '/api/workflows/{{ WorkflowId }}'
+        json: { 'selected_wf_module': 2 }
+    - get:
+        url: '/api/wfmodules/{{ SortFromTableId }}/render?endrow=200'
+    - patch:
+        url: '/api/parameters/{{ SortColumnParamId }}'
+        json: { 'value': 'market_rate_units' }
+    - post:
+        url: '/api/workflows/{{ WorkflowId }}'
+        json: { 'selected_wf_module': 2 }
+    - get:
+        url: '/api/workflows/{{ WorkflowId }}'
+        capture:
+          json: '$.revision'
+          as: 'Revision2'
+    - get:
+        url: '/api/wfmodules/{{ FilterId }}/input?startrow=0&endrow=0'
+    - get:
+        url: '/api/wfmodules/{{ SortFromTableId }}/input?startrow=0&endrow=0'
+    - get:
+        url: '/api/wfmodules/{{ ColumnChartId }}/input'
+    - get:
+        url: '/api/wfmodules/{{ SortFromTableId }}/render?endrow=200'
+    #- log: 'Workflow {{ WorkflowId }}: Reloading chart...'
+    - post:
+        url: '/api/workflows/{{ WorkflowId }}'
+        json: { 'selected_wf_module': 2 }
+    - get:
+        url: '/api/wfmodules/{{ ColumnChartId }}/output?rev={{ Revision2 }}'
+    - get:
+        url: '/api/wfmodules/{{ ColumnChartId }}/render?endrow=200'

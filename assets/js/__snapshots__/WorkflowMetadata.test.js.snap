@@ -112,7 +112,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
                       class="modal-title"
                     >
                       <span
-                        class="t-d-gray title-4"
+                        class="modal-title"
                       >
                         PRIVACY SETTING
                       </span>
@@ -275,7 +275,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
                         className="modal-title"
                       >
                         <span
-                          className="t-d-gray title-4"
+                          className="modal-title"
                         >
                           PRIVACY SETTING
                         </span>

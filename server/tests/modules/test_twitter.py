@@ -1,10 +1,16 @@
 from server.tests.utils import *
 from django.test import override_settings
-from server.modules.twitter import *
+from server.modules.twitter import Twitter
 import tempfile
-import mock
 from unittest.mock import patch
+from server.modules.types import ProcessResult
 import json
+
+
+def table_to_result(table):
+    result = ProcessResult(table)
+    result.sanitize_in_place()  # alters dataframe.equals() result
+    return result
 
 # test data, excerpted from tweepy repo. One overlapping tweet between the two sets of two tweets
 user_timeline_json = "[{\"created_at\":\"Sat Nov 05 21:38:46 +0000 2016\",\"id\":795017539831103489,\"id_str\":\"795017539831103489\",\"full_text\":\"Hello\",\"truncated\":false,\"entities\":{\"hashtags\":[],\"symbols\":[],\"user_mentions\":[],\"urls\":[]},\"source\":\"\\u003ca href=\\\"http:\\/\\/twitter.com\\\" rel=\\\"nofollow\\\"\\u003eTwitter Web Client\\u003c\\/a\\u003e\",\"in_reply_to_status_id\":null,\"in_reply_to_status_id_str\":null,\"in_reply_to_user_id\":null,\"in_reply_to_user_id_str\":null,\"in_reply_to_screen_name\":null,\"user\":{\"id\":794682839556038656,\"id_str\":\"794682839556038656\",\"name\":\"Tweepy Test\",\"screen_name\":\"TheTweepyTester\",\"location\":\"\",\"description\":\"\",\"url\":null,\"entities\":{\"description\":{\"urls\":[]}},\"protected\":false,\"followers_count\":1,\"friends_count\":18,\"listed_count\":0,\"created_at\":\"Fri Nov 04 23:28:48 +0000 2016\",\"favourites_count\":0,\"utc_offset\":-25200,\"time_zone\":\"Pacific Time (US & Canada)\",\"geo_enabled\":false,\"verified\":false,\"statuses_count\":112,\"lang\":\"en\",\"contributors_enabled\":false,\"is_translator\":false,\"is_translation_enabled\":false,\"profile_background_color\":\"000000\",\"profile_background_image_url\":\"http:\\/\\/abs.twimg.com\\/images\\/themes\\/theme1\\/bg.png\",\"profile_background_image_url_https\":\"https:\\/\\/abs.twimg.com\\/images\\/themes\\/theme1\\/bg.png\",\"profile_background_tile\":false,\"profile_image_url\":\"http:\\/\\/abs.twimg.com\\/sticky\\/default_profile_images\\/default_profile_6_normal.png\",\"profile_image_url_https\":\"https:\\/\\/abs.twimg.com\\/sticky\\/default_profile_images\\/default_profile_6_normal.png\",\"profile_banner_url\":\"https:\\/\\/pbs.twimg.com\\/profile_banners\\/794682839556038656\\/1478382257\",\"profile_link_color\":\"1B95E0\",\"profile_sidebar_border_color\":\"000000\",\"profile_sidebar_fill_color\":\"000000\",\"profile_text_color\":\"000000\",\"profile_use_background_image\":false,\"has_extended_profile\":false,\"default_profile\":false,\"default_profile_image\":true,\"following\":false,\"follow_request_sent\":false,\"notifications\":false,\"translator_type\":\"none\"},\"geo\":null,\"coordinates\":null,\"place\":null,\"contributors\":null,\"is_quote_status\":false,\"retweet_count\":0,\"favorite_count\":0,\"favorited\":false,\"retweeted\":false,\"lang\":\"en\"},{\"created_at\":\"Sat Nov 05 21:37:13 +0000 2016\",\"id\":795017147651162112,\"id_str\":\"795017147651162112\",\"full_text\":\"testing 1000 https:\\/\\/t.co\\/3vt8ITRQ3w\",\"truncated\":false,\"entities\":{\"hashtags\":[],\"symbols\":[],\"user_mentions\":[],\"urls\":[],\"media\":[{\"id\":795017144849272832,\"id_str\":\"795017144849272832\",\"indices\":[13,36],\"media_url\":\"http:\\/\\/pbs.twimg.com\\/media\\/Cwh34Y0WEAA6m1l.jpg\",\"media_url_https\":\"https:\\/\\/pbs.twimg.com\\/media\\/Cwh34Y0WEAA6m1l.jpg\",\"url\":\"https:\\/\\/t.co\\/3vt8ITRQ3w\",\"display_url\":\"pic.twitter.com\\/3vt8ITRQ3w\",\"expanded_url\":\"https:\\/\\/twitter.com\\/TheTweepyTester\\/status\\/795017147651162112\\/photo\\/1\",\"type\":\"photo\",\"sizes\":{\"medium\":{\"w\":1200,\"h\":600,\"resize\":\"fit\"},\"large\":{\"w\":1252,\"h\":626,\"resize\":\"fit\"},\"thumb\":{\"w\":150,\"h\":150,\"resize\":\"crop\"},\"small\":{\"w\":680,\"h\":340,\"resize\":\"fit\"}}}]},\"extended_entities\":{\"media\":[{\"id\":795017144849272832,\"id_str\":\"795017144849272832\",\"indices\":[13,36],\"media_url\":\"http:\\/\\/pbs.twimg.com\\/media\\/Cwh34Y0WEAA6m1l.jpg\",\"media_url_https\":\"https:\\/\\/pbs.twimg.com\\/media\\/Cwh34Y0WEAA6m1l.jpg\",\"url\":\"https:\\/\\/t.co\\/3vt8ITRQ3w\",\"display_url\":\"pic.twitter.com\\/3vt8ITRQ3w\",\"expanded_url\":\"https:\\/\\/twitter.com\\/TheTweepyTester\\/status\\/795017147651162112\\/photo\\/1\",\"type\":\"photo\",\"sizes\":{\"medium\":{\"w\":1200,\"h\":600,\"resize\":\"fit\"},\"large\":{\"w\":1252,\"h\":626,\"resize\":\"fit\"},\"thumb\":{\"w\":150,\"h\":150,\"resize\":\"crop\"},\"small\":{\"w\":680,\"h\":340,\"resize\":\"fit\"}}}]},\"source\":\"\\u003ca href=\\\"https:\\/\\/github.com\\/tweepy\\/tweepy\\\" rel=\\\"nofollow\\\"\\u003eTweepy dev\\u003c\\/a\\u003e\",\"in_reply_to_status_id\":null,\"in_reply_to_status_id_str\":null,\"in_reply_to_user_id\":null,\"in_reply_to_user_id_str\":null,\"in_reply_to_screen_name\":null,\"user\":{\"id\":794682839556038656,\"id_str\":\"794682839556038656\",\"name\":\"Tweepy Test\",\"screen_name\":\"TheTweepyTester\",\"location\":\"\",\"description\":\"\",\"url\":null,\"entities\":{\"description\":{\"urls\":[]}},\"protected\":false,\"followers_count\":1,\"friends_count\":18,\"listed_count\":0,\"created_at\":\"Fri Nov 04 23:28:48 +0000 2016\",\"favourites_count\":0,\"utc_offset\":-25200,\"time_zone\":\"Pacific Time (US & Canada)\",\"geo_enabled\":false,\"verified\":false,\"statuses_count\":112,\"lang\":\"en\",\"contributors_enabled\":false,\"is_translator\":false,\"is_translation_enabled\":false,\"profile_background_color\":\"000000\",\"profile_background_image_url\":\"http:\\/\\/abs.twimg.com\\/images\\/themes\\/theme1\\/bg.png\",\"profile_background_image_url_https\":\"https:\\/\\/abs.twimg.com\\/images\\/themes\\/theme1\\/bg.png\",\"profile_background_tile\":false,\"profile_image_url\":\"http:\\/\\/abs.twimg.com\\/sticky\\/default_profile_images\\/default_profile_6_normal.png\",\"profile_image_url_https\":\"https:\\/\\/abs.twimg.com\\/sticky\\/default_profile_images\\/default_profile_6_normal.png\",\"profile_banner_url\":\"https:\\/\\/pbs.twimg.com\\/profile_banners\\/794682839556038656\\/1478382257\",\"profile_link_color\":\"1B95E0\",\"profile_sidebar_border_color\":\"000000\",\"profile_sidebar_fill_color\":\"000000\",\"profile_text_color\":\"000000\",\"profile_use_background_image\":false,\"has_extended_profile\":false,\"default_profile\":false,\"default_profile_image\":true,\"following\":false,\"follow_request_sent\":false,\"notifications\":false,\"translator_type\":\"none\"},\"geo\":null,\"coordinates\":null,\"place\":null,\"contributors\":null,\"is_quote_status\":false,\"retweet_count\":0,\"favorite_count\":0,\"favorited\":false,\"retweeted\":false,\"possibly_sensitive\":false,\"lang\":\"en\"}]"
@@ -113,9 +119,8 @@ class TwitterTests(LoggedInTestCase):
         self.assertIsNotNone(first_delta)
 
         # Check that render output is right
-        table = Twitter.render(self.wf_module, None)
-        self.assertTrue(table.equals(self.mock_tweet_table))
-        self.assertEqual(len(table), 2)
+        result = Twitter.render(self.wf_module, None)
+        self.assertEqual(result, table_to_result(self.mock_tweet_table))
 
         # now accumulate new tweets
         cursor.reset_mock()
@@ -125,10 +130,9 @@ class TwitterTests(LoggedInTestCase):
         self.assertEqual(self.wf_module.status, WfModule.READY)
 
         # output should be only new tweets (in this case, one new tweet) appended to old tweets
-        table2 = Twitter.render(self.wf_module, None)
+        result2 = Twitter.render(self.wf_module, None)
         merged_table = pd.concat([ self.mock_tweet_table2.iloc[[0]], self.mock_tweet_table ],ignore_index=True)
-        self.assertTrue(table2.equals(merged_table))
-        self.assertEqual(len(table2), 3)
+        self.assertTrue(result2, table_to_result(merged_table))
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')
@@ -151,8 +155,8 @@ class TwitterTests(LoggedInTestCase):
         self.assertEqual(cursor.mock_calls[0][2]['q'], query)
 
         # Check that render output is right
-        table = Twitter.render(self.wf_module, None)
-        self.assertTrue(table.equals(self.mock_tweet_table))
+        result = Twitter.render(self.wf_module, None)
+        self.assertEquals(result, table_to_result(self.mock_tweet_table))
 
 
     @patch('server.oauth.OAuthService.lookup_or_none')
@@ -177,5 +181,5 @@ class TwitterTests(LoggedInTestCase):
         self.assertEqual(cursor.mock_calls[0][2]['slug'], 'theirlist')
 
         # Check that render output is right
-        table = Twitter.render(self.wf_module, None)
-        self.assertTrue(table.equals(self.mock_tweet_table))
+        result = Twitter.render(self.wf_module, None)
+        self.assertEquals(result, table_to_result(self.mock_tweet_table))

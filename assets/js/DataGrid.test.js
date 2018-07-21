@@ -2,17 +2,6 @@ import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid, {ColumnHeader, EditableColumnName} from "./DataGrid"
 
-// TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
-// https://github.com/airbnb/enzyme/issues/1509
-jest.mock('./DataGridDragDropContext', () => {
-  const context = {}
-  return {
-    Consumer: (props) => props.children(context),
-    Provider: (props) => props.children,
-  }
-})
-
-
 describe('DataGrid tests,', () => {
   var testData = {
     totalRows : 2,
@@ -39,6 +28,9 @@ describe('DataGrid tests,', () => {
     ]
   };
 
+  var sortDirectionMock = jest.fn()
+  var duplicateColumnMock = jest.fn()
+
   function getRow(i) {
     return testData.rows[i];
   }
@@ -57,8 +49,10 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         onEditCell={editCellMock}
+        setSortDirection={sortDirectionMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
         isReadOnly={false}
+        duplicateColumn={duplicateColumnMock}
       />
     );
 
@@ -109,6 +103,8 @@ describe('DataGrid tests,', () => {
         columnTypes={[]}
         getRow={() => {}}
         isReadOnly={false}
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
       />
     );
     expect(tree.find('HeaderCell')).toHaveLength(0);
@@ -119,6 +115,7 @@ describe('DataGrid tests,', () => {
   });
 
   it('Shows/hides letters in the header according to props', () => {
+
     const treeWithLetter = mount(
       <DataGrid
           wfModuleId={100}
@@ -129,6 +126,8 @@ describe('DataGrid tests,', () => {
           getRow={getRow}
           showLetter={true}
           isReadOnly={false}
+          setSortDirection={sortDirectionMock}
+          duplicateColumn={duplicateColumnMock}
       />
     );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
@@ -149,6 +148,8 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         showLetter={false}
         isReadOnly={false}
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
       />);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
 
@@ -168,6 +169,8 @@ describe('DataGrid tests,', () => {
           getRow={getRow}
           onRenameColumn={mockRenameColumn}
           isReadOnly={false}
+          setSortDirection={sortDirectionMock}
+          duplicateColumn={duplicateColumnMock}
       />
     );
 
@@ -187,8 +190,8 @@ describe('DataGrid tests,', () => {
         // First argument should be wfModuleId (100)
         expect(mockRenameColumn.mock.calls[0][0]).toBe(100);
         // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(mockRenameColumn.mock.calls[0][1].prevName).toBe('aaa');
-        expect(mockRenameColumn.mock.calls[0][1].newName).toBe('aaaa');
+        expect(mockRenameColumn.mock.calls[0][2].prevName).toBe('aaa');
+        expect(mockRenameColumn.mock.calls[0][2].newName).toBe('aaaa');
         tree.unmount();
         done();
       });
@@ -205,6 +208,8 @@ describe('DataGrid tests,', () => {
           columnTypes={testData.column_types}
           getRow={getRow}
           isReadOnly={true}
+          setSortDirection={sortDirectionMock}
+          duplicateColumn={duplicateColumnMock}
       />
     );
 

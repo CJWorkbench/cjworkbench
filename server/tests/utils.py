@@ -1,8 +1,9 @@
 # Utilities for testing, mostly around constructing test Workflows
 
-from django.test import TestCase
+from django.db import connection
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.test import SimpleTestCase
 from server.models import Module, ModuleVersion, Workflow, WfModule, ParameterSpec, ParameterVal
 from server.initmodules import load_module_from_dict
 import os
@@ -20,24 +21,75 @@ mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 mock_csv_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.csv')
 mock_xlsx_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/test.xlsx')
 
-# ---- Logging in ----
+
+class DbTestCase(SimpleTestCase):
+    allow_database_queries = True
+
+    def tearDown(self):
+        clear_db()
+        super().tearDown()
+
 
 # Derive from this to perform all tests logged in
-class LoggedInTestCase(TestCase):
+class LoggedInTestCase(DbTestCase):
     def setUp(self):
+        super().setUp()
+
         self.user = create_test_user()
         self.client.force_login(self.user)
 
 
-def create_test_user(username='username', email='user@example.org', password='password'):
-    return User.objects.create(username=username, email=email, password=password)
+def create_test_user(username='username', email='user@example.org',
+                     password='password'):
+    return User.objects.create(username=username, email=email,
+                               password=password)
 
 
-def clear_db():
-    ParameterVal.objects.all().delete()
-    WfModule.objects.all().delete()
-    Workflow.objects.all().delete()
-    User.objects.all().delete()
+_Tables = [
+    'server_addmodulecommand',
+    'server_changedataversioncommand',
+    'server_changeparametercommand',
+    'server_changewfmodulenotescommand',
+    'server_changewfmoduleupdatesettingscommand',
+    'server_changeworkflowtitlecommand',
+    'server_deletemodulecommand',
+    'server_delta',
+    'server_module',
+    'server_moduleversion',
+    'server_parameterspec',
+    'server_parameterval',
+    'server_reordermodulescommand',
+    'server_storedobject',
+    'server_uploadedfile',
+    'server_wfmodule',
+    'server_workflow',
+    'django_session',
+    'auth_group',
+    'auth_group_permissions',
+    'auth_permission',
+    'cjworkbench_userprofile',
+    'auth_user',
+    'auth_user_groups',
+    'auth_user_user_permissions',
+]
+
+if 'postgres' in settings.DATABASES['default']['ENGINE']:
+    _clear_db_sql = f"""
+    WITH f{', '.join([f't{i} AS (DELETE FROM {table})' for i, table in enumerate(_Tables)])}
+    SELECT 1
+    """
+
+    def clear_db():
+        with connection.cursor() as c:
+            c.execute(_clear_db_sql)
+
+else:
+    def clear_db():
+        with connection.cursor() as c:
+            c.execute('BEGIN')
+            for table in _Tables:
+                c.execute(f'DELETE FROM {table}')
+            c.execute('COMMIT')
 
 
 # ---- Setting up workflows ----

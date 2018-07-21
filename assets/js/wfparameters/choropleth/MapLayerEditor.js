@@ -1,12 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import WorkbenchAPI from '../../WorkbenchAPI'
 import {CirclePicker} from 'react-color'
-
-var api = WorkbenchAPI();
-export function mockAPI(mock_api) {
-    api = mock_api;
-}
+import {OutputIframeCtrl} from "../../OutputIframe"
 
 // Classes in these modules are used in testing.
 // If they are changed, please update the tests accordingly.
@@ -115,7 +110,6 @@ export class SingleMapLayerEditor extends React.Component {
                 });
             });
         }
-
     };
 
     render() {
@@ -166,6 +160,10 @@ export default class MapLayerEditor extends React.Component {
      */
 
     static propTypes = {
+        api: PropTypes.shape({
+            onParamChanged: PropTypes.func.isRequired,
+            inputColumns: PropTypes.func.isRequired,
+        }).isRequired,
         name: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired,
         keyColumn: PropTypes.string.isRequired,
@@ -199,8 +197,14 @@ export default class MapLayerEditor extends React.Component {
         return data;
     }
 
+    refreshIframe() {
+        if(OutputIframeCtrl) {
+            OutputIframeCtrl.postMessage({refresh: true}, '*');
+        }
+    }
+
     componentDidMount() {
-        api.inputColumns(this.props.wfModuleId).then((result) => {
+        this.props.api.inputColumns(this.props.wfModuleId).then((result) => {
             let newData = Object.assign(this.state.data);
 
             // We update the server whenever new columns are added,
@@ -224,7 +228,8 @@ export default class MapLayerEditor extends React.Component {
 
             if(updateData && (!this.props.isReadOnly)) {
                 console.log('Data updated');
-                api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
+                this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)})
+                    .then();
             }
         });
     }
@@ -233,8 +238,9 @@ export default class MapLayerEditor extends React.Component {
         let newData = Object.assign({}, this.state.data);
         newData.layers[col] = Object.assign({}, props);
         newData.lastEdited = col;
-        this.setState({data: newData});
-        api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
+        this.setState({data: newData}, () => {
+            this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
+        });
     };
 
     render() {

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.shortcuts import redirect, render
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseServerError
 from django.views.decorators.http import require_GET
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -23,28 +23,28 @@ from typing import Union
 # ---- Parameter ----
 
 def parameter_val_or_response_for_read(
-        pk: int, user: User) -> Union[HttpResponse, ParameterVal]:
+        pk: int, request: HttpRequest) -> Union[HttpResponse, ParameterVal]:
     """ParameterVal the user can read, or HTTP error response."""
     try:
         param = ParameterVal.objects.get(pk=pk) # raises
     except ParameterVal.DoesNotExist:
         return HttpResponseNotFound('Param not found')
 
-    if param.user_authorized_read(user):
+    if param.request_authorized_read(request):
         return param
     else:
         return HttpResponseForbidden('Not allowed to read param')
 
 
 def parameter_val_or_response_for_write(
-        pk: int, user: User) -> Union[HttpResponse, ParameterVal]:
+        pk: int, request: HttpRequest) -> Union[HttpResponse, ParameterVal]:
     """ParameterVal the user can write, or HTTP error response."""
     try:
         param = ParameterVal.objects.get(pk=pk) # raises
     except ParameterVal.DoesNotExist:
         return HttpResponseNotFound('Param not found')
 
-    if param.user_authorized_write(user):
+    if param.request_authorized_write(request):
         return param
     else:
         return HttpResponseForbidden('Not allowed to write param')
@@ -55,13 +55,13 @@ def parameter_val_or_response_for_write(
 @renderer_classes((JSONRenderer,))
 def parameterval_detail(request, pk, format=None):
     if request.method == 'GET':
-        param = parameter_val_or_response_for_read(pk, request.user)
+        param = parameter_val_or_response_for_read(pk, request)
         if isinstance(param, HttpResponse): return param
         serializer = ParameterValSerializer(param)
         return Response(serializer.data)
 
     elif request.method == 'PATCH':
-        param = parameter_val_or_response_for_write(pk, request.user)
+        param = parameter_val_or_response_for_write(pk, request)
         if isinstance(param, HttpResponse): return param
         ChangeParameterCommand.create(param, request.data['value'])
 
@@ -81,7 +81,7 @@ def parameterval_detail(request, pk, format=None):
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def parameterval_event(request, pk, format=None):
-    param = parameter_val_or_response_for_write(pk, request.user)
+    param = parameter_val_or_response_for_write(pk, request)
     if isinstance(param, HttpResponse): return param
 
     # change parameter value
@@ -96,7 +96,7 @@ def parameterval_event(request, pk, format=None):
 # Return a parameter val that is actually an image
 @require_GET
 def parameterval_png(request, pk):
-    param = parameter_val_or_response_for_read(pk, request.user)
+    param = parameter_val_or_response_for_read(pk, request)
     if isinstance(param, HttpResponse): return param
 
     # is this actually in image? totes hardcoded for now
@@ -137,7 +137,7 @@ def _oauth_start_authorize(request, param: ParameterVal, id_name: str) -> HttpRe
 
 @api_view(['GET', 'DELETE'])
 def parameterval_oauth_start_authorize(request, pk):
-    param = parameter_val_or_response_for_write(pk, request.user)
+    param = parameter_val_or_response_for_write(pk, request)
     if isinstance(param, HttpResponse): return param
 
     spec = param.parameter_spec
@@ -168,7 +168,7 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
     except KeyError:
         return HttpResponseForbidden('Did not expect auth response.')
 
-    param = parameter_val_or_response_for_write(flow['param-pk'], request.user)
+    param = parameter_val_or_response_for_write(flow['param-pk'], request)
     if isinstance(param, HttpResponse): return param
 
     service = oauth.OAuthService.lookup_or_none(flow['service-id'])
@@ -216,10 +216,12 @@ def parameterval_oauth_generate_access_token(request, pk) -> HttpResponse:
 
     We expect the caller to silently accept 404 Not Found but log other errors.
     """
-    param = parameter_val_or_response_for_read(pk, request.user)
+    param = parameter_val_or_response_for_read(pk, request)
     if isinstance(param, HttpResponse): return param
 
-    if param.wf_module.workflow.owner != request.user:
+    workflow = param.wf_module.workflow
+    if workflow.owner != request.user \
+            and workflow.anonymous_owner_session_key != request.session.session_key:
         # Let's be abundantly clear: this is a _secret_. Users give us their
         # refresh tokens under the assmption that we won't share access to all
         # their files with _anybody_.

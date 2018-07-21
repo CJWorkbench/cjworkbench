@@ -2,9 +2,29 @@
 
 
 .version-item {
+  font-size: 1.3rem;
+  color: $brand-text--dark;
   display: flex;
   align-items: center;
-  width:14.5rem;
+
+  .no-versions {margin-left: .5rem;}
+
+  button {
+    // button looks like a link
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: inline;
+    background: inherit;
+    font: inherit;
+    color: $brand-workspace;
+    cursor: pointer;
+    margin-left: .5rem;
+
+    &:hover {
+      color: $link-hover-success;
+    }
+  }
 }
 
 .frequency-item {
@@ -37,14 +57,13 @@
     }
 
     &>label {
-      width: 7rem;
+      width: 8rem;
       margin-right: 1rem;
       flex: 0 0 auto;
       cursor: pointer;
 
       input { display: none; }
       color: $brand-workspace;
-      text-transform: uppercase;
       font-weight: bold;
       font-size: 1.5rem;
       line-height: 1;
@@ -108,5 +127,126 @@
     @extend .module-parameter;
     height: 3.5rem!important;
     border-radius: 3px!important;
+  }
+}
+
+.data-versions-modal {
+  font-size: 1.4rem;
+
+  .modal-content .modal-body {
+    overflow: visible; // why do we have an "overflow: scroll" somewhere in our CSS?
+    padding-bottom: 0;
+  }
+
+  ol {
+    margin: -2rem -2rem 0 -2rem;
+    padding: 0;
+    list-style: none;
+    max-height: 20rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    color: $brand-text--dark;
+    background: white;
+
+    li {
+      display: block;
+    }
+
+    label {
+      display: flex;
+      padding: 1rem 2rem;
+      margin: 0;
+
+      &:not(.selected) {
+        cursor: pointer;
+        &:hover {
+          background: $hover-background;
+        }
+      }
+
+      &.selected {
+        color: white;
+        background: $brand-workspace--medium;
+      }
+
+      &.unseen {
+        &::after {
+          @extend .icon;
+          content: "\e917"; // .icon-notification
+          position: relative;
+          top: .3rem;
+        }
+      }
+
+      input {
+        display: none;
+      }
+
+      time {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+
+    form.notifications {
+      display: flex;
+      margin: 0;
+      margin-right: 2rem;
+      padding-right: 2rem;
+      border-right: 1px solid $Vlight-gray;
+
+      .text {
+        flex: 1 1 auto;
+
+        p:last-child {
+          margin-bottom: 0;
+        }
+        .status {
+          font-size: 1.6rem;
+          display: flex;
+          align-items: center;
+
+          .on {color:$brand-workspace;}
+
+          i {
+            margin-top: 0rem;
+            margin-right:.5rem;
+          }
+
+          .icon-notification {color:$brand-workspace;}
+          .icon-no-notification {color:$brand-red;}
+          strong {
+            text-transform: uppercase;
+            margin-left: .5rem;
+          }
+        }
+      }
+
+      .options {
+        flex: 0 0 auto;
+        align-self: center;
+        margin-left: 2rem;
+
+        label {
+          @extend %action-button;
+          @extend %button-gray;
+          margin-bottom: 0;
+
+          input[type="checkbox"] { display: none; }
+        }
+      }
+    }
+
+    .actions {
+      flex: 0 0 auto;
+
+      button {
+        @extend %action-button;
+        @extend %button-blue;
+      }
+    }
   }
 }

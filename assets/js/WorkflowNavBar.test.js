@@ -53,7 +53,7 @@ describe('WorkflowNavBar', () => {
       />
     );
 
-    expect(wrapper).toMatchSnapshot(); 
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper.state().spinnerVisible).toBe(false);
 
     let button = wrapper.find('.test-duplicate-button');
@@ -62,7 +62,7 @@ describe('WorkflowNavBar', () => {
 
     // spinner starts immediately
     expect(wrapper.state().spinnerVisible).toBe(true);
-    
+
     // then we wait for promise to resolve
     setImmediate( () => {
       expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/77');
@@ -70,7 +70,7 @@ describe('WorkflowNavBar', () => {
       done();
     });
   });
-  
+
   it('With user NOT logged in, Duplicate button sends user to sign-in page', (done) => {
     workflow = {
       id: 303,
@@ -87,7 +87,7 @@ describe('WorkflowNavBar', () => {
       />
     );
 
-    expect(wrapper).toMatchSnapshot(); 
+    expect(wrapper).toMatchSnapshot();
 
     let button = wrapper.find('.test-duplicate-button');
     expect(button).toHaveLength(1);
@@ -124,15 +124,15 @@ describe('WorkflowNavBar', () => {
 
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.state().modalsOpen).toBe(false);
-    
+
     let button = wrapper.find('.test-share-button');
     expect(button).toHaveLength(1);
     button.simulate('click');
 
-    expect(wrapper.state().modalsOpen).toBe(true);      
+    expect(wrapper.state().modalsOpen).toBe(true);
 
     const setpubModal = wrapper.find('div.test-setpublic-modal');
-    expect(setpubModal).toMatchSnapshot(); 
+    expect(setpubModal).toMatchSnapshot();
 
     const setPublicButton = setpubModal.find('.test-public-button');
     setPublicButton.simulate('click');
@@ -142,14 +142,14 @@ describe('WorkflowNavBar', () => {
       wrapper.update()
       // find the Share modal & wrap it
       const shareModal = wrapper.find('div.test-share-modal');
-      expect(shareModal).toMatchSnapshot(); 
-    
+      expect(shareModal).toMatchSnapshot();
+
       // check that link has rendered correctly
       const linkField = shareModal.find('input.test-link-field');
       expect(linkField.length).toBe(1);
       // Need to fix this once correct link string in place
       // expect(linkField.props().placeholder).toEqual("");
-    
+
       expect(api.setWorkflowPublic).toHaveBeenCalled();
       done();
     });
@@ -177,21 +177,21 @@ describe('WorkflowNavBar', () => {
 
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.state().modalsOpen).toBe(false);
-    
+
     let button = wrapper.find('.test-share-button');
     expect(button).toHaveLength(1);
     button.simulate('click');
 
-    expect(wrapper.state().modalsOpen).toBe(true);      
+    expect(wrapper.state().modalsOpen).toBe(true);
 
     const shareModal = wrapper.find('div.test-share-modal');
-    expect(shareModal).toMatchSnapshot(); 
+    expect(shareModal).toMatchSnapshot();
 
     // check that link has rendered correctly
     const linkField = shareModal.find('input.test-link-field');
     expect(linkField.length).toBe(1);
-    expect(linkField.props().placeholder).toEqual("/workflows/808");
-  
+    expect(linkField.props().value).toEqual("/workflows/808");
+
     expect(api.setWorkflowPublic).not.toHaveBeenCalled();
   });
 });

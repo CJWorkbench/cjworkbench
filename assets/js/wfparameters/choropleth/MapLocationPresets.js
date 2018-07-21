@@ -1,14 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import WorkbenchAPI from '../../WorkbenchAPI'
 
-var api = WorkbenchAPI();
-export function mockAPI(mock_api) {
-    api = mock_api;
-}
 
 export default class MapLocationPresets extends React.Component {
     static propTypes = {
+        api: PropTypes.shape({
+            onParamChanged: PropTypes.func.isRequired,
+        }),
         paramData: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
@@ -40,12 +38,12 @@ export default class MapLocationPresets extends React.Component {
             let geoJSON = {};
             if(newPreset !== 'select') {
                 geoJSON = require('./geojson/' + newPreset).default;
-                api.onParamChanged(this.props.paramId, {value: JSON.stringify({
+                this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify({
                     preset: newPreset,
                     geojson: geoJSON
                 })});
             } else {
-                api.onParamChanged(this.props.paramId, {value: ''});
+                this.props.api.onParamChanged(this.props.paramId, {value: ''});
             }
         });
     };

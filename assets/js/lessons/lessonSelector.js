@@ -86,22 +86,29 @@ const getLessonData = ({ lessonData }) => lessonData || null
  * a user doing something -- which probably means the user _didn't_ do what we
  * suggested.
  */
-const getLesson = createSelector([ getWorkflow, getSelectedWfModule, getLessonData ], (workflow, selected_wf_module, lessonData) => {
-  if (lessonData === null) return {
-    activeSectionIndex: null,
-    activeStepIndex: null,
-    testHighlight: testLessonHighlightButThereIsNoLesson,
-  }
+const getLesson = createSelector(
+  [ getWorkflow, getSelectedWfModule, getLessonData ],
+  (workflow, selectedWfModule, lessonData) => {
+    if (lessonData === null) {
+      return {
+        activeSectionIndex: null,
+        activeStepIndex: null,
+        testHighlight: testLessonHighlightButThereIsNoLesson
+      }
+    }
 
-  const stateWithHelpers = new StateWithHelpers({ workflow, selected_wf_module })
-  const { activeSectionIndex, activeStepIndex, activeStep } = calculateActiveStep(stateWithHelpers, lessonData.sections)
-  const lessonHighlight = activeStep ? activeStep.highlight : []
-  const testHighlight = (test) => matchLessonHighlight(lessonHighlight, test)
+    const stateWithHelpers = new StateWithHelpers({
+      workflow,
+      selected_wf_module: selectedWfModule
+    })
+    const { activeSectionIndex, activeStepIndex, activeStep } = calculateActiveStep(stateWithHelpers, lessonData.sections)
+    const lessonHighlight = activeStep ? activeStep.highlight : []
+    const testHighlight = (test) => matchLessonHighlight(lessonHighlight, test)
 
-  return {
-    activeSectionIndex,
-    activeStepIndex,
-    testHighlight,
-  }
-})
+    return {
+      activeSectionIndex,
+      activeStepIndex,
+      testHighlight
+    }
+  })
 export default getLesson

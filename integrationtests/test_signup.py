@@ -4,8 +4,7 @@ from integrationtests.utils import WorkbenchBase, find_url_in_email
 class TestSignup(WorkbenchBase):
     def test_signup(self):
         b = self.browser
-        # This will break when signup is open to the public
-        b.visit(self.live_server_url + '/xyzzy/signup/')
+        b.visit(self.live_server_url + '/account/signup/')
 
         #self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
         #self.assertTrue(b.is_element_present_by_text('Use Google account'))

@@ -31,23 +31,15 @@
   </head>
   <body>
     <div class="login-fullscreen-container">
-      <div class="container d-flex">
-        <div class="col-6 signup-card-left">
-          <div class="d-flex justify-content-center">
-            <div class="login-bigbrand">
-              <img src="/static/images/logo.svg" class="logo"/>
-              <h1><a href="http://workbenchdata.com">Workbench</a></h1>
-            </div>
-          </div>
-          <div class="byline">
-            Scrape, clean and analyse data without code
-          </div>
-          <img class="demoSignup"src="/static/images/demoSignup.gif"/>
+      <div class="signup-container">
+        <div class="col6 login-bigbrand d-flex flex-row align-items-center">
+          <img src="/static/images/logo.svg" class="logo"/>
+          <h1 className="login-bigbrand"><a href="http://workbenchdata.com">Workbench</a></h1>
         </div>
-        <div class="col-5 signup-card-right drop-shadow">
+        <div class="signup-card drop-shadow">
           <form method="post" class="account_form" action=''>
             <div class="mt-3 mb-5">
-                <div class='title-1 t-d-gray text-center'>Create account</div>
+                <div class='title-1 t-d-gray text-center'>Signup</div>
                   <div class='switch mt-1 d-flex justify-content-center'>
                       <a href="/account/login" class='t-white-u content-2'>Sign in</a>
                   </div>
@@ -80,17 +72,17 @@
             {{form.password2.errors}}
             <div class="d-flex align-items-center">
               {{form.get_newsletter}}
-              <label for="{{ form.get_newsletter.id_for_label }}" class="ml-2">Get Newsletter</label>
+              <label for="{{ form.get_newsletter.id_for_label }}" class="">It's ok to send me occasional news</label>
             </div>
             {{form.get_newsletter.errors}}
             {% if redirect_field_value %}
                 <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
             {% endif %}
+              <div class="consent">
+                I agree to Workbench's <a href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/terms-of-service" class='t-white-u'>Terms of service</a> and <a href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/privacy-policy" class='t-white-u'>Privacy policy</a>.
+              </div>
             <button type="submit" class="button-white--fill action-button mx-auto mb-3">Register</button>
-            <div class='mx-auto content-3 text-center'>
-              <span>Read our </span>
-                <a href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/privacy-policy" class='t-white-u'>Privacy policy</a>
-            </div>
+
           </form>
         </div>
       </div>

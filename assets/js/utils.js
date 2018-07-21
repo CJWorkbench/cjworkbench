@@ -1,5 +1,6 @@
 // ---- Utilities ---
 import * as Cookies from "js-cookie"
+import { setSelectedWfModuleAction } from './workflow-reducer'
 
 export function goToUrl(url) {
   window.location.href = url;
@@ -33,6 +34,18 @@ export function findModuleWithIdAndIdName(state, wfModuleId, moduleIdName) {
 
   // Nope, no target module with moduleIdName where we need it
   return null;
+}
+
+export function DEPRECATED_ensureSelectedWfModule(store, wfModule) {
+  const state = store.getState();
+
+  const current = state.selected_wf_module
+  let wanted = state.workflow ? state.workflow.wf_modules.indexOf(wfModule) : null
+  if (wanted === -1) wanted = null
+
+  if (wanted !== null && wanted !== current) {
+    store.dispatch(setSelectedWfModuleAction(wanted));
+  }
 }
 
 // Find the parameter value by its id name

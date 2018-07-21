@@ -1,0 +1,93 @@
+<header>
+  <h1>V. Monitor data and set custom alerts</h1>
+  <p>Monitor a data feed and receive an email notification if a condition is true.</p>
+  <img src="/static/images/lesson_banners/monitor_public_data.svg">
+</header>
+<section>
+  <h2>OVERVIEW</h2>
+  <p>In this tutorial you will learn how to monitor a data feed to receive an alert if a condition is true.</p>
+  <p>You will work with data on Police Incidents from the City of San Francisco, updated daily. You will analyse that data and set up an alert to be notified if the number of reported incidents in any district in 2018 is greater than 8,000.</p>
+</section>
+<section>
+  <h2>1. Set up automatic updates</h2>
+  <p>First, connect to the data source and set up the module to download any new available data. </p>
+  <p>The dataset 'Police department Incidents' from the City of San Francisco is published and documented <a href="https://data.sfgov.org/Public-Safety/-Change-Notice-Police-Department-Incidents/tmnf-yvry" class="highlight" target="_blank">here</a>.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Add from URL'"
+      >Add the module 'Add from URL'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000' && wfModule.selectedVersion"
+      >Paste in the following URL and click <kbd>Update</kbd> to load the data.
+      <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000</div>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]',
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.updateInterval === '5h'"
+      >Click <kbd>manual</kbd> to open the Workflow Update dialog. Set the feature to <kbd>Auto</kbd>, set the frequency to 5 hours, and click <kbd>Apply.</kbd>
+    </li>
+
+  </ol>
+</section>
+<section>
+  <h2>2. Add modules to find insight</h2>
+  <p>Let's count the number of incidents reported so far in 2018, per district.</p>
+  <h3 class="instructions">Instructions</h3>
+  <p class="instruction-detail">
+    Keep all incidents reported since January 01 2018.
+  </p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
+      data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
+      >Add the module 'Filter'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
+      data-test="const params = workflow.wfModules[1].parameters; return params.get('column') === 'date' && params.get('condition') === 17 && params.get('value') === '2018-01-01'"
+      >Select the column <kbd>date</kbd> to filter by. Choose <kbd>Date is after</kbd> as a condition, and type in <kbd>2018-01-01</kbd>
+      <p class="instruction-detail">
+        Group the result by police district, and count the number of incidents for each of them.
+      </p>
+    <li
+      data-highlight='[{"type":"Module","index":2,"name":"Group"}]'
+      data-test="return workflow.wfModules[2] && workflow.wfModules[2].moduleName === 'Group'"
+      >Add the module 'Group'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
+      data-test="const params = workflow.wfModules[2].parameters; return params.get('groupby|groupby|0') === 'pddistrict' && params.get('operation|operation|0') === 0"
+      >Choose <kbd>pddistrict</kbd> to group by, and leave the operation set on <kbd>Count</kbd>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>3. Receive an email if a condition is met</h2>
+  <p>We want to receive an email if more than 8,000 incidents are reported in any district since the beginning of the year.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":3,"name":"Filter"}]'
+      data-test="return workflow.wfModules[3] && workflow.wfModules[3].moduleName === 'Filter'"
+      >Add the module 'Filter'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","index":3,"moduleName":"Filter"}]'
+      data-test="const params = workflow.wfModules[3].parameters; return params.get('column') === 'Group Size' && params.get('condition') === 10 && params.get('value') === '8000'"
+      >Select the column <kbd>Group Size</kbd> to filter by. Choose <kbd>Greater than</kbd> as a condition, and type in <kbd>8000</kbd>
+      <p class="instruction-detail">
+        Turn this module's alert on to be notified if the list of neighborhoods matching the condition changes
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","index":3,"moduleName":"Filter"}]'
+      data-test="return workflow.wfModules[3].isEmailUpdates"
+      >In the filter module, click on the <span>
+      <img class="icon-insert" src="/static/images/monitor_lesson/alert_button.svg">icon. Turn the alert <kbd>ON</kbd>and close the window.
+      <p class="instruction-detail highlight">Congratulation! The workflow will automatically update to reflect changes in the data and send you an email if the output of the filter module changes! </p>
+    </li>
+  </ol>
+</section>

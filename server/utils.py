@@ -75,6 +75,13 @@ def get_google_analytics_id():
         return None
 
 
+def get_heap_analytics_id():
+    try:
+        return os.environ['CJW_HEAP_ANALYTICS_ID']
+    except KeyError:
+        return None
+
+
 def _setup_intercom_client():
     try:
         token = os.environ['CJW_INTERCOM_ACCESS_TOKEN']

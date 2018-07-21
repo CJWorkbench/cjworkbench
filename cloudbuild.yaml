@@ -1,0 +1,83 @@
+timeout: 1800s
+steps:
+## `docker pull` all our previous images, to speed up new builds
+## This works for the same reason it works on dev: we don't need to re-run
+## slow commands when the files that triggered them don't change.
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/migrate:latest' ]
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/backend:latest' ]
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/frontend:latest' ]
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
+# Build new Docker images
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--target', 'migrate',
+          '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--target', 'backend',
+          '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/backend:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--target', 'frontend',
+          '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/frontend:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--target', 'integration-test',
+          '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '.'
+        ]
+# Integration-test: migrate, then run the integration-test image
+- name: 'docker/compose:1.21.2'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          'run',
+          'migrate'
+        ]
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'COMMIT_SHA=$COMMIT_SHA'
+- name: 'docker/compose:1.21.2'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          'run',
+          'integration-test'
+        ]
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'COMMIT_SHA=$COMMIT_SHA'
+images:
+- 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/migrate:latest'
+- 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/backend:latest'
+- 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/frontend:latest'
+- 'gcr.io/$PROJECT_ID/integration-test:latest'

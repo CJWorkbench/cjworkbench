@@ -1,6 +1,5 @@
 import React from 'react'
-import Refine, {EditRow, mockAPI} from './Refine'
-import {mockStore} from '../workflow-reducer'
+import Refine from './Refine'
 import {jsonResponseMock} from '../test-utils'
 import {mount} from 'enzyme'
 
@@ -37,9 +36,9 @@ describe('Refine', () => {
            onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
            histogram: jsonResponseMock(histogramResponse)
         };
-        mockAPI(api);
         wrapper = mount(
             <Refine
+               api={api}
                wfModuleId={101}
                selectedColumn={'foo'}
                existingEdits={existingEdits}

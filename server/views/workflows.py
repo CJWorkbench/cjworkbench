@@ -1,12 +1,12 @@
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpRequest, HttpResponseForbidden, HttpResponseNotFound
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.utils import *
@@ -14,63 +14,28 @@ from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 from server.versions import WorkflowUndo, WorkflowRedo
-from django.db.models import Q
-import json
 
-# Cache this because we need it on every Workflow page load, and it never changes
-def edit_cells_module_id():
-    if edit_cells_module_id.id is None:
+# Add module name to expected Id alias {module_name: module_alias?}
+module_id_mapping = {
+    'editcells': 'editCellsModuleId',
+    'sort-from-table': 'sortModuleId',
+    'reorder-columns': 'reorderModuleId',
+    'rename-columns': 'renameModuleId',
+    'duplicate-column': 'duplicateModuleId'
+}
+
+# Cache module Ids dynamically per keys in module_name_to_id
+# because we need it on every Workflow page load, and it never changes
+def module_id(id_name):
+    if module_ids[id_name] is None:
         try:
-            edit_cells_module_id.id = Module.objects.get(id_name='editcells').id
-        except Module.DoesNotExist:
-            return None     # should only happen in testing
-
-    return edit_cells_module_id.id
-
-edit_cells_module_id.id = None
-
-
-# Deal with sort from table the same way we deal with EditCells
-def sort_module_id():
-    if sort_module_id.id is None:
-        try:
-            sort_module_id.id = Module.objects.get(id_name='sort-from-table').id
+            module_ids[id_name] = Module.objects.get(id_name=id_name).id
         except Module.DoesNotExist:
             return None
 
-    return sort_module_id.id
+    return module_ids[id_name]
 
-
-sort_module_id.id = None
-
-
-# Deal with reorder from table the same way we deal with EditCells
-def reorder_module_id():
-    if reorder_module_id.id is None:
-        try:
-            reorder_module_id.id = Module.objects.get(id_name='reorder-columns').id
-        except Module.DoesNotExist:
-            return None
-
-    return reorder_module_id.id
-
-
-reorder_module_id.id = None
-
-
-# Deal with rename from table the same way we deal with EditCells
-def rename_module_id():
-    if rename_module_id.id is None:
-        try:
-            rename_module_id.id = Module.objects.get(id_name='rename-columns').id
-        except Module.DoesNotExist:
-            return None
-
-    return rename_module_id.id
-
-
-rename_module_id.id = None
-
+module_ids = {id: None for id in module_id_mapping.keys()}
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request, workflow=None, modules=None):
@@ -78,18 +43,23 @@ def make_init_state(request, workflow=None, modules=None):
 
     if workflow:
         ret['workflowId'] = workflow.id
-        ret['workflow'] = WorkflowSerializer(workflow, context={'user' : request.user}).data
+        ret['workflow'] = WorkflowSerializer(workflow, context={'request' : request}).data
         ret['selected_wf_module'] = workflow.selected_wf_module
+        del ret['workflow']['selected_wf_module']
 
     if modules:
         ret['modules'] = ModuleSerializer(modules, many=True).data
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
-        ret['editCellsModuleId'] = edit_cells_module_id()
-        ret['sortModuleId'] = sort_module_id()
-        ret['reorderModuleId'] = reorder_module_id()
-        ret['renameModuleId'] = rename_module_id()
+
+    if workflow and not workflow.request_read_only(request):
+        ret['updateTableModuleIds'] = {}
+        for id_name, id_alias in module_id_mapping.items():
+            # Numerous dependencies, keeping ModuleId keys
+            ret[id_alias] = module_id(id_name)
+            # Simplify for front end retrieval by module name
+            ret['updateTableModuleIds'][id_name] = ret[id_alias]
 
     return ret
 
@@ -103,69 +73,109 @@ def render_workflows(request):
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
+@login_required
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.filter(Q(owner=request.user))
+        workflows = Workflow.objects \
+                .filter(Q(owner=request.user) | Q(example=True)) \
+                .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
 
-        # turn queryset into array so we can sort it ourselves by reverse chron
-        workflows = workflows.all()
-        workflows = sorted(workflows, key=lambda wf: wf.last_update(), reverse=True)
+        # turn queryset into list so we can sort it ourselves by reverse chron
+        # (this is because 'last update' is a property of the delta, not the
+        # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
+        # column.
+        workflows = list(workflows)
+        workflows.sort(key=lambda wf: wf.last_update(), reverse=True)
 
         serializer = WorkflowSerializerLite(workflows, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        serializer = WorkflowSerializer(data=request.data, context={'user': request.user})
-        if serializer.is_valid():
-            serializer.save(owner=request.user)
-            log_user_event(request.user, 'Create Workflow')
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        workflow = Workflow.objects.create(
+            name='New Workflow',
+            owner=request.user
+        )
+        serializer = WorkflowSerializerLite(workflow)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # ---- Workflow ----
 
-# no login_required as logged out users can view public workflows
+
+def _get_anonymous_workflow_for(workflow: Workflow,
+                                request: HttpRequest) -> Workflow:
+    """If not owner, return a cached duplicate of `workflow`.
+
+    The duplicate will be married to `request.session.session_key`, and its
+    `.is_anonymous` will return `True`.
+    """
+    if not request.session.session_key:
+        request.session.create()
+    session_key = request.session.session_key
+
+    try:
+        return Workflow.objects.get(original_workflow_id=workflow.id,
+                                    anonymous_owner_session_key=session_key)
+    except Workflow.DoesNotExist:
+        if workflow.example:
+            log_user_event(request.user,
+                           'Opened Demo Workflow',
+                           {'name': workflow.name})
+        return workflow.duplicate_anonymous(session_key)
+
+
+# Restrict the modules that are available, based on the user
+def visible_modules(request):
+    modules = Module.objects.all().exclude(id_name='reorder-columns') # excluding because no functional UI
+    if request.user.is_authenticated:
+        return modules
+    else:
+        return modules.exclude(id_name='pythoncode')  # need to log in to write Python code
+
+
+# no login_required as logged out users can view example/public workflows
 def render_workflow(request, pk=None):
     # Workflow must exist and be readable by this user
     workflow = get_object_or_404(Workflow, pk=pk)
 
-    if not workflow.user_authorized_read(request.user):
-        raise Http404()
+    # 404 if trying to access an object without even read authorization, to prevent leakage of object ids
+    if not workflow.request_authorized_read(request):
+        return HttpResponseNotFound()
 
     if workflow.lesson and workflow.owner == request.user:
         return redirect(workflow.lesson)
     else:
-        modules = Module.objects.all()
-        init_state = make_init_state(request, workflow=workflow,
-                                     modules=modules)
+        if workflow.example and workflow.owner != request.user:
+            workflow = _get_anonymous_workflow_for(workflow, request)
+
+        modules = visible_modules(request)
+        init_state = make_init_state(request, workflow=workflow, modules=modules)
+
         return TemplateResponse(request, 'workflow.html',
                                 {'initState': init_state})
+
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules
 @api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def workflow_detail(request, pk, format=None):
-
     workflow = get_object_or_404(Workflow, pk=pk)
 
-    if not workflow.user_authorized_read(request.user):
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    # 404 if trying to access an object without even read authorization, to prevent leakage of object ids
+    if not workflow.request_authorized_read(request):
+        return HttpResponseNotFound()
 
     if request.method == 'GET':
-        if workflow.name.startswith('Demo'):
-            log_user_event(request.user, 'Opened Demo Workflow', {'name': workflow.name})
         with workflow.cooperative_lock():
-            serializer = WorkflowSerializer(workflow, context={'user' : request.user})
+            serializer = WorkflowSerializer(workflow,
+                                            context={'request': request})
             return Response(serializer.data)
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
-        if not workflow.user_authorized_write(request.user):
+        if not workflow.request_authorized_write(request):
             return HttpResponseForbidden()
 
         try:
@@ -176,7 +186,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'POST':
-        if not workflow.user_authorized_write(request.user):
+        if not workflow.request_authorized_write(request):
             return HttpResponseForbidden()
 
         try:
@@ -201,7 +211,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        if not workflow.user_authorized_write(request.user):
+        if not workflow.request_authorized_write(request):
             return HttpResponseForbidden()
 
         workflow.delete()
@@ -214,7 +224,7 @@ def workflow_detail(request, pk, format=None):
 def workflow_addmodule(request, pk, format=None):
     workflow = get_object_or_404(Workflow, pk=pk)
 
-    if not workflow.user_authorized_write(request.user):
+    if not workflow.request_authorized_write(request):
         return HttpResponseForbidden()
 
     module_id = request.data['moduleId']
@@ -224,20 +234,18 @@ def workflow_addmodule(request, pk, format=None):
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    # don't allow python code module in anonymous workflow
+    if module.id_name == 'pythoncode' and workflow.is_anonymous:
+        return HttpResponseForbidden()
+
     # always add the latest version of a module (do we need ordering on the objects to ensure last is always latest?)
     module_version = ModuleVersion.objects.filter(module=module).last()
 
-    log_user_event(request.user, 'Add Module', {'name': module.name, 'id_name':module.id_name})
+    log_user_event(request.user, 'Add Module ' + module.name, {'name': module.name, 'id_name':module.id_name})
 
-    watch_list = ['columnchart', 'linechart', 'loadurl', 'twitter', 'googlesheets']
-
-    if module.id_name in watch_list:
-        log_user_event(request.user, 'Add ' + module.name, {'name': module.name, 'id_name':module.id_name})
-
-    with workflow.cooperative_lock():
-        delta = AddModuleCommand.create(workflow, module_version, insert_before)
-        serializer = WfModuleSerializer(delta.wf_module)
-        wfmodule_data = serializer.data
+    delta = AddModuleCommand.create(workflow, module_version, insert_before)
+    serializer = WfModuleSerializer(delta.wf_module)
+    wfmodule_data = serializer.data
     wfmodule_data['insert_before'] = request.data['insertBefore']
 
     return Response(wfmodule_data, status.HTTP_201_CREATED)
@@ -245,6 +253,7 @@ def workflow_addmodule(request, pk, format=None):
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
 @api_view(['GET'])
+@login_required
 @renderer_classes((JSONRenderer,))
 def workflow_duplicate(request, pk):
     try:
@@ -252,7 +261,7 @@ def workflow_duplicate(request, pk):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized_read(request.user):
+    if not workflow.request_authorized_read(request):
         return HttpResponseForbidden()
 
     workflow2 = workflow.duplicate(request.user)
@@ -272,7 +281,7 @@ def workflow_undo_redo(request, pk, action, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized_write(request.user):
+    if not workflow.request_authorized_write(request):
         return HttpResponseForbidden()
 
     if action=='undo':

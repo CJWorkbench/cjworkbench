@@ -2,6 +2,7 @@ article.lesson {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  flex: 0 0 auto;
   min-width: 20rem;
 
   h1 { display: none; }
@@ -41,10 +42,14 @@ article.lesson {
     &.not-current { display: none; }
 
     .backToLessons {
+      @extend .info-1;
       color:$white;
+      opacity: .8;
+      text-transform: uppercase;
       text-decoration: none;
       margin-bottom: 1rem;
       &:hover{
+        opacity: 1;
         text-decoration: underline;
       }
     }
@@ -103,7 +108,6 @@ article.lesson {
     .instruction-detail {
       position: relative;
       margin-top: 3rem;
-      width:32rem;
       color: $white;
       &.highlight {font-weight:400;}
     }
@@ -173,6 +177,7 @@ article.lesson {
         &.done::before {
           content: "\e904"; // icon-check
           color:$brand-learn;
+          font-size: 1rem;
         }
       }
     }

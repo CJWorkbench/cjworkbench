@@ -7,15 +7,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-# Remove all uploaded files. Will reset existing wf_modules, but hey, we have no users yet
-def clear_upload_modules(apps, schema_editor):
-    for wfm in WfModule.objects.filter(module_version__module__id_name='uploadfile'):
-        StoredObject.objects.filter(wf_module=wfm).delete() # blows render caches too, makes this obvious to user
-        wfm.status = WfModule.READY
-        wfm.stored_data_version = None
-        wfm.save()
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -23,8 +14,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(clear_upload_modules),  # run before schema changes, while we still have StoredObject uuid, name fields
-
         migrations.CreateModel(
             name='UploadedFile',
             fields=[

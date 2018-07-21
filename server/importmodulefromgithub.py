@@ -1,26 +1,23 @@
-from server.initmodules import load_module_from_dict, update_wfm_parameters_to_new_version
-from server.models import Module, ModuleVersion, WfModule
-from server.utils import log_message
-from django.forms import URLField
-from django.core.exceptions import ValidationError
-
 import importlib.util
-
-import inspect
 import json
 import os
 import re
 import shutil
-
-import time
+from django.forms import URLField
+from django.core.exceptions import ValidationError
 import git
 from git.exc import GitCommandError
+from server import dynamicdispatch
+from server.initmodules import load_module_from_dict, \
+        update_wfm_parameters_to_new_version
+from server.models import Module, ModuleVersion, WfModule
+from server.utils import log_message
 
-categories = set()
 
 # Categories allowed for modules. If not in this list, will be assigned "Other"
 def get_categories():
-    return ['Add data', 'Clean', 'Analyze', 'Code', 'Visualize']
+    return ['Add data', 'Scrape', 'Clean', 'Analyze', 'Code', 'Visualize']
+
 
 # Returns dict of {id_name: url} for existing Module objects
 def get_already_imported_module_urls():
@@ -30,10 +27,12 @@ def get_already_imported_module_urls():
         already_imported[module.id_name] = module.link
     return already_imported
 
+
 def refresh_module_from_github(url):
-    #we should check if this is a refreshable module: does the module exist, and if it does,
-    #...and if it is, we should import it.
+    # we should check if this is a refreshable module: does the module exist,
+    # and if it does, ...and if it is, we should import it.
     import_module_from_github(url)
+
 
 def sanitise_url(url):
     url = url.strip()
@@ -51,9 +50,11 @@ def sanitise_url(url):
 
     return url
 
+
 def retrieve_project_name(url):
     # - extract the folder name from the url
     return url.rsplit('/', 1)[1]
+
 
 def retrieve_author(url):
     if url[-1] == '/':
@@ -62,19 +63,22 @@ def retrieve_author(url):
     account = url.rsplit('/', 2)[1]
     return account
 
+
 # Check that we have one .py and one .json file in the repo root dir
 def validate_module_structure(directory):
     files = os.listdir(directory)
     if len(files) < 3:
-        raise ValidationError('{} is not a valid workflow module.'.format(directory))
+        raise ValidationError(f'{directory} is not a valid workflow module')
 
     extension_file_mapping = {}
     for item in files:
-        # check file extension and ensure that we have one python, one JSON, and optionally one HTML file.
+        # check file extension and ensure that we have one python, one JSON,
+        # and optionally one HTML file.
 
         # Skip directories (__pycache__ etc.) and test_*
         if not os.path.isdir(item) and not item.startswith('test'):
-            if item in [ '__init__.py', 'setup.py' ]: continue
+            if item in ['__init__.py', 'setup.py']:
+                continue
 
             extension = item.rsplit('.', 1)
             if len(extension) > 1:
@@ -86,12 +90,15 @@ def validate_module_structure(directory):
                     extension_file_mapping[extension] = item
                 else:
                     raise ValidationError(
-                        "Multiple files exist with extension {}. This isn't currently supported.".format(extension))
+                        f'Multiple files exist with extension {extension}.'
+                        f" This isn't currently supported."
+                    )
 
     if len(extension_file_mapping) < 2:
         raise ValidationError(
-            '{} is not a valid workflow module. You must have exactly one .py file and one .json file.'.format(
-                directory))
+            f'{directory} is not a valid module.',
+            f' You must have exactly one .py file and one .json file'
+        )
 
     return extension_file_mapping
 
@@ -102,7 +109,8 @@ def get_module_config_from_json(url, extension_file_mapping, directory):
     try:
         json_file = extension_file_mapping['json']
     except KeyError:
-        raise ValidationError("No JSON file found in remote repository.") # shouldn't happen, checked in validate_module_struture
+        # shouldn't happen, checked in validate_module_struture
+        raise ValidationError("No JSON file found in remote repository.")
 
     with open(os.path.join(directory, json_file)) as readable:
         try:
@@ -110,18 +118,23 @@ def get_module_config_from_json(url, extension_file_mapping, directory):
         except json.decoder.JSONDecodeError as e:
             raise ValidationError('{} of {}'.format(str(e), json_file))
 
-    if "name" not in module_config or "id_name" not in module_config or "category" not in module_config:
-        raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
-                      "category and parameters")
+    if "name" not in module_config \
+       or "id_name" not in module_config \
+       or "category" not in module_config:
+        raise ValidationError(
+            "The module configuration isn't in the correct format."
+            ' It should contain name, id_name, category and parameters.'
+        )
 
     return module_config
 
-# Directory where this version of this module actually lives. Filed under importedmodules/reponame/git_version_hash
-def create_destination_directory(reponame, version):
 
+# Directory where this version of this module actually lives.
+# Filed under importedmodules/reponame/git_version_hash
+def create_destination_directory(reponame, version):
     # check if files with the same name already exist.
-    # This can happen if a module is deleted from the server DB, then re-imported
-    # Just delete existing if so
+    # This can happen if a module is deleted from the server DB, then
+    # re-imported. Just delete existing if so.
     destination_directory = os.path.join(MODULE_DIRECTORY, reponame, version)
     if os.path.isdir(destination_directory):
         shutil.rmtree(destination_directory)
@@ -135,23 +148,33 @@ def create_destination_directory(reponame, version):
 
 
 # Move py,json,html files to the directory where they will live henceforth
-# that's /importedmodules/projname/version for the mangled ones (with boilerplate) that we run
-# plus /importedmodules/projname/version-original for the pristine source files (so we can change boilerplate)
+# that's /importedmodules/projname/version for the mangled ones (with
+# boilerplate) that we run plus /importedmodules/projname/version-original for
+# the pristine source files (so we can change boilerplate)
 def move_files_to_final_location(destination_directory, imported_dir, files):
-
     original_dir = destination_directory + '-original'
 
     for f in files:
         if f:  # html or other optional files might be None
             try:
-                shutil.copy(os.path.join(imported_dir, f), os.path.join(original_dir, f))
+                shutil.copy(
+                    os.path.join(imported_dir, f),
+                    os.path.join(original_dir, f)
+                )
             except (OSError, Exception) as error:
-                raise ValidationError("Unable to copy %s to module directory: %s" % (f, str(error)))
+                raise ValidationError(
+                    f'Unable to copy {f} to module directory: {str(error)}'
+                )
 
             try:
-                shutil.move(os.path.join(imported_dir, f), os.path.join(destination_directory, f))
+                shutil.move(
+                    os.path.join(imported_dir, f),
+                    os.path.join(destination_directory, f)
+                )
             except (OSError, Exception) as error:
-                raise ValidationError("Unable to move %s to module directory: %s" % (f, str(error)))
+                raise ValidationError(
+                    f'Unable to move {f} to module directory:{str(error)}'
+                )
 
 
 module_boilerplate = """
@@ -162,8 +185,9 @@ import re
 
 """
 
-# Convert line numbers in our imported module code back to line numbers in the original file
-# For the poor module writers
+
+# Convert line numbers in our imported module code back to line numbers in
+# the original file, For the poor module writers.
 def original_module_lineno(line):
     return line - module_boilerplate.count('\n')
 
@@ -171,29 +195,31 @@ def original_module_lineno(line):
 # Ensure the Python file compiles
 # This function rewrites the file to add module definition boilerplate.
 def add_boilerplate_and_check_syntax(destination_directory, python_file):
-
-
     filename = os.path.join(destination_directory, python_file)
 
     try:
         script = open(os.path.join(filename), 'r').read() + '\n'
     except:
-        raise ValidationError("Unable to open Python code file {}.".format(python_file))
+        raise ValidationError(f'Unable to open Python code file {python_file}')
 
-    # Indent the user's function declaration to put it inside the Importable class, then replace file contents
+    # Indent the user's function declaration to put it inside the Importable
+    # class, then replace file contents
     script = module_boilerplate + script
     sfile = open(os.path.join(filename), 'w')
     sfile.write(script)
     sfile.close()
 
     try:
-        compiled = compile(script, filename, 'exec')  # filename used only for stack traces etc.
-        if compiled == None:
-            raise ValidationError("Empty Python code file.")
+        # filename used only for stack traces etc.
+        compiled = compile(script, filename, 'exec')
+        if compiled is None:
+            raise ValidationError('Empty Python code file.')
     except ValueError:
-        raise ValidationError("Source file {} contains bad characters.".format(python_file))
+        raise ValidationError(
+            'Source file {python_file} contains bad characters'
+        )
     except SyntaxError as se:
-        # We have to change the reported line number to account for our boilerplate
+        # Change the reported line number to account for our boilerplate
         errstr = str(se)
         linenostr = re.search('line (\d+)', errstr).group(1)
         newlineno = original_module_lineno(int(linenostr))
@@ -213,7 +239,7 @@ def validate_python_functions(destination_directory, python_file):
         test_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(test_module)
     except:
-       raise ValidationError("Cannot load module")
+        raise ValidationError('Cannot load module')
 
     if hasattr(test_module, 'render'):
         if callable(test_module.render):
@@ -226,7 +252,7 @@ def validate_python_functions(destination_directory, python_file):
         else:
             raise ValidationError("Module fetch() function isn't callable.")
     else:
-       raise ValidationError("Module render() function is missing.")
+        raise ValidationError("Module render() function is missing.")
 
 
 # Get head version hash from git repo on disk
@@ -237,16 +263,17 @@ def extract_version(repodir):
 
 
 # Directories that the module files go through as we load and validate them
-CURRENT_PATH = os.path.dirname(os.path.abspath(__file__)) # path of this source file
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))  # path of this file
 ROOT_DIRECTORY = os.path.dirname(CURRENT_PATH)
 MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 
 
 # Load a module after cloning from github
-# This is the guts of our module import, also a good place to hook into for tests (bypassing github access)
-# Returns a dictionary of info to display to user (category, repo name, author, id_name)
-def import_module_from_directory(url, reponame, version, importdir, force_reload=False):
-
+# This is the guts of our module import, also a good place to hook into for
+# tests (bypassing github access). Returns a dictionary of info to display to
+# user (category, repo name, author, id_name)
+def import_module_from_directory(url, reponame, version, importdir,
+                                 force_reload=False):
     destination_directory = None
     ui_info = {}
 
@@ -258,35 +285,48 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
         html_file = extension_file_mapping.get('html', None)
 
         # load json file
-        module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
+        module_config = get_module_config_from_json(url,
+                                                    extension_file_mapping,
+                                                    importdir)
         id_name = module_config['id_name']
 
         # Don't allow importing the same version twice, unless forced
         if not force_reload:
-            if ModuleVersion.objects.filter(module__id_name=id_name, source_version_hash=version):
-                raise ValidationError('Version {} of module {} has already been imported'.format(version, url))
+            if ModuleVersion.objects.filter(module__id_name=id_name,
+                                            source_version_hash=version):
+                raise ValidationError(
+                    f'Version {version} of module {url}'
+                    ' has already been imported'
+                )
 
-        # Don't allow loading a module with the same id_name from a different repo. Prevents replacement attacks.
+        # Don't allow loading a module with the same id_name from a different
+        # repo. Prevents replacement attacks.
         module_urls = get_already_imported_module_urls()
-        if module_config["id_name"] in module_urls and url != module_urls[module_config["id_name"]]:
+        if module_config["id_name"] in module_urls \
+           and url != module_urls[module_config["id_name"]]:
             source = module_urls[module_config["id_name"]]
             if source == '':
                 source = "Internal"
             raise ValidationError(
-                "Module {} has already been loaded from a different repo: {}.".format(module_config["id_name"], source))
+                f"Module {module_config['id_name']} has already been loaded"
+                f' from a different repo: {source}'
+            )
 
-        module_config["source_version"] = version
-        module_config["link"] = url
-        module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
+        module_config['source_version'] = version
+        module_config['link'] = url
+        if 'author' not in module_config:
+            module_config['author'] = retrieve_author(url)
 
-        # Ensure that modules are categorised properly – if a module category isn't one of our
-        # pre-defined categories, then we just set it to other.
+        # Ensure that modules are categorised properly – if a module category
+        # isn't one of our pre-defined categories, then we just set it to
+        # other.
         if module_config["category"] not in get_categories():
             module_config["category"] = "Other"
 
         # The core work of creating a module
         destination_directory = create_destination_directory(id_name, version)
-        move_files_to_final_location(destination_directory, importdir, [json_file, python_file, html_file])
+        move_files_to_final_location(destination_directory, importdir,
+                                     [json_file, python_file, html_file])
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 
@@ -296,8 +336,13 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
         # clean-up
         shutil.rmtree(importdir)
 
-        # For now, our policy is to update all wfmodules to this just-imported version
-        for wfm in WfModule.objects.filter(module_version__module=module_version.module):
+        if force_reload:
+            dynamicdispatch.load_module.cache_clear()
+
+        # For now, our policy is to update all wfmodules to this just-imported
+        # version
+        module = module_version.module
+        for wfm in WfModule.objects.filter(module_version__module=module):
             update_wfm_parameters_to_new_version(wfm, module_version)
 
     except Exception as e:
@@ -322,16 +367,18 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
 
 
 # Top level import, clones from github
-# If force_relaod, reloads the module even if the version hasn't changed (normally, this is an error)
-# On success, returnd a dict with (category, repo name, author, id_name) to tell user what happened
+# If force_relaod, reloads the module even if the version hasn't changed
+# (normally, this is an error). On success, returnd a dict with (category,
+# repo name, author, id_name) to tell user what happened
 def import_module_from_github(url, force_reload=False):
     url = sanitise_url(url)
 
     reponame = retrieve_project_name(url)
     importdir = os.path.join(MODULE_DIRECTORY, 'clones', reponame)
 
-    # Delete anything that might left over junk from previous failures (shouldn't happen, but)
-    if  os.path.isdir(importdir):
+    # Delete anything that might left over junk from previous failures
+    # (shouldn't happen, but)
+    if os.path.isdir(importdir):
         shutil.rmtree(importdir)
 
     try:
@@ -348,10 +395,11 @@ def import_module_from_github(url, force_reload=False):
 
         # load it
         version = extract_version(importdir)
-        ui_info = import_module_from_directory(url, reponame, version, importdir, force_reload)
-
+        ui_info = import_module_from_directory(url, reponame, version,
+                                               importdir, force_reload)
     except Exception as e:
-        # Clean up any existing dirs and pass exception up (ValidationErrors will have error message for user)
+        # Clean up any existing dirs and pass exception up
+        # (ValidationErrors will have error message for user)
         if os.path.isdir(importdir):
             shutil.rmtree(importdir)
         raise

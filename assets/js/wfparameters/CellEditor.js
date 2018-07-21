@@ -4,13 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types'
 
 export default class CellEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        edits: []
-    };
-  }
-
   // Starting from a JSON string that represents an array like this
   // [
   //   { row: 3, col: 'foo', value:'bar' },

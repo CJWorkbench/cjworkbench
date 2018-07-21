@@ -27,6 +27,16 @@ export function okResponseMock () {
   return jsonResponseMock(null)
 }
 
+// Helper function to return a promise that resolves after all other promise mocks,
+// even if they are chained like Promise.resolve().then(...).then(...)
+// Technically: this is designed to resolve on the next macrotask
+// https://stackoverflow.com/questions/25915634/difference-between-microtask-and-macrotask-within-an-event-loop-context
+export function tick() {
+  return new Promise(resolve => {
+    setTimeout(resolve, 0);
+  })
+}
+
 
 /**
  * Like enzyme's `shallow()`, but child components that depend on redux
@@ -40,84 +50,3 @@ export function shallowWithStubbedStore(component) {
   return shallow(<Provider store={store}>{component}</Provider>).dive()
 }
 
-// Guarantees for writing tests:
-// - At least three modules
-// - Module ids increment by 10
-// - First module adds data and has data versions and unread notifications
-export const genericTestWorkflow = {
-  id: 999,
-  selected_wf_module: 30,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
-  wf_modules: [
-    {
-      id: 10,
-      parameter_vals: [
-        {
-          id: 1,
-          parameter_spec : {
-            id_name: 'data',
-          },
-          value: 'Some Data'
-        }
-      ],
-      versions: {
-        selected: "2018-02-21T03:09:20.214054Z",
-        versions: [
-          ["2018-02-21T03:09:20.214054Z", true],
-          ["2018-02-21T03:09:15.214054Z", false],
-          ["2018-02-21T03:09:10.214054Z", false]
-        ]
-      },
-      notification_count: 2
-    },
-    {
-      id: 20
-    },
-    {
-      id: 30
-    },
-  ],
-};
-
-
-// Test module data
-export const genericTestModules = [
-  {
-    "id":1,
-    "name":"Chartbuilder",
-    "category":"Visualize",
-    "description":"Create line, column and scatter plot charts.",
-    "icon":"chart"
-  },
-  {
-    "id":2,
-    "name":"Load from Facebork",
-    "category":"Add data",
-    "description":"Import from your favorite snowshall media",
-    "icon":"url"
-  },
-  {
-    "id":3,
-    "name":"Load from Enigma",
-    "category":"Add data",
-    "description":"Connect a dataset from Enigma's collection via URL.",
-    "icon":"url"
-  },
-  {
-    "id":4,
-    "name":"Other Module 1",
-    "category":"other category",    // test modules outside the predefined categories
-    "icon":"url"
-  },
-  {
-    "id":5,
-    "name":"Other Module 2",
-    "category":"x category",
-    "icon":"url"
-  },
-  {
-    "id":6,
-    "name":"Other Module 3",
-    "category":"other category",
-    "icon":"url"
-  },
-];

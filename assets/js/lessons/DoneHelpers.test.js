@@ -111,24 +111,16 @@ describe('DoneHelpers', () => {
       expect(go(4, 'weeks')).toEqual('4w')
     })
 
-    it('should have .isEmailUpdates if workflow update is on and email is on', () => {
+    it('should have .isEmailUpdates if workflow email is on', () => {
       const on = new WorkflowModuleWithHelpers({
-        auto_update_data: true,
         notifications: true,
       })
       expect(on.isEmailUpdates).toBe(true)
 
       const off1 = new WorkflowModuleWithHelpers({
-        auto_update_data: true,
         notifications: false,
       })
       expect(off1.isEmailUpdates).toBe(false)
-
-      const off2 = new WorkflowModuleWithHelpers({
-        auto_update_data: false,
-        notifications: true,
-      })
-      expect(off2.isEmailUpdates).toBe(false)
     })
   })
 
@@ -156,7 +148,7 @@ describe('DoneHelpers', () => {
             { id: 3, module_version: { module: { name: 'Bar' } } },
           ],
         },
-        selected_wf_module: 3,
+        selected_wf_module: 1,
       })
 
       expect(state.selectedWfModule.moduleName).toEqual('Bar')

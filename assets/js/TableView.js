@@ -8,37 +8,25 @@ import DataGrid from "./DataGrid";
 import ExportModal from "./ExportModal"
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
-import * as SortFromTable from './SortFromTable'
-import * as ReorderColumns from './ReorderColumns'
-import * as RenameColumns from './RenameColumns'
+import * as UpdateTableAction from './UpdateTableAction'
 import {findParamValByIdName} from "./utils";
-
-export function mockAddCellEdit(fn) {
-  EditCells.addCellEdit = fn;
-}
-
-export function mockSortColumn(fn) {
-  SortFromTable.updateSort = fn;
-}
-
-export function mockReorderColumns(fn) {
-  ReorderColumns.updateReorder = fn;
-}
 
 // Constants to control loading behaviour. Exported so they are accessible to tests
 export const initialRows = 200;   // because react-data-grid seems to preload to 100
 export const preloadRows = 100;    // load when we have less then this many rows ahead
 export const deltaRows = 200;     // get this many rows at a time (must be > preloadRows)
 
-export default class TableView extends React.Component {
-
- static propTypes = {
-    id:                 PropTypes.number,             // not actually required, could have no selected module
+export default class TableView extends React.PureComponent {
+  static propTypes = {
+    selectedWfModuleId: PropTypes.number,             // not actually required, could have no selected module
     revision:           PropTypes.number.isRequired,
     api:                PropTypes.object.isRequired,
     isReadOnly:         PropTypes.bool.isRequired,
-    resizing:           PropTypes.bool,
+    resizing:           PropTypes.bool.isRequired,
     setBusySpinner:     PropTypes.func,
+    showColumnLetter:   PropTypes.bool.isRequired,
+    sortColumn:         PropTypes.string,
+    sortDirection:      PropTypes.number,
   };
 
   constructor(props) {
@@ -55,8 +43,9 @@ export default class TableView extends React.Component {
 
     this.getRow = this.getRow.bind(this);
     this.onEditCell = this.onEditCell.bind(this);
-    this.onSort = this.onSort.bind(this);
+    this.setSortDirection = this.setSortDirection.bind(this);
     this.toggleExportModal = this.toggleExportModal.bind(this);
+    this.duplicateColumn = this.duplicateColumn.bind(this);
 
     this.loading = false;
     this.highestRowRequested = 0;
@@ -76,14 +65,14 @@ export default class TableView extends React.Component {
 
 
   // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
-  refreshTable(id) {
-    if (id) {
+  refreshTable() {
+    if (this.props.selectedWfModuleId) {
       this.loading = true;
       this.highestRowRequested = 0;
       this.emptyRowCache = null;
       this.setBusySpinner(true);
 
-      this.props.api.render(id, 0, initialRows)
+      this.props.api.render(this.props.selectedWfModuleId, 0, initialRows)
         .then(json => {
           this.loading = false;
           this.setBusySpinner(false);
@@ -97,8 +86,8 @@ export default class TableView extends React.Component {
 
 
   // Load more table data from render API. Spinner if we're going to see blanks.
-  loadTable(id, toRow) {
-    if (id) {
+  loadTable(toRow) {
+    if (this.props.selectedWfModuleId) {
       this.loading = true;
 
       // Spinner if we've used up all our preloaded rows (we're now seeing blanks)
@@ -106,7 +95,7 @@ export default class TableView extends React.Component {
         this.setBusySpinner(true);
       }
 
-      this.props.api.render(id, this.state.lastLoadedRow, toRow)
+      this.props.api.render(this.props.selectedWfModuleId, this.state.lastLoadedRow, toRow)
         .then(json => {
 
           // Add just retrieved rows to current data, if any
@@ -127,15 +116,15 @@ export default class TableView extends React.Component {
 
 
   componentDidMount() {
-    this.refreshTable(this.props.id);  // refresh, not load, so we get the spinner
+    this.refreshTable();  // refresh, not load, so we get the spinner
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
       //console.log("Table props:");
       //console.log(nextProps);
-    if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
-        this.refreshTable(nextProps.id);
+    if (this.props.revision !== prevProps.revision || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
+        this.refreshTable();
     }
   }
 
@@ -158,7 +147,7 @@ export default class TableView extends React.Component {
         target = Math.min(target, this.state.tableData.total_rows-1);  // don't try to load past end of data
         if (target >= this.state.lastLoadedRow) {
           target += deltaRows;
-          this.loadTable(this.props.id, target);
+          this.loadTable(target);
         }
       }
 
@@ -180,54 +169,36 @@ export default class TableView extends React.Component {
     if (row<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
 
       // Add an edit if the data has actually changed. Cast everything to string for comparisons.
-      let oldVal = this.state.tableData.rows[row][colName];
-      if (newVal !== String(oldVal)) {
+      const oldVal = this.state.tableData.rows[row][colName];
+      if (newVal !== (oldVal || '')) {
         // Change just this one row, keeping as much of the old tableData as possible
-        let newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
-        let newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
+        const newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
+        const newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
         this.setState({tableData: newTableData});
 
-        EditCells.addCellEdit(this.props.id, {row: row, col: colName, value: newVal})
+        EditCells.addCellEdit(this.props.selectedWfModuleId, {row: row, col: colName, value: newVal})
       }
     }
   }
 
-  onSort(sortCol, sortType) {
-      SortFromTable.updateSort(this.props.id, sortCol, sortType);
-      this.refreshTable(this.props.id);
+  setSortDirection(sortCol, sortType, sortDirection) {
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'sort-from-table', sortCol, sortType, sortDirection);
+      this.refreshTable();
+  }
+
+  duplicateColumn(colName) {
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'duplicate-column', colName);
+      this.refreshTable();
   }
 
   render() {
-    var tableData = this.props.tableData;
-
     // Make a table component if we have the data
     var nrows = 0;
     var ncols = 0;
     var gridView = null;
-    if (this.props.id && this.state.tableData && this.state.tableData.total_rows>0) {
-      // Expand the list of letter-showing modules by changing the array here
-      let showLetterWfModuleIdNames = ['formula', 'reorder-columns'];
 
-      var moduleIsSort = false;
-      var showColumnLetter = false;
-      if(this.props.currentModule) {
-          if(this.props.currentModule.module_version) {
-              if(this.props.currentModule.module_version.module) {
-                  moduleIsSort = (this.props.currentModule.module_version.module.id_name == "sort-from-table");
-                  showColumnLetter = (showLetterWfModuleIdNames.indexOf(this.props.currentModule.module_version.module.id_name) >= 0);
-              }
-          }
-      }
-
-      // Maps sort direction to ReactDataGrid direction names
-      let sortDirectionTranslator = ["NONE", "ASC", "DESC"];
-      var sortColumn = undefined;
-      var sortDirection = undefined;
-
-      if(moduleIsSort) {
-        sortColumn = findParamValByIdName(this.props.currentModule, 'column').value;
-        sortDirection = sortDirectionTranslator[findParamValByIdName(this.props.currentModule, 'direction').value];
-      }
+    if (this.props.selectedWfModuleId && this.state.tableData && this.state.tableData.total_rows>0) {
+      const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       // DataGrid is the heaviest DOM tree we have, and it effects the
       // performance of the custom drag layer (and probably everything else). By
@@ -240,17 +211,18 @@ export default class TableView extends React.Component {
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
             columnTypes={this.state.tableData.column_types}
-            wfModuleId={this.props.id}
+            wfModuleId={this.props.selectedWfModuleId}
             revision={this.props.revision}
             getRow={this.getRow}
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}
-            onSortColumn={this.onSort}
+            setSortDirection={this.setSortDirection}
             sortColumn={sortColumn}
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
-            onReorderColumns={ReorderColumns.updateReorder}
-            onRenameColumn={RenameColumns.updateRename}
+            duplicateColumn={this.duplicateColumn}
+            onReorderColumns={UpdateTableAction.updateTableActionModule}
+            onRenameColumn={UpdateTableAction.updateTableActionModule}
             isReadOnly={this.props.isReadOnly}
           />
         </div>
@@ -268,6 +240,8 @@ export default class TableView extends React.Component {
             columns={['',' ','   ','    ']}
             getRow={() => {return {}}}
             isReadOnly={this.props.isReadOnly}
+            setSortDirection={this.setSortDirection}
+            duplicateColumn={this.duplicateColumn}
           />
       </div>
     }
@@ -285,9 +259,12 @@ export default class TableView extends React.Component {
                   <div className='value'>{ncols}</div>
               </div>
             </div>
-            {this.props.id ? (
-              <div className="export-table icon-download" onClick={this.toggleExportModal}>
-                <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
+            {this.props.selectedWfModuleId ? (
+              <div className="export-table" onClick={this.toggleExportModal}>
+                <div className="icon-download"></div>
+                <span>CSV</span>
+                <span className="feed">JSON FEED</span>
+                <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.selectedWfModuleId} onClose={this.toggleExportModal}/>
               </div>
             ) : null}
           </div>

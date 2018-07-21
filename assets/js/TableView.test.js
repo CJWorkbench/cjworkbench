@@ -1,21 +1,26 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { jsonResponseMock } from "./test-utils";
-import TableView from './TableView'
-import { mockAddCellEdit, mockReorderColumns, mockSortColumn, initialRows, preloadRows, deltaRows } from "./TableView";
-import DataGrid from "./DataGrid";
+import { jsonResponseMock } from './test-utils';
+import TableView, { initialRows, preloadRows, deltaRows } from './TableView';
+import DataGrid from './DataGrid';
 
-// TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
-// https://github.com/airbnb/enzyme/issues/1509
-jest.mock('./DataGridDragDropContext', () => {
-  const context = {}
-  return {
-    Consumer: (props) => props.children(context),
-    Provider: (props) => props.children,
-  }
-})
+jest.mock('./EditCells');
+jest.mock('./UpdateTableAction');
+import { addCellEdit } from './EditCells';
+import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateTableActionModule } from './UpdateTableAction'
 
 describe('TableView', () => {
+  const defaultProps = {
+    resizing: false,
+    showColumnLetter: false,
+    isReadOnly: false,
+  }
+
+  beforeEach(() => {
+    addCellEdit.mockReset()
+    updateTableActionModule.mockReset()
+  })
+
   // Mocks json response (promise) returning part of a larger table
   function makeRenderResponse(start, end, totalRows) {
     let nRows = end-start;
@@ -26,39 +31,28 @@ describe('TableView', () => {
       columns: ["a", "b", "c"],
       column_types: ["Number", "Number", "Number"],
       rows: Array(nRows).fill({
-        "a": 1,
-        "b": 2,
-        "c": 3
+        "a": '1',
+        "b": '2',
+        "c": '3',
       })
     };
     return jsonResponseMock(data);
   }
 
 
-  it('Fetches, renders, edits cells, sorts columns and reorders columns', (done) => {
-
+  it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', (done) => {
     var api = {
       render: makeRenderResponse(0, 2, 1000)
     };
 
-    // Mocks table-related operations for testing
-    let addCellEditMock = jest.fn();
-    mockAddCellEdit(addCellEditMock);
-    let updateSortMock = jest.fn();
-    mockSortColumn(updateSortMock);
-    let reorderColumnsMock = jest.fn();
-    mockReorderColumns(reorderColumnsMock);
-
-
     const tree = mount(
-      <TableView id={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
     )
 
     // wait for promise to resolve, then see what we get
     setImmediate(() => {
       // should have called API for its data, and loaded it
-      expect(api.render.mock.calls.length).toBe(1);
-      expect(api.render.mock.calls[0][0]).toBe(100);
+      expect(api.render).toHaveBeenCalledWith(100, 0, initialRows);
 
       expect(tree).toMatchSnapshot();
 
@@ -72,19 +66,23 @@ describe('TableView', () => {
 
       // Test calls to EditCells.addCellEdit
       // Don't call addCellEdit if the cell value has not changed
-      tree.find(TableView).instance().onEditCell(0, 'c', '3');            // edited value always string...
-      expect(addCellEditMock.mock.calls.length).toBe(0);  // but should still detect no change
+      tree.find(TableView).instance().onEditCell(0, 'c', '3');
+      expect(addCellEdit).not.toHaveBeenCalled();
       // Do call addCellEdit if the cell value has changed
       tree.find(TableView).instance().onEditCell(1, 'b', '1000');
-      expect(addCellEditMock.mock.calls.length).toBe(1);
+      expect(addCellEdit).toHaveBeenCalledWith(100, { row: 1, col: 'b', value: '1000' });
 
       // Calls SortFromTable
-      tree.find(TableView).instance().onSort('a', 'ASC');
-      expect(updateSortMock.mock.calls.length).toBe(1);
+      tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', 'a', 'Number', sortDirectionAsc);
+
+      // Calls DuplicateColumns
+      tree.find(TableView).instance().duplicateColumn('a');
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', 'a');
 
       // Calls ReorderColumns
-      tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
-      expect(reorderColumnsMock).toHaveBeenCalledWith(100, { column: 'a', from: 0, to: 1 })
+      tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', { column: 'a', from: 0, to: 1 });
 
       done();
     });
@@ -93,7 +91,7 @@ describe('TableView', () => {
 
   it('Blank table when no module id', () => {
     const tree = mount(
-      <TableView id={undefined} revision={1} api={{}} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={undefined} revision={1} api={{}} isReadOnly={false}/>
     );
     tree.update();
 
@@ -112,15 +110,12 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-      <TableView id={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
     );
     let tableView = tree.find('TableView').instance();
 
     // Should load 0..initialRows at first
-    expect(api.render.mock.calls.length).toBe(1);
-    expect(api.render.mock.calls[0][0]).toBe(tree.find('TableView').props().id);
-    expect(api.render.mock.calls[0][1]).toBe(0);
-    expect(api.render.mock.calls[0][2]).toBe(initialRows);
+    expect(api.render).toHaveBeenCalledWith(100, 0, initialRows);
 
     // let rows load
     setImmediate(() => {
@@ -188,7 +183,7 @@ describe('TableView', () => {
               // Now that we've loaded the whole table, asking for the last row should not trigger a render
               api.render = jsonResponseMock({});
               row = tableView.getRow(totalRows-1);
-              expect(row.a).toBe(1); // not empty
+              expect(row.a).toBe('1'); // not empty
               expect(api.render.mock.calls.length).toBe(0); // no new calls
 
               done();
@@ -225,88 +220,26 @@ describe('TableView', () => {
       render: jsonResponseMock(testData),
     };
 
-    const NON_SORT_MODULE_ID = 28;
-    const SORT_MODULE_ID = 135;
-
-    // A barebones workflow for testing the sort stuff
-    var workflow = {
-      wf_modules: [
-          {
-            id: NON_SORT_MODULE_ID,
-            module_version: {
-              module: {
-                id_name: 'loadurl'
-              }
-            }
-          },
-          {
-            id: SORT_MODULE_ID,
-            module_version: {
-              module: {
-                id_name: 'sort-from-table'
-              }
-            },
-            parameter_vals: [
-                {
-                  // column
-                  parameter_spec: {id_name: 'column'},
-                  value: 'b',
-                },
-                {
-                  // dtype
-                  parameter_spec: {id_name: 'dtype'},
-                  value: 1
-                },
-                {
-                  //direction
-                  parameter_spec: {id_name: 'direction'},
-                  value: 2 // Descending
-                }
-            ]
-          },
-      ]
-    }
-
     // Try a mount with the sort module selected, should have sortColumn and sortDirection
     var tree = mount(
       <TableView
+          {...defaultProps}
           revision={1}
-          id={100}
+          selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
-          resizing={false}
-          currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
           isReadOnly={false}
+          sortColumn={'b'}
+          sortDirection={sortDirectionDesc}
       />
     );
 
     setImmediate(() => {
       tree.update();
-      var dataGrid = tree.find(DataGrid);
-      expect(dataGrid).toHaveLength(1);
+      const dataGrid = tree.find(DataGrid);
       expect(dataGrid.prop('sortColumn')).toBe('b');
-      expect(dataGrid.prop('sortDirection')).toBe('DESC');
-
-      // Try a mount with a non-sort module selected, sortColumn and sortDirection should be undefined
-      tree = mount(
-        <TableView
-            revision={1}
-            id={100}
-            api={api}
-            setBusySpinner={jest.fn()}
-            resizing={false}
-            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
-            isReadOnly={false}
-        />
-      );
-      setImmediate(() => {
-        tree.update();
-        dataGrid = tree.find(DataGrid);
-        expect(dataGrid).toHaveLength(1);
-        expect(dataGrid.prop('sortColumn')).toBeUndefined();
-        expect(dataGrid.prop('sortDirection')).toBeUndefined();
-        done();
-      })
+      expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc);
+      done();
     });
   });
 
@@ -338,65 +271,23 @@ describe('TableView', () => {
     const NON_SHOWLETTER_ID = 28;
     const SHOWLETTER_ID = 135;
 
-    // A barebones workflow for testing the sort stuff
-    var workflow = {
-      wf_modules: [
-          {
-            id: NON_SHOWLETTER_ID,
-            module_version: {
-              module: {
-                id_name: 'loadurl'
-              }
-            }
-          },
-          {
-            id: SHOWLETTER_ID,
-            module_version: {
-              module: {
-                id_name: 'formula'
-              }
-            },
-          },
-      ]
-    };
-
     // Try a mount with the formula module selected, should show letter
     var tree = mount(
       <TableView
+          {...defaultProps}
+          showColumnLetter={true}
           revision={1}
-          id={100}
+          selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
-          resizing={false}
-          currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
-          isReadOnly={false}
       />
     );
     setImmediate(() => {
       tree.update();
-      var dataGrid = tree.find(DataGrid);
+      const dataGrid = tree.find(DataGrid);
       expect(dataGrid).toHaveLength(1);
       expect(dataGrid.prop('showLetter')).toBe(true);
-
-      // Try a mount with a non-formula module selected, should not show letter
-      tree = mount(
-        <TableView
-            revision={1}
-            id={100}
-            api={api}
-            setBusySpinner={jest.fn()}
-            resizing={false}
-            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
-            isReadOnly={false}
-        />
-      );
-      setImmediate(() => {
-        tree.update();
-        dataGrid = tree.find(DataGrid);
-        expect(dataGrid).toHaveLength(1);
-        expect(dataGrid.prop('showLetter')).toBe(false);
-        done();
-      })
+      done();
     });
   });
 });

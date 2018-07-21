@@ -7,6 +7,5 @@ from .ParameterVal import *
 from .ModuleVersion import *
 from .Delta import *
 from .Commands import *
-from .Notification import *
 from .UploadedFile import *
 from .StoredObject import *

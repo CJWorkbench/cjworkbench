@@ -26,6 +26,8 @@ describe('WfParameter', () => {
     return shallow(
       <WfParameter
         p={p}
+        isReadOnly={false}
+        isZenMode={false}
         moduleName="test"
         wf_module_id={0}
         revision={0}

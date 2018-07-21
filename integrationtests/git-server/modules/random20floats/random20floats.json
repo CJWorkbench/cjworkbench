@@ -1,0 +1,16 @@
+{
+  "name": "Random 20 Floats",
+  "id_name": "random20floats",
+  "category" : "Add data",
+  "icon": "twitter",
+  "description": "Generate a column of 20 random floats",
+  "help_url":"modules/add-data/random-20-floats",
+  "loads_data": true,
+  "parameters": [
+    {
+      "name": "Update",
+      "id_name" : "version_select",
+      "type": "custom"
+    }
+  ]
+}

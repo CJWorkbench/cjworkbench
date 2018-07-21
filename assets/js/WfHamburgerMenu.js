@@ -6,24 +6,23 @@ import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
 import DropdownToggle from 'reactstrap/lib/DropdownToggle'
 import DropdownMenu from 'reactstrap/lib/DropdownMenu'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
-import ImportModuleFromGitHub from './ImportModuleFromGitHub';
+import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 
 export default class WfHamburgerMenu extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.toggleImportModal = this.toggleImportModal.bind(this);
+  constructor (props) {
+    super(props)
+    this.toggleImportModal = this.toggleImportModal.bind(this)
 
     this.state = {
-      importModalOpen: false,
-    };
+      importModalOpen: false
+    }
   }
 
-  toggleImportModal() {
-    this.setState({ importModalOpen: !this.state.importModalOpen });
+  toggleImportModal () {
+    this.setState({ importModalOpen: !this.state.importModalOpen })
   }
 
-  renderImportModal() {
+  renderImportModal () {
     return (
       <ImportModuleFromGitHub
         closeModal={this.toggleImportModal}
@@ -32,49 +31,49 @@ export default class WfHamburgerMenu extends React.Component {
     )
   }
 
-  render() {
-    let homeLink=null;
-    let undoRedo=null;
-    let logInorOut=null;
-    let importModule=null;
+  render () {
+    let homeLink = null
+    let undoRedo = null
+    let logInorOut = null
+    let importModule = null
 
-    let loggedIn = typeof this.props.user !== 'undefined' && this.props.user.id;
+    let loggedIn = typeof this.props.user !== 'undefined' && this.props.user.id
 
-    if (this.props.workflowId != undefined) {  // on Wf page
+    if (this.props.workflowId) { // on Wf page
       if (loggedIn) {
         homeLink = (
-          <DropdownItem href="/workflows">
+          <DropdownItem href='/workflows'>
             <span>My Workflows</span>
           </DropdownItem>
-        );
+        )
       } else {
         homeLink = (
-          <DropdownItem href="https://workbenchdata.com">
+          <DropdownItem href='https://workbenchdata.com'>
             <span>Home</span>
           </DropdownItem>
-        );
+        )
       }
     }
 
     // If we can edit the workflow we have undo and redo items
-    if (this.props.workflowId != undefined && !this.props.isReadOnly) {
+    if (this.props.workflowId && !this.props.isReadOnly) {
       undoRedo = (
         <React.Fragment>
-          <DropdownItem divider/>
-          <DropdownItem onClick={ () => { this.props.api.undo(this.props.workflowId)} }>
+          <DropdownItem divider />
+          <DropdownItem onClick={() => { this.props.api.undo(this.props.workflowId) }}>
             <span>Undo</span>
           </DropdownItem>
-          <DropdownItem onClick={ () => { this.props.api.redo(this.props.workflowId)} }>
+          <DropdownItem onClick={() => { this.props.api.redo(this.props.workflowId) }}>
             <span>Redo</span>
           </DropdownItem>
-          <DropdownItem divider/>
+          <DropdownItem divider />
         </React.Fragment>
-      );
+      )
     }
 
     // can import if logged in
     if (loggedIn) {
-      let importModal = this.state.importModalOpen ? this.renderImportModal() : null;
+      let importModal = this.state.importModalOpen ? this.renderImportModal() : null
 
       importModule = (
         <DropdownItem onClick={this.toggleImportModal} className='test-export-button'>
@@ -87,21 +86,22 @@ export default class WfHamburgerMenu extends React.Component {
     // either log in or out
     if (loggedIn) {
       logInorOut = (
-        <DropdownItem href="/account/logout">
-           <span>Log Out</span>
+        <DropdownItem href='/account/logout'>
+          <span>Log Out</span>
         </DropdownItem>
       )
     } else {
-      logInorOut =
-        <DropdownItem href="/account/logout">
+      logInorOut = (
+        <DropdownItem href='/account/logout'>
           <span>Log out</span>
         </DropdownItem>
+      )
     }
 
     return (
       <UncontrolledDropdown>
-        <DropdownToggle title="menu" className='context-button'>
-          <i className='context-button--icon icon-more'></i>
+        <DropdownToggle title='menu' className='context-button'>
+          <i className='context-button--icon icon-more' />
         </DropdownToggle>
         <DropdownMenu right>
           {homeLink}
@@ -110,14 +110,14 @@ export default class WfHamburgerMenu extends React.Component {
           {logInorOut}
         </DropdownMenu>
       </UncontrolledDropdown>
-    );
+    )
   }
 }
 
 // api, isReadOnly not required because they aren't needed (or set) when we're called from WorkflowListNavBar
 WfHamburgerMenu.propTypes = {
-  api:        PropTypes.object,
+  api: PropTypes.object,
   workflowId: PropTypes.number,
   isReadOnly: PropTypes.bool,
-  user:       PropTypes.object
-};
+  user: PropTypes.object
+}

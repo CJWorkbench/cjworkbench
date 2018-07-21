@@ -1,13 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import WorkbenchAPI from '../WorkbenchAPI'
 import UncontrolledAlert from 'reactstrap/lib/UncontrolledAlert'
-
-
-var api = WorkbenchAPI();
-export function mockAPI(mock_api) {
-    api = mock_api;
-}
 
 const INTERNAL_COUNT_COLNAME = '__internal_count_column__'
 
@@ -120,7 +113,17 @@ EditRow.propTypes = {
     valueEdited: PropTypes.bool.isRequired
 }
 
-export default class facet extends React.Component {
+export default class Refine extends React.Component {
+    static propTypes = {
+        api: PropTypes.shape({
+          histogram: PropTypes.func.isRequired,
+        }).isRequired,
+        wfModuleId: PropTypes.number.isRequired,
+        selectedColumn: PropTypes.string.isRequired,
+        existingEdits: PropTypes.string.isRequired,
+        saveEdits: PropTypes.func.isRequired,
+        revision: PropTypes.number.isRequired
+    }
 
     /*
     Format of edits:
@@ -220,7 +223,7 @@ export default class facet extends React.Component {
             this.setState(nextState);
             return;
         }
-        api.histogram(this.props.wfModuleId, targetCol)
+        this.props.api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
                 if(histogram != 'request error') {
                     //console.log(histogram);
@@ -359,7 +362,7 @@ export default class facet extends React.Component {
                             </div>
                         ) : ''
                     }
-                    <div className='t-d-gray content-3 label-margin'>Select and edit values</div>
+                    <div className='t-d-gray content-3 mt-2 label-margin'>Select and edit values</div>
                     <div className='container list-wrapper'>
                         <div className='row list-scroll'>
                             { checkboxes }
@@ -387,12 +390,4 @@ export default class facet extends React.Component {
             </div>
         )
     }
-};
-
-facet.propTypes = {
-    wfModuleId: PropTypes.number.isRequired,
-    selectedColumn: PropTypes.string.isRequired,
-    existingEdits: PropTypes.string.isRequired,
-    saveEdits: PropTypes.func.isRequired,
-    revision: PropTypes.number.isRequired
 };

@@ -64,7 +64,7 @@ export default class WorkflowMetadata extends React.Component {
     return (
       <Modal isOpen={this.state.privacyModalOpen} toggle={this.togglePrivacyModal}>
         <ModalHeader toggle={this.togglePrivacyModal} className='dialog-header' >
-          <span className='t-d-gray title-4'>PRIVACY SETTING</span>
+          <span className='modal-title'>PRIVACY SETTING</span>
         </ModalHeader>
         <ModalBody >
           <div className="row d-flex align-items-center mb-5">

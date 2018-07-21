@@ -16,7 +16,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
       onClick={[Function]}
       title="change auto-update settings"
     >
-      manual
+      Manual
     </a>
   </div>
   <div

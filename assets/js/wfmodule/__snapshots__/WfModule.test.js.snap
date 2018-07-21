@@ -104,6 +104,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             getParamMenuItems={[Function]}
             getParamText={[Function]}
             isReadOnly={false}
+            isZenMode={false}
             key="0"
             moduleName="Load from URL"
             p={
@@ -117,7 +118,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             revision={707}
-            setClickNotification={[Function]}
             setParamText={[Function]}
             updateSettings={
               Object {
@@ -142,6 +142,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             getParamMenuItems={[Function]}
             getParamText={[Function]}
             isReadOnly={false}
+            isZenMode={false}
             key="1"
             moduleName="Load from URL"
             p={
@@ -154,7 +155,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             revision={707}
-            setClickNotification={[Function]}
             setParamText={[Function]}
             updateSettings={
               Object {
@@ -168,9 +168,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           />
         </div>
       </div>
-      <div
-        className="drop-alert "
-      />
     </div>
   </div>
 </div>

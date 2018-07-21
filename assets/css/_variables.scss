@@ -4,11 +4,13 @@
 $brand-workspace: #48C8D7;
 $brand-learn: #ffaad3;
 $brand-orange:#FBAA6D;
+$brand-red:#E24F4A;
 $WF-background:#E9EBEE;
 $page-background:#EDECEC;
 $table-background:#f4f4f4;
-$modal-color:#F5F7F8;
+$modal-color:$brand-workspace;
 $table-element: #719BB0;
+$hover-background: #F5F5F5;
 
 // Secondary Colors (づ ￣ ³￣)づ
 
@@ -18,9 +20,9 @@ $light-gray: #b4b4b4;
 $medium-gray: #a2a2a2;
 $dark-gray: #8b8b8b;
 
-$table-border:#CFDEE2;
+$table-border:#D7E4E7;
 
-$module-action: #C7D6DF;
+$module-action: #C2D2DB;
 
 $dark-blue: #577485;
 $dark-orange:#F88630;
@@ -33,7 +35,7 @@ $input-alt-placeholder: $SuperLightGray;
 $error-prompt: rgba(232,114,110,0.6);
 
 // Text colors ＼(＾O＾)／
-$brand-text--darker: #414141;
+$brand-text--darker: #383838;
 $brand-text--dark: #686768;
 $brand-text--medium: #7d7d7d;
 
@@ -54,7 +56,7 @@ $table-element--light: lighten($table-element,18%);
 
 $brand-workspace--Vlight:lighten($brand-workspace,41%);
 $brand-workspace--light:lighten($brand-workspace,39%);
-$brand-workspace--medium:lighten($brand-workspace,18%);
+$brand-workspace--medium:lighten($brand-workspace,15%);
 
 $brand-orange--light:lighten($brand-orange,26%);
 
@@ -68,7 +70,7 @@ $brand-learn--medium:lighten($brand-learn,5%);
 
 $search-field--light: rgba(255,255,255,.2);
 
-$placeholder: #c8c8c8;
+$placeholder: #a2a2a2;
 $placeholder--light: rgba(255,255,255,.5);
 
 // box shadows ~~~~ ༼ つ ◕_◕ ༽つ

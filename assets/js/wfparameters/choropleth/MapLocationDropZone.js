@@ -1,12 +1,7 @@
 import React, {Component} from 'react'
-import {store, setWfModuleStatusAction} from "../../workflow-reducer"
 import Dropzone from 'react-dropzone'
 import PropTypes from 'prop-types'
 import GJV from 'geojson-validation'
-import WorkBenchAPI from '../../WorkbenchAPI'
-
-
-var api = WorkBenchAPI();
 
 export default class MapLocationDropZone extends Component {
     // Accepts an upload of GeoJSON file. It is parsed in the front-end because
@@ -14,6 +9,9 @@ export default class MapLocationDropZone extends Component {
     // The GeoJSON data is stored as a string in the wfModule
 
     static propTypes = {
+        api: PropTypes.shape({
+            onParamChanged: PropTypes.func.isRequired,
+        }).isRequired,
         name: PropTypes.string.isRequired,
         paramData: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired,
@@ -60,7 +58,7 @@ export default class MapLocationDropZone extends Component {
             geojson: geoJSON,
             modified: file.lastModifiedDate
         };
-        api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)});
+        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)});
     }
 
     onDrop(acceptedFiles, rejectedFiles) {

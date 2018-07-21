@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColumnContextMenu should match snapshot 1`] = `
+<UncontrolledDropdown>
+  <DropdownToggle
+    aria-haspopup={true}
+    className="context-button"
+    color="secondary"
+  >
+    <i
+      className="icon-more"
+    />
+  </DropdownToggle>
+  <Portal>
+    <DropdownMenu
+      flip={false}
+      modifiers={
+        Object {
+          "hide": Object {
+            "enabled": false,
+          },
+          "preventOverflow": Object {
+            "enabled": false,
+          },
+        }
+      }
+      persist={true}
+      tag="div"
+    >
+      <DropdownItem
+        className="duplicate-column"
+        onClick={[MockFunction]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-duplicate"
+        />
+        <span>
+          Duplicate
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        divider={true}
+        tag="button"
+        toggle={true}
+      />
+      <DropdownItem
+        className="sort-ascending"
+        onClick={[Function]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-sort-up"
+        />
+        <span>
+          Sort ascending
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        className="sort-descending"
+        onClick={[Function]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-sort-down"
+        />
+        <span>
+          Sort descending
+        </span>
+      </DropdownItem>
+    </DropdownMenu>
+  </Portal>
+</UncontrolledDropdown>
+`;

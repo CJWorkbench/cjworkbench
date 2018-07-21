@@ -18,8 +18,8 @@ export class StateWithHelpers {
   }
 
   get selectedWfModule() {
-    const id = this.state.selected_wf_module || null
-    return this.workflow.wfModules.find(m => m.id === id) || null
+    const index = this.state.selected_wf_module // may be null
+    return this.workflow.wfModules[index] || null
   }
 }
 
@@ -76,7 +76,7 @@ export class WorkflowModuleWithHelpers {
   }
 
   get isEmailUpdates() {
-    return !!this.wfModule.auto_update_data && !!this.wfModule.notifications
+    return !!this.wfModule.notifications
   }
 
   /**

@@ -10,17 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
+
 import os
 import sys
 import json
 from json.decoder import JSONDecodeError
 from os.path import abspath, basename, dirname, join, normpath
-from server.settingsutils import *
+from server.settingsutils import workbench_user_display
 
 if sys.version_info[0] < 3:
     raise RuntimeError('CJ Workbench requires Python 3')
-
-I_AM_TESTING = 'test' in sys.argv
 
 # ----- Configurable Parameters -----
 
@@ -57,23 +56,22 @@ if not os.path.isdir(MEDIA_ROOT):
 if 'CJW_PRODUCTION' in os.environ:
     DEBUG = not os.environ['CJW_PRODUCTION']
 else:
-    DEBUG=True
+    DEBUG = True
 
 DEFAULT_FROM_EMAIL = 'Workbench <hello@accounts.workbenchdata.com>'
 
-# Various environment variables must be set in production
-if DEBUG==False:
-    try:
-        SECRET_KEY = os.environ['CJW_SECRET_KEY']
-    except KeyError:
+# SECRET_KEY
+try:
+    SECRET_KEY = os.environ['CJW_SECRET_KEY']
+except KeyError:
+    if DEBUG:
+        SECRET_KEY = 'my debug secret key is not a secret'
+    else:
         sys.exit('Must set CJW_SECRET_KEY in production')
 
-    if 'CJW_DB_HOST' not in os.environ:
-        sys.exit('Must set CJW_DB_HOST in production')
 
-    if 'CJW_DB_PASSWORD' not in os.environ:
-        sys.exit('Must set CJW_DB_PASSWORD in production')
-
+# DATABASES
+if 'CJW_DB_HOST' in os.environ and 'CJW_DB_PASSWORD' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -82,40 +80,15 @@ if DEBUG==False:
             'HOST': os.environ['CJW_DB_HOST'],
             'PASSWORD': os.environ['CJW_DB_PASSWORD'],
             'PORT': '5432',
+            'CONN_MAX_AGE': 30,
         }
     }
-
-    if 'CJW_SENDGRID_API_KEY' not in os.environ:
-        sys.exit('Must set CJW_SENDGRID_API_KEY in production')
-
-    if not all(x in os.environ for x in [
-        'CJW_SENDGRID_INVITATION_ID',
-        'CJW_SENDGRID_CONFIRMATION_ID',
-        'CJW_SENDGRID_PASSWORD_CHANGE_ID',
-        'CJW_SENDGRID_PASSWORD_RESET_ID'
-        ]):
-        sys.exit('Must set Sendgrid template IDs for all system emails')
-
-    if os.environ.get('CJW_MOCK_EMAIL'): # e.g., integration tests
-        EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-        EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
-    else:
-        EMAIL_BACKEND = 'sgbackend.SendGridBackend'
-
-    SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
-    ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
-    SENDGRID_TEMPLATE_IDS = {
-        'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
-    }
-    SESSION_ENGINE='django.contrib.sessions.backends.db'
-
 else:
-    # We are running in debug
-    SECRET_KEY = 'my debug secret key is not a secret'
+    if not DEBUG:
+        sys.exit('Must set CJW_DB_HOST and CJW_DB_PASSWORD in production')
 
     from django.db.backends.signals import connection_created
+
     def speed_up_writes_by_20_percent(sender, connection, **kwargs):
         """Truncate, don't delete, sqlite3 journal.
 
@@ -138,8 +111,36 @@ else:
         },
     }
 
+# EMAIL_BACKEND
+#
+# In Production, sets ACCOUNT_ADAPTER, SENDGRID_TEMPLATE_IDS
+if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
+elif os.environ.get('CJW_MOCK_EMAIL'):  # e.g., integration tests
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+else:
+    EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+    # ACCOUNT_ADAPTER is specifically for sendgrid and nothing else
+    ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
+
+    if 'CJW_SENDGRID_API_KEY' not in os.environ:
+        sys.exit('Must set CJW_SENDGRID_API_KEY in production')
+
+    if not all(x in os.environ for x in [
+                'CJW_SENDGRID_INVITATION_ID',
+                'CJW_SENDGRID_CONFIRMATION_ID',
+                'CJW_SENDGRID_PASSWORD_CHANGE_ID',
+                'CJW_SENDGRID_PASSWORD_RESET_ID']):
+        sys.exit('Must set Sendgrid template IDs for all system emails')
+
+    SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
+
+    SENDGRID_TEMPLATE_IDS = {
+        'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
+    }
 
 if 'CJW_GOOGLE_ANALYTICS' in os.environ:
     GOOGLE_ANALYTICS_PROPERTY_ID = os.environ['CJW_GOOGLE_ANALYTICS']
@@ -182,12 +183,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
+SESSION_ENGINE='django.contrib.sessions.backends.db'
+
 ROOT_URLCONF = 'cjworkbench.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-#        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -205,21 +208,26 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    )
 }
 
 WSGI_APPLICATION = 'cjworkbench.wsgi.application'
 ASGI_APPLICATION = 'cjworkbench.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
-
-
+if 'CJW_REDIS_HOST' in os.environ:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [(os.environ['CJW_REDIS_HOST'], 6379)],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 
 # Password validation
@@ -253,11 +261,14 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files. CSS, JavaScript are bundled by webpack, but fonts, test data, images, etc. are not
+# Static files. CSS, JavaScript are bundled by webpack, but fonts, test data,
+# images, etc. are not
 STATIC_URL = '/static/'
 STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'assets'), # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
+    # We do this so that django's collectstatic copies or our bundles to the
+    # STATIC_ROOT or syncs them to whatever storage we use.
+    os.path.join(BASE_DIR, 'assets'),
 )
 
 # Webpack loads all our js/css into handy bundles
@@ -297,9 +308,16 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        #'django.db.backends': { # only gets messages when settings.DEBUG is True
+        'django.request': {
+            # Django prints WARNINGs for 400-level HTTP responses. That's
+            # wrong: our code is _meant_ to output 400-level HTTP responses in
+            # some cases -- that's exactly why 400-level HTTP responses exist!
+            # Ignore those WARNINGs and only log ERRORs.
+            'level': 'ERROR',
+        },
+        #'django.db.backends': {  # only gets messages when settings.DEBUG==True
         #    'level': 'DEBUG',
-        #    'handlers': [ 'debug_console' ],
+        #    'handlers': ['debug_console'],
         #},
     }
 }
@@ -319,7 +337,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Third party services
-PARAMETER_OAUTH_SERVICES = {} # id_name => parameters. See requests-oauthlib docs
+PARAMETER_OAUTH_SERVICES = {}  # id_name => parameters. See requests-oauthlib docs
 
 # Google, for Google Drive.
 
@@ -343,7 +361,11 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
             'token_url': d['web']['token_uri'],
             'refresh_url': d['web']['token_uri'],
             'redirect_url': d['web']['redirect_uris'][0],
-            'scope': 'email https://www.googleapis.com/auth/drive.readonly',
+            'scope': ' '.join([
+                'https://www.googleapis.com/auth/drive.readonly',
+                'https://www.googleapis.com/auth/userinfo.email',
+                'https://www.googleapis.com/auth/plus.me',
+            ])
         }
 
 
@@ -389,7 +411,6 @@ if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
 
 
         INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])
-
 else:
 
     CJW_SOCIALACCOUNT_SECRETS = []
@@ -398,11 +419,7 @@ else:
 # Knowledge base root url, used as a default for missing help links
 KB_ROOT_URL = 'http://help.workbenchdata.com/'
 
-try:
-    from cjworkbench.local_settings import *
-except ImportError:
-    pass
-
+I_AM_TESTING = 'test' in sys.argv
 if I_AM_TESTING:
     for provider in ['allauth.socialaccount.providers.facebook',
                      'allauth.socialaccount.providers.google']:

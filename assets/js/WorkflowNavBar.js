@@ -103,12 +103,12 @@ export default class WorkflowNavBar extends React.Component {
 
     if (this.state.linkCopied) {
       return (
-        <div className='info-2 t-orange' >Link copied to clipboard</div>
+        <div className='clipboard copied' >Link copied to clipboard</div>
       );
     } else {
       return (
-        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 action-link'>
-          <div>Copy to clipboard</div>
+        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='clipboard'>
+          <div>COPY TO CLIPBOARD</div>
         </CopyToClipboard>
       );
     }
@@ -127,7 +127,7 @@ export default class WorkflowNavBar extends React.Component {
     var setPublicModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+          <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
         <ModalBody >
           <div className='title-3 mb-3'>This workflow is currently private</div>
@@ -144,16 +144,16 @@ export default class WorkflowNavBar extends React.Component {
     var shareModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-share-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+          <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
         <ModalBody >
           <FormGroup>
             <div className='d-flex align-items-center justify-content-between flex-row'>
-              <Label className='label-margin info-1'>Public link</Label>
+              <Label className='dl-file'>PUBLIC URL</Label>
               {copyLink}
             </div>
             <div className='mb-3'>
-              <Input type='url' className='url-link t-d-gray content-2 test-link-field' placeholder={linkString} readOnly/>
+              <Input type='url' className='url-link test-link-field' value={linkString} readOnly/>
             </div>
           </FormGroup>
 
@@ -196,7 +196,7 @@ export default class WorkflowNavBar extends React.Component {
           user={this.props.loggedInUser}
       />
     } else {
-      contextMenu = <a href="/account/login" className='nav--link t-white content-2'>Sign in</a>
+      contextMenu = <a href="/account/login" className='nav--link'>Sign in</a>
     }
 
     var duplicate = <button onClick={this.handleDuplicate} className='button-white--fill action-button test-duplicate-button'>

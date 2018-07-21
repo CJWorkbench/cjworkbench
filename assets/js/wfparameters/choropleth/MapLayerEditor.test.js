@@ -1,5 +1,5 @@
 import React from 'react'
-import MapLayerEditor, {SingleMapLayerEditor, mockAPI} from "./MapLayerEditor"
+import MapLayerEditor, {SingleMapLayerEditor} from "./MapLayerEditor"
 import {mount} from 'enzyme'
 import {jsonResponseMock} from "../../test-utils"
 import {CirclePicker} from 'react-color'
@@ -47,12 +47,12 @@ describe('MapLayerEditor rendering and interactions', () => {
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
             inputColumns: jsonResponseMock(mockDefaultColumns)
         };
-        mockAPI(api);
     });
 
     it('Does not render anything upon initial load without key column, but updates the server with default map appearance', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={''}
@@ -96,6 +96,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Does not update the server upon loading existing data if columns don\'t change', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={''}
@@ -122,10 +123,10 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Gives a newly appearing column the default settings upon load', async () => {
         // Modify the mock API to return new columns
         api.inputColumns = jsonResponseMock(mockChangedColumns);
-        mockAPI(api);
 
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={''}
@@ -179,6 +180,7 @@ describe('MapLayerEditor rendering and interactions', () => {
 
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={keyColumn}
@@ -220,6 +222,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a layer selection change', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={'location'}
@@ -274,6 +277,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a layer levels change, completed via blur event', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={'location'}
@@ -331,6 +335,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a layer levels change, completed via pressing Enter', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={'location'}
@@ -388,6 +393,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a color change', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={'location'}
@@ -444,6 +450,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Respects read-only setting', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={'location'}
@@ -485,6 +492,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Only accepts positive integers for the levels field', async () => {
         let tree = mount(
             <MapLayerEditor
+                api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
                 keyColumn={'location'}

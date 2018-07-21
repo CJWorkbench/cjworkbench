@@ -360,7 +360,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
           className="modal-title"
         >
           <div
-            className="t-d-gray title-4"
+            className="modal-title"
           >
             SHARE THIS WORKFLOW
           </div>
@@ -439,7 +439,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
           className="modal-title"
         >
           <div
-            className="t-d-gray title-4"
+            className="modal-title"
           >
             SHARE THIS WORKFLOW
           </div>
@@ -474,7 +474,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               className="d-flex align-items-center justify-content-between flex-row"
             >
               <Label
-                className="label-margin info-1"
+                className="dl-file"
                 tag="label"
                 widths={
                   Array [
@@ -487,21 +487,21 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                 }
               >
                 <label
-                  className="label-margin info-1 "
+                  className="dl-file "
                 >
-                  Public link
+                  PUBLIC URL
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 action-link"
+                className="clipboard"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 action-link"
+                  className="clipboard"
                   onClick={[Function]}
                 >
-                  Copy to clipboard
+                  COPY TO CLIPBOARD
                 </div>
               </CopyToClipboard>
             </div>
@@ -509,16 +509,16 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               className="mb-3"
             >
               <Input
-                className="url-link t-d-gray content-2 test-link-field"
-                placeholder="/workflows/808"
+                className="url-link test-link-field"
                 readOnly={true}
                 type="url"
+                value="/workflows/808"
               >
                 <input
-                  className="url-link t-d-gray content-2 test-link-field form-control"
-                  placeholder="/workflows/808"
+                  className="url-link test-link-field form-control"
                   readOnly={true}
                   type="url"
+                  value="/workflows/808"
                 />
               </Input>
             </div>
@@ -924,7 +924,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
           className="modal-title"
         >
           <div
-            className="t-d-gray title-4"
+            className="modal-title"
           >
             SHARE THIS WORKFLOW
           </div>
@@ -959,7 +959,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
               className="d-flex align-items-center justify-content-between flex-row"
             >
               <Label
-                className="label-margin info-1"
+                className="dl-file"
                 tag="label"
                 widths={
                   Array [
@@ -972,21 +972,21 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
                 }
               >
                 <label
-                  className="label-margin info-1 "
+                  className="dl-file "
                 >
-                  Public link
+                  PUBLIC URL
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 action-link"
+                className="clipboard"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 action-link"
+                  className="clipboard"
                   onClick={[Function]}
                 >
-                  Copy to clipboard
+                  COPY TO CLIPBOARD
                 </div>
               </CopyToClipboard>
             </div>
@@ -994,16 +994,16 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
               className="mb-3"
             >
               <Input
-                className="url-link t-d-gray content-2 test-link-field"
-                placeholder="/workflows/808"
+                className="url-link test-link-field"
                 readOnly={true}
                 type="url"
+                value="/workflows/808"
               >
                 <input
-                  className="url-link t-d-gray content-2 test-link-field form-control"
-                  placeholder="/workflows/808"
+                  className="url-link test-link-field form-control"
                   readOnly={true}
                   type="url"
+                  value="/workflows/808"
                 />
               </Input>
             </div>
@@ -1182,7 +1182,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         Share
       </button>
       <a
-        className="nav--link t-white content-2"
+        className="nav--link"
         href="/account/login"
       >
         Sign in

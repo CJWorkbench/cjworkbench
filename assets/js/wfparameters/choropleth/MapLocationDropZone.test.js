@@ -17,8 +17,16 @@ describe('MapLocationDropZone rendering tests', () => {
         modified: new Date(2018, 4, 22, 9, 0)
     };
 
+    var api;
+
+    beforeEach(() => {
+        api = {
+            onParamChanged: jest.fn().mockReturnValue(Promise.resolve())
+        };
+    });
+
     it('Renders an empty dropzone on initial load', () => {
-        let tree = shallow(<MapLocationDropZone name={PARAM_NAME} paramData={''} paramId={PARAM_ID} isReadOnly={false}/>);
+        let tree = shallow(<MapLocationDropZone api={api} name={PARAM_NAME} paramData={''} paramId={PARAM_ID} isReadOnly={false}/>);
         expect(tree.find(Dropzone)).toHaveLength(1);
         expect(tree.find('div.map-uploaded-filename')).toHaveLength(0);
         expect(tree.find('div.map-uploaded-date')).toHaveLength(0);
@@ -28,6 +36,7 @@ describe('MapLocationDropZone rendering tests', () => {
     it('Renders a dropzone that shows previously uploaded files according to param data', () => {
         let tree = shallow(
             <MapLocationDropZone
+                api={api}
                 name={PARAM_NAME}
                 paramData={JSON.stringify(mockParamData)}
                 paramId={PARAM_ID}
@@ -47,6 +56,7 @@ describe('MapLocationDropZone rendering tests', () => {
     it('Renders a placeholder div instead of a dropzone for a read-only module', () => {
         let tree = shallow(
             <MapLocationDropZone
+                api={api}
                 name={PARAM_NAME}
                 paramData={JSON.stringify(mockParamData)}
                 paramId={PARAM_ID}

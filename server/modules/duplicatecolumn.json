@@ -1,0 +1,21 @@
+{
+ "name": "Duplicate Columns",
+ "id_name": "duplicate-column",
+ "category" : "Clean",
+ "description" : "Duplicate a column from the table or from the module",
+ "icon" : "duplicate",
+ "parameters": [
+        {
+         "name" : "Columns",
+         "id_name" : "source-columns",
+         "type" : "multicolumn",
+         "ui-only": true
+        },
+        {
+         "name": "Column Names",
+         "id_name": "colnames",
+         "type": "string",
+         "visible": false
+        }
+    ]
+}

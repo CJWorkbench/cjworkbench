@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Python Console Output</title>
+    <style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  background: white;
+}
+
+pre {
+  padding: 1rem;
+  margin: 0;
+  width: 100%;
+  white-space: pre-wrap;
+}
+
+pre:empty {
+  padding: 0;
+}
+
+pre:not(:empty)::before {
+  content: 'Python console output';
+  padding-bottom: .5rem;
+  display: block;
+  text-decoration: underline;
+  font-weight: bold;
+}
+    </style>
+  </head>
+  <body>
+    <pre></pre>
+    <script>
+const pre = document.querySelector('pre')
+
+function notifySize () {
+  window.parent.postMessage({
+    from: 'outputIframe',
+    type: 'resize',
+    wfModuleId: parseInt(/(\d+)\/output/.exec(String(window.location))[1], 10),
+    height: pre.clientHeight,
+  }, window.location.origin)
+}
+
+function renderOutput (json) {
+  pre.textContent = (json ? json.output || '' : '')
+  notifySize()
+}
+
+function startLoading () {
+  const url = String(window.location).replace(/\/output.*/, '/embeddata')
+  fetch(url, { credentials: 'same-origin' })
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Invalid response code: ' + response.status)
+      }
+
+      return response.json()
+    })
+    .then(renderOutput)
+    .catch(console.error)
+}
+
+window.addEventListener('resize', notifySize)
+window.addEventListener('hashchange', startLoading)
+
+renderOutput(window.workbench.embeddata)
+    </script>
+  </body>
+</html>

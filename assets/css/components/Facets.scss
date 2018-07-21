@@ -1,14 +1,19 @@
 .facet-checkbox-container{
   justify-content: space-between;
 
+  .label {
+    @extend .content-3;
+    font-size: 1.2rem;
+  }
   .facet-value {
     border: none;
     background-color: transparent;
-    width:17rem;
+    color:$brand-text--dark;
+    width:15rem;
     &:hover{background-color: $SuperLightGray;}
   }
   .facet-value--edited{
-    font-weight: 800;
+    font-weight: bolder;
     color: $brand-text--darker;
   }
   .facet-count {

@@ -4,7 +4,7 @@ import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import debounce from 'lodash/debounce'
-import { addModuleAction, moveModuleAction } from './workflow-reducer'
+import { addModuleAction, deleteModuleAction, moveModuleAction, setParamValueAction } from './workflow-reducer'
 import { scrollTo } from './utils'
 import { connect } from 'react-redux';
 import lessonSelector from './lessons/lessonSelector'
@@ -17,12 +17,8 @@ class ModuleDropSpot extends React.PureComponent {
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      isDragHovering: false,
-    }
+  state = {
+    isDragHovering: false
   }
 
   canDrop() {
@@ -93,15 +89,11 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
-    isReadOnly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      isSearching: false,
-    }
+  state = {
+    isSearching: false
   }
 
   onClickSearch = () => {
@@ -208,15 +200,13 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
       <div className={className}>
         <button className="search" onClick={this.onClickSearch}>
           <i className="icon-addc"></i>{' '}
-          Add Module
+          <span>Add Module</span>
         </button>
         {this.renderModuleSearchIfSearching()}
       </div>
     )
   }
 }
-
-const FixmeIKilledDragAndDrop = () => {}
 
 class ModuleStack extends React.Component {
   static propTypes = {
@@ -227,24 +217,54 @@ class ModuleStack extends React.Component {
     addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
     moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     removeModule:       PropTypes.func.isRequired,
-    loggedInUser:       PropTypes.object,            // undefined if no one logged in (viewing public wf)
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
     isReadOnly:         PropTypes.bool.isRequired,
   }
 
   constructor(props) {
-    super(props);
-    this.scrollRef = React.createRef();
+    super(props)
+
+    this.scrollRef = React.createRef()
     // Debounced so that execution is cancelled if we start
     // another animation. See note on focusModule definition.
-    this.focusModule = debounce(this.focusModule.bind(this), 200);
+    this.focusModule = debounce(this.focusModule.bind(this), 200)
 
     this.state = {
       isDraggingModuleAtIndex: null,
+      zenModeWfModuleId: null
     }
   }
 
-  focusModule(module) {
+  /**
+   * Sets which module has "Zen mode" (extra size+focus).
+   *
+   * setZenMode(2, true) // module with ID 2 gets "Zen mode"
+   * setZenMode(2, false) // module with ID 2 gets _not_ "Zen mode"
+   *
+   * Only one module can have Zen mode. When module 2 enters Zen mode, Zen
+   * mode is "locked" to module 2: no other modules can set it until module
+   * 2 exits Zen mode.
+   */
+  setZenMode = (wfModuleId, isZenMode) => {
+    const oldId = this.state.zenModeWfModuleId
+    if (!isZenMode && wfModuleId === oldId) {
+      this.setState({ zenModeWfModuleId: null })
+    } else if (isZenMode && oldId === null) {
+      this.setState({ zenModeWfModuleId: wfModuleId })
+    }
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    // If we delete a zen-mode while in zen mode, exit zen mode
+    const zenId = state.zenModeWfModuleId
+    if (zenId && !props.workflow.wf_modules.some(m => m.id === zenId)) {
+      return { zenModeWfModuleId: null }
+    } else {
+      return null
+    }
+  }
+
+  focusModule = (module) => {
     // Wait for the next two browser repaints before animating, because
     // two repaints gets it about right.
     // This is a bad hack that's here because JavaScript doesn't have
@@ -292,7 +312,7 @@ class ModuleStack extends React.Component {
       // If this item is replacing a placeholder, disable the enter animations
       if (item.placeholder) {
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={`placeholder-${i}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModuleHeader
               moduleName={item.name}
@@ -304,19 +324,20 @@ class ModuleStack extends React.Component {
         )
       } else {
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={`module-${item.id}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModule
               isReadOnly={this.props.workflow.read_only}
+              isZenMode={this.state.zenModeWfModuleId === item.id}
               wfModule={item}
               changeParam={this.props.changeParam}
               removeModule={this.props.removeModule}
               revision={this.props.workflow.revision}
-              selected={item.id === this.props.selected_wf_module}
+              selected={i === this.props.selected_wf_module}
               api={this.props.api}
-              user={this.props.loggedInUser}
               loads_data={item.moduleVersion && item.module_version.module.loads_data}
               index={i}
+              setZenMode={this.setZenMode}
               onDragStart={this.onDragStart}
               onDragEnd={this.onDragEnd}
               focusModule={this.focusModule}
@@ -326,8 +347,11 @@ class ModuleStack extends React.Component {
       }
     })
 
+    let className = 'module-stack'
+    if (this.state.zenModeWfModuleId !== null) className += ' zen-mode'
+
     return (
-      <div className="module-stack">
+      <div className={className}>
         {spotsAndItems}
         <LastModuleStackInsertSpot
           key="last"
@@ -346,6 +370,8 @@ class ModuleStack extends React.Component {
 const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
   return {
+    workflow: state.workflow,
+    selected_wf_module: state.selected_wf_module,
     wf_modules: state.workflow.wf_modules,
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', index: index }),
@@ -363,6 +389,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       const action = moveModuleAction(oldIndex, newIndex)
       dispatch(action)
     },
+
+    removeModule(wfModuleId) {
+      const action = deleteModuleAction(wfModuleId)
+      dispatch(action)
+    },
+
+    changeParam(paramId, newVal) {
+      const action = setParamValueAction(paramId, newVal)
+      dispatch(action)
+    }
   }
 }
 

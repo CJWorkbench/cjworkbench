@@ -3,16 +3,6 @@
 </div>
 
 <table>
-
-
-<tr>
-  <td>Build Status</td>
-  <td>
-    <a href="https://travis-ci.org/CJWorkbench/cjworkbench">
-      <img src="https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master" alt="travis build status" />
-    </a>
-  </td>
-</tr>
 <tr>
   <td>License</td>
   <td>
@@ -45,7 +35,7 @@ Workbench is a platform that combines data tools and training for journalists. I
 - Connect to Google Drive, Twitter, and API endpoints.
 - Every action is recorded, so all workflows are repeatable and transparent
 - All data is live and versioned, and you can monitor for changes.
-- Write custom modules in Python + Javascript and add them to the module library
+- Write custom modules in Python and add them to the module library
 
 # Try it
 
@@ -57,6 +47,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 
 # User Documentation
 
+- [Imagining the data journalism workflow of the future](https://medium.com/@Workbench/seriously-no-more-spreadsheets-imagining-the-data-journalism-workflow-of-the-future-386336e12048)
 - [What workbench can do for data](https://medium.com/@Workbench/what-workbench-can-do-for-data-c8534384c978)
 - [A different approach to transparent data journalism](https://medium.com/@Workbench/a-different-approach-to-transparent-data-journalism-a019d23595f2)
 - [Data journalism made easier, faster, and more collaborative](https://medium.com/@Workbench/data-journalism-made-easier-faster-and-more-collaborative-e33081bf0080)

@@ -27,23 +27,28 @@ class ParameterVal(models.Model):
         self.visible = self.parameter_spec.def_visible
 
     def duplicate(self, to_wf_module):
+        if self.parameter_spec.type == ParameterSpec.SECRET:
+            value = ''
+        else:
+            value = self.value
+
         newval = ParameterVal.objects.create(
-            wf_module = to_wf_module,
-            parameter_spec = self.parameter_spec,
-            order = self.order,
-            value = self.value,
-            menu_items = self.menu_items,
-            visible = self.visible
+            wf_module=to_wf_module,
+            parameter_spec=self.parameter_spec,
+            order=self.order,
+            value=value,
+            menu_items=self.menu_items,
+            visible=self.visible
         )
         return newval
 
 
     # User can access param if they can access wf_module
-    def user_authorized_read(self, user):
-        return self.wf_module.user_authorized_read(user)
+    def request_authorized_read(self, request):
+        return self.wf_module.request_authorized_read(request)
 
-    def user_authorized_write(self, user):
-        return self.wf_module.user_authorized_write(user)
+    def request_authorized_write(self, request):
+        return self.wf_module.request_authorized_write(request)
 
     # Return selected menu item index. Insensitive to menu item text, either in config json or at runtime.
     def selected_menu_item_idx(self):
@@ -158,7 +163,10 @@ class ParameterVal(models.Model):
     def get_secret(self):
         ptype = self.parameter_spec.type
         if ptype == ParameterSpec.SECRET:
-            return json.loads(self.value)['secret']
+            if self.value:
+                return json.loads(self.value)['secret']
+            else:
+                return None
 
 
     def __str__(self):

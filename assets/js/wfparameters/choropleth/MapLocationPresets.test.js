@@ -1,5 +1,5 @@
 import React from 'react'
-import MapLocationPresets, {mockAPI} from './MapLocationPresets'
+import MapLocationPresets from './MapLocationPresets'
 import {mount, shallow} from 'enzyme'
 import GJV from 'geojson-validation'
 
@@ -10,17 +10,16 @@ describe('MapLocationPresets rendering and interactions', () => {
     const PARAM_ID = 11;
     const PARAM_NAME = 'Presets';
 
-    var api = undefined;
+    var api;
 
     beforeEach(() => {
         api = {
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve())
         };
-        mockAPI(api);
     });
 
     it('Renders the select widgets with presets and selects "select" if parameter is empty', () => {
-        let tree = shallow(<MapLocationPresets paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
+        let tree = shallow(<MapLocationPresets api={api} paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
 
         expect(tree.find('select')).toHaveLength(1);
         expect(tree.find('select').prop('value')).toEqual('select');
@@ -43,7 +42,7 @@ describe('MapLocationPresets rendering and interactions', () => {
         let tree = shallow(
             <MapLocationPresets
                 paramData={JSON.stringify({preset: 'us-states', geojson: {}})}
-                paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>
+                paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false} api={api}/>
         );
 
         expect(tree.find('select')).toHaveLength(1);
@@ -51,7 +50,7 @@ describe('MapLocationPresets rendering and interactions', () => {
     });
 
     it('Updates the server with proper GeoJSON upon selecting a preset', async () => {
-        let tree = mount(<MapLocationPresets paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
+        let tree = mount(<MapLocationPresets api={api} paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
 
         expect(tree.find('select')).toHaveLength(1);
 
@@ -71,7 +70,7 @@ describe('MapLocationPresets rendering and interactions', () => {
     });
 
     it('Updates the server with empty data upon selecting "select"', async () => {
-        let tree = mount(<MapLocationPresets paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
+        let tree = mount(<MapLocationPresets api={api} paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
 
         expect(tree.find('select')).toHaveLength(1);
 
@@ -86,11 +85,11 @@ describe('MapLocationPresets rendering and interactions', () => {
     });
 
     it('Respects the isReadOnlySetting', () => {
-        let readOnlyTree = mount(<MapLocationPresets paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={true}/>);
+        let readOnlyTree = mount(<MapLocationPresets api={api} paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={true}/>);
         expect(readOnlyTree.find('select')).toHaveLength(1);
         expect(readOnlyTree.find('select').prop('disabled')).toBe(true);
 
-        let modifiableTree = mount(<MapLocationPresets paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
+        let modifiableTree = mount(<MapLocationPresets api={api} paramData={''} paramId={PARAM_ID} name={PARAM_NAME} isReadOnly={false}/>);
         expect(modifiableTree.find('select')).toHaveLength(1);
         expect(modifiableTree.find('select').prop('disabled')).toBe(false);
     });

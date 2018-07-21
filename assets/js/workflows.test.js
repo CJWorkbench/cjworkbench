@@ -125,7 +125,7 @@ describe('Workflow list page', () => {
       newButton.first().simulate('click');
 
       setImmediate(() => {
-        expect(api.newWorkflow).toHaveBeenCalledWith('New Workflow')
+        expect(api.newWorkflow).toHaveBeenCalled()
         expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/543')
         done()
       })

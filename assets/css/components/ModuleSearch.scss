@@ -82,14 +82,15 @@
   }
 
   .module-search-result-groups {
-    max-height: 40rem;
+    max-height: 38rem;
     background-color: $white;
     overflow-x: hidden;
     overflow-y: auto;
   }
 
-  .module-search-result-group + .module-search-result-group {
+  .module-search-result-group  {
     border-top: 1px solid $dark-accent--soft;
+    margin-bottom: 1.5rem;
   }
 
   h4, .module-search-result {
@@ -101,7 +102,10 @@
   }
 
   h4 {
+    @extend .info-2;
     color: $light-gray;
+    margin-top: 1rem;
+    text-transform: uppercase;
   }
 
   .module-search-result {

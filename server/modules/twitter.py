@@ -1,10 +1,11 @@
 import tweepy
 from tweepy import TweepError
 import pandas as pd
-import os, re
+import re
 from .moduleimpl import ModuleImpl
+from .types import ProcessResult
 from server import oauth
-from server.versions import save_fetched_table_if_changed
+from django.utils.translation import gettext as _
 
 # ---- Twitter import module ----
 
@@ -24,7 +25,8 @@ class Twitter(ModuleImpl):
     @staticmethod
     def get_new_tweets(access_token, querytype, query, old_tweets):
         service = oauth.OAuthService.lookup_or_none('twitter_credentials')
-        if not service: raise Exception('credentials not set: user must log in to Twitter')
+        if not service:
+            raise Exception('Twitter connection misconfigured')
 
         auth = tweepy.OAuthHandler(service.consumer_key,
                                    service.consumer_secret)
@@ -71,27 +73,30 @@ class Twitter(ModuleImpl):
         tweets = [[getattr(t, x) for x in cols] for t in statuses]
         table = pd.DataFrame(tweets, columns=cols)
         table.insert(0, 'screen_name', [t.user.screen_name for t in statuses])
-        table.rename(columns={'full_text':'text'}, inplace=True)  # 280 chars should still be called 'text', meh
+        # 280 chars should still be called 'text', meh
+        table.rename(columns={'full_text': 'text'}, inplace=True)
         return table
-
 
     # Combine this set of tweets with previous set of tweets
     def merge_tweets(wf_module, new_table):
         old_table = Twitter.get_stored_tweets(wf_module)
         if old_table is not None:
-            new_table = pd.concat([new_table,old_table]).sort_values('id',ascending=False).reset_index(drop=True)
+            new_table = pd.concat([new_table, old_table]) \
+                    .sort_values('id', ascending=False) \
+                    .reset_index(drop=True)
         return new_table
 
     # Render just returns previously retrieved tweets
     @staticmethod
     def render(wf_module, table):
-        return Twitter.get_stored_tweets(wf_module)
-
+        return ProcessResult(
+            dataframe=Twitter.get_stored_tweets(wf_module),
+            error=wf_module.error_msg
+        )
 
     # Load specified user's timeline
     @staticmethod
-    def event(wfm, event=None, **kwargs):
-        table = None
+    def event(wfm, **kwargs):
         param_names = {
             Twitter.QUERY_TYPE_USER: 'username',
             Twitter.QUERY_TYPE_SEARCH: 'query',
@@ -110,37 +115,44 @@ class Twitter(ModuleImpl):
             wfm.set_error('Please sign in to Twitter')
             return
 
-        # fetching could take a while so notify clients/users that we're working on it
+        # fetching could take a while so notify clients/users we're working
         wfm.set_busy(notify=True)
 
         try:
-
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = Twitter.get_stored_tweets(wfm)
-                tweets = Twitter.get_new_tweets(access_token, querytype, query, old_tweets)
+                tweets = Twitter.get_new_tweets(access_token, querytype, query,
+                                                old_tweets)
                 tweets = Twitter.merge_tweets(wfm, tweets)
             else:
-                tweets = Twitter.get_new_tweets(access_token, querytype, query, None)
+                tweets = Twitter.get_new_tweets(access_token, querytype, query,
+                                                None)
 
         except TweepError as e:
             if e.response:
-                if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==401:
-                    wfm.set_error('User %s\'s tweets are protected' % query)
+                if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code == 401:
+                    wfm.set_error(_('User %s\'s tweets are protected') % query)
                     return
-                elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==404:
-                    wfm.set_error('User %s does not exist' % query)
+                elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code == 404:
+                    wfm.set_error(_('User %s does not exist') % query)
+                    return
+                elif e.response.status_code == 429:
+                    wfm.set_error(_('Twitter API rate limit exceeded. Please wait a few minutes and try again.'))
                     return
                 else:
-                    wfm.set_error('HTTP error %s fetching tweets' % str(e.response.status_code))
+                    wfm.set_error(_('HTTP error %s fetching tweets' % str(e.response.status_code)))
                     return
             else:
-                wfm.set_error('Error fetching tweets: ' + str(e))
+                wfm.set_error(_('Error fetching tweets: ' + str(e)))
                 return
 
         except Exception as e:
-            wfm.set_error('Error fetching tweets: ' + str(e))
+            wfm.set_error(_('Error fetching tweets: ' + str(e)))
             return
 
+        result = ProcessResult(dataframe=tweets)
 
-        if wfm.status != wfm.ERROR:
-            save_fetched_table_if_changed(wfm, tweets, '')
+        result.truncate_in_place_if_too_big()
+        result.sanitize_in_place()
+
+        ModuleImpl.commit_result(wfm, result)

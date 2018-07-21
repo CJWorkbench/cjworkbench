@@ -52,6 +52,7 @@
 
     .LS-toggle--link,
     .WF-toggle--link {
+      text-transform: uppercase;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -73,7 +74,7 @@
       }
 
       .LS-link--under{
-        width:7rem;
+        width:8.5rem;
       }
     }
   }
@@ -129,7 +130,7 @@
 
   .editable-title--container{
     margin-right: 3.5rem;
-    min-width: 32rem;
+    min-width: 90%;
   }
   .title-metadata-stack {
     flex-grow: 1;
@@ -209,14 +210,17 @@
 //// Readonly signout navbar
 
 .nav--link {
+  @extend .content-3;
+  text-transform: uppercase;
+  font-size: 1.4rem;
   cursor: pointer;
   margin-right: 5rem;
-  width:5rem;
-}
+  color:$white;
 
-.nav--link:hover{
-  text-decoration: underline;
-  color: #fff;
+  &:hover {
+    text-decoration: underline;
+    color: #fff;
+  }
 }
 
 

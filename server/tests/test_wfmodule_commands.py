@@ -40,7 +40,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo! undo! ahhhhh everything is on fire! undo!
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.first(), existing_module)
+        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
 
         # wait no, we wanted that module
         cmd.forward()
@@ -53,7 +53,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # Undo and test deleting the un-applied command. Should delete dangling WfModule too
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.first(), existing_module)
+        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
         cmd.delete()
         self.assertFalse(WfModule.objects.filter(pk=added_module.id).exists()) # should be gone
 
@@ -129,7 +129,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.first(), existing_module)
+        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
 
         # nevermind, redo
         cmd.forward()
@@ -147,7 +147,7 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertEqual(all_modules.count(), 1)
         existing_module = WfModule.objects.first()
 
-        self.workflow.selected_wf_module = existing_module.id
+        self.workflow.selected_wf_module = 0
         self.workflow.save()
 
         cmd = DeleteModuleCommand.create(existing_module)
@@ -157,7 +157,7 @@ class AddDeleteModuleCommandTests(TestCase):
 
         cmd.backward()
         self.workflow.refresh_from_db()
-        self.assertEqual(self.workflow.selected_wf_module, existing_module.id)
+        self.assertEqual(self.workflow.selected_wf_module, 0)
 
 
     # ensure that adding a module, selecting it, then undo add, prevents dangling selected_wf_module
@@ -169,13 +169,13 @@ class AddDeleteModuleCommandTests(TestCase):
 
         cmd = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=1)
 
-        self.workflow.selected_wf_module = cmd.wf_module.id
+        self.workflow.selected_wf_module = cmd.wf_module.order
         self.workflow.save()
 
         cmd.backward()
 
         self.workflow.refresh_from_db()
-        self.assertEqual(self.workflow.selected_wf_module, None)
+        self.assertIsNone(self.workflow.selected_wf_module)
 
 
     # We had a bug where add then delete caused an error when deleting workflow,

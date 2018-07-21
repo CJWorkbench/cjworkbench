@@ -1,73 +1,79 @@
 // UI for a single module within a workflow
 
 import React from 'react'
+import DataVersionModal from '../DataVersionModal'
 import WfParameter from '../WfParameter'
 import WfModuleContextMenu from '../WfModuleContextMenu'
 import EditableNotes from '../EditableNotes'
 import StatusBar from './StatusBar'
 import StatusLine from './StatusLine'
 import {
-  store,
   setWfModuleCollapsedAction,
-  updateWfModuleAction,
   clearNotificationsAction,
   setSelectedWfModuleAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
+import { createSelector } from 'reselect'
 
 
 // ---- WfModule ----
 export class WfModule extends React.PureComponent {
+  static propTypes = {
+    isReadOnly:         PropTypes.bool.isRequired,
+    isAnonymous:        PropTypes.bool.isRequired,
+    isZenMode:          PropTypes.bool.isRequired,
+    index:              PropTypes.number.isRequired,
+    wfModule:           PropTypes.object,
+    selected:           PropTypes.bool,
+    changeParam:        PropTypes.func,
+    removeModule:       PropTypes.func,
+    api:                PropTypes.object.isRequired,
+    onDragStart:        PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
+    onDragEnd:          PropTypes.func.isRequired, // func() => undefined
+    focusModule:        PropTypes.func,
+    isLessonHighlight: PropTypes.bool.isRequired,
+    isLessonHighlightNotes: PropTypes.bool.isRequired,
+    isLessonHighlightCollapse: PropTypes.bool.isRequired,
+    revision:           PropTypes.number.isRequired,
+    fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
+    clearNotifications: PropTypes.func.isRequired, // func() => undefined
+    setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
+    setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
+    setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
+  }
+
   constructor(props) {
     super(props);
 
-    this.click = this.click.bind(this);
     this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
     this.getParamMenuItems = this.getParamMenuItems.bind(this);
     this.removeModule = this.removeModule.bind(this);
-    this.setNotifications = this.setNotifications.bind(this);
-    this.setClickNotification = this.setClickNotification.bind(this);
-    this.onClickNotification = this.onClickNotification.bind(this);
     this.setModuleRef = this.setModuleRef.bind(this);
     this.moduleRef = null;
     this.notesInputRef = React.createRef();
 
     this.state = {
-      isCollapsed: this.props.wfModule.is_collapsed,
       notes: this.props.wfModule.notes || '',
       isNoteForcedVisible: false,
-      notifications: this.props.wfModule.notifications,
-      notification_count: this.props.wfModule.notification_count,
+      isDataVersionModalOpen: false,
       isDragging: false,
     }
-  }
-
-  // pass a function to all wf_parameters to allow them to overload
-  // the function that runs when a user clicks on the notification
-  // icon
-  setClickNotification(cb) {
-    this.clickNotification = cb;
   }
 
   clickNotification() {
     return false;
   }
 
-  onClickNotification() {
-    store.dispatch(clearNotificationsAction(this.props.wfModule.id));
-    this.clickNotification();
-  }
+  onClickNotification = () => {
+    this.props.clearNotifications(this.props.wfModule.id)
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.wfModule.is_collapsed !== this.state.isCollapsed) {
-      this.setState({
-        isCollapsed: newProps.wfModule.is_collapsed
-      })
-    }
+    this.setState({
+      isDataVersionModalOpen: true,
+    })
   }
 
   // Scroll when we create a new wfmodule
@@ -78,8 +84,8 @@ export class WfModule extends React.PureComponent {
   }
 
   // We become the selected module on any click
-  click(e) {
-    store.dispatch(setSelectedWfModuleAction(this.props.wfModule.id));
+  click = (e) => {
+    this.props.setSelectedWfModule(this.props.index);
   }
 
   changeParam(id, payload) {
@@ -163,15 +169,7 @@ export class WfModule extends React.PureComponent {
   // Optimistically updates the state, and then sends the new state to the server,
   // where it's persisted across sessions and through time.
   setCollapsed(isCollapsed) {
-    this.setState({
-      isCollapsed,
-    })
-
-    store.dispatch(setWfModuleCollapsedAction(
-      this.props.wfModule.id,
-      isCollapsed,
-      this.props.isReadOnly
-    ))
+    this.props.setWfModuleCollapsed(this.props.wfModule.id, isCollapsed, this.props.isReadOnly)
   }
 
   collapse = () => {
@@ -212,16 +210,36 @@ export class WfModule extends React.PureComponent {
     this.setState({ notes: this.props.wfModule.notes });
   }
 
-  setNotifications() {
-    store.dispatch(
-      updateWfModuleAction(
-        this.props.wfModule.id,
-        { notifications: !this.props.wfModule.notifications }
-    ));
+  onCloseDataVersionModal = () => {
+    this.setState({
+      isDataVersionModalOpen: false,
+    })
   }
 
   setModuleRef(ref) {
     this.moduleRef = ref;
+  }
+
+  onChangeIsZenMode = (ev) => {
+    this.props.setZenMode(this.props.wfModule.id, ev.target.checked)
+  }
+
+  renderZenModeButton() {
+    const { wfModule, isZenMode } = this.props
+    const module = wfModule.module_version.module
+    const zenModeAllowed = module.id_name === 'pythoncode'
+
+    if (!zenModeAllowed) return null
+
+    let className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
+    let title = isZenMode ? 'exit Zen mode' : 'enter Zen mode'
+
+    return (
+      <label className={className}>
+        <input type="checkbox" name="zen-mode" checked={isZenMode} onChange={this.onChangeIsZenMode} />
+        <i className='icon-full-screen'></i>
+      </label>
+    )
   }
 
   render() {
@@ -241,6 +259,8 @@ export class WfModule extends React.PureComponent {
           api={this.props.api}
           moduleName={module.name}
           isReadOnly={this.props.isReadOnly}
+          isZenMode={this.props.isZenMode}
+          wfModuleError={wfModule.error_msg}
           key={i}
           p={ps}
           changeParam={this.changeParam}
@@ -251,9 +271,6 @@ export class WfModule extends React.PureComponent {
           getParamText={this.getParamText}
           getParamMenuItems={this.getParamMenuItems}
           setParamText={this.setParamText}
-          setClickNotification={this.setClickNotification}
-          notifications={wfModule.notifications}
-          loggedInUser={this.props.user}
         />)
       });
 
@@ -272,7 +289,23 @@ export class WfModule extends React.PureComponent {
       </div>
     );
 
-    let helpIcon;
+    let alertButton
+    if (this.props.fetchModuleExists && !this.props.isReadOnly && !this.props.isAnonymous) {
+      const notifications = this.props.wfModule.notifications
+      const hasUnseen = this.props.wfModule.has_unseen_notification
+      let className = 'notifications'
+      if (notifications) className += ' enabled'
+      if (hasUnseen) className += ' has-unseen'
+      const title = notifications ? 'Email alerts enabled' : 'Email alerts disabled'
+
+      alertButton = (
+        <button title={title} className={className} onClick={this.onClickNotification}>
+          <i className={` ${hasUnseen ? 'icon-notification-filled' : 'icon-notification'}`}></i>
+        </button>
+      );
+    }
+
+    let helpIcon
     if (!this.props.isReadOnly) {
       helpIcon = (
         <a title='Help for this module' className='help-button' href={module.help_url} target='_blank'>
@@ -281,7 +314,7 @@ export class WfModule extends React.PureComponent {
       );
     }
 
-    let notesIcon;
+    let notesIcon
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
@@ -309,15 +342,8 @@ export class WfModule extends React.PureComponent {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     const contextBtns =
         <div className='context-buttons'>
-          {wfModule.notifications &&
-          <button
-            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active action-link' : '' )}
-            onClick={this.onClickNotification}
-            >
-            <i className="icon-notification"></i>
-            { wfModule.notification_count > 0 && <span className="count">{wfModule.notification_count}</span> }
-          </button>
-          }
+          {this.renderZenModeButton()}
+          {alertButton}
           {helpIcon}
           {notesIcon}
           {contextMenu}
@@ -325,9 +351,24 @@ export class WfModule extends React.PureComponent {
 
     const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon';
 
+    let maybeDataVersionModal = null
+    if (this.state.isDataVersionModalOpen) {
+      maybeDataVersionModal = (
+        <DataVersionModal
+          wfModuleId={wfModule.id}
+          onClose={this.onCloseDataVersionModal}
+          />
+      )
+    }
+
+    let className = 'wf-module'
+    className += wfModule.is_collapsed ? ' collapsed' : ' expanded'
+    if (this.props.isLessonHighlight) className += ' lesson-highlight'
+    if (this.props.isZenMode) className += ' zen-mode'
+
     // Putting it all together: name, status, parameters, output
     return (
-      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '') + (this.state.isCollapsed ? ' collapsed' : ' expanded')} data-module-name={module.name}>
+      <div onClick={this.click} className={className} data-module-name={module.name}>
         {notes}
         <div className={'wf-card '+ (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
@@ -338,7 +379,7 @@ export class WfModule extends React.PureComponent {
             <div className='module-content'>
               <div className='module-card-header'>
                 <WfModuleCollapseButton
-                  isCollapsed={this.state.isCollapsed}
+                  isCollapsed={wfModule.is_collapsed}
                   isLessonHighlight={this.props.isLessonHighlightCollapse}
                   onCollapse={this.collapse}
                   onExpand={this.expand}
@@ -353,33 +394,12 @@ export class WfModule extends React.PureComponent {
                 {paramdivs}
               </div>
             </div>
-            <div className={
-              'drop-alert ' +
-              ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.dragItem) ? 'active ' : '' ) +
-              ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.isOver) ? 'over ' : '')
-              } />
-
           </div>
         </div>
+        {maybeDataVersionModal}
       </div>
-    ) || null;
+    )
   }
-}
-WfModule.propTypes = {
-  isReadOnly:         PropTypes.bool.isRequired,
-  index:              PropTypes.number.isRequired,
-  wfModule:           PropTypes.object,
-  revison:            PropTypes.number,
-  selected:           PropTypes.bool,
-  changeParam:        PropTypes.func,
-  removeModule:       PropTypes.func,
-  api:                PropTypes.object.isRequired,
-  onDragStart:        PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
-  onDragEnd:          PropTypes.func.isRequired, // func() => undefined
-  focusModule:        PropTypes.func,
-  isLessonHighlight: PropTypes.bool.isRequired,
-  isLessonHighlightNotes: PropTypes.bool.isRequired,
-  isLessonHighlightCollapse: PropTypes.bool.isRequired,
 }
 
 class WfModuleCollapseButton extends React.PureComponent {
@@ -393,7 +413,7 @@ class WfModuleCollapseButton extends React.PureComponent {
   render() {
     const { isCollapsed, isLessonHighlight, onCollapse, onExpand } = this.props
 
-    const iconClass = isCollapsed ? 'icon-sort-right' : 'icon-sort-down'
+    const iconClass = isCollapsed ? 'icon-caret-right' : 'icon-caret-down'
     const onClick = isCollapsed ? onExpand : onCollapse
     const name = isCollapsed ? 'expand module' : 'collapse module'
     const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''
@@ -415,18 +435,47 @@ function propsToModuleName(props) {
   )
 }
 
+const getWorkflow = ({ workflow }) => workflow
+/**
+ * Find first WfModule that has a `.loads_data` ModuleVersion.
+ */
+const hasFetchWfModule = createSelector([ getWorkflow ], (workflow) => {
+  return (workflow.wf_modules || []).some(wfModule => {
+    return wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.loads_data
+  })
+})
+
 function mapStateToProps(state, ownProps) {
   const { testHighlight } = lessonSelector(state)
+  const { index } = ownProps
   const moduleName = propsToModuleName(ownProps)
   return {
-    isLessonHighlight: testHighlight({ type: 'WfModule', moduleName }),
-    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', moduleName }),
-    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', moduleName }),
+    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
+    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),
+    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
+    isReadOnly: state.workflow.read_only,
+    isAnonymous: state.workflow.is_anonymous,
+    fetchModuleExists: hasFetchWfModule(state),
   }
 }
 
-// TODO replace "store.dispatch" with mapDispatchToProps()
+function mapDispatchToProps(dispatch) {
+  return {
+    clearNotifications(wfModuleId) {
+      dispatch(clearNotificationsAction(wfModuleId));
+    },
+
+    setSelectedWfModule(index) {
+      dispatch(setSelectedWfModuleAction(index));
+    },
+
+    setWfModuleCollapsed(wfModuleId, isCollapsed, isReadOnly) {
+      dispatch(setWfModuleCollapsedAction(wfModuleId, isCollapsed, isReadOnly));
+    },
+  }
+}
 
 export default connect(
   mapStateToProps,
+  mapDispatchToProps
 )(WfModule)

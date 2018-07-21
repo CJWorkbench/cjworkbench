@@ -1,68 +1,49 @@
+/* global describe, it, expect */
 import React from 'react'
 import { shallow } from 'enzyme'
-import OutputPane from './OutputPane'
-import { jsonResponseMock } from './test-utils'
-import {OutputIframe} from "./OutputIframe";
-
+import { OutputPane } from './OutputPane'
+import OutputIframe from './OutputIframe'
 
 describe('OutputPane', () => {
+  const wrapper = function (extraProps = {}) {
+    return shallow(
+      <OutputPane
+        api={{}}
+        workflowId={123}
+        revision={1}
+        selectedWfModuleId={987}
+        isPublic={false}
+        isReadOnly={false}
+        htmlOutput={false}
+        showColumnLetter={false}
+        {...extraProps}
+      />
+    )
+  }
 
-  it('Renders', () => {
-    var testData = {
-      total_rows: 2,
-      start_row: 0,
-      end_row: 2,
-      columns: ["a", "b", "c"],
-      rows: [
-        {
-          "a": "1",
-          "b": "2",
-          "c": "3"
-        },
-        {
-          "a": "4",
-          "b": "5",
-          "c": "6"
-        }
-      ]
-    };
+  it('matches snapshot', () => {
+    const w = wrapper()
+    expect(w).toMatchSnapshot()
+  })
 
-    var api = {
-      render: jsonResponseMock(testData),
-    };
+  it('renders a TableView', () => {
+    const w = wrapper()
+    expect(w.find('TableView')).toHaveLength(1)
+  })
 
-    const tree = shallow(
-          <OutputPane id={100} revision={1} api={api}/>
-    );
+  it('does not render an iframe, normally', () => {
+    const w = wrapper()
+    expect(w.find(OutputIframe)).toHaveLength(0)
+  })
 
-    expect(tree).toMatchSnapshot();
-    expect(tree.find('TableView')).toHaveLength(1);
-  });
+  it('renders when no module id', () => {
+    const w = wrapper({ selectedWfModuleId: null })
+    expect(w).toMatchSnapshot()
+    expect(w.find('TableView')).toHaveLength(1)
+  })
 
-  it('Renders when no module id', () => {
-    const tree = shallow(
-            <OutputPane id={undefined} revision={1} api={{}}/>
-    );
-
-    expect(tree.find('TableView')).toHaveLength(1);
-    expect(tree).toMatchSnapshot();
-  });
-
-  it('Iframe when htmloutput set', () => {
-    const tree = shallow(
-          <OutputPane
-            id={undefined}
-            workflow={{id:777,public:true,read_only:false}}
-            selectedWfModuleId={999}
-            revision={1}
-            htmlOutput={true}
-            api={{}}/>
-    );
-
-    expect(tree.find('OutputIframe')).toHaveLength(1);
-    expect(tree).toMatchSnapshot();
-  });
-
-});
-
-
+  it('renders an iframe when htmlOutput', () => {
+    const w = wrapper({ htmlOutput: true })
+    expect(w.find(OutputIframe)).toHaveLength(1)
+  })
+})

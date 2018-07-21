@@ -1,11 +1,12 @@
 # --- Dataframe sanitization and truncation ---
 import pandas as pd
-from django.conf import settings
 
 # convert numbers to string, replacing NaN with '' (naive conversion results in 'Nan' string cells)
 def safe_column_to_string(col):
     def string_or_null(val):
-        if pd.isnull(val):
+        if isinstance(val, list) or isinstance(val, dict):
+            return str(val)
+        elif pd.isnull(val):  # this expression won't work on containers
             return ''
         else:
             return str(val)
@@ -52,8 +53,15 @@ def sanitize_dataframe(table):
     return table
 
 
-# Limit table to maximum allowable number of rows. Returns true if we clipped it down
 def truncate_table_if_too_big(df):
+    """
+    Limit table size to max allowed number of rows.
+
+    Return whether we modified the table.
+    """
+    # Import here, so that the pythoncode module does not need to import django
+    from django.conf import settings
+
     nrows = len(df)
     if nrows > settings.MAX_ROWS_PER_TABLE:
         df.drop(range(settings.MAX_ROWS_PER_TABLE, nrows), inplace=True)

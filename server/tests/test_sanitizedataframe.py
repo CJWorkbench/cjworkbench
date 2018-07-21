@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.test import TestCase
 from server.sanitizedataframe import *
 from pandas.util import hash_pandas_object
@@ -35,6 +36,19 @@ class SantizeDataframeTestCase(TestCase):
         sanitize_dataframe(mv_table)
         numempty = sum(mv_table['recording_date'].apply(lambda x: x==''))
         self.assertTrue(numempty > 0)
+
+
+    def test_lists_and_dicts(self):
+        # By assigning through Series it is possible to store lists and dicts in a DataFrame.
+        # True fact. Fucks people up. But not us.
+        t = pd.DataFrame([[1, 2, 3],[4,5,6]], columns=['a','b','c'])
+        s = pd.Series([None, None])
+        s[0] = [5,6,7]
+        s[1] = {8:9}
+        t['s']=s
+        sanitize_dataframe(t)
+        self.assertEqual(t['s'][0], '[5, 6, 7]')
+        self.assertEqual(t['s'][1], '{8: 9}')
 
 
     def test_duplicate_colnames(self):

@@ -1,10 +1,11 @@
-import {addCellEdit, mockAPI } from "./EditCells";
-import {mockStore, mockAPI as mockStoreApi} from './workflow-reducer'
-import { jsonResponseMock } from './test-utils'
+import { addCellEdit } from "./EditCells"
+
+jest.mock('./workflow-reducer')
+import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from './workflow-reducer'
 
 describe('Edit Cell actions', () => {
-
-  var store, api;
+  const Edit1 = { row: 3, col: 'foo', value: 'bar' }
+  const Edit2 = { row: 10, col: 'bar', value: 'yippee!' }
 
   // Stripped down workflow object, only what we need for testing cell editing
   const test_workflow = {
@@ -30,7 +31,7 @@ describe('Edit Cell actions', () => {
           {
             id: 101,
             parameter_spec: { id_name: 'celledits' },
-            value: '[{ "row":3, "col":"foo", "value":"bar" }]'
+            value: JSON.stringify([ Edit1 ]),
           }
         ]
       },
@@ -51,10 +52,10 @@ describe('Edit Cell actions', () => {
         }
       },
     ],
-  };
+  }
 
   // mocked data from api.addModule call, looks like a just-added edit cells module
-  const addModuleReponse = {
+  const addModuleResponse = {
     id: 99,
     module_version : {
       module : {
@@ -68,86 +69,61 @@ describe('Edit Cell actions', () => {
         value: ''
       }
     ]
-  };
+  }
 
   const initialState = {
     workflow: test_workflow,
     editCellsModuleId: 5000
-  };
+  }
 
-  // Mocks store and api
   beforeEach(() => {
-    api = {
-      onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
-      addModule: jsonResponseMock(addModuleReponse),
-      setSelectedWfModule: jest.fn().mockReturnValue(Promise.resolve())
-    };
-    // This is a code smell
-    mockAPI(api);
-    mockStoreApi(api);
+    store.getState.mockImplementation(() => initialState)
+    // Our shim Redux API:
+    // 1) actions are functions; dispatch returns their retvals in a Promise.
+    //    This is useful when we care about retvals.
+    // 2) actions are _not_ functions; dispatch does nothing. This is useful when
+    //    we care about arguments.
+    store.dispatch.mockImplementation(action => {
+      if (typeof action === 'function') {
+        return Promise.resolve({ value: action() })
+      }
+    })
 
-    store = {
-      getState: () => initialState,
-      dispatch: jest.fn()
-    };
-    mockStore(store);
-  });
+    setParamValueAction.mockImplementation((...args) => [ 'setParamValueAction', ...args ])
+    setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
+  })
 
+  it('adds edit to existing Edit Cell module', () => {
+    addCellEdit(20, Edit2)
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
+  })
 
-  it('Add edit to existing Edit Cell module', () => {
-      addCellEdit(20, {row: 10, col:'bar', 'value':'yippee!'});
+  it('selects the Edit Cell module it is editing', () => {
+    addCellEdit(20, Edit2)
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 1 ])
+  })
 
-      expect(api.onParamChanged.mock.calls).toHaveLength(1);
-      expect(api.onParamChanged.mock.calls[0][0]).toBe(101);
-      expect(api.onParamChanged.mock.calls[0][1]).toEqual(
-        { value: '[{"row":3,"col":"foo","value":"bar"},{"row":10,"col":"bar","value":"yippee!"}]' } );
-  });
+  it('adds edit to immediately-following Edit Cell module', () => {
+    addCellEdit(10, Edit2)
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
+  })
 
-    it('Add edit to immediately following Edit Cell module', () => {
-      addCellEdit(10, {row: 10, col:'bar', 'value':'yippee!'});
+  it('adds new Edit Cells module before end of stack', (done) => {
+    addModuleAction.mockImplementation(() => () => addModuleResponse)
+    addCellEdit(30, Edit2)
 
-      expect(api.onParamChanged.mock.calls).toHaveLength(1);
-      expect(api.onParamChanged.mock.calls[0][0]).toBe(101);
-      expect(api.onParamChanged.mock.calls[0][1]).toEqual(
-        { value: '[{"row":3,"col":"foo","value":"bar"},{"row":10,"col":"bar","value":"yippee!"}]' } );
-  });
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.editCellsModuleId, 3)
 
-  it('Add new Edit Cells module before end of stack', (done) => {
-      addCellEdit(30, {row: 10, col:'bar', 'value':'yippee!'});
+    // let addModule promise resolve
+    setImmediate(() => {
+      expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 999, JSON.stringify([ Edit2 ]) ])
+      done()
+    })
+  })
 
-      expect(api.addModule.mock.calls).toHaveLength(1);
-      expect(api.addModule.mock.calls[0][1]).toEqual(initialState.editCellsModuleId);
-      expect(api.addModule.mock.calls[0][2]).toEqual(3); // insert before this module
-
-      // let addModule promise resolve
-      setImmediate( () => {
-        expect(api.onParamChanged.mock.calls).toHaveLength(1);
-        expect(api.onParamChanged.mock.calls[0][0]).toBe(999);
-        expect(api.onParamChanged.mock.calls[0][1]).toEqual(
-           { value: '[{"row":10,"col":"bar","value":"yippee!"}]' } );
-        done();
-      })
-  });
-
-  it('Add new Edit Cells module at end of stack', (done) => {
-      addCellEdit(40, {row: 10, col:'bar', 'value':'yippee!'});
-
-      expect(api.addModule.mock.calls).toHaveLength(1);
-      expect(api.addModule.mock.calls[0][1]).toEqual(initialState.editCellsModuleId);
-      expect(api.addModule.mock.calls[0][2]).toEqual(4); // insert before this module == end of stack
-
-      // let addModule promise resolve
-      setImmediate( () => {
-        expect(api.onParamChanged.mock.calls).toHaveLength(1);
-        expect(api.onParamChanged.mock.calls[0][0]).toBe(999);
-        expect(api.onParamChanged.mock.calls[0][1]).toEqual(
-           { value: '[{"row":10,"col":"bar","value":"yippee!"}]' } );
-        done();
-      })
-  });
-
-});
-
-
-
-
+  it('add new Edit Cells module to end of stack', () => {
+    addModuleAction.mockImplementation(() => () => addModuleResponse)
+    addCellEdit(40, {row: 10, col:'bar', 'value':'yippee!'})
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.editCellsModuleId, 4)
+  })
+})

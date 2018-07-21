@@ -6,6 +6,20 @@ import { updateWfModuleAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 
 export class UpdateFrequencySelect extends React.PureComponent {
+  static propTypes = {
+    wfModuleId: PropTypes.number.isRequired,
+    isAnonymous: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
+    settings: PropTypes.shape({
+      isAutoUpdate: PropTypes.bool.isRequired,
+      isEmailUpdates: PropTypes.bool.isRequired,
+      timeNumber: PropTypes.number.isRequired,
+      timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
+    }).isRequired,
+    updateSettings: PropTypes.func.isRequired, // func({ isAutoUpdate, isEmailUpdates, timeNumber, timeUnit }) -> undefined
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +30,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
   onOpenModal = (ev) => {
     if (ev && ev.preventDefault) ev.preventDefault() // <a> => do not change URL
     if (this.props.isReadOnly) return
+    if (this.props.isAnonymous) return
 
     this.setState({
       isModalOpen: true,
@@ -43,7 +58,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
       </div>
     ) : null
 
-    const autoOrManual = this.props.settings.isAutoUpdate ? 'auto' : 'manual'
+    const autoOrManual = this.props.settings.isAutoUpdate ? 'Auto' : 'Manual'
 
     const maybeModal = this.state.isModalOpen ? (
         <UpdateFrequencySelectModal
@@ -64,19 +79,6 @@ export class UpdateFrequencySelect extends React.PureComponent {
       </div>
     )
   }
-
-}
-
-UpdateFrequencySelect.propTypes = {
-  wfModuleId: PropTypes.number.isRequired,
-  lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
-  settings: PropTypes.shape({
-    isAutoUpdate: PropTypes.bool.isRequired,
-    isEmailUpdates: PropTypes.bool.isRequired,
-    timeNumber: PropTypes.number.isRequired,
-    timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
-  }).isRequired,
-  updateSettings: PropTypes.func.isRequired, // func({ isAutoUpdate, isEmailUpdates, timeNumber, timeUnit }) -> undefined
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -90,6 +92,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     lastCheckDate,
+    isReadOnly: workflow.read_only,
+    isAnonymous: workflow.is_anonymous,
     settings: {
       isAutoUpdate: wfModule.auto_update_data || false,
       isEmailUpdates: wfModule.notifications || false,

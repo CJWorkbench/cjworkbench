@@ -13,7 +13,8 @@
   .outputpane-iframe {
     flex: 0 0 auto;
     width:100%;
-    height: calc(50% - 3rem);
+    height: 100%; // OutputIframe.js will override this ...
+    max-height: calc(50% - 3rem); // ... and this is the max
     position:relative;
     iframe {
       border:none;
@@ -25,11 +26,11 @@
     }
     .outputpane-iframe-control-overlay {
       position: absolute;
-      top:1.5rem;
       right:6rem;
       width: 4rem;
       height: 4rem;
       background-color: transparent;
+      i {color:$brand-text--dark;}
     }
     .outputpane-iframe-control-overlay .btn {
       position: absolute;
@@ -87,21 +88,30 @@
         }
       }
 
+
       .export-table {
         display: flex;
-        justify-content: center;
+        padding:0 1.5rem;
         align-items: center;
-        width:3.5rem;
         height: 3.5rem;
         border-radius: 2rem;
-        border:2px solid $table-element--light;
         color:$table-element;
         background-color: $white;
         cursor: pointer;
         &:hover{
-          border:2px solid $table-element;
+          background-color: $dark-accent--soft;
         }
         font-size: 1.5rem;
+
+        span {font-size: 1.4rem;}
+        .icon-download {
+          margin-right:1rem;
+        }
+        .feed {
+          margin-left: 1rem;
+          padding-left: 1rem;
+          border-left: .2rem solid $table-element--light;
+        }
       }
     }
     .react-grid-Cell--locked:last-of-type {
@@ -173,7 +183,7 @@
       }
     }
 
-    .react-grid-HeaderCell{
+    .react-grid-HeaderCell {
       background-color: $heading-bg;
       color:white;
       border-right:1px solid rgba(0,0,0,0.1);
@@ -236,6 +246,28 @@
           padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
           flex: 1 1 auto;
           overflow: hidden;
+          height:100%;
+        }
+
+        .column-sort-arrow {
+          position:absolute;
+          height: 3.6rem;
+          background: $heading-bg;
+          top:-.5rem;
+          right:0;
+          border-left: 1px solid $dark-accent--medium;
+        }
+
+        button {
+          flex: 0 0 auto;
+          font-size: 1.2rem;
+          margin-top:.5rem ;
+          border: 0;
+          cursor: pointer;
+          background-color: transparent;
+          color: inherit;
+          opacity: 0;
+          &:hover {opacity: 1}
         }
 
         input[name="new-column-key"] {
@@ -248,17 +280,11 @@
           flex: 1 1 auto;
           border: 0;
         }
-
-        button {
-          flex: 0 0 auto;
-          font-size: .7rem;
-          margin-top:.5rem ;
-          border: 0;
-          cursor: pointer;
-          background-color: transparent;
-          color: inherit;
-        }
       }
+    }
+
+    .react-grid-HeaderCell:hover button {
+      opacity: 0.7;
     }
 
 
@@ -366,38 +392,10 @@
     .outputpane-header{
 
       .export-table {
-        border:2px solid $table-element;
+
         color:$table-element;
-        &:hover {background-color: $brand-learn--Vlight;}
+        &:hover {background-color: $dark-accent--soft;}
       }
     }
   }
 }
-
-
-///// June 13 2018 - Pierre
-// // Table in modules (Such as Rename columns)
-// .module-content {
-//
-//   .react-grid-Grid {
-//     @extend %font-nunito-regular;
-//     font-size: 1.2rem;
-//     height: 4rem;
-//
-//   }
-//   .table-module-wrapper {
-//     resize: vertical;
-//     border-radius: 3px;
-//     max-height: 26rem;
-//     overflow: auto;
-//     overflow-x: hidden;
-//
-//     .react-grid-Main{
-//       outline:0px;
-//
-//       .react-grid-Canvas {
-//         background-color: $table-background;
-//       }
-//     }
-//   }
-// }

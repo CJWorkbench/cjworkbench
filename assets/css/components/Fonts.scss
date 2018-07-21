@@ -33,6 +33,7 @@
 	font-size: 2.5rem;
 	font-weight: 300;
 	line-height: 2.5rem;
+	@extend %font-nunito-regular;
 }
 
 .title-2 {
@@ -147,66 +148,3 @@
 	font-weight: 500;
 	line-height: 1.1rem;
 }
-
-/* --- Colors legacy, should get rid of in the code ---  */
-
-// /* Text  */
-//
-// .t-white-u {
-//   cursor:pointer;
-//   color: #FFFFFF;
-//   text-decoration: underline !important;
-// }
-//
-//
-// .t-d-gray {
-//   color: $dark-gray;
-// }
-//
-// .t-d-blue {
-//   color: #577485;
-// }
-//
-// .t-o-red {
-//   color: #e24f4a;
-// }
-// /* Backgrounds  */
-// .b-vl-gray {
-//   background-color: #FAFAFA;
-// }
-// .b-l-gray {
-//   background-color: #F2F2F2;
-// }
-// .b-m-gray {
-//   background-color: #B4B4B4;
-// }
-// .b-d-gray {
-//   background-color: #686768;
-// }
-// .b-d-blue {
-//   background-color: #577485;
-// }
-// .b-f-blue {
-//   background-color: $brand-workspace;
-// }
-// .b-orange {
-//   background-color: #F8AA6D;
-// }
-// .b-table-row {
-//   background-color: #EDF4F6;
-// }
-// .b-table-column {
-//   background-color: #E1E9EB;
-// }
-// .b-output-blue-1 {
-//   background-color: #DBECF1;
-// }
-// .b-output-blue-2 {
-//   background-color: #BFDDE4;
-// }
-// .b-output-red-1 {
-//   background-color: #F3B9B7;
-// }
-// .b-output-red-2 {
-//   background-color: #E24F4A;
-// }

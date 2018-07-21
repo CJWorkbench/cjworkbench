@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', views.wfmodule_render),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/output$', views.wfmodule_output), #TODO: These names are bad and basically backwards
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', views.wfmodule_input),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/embeddata$', views.wfmodule_embeddata),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/histogram/(?P<col>.*)', views.wfmodule_histogram),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion/read', views.wfmodule_dataversion_read),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion', views.wfmodule_dataversion),
@@ -63,9 +64,6 @@ urlpatterns = [
 
     # Embeds
     url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),
-
-    # URL endpoint to trigger internal cron jobs
-    url(r'^runcron$', views.runcron),
 
     # Preloader testing
     url(r'^preloader/$', TemplateView.as_view(template_name='preloader.html')),

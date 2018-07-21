@@ -1,7 +1,50 @@
 import * as wfr from './workflow-reducer'
-import { jsonResponseMock, genericTestModules } from './test-utils'
+import { jsonResponseMock } from './test-utils'
 
 const workflowReducer = wfr.workflowReducer;
+
+// Test module data
+export const genericTestModules = [
+  {
+    "id":1,
+    "name":"Chartbuilder",
+    "category":"Visualize",
+    "description":"Create line, column and scatter plot charts.",
+    "icon":"chart"
+  },
+  {
+    "id":2,
+    "name":"Load from Facebork",
+    "category":"Add data",
+    "description":"Import from your favorite snowshall media",
+    "icon":"url"
+  },
+  {
+    "id":3,
+    "name":"Load from Enigma",
+    "category":"Add data",
+    "description":"Connect a dataset from Enigma's collection via URL.",
+    "icon":"url"
+  },
+  {
+    "id":4,
+    "name":"Other Module 1",
+    "category":"other category",    // test modules outside the predefined categories
+    "icon":"url"
+  },
+  {
+    "id":5,
+    "name":"Other Module 2",
+    "category":"x category",
+    "icon":"url"
+  },
+  {
+    "id":6,
+    "name":"Other Module 3",
+    "category":"other category",
+    "icon":"url"
+  },
+];
 
 // Sets a specfic function for reduver mockAPI, with optional json return
 function installMockApiCall(key, response) {
@@ -18,7 +61,7 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const test_workflow = {
     id: 999,
-    selected_wf_module: 30,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
+    selected_wf_module: 2,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
     wf_modules: [
       {
         id: 10,
@@ -39,7 +82,7 @@ describe('Reducer actions', () => {
             ["2018-02-21T03:09:10.214054Z", false]
           ]
         },
-        notification_count: 2
+        has_unseen_notification: true
       },
       {
         id: 20
@@ -53,7 +96,7 @@ describe('Reducer actions', () => {
   // test state has second module selected
   const test_state = {
     workflow: test_workflow,
-    selected_wf_module: 20
+    selected_wf_module: 1
   };
 
   // many action creators reference the current store
@@ -84,6 +127,25 @@ describe('Reducer actions', () => {
     expect(state.workflow).toEqual(test_workflow);
   });
 
+  it('does not overwrite is_collapsed when reloading workflow', () => {
+    // https://www.pivotaltracker.com/story/show/158620575
+    const workflow1 = JSON.parse(JSON.stringify(test_workflow))
+    workflow1.wf_modules[1].is_collapsed = false
+    workflow1.wf_modules[2].is_collapsed = true
+
+    const workflow2 = JSON.parse(JSON.stringify(test_workflow))
+    workflow2.wf_modules[1].is_collapsed = true
+    workflow2.wf_modules[2].is_collapsed = false
+
+    const state = workflowReducer({ workflow: workflow1 }, {
+      type: 'RELOAD_WORKFLOW_FULFILLED',
+      payload: workflow2
+    })
+
+    expect(state.workflow.wf_modules[1].is_collapsed).toBe(false)
+    expect(state.workflow.wf_modules[2].is_collapsed).toBe(true)
+  })
+
    // LOAD_MODULES
    it('loadModules', () => {
      let api = installMockApiCall('getModules', genericTestModules);
@@ -104,7 +166,6 @@ describe('Reducer actions', () => {
       payload: mock_add_wf_module_result,
     });
     expect(state.workflow.wf_modules[2].id).toEqual(40);
-    expect(state.selected_wf_module).toEqual(40);
   });
 
   it('Deletes a module', () => {
@@ -120,9 +181,9 @@ describe('Reducer actions', () => {
   it('Sets the selected module to a module in state', () => {
     const state = workflowReducer(test_state, {
      type: 'SET_SELECTED_MODULE',
-     payload: 32,
+     payload: 1,
     });
-    expect(state.selected_wf_module).toBe(32);
+    expect(state.selected_wf_module).toBe(1);
   });
 
   it('Updates the workflow module with the specified data', () => {
@@ -257,6 +318,6 @@ describe('Reducer actions', () => {
         wfModuleId: 10
       }
     });
-    expect(state.workflow.wf_modules[0].notification_count).toBe(0);
+    expect(state.workflow.wf_modules[0].has_unseen_notification).toBe(false);
   });
 });

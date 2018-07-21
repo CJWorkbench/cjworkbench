@@ -1,17 +1,23 @@
-from server.models import StoredObject
-from server.sanitizedataframe import sanitize_dataframe
-from server.tests.utils import *
-from django.test import override_settings
-import tempfile
-import pandas as pd
+import io
 import os
 import json
+import tempfile
+import pandas as pd
+from django.conf import settings
+from server.models import StoredObject, WfModule, ModuleVersion
+from server.sanitizedataframe import sanitize_dataframe
+from server.tests.utils import DbTestCase, create_testdata_workflow, \
+        add_new_wf_module, mock_csv_table, mock_csv_table2
+from django.test import override_settings
 
-# don't clutter media directory with our tests (and don't accidentally succeed because of files there)
+
+# don't clutter media directory with our tests (and don't accidentally succeed
+# because of files there)
 @override_settings(MEDIA_ROOT=tempfile.gettempdir())
-class StoredObjectTests(TestCase):
-
+class StoredObjectTests(DbTestCase):
     def setUp(self):
+        super().setUp()
+
         self.workflow = create_testdata_workflow()
         self.wfm1 = WfModule.objects.first()
         self.wfm2 = add_new_wf_module(self.workflow, ModuleVersion.objects.first(), 1)  # order = 1
@@ -35,48 +41,17 @@ class StoredObjectTests(TestCase):
 
     def test_store_fetched_table(self):
         so1 = StoredObject.create_table(self.wfm1,
-                                        StoredObject.FETCHED_TABLE,
                                         self.test_table,
                                         self.metadata)
-        self.assertEqual(so1.type, StoredObject.FETCHED_TABLE)
         self.assertEqual(so1.metadata, self.metadata )
         table2 = so1.get_table()
         self.assertTrue(table2.equals(self.test_table))
-
-
-    def test_store_cached_table(self):
-        so1 = StoredObject.create_table(self.wfm1,
-                                        StoredObject.CACHED_TABLE,
-                                        self.test_table,
-                                        metadata=self.metadata)
-        self.assertEqual(so1.type, StoredObject.CACHED_TABLE)
-        self.assertEqual(so1.metadata, self.metadata )
-        self.assertEqual(so1.size, os.stat(so1.file.name).st_size)
-        table2 = so1.get_table()
-        self.assertTrue(table2.equals(self.test_table))
-
-
-    def test_type_interference(self):
-        # if different types use the same filename -- perhaps because they have the same content -- we have problems
-        # actually happened during development (module fetch and module cache can be the same data for add data module)
-        so1 = StoredObject.create_table(self.wfm1,
-                                        StoredObject.CACHED_TABLE,
-                                        self.test_table)
-        so2 = StoredObject.create_table(self.wfm1,
-                                        StoredObject.FETCHED_TABLE,
-                                        self.test_table)
-
-        self.assertNotEqual(so1.file.path, so2.file.path)
-        so1.delete()
-        so2.get_table()
 
 
     def test_store_empty_table(self):
         so1 = StoredObject.create_table(self.wfm1,
-                                        StoredObject.CACHED_TABLE,
                                         None,
                                         metadata=self.metadata)
-        self.assertEqual(so1.type, StoredObject.CACHED_TABLE)
         self.assertEqual(so1.metadata, self.metadata )
         self.assertEqual(so1.size, 0)
         table2 = so1.get_table()
@@ -93,18 +68,18 @@ class StoredObjectTests(TestCase):
         test_table = pd.read_csv(io.StringIO(test_csv))
         test_table_M = pd.DataFrame(test_table['M'])  # need DataFrame ctor otherwise we get series not df
 
-        so = StoredObject.create_table(self.wfm1, StoredObject.FETCHED_TABLE, test_table_M)
+        so = StoredObject.create_table(self.wfm1, test_table_M)
         table_out = so.get_table()
         self.assertTrue(table_out.equals(test_table_M))
 
 
     def test_create_table_if_different(self):
-        so1 = StoredObject.create_table(self.wfm1, StoredObject.FETCHED_TABLE, mock_csv_table)
+        so1 = StoredObject.create_table(self.wfm1, mock_csv_table)
 
-        so2 = StoredObject.create_table_if_different(self.wfm1, so1, StoredObject.FETCHED_TABLE, mock_csv_table)
+        so2 = StoredObject.create_table_if_different(self.wfm1, so1, mock_csv_table)
         self.assertIsNone(so2)
 
-        so3 = StoredObject.create_table_if_different(self.wfm1, so1, StoredObject.FETCHED_TABLE, mock_csv_table2)
+        so3 = StoredObject.create_table_if_different(self.wfm1, so1, mock_csv_table2)
         self.assertIsNotNone(so3)
         table3 = so3.get_table()
         self.assertTrue(table3.equals(mock_csv_table2))
@@ -112,12 +87,11 @@ class StoredObjectTests(TestCase):
 
     # Duplicate from one wfm to another, tests the typical WfModule duplication case
     def test_duplicate_table(self):
-        so1 = StoredObject.create_table(self.wfm1, StoredObject.FETCHED_TABLE, mock_csv_table)
+        so1 = StoredObject.create_table(self.wfm1, mock_csv_table)
         so2 = so1.duplicate(self.wfm2)
 
-        # new StoredObject should have same time, same type, same metadata, different file with same contents
+        # new StoredObject should have same time, same metadata, different file with same contents
         self.assertEqual(so1.stored_at, so2.stored_at)
-        self.assertEqual(so1.type, so2.type)
         self.assertEqual(so1.metadata, so2.metadata)
         self.assertNotEqual(so1.file, so2.file)
 

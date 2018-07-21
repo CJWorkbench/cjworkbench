@@ -18,11 +18,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
       "rn_",
     ]
   }
+  duplicateColumn={[MockFunction]}
   getRow={[Function]}
   isReadOnly={false}
   onEditCell={[MockFunction]}
   onGridSort={[MockFunction]}
   revision={999}
+  setSortDirection={[MockFunction]}
   totalRows={2}
   wfModuleId={100}
 >
@@ -44,6 +46,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             columnKey="aaa"
             columnType="Number"
             draggingColumnIndex={null}
+            duplicateColumn={[MockFunction]}
             index={0}
             isReadOnly={false}
             isSorted={false}
@@ -51,7 +54,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onDragStartColumnIndex={[Function]}
             onDropColumnIndexAtIndex={[Function]}
             onRenameColumn={[Function]}
-            onSortColumn={[Function]}
+            setSortDirection={[MockFunction]}
             showLetter={false}
             sortDirection={undefined}
           />,
@@ -70,6 +73,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             columnKey="bbbb"
             columnType="String"
             draggingColumnIndex={null}
+            duplicateColumn={[MockFunction]}
             index={1}
             isReadOnly={false}
             isSorted={false}
@@ -77,7 +81,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onDragStartColumnIndex={[Function]}
             onDropColumnIndexAtIndex={[Function]}
             onRenameColumn={[Function]}
-            onSortColumn={[Function]}
+            setSortDirection={[MockFunction]}
             showLetter={false}
             sortDirection={undefined}
           />,
@@ -96,6 +100,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             columnKey="ccccc"
             columnType="String"
             draggingColumnIndex={null}
+            duplicateColumn={[MockFunction]}
             index={2}
             isReadOnly={false}
             isSorted={false}
@@ -103,7 +108,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onDragStartColumnIndex={[Function]}
             onDropColumnIndexAtIndex={[Function]}
             onRenameColumn={[Function]}
-            onSortColumn={[Function]}
+            setSortDirection={[MockFunction]}
             showLetter={false}
             sortDirection={undefined}
           />,
@@ -122,6 +127,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             columnKey="rn_"
             columnType="String"
             draggingColumnIndex={null}
+            duplicateColumn={[MockFunction]}
             index={3}
             isReadOnly={false}
             isSorted={false}
@@ -129,7 +135,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onDragStartColumnIndex={[Function]}
             onDropColumnIndexAtIndex={[Function]}
             onRenameColumn={[Function]}
-            onSortColumn={[Function]}
+            setSortDirection={[MockFunction]}
             showLetter={false}
             sortDirection={undefined}
           />,
@@ -236,6 +242,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     columnKey="aaa"
                     columnType="Number"
                     draggingColumnIndex={null}
+                    duplicateColumn={[MockFunction]}
                     index={0}
                     isReadOnly={false}
                     isSorted={false}
@@ -243,7 +250,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onDragStartColumnIndex={[Function]}
                     onDropColumnIndexAtIndex={[Function]}
                     onRenameColumn={[Function]}
-                    onSortColumn={[Function]}
+                    setSortDirection={[MockFunction]}
                     showLetter={false}
                     sortDirection={undefined}
                   />,
@@ -263,6 +270,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     columnKey="bbbb"
                     columnType="String"
                     draggingColumnIndex={null}
+                    duplicateColumn={[MockFunction]}
                     index={1}
                     isReadOnly={false}
                     isSorted={false}
@@ -270,7 +278,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onDragStartColumnIndex={[Function]}
                     onDropColumnIndexAtIndex={[Function]}
                     onRenameColumn={[Function]}
-                    onSortColumn={[Function]}
+                    setSortDirection={[MockFunction]}
                     showLetter={false}
                     sortDirection={undefined}
                   />,
@@ -290,6 +298,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     columnKey="ccccc"
                     columnType="String"
                     draggingColumnIndex={null}
+                    duplicateColumn={[MockFunction]}
                     index={2}
                     isReadOnly={false}
                     isSorted={false}
@@ -297,7 +306,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onDragStartColumnIndex={[Function]}
                     onDropColumnIndexAtIndex={[Function]}
                     onRenameColumn={[Function]}
-                    onSortColumn={[Function]}
+                    setSortDirection={[MockFunction]}
                     showLetter={false}
                     sortDirection={undefined}
                   />,
@@ -317,6 +326,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     columnKey="rn_"
                     columnType="String"
                     draggingColumnIndex={null}
+                    duplicateColumn={[MockFunction]}
                     index={3}
                     isReadOnly={false}
                     isSorted={false}
@@ -324,7 +334,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onDragStartColumnIndex={[Function]}
                     onDropColumnIndexAtIndex={[Function]}
                     onRenameColumn={[Function]}
-                    onSortColumn={[Function]}
+                    setSortDirection={[MockFunction]}
                     showLetter={false}
                     sortDirection={undefined}
                   />,
@@ -359,6 +369,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   columnKey="aaa"
                   columnType="Number"
                   draggingColumnIndex={null}
+                  duplicateColumn={[MockFunction]}
                   index={0}
                   isReadOnly={false}
                   isSorted={false}
@@ -366,7 +377,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onDragStartColumnIndex={[Function]}
                   onDropColumnIndexAtIndex={[Function]}
                   onRenameColumn={[Function]}
-                  onSortColumn={[Function]}
+                  setSortDirection={[MockFunction]}
                   showLetter={false}
                   sortDirection={undefined}
                 />,
@@ -385,6 +396,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   columnKey="bbbb"
                   columnType="String"
                   draggingColumnIndex={null}
+                  duplicateColumn={[MockFunction]}
                   index={1}
                   isReadOnly={false}
                   isSorted={false}
@@ -392,7 +404,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onDragStartColumnIndex={[Function]}
                   onDropColumnIndexAtIndex={[Function]}
                   onRenameColumn={[Function]}
-                  onSortColumn={[Function]}
+                  setSortDirection={[MockFunction]}
                   showLetter={false}
                   sortDirection={undefined}
                 />,
@@ -411,6 +423,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   columnKey="ccccc"
                   columnType="String"
                   draggingColumnIndex={null}
+                  duplicateColumn={[MockFunction]}
                   index={2}
                   isReadOnly={false}
                   isSorted={false}
@@ -418,7 +431,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onDragStartColumnIndex={[Function]}
                   onDropColumnIndexAtIndex={[Function]}
                   onRenameColumn={[Function]}
-                  onSortColumn={[Function]}
+                  setSortDirection={[MockFunction]}
                   showLetter={false}
                   sortDirection={undefined}
                 />,
@@ -437,6 +450,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   columnKey="rn_"
                   columnType="String"
                   draggingColumnIndex={null}
+                  duplicateColumn={[MockFunction]}
                   index={3}
                   isReadOnly={false}
                   isSorted={false}
@@ -444,7 +458,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onDragStartColumnIndex={[Function]}
                   onDropColumnIndexAtIndex={[Function]}
                   onRenameColumn={[Function]}
-                  onSortColumn={[Function]}
+                  setSortDirection={[MockFunction]}
                   showLetter={false}
                   sortDirection={undefined}
                 />,
@@ -572,6 +586,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         columnKey="aaa"
                         columnType="Number"
                         draggingColumnIndex={null}
+                        duplicateColumn={[MockFunction]}
                         index={0}
                         isReadOnly={false}
                         isSorted={false}
@@ -579,7 +594,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onDragStartColumnIndex={[Function]}
                         onDropColumnIndexAtIndex={[Function]}
                         onRenameColumn={[Function]}
-                        onSortColumn={[Function]}
+                        setSortDirection={[MockFunction]}
                         showLetter={false}
                         sortDirection={undefined}
                       />,
@@ -599,6 +614,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         columnKey="bbbb"
                         columnType="String"
                         draggingColumnIndex={null}
+                        duplicateColumn={[MockFunction]}
                         index={1}
                         isReadOnly={false}
                         isSorted={false}
@@ -606,7 +622,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onDragStartColumnIndex={[Function]}
                         onDropColumnIndexAtIndex={[Function]}
                         onRenameColumn={[Function]}
-                        onSortColumn={[Function]}
+                        setSortDirection={[MockFunction]}
                         showLetter={false}
                         sortDirection={undefined}
                       />,
@@ -626,6 +642,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         columnKey="ccccc"
                         columnType="String"
                         draggingColumnIndex={null}
+                        duplicateColumn={[MockFunction]}
                         index={2}
                         isReadOnly={false}
                         isSorted={false}
@@ -633,7 +650,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onDragStartColumnIndex={[Function]}
                         onDropColumnIndexAtIndex={[Function]}
                         onRenameColumn={[Function]}
-                        onSortColumn={[Function]}
+                        setSortDirection={[MockFunction]}
                         showLetter={false}
                         sortDirection={undefined}
                       />,
@@ -653,6 +670,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         columnKey="rn_"
                         columnType="String"
                         draggingColumnIndex={null}
+                        duplicateColumn={[MockFunction]}
                         index={3}
                         isReadOnly={false}
                         isSorted={false}
@@ -660,7 +678,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onDragStartColumnIndex={[Function]}
                         onDropColumnIndexAtIndex={[Function]}
                         onRenameColumn={[Function]}
-                        onSortColumn={[Function]}
+                        setSortDirection={[MockFunction]}
                         showLetter={false}
                         sortDirection={undefined}
                       />,
@@ -726,6 +744,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="aaa"
                           columnType="Number"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={0}
                           isReadOnly={false}
                           isSorted={false}
@@ -733,7 +752,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -753,6 +772,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="bbbb"
                           columnType="String"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={1}
                           isReadOnly={false}
                           isSorted={false}
@@ -760,7 +780,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -780,6 +800,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="ccccc"
                           columnType="String"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={2}
                           isReadOnly={false}
                           isSorted={false}
@@ -787,7 +808,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -807,6 +828,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="rn_"
                           columnType="String"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={3}
                           isReadOnly={false}
                           isSorted={false}
@@ -814,7 +836,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -888,6 +910,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columnKey="aaa"
                               columnType="Number"
                               draggingColumnIndex={null}
+                              duplicateColumn={[MockFunction]}
                               index={0}
                               isReadOnly={false}
                               isSorted={false}
@@ -895,7 +918,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onDragStartColumnIndex={[Function]}
                               onDropColumnIndexAtIndex={[Function]}
                               onRenameColumn={[Function]}
-                              onSortColumn={[Function]}
+                              setSortDirection={[MockFunction]}
                               showLetter={false}
                               sortDirection={undefined}
                             />,
@@ -920,6 +943,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="aaa"
                             columnType="Number"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={0}
                             isReadOnly={false}
                             isSorted={false}
@@ -927,7 +951,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />
@@ -957,6 +981,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   columnKey="aaa"
                                   columnType="Number"
                                   draggingColumnIndex={null}
+                                  duplicateColumn={[MockFunction]}
                                   index={0}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -964,7 +989,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onDragStartColumnIndex={[Function]}
                                   onDropColumnIndexAtIndex={[Function]}
                                   onRenameColumn={[Function]}
-                                  onSortColumn={[Function]}
+                                  setSortDirection={[MockFunction]}
                                   showLetter={false}
                                   sortDirection={undefined}
                                 />,
@@ -983,6 +1008,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="aaa"
                             columnType="Number"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             height={36}
                             index={0}
                             isReadOnly={false}
@@ -991,7 +1017,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                           >
                             <div
@@ -1017,6 +1043,201 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     aaa
                                   </span>
                                 </EditableColumnName>
+                                <ColumnContextMenu
+                                  duplicateColumn={[Function]}
+                                  setSortDirection={[Function]}
+                                  sortDirection={0}
+                                >
+                                  <UncontrolledDropdown>
+                                    <Dropdown
+                                      active={false}
+                                      addonType={false}
+                                      direction="down"
+                                      inNavbar={false}
+                                      isOpen={false}
+                                      nav={false}
+                                      setActiveFromChild={false}
+                                      toggle={[Function]}
+                                    >
+                                      <Manager
+                                        className="dropdown"
+                                        onKeyDown={[Function]}
+                                        tag="div"
+                                      >
+                                        <div
+                                          className="dropdown"
+                                          onKeyDown={[Function]}
+                                        >
+                                          <DropdownToggle
+                                            aria-haspopup={true}
+                                            className="context-button"
+                                            color="secondary"
+                                          >
+                                            <Target
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
+                                              className="context-button"
+                                              color="secondary"
+                                              component={[Function]}
+                                              onClick={[Function]}
+                                            >
+                                              <Button
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
+                                                className="context-button"
+                                                color="secondary"
+                                                innerRef={[Function]}
+                                                onClick={[Function]}
+                                                tag="button"
+                                              >
+                                                <button
+                                                  aria-expanded={false}
+                                                  aria-haspopup={true}
+                                                  className="context-button btn btn-secondary"
+                                                  onClick={[Function]}
+                                                  type="button"
+                                                >
+                                                  <i
+                                                    className="icon-more"
+                                                  />
+                                                </button>
+                                              </Button>
+                                            </Target>
+                                          </DropdownToggle>
+                                          <Portal>
+                                            <DropdownMenu
+                                              flip={false}
+                                              modifiers={
+                                                Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
+                                                  "preventOverflow": Object {
+                                                    "enabled": false,
+                                                  },
+                                                }
+                                              }
+                                              persist={true}
+                                              tag="div"
+                                            >
+                                              <Popper
+                                                aria-hidden={true}
+                                                className="dropdown-menu"
+                                                component="div"
+                                                eventsEnabled={true}
+                                                modifiers={
+                                                  Object {
+                                                    "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "preventOverflow": Object {
+                                                      "enabled": false,
+                                                    },
+                                                  }
+                                                }
+                                                placement="bottom-start"
+                                                positionFixed={false}
+                                                role="menu"
+                                                tabIndex="-1"
+                                                x-placement="bottom-start"
+                                              >
+                                                <div
+                                                  aria-hidden={true}
+                                                  className="dropdown-menu"
+                                                  role="menu"
+                                                  style={
+                                                    Object {
+                                                      "opacity": 0,
+                                                      "pointerEvents": "none",
+                                                      "position": "absolute",
+                                                    }
+                                                  }
+                                                  tabIndex="-1"
+                                                  x-placement="bottom-start"
+                                                >
+                                                  <DropdownItem
+                                                    className="duplicate-column"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="duplicate-column dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-duplicate"
+                                                      />
+                                                      <span>
+                                                        Duplicate
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    divider={true}
+                                                    tag="button"
+                                                    toggle={true}
+                                                  >
+                                                    <div
+                                                      className="dropdown-divider"
+                                                      onClick={[Function]}
+                                                      tabIndex="-1"
+                                                    />
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-ascending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-ascending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-up"
+                                                      />
+                                                      <span>
+                                                        Sort ascending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-descending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-descending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-down"
+                                                      />
+                                                      <span>
+                                                        Sort descending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                </div>
+                                              </Popper>
+                                            </DropdownMenu>
+                                          </Portal>
+                                        </div>
+                                      </Manager>
+                                    </Dropdown>
+                                  </UncontrolledDropdown>
+                                </ColumnContextMenu>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1069,6 +1290,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columnKey="bbbb"
                               columnType="String"
                               draggingColumnIndex={null}
+                              duplicateColumn={[MockFunction]}
                               index={1}
                               isReadOnly={false}
                               isSorted={false}
@@ -1076,7 +1298,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onDragStartColumnIndex={[Function]}
                               onDropColumnIndexAtIndex={[Function]}
                               onRenameColumn={[Function]}
-                              onSortColumn={[Function]}
+                              setSortDirection={[MockFunction]}
                               showLetter={false}
                               sortDirection={undefined}
                             />,
@@ -1101,6 +1323,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="bbbb"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={1}
                             isReadOnly={false}
                             isSorted={false}
@@ -1108,7 +1331,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />
@@ -1138,6 +1361,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   columnKey="bbbb"
                                   columnType="String"
                                   draggingColumnIndex={null}
+                                  duplicateColumn={[MockFunction]}
                                   index={1}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -1145,7 +1369,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onDragStartColumnIndex={[Function]}
                                   onDropColumnIndexAtIndex={[Function]}
                                   onRenameColumn={[Function]}
-                                  onSortColumn={[Function]}
+                                  setSortDirection={[MockFunction]}
                                   showLetter={false}
                                   sortDirection={undefined}
                                 />,
@@ -1164,6 +1388,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="bbbb"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             height={36}
                             index={1}
                             isReadOnly={false}
@@ -1172,7 +1397,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                           >
                             <div
@@ -1198,6 +1423,201 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     bbbb
                                   </span>
                                 </EditableColumnName>
+                                <ColumnContextMenu
+                                  duplicateColumn={[Function]}
+                                  setSortDirection={[Function]}
+                                  sortDirection={0}
+                                >
+                                  <UncontrolledDropdown>
+                                    <Dropdown
+                                      active={false}
+                                      addonType={false}
+                                      direction="down"
+                                      inNavbar={false}
+                                      isOpen={false}
+                                      nav={false}
+                                      setActiveFromChild={false}
+                                      toggle={[Function]}
+                                    >
+                                      <Manager
+                                        className="dropdown"
+                                        onKeyDown={[Function]}
+                                        tag="div"
+                                      >
+                                        <div
+                                          className="dropdown"
+                                          onKeyDown={[Function]}
+                                        >
+                                          <DropdownToggle
+                                            aria-haspopup={true}
+                                            className="context-button"
+                                            color="secondary"
+                                          >
+                                            <Target
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
+                                              className="context-button"
+                                              color="secondary"
+                                              component={[Function]}
+                                              onClick={[Function]}
+                                            >
+                                              <Button
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
+                                                className="context-button"
+                                                color="secondary"
+                                                innerRef={[Function]}
+                                                onClick={[Function]}
+                                                tag="button"
+                                              >
+                                                <button
+                                                  aria-expanded={false}
+                                                  aria-haspopup={true}
+                                                  className="context-button btn btn-secondary"
+                                                  onClick={[Function]}
+                                                  type="button"
+                                                >
+                                                  <i
+                                                    className="icon-more"
+                                                  />
+                                                </button>
+                                              </Button>
+                                            </Target>
+                                          </DropdownToggle>
+                                          <Portal>
+                                            <DropdownMenu
+                                              flip={false}
+                                              modifiers={
+                                                Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
+                                                  "preventOverflow": Object {
+                                                    "enabled": false,
+                                                  },
+                                                }
+                                              }
+                                              persist={true}
+                                              tag="div"
+                                            >
+                                              <Popper
+                                                aria-hidden={true}
+                                                className="dropdown-menu"
+                                                component="div"
+                                                eventsEnabled={true}
+                                                modifiers={
+                                                  Object {
+                                                    "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "preventOverflow": Object {
+                                                      "enabled": false,
+                                                    },
+                                                  }
+                                                }
+                                                placement="bottom-start"
+                                                positionFixed={false}
+                                                role="menu"
+                                                tabIndex="-1"
+                                                x-placement="bottom-start"
+                                              >
+                                                <div
+                                                  aria-hidden={true}
+                                                  className="dropdown-menu"
+                                                  role="menu"
+                                                  style={
+                                                    Object {
+                                                      "opacity": 0,
+                                                      "pointerEvents": "none",
+                                                      "position": "absolute",
+                                                    }
+                                                  }
+                                                  tabIndex="-1"
+                                                  x-placement="bottom-start"
+                                                >
+                                                  <DropdownItem
+                                                    className="duplicate-column"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="duplicate-column dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-duplicate"
+                                                      />
+                                                      <span>
+                                                        Duplicate
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    divider={true}
+                                                    tag="button"
+                                                    toggle={true}
+                                                  >
+                                                    <div
+                                                      className="dropdown-divider"
+                                                      onClick={[Function]}
+                                                      tabIndex="-1"
+                                                    />
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-ascending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-ascending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-up"
+                                                      />
+                                                      <span>
+                                                        Sort ascending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-descending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-descending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-down"
+                                                      />
+                                                      <span>
+                                                        Sort descending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                </div>
+                                              </Popper>
+                                            </DropdownMenu>
+                                          </Portal>
+                                        </div>
+                                      </Manager>
+                                    </Dropdown>
+                                  </UncontrolledDropdown>
+                                </ColumnContextMenu>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1250,6 +1670,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columnKey="ccccc"
                               columnType="String"
                               draggingColumnIndex={null}
+                              duplicateColumn={[MockFunction]}
                               index={2}
                               isReadOnly={false}
                               isSorted={false}
@@ -1257,7 +1678,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onDragStartColumnIndex={[Function]}
                               onDropColumnIndexAtIndex={[Function]}
                               onRenameColumn={[Function]}
-                              onSortColumn={[Function]}
+                              setSortDirection={[MockFunction]}
                               showLetter={false}
                               sortDirection={undefined}
                             />,
@@ -1282,6 +1703,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="ccccc"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={2}
                             isReadOnly={false}
                             isSorted={false}
@@ -1289,7 +1711,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />
@@ -1319,6 +1741,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   columnKey="ccccc"
                                   columnType="String"
                                   draggingColumnIndex={null}
+                                  duplicateColumn={[MockFunction]}
                                   index={2}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -1326,7 +1749,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onDragStartColumnIndex={[Function]}
                                   onDropColumnIndexAtIndex={[Function]}
                                   onRenameColumn={[Function]}
-                                  onSortColumn={[Function]}
+                                  setSortDirection={[MockFunction]}
                                   showLetter={false}
                                   sortDirection={undefined}
                                 />,
@@ -1345,6 +1768,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="ccccc"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             height={36}
                             index={2}
                             isReadOnly={false}
@@ -1353,7 +1777,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                           >
                             <div
@@ -1379,6 +1803,201 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     ccccc
                                   </span>
                                 </EditableColumnName>
+                                <ColumnContextMenu
+                                  duplicateColumn={[Function]}
+                                  setSortDirection={[Function]}
+                                  sortDirection={0}
+                                >
+                                  <UncontrolledDropdown>
+                                    <Dropdown
+                                      active={false}
+                                      addonType={false}
+                                      direction="down"
+                                      inNavbar={false}
+                                      isOpen={false}
+                                      nav={false}
+                                      setActiveFromChild={false}
+                                      toggle={[Function]}
+                                    >
+                                      <Manager
+                                        className="dropdown"
+                                        onKeyDown={[Function]}
+                                        tag="div"
+                                      >
+                                        <div
+                                          className="dropdown"
+                                          onKeyDown={[Function]}
+                                        >
+                                          <DropdownToggle
+                                            aria-haspopup={true}
+                                            className="context-button"
+                                            color="secondary"
+                                          >
+                                            <Target
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
+                                              className="context-button"
+                                              color="secondary"
+                                              component={[Function]}
+                                              onClick={[Function]}
+                                            >
+                                              <Button
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
+                                                className="context-button"
+                                                color="secondary"
+                                                innerRef={[Function]}
+                                                onClick={[Function]}
+                                                tag="button"
+                                              >
+                                                <button
+                                                  aria-expanded={false}
+                                                  aria-haspopup={true}
+                                                  className="context-button btn btn-secondary"
+                                                  onClick={[Function]}
+                                                  type="button"
+                                                >
+                                                  <i
+                                                    className="icon-more"
+                                                  />
+                                                </button>
+                                              </Button>
+                                            </Target>
+                                          </DropdownToggle>
+                                          <Portal>
+                                            <DropdownMenu
+                                              flip={false}
+                                              modifiers={
+                                                Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
+                                                  "preventOverflow": Object {
+                                                    "enabled": false,
+                                                  },
+                                                }
+                                              }
+                                              persist={true}
+                                              tag="div"
+                                            >
+                                              <Popper
+                                                aria-hidden={true}
+                                                className="dropdown-menu"
+                                                component="div"
+                                                eventsEnabled={true}
+                                                modifiers={
+                                                  Object {
+                                                    "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "preventOverflow": Object {
+                                                      "enabled": false,
+                                                    },
+                                                  }
+                                                }
+                                                placement="bottom-start"
+                                                positionFixed={false}
+                                                role="menu"
+                                                tabIndex="-1"
+                                                x-placement="bottom-start"
+                                              >
+                                                <div
+                                                  aria-hidden={true}
+                                                  className="dropdown-menu"
+                                                  role="menu"
+                                                  style={
+                                                    Object {
+                                                      "opacity": 0,
+                                                      "pointerEvents": "none",
+                                                      "position": "absolute",
+                                                    }
+                                                  }
+                                                  tabIndex="-1"
+                                                  x-placement="bottom-start"
+                                                >
+                                                  <DropdownItem
+                                                    className="duplicate-column"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="duplicate-column dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-duplicate"
+                                                      />
+                                                      <span>
+                                                        Duplicate
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    divider={true}
+                                                    tag="button"
+                                                    toggle={true}
+                                                  >
+                                                    <div
+                                                      className="dropdown-divider"
+                                                      onClick={[Function]}
+                                                      tabIndex="-1"
+                                                    />
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-ascending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-ascending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-up"
+                                                      />
+                                                      <span>
+                                                        Sort ascending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-descending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-descending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-down"
+                                                      />
+                                                      <span>
+                                                        Sort descending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                </div>
+                                              </Popper>
+                                            </DropdownMenu>
+                                          </Portal>
+                                        </div>
+                                      </Manager>
+                                    </Dropdown>
+                                  </UncontrolledDropdown>
+                                </ColumnContextMenu>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1431,6 +2050,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columnKey="rn_"
                               columnType="String"
                               draggingColumnIndex={null}
+                              duplicateColumn={[MockFunction]}
                               index={3}
                               isReadOnly={false}
                               isSorted={false}
@@ -1438,7 +2058,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onDragStartColumnIndex={[Function]}
                               onDropColumnIndexAtIndex={[Function]}
                               onRenameColumn={[Function]}
-                              onSortColumn={[Function]}
+                              setSortDirection={[MockFunction]}
                               showLetter={false}
                               sortDirection={undefined}
                             />,
@@ -1463,6 +2083,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="rn_"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={3}
                             isReadOnly={false}
                             isSorted={false}
@@ -1470,7 +2091,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />
@@ -1500,6 +2121,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   columnKey="rn_"
                                   columnType="String"
                                   draggingColumnIndex={null}
+                                  duplicateColumn={[MockFunction]}
                                   index={3}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -1507,7 +2129,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onDragStartColumnIndex={[Function]}
                                   onDropColumnIndexAtIndex={[Function]}
                                   onRenameColumn={[Function]}
-                                  onSortColumn={[Function]}
+                                  setSortDirection={[MockFunction]}
                                   showLetter={false}
                                   sortDirection={undefined}
                                 />,
@@ -1526,6 +2148,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="rn_"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             height={36}
                             index={3}
                             isReadOnly={false}
@@ -1534,7 +2157,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                           >
                             <div
@@ -1560,6 +2183,201 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     rn_
                                   </span>
                                 </EditableColumnName>
+                                <ColumnContextMenu
+                                  duplicateColumn={[Function]}
+                                  setSortDirection={[Function]}
+                                  sortDirection={0}
+                                >
+                                  <UncontrolledDropdown>
+                                    <Dropdown
+                                      active={false}
+                                      addonType={false}
+                                      direction="down"
+                                      inNavbar={false}
+                                      isOpen={false}
+                                      nav={false}
+                                      setActiveFromChild={false}
+                                      toggle={[Function]}
+                                    >
+                                      <Manager
+                                        className="dropdown"
+                                        onKeyDown={[Function]}
+                                        tag="div"
+                                      >
+                                        <div
+                                          className="dropdown"
+                                          onKeyDown={[Function]}
+                                        >
+                                          <DropdownToggle
+                                            aria-haspopup={true}
+                                            className="context-button"
+                                            color="secondary"
+                                          >
+                                            <Target
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
+                                              className="context-button"
+                                              color="secondary"
+                                              component={[Function]}
+                                              onClick={[Function]}
+                                            >
+                                              <Button
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
+                                                className="context-button"
+                                                color="secondary"
+                                                innerRef={[Function]}
+                                                onClick={[Function]}
+                                                tag="button"
+                                              >
+                                                <button
+                                                  aria-expanded={false}
+                                                  aria-haspopup={true}
+                                                  className="context-button btn btn-secondary"
+                                                  onClick={[Function]}
+                                                  type="button"
+                                                >
+                                                  <i
+                                                    className="icon-more"
+                                                  />
+                                                </button>
+                                              </Button>
+                                            </Target>
+                                          </DropdownToggle>
+                                          <Portal>
+                                            <DropdownMenu
+                                              flip={false}
+                                              modifiers={
+                                                Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
+                                                  "preventOverflow": Object {
+                                                    "enabled": false,
+                                                  },
+                                                }
+                                              }
+                                              persist={true}
+                                              tag="div"
+                                            >
+                                              <Popper
+                                                aria-hidden={true}
+                                                className="dropdown-menu"
+                                                component="div"
+                                                eventsEnabled={true}
+                                                modifiers={
+                                                  Object {
+                                                    "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "preventOverflow": Object {
+                                                      "enabled": false,
+                                                    },
+                                                  }
+                                                }
+                                                placement="bottom-start"
+                                                positionFixed={false}
+                                                role="menu"
+                                                tabIndex="-1"
+                                                x-placement="bottom-start"
+                                              >
+                                                <div
+                                                  aria-hidden={true}
+                                                  className="dropdown-menu"
+                                                  role="menu"
+                                                  style={
+                                                    Object {
+                                                      "opacity": 0,
+                                                      "pointerEvents": "none",
+                                                      "position": "absolute",
+                                                    }
+                                                  }
+                                                  tabIndex="-1"
+                                                  x-placement="bottom-start"
+                                                >
+                                                  <DropdownItem
+                                                    className="duplicate-column"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="duplicate-column dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-duplicate"
+                                                      />
+                                                      <span>
+                                                        Duplicate
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    divider={true}
+                                                    tag="button"
+                                                    toggle={true}
+                                                  >
+                                                    <div
+                                                      className="dropdown-divider"
+                                                      onClick={[Function]}
+                                                      tabIndex="-1"
+                                                    />
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-ascending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-ascending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-up"
+                                                      />
+                                                      <span>
+                                                        Sort ascending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                  <DropdownItem
+                                                    className="sort-descending"
+                                                    onClick={[Function]}
+                                                    tag="button"
+                                                    toggle={false}
+                                                  >
+                                                    <button
+                                                      className="sort-descending dropdown-item"
+                                                      onClick={[Function]}
+                                                      tabIndex="0"
+                                                      type="button"
+                                                    >
+                                                      <i
+                                                        className="icon-sort-down"
+                                                      />
+                                                      <span>
+                                                        Sort descending
+                                                      </span>
+                                                    </button>
+                                                  </DropdownItem>
+                                                </div>
+                                              </Popper>
+                                            </DropdownMenu>
+                                          </Portal>
+                                        </div>
+                                      </Manager>
+                                    </Dropdown>
+                                  </UncontrolledDropdown>
+                                </ColumnContextMenu>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1709,6 +2527,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="aaa"
                           columnType="Number"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={0}
                           isReadOnly={false}
                           isSorted={false}
@@ -1716,7 +2535,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -1736,6 +2555,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="bbbb"
                           columnType="String"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={1}
                           isReadOnly={false}
                           isSorted={false}
@@ -1743,7 +2563,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -1763,6 +2583,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="ccccc"
                           columnType="String"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={2}
                           isReadOnly={false}
                           isSorted={false}
@@ -1770,7 +2591,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -1790,6 +2611,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           columnKey="rn_"
                           columnType="String"
                           draggingColumnIndex={null}
+                          duplicateColumn={[MockFunction]}
                           index={3}
                           isReadOnly={false}
                           isSorted={false}
@@ -1797,7 +2619,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onDragStartColumnIndex={[Function]}
                           onDropColumnIndexAtIndex={[Function]}
                           onRenameColumn={[Function]}
-                          onSortColumn={[Function]}
+                          setSortDirection={[MockFunction]}
                           showLetter={false}
                           sortDirection={undefined}
                         />,
@@ -1909,6 +2731,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="aaa"
                             columnType="Number"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={0}
                             isReadOnly={false}
                             isSorted={false}
@@ -1916,7 +2739,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />,
@@ -1936,6 +2759,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="bbbb"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={1}
                             isReadOnly={false}
                             isSorted={false}
@@ -1943,7 +2767,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />,
@@ -1963,6 +2787,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="ccccc"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={2}
                             isReadOnly={false}
                             isSorted={false}
@@ -1970,7 +2795,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />,
@@ -1990,6 +2815,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="rn_"
                             columnType="String"
                             draggingColumnIndex={null}
+                            duplicateColumn={[MockFunction]}
                             index={3}
                             isReadOnly={false}
                             isSorted={false}
@@ -1997,7 +2823,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onDragStartColumnIndex={[Function]}
                             onDropColumnIndexAtIndex={[Function]}
                             onRenameColumn={[Function]}
-                            onSortColumn={[Function]}
+                            setSortDirection={[MockFunction]}
                             showLetter={false}
                             sortDirection={undefined}
                           />,
@@ -2110,6 +2936,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="aaa"
                                       columnType="Number"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={0}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2117,7 +2944,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2137,6 +2964,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="bbbb"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={1}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2144,7 +2972,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2164,6 +2992,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="ccccc"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={2}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2171,7 +3000,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2191,6 +3020,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="rn_"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={3}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2198,7 +3028,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2289,6 +3119,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="aaa"
                                       columnType="Number"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={0}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2296,7 +3127,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2316,6 +3147,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="bbbb"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={1}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2323,7 +3155,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2343,6 +3175,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="ccccc"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={2}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2350,7 +3183,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2370,6 +3203,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="rn_"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={3}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2377,7 +3211,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2477,6 +3311,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="aaa"
                                         columnType="Number"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={0}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2484,7 +3319,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2504,6 +3339,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="bbbb"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={1}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2511,7 +3347,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2531,6 +3367,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="ccccc"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={2}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2538,7 +3375,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2558,6 +3395,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="rn_"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={3}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2565,7 +3403,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2656,6 +3494,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="aaa"
                                         columnType="Number"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={0}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2663,7 +3502,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2683,6 +3522,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="bbbb"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={1}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2690,7 +3530,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2710,6 +3550,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="ccccc"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={2}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2717,7 +3558,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2737,6 +3578,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="rn_"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={3}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2744,7 +3586,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -2842,6 +3684,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="aaa"
                                       columnType="Number"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={0}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2849,7 +3692,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2869,6 +3712,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="bbbb"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={1}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2876,7 +3720,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2896,6 +3740,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="ccccc"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={2}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2903,7 +3748,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -2923,6 +3768,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="rn_"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={3}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -2930,7 +3776,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -3019,6 +3865,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="aaa"
                                         columnType="Number"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={0}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -3026,7 +3873,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -3173,6 +4020,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="bbbb"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={1}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -3180,7 +4028,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -3327,6 +4175,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="ccccc"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={2}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -3334,7 +4183,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -3481,6 +4330,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="rn_"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={3}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -3488,7 +4338,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -3774,6 +4624,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="aaa"
                                       columnType="Number"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={0}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -3781,7 +4632,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -3801,6 +4652,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="bbbb"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={1}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -3808,7 +4660,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -3828,6 +4680,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="ccccc"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={2}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -3835,7 +4688,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -3855,6 +4708,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       columnKey="rn_"
                                       columnType="String"
                                       draggingColumnIndex={null}
+                                      duplicateColumn={[MockFunction]}
                                       index={3}
                                       isReadOnly={false}
                                       isSorted={false}
@@ -3862,7 +4716,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onDragStartColumnIndex={[Function]}
                                       onDropColumnIndexAtIndex={[Function]}
                                       onRenameColumn={[Function]}
-                                      onSortColumn={[Function]}
+                                      setSortDirection={[MockFunction]}
                                       showLetter={false}
                                       sortDirection={undefined}
                                     />,
@@ -3951,6 +4805,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="aaa"
                                         columnType="Number"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={0}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -3958,7 +4813,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -4105,6 +4960,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="bbbb"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={1}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -4112,7 +4968,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -4259,6 +5115,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="ccccc"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={2}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -4266,7 +5123,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -4413,6 +5270,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         columnKey="rn_"
                                         columnType="String"
                                         draggingColumnIndex={null}
+                                        duplicateColumn={[MockFunction]}
                                         index={3}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -4420,7 +5278,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onDragStartColumnIndex={[Function]}
                                         onDropColumnIndexAtIndex={[Function]}
                                         onRenameColumn={[Function]}
-                                        onSortColumn={[Function]}
+                                        setSortDirection={[MockFunction]}
                                         showLetter={false}
                                         sortDirection={undefined}
                                       />,
@@ -4670,9 +5528,11 @@ exports[`DataGrid tests, matches snapshot without data 1`] = `
 <DataGrid
   columnTypes={Array []}
   columns={Array []}
+  duplicateColumn={[MockFunction]}
   getRow={[Function]}
   isReadOnly={false}
   revision={999}
+  setSortDirection={[MockFunction]}
   totalRows={0}
   wfModuleId={100}
 />

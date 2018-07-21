@@ -1,11 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import WorkBenchAPI from '../WorkbenchAPI'
-import {store, setSelectedWfModuleAction} from "../workflow-reducer";
+import {store, deleteModuleAction} from "../workflow-reducer";
 
-var api = WorkBenchAPI();
-export function mockAPI(mock_api) {
-    api = mock_api;
+function parseJsonOrEmpty(s) {
+  if (s) {
+    return JSON.parse(s)
+  } else {
+    return {}
+  }
+}
+
+function isEmptyJson(s) {
+  return !s || s == '{}'
 }
 
 export class RenameEntry extends React.Component {
@@ -32,7 +38,7 @@ export class RenameEntry extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.newColname != this.state.inputValue) {
+        if (nextProps.newColname != this.state.inputValue) {
             this.setState({inputValue: nextProps.newColname});
         }
     }
@@ -66,7 +72,7 @@ export class RenameEntry extends React.Component {
         // The class names below are used in testing.
         // Changing them would require updating the tests accordingly.
         return (
-            <div className="wf-parameter">
+            <div className="wf-parameter rename-entry" data-column-name={this.props.colname}>
                 <div className={'rename-column'}>{this.props.colname}</div>
                 <div className="rename-container">
                   <input
@@ -92,9 +98,11 @@ export class RenameEntry extends React.Component {
 
 export default class RenameEntries extends React.Component {
     static propTypes = {
-        loadAll: PropTypes.bool.isRequired,
-        changeLoadAll: PropTypes.func.isRequired,
-        entries: PropTypes.string.isRequired,
+        api: PropTypes.shape({
+          inputColumns: PropTypes.func.isRequired,
+          onParamChanged: PropTypes.func.isRequired,
+        }).isRequired,
+        entriesJsonString: PropTypes.string.isRequired,
         wfModuleId: PropTypes.number.isRequired,
         revision: PropTypes.number,
         paramId: PropTypes.number.isRequired,
@@ -104,86 +112,55 @@ export default class RenameEntries extends React.Component {
     constructor(props) {
         super(props);
 
-        var entries = {};
-        try {
-            entries = JSON.parse(this.props.entries);
-        } catch(e) {}
-
         this.state = {
-            columns: undefined,
-            entries: entries,
+            entries: parseJsonOrEmpty(this.props.entriesJsonString),
         };
-
-        this.onColRename = this.onColRename.bind(this);
-        this.onEntryDelete = this.onEntryDelete.bind(this);
     }
 
-    refreshColumns(props) {
-        if(props.loadAll) {
-            api.inputColumns(props.wfModuleId)
-                .then((columns) => {
-                    this.setState({columns: columns});
-                });
-        } else {
-            this.setState({columns: undefined});
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if(nextProps.entries != this.props.entries) {
-            try {
-                let newEntries = JSON.parse(nextProps.entries);
-                this.setState({entries: newEntries});
-            } catch(e) {
-                this.setState({entries: {}});
-            }
-        }
-        if((nextProps.revision != this.props.revision) || (nextProps.loadAll != this.props.loadAll)) {
-            this.refreshColumns(nextProps);
+    componentDidUpdate(prevProps) {
+        if (prevProps.entriesJsonString !== this.props.entriesJsonString) {
+            this.setState({ entries: parseJsonOrEmpty(this.props.entriesJsonString) });
         }
     }
 
     componentDidMount() {
-        //this.refreshColumns(this.props);
-        if(this.props.loadAll) {
-            api.inputColumns(this.props.wfModuleId)
-                .then((columns) => {
-                    var entries = {};
-                    for(var idx in columns) {
-                        entries[columns[idx]] = columns[idx];
+        if (isEmptyJson(this.props.entriesJsonString)) {
+            // This is a brand-new module. Load an initial state from the
+            // server, renaming all columns.
+            //
+            // This `entries` will not be in the Redux store until we write it;
+            // that'll be the first onColRename/onEntryDelete.
+            this.props.api.inputColumns(this.props.wfModuleId)
+                .then(columns => {
+                    // avoid race: if we've already renamed something, clearly
+                    // we don't want these values from the server.
+                    if (!isEmptyJson(this.props.entriesJsonString)) return;
+
+                    const entries = {};
+                    for (const colname of columns) {
+                        entries[colname] = colname;
                     }
-                    api.onParamChanged(this.props.paramId, {value: JSON.stringify(entries)})
-                        .then(() => {
-                            this.props.changeLoadAll(false);
-                        })
+                    this.setState({ entries });
                 });
         }
     }
 
-    onColRename(prevName, nextName) {
+    onColRename = (prevName, nextName) => {
         var newEntries = Object.assign({}, this.state.entries);
         newEntries[prevName] = nextName;
-        api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
     }
 
-    onEntryDelete(prevName) {
+    onEntryDelete = (prevName) => {
         var newEntries = Object.assign({}, this.state.entries);
-        if(prevName in newEntries) {
+        if (prevName in newEntries) {
             delete newEntries[prevName];
-            if(Object.keys(newEntries).length == 0) {
-                // Find the previous module to the current module, delete the current module
-                // and switch to the previous module
-                // We can always assume previous module exist as otherwise this module wouldn't have
-                // any data and would not encounter this situation
-                let state = store.getState();
-                let currentIdx = state.workflow.wf_modules.findIndex((wfm) => (wfm.id == this.props.wfModuleId));
-                let prevIdx = currentIdx - 1;
+            if (Object.keys(newEntries).length == 0) {
                 // I am intermixing actions and API calls here because somehow other combinations
                 // of them do not work
-                api.deleteModule(this.props.wfModuleId)
-                    .then(() => {store.dispatch(setSelectedWfModuleAction(state.workflow.wf_modules[prevIdx].id))});
+                store.dispatch(deleteModuleAction(this.props.wfModuleId));
             } else {
-                api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+                this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
             }
         }
     }

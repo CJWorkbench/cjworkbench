@@ -1,0 +1,28 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: saveddata-pv-staging
+  namespace: staging
+  labels:
+    implementation: nfs-server
+spec:
+  capacity:
+    storage: 18Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    # Need absolute URL, not relative one: mount.nfs is run on the _node_,
+    # not the pod, so the namespace ("production"/"staging") is not in the
+    # DNS search domain. https://github.com/kubernetes/kubernetes/issues/44528
+    #
+    # To deploy to staging (which you'll only need to do once):
+    #
+    # 1. Edit the next line: s/production/staging
+    # 2. Edit the `name` (in `metadata`) to add `-staging` to the end: these
+    #    volumes are not namespaced, it would appear....
+    # 3. `kubectl -n staging apply -f ...`
+    # 4. Undo the edits
+    server: nfs-server-service.staging.svc.cluster.local
+    path: /saveddata
+    readOnly: false

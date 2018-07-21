@@ -12,7 +12,8 @@ def embed(request, wfmodule_id):
     except WfModule.DoesNotExist:
         wf_module = None
 
-    if wf_module and (not wf_module.workflow.user_authorized_read(request.user) or not wf_module.module_version.html_output):
+    if wf_module and (not wf_module.workflow.request_authorized_read(request)
+                      or not wf_module.module_version.html_output):
         wf_module = None
 
     if wf_module:
@@ -22,13 +23,11 @@ def embed(request, wfmodule_id):
             'workflow': workflow_serializer.data,
             'wf_module': workflow_module_serializer.data
         }
-        # json.dumps barfs on datetime objects, and it's not needed here
-        del (init_state['workflow'])['last_update']
     else:
         init_state = {
             'workflow': None,
             'wf_module': None
         }
 
-    response = TemplateResponse(request, 'embed.html', {'initState': json.dumps(init_state)})
+    response = TemplateResponse(request, 'embed.html', {'initState': init_state})
     return response
