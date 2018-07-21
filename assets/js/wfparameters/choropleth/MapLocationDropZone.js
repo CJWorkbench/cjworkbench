@@ -1,7 +1,8 @@
-import React, {Component} from 'react'
-import Dropzone from 'react-dropzone'
-import PropTypes from 'prop-types'
-import GJV from 'geojson-validation'
+import React, {Component} from 'react';
+import Dropzone from 'react-dropzone';
+import PropTypes from 'prop-types';
+import GJV from 'geojson-validation';
+import {OutputIframeCtrl} from "../../OutputIframe";
 
 export default class MapLocationDropZone extends Component {
     // Accepts an upload of GeoJSON file. It is parsed in the front-end because
@@ -52,13 +53,22 @@ export default class MapLocationDropZone extends Component {
         console.log("Uploaded file is not valid geoJSON.");
     }
 
+    refreshIframe() {
+        // This slight hack deals with an issue that the iframe does not refresh
+        // after a parameter is updated.
+        if(OutputIframeCtrl) {
+            OutputIframeCtrl.postMessage({refresh: true}, '*');
+        }
+    }
+
     updateParamValue(file, geoJSON) {
         let newVal = {
             filename: file.name,
             geojson: geoJSON,
             modified: file.lastModifiedDate
         };
-        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)});
+        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)})
+            .then(() => {this.refreshIframe()});
     }
 
     onDrop(acceptedFiles, rejectedFiles) {
