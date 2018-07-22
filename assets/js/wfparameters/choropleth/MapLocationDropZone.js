@@ -180,16 +180,19 @@ export default class MapLocationDropZone extends Component {
                             {dropZoneContent}
                         </Dropzone>
                 )}
-                {this.props.isEmpty ? '' : (
-                    <select
-                        className={'custom-select module-parameter dropdown-selector'}
-                        name={'location'}
-                        value={this.state.keyProperty}
-                        disabled={this.props.isReadOnly}
-                        onChange={this.handlePropertySelectionChange}
-                    >
-                        {propertyOptions}
-                    </select>
+                {this.state.isEmpty ? '' : (
+                    <div>
+                        <div className='label-margin t-d-gray content-3'>Location property</div>
+                        <select
+                            className={'custom-select module-parameter dropdown-selector'}
+                            name={'location'}
+                            value={this.state.keyProperty}
+                            disabled={this.props.isReadOnly}
+                            onChange={this.handlePropertySelectionChange}
+                        >
+                            {propertyOptions}
+                        </select>
+                    </div>
                 )}
             </div>
         );
