@@ -102,7 +102,7 @@ export default class MapLocationDropZone extends Component {
     renderDropZoneContent() {
         if(this.state.isEmpty) {
             return (
-                <div>
+                <div className={'map-upload-explainer'}>
                     Drop a GeoJSON file here, or click this area to browse and upload from your computer.
                     <br/>
                     GeoJSON files defines the map areas for the choropleth map.

@@ -66,7 +66,10 @@ export default class MapLocationPresets extends React.Component {
             and save as a .js file under the ./geojson directory, then update here.
          */
         const presets = [
-            {filename: 'us-states', display: 'US States'},
+            {filename: 'us-states', display: 'US states'},
+            {filename: 'us-states-abbr', display: 'US states (abbreviation)'},
+            {filename: 'contiguous-us-states', display: 'Contiguous US states'},
+            {filename: 'contiguous-us-states-abbr', display: 'Contiguous US states (abbreviation)'},
             {filename: 'nyc-precincts', display: 'NYC precincts'}
         ];
         const presetOptions = presets.map((p) => {
