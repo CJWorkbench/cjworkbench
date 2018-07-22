@@ -41,6 +41,9 @@ export default class MapLocationDropZone extends Component {
             filename: paramVal.filename,
             modified: paramVal.modified,
             alertInvalidFormat: false,
+            geojson: paramVal.geojson,
+            properties: paramVal.properties,       // Potential property names to correlate to location column
+            keyProperty: paramVal.keyProperty,     // Selected property name to correlate to location column
         };
     }
 
@@ -62,11 +65,38 @@ export default class MapLocationDropZone extends Component {
         }
     }
 
+    handlePropertySelectionChange = (event) => {
+        let newKeyProperty = event.target.value;
+        let newVal = {
+            filename: this.state.filename,
+            modified: this.state.modified,
+            geojson: this.state.geojson,
+            properties: this.state.properties,
+            keyProperty: event.target.value
+        };
+        this.setState({keyProperty: newKeyProperty},
+            () => {this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)}).then(() => {this.refreshIframe()})});
+    };
+
     updateParamValue(file, geoJSON) {
+        if(geoJSON.features.length < 1) {
+            // We don't consider a GeoJSON file valid if it doesn't have features
+            this.alertInvalidFormat();
+            return;
+        }
+        let propertyNames = Object.keys(geoJSON.features[0].properties);
+        if(propertyNames.length < 1) {
+            // We don't consider a GeoJSON file valid its features do not have properties
+            this.alertInvalidFormat();
+            return;
+        }
+        let selectedProperty = propertyNames[0];
         let newVal = {
             filename: file.name,
             geojson: geoJSON,
-            modified: file.lastModifiedDate
+            modified: file.lastModifiedDate,
+            properties: propertyNames,
+            keyProperty: selectedProperty
         };
         this.setState({alertInvalidFormat: false}, () => {
             this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)})
@@ -129,6 +159,13 @@ export default class MapLocationDropZone extends Component {
     render() {
         const dropZoneContent = this.renderDropZoneContent();
 
+        let propertyOptions = [];
+        if(!this.state.isEmpty) {
+            propertyOptions = this.state.properties.map((p) => {
+                return (<option key={p} value={p} className={'dropdown-menu-item t-d-gray content-3'}>{p}</option>)
+            });
+        }
+
         return (
             <div>
                 <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
@@ -142,6 +179,17 @@ export default class MapLocationDropZone extends Component {
                         >
                             {dropZoneContent}
                         </Dropzone>
+                )}
+                {this.props.isEmpty ? '' : (
+                    <select
+                        className={'custom-select module-parameter dropdown-selector'}
+                        name={'location'}
+                        value={this.state.keyProperty}
+                        disabled={this.props.isReadOnly}
+                        onChange={this.handlePropertySelectionChange}
+                    >
+                        {propertyOptions}
+                    </select>
                 )}
             </div>
         );
