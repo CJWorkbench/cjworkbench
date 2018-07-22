@@ -14,7 +14,9 @@ describe('MapLocationDropZone rendering tests', () => {
     const mockParamData = {
         filename: 'test.js',
         geojson: {},
-        modified: new Date(2018, 4, 22, 9, 0)
+        modified: new Date(2018, 4, 22, 9, 0),
+        properties: ['location', 'other'],
+        keyProperty: 'location'
     };
 
     var api;
@@ -51,6 +53,12 @@ describe('MapLocationDropZone rendering tests', () => {
         // We don't check the values here as the prompt and date format might be subject to change
         expect(tree.find('div.map-uploaded-date')).toHaveLength(1);
         expect(tree.find('div.map-upload-new')).toHaveLength(1);
+        // A "property" select should appear that lets the user choose which property is location
+        expect(tree.find('select')).toHaveLength(1);
+        expect(tree.find('option')).toHaveLength(2);
+        tree.find('option').forEach((node) => {
+            expect(mockParamData.properties.includes(node.prop('value'))).toBe(true);
+        });
     });
 
     it('Renders a placeholder div instead of a dropzone for a read-only module', () => {

@@ -42,7 +42,6 @@ export class SingleMapLayerEditor extends React.Component {
     };
 
     commitInputValue = () => {
-        console.log("New levels: " + this.state.levels);
         this.props.onEdit(this.props.column, {
             color: this.props.color,
             levels: parseInt(this.state.levels),
@@ -98,7 +97,6 @@ export class SingleMapLayerEditor extends React.Component {
     };
 
     handleColorChangeComplete = (color, event) => {
-        console.log("New color: " + color.hex);
         if(this.props.isReadOnly) {
             this.setState({color: this.props.color});
         } else {
@@ -229,7 +227,6 @@ export default class MapLayerEditor extends React.Component {
             });
 
             if(updateData && (!this.props.isReadOnly)) {
-                console.log('Data updated');
                 this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)})
                     .then(() => {this.refreshIframe()});
             }
