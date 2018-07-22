@@ -27,6 +27,17 @@ export class SingleMapLayerEditor extends React.Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps != this.props) {
+            this.setState({
+                selected: nextProps.selected,
+                levels: nextProps.levels,
+                color: nextProps.color,
+                showLevelsError: false
+            });
+        }
+    }
+
     handleCheckboxClick = () => {
         this.setState({selected: !this.state.selected}, () => {
             this.props.onEdit(this.props.column, {
@@ -178,6 +189,13 @@ export default class MapLayerEditor extends React.Component {
         this.state = {
             columns: [],
             data: data,
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.paramData !== this.props.paramData) {
+            let data = this.parseParamData(nextProps.paramData);
+            this.setState({data: data}, () => {this.refreshIframe()});
         }
     }
 

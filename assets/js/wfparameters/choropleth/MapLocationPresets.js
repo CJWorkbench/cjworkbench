@@ -20,6 +20,14 @@ export default class MapLocationPresets extends React.Component {
         this.state = this.parseParamData(props.paramData);
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.paramData !== this.props.paramData) {
+            this.setState(this.parseParamData(nextProps.paramData), () => {
+                this.refreshIframe()
+            });
+        }
+    }
+
     parseParamData(paramData) {
         let data = {};
         try {

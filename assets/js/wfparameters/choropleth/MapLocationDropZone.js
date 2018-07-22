@@ -23,8 +23,14 @@ export default class MapLocationDropZone extends Component {
         super(props);
 
         this.state = this.parseParamDataToState(props.paramData);
+    }
 
-        this.onDrop = this.onDrop.bind(this);
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.paramData !== this.props.paramData) {
+            this.setState(this.parseParamDataToState(nextProps.paramData), () => {
+                this.refreshIframe()
+            });
+        }
     }
 
     parseParamDataToState(paramData) {
@@ -104,7 +110,7 @@ export default class MapLocationDropZone extends Component {
         });
     }
 
-    onDrop(acceptedFiles, rejectedFiles) {
+    onDrop = (acceptedFiles, rejectedFiles) => {
         if(acceptedFiles.length < 1) {
             return;
         }
@@ -127,7 +133,7 @@ export default class MapLocationDropZone extends Component {
         };
 
         reader.readAsText(acceptedFiles[0]);
-    }
+    };
 
     renderDropZoneContent() {
         if(this.state.isEmpty) {
