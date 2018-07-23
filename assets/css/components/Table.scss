@@ -224,12 +224,14 @@
       }
 
       .column-letter {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         padding-top: .15rem;
         background-color: #fff;
         color: $light-gray;
-        height: 2rem;
-        padding-bottom: .1rem;
+        height: 1.8rem;
         font-weight: 300;
         //box shadow to cover the 1px border from header with a lighter one
         box-shadow:
@@ -237,7 +239,7 @@
            1px 0 0 $table-border;
       }
 
-      .sort-container {
+      .data-grid-column-header  {
         display: flex;
         align-items: center;
         overflow: hidden;
@@ -249,25 +251,24 @@
           height:100%;
         }
 
-        .column-sort-arrow {
-          position:absolute;
-          height: 3.6rem;
-          background: $heading-bg;
-          top:-.5rem;
+        .dropdown {
+          position: absolute;
+          margin-top: .2rem;
           right:0;
-          border-left: 1px solid $dark-accent--medium;
-        }
-
-        button {
-          flex: 0 0 auto;
-          font-size: 1.2rem;
-          margin-top:.5rem ;
-          border: 0;
-          cursor: pointer;
-          background-color: transparent;
-          color: inherit;
           opacity: 0;
-          &:hover {opacity: 1}
+          background-color: $heading-bg;
+          z-index: 1;
+          cursor: pointer;
+
+          button {
+            flex: 0 0 auto;
+            font-size: 1.2rem;
+            border: 0;
+            background-color: transparent;
+            color: inherit;
+            opacity: 0.7;
+            &:hover {opacity: 1}
+          }
         }
 
         input[name="new-column-key"] {
@@ -279,17 +280,23 @@
           padding-right: 1rem;
           flex: 1 1 auto;
           border: 0;
+          z-index: 2;
         }
       }
     }
 
-    .react-grid-HeaderCell:hover button {
-      opacity: 0.7;
+    .react-grid-HeaderCell:hover .dropdown {
+      opacity: 1;
     }
 
 
     .react-grid-HeaderCell:active {
-      background-color: #95B5C9;
+      background-color: $header-hover;
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+
+      .dropdown {opacity: 0;}
     }
 
     .react-grid-HeaderCell__draggable{
@@ -298,7 +305,8 @@
 
     .react-grid-HeaderCell__draggable:hover,
     .react-grid-HeaderCell__draggable:active {
-      background-color: #95B5C9;
+      background-color: $header-hover;
+
     }
 
     .react-grid-Grid{

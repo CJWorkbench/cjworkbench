@@ -267,7 +267,7 @@ export class ColumnHeader extends React.PureComponent {
     if(this.props.isReadOnly) {
       return null;
     }
-    
+
     return (
       <ColumnContextMenu duplicateColumn={this.onDuplicateColumn} setSortDirection={this.onSetSortDirection} sortDirection={this.props.isSorted == true
         ? this.props.sortDirection : sortDirectionNone}/>
@@ -332,12 +332,12 @@ export class ColumnHeader extends React.PureComponent {
           onDragEnd={this.onDragEnd}
           >
           {maybeDropZone('left', index)}
-          <div className="sort-container">
+
             <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn} isReadOnly={this.props.isReadOnly}/>
             {columnMenuSection}
           </div>
           {maybeDropZone('right', index + 1)}
-        </div>
+        
       </React.Fragment>
     );
   }
