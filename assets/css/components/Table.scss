@@ -224,12 +224,14 @@
       }
 
       .column-letter {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         padding-top: .15rem;
         background-color: #fff;
         color: $light-gray;
-        height: 2rem;
-        padding-bottom: .1rem;
+        height: 1.8rem;
         font-weight: 300;
         //box shadow to cover the 1px border from header with a lighter one
         box-shadow:
@@ -251,6 +253,7 @@
 
         .dropdown {
           position: absolute;
+          margin-top: .2rem;
           right:0;
           opacity: 0;
           background-color: $heading-bg;
