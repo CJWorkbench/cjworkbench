@@ -237,7 +237,7 @@
            1px 0 0 $table-border;
       }
 
-      .sort-container {
+      .data-grid-column-header  {
         display: flex;
         align-items: center;
         overflow: hidden;
@@ -249,25 +249,25 @@
           height:100%;
         }
 
-        .column-sort-arrow {
-          position:absolute;
-          height: 3.6rem;
-          background: $heading-bg;
-          top:-.5rem;
+        .dropdown {
+          position: absolute;
           right:0;
-          border-left: 1px solid $dark-accent--medium;
-        }
-
-        button {
-          flex: 0 0 auto;
-          font-size: 1.2rem;
-          margin-top:.5rem ;
-          border: 0;
-          cursor: pointer;
-          background-color: transparent;
-          color: inherit;
           opacity: 0;
-          &:hover {opacity: 1}
+          background-color: $heading-bg;
+          z-index: 1;
+
+
+          button {
+            flex: 0 0 auto;
+            font-size: 1.2rem;
+            margin-top:.5rem ;
+            border: 0;
+            cursor: pointer;
+            background-color: transparent;
+            color: inherit;
+            opacity: 0.7;
+            &:hover {opacity: 1}
+          }
         }
 
         input[name="new-column-key"] {
@@ -279,12 +279,13 @@
           padding-right: 1rem;
           flex: 1 1 auto;
           border: 0;
+          z-index: 2;
         }
       }
     }
 
-    .react-grid-HeaderCell:hover button {
-      opacity: 0.7;
+    .react-grid-HeaderCell:hover .dropdown {
+      opacity: 1;
     }
 
 
