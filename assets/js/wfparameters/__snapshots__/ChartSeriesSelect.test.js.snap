@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartSeriesSelect should match snapshot 1`] = `
+<ChartSeriesSelect
+  availableColumns={
+    Array [
+      "foo",
+      "bar",
+    ]
+  }
+  color="#abcdef"
+  column="foo"
+  index={2}
+  onChange={[MockFunction]}
+>
+  <InputGroup
+    className="chart-series-select"
+    size="lg"
+    tag="div"
+  >
+    <div
+      className="chart-series-select input-group input-group-lg"
+    >
+      <InputGroupAddon
+        addonType="prepend"
+        tag="div"
+      >
+        <div
+          className="input-group-prepend"
+        >
+          <Button
+            className="color-picker button color"
+            color="secondary"
+            onClick={[Function]}
+            style={
+              Object {
+                "background": "#abcdef",
+              }
+            }
+            tag="button"
+            title="Pick color"
+          >
+            <button
+              className="color-picker button color btn btn-secondary"
+              onClick={[Function]}
+              style={
+                Object {
+                  "background": "#abcdef",
+                }
+              }
+              title="Pick color"
+              type="button"
+            >
+              <i
+                className="color-picker"
+              />
+            </button>
+          </Button>
+        </div>
+      </InputGroupAddon>
+      <select
+        className="form-control"
+        name="column"
+        onChange={[Function]}
+        value="foo"
+      >
+        <option
+          key="foo"
+        >
+          foo
+        </option>
+        <option
+          key="bar"
+        >
+          bar
+        </option>
+      </select>
+    </div>
+  </InputGroup>
+</ChartSeriesSelect>
+`;

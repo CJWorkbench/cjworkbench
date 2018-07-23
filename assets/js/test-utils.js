@@ -31,12 +31,17 @@ export function okResponseMock () {
 // even if they are chained like Promise.resolve().then(...).then(...)
 // Technically: this is designed to resolve on the next macrotask
 // https://stackoverflow.com/questions/25915634/difference-between-microtask-and-macrotask-within-an-event-loop-context
-export function tick() {
+export function tick () {
   return new Promise(resolve => {
-    setTimeout(resolve, 0);
+    setTimeout(resolve, 0)
   })
 }
 
+export function sleep (ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+}
 
 /**
  * Like enzyme's `shallow()`, but child components that depend on redux

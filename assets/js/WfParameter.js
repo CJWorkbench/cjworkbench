@@ -4,6 +4,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import MenuParam from './wfparameters/MenuParam'
 import ChartEditor from './wfparameters/charts/ChartEditor'
+import ChartSeriesMultiSelect from './wfparameters/ChartSeriesMultiSelect'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
@@ -134,6 +135,18 @@ export default class WfParameter extends React.Component {
     this.props.api.postParamEvent(this.props.getParamId('version_select'), {})
   }
 
+  fetchInputColumns = () => {
+    return this.props.api.inputColumns(this.props.wf_module_id)
+  }
+
+  onChangeYColumns = (arr) => {
+    this.props.setParamText('y_columns', JSON.stringify(arr))
+  }
+
+  colRenameSaveState = (state) => {
+    this.props.setParamText('newcolnames', state)
+  }
+
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
     const { id, value } = this.props.p
@@ -159,93 +172,92 @@ export default class WfParameter extends React.Component {
   render_custom_parameter() {
     const { id_name, name } = this.props.p.parameter_spec
 
-    if (id_name == 'chart_editor') {
-      return (
-        <ChartEditor
-          isReadOnly={ this.props.isReadOnly }
-          revision={ this.props.revision }
-          wfModuleId={this.props.wf_module_id}
-          modelText={this.props.p.value}
-          type={ this.props.getParamText('chart_type') }
-          api={this.props.api}
-        />
-      )
-    } else if (id_name == 'version_select') {
-
-      var button = (!this.props.isReadOnly)
-        ? <button className='button-blue action-button mt-0' onClick={this.click}>{name}</button>
-        : null
-
-      return (
-        <div {...this.outerDivProps}>
-          <UpdateFrequencySelect
+    switch (id_name) {
+      case 'chart_editor':
+        return (
+          <ChartEditor
+            isReadOnly={ this.props.isReadOnly }
+            revision={ this.props.revision }
             wfModuleId={this.props.wf_module_id}
-            isReadOnly={this.props.isReadOnly}
+            modelText={this.props.p.value}
+            type={ this.props.getParamText('chart_type') }
+            api={this.props.api}
           />
-          <div className="d-flex justify-content-between mt-2">
-            <DataVersionSelect wfModuleId={this.props.wf_module_id} />
-            {button}
+        )
+      case 'version_select':
+        const button = (!this.props.isReadOnly)
+          ? <button className='button-blue action-button mt-0' onClick={this.click}>{name}</button>
+          : null
+
+        return (
+          <div {...this.outerDivProps}>
+            <UpdateFrequencySelect
+              wfModuleId={this.props.wf_module_id}
+              isReadOnly={this.props.isReadOnly}
+            />
+            <div className="d-flex justify-content-between mt-2">
+              <DataVersionSelect wfModuleId={this.props.wf_module_id} />
+              {button}
+            </div>
+
           </div>
-
-        </div>
-      );
-    } else if (id_name == 'version_select_simpler') {
-
-      return (
-        <div className='versionSelect--uploadFile'>
-          <DataVersionSelect wfModuleId={this.props.wf_module_id} />
-        </div>
-      );
-    } else if (id_name == 'colrename') {
-      var renameParam = this.props.getParamText('newcolnames');
-      let saveState = ( state => this.props.setParamText('newcolnames', state) );
-      return (
-        <div className=''>
-          <ColumnRenamer
-            isReadOnly={this.props.isReadOnly}
-            renameParam={renameParam}
-            saveState={saveState}
-            getColNames={this.getInputColNames}
-            revision={this.props.revision} />
-        </div> );
-    } else if (id_name == 'file') {
-      return (
-        <DropZone
-          wfModuleId={this.props.wf_module_id}
-          revision={this.props.revision}
-          api={this.props.api}
+        );
+      case 'version_select_simpler':
+        return (
+          <div className='versionSelect--uploadFile'>
+            <DataVersionSelect wfModuleId={this.props.wf_module_id} />
+          </div>
+        );
+      case 'colrename':
+        const renameParam = this.props.getParamText('newcolnames');
+        return (
+          <div className=''>
+            <ColumnRenamer
+              isReadOnly={this.props.isReadOnly}
+              renameParam={renameParam}
+              saveState={this.colRenameSaveState}
+              getColNames={this.getInputColNames}
+              revision={this.props.revision} />
+          </div>
+        );
+      case 'file':
+        return (
+          <DropZone
+            wfModuleId={this.props.wf_module_id}
+            revision={this.props.revision}
+            api={this.props.api}
           />
-      );
-    } else if (id_name == 'googlefileselect') {
-      const secret = this.props.getParamText('google_credentials')
-      const secretName = secret ? (secret.name || null) : null
-      return (
-        <GoogleFileSelect
-          api={this.props.api}
-          googleCredentialsParamId={this.props.getParamId('google_credentials')}
-          googleCredentialsSecretName={secretName}
-          fileMetadataJson={this.props.getParamText('googlefileselect')}
-          onChangeJson={this.onChangeGoogleFileSelectJson}
+        )
+      case 'googlefileselect':
+        const secret = this.props.getParamText('google_credentials')
+        const secretName = secret ? (secret.name || null) : null
+        return (
+          <GoogleFileSelect
+            api={this.props.api}
+            googleCredentialsParamId={this.props.getParamId('google_credentials')}
+            googleCredentialsSecretName={secretName}
+            fileMetadataJson={this.props.getParamText('googlefileselect')}
+            onChangeJson={this.onChangeGoogleFileSelectJson}
           />
-      )
-    } else if (id_name == 'code') {
-      return (
-        <WorkbenchAceEditor
-          name={this.props.p.parameter_spec.name}
-          isZenMode={this.props.isZenMode}
-          wfModuleError={this.props.wfModuleError}
-          save={this.paramChanged}
-          defaultValue={this.props.p.value}
+        )
+      case 'code':
+        return (
+          <WorkbenchAceEditor
+            name={this.props.p.parameter_spec.name}
+            isZenMode={this.props.isZenMode}
+            wfModuleError={this.props.wfModuleError}
+            save={this.paramChanged}
+            defaultValue={this.props.p.value}
           />
-      )
-    } else if (id_name == 'celledits') {
-      return (
-        <CellEditor
-          edits={this.props.p.value}
-          onSave={this.paramChanged}
-        />
-      )
-    } else if (id_name == 'refine') {
+        )
+      case 'celledits':
+        return (
+          <CellEditor
+            edits={this.props.p.value}
+            onSave={this.paramChanged}
+          />
+        )
+      case 'refine':
         return (
           <Refine
             api={this.props.api}
@@ -254,27 +266,38 @@ export default class WfParameter extends React.Component {
             existingEdits={this.props.p.value}
             saveEdits={this.paramChanged}
             revision={this.props.revision}
+          />
+        )
+      case 'reorder-history':
+        return (
+          <ReorderHistory
+            history={this.props.getParamText('reorder-history')}
+          />
+        )
+      case 'rename-entries':
+        return (
+          <RenameEntries
+            api={this.props.api}
+            entriesJsonString={this.props.p.value}
+            wfModuleId={this.props.wf_module_id}
+            paramId={this.props.p.id}
+            revision={this.props.revision}
+            isReadOnly={this.props.isReadOnly}
+          />
+        )
+      case 'y_columns':
+        return (
+          <ChartSeriesMultiSelect
+            workflowRevision={this.props.revision}
+            series={JSON.parse(this.props.p.value || '[]')}
+            fetchInputColumns={this.fetchInputColumns}
+            onChange={this.onChangeYColumns}
             />
         )
-    } else if (id_name == 'reorder-history') {
-      return (
-        <ReorderHistory
-          history={this.props.getParamText('reorder-history')}
-        />
-      )
-    } else if (id_name == 'rename-entries') {
-      return (
-          <RenameEntries
-              api={this.props.api}
-              entriesJsonString={this.props.p.value}
-              wfModuleId={this.props.wf_module_id}
-              paramId={this.props.p.id}
-              revision={this.props.revision}
-              isReadOnly={this.props.isReadOnly}
-          />
-      )
-    } else {
-      return (<p className="error">Custom type {id_name} not handled</p>)
+      default:
+        return (
+          <p className="error">Custom type {id_name} not handled</p>
+        )
     }
   }
 
