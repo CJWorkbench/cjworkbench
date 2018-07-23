@@ -77,16 +77,18 @@
 </section>
 <section>
   <h2>3. Changing table format</h2>
-  <p>The table is currently in a 'long' format, where each row is a unique observation. In order to make it more legible, we need to display it in the 'wide' format, used in most spreadshseets.</p>
+  <p>The table is currently in a 'long' format, where each row is a unique combination of variables (Year, MetroArea) and values (Population).</p>
+  <p>To make it more legible, we must display it in a 'wide' format, commonly found in spreadsheets.</p>
+  <p>In the 'wide' format, a variable is used as a 'Row variable', and another variable as the 'Column variable'. All remaining cells are populated with corresponding values.</p>
+  <figure>
+    <img alt="Inspect element" src="/static/images/clean_standardize_lesson/3_reshape_long_wide.png">
+  </figure>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":4,"name":"Reshape" }]'
       data-test="return workflow.wfModules.length > 4 && workflow.wfModules[4].moduleName === 'Reshape'"
       >Add the module ‘Reshape’.
-      <figure>
-        <img alt="Inspect element" src="/static/images/clean_standardize_lesson/3_reshape_long_wide.png">
-      </figure>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
@@ -96,12 +98,12 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('colnames') == 'Year'"
-      >Choose <kbd>Year</kbd> as the Row variable. Those values will be displayed in leftmost column of the wide table.</li>
+      >Choose <kbd>Year</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
       >Choose <kbd>MetroArea</kbd> as the Column variable. Those values will be used in the column header in the wide table.
-      <p class="instruction-detail highlight">Congratulation! Your data and ready for analysis.</p>
+      <p class="instruction-detail highlight">Congratulation, your data is clean and ready for analysis!</p>
       <span class="instruction-detail"> Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" >how to scrape and monitor content on a web page.</a></span>
     </li>
   </ol>
