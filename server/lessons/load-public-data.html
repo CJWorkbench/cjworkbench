@@ -60,7 +60,7 @@
 </section>
 <section>
   <h2>3. Filtering with a condition</h2>
-  <p>Let’s make our chart more legible by filtering and sorting its data.</p>
+  <p>Let’s make our chart more legible by only keeping projects that include more than 200 affordable units.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -70,7 +70,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
       data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
-      >Select the column <kbd>affordable_units</kbd>, then choose the condition <kbd>Greater than</kbd> and keep all rows having more than 200 affordable units.</li>
+      >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd></br> and enter the value <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
@@ -82,8 +82,8 @@
       >Get the embed code by clicking on the <span>
       <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg">
     </span> button at the top right of the chart panel.
-    <p class="instruction-detail highlight">Congratulations, your chart is live! It will now update to reflect any change in the data.<p>
-    <span class="instruction-detail"> Next, learn <a href="https://app.workbenchdata.com/lessons/clean-and-standardize/" class="highlight" target="_blank">how to clean and standardize data.</a></span>
+    <p class="instruction-detail highlight">Congratulations making your first chart!<p>
+    <span class="instruction-detail"> Next, learn how to <a href="https://app.workbenchdata.com/lessons/clean-and-standardize/" class="highlight" target="_blank">how to clean and standardize data.</a></span>
     </li>
   </ol>
 </section>
