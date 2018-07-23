@@ -1,15 +1,20 @@
 from functools import lru_cache
 import importlib
 import importlib.util
+import logging
 import os
 import sys
 import traceback
 from types import ModuleType
 from typing import Any, Dict, Optional
+from django.conf import settings
 from pandas import DataFrame
 from server.models import WfModule
 from server.modules.types import ProcessResult
 from server.modules.moduleimpl import ModuleImpl
+
+
+logger = logging.getLogger(__name__)
 
 
 # the base directory where all modules imported should be stored, i.e. the
@@ -126,7 +131,6 @@ class DynamicModule:
         ModuleImpl.commit_result(wf_module, result)
 
 
-@lru_cache(maxsize=None)
 def load_module(module_id_name: str, version_sha1: str) -> ModuleType:
     """Load a Python Module given a name and version.
 
@@ -161,6 +165,7 @@ def load_module(module_id_name: str, version_sha1: str) -> ModuleType:
         raise ValueError(f'Expected .py file in {path_to_code}')
 
     # Now we can load the code into memory.
+    logger.info(f'Loading {python_file}')
     spec = importlib.util.spec_from_file_location(
         f'{module_id_name}.{version_sha1}',
         python_file
@@ -168,6 +173,10 @@ def load_module(module_id_name: str, version_sha1: str) -> ModuleType:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+if settings.CACHE_MODULES:
+    load_module = lru_cache(maxsize=None)(load_module)
 
 
 def wf_module_to_dynamic_module(wf_module: WfModule) -> DynamicModule:
