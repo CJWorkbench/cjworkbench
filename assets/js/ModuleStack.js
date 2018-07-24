@@ -374,7 +374,7 @@ const mapStateToProps = (state) => {
     selected_wf_module: state.selected_wf_module,
     wf_modules: state.workflow.wf_modules,
     isReadOnly: state.workflow.read_only,
-    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', index: index }),
+    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index }),
   }
 }
 

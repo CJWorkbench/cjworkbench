@@ -41,7 +41,7 @@ const LessonHighlightType = P.oneOfType([
 export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
 
 const matchOneLessonHighlight = (lessonHighlight, test) => {
-  return !Object.keys(lessonHighlight).some(key => test[key] !== lessonHighlight[key])
+  return !Object.keys(lessonHighlight).some(key => test[key] !== null && test[key] !== lessonHighlight[key])
 }
 
 /**
