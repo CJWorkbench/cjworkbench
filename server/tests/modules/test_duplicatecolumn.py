@@ -28,23 +28,17 @@ reference_table = pd.read_csv(io.StringIO(test_csv), dtype={
 def duplicated_column(column_number, table=reference_table.copy()):
     col_to_dup = table.columns[column_number]
     expected_col_name = '{0} {1}'.format(duplicate_column_prefix, col_to_dup)
-    table[expected_col_name] = table[col_to_dup]
+    table.insert(column_number + 1, expected_col_name, table[col_to_dup])
     return ProcessResult(table)
 
 def duplicated_column_with_existing(column_number, existing_column_number, table=reference_table.copy()):
     col_to_dup = table.columns[column_number]
     existing_column_name = table.columns[existing_column_number]
     expected_col_name = '{0} {1}'.format(existing_column_name, 1)
-    table[expected_col_name] = table[col_to_dup]
+    table.insert(column_number + 1, expected_col_name, table[col_to_dup])
     return ProcessResult(table)
 
 class DuplicateColumnFromTableTests(LoggedInTestCase):
-    # Current dtype choices: "String|Number|Date"
-    # Current direction choices: "Select|Ascending|Descending"
-    # If the position of the values change, tests will need to be updated
-
-    # NaN and NaT always appear last as the policy in SortFromTable dictates
-
     def setUp(self):
         super(DuplicateColumnFromTableTests, self).setUp()
         # A reference table for correctness checking
@@ -62,18 +56,6 @@ class DuplicateColumnFromTableTests(LoggedInTestCase):
         result = execute_nocache(self.wf_module)
         self.assertEqual(result, duplicated_column(0))
 
-        # Tests duplicating the third column (second column is special case)
-        """self.colnames_pval.value = 'col_3'
-        self.colnames_pval.save()
-        result = execute_nocache(self.wf_module)
-        self.assertEqual(result, duplicated_column(2))
-
-        # Tests duplicating the fourth column
-        self.colnames_pval.value = 'col_4'
-        self.colnames_pval.save()
-        result = execute_nocache(self.wf_module)
-        self.assertEqual(result, duplicated_column(3))
-        """
 
     def test_duplicate_with_existing(self):
         # Tests duplicating the second column when an expected column name already exists
@@ -81,3 +63,4 @@ class DuplicateColumnFromTableTests(LoggedInTestCase):
         self.colnames_pval.save()
         result = execute_nocache(self.wf_module)
         self.assertEqual(result, duplicated_column_with_existing(1,4))
+
