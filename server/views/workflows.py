@@ -18,10 +18,12 @@ from server.versions import WorkflowUndo, WorkflowRedo
 # Add module name to expected Id alias {module_name: module_alias?}
 modules_from_table = [
     'editcells',
+    'filter',
     'sort-from-table',
     'reorder-columns',
     'rename-columns',
-    'duplicate-column'
+    'duplicate-column',
+    'selectcolumns'
 ]
 
 # Cache module Ids dynamically per keys in module_name_to_id
@@ -29,7 +31,11 @@ modules_from_table = [
 def module_id(id_name):
     if module_ids[id_name] is None:
         try:
-            module_ids[id_name] = Module.objects.get(id_name=id_name).id
+            module = Module.objects.filter(id_name=id_name).first()
+            if not module:
+                module_ids[id_name] = None
+            else:
+                module_ids[id_name] = module.id
         except Module.DoesNotExist:
             return None
 

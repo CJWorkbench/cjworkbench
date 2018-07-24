@@ -67,19 +67,27 @@ describe('TableView', () => {
       expect(updateTableActionModule).not.toHaveBeenCalled();
       // Do call updateTableActionModule if the cell value has changed
       tree.find(TableView).instance().onEditCell(1, 'b', '1000');
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', { row: 1, col: 'b', value: '1000' });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' });
 
       // Calls updateTableActionModule for sorting
       tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', 'a', 'Number', sortDirectionAsc);
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, 'a', 'Number', sortDirectionAsc);
 
       // Calls updateTableActionModule for duplicating column
       tree.find(TableView).instance().duplicateColumn('a');
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', 'a');
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, 'a');
+
+      // Calls updateTableActionModule for filtering column
+      tree.find(TableView).instance().filterColumn('a');
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, 'a');
+
+      // Calls updateTableActionModule for drop column
+      tree.find(TableView).instance().dropColumn('a');
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, 'a');
 
       // Calls updateTableActionModule for column reorder
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', { column: 'a', from: 0, to: 1 });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 });
 
       done();
     });

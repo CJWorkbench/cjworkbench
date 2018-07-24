@@ -59,7 +59,9 @@ exports[`TableView Blank table when no module id 1`] = `
             "    ",
           ]
         }
+        dropColumn={[Function]}
         duplicateColumn={[Function]}
+        filterColumn={[Function]}
         getRow={[Function]}
         isReadOnly={false}
         setSortDirection={[Function]}
@@ -83,7 +85,9 @@ exports[`TableView Blank table when no module id 1`] = `
                   columnKey=""
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={0}
                   isReadOnly={false}
                   isSorted={false}
@@ -110,7 +114,9 @@ exports[`TableView Blank table when no module id 1`] = `
                   columnKey=" "
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={1}
                   isReadOnly={false}
                   isSorted={false}
@@ -137,7 +143,9 @@ exports[`TableView Blank table when no module id 1`] = `
                   columnKey="   "
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={2}
                   isReadOnly={false}
                   isSorted={false}
@@ -164,7 +172,9 @@ exports[`TableView Blank table when no module id 1`] = `
                   columnKey="    "
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={3}
                   isReadOnly={false}
                   isSorted={false}
@@ -279,7 +289,9 @@ exports[`TableView Blank table when no module id 1`] = `
                           columnKey=""
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={0}
                           isReadOnly={false}
                           isSorted={false}
@@ -307,7 +319,9 @@ exports[`TableView Blank table when no module id 1`] = `
                           columnKey=" "
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={1}
                           isReadOnly={false}
                           isSorted={false}
@@ -335,7 +349,9 @@ exports[`TableView Blank table when no module id 1`] = `
                           columnKey="   "
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={2}
                           isReadOnly={false}
                           isSorted={false}
@@ -363,7 +379,9 @@ exports[`TableView Blank table when no module id 1`] = `
                           columnKey="    "
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={3}
                           isReadOnly={false}
                           isSorted={false}
@@ -406,7 +424,9 @@ exports[`TableView Blank table when no module id 1`] = `
                         columnKey=""
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={0}
                         isReadOnly={false}
                         isSorted={false}
@@ -433,7 +453,9 @@ exports[`TableView Blank table when no module id 1`] = `
                         columnKey=" "
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={1}
                         isReadOnly={false}
                         isSorted={false}
@@ -460,7 +482,9 @@ exports[`TableView Blank table when no module id 1`] = `
                         columnKey="   "
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={2}
                         isReadOnly={false}
                         isSorted={false}
@@ -487,7 +511,9 @@ exports[`TableView Blank table when no module id 1`] = `
                         columnKey="    "
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={3}
                         isReadOnly={false}
                         isSorted={false}
@@ -623,7 +649,9 @@ exports[`TableView Blank table when no module id 1`] = `
                               columnKey=""
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={0}
                               isReadOnly={false}
                               isSorted={false}
@@ -651,7 +679,9 @@ exports[`TableView Blank table when no module id 1`] = `
                               columnKey=" "
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={1}
                               isReadOnly={false}
                               isSorted={false}
@@ -679,7 +709,9 @@ exports[`TableView Blank table when no module id 1`] = `
                               columnKey="   "
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={2}
                               isReadOnly={false}
                               isSorted={false}
@@ -707,7 +739,9 @@ exports[`TableView Blank table when no module id 1`] = `
                               columnKey="    "
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={3}
                               isReadOnly={false}
                               isSorted={false}
@@ -781,7 +815,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey=""
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={0}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -809,7 +845,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey=" "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={1}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -837,7 +875,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey="   "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={2}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -865,7 +905,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey="    "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={3}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -947,7 +989,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                     columnKey=""
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={0}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -980,7 +1024,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey=""
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={0}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -1018,7 +1064,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                         columnKey=""
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={0}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -1045,7 +1093,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey=""
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={0}
                                   isReadOnly={false}
@@ -1076,7 +1126,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                       />
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -1191,6 +1244,46 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1220,6 +1313,26 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -1321,7 +1434,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                     columnKey=" "
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={1}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -1354,7 +1469,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey=" "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={1}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -1392,7 +1509,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                         columnKey=" "
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={1}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -1419,7 +1538,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey=" "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={1}
                                   isReadOnly={false}
@@ -1452,7 +1573,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                       </span>
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -1567,6 +1691,46 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1596,6 +1760,26 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -1697,7 +1881,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                     columnKey="   "
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={2}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -1730,7 +1916,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey="   "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={2}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -1768,7 +1956,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                         columnKey="   "
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={2}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -1795,7 +1985,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey="   "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={2}
                                   isReadOnly={false}
@@ -1828,7 +2020,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                       </span>
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -1943,6 +2138,46 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1972,6 +2207,26 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -2073,7 +2328,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                     columnKey="    "
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={3}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -2106,7 +2363,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey="    "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={3}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -2144,7 +2403,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                         columnKey="    "
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={3}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -2171,7 +2432,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey="    "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={3}
                                   isReadOnly={false}
@@ -2204,7 +2467,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                       </span>
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -2319,6 +2585,46 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2348,6 +2654,26 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -2546,7 +2872,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey=""
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={0}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -2574,7 +2902,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey=" "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={1}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -2602,7 +2932,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey="   "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={2}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -2630,7 +2962,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                 columnKey="    "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={3}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -2750,7 +3084,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey=""
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={0}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -2778,7 +3114,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey=" "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={1}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -2806,7 +3144,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey="   "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={2}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -2834,7 +3174,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                   columnKey="    "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={3}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -2955,7 +3297,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -2983,7 +3327,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3011,7 +3357,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3039,7 +3387,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3134,7 +3484,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3162,7 +3514,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3190,7 +3544,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3218,7 +3574,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3313,7 +3671,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3341,7 +3701,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3369,7 +3731,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3397,7 +3761,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3492,7 +3858,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3520,7 +3888,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3548,7 +3918,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3576,7 +3948,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -3723,7 +4097,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3751,7 +4127,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3779,7 +4157,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3807,7 +4187,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3902,7 +4284,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3930,7 +4314,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3958,7 +4344,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -3986,7 +4374,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4081,7 +4471,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4109,7 +4501,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4137,7 +4531,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4165,7 +4561,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4260,7 +4658,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4288,7 +4688,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4316,7 +4718,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4344,7 +4748,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4489,7 +4895,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -4517,7 +4925,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -4545,7 +4955,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -4573,7 +4985,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -4666,7 +5080,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4802,7 +5218,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -4938,7 +5356,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -5074,7 +5494,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -5345,7 +5767,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -5373,7 +5797,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -5401,7 +5827,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -5429,7 +5857,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -5522,7 +5952,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -5658,7 +6090,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -5794,7 +6228,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -5930,7 +6366,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -6201,7 +6639,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -6229,7 +6669,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -6257,7 +6699,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -6285,7 +6729,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -6378,7 +6824,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -6514,7 +6962,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -6650,7 +7100,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -6786,7 +7238,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -7057,7 +7511,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -7085,7 +7541,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -7113,7 +7571,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -7141,7 +7601,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -7234,7 +7696,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -7370,7 +7834,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -7506,7 +7972,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -7642,7 +8110,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -8018,7 +8488,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
             "    ",
           ]
         }
+        dropColumn={[Function]}
         duplicateColumn={[Function]}
+        filterColumn={[Function]}
         getRow={[Function]}
         isReadOnly={false}
         setSortDirection={[Function]}
@@ -8042,7 +8514,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                   columnKey=""
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={0}
                   isReadOnly={false}
                   isSorted={false}
@@ -8069,7 +8543,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                   columnKey=" "
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={1}
                   isReadOnly={false}
                   isSorted={false}
@@ -8096,7 +8572,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                   columnKey="   "
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={2}
                   isReadOnly={false}
                   isSorted={false}
@@ -8123,7 +8601,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                   columnKey="    "
                   columnType=""
                   draggingColumnIndex={null}
+                  dropColumn={[Function]}
                   duplicateColumn={[Function]}
+                  filterColumn={[Function]}
                   index={3}
                   isReadOnly={false}
                   isSorted={false}
@@ -8238,7 +8718,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                           columnKey=""
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={0}
                           isReadOnly={false}
                           isSorted={false}
@@ -8266,7 +8748,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                           columnKey=" "
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={1}
                           isReadOnly={false}
                           isSorted={false}
@@ -8294,7 +8778,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                           columnKey="   "
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={2}
                           isReadOnly={false}
                           isSorted={false}
@@ -8322,7 +8808,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                           columnKey="    "
                           columnType=""
                           draggingColumnIndex={null}
+                          dropColumn={[Function]}
                           duplicateColumn={[Function]}
+                          filterColumn={[Function]}
                           index={3}
                           isReadOnly={false}
                           isSorted={false}
@@ -8365,7 +8853,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                         columnKey=""
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={0}
                         isReadOnly={false}
                         isSorted={false}
@@ -8392,7 +8882,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                         columnKey=" "
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={1}
                         isReadOnly={false}
                         isSorted={false}
@@ -8419,7 +8911,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                         columnKey="   "
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={2}
                         isReadOnly={false}
                         isSorted={false}
@@ -8446,7 +8940,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                         columnKey="    "
                         columnType=""
                         draggingColumnIndex={null}
+                        dropColumn={[Function]}
                         duplicateColumn={[Function]}
+                        filterColumn={[Function]}
                         index={3}
                         isReadOnly={false}
                         isSorted={false}
@@ -8582,7 +9078,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                               columnKey=""
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={0}
                               isReadOnly={false}
                               isSorted={false}
@@ -8610,7 +9108,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                               columnKey=" "
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={1}
                               isReadOnly={false}
                               isSorted={false}
@@ -8638,7 +9138,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                               columnKey="   "
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={2}
                               isReadOnly={false}
                               isSorted={false}
@@ -8666,7 +9168,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                               columnKey="    "
                               columnType=""
                               draggingColumnIndex={null}
+                              dropColumn={[Function]}
                               duplicateColumn={[Function]}
+                              filterColumn={[Function]}
                               index={3}
                               isReadOnly={false}
                               isSorted={false}
@@ -8740,7 +9244,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey=""
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={0}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -8768,7 +9274,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey=" "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={1}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -8796,7 +9304,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey="   "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={2}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -8824,7 +9334,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey="    "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={3}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -8906,7 +9418,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                     columnKey=""
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={0}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -8939,7 +9453,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey=""
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={0}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -8977,7 +9493,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                         columnKey=""
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={0}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -9004,7 +9522,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey=""
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={0}
                                   isReadOnly={false}
@@ -9035,7 +9555,10 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                       />
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -9150,6 +9673,46 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -9179,6 +9742,26 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -9280,7 +9863,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                     columnKey=" "
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={1}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -9313,7 +9898,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey=" "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={1}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -9351,7 +9938,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                         columnKey=" "
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={1}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -9378,7 +9967,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey=" "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={1}
                                   isReadOnly={false}
@@ -9411,7 +10002,10 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                       </span>
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -9526,6 +10120,46 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -9555,6 +10189,26 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -9656,7 +10310,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                     columnKey="   "
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={2}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -9689,7 +10345,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey="   "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={2}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -9727,7 +10385,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                         columnKey="   "
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={2}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -9754,7 +10414,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey="   "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={2}
                                   isReadOnly={false}
@@ -9787,7 +10449,10 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                       </span>
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -9902,6 +10567,46 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -9931,6 +10636,26 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -10032,7 +10757,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                     columnKey="    "
                                     columnType=""
                                     draggingColumnIndex={null}
+                                    dropColumn={[Function]}
                                     duplicateColumn={[Function]}
+                                    filterColumn={[Function]}
                                     index={3}
                                     isReadOnly={false}
                                     isSorted={false}
@@ -10065,7 +10792,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey="    "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={3}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -10103,7 +10832,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                         columnKey="    "
                                         columnType=""
                                         draggingColumnIndex={null}
+                                        dropColumn={[Function]}
                                         duplicateColumn={[Function]}
+                                        filterColumn={[Function]}
                                         index={3}
                                         isReadOnly={false}
                                         isSorted={false}
@@ -10130,7 +10861,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey="    "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   height={36}
                                   index={3}
                                   isReadOnly={false}
@@ -10163,7 +10896,10 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                       </span>
                                     </EditableColumnName>
                                     <ColumnContextMenu
+                                      dropColumn={[Function]}
                                       duplicateColumn={[Function]}
+                                      filterColumn={[Function]}
+                                      renameColumn={[Function]}
                                       setSortDirection={[Function]}
                                       sortDirection={0}
                                     >
@@ -10278,6 +11014,46 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-transform"
+                                                          />
+                                                          <span>
+                                                            Drop
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="rename-column-header"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="rename-column-header dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-edit"
+                                                          />
+                                                          <span>
+                                                            Rename
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="duplicate-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -10307,6 +11083,26 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           onClick={[Function]}
                                                           tabIndex="-1"
                                                         />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
                                                       </DropdownItem>
                                                       <DropdownItem
                                                         className="sort-ascending"
@@ -10505,7 +11301,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey=""
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={0}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -10533,7 +11331,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey=" "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={1}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -10561,7 +11361,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey="   "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={2}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -10589,7 +11391,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                 columnKey="    "
                                 columnType=""
                                 draggingColumnIndex={null}
+                                dropColumn={[Function]}
                                 duplicateColumn={[Function]}
+                                filterColumn={[Function]}
                                 index={3}
                                 isReadOnly={false}
                                 isSorted={false}
@@ -10709,7 +11513,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey=""
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={0}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -10737,7 +11543,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey=" "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={1}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -10765,7 +11573,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey="   "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={2}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -10793,7 +11603,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                   columnKey="    "
                                   columnType=""
                                   draggingColumnIndex={null}
+                                  dropColumn={[Function]}
                                   duplicateColumn={[Function]}
+                                  filterColumn={[Function]}
                                   index={3}
                                   isReadOnly={false}
                                   isSorted={false}
@@ -10914,7 +11726,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -10942,7 +11756,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -10970,7 +11786,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -10998,7 +11816,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11093,7 +11913,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11121,7 +11943,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11149,7 +11973,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11177,7 +12003,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11272,7 +12100,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11300,7 +12130,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11328,7 +12160,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11356,7 +12190,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11451,7 +12287,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11479,7 +12317,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11507,7 +12347,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11535,7 +12377,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -11682,7 +12526,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11710,7 +12556,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11738,7 +12586,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11766,7 +12616,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11861,7 +12713,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11889,7 +12743,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11917,7 +12773,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -11945,7 +12803,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12040,7 +12900,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12068,7 +12930,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12096,7 +12960,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12124,7 +12990,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12219,7 +13087,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12247,7 +13117,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12275,7 +13147,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12303,7 +13177,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12448,7 +13324,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -12476,7 +13354,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -12504,7 +13384,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -12532,7 +13414,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -12625,7 +13509,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12761,7 +13647,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -12897,7 +13785,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -13033,7 +13923,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -13304,7 +14196,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -13332,7 +14226,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -13360,7 +14256,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -13388,7 +14286,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -13481,7 +14381,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -13617,7 +14519,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -13753,7 +14657,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -13889,7 +14795,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -14160,7 +15068,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -14188,7 +15098,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -14216,7 +15128,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -14244,7 +15158,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -14337,7 +15253,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -14473,7 +15391,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -14609,7 +15529,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -14745,7 +15667,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -15016,7 +15940,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=""
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={0}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -15044,7 +15970,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey=" "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={1}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -15072,7 +16000,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="   "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={2}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -15100,7 +16030,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                             columnKey="    "
                                             columnType=""
                                             draggingColumnIndex={null}
+                                            dropColumn={[Function]}
                                             duplicateColumn={[Function]}
+                                            filterColumn={[Function]}
                                             index={3}
                                             isReadOnly={false}
                                             isSorted={false}
@@ -15193,7 +16125,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=""
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={0}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -15329,7 +16263,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey=" "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={1}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -15465,7 +16401,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="   "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={2}
                                               isReadOnly={false}
                                               isSorted={false}
@@ -15601,7 +16539,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                               columnKey="    "
                                               columnType=""
                                               draggingColumnIndex={null}
+                                              dropColumn={[Function]}
                                               duplicateColumn={[Function]}
+                                              filterColumn={[Function]}
                                               index={3}
                                               isReadOnly={false}
                                               isSorted={false}

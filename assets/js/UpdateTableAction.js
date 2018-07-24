@@ -4,12 +4,14 @@ import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId,
 // Unit tests written in individual test.js files per module ex: SortFromTable.test.js
 
 // Map Module id_name to update function and moduleId in workflows.py
-const updateModuleMapping = {
+export const updateModuleMapping = {
+  'selectcolumns':    updateSelectModule,
   'duplicate-column': updateDuplicateModule,
-  'editcells': addEditToEditCellsModule,
-  'rename-columns': updateRenameModule,
-  'reorder-columns': updateReorderModule,
-  'sort-from-table': updateSortModule
+  'filter':           updateFilterModule,
+  'editcells':        addEditToEditCellsModule,
+  'rename-columns':   updateRenameModule,
+  'reorder-columns':  updateReorderModule,
+  'sort-from-table':  updateSortModule
 }
 
 // Constants for sort module
@@ -18,11 +20,19 @@ export const sortDirectionNone = 0
 export const sortDirectionAsc = 1
 export const sortDirectionDesc = 2
 
-export function updateTableActionModule (wfModuleId, idName, ...params) {
-  const state = store.getState()
+// Constants for select module
+export const selectColumnDrop = 0
+export const selectColumnKeep = 1
 
+export function updateTableActionModule (wfModuleId, idName, forceNewModule, ...params) {
+  const state = store.getState()
+  // Check if module imported
+  if (state.updateTableModuleIds[idName] === null) {
+    window.alert("Module '" + idName + "' not imported.")
+    return
+  }
   const existingModule = findModuleWithIdAndIdName(state, wfModuleId, idName)
-  if (existingModule) {
+  if (existingModule && !forceNewModule) {
     DEPRECATED_ensureSelectedWfModule(store, existingModule) // before state's existingModule changes
     updateModuleMapping[idName](existingModule, params) // ... changing state's existingModule
   } else {
@@ -32,6 +42,40 @@ export function updateTableActionModule (wfModuleId, idName, ...params) {
         const newWfm = fulfilled.value
         updateModuleMapping[idName](newWfm, params)
       })
+  }
+}
+
+function updateFilterModule (wfm, params) {
+  const filterColumnName = params[0]
+  store.dispatch(setParamValueActionByIdName(wfm.id, 'column', filterColumnName))
+}
+
+function updateSelectModule (wfm, params) {
+  let selectedColumns = findParamValByIdName(wfm, 'colnames')
+  const action = findParamValByIdName(wfm, 'drop_or_keep')
+  const dropColumnName = params[0]
+
+  // Case: If module exists and drop already selected
+  if (selectedColumns.value && action.value === selectColumnDrop) {
+    if (!(selectedColumns.value.split(',').includes(dropColumnName))) {
+      let entries = selectedColumns.value + ',' + dropColumnName
+      store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', entries))
+    }
+  }
+  // Case: If module exists and keep already selected, deselect dropColumnName
+  else if (selectedColumns.value && action.value === selectColumnKeep) {
+    selectedColumns = selectedColumns.value.split(',')
+    let dropColumnNameIdx = selectedColumns.indexOf(dropColumnName)
+    if (dropColumnNameIdx > -1) {
+      selectedColumns.splice(dropColumnNameIdx, 1)
+      store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', selectedColumns.toString()))
+      store.dispatch(setParamValueActionByIdName(wfm.id, 'drop_or_keep', selectColumnKeep))
+    }
+  }
+  // Case: If no existing module
+  else if (!selectedColumns.value) {
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', dropColumnName))
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'drop_or_keep', selectColumnDrop))
   }
 }
 

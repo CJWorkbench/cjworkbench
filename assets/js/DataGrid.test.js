@@ -30,6 +30,8 @@ describe('DataGrid tests,', () => {
 
   var sortDirectionMock = jest.fn()
   var duplicateColumnMock = jest.fn()
+  var dropColumnMock = jest.fn()
+  var filterColumnMock = jest.fn()
 
   function getRow(i) {
     return testData.rows[i];
@@ -53,6 +55,8 @@ describe('DataGrid tests,', () => {
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
         isReadOnly={false}
         duplicateColumn={duplicateColumnMock}
+        filterColumn={filterColumnMock}
+        dropColumn={dropColumnMock}
       />
     );
 
@@ -105,6 +109,8 @@ describe('DataGrid tests,', () => {
         isReadOnly={false}
         setSortDirection={sortDirectionMock}
         duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
       />
     );
     expect(tree.find('HeaderCell')).toHaveLength(0);
@@ -128,6 +134,8 @@ describe('DataGrid tests,', () => {
           isReadOnly={false}
           setSortDirection={sortDirectionMock}
           duplicateColumn={duplicateColumnMock}
+          dropColumn={dropColumnMock}
+          filterColumn={filterColumnMock}
       />
     );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
@@ -150,6 +158,8 @@ describe('DataGrid tests,', () => {
         isReadOnly={false}
         setSortDirection={sortDirectionMock}
         duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
       />);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
 
@@ -171,6 +181,8 @@ describe('DataGrid tests,', () => {
           isReadOnly={false}
           setSortDirection={sortDirectionMock}
           duplicateColumn={duplicateColumnMock}
+          dropColumn={dropColumnMock}
+          filterColumn={filterColumnMock}
       />
     );
 
@@ -190,8 +202,8 @@ describe('DataGrid tests,', () => {
         // First argument should be wfModuleId (100)
         expect(mockRenameColumn.mock.calls[0][0]).toBe(100);
         // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(mockRenameColumn.mock.calls[0][2].prevName).toBe('aaa');
-        expect(mockRenameColumn.mock.calls[0][2].newName).toBe('aaaa');
+        expect(mockRenameColumn.mock.calls[0][3].prevName).toBe('aaa');
+        expect(mockRenameColumn.mock.calls[0][3].newName).toBe('aaaa');
         tree.unmount();
         done();
       });
@@ -210,6 +222,8 @@ describe('DataGrid tests,', () => {
           isReadOnly={true}
           setSortDirection={sortDirectionMock}
           duplicateColumn={duplicateColumnMock}
+          dropColumn={dropColumnMock}
+          filterColumn={filterColumnMock}
       />
     );
 

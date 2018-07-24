@@ -45,6 +45,8 @@ export default class TableView extends React.PureComponent {
     this.setSortDirection = this.setSortDirection.bind(this);
     this.toggleExportModal = this.toggleExportModal.bind(this);
     this.duplicateColumn = this.duplicateColumn.bind(this);
+    this.dropColumn = this.dropColumn.bind(this);
+    this.filterColumn = this.filterColumn.bind(this)
 
     this.loading = false;
     this.highestRowRequested = 0;
@@ -175,18 +177,28 @@ export default class TableView extends React.PureComponent {
         const newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
         this.setState({tableData: newTableData});
 
-        UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'editcells', {row: row, col: colName, value: newVal})
+        UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'editcells', false, {row: row, col: colName, value: newVal})
       }
     }
   }
 
   setSortDirection(sortCol, sortType, sortDirection) {
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'sort-from-table', sortCol, sortType, sortDirection);
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'sort-from-table', false, sortCol, sortType, sortDirection);
       this.refreshTable();
   }
 
   duplicateColumn(colName) {
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'duplicate-column', colName);
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'duplicate-column', false, colName);
+      this.refreshTable();
+  }
+
+  dropColumn(colName) {
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'selectcolumns', false, colName);
+      this.refreshTable();
+  }
+
+  filterColumn(colName) {
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'filter', true, colName);
       this.refreshTable();
   }
 
@@ -220,6 +232,8 @@ export default class TableView extends React.PureComponent {
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
             duplicateColumn={this.duplicateColumn}
+            dropColumn={this.dropColumn}
+            filterColumn={this.filterColumn}
             onReorderColumns={UpdateTableAction.updateTableActionModule}
             onRenameColumn={UpdateTableAction.updateTableActionModule}
             isReadOnly={this.props.isReadOnly}
@@ -241,6 +255,8 @@ export default class TableView extends React.PureComponent {
             isReadOnly={this.props.isReadOnly}
             setSortDirection={this.setSortDirection}
             duplicateColumn={this.duplicateColumn}
+            dropColumn={this.dropColumn}
+            filterColumn={this.filterColumn}
           />
       </div>
     }

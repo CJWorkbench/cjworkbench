@@ -213,11 +213,15 @@ export class ColumnHeader extends React.PureComponent {
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
     onRenameColumn: PropTypes.func,
-    duplicateColumn: PropTypes.func.isRequired
+    duplicateColumn: PropTypes.func.isRequired,
+    dropColumn: PropTypes.func.isRequired,
+    filterColumn: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
+
+    this.inputRef = React.createRef();
 
     this.state = {
       isHovered: false,
@@ -229,8 +233,20 @@ export class ColumnHeader extends React.PureComponent {
     this.props.setSortDirection(this.props.columnKey, this.props.columnType, sortDirection);
   }
 
+  onDropColumn = () => {
+    this.props.dropColumn(this.props.columnKey)
+  }
+
   onDuplicateColumn = () => {
     this.props.duplicateColumn(this.props.columnKey)
+  }
+
+  onFilterColumn = () => {
+    this.props.filterColumn(this.props.columnKey)
+  }
+
+  onRenameColumn = () => {
+    this.inputRef.current.enterEditMode()
   }
 
   onMouseEnter = () => {
@@ -269,8 +285,14 @@ export class ColumnHeader extends React.PureComponent {
     }
 
     return (
-      <ColumnContextMenu duplicateColumn={this.onDuplicateColumn} setSortDirection={this.onSetSortDirection} sortDirection={this.props.isSorted == true
-        ? this.props.sortDirection : sortDirectionNone}/>
+      <ColumnContextMenu
+        dropColumn={this.onDropColumn}
+        duplicateColumn={this.onDuplicateColumn}
+        filterColumn={this.onFilterColumn}
+        renameColumn={this.onRenameColumn}
+        setSortDirection={this.onSetSortDirection}
+        sortDirection={this.props.isSorted == true ? this.props.sortDirection : sortDirectionNone}
+      />
       );
   }
 
@@ -333,7 +355,12 @@ export class ColumnHeader extends React.PureComponent {
           >
           {maybeDropZone('left', index)}
 
-            <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn} isReadOnly={this.props.isReadOnly}/>
+            <EditableColumnName
+              columnKey={columnKey}
+              onRename={this.props.onRenameColumn}
+              isReadOnly={this.props.isReadOnly}
+              ref={this.inputRef}
+            />
             {columnMenuSection}
           </div>
           {maybeDropZone('right', index + 1)}
@@ -382,6 +409,8 @@ function makeFormattedCols(props) {
         sortDirection={props.sortDirection}
         setSortDirection={props.setSortDirection}
         duplicateColumn={props.duplicateColumn}
+        dropColumn={props.dropColumn}
+        filterColumn={props.filterColumn}
         showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
         onDragEnd={props.onDragEnd}
@@ -414,6 +443,8 @@ export default class DataGrid extends React.Component {
     sortColumn:         PropTypes.string,
     sortDirection:      PropTypes.number,
     duplicateColumn:    PropTypes.func.isRequired,
+    dropColumn:         PropTypes.func.isRequired,
+    filterColumn:       PropTypes.func.isRequired,
     showLetter:         PropTypes.bool,
     onReorderColumns:   PropTypes.func,
     onRenameColumn:     PropTypes.func,
@@ -540,7 +571,7 @@ export default class DataGrid extends React.Component {
         to: toIndex,
       }
 
-    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', reorderInfo);
+    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', false, reorderInfo);
   };
 
   onDragStartColumnIndex = (index) => {
@@ -556,7 +587,7 @@ export default class DataGrid extends React.Component {
   };
 
   onRename = (renameInfo) => {
-    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', renameInfo);
+    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', false, renameInfo);
   };
 
   render() {
