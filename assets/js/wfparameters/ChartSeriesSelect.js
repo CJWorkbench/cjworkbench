@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { ColumnParam } from './ColumnParam'
 import InputGroup from 'reactstrap/lib/InputGroup'
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
 import Input from 'reactstrap/lib/Input'
@@ -12,6 +13,8 @@ export default class ChartSeriesSelect extends React.PureComponent {
     index: PropTypes.number.isRequired,
     column: PropTypes.string, // null if not selected
     color: PropTypes.string, // null for auto-chosen based on idx
+    prompt: PropTypes.string.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
     availableColumns: PropTypes.arrayOf(PropTypes.string).isRequired,
     onChange: PropTypes.func.isRequired, // func(index, column) => undefined
   }
@@ -42,8 +45,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
     }
   }
 
-  onSelectColumn = (ev) => {
-    const column = ev.target.value
+  onSelectColumn = (column) => {
     const { index, color } = this.props
     const safeColor = color || this.state.color || getColor(index)
 
@@ -57,7 +59,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
   }
 
   render() {
-    const { availableColumns, column, color, index } = this.props
+    const { availableColumns, column, color, index, prompt, isReadOnly } = this.props
     const safeColor = color || getColor(index)
 
     return (
@@ -68,13 +70,15 @@ export default class ChartSeriesSelect extends React.PureComponent {
               <i className="color-picker"/>
             </Button>
           </InputGroupAddon>
-          <select className='form-control' name='column' value={column || ''} onChange={this.onSelectColumn}>
-            {availableColumns.map(availableColumn => {
-              return (
-                <option key={availableColumn}>{availableColumn}</option>
-              )
-            })}
-          </select>
+          <ColumnParam
+            name='column'
+            value={column}
+            prompt={prompt}
+            isReadOnly={isReadOnly}
+            allColumns={availableColumns}
+            allColumnsFetchError={null}
+            onChange={this.onSelectColumn}
+          />
         </InputGroup>
         { this.state.colorPickerOpen ? <div className="color-picker pop-over">
           <div className="color-picker cover" onClick={this.closeColorPicker} />

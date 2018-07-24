@@ -144,6 +144,23 @@ textarea:focus, input:focus{
   }
 }
 
+.chart-series-multi-select {
+  .buttons {
+    text-align: right;
+    padding-top: .5rem;
+
+    button {
+      font: inherit;
+      font-size: 1.3rem;
+      color: inherit;
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      display: inline-block;
+    }
+  }
+}
+
 .module-parameter:focus{
   border: 2px solid $brand-workspace;
 }

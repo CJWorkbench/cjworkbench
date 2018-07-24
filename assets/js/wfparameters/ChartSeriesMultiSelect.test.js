@@ -13,6 +13,8 @@ describe('ChartSeriesMultiSelect', () => {
           { column: 'A', color: '#aaaaaa' },
           { column: 'B', color: '#bbbbbb' }
         ]}
+        isReadOnly={false}
+        prompt={'prompt'}
         fetchInputColumns={jest.fn(() => Promise.resolve([ 'A', 'B', 'C' ]))}
         onChange={jest.fn()}
         {...props}
@@ -53,16 +55,64 @@ describe('ChartSeriesMultiSelect', () => {
     ])
   })
 
-  it('should add column', async () => {
+  it('should add a column', async () => {
     const w = wrapper()
     await tick() // load columns
     w.update()
+    w.find('button[title="add another column"]').simulate('click')
     w.find('ChartSeriesSelect').at(2).find('select[name="column"]').simulate('change', { target: { value: 'C' } })
     expect(w.prop('onChange')).toHaveBeenCalledWith([
       { column: 'A', color: '#aaaaaa' },
       { column: 'B', color: '#bbbbbb' },
       { column: 'C', color: '#48C8D7' }
     ])
+  })
+
+  it('should present a placeholder when empty', async () => {
+    const w = wrapper({ series: [] })
+    await tick() // load columns
+    w.update()
+    expect(w.find('ChartSeriesSelect')).toHaveLength(1)
+    // No add/remove buttons
+    expect(w.find('button[title="add another column"]')).toHaveLength(0)
+    expect(w.find('button[title="remove last column"]')).toHaveLength(0)
+  })
+
+  it('should remove a column', async () => {
+    const w = wrapper()
+    await tick() // load columns
+    w.update()
+    w.find('button[title="remove last column"]').simulate('click')
+    expect(w.prop('onChange')).toHaveBeenCalledWith([
+      { column: 'A', color: '#aaaaaa' }
+    ])
+  })
+
+  it('should remove placeholder, not column, if placeholder selected', async () => {
+    const w = wrapper()
+    await tick() // load columns
+    w.update()
+    w.find('button[title="add another column"]').simulate('click')
+    w.find('button[title="remove last column"]').simulate('click')
+    expect(w.find('ChartSeriesSelect')).toHaveLength(2)
+    expect(w.prop('onChange')).not.toHaveBeenCalled()
+  })
+
+  it('should not allow removing last column', async () => {
+    const w = wrapper({ series: [
+      { column: 'A', color: '#aaaaaa' }
+    ]})
+    await tick() // load columns
+    w.update()
+    expect(w.find('button[title="remove last column"]')).toHaveLength(0)
+  })
+
+  it('should not allow adding two placeholders', async () => {
+    const w = wrapper()
+    await tick() // load columns
+    w.update()
+    w.find('button[title="add another column"]').simulate('click')
+    expect(w.find('button[title="add another column"]')).toHaveLength(0)
   })
 
   it('should show loading', async () => {
@@ -90,6 +140,6 @@ describe('ChartSeriesMultiSelect', () => {
     expect(fetchInputColumns).toHaveBeenCalledTimes(2)
     await tick() // load columns again
     w.update()
-    expect(w.find('ChartSeriesSelect[column="A"] option')).toHaveLength(4)
+    expect(w.find('ChartSeriesSelect[column="A"] option').not('.prompt')).toHaveLength(4)
   })
 })

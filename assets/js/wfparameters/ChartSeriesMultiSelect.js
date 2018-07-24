@@ -9,14 +9,17 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
       column: PropTypes.string.isRequired,
       color: PropTypes.string.isRequired
     })).isRequired,
+    prompt: PropTypes.string.isRequired,
     fetchInputColumns: PropTypes.func.isRequired, // func() => Promise[Array[String]]
-    onChange: PropTypes.func.isRequired // func([{column, color}, ...]) => undefined
+    onChange: PropTypes.func.isRequired, // func([{column, color}, ...]) => undefined
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   state = {
     allColumns: null,
     allColumnsWorkflowRevision: null,
     allColumnsFetchError: null,
+    isAddingPlaceholder: this.props.series.length == 0,
   }
 
   componentDidMount () {
@@ -54,13 +57,64 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
 
   onChange = ({ index, column, color }) => {
     const series = this.props.series.slice() // shallow copy
+
+    if (index === series.length) {
+      // We just overwrote the placeholder
+      this.setState({ isAddingPlaceholder: false })
+    }
+
     series[index] = { column, color }
     this.props.onChange(series)
   }
 
-  render() {
+  onClickAddPlaceholder = () => {
+    this.setState({ isAddingPlaceholder: true })
+  }
+
+  onClickRemoveLast = () => {
+    if (this.state.isAddingPlaceholder) {
+      this.setState({ isAddingPlaceholder: false })
+    } else {
+      const series = this.props.series.slice() // shallow copy
+      series.pop()
+      this.props.onChange(series)
+    }
+  }
+
+  renderButtons () {
+    const { isAddingPlaceholder, allColumns } = this.state
+    const { series, isReadOnly } = this.props
+
+    const showAddButton = !isReadOnly && !isAddingPlaceholder && series.length < (allColumns || []).length
+    const showRemoveButton = !isReadOnly && (series.length > 1 || series.length === 1 && isAddingPlaceholder)
+
+    if (!showAddButton && !showRemoveButton) {
+      return null
+    } else {
+      const addButton = !showAddButton ? null : (
+        <button title="add another column" onClick={this.onClickAddPlaceholder}>
+          <i className="icon-addc" />
+        </button>
+      )
+
+      const removeButton = !showRemoveButton ? null : (
+        <button title="remove last column" onClick={this.onClickRemoveLast}>
+          <i className="icon-removec" />
+        </button>
+      )
+
+      return (
+        <div className="buttons">
+          {removeButton}
+          {addButton}
+        </div>
+      )
+    }
+  }
+
+  render () {
     const { allColumns, allColumnsFetchError } = this.state
-    const { series } = this.props
+    const { series, prompt, isReadOnly } = this.props
 
     if (allColumns === null && allColumnsFetchError === null) {
       return <p className="loading">Loading…</p>
@@ -70,16 +124,18 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
       return <p className="error">Failed to fetch column names</p>
     }
 
-    const pickedColors = series.map(x => x.column)
+    const pickedColumns = series.map(x => x.column)
     const pickers = series.map(({ column, color }, index) => {
       // Don't allow picking a column that's already picked
       const availableColumns = allColumns
-        .filter(x => pickedColors.indexOf(x.column) === -1 || x.column === column)
+        .filter(x => pickedColumns.indexOf(x.column) === -1 || x.column === column)
 
       return (
         <ChartSeriesSelect
           key={index}
           index={index}
+          prompt={prompt}
+          isReadOnly={isReadOnly}
           column={column}
           color={color}
           availableColumns={availableColumns}
@@ -88,27 +144,31 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
       )
     })
 
-    if (allColumns.length > series.length) {
-      // Don't allow picking a column that's already picked
+    if (this.state.isAddingPlaceholder) {
       const availableColumns = allColumns
-        .filter(x => pickedColors.indexOf(x.column) === -1)
+        .filter(x => pickedColumns.indexOf(x.column) === -1)
 
       pickers.push(
         <ChartSeriesSelect
           key={series.length}
           index={series.length}
+          prompt={prompt}
+          isReadOnly={isReadOnly}
           column={null}
           color={null}
           availableColumns={availableColumns}
           onChange={this.onChange}
         />
       )
-
-      return (
-        <React.Fragment>
-          {pickers}
-        </React.Fragment>
-      )
     }
+
+    const buttons = this.renderButtons()
+
+    return (
+      <div className="wf-parameter chart-series-multi-select">
+        {pickers}
+        {buttons}
+      </div>
+    )
   }
 }

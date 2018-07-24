@@ -2,7 +2,62 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default class ColumnParam extends React.PureComponent {
+export class ColumnParam extends React.PureComponent {
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    value: PropTypes.string, // or null
+    prompt: PropTypes.string, // default 'Select'
+    isReadOnly: PropTypes.bool.isRequired,
+    allColumns: PropTypes.arrayOf(PropTypes.string), // or null for loading/error
+    allColumnsFetchError: PropTypes.object, // or null for loading/success
+    onChange: PropTypes.func.isRequired // func(colnameOrNull) => undefined
+  }
+
+  onChange = (ev) => {
+    this.props.onChange(ev.target.value || null)
+  }
+
+  render() {
+    const { allColumns, allColumnsFetchError, prompt, value } = this.props
+
+    let className = 'custom-select module-parameter dropdown-selector'
+
+    const options = (allColumns || []).map(name => (
+      <option key={name}>{name}</option>
+    ))
+    if (allColumnsFetchError !== null) {
+      className += ' error'
+      options.push(<option disabled className="error" key="error" value="">Error loading columns</option>)
+    } else {
+      // Select prompt when no column is selected, _or_ when an invalid
+      // column is selected. `value || ''` is the currently-selected value.
+      //
+      // When a column is selected, set the prompt to '' so it is _not_
+      // selected.
+      const promptValue = (allColumns || []).indexOf(value) === -1 ? (value || '') : ''
+      options.unshift(<option disabled className="prompt" key="prompt" value={promptValue}>{prompt || 'Select'}</option>)
+
+      if (allColumns === null) {
+        className += ' loading'
+        options.push(<option disabled className="loading" key="loading" value="">Loading columns</option>)
+      }
+    }
+
+    return (
+      <select
+        className={className}
+        value={value || ''}
+        onChange={this.onChange}
+        name={this.props.name}
+        disabled={this.props.isReadOnly}
+      >
+        {options}
+      </select>
+    )
+  }
+}
+
+export default class FetchingColumnParam extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     value: PropTypes.string, // or null
@@ -57,47 +112,20 @@ export default class ColumnParam extends React.PureComponent {
     }
   }
 
-  onChange = (ev) => {
-    this.props.onChange(ev.target.value || null)
-  }
-
   render() {
     const { allColumns, allColumnsFetchError } = this.state
-    const { prompt, value } = this.props
-
-    let className = 'custom-select module-parameter dropdown-selector'
-
-    const options = (allColumns || []).map(name => (
-      <option key={name}>{name}</option>
-    ))
-    if (allColumnsFetchError !== null) {
-      className += ' error'
-      options.push(<option disabled className="error" key="error" value="">Error loading columns</option>)
-    } else {
-      // Select prompt when no column is selected, _or_ when an invalid
-      // column is selected. `value || ''` is the currently-selected value.
-      //
-      // When a column is selected, set the prompt to '' so it is _not_
-      // selected.
-      const promptValue = (allColumns || []).indexOf(value) === -1 ? (value || '') : ''
-      options.unshift(<option disabled className="prompt" key="prompt" value={promptValue}>{prompt || 'Select'}</option>)
-
-      if (allColumns === null) {
-        className += ' loading'
-        options.push(<option disabled className="loading" key="loading" value="">Loading columns</option>)
-      }
-    }
+    const { name, prompt, value, isReadOnly } = this.props
 
     return (
-      <select
-        className={className}
-        value={value || ''}
-        onChange={this.onChange}
-        name={this.props.name}
-        disabled={this.props.isReadOnly}
-      >
-        {options}
-      </select>
+      <ColumnParam
+        name={name}
+        value={value}
+        prompt={prompt}
+        isReadOnly={isReadOnly}
+        allColumns={allColumns}
+        allColumnsFetchError={allColumnsFetchError}
+        onChange={this.props.onChange}
+      />
     )
   }
 }

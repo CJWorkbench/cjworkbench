@@ -288,6 +288,8 @@ export default class WfParameter extends React.Component {
       case 'y_columns':
         return (
           <ChartSeriesMultiSelect
+            prompt='Select a numeric column'
+            isReadOnly={this.props.isReadOnly}
             workflowRevision={this.props.revision}
             series={JSON.parse(this.props.p.value || '[]')}
             fetchInputColumns={this.fetchInputColumns}

@@ -11,7 +11,9 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
   color="#abcdef"
   column="foo"
   index={2}
+  isReadOnly={false}
   onChange={[MockFunction]}
+  prompt="prompt"
 >
   <InputGroup
     className="chart-series-select"
@@ -58,23 +60,47 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
           </Button>
         </div>
       </InputGroupAddon>
-      <select
-        className="form-control"
+      <ColumnParam
+        allColumns={
+          Array [
+            "foo",
+            "bar",
+          ]
+        }
+        allColumnsFetchError={null}
+        isReadOnly={false}
         name="column"
         onChange={[Function]}
+        prompt="prompt"
         value="foo"
       >
-        <option
-          key="foo"
+        <select
+          className="custom-select module-parameter dropdown-selector"
+          disabled={false}
+          name="column"
+          onChange={[Function]}
+          value="foo"
         >
-          foo
-        </option>
-        <option
-          key="bar"
-        >
-          bar
-        </option>
-      </select>
+          <option
+            className="prompt"
+            disabled={true}
+            key="prompt"
+            value=""
+          >
+            prompt
+          </option>
+          <option
+            key="foo"
+          >
+            foo
+          </option>
+          <option
+            key="bar"
+          >
+            bar
+          </option>
+        </select>
+      </ColumnParam>
     </div>
   </InputGroup>
 </ChartSeriesSelect>
