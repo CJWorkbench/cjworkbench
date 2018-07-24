@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {OutputIframeCtrl} from "../../OutputIframe";
 
 
 export default class MapLocationPresets extends React.Component {
@@ -22,9 +21,7 @@ export default class MapLocationPresets extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.paramData !== this.props.paramData) {
-            this.setState(this.parseParamData(nextProps.paramData), () => {
-                this.refreshIframe()
-            });
+            this.setState(this.parseParamData(nextProps.paramData));
         }
     }
 
@@ -41,14 +38,6 @@ export default class MapLocationPresets extends React.Component {
         }
     }
 
-    refreshIframe() {
-        // This slight hack deals with an issue that the iframe does not refresh
-        // after a parameter is updated.
-        if(OutputIframeCtrl) {
-            OutputIframeCtrl.postMessage({refresh: true}, '*');
-        }
-    }
-
     onPresetSelectionChange = (event) => {
         let newPreset = event.target.value;
         this.setState({preset: event.target.value}, () => {
@@ -58,10 +47,9 @@ export default class MapLocationPresets extends React.Component {
                 this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify({
                     preset: newPreset,
                     geojson: geoJSON
-                })}).then(() => {this.refreshIframe()});
+                })});
             } else {
-                this.props.api.onParamChanged(this.props.paramId, {value: ''})
-                    .then(() => {this.refreshIframe()});
+                this.props.api.onParamChanged(this.props.paramId, {value: ''});
             }
         });
     };

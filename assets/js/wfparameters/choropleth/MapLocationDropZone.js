@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Dropzone from 'react-dropzone';
 import PropTypes from 'prop-types';
 import GJV from 'geojson-validation';
-import {OutputIframeCtrl} from "../../OutputIframe";
+
 
 export default class MapLocationDropZone extends Component {
     // Accepts an upload of GeoJSON file. It is parsed in the front-end because
@@ -27,9 +27,7 @@ export default class MapLocationDropZone extends Component {
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.paramData !== this.props.paramData) {
-            this.setState(this.parseParamDataToState(nextProps.paramData), () => {
-                this.refreshIframe()
-            });
+            this.setState(this.parseParamDataToState(nextProps.paramData));
         }
     }
 
@@ -63,14 +61,6 @@ export default class MapLocationDropZone extends Component {
         this.setState({alertInvalidFormat: true});
     }
 
-    refreshIframe() {
-        // This slight hack deals with an issue that the iframe does not refresh
-        // after a parameter is updated.
-        if(OutputIframeCtrl) {
-            OutputIframeCtrl.postMessage({refresh: true}, '*');
-        }
-    }
-
     handlePropertySelectionChange = (event) => {
         let newKeyProperty = event.target.value;
         let newVal = {
@@ -81,7 +71,7 @@ export default class MapLocationDropZone extends Component {
             keyProperty: event.target.value
         };
         this.setState({keyProperty: newKeyProperty},
-            () => {this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)}).then(() => {this.refreshIframe()})});
+            () => {this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)})});
     };
 
     updateParamValue(file, geoJSON) {
@@ -105,8 +95,7 @@ export default class MapLocationDropZone extends Component {
             keyProperty: selectedProperty
         };
         this.setState({alertInvalidFormat: false}, () => {
-            this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)})
-            .then(() => {this.refreshIframe()});
+            this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newVal)});
         });
     }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {CirclePicker} from 'react-color';
-import {OutputIframeCtrl} from "../../OutputIframe";
 
 // Classes in these modules are used in testing.
 // If they are changed, please update the tests accordingly.
@@ -195,7 +194,7 @@ export default class MapLayerEditor extends React.Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.paramData !== this.props.paramData) {
             let data = this.parseParamData(nextProps.paramData);
-            this.setState({data: data}, () => {this.refreshIframe()});
+            this.setState({data: data});
         }
     }
 
@@ -211,14 +210,6 @@ export default class MapLayerEditor extends React.Component {
         }
 
         return data;
-    }
-
-    refreshIframe() {
-        // This slight hack deals with an issue that the iframe does not refresh
-        // after a parameter is updated.
-        if(OutputIframeCtrl) {
-            OutputIframeCtrl.postMessage({refresh: true}, '*');
-        }
     }
 
     componentDidMount() {
@@ -245,8 +236,7 @@ export default class MapLayerEditor extends React.Component {
             });
 
             if(updateData && (!this.props.isReadOnly)) {
-                this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)})
-                    .then(() => {this.refreshIframe()});
+                this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
             }
         });
     }
@@ -256,8 +246,7 @@ export default class MapLayerEditor extends React.Component {
         newData.layers[col] = Object.assign({}, props);
         newData.lastEdited = col;
         this.setState({data: newData}, () => {
-            this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)})
-                .then(() => {this.refreshIframe()});
+            this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
         });
     };
 
