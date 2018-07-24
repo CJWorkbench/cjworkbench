@@ -54,8 +54,13 @@
       >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="if (workflow.wfModules.length <= 1) return false; const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; if (wfModule.moduleName !== 'Column Chart') return false; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
-      >Add a title to the chart.</li>
+      data-test="const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; const p = wfModule.parameters; if (p.get('x_column') !== 'city_neighborhood') return false; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return yColumns.length === 1 && yColumns[0].column === 'affordable_units';"
+      >
+      Select <kbd>city_neighborhood</kbd> for the X axis and <kbd>affordable_units</kbd> for the Y axis.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+      data-test="const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; const p = wfModule.parameters; return !!p.get('title') && !!p.get('x_axis_label') && !!p.get('y_axis_label')"
+      >Add a title, X-axis label and Y-axis label to the chart.</li>
   </ol>
 </section>
 <section>

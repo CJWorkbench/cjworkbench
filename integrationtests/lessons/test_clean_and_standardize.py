@@ -41,25 +41,25 @@ class TestLesson(LessonTest):
         b.fill_in(
             'url',
             'https://app.workbenchdata.com/static/data/population_dirty_data.csv',
-            wait=True # wait for module to load
+            wait=True  # wait for module to load
         )
-        b.click_whatever('h2') # AAAAH! we need to blur, _then_ click Update!
+        b.click_whatever('h2')  # AAAAH! we need to blur, _then_ click Update!
         b.click_button('Update')
 
         # Wait for module to update
         self.expect_highlight(
-			2,
-			'.in-between-modules:last-child .add-module-search',
-			wait=True
-		)
+            2,
+            '.in-between-modules:last-child .add-module-search',
+            wait=True
+        )
         self.add_wf_module('Drop empty columns')
 
         # Wait for module to load
         self.expect_highlight(
-			3,
-			'.in-between-modules:last-child .add-module-search',
-			wait=True
-		)
+            3,
+            '.in-between-modules:last-child .add-module-search',
+            wait=True
+        )
         self.add_wf_module('Drop empty rows')
 
         # Wait for module to load
@@ -94,7 +94,7 @@ class TestLesson(LessonTest):
 
         # Wait for module to update
         self.expect_highlight(
-            1, # still not done this step
+            1,  # still not done this step
             '.wf-module[data-module-name="Refine"]',
             wait=True
         )
@@ -103,11 +103,8 @@ class TestLesson(LessonTest):
         self._rename_column(
             'San Jose-San Francisco-Oakland', 'San Francisco - Bay Area'
         )
-        self._rename_column('Austin', 'Austin - Round Rock')
-        self._rename_column('Bay Area', 'San Francisco - Bay Area')
+        self.expect_highlight(1)  # not done this step
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
-        self.expect_highlight(1) # _still_ not done this step
-        self._rename_column('SF - BAY AREA', 'San Francisco - Bay Area')
 
         # Okay, we're done now
         self.expect_highlight(2, '.wf-module[data-module-name="Refine"]')

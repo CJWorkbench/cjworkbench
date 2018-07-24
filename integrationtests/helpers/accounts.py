@@ -50,8 +50,18 @@ def _open_python_in_docker(pty_slave):
             'sh', '-c', ' '.join([
                 # do not convert \n to \r\n
                 # https://github.com/moby/moby/issues/8513
-                'stty -onlcr -echo;',
-                'echo "import sys; sys.ps1 = sys.ps2 = str()" >/tmp/pystart;',
+                'stty raw -echo;',
+                'echo -n "" >/tmp/pystart;',
+                'echo "import sys, termios, tty" >>/tmp/pystart;',
+                # Avoid showing prompts, so we won't need to parse them
+                'echo "sys.ps1 = sys.ps2 = str()" >>/tmp/pystart;',
+                'echo "fd = sys.stdin.fileno()" >>/tmp/pystart;',
+                # Avoid echoing input
+                'echo "when = termios.TCSADRAIN" >>/tmp/pystart;',
+                'echo "attr = termios.tcgetattr(fd)" >>/tmp/pystart;',
+                'echo "attr[3] = attr[3] & ~termios.ECHO" >>/tmp/pystart;',
+                'echo "tty.tcsetattr(fd, when, attr)" >>/tmp/pystart;',
+                'echo "termios.tcdrain(sys.stdin.fileno())" >>/tmp/pystart;',
                 'chmod +x /tmp/pystart;',
                 'PYTHONSTARTUP=/tmp/pystart',
                 'python',  # not ./manage.py shell, because it isn't quiet

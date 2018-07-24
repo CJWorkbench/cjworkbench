@@ -5,7 +5,8 @@ class TestLesson(LessonTest):
     def test_lesson(self):
         b = self.browser
         b.visit('/lessons/')
-        b.click_whatever('h2', text='I. Load public data and make a chart', wait=True)
+        b.click_whatever('h2', text='I. Load public data and make a chart',
+                         wait=True)  # wait for page to load
 
         self.import_module('columnchart')
         self.import_module('filter')
@@ -25,16 +26,16 @@ class TestLesson(LessonTest):
         b.fill_in(
             'url',
             'https://app.workbenchdata.com/static/data/affordable_housing_1.csv',
-            wait=True # wait for module to load
+            wait=True  # wait for module to load
         )
-        b.click_whatever('h2') # AAAAH! we need to blur, _then_ click Update!
+        b.click_whatever('h2')  # AAAAH! we need to blur, _then_ click Update!
         b.click_button('Update')
 
         # Wait for table to load
         self.expect_highlight(2, 'button.edit-note', wait=True)
         b.click_button('Edit Note')
         b.fill_in('notes', 'Data from datasf.org')
-        b.click_whatever('h2') # blur, to commit data
+        b.click_whatever('h2')  # blur, to commit data
 
         # wait for note to be set
         self.expect_highlight(3, 'i.context-collapse-button', wait=True)
@@ -48,10 +49,42 @@ class TestLesson(LessonTest):
         self.add_wf_module('Column Chart')
 
         self.expect_highlight(1, '.wf-module[data-module-name="Column Chart"]')
-        b.fill_in('title', 'a title', wait=True) # wait for module to load
-        b.click_whatever('h2') # blur, to commit data
+        # Multi-phased waits. Workbench will:
+        # 1. Execute the module
+        # 2. Send a WebSockets message
+        # 3. Update redux state with a new workflow.revision
+        # 4a. Re-render the WfModule (reloading column names)
+        # 4b. Re-render the OutputIframe (reloading chart)
+        # 5 or 6. Finish reloading column names
+        # 6 or 5. Finish reloading chart
+        #
+        # Therefore, once the chart reloads we know the column-name reload
+        # has begun. Then we wait for the column-name reload to end and assume
+        # there are no more DOM modifications after that.
 
-        self.expect_highlight_next()
+        # First wait: for the X-axis column selector to load
+        # Remember to wait for the iframe to appear -- we haven't waited for
+        # that yet.
+        with b.iframe('.outputpane-iframe iframe', wait=True):
+            b.assert_element('g.role-title text',
+                             text='Please choose an X-axis column', wait=True)
+        b.assert_element('select[name="x_column"]:not(.loading)', wait=True)
+        b.select('x_column', 'city_neighborhood')
+
+        # Second wait: for the Y-axis column selector to load
+        with b.iframe('.outputpane-iframe iframe'):
+            b.assert_element('g.role-title text',
+                             text='Please choose a Y-axis column', wait=True)
+        b.assert_element('select[name="column"]:not(.loading)', wait=True)
+        b.select('column', 'affordable_units')
+
+        self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
+        b.fill_in('title', 'a title')
+        b.fill_in('x_axis_label', 'Area')
+        b.fill_in('y_axis_label', 'Number of Affordable Houses')
+        b.click_whatever('h2')  # blur, to commit data
+
+        self.expect_highlight_next(wait=True)
         self.click_next()
 
         # 4. 3. Filter with a condition
@@ -59,17 +92,18 @@ class TestLesson(LessonTest):
         self.add_wf_module('Filter', position=1)
 
         self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
-        self.select_column('column', 'affordable_units', wait=True) # wait for module load
+        # wait for module load
+        with b.scope('.wf-module[data-module-name="Filter"]'):
+            self.select_column('column', 'affordable_units', wait=True)
         b.select('condition', 'Greater than')
         b.fill_in('value', 200, wait=True)  # wait for field to appear
-        b.click_whatever('h2') # blur, to commit data
+        b.click_whatever('h2')  # blur, to commit data
 
         self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]',
-                             wait=True)  # wait for lesson to update
-        # bug in the test: it's hard to click the column chart without changing
-        # anything. But we'll try.
+                              wait=True)  # wait for lesson to update
+        # Select the Column Chart
         b.click_whatever(
-            '.wf-module[data-module-name="Column Chart"] input[name="title"]'
+            '.wf-module[data-module-name="Column Chart"] .module-name'
         )
 
         b.assert_no_element('.lesson-highlight')
