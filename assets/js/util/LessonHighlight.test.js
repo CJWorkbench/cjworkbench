@@ -58,7 +58,7 @@ describe('LessonHighlight', () => {
   })
 
   it('should partial-match', () => {
-    const test = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
-    expect(matchLessonHighlight(test, { type: 'Module', name: 'Foo' })).toBe(true)
+    const lessonHighlight = [ { type: 'Module', name: 'Foo' }, { type: 'EditableNotes' } ]
+    expect(matchLessonHighlight(lessonHighlight, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
   })
 })
