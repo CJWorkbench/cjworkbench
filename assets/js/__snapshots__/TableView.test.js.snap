@@ -15,7 +15,7 @@ exports[`TableView Blank table when no module id 1`] = `
       className="outputpane-header"
     >
       <div
-        className="container"
+        className="table-info-container"
       >
         <div
           className="table-info"
@@ -7953,7 +7953,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
       className="outputpane-header"
     >
       <div
-        className="container"
+        className="table-info-container"
       >
         <div
           className="table-info"
@@ -7988,7 +7988,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
         className="export-table"
         onClick={[Function]}
       >
-        <div
+        <i
           className="icon-download"
         />
         <span>
