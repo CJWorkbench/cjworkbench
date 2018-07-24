@@ -451,15 +451,16 @@ export default class WfParameter extends React.Component {
           <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <ColumnParam
-              selectedCol={this.props.p.value}
+              value={this.props.p.value}
               name={id_name}
-              getColNames={this.getInputColNames}
-              noSelectionText={this.props.p.parameter_spec.placeholder}
+              prompt={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
-              revision={this.props.revision}
+              workflowRevision={this.props.revision}
+              fetchInputColumns={this.getInputColNames}
               onChange={this.paramChanged}
             />
-          </div> );
+          </div>
+        )
 
       case 'multicolumn':
         return (
