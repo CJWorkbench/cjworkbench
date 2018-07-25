@@ -166,12 +166,15 @@ textarea:focus, input:focus{
 
     button {
       font: inherit;
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       color: inherit;
       cursor: pointer;
       background: transparent;
       border: 0;
       display: inline-block;
+      padding-right: 0;
+      opacity: .7;
+      &:hover {opacity: 1}
     }
   }
 }
