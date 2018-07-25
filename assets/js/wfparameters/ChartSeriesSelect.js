@@ -5,7 +5,7 @@ import InputGroup from 'reactstrap/lib/InputGroup'
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
 import Input from 'reactstrap/lib/Input'
 import Button from 'reactstrap/lib/Button'
-import BlockPicker from 'react-color/lib/Block'
+import TwitterPicker from 'react-color/lib/Twitter'
 import { defaultColors, getColor } from './charts/ChartColors'
 
 export default class ChartSeriesSelect extends React.PureComponent {
@@ -82,7 +82,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
         </InputGroup>
         { this.state.colorPickerOpen ? <div className="color-picker pop-over">
           <div className="color-picker cover" onClick={this.closeColorPicker} />
-            <BlockPicker
+            <TwitterPicker
               color={safeColor}
               colors={defaultColors}
               onChangeComplete={this.onPickColor}
