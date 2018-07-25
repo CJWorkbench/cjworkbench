@@ -1,14 +1,12 @@
-from django.contrib.auth.models import User
+from collections import namedtuple
 import json
-import pandas as pd
-import io
-from server.views.WfModule import wfmodule_detail, wfmodule_dataversion
+from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from server.models import Module, WfModule, Workflow
 from rest_framework.test import force_authenticate
+from server.models import Module, WfModule, Workflow
+from server.views.WfModule import wfmodule_detail, wfmodule_dataversion
 from server.tests.test_wfmodule import WfModuleTestsBase
-from collections import namedtuple
 from server.tests.utils import LoggedInTestCase, mock_csv_table, \
         mock_csv_table2, add_new_workflow, add_new_wf_module, \
         create_testdata_workflow

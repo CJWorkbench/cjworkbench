@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^api/uploadfile/(?P<qquuid>\S+)?$', UploadedFileView.as_view()),
 
     # list all workflows
-    url(r'^workflows/$', views.render_workflows),
+    url(r'^workflows/$', views.render_workflows, name='workflows'),
     url(r'^api/workflows/?$', views.workflow_list),
 
     url(r'^lessons/$', views.render_lesson_list),
