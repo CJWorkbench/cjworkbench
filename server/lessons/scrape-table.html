@@ -13,17 +13,19 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Scrape table"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.moduleName === 'Scrape table'"
       >Add the module 'Scrape table'
     </li>
-    <li data-highlight='[{"type":"Module","index":0,"name":"Scrape table"}]'
-    data-test="const wfModule = workflow.wfModules[0];"
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate'"
       >Paste in the URL of the webpage where the table is published:
       <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate</div>
     </li>
-    <li data-highlight='[{"type":"Module","index":0,"name":"Scrape table"}]'
-    data-test="const wfModule = workflow.wfModules[0];">
-      Click <kbd>Scrape</kbd> to load the data
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].selectedVersion"
+      >Click <kbd>Scrape</kbd> to load the data
       <p class="instruction-detail">Once loaded, the dataset is copied on Workbench's server. It will stay accessible even if the webpage it was scraped from goes offline.</p>
     </li>
   </ol>
@@ -35,10 +37,10 @@
   <p>Rename the column's header</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+      data-highlight='[{"type":"WfModule","moduleName":"Rename columns"}]'
+      data-test="const wfModule = workflow.wfModules[1]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
       >
-      <p>Click on the column names in the header of the table, to rename columns as follow:</p>
+      <p>Click the column names in the header of the table to rename columns to the following:</p>
       <p>Country</br>Literacy rate</br>Male literacy</br>Female literacy</br>Gender difference</br>Non-UNESCO - literacy rate</p>
     </li>
   </ol>
