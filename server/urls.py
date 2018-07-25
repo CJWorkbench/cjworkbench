@@ -73,4 +73,7 @@ urlpatterns = [
 
     # 404
     url(r'^404/$', TemplateView.as_view(template_name='404.html')),
+
+    # 403
+    url(r'^403/$', TemplateView.as_view(template_name='403.html')),
 ]
