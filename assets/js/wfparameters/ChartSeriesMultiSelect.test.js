@@ -64,7 +64,7 @@ describe('ChartSeriesMultiSelect', () => {
     expect(w.prop('onChange')).toHaveBeenCalledWith([
       { column: 'A', color: '#aaaaaa' },
       { column: 'B', color: '#bbbbbb' },
-      { column: 'C', color: '#48C8D7' }
+      { column: 'C', color: '#fbaa6d' }
     ])
   })
 

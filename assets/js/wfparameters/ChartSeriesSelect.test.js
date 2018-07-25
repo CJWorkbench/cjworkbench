@@ -48,7 +48,7 @@ describe('ChartSeriesSelect', () => {
   it('should change color', async () => {
     const w = wrapper()
     w.find('button[title="Pick color"]').simulate('click')
-    w.find('div[title="#FBAA6D"]').simulate('click')
+    w.find('div[title="#fbaa6d"]').simulate('click')
     await sleepThroughDebounce()
     expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'foo', color: '#fbaa6d' })
 
@@ -61,7 +61,7 @@ describe('ChartSeriesSelect', () => {
     const w = wrapper({ column: null, color: null })
     w.find('button[title="Pick color"]').simulate('click')
     w.update()
-    w.find('div[title="#FBAA6D"]').simulate('click')
+    w.find('div[title="#fbaa6d"]').simulate('click')
     await sleepThroughDebounce()
     expect(w.prop('onChange')).not.toHaveBeenCalled()
     w.find('select[name="column"]').simulate('change', { target: { value: 'bar' } })
