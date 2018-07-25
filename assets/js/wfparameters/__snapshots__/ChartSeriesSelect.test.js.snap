@@ -16,12 +16,12 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
   prompt="prompt"
 >
   <InputGroup
-    className="chart-series-select"
+    className="chart-series-select wf-parameter"
     size="lg"
     tag="div"
   >
     <div
-      className="chart-series-select input-group input-group-lg"
+      className="chart-series-select wf-parameter input-group input-group-lg"
     >
       <InputGroupAddon
         addonType="prepend"
