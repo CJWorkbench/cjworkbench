@@ -64,7 +64,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <InputGroup size='lg' className='chart-series-select'>
+        <InputGroup size='lg' className='chart-series-select wf-parameter'>
           <InputGroupAddon addonType='prepend'>
             <Button title='Pick color' onClick={this.openColorPicker} className='color-picker button color' style={{background: safeColor}}>
               <i className="color-picker"/>

@@ -145,6 +145,21 @@ textarea:focus, input:focus{
 }
 
 .chart-series-multi-select {
+
+  .input-group-prepend{
+
+    button {
+      z-index: 2;
+      position: absolute;
+      border-radius: 3px 0 0 3px!important;
+      width: 2rem;
+    }
+  }
+
+  .custom-select {
+    margin-left: 1.8rem;
+  }
+
   .buttons {
     text-align: right;
     padding-top: .5rem;
