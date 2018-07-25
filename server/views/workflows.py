@@ -1,3 +1,4 @@
+from functools import lru_cache
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponseForbidden, \
         HttpResponseNotFound
@@ -18,27 +19,21 @@ from server.serializers import WorkflowSerializer, ModuleSerializer, \
 from server.utils import log_user_event
 from server.versions import WorkflowUndo, WorkflowRedo
 
+
 # Add module name to expected Id alias {module_name: module_alias?}
-modules_from_table = [
-    'editcells',
-    'sort-from-table',
-    'reorder-columns',
-    'rename-columns',
-    'duplicate-column'
-]
+#
+# TODO nix these. The client has this information already.
+@lru_cache(maxsize=1)
+def load_update_table_module_ids():
+    modules = Module.objects.filter(id_name__in=[
+        'duplicate-column',
+        'editcells',
+        'rename-columns',
+        'reorder-columns',
+        'sort-from-table',
+    ])
+    return dict([(m.id_name, m.id) for m in modules])
 
-# Cache module Ids dynamically per keys in module_name_to_id
-# because we need it on every Workflow page load, and it never changes
-def module_id(id_name):
-    if module_ids[id_name] is None:
-        try:
-            module_ids[id_name] = Module.objects.get(id_name=id_name).id
-        except Module.DoesNotExist:
-            return None
-
-    return module_ids[id_name]
-
-module_ids = {id: None for id in modules_from_table}
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request, workflow=None, modules=None):
@@ -46,7 +41,7 @@ def make_init_state(request, workflow=None, modules=None):
 
     if workflow:
         ret['workflowId'] = workflow.id
-        ret['workflow'] = WorkflowSerializer(workflow, context={'request' : request}).data
+        ret['workflow'] = WorkflowSerializer(workflow, context={'request': request}).data
         ret['selected_wf_module'] = workflow.selected_wf_module
         del ret['workflow']['selected_wf_module']
 
@@ -57,10 +52,7 @@ def make_init_state(request, workflow=None, modules=None):
         ret['loggedInUser'] = UserSerializer(request.user).data
 
     if workflow and not workflow.request_read_only(request):
-        ret['updateTableModuleIds'] = dict(
-            [(m.id_name, m.id)
-             for m in Module.objects.filter(id_name__in=modules_from_table)]
-        )
+        ret['updateTableModuleIds'] = load_update_table_module_ids()
 
     return ret
 
