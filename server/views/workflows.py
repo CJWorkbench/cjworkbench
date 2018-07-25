@@ -1,4 +1,6 @@
-from django.http import HttpRequest, HttpResponseForbidden, HttpResponseNotFound
+from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest, HttpResponseForbidden, \
+        HttpResponseNotFound
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
@@ -6,13 +8,14 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
-from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.utils import *
 from server.models import Module, ModuleVersion, Workflow
-from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
-from server.serializers import WorkflowSerializer, ModuleSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
+from server.models import AddModuleCommand, ReorderModulesCommand, \
+        ChangeWorkflowTitleCommand
+from server.serializers import WorkflowSerializer, ModuleSerializer, \
+        WorkflowSerializerLite, WfModuleSerializer, UserSerializer
+from server.utils import log_user_event
 from server.versions import WorkflowUndo, WorkflowRedo
 
 # Add module name to expected Id alias {module_name: module_alias?}
@@ -54,10 +57,10 @@ def make_init_state(request, workflow=None, modules=None):
         ret['loggedInUser'] = UserSerializer(request.user).data
 
     if workflow and not workflow.request_read_only(request):
-        ret['updateTableModuleIds'] = {}
-        for id_name in modules_from_table:
-            # Simplify for front end retrieval by module name
-            ret['updateTableModuleIds'][id_name] = module_id(id_name)
+        ret['updateTableModuleIds'] = dict(
+            [(m.id_name, m.id)
+             for m in Module.objects.filter(id_name__in=modules_from_table)]
+        )
 
     return ret
 
@@ -225,7 +228,7 @@ def workflow_addmodule(request, pk, format=None):
     if not workflow.request_authorized_write(request):
         return HttpResponseForbidden()
 
-    module_id = request.data['moduleId']
+    module_id = int(request.data['moduleId'])
     insert_before = int(request.data['insertBefore'])
     try:
         module = Module.objects.get(pk=module_id)
