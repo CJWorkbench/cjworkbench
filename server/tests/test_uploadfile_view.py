@@ -16,13 +16,15 @@ class UploadFileViewTests(LoggedInTestCase):
         self.factory = APIRequestFactory()
 
         # Path through chardet encoding detection
-        iobytes = open(mock_csv_path, 'rb')
-        self.csv_table = parse_bytesio(iobytes, 'text/csv', None).dataframe
+        with open(mock_csv_path, 'rb') as iobytes:
+            self.csv_table = parse_bytesio(iobytes, 'text/csv', None).dataframe
 
-        iobytes = open(mock_xlsx_path, 'rb')
-        self.xlsx_table = parse_bytesio(iobytes,
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', None).dataframe
-
+        with open(mock_xlsx_path, 'rb') as iobytes:
+            self.xlsx_table = parse_bytesio(
+                iobytes,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                None
+            ).dataframe
 
     def _test_successful_upload(self, path, table):
         self.assertEqual(len(self.wfm.list_fetched_data_versions()), 0)
