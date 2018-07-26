@@ -2,23 +2,47 @@
   "name": "Line Chart",
   "id_name": "linechart",
   "category" : "Visualize",
-  "icon" : "linechart",
+  "icon" : "chart",
   "description" : "Create a line chart.",
+  "html_output": true,
   "help_url":"modules/visualization/column-and-line-charts",
-  "html_output" : true,
   "parameters": [
     {
-      "name": "Chart Options",
-      "id_name": "chart_editor",
-      "type": "custom",
-      "ui-only": true
+      "name": "",
+      "id_name": "title",
+      "type": "string",
+      "placeholder": "Chart title"
     },
     {
-      "name": "Chart Type",
-      "id_name": "chart_type",
+      "name": "X axis",
+      "id_name": "x_axis_label",
       "type": "string",
-      "default": "line",
-      "visible": false
+      "placeholder": "Label"
+    },
+    {
+      "name": "",
+      "id_name": "x_column",
+      "type": "column",
+      "placeholder": "Select X-Axis Column"
+    },
+    {
+      "name": "",
+      "id_name": "x_data_type",
+      "type": "menu",
+      "placeholder": "Select X-Axis Data Type",
+      "menu_items": "Numbers|Dates (ISO 8601-formatted)",
+      "default": "0"
+    },
+    {
+      "name": "Y axis",
+      "id_name": "y_axis_label",
+      "type": "string",
+      "placeholder": "Label"
+    },
+    {
+      "name": "Columns",
+      "id_name": "y_columns",
+      "type": "custom"
     }
   ]
 }

@@ -3,6 +3,7 @@ from server.views.UploadedFileView import UploadedFileView
 from rest_framework import status
 from rest_framework.test import force_authenticate, APIRequestFactory
 from server.tests.utils import *
+from server.modules.utils import parse_bytesio
 from django.conf import settings
 import pandas as pd
 import os
@@ -14,9 +15,16 @@ class UploadFileViewTests(LoggedInTestCase):
         self.wfm = load_and_add_module('uploadfile')
         self.factory = APIRequestFactory()
 
-        self.csv_table = pd.read_csv(mock_csv_path)
-        self.xlsx_table = pd.read_excel(mock_xlsx_path)
+        # Path through chardet encoding detection
+        with open(mock_csv_path, 'rb') as iobytes:
+            self.csv_table = parse_bytesio(iobytes, 'text/csv', None).dataframe
 
+        with open(mock_xlsx_path, 'rb') as iobytes:
+            self.xlsx_table = parse_bytesio(
+                iobytes,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                None
+            ).dataframe
 
     def _test_successful_upload(self, path, table):
         self.assertEqual(len(self.wfm.list_fetched_data_versions()), 0)

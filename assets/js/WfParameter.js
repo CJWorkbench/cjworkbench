@@ -3,7 +3,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import MenuParam from './wfparameters/MenuParam'
-import ChartEditor from './wfparameters/charts/ChartEditor'
 import ChartSeriesMultiSelect from './wfparameters/ChartSeriesMultiSelect'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
@@ -173,17 +172,6 @@ export default class WfParameter extends React.Component {
     const { id_name, name } = this.props.p.parameter_spec
 
     switch (id_name) {
-      case 'chart_editor':
-        return (
-          <ChartEditor
-            isReadOnly={ this.props.isReadOnly }
-            revision={ this.props.revision }
-            wfModuleId={this.props.wf_module_id}
-            modelText={this.props.p.value}
-            type={ this.props.getParamText('chart_type') }
-            api={this.props.api}
-          />
-        )
       case 'version_select':
         const button = (!this.props.isReadOnly)
           ? <button className='button-blue action-button mt-0' onClick={this.click}>{name}</button>

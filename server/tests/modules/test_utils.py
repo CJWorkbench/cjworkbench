@@ -32,3 +32,23 @@ class ParseBytesIoTest(unittest.TestCase):
                                'text/csv', 'utf-8')
         expected = ProcessResult(pandas.DataFrame({'A': ['caf�']}))
         self.assertEqual(result, expected)
+
+    def test_autodetect_charset(self):
+        # \xe9 is ISO-8859-1 so Workbench should auto-detect it
+        result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
+                               'text/csv', None)
+        expected = ProcessResult(pandas.DataFrame({'A': ['café']}))
+        self.assertEqual(result, expected)
+
+        # \x96 is - in windows-1252, does not exist in UTF-8
+        result = parse_bytesio(io.BytesIO(b'A\n2000\x962018'),
+                               'text/csv', None)
+        expected = ProcessResult(pandas.DataFrame({'A': ['2000–2018']}))
+        self.assertEqual(result, expected)
+
+        # 'Thank you' in Mandarin should resolve to UTF-8
+        result = parse_bytesio(io.BytesIO(b'A\n\xE8\xB0\xA2\xE8\xB0\xA2\xE4\xBD\xA0'),
+                               'text/csv', None)
+        expected = ProcessResult(pandas.DataFrame({'A': ['谢谢你']}))
+        self.assertEqual(result, expected)
+
