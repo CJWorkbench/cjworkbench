@@ -27,6 +27,7 @@ def load_update_table_module_ids():
     modules = Module.objects.filter(id_name__in=[
         'duplicate-column',
         'editcells',
+        'filter',
         'rename-columns',
         'reorder-columns',
         'sort-from-table',
