@@ -7,7 +7,7 @@ const workflowReducer = wfr.workflowReducer;
 export const genericTestModules = [
   {
     "id":1,
-    "name":"Chartbuilder",
+    "name":"Chart",
     "category":"Visualize",
     "description":"Create line, column and scatter plot charts.",
     "icon":"chart"
