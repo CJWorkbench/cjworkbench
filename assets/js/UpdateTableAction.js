@@ -27,7 +27,7 @@ export const selectColumnKeep = 1
 export function updateTableActionModule (wfModuleId, idName, forceNewModule, ...params) {
   const state = store.getState()
   // Check if module imported
-  if (state.updateTableModuleIds[idName] === null) {
+  if (!(idName in state.updateTableModuleIds)) {
     window.alert("Module '" + idName + "' not imported.")
     return
   }

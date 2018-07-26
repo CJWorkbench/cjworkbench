@@ -10,7 +10,7 @@ describe("UpdateTableAction actions", () => {
   const COLUMN_PAR_ID_1 = 35;
 
   var initialStateNone = {
-    updateTableModuleIds: {'filter': null},
+    updateTableModuleIds: {},  // no modules installed, error condition if unchanged
     workflow: {
       id: 127,
       wf_modules: [
@@ -44,7 +44,7 @@ describe("UpdateTableAction actions", () => {
 
   // Change the module in the initial state
   function setInitialState (module) {
-    initialState.updateTableModuleIds = module
+    initialState.updateTableModuleIds = { module: 666 }
     initialState.workflow.wf_modules[0].module_version.module.id_name = module
   }
 

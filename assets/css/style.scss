@@ -50,6 +50,15 @@ body {
   color: $brand-text--dark;
 }
 
+//404 , 403
+.error-number {
+  @extend .font404;
+  text-align:center;
+  margin-top: .5rem;
+  margin-bottom: 1rem;
+  color:$white;
+}
+
 /* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space.
   Not sure why position absolute is needed, but it gets push down the screen (not flush with top) otherwise. */
 

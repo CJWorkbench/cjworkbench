@@ -16,6 +16,7 @@
     height: 100%; // OutputIframe.js will override this ...
     max-height: calc(50% - 3rem); // ... and this is the max
     position:relative;
+    border-bottom: 1px solid $WF-background;
     iframe {
       border:none;
       position: absolute;
@@ -26,6 +27,7 @@
     }
     .outputpane-iframe-control-overlay {
       position: absolute;
+      margin-top: 1.5rem;
       right:6rem;
       width: 4rem;
       height: 4rem;
@@ -55,62 +57,57 @@
     .outputpane-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       height: 5.5rem;
-      background-color: #FFFFFF;
-      padding:0 2.25rem;
+      background-color: white;
 
-      .container {
+      .table-info-container {
         display: flex;
-        margin-left: 1.5rem;
-        width:30rem;
+        margin-left: 5.25rem;
 
         .table-info {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: space-between;
-          margin-right: 5rem;
-          margin-top: .5rem;
+          text-align: center;
+          margin-right: 3rem;
           background-color: transparent;
 
           .data {
-            @extend %content-4;
-            color:$light-gray;
+            color: $light-gray;
             text-transform: uppercase;
             font-size: 1rem;
+            line-height: 1;
             cursor: default;
           }
           .value {
+            color: $dark-gray;
+            font-size: 1.4rem;
+            line-height: 1;
             margin-top: .7rem;
-            @extend %content-2;
-            color:$dark-gray;
           }
         }
       }
 
-
       .export-table {
-        display: flex;
-        padding:0 1.5rem;
-        align-items: center;
-        height: 3.5rem;
+        display: inline-block;
+        white-space: nowrap;
+        padding: .5rem 1.5rem;
+        margin-right: 2.25rem;
         border-radius: 2rem;
-        color:$table-element;
-        background-color: $white;
+        color: $table-element;
+        background-color: white;
         cursor: pointer;
         &:hover{
           background-color: $dark-accent--soft;
         }
-        font-size: 1.5rem;
+        font-size: 1.4rem;
 
-        span {font-size: 1.4rem;}
         .icon-download {
+          font-size: 1.5rem;
           margin-right:1rem;
         }
         .feed {
           margin-left: 1rem;
           padding-left: 1rem;
-          border-left: .2rem solid $table-element--light;
+          border-left: 2px solid $table-element--light;
         }
       }
     }

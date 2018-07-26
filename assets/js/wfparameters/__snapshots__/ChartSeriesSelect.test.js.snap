@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartSeriesSelect should match snapshot 1`] = `
+<ChartSeriesSelect
+  availableColumns={
+    Array [
+      "foo",
+      "bar",
+    ]
+  }
+  color="#abcdef"
+  column="foo"
+  index={2}
+  isReadOnly={false}
+  onChange={[MockFunction]}
+  prompt="prompt"
+>
+  <InputGroup
+    className="chart-series-select wf-parameter"
+    size="lg"
+    tag="div"
+  >
+    <div
+      className="chart-series-select wf-parameter input-group input-group-lg"
+    >
+      <InputGroupAddon
+        addonType="prepend"
+        tag="div"
+      >
+        <div
+          className="input-group-prepend"
+        >
+          <Button
+            className="color-picker button color"
+            color="secondary"
+            onClick={[Function]}
+            style={
+              Object {
+                "background": "#abcdef",
+              }
+            }
+            tag="button"
+            title="Pick color"
+          >
+            <button
+              className="color-picker button color btn btn-secondary"
+              onClick={[Function]}
+              style={
+                Object {
+                  "background": "#abcdef",
+                }
+              }
+              title="Pick color"
+              type="button"
+            >
+              <i
+                className="color-picker"
+              />
+            </button>
+          </Button>
+        </div>
+      </InputGroupAddon>
+      <ColumnParam
+        allColumns={
+          Array [
+            "foo",
+            "bar",
+          ]
+        }
+        allColumnsFetchError={null}
+        isReadOnly={false}
+        name="column"
+        onChange={[Function]}
+        prompt="prompt"
+        value="foo"
+      >
+        <select
+          className="custom-select module-parameter dropdown-selector"
+          disabled={false}
+          name="column"
+          onChange={[Function]}
+          value="foo"
+        >
+          <option
+            className="prompt"
+            disabled={true}
+            key="prompt"
+            value=""
+          >
+            prompt
+          </option>
+          <option
+            key="foo"
+          >
+            foo
+          </option>
+          <option
+            key="bar"
+          >
+            bar
+          </option>
+        </select>
+      </ColumnParam>
+    </div>
+  </InputGroup>
+</ChartSeriesSelect>
+`;

@@ -58,7 +58,12 @@ describe('LessonHighlight', () => {
   })
 
   it('should partial-match', () => {
-    const valid = [ { type: 'Module', name: 'Foo' }, { type: 'EditableNotes' } ]
-    expect(matchLessonHighlight(valid, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
+    const lessonHighlight = [ { type: 'Module', name: 'Foo' }, { type: 'EditableNotes' } ]
+    expect(matchLessonHighlight(lessonHighlight, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
+  })
+
+  it('should allow `null` as a "wildcard"', () => {
+    const lessonHighlight = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
+    expect(matchLessonHighlight(lessonHighlight, { type: 'Module', name: null, index: 2 })).toBe(true)
   })
 })

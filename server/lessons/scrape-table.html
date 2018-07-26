@@ -1,0 +1,67 @@
+<header>
+  <h1>VI. Scrape and clean a table from a web page​</h1>
+  <p>Coming soon</p>
+  <img src="/static/images/lesson_banners/scrape_table.svg">
+</header>
+<section>
+  <h2>COMING SOON</h2>
+</section>
+<section>
+  <h2>1. Loading the HTML table</h2>
+  <p>Let's scrape the dataset <a href="https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate" class="highlight" target="_blank">List of countries by literacy rate</a>, published and documented on Wikipedia.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Scrape table"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.moduleName === 'Scrape table'"
+      >Add the module 'Scrape table'
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate'"
+      >Paste in the URL of the webpage where the table is published:
+      <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate</div>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].selectedVersion"
+      >Click <kbd>Scrape</kbd> to load the data
+      <p class="instruction-detail">Once loaded, the dataset is copied on Workbench's server. It will stay accessible even if the webpage it was scraped from goes offline.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>2. Cleaning double header rows</h2>
+  <p>The <a href="https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate" class="highlight" target="_blank">original table</a> has two header rows: the bottom row is nested in the top row. In order to be able to sort the table, Workbench collapses both rows into a single header.</p>
+  <h3 class="instructions">Instructions</h3>
+  <p>Rename the column's header</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Rename columns"}]'
+      data-test="const wfModule = workflow.wfModules[1]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+      >
+      <p>Click the column names in the header of the table to rename columns to the following:</p>
+      <p>Country</br>Literacy rate</br>Male literacy</br>Female literacy</br>Gender difference</br>Non-UNESCO - literacy rate</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>3. Table's position on the page</h2>
+  <p>There are two different tables on the <a href="https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate" class="highlight" target="_blank">page</a> you just scraped. What if you wanted to load the second one, and not the first?</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+      >
+      <p>In the Scrape table module, modify the <kbd>Table's position on the webpage to the correct value, and click <kbd>Scrape</kbd>.  
+    </li>
+    <Li data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
+    data-test="const wfModule = workflow.wfModules[0];"
+      >Press scrape to load the new table
+      <p class="instruction-detail highlight">Congratulation! Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" >how to scrape and monitor content on a web page</a>.
+    </li>
+  </ol>
+</section>
+  </ol>
+</section>

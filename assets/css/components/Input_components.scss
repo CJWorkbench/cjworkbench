@@ -144,6 +144,41 @@ textarea:focus, input:focus{
   }
 }
 
+.chart-series-multi-select {
+
+  .input-group-prepend{
+
+    button {
+      z-index: 2;
+      position: absolute;
+      border-radius: 3px 0 0 3px!important;
+      width: 2rem;
+    }
+  }
+
+  .custom-select {
+    margin-left: 1.8rem;
+  }
+
+  .buttons {
+    text-align: right;
+    padding-top: .5rem;
+
+    button {
+      font: inherit;
+      font-size: 1.5rem;
+      color: inherit;
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      display: inline-block;
+      padding-right: 0;
+      opacity: .7;
+      &:hover {opacity: 1}
+    }
+  }
+}
+
 .module-parameter:focus{
   border: 2px solid $brand-workspace;
 }
@@ -239,4 +274,44 @@ textarea[name="notes"], .editable-notes-read-only {
   background-color:transparent;
   display: table;
   margin:auto;
+}
+
+.twitter-picker {
+  // Override react-color's style. We can't set `width` because react-color
+  // uses JS to set styles. But we can set `max-width`.
+  max-width: 24rem;
+
+  // Center horizontally
+  // (it's already position:relative)
+  left: -.6rem;
+
+  // Place vertically so triangle is just next to button
+  top: .3rem;
+
+  // Can't adjust 'border' or 'box-shadow'. TwitterPicker does, but far too
+  // pale. Instead, use '::before' and '::after' to create a triangle pointer
+  // ... can we all agree that reactcss is terrible for customization?
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid $light-gray;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -.5rem;
+    left: 1.1rem; // centered on button
+    width: 1rem;
+    height: 1rem;
+    background: white;
+    transform: rotate(-45deg);
+    border: 1px solid transparent;
+    border-right-color: $light-gray;
+    border-top-color: $light-gray;
+  }
 }

@@ -1,11 +1,13 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, \
-        HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
+from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
+        Http404, HttpResponseNotFound, JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from django.utils import dateparse, timezone
-from server.models import Workflow, WfModule, StoredObject
+from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
@@ -18,60 +20,45 @@ import json
 import re
 import pandas as pd
 from django.views.decorators.clickjacking import xframe_options_exempt
-from typing import Union
-
-_LookupResponse = Union[HttpResponse, WfModule]
 
 
-def _lookup_wf_module_no_access_control(pk: int) -> _LookupResponse:
+def _lookup_wf_module(pk: int) -> WfModule:
     """Find a Workflow and WfModule based on pk (no access control).
 
-    Returns HttpResponseNotFound if pk is not in the database.
+    Raises Http404 if pk is not found in the database.
     """
-    try:
-        wf_module = WfModule.objects.get(pk=pk)
-    except WfModule.DoesNotExist:
-        return HttpResponseNotFound()
+    wf_module = get_object_or_404(WfModule, pk=pk)
 
-    try:
-        # Look up workflow now, so we don't look it up later
-        wf_module.workflow
-    except Workflow.DoesNotExist:  # race
-        return HttpResponseNotFound()
+    # Look up workflow now, so we don't look it up later
+    wf_module.workflow  # or ObjectDoesNotExist
 
     return wf_module
 
 
-def _lookup_wf_module_for_read(
-        pk: int, request: HttpRequest) -> _LookupResponse:
+def _lookup_wf_module_for_read(pk: int, request: HttpRequest) -> WfModule:
     """Find a WfModule based on pk.
 
-    Returns HttpResponseNotFound if pk is not in the database, or
-    HttpResponseForbidden if the person requesting does not have access.
+    Raises Http404 if pk is not found in the database, or PermissionDenied if
+    the person requesting does not have read access.
     """
-    wf_module = _lookup_wf_module_no_access_control(pk)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
+    wf_module = _lookup_wf_module(pk)  # or raise Http404
 
     if not wf_module.workflow.request_authorized_read(request):
-        return HttpResponseForbidden()
+        raise PermissionDenied()
 
     return wf_module
 
 
-def _lookup_wf_module_for_write(
-        pk: int, request: HttpRequest) -> _LookupResponse:
+def _lookup_wf_module_for_write(pk: int, request: HttpRequest) -> WfModule:
     """Find a WfModule based on pk.
 
-    Returns HttpResponseNotFound if pk is not in the database, or
-    HttpResponseForbidden if the person requesting does not have access.
+    Raises Http404 if pk is not found in the database, or PermissionDenied if
+    the person requesting does not have write access.
     """
-    wf_module = _lookup_wf_module_no_access_control(pk)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
+    wf_module = _lookup_wf_module(pk)  # or raise Http404
 
     if not wf_module.workflow.request_authorized_write(request):
-        return HttpResponseForbidden()
+        raise PermissionDenied()
 
     return wf_module
 
@@ -122,9 +109,6 @@ def wfmodule_detail(request, pk, format=None):
         wf_module = _lookup_wf_module_for_read(pk, request)
     else:
         wf_module = _lookup_wf_module_for_write(pk, request)
-
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     if request.method == 'GET':
         with wf_module.workflow.cooperative_lock():
@@ -228,8 +212,6 @@ def table_json_response(request, wf_module):
 @renderer_classes((JSONRenderer,))
 def wfmodule_render(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     with wf_module.workflow.cooperative_lock():
         return table_json_response(request, wf_module)
@@ -242,8 +224,6 @@ _html_head_start_re = re.compile(rb'<\s*head[^>]*>', re.IGNORECASE)
 @xframe_options_exempt
 def wfmodule_output(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     html = module_get_html_bytes(wf_module)
 
@@ -279,8 +259,6 @@ def wfmodule_output(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     with wf_module.workflow.cooperative_lock():
         result = execute_wfmodule(wf_module)
@@ -292,8 +270,6 @@ def wfmodule_embeddata(request, pk):
 @renderer_classes((JSONRenderer,))
 def wfmodule_histogram(request, pk, col, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     INTERNAL_COUNT_COLNAME = '__internal_count_column__'
 
@@ -325,8 +301,6 @@ def wfmodule_histogram(request, pk, col, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_input(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     with wf_module.workflow.cooperative_lock():
         # return empty table if this is the first module in the stack
@@ -343,8 +317,6 @@ def wfmodule_input(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     with wf_module.workflow.cooperative_lock():
         result = execute_wfmodule(wf_module)
@@ -374,8 +346,6 @@ def wfmodule_columns(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
-    if isinstance(wf_module, HttpResponse):
-        return wf_module
 
     with wf_module.workflow.cooperative_lock():
         result = execute_wfmodule(wf_module)
@@ -386,7 +356,7 @@ def wfmodule_public_output(request, pk, type, format=None):
             d = result.dataframe.to_csv(index=False)
             return HttpResponse(d, content_type="text/csv")
         else:
-            return HttpResponseNotFound()
+            raise Http404()
 
 
 # Get list of data versions, or set current data version
@@ -395,7 +365,6 @@ def wfmodule_public_output(request, pk, type, format=None):
 def wfmodule_dataversion(request, pk, format=None):
     if request.method == 'GET':
         wf_module = _lookup_wf_module_for_read(pk, request)
-        if isinstance(wf_module, HttpResponse): return wf_module
 
         with wf_module.workflow.cooperative_lock():
             versions = wf_module.list_fetched_data_versions()
@@ -406,7 +375,6 @@ def wfmodule_dataversion(request, pk, format=None):
 
     elif request.method == 'PATCH':
         wf_module = _lookup_wf_module_for_write(pk, request)
-        if isinstance(wf_module, HttpResponse): return wf_module
 
         with wf_module.workflow.cooperative_lock():
             date_s = request.data.get('selected', '')
@@ -446,11 +414,11 @@ def wfmodule_dataversion(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_dataversion_read(request, pk):
     wf_module = _lookup_wf_module_for_write(pk, request)
-    if isinstance(wf_module, HttpResponse): return wf_module
 
     with wf_module.workflow.cooperative_lock():
-        stored_objects = StoredObject.objects.filter(wf_module=wf_module, \
-            stored_at__in=request.data['versions'])
+        stored_objects = wf_module.stored_objects.filter(
+            stored_at__in=request.data['versions']
+        )
 
         stored_objects.update(read=True)
 

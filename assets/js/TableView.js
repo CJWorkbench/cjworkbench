@@ -264,7 +264,7 @@ export default class TableView extends React.PureComponent {
     return (
       <div className="outputpane-table">
           <div className="outputpane-header">
-            <div className="container">
+            <div className="table-info-container">
               <div className='table-info'>
                   <div className='data'>Rows</div>
                   <div className='value'>{nrows}</div>
@@ -276,7 +276,7 @@ export default class TableView extends React.PureComponent {
             </div>
             {this.props.selectedWfModuleId ? (
               <div className="export-table" onClick={this.toggleExportModal}>
-                <div className="icon-download"></div>
+                <i className="icon-download"></i>
                 <span>CSV</span>
                 <span className="feed">JSON FEED</span>
                 <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.selectedWfModuleId} onClose={this.toggleExportModal}/>

@@ -1,140 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ColumnParam renders with noSelectionText 1`] = `
-<ColumnParam
-  getColNames={[Function]}
-  isReadOnly={true}
-  name="column"
-  noSelectionText="Just pick something, user"
-  onChange={[Function]}
-  revision={101}
-  selectedCol="baz"
+exports[`ColumnParam matches snapshot 1`] = `
+<FetchingColumnParam
+  fetchInputColumns={
+    [MockFunction] {
+      "calls": Array [
+        Array [],
+      ],
+    }
+  }
+  isReadOnly={false}
+  name="col"
+  onChange={[MockFunction]}
+  prompt="SelectACol"
+  value={null}
+  workflowRevision={1}
 >
-  <select
-    className="custom-select module-parameter dropdown-selector"
-    disabled={true}
-    name="column"
-    onChange={[Function]}
-    value={3}
+  <ColumnParam
+    allColumns={
+      Array [
+        "A",
+        "B",
+        "C",
+      ]
+    }
+    allColumnsFetchError={null}
+    isReadOnly={false}
+    name="col"
+    onChange={[MockFunction]}
+    prompt="SelectACol"
+    value={null}
   >
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="0"
-      value={0}
+    <select
+      className="custom-select module-parameter dropdown-selector"
+      disabled={false}
+      name="col"
+      onChange={[Function]}
+      value=""
     >
-      Just pick something, user
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="1"
-      value={1}
-    >
-      foo
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="2"
-      value={2}
-    >
-      bar
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="3"
-      value={3}
-    >
-      baz
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="4"
-      value={4}
-    >
-      wow
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="5"
-      value={5}
-    >
-      word wrap
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="6"
-      value={6}
-    >
-      ok then
-    </option>
-  </select>
-</ColumnParam>
-`;
-
-exports[`ColumnParam renders without noSelectionText 1`] = `
-<ColumnParam
-  getColNames={[Function]}
-  isReadOnly={true}
-  name="column"
-  onChange={[Function]}
-  revision={101}
-  selectedCol="baz"
->
-  <select
-    className="custom-select module-parameter dropdown-selector"
-    disabled={true}
-    name="column"
-    onChange={[Function]}
-    value={3}
-  >
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="0"
-      value={0}
-    >
-      Select
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="1"
-      value={1}
-    >
-      foo
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="2"
-      value={2}
-    >
-      bar
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="3"
-      value={3}
-    >
-      baz
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="4"
-      value={4}
-    >
-      wow
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="5"
-      value={5}
-    >
-      word wrap
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      key="6"
-      value={6}
-    >
-      ok then
-    </option>
-  </select>
-</ColumnParam>
+      <option
+        className="prompt"
+        disabled={true}
+        key="prompt"
+        value=""
+      >
+        SelectACol
+      </option>
+      <option
+        key="A"
+      >
+        A
+      </option>
+      <option
+        key="B"
+      >
+        B
+      </option>
+      <option
+        key="C"
+      >
+        C
+      </option>
+    </select>
+  </ColumnParam>
+</FetchingColumnParam>
 `;

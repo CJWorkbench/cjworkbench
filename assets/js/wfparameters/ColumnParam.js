@@ -2,90 +2,130 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-
-export default class ColumnParam extends React.Component {
-  constructor(props) {
-    super(props);
-    this.selectRef = null;
-    this.state = { colNames: [], selectedCol: props.selectedCol };
-    this.onChange = this.onChange.bind(this);
+export class ColumnParam extends React.PureComponent {
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    value: PropTypes.string, // or null
+    prompt: PropTypes.string, // default 'Select'
+    isReadOnly: PropTypes.bool.isRequired,
+    allColumns: PropTypes.arrayOf(PropTypes.string), // or null for loading/error
+    allColumnsFetchError: PropTypes.object, // or null for loading/success
+    onChange: PropTypes.func.isRequired // func(colnameOrNull) => undefined
   }
 
-  loadColNames() {
-    this.props.getColNames()
-      .then(cols => {
-
-        // Always make it possible to select (or show) "(None)"
-        let select_string = this.props.noSelectionText || 'Select';
-        var colsPlusNone = [select_string].concat(cols);
-        this.setState({colNames: colsPlusNone});
-      });
-  }
-
-  // Load column names when first rendered
-  componentDidMount() {
-    this.loadColNames();
-  }
-
-  // Update when we get new props = new selected column
-  // And also column names when workflow revision bumps
-  componentWillReceiveProps(nextProps) {
-    this.setState({selectedCol: nextProps.selectedCol});
-    if (this.props.revision !== nextProps.revision) {
-      this.loadColNames();
-    }
-  }
-
-  onChange(evt) {
-    let colName;
-    if (this.selectRef.selectedIndex === 0) {
-      colName = "";  // no selection
-    } else {
-      colName = this.state.colNames[evt.target.value];
-    }
-
-    this.setState({selectedCol: colName});
-    this.props.onChange(colName);
+  onChange = (ev) => {
+    this.props.onChange(ev.target.value || null)
   }
 
   render() {
-
-    // Select the current column name if any, otherwise (None)
-    var idx = this.state.colNames.indexOf(this.state.selectedCol);
-    if (idx === -1) {
-      idx = 0;
-    }
-
-    var itemDivs = this.state.colNames.map( (name, idx) => {
-        return <option key={idx} value={idx} className='dropdown-menu-item t-d-gray content-3'>{name}</option>;
-    });
+    const { allColumns, allColumnsFetchError, prompt, value } = this.props
 
     let className = 'custom-select module-parameter dropdown-selector'
-    if (this.state.colNames.length === 0) {
-      className += ' loading'
+
+    const options = (allColumns || []).map(name => (
+      <option key={name}>{name}</option>
+    ))
+    if (allColumnsFetchError !== null) {
+      className += ' error'
+      options.push(<option disabled className="error" key="error" value="">Error loading columns</option>)
+    } else {
+      // Select prompt when no column is selected, _or_ when an invalid
+      // column is selected. `value || ''` is the currently-selected value.
+      //
+      // When a column is selected, set the prompt to '' so it is _not_
+      // selected.
+      const promptValue = (allColumns || []).indexOf(value) === -1 ? (value || '') : ''
+      options.unshift(<option disabled className="prompt" key="prompt" value={promptValue}>{prompt || 'Select'}</option>)
+
+      if (allColumns === null) {
+        className += ' loading'
+        options.push(<option disabled className="loading" key="loading" value="">Loading columns</option>)
+      }
     }
 
     return (
-        <select
-          className={className}
-          value={idx}
-          onChange={this.onChange}
-          name={this.props.name}
-          disabled={this.props.isReadOnly}
-          ref={(ref) => this.selectRef= ref}
-        >
-          {itemDivs}
-        </select>
-    );
+      <select
+        className={className}
+        value={value || ''}
+        onChange={this.onChange}
+        name={this.props.name}
+        disabled={this.props.isReadOnly}
+      >
+        {options}
+      </select>
+    )
   }
 }
 
-ColumnParam.propTypes = {
-  selectedCol:    PropTypes.string.isRequired,
-  getColNames:    PropTypes.func.isRequired,
-  name:           PropTypes.string.isRequired,
-  noSelectionText:PropTypes.string,
-  isReadOnly:     PropTypes.bool.isRequired,
-  revision:       PropTypes.number.isRequired,
-  onChange:       PropTypes.func.isRequired
-};
+export default class FetchingColumnParam extends React.PureComponent {
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    value: PropTypes.string, // or null
+    prompt: PropTypes.string, // default 'Select'
+    isReadOnly: PropTypes.bool.isRequired,
+    workflowRevision: PropTypes.number.isRequired,
+    fetchInputColumns: PropTypes.func.isRequired, // func() => Promise[Array[String]]
+    onChange: PropTypes.func.isRequired // func(colnameOrNull) => undefined
+  }
+
+  state = {
+    allColumns: null,
+    allColumnsFetchError: null,
+    allColumnsWorkflowRevision: null,
+  }
+
+  loadInputColumns () {
+    const { allColumns, allColumnsFetchError, allColumnsWorkflowRevision } = this.state
+    if (allColumnsWorkflowRevision === this.props.workflowRevision) return
+
+    this.setState({
+      allColumns: null,
+      allColumnsFetchError: null,
+      allColumnsWorkflowRevision: this.props.workflowRevision
+    })
+
+    const setState = (state) => {
+      if (!this.mounted) return
+      if (this.state.allColumnsWorkflowRevision !== this.props.workflowRevision) return // race -- two concurrent fetches
+
+      this.setState(state)
+    }
+
+    this.props.fetchInputColumns()
+      .then(allColumns => setState({ allColumns }))
+      .catch(allColumnsFetchError => setState({ allColumnsFetchError }))
+  }
+
+  // Load column names when first rendered
+  componentDidMount () {
+    this.mounted = true
+    this.loadInputColumns()
+  }
+
+  componentWillUnmount () {
+    this.mounted = false
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.workflowRevision !== this.props.workflowRevision) {
+      this.loadInputColumns()
+    }
+  }
+
+  render() {
+    const { allColumns, allColumnsFetchError } = this.state
+    const { name, prompt, value, isReadOnly } = this.props
+
+    return (
+      <ColumnParam
+        name={name}
+        value={value}
+        prompt={prompt}
+        isReadOnly={isReadOnly}
+        allColumns={allColumns}
+        allColumnsFetchError={allColumnsFetchError}
+        onChange={this.props.onChange}
+      />
+    )
+  }
+}

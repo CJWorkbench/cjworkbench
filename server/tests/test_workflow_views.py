@@ -4,12 +4,15 @@ from allauth.account.utils import user_display
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
+from server.models import Module, ModuleVersion, User, WfModule, Workflow
 from server.serializers import WfModuleSerializer
-from server.tests.utils import *
-from server.views import workflow_list, workflow_addmodule, workflow_detail, render_workflow
+from server.tests.utils import LoggedInTestCase, add_new_workflow, \
+        add_new_module_version, add_new_wf_module, load_module_version
+from server.views import workflow_list, workflow_addmodule, workflow_detail, \
+        render_workflow, load_update_table_module_ids
 
 
-FakeSession = namedtuple('FakeSession', [ 'session_key' ])
+FakeSession = namedtuple('FakeSession', ['session_key'])
 
 
 class WorkflowViewTests(LoggedInTestCase):
@@ -141,11 +144,13 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
-        # 404 viewing someone else' private workflow (don't 403 as we don't want to leak urls)
+        # 403 viewing someone else' private workflow (don't 404 as sometimes
+        # users try to share workflows by sharing the URL without first making
+        # them public, and we need to help them debug that case)
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_workflow_init_state(self):
@@ -154,6 +159,7 @@ class WorkflowViewTests(LoggedInTestCase):
 
             # create an Edit Cells module so we can check that its ID is returned correctly
             edit_cells_module_id = add_new_module_version('Edit Cells', id_name='editcells').module_id
+            load_update_table_module_ids.cache_clear()
 
             response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -240,17 +246,19 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Other workflow public')
 
-        # not authenticated should give 404 (not 403, so we don't leak urls, and so we have a nice 404 page)
+        # not authenticated should give 403 (not 404, because users try to
+        # share their URLs without setting them public first and we need to
+        # help them debug that case)
         request = self._build_get('/api/workflows/%d/' % pk_workflow,
                                   user=AnonymousUser())
         response = workflow_detail(request, pk = pk_workflow)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
-        # similarly, someone else's private workflow should 404
+        # similarly, someone else's private workflow should 403
         request = self._build_get('/api/workflows/%d/' % self.other_workflow_private.id,
                                   user=self.user)
         response = workflow_detail(request, pk=self.other_workflow_private.id)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
 
     def test_email_leakage(self):

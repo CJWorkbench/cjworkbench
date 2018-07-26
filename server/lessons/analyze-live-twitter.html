@@ -91,8 +91,13 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
-    data-test="const p = workflow.wfModules[3].parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
-    >In the module, add a <kbd>title</kbd> to the chart.
+    data-test="const p = workflow.wfModules[3].parameters; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return p.get('x_column') === 'created_at' && yColumns[0].column === 'count'"
+    >Select <kbd>created_at</kbd> for the X axis and <kbd>count</kbd> for the Y axis.
+  </li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
+    data-test="const p = workflow.wfModules[3].parameters; return !!p.get('title')"
+    >Add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail">
       Next, let's make this chart update every time our user tweets contain the word we chose.
     </p>

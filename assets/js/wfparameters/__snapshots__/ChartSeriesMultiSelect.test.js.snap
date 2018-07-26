@@ -1,0 +1,276 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
+<ChartSeriesMultiSelect
+  fetchInputColumns={
+    [MockFunction] {
+      "calls": Array [
+        Array [],
+      ],
+    }
+  }
+  isReadOnly={false}
+  onChange={[MockFunction]}
+  prompt="prompt"
+  series={
+    Array [
+      Object {
+        "color": "#aaaaaa",
+        "column": "A",
+      },
+      Object {
+        "color": "#bbbbbb",
+        "column": "B",
+      },
+    ]
+  }
+  workflowRevision={1}
+>
+  <div
+    className="wf-parameter chart-series-multi-select"
+  >
+    <ChartSeriesSelect
+      availableColumns={
+        Array [
+          "A",
+          "B",
+          "C",
+        ]
+      }
+      color="#aaaaaa"
+      column="A"
+      index={0}
+      isReadOnly={false}
+      key="0"
+      onChange={[Function]}
+      prompt="prompt"
+    >
+      <InputGroup
+        className="chart-series-select wf-parameter"
+        size="lg"
+        tag="div"
+      >
+        <div
+          className="chart-series-select wf-parameter input-group input-group-lg"
+        >
+          <InputGroupAddon
+            addonType="prepend"
+            tag="div"
+          >
+            <div
+              className="input-group-prepend"
+            >
+              <Button
+                className="color-picker button color"
+                color="secondary"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "background": "#aaaaaa",
+                  }
+                }
+                tag="button"
+                title="Pick color"
+              >
+                <button
+                  className="color-picker button color btn btn-secondary"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "background": "#aaaaaa",
+                    }
+                  }
+                  title="Pick color"
+                  type="button"
+                >
+                  <i
+                    className="color-picker"
+                  />
+                </button>
+              </Button>
+            </div>
+          </InputGroupAddon>
+          <ColumnParam
+            allColumns={
+              Array [
+                "A",
+                "B",
+                "C",
+              ]
+            }
+            allColumnsFetchError={null}
+            isReadOnly={false}
+            name="column"
+            onChange={[Function]}
+            prompt="prompt"
+            value="A"
+          >
+            <select
+              className="custom-select module-parameter dropdown-selector"
+              disabled={false}
+              name="column"
+              onChange={[Function]}
+              value="A"
+            >
+              <option
+                className="prompt"
+                disabled={true}
+                key="prompt"
+                value=""
+              >
+                prompt
+              </option>
+              <option
+                key="A"
+              >
+                A
+              </option>
+              <option
+                key="B"
+              >
+                B
+              </option>
+              <option
+                key="C"
+              >
+                C
+              </option>
+            </select>
+          </ColumnParam>
+        </div>
+      </InputGroup>
+    </ChartSeriesSelect>
+    <ChartSeriesSelect
+      availableColumns={
+        Array [
+          "A",
+          "B",
+          "C",
+        ]
+      }
+      color="#bbbbbb"
+      column="B"
+      index={1}
+      isReadOnly={false}
+      key="1"
+      onChange={[Function]}
+      prompt="prompt"
+    >
+      <InputGroup
+        className="chart-series-select wf-parameter"
+        size="lg"
+        tag="div"
+      >
+        <div
+          className="chart-series-select wf-parameter input-group input-group-lg"
+        >
+          <InputGroupAddon
+            addonType="prepend"
+            tag="div"
+          >
+            <div
+              className="input-group-prepend"
+            >
+              <Button
+                className="color-picker button color"
+                color="secondary"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "background": "#bbbbbb",
+                  }
+                }
+                tag="button"
+                title="Pick color"
+              >
+                <button
+                  className="color-picker button color btn btn-secondary"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "background": "#bbbbbb",
+                    }
+                  }
+                  title="Pick color"
+                  type="button"
+                >
+                  <i
+                    className="color-picker"
+                  />
+                </button>
+              </Button>
+            </div>
+          </InputGroupAddon>
+          <ColumnParam
+            allColumns={
+              Array [
+                "A",
+                "B",
+                "C",
+              ]
+            }
+            allColumnsFetchError={null}
+            isReadOnly={false}
+            name="column"
+            onChange={[Function]}
+            prompt="prompt"
+            value="B"
+          >
+            <select
+              className="custom-select module-parameter dropdown-selector"
+              disabled={false}
+              name="column"
+              onChange={[Function]}
+              value="B"
+            >
+              <option
+                className="prompt"
+                disabled={true}
+                key="prompt"
+                value=""
+              >
+                prompt
+              </option>
+              <option
+                key="A"
+              >
+                A
+              </option>
+              <option
+                key="B"
+              >
+                B
+              </option>
+              <option
+                key="C"
+              >
+                C
+              </option>
+            </select>
+          </ColumnParam>
+        </div>
+      </InputGroup>
+    </ChartSeriesSelect>
+    <div
+      className="buttons"
+    >
+      <button
+        onClick={[Function]}
+        title="remove last column"
+      >
+        <i
+          className="icon-removec"
+        />
+      </button>
+      <button
+        onClick={[Function]}
+        title="add another column"
+      >
+        <i
+          className="icon-addc"
+        />
+      </button>
+    </div>
+  </div>
+</ChartSeriesMultiSelect>
+`;
