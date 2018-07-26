@@ -9,6 +9,7 @@ import pandas
 from pandas import DataFrame
 import pandas.errors
 from .types import ProcessResult
+import cchardet as chardet
 
 
 _TextEncoding = Optional[str]
@@ -159,6 +160,21 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     """
     return pandas.read_excel(bytesio)
 
+def _detect_encoding(bytesio: io.BytesIO):
+    """
+    Detect charset using cChardet.
+    Returns encoding string.
+
+    Peculiarities:
+
+    * Reads entire file (quick)
+    * Sets seek back to beginning of file for downstream usage
+
+    """
+    result = chardet.detect(bytesio.read())
+    bytesio.seek(0)
+    return result['encoding']
+
 
 _parse_xls = _parse_xlsx
 
@@ -188,6 +204,8 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
     """
     if mime_type in _Parsers:
         parser = _Parsers[mime_type]
+        if not text_encoding:
+            text_encoding = _detect_encoding(bytesio)
         return _safe_parse(bytesio, parser, text_encoding)
     else:
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
