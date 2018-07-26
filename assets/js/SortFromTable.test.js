@@ -156,7 +156,7 @@ describe("SortFromTable actions", () => {
 
   it('adds new sort module after the given module and sets sort parameters', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(19, idName, 'num_col', 'Number', sortDirectionNone);
+    updateTableActionModule(19, idName, false, 'num_col', 'Number', sortDirectionNone);
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
@@ -168,14 +168,14 @@ describe("SortFromTable actions", () => {
 
   it('selects the existing sort module when updating it', async () => {
     store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
-    updateTableActionModule(17, idName, 'str_col', 'String');
+    updateTableActionModule(17, idName, false, 'str_col', 'String');
 
     expect(store.dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 1 ]);
   })
 
   it('orders a String column ascending by default', async () => {
     // Click on 'str_col' once, which should give us ascending order
-    updateTableActionModule(17, idName, 'str_col', 'String', sortDirectionAsc);
+    updateTableActionModule(17, idName, false, 'str_col', 'String', sortDirectionAsc);
 
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'column', 'str_col' ]);
@@ -184,14 +184,14 @@ describe("SortFromTable actions", () => {
   });
 
   it('orders a Number column descending by default', async () => {
-    updateTableActionModule(17, idName, 'num_col', 'Number', sortDirectionDesc);
+    updateTableActionModule(17, idName, false, 'num_col', 'Number', sortDirectionDesc);
 
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'direction', sortDirectionDesc ]);
   });
 
   it('orders a Data column descending by default', async () => {
-    updateTableActionModule(17, idName, 'date_col', 'Date', sortDirectionDesc);
+    updateTableActionModule(17, idName, false, 'date_col', 'Date', sortDirectionDesc);
 
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'direction', sortDirectionDesc ]);
@@ -199,7 +199,7 @@ describe("SortFromTable actions", () => {
 
   it('resets ordering state when changing sort column', async () => {
     // sort 79 is for 'num_col' in initial state. Change to 'str_col' and expect ascending order
-    updateTableActionModule(79, idName, 'str_col', 'String', sortDirectionAsc);
+    updateTableActionModule(79, idName, false, 'str_col', 'String', sortDirectionAsc);
 
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 79, 'column', 'str_col' ]);

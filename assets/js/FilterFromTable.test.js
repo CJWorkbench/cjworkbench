@@ -1,18 +1,18 @@
-import { updateTableActionModule } from './UpdateTableAction'
+import { updateTableActionModule, selectColumnDrop, selectColumnKeep } from './UpdateTableAction'
 import {tick} from './test-utils'
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
 jest.mock('./workflow-reducer');
 
-describe("DuplicateFromTable actions", () => {
+describe("FilterFromTable actions", () => {
   // A few parameter id constants for better readability
-  const idName = 'duplicate-column'
+  const idName = 'filter'
   const COLUMN_PAR_ID_1 = 35;
   const COLUMN_PAR_ID_2 = 70;
   const COLUMN_PAR_ID_3 = 140;
 
   var initialState = {
-    updateTableModuleIds: { 'duplicate-column': 77 },
+    updateTableModuleIds: { 'filter': 77 },
     workflow: {
       id: 127,
       wf_modules: [
@@ -25,7 +25,15 @@ describe("DuplicateFromTable actions", () => {
           }
         },
         {
-          // An existing duplicate module
+          id: 18,
+          module_version: {
+            module: {
+              id_name: 'selectcolumns'
+            }
+          }
+        },
+        {
+          // An existing select module with 2 columns kept
           id: 7,
           module_version: {
             module: {
@@ -35,7 +43,7 @@ describe("DuplicateFromTable actions", () => {
           parameter_vals: [
             {
               id: COLUMN_PAR_ID_2,
-              parameter_spec: {id_name: 'colnames'},
+              parameter_spec: {id_name: 'column'},
               value: 'col_1'
             }
           ]
@@ -55,22 +63,6 @@ describe("DuplicateFromTable actions", () => {
               id_name: 'filter'
             }
           }
-        },
-        {
-          // Another existing duplicate module, set existing duplicates col_2,col_3
-          id: 79,
-          module_version: {
-            module: {
-              id_name: idName
-            }
-          },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_3,
-              parameter_spec: {id_name: 'colnames'},
-              value: 'col_2,col_3'
-            }
-          ]
         }
       ]
     }
@@ -86,9 +78,9 @@ describe("DuplicateFromTable actions", () => {
     parameter_vals: [
       {
         id: COLUMN_PAR_ID_1,
-        parameter_spec: {id_name: 'colnames'},
+        parameter_spec: {id_name: 'column'},
         value: ''
-      }
+      },
     ]
   };
 
@@ -110,27 +102,21 @@ describe("DuplicateFromTable actions", () => {
     setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
   })
 
-  it('adds new duplicate module after the given module and sets column parameter', async () => {
+  it('adds new filter module after the given module and sets column parameter', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(19, idName, false, 'col_1');
+    updateTableActionModule(17, idName, true, 'col_1');
+
+    await tick();
+    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'column', 'col_1' ]);
+  });
+
+  it('selects the existing filter module but forces add new', async () => {
+    addModuleAction.mockImplementation(() => () => addModuleResponse);
+    updateTableActionModule(7, idName, true, 'col_2');
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'colnames', 'col_1' ]);
-  });
-
-  it('selects the existing duplicate module and adds a new column to duplicate', async () => {
-    store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
-    updateTableActionModule(17, idName, false, 'col_2');
-
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'colnames', 'col_1,col_2' ]);
-  })
-
-  it('selects the existing duplicate module and tries to duplicate the same column', async () => {
-    store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
-    updateTableActionModule(17, idName, false, 'col_1');
-
-    // Sets selected module (no change)
-    expect(store.dispatch).toHaveBeenCalledWith(["setSelectedWfModuleAction", 1]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'column', 'col_2' ]);
   })
 });

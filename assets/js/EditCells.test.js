@@ -95,23 +95,23 @@ describe('Edit Cell actions', () => {
   })
 
   it('adds edit to existing Edit Cell module', () => {
-    updateTableActionModule(20, idName, Edit2)
+    updateTableActionModule(20, idName, false, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
   })
 
   it('selects the Edit Cell module it is editing', () => {
-    updateTableActionModule(20, idName, Edit2)
+    updateTableActionModule(20, idName, false, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 1 ])
   })
 
   it('adds edit to immediately-following Edit Cell module', () => {
-    updateTableActionModule(10, idName, Edit2)
+    updateTableActionModule(10, idName, false, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
   })
 
   it('adds new Edit Cells module before end of stack', (done) => {
     addModuleAction.mockImplementation(() => () => addModuleResponse)
-    updateTableActionModule(30, idName, Edit2)
+    updateTableActionModule(30, idName, false, Edit2)
 
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3)
 
@@ -124,7 +124,7 @@ describe('Edit Cell actions', () => {
 
   it('add new Edit Cells module to end of stack', () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse)
-    updateTableActionModule(40, idName, {row: 10, col:'bar', 'value':'yippee!'})
+    updateTableActionModule(40, idName, false, {row: 10, col:'bar', 'value':'yippee!'})
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 4)
   })
 })

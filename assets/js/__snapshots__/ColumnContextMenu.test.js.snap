@@ -28,6 +28,32 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
       tag="div"
     >
       <DropdownItem
+        className="drop-column"
+        onClick={[MockFunction]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-transform"
+        />
+        <span>
+          Drop
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        className="rename-column-header"
+        onClick={[MockFunction]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-edit"
+        />
+        <span>
+          Rename
+        </span>
+      </DropdownItem>
+      <DropdownItem
         className="duplicate-column"
         onClick={[MockFunction]}
         tag="button"
@@ -45,6 +71,19 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
         tag="button"
         toggle={true}
       />
+      <DropdownItem
+        className="filter-column"
+        onClick={[MockFunction]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-filter"
+        />
+        <span>
+          Filter
+        </span>
+      </DropdownItem>
       <DropdownItem
         className="sort-ascending"
         onClick={[Function]}

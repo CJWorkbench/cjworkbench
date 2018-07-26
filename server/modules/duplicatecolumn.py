@@ -24,7 +24,9 @@ def _do_render(table, columns):
                     new_column_name = '{0} {1}'.format(new_column_name, count)
                     break
 
-        table[new_column_name] = table[c]
+        # Add new column next to reference column
+        column_idx = table.columns.tolist().index(c)
+        table.insert(column_idx + 1, new_column_name, table[c])
 
     return ProcessResult(table)
 

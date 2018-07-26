@@ -19,10 +19,9 @@ from server.serializers import WorkflowSerializer, ModuleSerializer, \
 from server.utils import log_user_event
 from server.versions import WorkflowUndo, WorkflowRedo
 
-
-# Add module name to expected Id alias {module_name: module_alias?}
-#
-# TODO nix these. The client has this information already.
+# This id_name->ids mapping is used by the client to execute the add module from table actions
+# We cannot nix these, because modules without a UI in the stack (e.g. reorder) do not appear
+# in the regular modules list in init_state, because that list is for the module menu
 @lru_cache(maxsize=1)
 def load_update_table_module_ids():
     modules = Module.objects.filter(id_name__in=[
@@ -31,6 +30,8 @@ def load_update_table_module_ids():
         'rename-columns',
         'reorder-columns',
         'sort-from-table',
+        'duplicate-column',
+        'selectcolumns'
     ])
     return dict([(m.id_name, m.id) for m in modules])
 

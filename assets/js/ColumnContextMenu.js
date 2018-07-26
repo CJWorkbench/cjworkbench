@@ -22,9 +22,12 @@ var dropdownModifiers = {
 
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {
-    duplicateColumn: PropTypes.func.isRequired,
+    duplicateColumn:  PropTypes.func.isRequired,
+    dropColumn:       PropTypes.func.isRequired,
+    filterColumn:     PropTypes.func.isRequired,
+    renameColumn:     PropTypes.func.isRequired,
     setSortDirection: PropTypes.func.isRequired,
-    sortDirection: PropTypes.oneOf([sortDirectionNone, sortDirectionAsc, sortDirectionDesc]).isRequired
+    sortDirection:    PropTypes.oneOf([sortDirectionNone, sortDirectionAsc, sortDirectionDesc]).isRequired
   }
 
   setSortDirectionAsc = () => this.props.setSortDirection(sortDirectionAsc)
@@ -38,12 +41,24 @@ export default class ColumnContextMenu extends React.Component {
           <i className='icon-more'></i>
         </DropdownToggle>
         <Portal>
-          <DropdownMenu persist flip={false} modifiers={dropdownModifiers} >
+          <DropdownMenu persist flip={false} modifiers={dropdownModifiers}>
+            <DropdownItem onClick={this.props.dropColumn} className='drop-column' toggle={false}>
+              <i className="icon-transform"></i>
+              <span>Drop</span>
+            </DropdownItem>
+            <DropdownItem onClick={this.props.renameColumn} className='rename-column-header' toggle={false}>
+              <i className="icon-edit"></i>
+              <span>Rename</span>
+            </DropdownItem>
             <DropdownItem onClick={this.props.duplicateColumn} className='duplicate-column' toggle={false}>
               <i className="icon-duplicate"></i>
               <span>Duplicate</span>
             </DropdownItem>
             <DropdownItem divider />
+            <DropdownItem onClick={this.props.filterColumn} className='filter-column' toggle={false}>
+              <i className="icon-filter"></i>
+              <span>Filter</span>
+            </DropdownItem>
             <DropdownItem onClick={this.setSortDirectionAsc} className='sort-ascending' toggle={false}>
               <i className="icon-sort-up"></i>
               <span>Sort ascending</span>
