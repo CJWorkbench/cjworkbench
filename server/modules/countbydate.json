@@ -35,6 +35,12 @@
         "id_name": "operation",
         "value": "Count"
       }
+    },
+    {
+      "name": "Include missing dates",
+      "id_name": "include_missing_dates",
+      "type": "checkbox",
+      "default": "False"
     }
   ]
 }

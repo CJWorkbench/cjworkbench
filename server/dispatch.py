@@ -5,7 +5,7 @@ from server.models import WfModule
 from server.modules.types import ProcessResult
 from .dynamicdispatch import get_module_render_fn, \
         get_module_html_path, wf_module_to_dynamic_module
-from .modules.counybydate import CountByDate
+from .modules.countbydate import CountByDate
 from .modules.formula import Formula
 from .modules.loadurl import LoadURL
 from .modules.moduleimpl import ModuleImpl

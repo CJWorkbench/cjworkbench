@@ -151,14 +151,15 @@ def get_param_by_id_name(id_name, wf_module=None):
     else:
         return ParameterVal.objects.get(parameter_spec__id_name=id_name, wf_module=wf_module)
 
+
 # --- set parameters ---
-def set_string(pval, str):
-    pval.set_value(str)
+def set_param(pval, value):
+    pval.set_value(value)
     pval.save()
 
-def set_integer(pval, integer):
-    pval.set_value(integer)
-    pval.save()
+
+set_integer = set_param
+set_string = set_param
 
 
 # ---- Load Modules ----

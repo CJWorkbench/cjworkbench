@@ -95,7 +95,7 @@ class ParameterVal(models.Model):
                 if type(new_value) is bool:
                     self.value = str(new_value)
                 elif type(new_value) is str:
-                    self.value = new_value.lower().strip() == 'true'
+                    self.value = str(new_value.lower().strip() == 'true')
                 else:
                     self.value = str(bool(new_value))  # we catch number types here
             except ValueError:
