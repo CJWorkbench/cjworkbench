@@ -7,8 +7,8 @@
   <h2>COMING SOON</h2>
 </section>
 <section>
-  <h2>1. Loading the HTML table</h2>
-  <p>Let's scrape the dataset <a href="https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate" class="highlight" target="_blank">List of countries by literacy rate</a>, published and documented on Wikipedia.</p>
+  <h2>1. Load an HTML table</h2>
+  <p>Let's scrape the dataset <a href="https://en.wikipedia.org/wiki/Global_Gender_Gap_Report" class="highlight" target="_blank">Global Gender Gap Index rankings</a>, published and documented on Wikipedia.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -18,21 +18,24 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate'"
+      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
       >Paste in the URL of the webpage where the table is published:
-      <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate</div>
+      <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
       data-test="return workflow.wfModules[0].selectedVersion"
       >Click <kbd>Scrape</kbd> to load the data
-      <p class="instruction-detail">Once loaded, the dataset is copied on Workbench's server. It will stay accessible even if the webpage it was scraped from goes offline.</p>
+      <p class="instruction-detail">Once loaded, the dataset is copied on Workbench's server. It will stay accessible even if the webpage with the original data goes offline.</p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>2. Cleaning double header rows</h2>
-  <p>The <a href="https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate" class="highlight" target="_blank">original table</a> has two header rows: the bottom row is nested in the top row. In order to be able to sort the table, Workbench collapses both rows into a single header.</p>
+  <h2>2. Clean double header rows</h2>
+  <p>The <a href="https://en.wikipedia.org/wiki/Global_Gender_Gap_Report" class="highlight" target="_blank">original table</a> has two header rows on top of each other:
+    <figure>
+      <img alt="Inspect element" src="/static/images/scrape_table/double_header.png">
+    </figure>When scraping, Workbench collapses both rows into a single header and concatenates the content of both into the new headers, for every columns.</p>
   <h3 class="instructions">Instructions</h3>
   <p>Rename the column's header</p>
   <ol class="steps">
@@ -40,28 +43,45 @@
       data-highlight='[{"type":"WfModule","moduleName":"Rename columns"}]'
       data-test="const wfModule = workflow.wfModules[1]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
       >
-      <p>Click the column names in the header of the table to rename columns to the following:</p>
-      <p>Country</br>Literacy rate</br>Male literacy</br>Female literacy</br>Gender difference</br>Non-UNESCO - literacy rate</p>
+      <p>Click column names in the header of the table to rename them and only keep the year, for example:</br>Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.
+      <p></p>
     </li>
   </ol>
 </section>
 <section>
   <h2>3. Table's position on the page</h2>
-  <p>There are two different tables on the <a href="https://en.wikipedia.org/wiki/List_of_countries_by_literacy_rate" class="highlight" target="_blank">page</a> you just scraped. What if you wanted to load the second one, and not the first?</p>
+  <p>There are often more than one table on a page. For example there are 3 tables visible on this <a href="https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)" class="highlight" target="_blank">page</a>, each of them using a different index to list GDP per country.</p>
   <h3 class="instructions">Instructions</h3>
+  <p>Scrape the table displayed between the two others, using data from the World Bank.</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
       >
-      <p>In the Scrape table module, modify the <kbd>Table's position on the webpage to the correct value, and click <kbd>Scrape</kbd>.  
+      <p>Delete the 'Rename column' module which we do not need in this example.</p>
     </li>
-    <Li data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
-    data-test="const wfModule = workflow.wfModules[0];"
-      >Press scrape to load the new table
-      <p class="instruction-detail highlight">Congratulation! Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" >how to scrape and monitor content on a web page</a>.
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      >Paste in the URL of the new page we want to scrape the table  from:
+      <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)</div>
     </li>
-  </ol>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      >Set the table's position on the page to <code>4</code>
+      <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.
+      </br>Try scraping positions <code>1</code> to <code>5</code>, and look at the original page to understand where other HTML tables are.</p>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      >Click <kbd>Scrape</kbd>
+      <p class="instruction-detail highlight">Congratulations!</p>
+      <span class="instruction-detail"> Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" >how to scrape and monitor content on a web page.</a></span>
+    </li>
+    </li>
+    </ol>
 </section>
   </ol>
 </section>
