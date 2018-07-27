@@ -10,7 +10,8 @@ import StatusLine from './StatusLine'
 import {
   setWfModuleCollapsedAction,
   clearNotificationsAction,
-  setSelectedWfModuleAction
+  setSelectedWfModuleAction,
+  setParamValueAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -264,7 +265,7 @@ export class WfModule extends React.PureComponent {
           key={i}
           p={ps}
           changeParam={this.changeParam}
-          wf_module_id={wfModule.id}
+          wfModuleId={wfModule.id}
           revision={this.props.revision}
           updateSettings={updateSettings}
           getParamId={this.getParamId}
@@ -472,6 +473,11 @@ function mapDispatchToProps(dispatch) {
     setWfModuleCollapsed(wfModuleId, isCollapsed, isReadOnly) {
       dispatch(setWfModuleCollapsedAction(wfModuleId, isCollapsed, isReadOnly));
     },
+
+    changeParam(paramId, newVal) {
+      const action = setParamValueAction(paramId, newVal)
+      dispatch(action)
+    }
   }
 }
 
