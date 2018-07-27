@@ -42,9 +42,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Rename columns"}]'
       data-test="const wfModule = workflow.wfModules[1]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
-      >
-      <p>Click column names in the header of the table to rename them and only keep the year, for example:</br>Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.
-      <p></p>
+      >Click column names in the header of the table to rename them and only keep the year, for example:</br>Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.
     </li>
   </ol>
 </section>
@@ -52,14 +50,8 @@
   <h2>3. Table's position on the page</h2>
   <p>There are often more than one table on a page. For example there are 3 tables visible on this <a href="https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)" class="highlight" target="_blank">page</a>, each of them using a different index to list GDP per country.</p>
   <h3 class="instructions">Instructions</h3>
-  <p>Scrape the table displayed between the two others, using data from the World Bank.</p>
+  <p>Scrape the table using World Bank data, displayed between the two others.</p>
   <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
-      >
-      <p>Delete the 'Rename column' module which we do not need in this example.</p>
-    </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
       data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
@@ -71,7 +63,7 @@
       data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
       >Set the table's position on the page to <code>4</code>
       <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.
-      </br>Try scraping positions <code>1</code> to <code>5</code>, and look at the original page to understand where other HTML tables are.</p>
+      </br>Try scraping positions <code>1</code> to <code>5</code>, and check the original page to understand where other HTML tables are located.</p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
