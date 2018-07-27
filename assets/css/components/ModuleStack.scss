@@ -131,8 +131,8 @@
     left: 0;
     width: $module-width;
     margin: 0 $module-margin;
-    height: 0.5rem;
-    z-index: 1;
+    height: .5rem;
+    z-index: 2;
     background: transparent;
 
     &.is-drag-hovering {
