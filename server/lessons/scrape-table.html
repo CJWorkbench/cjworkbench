@@ -18,7 +18,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      data-test="const url = workflow.wfModules[0].parameters.get('url'); return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Paste in the URL of the webpage where the table is published:
       <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
     </li>
@@ -40,8 +40,8 @@
   <p>Rename the column's header</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Rename columns"}]'
-      data-test="const wfModule = workflow.wfModules[1]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+      data-highlight='[]'
+      data-test="const wfModule = workflow.wfModules[1]; return wfModule && wfModule.moduleName === 'Rename columns'"
       >Click column names in the header of the table to rename them and only keep the year, for example:</br>Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.
     </li>
   </ol>
@@ -54,26 +54,24 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      data-test="const url = workflow.wfModules[0].parameters.get('url'); return url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Paste in the URL of the new page we want to scrape the table  from:
       <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)</div>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      data-test="return workflow.wfModules[0].parameters.get('tablenum') === 4"
       >Set the table's position on the page to <code>4</code>
       <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.
       </br>Try scraping positions <code>1</code> to <code>5</code>, and check the original page to understand where other HTML tables are located.</p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.wfModules[0].parameters.get('url') === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report'"
+      data-test="return new Date() - workflow.wfModules[0].lastFetchCheckAt < 10000"
       >Click <kbd>Scrape</kbd>
+      <!-- the data-test= here is sketchy. It only works as final step in the whole lesson. -->
       <p class="instruction-detail highlight">Congratulations!</p>
       <span class="instruction-detail"> Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" >how to scrape and monitor content on a web page.</a></span>
     </li>
-    </li>
-    </ol>
-</section>
   </ol>
 </section>

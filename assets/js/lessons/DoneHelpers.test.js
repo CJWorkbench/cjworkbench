@@ -1,3 +1,4 @@
+/* global describe, it, expect */
 import { StateWithHelpers, WorkflowModuleWithHelpers, WorkflowWithHelpers } from './DoneHelpers'
 
 describe('DoneHelpers', () => {
@@ -6,7 +7,7 @@ describe('DoneHelpers', () => {
       const workflow = new WorkflowWithHelpers({
         wf_modules: [
           { module_version: { module: { name: 'Foo' } } },
-          { module_version: { module: { name: 'Bar' } } },
+          { module_version: { module: { name: 'Bar' } } }
         ]
       })
 
@@ -17,7 +18,7 @@ describe('DoneHelpers', () => {
       const workflow = new WorkflowWithHelpers({
         wf_modules: [
           { module_version: { module: { name: 'Foo' } } },
-          { module_version: { module: { name: 'Bar' } } },
+          { module_version: { module: { name: 'Bar' } } }
         ]
       })
 
@@ -45,8 +46,8 @@ describe('DoneHelpers', () => {
         module_version: { module: { name: 'Foo' } },
         parameter_vals: [
           { parameter_spec: { id_name: 'url' }, value: 'foo' },
-          { parameter_spec: { id_name: 'bar' }, value: 'baz' },
-        ],
+          { parameter_spec: { id_name: 'bar' }, value: 'baz' }
+        ]
       })
       const parameters = wfModule.parameters
       expect(parameters.get('url')).toEqual('foo')
@@ -56,7 +57,7 @@ describe('DoneHelpers', () => {
 
     it('should have null parameters.get() on placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers({
-        placeholder: true,
+        placeholder: true
       })
       const parameters = wfModule.parameters
       expect(parameters.get('url')).toBe(null)
@@ -67,7 +68,7 @@ describe('DoneHelpers', () => {
     it('should have moduleName even when placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers({
         placeholder: true,
-        name: 'Add from URL',
+        name: 'Add from URL'
       })
       expect(wfModule.moduleName).toEqual('Add from URL')
     })
@@ -82,10 +83,10 @@ describe('DoneHelpers', () => {
       expect(wfModule.selectedVersion).toBe('some-sort-of-id')
     })
 
-    it('should have selectedVersion even when placeholder', () => {
+    it('should have .selectedVersion even when placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers({
         placeholder: true,
-        name: 'Add from URL',
+        name: 'Add from URL'
       })
       expect(wfModule.selectedVersion).toBe(null)
     })
@@ -94,7 +95,7 @@ describe('DoneHelpers', () => {
       expect(new WorkflowModuleWithHelpers({
         auto_update_data: false,
         update_interval: 1,
-        update_units: 'days',
+        update_units: 'days'
       }).updateInterval).toBe(null)
     })
 
@@ -102,7 +103,7 @@ describe('DoneHelpers', () => {
       const go = (interval, units) => new WorkflowModuleWithHelpers({
         auto_update_data: true,
         update_interval: interval,
-        update_units: units,
+        update_units: units
       }).updateInterval
 
       expect(go(1, 'minutes')).toEqual('1m')
@@ -113,14 +114,26 @@ describe('DoneHelpers', () => {
 
     it('should have .isEmailUpdates if workflow email is on', () => {
       const on = new WorkflowModuleWithHelpers({
-        notifications: true,
+        notifications: true
       })
       expect(on.isEmailUpdates).toBe(true)
 
       const off1 = new WorkflowModuleWithHelpers({
-        notifications: false,
+        notifications: false
       })
       expect(off1.isEmailUpdates).toBe(false)
+    })
+
+    it('should have .lastFetchCheckAt', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        last_update_check: '2018-07-27T13:27:02.986129Z'
+      })
+      expect(wfModule.lastFetchCheckAt).toEqual(new Date(Date.UTC(
+        2018, 6, 27, 13, 27, 2, 986
+      )))
+
+      const wfModuleWithoutDate = new WorkflowModuleWithHelpers({})
+      expect(wfModuleWithoutDate.lastFetchCheckAt).toBe(null)
     })
   })
 
@@ -132,7 +145,7 @@ describe('DoneHelpers', () => {
         workflow: {
           wf_modules: [
             { module_version: { module: { name: 'Foo' } } },
-            { module_version: { module: { name: 'Bar' } } },
+            { module_version: { module: { name: 'Bar' } } }
           ]
         }
       })
@@ -145,10 +158,10 @@ describe('DoneHelpers', () => {
         workflow: {
           wf_modules: [
             { id: 2, module_version: { module: { name: 'Foo' } } },
-            { id: 3, module_version: { module: { name: 'Bar' } } },
-          ],
+            { id: 3, module_version: { module: { name: 'Bar' } } }
+          ]
         },
-        selected_wf_module: 1,
+        selected_wf_module: 1
       })
 
       expect(state.selectedWfModule.moduleName).toEqual('Bar')

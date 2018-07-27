@@ -9,80 +9,80 @@
 // lessons and less pain when we refactor global state.
 
 export class StateWithHelpers {
-  constructor(state) {
+  constructor (state) {
     this.state = state
   }
 
-  get workflow() {
+  get workflow () {
     return new WorkflowWithHelpers(this.state.workflow)
   }
 
-  get selectedWfModule() {
+  get selectedWfModule () {
     const index = this.state.selected_wf_module // may be null
     return this.workflow.wfModules[index] || null
   }
 }
 
 export class WorkflowWithHelpers {
-  constructor(workflow) {
+  constructor (workflow) {
     this.workflow = workflow
   }
 
-  get wfModules() {
+  get wfModules () {
     return this.workflow.wf_modules.map(wfm => new WorkflowModuleWithHelpers(wfm))
   }
 
-  get wfModuleNames() {
+  get wfModuleNames () {
     return this.wfModules.map(wfm => wfm.moduleName)
   }
 }
 
 export class WorkflowModuleWithHelpers {
-  constructor(wfModule) {
+  constructor (wfModule) {
     this.wfModule = wfModule
   }
 
-  get id() {
+  get id () {
     return this.wfModule.id
   }
 
-  get isCollapsed() {
+  get isCollapsed () {
     return this.wfModule.is_collapsed
   }
 
-  get module() {
+  get module () {
     return this.moduleVersion ? this.moduleVersion.module : null
   }
 
-  get moduleName() {
+  get moduleName () {
     return this.module ? this.module.name : this.wfModule.name
   }
 
-  get moduleVersion() {
+  get moduleVersion () {
     return this.wfModule.module_version
   }
 
-  get note() {
+  get note () {
     return this.wfModule.notes
   }
 
-  get parameters() {
+  get parameters () {
     return new ParametersWithHelpers(this.wfModule.parameter_vals || [])
   }
 
-  get selectedVersion() {
+  get selectedVersion () {
     const versions = this.wfModule.versions
-    return versions && versions.selected || null
+    return (versions && versions.selected) || null
   }
 
-  get isEmailUpdates() {
+  get isEmailUpdates () {
     return !!this.wfModule.notifications
   }
 
   /**
    * The update interval in the form "1w", "3h"; null if not auto-update.
    */
-  get updateInterval() {
+  get updateInterval () {
     const wfModule = this.wfModule
     if (!wfModule.auto_update_data) return null
 
@@ -91,19 +91,27 @@ export class WorkflowModuleWithHelpers {
       minutes: 'm',
       hours: 'h',
       days: 'd',
-      weeks: 'w',
+      weeks: 'w'
     }[wfModule.update_units] || '?'
 
     return n + s
   }
+
+  /**
+   * Date the server says is the last time it checked an upstream website.
+   */
+  get lastFetchCheckAt () {
+    const s = this.wfModule.last_update_check
+    return s ? new Date(s) : null
+  }
 }
 
 export class ParametersWithHelpers {
-  constructor(parameters) {
+  constructor (parameters) {
     this.parameters = parameters
   }
 
-  get(key) {
+  get (key) {
     const p = this.parameters.find(p => p.parameter_spec.id_name === key)
     if (p) {
       return p.value
