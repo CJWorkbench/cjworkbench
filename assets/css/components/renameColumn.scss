@@ -1,8 +1,11 @@
 .rename-column {
   @extend .wf-parameter;
-  @extend .content-3;
+  @extend .info-2;
   margin-left: .6rem;
   margin-bottom: .3rem;
+  overflow-x: hidden;
+  white-space: nowrap;
+  margin-left: 0;
 }
 
 .rename-container {
