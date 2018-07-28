@@ -112,7 +112,7 @@
       }
     }
     .react-grid-Cell--locked:last-of-type {
-      border-right: 1px solid rgba(113,155,176,.2);
+      border-right: 1px solid $table-border;
 
       .row-number {
         color:$light-gray;
@@ -318,7 +318,7 @@
       padding-right:0rem;
       padding-left:0rem;
       border-right: 1px solid $table-border;
-      border-bottom: 1px solid $table-border;
+      border-bottom: 0px solid $table-border;
       //Click and edit a cell
       &:focus {
         padding-left: 0;
@@ -342,7 +342,7 @@
 
 
     .react-grid-Row--odd .react-grid-Cell{
-      background-color: #EDF4F6;
+      background-color: #ECF4F8;
     }
 
     .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
