@@ -23,32 +23,45 @@ class ParseBytesIoTest(unittest.TestCase):
     def test_parse_utf8_csv(self):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xc3\xa9'),
                                'text/csv', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['café']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['café']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
     def test_replace_invalid_utf8(self):
         # \xe9 is ISO-8859-1 and we select 'utf-8' to test Workbench's recovery
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['caf�']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['caf�']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
     def test_autodetect_charset(self):
         # \xe9 is ISO-8859-1 so Workbench should auto-detect it
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
-        expected = ProcessResult(pandas.DataFrame({'A': ['café']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['café']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
         # \x96 is - in windows-1252, does not exist in UTF-8
         result = parse_bytesio(io.BytesIO(b'A\n2000\x962018'),
                                'text/csv', None)
-        expected = ProcessResult(pandas.DataFrame({'A': ['2000–2018']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['2000–2018']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
         # 'Thank you' in Mandarin should resolve to UTF-8
-        result = parse_bytesio(io.BytesIO(b'A\n\xE8\xB0\xA2\xE8\xB0\xA2\xE4\xBD\xA0'),
-                               'text/csv', None)
-        expected = ProcessResult(pandas.DataFrame({'A': ['谢谢你']}))
+        result = parse_bytesio(
+            io.BytesIO(b'A\n\xE8\xB0\xA2\xE8\xB0\xA2\xE4\xBD\xA0'),
+            'text/csv',
+            None
+        )
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['谢谢你']}).astype('category')
+        )
         self.assertEqual(result, expected)
 

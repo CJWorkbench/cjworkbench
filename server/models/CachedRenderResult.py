@@ -2,7 +2,7 @@ import os
 import json
 from typing import Optional
 from django.core.files.storage import default_storage
-import pandas
+import fastparquet
 import pyarrow.lib
 from server.modules.types import ProcessResult
 
@@ -46,8 +46,9 @@ class CachedRenderResult:
 
         parquet_path = _parquet_path(workflow_id, wf_module_id)
         try:
-            dataframe = pandas.read_parquet(parquet_path)
-        except pyarrow.lib.ArrowIOError:
+            pf = fastparquet.ParquetFile(parquet_path)
+            dataframe = pf.to_pandas()  # no need to close(), I guess...
+        except (pyarrow.lib.ArrowIOError, OSError):
             # Two possibilities:
             #
             # 1. The file is missing.
@@ -136,6 +137,7 @@ class CachedRenderResult:
             with open(ret.parquet_path, 'wb') as f:
                 f.write(b'')
         else:
-            result.dataframe.to_parquet(ret.parquet_path)
+            fastparquet.write(ret.parquet_path, result.dataframe,
+                              compression='SNAPPY')
 
         return ret
