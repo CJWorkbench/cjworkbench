@@ -5,7 +5,7 @@ from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 import pandas as pd
 import io
-import mock
+from unittest import mock
 
 
 class ExecuteTests(LoggedInTestCase):

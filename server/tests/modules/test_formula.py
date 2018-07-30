@@ -1,5 +1,6 @@
 import io
 import pandas
+from pandas.testing import assert_frame_equal
 from server.execute import execute_nocache
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         create_testdata_workflow, get_param_by_id_name
@@ -39,36 +40,67 @@ class FormulaTests(LoggedInTestCase):
         expected = ProcessResult(table)
         expected.sanitize_in_place()
 
-        self.assertEqual(result, expected)
+        self.assertEqual(result.error, expected.error)
+        self.assertEqual(result.json, expected.json)
+        assert_frame_equal(result.dataframe, expected.dataframe)
 
     def _assertRendersError(self, message):
         result = execute_nocache(self.wfmodule)
         expected = ProcessResult(error=message)
         self.assertEqual(result, expected)
 
-    def test_python_formula(self):
+    def test_python_formula_int_output(self):
         # set up a formula to double the Amount column
         self.python_pval.set_value('Amount*2')
         self.python_pval.save()
         self.syntax_pval.set_value(1)
         self.syntax_pval.save()
         table = mock_csv_table.copy()
-        table['output'] = pandas.Series([20, 1332], dtype=object)
+        table['output'] = pandas.Series([20, 1332])
 
         self._assertRendersTable(table)
 
+    def test_python_formula_str_output(self):
+        # set up a formula to double the Amount column
+        self.python_pval.set_value('str(Amount) + "x"')
+        self.python_pval.save()
+        self.syntax_pval.set_value(1)
+        self.syntax_pval.save()
+        table = mock_csv_table.copy()
+        table['output'] = pandas.Series(['10x', '666x'])
+
+        self._assertRendersTable(table)
+
+    def test_python_formula_empty_output_pval_makes_result(self):
         # empty result parameter should produce 'result'
+        self.python_pval.set_value('Amount*2')
+        self.python_pval.save()
+        self.syntax_pval.set_value(1)
+        self.syntax_pval.save()
         self.outcol_pval.set_value('')
         self.outcol_pval.save()
         table = mock_csv_table.copy()
-        table['result'] = pandas.Series([20, 1332], dtype=object)
+        table['result'] = pandas.Series([20, 1332])
         self._assertRendersTable(table)
 
+    def test_python_formula_missing_colname_makes_error(self):
         # formula with missing column name should error
         self.python_pval.set_value('xxx*2')
         self.python_pval.save()
-        # NOP on error
+        self.syntax_pval.set_value(1)
+        self.syntax_pval.save()
         self._assertRendersError("name 'xxx' is not defined",)
+
+    def test_python_formula_cast_nonsane_output(self):
+        # set up a formula to double the Amount column
+        self.python_pval.set_value('[Amount, 2]')
+        self.python_pval.save()
+        self.syntax_pval.set_value(1)
+        self.syntax_pval.save()
+        table = mock_csv_table.copy()
+        # assert str() is called on the output
+        table['output'] = pandas.Series(['[10, 2]', '[666, 2]'])
+        self._assertRendersTable(table)
 
     def test_spaces_to_underscores(self):
         # column names with spaces should be referenced with underscores in the
@@ -88,7 +120,7 @@ class FormulaTests(LoggedInTestCase):
         sval.set_value(1)
 
         table = underscore_table.copy()
-        table['formula output'] = pandas.Series([20, 1332], dtype=object)
+        table['formula output'] = pandas.Series([20, 1332])
         self._assertRendersTable(table, wf_module=wfm)
 
     def _set_excel_formula(self, formula, all_rows=True):

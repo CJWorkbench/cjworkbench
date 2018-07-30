@@ -47,10 +47,13 @@ class ProcessResult:
         )
 
     def __eq__(self, other) -> bool:
+        """Fuzzy equality operator, for unit tests."""
         # self.dataframe == other.dataframe returns a dataframe. Use .equals.
         return (
             isinstance(other, ProcessResult)
-            and self.dataframe.equals(other.dataframe)
+            and self.dataframe.astype(str).equals(
+                other.dataframe.astype(str)
+            )
             and self.error == other.error
             and self.json == other.json
         )

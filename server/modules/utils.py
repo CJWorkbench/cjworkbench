@@ -10,6 +10,7 @@ from pandas import DataFrame
 import pandas.errors
 from .types import ProcessResult
 import cchardet as chardet
+from server.sanitizedataframe import autocast_dtypes_in_place
 
 
 _TextEncoding = Optional[str]
@@ -116,7 +117,9 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
       pandas default auto-detection.
     """
     with _wrap_text(bytesio, text_encoding) as textio:
-        return pandas.read_csv(textio)
+        data = pandas.read_csv(textio, dtype='category')
+        autocast_dtypes_in_place(data)
+        return data
 
 
 def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
@@ -129,7 +132,9 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
       pandas default auto-detection.
     """
     with _wrap_text(bytesio, text_encoding) as textio:
-        return pandas.read_table(textio)
+        data = pandas.read_table(textio, dtype='category')
+        autocast_dtypes_in_place(data)
+        return data
 
 
 def _parse_json(bytesio: io.BytesIO,
@@ -158,7 +163,7 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     * Error can be xlrd.XLRDError or pandas error
     * We read the entire file contents into memory before parsing
     """
-    return pandas.read_excel(bytesio)
+    return pandas.read_excel(bytesio, dtype='category')
 
 def _detect_encoding(bytesio: io.BytesIO):
     """

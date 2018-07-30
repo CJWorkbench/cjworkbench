@@ -3,7 +3,7 @@ from server.tests.utils import LoggedInTestCase, load_and_add_module, \
 from server.models import ParameterSpec, ParameterVal, WfModule
 from server.execute import execute_nocache
 from django.test import override_settings
-import mock
+from unittest import mock
 import tempfile
 from urllib.error import URLError, HTTPError
 from server.modules.types import ProcessResult
