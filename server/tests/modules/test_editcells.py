@@ -1,7 +1,9 @@
 import json
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
+import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 import numpy as np
 from server.models import WfModule
 from server.modules.editcells import EditCells
@@ -62,7 +64,7 @@ class EditCellsTests(DbTestCase):
 
         patched_table = pd.DataFrame([
             [55,    5,      '9',    100,    '20.5',     'cake',     13],
-            [99,    3.14,   'bar',  10.2,   '',         'or',       14],
+            [99,    3.14,   'bar',  10.2,   np.nan,     'or',       14],
             [3,     7,      '11',   10.3,   '20.7',     'death',    15],
             [4,     8,      '66',   10.4,   'baz',      '77',       16]],
             columns=['int1', 'int2', 'int3', 'float1', 'float2', 'string', 'unchanged'])
@@ -70,17 +72,17 @@ class EditCellsTests(DbTestCase):
         patched_table = patched_table.astype({
             'int1': 'int64',
             'int2': 'float64',
-            'int3': 'str',
+            'int3': str,
             'float1': 'float64',
-            'float2': 'str',
-            'string': 'str',
+            'float2': str,
+            'string': str,
             'unchanged': 'int64'
         })
 
         self.pval.set_value(json.dumps(patch))
         self.pval.save()
         out = EditCells.render(self.wf_module, self.table)
-        self.assertTrue(out.equals(patched_table))
+        assert_frame_equal(out, patched_table)
 
         # check that all columns have the simplest type that will hold values (int -> float -> string)
         self.assertEqual(out['int1'].dtype, np.int64)

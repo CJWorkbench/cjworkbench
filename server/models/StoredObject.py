@@ -5,9 +5,9 @@ from django.db import models
 from django.core.files.storage import default_storage
 from django.dispatch import receiver
 from django.utils import timezone
-import fastparquet
 import pandas as pd
 from server.pandas_util import hash_table
+from server import parquet
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
@@ -59,7 +59,7 @@ class StoredObject(models.Model):
     @staticmethod
     def __create_table_internal(wf_module, table, metadata, hash):
         path = StoredObject._storage_filename(wf_module.id)
-        fastparquet.write(path, table, compression='SNAPPY')
+        parquet.write(path, table)
         return StoredObject.objects.create(
             wf_module=wf_module,
             metadata=metadata,
@@ -85,8 +85,7 @@ class StoredObject(models.Model):
         if not self.size:
             return pd.DataFrame()  # empty table
 
-        pf = fastparquet.ParquetFile(self.file.name)
-        return pf.to_pandas()  # no need to close? Weird API
+        return parquet.read(self.file.name)
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
