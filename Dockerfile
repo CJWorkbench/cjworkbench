@@ -26,10 +26,13 @@ FROM pybase AS pydev
 # * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
+# * fastparquet
+# * python-snappy
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
+      libsnappy-dev \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -46,13 +49,19 @@ COPY Pipfile Pipfile.lock /app/
 # * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
+# * fastparquet
+# * python-snappy
+# ... and we want to keep libsnappy around after the fact, too
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
+      libsnappy1v5 \
+      libsnappy-dev \
     && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
       build-essential \
+      libsnappy-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 

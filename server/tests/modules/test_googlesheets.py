@@ -4,6 +4,7 @@ import json
 from unittest.mock import patch, Mock
 import requests.exceptions
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from server.sanitizedataframe import sanitize_dataframe
 from server import oauth
 from server.modules.googlesheets import GoogleSheets
@@ -94,19 +95,6 @@ class GoogleSheetsTests(LoggedInTestCase):
         result = GoogleSheets.render(self.wf_module, None)
         self.assertEqual(result, ProcessResult(pd.DataFrame()))
 
-    def test_event_fetch_google_sheet(self):
-        self.requests.get.return_value = MockResponse(200, example_csv)
-
-        GoogleSheets.event(self.wf_module)
-
-        self.requests.get.assert_called_with(
-            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv'
-        )
-
-        # Check that the data was actually stored
-        self.assertEqual(self.wf_module.error_msg, '')
-        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
-
     def _assert_file_event_happy_path(self):
         GoogleSheets.event(self.wf_module)
 
@@ -115,7 +103,8 @@ class GoogleSheetsTests(LoggedInTestCase):
         )
 
         self.assertEqual(self.wf_module.error_msg, '')
-        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+        assert_frame_equal(self.wf_module.retrieve_fetched_table().astype(str),
+                           self.test_table.astype(str))
 
     def test_event_fetch_csv(self):
         self._set_file_type('text/csv')
