@@ -1,0 +1,50 @@
+# Bring up all the pieces necessary to run the workbench
+# Data persists in dbdata in local dir
+
+# This file passes through all necessary env variables to requisite
+# Docker containers and makes them available when running commands via
+# `docker exec`. The environment variables need to be set by the user, either
+# with a .env file or some other means.
+
+version: '3.4'
+
+services:
+
+  database:
+    image: postgres:10.4
+    container_name: workbench-db
+    environment:
+      - POSTGRES_USER=cjworkbench
+      - POSTGRES_PASSWORD=cjworkbench
+      - POSTGRES_DB=cjworkbench
+      - PGDATA=/var/lib/postgresql/data/10.4
+    ports:
+      - "5432:5432"
+    volumes:
+      - cjworkbench_dev_dbdata
+
+  frontend:
+    build:
+      context: .
+      target: pydev
+    container_name: frontend
+    environment:
+      - POSTGRES_USER=cjworkbench
+      - CJW_DB_PASSWORD=cjworkbench
+      - CJW_DB_HOST=workbench-db
+    depends_on:
+      - database
+    links:
+      - database
+    volumes:
+      - ./:/app
+      - cjworkbench_dev_virtualenvs:/root/.local/share/virtualenvs
+    ports:
+      - "8080:8080"
+    command: bash -c "pipenv install --dev --system && ./bin/migrate-prod && python ./manage.py runserver --insecure 0.0.0.0:8080"
+
+
+volumes:
+    cjworkbench_dev_dbdata: {}
+    cjworkbench_dev_virtualenvs:
+      external: true
