@@ -3,8 +3,15 @@ import numpy as np
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 import json
-from .editcells import to_numeric
 from server.sanitizedataframe import safe_column_to_string
+
+
+# This will perform poorly if many values are not convertible
+def to_numeric(val):
+    try:
+        return pd.to_numeric(val)
+    except:
+        return None
 
 
 def to_timestamp(val):

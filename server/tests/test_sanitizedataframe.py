@@ -71,8 +71,30 @@ class SantizeDataframeTest(TestCase):
         sanitize_dataframe(newtab)
         self.assertCountEqual((newtab.index), [0, 1])
 
+    def test_cast_int_category_to_int(self):
+        result = pd.DataFrame({'A': [1, 2]}, dtype='category')
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': [1, 2]})
+        assert_frame_equal(result, expected)
 
-class InferDtypesTest(TestCase):
+    def test_cast_mixed_category_to_str(self):
+        result = pd.DataFrame({'A': [1, '2']}, dtype='category')
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['1', '2']}, dtype='category')
+        assert_frame_equal(result, expected)
+
+    def test_remove_unused_categories(self):
+        result = pd.DataFrame(
+            {'A': ['a', 'b']},
+            # extraneous value
+            dtype=pd.api.types.CategoricalDtype(['a', 'b', 'c'])
+        )
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['a', 'b']}, dtype='category')
+        assert_frame_equal(result, expected)
+
+
+class AutocastDtypesTest(TestCase):
     def test_autocast_int_from_str(self):
         table = pd.DataFrame({'A': ['1', '2']})
         autocast_dtypes_in_place(table)

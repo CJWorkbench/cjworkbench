@@ -78,15 +78,18 @@ def sanitize_series(series: pd.Series) -> pd.Series:
     * Convert unsupported dtypes to string.
     """
     dtype = pd.api.types.infer_dtype(series)
-    if dtype == 'categorical':
-        col_dtype = pd.api.types.infer_dtype(series.cat.categories)
-        if col_dtype not in _AllowedDtypes:
-            # Convert categories to str
-            return series.cat.rename_categories(
-                series.cat.categories.apply(value_str_or_empty_str)
-            )
-        else:
-            return series
+    if hasattr(series, 'cat'):
+        categories = series.cat.categories
+        if pd.api.types.is_numeric_dtype(categories):
+            # Un-categorize: make array of int/float
+            return pd.to_numeric(series)
+        elif categories.dtype != object \
+                or pd.api.types.infer_dtype(categories) != 'string':
+            # Cast non-Strings to String
+            series = series.cat.rename_categories(categories.astype(str))
+
+        series = series.cat.remove_unused_categories()
+        return series
     elif dtype not in _AllowedDtypes:
         return series.apply(value_str_or_empty_str)
     else:
