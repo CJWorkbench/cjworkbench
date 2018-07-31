@@ -27,9 +27,7 @@ exports[`TableView Blank table when no module id 1`] = `
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
         <div
           className="table-info"
@@ -41,9 +39,7 @@ exports[`TableView Blank table when no module id 1`] = `
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
       </div>
     </div>
@@ -64,6 +60,8 @@ exports[`TableView Blank table when no module id 1`] = `
         filterColumn={[Function]}
         getRow={[Function]}
         isReadOnly={false}
+        onRenameColumn={[Function]}
+        onReorderColumns={[Function]}
         setSortDirection={[Function]}
         totalRows={10}
       >
@@ -8448,7 +8446,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
           Array [
             100,
             0,
-            200,
+            201,
           ],
         ],
       },
@@ -8479,9 +8477,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
         <div
           className="table-info"
@@ -8493,9 +8489,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
       </div>
       <div
@@ -8537,6 +8531,8 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
         filterColumn={[Function]}
         getRow={[Function]}
         isReadOnly={false}
+        onRenameColumn={[Function]}
+        onReorderColumns={[Function]}
         setSortDirection={[Function]}
         totalRows={10}
       >
