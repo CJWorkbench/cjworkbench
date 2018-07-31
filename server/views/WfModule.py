@@ -22,6 +22,9 @@ import pandas as pd
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 
+_MaxNRowsPerRequest = 300
+
+
 def _lookup_wf_module(pk: int) -> WfModule:
     """Find a Workflow and WfModule based on pk (no access control).
 
@@ -151,6 +154,7 @@ def wfmodule_detail(request, pk, format=None):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 # ---- render / input / livedata ----
 # These endpoints return actual table data
 
@@ -161,10 +165,10 @@ def _make_render_dict(table, startrow=None, endrow=None):
     if startrow is None:
         startrow = 0
     if endrow is None:
-        endrow = nrows
+        endrow = startrow + _MaxNRowsPerRequest
 
     startrow = max(0, startrow)
-    endrow = min(nrows, endrow)
+    endrow = min(nrows, endrow, startrow + _MaxNRowsPerRequest)
     table = table[startrow:endrow]
 
     # In a sane and just world, we could now just do something like
