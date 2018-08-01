@@ -151,7 +151,7 @@ def _parse_json(bytesio: io.BytesIO,
     """
     with _wrap_text(bytesio, text_encoding) as textio:
         data = json.load(textio, object_pairs_hook=OrderedDict)
-        return pandas.DataFrame(data)
+        return pandas.DataFrame.from_records(data)
 
 
 def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
