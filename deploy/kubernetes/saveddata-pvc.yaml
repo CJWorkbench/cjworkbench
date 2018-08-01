@@ -8,7 +8,7 @@ spec:
   storageClassName: ''
   resources:
     requests:
-      storage: 18Gi
+      storage: 97Gi
   selector:
     matchLabels:
       implementation: nfs-server
