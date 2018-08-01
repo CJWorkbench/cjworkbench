@@ -1,8 +1,9 @@
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
+import io
 import pandas as pd
 from pandas.io.common import EmptyDataError, ParserError
-import io
+from .moduleimpl import ModuleImpl
+from .types import ProcessResult
+from ..sanitizedataframe import autocast_dtypes_in_place
 
 
 # ---- PasteCSV ----
@@ -28,7 +29,9 @@ class PasteCSV(ModuleImpl):
 
         try:
             table = pd.read_table(io.StringIO(tablestr), header=header_row,
-                                  skipinitialspace=True, sep=sep)
+                                  skipinitialspace=True, sep=sep,
+                                  dtype='category')
+            autocast_dtypes_in_place(table)
         except EmptyDataError:
             return ProcessResult(pd.DataFrame())
         except ParserError as err:
