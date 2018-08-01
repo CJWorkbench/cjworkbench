@@ -32,17 +32,16 @@ class SantizeDataframeTest(TestCase):
         # not have
         hash_pandas_object(sfpd)
 
-    def test_nan_to_string(self):
+    def test_mixed_to_string_keeps_nan(self):
         # check that sanitizing a non-string column with missing data produces
         # empty cells, not 'nan' strings
         # https://www.pivotaltracker.com/story/show/154619564
-        fname = os.path.join(settings.BASE_DIR,
-                             'server/tests/test_data/missing_values.json')
-        mv_json = open(fname).read()
-        mv_table = pd.DataFrame(json.loads(mv_json))
-        sanitize_dataframe(mv_table)
-        numempty = sum(mv_table['recording_date'].apply(lambda x: x == ''))
-        self.assertTrue(numempty > 0)
+        result = pd.DataFrame({'A': [1.0, 'str', np.nan, '']})  # mixed
+        sanitize_dataframe(result)
+        assert_frame_equal(
+            result,
+            pd.DataFrame({'A': ['1.0', 'str', np.nan, '']})
+        )
 
     def test_lists_and_dicts(self):
         # By assigning through Series it is possible to store lists and dicts
