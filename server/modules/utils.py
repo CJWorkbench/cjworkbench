@@ -11,7 +11,7 @@ import pandas.errors
 from .types import ProcessResult
 import cchardet as chardet
 from server.sanitizedataframe import autocast_dtypes_in_place
-
+from django.conf import settings
 
 _TextEncoding = Optional[str]
 
@@ -172,13 +172,20 @@ def _detect_encoding(bytesio: io.BytesIO):
 
     Peculiarities:
 
-    * Reads entire file (quick)
+    * Reads file by CHARDET_CHUNK_SIZE defined in settings.py
+    * stops seeking when detector.done flag True
     * Sets seek back to beginning of file for downstream usage
-
     """
-    result = chardet.detect(bytesio.read())
+    detector = chardet.UniversalDetector()
+    chunk = settings.CHARDET_CHUNK_SIZE
+    while not detector.done and chunk == settings.CHARDET_CHUNK_SIZE:
+        chunk = bytesio.tell()
+        detector.feed(bytesio.read(settings.CHARDET_CHUNK_SIZE))
+        chunk = bytesio.tell() - chunk
+
+    detector.close()
     bytesio.seek(0)
-    return result['encoding']
+    return detector.result['encoding']
 
 
 _parse_xls = _parse_xlsx
