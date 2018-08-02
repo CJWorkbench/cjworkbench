@@ -4,7 +4,7 @@ metadata:
   name: all-nfs-data-pv
 spec:
   capacity:
-    storage: 20Gi
+    storage: 100Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain

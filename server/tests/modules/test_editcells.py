@@ -1,137 +1,154 @@
 import json
-from server.tests.utils import DbTestCase, create_testdata_workflow, \
-        load_and_add_module, get_param_by_id_name
-import numpy as np
+import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import numpy as np
-from server.models import WfModule
 from server.modules.editcells import EditCells
-import logging
-
-class EditCellsTests(DbTestCase):
-
-    def setUp(self):
-        super().setUp()
-
-        workflow = create_testdata_workflow()
-        self.wf_module = load_and_add_module('editcells', workflow=workflow)
-        self.pval = get_param_by_id_name('celledits')
-
-        self.table = pd.DataFrame([
-            [1,     5,      9,      10.1,   20.5,          'cake',     13,],
-            [2,     6,      10,     10.2,   float('nan'),  'or',       14],
-            [3,     7,      11,     10.3,   20.7,          'death',    15],
-            [4,     8,      12,     10.4,   20.8,          'please',   16]],
-            columns=['int1', 'int2', 'int3', 'float1', 'float2', 'string', 'unchanged'])
-
-        self.table = self.table.astype({
-            'int1': 'int64',
-            'int2': 'int64',
-            'int3': 'int64',
-            'float1': 'float64',
-            'float2': 'float64',
-            'string': 'str',
-            'unchanged': 'int64'
-        })
-
-    def test_edit_cells(self):
-        # edit cells on a test df with cols and vals of different types.
-        # - int with int val, int with float val, int with string val
-        # - float with int,float,string
-        # - string with int, float, string
-        # - assigning multiple types to a column
-        # - 0, 1, 2 values changed per column
-        # - unchanged row and column
-        # - NaNs in float column (should end up as empty strings if we assign a string)
+from server.modules.types import ProcessResult
+from server.sanitizedataframe import sanitize_dataframe
 
 
-        # all edit cell values are strings, because that's how they come from the client
-        patch = [
-            {'row': 0, 'col': 'int1', 'value':'55'},        # assign int to int
-            {'row': 1, 'col': 'int1', 'value':'99'},        # two values edited in this col, both int
+class MockWfModule:
+    def __init__(self, patch_json):
+        self.patch_json = patch_json
+        self.error = None
 
-            {'row': 1, 'col': 'int2', 'value':'3.14'},      # assign float to int
+    def set_error(self, error):
+        self.error = error
 
-            {'row': 1, 'col': 'int3', 'value':'bar'},       # assign string to int
-            {'row': 3, 'col': 'int3', 'value':'66'},        # also assign float to the same column
+    def get_param_raw(self, param, param_type):
+        if param != 'celledits':
+            raise Exception('Expected param == "celledits"')
+        if param_type != 'custom':
+            raise Exception('Expected param_type == "custom"')
 
-            {'row': 0, 'col': 'float1', 'value': '100'},    # assign int to float
-            {'row': 3, 'col': 'float2', 'value': 'baz'},    # assign string to float col with NaN's
-
-            {'row': 3, 'col': 'string', 'value': '77'}    # assign int to string
-        ]
-
-        patched_table = pd.DataFrame([
-            [55,    5,      '9',    100,    '20.5',     'cake',     13],
-            [99,    3.14,   'bar',  10.2,   np.nan,     'or',       14],
-            [3,     7,      '11',   10.3,   '20.7',     'death',    15],
-            [4,     8,      '66',   10.4,   'baz',      '77',       16]],
-            columns=['int1', 'int2', 'int3', 'float1', 'float2', 'string', 'unchanged'])
-
-        patched_table = patched_table.astype({
-            'int1': 'int64',
-            'int2': 'float64',
-            'int3': str,
-            'float1': 'float64',
-            'float2': str,
-            'string': str,
-            'unchanged': 'int64'
-        })
-
-        self.pval.set_value(json.dumps(patch))
-        self.pval.save()
-        out = EditCells.render(self.wf_module, self.table)
-        assert_frame_equal(out, patched_table)
-
-        # check that all columns have the simplest type that will hold values (int -> float -> string)
-        self.assertEqual(out['int1'].dtype, np.int64)
-        self.assertEqual(out['int2'].dtype, np.float64)
-        self.assertEqual(out['int3'].dtype, np.object)
-        self.assertEqual(out['float1'].dtype, np.float64)
-        self.assertEqual(out['float2'].dtype, np.object)
-        self.assertEqual(out['string'].dtype, np.object)
-        self.assertEqual(out['unchanged'].dtype, np.int64)
+        return self.patch_json
 
 
-    def test_empty_patch(self):
-        self.pval.set_value('')
-        self.pval.save()
-        out = EditCells.render(self.wf_module, self.table)
-        self.assertTrue(out.equals(self.table))             # should NOP
+def test_render(in_table, patch_json, out_table=pd.DataFrame(),
+                out_error=''):
+    wfm = MockWfModule(patch_json)
+    sanitize_dataframe(in_table)
 
+    result = ProcessResult.coerce(EditCells.render(wfm, in_table))
+    result.sanitize_in_place()
+
+    expected = ProcessResult(out_table, out_error)
+    expected.sanitize_in_place()
+
+    assert result.error == expected.error
+    assert_frame_equal(result.dataframe, expected.dataframe)
+
+
+class EditCellsTests(unittest.TestCase):
+    def test_edit_int_to_int(self):
+        test_render(
+            pd.DataFrame({'A': [1, 2]}, dtype='int64'),
+            json.dumps([{'row': 1, 'col': 'A', 'value': '3'}]),
+            pd.DataFrame({'A': [1, 3]}, dtype='int64')
+        )
+
+    def test_edit_int_to_str(self):
+        test_render(
+            pd.DataFrame({'A': [1, 2]}, dtype='int64'),
+            json.dumps([{'row': 1, 'col': 'A', 'value': 'foo'}]),
+            pd.DataFrame({'A': ['1', 'foo']})
+        )
+
+    def test_edit_int_to_float(self):
+        test_render(
+            pd.DataFrame({'A': [1, 2]}, dtype='int64'),
+            json.dumps([{'row': 1, 'col': 'A', 'value': '2.1'}]),
+            pd.DataFrame({'A': [1, 2.1]}, dtype='float64')
+        )
+
+    def test_edit_float_to_int(self):
+        # It stays float64, even though all values are int
+        test_render(
+            pd.DataFrame({'A': [1, 2.1]}, dtype='float64'),
+            json.dumps([{'row': 1, 'col': 'A', 'value': '2'}]),
+            pd.DataFrame({'A': [1, 2]}, dtype='float64')
+        )
+
+    def test_edit_float_to_str(self):
+        test_render(
+            pd.DataFrame({'A': [1.1, 2.1]}, dtype='float64'),
+            json.dumps([{'row': 1, 'col': 'A', 'value': 'foo'}]),
+            pd.DataFrame({'A': ['1.1', 'foo']})
+        )
+
+    def test_edit_str_to_int(self):
+        test_render(
+            pd.DataFrame({'A': ['foo', 'bar']}),
+            json.dumps([{'row': 1, 'col': 'A', 'value': '2'}]),
+            # All stays str
+            pd.DataFrame({'A': ['foo', '2']})
+        )
+
+    def test_edit_str_category_to_new_str_category(self):
+        test_render(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            json.dumps([{'row': 1, 'col': 'A', 'value': 'c'}]),
+            pd.DataFrame({'A': ['a', 'c']}, dtype='category')
+        )
+
+    def test_edit_str_category_to_existing_str_category(self):
+        test_render(
+            pd.DataFrame({'A': ['a', 'b', 'a']}, dtype='category'),
+            json.dumps([{'row': 2, 'col': 'A', 'value': 'b'}]),
+            pd.DataFrame({'A': ['a', 'b', 'b']}, dtype='category')
+        )
+
+    def test_two_edits_in_column(self):
+        test_render(
+            pd.DataFrame({'A': ['a', 'b', 'c']}),
+            json.dumps([
+                {'row': 1, 'col': 'A', 'value': 'x'},
+                {'row': 2, 'col': 'A', 'value': 'y'},
+            ]),
+            pd.DataFrame({'A': ['a', 'x', 'y']})
+        )
+
+    def test_two_edits_in_row(self):
+        test_render(
+            pd.DataFrame({'A': ['a', 'b'], 'B': ['c', 'd']}),
+            json.dumps([
+                {'row': 0, 'col': 'A', 'value': 'x'},
+                {'row': 0, 'col': 'B', 'value': 'y'},
+            ]),
+            pd.DataFrame({'A': ['x', 'b'], 'B': ['y', 'd']})
+        )
+
+    def test_empty_patch_str(self):
+        test_render(
+            pd.DataFrame({'A': ['a']}),
+            '',
+            pd.DataFrame({'A': ['a']})  # no-op
+        )
 
     def test_empty_table(self):
-        patch = [
-            {'row': 0, 'col': 'int1', 'value': '55'},
-            {'row': 1, 'col': 'int1', 'value': '99'}
-        ]
-
-        self.pval.set_value(json.dumps(patch))
-        self.pval.save()
-        out = EditCells.render(self.wf_module, pd.DataFrame())
-        self.assertEqual(len(out), 0)
-
+        test_render(
+            pd.DataFrame(),
+            json.dumps([{'row': 0, 'col': 'A', 'value': 'x'}]),
+            pd.DataFrame()  # no-op
+        )
 
     def test_bad_json(self):
-        # this test is supposed to log an exception, but don't print that every test
-        logging.disable(logging.CRITICAL)
+        test_render(
+            pd.DataFrame({'A': ['a', 'b']}),
+            'not JSON',
+            out_error='Internal error: invalid JSON'
+        )
 
-        self.pval.set_value('No way this is json')
-        self.pval.save()
-        out = EditCells.render(self.wf_module, self.table)
-        self.assertEqual(self.wf_module.status, WfModule.ERROR)
-        self.assertEqual(self.wf_module.error_msg, 'Internal error')
-        self.assertTrue(out.equals(self.table))
+    def test_missing_col(self):
+        test_render(
+            pd.DataFrame({'A': ['a', 'b']}),
+            json.dumps([{'row': 0, 'col': 'B', 'value': 'x'}]),
+            pd.DataFrame({'A': ['a', 'b']})  # no-op
+        )
 
-        logging.disable(logging.NOTSET)
-
-    def test_missing_cols(self):
-        patch = [
-            {'row': 0, 'col': 'hello', 'value': '55'},
-            {'row': 1, 'col': 'kitty', 'value': '99'}
-        ]
-        self.pval.set_value(json.dumps(patch))
-        self.pval.save()
-        out = EditCells.render(self.wf_module, self.table)
-        self.assertTrue(out.equals(self.table))                # should NOP
+    def test_missing_row(self):
+        test_render(
+            pd.DataFrame({'A': ['a', 'b']}),
+            json.dumps([{'row': 2, 'col': 'A', 'value': 'x'}]),
+            pd.DataFrame({'A': ['a', 'b']})  # no-op
+        )

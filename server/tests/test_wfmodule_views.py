@@ -17,7 +17,7 @@ FakeSession = namedtuple('FakeSession', ['session_key'])
 test_data_json = {
     'total_rows': 4,
     'start_row': 0,
-    'end_row': 4,
+    'end_row': 4,  # XXX should be 3? Will that break anything?
     'columns': ['Class', 'M', 'F'],
     'rows': [
         {'Class': 'math', 'F': 12, 'M': 10.0},

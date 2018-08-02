@@ -3,9 +3,9 @@ from server.views.UploadedFileView import UploadedFileView
 from rest_framework import status
 from rest_framework.test import force_authenticate, APIRequestFactory
 from server.tests.utils import *
+from pandas.testing import assert_frame_equal
+from server.sanitizedataframe import sanitize_dataframe
 from server.modules.utils import parse_bytesio
-from django.conf import settings
-import pandas as pd
 import os
 
 
@@ -25,6 +25,7 @@ class UploadFileViewTests(LoggedInTestCase):
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 None
             ).dataframe
+            sanitize_dataframe(self.xlsx_table)
 
     def _test_successful_upload(self, path, table):
         self.assertEqual(len(self.wfm.list_fetched_data_versions()), 0)
@@ -46,6 +47,7 @@ class UploadFileViewTests(LoggedInTestCase):
         # should have parsed UploadedFile into a fetched table
         self.wfm.refresh_from_db()
         self.assertEqual(len(self.wfm.list_fetched_data_versions()), 1)
+        assert_frame_equal(self.wfm.retrieve_fetched_table(), table)
         self.assertTrue(self.wfm.retrieve_fetched_table().equals(table))
         self.assertEqual(UploadedFile.objects.count(), 1)  # don't delete successful uploads
 

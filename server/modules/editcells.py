@@ -1,89 +1,109 @@
+from itertools import groupby
+from typing import List, Union
 import pandas as pd
 import numpy as np
 from .moduleimpl import ModuleImpl
+from server.models import WfModule
 import json
 import logging
 from server.sanitizedataframe import safe_column_to_string
 
 logger = logging.getLogger(__name__)
 
-# This will perform poorly if many values are not convertible
-def to_numeric(val):
-    try:
-        return pd.to_numeric(val)
-    except:
-        return None
 
-# Change a single cell value, with correct type handling when assigning to a numeric col
-#  - if val is a number in string form, convert it to numeric first
-#  - if val is a true string, cast the column to all strings first
-#
-def sanitized_edit_cell(table, colname, row, val):
-    ctype = table[colname].dtype
+class Edit:
+    def __init__(self, *, row, col, value):
+        self.row = int(row)
+        self.col = str(col)
+        self.value = str(value)
 
-    if ctype == np.int64 or ctype == np.float64:
-        val_num = to_numeric(val)
-        if val_num is not None:
-            table.loc[table.index[row], colname] = val_num  # pandas will upcast int64 col to float64 if needed
-        else:
-            table[colname] = safe_column_to_string(table[colname])  # convert numbers to string, replacing NaN with ''
-            table.loc[table.index[row], colname] = val
 
+def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
+    """
+    Change a single cell value, with correct type handling.
+
+    If the (str) edit value can be converted to numeric and the cell is
+    numeric, edit without casting (or cast from int64 to float64 if necessary).
+    If the column is numeric and the edit value is str, convert the column to
+    str.
+    """
+    keys = [edit.row for edit in edits]
+    str_values = pd.Series([edit.value for edit in edits], dtype=str)
+
+    if series.dtype == np.int64 or series.dtype == np.float64:
+        try:
+            num_values = pd.to_numeric(str_values)
+            # pandas will upcast int64 col to float64 if needed
+            series[keys] = num_values
+        except ValueError:
+            # convert numbers to string, replacing NaN with ''
+            series = safe_column_to_string(series)
+            series[keys] = str_values
+    elif hasattr(series, 'cat'):
+        series.cat.add_categories(set(str_values) - set(series.cat.categories),
+                                  inplace=True)
+        series[keys] = str_values
     else:
-        # Column type will be string (see sanitize_dataframe) so assign directly
-        if ctype != np.object:
-            logger.warning('Unknown Pandas column type %s in edit cells', str(ctype))
+        if series.dtype != np.object:
+            logger.warning('Unknown Pandas column type %s in edit cells' %
+                           str(series.dtype))
 
-        table.loc[table.index[row], colname] = val
+        # Column type is str (see sanitize_dataframe) so assign directly
+        series[keys] = str_values
 
+    return series
+
+
+def parse_json(edits_str: str) -> Union[List[Edit], str]:
+    """Parse a list of Edits from a str, or return an error string."""
+    if edits_str == '':
+        return []
+
+    try:
+        edits_arr = json.loads(edits_str)
+    except json.JSONDecodeError as str:
+        return f'Internal error: invalid JSON'
+
+    if not isinstance(edits_arr, list):
+        return 'Internal error: invalid JSON: not an Array'
+
+    try:
+        edits = [Edit(**item) for item in edits_arr]
+    except TypeError:
+        return (
+            'Internal error: invalid JSON: '
+            'Objects must all have row, col and value'
+        )
+    except ValueError:
+        return 'Internal error: invalid JSON: "row" must be a Number'
+
+    return edits
 
 
 class EditCells(ModuleImpl):
-
-    # Execute our edits. Stored in parameter as a json serialized array that looks like this:
+    # Execute our edits. Stored in parameter as a json serialized array that
+    # looks like this:
     #  [
     #    { 'row': 3, 'col': 'foo', 'value':'bar' },
     #    { 'row': 6, 'col': 'food', 'value':'sandwich' },
     #    ...
     #  ]
     @staticmethod
-    def render(wfm, table):
-        def format_error():
-            logger.exception("Error decoding edit cells data for " + str(wfm))
-            wfm.set_error("Internal error")
+    def render(wfm: WfModule,
+               table: pd.DataFrame) -> Union[str, pd.DataFrame]:
+        edits = parse_json(wfm.get_param_raw('celledits', 'custom'))
+        if isinstance(edits, str):
+            return edits
 
-        edits_json = wfm.get_param_raw('celledits','custom')
+        # Ignore missing columns and rows: delete them from the Array of edits
+        edits = [edit for edit in edits
+                 if edit.col in table.columns
+                 and edit.row >= 0 and edit.row < len(table)]
 
-        if edits_json.strip() == '':
-            return table
+        for column, column_edits in groupby(edits, lambda e: e.col):
+            series = table[column]
+            series2 = apply_edits(series, list(column_edits))
+            if series2 is not series:
+                table[column] = series2
 
-        try:
-            edits = json.loads(edits_json)
-        except ValueError:
-            format_error()
-            return table
-
-        # if no edits yet, table is unchanged
-        if len(edits) == 0:
-            return table
-
-        table2 = table.copy()
-        try:
-            for ed in edits:
-                try:
-                    col = ed['col']
-
-                    # silently ignore missing columns, maybe they'll come back
-                    if col in table2.columns:
-                        sanitized_edit_cell(table2, col, ed['row'], ed['value'])
-
-                except (TypeError, KeyError) as e:
-                    format_error()
-                    return table
-
-        except KeyError:
-            format_error()
-            return table        # return unmodified table if bad json
-
-        return table2
-
+        return table

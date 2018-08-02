@@ -32,17 +32,16 @@ class SantizeDataframeTest(TestCase):
         # not have
         hash_pandas_object(sfpd)
 
-    def test_nan_to_string(self):
+    def test_mixed_to_string_keeps_nan(self):
         # check that sanitizing a non-string column with missing data produces
         # empty cells, not 'nan' strings
         # https://www.pivotaltracker.com/story/show/154619564
-        fname = os.path.join(settings.BASE_DIR,
-                             'server/tests/test_data/missing_values.json')
-        mv_json = open(fname).read()
-        mv_table = pd.DataFrame(json.loads(mv_json))
-        sanitize_dataframe(mv_table)
-        numempty = sum(mv_table['recording_date'].apply(lambda x: x == ''))
-        self.assertTrue(numempty > 0)
+        result = pd.DataFrame({'A': [1.0, 'str', np.nan, '']})  # mixed
+        sanitize_dataframe(result)
+        assert_frame_equal(
+            result,
+            pd.DataFrame({'A': ['1.0', 'str', np.nan, '']})
+        )
 
     def test_lists_and_dicts(self):
         # By assigning through Series it is possible to store lists and dicts
@@ -71,8 +70,30 @@ class SantizeDataframeTest(TestCase):
         sanitize_dataframe(newtab)
         self.assertCountEqual((newtab.index), [0, 1])
 
+    def test_cast_int_category_to_int(self):
+        result = pd.DataFrame({'A': [1, 2]}, dtype='category')
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': [1, 2]})
+        assert_frame_equal(result, expected)
 
-class InferDtypesTest(TestCase):
+    def test_cast_mixed_category_to_str(self):
+        result = pd.DataFrame({'A': [1, '2']}, dtype='category')
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['1', '2']}, dtype='category')
+        assert_frame_equal(result, expected)
+
+    def test_remove_unused_categories(self):
+        result = pd.DataFrame(
+            {'A': ['a', 'b']},
+            # extraneous value
+            dtype=pd.api.types.CategoricalDtype(['a', 'b', 'c'])
+        )
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['a', 'b']}, dtype='category')
+        assert_frame_equal(result, expected)
+
+
+class AutocastDtypesTest(TestCase):
     def test_autocast_int_from_str(self):
         table = pd.DataFrame({'A': ['1', '2']})
         autocast_dtypes_in_place(table)

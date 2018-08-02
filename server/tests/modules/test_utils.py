@@ -1,5 +1,6 @@
 import io
 import unittest
+import numpy
 import pandas
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio
@@ -65,3 +66,23 @@ class ParseBytesIoTest(unittest.TestCase):
         )
         self.assertEqual(result, expected)
 
+    def test_json_with_nulls(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": "a"},
+            {"A": null}
+        ]""".encode('utf-8')), 'application/json')
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['a', None]}, dtype=str)
+        )
+        self.assertEqual(result, expected)
+
+    def test_json_with_undefined(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": "a"},
+            {"A": "aa", "B": "b"}
+        ]""".encode('utf-8')), 'application/json')
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']},
+                             dtype=str)
+        )
+        self.assertEqual(result, expected)

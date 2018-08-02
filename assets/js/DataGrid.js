@@ -446,8 +446,8 @@ export default class DataGrid extends React.Component {
     dropColumn:         PropTypes.func.isRequired,
     filterColumn:       PropTypes.func.isRequired,
     showLetter:         PropTypes.bool,
-    onReorderColumns:   PropTypes.func,
-    onRenameColumn:     PropTypes.func,
+    onReorderColumns:   PropTypes.func.isRequired,
+    onRenameColumn:     PropTypes.func.isRequired,
   };
 
   constructor(props) {
