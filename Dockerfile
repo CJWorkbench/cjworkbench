@@ -145,7 +145,7 @@ FROM base AS frontend
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
 # TODO nix --insecure; serve static files elsewhere
-CMD [ "./manage.py", "runserver", "--insecure", "0.0.0.0:8080", "--http-timeout", "1000" ]
+CMD [ "./manage.py", "runserver", "--insecure", "--http_timeout", "1000", "0.0.0.0:8080" ]
 
 # 4. integration-test: tests all the above
 FROM integration-test-deps AS integration-test
