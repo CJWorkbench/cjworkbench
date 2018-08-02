@@ -2,6 +2,7 @@ import io
 import unittest
 import numpy
 import pandas
+from django.test import SimpleTestCase, override_settings
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio
 
@@ -20,7 +21,7 @@ ret = sorted(list([1, 2, sum([3, 4])]))
         self.assertEqual(env['ret'], [1, 2, 7])
 
 
-class ParseBytesIoTest(unittest.TestCase):
+class ParseBytesIoTest(SimpleTestCase):
     def test_parse_utf8_csv(self):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xc3\xa9'),
                                'text/csv', 'utf-8')
@@ -38,7 +39,7 @@ class ParseBytesIoTest(unittest.TestCase):
         )
         self.assertEqual(result, expected)
 
-    def test_autodetect_charset(self):
+    def test_autodetect_charset_iso8859_1(self):
         # \xe9 is ISO-8859-1 so Workbench should auto-detect it
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
@@ -47,7 +48,8 @@ class ParseBytesIoTest(unittest.TestCase):
         )
         self.assertEqual(result, expected)
 
-        # \x96 is - in windows-1252, does not exist in UTF-8
+    def test_autodetect_charset_windows_1252(self):
+        # \x96 is - in windows-1252, does not exist in UTF-8 or ISO-8859-1
         result = parse_bytesio(io.BytesIO(b'A\n2000\x962018'),
                                'text/csv', None)
         expected = ProcessResult(
@@ -55,7 +57,7 @@ class ParseBytesIoTest(unittest.TestCase):
         )
         self.assertEqual(result, expected)
 
-        # 'Thank you' in Mandarin should resolve to UTF-8
+    def test_autodetect_charset_utf8(self):
         result = parse_bytesio(
             io.BytesIO(b'A\n\xE8\xB0\xA2\xE8\xB0\xA2\xE4\xBD\xA0'),
             'text/csv',
@@ -63,6 +65,15 @@ class ParseBytesIoTest(unittest.TestCase):
         )
         expected = ProcessResult(
             pandas.DataFrame({'A': ['谢谢你']}).astype('category')
+        )
+        self.assertEqual(result, expected)
+
+    @override_settings(CHARDET_CHUNK_SIZE=3)
+    def test_autodetect_charset_chunked(self):
+        result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
+                               'text/csv', None)
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['café']}).astype('category')
         )
         self.assertEqual(result, expected)
 

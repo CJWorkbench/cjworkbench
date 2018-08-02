@@ -167,21 +167,20 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
 
 def _detect_encoding(bytesio: io.BytesIO):
     """
-    Detect charset using cChardet.
-    Returns encoding string.
+    Detect charset, as Python-friendly encoding string.
 
     Peculiarities:
 
     * Reads file by CHARDET_CHUNK_SIZE defined in settings.py
-    * stops seeking when detector.done flag True
-    * Sets seek back to beginning of file for downstream usage
+    * Stops seeking when detector.done flag True
+    * Seeks back to beginning of file for downstream usage
     """
     detector = chardet.UniversalDetector()
-    chunk = settings.CHARDET_CHUNK_SIZE
-    while not detector.done and chunk == settings.CHARDET_CHUNK_SIZE:
-        chunk = bytesio.tell()
-        detector.feed(bytesio.read(settings.CHARDET_CHUNK_SIZE))
-        chunk = bytesio.tell() - chunk
+    while not detector.done:
+        chunk = bytesio.read(settings.CHARDET_CHUNK_SIZE)
+        if not chunk:
+            break  # EOF
+        detector.feed(chunk)
 
     detector.close()
     bytesio.seek(0)
