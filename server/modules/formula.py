@@ -174,5 +174,4 @@ class Formula(ModuleImpl):
                 out_column = f'result{n}'
         table[out_column] = newcol
 
-        wf_module.set_ready(notify=False)
         return table
