@@ -7,15 +7,6 @@ class TestPasswordReset(WorkbenchBase):
         super().setUp()
 
         self.user = self.account_admin.create_user('user@example.org')
-        self.user_email = self.account_admin.verify_user_email(self.user)
-
-
-    def tearDown(self):
-        self.account_admin.destroy_user_email(self.user_email)
-        self.account_admin.destroy_user(self.user)
-
-        super().tearDown()
-
 
     def _begin_password_reset(self, email):
         b = self.browser

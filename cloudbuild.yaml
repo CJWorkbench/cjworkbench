@@ -1,45 +1,21 @@
 timeout: 1800s
 steps:
-## `docker pull` all our previous images, to speed up new builds
-## This works for the same reason it works on dev: we don't need to re-run
-## slow commands when the files that triggered them don't change.
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: [ 'pull', 'gcr.io/$PROJECT_ID/migrate:latest' ]
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: [ 'pull', 'gcr.io/$PROJECT_ID/backend:latest' ]
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: [ 'pull', 'gcr.io/$PROJECT_ID/frontend:latest' ]
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
+# cache-from doesn't work well with multi-stage builds yet: see
+# https://github.com/moby/moby/issues/32612. We don't win if we pull down
+# migrate/backend/frontend and try to build using their caches.
+#
+# One alternative win for build speed: author pull requests for each Python
+# library that uses C, so they push bdist with manylinux. That way our
+# Dockerfile won't need apt-get or gcc calls, saving oodles of time.
+#
+# We can at least pull the latest integration test: our integration tests
+# don't use multi-stage build so they play nice with cache. (That's a great
+# win because installing Firefox deps is particularly slow.)
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
 # Build new Docker images
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
-          '--target', 'migrate',
-          '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
-          '--target', 'backend',
-          '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/backend:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'frontend',
           '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/frontend:latest',
@@ -47,18 +23,35 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
-          '--target', 'integration-test',
+          '--target', 'migrate',
+          '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--target', 'backend',
+          '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/backend:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--file', 'Dockerfile.integrationtest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '.'
         ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '-t', 'gcr.io/$PROJECT_ID/git-server:$COMMIT_SHA',
+          './integrationtests/git-server'
+        ]
 # Integration-test: migrate, then run the integration-test image
 - name: 'docker/compose:1.21.2'
   args: [ '-f', 'integrationtests/docker-compose.yml',
+          '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
           'migrate'
         ]
@@ -67,6 +60,7 @@ steps:
     - 'COMMIT_SHA=$COMMIT_SHA'
 - name: 'docker/compose:1.21.2'
   args: [ '-f', 'integrationtests/docker-compose.yml',
+          '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
           'integration-test'
         ]

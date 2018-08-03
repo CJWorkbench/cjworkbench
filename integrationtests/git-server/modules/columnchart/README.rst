@@ -25,3 +25,11 @@ To add a feature on the HTML/JavaScript side:
 1. Edit ``columnchart.html``
 2. Test by importing the module from this directory into Workbench
 3. Commit and submit a pull request
+
+To develop continuously on Workbench:
+
+1. Check out the columnchart repository in a sibling directory to your checked-out Workbench code.
+2. Start Workbench with ``CACHE_MODULES=false bin/dev``
+3. In a separate tab in the Workbench directory, run ``pipenv run ./manage.py develop-module ../columnchart https://github.com/CJWorkbench/columnchart.git``
+4. Edit this code; the module will be reloaded in Workbench immediately
+5. When viewing the chart in Workbench, modify parameters to re-render JSON and refresh the page to load new HTML

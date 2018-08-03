@@ -8,19 +8,9 @@ class TestExampleWorkflow(WorkbenchBase):
         self.admin = self.account_admin.create_user('admin@example.org',
                                                     is_staff=True,
                                                     is_superuser=True)
-        self.admin_email = self.account_admin.verify_user_email(self.admin)
 
         self.user1 = self.account_admin.create_user('user1@example.org')
-        self.user1_email = self.account_admin.verify_user_email(self.user1)
 
-
-    def tearDown(self):
-        self.account_admin.destroy_user_email(self.user1_email)
-        self.account_admin.destroy_user_email(self.admin_email)
-        self.account_admin.destroy_user(self.user1)
-        self.account_admin.destroy_user(self.admin)
-
-        super().tearDown()
 
     def _create_example_workflow(self):
         b = self.browser

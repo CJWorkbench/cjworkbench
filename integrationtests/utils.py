@@ -24,26 +24,13 @@ def find_url_in_email(message: email.message.Message) -> Optional[str]:
     return match.group(0)
 
 
-def _find_server_url():
-    """Get URL using `docker port` or env.env['SERVER_URL']"""
-    env_url = os.getenv('SERVER_URL')
-    if env_url:
-        return env_url
-
-    process = subprocess.run([
-        'docker',
-        'port',
-        'cjworkbench_integrationtest_django',
-        '8080/tcp'
-    ], stdout=subprocess.PIPE)
-    port_str = process.stdout.decode('ascii').split(':')[1].strip()
-    return f"http://localhost:{port_str}"
-
-
 class WorkbenchBase(unittest.TestCase):
     serve_static = True
-    live_server_url = _find_server_url()
-    account_admin = accounts.AccountAdmin(live_server_url)
+    live_server_url = 'http://frontend:8080'
+    db_connect_str = 'user=cjworkbench host=workbench-db password=cjworkbench'
+    data_path = '/app'
+    account_admin = accounts.AccountAdmin(live_server_url, db_connect_str,
+                                          data_path)
 
     def setUp(self):
         super().setUp()
@@ -164,13 +151,5 @@ class LoggedInIntegrationTest(WorkbenchBase):
         super().setUp()
 
         self.user = self.account_admin.create_user('user@example.org')
-        self.user_email = self.account_admin.verify_user_email(self.user)
 
         accounts.login(self.browser, self.user.email, self.user.email)
-
-    def tearDown(self):
-        self.account_admin.destroy_user_email(self.user_email)
-        self.account_admin.destroy_user(self.user)
-        self.account_admin.destroy_modules()
-
-        super().tearDown()

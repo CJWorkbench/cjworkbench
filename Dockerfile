@@ -69,31 +69,6 @@ RUN true \
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
 
 
-# 1.1 integration-test deps
-# Depends on pybuild because integration tests run Django shell to fiddle
-# with database.
-FROM pybuild AS integration-test-deps
-
-RUN pip install capybara-py selenium
-# Install Firefox deps (and curl and xvfb). Debian Stretch has Firefox v52,
-# which is way too old; but we'll install 52's dependencies and hope they
-# satisfy Firefox v61
-RUN apt-get update \
-    && bash -c 'apt-get install -y --no-install-recommends $(apt-cache depends firefox-esr | awk "/Depends:/{print\$2}")' \
-    && apt-get install --no-install-recommends -y \
-        curl \
-        xauth \
-        xvfb \
-        bzip2 \
-    && rm -rf /var/lib/apt/lists/*
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0.1/linux-x86_64/en-US/firefox-61.0.1.tar.bz2 \
-        | tar jx -C /opt \
-        && ln -s /opt/firefox/firefox /usr/bin/firefox
-RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz \
-        | tar zx -C /usr/bin/ \
-        && chmod +x /usr/bin/geckodriver
-
-
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
 FROM node:10.1.0-slim as jsbase
@@ -145,12 +120,4 @@ FROM base AS frontend
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
 # TODO nix --insecure; serve static files elsewhere
-CMD [ "./manage.py", "runserver", "--insecure", "--http_timeout", "1000", "0.0.0.0:8080" ]
-
-# 4. integration-test: tests all the above
-FROM integration-test-deps AS integration-test
-WORKDIR /app
-COPY cjworkbench/ /app/cjworkbench/
-COPY server/ /app/server/
-COPY integrationtests/ /app/integrationtests/
-CMD [ "sh", "-c", "xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests" ]
+CMD [ "./manage.py", "runserver", "--insecure", "0.0.0.0:8080" ]

@@ -1,0 +1,35 @@
+version: '3.4'
+# These settings are specific to dev mode
+
+services:
+  migrate:
+    build:
+      context: ..
+      target: migrate
+
+  git-server:
+    build: ./git-server
+
+  backend:
+    build:
+      context: ..
+      target: backend
+
+  frontend:
+    # Allow debugging at http://localhost:8080
+    # Port 8080 is what we use on prod, so let's expose the same one on localhost
+    ports: [ '8080:8080' ]
+    build:
+      context: ..
+      target: frontend
+
+  integration-test:
+    build:
+      context: ..
+      dockerfile: Dockerfile.integrationtest
+      target: dev
+    # Allow access using vncviewer
+    ports: [ '5901:5901' ]
+    volumes:
+      # Allow editing code in dev mode
+      - .:/app/integrationtests

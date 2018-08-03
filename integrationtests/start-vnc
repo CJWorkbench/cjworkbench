@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+export DISPLAY=:1
+
+Xvnc \
+  -Log='*:stderr:0' \
+  -geometry 1200x900 \
+  -SecurityTypes None \
+  $DISPLAY
