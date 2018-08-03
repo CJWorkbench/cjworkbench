@@ -3,7 +3,9 @@ FROM python:3.6.6-slim-stretch AS pybase
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
-# postgresql-client: because we poll the DB on prod before ./manage.py migrate
+# postgresql-client: because we poll the DB:
+# * on prod before ./manage.py migrate
+# * on unittest before ./manage.py test
 # git: because sometimes we throw git revisions in the Pipfile -- which is always lazy
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
@@ -103,9 +105,6 @@ COPY server/ /app/server/
 COPY bin/ /app/bin/
 COPY templates/ /app/templates/
 COPY manage.py /app/
-# Inject unit tests into our continuous integration
-# This is how Travis tests
-RUN ./manage.py test -v2
 
 # 3.1. migrate: runs ./manage.py migrate
 FROM base AS migrate
