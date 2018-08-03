@@ -38,9 +38,7 @@ python-snappy = "*"
 [dev-packages]
 mock = "==2.0.0"
 "requests-mock" = "==1.5.0"
-"capybara-py" = "*"
 aiounittest = "*"
-selenium = "*"
 watchdog = "*"
 
 [requires]
