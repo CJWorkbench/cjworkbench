@@ -14,6 +14,7 @@ import OAuthConnect from './wfparameters/OAuthConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
+import NumberField from './wfparameters/NumberField'
 import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
@@ -432,8 +433,9 @@ export default class WfParameter extends React.Component {
               isReadOnly={this.props.isReadOnly}
               onChange={this.onChange}
               onSubmit={this.onSubmit}
+              onReset={this.onReset}
               initialValue={this.props.p.value}
-              value={this.state.value}
+              value={this.props.value}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
             />
           </div>
