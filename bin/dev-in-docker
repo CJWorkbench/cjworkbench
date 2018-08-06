@@ -19,313 +19,21 @@
 set -e
 #set -x
 
+docker_compose() {
+  docker-compose "$@"
+}
+
 cd "$(dirname "$0")"/..
 
-if type PowerShell.exe >/dev/null 2>&1; then
-  # Windows
-  ABSDIR="$(PowerShell.exe -NoLogo -Command " (Resolve-Path .\).Path")"
-else
-  # UNIX
-  ABSDIR="$(pwd)"
-fi
-
-PREFIX=cjworkbench_dev
-NETWORK_NAME="${PREFIX}_network"
-VIRTUALENV_VOLUME_NAME="${PREFIX}_virtualenvs"
-NODE_MODULES_VOLUME_NAME="${PREFIX}_node_modules"
-DBDATA_VOLUME_NAME="${PREFIX}_dbdata"
-TEST_MEDIA_VOLUME_NAME="${PREFIX}_test_media"
-TEST_IMPORTEDMODULES_VOLUME_NAME="${PREFIX}_test_importedmodules"
-PYBASE_IMAGE_ID=""
-
-stop_container_if_running() {
-  basename="$1"
-  name="${PREFIX}_${basename}"
-  id=$(docker ps -a -q --filter name="$name")
-  test -z "$id" || docker rm -f "$name"
-}
-
-# Return image ID. In the common case, this won't cause any network hits.
-pulled_or_cached_image_id() {
-  name="$1"
-  id=$(docker image ls -q "$name")
-  if [ -z "$id" ]; then
-    docker image pull "$name" >&2
-    id=$(docker image ls -q "$name")
-  fi
-  echo $id
-}
-
-get_container_status() {
-  docker container inspect "${PREFIX}_$1" --format '{{.State.Status}}' 2>/dev/null
-}
-
-start_all() {
-  if ! docker network inspect "$NETWORK_NAME" >/dev/null 2>&1; then
-    echo -n "Creating $NETWORK_NAME… " >&2 # ID will appear after
-    docker network create "$NETWORK_NAME" >&2
-  fi
-  for volume in $VIRTUALENV_VOLUME_NAME $NODE_MODULES_VOLUME_NAME $DBDATA_VOLUME_NAME $TEST_MEDIA_VOLUME_NAME $TEST_IMPORTEDMODULES_VOLUME_NAME; do
-    if ! docker volume inspect "$volume" >/dev/null 2>&1; then
-      echo -n "Creating $volume… " >&2 # ID will appear after
-      docker volume create "$volume" >&2
-    fi
-  done
-
-  run_pipenv -- pipenv sync --dev
-  run_node -- npm install
-
-  [ "$(get_container_status database)" = 'running' ] && echo 'Database already running' >&2 || start_database
-  [ "$(get_container_status redis)" = 'running' ] && echo 'Redis already running' >&2 || start_redis
-
-  echo 'Migrating database…' >&2
-  run_python -- python ./manage.py migrate sites -v1
-  run_python -- python ./manage.py migrate -v1
-
-  # Start Webpack fairly early on, so it can run in parallel with Python
-  [ "$(get_container_status webpack)" = 'running' ] && echo 'Webpack already running' >&2 || start_webpack
-
-  # Reload modules that are part of our source tree
-  # (always run this -- it changes frequently).
-  # Run this _after_ migrating database.
-  run_python -- python ./manage.py reload-internal-modules
-
-  [ "$(get_container_status backend)" = 'running' ] && echo 'Backend already running' >&2 || start_backend
-  [ "$(get_container_status frontend)" = 'running' ] && echo 'Frontend already running' >&2 || start_frontend
-}
-
-stop_all() {
-  stop_container_if_running database
-  stop_container_if_running testdb
-  stop_container_if_running redis
-  stop_container_if_running backend
-  stop_container_if_running frontend
-  stop_container_if_running webpack
-  docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
-}
-
-start_database_with_name_alias() {
-  name="$1"
-  shift
-  alias="$1"
-  shift
-
-  # Separate arguments: pre-"--" are for Docker, the rest are commandline
-  declare -a docker_args=()
-  while [ "$1" != "--" ]; do
-    docker_args+=($1)
-    shift
-  done
-  shift # nix "--"
-
-  echo "Starting $name…" >&2
-  image_id=$(
-    docker run \
-      --detach \
-      --env POSTGRES_USER=cjworkbench \
-      --env POSTGRES_PASSWORD=cjworkbench \
-      --env POSTGRES_DB=cjworkbench \
-      --env PGDATA=/var/lib/postgresql/data/10.4 \
-      "${docker_args[@]}" \
-      --network "$NETWORK_NAME" \
-      --publish-all \
-      --network-alias "$alias" \
-      --name "${PREFIX}_${name}" \
-      $(pulled_or_cached_image_id "postgres:10.4") \
-      postgres "$@"
-  )
-}
-
-start_database() {
-  start_database_with_name_alias database workbench-db --volume "$DBDATA_VOLUME_NAME" -- -c synchronous_commit=off
-}
-
-start_redis() {
-  echo 'Starting redis…' >&2
-  docker run \
-    --detach \
-    --network "$NETWORK_NAME" \
-    --network-alias "redis" \
-    --name "${PREFIX}_redis" \
-    $(pulled_or_cached_image_id "redis:4.0.10")
-}
-
-start_webpack() {
-  echo 'Starting webpack…' >&2
-  run_node \
-    --detach \
-    --name "${PREFIX}_webpack" \
-    -- node_modules/.bin/webpack --mode development --watch
-}
-
-start_backend() {
-  echo 'Starting backend…' >&2
-  run_python \
-    --detach \
-    --name "${PREFIX}_backend" \
-    -- python ./manage.py run-background-loop
-}
-
-start_frontend() {
-  echo 'Starting frontend…' >&2
-  run_python \
-    --detach \
-    --name "${PREFIX}_frontend" \
-    --publish 127.0.0.1:8000:8080/tcp \
-    -- python ./manage.py runserver --insecure 0.0.0.0:8080
-}
-
-get_pydev_image_id() {
-  if [ -z "$PYBASE_IMAGE_ID" ]; then
-    PYBASE_IMAGE_ID="$(docker build -q . --target=pydev)"
-  fi
-
-  echo "$PYBASE_IMAGE_ID"
-}
-
-run_pipenv() {
-  # Separate arguments: pre-"--" are for Docker, the rest are commandline
-  declare -a docker_args=()
-  while [ "$1" != "--" ]; do
-    docker_args+=($1)
-    shift
-  done
-  shift # nix "--"
-
-  # Add volumes to $docker_args...:
-  # 1. Read-only folders and files, omitted if missing.
-  #    (The folders won't ever be missing. The files are optional secrets which
-  #    are only read during initialization.)
-  touch webpack-stats.json
-  for ro_path in \
-    assets \
-    templates \
-    manage.py \
-    webpack-stats.json \
-    twitter_secret.json \
-    client_secret.json \
-    socialaccount_secrets.json; do
-    if [ -f "$ro_path" -o -d "$ro_path" ]; then
-      docker_args+=(--volume "$ABSDIR"/"$ro_path":/app/"$ro_path":ro)
-    fi
-  done
-
-  # 2. Read-write files, always present.
-  # Pipfile and Pipfile.lock are managed by the 'pipenv' command.
-  # cjworkbench/migrations and server/migrations are written by manage.py
-  for rw_path in cjworkbench server Pipfile Pipfile.lock; do
-    touch "$rw_path"
-    docker_args+=(--volume "$ABSDIR"/"$rw_path":/app/"$rw_path":rw)
-  done
-
-  # 3. Read-write directories, which we must ensure are present.
-  for rw_dir in importedmodules local_mail media; do
-    if [[ "${docker_args[@]}" =~ ":/app/$rw_dir:rw " ]]; then
-        # We're calling this with the --volume already specified
-        # e.g., unittest already mounts importedmodules+media
-        sleep 0
-    else
-        mkdir -p "$rw_dir"
-        docker_args+=(--volume "$ABSDIR"/"$rw_dir":/app/"$rw_dir":rw)
-    fi
-  done
-
-  docker run \
-    -i -t --rm \
-    --env PYTHONUNBUFFERED=1 \
-    --env CJW_REDIS_HOST=redis \
-    --env CJW_DB_HOST=workbench-db \
-    --env CJW_DB_PASSWORD=cjworkbench \
-    --env CJW_MOCK_EMAIL=true \
-    --network "$NETWORK_NAME" \
-    --volume "$VIRTUALENV_VOLUME_NAME":/root/.local/share/virtualenvs:rw \
-    "${docker_args[@]}" \
-    $(get_pydev_image_id) \
+# docker-compose with overrides
+#
+# https://github.com/docker/compose/issues/1896 gives docker-compose's rationale
+# for keeping our 'migrate' and 'test' runners outside of docker-compose.yml.
+docker_compose_with_commands() {
+  docker-compose \
+    -f docker-compose.yml \
+    -f docker-compose.commands.yml \
     "$@"
-}
-
-# e.g., 'run_python --name foo -- python ./manage.py migrate'
-run_python() {
-  # Separate arguments: pre-"--" are for Docker, the rest are commandline
-  declare -a docker_args=()
-  while [ "$1" != "--" ]; do
-    docker_args+=($1)
-    shift
-  done
-  shift # nix "--"
-
-  run_pipenv "${docker_args[@]}" -- pipenv run "$@"
-}
-
-run_node() {
-  # Separate arguments: pre-"--" are for Docker, the rest are commandline
-  declare -a docker_args=()
-  while [ "$1" != "--" ]; do
-    docker_args+=($1)
-    shift
-  done
-  shift # nix "--"
-
-  # Add volumes to $docker_args...:
-  # 1. Read-only paths
-  for ro_path in \
-    __mocks__/ \
-    setupJest.js \
-    webpack.config.js; do
-    touch "$ro_path"
-    docker_args+=(--volume "$ABSDIR"/"$ro_path":/app/"$ro_path":ro)
-  done
-
-  # 2. Read-write paths
-  # package.json and package-lock.json are written by npm; assets and
-  # webpack-stats.json are written by Webpack
-  for rw_path in \
-    assets/ \
-    package.json \
-    package-lock.json \
-    webpack-stats.json; do
-    docker_args+=(--volume "$ABSDIR"/"$rw_path":/app/"$rw_path":rw)
-  done
-
-  node_image_id="$(docker build -q . --target=jsbase)"
-
-  docker run \
-    -i -t --rm \
-    --volume "$NODE_MODULES_VOLUME_NAME":/app/node_modules:rw \
-    "${docker_args[@]}" \
-    "$node_image_id" \
-    "$@"
-}
-
-start_testdb() {
-  start_database_with_name_alias testdb testdb -- -c fsync=off -c full_page_writes=off
-}
-
-# Usage: 'unittest server.tests.modules'
-run_unittest() {
-  [ "$(get_container_status redis)" = 'running' ] && echo 'Redis already running' >&2 || start_redis
-  [ "$(get_container_status testdb)" = 'running' ] && echo 'testdb already running' >&2 || start_testdb
-  shift # "unittest" is not a command
-  run_python \
-    --env CJW_DB_HOST=testdb \
-    --volume "$TEST_IMPORTEDMODULES_VOLUME_NAME:/app/importedmodules:rw" \
-    --volume "$TEST_MEDIA_VOLUME_NAME:/app/media:rw" \
-    --name "${PREFIX}_unittest" \
-    -- python ./manage.py test --keepdb "$@"
-}
-
-run_develop_module() {
-  shift # "develop-module"
-  module_dir="$1"
-  shift # module_dir
-  module_name="$(basename "$module_dir")"
-
-  # --//develop-module/... (with the extra slash) circumvents
-  # https://github.com/moby/moby/issues/24029 on Git for Windows Bash
-  run_python \
-    --volume "$ABSDIR/$module_dir:/develop-module/$module_name:ro" \
-    --name "${PREFIX}_develop_module" \
-    -- python ./manage.py develop-module "//develop-module/$module_name" "$@"
 }
 
 print_usage() {
@@ -339,89 +47,48 @@ print_usage() {
   echo '  start -- starts database, Redis, Webpack and Python' >&2
   echo '  stop -- stops services created by start' >&2
   echo '  unittest ARGS -- runs "./manage.py test ARGS..."' >&2
-}
-
-follow_all_logs() {
-  echo 'Logging not supported yet' >&2
+  echo '  run SERVICE ARGS -- runs "docker-compose run -rm SERVICE ARGS..."' >&2
 }
 
 case "$1" in
   "npm")
-    run_node -- "$@"
+    shift
+    docker_compose run --rm webpack npm "$@"
     ;;
 
   "python")
-    run_python -- "$@"
+    shift
+    docker_compose run --rm frontend pipenv run python "$@"
     ;;
 
   "pipenv")
-    run_pipenv -- "$@"
+    shift
+    docker_compose run --rm frontend pipenv "$@"
     ;;
 
   "unittest")
-    run_unittest "$@"
+    shift
+    docker_compose_with_commands run --rm unittest pipenv run python ./manage.py test "$@"
     ;;
 
   "develop-module")
-    run_develop_module "$@"
+    echo 'FIXME gotta re-develop this one to work with docker-compose somehow' >&2
+    exit 1
     ;;
 
   "start")
-    case "$2" in
-      "database")
-        stop_container_if_running "$2"
-        start_database
-        ;;
-
-      "testdb")
-        stop_container_if_running "$2"
-        start_testdb
-        ;;
-
-      "redis")
-        stop_container_if_running "$2"
-        start_redis
-        ;;
-
-      "frontend")
-        stop_container_if_running "$2"
-        start_frontend
-        ;;
-
-      "backend")
-        stop_container_if_running "$2"
-        start_backend
-        ;;
-
-      "webpack")
-        stop_container_if_running "$2"
-        start_webpack
-        ;;
-
-      "")
-        start_all
-        ;;
-
-      *)
-        print_usage
-        ;;
-    esac
+    docker_compose_with_commands run migrate
+    docker_compose up
     ;;
 
   "stop")
-    case "$2" in
-      "database" | "frontend" | "backend" | "redis" | "webpack" | "testdb")
-        stop_container_if_running "$2"
-        ;;
+    docker_compose_with_commands down -t0
+    docker_compose_with_commands rm -f -v # -v removes _anonymous_ volumes
+    ;;
 
-      "")
-        stop_all
-        ;;
-
-      *)
-        print_usage
-        ;;
-    esac
+  "run")
+    shift
+    docker_compose_with_commands run --rm "$@"
     ;;
 
   "")

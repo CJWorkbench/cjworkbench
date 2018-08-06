@@ -1,50 +1,82 @@
 # Bring up all the pieces necessary to run the workbench
-# Data persists in dbdata in local dir
+# Data persists in Docker volumes and in local dir
 
 # This file passes through all necessary env variables to requisite
 # Docker containers and makes them available when running commands via
-# `docker exec`. The environment variables need to be set by the user, either
-# with a .env file or some other means.
+# `docker exec`.
 
 version: '3.4'
 
 services:
-
   database:
     image: postgres:10.4
-    container_name: workbench-db
     environment:
       - POSTGRES_USER=cjworkbench
       - POSTGRES_PASSWORD=cjworkbench
       - POSTGRES_DB=cjworkbench
       - PGDATA=/var/lib/postgresql/data/10.4
-    ports:
-      - "5432:5432"
+    networks: [ 'dev' ]
     volumes:
-      - cjworkbench_dev_dbdata
+      - dbdata:/var/lib/postgresql/data
 
-  frontend:
+  redis:
+    image: redis:4.0.10
+    networks: [ 'dev' ]
+
+  webpack:
     build:
       context: .
+      target: jsbase
+    volumes:
+      # Migrate 
+      - ./:/app/:rw
+    networks: [ 'dev' ]
+    command: node_modules/.bin/webpack --mode development --watch
+
+  frontend:
+    build: &python-build
+      context: .
       target: pydev
-    container_name: frontend
+    volumes: &python-volumes
+      - ./:/app/:rw
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
+    environment: &pydev-environment
+      PYTHONUNBUFFERED: '1'
+      CJW_DB_HOST: database
+      CJW_REDIS_HOST: redis
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+    networks: [ 'dev' ]
+    depends_on: [ 'database', 'redis' ]
+    command: [ 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
+
+  backend:
+    build: *python-build
+    volumes: *python-volumes
+    environment: *pydev-environment
+    depends_on: [ 'database', 'redis' ]
+    networks: [ 'dev' ]
+    command: [ 'python', './manage.py', 'run-background-loop' ]
+
+  testdatabase:
+    image: postgres:10.4
     environment:
       - POSTGRES_USER=cjworkbench
-      - CJW_DB_PASSWORD=cjworkbench
-      - CJW_DB_HOST=workbench-db
-    depends_on:
-      - database
-    links:
-      - database
-    volumes:
-      - ./:/app
-      - cjworkbench_dev_virtualenvs:/root/.local/share/virtualenvs
-    ports:
-      - "8080:8080"
-    command: bash -c "pipenv install --dev --system && ./bin/migrate-prod && python ./manage.py runserver --insecure 0.0.0.0:8080"
+      - POSTGRES_PASSWORD=cjworkbench
+      - POSTGRES_DB=cjworkbench
+      - PGDATA=/var/lib/postgresql/data/10.4
+    networks: [ 'test' ]
+    # no volumes: we wipe this DB a lot
 
+  testredis:
+    image: redis:4.0.10
+    networks: [ 'test' ]
+
+networks:
+  dev: {}
+  test: {}
 
 volumes:
-    cjworkbench_dev_dbdata: {}
-    cjworkbench_dev_virtualenvs:
-      external: true
+  dbdata: {}
+  virtualenvs: {}
