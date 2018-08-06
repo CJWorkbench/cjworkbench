@@ -218,7 +218,7 @@ export default class WfParameter extends React.Component {
               isReadOnly={this.props.isReadOnly}
             />
             <div className="d-flex justify-content-between mt-2">
-              <DataVersionSelect wfModuleId={this.props.wfModuleId} />
+              <DataVersionSelect wfModuleId={this.props.wfModuleId}/>
               {button}
             </div>
 
@@ -227,7 +227,7 @@ export default class WfParameter extends React.Component {
       case 'version_select_simpler':
         return (
           <div className='versionSelect--uploadFile'>
-            <DataVersionSelect wfModuleId={this.props.wfModuleId} />
+            <DataVersionSelect wfModuleId={this.props.wfModuleId}/>
           </div>
         );
       case 'colrename':
@@ -239,7 +239,7 @@ export default class WfParameter extends React.Component {
               renameParam={renameParam}
               saveState={this.colRenameSaveState}
               getColNames={this.getInputColNames}
-              revision={this.props.revision} />
+              revision={this.props.revision}/>
           </div>
         );
       case 'file':
@@ -306,7 +306,6 @@ export default class WfParameter extends React.Component {
             revision={this.props.revision}
             isReadOnly={this.props.isReadOnly}
           />
-<<<<<<< HEAD
         )
       case 'y_columns':
         return (
@@ -317,49 +316,44 @@ export default class WfParameter extends React.Component {
             series={JSON.parse(this.props.p.value || '[]')}
             fetchInputColumns={this.fetchInputColumns}
             onChange={this.onChangeYColumns}
-            />
+          />
+        )
+      case 'map-geojson':
+        return (
+          <MapLocationDropZone
+            api={this.props.api}
+            name={this.props.p.parameter_spec.name}
+            paramData={this.props.p.value}
+            paramId={this.props.p.id}
+            isReadOnly={this.props.isReadOnly}
+          />
+        )
+      case 'map-presets':
+        return (
+          <MapLocationPresets
+            api={this.props.api}
+            name={this.props.p.parameter_spec.name}
+            paramData={this.props.p.value}
+            paramId={this.props.p.id}
+            isReadOnly={this.props.isReadOnly}
+          />
+        )
+      case 'map-layers':
+        return (
+          <MapLayerEditor
+            api={this.props.api}
+            name={this.props.p.parameter_spec.name}
+            paramId={this.props.p.id}
+            keyColumn={this.props.getParamText("key-column")}
+            wfModuleId={this.props.wf_module_id}
+            isReadOnly={this.props.isReadOnly}
+            paramData={this.props.p.value}
+          />
         )
       default:
         return (
           <p className="error">Custom type {id_name} not handled</p>
         )
-=======
-      )
-    } else if (id_name == 'map-geojson') {
-      return (
-          <MapLocationDropZone
-              api={this.props.api}
-              name={this.props.p.parameter_spec.name}
-              paramData={this.props.p.value}
-              paramId={this.props.p.id}
-              isReadOnly={this.props.isReadOnly}
-          />
-      )
-    } else if (id_name == 'map-presets') {
-      return (
-          <MapLocationPresets
-              api={this.props.api}
-              name={this.props.p.parameter_spec.name}
-              paramData={this.props.p.value}
-              paramId={this.props.p.id}
-              isReadOnly={this.props.isReadOnly}
-          />
-      )
-    } else if (id_name == 'map-layers') {
-      return (
-          <MapLayerEditor
-              api={this.props.api}
-              name={this.props.p.parameter_spec.name}
-              paramId={this.props.p.id}
-              keyColumn={this.props.getParamText("key-column")}
-              wfModuleId={this.props.wf_module_id}
-              isReadOnly={this.props.isReadOnly}
-              paramData={this.props.p.value}
-          />
-      )
-    } else {
-      return (<p className="error">Custom type {id_name} not handled</p>)
->>>>>>> origin/choropleth-map
     }
   }
 
