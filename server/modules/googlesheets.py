@@ -104,7 +104,8 @@ def download_data_frame(sheet_id: str, sheet_mime_type: str,
 class GoogleSheets(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
-        return ProcessResult(wf_module.retrieve_fetched_table())
+        return ProcessResult(wf_module.retrieve_fetched_table(),
+                             wf_module.error_msg)
 
     @staticmethod
     def event(wf_module, **kwargs):

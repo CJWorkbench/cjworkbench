@@ -60,4 +60,5 @@ def upload_to_table(wf_module, uploaded_file):
 class UploadFile(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
-        return ProcessResult(wf_module.retrieve_fetched_table())
+        return ProcessResult(wf_module.retrieve_fetched_table(),
+                             wf_module.error_msg)

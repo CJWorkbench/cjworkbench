@@ -19,7 +19,7 @@ class Twitter(ModuleImpl):
     # Get dataframe of last tweets fron our storage,
     @staticmethod
     def get_stored_tweets(wf_module):
-        return wf_module.retrieve_fetched_table()
+        return (wf_module.retrieve_fetched_table(), wf_module.error_msg)
 
     # Get from Twitter, return as dataframe
     @staticmethod
