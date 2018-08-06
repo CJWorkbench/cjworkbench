@@ -64,9 +64,6 @@ export default class MapLocationPresets extends React.Component {
         const presets = [
             {filename: 'us-states', display: 'US states'},
             {filename: 'us-states-abbr', display: 'US states (abbreviation)'},
-            {filename: 'contiguous-us-states', display: 'Contiguous US states'},
-            {filename: 'contiguous-us-states-abbr', display: 'Contiguous US states (abbreviation)'},
-            {filename: 'nyc-precincts', display: 'NYC precincts'}
         ];
         const presetOptions = presets.map((p) => {
             return (

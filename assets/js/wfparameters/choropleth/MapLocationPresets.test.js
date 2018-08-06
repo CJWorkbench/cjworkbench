@@ -24,7 +24,6 @@ describe('MapLocationPresets rendering and interactions', () => {
         expect(tree.find('select')).toHaveLength(1);
         expect(tree.find('select').prop('value')).toEqual('select');
 
-        // The following test assume that "us-states" and "nyc-precincts" presets exist.
         // If they are removed, update the tests here.
         let presetOptions = [];
         tree.find('option').forEach((node) => {
@@ -32,7 +31,6 @@ describe('MapLocationPresets rendering and interactions', () => {
         });
         expect(presetOptions.includes('select')).toBe(true);
         expect(presetOptions.includes('us-states')).toBe(true);
-        expect(presetOptions.includes('nyc-precincts')).toBe(true);
     });
 
     it('Renders the previously-selected preset according to parameter data', () => {
