@@ -87,6 +87,13 @@ function addEditToEditCellsModule (wfm, params) {
   if (param.value) {
     try {
       edits = JSON.parse(param.value)
+      // Remove the previous edit to the same cell
+      let idx = edits.findIndex((element) => {
+        return element.row === params[0].row && element.col === params[0].col
+      })
+      if (idx > -1) {
+        edits.splice(idx, idx + 1)
+      }
     } catch (err) {
       console.error(err)
       edits = []

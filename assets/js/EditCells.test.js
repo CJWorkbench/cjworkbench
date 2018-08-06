@@ -7,6 +7,7 @@ describe('Edit Cell actions', () => {
   const idName = 'editcells'
   const Edit1 = { row: 3, col: 'foo', value: 'bar' }
   const Edit2 = { row: 10, col: 'bar', value: 'yippee!' }
+  const Edit3 = { row: 3, col: 'foo', value: 'new!' }
 
   // Stripped down workflow object, only what we need for testing cell editing
   const test_workflow = {
@@ -97,6 +98,10 @@ describe('Edit Cell actions', () => {
   it('adds edit to existing Edit Cell module', () => {
     updateTableActionModule(20, idName, false, Edit2)
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit1, Edit2 ]) ])
+
+    // Replace the previous edit of the same cell
+    updateTableActionModule(20, idName, false, Edit3)
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', 101, JSON.stringify([ Edit3 ]) ])
   })
 
   it('selects the Edit Cell module it is editing', () => {
