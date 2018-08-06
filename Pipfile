@@ -32,8 +32,8 @@ pyjwt = "*"
 channels-redis = "*"
 workbenchdata-pandas = "==0.24.0a3"
 cchardet = "*"
-fastparquet = "*"
 python-snappy = "*"
+workbenchdata-fastparquet = "==0.1.6a2"
 
 [dev-packages]
 mock = "==2.0.0"
