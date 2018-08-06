@@ -1,3 +1,4 @@
+# coding=utf-8
 from selenium.webdriver.support.wait import WebDriverWait
 from integrationtests.utils import LoggedInIntegrationTest
 
