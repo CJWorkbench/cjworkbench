@@ -44,23 +44,58 @@ class SantizeDataframeTest(TestCase):
         )
 
     def test_lists_and_dicts(self):
-        # By assigning through Series it is possible to store lists and dicts
-        # in a DataFrame. True fact. Fucks people up. But not us.
-        t = pd.DataFrame([[1, 2, 3], [4, 5, 6]], columns=['a', 'b', 'c'])
-        s = pd.Series([None, None])
-        s[0] = [5, 6, 7]
-        s[1] = {8: 9}
-        t['s'] = s
-        sanitize_dataframe(t)
-        self.assertEqual(t['s'][0], '[5, 6, 7]')
-        self.assertEqual(t['s'][1], '{8: 9}')
+        result = pd.DataFrame({'A': [[5, 6, 7], {'a': 'b'}]})
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['[5, 6, 7]', "{'a': 'b'}"]})
+        assert_frame_equal(result, expected)
 
     def test_duplicate_colnames(self):
         # check that duplicate cols are renamed, and that non-string names are
         # converted to string
-        t = pd.DataFrame([[1, 2, 3], [4, 5, 6]], columns=['a', 20.0, 'a'])
-        sanitize_dataframe(t)
-        self.assertEqual(list(t.columns), ['a', '20', 'a_1'])
+        result = pd.DataFrame(
+            data=[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6], [3, 4, 5, 6, 7]],
+            columns=['A', 'B', 'B', 'A', 'A']
+        )
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({
+            'A': [1, 2, 3],
+            'B': [2, 3, 4],
+            'B_1': [3, 4, 5],
+            'A_1': [4, 5, 6],
+            'A_2': [5, 6, 7],
+        })
+        assert_frame_equal(result, expected)
+
+    def test_duplicate_colnames_rename_conflict(self):
+        # check that duplicate cols are renamed, and that non-string names are
+        # converted to string
+        result = pd.DataFrame(data=[[1, 2, 3], [2, 3, 4], [3, 4, 5]],
+                              columns=['A', 'A_1', 'A'])
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({
+            'A': [1, 2, 3],
+            'A_1': [2, 3, 4],
+            'A_1_1': [3, 4, 5],
+        })
+        assert_frame_equal(result, expected)
+
+    def test_nonstr_colnames(self):
+        # #157901159: "first row is header" option gives int column name, but
+        # Workbench requires str
+        result = pd.DataFrame(data=[['a', 'b'], ['c', 'd']],
+                              columns=['A', 3])
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['a', 'c'], '3': ['b', 'd']})
+        assert_frame_equal(result, expected)
+
+    def test_rename_colnames_while_converting_types(self):
+        # when we replace a column, there must not be duplicates. In other
+        # words: rename-duplicates must come before replace.
+        result = pd.DataFrame(data=[['a', {'a': 'b'}], ['c', 'd']],
+                              columns=['A', 3])
+        sanitize_dataframe(result)
+        expected = pd.DataFrame({'A': ['a', 'c'], '3': ["{'a': 'b'}", 'd']})
+        assert_frame_equal(result, expected)
 
     def test_reset_index(self):
         # should always come out with row numbers contiguous from zero

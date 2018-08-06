@@ -22,13 +22,6 @@ def safe_column_to_string(col: pd.Series) -> pd.Series:
     return col.apply(value_str_or_empty_str)
 
 
-def str_or_na(v):
-    if v is np.nan or v is pd.NaT or v is None:
-        return np.nan
-    else:
-        return str(v)
-
-
 def _colname_to_str(c: Any) -> str:
     """
     Cast a column name to str.
@@ -42,19 +35,34 @@ def _colname_to_str(c: Any) -> str:
         return str(c)
 
 
-def _rename_duplicate_columns_in_place(table: pd.DataFrame) -> None:
+def _rename_duplicate_and_nonstr_columns_in_place(table: pd.DataFrame) -> None:
     """
-    Modify column names so they are all unique.
+    Modify column names so they are all unique and str.
     """
-    newcols = []
-    for item in table.columns:
-        counter = 0
-        newitem = _colname_to_str(item)
-        while newitem in newcols:
-            counter += 1
-            newitem = newitem + '_' + str(counter)
-        newcols.append(newitem)
-    table.columns = newcols
+    counts = {}
+
+    def unique_name(ideal_name: str) -> str:
+        """
+        Generate a guaranteed-unique column name, using `counts` as state.
+
+        Strategy for making 'A' unique:
+
+        * If 'A' has never been seen before, return it.
+        * If 'A' has been seen before, try 'A_1' or 'A_2' (where 1 and 2 are
+          the number of times 'A' has been seen).
+        * If there is a conflict on 'A_1', recurse.
+        """
+        if ideal_name not in counts:
+            counts[ideal_name] = 1
+            return ideal_name
+
+        count = counts[ideal_name]
+        counts[ideal_name] += 1
+        backup_name = f'{ideal_name}_{count}'
+        return unique_name(backup_name)
+
+    table.columns = list([unique_name(_colname_to_str(name))
+                          for name in table.columns])
 
 
 # full type list:
@@ -96,7 +104,10 @@ def sanitize_series(series: pd.Series) -> pd.Series:
         series = series.cat.remove_unused_categories()
         return series
     elif dtype not in _AllowedDtypes:
-        return series.apply(str_or_na)
+        # convert all non-NA to str
+        ret = series.astype(str)
+        ret[series.isna()] = np.nan
+        return ret
     else:
         return series
 
@@ -118,16 +129,16 @@ def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:
     if table is None:
         return pd.DataFrame()
 
+    # renumber row indices so always 0..n
+    table.index = pd.RangeIndex(len(table.index))
+
+    _rename_duplicate_and_nonstr_columns_in_place(table)
+
     for colname in table.columns:
         column = table[colname]
         sane_column = sanitize_series(column)
         if sane_column is not column:  # avoid SettingWithCopyWarning
             table[colname] = sane_column
-
-    _rename_duplicate_columns_in_place(table)
-
-    # renumber row indices so always 0..n
-    table.index = pd.RangeIndex(len(table.index))
 
     return table
 
