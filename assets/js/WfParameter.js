@@ -130,15 +130,8 @@ export default class WfParameter extends React.Component {
     this.paramChanged(e.target.value)
   }
 
-  // Send event to server for button click
-  click = (e) => {
-    const type = this.props.p.parameter_spec.type
-
-    if (type === 'checkbox') {
-      this.paramChanged(e.target.checked)
-    } else if (type === 'string' && !this.props.isReadOnly) {
-      this.stringRef.select()
-    }
+  onClickCheckbox = (ev) => {
+    this.paramChanged(ev.target.checked)
   }
 
   // Return array of column names available to us, as a promise
@@ -149,9 +142,7 @@ export default class WfParameter extends React.Component {
   // set contents of HTML input field corresponding to our type
   setInputValue (val) {
     const type = this.props.p.parameter_spec.type
-    if (type === 'string' && this.stringRef) {
-      this.stringRef.value = val
-    } else if (type === 'checkbox' && this.checkboxRef) {
+    if (type === 'checkbox' && this.checkboxRef) {
       this.checkboxRef.value = val
     } else if ((type === 'integer' || type === 'float') && this.numberRef) {
       this.numberRef.value = val
@@ -159,7 +150,7 @@ export default class WfParameter extends React.Component {
   }
 
   // We need to update input contents when we get new props
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps (newProps) {
     // If this is our first time through, update form controls to current values
     // this conditional fixes https://www.pivotaltracker.com/story/show/154104065
     // TODO WTF? Nix this; React state solves this tidily.
@@ -396,15 +387,13 @@ export default class WfParameter extends React.Component {
               <div className='label-margin t-d-gray content-3'>{name}</div>
               <textarea
                 onBlur={this.blur}
-                onClick={this.click}
                 readOnly={this.props.isReadOnly}
                 className='module-parameter t-d-gray content-3 text-field-large'
                 name={id_name}
                 rows={4}
                 defaultValue={this.props.p.value}
                 placeholder={this.props.p.parameter_spec.placeholder || ''}
-                ref={ el => this.stringRef = el}
-                />
+              />
             </div>
           )
         } else {
@@ -460,7 +449,7 @@ export default class WfParameter extends React.Component {
                 disabled={this.props.isReadOnly}
                 type="checkbox" className="checkbox"
                 checked={this.props.p.value}
-                onChange={this.click}
+                onChange={this.onClickCheckbox}
                 name={id_name}
                 ref={ el => this.checkboxRef = el}
                 id={this.props.p.id} />
