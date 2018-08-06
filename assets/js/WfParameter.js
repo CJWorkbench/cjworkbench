@@ -19,6 +19,9 @@ import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
+import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
+import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
+import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -303,6 +306,7 @@ export default class WfParameter extends React.Component {
             revision={this.props.revision}
             isReadOnly={this.props.isReadOnly}
           />
+<<<<<<< HEAD
         )
       case 'y_columns':
         return (
@@ -319,6 +323,43 @@ export default class WfParameter extends React.Component {
         return (
           <p className="error">Custom type {id_name} not handled</p>
         )
+=======
+      )
+    } else if (id_name == 'map-geojson') {
+      return (
+          <MapLocationDropZone
+              api={this.props.api}
+              name={this.props.p.parameter_spec.name}
+              paramData={this.props.p.value}
+              paramId={this.props.p.id}
+              isReadOnly={this.props.isReadOnly}
+          />
+      )
+    } else if (id_name == 'map-presets') {
+      return (
+          <MapLocationPresets
+              api={this.props.api}
+              name={this.props.p.parameter_spec.name}
+              paramData={this.props.p.value}
+              paramId={this.props.p.id}
+              isReadOnly={this.props.isReadOnly}
+          />
+      )
+    } else if (id_name == 'map-layers') {
+      return (
+          <MapLayerEditor
+              api={this.props.api}
+              name={this.props.p.parameter_spec.name}
+              paramId={this.props.p.id}
+              keyColumn={this.props.getParamText("key-column")}
+              wfModuleId={this.props.wf_module_id}
+              isReadOnly={this.props.isReadOnly}
+              paramData={this.props.p.value}
+          />
+      )
+    } else {
+      return (<p className="error">Custom type {id_name} not handled</p>)
+>>>>>>> origin/choropleth-map
     }
   }
 
