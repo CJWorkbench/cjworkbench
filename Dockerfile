@@ -3,7 +3,9 @@ FROM python:3.6.6-slim-stretch AS pybase
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
-# postgresql-client: because we poll the DB on prod before ./manage.py migrate
+# postgresql-client: because we poll the DB:
+# * on prod before ./manage.py migrate
+# * on unittest before ./manage.py test
 # git: because sometimes we throw git revisions in the Pipfile -- which is always lazy
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
@@ -26,10 +28,13 @@ FROM pybase AS pydev
 # * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
+# * fastparquet
+# * python-snappy
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
+      libsnappy-dev \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -46,43 +51,24 @@ COPY Pipfile Pipfile.lock /app/
 # * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
+# * fastparquet
+# * python-snappy
+# ... and we want to keep libsnappy around after the fact, too
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
+      libsnappy1v5 \
+      libsnappy-dev \
     && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
       build-essential \
+      libsnappy-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
 # nltk models (for sentiment)
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
-
-
-# 1.1 integration-test deps
-# Depends on pybuild because integration tests run Django shell to fiddle
-# with database.
-FROM pybuild AS integration-test-deps
-
-RUN pip install capybara-py selenium
-# Install Firefox deps (and curl and xvfb). Debian Stretch has Firefox v52,
-# which is way too old; but we'll install 52's dependencies and hope they
-# satisfy Firefox v61
-RUN apt-get update \
-    && bash -c 'apt-get install -y --no-install-recommends $(apt-cache depends firefox-esr | awk "/Depends:/{print\$2}")' \
-    && apt-get install --no-install-recommends -y \
-        curl \
-        xauth \
-        xvfb \
-        bzip2 \
-    && rm -rf /var/lib/apt/lists/*
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0.1/linux-x86_64/en-US/firefox-61.0.1.tar.bz2 \
-        | tar jx -C /opt \
-        && ln -s /opt/firefox/firefox /usr/bin/firefox
-RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz \
-        | tar zx -C /usr/bin/ \
-        && chmod +x /usr/bin/geckodriver
 
 
 # 2. Node deps -- completely independent
@@ -119,9 +105,6 @@ COPY server/ /app/server/
 COPY bin/ /app/bin/
 COPY templates/ /app/templates/
 COPY manage.py /app/
-# Inject unit tests into our continuous integration
-# This is how Travis tests
-RUN ./manage.py test -v2
 
 # 3.1. migrate: runs ./manage.py migrate
 FROM base AS migrate
@@ -137,11 +120,3 @@ FROM base AS frontend
 EXPOSE 8080
 # TODO nix --insecure; serve static files elsewhere
 CMD [ "./manage.py", "runserver", "--insecure", "0.0.0.0:8080" ]
-
-# 4. integration-test: tests all the above
-FROM integration-test-deps AS integration-test
-WORKDIR /app
-COPY cjworkbench/ /app/cjworkbench/
-COPY server/ /app/server/
-COPY integrationtests/ /app/integrationtests/
-CMD [ "sh", "-c", "xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests" ]

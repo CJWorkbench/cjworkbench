@@ -1,166 +1,324 @@
-import io
 import json
+import unittest
+import numpy as np
 import pandas as pd
-from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
-        load_and_add_module, get_param_by_id_name
-from server.execute import execute_nocache
-from server.modules.refine import Refine
+from typing import Any, Dict, List
+from pandas.testing import assert_frame_equal
+from server.modules.refine import Refine, RefineSpec
 from server.modules.types import ProcessResult
 
 
-test_csv = '\n'.join([
-    'name,date,count',
-    'Dolores,1524355200000,3',
-    'Bernard,1524355200000,5',
-    'Ford,1475366400000,5',
-    'Dolores,1475366400000,4',
-])
-reference_table = pd.read_csv(io.StringIO(test_csv))
+class MockWfModule:
+    def __init__(self, column: str, refine: str):
+        self.column = column
+        self.refine = refine
+
+    def get_param_raw(self, param, _unused=''):
+        return getattr(self, param)
+
+    def get_param_column(self, param):
+        return getattr(self, param)
 
 
-class MockModule:
-    # A mock module that stores parameter data,
-    # for directly testing a module's render() function
-    # We can move this into test utils if it's more widely applicable
+class RefineSpecTest(unittest.TestCase):
+    def _test_parse_v0(self, column: str, arr: List[Dict[str, Any]],
+                       expected: RefineSpec) -> None:
+        """
+        Test that deprecated input is transformed into what the user expects.
+        """
+        result = RefineSpec.parse_v0(column, arr)
+        self.assertEqual(result.renames, expected.renames)
+        self.assertEqual(set(result.blacklist), set(expected.blacklist))
 
-    def __init__(self, params):
-        self.params = params
+    def test_parse_v0_filter(self):
+        self._test_parse_v0(
+            'A',
+            [{'type': 'select', 'column': 'A', 'content': {'value': 'foo'}}],
+            RefineSpec(blacklist=['foo'])
+        )
 
-    def get_param_raw(self, name, ptype):
-        if name in self.params:
-            return self.params[name]
-        return ''
+    def test_parse_v0_filter_toggle(self):
+        self._test_parse_v0(
+            'A',
+            [
+              {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
+              {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
+            ],
+            RefineSpec(blacklist=[])
+        )
 
-    def get_param_column(self, name):
-        if name in self.params:
-            return self.params[name]
-        return ''
+    def test_parse_v0_filter_multiple(self):
+        self._test_parse_v0(
+            'A',
+            [
+              {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
+              {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
+            ],
+            RefineSpec(blacklist=[])
+        )
 
-    def get_param_menu_idx(self, name):
-        if name in self.params:
-            return self.params[name]
-        return ''
+    def test_parse_v0_ignore_wrong_column(self):
+        self._test_parse_v0(
+            'A',
+            [{'type': 'select', 'column': 'B', 'content': {'value': 'foo'}}],
+            RefineSpec(blacklist=[])
+        )
 
+    def test_parse_v0_rename(self):
+        self._test_parse_v0(
+            'A',
+            [
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'x', 'toVal': 'y'}},
+            ],
+            RefineSpec({'x': 'y'})
+        )
 
-class RefineTests(LoggedInTestCase):
-    def setUp(self):
-        super(RefineTests, self).setUp()
-        self.workflow = create_testdata_workflow(csv_text=test_csv)
-        self.wf_module = load_and_add_module('refine', workflow=self.workflow)
-        self.edits_pval = get_param_by_id_name('refine')
-        self.column_pval = get_param_by_id_name('column')
-        self.edits = []
+    def test_parse_v0_cascade_rename(self):
+        self._test_parse_v0(
+            'A',
+            [
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'x', 'toVal': 'y'}},
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'y', 'toVal': 'z'}},
+            ],
+            RefineSpec({'x': 'z', 'y': 'z'})
+        )
 
-    def test_render_select(self):
-        # Perform a deselection
-        self.column_pval.value = 'name'
-        self.column_pval.save()
-        self.edits.append({
-            'type': 'select',
-            'column': 'name',
-            'content': {
-                'value': 'Dolores'
-            }
+    def test_parse_v0_blacklist_after_rename(self):
+        # The old logic would run one edit at a time, modifying the dataframe
+        # each time and adding a separate "selected" column. When the user
+        # added a 'change', the old logic would check the 'selected' of the
+        # destination value.
+        #
+        # ... this was a stateful and confusing way of accomplishing something
+        # terribly simple: rename first, then filter.
+        #
+        # Unfortunately, the behavior would depend on the values in the table.
+        # Now we don't: the user edits a set of instructions, not direct table
+        # values. Before, in this example, 'y' might be selected or it might
+        # be deselected. Now, after the upgrade, it's deselected. This isn't
+        # strictly compatible, but how hard are we meant to work on supporting
+        # this old format?
+        self._test_parse_v0(
+            'A',
+            [
+                {'type': 'select', 'column': 'A', 'content': {'value': 'x'}},
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'x', 'toVal': 'y'}},
+            ],
+            RefineSpec({'x': 'y'}, [])  # opinionated
+        )
+
+    def test_parse_v0_rename_remove_non_rename(self):
+        self._test_parse_v0(
+            'A',
+            [
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'x', 'toVal': 'y'}},
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'y', 'toVal': 'x'}},
+            ],
+            RefineSpec({'y': 'x'})
+        )
+
+    def test_parse_v0_valueerror_bad_select_bad_value(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse_v0('A', [
+                {'type': 'select', 'column': 'A', 'content': {'valu': 'x'}},
+            ])
+
+    def test_parse_v0_valueerror_bad_change_bad_content_key(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse_v0('A', [
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromValx': 'x', 'toVal': 'y'}},
+            ])
+
+    def test_parse_v0_valueerror_bad_change_no_content_key(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse_v0('A', [
+                {'type': 'change', 'column': 'A',
+                 'contentx': {'fromVal': 'x', 'toVal': 'y'}},
+            ])
+
+    def test_parse_v0_valueerror_bad_type(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse_v0('A', [
+                {'type': 'selec', 'column': 'A', 'content': {'value': 'x'}},
+            ])
+
+    def test_parse_v0_valueerror_not_dict(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse_v0('A', ['foo'])
+
+    def test_parse_v1_missing_renames(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse('A', {'enames': {}, 'blacklist': []})
+
+    def test_parse_v1_bad_renames(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse('A', {'renames': [], 'blacklist': []})
+
+    def test_parse_v1_bad_blacklist(self):
+        with self.assertRaises(ValueError):
+            RefineSpec.parse('A', {'renames': {}, 'blacklist': 3})
+
+    def test_parse_v1(self):
+        result = RefineSpec.parse('A', {
+            'renames': {'x': 'y', 'y': 'z'},
+            'blacklist': ['z']
         })
-        self.edits_pval.value = json.dumps(self.edits)
-        self.edits_pval.save()
-        result = execute_nocache(self.wf_module)
-        expected_table = reference_table[[False, True, True, False]]
-        # reset to contiguous indices
-        expected_table.index = pd.RangeIndex(len(expected_table.index))
-        self.assertEqual(result, ProcessResult(expected_table))
+        self.assertEqual(result.renames, {'x': 'y', 'y': 'z'})
+        self.assertEqual(result.blacklist, ['z'])
 
-        # Perform a selection on the same value, table should be back to normal
-        self.edits.append({
-            'type': 'select',
-            'column': 'name',
-            'content': {
-                'value': 'Dolores'
-            }
-        })
-        self.edits_pval.value = json.dumps(self.edits)
-        self.edits_pval.save()
-        result = execute_nocache(self.wf_module)
-        expected_table = reference_table[[True, True, True, True]]
-        self.assertEqual(result, ProcessResult(expected_table))
+    def _test_refine_spec_apply(self, in_table: pd.DataFrame, column: str,
+                                spec: RefineSpec,
+                                expected_out: pd.DataFrame=pd.DataFrame(),
+                                expected_error: str='') -> None:
+        """Render and assert the output is as expected."""
+        result = ProcessResult.coerce(spec.apply(in_table, column))
+        # Sanitize result+expected, so if sanitize changes these tests may
+        # break (which is what we want).
+        result.sanitize_in_place()
 
-    def test_render_edit(self):
-        # Perform a single edit on a string
-        self.column_pval.value = 'name'
-        self.column_pval.save()
-        self.edits.append({
-            'type': 'change',
-            'column': 'name',
-            'content': {
-                'fromVal': 'Dolores',
-                'toVal': 'Wyatt'
-            }
-        })
-        self.edits_pval.value = json.dumps(self.edits)
-        self.edits_pval.save()
-        result = execute_nocache(self.wf_module)
-        expected_table = reference_table.copy()
-        expected_table \
-            .loc[expected_table['name'] == 'Dolores', 'name'] = 'Wyatt'
-        self.assertEqual(result, ProcessResult(expected_table))
+        expected = ProcessResult(expected_out, expected_error)
+        expected.sanitize_in_place()
 
-        # Perform a single edit on a number
-        self.column_pval.value = 'count'
-        self.column_pval.save()
-        # Content are all strings as this is what we get from UI
-        self.edits = [{
-            'type': 'change',
-            'column': 'count',
-            'content': {
-                'fromVal': '5',
-                'toVal': '4'
-            }
-        }]
-        self.edits_pval.value = json.dumps(self.edits)
-        self.edits_pval.save()
-        result = execute_nocache(self.wf_module)
-        expected_table = reference_table.copy()
-        expected_table.loc[expected_table['count'] == 5, 'count'] = 4
-        self.assertEqual(result, ProcessResult(expected_table))
+        self.assertEqual(result.error, expected.error)
+        assert_frame_equal(result.dataframe, expected.dataframe)
 
-    def test_render_date(self):
-        # Since we don't have a upstream module that can feed dates with
-        # minimal fuss we will directly test Refine's render() function here.
-        dates_table = reference_table.copy()
-        dates_table['date'] = pd.to_datetime(dates_table['date'], unit='ms')
+    def test_refine_rename_to_new(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b']}),
+            'A',
+            RefineSpec({'b': 'c'}),
+            pd.DataFrame({'A': ['a', 'c']}, dtype='category')
+        )
 
-        # Perform a single edit on a date
-        self.edits = [{
-            'type': 'change',
-            'column': 'date',
-            'content': {
-                'fromVal': '2016-10-02 00:00:00',
-                'toVal': '2016-12-04 00:00:00'
-            }
-        }]
-        mock_refine = MockModule({
-            'column': 'date',
-            'refine': json.dumps(self.edits)
-        })
-        result = Refine.render(mock_refine, dates_table.copy())
-        expected_table = dates_table.copy()
-        expected_table \
-            .loc[expected_table['date'] == pd.Timestamp('2016-10-02 00:00:00'),
-                 'date'] = pd.Timestamp('2016-12-04 00:00:00')
-        self.assertEqual(result, ProcessResult(expected_table))
+    def test_refine_rename_category_to_new(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            RefineSpec({'b': 'c'}),
+            pd.DataFrame({'A': ['a', 'c']}, dtype='category')
+        )
 
-        # Perform a single selection on a date
-        self.edits = [{
-            'type': 'select',
-            'column': 'date',
-            'content': {
-                'value': '2016-10-02',
-            }
-        }]
-        mock_refine = MockModule({
-            'column': 'date',
-            'refine': json.dumps(self.edits)
-        })
-        result = Refine.render(mock_refine, dates_table.copy())
-        expected_table = dates_table[[True, True, False, False]]
-        self.assertEqual(result, ProcessResult(expected_table))
+    def test_refine_rename_category_to_existing(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            RefineSpec({'b': 'a'}),
+            pd.DataFrame({'A': ['a', 'a']}, dtype='category')
+        )
+
+    def test_refine_rename_swap(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            RefineSpec({'a': 'b', 'b': 'a'}),
+            pd.DataFrame({'A': ['b', 'a']}, dtype='category')
+        )
+
+    def test_refine_blacklist(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            RefineSpec({}, ['a']),
+            pd.DataFrame({'A': ['b']}, dtype='category')
+        )
+
+    def test_refine_cast_int_to_str(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': [1, 2]}),
+            'A',
+            RefineSpec({'1': '2'}),
+            pd.DataFrame({'A': ['2', '2']}, dtype='category')
+        )
+
+    def test_refine_cast_date_to_str(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': [np.datetime64('2018-08-03T17:12')]}),
+            'A',
+            RefineSpec({'2018-08-03 17:12:00': 'x'}),
+            pd.DataFrame({'A': ['x']}, dtype='category')
+        )
+
+    def _test_render(self, in_table: pd.DataFrame, column: str,
+                     edits_json: str,
+                     expected_out: pd.DataFrame=pd.DataFrame(),
+                     expected_error: str='') -> None:
+        """Test that the render method works (kinda an integration test)."""
+        wf_module = MockWfModule(column, edits_json)
+        result = Refine.render(wf_module, in_table)
+        result.sanitize_in_place()
+
+        expected = ProcessResult(expected_out, expected_error)
+        expected.sanitize_in_place()
+
+        self.assertEqual(result.error, expected.error)
+        if not result.dataframe.equals(expected.dataframe):
+            print(repr(result.dataframe))
+            print(repr(expected.dataframe))
+        assert_frame_equal(result.dataframe, expected.dataframe)
+
+    def test_render_no_column_is_no_op(self):
+        self._test_render(
+            pd.DataFrame({'A': ['b']}, dtype='category'),
+            '',
+            json.dumps({'renames': {}, 'blacklist': []}),
+            pd.DataFrame({'A': ['b']}, dtype='category')
+        )
+
+    def test_render_no_json_is_no_op(self):
+        self._test_render(
+            pd.DataFrame({'A': ['b']}, dtype='category'),
+            'A',
+            '',
+            pd.DataFrame({'A': ['b']}, dtype='category')
+        )
+
+    def test_render_parse_v0(self):
+        self._test_render(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            json.dumps([
+                {'type': 'change', 'column': 'A',
+                 'content': {'fromVal': 'a', 'toVal': 'c'}},
+                {'type': 'select', 'column': 'A', 'content': {'value': 'b'}},
+            ]),
+            pd.DataFrame({'A': ['c']}, dtype='category')
+        )
+
+    def test_render_parse_v1(self):
+        self._test_render(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            json.dumps({
+                'renames': {'a': 'c'},
+                'blacklist': ['b'],
+            }),
+            pd.DataFrame({'A': ['c']}, dtype='category')
+        )
+
+    def test_render_json_error(self):
+        self._test_render(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            'this is not json',
+            pd.DataFrame(),
+            'Internal error: Invalid JSON'
+        )
+
+    def test_render_parse_error(self):
+        self._test_render(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            json.dumps({
+                'renames': ['foo', 'bar'],
+                'blacklist': 4,
+            }),
+            pd.DataFrame(),
+            'Internal error: "renames" must be a dict from old value to new'
+        )

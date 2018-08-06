@@ -24,7 +24,7 @@ class VersionTests(TestCase):
         save_result_if_changed(self.wfm, ProcessResult(table))
         self.assertEqual(StoredObject.objects.count(), 2)
 
-    @override_settings(MAX_STORAGE_PER_MODULE=2000)
+    @override_settings(MAX_STORAGE_PER_MODULE=1000)
     def test_storage_limits(self):
         table = mock_csv_table
         stored_objects = self.wfm.stored_objects  # not queried yet

@@ -1,6 +1,8 @@
 import io
 import unittest
+import numpy
 import pandas
+from django.test import SimpleTestCase, override_settings
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio
 
@@ -19,36 +21,79 @@ ret = sorted(list([1, 2, sum([3, 4])]))
         self.assertEqual(env['ret'], [1, 2, 7])
 
 
-class ParseBytesIoTest(unittest.TestCase):
+class ParseBytesIoTest(SimpleTestCase):
     def test_parse_utf8_csv(self):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xc3\xa9'),
                                'text/csv', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['café']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['café']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
     def test_replace_invalid_utf8(self):
         # \xe9 is ISO-8859-1 and we select 'utf-8' to test Workbench's recovery
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['caf�']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['caf�']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
-    def test_autodetect_charset(self):
+    def test_autodetect_charset_iso8859_1(self):
         # \xe9 is ISO-8859-1 so Workbench should auto-detect it
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
-        expected = ProcessResult(pandas.DataFrame({'A': ['café']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['café']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
-        # \x96 is - in windows-1252, does not exist in UTF-8
+    def test_autodetect_charset_windows_1252(self):
+        # \x96 is - in windows-1252, does not exist in UTF-8 or ISO-8859-1
         result = parse_bytesio(io.BytesIO(b'A\n2000\x962018'),
                                'text/csv', None)
-        expected = ProcessResult(pandas.DataFrame({'A': ['2000–2018']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['2000–2018']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
-        # 'Thank you' in Mandarin should resolve to UTF-8
-        result = parse_bytesio(io.BytesIO(b'A\n\xE8\xB0\xA2\xE8\xB0\xA2\xE4\xBD\xA0'),
+    def test_autodetect_charset_utf8(self):
+        result = parse_bytesio(
+            io.BytesIO(b'A\n\xE8\xB0\xA2\xE8\xB0\xA2\xE4\xBD\xA0'),
+            'text/csv',
+            None
+        )
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['谢谢你']}).astype('category')
+        )
+        self.assertEqual(result, expected)
+
+    @override_settings(CHARDET_CHUNK_SIZE=3)
+    def test_autodetect_charset_chunked(self):
+        result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
-        expected = ProcessResult(pandas.DataFrame({'A': ['谢谢你']}))
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['café']}).astype('category')
+        )
         self.assertEqual(result, expected)
 
+    def test_json_with_nulls(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": "a"},
+            {"A": null}
+        ]""".encode('utf-8')), 'application/json')
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['a', None]}, dtype=str)
+        )
+        self.assertEqual(result, expected)
+
+    def test_json_with_undefined(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": "a"},
+            {"A": "aa", "B": "b"}
+        ]""".encode('utf-8')), 'application/json')
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']},
+                             dtype=str)
+        )
+        self.assertEqual(result, expected)

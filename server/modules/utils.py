@@ -10,7 +10,8 @@ from pandas import DataFrame
 import pandas.errors
 from .types import ProcessResult
 import cchardet as chardet
-
+from server.sanitizedataframe import autocast_dtypes_in_place
+from django.conf import settings
 
 _TextEncoding = Optional[str]
 
@@ -116,7 +117,9 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
       pandas default auto-detection.
     """
     with _wrap_text(bytesio, text_encoding) as textio:
-        return pandas.read_csv(textio)
+        data = pandas.read_csv(textio, dtype='category')
+        autocast_dtypes_in_place(data)
+        return data
 
 
 def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
@@ -129,7 +132,9 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
       pandas default auto-detection.
     """
     with _wrap_text(bytesio, text_encoding) as textio:
-        return pandas.read_table(textio)
+        data = pandas.read_table(textio, dtype='category')
+        autocast_dtypes_in_place(data)
+        return data
 
 
 def _parse_json(bytesio: io.BytesIO,
@@ -146,7 +151,7 @@ def _parse_json(bytesio: io.BytesIO,
     """
     with _wrap_text(bytesio, text_encoding) as textio:
         data = json.load(textio, object_pairs_hook=OrderedDict)
-        return pandas.DataFrame(data)
+        return pandas.DataFrame.from_records(data)
 
 
 def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
@@ -158,22 +163,28 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     * Error can be xlrd.XLRDError or pandas error
     * We read the entire file contents into memory before parsing
     """
-    return pandas.read_excel(bytesio)
+    return pandas.read_excel(bytesio, dtype='category')
 
 def _detect_encoding(bytesio: io.BytesIO):
     """
-    Detect charset using cChardet.
-    Returns encoding string.
+    Detect charset, as Python-friendly encoding string.
 
     Peculiarities:
 
-    * Reads entire file (quick)
-    * Sets seek back to beginning of file for downstream usage
-
+    * Reads file by CHARDET_CHUNK_SIZE defined in settings.py
+    * Stops seeking when detector.done flag True
+    * Seeks back to beginning of file for downstream usage
     """
-    result = chardet.detect(bytesio.read())
+    detector = chardet.UniversalDetector()
+    while not detector.done:
+        chunk = bytesio.read(settings.CHARDET_CHUNK_SIZE)
+        if not chunk:
+            break  # EOF
+        detector.feed(chunk)
+
+    detector.close()
     bytesio.seek(0)
-    return result['encoding']
+    return detector.result['encoding']
 
 
 _parse_xls = _parse_xlsx

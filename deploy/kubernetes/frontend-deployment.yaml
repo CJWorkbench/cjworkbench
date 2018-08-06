@@ -17,10 +17,10 @@ spec:
           resources:
             requests:
               cpu: 0.2
-              memory: 0.5Gi
+              memory: 5200Mi
             limits:
               cpu: 0.9
-              memory: 1.5Gi
+              memory: 5200Mi
           ports:
             - name: http
               containerPort: 8080

@@ -4,16 +4,32 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import DataGrid from "./DataGrid";
+import DataGrid from './DataGrid'
 import ExportModal from "./ExportModal"
 import update from 'immutability-helper'
 import * as UpdateTableAction from './UpdateTableAction'
-import {findParamValByIdName} from "./utils";
+import { findParamValByIdName } from './utils'
 
-// Constants to control loading behaviour. Exported so they are accessible to tests
-export const initialRows = 200;   // because react-data-grid seems to preload to 100
-export const preloadRows = 100;    // load when we have less then this many rows ahead
-export const deltaRows = 200;     // get this many rows at a time (must be > preloadRows)
+export const NRowsPerPage = 200 // exported to help tests
+export const FetchTimeout = 50 // ms after scroll before fetch
+
+const NumberFormat = new Intl.NumberFormat('en-US')
+
+// We'll cache some data on TableView that isn't props or state.
+const InitialValues = {
+  minMissingRowIndex: null,
+  maxMissingRowIndex: null,
+  scheduleLoadTimeout: null,
+  emptyRow: { '': '', ' ': '', '  ': '', '   ': '' }
+}
+
+const InitialState = {
+    loadedRows: [],
+    columns: null,
+    columnTypes: null,
+    totalNRows: null,
+    loading: false
+}
 
 export default class TableView extends React.PureComponent {
   static propTypes = {
@@ -26,37 +42,113 @@ export default class TableView extends React.PureComponent {
     showColumnLetter:   PropTypes.bool.isRequired,
     sortColumn:         PropTypes.string,
     sortDirection:      PropTypes.number,
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     // componentDidMount will trigger first load
-    this.state = {
-      tableData: null,
-      lastLoadedRow : 0,
-      leftOffset : 0,
-      initLeftOffset: 0,
-      exportModalOpen: false,
-    };
+    this.state = Object.assign({
+      isExportModalOpen: false,
+    }, InitialState)
 
-    this.getRow = this.getRow.bind(this);
-    this.onEditCell = this.onEditCell.bind(this);
+    // Missing row indexes: every call to getRow() we might set these and run
+    // this.scheduleLoad().
+    //
+    // They aren't in this.state because editing them shouldn't cause re-render
+    Object.assign(this, InitialValues)
+
     this.setSortDirection = this.setSortDirection.bind(this);
-    this.toggleExportModal = this.toggleExportModal.bind(this);
     this.duplicateColumn = this.duplicateColumn.bind(this);
     this.dropColumn = this.dropColumn.bind(this);
     this.filterColumn = this.filterColumn.bind(this)
-
-    this.loading = false;
-    this.highestRowRequested = 0;
-    this.emptyRowCache = null;
   }
 
-  toggleExportModal() {
-    this.setState({ exportModalOpen: !this.state.exportModalOpen });
+  scheduleLoad () {
+    if (this.scheduleLoadTimeout === null) {
+      this.scheduleLoadTimeout = window.setTimeout(() => this.load(), 50)
+    }
   }
 
+  componentWillUnmount () {
+    this.reset() // cancel timeout
+    this.unmounted = true
+  }
+
+  /**
+   * Reset us to how we were before our first render: no data.
+   *
+   * This will trigger render(), which will eventually call getRow(), which
+   * will trigger load. But you can load before that if you prefer.
+   */
+  reset () {
+    if (this.scheduleLoadTimeout !== null) {
+      window.cancelTimeout(this.scheduleLoadTimeout)
+    }
+    Object.assign(this, InitialValues)
+    this.setState(InitialState)
+  }
+
+  load () {
+    const min = this.minMissingRowIndex
+    const max = min + NRowsPerPage // don't care about maxMissingRowIndex...
+    const wfModuleId = this.props.selectedWfModuleId
+    const revision = this.props.revision
+    const { loadedRows } = this.state
+
+    this.minMissingRowIndex = null
+    this.maxMissingRowIndex = null
+    this.scheduleLoadTimeout = null
+
+    let areAllValuesMissing = true
+    for (let i = min; i < max; i++) {
+      if (loadedRows[i]) {
+        areAllValuesMissing = false
+        break
+      }
+    }
+    if (areAllValuesMissing) {
+      this.setBusySpinner(true)
+    }
+
+    this.setState({ loading: true })
+    this.props.api.render(this.props.selectedWfModuleId, min, max + 1) // +1: of-by-one oddness in API
+      .then(json => {
+        // Avoid races: return if we've changed what we want to fetch
+        if (wfModuleId !== this.props.selectedWfModuleId) return
+        if (revision !== this.props.revision) return
+        if (json.start_row !== min) return
+        if (this.unmounted) return
+
+        const loadedRows = this.state.loadedRows.slice()
+        const totalNRows = json.total_rows
+        const columns = this.state.columns || json.columns
+        const columnTypes = this.state.columnTypes || json.column_types
+
+        // expand the Array (filling undefined for missing values in between)
+        loadedRows[json.start_row] = null
+        // add the new rows
+        loadedRows.splice(json.start_row, json.rows.length, ...json.rows)
+
+        this.setState({
+          loading: false,
+          totalNRows,
+          loadedRows,
+          columns,
+          columnTypes
+        })
+
+        this.setBusySpinner(false)
+      })
+  }
+
+  openExportModal = () => {
+    this.setState({ isExportModalOpen: true })
+  }
+
+  closeExportModal = () => {
+    this.setState({ isExportModalOpen: false })
+  }
 
   // safe wrapper as setBusySpinner prop is optional
   setBusySpinner(visible) {
@@ -64,27 +156,20 @@ export default class TableView extends React.PureComponent {
       this.props.setBusySpinner(visible);
   }
 
-
   // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
   refreshTable() {
     if (this.props.selectedWfModuleId) {
-      this.loading = true;
-      this.highestRowRequested = 0;
-      this.emptyRowCache = null;
-      this.setBusySpinner(true);
+      this.setBusySpinner(true)
 
-      this.props.api.render(this.props.selectedWfModuleId, 0, initialRows)
-        .then(json => {
-          this.loading = false;
-          this.setBusySpinner(false);
-          this.setState({
-            tableData: json,
-            lastLoadedRow: json.end_row,
-          });
-        })
+      this.reset()
+      this.minMissingRowIndex = 0
+      this.maxMissingRowIndex = NRowsPerPage
+
+      // Set this.state.loading=true and begin the fetch
+      // we know scheduleLoadTimeout is null because reset() reset it
+      this.load()
     }
   }
-
 
   // Load more table data from render API. Spinner if we're going to see blanks.
   loadTable(toRow) {
@@ -105,80 +190,65 @@ export default class TableView extends React.PureComponent {
             json.start_row = 0;  // no one looks at this currently, but they might
           }
 
+          this.emptyRow = json.columns.reduce((obj, col) => { obj[col] = null; return obj }, {})
+
           this.loading = false;
           this.setBusySpinner(false);
           this.setState({
             tableData: json,
-            lastLoadedRow : json.end_row,
           });
         });
     }
   }
 
-
-  componentDidMount() {
-    this.refreshTable();  // refresh, not load, so we get the spinner
+  componentDidMount () {
+    this.refreshTable()  // refresh, not load, so we get the spinner
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
-  componentDidUpdate(prevProps) {
-      //console.log("Table props:");
-      //console.log(nextProps);
+  componentDidUpdate (prevProps) {
     if (this.props.revision !== prevProps.revision || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
-        this.refreshTable();
+      this.refreshTable();
     }
   }
 
-  emptyRow() {
-    if (!this.emptyRowCache)
-      this.emptyRowCache = this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
-    return this.emptyRowCache;
-  }
+  getRow = (i) => {
+    const { loadedRows, loading } = this.state
 
-  getRow(i) {
-    if (this.state.tableData) {
-
-      // Don't load rows only 100 at a time, if the user scrolls down fast
-      this.highestRowRequested = Math.max(this.highestRowRequested, i);
-
-      // Time to load more rows?
-      if (!this.loading) {
-        let target = Math.max(i, this.highestRowRequested);
-        target += preloadRows;
-        target = Math.min(target, this.state.tableData.total_rows-1);  // don't try to load past end of data
-        if (target >= this.state.lastLoadedRow) {
-          target += deltaRows;
-          this.loadTable(target);
-        }
-      }
-
-      // Return the row if we have it
-      if (i < this.state.lastLoadedRow ) {
-        return this.state.tableData.rows[i];
-      } else {
-        return this.emptyRow();
-      }
-
+    if (loadedRows[i]) {
+      this.renderedAtLeastOneNonEmptyRow = true
+      return loadedRows[i]
     } else {
-        // nothing loaded yet
-        return null;
+      if (!loading) {
+        // Queue load for when we have time
+        this.minMissingRowIndex = Math.min(i, this.minMissingRowIndex || i)
+        this.maxMissingRowIndex = Math.max(i, this.maxMissingRowIndex || i)
+        this.scheduleLoad()
+      } else {
+        // no-op: there will be another render after the load finishes, and
+        // after _that_ we can start our fetching.
+      }
+
+      // Return something right now, in the meantime
+      return this.emptyRow
     }
   }
 
   // When a cell is edited we need to 1) update our own state 2) add this edit to an Edit Cells module
-  onEditCell(row, colName, newVal) {
-    if (row<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
+  onEditCell = (rowIndex, colName, newVal) => {
+    const row = this.state.loadedRows[rowIndex]
+    if (!row) return // should never happen
 
-      // Add an edit if the data has actually changed. Cast everything to string for comparisons.
-      const oldVal = this.state.tableData.rows[row][colName];
-      if (newVal !== (oldVal || '')) {
-        // Change just this one row, keeping as much of the old tableData as possible
-        const newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
-        const newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
-        this.setState({tableData: newTableData});
+    // Add an edit if the data has actually changed. Cast everything to string for comparisons.
+    const oldVal = row[colName]
+    if (newVal !== (oldVal || '')) {
+      // Change just this one row
+      const newRow = Object.assign({}, row, { [colName]: newVal })
+      const loadedRows = this.state.loadedRows.slice()
+      loadedRows[rowIndex] = newRow
+      this.setState({ loadedRows })
 
-        UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'editcells', false, {row: row, col: colName, value: newVal})
-      }
+      UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'editcells', false, {row: rowIndex, col: colName, value: newVal})
     }
   }
 
@@ -204,11 +274,11 @@ export default class TableView extends React.PureComponent {
 
   render() {
     // Make a table component if we have the data
-    var nrows = 0;
-    var ncols = 0;
-    var gridView = null;
+    let nRowsString
+    let nColsString
+    let gridView
 
-    if (this.props.selectedWfModuleId && this.state.tableData && this.state.tableData.total_rows>0) {
+    if (this.props.selectedWfModuleId && this.state.totalNRows > 0) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       // DataGrid is the heaviest DOM tree we have, and it effects the
@@ -216,12 +286,12 @@ export default class TableView extends React.PureComponent {
       // putting a no-op translate3d property on it, we coerce browsers into
       // rendering it and all of its children in a seperate compositing layer,
       // improving the rendering of everything else in the app.
-      gridView =
+      gridView = (
         <div className="outputpane-data" style={{transform:'translate3d(0, 0, 0)'}}>
           <DataGrid
-            totalRows={this.state.tableData.total_rows}
-            columns={this.state.tableData.columns}
-            columnTypes={this.state.tableData.column_types}
+            totalRows={this.state.totalNRows}
+            columns={this.state.columns}
+            columnTypes={this.state.columnTypes}
             wfModuleId={this.props.selectedWfModuleId}
             revision={this.props.revision}
             getRow={this.getRow}
@@ -239,13 +309,13 @@ export default class TableView extends React.PureComponent {
             isReadOnly={this.props.isReadOnly}
           />
         </div>
-      // adds commas to row count
-      nrows = new Intl.NumberFormat('en-US').format(this.state.tableData.total_rows);
-      ncols = this.state.tableData.columns.length;
+      )
+      nRowsString = NumberFormat.format(this.state.totalNRows)
+      nColsString = NumberFormat.format(this.state.columns.length)
     } else {
       // Empty grid, big enough to fill screen.
       // 10 rows by four blank columns (each with a different number of spaces, for unique names)
-      gridView =
+      gridView = (
         <div className="outputpane-data">
           <DataGrid
             id={undefined}
@@ -257,8 +327,13 @@ export default class TableView extends React.PureComponent {
             duplicateColumn={this.duplicateColumn}
             dropColumn={this.dropColumn}
             filterColumn={this.filterColumn}
+            onRenameColumn={() => null}
+            onReorderColumns={() => null}
           />
-      </div>
+        </div>
+      )
+      nRowsString = ''
+      nColsString = ''
     }
 
     return (
@@ -267,24 +342,28 @@ export default class TableView extends React.PureComponent {
             <div className="table-info-container">
               <div className='table-info'>
                   <div className='data'>Rows</div>
-                  <div className='value'>{nrows}</div>
+                  <div className='value'>{nRowsString}</div>
               </div>
               <div className='table-info'>
                   <div className='data'>Columns</div>
-                  <div className='value'>{ncols}</div>
+                  <div className='value'>{nColsString}</div>
               </div>
             </div>
             {this.props.selectedWfModuleId ? (
-              <div className="export-table" onClick={this.toggleExportModal}>
+              <div className="export-table" onClick={this.openExportModal}>
                 <i className="icon-download"></i>
                 <span>CSV</span>
                 <span className="feed">JSON FEED</span>
-                <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.selectedWfModuleId} onClose={this.toggleExportModal}/>
+                <ExportModal
+                  open={this.state.isExportModalOpen}
+                  wfModuleId={this.props.selectedWfModuleId}
+                  onClose={this.closeExportModal}
+                />
               </div>
             ) : null}
           </div>
           {gridView}
       </div>
-    );
+    )
   }
 }

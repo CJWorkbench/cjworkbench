@@ -5,8 +5,31 @@ from server.modules.types import ProcessResult
 import pandas as pd
 import numpy as np
 import io
-from server.tests.modules.test_refine import MockModule
 from server.modules.sortfromtable import SortFromTable
+
+
+class MockModule:
+    # A mock module that stores parameter data,
+    # for directly testing a module's render() function
+    # We can move this into test utils if it's more widely applicable
+
+    def __init__(self, params):
+        self.params = params
+
+    def get_param_raw(self, name, ptype):
+        if name in self.params:
+            return self.params[name]
+        return ''
+
+    def get_param_column(self, name):
+        if name in self.params:
+            return self.params[name]
+        return ''
+
+    def get_param_menu_idx(self, name):
+        if name in self.params:
+            return self.params[name]
+        return ''
 
 
 test_csv = '\n'.join([

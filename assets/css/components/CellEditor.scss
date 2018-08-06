@@ -5,8 +5,10 @@
 	@extend .content-3;
 	color:$brand-text--dark;
 	overflow-x: hidden;
+	margin-left: 0;
 
 	.edited-column {
+		@extend .info-2;
 		margin-left: .7rem;
 	}
 
@@ -32,7 +34,8 @@
 			align-items: center;
 			padding:0.7rem;
 			line-height:2rem;
-			width: 5rem;
+			overflow-x: hidden;
+			white-space: nowrap;
 		}
 	}
 }

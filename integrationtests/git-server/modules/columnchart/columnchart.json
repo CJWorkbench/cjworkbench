@@ -8,15 +8,16 @@
   "help_url":"modules/visualization/column-and-line-charts",
   "parameters": [
     {
-      "name": "Chart Title",
+      "name": "",
       "id_name": "title",
       "type": "string",
       "placeholder": "Chart title"
     },
     {
       "name": "X axis",
-      "id_name": "x_axis_statictext",
-      "type": "statictext"
+      "id_name": "x_axis_label",
+      "type": "string",
+      "placeholder": "Label"
     },
     {
       "name": "",
@@ -25,18 +26,7 @@
       "placeholder": "Select X-Axis Column"
     },
     {
-      "name": "",
-      "id_name": "x_axis_label",
-      "type": "string",
-      "placeholder": "Label"
-    },
-    {
       "name": "Y axis",
-      "id_name": "y_axis_statictext",
-      "type": "statictext"
-    },
-    {
-      "name": "",
       "id_name": "y_axis_label",
       "type": "string",
       "placeholder": "Label"

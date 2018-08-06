@@ -1,0 +1,27 @@
+version: '3.4'
+# This docker-compose.yml is only used by cloudbuild: not by devs.
+
+services:
+  testdb:
+    image: postgres:10
+    environment:
+      POSTGRES_USER: 'cjworkbench'
+      POSTGRES_PASSWORD: 'cjworkbench'
+      POSTGRES_DB: 'cjworkbench'
+
+  testredis:
+    image: redis:4.0.10
+
+  unittest:
+    image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
+    command: [ 'bash', '-c', 'until PGPASSWORD=cjworkbench psql -h testdb -U cjworkbench -c "\\q"; do echo "Waiting for Postgres..."; sleep 1; done; ./manage.py test -v2' ]
+    depends_on: [ 'testdb', 'testredis' ]
+    environment:
+      PYTHONUNBUFFERED: '1'
+      CJW_REDIS_HOST: testredis
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: testdb
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+    # importedmodules and saveddata don't get volumes

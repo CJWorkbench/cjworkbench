@@ -7,10 +7,14 @@ const apiHeaders = {
   'Accept': 'application/json',
   'Content-Type': 'application/json',
   'X-CSRFToken': csrfToken
-};
+}
 
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
+  // We send at most one data-modification request at a time, to avoid races.
+  // this._serializer always resolves to the last-returned fetch result.
+  _serializer = Promise.resolve(null)
+
   /**
    * Returns Promise of JSON on HTTP success (or `null` on HTTP 204 success).
    *
@@ -23,7 +27,9 @@ class WorkbenchAPI {
    */
   _fetch(url, options) {
     const realOptions = Object.assign({ credentials: 'include' }, options || {})
-    return fetch(url, realOptions)
+
+    return this._serializer = this._serializer.catch(() => null)
+      .then(() => fetch(url, realOptions))
       .then(res => {
         if (!res.ok) {
           throw new RangeError(`Server responded with non-200 status code ${res.status}`)

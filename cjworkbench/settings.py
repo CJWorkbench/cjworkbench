@@ -33,6 +33,9 @@ MAX_STORAGE_PER_MODULE = 1024*1024*1024
 SCRAPER_NUM_CONNECTIONS = 8
 SCRAPER_TIMEOUT = 30 # seconds
 
+# Chunk size for chardet file encoding detection
+CHARDET_CHUNK_SIZE = 1024*1024
+
 # ----- App Boilerplate -----
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

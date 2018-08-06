@@ -1,4 +1,8 @@
-version: '3'
+version: '3.4'
+
+# See also:
+# docker-compose.override.yml (for dev mode only -- uses 'build')
+# docker-compose.cloudbuild.yml (for cloudbuild only -- uses 'image')
 
 services:
   db:
@@ -15,7 +19,8 @@ services:
     image: redis:4.0.10
 
   migrate:
-    image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
+    #image:
+    #build:
     depends_on: [ 'db' ]
     environment:
       PYTHONUNBUFFERED: '1'
@@ -26,10 +31,12 @@ services:
       CJW_MOCK_EMAIL: 'True'
 
   git-server:
-    build: ./git-server
+    #image:
+    #build:
 
   backend:
-    image: 'gcr.io/${PROJECT_ID}/backend:${COMMIT_SHA}'
+    #image:
+    #build:
     depends_on: [ 'db', 'redis' ]
     environment:
       PYTHONUNBUFFERED: '1'
@@ -44,8 +51,9 @@ services:
       - saveddata:/app/media
 
   frontend:
-    image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    ports: [ '8080:8000' ] # 8080 is Kubernetes standard web server port
+    #image:
+    #build:
+    #no ports: on cloudbuild
     depends_on: [ 'db', 'redis' ]
     environment:
       PYTHONUNBUFFERED: '1'
@@ -60,18 +68,15 @@ services:
       - saveddata:/app/media
 
   integration-test:
-    image: 'gcr.io/${PROJECT_ID}/integration-test:${COMMIT_SHA}'
-    depends_on: [ 'backend', 'frontend', 'git-server' ]
+    #image:
+    #build:
+    depends_on: [ 'db', 'backend', 'frontend', 'git-server' ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
+    volumes:
+      - importedmodules:/app/importedmodules
+      - saveddata:/app/saveddata
     environment:
       PYTHONUNBUFFERED: '1'
-      SERVER_URL: 'http://frontend:8080'
-      # Integration tests run Django code, so they need these vars
-      CJW_PRODUCTION: 'True'
-      CJW_DB_HOST: workbench-db
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
 
 volumes:
   importedmodules: {}

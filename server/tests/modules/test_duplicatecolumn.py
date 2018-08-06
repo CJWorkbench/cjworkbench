@@ -5,8 +5,7 @@ from server.modules.types import ProcessResult
 import pandas as pd
 import numpy as np
 import io
-from server.tests.modules.test_refine import MockModule
-from server.modules.duplicatecolumn import DuplicateColumn
+
 
 duplicate_column_prefix = 'Copy of'
 

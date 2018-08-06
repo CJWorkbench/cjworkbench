@@ -65,7 +65,15 @@ class SeriesParams:
         """
         ret = {
             "$schema": "https://vega.github.io/schema/vega/v4.json",
-            "title": self.title,
+            "background": "white",
+            "title": {
+                "text": self.title,
+                "offset": 15,
+                "color": '#383838',
+                "font": "Nunito Sans, Helvetica, sans-serif",
+                "fontSize": 20,
+                "fontWeight": "normal"
+            },
 
             "data": [
                 {
@@ -80,7 +88,7 @@ class SeriesParams:
                     "type": "band",
                     "domain": {"data": "table", "field": self.x_series.name},
                     "range": "width",
-                    "padding": 0.2
+                    "padding": 0.15,
                 },
                 {
                     "name": "yscale",
@@ -99,11 +107,40 @@ class SeriesParams:
             ],
 
             "axes": [
-                {"orient": "bottom", "scale": "xscale", "tickSize": 0,
-                 "title": self.x_axis_label},
-
-                {"orient": "left", "scale": "yscale", "labelOverlap": True,
-                 "title": self.y_axis_label},
+                {
+                    "title": self.x_axis_label,
+                    "orient": "bottom",
+                    "scale": "xscale",
+                    "tickSize": 0,
+                    "titlePadding": 15,
+                    "titleColor": "#686768",
+                    "titleFontSize": 15,
+                    "titleFontWeight": 100,
+                    "titleFont": "Nunito Sans, Helvetica, sans-serif",
+                    "labelFont": "Nunito Sans, Helvetica, sans-serif",
+                    "labelFontWeight":400,
+                    "labelPadding": 10,
+                    "labelFontSize": 12,
+                    "labelColor":"#383838",
+                    
+                },
+                {
+                    "title": self.y_axis_label,
+                    "orient": "left",
+                    "scale": "yscale",
+                    "tickSize": 3,
+                    "labelOverlap": True,
+                    "titleFontSize": 14,
+                    "titleColor": "#686768",
+                    "titleFontWeight": 100,
+                    "titleFont": "Nunito Sans, Helvetica, sans-serif",
+                    "labelFont": "Nunito Sans, Helvetica, sans-serif",
+                    "labelColor": "#383838",
+                    "labelFontWeight":400,
+                    "titlePadding": 20,
+                    "labelPadding": 10,
+                    "labelFontSize": 11,
+                },
             ],
 
             "marks": [
@@ -162,9 +199,15 @@ class SeriesParams:
         if len(self.y_columns) > 1:
             ret["legends"] = [
                 {
-                    "title": "Legend",
                     "fill": "color",
-                    "symbolType": "square",
+                    "symbolType": "circle",
+                    "padding": 15,
+                    "offset": 0,
+                    "labelFontSize": 12,
+                    "rowPadding": 10,
+                    "labelFont": "Nunito Sans, Helvetica, sans-serif",
+                    "labelColor": "#383838",
+                    "labelFontWeight":400,
                 },
             ]
 
@@ -218,7 +261,7 @@ class UserParams:
         if len(table.index) >= MaxNBars:
             raise ValueError(
                 f'Refusing to build column chart with '
-                'more than {MaxNBars} bars'
+                f'more than {MaxNBars} bars'
             )
 
         if self.x_column not in table.columns:

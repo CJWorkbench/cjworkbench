@@ -3,9 +3,11 @@ apiVersion: v1
 metadata:
   name: saveddata-pv
   namespace: production
+  labels:
+    implementation: nfs-server
 spec:
   capacity:
-    storage: 18Gi
+    storage: 97Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain

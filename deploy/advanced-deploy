@@ -12,7 +12,7 @@ find_sha1_on_env() {
 }
 
 LAST_SHA=$(find_sha1_on_env "$ENV")
-if git diff --quiet "$LAST_SHA" "$SHA" -- cjworkbench/migrations server/migrations; then
+if git diff --quiet "$LAST_SHA" "$SHA" -- cjworkbench/migrations server/migrations server/modules; then
   echo "Skipping migrate: there are no changes in {cjworkbench,server}/migrations server/modules between $LAST_SHA and $SHA" >&2
 else
   echo -n "Running migrations for $SHA on $ENV..." >&2

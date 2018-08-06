@@ -62,9 +62,14 @@ class TestLesson(LessonTest):
         # has begun. Then we wait for the column-name reload to end and assume
         # there are no more DOM modifications after that.
 
+        # XXX [2018-08-02] This doesn't seem to work -- probably because
+        # Workbench refreshes things far too often. So we'll wait an additional
+        # second before each.
+
         # First wait: for the X-axis column selector to load
         # Remember to wait for the iframe to appear -- we haven't waited for
         # that yet.
+        time.sleep(1)  # TODO prevent reloads, then nix
         with b.iframe('.outputpane-iframe iframe', wait=True):
             b.assert_element('g.role-title text',
                              text='Please choose an X-axis column', wait=True)
@@ -72,6 +77,7 @@ class TestLesson(LessonTest):
         b.select('x_column', 'city_neighborhood')
 
         # Second wait: for the Y-axis column selector to load
+        time.sleep(1)  # TODO prevent reloads, then nix
         with b.iframe('.outputpane-iframe iframe'):
             b.assert_element('g.role-title text',
                              text='Please choose a Y-axis column', wait=True)

@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from .moduleimpl import ModuleImpl
 from .utils import build_globals_for_eval
+from server.sanitizedataframe import sanitize_series, autocast_series_dtype
 from django.utils.translation import gettext as _
 
 # ---- Formula ----
@@ -20,6 +21,8 @@ def python_formula(table, formula):
     newcol = pd.Series(list(itertools.repeat(None, len(table))))
     for i, row in enumerate(table.values):
         newcol[i] = eval(code, custom_code_globals, dict(zip(colnames, row)))
+
+    newcol = autocast_series_dtype(sanitize_series(newcol))
 
     return newcol
 
@@ -171,5 +174,4 @@ class Formula(ModuleImpl):
                 out_column = f'result{n}'
         table[out_column] = newcol
 
-        wf_module.set_ready(notify=False)
         return table

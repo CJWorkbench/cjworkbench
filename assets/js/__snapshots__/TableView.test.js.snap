@@ -27,9 +27,7 @@ exports[`TableView Blank table when no module id 1`] = `
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
         <div
           className="table-info"
@@ -41,9 +39,7 @@ exports[`TableView Blank table when no module id 1`] = `
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
       </div>
     </div>
@@ -64,6 +60,8 @@ exports[`TableView Blank table when no module id 1`] = `
         filterColumn={[Function]}
         getRow={[Function]}
         isReadOnly={false}
+        onRenameColumn={[Function]}
+        onReorderColumns={[Function]}
         setSortDirection={[Function]}
         totalRows={10}
       >
@@ -1244,26 +1242,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1315,26 +1293,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1371,6 +1329,57 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -1691,26 +1700,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1762,26 +1751,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1818,6 +1787,57 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -2138,26 +2158,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2209,26 +2209,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2265,6 +2245,57 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -2585,26 +2616,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2656,26 +2667,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2712,6 +2703,57 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -8404,7 +8446,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
           Array [
             100,
             0,
-            200,
+            201,
           ],
         ],
       },
@@ -8435,9 +8477,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
         <div
           className="table-info"
@@ -8449,9 +8489,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
           </div>
           <div
             className="value"
-          >
-            0
-          </div>
+          />
         </div>
       </div>
       <div
@@ -8493,6 +8531,8 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
         filterColumn={[Function]}
         getRow={[Function]}
         isReadOnly={false}
+        onRenameColumn={[Function]}
+        onReorderColumns={[Function]}
         setSortDirection={[Function]}
         totalRows={10}
       >
@@ -9673,26 +9713,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -9744,26 +9764,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -9800,6 +9800,57 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -10120,26 +10171,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -10191,26 +10222,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -10247,6 +10258,57 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -10567,26 +10629,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -10638,26 +10680,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -10694,6 +10716,57 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -11014,26 +11087,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                       x-placement="bottom-start"
                                                     >
                                                       <DropdownItem
-                                                        className="drop-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="drop-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-transform"
-                                                          />
-                                                          <span>
-                                                            Drop
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="rename-column-header"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -11085,26 +11138,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         />
                                                       </DropdownItem>
                                                       <DropdownItem
-                                                        className="filter-column"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="filter-column dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-filter"
-                                                          />
-                                                          <span>
-                                                            Filter
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
                                                         className="sort-ascending"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -11141,6 +11174,57 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Sort descending
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="filter-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="filter-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-filter"
+                                                          />
+                                                          <span>
+                                                            Filter
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        className="drop-column"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="drop-column dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-removec"
+                                                          />
+                                                          <span>
+                                                            Drop column
                                                           </span>
                                                         </button>
                                                       </DropdownItem>

@@ -3,190 +3,58 @@
 set -e
 #set -x
 
-# Set HEADLESS, one way or the other
-if [ "$HEADLESS" != "false" ]; then
-  HEADLESS=true
-fi
-
 cd "$(dirname "$0")"/..
 
-echo 'Building git server (`docker build ./integrationtests/git-server`)…' >&2
-GIT_IMAGE_ID="$(docker build ./integrationtests/git-server -q)"
-
-echo 'Building django (`docker build .`), which may take 30 minutes…' >&2
-# To see which steps are slow:
-# docker build . --no-cache # watch a cold build
-# or
-# docker build . # watch build steps after you've edited .js or .py files
-DJANGO_IMAGE_ID="$(docker build --target frontend . -q)"
-MIGRATE_IMAGE_ID="$(docker build --target migrate . -q)"
-
-PREFIX=cjworkbench_integrationtest
-NETWORK_NAME="${PREFIX}_network"
-
-stop_container_if_running() {
-  basename="$1"
-  name="${PREFIX}_${basename}"
-  id=$(docker ps -a -q --filter name="$name")
-  test -z "$id" || docker rm -f "$name"
+docker_compose() {
+  docker-compose \
+    -p 'cjworkbench_integrationtest' \
+    -f integrationtests/docker-compose.yml \
+    -f integrationtests/docker-compose.dev-override.yml \
+    "$@"
 }
 
-pulled_or_cached_image_id() {
-  name="$1"
-  id=$(docker image ls -q "$name")
-  if [ -z "$id" ]; then
-    docker image pull "$name" >&2
-    id=$(docker image ls -q "$name")
-  fi
-  echo $id
-}
-
-start_database() {
-  echo -n 'Starting database… ' >&2 # `docker run` will output container id
-  image_id="$(pulled_or_cached_image_id "postgres:10.4")"
-  docker run \
-    --detach \
-    --env POSTGRES_USER=cjworkbench \
-    --env POSTGRES_PASSWORD=cjworkbench \
-    --env POSTGRES_DB=cjworkbench \
-    --network "$NETWORK_NAME" \
-    --network-alias "workbench-db" \
-    --name "${PREFIX}_database" \
-    "$image_id"
-}
-
-start_redis() {
-  echo -n 'Starting redis… ' >&2 # `docker run` will output container id
-  image_id="$(pulled_or_cached_image_id "redis:4.0.10")"
-  docker run \
-    --detach \
-    --network "$NETWORK_NAME" \
-    --network-alias "redis" \
-    --name "${PREFIX}_redis" \
-    "$image_id"
-}
-
-start_git() {
-  echo -n 'Starting mock-module Git HTTP server… ' >&2 # `docker run` will output container id
-  # We call it "git-server" and not "git" because someday, somebody might
-  # register a ".git" TLD and enforce SSL, like Google git with ".dev"
-  docker run \
-    --detach \
-    --network "$NETWORK_NAME" \
-    --name "${PREFIX}_git" \
-    --network-alias "git-server" \
-    --publish-all \
-    "$GIT_IMAGE_ID"
-}
-
-do_migrate() {
-  echo 'Migrating database…' >&2
-  docker run --rm \
-    --env PYTHONUNBUFFERED=1 \
-    --env CJW_PRODUCTION=True \
-    --env CJW_DB_HOST=workbench-db \
-    --env CJW_DB_PASSWORD=cjworkbench \
-    --env CJW_MOCK_EMAIL=true \
-    --env CJW_SECRET_KEY=notasecret \
-    --env CJW_SENDGRID_API_KEY=notasecret \
-    --env CJW_SENDGRID_INVITATION_ID=notanid \
-    --env CJW_SENDGRID_CONFIRMATION_ID=notanid \
-    --env CJW_SENDGRID_PASSWORD_CHANGE_ID=notanid \
-    --env CJW_SENDGRID_PASSWORD_RESET_ID=notanid \
-    --network "$NETWORK_NAME" \
-    --name "${PREFIX}_migrate" \
-    "$MIGRATE_IMAGE_ID"
-}
-
-start_django() {
-  echo -n 'Starting Django… ' >&2 # `docker run` will output container id
-  docker run \
-    --detach \
-    --env PYTHONUNBUFFERED=1 \
-    --env CJW_REDIS_HOST=redis \
-    --env CJW_PRODUCTION=True \
-    --env CJW_DB_HOST=workbench-db \
-    --env CJW_DB_PASSWORD=cjworkbench \
-    --env CJW_MOCK_EMAIL=true \
-    --env CJW_SECRET_KEY=notasecret \
-    --env CJW_SENDGRID_API_KEY=notasecret \
-    --env CJW_SENDGRID_INVITATION_ID=notanid \
-    --env CJW_SENDGRID_CONFIRMATION_ID=notanid \
-    --env CJW_SENDGRID_PASSWORD_CHANGE_ID=notanid \
-    --env CJW_SENDGRID_PASSWORD_RESET_ID=notanid \
-    --network "$NETWORK_NAME" \
-    --network-alias "frontend" \
-    --name "${PREFIX}_django" \
-    --publish-all \
-    "$DJANGO_IMAGE_ID"
-}
-
-find_django_url() {
-  port=$(docker port cjworkbench_integrationtest_django 8080/tcp | cut -d: -f2)
-  echo "http://localhost:$port"
-}
-
-cleanup() {
-  stop_container_if_running django
-  stop_container_if_running database
-  stop_container_if_running redis
-  stop_container_if_running git
-  docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
-}
-
-echo 'Cleaning old containers…' >&2
-cleanup
-
-echo 'Setting up network…' >&2
-docker network create "${PREFIX}_network"
-
-start_database
-start_redis
-start_git
-do_migrate
-start_django
-
-echo -n 'Waiting for Django to start its database and HTTP server… ' >&2
-docker run -it --network "$NETWORK_NAME" --rm alpine:3.8 sh -c 'until wget -q http://frontend:8080/workflows/ -O/dev/null >/dev/null 2>/dev/null; do echo -n "."; sleep 1; done; echo'
-# No need to wait for git to start: django is 1,000,000 times slower
-
-url=$(find_django_url)
-echo "Django is at ${url}" >&2
-
-echo 'Testing. On error, the environment will stay up and you can use' >&2
-
-# Development: use pipenv, because developers run `pipenv install`
-# Travis: use python, because we manually pip install capybara-py+selenium,
-# integration tests have no other deps, and pipenv is not installed.
-PYTHON="python"
-if [ "$HEADLESS" != "false" ]; then
-  PYTHON="env MOZ_HEADLESS=1 $PYTHON"
-fi
-if pipenv --venv >/dev/null 2>&1; then
-  PYTHON="pipenv run $PYTHON"
-fi
-echo "'$PYTHON -m unittest -v integrationtests.[module]' to re-run the tests" >&2
-
-if [ -z "$1" ]; then
-  echo 'Running all tests' >&2
-  TEST_COMMAND="$PYTHON -m unittest discover -v integrationtests"
-else
-  echo "Running selected tests: $@" >&2
-  # Invalid escaping here, probably, but shouldn't affect anybody in practice
-  TEST_COMMAND="$PYTHON -m unittest -v $@"
-fi
-
-if !($TEST_COMMAND); then
-  echo >&2
-  echo 'Tests failed. Here is the failing command:' >&2
-  echo >&2
-  echo "$TEST_COMMAND" >&2
-  echo >&2
-  echo 'Run `pipenv run python -m unittest -v integrationtests.[module]` to re-run the failing test(s) in a visible browser window.' >&2
+if [ "$1" = "shell" ]; then
+  docker_compose run --rm \
+    --service-ports \
+    integration-test \
+    bash -c '/app/integrationtests/start-vnc & DISPLAY=:1 bash'
+  exit 0
+elif [ -n "$1" ]; then
+  echo "Usage: $0 [shell]" >&2
   exit 1
 fi
 
-echo 'Success!' >&2
+echo 'Building…' >&2
+docker_compose build --pull
 
-echo 'Cleaning containers…' >&2
-cleanup
+echo 'Tearing down old environment (if it exists)…' >&2
+docker_compose down -v
+
+echo 'Migrating (and starting database)…' >&2
+docker_compose run migrate
+
+echo 'Testing (and starting test environment)…' >&2
+if docker_compose run integration-test; then
+  echo 'Tests passed!' >&2
+  docker_compose down -v
+else
+  echo 'Tests failed, so we left everything running.' >&2
+  echo >&2
+  echo 'DEBUGGING IDEAS' >&2
+  echo >&2
+  echo '1. Find a bug in your web browser' >&2
+  echo >&2
+  echo '    a. Browse to http://localhost:8080' >&2
+  echo '    b. If you need a login, register and then browse to' >&2
+  echo '       http://localhost:8080/last-sent-email for the confirmation link' >&2
+  echo >&2
+  echo '2. Watch tests using VNC' >&2
+  echo >&2
+  echo "    a. Run \`$0 shell\` to start a new test runner" >&2
+  echo '    b. Connect a VNC client to localhost:5901' >&2
+  echo '    c. In the test-runner shell, run `python -m unittest discover integrationtests`' >&2
+  echo '    d1. If the bug is in the test, edit and re-run python (integrationtests/ is mounted)' >&2
+  echo '    d2. If the bug is in Workbench, write a unit-test and restart from scratch' >&2
+  echo '    d3. Still not finding the bug? Run `firefox` and test in your VNC client' >&2
+  exit 1
+fi
