@@ -34,6 +34,7 @@
         {{form.login.errors}}
         {{form.password}}
         {{form.password.errors}}
+        {{form.non_field_errors.as_text}}
 
         {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
@@ -43,6 +44,5 @@
             <a class="content-3 t-white-u mx-auto" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         </div>
         <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{% trans "Sign In" %}</button>
-
     </form>
 {% endblock %}
