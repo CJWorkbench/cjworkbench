@@ -4,7 +4,7 @@ import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import debounce from 'lodash/debounce'
-import { addModuleAction, deleteModuleAction, moveModuleAction, setParamValueAction } from './workflow-reducer'
+import { addModuleAction, deleteModuleAction, moveModuleAction } from './workflow-reducer'
 import { scrollTo } from './utils'
 import { connect } from 'react-redux';
 import lessonSelector from './lessons/lessonSelector'
@@ -213,7 +213,6 @@ class ModuleStack extends React.Component {
     api:                PropTypes.object.isRequired,
     workflow:           PropTypes.object,
     selected_wf_module: PropTypes.number,
-    changeParam:        PropTypes.func.isRequired,
     addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
     moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     removeModule:       PropTypes.func.isRequired,
@@ -330,7 +329,6 @@ class ModuleStack extends React.Component {
               isReadOnly={this.props.workflow.read_only}
               isZenMode={this.state.zenModeWfModuleId === item.id}
               wfModule={item}
-              changeParam={this.props.changeParam}
               removeModule={this.props.removeModule}
               revision={this.props.workflow.revision}
               selected={i === this.props.selected_wf_module}
@@ -392,11 +390,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
     removeModule(wfModuleId) {
       const action = deleteModuleAction(wfModuleId)
-      dispatch(action)
-    },
-
-    changeParam(paramId, newVal) {
-      const action = setParamValueAction(paramId, newVal)
       dispatch(action)
     }
   }

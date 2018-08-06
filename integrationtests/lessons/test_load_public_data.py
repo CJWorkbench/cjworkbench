@@ -1,6 +1,9 @@
 from integrationtests.lessons import LessonTest
 import time
 
+DataUrl = 'https://app.workbenchdata.com/static/data/affordable_housing_1.csv'
+
+
 class TestLesson(LessonTest):
     def test_lesson(self):
         b = self.browser
@@ -23,12 +26,7 @@ class TestLesson(LessonTest):
             1,
             '.wf-module[data-module-name="Add from URL"]',
         )
-        b.fill_in(
-            'url',
-            'https://app.workbenchdata.com/static/data/affordable_housing_1.csv',
-            wait=True  # wait for module to load
-        )
-        b.click_whatever('h2')  # AAAAH! we need to blur, _then_ click Update!
+        b.fill_in('url', DataUrl, wait=True)  # wait for module to load
         b.click_button('Update')
 
         # Wait for table to load
@@ -88,7 +86,8 @@ class TestLesson(LessonTest):
         b.fill_in('title', 'a title')
         b.fill_in('x_axis_label', 'Area')
         b.fill_in('y_axis_label', 'Number of Affordable Houses')
-        b.click_whatever('h2')  # blur, to commit data
+        with b.scope('.wf-parameter[data-name="y_axis_label"]'):
+            b.click_button('submit')
 
         self.expect_highlight_next(wait=True)
         self.click_next()
@@ -103,7 +102,8 @@ class TestLesson(LessonTest):
             self.select_column('column', 'affordable_units', wait=True)
         b.select('condition', 'Greater than')
         b.fill_in('value', 200, wait=True)  # wait for field to appear
-        b.click_whatever('h2')  # blur, to commit data
+        with b.scope('.wf-parameter[data-name="value"]'):
+            b.click_button('submit')
 
         self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]',
                               wait=True)  # wait for lesson to update

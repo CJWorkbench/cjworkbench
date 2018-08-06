@@ -120,14 +120,14 @@ class URLScraper(ModuleImpl):
                 # Check if we have a fetched table; if not, return the table itself.
                 fetched_table = wf_module.retrieve_fetched_table()
                 if fetched_table is not None:
-                    return fetched_table
+                    return (fetched_table, wf_module.error_msg)
                 return table
             else:
                 return table # nop if column not set
         elif urlsource == 'List':
             fetched_table = wf_module.retrieve_fetched_table()
             if fetched_table is not None:
-                return fetched_table
+                return (fetched_table, wf_module.error_msg)
             else:
                 return table
 

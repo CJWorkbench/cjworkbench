@@ -83,7 +83,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             <WfModuleContextMenu
               id={999}
               removeModule={[Function]}
-              stopProp={[Function]}
             />
           </div>
         </div>
@@ -107,6 +106,10 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             isZenMode={false}
             key="0"
             moduleName="Load from URL"
+            name="url"
+            onChange={[Function]}
+            onReset={[Function]}
+            onSubmit={[Function]}
             p={
               Object {
                 "id": 100,
@@ -127,7 +130,8 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "updateUnits": undefined,
               }
             }
-            wf_module_id={999}
+            value="http://some.URL.me"
+            wfModuleId={999}
           />
           <WfParameter
             api={
@@ -145,6 +149,10 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             isZenMode={false}
             key="1"
             moduleName="Load from URL"
+            name="version_select"
+            onChange={[Function]}
+            onReset={[Function]}
+            onSubmit={[Function]}
             p={
               Object {
                 "id": 101,
@@ -164,7 +172,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "updateUnits": undefined,
               }
             }
-            wf_module_id={999}
+            wfModuleId={999}
           />
         </div>
       </div>

@@ -1,5 +1,8 @@
 from integrationtests.lessons import LessonTest
 
+DataUrl = 'https://app.workbenchdata.com/static/data/population_dirty_data.csv'
+
+
 class TestLesson(LessonTest):
     def _rename_column(self, old: str, new: str) -> None:
         """Rename a column in the "Refine" wf-module."""
@@ -11,13 +14,15 @@ class TestLesson(LessonTest):
         # we just edited to disappear. It'll only disappear once the server
         # informs us of updates.
         self.browser.fill_in(f'rename[{old}]', new)
-        self.browser.click_whatever('h2') # blur, to force save
-        self.browser.assert_no_element(f'input[name="rename[{old}]"]', wait=True)
+        self.browser.click_whatever('h2')  # blur, to force save
+        self.browser.assert_no_element(f'input[name="rename[{old}]"]',
+                                       wait=True)
 
     def test_lesson(self):
         b = self.browser
         b.visit('/lessons/')
-        b.click_whatever('h2', text='II. Clean and standardize data', wait=True)
+        b.click_whatever('h2', text='II. Clean and standardize data',
+                         wait=True)
 
         self.import_module('dropna')
         self.import_module('linechart')
@@ -38,12 +43,7 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Add from URL"]',
             wait=True
         )
-        b.fill_in(
-            'url',
-            'https://app.workbenchdata.com/static/data/population_dirty_data.csv',
-            wait=True  # wait for module to load
-        )
-        b.click_whatever('h2')  # AAAAH! we need to blur, _then_ click Update!
+        b.fill_in('url', DataUrl, wait=True)  # wait for module to load
         b.click_button('Update')
 
         # Wait for module to update

@@ -15,16 +15,14 @@ exports[`WfParameter Renders string input field 1`] = `
   <div
     className="label-margin t-d-gray content-3"
   />
-  <textarea
-    className="text-field"
-    defaultValue="data.sfgov.org"
+  <SingleLineTextField
+    initialValue="data.sfgov.org"
+    isReadOnly={false}
     name="url"
-    onBlur={[Function]}
-    onClick={[Function]}
-    onKeyPress={[Function]}
-    placeholder=""
-    readOnly={false}
-    rows={1}
+    onChange={[Function]}
+    onReset={[Function]}
+    onSubmit={[Function]}
+    value="data.sfgov.org"
   />
 </div>
 `;

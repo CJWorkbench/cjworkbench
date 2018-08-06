@@ -14,9 +14,11 @@ import OAuthConnect from './wfparameters/OAuthConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
+import NumberField from './wfparameters/NumberField'
 import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
+import SingleLineTextField from './wfparameters/SingleLineTextField'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -32,16 +34,53 @@ class TextOrNothing extends React.Component {
 }
 
 export default class WfParameter extends React.Component {
+  static propTypes = {
+    p: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      value: PropTypes.any, // initial value -- value in Redux store
+      parameter_spec: PropTypes.shape({
+        id_name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
+    moduleName:     PropTypes.string.isRequired,
+    wfModuleError:  PropTypes.string, // module-level error message
+    wfModuleId:   PropTypes.number.isRequired,
+    revision:       PropTypes.number.isRequired,
+    api:            PropTypes.object.isRequired,
+    updateSettings: PropTypes.object,             // only for modules that load data
+    isReadOnly:     PropTypes.bool.isRequired,
+    isZenMode:      PropTypes.bool.isRequired,
+    changeParam:    PropTypes.func.isRequired,
+    getParamId:     PropTypes.func.isRequired,
+    getParamText:   PropTypes.func.isRequired,
+    setParamText:   PropTypes.func.isRequired,
+    // "new-style" API: what it should have been all along. Normal React state stuff.
+    onChange: PropTypes.func.isRequired, // func(idName, newValue) => undefined
+    onSubmit: PropTypes.func.isRequired, // func() => undefined
+    onReset: PropTypes.func.isRequired, // func(idName) => undefined
+    value: PropTypes.any // value user has edited but not saved -- usually p.value, empty is allowed
+  }
 
   constructor(props) {
     super(props)
 
-    this.firstProps = true;
+    this.firstProps = true
 
-    this.keyPress = this.keyPress.bind(this);
-    this.blur = this.blur.bind(this);
-    this.click = this.click.bind(this);
     this.getInputColNames = this.getInputColNames.bind(this);
+
+    this.state = {
+      value: this.props.p.value
+    }
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.p.value !== this.props.p.value) {
+      // Overwrite user's changes to value, if there are any.
+      // More often, when this value changes the user _hasn't_ been editing
+      // values, so we want to change the value to what the server says it is.
+      this.setState({ value: this.props.p.value })
+    }
   }
 
   get outerDivProps() {
@@ -64,65 +103,57 @@ export default class WfParameter extends React.Component {
     return nameParts.join(' ')
   }
 
-  paramChanged = (newVal, pressedEnter) => {
-    this.props.changeParam(this.props.p.id, {value: newVal, pressed_enter: pressedEnter});
+  get idName () {
+    return this.props.p.parameter_spec.id_name
   }
 
-  // Save value (and re-render) when user presses enter (but not on multiline fields)
-  // Applies only to non-multiline fields
-  keyPress(e) {
-    const type = this.props.p.parameter_spec.type
-
-    if (e.key == 'Enter' && (type != 'string' || !this.props.p.parameter_spec.multiline)) {
-        this.paramChanged(e.target.value, PRESSED_ENTER);
-        e.preventDefault();       // eat the Enter so it doesn't get in our input field
-    }
+  onChange = (value) => {
+    this.props.onChange(this.idName, value)
   }
 
-  blur(e) {
-    this.paramChanged(e.target.value, DIDNT_PRESS_ENTER); // false = did not press enter
+  onSubmit = () => {
+    this.props.onSubmit()
   }
 
-  // Send event to server for button click
-  click(e) {
-    const type = this.props.p.parameter_spec.type
+  onReset = () => {
+    this.props.onReset(this.idName)
+  }
 
-    // type==custom a hack for version_select type
-    if (type == 'button' || type == 'custom') {
-      var eventData = {'type': 'click'};
-      this.props.api.postParamEvent(this.props.p.id, eventData)
-    }
+  paramChanged = (newVal) => {
+    this.props.changeParam(this.props.p.id, { value: newVal })
+  }
 
-    if (type == 'checkbox') {
-      this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
-    }
+  /**
+   * "old-style" form: submit just this param on blur.
+   */
+  blur = (e) => {
+    this.paramChanged(e.target.value)
+  }
 
-    if (type == 'string' && !this.props.isReadOnly) {
-      this.stringRef.select();
-    }
+  onClickCheckbox = (ev) => {
+    this.paramChanged(ev.target.checked)
   }
 
   // Return array of column names available to us, as a promise
-  getInputColNames() {
-    return this.props.api.inputColumns(this.props.wf_module_id);
+  getInputColNames () {
+    return this.props.api.inputColumns(this.props.wfModuleId)
   }
 
   // set contents of HTML input field corresponding to our type
-  setInputValue(val) {
+  setInputValue (val) {
     const type = this.props.p.parameter_spec.type
-    if (type === 'string' && this.stringRef) {
-      this.stringRef.value = val;
-    } else if (type === 'checkbox' && this.checkboxRef) {
-      this.checkboxRef.value = val;
-    } else if ((type === 'integer' || type == 'float') && this.numberRef) {
-      this.numberRef.value = val;
+    if (type === 'checkbox' && this.checkboxRef) {
+      this.checkboxRef.value = val
+    } else if ((type === 'integer' || type === 'float') && this.numberRef) {
+      this.numberRef.value = val
     }
   }
 
   // We need to update input contents when we get new props
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps (newProps) {
     // If this is our first time through, update form controls to current values
     // this conditional fixes https://www.pivotaltracker.com/story/show/154104065
+    // TODO WTF? Nix this; React state solves this tidily.
     if (this.firstProps) {
       this.setInputValue(newProps.p.value);
       this.firstProps = false;
@@ -130,12 +161,12 @@ export default class WfParameter extends React.Component {
   }
 
   onChangeGoogleFileSelectJson = (json) => {
-    this.props.setParamText('googlefileselect', json)
-    this.props.api.postParamEvent(this.props.getParamId('version_select'), {})
+    this.props.onChange(this.props.name, json)
+    this.props.onSubmit()
   }
 
   fetchInputColumns = () => {
-    return this.props.api.inputColumns(this.props.wf_module_id)
+    return this.props.api.inputColumns(this.props.wfModuleId)
   }
 
   onChangeYColumns = (arr) => {
@@ -168,23 +199,23 @@ export default class WfParameter extends React.Component {
   }
 
   // Render one of the many parameter types that are specific to a particular module
-  render_custom_parameter() {
+  render_custom_parameter () {
     const { id_name, name } = this.props.p.parameter_spec
 
     switch (id_name) {
       case 'version_select':
         const button = (!this.props.isReadOnly)
-          ? <button className='button-blue action-button mt-0' onClick={this.click}>{name}</button>
+          ? <button className='button-blue action-button mt-0' onClick={this.props.onSubmit}>{name}</button>
           : null
 
         return (
           <div {...this.outerDivProps}>
             <UpdateFrequencySelect
-              wfModuleId={this.props.wf_module_id}
+              wfModuleId={this.props.wfModuleId}
               isReadOnly={this.props.isReadOnly}
             />
             <div className="d-flex justify-content-between mt-2">
-              <DataVersionSelect wfModuleId={this.props.wf_module_id} />
+              <DataVersionSelect wfModuleId={this.props.wfModuleId} />
               {button}
             </div>
 
@@ -193,7 +224,7 @@ export default class WfParameter extends React.Component {
       case 'version_select_simpler':
         return (
           <div className='versionSelect--uploadFile'>
-            <DataVersionSelect wfModuleId={this.props.wf_module_id} />
+            <DataVersionSelect wfModuleId={this.props.wfModuleId} />
           </div>
         );
       case 'colrename':
@@ -211,7 +242,7 @@ export default class WfParameter extends React.Component {
       case 'file':
         return (
           <DropZone
-            wfModuleId={this.props.wf_module_id}
+            wfModuleId={this.props.wfModuleId}
             revision={this.props.revision}
             api={this.props.api}
           />
@@ -249,7 +280,7 @@ export default class WfParameter extends React.Component {
         return (
           <Refine
             api={this.props.api}
-            wfModuleId={this.props.wf_module_id}
+            wfModuleId={this.props.wfModuleId}
             selectedColumn={this.props.getParamText('column')}
             existingEdits={this.props.p.value}
             saveEdits={this.paramChanged}
@@ -267,7 +298,7 @@ export default class WfParameter extends React.Component {
           <RenameEntries
             api={this.props.api}
             entriesJsonString={this.props.p.value}
-            wfModuleId={this.props.wf_module_id}
+            wfModuleId={this.props.wfModuleId}
             paramId={this.props.p.id}
             revision={this.props.revision}
             isReadOnly={this.props.isReadOnly}
@@ -350,55 +381,59 @@ export default class WfParameter extends React.Component {
     switch (type) {
       case 'string':
         // Different size and style if it's a multiline string
-        var sclass, srows;
-        if (!this.props.p.parameter_spec.multiline) {
-          sclass='text-field';
-          srows = 1;
-        } else {
-          sclass='module-parameter t-d-gray content-3 text-field-large';
-          srows = 4;
-        }
-
-        return (
-          <div {...this.outerDivProps}>
-            <div className='label-margin t-d-gray content-3'>{name}</div>
-            <textarea
-              onBlur={this.blur}
-              onKeyPress={this.keyPress}
-              onClick={this.click}
-              readOnly={this.props.isReadOnly}
-              className={sclass}
-              name={id_name}
-              rows={srows}
-              defaultValue={this.props.p.value}
-              placeholder={this.props.p.parameter_spec.placeholder || ''}
-              ref={ el => this.stringRef = el}
+        if (this.props.p.parameter_spec.multiline) {
+          return (
+            <div {...this.outerDivProps}>
+              <div className='label-margin t-d-gray content-3'>{name}</div>
+              <textarea
+                onBlur={this.blur}
+                readOnly={this.props.isReadOnly}
+                className='module-parameter t-d-gray content-3 text-field-large'
+                name={id_name}
+                rows={4}
+                defaultValue={this.props.p.value}
+                placeholder={this.props.p.parameter_spec.placeholder || ''}
               />
-          </div>
-        );
+            </div>
+          )
+        } else {
+          return (
+            <div {...this.outerDivProps}>
+              <div className='label-margin t-d-gray content-3'>{name}</div>
+              <SingleLineTextField
+                isReadOnly={this.props.isReadOnly}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
+                onReset={this.onReset}
+                name={id_name}
+                initialValue={this.props.p.value}
+                value={this.props.value}
+              />
+            </div>
+          )
+        }
 
       case 'integer':
       case 'float':
         return (
           <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
-            <input type="text"
-              readOnly={this.props.isReadOnly}
-              className='number-field module-parameter t-d-gray content-3'
-              name={id_name}
-              rows='1'
-              defaultValue={this.props.p.value}
-              onBlur={this.blur}
-              onKeyPress={this.keyPress}
+            <NumberField
+              isReadOnly={this.props.isReadOnly}
+              onChange={this.onChange}
+              onSubmit={this.onSubmit}
+              onReset={this.onReset}
+              initialValue={this.props.p.value}
+              value={this.props.value}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
-              ref={ el => this.numberRef = el}/>
+            />
           </div>
         );
 
       case 'button':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
-            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.click}>{name}</button>
+            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.props.onSubmit}>{name}</button>
           </div>
         );
       case 'statictext':
@@ -414,7 +449,7 @@ export default class WfParameter extends React.Component {
                 disabled={this.props.isReadOnly}
                 type="checkbox" className="checkbox"
                 checked={this.props.p.value}
-                onChange={this.click}
+                onChange={this.onClickCheckbox}
                 name={id_name}
                 ref={ el => this.checkboxRef = el}
                 id={this.props.p.id} />
@@ -475,27 +510,4 @@ export default class WfParameter extends React.Component {
         return null;  // unrecognized parameter type
     }
   }
-}
-
-WfParameter.propTypes = {
-  p: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    value: PropTypes.any,
-    parameter_spec: PropTypes.shape({
-      id_name: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-  moduleName:     PropTypes.string.isRequired,
-  wfModuleError:  PropTypes.string, // module-level error message
-  wf_module_id:   PropTypes.number.isRequired,
-  revision:       PropTypes.number.isRequired,
-  api:            PropTypes.object.isRequired,
-  updateSettings: PropTypes.object,             // only for modules that load data
-  isReadOnly:     PropTypes.bool.isRequired,
-  isZenMode:      PropTypes.bool.isRequired,
-  changeParam:    PropTypes.func.isRequired,
-  getParamId:     PropTypes.func.isRequired,
-  getParamText:   PropTypes.func.isRequired,
-  setParamText:   PropTypes.func.isRequired,
 }

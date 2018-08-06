@@ -42,6 +42,7 @@
     "@babel/preset-react": "^7.0.0-beta.49",
     "@babel/runtime": "^7.0.0-beta.49",
     "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^8.2.6",
     "babel-loader": "^8.0.0-beta.3",
     "check-dependencies": "^1.1.0",
     "css-loader": "^0.28.11",
@@ -71,6 +72,9 @@
     "test:coverage": "jest --coverage",
     "watchjs": "webpack --mode development --watch",
     "compilejs": "webpack --mode production"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   },
   "jest": {
     "setupFiles": [

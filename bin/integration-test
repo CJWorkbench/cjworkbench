@@ -13,14 +13,52 @@ docker_compose() {
     "$@"
 }
 
+debugging_ideas() {
+  cat <<EOT
+
+DEBUGGING IDEAS
+
+1. Blindly fix bugs in the integration tests
+
+    a. Edit code in integrationtests/
+    b. Run \`$0 resume\` to run tests without changing the system under test
+
+2. Find a bug in your web browser
+
+    a. Browse to http://localhost:8080
+    b. If you need a login, register and then browse to
+       http://localhost:8080/last-sent-email for the confirmation link
+    c1. If the bug is in a test, edit and run \`$0 resume\`
+    c2. If the bug is in Workbench, write a unit-test and restart from scratch
+
+3. Watch tests using VNC
+
+    a. Run \`$0 shell\` to start a new test runner
+    b. Connect a VNC client to localhost:5901
+    c. In the test-runner shell, run \`python -m unittest discover integrationtests\`
+    d1. If the bug is in a test, edit and re-run python (integrationtests/ is mounted)
+    d2. If the bug is in Workbench, write a unit-test and restart from scratch
+    d3. Still not finding the bug? Run \`firefox\` and test in your VNC client
+EOT
+}
+
 if [ "$1" = "shell" ]; then
   docker_compose run --rm \
     --service-ports \
     integration-test \
     bash -c '/app/integrationtests/start-vnc & DISPLAY=:1 bash'
   exit 0
+elif [ "$1" = "resume" ]; then
+  if docker_compose run integration-test; then
+    echo 'Tests passed! We left everything running because you resumed.' >&2
+    exit 0
+  else
+    echo 'Tests failed, and we left everything running.' >&2
+    debugging_ideas >&2
+    exit 1
+  fi
 elif [ -n "$1" ]; then
-  echo "Usage: $0 [shell]" >&2
+  echo "Usage: $0 [shell|resume]" >&2
   exit 1
 fi
 
@@ -39,22 +77,6 @@ if docker_compose run integration-test; then
   docker_compose down -v
 else
   echo 'Tests failed, so we left everything running.' >&2
-  echo >&2
-  echo 'DEBUGGING IDEAS' >&2
-  echo >&2
-  echo '1. Find a bug in your web browser' >&2
-  echo >&2
-  echo '    a. Browse to http://localhost:8080' >&2
-  echo '    b. If you need a login, register and then browse to' >&2
-  echo '       http://localhost:8080/last-sent-email for the confirmation link' >&2
-  echo >&2
-  echo '2. Watch tests using VNC' >&2
-  echo >&2
-  echo "    a. Run \`$0 shell\` to start a new test runner" >&2
-  echo '    b. Connect a VNC client to localhost:5901' >&2
-  echo '    c. In the test-runner shell, run `python -m unittest discover integrationtests`' >&2
-  echo '    d1. If the bug is in the test, edit and re-run python (integrationtests/ is mounted)' >&2
-  echo '    d2. If the bug is in Workbench, write a unit-test and restart from scratch' >&2
-  echo '    d3. Still not finding the bug? Run `firefox` and test in your VNC client' >&2
+  debugging_ideas >&2
   exit 1
 fi

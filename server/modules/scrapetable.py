@@ -43,7 +43,7 @@ class ScrapeTable(ModuleImpl):
             if first_row_is_header:
                 table.columns = list(table.iloc[0, :])
                 table = table[1:]
-        return table
+        return (table, wf_module.error_msg)
 
     @staticmethod
     def event(wfm, event=None, **kwargs):
