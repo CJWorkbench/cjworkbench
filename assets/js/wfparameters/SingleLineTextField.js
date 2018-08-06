@@ -17,6 +17,7 @@ export default class SingleLineTextField extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func(str) => undefined
     onSubmit: PropTypes.func.isRequired, // func() => undefined
+    onReset: PropTypes.func.isRequired, // func() => undefined
     name: PropTypes.string.isRequired,
     initialValue: PropTypes.string, // sometimes empty string
     value: PropTypes.string, // sometimes empty string
@@ -36,17 +37,14 @@ export default class SingleLineTextField extends React.PureComponent {
     this.props.onChange(value)
   }
 
-  onSubmit = (ev) => {
-    ev.preventDefault()
-    this.props.onSubmit()
-  }
-
   onKeyDown = (ev) => {
     switch (ev.keyCode) {
       case 13: // Enter
-        return this.onSubmit(ev)
+        ev.preventDefault()
+        return this.props.onSubmit()
       case 27: // Escape
-        return this.props.onChange(this.props.initialValue)
+        ev.preventDefault()
+        return this.props.onReset()
       // else handle the key as usual
     }
   }
@@ -92,7 +90,7 @@ export default class SingleLineTextField extends React.PureComponent {
     const { name, initialValue, value, placeholder, isReadOnly } = this.props
     const { rows } = this.state
     const maybeButton = initialValue === value ? null : (
-      <button title="submit" ref={this.buttonRef} onClick={this.onSubmit}>
+      <button title="submit" ref={this.buttonRef} onClick={this.props.onSubmit}>
         <i className="icon-caret-right" />
       </button>
     )
@@ -106,7 +104,7 @@ export default class SingleLineTextField extends React.PureComponent {
           <span ref={this.calculatorRef}>{value}</span>
         </div>
         <textarea
-          readonly={isReadOnly}
+          readOnly={isReadOnly}
           name={name}
           placeholder={placeholder}
           rows={rows}

@@ -13,7 +13,6 @@ describe('WfModuleContextMenu', () => {
     wrapper = mount(
       <WfModuleContextMenu
         removeModule={removeModule} 
-        stopProp={ () => {} }
         id={415}
         className="menu-test-class"        
       />

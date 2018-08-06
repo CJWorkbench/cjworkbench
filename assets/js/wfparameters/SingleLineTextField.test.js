@@ -8,6 +8,7 @@ describe('SingleLineTextField', () => {
     <SingleLineTextField
       onChange={jest.fn()}
       onSubmit={jest.fn()}
+      onReset={jest.fn()}
       isReadOnly={false}
       name='field-name'
       value='initialValue'
@@ -45,18 +46,17 @@ describe('SingleLineTextField', () => {
       value: 'new',
       initialValue: 'old'
     })
-    w.find('textarea').simulate('keydown', { keyCode: 13 })
+    w.find('textarea').simulate('keydown', { keyCode: 13, preventDefault: jest.fn() })
     expect(w.prop('onSubmit')).toHaveBeenCalled()
   })
 
-  it('should change back to initial value by pressing Escape', () => {
+  it('should reset by pressing Escape', () => {
     const w = wrapper({
       value: 'new',
       initialValue: 'old'
     })
-    w.find('textarea').simulate('keydown', { keyCode: 27 })
-    expect(w.prop('onSubmit')).not.toHaveBeenCalled()
-    expect(w.prop('onChange')).toHaveBeenCalledWith('old')
+    w.find('textarea').simulate('keydown', { keyCode: 27, preventDefault: jest.fn() })
+    expect(w.prop('onReset')).toHaveBeenCalled()
   })
 
   it('should not allow newlines', () => {
@@ -67,6 +67,6 @@ describe('SingleLineTextField', () => {
 
   it('should disable when read-only', () => {
     const w = wrapper({ isReadOnly: true })
-    expect(w.find('textarea').prop('readonly')).toBe(true)
+    expect(w.find('textarea').prop('readOnly')).toBe(true)
   })
 })

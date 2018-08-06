@@ -36,7 +36,7 @@ export default class WfParameter extends React.Component {
   static propTypes = {
     p: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      value: PropTypes.any,
+      value: PropTypes.any, // initial value -- value in Redux store
       parameter_spec: PropTypes.shape({
         id_name: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
@@ -54,18 +54,22 @@ export default class WfParameter extends React.Component {
     getParamId:     PropTypes.func.isRequired,
     getParamText:   PropTypes.func.isRequired,
     setParamText:   PropTypes.func.isRequired,
+    // "new-style" API: what it should have been all along. Normal React state stuff.
+    onChange: PropTypes.func.isRequired, // func(idName, newValue) => undefined
+    onSubmit: PropTypes.func.isRequired, // func() => undefined
+    onReset: PropTypes.func.isRequired, // func(idName) => undefined
+    value: PropTypes.any // value user has edited but not saved -- usually p.value, empty is allowed
   }
 
   constructor(props) {
     super(props)
 
-    this.firstProps = true;
+    this.firstProps = true
 
-    this.keyPress = this.keyPress.bind(this);
     this.getInputColNames = this.getInputColNames.bind(this);
 
     this.state = {
-      value: this.props.p.value,
+      value: this.props.p.value
     }
   }
 
@@ -98,72 +102,58 @@ export default class WfParameter extends React.Component {
     return nameParts.join(' ')
   }
 
+  get idName () {
+    return this.props.p.parameter_spec.id_name
+  }
+
   onChange = (value) => {
-    this.setState({ value })
+    this.props.onChange(this.idName, value)
   }
 
   onSubmit = () => {
-    this.props.changeParam(this.props.p.id, {
-      value: this.state.value,
-      pressed_enter: true
-    })
+    this.props.onSubmit()
   }
 
-  paramChanged = (newVal, pressedEnter) => {
-    this.props.changeParam(this.props.p.id, {value: newVal, pressed_enter: pressedEnter});
+  onReset = () => {
+    this.props.onReset(this.idName)
   }
 
-  keyPress(e) {
-    // Save value (and re-render) when user presses enter (but not on multiline fields)
-    // Applies only to non-multiline fields
-    const type = this.props.p.parameter_spec.type
-
-    if (e.key == 'Enter' && (type != 'string' || !this.props.p.parameter_spec.multiline)) {
-        this.paramChanged(e.target.value, PRESSED_ENTER);
-        e.preventDefault();       // eat the Enter so it doesn't get in our input field
-    }
+  paramChanged = (newVal) => {
+    this.props.changeParam(this.props.p.id, { value: newVal })
   }
 
   /**
    * "old-style" form: submit just this param on blur.
    */
   blur = (e) => {
-    this.paramChanged(e.target.value, DIDNT_PRESS_ENTER); // false = did not press enter
+    this.paramChanged(e.target.value)
   }
 
   // Send event to server for button click
   click = (e) => {
     const type = this.props.p.parameter_spec.type
 
-    // type==custom a hack for version_select type
-    if (type == 'button' || type == 'custom') {
-      var eventData = {'type': 'click'};
-      this.props.api.postParamEvent(this.props.p.id, eventData)
-    }
-
-    if (type == 'checkbox') {
-      this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
-    }
-
-    if (type == 'string' && !this.props.isReadOnly) {
-      this.stringRef.select();
+    if (type === 'checkbox') {
+      this.paramChanged(e.target.checked)
+    } else if (type === 'string' && !this.props.isReadOnly) {
+      this.stringRef.select()
     }
   }
 
   // Return array of column names available to us, as a promise
-  getInputColNames() {
-    return this.props.api.inputColumns(this.props.wfModuleId);
+  getInputColNames () {
+    return this.props.api.inputColumns(this.props.wfModuleId)
   }
 
   // set contents of HTML input field corresponding to our type
-  setInputValue(val) {
+  setInputValue (val) {
     const type = this.props.p.parameter_spec.type
     if (type === 'string' && this.stringRef) {
-      this.stringRef.value = val;
+      this.stringRef.value = val
     } else if (type === 'checkbox' && this.checkboxRef) {
-      this.checkboxRef.value = val;
-    } else if ((type === 'integer' || type == 'float') && this.numberRef) {
-      this.numberRef.value = val;
+      this.checkboxRef.value = val
+    } else if ((type === 'integer' || type === 'float') && this.numberRef) {
+      this.numberRef.value = val
     }
   }
 
@@ -171,6 +161,7 @@ export default class WfParameter extends React.Component {
   componentWillReceiveProps(newProps) {
     // If this is our first time through, update form controls to current values
     // this conditional fixes https://www.pivotaltracker.com/story/show/154104065
+    // TODO WTF? Nix this; React state solves this tidily.
     if (this.firstProps) {
       this.setInputValue(newProps.p.value);
       this.firstProps = false;
@@ -178,8 +169,8 @@ export default class WfParameter extends React.Component {
   }
 
   onChangeGoogleFileSelectJson = (json) => {
-    this.props.setParamText('googlefileselect', json)
-    this.props.api.postParamEvent(this.props.getParamId('version_select'), {})
+    this.props.onChange(this.props.name, json)
+    this.props.onSubmit()
   }
 
   fetchInputColumns = () => {
@@ -216,13 +207,13 @@ export default class WfParameter extends React.Component {
   }
 
   // Render one of the many parameter types that are specific to a particular module
-  render_custom_parameter() {
+  render_custom_parameter () {
     const { id_name, name } = this.props.p.parameter_spec
 
     switch (id_name) {
       case 'version_select':
         const button = (!this.props.isReadOnly)
-          ? <button className='button-blue action-button mt-0' onClick={this.click}>{name}</button>
+          ? <button className='button-blue action-button mt-0' onClick={this.props.onSubmit}>{name}</button>
           : null
 
         return (
@@ -404,7 +395,6 @@ export default class WfParameter extends React.Component {
               <div className='label-margin t-d-gray content-3'>{name}</div>
               <textarea
                 onBlur={this.blur}
-                onKeyPress={this.keyPress}
                 onClick={this.click}
                 readOnly={this.props.isReadOnly}
                 className='module-parameter t-d-gray content-3 text-field-large'
@@ -424,9 +414,10 @@ export default class WfParameter extends React.Component {
                 isReadOnly={this.props.isReadOnly}
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}
-                name={name}
+                onReset={this.onReset}
+                name={id_name}
                 initialValue={this.props.p.value}
-                value={this.state.value}
+                value={this.props.value}
               />
             </div>
           )
@@ -451,7 +442,7 @@ export default class WfParameter extends React.Component {
       case 'button':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
-            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.click}>{name}</button>
+            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.props.onSubmit}>{name}</button>
           </div>
         );
       case 'statictext':

@@ -21,7 +21,7 @@ describe('WfModule, not read-only mode', () => {
     isZenMode: false,
     name: 'TestModule',
     wfModule: wfModule,
-    changeParam: mockApi.onParamChanged,
+    changeParam: jest.fn(),
     removeModule: jest.fn(),
     revision: 707,
     selected: true,
@@ -200,6 +200,124 @@ describe('WfModule, not read-only mode', () => {
     expect(mockApi.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, '')
 
     expect(wrapper.find('.module-notes.visible')).toHaveLength(0)
+  })
+
+  it('queues changes from onChange and then submits them in onSubmit', () => {
+    const wfModule = {
+      id: 999,
+      notes: '',
+      is_collapsed: false,
+      parameter_vals: [
+        { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
+        { id: 2, parameter_spec: { id_name: 'b', type: 'String' }, value: 'B' }
+      ],
+      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+    }
+    const wrapper = shallow(
+      <WfModule
+        {...props}
+        wfModule={wfModule}
+      />
+    )
+
+    wrapper.find('WfParameter[name="a"]').prop('onChange')('a', 'C')
+    wrapper.update()
+    expect(wrapper.find('WfParameter[name="a"]').prop('value')).toEqual('C')
+
+    wrapper.find('WfParameter[name="b"]').prop('onChange')('b', 'D')
+    wrapper.update()
+    expect(wrapper.find('WfParameter[name="b"]').prop('value')).toEqual('D')
+
+    // ... and neither should be submitted to the server
+    expect(props.changeParam).not.toHaveBeenCalled()
+
+    wrapper.find('WfParameter[name="b"]').prop('onSubmit')()
+    expect(props.changeParam).toHaveBeenCalledWith(1, 'C')
+    expect(props.changeParam).toHaveBeenCalledWith(2, 'D')
+
+    // a bit of a white-box test: state should be cleared
+    expect(wrapper.state('edits')).toEqual({})
+  })
+
+  it('resets just the one WfParmeter in onReset', () => {
+    const wfModule = {
+      id: 999,
+      notes: '',
+      is_collapsed: false,
+      parameter_vals: [
+        { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
+        { id: 2, parameter_spec: { id_name: 'b', type: 'String' }, value: 'B' }
+      ],
+      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+    }
+    const wrapper = shallow(
+      <WfModule
+        {...props}
+        wfModule={wfModule}
+      />
+    )
+
+    wrapper.find('WfParameter[name="a"]').prop('onChange')('a', 'C')
+    wrapper.find('WfParameter[name="b"]').prop('onChange')('b', 'D')
+    wrapper.update()
+    wrapper.find('WfParameter[name="b"]').prop('onReset')('b')
+    wrapper.update()
+    expect(wrapper.find('WfParameter[name="a"]').prop('value')).toEqual('C')
+    expect(wrapper.find('WfParameter[name="b"]').prop('value')).toEqual('B')
+  })
+
+  it('submits a fake version_select click event in WfParameter onSubmit', () => {
+    // Use case:
+    // 1. User edits url field
+    // 2. User clicks "submit" button within the URL field
+    // Expected behavior: same as if user clicks "submit" button in the
+    // WfParameter
+    const wfModule = {
+      id: 999,
+      notes: '',
+      is_collapsed: false,
+      parameter_vals: [
+        { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: '' },
+        { id: 2, parameter_spec: { id_name: 'version_select', type: 'String' }, value: 'B' }
+      ],
+      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+    }
+    const wrapper = shallow(
+      <WfModule
+        {...props}
+        wfModule={wfModule}
+      />
+    )
+
+    wrapper.find('WfParameter[name="url"]').prop('onChange')('url', 'http://example.org')
+    wrapper.find('WfParameter[name="url"]').prop('onSubmit')()
+
+    expect(props.changeParam).toHaveBeenCalledWith(1, 'http://example.org')
+    expect(mockApi.postParamEvent).toHaveBeenCalledWith(2)
+  })
+
+  it('submits a version_select click event in WfParameter[name=version_select] onSubmit', () => {
+    // Use case: user wants to re-fetch
+    const wfModule = {
+      id: 999,
+      notes: '',
+      is_collapsed: false,
+      parameter_vals: [
+        { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: 'http://example.org' },
+        { id: 2, parameter_spec: { id_name: 'version_select', type: 'String' }, value: 'B' }
+      ],
+      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+    }
+    const wrapper = shallow(
+      <WfModule
+        {...props}
+        wfModule={wfModule}
+      />
+    )
+
+    wrapper.find('WfParameter[name="version_select"]').prop('onSubmit')()
+
+    expect(mockApi.postParamEvent).toHaveBeenCalledWith(2)
   })
 
   describe('lesson highlights', () => {

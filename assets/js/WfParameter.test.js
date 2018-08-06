@@ -1,75 +1,86 @@
+/* global describe, it, expect, jest */
 import React from 'react'
 import WfParameter from './WfParameter'
 import { shallow } from 'enzyme'
 
 describe('WfParameter', () => {
-
-  var nullApi = {};
-  var nullFn = () => {};
-
   // For testing conditional UI
-  var mockGetParamMenuItems = (param_id) => {return 'Sugar|Butter||Flour'.split('|').map(s => s.trim())}
-  var visibilityCond1 = {
+  const visibilityCond1 = {
     'id_name': 'whatever',
     'value': 'Butter|Flour'
-  };
-  var visibilityCond2 = {
+  }
+  const visibilityCond2 = {
     'id_name': 'whatever',
-    'value': 'Sugar',
-  };
-  var visibilityCond3 = {
+    'value': 'Sugar'
+  }
+  const visibilityCond3 = {
     'id_name': 'whatever',
-    'value': true,
-  };
+    'value': true
+  }
 
-  function shallowParameter(p, paramtextReturnValue) {
+  function shallowParameter (p, paramtextReturnValue, value) {
     return shallow(
       <WfParameter
         p={p}
         isReadOnly={false}
         isZenMode={false}
-        moduleName="test"
-        wf_module_id={0}
+        moduleName='test'
+        wfModuleId={1}
         revision={0}
         loggedInUser={{}}
-        api={nullApi}
-        changeParam={nullFn}
-        getParamId={(id) => null}
-        getParamText={(id) => paramtextReturnValue}
-        setParamText={nullFn}
-        getParamMenuItems={mockGetParamMenuItems}
-        startDrag={nullFn}
-        stopDrag={nullFn}        
-      />);
+        api={{}}
+        changeParam={jest.fn()}
+        getParamId={jest.fn(_ => null)}
+        getParamText={jest.fn(_ => paramtextReturnValue)}
+        setParamText={jest.fn()}
+        getParamMenuItems={jest.fn(_ => ['Sugar', 'Butter', '', 'Flour'])}
+        startDrag={jest.fn()}
+        stopDrag={jest.fn()}
+        onChange={jest.fn()}
+        onSubmit={jest.fn()}
+        onReset={jest.fn()}
+        value={p.value || value}
+      />
+    )
   }
 
   it('Renders cell editor', () => {
-    var wrapper = shallowParameter({visible: true, id: 123, value: '', parameter_spec: {type:'custom', id_name:'celledits' }});
-    expect(wrapper.find('CellEditor')).toHaveLength(1);
-    expect(wrapper).toMatchSnapshot();
-  });
+    const wrapper = shallowParameter({
+      visible: true,
+      id: 123,
+      value: '',
+      parameter_spec: { type: 'custom', id_name: 'celledits' }
+    })
+    expect(wrapper.find('CellEditor')).toHaveLength(1)
+    expect(wrapper).toMatchSnapshot()
+  })
 
   it('Renders string input field', () => {
-    var wrapper = shallowParameter({visible: true, id: 123, value: 'data.sfgov.org', parameter_spec: {type:'string', id_name:'url'}});
-    expect(wrapper.find('textarea')).toHaveLength(1);
-    expect(wrapper).toMatchSnapshot();
-  });
+    const wrapper = shallowParameter({
+      visible: true,
+      id: 123,
+      value: 'data.sfgov.org',
+      parameter_spec: {type: 'string', id_name: 'url'}
+    })
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(1)
+    expect(wrapper).toMatchSnapshot()
+  })
 
   // Conditional UI tests
 
   it('Renders a parameter when visible_if conditions are met', () => {
-    var wrapper = shallowParameter({
-        visible: true,
-        id: 123,
-        value: 'data.sfgov.org',
-        parameter_spec: {
-          id_name: 'url',
-          type: 'string',
-          visible_if: JSON.stringify(visibilityCond1),
-        }
-    }, 3);
-    expect(wrapper.find('textarea')).toHaveLength(1);
-  });
+    const wrapper = shallowParameter({
+      visible: true,
+      id: 123,
+      value: 'data.sfgov.org',
+      parameter_spec: {
+        id_name: 'url',
+        type: 'string',
+        visible_if: JSON.stringify(visibilityCond1)
+      }
+    }, 3)
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(1)
+  })
 
   it('Does not render a parameter when visible_if conditions are not met', () => {
     var wrapper = shallowParameter({
@@ -82,7 +93,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond2),
         }
     }, 3);
-    expect(wrapper.find('textarea')).toHaveLength(0);
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
   });
 
   it('Does not render a parameter when visible_if conditions are met but visible_if is inverted', () => {
@@ -98,7 +109,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(newVisibilityCond),
         }
     }, 3);
-    expect(wrapper.find('textarea')).toHaveLength(0);
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
   });
 
   it('Renders a parameter when visible_if conditions are not met but visible_if is inverted', () => {
@@ -114,7 +125,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(newVisibilityCond),
         }
     }, 3);
-    expect(wrapper.find('textarea')).toHaveLength(1);
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(1);
   });
 
   it('Renders a parameter when boolean visible_if conditions are met', () => {
@@ -128,7 +139,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond3),
         }
     }, true);
-    expect(wrapper.find('textarea')).toHaveLength(1);
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(1);
   });
 
   it('It does not render a parameter when boolean visible_if conditions are not met', () => {
@@ -142,7 +153,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond3),
         }
     }, false);
-    expect(wrapper.find('textarea')).toHaveLength(0);
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
   });
 });
 
