@@ -120,6 +120,7 @@ class TwitterTests(LoggedInTestCase):
 
         # Check that render output is right
         result = Twitter.render(self.wf_module, None)
+        result.sanitize_in_place()
         self.assertEqual(result, table_to_result(self.mock_tweet_table))
 
         # now accumulate new tweets
@@ -156,6 +157,7 @@ class TwitterTests(LoggedInTestCase):
 
         # Check that render output is right
         result = Twitter.render(self.wf_module, None)
+        result.sanitize_in_place()
         self.assertEquals(result, table_to_result(self.mock_tweet_table))
 
 
@@ -182,4 +184,5 @@ class TwitterTests(LoggedInTestCase):
 
         # Check that render output is right
         result = Twitter.render(self.wf_module, None)
+        result.sanitize_in_place()
         self.assertEquals(result, table_to_result(self.mock_tweet_table))
