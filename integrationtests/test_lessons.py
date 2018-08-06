@@ -1,5 +1,6 @@
 from integrationtests.utils import LoggedInIntegrationTest
 
+
 class TestLessons(LoggedInIntegrationTest):
     def test_lesson_list(self):
         b = self.browser
@@ -13,7 +14,8 @@ class TestLessons(LoggedInIntegrationTest):
     def test_lesson_detail(self):
         b = self.browser
         b.visit('/lessons/')
-        b.click_whatever('h2', text='I. Load public data and make a chart', wait=True)
+        b.click_whatever('h2', text='I. Load public data and make a chart',
+                         wait=True)
 
         b.assert_element('.module-stack')
         b.assert_element('h2', text='Overview')
