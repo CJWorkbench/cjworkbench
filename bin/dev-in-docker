@@ -116,7 +116,7 @@ case "$COMMAND" in
     docker_compose run --rm webpack npm install
 
     # Start Django and Webpack
-    docker_compose up
+    docker_compose up -t0 --abort-on-container-exit
     ;;
 
   "stop")
