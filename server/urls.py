@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', views.wfmodule_input),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/embeddata$', views.wfmodule_embeddata),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/histogram/(?P<col>.*)', views.wfmodule_histogram),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input-value-counts$', views.wfmodule_input_value_counts),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion/read', views.wfmodule_dataversion_read),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion', views.wfmodule_dataversion),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/notifications', views.notifications_delete_by_wfmodule),

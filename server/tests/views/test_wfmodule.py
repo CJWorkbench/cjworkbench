@@ -32,23 +32,6 @@ test_data_json = {
     ]
 }
 
-test_histogram_data_json = {
-    'total_rows': 4,
-    'start_row': 0,
-    'end_row': 4,
-    'columns': ['Class', '__internal_count_column__'],
-    'rows': [
-        {'Class': 'economics', '__internal_count_column__': 1},
-        {'Class': 'english', '__internal_count_column__': 1},
-        {'Class': 'history', '__internal_count_column__': 1},
-        {'Class': 'math', '__internal_count_column__': 1},
-    ],
-    'column_types': [
-        'String',
-        'Number',
-    ]
-}
-
 empty_data_json = {
     'total_rows': 0,
     'start_row': 0,
@@ -253,24 +236,38 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), test_data_json)
 
-    # tests for the /histogram API
-    def test_wf_module_histogram(self):
-        # The column name for histogram counts, to prevent name conflicts
-        INTERNAL_COUNT_COLNAME = '__internal_count_column__'
-
-        # First module: no prior input, should be empty result
-        response = self.client.get('/api/wfmodules/%d/histogram/Class' % self.wfmodule1.id)
+    def test_count_values_missing_module(self):
+        # First module: no prior input, should be 404
+        response = self.client.get('/api/wfmodules/%d/input-value-counts?column=Class' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), empty_data_json)
+        self.assertEqual(json.loads(response.content), {})
 
-        # Second module: histogram should be count 1 for each column
-        response = self.client.get('/api/wfmodules/%d/histogram/Class' % self.wfmodule2.id)
+    def test_count_values_str(self):
+        response = self.client.get('/api/wfmodules/%d/input-value-counts?column=Class' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), test_histogram_data_json)
+        self.assertEqual(json.loads(response.content), {'values': {
+            'math': 1,
+            'english': 1,
+            'history': 1,
+            'economics': 1,
+        }})
 
-        # Test for non-existent column; should return a 204 code
-        response = self.client.get('/api/wfmodules/%d/histogram/O' % self.wfmodule2.id)
-        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_count_values_number(self):
+        response = self.client.get('/api/wfmodules/%d/input-value-counts?column=F' % self.wfmodule2.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {'values': {
+            '12': 1,
+            '7': 1,
+            '13': 1,
+            '20': 1,
+        }})
+
+    def test_count_values_missing_column(self):
+        response = self.client.get('/api/wfmodules/%d/input-value-counts?column=O' % self.wfmodule2.id)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(json.loads(response.content), {
+            'error': 'column "O" not found'
+        })
 
     # tests for the /columns API
     def test_wf_module_columns(self):
