@@ -27,6 +27,7 @@ services:
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench
+      CJW_REDIS_HOST: redis
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
 
