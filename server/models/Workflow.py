@@ -69,14 +69,10 @@ class Workflow(models.Model):
         It is safe to call cooperative_lock() within a cooperative_lock(). The
         inner one will behave as a no-op.
         """
-        # savepoint=False because on sqlite, savepoints commit before start
-        with transaction.atomic(savepoint=False):
+        with transaction.atomic():
             # Lock the workflow, in the database.
             # This will block until the workflow is released.
             # https://docs.djangoproject.com/en/2.0/ref/models/querysets/#select-for-update
-            #
-            # In sqlite select_for_update() is a no-op; but we're safe because
-            # sqlite doesn't allow concurrent transactions.
             #
             # list() executes the query
             list(Workflow.objects.select_for_update().filter(id=self.id))

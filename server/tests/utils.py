@@ -73,23 +73,13 @@ _Tables = [
     'auth_user_user_permissions',
 ]
 
-if 'postgres' in settings.DATABASES['default']['ENGINE']:
-    _clear_db_sql = f"""
-    WITH f{', '.join([f't{i} AS (DELETE FROM {table})' for i, table in enumerate(_Tables)])}
-    SELECT 1
-    """
 
-    def clear_db():
-        with connection.cursor() as c:
-            c.execute(_clear_db_sql)
-
-else:
-    def clear_db():
-        with connection.cursor() as c:
-            c.execute('BEGIN')
-            for table in _Tables:
-                c.execute(f'DELETE FROM {table}')
-            c.execute('COMMIT')
+def clear_db():
+    deletes = [f't{i} AS (DELETE FROM {table})'
+               for i, table in enumerate(_Tables)]
+    sql = f"WITH {', '.join(deletes)} SELECT 1"
+    with connection.cursor() as c:
+        c.execute(sql)
 
 
 # ---- Setting up workflows ----

@@ -67,14 +67,10 @@ DEFAULT_FROM_EMAIL = 'Workbench <hello@accounts.workbenchdata.com>'
 try:
     SECRET_KEY = os.environ['CJW_SECRET_KEY']
 except KeyError:
-    if DEBUG:
-        SECRET_KEY = 'my debug secret key is not a secret'
-    else:
-        sys.exit('Must set CJW_SECRET_KEY in production')
-
+    sys.exit('Must set CJW_SECRET_KEY')
 
 # DATABASES
-if 'CJW_DB_HOST' in os.environ and 'CJW_DB_PASSWORD' in os.environ:
+try:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -86,33 +82,21 @@ if 'CJW_DB_HOST' in os.environ and 'CJW_DB_PASSWORD' in os.environ:
             'CONN_MAX_AGE': 30,
         }
     }
-else:
-    if not DEBUG:
-        sys.exit('Must set CJW_DB_HOST and CJW_DB_PASSWORD in production')
+except KeyError:
+    sys.exit('Must set CJW_DB_HOST and CJW_DB_PASSWORD')
 
-    from django.db.backends.signals import connection_created
-
-    def speed_up_writes_by_20_percent(sender, connection, **kwargs):
-        """Truncate, don't delete, sqlite3 journal.
-
-        This is faster because every write no longer needs to create and
-        delete a file (which would mean two directory writes).
-        """
-        cursor = connection.cursor()
-        cursor.execute('PRAGMA journal_mode=TRUNCATE')
-
-    connection_created.connect(speed_up_writes_by_20_percent)
-
-    DATABASES = {
+# REDIS
+try:
+    CHANNEL_LAYERS = {
         'default': {
-            'ENGINE': 'cjworkbench.sqlite3withbeginimmediate',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-            'OPTIONS': {
-                'timeout': 30,
-                'isolation_level': 'IMMEDIATE',
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [(os.environ['CJW_REDIS_HOST'], 6379)],
             },
         },
     }
+except KeyError:
+    sys.exit('Must set CJW_REDIS_HOST')
 
 # EMAIL_BACKEND
 #
@@ -145,8 +129,10 @@ else:
         'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
 
-if 'CJW_GOOGLE_ANALYTICS' in os.environ:
+try:
     GOOGLE_ANALYTICS_PROPERTY_ID = os.environ['CJW_GOOGLE_ANALYTICS']
+except KeyError:
+    pass
 
 if 'HTTPS' in os.environ and os.environ['HTTPS'] == 'on':
     SESSION_COOKIE_SECURE = True
@@ -215,22 +201,6 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'cjworkbench.wsgi.application'
 ASGI_APPLICATION = 'cjworkbench.asgi.application'
-
-if 'CJW_REDIS_HOST' in os.environ:
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [(os.environ['CJW_REDIS_HOST'], 6379)],
-            },
-        },
-    }
-else:
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels.layers.InMemoryChannelLayer',
-        },
-    }
 
 
 # Password validation
