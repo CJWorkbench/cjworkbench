@@ -4,13 +4,13 @@ version: '3.4'
 # for keeping our 'migrate' and 'test' runners outside of docker-compose.yml.
 services:
   migrate:
-    build: &python-build
+    build:
       context: .
       target: pydev
-    volumes: &python-volumes
+    volumes:
       - ./:/app/:rw
       - virtualenvs:/root/.local/share/virtualenvs/:rw
-    environment: &pydev-environment
+    environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
       CJW_REDIS_HOST: redis
@@ -21,12 +21,20 @@ services:
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   unittest:
-    build: *python-build
-    volumes: *python-volumes
+    # It'd be nice to use YAML anchors to copy these parameters ... but
+    # PyCharm's YAML parser seems to die when we use YAML anchors.
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - ./:/app/:rw
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
-      <<: *pydev-environment
+      PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: testdatabase
       CJW_REDIS_HOST: testredis
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testredis' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'test' ]

@@ -34,13 +34,13 @@ services:
     command: node_modules/.bin/webpack --mode development --watch
 
   frontend:
-    build: &python-build
+    build:
       context: .
       target: pydev
-    volumes: &python-volumes
+    volumes:
       - ./:/app/:rw
       - virtualenvs:/root/.local/share/virtualenvs/:rw
-    environment: &pydev-environment
+    environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
       CJW_REDIS_HOST: redis
@@ -52,9 +52,20 @@ services:
     command: [ 'pipenv', 'run', 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
 
   backend:
-    build: *python-build
-    volumes: *python-volumes
-    environment: *pydev-environment
+    # It'd be nice to use YAML anchors to copy these parameters ... but
+    # PyCharm's YAML parser seems to die when we use YAML anchors.
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - ./:/app/:rw
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
+    environment:
+      PYTHONUNBUFFERED: '1'
+      CJW_DB_HOST: database
+      CJW_REDIS_HOST: redis
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
     depends_on: [ 'database', 'redis' ]
     networks: [ 'dev' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'run-background-loop' ]
