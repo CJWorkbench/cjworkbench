@@ -77,7 +77,7 @@ case "$1" in
     ;;
 
   "start")
-    docker_compose_with_commands run migrate
+    docker_compose_with_commands run --rm migrate
     docker_compose up
     ;;
 
