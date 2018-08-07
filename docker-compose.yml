@@ -46,10 +46,10 @@ services:
       CJW_REDIS_HOST: redis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
+    ports: [ '8000:8080' ]
     networks: [ 'dev' ]
     depends_on: [ 'database', 'redis' ]
-    command: [ 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
+    command: [ 'pipenv', 'run', 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
 
   backend:
     build: *python-build
@@ -57,7 +57,7 @@ services:
     environment: *pydev-environment
     depends_on: [ 'database', 'redis' ]
     networks: [ 'dev' ]
-    command: [ 'python', './manage.py', 'run-background-loop' ]
+    command: [ 'pipenv', 'run', 'python', './manage.py', 'run-background-loop' ]
 
   testdatabase:
     image: postgres:10.4

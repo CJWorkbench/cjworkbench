@@ -16,10 +16,9 @@ services:
       CJW_REDIS_HOST: redis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
     networks: [ 'dev' ]
     depends_on: [ 'database', 'redis' ]
-    command: [ 'sh', '-c', 'pipenv sync --dev && bin/migrate-prod' ]
+    command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   unittest:
     build: *python-build
