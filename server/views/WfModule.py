@@ -1,25 +1,27 @@
+from datetime import timedelta
+import json
+import re
+from typing import Optional
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
         Http404, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils import dateparse, timezone
+from django.views.decorators.clickjacking import xframe_options_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from django.utils import dateparse, timezone
+from rest_framework.response import Response
+import numpy as np
+import pandas as pd
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
-from server.execute import execute_wfmodule
+from server import execute
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
-from datetime import timedelta
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
 from server.templatetags.json_filters import escape_potential_hack_chars
-import json
-import re
-import pandas as pd
-from django.views.decorators.clickjacking import xframe_options_exempt
 
 
 _MaxNRowsPerRequest = 300
@@ -206,7 +208,7 @@ def table_json_response(request, wf_module):
         return Response({'message': 'bad row number', 'status_code': 400},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    result = execute_wfmodule(wf_module)
+    result = execute.execute_wfmodule(wf_module)
     j = _make_render_dict(result.dataframe, startrow, endrow)
     return JsonResponse(j)
 
@@ -231,7 +233,7 @@ def wfmodule_output(request, pk, format=None):
 
     html = module_get_html_bytes(wf_module)
 
-    result = execute_wfmodule(wf_module)
+    result = execute.execute_wfmodule(wf_module)
 
     # TODO nix params. Use result.json_dict instead.
     params = wf_module.create_parameter_dict(result.dataframe)
@@ -265,9 +267,54 @@ def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(wf_module)
+        result = execute.execute_wfmodule(wf_module)
 
     return JsonResponse(result.json)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_input_value_counts(request, pk):
+    wf_module = _lookup_wf_module_for_read(pk, request)
+
+    with wf_module.workflow.cooperative_lock():
+        input_wf_module = _previous_wf_module(wf_module)
+        if not input_wf_module:
+            return JsonResponse(
+                {'error': 'Module has no input'},
+                status=404
+            )
+
+        try:
+            column = wf_module.get_param_column('column')
+        except ValueError:
+            return JsonResponse(
+                {'error': 'Module is missing a "column" parameter'},
+                status=404
+            )
+
+        if not column:
+            # User has not yet chosen a column. Empty response.
+            return JsonResponse({'values': {}})
+
+        result = execute.execute_wfmodule(input_wf_module)
+        table = result.dataframe
+
+        try:
+            series = table[column]
+        except KeyError:
+            return JsonResponse({'error': f'column "{column}" not found'},
+                                status=404)
+
+        # We only handle string. If it's not string, convert to string.
+        if not (series.dtype == object or hasattr(series, 'cat')):
+            t = series.astype(str)
+            t[series.isna()] = np.nan
+            series = t
+
+        value_counts = series.value_counts().to_dict()
+
+    return JsonResponse({'values': value_counts})
 
 
 @api_view(['GET'])
@@ -283,7 +330,7 @@ def wfmodule_histogram(request, pk, col, format=None):
         return JsonResponse(_make_render_dict(pd.DataFrame()))
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(prev_modules.last())
+        result = execute.execute_wfmodule(prev_modules.last())
 
     if col not in result.dataframe.columns:
         return JsonResponse({
@@ -300,6 +347,19 @@ def wfmodule_histogram(request, pk, col, format=None):
     return JsonResponse(_make_render_dict(hist_table))
 
 
+def _previous_wf_module(wf_module: WfModule) -> Optional[WfModule]:
+    """
+    Find the WfModule whose output is `wf_module`'s input.
+
+    Return None if there is no previous WfModule.
+
+    Must be called within a `Workflow.cooperative_lock`.
+    """
+    return wf_module.workflow.wf_modules \
+        .filter(order__lt=wf_module.order) \
+        .last()
+
+
 # /input is just /render on the previous wfmodule
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -307,13 +367,12 @@ def wfmodule_input(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        # return empty table if this is the first module in the stack
-        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow,
-                                               order__lt=wf_module.order)
-        if not prev_modules:
+        previous_module = _previous_wf_module(wf_module)
+
+        if not previous_module:
             return JsonResponse(_make_render_dict(pd.DataFrame()))
         else:
-            return table_json_response(request, prev_modules.last())
+            return table_json_response(request, previous_module)
 
 
 # returns a list of columns and their simplified types
@@ -323,7 +382,7 @@ def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(wf_module)
+        result = execute.execute_wfmodule(wf_module)
         dtypes = result.dataframe.dtypes.to_dict()
 
     ret_types = []
@@ -352,7 +411,7 @@ def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(wf_module)
+        result = execute.execute_wfmodule(wf_module)
         if type == 'json':
             d = result.dataframe.to_json(orient='records')
             return HttpResponse(d, content_type="application/json")

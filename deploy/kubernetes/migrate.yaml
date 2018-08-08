@@ -17,6 +17,8 @@ spec:
               value: 'True'
             - name: CJW_DB_HOST
               value: database-service
+            - name: CJW_REDIS_HOST
+              value: redis-service
             - name: CJW_DB_PASSWORD
               value: cjworkbench
             - name: CJW_SECRET_KEY
