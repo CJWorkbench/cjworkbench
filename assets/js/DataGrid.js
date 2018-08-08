@@ -39,6 +39,46 @@ RowNumberFormatter.propTypes = {
   value:    PropTypes.node.isRequired
 };
 
+// General class for type formatting
+export class RowTypeFormatter extends React.PureComponent {
+
+  render () {
+    // Insert types that need to align right
+    const alignRight = [
+      'Number'
+    ]
+    // For init state
+    if (this.props.type === '') {
+      return (
+        <div className={'row-init'} >
+          {this.props.value}
+        </div>
+      )
+    }
+    // For null types, adding '' for now but will populate 'null' table at init
+    if (this.props.value === null | this.props.value === '') {
+      return (
+        <div className={'row-null'}>
+          {'null'}
+        </div>
+      )
+    }
+    // Left align for text, right align for numeric
+    let type = this.props.type
+    let className = 'row-' + type.toLowerCase()
+    let align = alignRight.indexOf(type) >= 0 ? 'right' : 'left'
+
+    return (
+      <div className={className} align={align} >
+        {this.props.value}
+      </div>)
+  }
+}
+
+RowTypeFormatter.propTypes = {
+  value:    PropTypes.node,   // not required because can be null
+  type:     PropTypes.string.isRequired
+};
 
 class ReorderColumnDropZone extends React.PureComponent {
   static propTypes = {
@@ -98,6 +138,7 @@ class ReorderColumnDropZone extends React.PureComponent {
 export class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
+    columnType: PropTypes.string.isRequired,
     onRename: PropTypes.func.isRequired,
     isReadOnly: PropTypes.bool.isRequired
   };
@@ -190,7 +231,10 @@ export class EditableColumnName extends React.Component {
           className={'column-key'}
           onClick={this.enterEditMode}
         >
-          {this.state.newName}
+          {this.state.newName} <br />
+          <div className={'column-type'}>
+            {this.props.columnType}
+          </div>
         </span>
       );
     }
@@ -357,6 +401,7 @@ export class ColumnHeader extends React.PureComponent {
 
             <EditableColumnName
               columnKey={columnKey}
+              columnType={columnType}
               onRename={this.props.onRenameColumn}
               isReadOnly={this.props.isReadOnly}
               ref={this.inputRef}
@@ -393,6 +438,7 @@ function makeFormattedCols(props) {
     name: columnKey,
     resizable: true,
     editable: editable,
+    formatter: <RowTypeFormatter type={columnTypes[index]} />,
     width: 160,
     // react-data-grid normally won't re-render if we change headerRenderer.
     // So we need to change _other_ props, forcing it to re-render.
@@ -610,7 +656,7 @@ export default class DataGrid extends React.Component {
           rowsCount={this.props.totalRows}
           minWidth={this.state.gridWidth -2}
           minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-          headerRowHeight={this.props.showLetter ? 54 : 36}
+          headerRowHeight={this.props.showLetter ? 54 : 47.5}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
           key={this.state.componentKey}

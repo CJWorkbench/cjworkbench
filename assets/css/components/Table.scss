@@ -246,6 +246,12 @@
           flex: 1 1 auto;
           overflow: hidden;
           height:100%;
+
+          .column-type {
+            font-size: .95rem;
+            font-weight: normal;
+            @extend %font-nunito-extra-light
+          }
         }
 
         .dropdown {
@@ -337,7 +343,18 @@
 
     .react-grid-Cell:not(.editing) .react-grid-Cell__value{
       margin-left: 1rem;
+      margin-right: 1rem;
       font-size: 1.2rem;
+
+      .row-null {
+        color:$light-gray;
+        @extend .content-3;
+        text-align: right;
+        font-size: 1.2rem!important;
+        line-height: 1.2rem!important;
+        font-style: italic;
+        padding-right: 2px;
+      }
     }
 
 
