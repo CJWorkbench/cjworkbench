@@ -231,9 +231,11 @@ export class EditableColumnName extends React.Component {
           className={'column-key'}
           onClick={this.enterEditMode}
         >
-          {this.state.newName} <br />
+          <div>
+            {this.state.newName}
+          </div>
           <div className={'column-type'}>
-            {this.props.columnType}
+            {this.props.columnType.toLowerCase()}
           </div>
         </span>
       );
@@ -656,7 +658,7 @@ export default class DataGrid extends React.Component {
           rowsCount={this.props.totalRows}
           minWidth={this.state.gridWidth -2}
           minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-          headerRowHeight={this.props.showLetter ? 54 : 47.5}
+          headerRowHeight={this.props.showLetter ? 54 : 48}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
           key={this.state.componentKey}

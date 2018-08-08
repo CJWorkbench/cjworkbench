@@ -18,6 +18,8 @@ module.exports = {
 
   watchOptions: {
     ignored: /node_modules/,
+    poll: 500,
+    aggregateTimeout: 300
   },
 
   output: {

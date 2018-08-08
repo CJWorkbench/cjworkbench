@@ -4,43 +4,42 @@ import DataGrid, {ColumnHeader, EditableColumnName} from "./DataGrid"
 
 describe('DataGrid tests,', () => {
   var testData = {
-    totalRows : 2,
-    columns : ["aaa", "bbbb", "ccccc", "rn_"],
-    "column_types": [
-      "Number",
-      "String",
-      "String",
-      "String"
-      ],
-    rows : [
+    totalRows: 2,
+    columns: ['aaa', 'bbbb', 'ccccc', 'rn_'],
+    'column_types': [
+      'Number',
+      'String',
+      'String',
+      'String'
+    ],
+    rows: [
       {
-      "aaa": "9",
-      "bbbb": "foo",
-      "ccccc": "9",       // use digits that will not appear in our row numbers, so we can test
-      "rn_" : "someval"   // deliberately conflict with DataGrid's default row number column key
+        'aaa': '9',
+        'bbbb': 'foo',
+        'ccccc': '9', // use digits that will not appear in our row numbers, so we can test
+        'rn_': 'someval' // deliberately conflict with DataGrid's default row number column key
       },
       {
-      "aaa": "9",
-      "bbbb": "9",
-      "ccccc": "baz",
-      "rn_" : "someotherval"
+        'aaa': '9',
+        'bbbb': '',
+        'ccccc': 'baz',
+        'rn_': 'someotherval'
       }
     ]
-  };
+  }
 
   var sortDirectionMock = jest.fn()
   var duplicateColumnMock = jest.fn()
   var dropColumnMock = jest.fn()
   var filterColumnMock = jest.fn()
 
-  function getRow(i) {
-    return testData.rows[i];
+  function getRow (i) {
+    return testData.rows[i]
   }
 
   it('Renders the grid', () => {
-
-    var editCellMock = jest.fn();
-    var sortMock = jest.fn();
+    var editCellMock = jest.fn()
+    var sortMock = jest.fn()
 
     const tree = mount(
       <DataGrid
@@ -58,33 +57,33 @@ describe('DataGrid tests,', () => {
         filterColumn={filterColumnMock}
         dropColumn={dropColumnMock}
       />
-    );
+    )
 
     // Check that we ended up with five columns (first is row number), with the right names
     // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
-    expect(tree.find('HeaderCell')).toHaveLength(5);
+    expect(tree.find('HeaderCell')).toHaveLength(5)
 
     // We now test the headers separately
-    expect(tree.find('EditableColumnName')).toHaveLength(4);
-    expect(tree.find('EditableColumnName').get(0).props.columnKey).toBe('aaa');
-    expect(tree.find('EditableColumnName').get(1).props.columnKey).toBe('bbbb');
-    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('ccccc');
-    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('rn_');
+    expect(tree.find('EditableColumnName')).toHaveLength(4)
+    expect(tree.find('EditableColumnName').get(0).props.columnKey).toBe('aaa')
+    expect(tree.find('EditableColumnName').get(1).props.columnKey).toBe('bbbb')
+    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('ccccc')
+    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('rn_')
 
-    let text = tree.text();
+    let text = tree.text()
 
-    expect(text).toContain('foo');      // some cell values
-    expect(text).toContain('someval');
+    expect(text).toContain('foo') // some cell values
+    expect(text).toContain('someval')
 
-    expect(text).toContain('1');        // row numbers
-    expect(text).toContain('2');
+    expect(text).toContain('1') // row numbers
+    expect(text).toContain('2')
 
     // row number column should not have the same name as any of our cols
-    expect(testData.columns.includes(tree.find('DataGrid').instance().rowNumKey)).toBeFalsy();
+    expect(testData.columns.includes(tree.find('DataGrid').instance().rowNumKey)).toBeFalsy()
 
-    expect(tree).toMatchSnapshot();
+    expect(tree).toMatchSnapshot()
 
-    tree.unmount();
+    tree.unmount()
 
     // Double click on a cell, enter text, enter, and ensure onCellEdit is called
     // Sadly, can't get this to work
@@ -94,10 +93,9 @@ describe('DataGrid tests,', () => {
     // cell.simulate('keydown', { which: 'X' });
     // cell.simulate('keydown', { which: '\n' });
     // expect(editCellMock.mock.calls).toHaveLength(1);
-  });
+  })
 
   it('matches snapshot without data', () => {
-
     const tree = mount(
       <DataGrid
         wfModuleId={100}
@@ -112,39 +110,38 @@ describe('DataGrid tests,', () => {
         dropColumn={dropColumnMock}
         filterColumn={filterColumnMock}
       />
-    );
-    expect(tree.find('HeaderCell')).toHaveLength(0);
+    )
+    expect(tree.find('HeaderCell')).toHaveLength(0)
 
-    expect(tree).toMatchSnapshot();
+    expect(tree).toMatchSnapshot()
 
-    tree.unmount();
-  });
+    tree.unmount()
+  })
 
   it('Shows/hides letters in the header according to props', () => {
-
     const treeWithLetter = mount(
       <DataGrid
-          wfModuleId={100}
-          revision={999}
-          totalRows={testData.totalRows}
-          columns={testData.columns}
-          columnTypes={testData.column_types}
-          getRow={getRow}
-          showLetter={true}
-          isReadOnly={false}
-          setSortDirection={sortDirectionMock}
-          duplicateColumn={duplicateColumnMock}
-          dropColumn={dropColumnMock}
-          filterColumn={filterColumnMock}
+        wfModuleId={100}
+        revision={999}
+        totalRows={testData.totalRows}
+        columns={testData.columns}
+        columnTypes={testData.column_types}
+        getRow={getRow}
+        showLetter
+        isReadOnly={false}
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
       />
-    );
-    expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
-    expect(treeWithLetter.find('.column-letter').at(0).text()).toEqual('A');
-    expect(treeWithLetter.find('.column-letter').at(1).text()).toEqual('B');
-    expect(treeWithLetter.find('.column-letter').at(2).text()).toEqual('C');
-    expect(treeWithLetter.find('.column-letter').at(3).text()).toEqual('D');
+    )
+    expect(treeWithLetter.find('.column-letter')).toHaveLength(4)
+    expect(treeWithLetter.find('.column-letter').at(0).text()).toEqual('A')
+    expect(treeWithLetter.find('.column-letter').at(1).text()).toEqual('B')
+    expect(treeWithLetter.find('.column-letter').at(2).text()).toEqual('C')
+    expect(treeWithLetter.find('.column-letter').at(3).text()).toEqual('D')
 
-    treeWithLetter.unmount();
+    treeWithLetter.unmount()
 
     const treeWithoutLetter = mount(
       <DataGrid
@@ -160,84 +157,132 @@ describe('DataGrid tests,', () => {
         duplicateColumn={duplicateColumnMock}
         dropColumn={dropColumnMock}
         filterColumn={filterColumnMock}
-      />);
-    expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
+      />)
+    expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0)
 
-    treeWithoutLetter.unmount();
-  });
+    treeWithoutLetter.unmount()
+  })
 
   it('Calls column rename upon editing a column header', (done) => {
-    var mockRenameColumn = jest.fn();
+    var mockRenameColumn = jest.fn()
 
     var tree = mount(
       <DataGrid
-          wfModuleId={100}
-          revision={999}
-          totalRows={testData.totalRows}
-          columns={testData.columns}
-          columnTypes={testData.column_types}
-          getRow={getRow}
-          onRenameColumn={mockRenameColumn}
-          isReadOnly={false}
-          setSortDirection={sortDirectionMock}
-          duplicateColumn={duplicateColumnMock}
-          dropColumn={dropColumnMock}
-          filterColumn={filterColumnMock}
+        wfModuleId={100}
+        revision={999}
+        totalRows={testData.totalRows}
+        columns={testData.columns}
+        columnTypes={testData.column_types}
+        getRow={getRow}
+        onRenameColumn={mockRenameColumn}
+        isReadOnly={false}
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
       />
-    );
+    )
 
-    expect(tree.find('EditableColumnName')).toHaveLength(4);
+    expect(tree.find('EditableColumnName')).toHaveLength(4)
     // Tests rename on aaaColumn
-    let aaaColumn = tree.find('EditableColumnName').first();
-    aaaColumn.simulate('click');
+    let aaaColumn = tree.find('EditableColumnName').first()
+    aaaColumn.simulate('click')
     setImmediate(() => {
-      //tree.update();
-      let newAaaColumn = tree.find('EditableColumnName').first();
-      expect(newAaaColumn.find('input[value="aaa"]')).toHaveLength(1);
-      let aaaInput = newAaaColumn.find('input[value="aaa"]');
-      aaaInput.simulate('change', {target: {value: 'aaaa'}});
-      aaaInput.simulate('blur');
+      // tree.update();
+      let newAaaColumn = tree.find('EditableColumnName').first()
+      expect(newAaaColumn.find('input[value="aaa"]')).toHaveLength(1)
+      let aaaInput = newAaaColumn.find('input[value="aaa"]')
+      aaaInput.simulate('change', {target: {value: 'aaaa'}})
+      aaaInput.simulate('blur')
       setImmediate(() => {
-        expect(mockRenameColumn.mock.calls).toHaveLength(1);
+        expect(mockRenameColumn.mock.calls).toHaveLength(1)
         // First argument should be wfModuleId (100)
-        expect(mockRenameColumn.mock.calls[0][0]).toBe(100);
+        expect(mockRenameColumn.mock.calls[0][0]).toBe(100)
         // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(mockRenameColumn.mock.calls[0][3].prevName).toBe('aaa');
-        expect(mockRenameColumn.mock.calls[0][3].newName).toBe('aaaa');
-        tree.unmount();
-        done();
-      });
-    });
-  });
+        expect(mockRenameColumn.mock.calls[0][3].prevName).toBe('aaa')
+        expect(mockRenameColumn.mock.calls[0][3].newName).toBe('aaaa')
+        tree.unmount()
+        done()
+      })
+    })
+  })
 
   it('Respects isReadOnly setting for rename columns', (done) => {
     var tree = mount(
       <DataGrid
-          wfModuleId={100}
-          revision={999}
-          totalRows={testData.totalRows}
-          columns={testData.columns}
-          columnTypes={testData.column_types}
-          getRow={getRow}
-          isReadOnly={true}
-          setSortDirection={sortDirectionMock}
-          duplicateColumn={duplicateColumnMock}
-          dropColumn={dropColumnMock}
-          filterColumn={filterColumnMock}
+        wfModuleId={100}
+        revision={999}
+        totalRows={testData.totalRows}
+        columns={testData.columns}
+        columnTypes={testData.column_types}
+        getRow={getRow}
+        isReadOnly
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
       />
-    );
+    )
 
-    expect(tree.find('EditableColumnName')).toHaveLength(4);
+    expect(tree.find('EditableColumnName')).toHaveLength(4)
     // Tests rename on aaa column
-    let aaaColumn = tree.find('EditableColumnName').first();
-    aaaColumn.simulate('click');
+    let aaaColumn = tree.find('EditableColumnName').first()
+    aaaColumn.simulate('click')
     setImmediate(() => {
       // In the read-only case, the header should not turn into an input box
-      let newAaaColumn = tree.find('EditableColumnName').first();
-      expect(newAaaColumn.find('input.column-key-input')).toHaveLength(0);
-      done();
-    });
-  });
-});
+      let newAaaColumn = tree.find('EditableColumnName').first()
+      expect(newAaaColumn.find('input.column-key-input')).toHaveLength(0)
+      done()
+    })
+  })
 
+  it('Should respect alignment by type', (done) => {
+    var tree = mount(
+      <DataGrid
+        wfModuleId={100}
+        revision={999}
+        totalRows={testData.totalRows}
+        columns={testData.columns}
+        columnTypes={testData.column_types}
+        getRow={getRow}
+        isReadOnly
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
+      />
+    )
 
+    setImmediate(() => {
+      expect(tree.find('.row-string').first().prop('align')).toBe('left')
+      expect(tree.find('.row-number').first().prop('align')).toBe('right')
+      tree.unmount()
+      done()
+    })
+  })
+
+  it('Should display "null" for none types', (done) => {
+    var tree = mount(
+      <DataGrid
+        wfModuleId={100}
+        revision={999}
+        totalRows={testData.totalRows}
+        columns={testData.columns}
+        columnTypes={testData.column_types}
+        getRow={getRow}
+        isReadOnly
+        setSortDirection={sortDirectionMock}
+        duplicateColumn={duplicateColumnMock}
+        dropColumn={dropColumnMock}
+        filterColumn={filterColumnMock}
+      />
+    )
+
+    setImmediate(() => {
+      expect(tree.find('.row-null').first().text()).toBe('null')
+      tree.unmount()
+      done()
+    })
+  })
+
+})
