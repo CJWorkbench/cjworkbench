@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
-from server.execute import execute_wfmodule
+from server import execute
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 from server.utils import units_to_seconds
@@ -208,7 +208,7 @@ def table_json_response(request, wf_module):
         return Response({'message': 'bad row number', 'status_code': 400},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    result = execute_wfmodule(wf_module)
+    result = execute.execute_wfmodule(wf_module)
     j = _make_render_dict(result.dataframe, startrow, endrow)
     return JsonResponse(j)
 
@@ -233,7 +233,7 @@ def wfmodule_output(request, pk, format=None):
 
     html = module_get_html_bytes(wf_module)
 
-    result = execute_wfmodule(wf_module)
+    result = execute.execute_wfmodule(wf_module)
 
     # TODO nix params. Use result.json_dict instead.
     params = wf_module.create_parameter_dict(result.dataframe)
@@ -267,7 +267,7 @@ def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(wf_module)
+        result = execute.execute_wfmodule(wf_module)
 
     return JsonResponse(result.json)
 
@@ -279,19 +279,26 @@ def wfmodule_input_value_counts(request, pk):
 
     with wf_module.workflow.cooperative_lock():
         input_wf_module = _previous_wf_module(wf_module)
-
         if not input_wf_module:
-            # Same as if the input were pd.DataFrame()
-            return JsonResponse({})
-
-        result = execute_wfmodule(input_wf_module)
-        table = result.dataframe
+            return JsonResponse(
+                {'error': 'Module has no input'},
+                status=404
+            )
 
         try:
-            column = request.GET['column']
-        except KeyError:
-            return JsonResponse({'error': 'missing "column" parameter'},
-                                status=400)
+            column = wf_module.get_param_column('column')
+        except ValueError:
+            return JsonResponse(
+                {'error': 'Module is missing a "column" parameter'},
+                status=404
+            )
+
+        if not column:
+            # User has not yet chosen a column. Empty response.
+            return JsonResponse({'values': {}})
+
+        result = execute.execute_wfmodule(input_wf_module)
+        table = result.dataframe
 
         try:
             series = table[column]
@@ -323,7 +330,7 @@ def wfmodule_histogram(request, pk, col, format=None):
         return JsonResponse(_make_render_dict(pd.DataFrame()))
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(prev_modules.last())
+        result = execute.execute_wfmodule(prev_modules.last())
 
     if col not in result.dataframe.columns:
         return JsonResponse({
@@ -375,7 +382,7 @@ def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(wf_module)
+        result = execute.execute_wfmodule(wf_module)
         dtypes = result.dataframe.dtypes.to_dict()
 
     ret_types = []
@@ -404,7 +411,7 @@ def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        result = execute_wfmodule(wf_module)
+        result = execute.execute_wfmodule(wf_module)
         if type == 'json':
             d = result.dataframe.to_json(orient='records')
             return HttpResponse(d, content_type="application/json")
