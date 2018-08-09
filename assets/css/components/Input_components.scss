@@ -115,13 +115,14 @@ textarea:focus, input:focus{
     height: 100%;
     resize: none;
     overflow: hidden;
+    color:$brand-text--dark;
   }
 
   button {
     cursor: pointer;
     position: absolute;
-    right: .5rem;
-    bottom: 1rem;
+    right: 1.2rem;
+    bottom: .9rem;
     width: 1.5rem;
     height: 1.5rem;
     text-align: center;

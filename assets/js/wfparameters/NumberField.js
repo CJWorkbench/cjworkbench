@@ -44,7 +44,7 @@ export default class NumberField extends React.PureComponent {
     const { name, initialValue, value, placeholder, isReadOnly } = this.props
     const maybeButton = initialValue === value ? null : (
       <button title='submit' ref={this.buttonRef} onClick={this.props.onSubmit}>
-        <i className='icon-caret-right' />
+        <i className='icon-play' />
       </button>
     )
 

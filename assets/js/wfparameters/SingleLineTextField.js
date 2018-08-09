@@ -91,7 +91,7 @@ export default class SingleLineTextField extends React.PureComponent {
     const { rows } = this.state
     const maybeButton = initialValue === value ? null : (
       <button title="submit" ref={this.buttonRef} onClick={this.props.onSubmit}>
-        <i className="icon-caret-right" />
+        <i className="icon-play" />
       </button>
     )
 
