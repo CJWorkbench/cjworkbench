@@ -126,6 +126,11 @@ class WorkbenchAPI {
     return this._fetch(url)
   }
 
+  inputValueCounts(wfModuleId) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/input-value-counts`)
+      .then(json => json.values)
+  }
+
   inputColumns(wfModuleId) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/input?startrow=0&endrow=0`)
       .then(json => json.columns)
@@ -133,10 +138,6 @@ class WorkbenchAPI {
 
   output(wfModuleId) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/output`)
-  }
-
-  histogram(wfModuleId, column) {
-    return this._fetch(`/api/wfmodules/${wfModuleId}/histogram/${column}`)
   }
 
   getColumns(wfModuleId) {
