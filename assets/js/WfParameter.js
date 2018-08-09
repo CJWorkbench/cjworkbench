@@ -142,6 +142,10 @@ export default class WfParameter extends React.Component {
     return this.props.api.inputColumns(this.props.wfModuleId)
   }
 
+  getInputValueCounts = () => {
+    return this.props.api.inputValueCounts(this.props.wfModuleId)
+  }
+
   // set contents of HTML input field corresponding to our type
   setInputValue (val) {
     const type = this.props.p.parameter_spec.type
@@ -282,12 +286,10 @@ export default class WfParameter extends React.Component {
       case 'refine':
         return (
           <Refine
-            api={this.props.api}
-            wfModuleId={this.props.wfModuleId}
-            selectedColumn={this.props.getParamText('column')}
-            existingEdits={this.props.p.value}
-            saveEdits={this.paramChanged}
-            revision={this.props.revision}
+            fetchData={this.getInputValueCounts}
+            workflowRevision={this.props.revision}
+            value={this.props.p.value}
+            onChange={this.paramChanged}
           />
         )
       case 'reorder-history':

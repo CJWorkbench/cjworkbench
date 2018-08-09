@@ -1,163 +1,229 @@
+/* global describe, it, expect, jest */
 import React from 'react'
-import Refine from './Refine'
-import {jsonResponseMock} from '../test-utils'
-import {mount} from 'enzyme'
+import LoadingRefine, { Refine } from './Refine'
+import { mount } from 'enzyme'
+import { tick } from '../test-utils'
 
 describe('Refine', () => {
+  const wrapper = (props={}) => mount(
+    <Refine
+      valueCounts={{}}
+      loading={false}
+      value={''}
+      onChange={jest.fn()}
+      {...props}
+    />
+  )
 
-    const INTERNAL_COUNT_COLNAME = '__internal_count_column__'
-
-    let store, api, wrapper
-
-    // Mocks response to the histogram API call
-    const histogramResponse = {
-        columns: ['foo', 'count'],
-        start_row: 0,
-        end_row: 3,
-        total_rows: 3,
-        rows: [
-            {foo: 'bar1', '__internal_count_column__': 1},
-            {foo: 'bar2', '__internal_count_column__': 2},
-            {foo: 'bar3', '__internal_count_column__': 3}
-        ]
-    };
-
-    let existingEdits = '[]';
-
-    function mockSaveEdits(edits) {
-        //console.log('mockSaveEdits called');
-        existingEdits = edits;
-    }
-
-    beforeEach(() => {
-        existingEdits = '[]';
-
-        api = {
-           onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
-           histogram: jsonResponseMock(histogramResponse)
-        };
-        wrapper = mount(
-            <Refine
-               api={api}
-               wfModuleId={101}
-               selectedColumn={'foo'}
-               existingEdits={existingEdits}
-               saveEdits={mockSaveEdits}
-               revision={0}
-            />
-        )
+  it('should render value counts in order', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 2 },
+      value: ''
     })
 
-    afterEach(() => wrapper.unmount())
+    const dt1 = w.find('dt').at(0)
+    expect(dt1.find('input[type="text"]').prop('value')).toEqual('b')
+    expect(dt1.find('.count').text()).toEqual('2')
 
-    it('loads the histogram', (done) => {
-        //expect(wrapper).toMatchSnapshot();
+    const dt2 = w.find('dt').at(1)
+    expect(dt2.find('input[type="text"]').prop('value')).toEqual('a')
+    expect(dt2.find('.count').text()).toEqual('1')
+  })
 
-        setImmediate(() => {
-            wrapper.update()
-            expect(wrapper.state()).toEqual({
-                selectedColumn: 'foo',
-                histogramLoaded: true,
-                histogramNumRows: histogramResponse.total_rows,
-                histogramData: histogramResponse.rows.map(function(entry) {
-                    var newEntry = Object.assign({}, entry);
-                    newEntry.selected = true;
-                    newEntry.edited = false;
-                    return newEntry;
-                }).sort((item1, item2) => {
-                    return (item1[INTERNAL_COUNT_COLNAME] < item2[INTERNAL_COUNT_COLNAME] ? 1 : -1);
-                }),
-                showWarning: false,
-                showColError: false,
-                edits: [],
-            });
-            done();
-        });
-    });
-
-    it('updates the histogram upon value edit', (done) => {
-        setImmediate(() => {
-            wrapper.update()
-            var bar1Input = wrapper.find('input[value="bar1"]');
-            expect(bar1Input).toHaveLength(1);
-
-            bar1Input.simulate('focus');
-            bar1Input.simulate('change', {
-                target: {
-                    value: 'bar2'
-                }
-            });
-            bar1Input.simulate('keyPress', {
-                key: 'Enter'
-            });
-
-            setImmediate(() => {
-                wrapper.update()
-                wrapper.setProps({
-                    existingEdits: existingEdits,
-                    revision: 1
-                });
-
-                setImmediate(() => {
-                    wrapper.update()
-                    //console.log(wrapper.state().histogramData);
-                    expect(wrapper.state().histogramData).toEqual(
-                        [
-                            {foo: 'bar2', '__internal_count_column__': 3, selected: true, edited: true},
-                            {foo: 'bar3', '__internal_count_column__': 3, selected: true, edited: false}
-                        ]
-                    );
-                    expect(wrapper.find('EditRow')).toHaveLength(2);
-
-                    done();
-                });
-
-            });
-
-        });
-    });
-
-    it('updates the checkboxes upon value (de)selection', (done) => {
-      const findBar1Checkbox = (name) => {
-        return wrapper.find('EditRow').at(0).find('input[type="checkbox"]')
-      }
-
-        setImmediate(() => {
-            wrapper.update()
-            // Click the checkbox for value 'bar1'
-
-            expect(findBar1Checkbox().prop('checked')).toBe(true)
-            findBar1Checkbox().simulate('change')
-
-            // Update the component
-            wrapper.setProps({
-                existingEdits: existingEdits,
-                revision: 1
-            })
-
-            setImmediate(() => {
-                wrapper.update()
-                // And check that the checkbox should not be checked
-                // After that, click the checkbox again
-
-                expect(findBar1Checkbox().prop('checked')).toBe(false)
-                findBar1Checkbox().simulate('change');
-
-                // Update the component
-                wrapper.setProps({
-                    existingEdits: existingEdits,
-                    revision: 2
-                })
-
-                setImmediate(() => {
-                    wrapper.update()
-                    // And check that the checkbox should be checked now
-
-                    expect(findBar1Checkbox().prop('checked')).toBe(true)
-
-                    done();
-                });
-            });
-        });
+  it('should render commas in value counts', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1234 },
+      value: ''
     })
-});
+
+    expect(w.find('.count').text()).toEqual('1,234')
+  })
+
+  it('should render a rename', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 2 },
+      value: JSON.stringify({ renames: { a: 'c' }, blacklist: [] })
+    })
+
+    expect(w.find('input[value="c"]')).toHaveLength(1)
+  })
+
+  it('should render when valueCounts have not loaded', () => {
+    const w = wrapper({
+      valueCounts: null,
+      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+    })
+
+    expect(w.find('input')).toHaveLength(0)
+  })
+
+  it('should blacklist', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 2, 'b': 1 },
+      value: JSON.stringify({ renames: {}, blacklist: [ 'a' ] })
+    })
+
+    // 'a': blacklisted ("shown" checkbox is unchecked)
+    expect(w.find('dt').at(0).find('input[type="checkbox"]').prop('checked')).toBe(false)
+    // 'b': not blacklisted ("shown" checkbox is checked)
+    expect(w.find('dt').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
+
+    const changeCalls = w.prop('onChange').mock.calls
+
+    // Add 'b' to blacklist
+    w.find('dt').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: false } })
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).blacklist).toEqual([ 'a', 'b' ])
+
+    // The change is only applied _after_ we change the prop; outside of the
+    // test environment, this is the Redux state.
+    w.update()
+    expect(w.find('dt').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
+    w.setProps({ value: changeCalls[0][0] })
+    w.update()
+    expect(w.find('dt').at(1).find('input[type="checkbox"]').prop('checked')).toBe(false)
+
+    // Remove 'b' from blacklist
+    w.find('dt').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
+
+    expect(changeCalls).toHaveLength(2)
+    expect(JSON.parse(changeCalls[1][0]).blacklist).toEqual([ 'a' ])
+  })
+
+  it('should rename a value', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1 },
+      value: JSON.stringify({ renames: {}, blacklist: [] })
+    })
+
+    w.find('input[value="a"]').simulate('change', { target: { value: 'b' } }).simulate('blur')
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ 'a': 'b' })
+  })
+
+  it('should re-rename a group', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
+      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+    })
+
+    w.find('input[value="b"]').simulate('change', { target: { value: 'd' } }).simulate('blur')
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ 'a': 'd', 'b': 'd' })
+  })
+
+  it('should show group values', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
+      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+    })
+
+    expect(w.find('dd').at(0).text()).toEqual('') // collapsed to begin with
+
+    // expand to see the values
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
+
+    // collapse to stop rendering them
+    w.find('dt').at(0).find('label.expand input').simulate('change', { target: { checked: false } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toEqual('') // collapsed to begin with
+  })
+
+  it('should un-group values', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: JSON.stringify({ renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] })
+    })
+
+    // expand to see the values:
+    // a 1 [x]
+    // b 1 [x]
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
+
+    w.find('button[name="reset"]').at(0).simulate('click')
+    // The change is only applied _after_ we change the prop; outside of the
+    // test environment, this is the Redux state.
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ d: 'e' })
+  })
+
+  it('should un-group a single value', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: JSON.stringify({ renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] })
+    })
+
+    // expand to see the values:
+    // a 1 [x]
+    // b 1 [x]
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
+
+    w.find('.count-and-remove button[data-value="a"]').simulate('click')
+    // The change is only applied _after_ we change the prop; outside of the
+    // test environment, this is the Redux state.
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ b: 'c', d: 'e' })
+  })
+
+  it('should not allow un-grouping a value from a group with the same name', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1 },
+      value: JSON.stringify({ renames: { b: 'a' }, blacklist: [] })
+    })
+
+    // expand to see the values:
+    // a 1 [ ]
+    // b 1 [x]
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+
+    expect(w.find('.count-and-remove button[data-value="a"]')).toHaveLength(0)
+  })
+
+  it('should migrate a v0 spec', () => {
+    // Previous versions of Refine had an awful spec with "select" and "change"
+    // actions. See the "v0" stuff in `modules/refine.py` for further whinging.
+    //
+    // We need to migrate on the server side so renders continue to work when
+    // users haven't edited params. _AND_ we need to migrate on the client side
+    // so users can edit params. That's right: we need to write this migration
+    // code and tests in two programming languages.
+    //
+    // So excuse me for not writing two identical barrages of unit tests. The
+    // one test here will have to do.
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: JSON.stringify([
+        { type: 'change', column: 'A', content: { fromVal: 'c', toVal: 'a' } },
+        { type: 'select', column: 'A', content: { value: 'a' } }
+      ])
+    })
+
+    expect(w.prop('onChange')).not.toHaveBeenCalled()
+
+    // The 'a' group renders
+    expect(w.find('dt input[type="text"]').at(0).prop('value')).toEqual('a')
+    // The 'a' group is blacklisted
+    expect(w.find('input[type="checkbox"]').at(0).prop('checked')).toBe(false)
+
+    // Run _one_ action. Here, we choose, "un-blacklist a"
+    w.find('input[type="checkbox"]').at(0).simulate('change', { target: { checked: true } })
+
+    const onChangeCalls = w.prop('onChange').mock.calls
+    expect(onChangeCalls).toHaveLength(1)
+    expect(JSON.parse(onChangeCalls[0][0])).toEqual({
+      renames: { c: 'a' },
+      blacklist: []
+    })
+  })
+})
