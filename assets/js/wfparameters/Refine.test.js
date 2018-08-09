@@ -113,4 +113,102 @@ describe('Refine', () => {
     expect(changeCalls).toHaveLength(1)
     expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ 'a': 'd', 'b': 'd' })
   })
+
+  it('should show group values', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
+      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+    })
+
+    expect(w.find('dd').at(0).text()).toEqual('') // collapsed to begin with
+
+    // expand to see the values
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
+
+    // collapse to stop rendering them
+    w.find('dt').at(0).find('label.expand input').simulate('change', { target: { checked: false } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toEqual('') // collapsed to begin with
+  })
+
+  it('should un-group values', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: JSON.stringify({ renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] })
+    })
+
+    // expand to see the values:
+    // a 1 [x]
+    // b 1 [x]
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
+
+    w.find('button[name="reset"]').at(0).simulate('click')
+    // The change is only applied _after_ we change the prop; outside of the
+    // test environment, this is the Redux state.
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ d: 'e' })
+  })
+
+  it('should un-group a single value', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: JSON.stringify({ renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] })
+    })
+
+    // expand to see the values:
+    // a 1 [x]
+    // b 1 [x]
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+    expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
+
+    w.find('button[name="remove"]').at(0).simulate('click')
+    // The change is only applied _after_ we change the prop; outside of the
+    // test environment, this is the Redux state.
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ b: 'c', d: 'e' })
+  })
+
+  it('should migrate a v0 spec', () => {
+    // Previous versions of Refine had an awful spec with "select" and "change"
+    // actions. See the "v0" stuff in `modules/refine.py` for further whinging.
+    //
+    // We need to migrate on the server side so renders continue to work when
+    // users haven't edited params. _AND_ we need to migrate on the client side
+    // so users can edit params. That's right: we need to write this migration
+    // code and tests in two programming languages.
+    //
+    // So excuse me for not writing two identical barrages of unit tests. The
+    // one test here will have to do.
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: JSON.stringify([
+        { type: 'change', column: 'A', content: { fromVal: 'c', toVal: 'a' } },
+        { type: 'select', column: 'A', content: { value: 'a' } }
+      ])
+    })
+
+    expect(w.prop('onChange')).not.toHaveBeenCalled()
+
+    // The 'a' group renders
+    expect(w.find('dt input[type="text"]').at(0).prop('value')).toEqual('a')
+    // The 'a' group is blacklisted
+    expect(w.find('input[type="checkbox"]').at(0).prop('checked')).toBe(false)
+
+    // Run _one_ action. Here, we choose, "un-blacklist a"
+    w.find('input[type="checkbox"]').at(0).simulate('change', { target: { checked: true } })
+
+    const onChangeCalls = w.prop('onChange').mock.calls
+    expect(onChangeCalls).toHaveLength(1)
+    expect(JSON.parse(onChangeCalls[0][0])).toEqual({
+      renames: { c: 'a' },
+      blacklist: []
+    })
+  })
 })
