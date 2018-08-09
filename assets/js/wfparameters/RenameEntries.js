@@ -185,7 +185,7 @@ export default class RenameEntries extends React.Component {
     render() {
         const entries = this.renderEntries();
         return (
-            <div>{entries}</div>
+            <div className="RenameEntries--container">{entries}</div>
         )
     }
 }

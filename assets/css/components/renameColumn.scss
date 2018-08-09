@@ -7,9 +7,15 @@
   white-space: nowrap;
   margin-left: 0;
 }
+.RenameEntries--container {
+  padding: 1rem 0;
 
+  max-height: 25rem;
+  overflow-y: scroll;
+}
 .rename-container {
   display: flex;
+  position: relative;
   &:hover .rename-delete {
     opacity: 1;
     background-color: $Vlight-gray;
@@ -18,7 +24,7 @@
   .rename-input {
     @extend .text-field;
     cursor: text;
-    border-radius: 3px 0 0 3px;
+    border-radius: 3px;
   }
 
   .rename-delete {
@@ -26,7 +32,7 @@
     cursor: pointer;
     font-size: 1.3rem;
     position: absolute;
-    right:1.7rem;
+    right:.2rem;
     margin-top: .2rem;
     background-color: $Vlight-gray;
     opacity:0;
