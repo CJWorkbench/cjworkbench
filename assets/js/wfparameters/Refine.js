@@ -241,7 +241,9 @@ class RefineGroup extends React.PureComponent {
     const { name, isExpanded } = this.state
     const { count, values, valueCounts } = this.props
 
-    const isOriginal = values.length === 1 && values[0] === name
+    // isOriginal uses this._props_.name, not this._state_. The group the
+    // buttons would modify is this.props.name.
+    const isOriginal = values.length === 1 && values[0] === this.props.name
     const className = isOriginal ? '' : 'edited'
 
     const maybeExpandCheckbox = isOriginal ? null : (
@@ -253,7 +255,7 @@ class RefineGroup extends React.PureComponent {
           checked={isExpanded}
           onChange={this.onChangeIsExpanded}
         />
-        <i className='icon-more' />
+        <i className='icon-caret-down' />
       </label>
     )
 
@@ -272,10 +274,16 @@ class RefineGroup extends React.PureComponent {
         {values.sort((a, b) => a.localeCompare(b)).map(value => (
           <li key={value}>
             <span className='value'>{value}</span>
-            <span className='count'>{valueCounts[value]}</span>
-            <button name='remove' data-value={value} onClick={this.onClickRemove}>
-              <i className='icon-delete' />
-            </button>
+            <span className='count-and-remove'>
+              { this.props.name === value ? null : (
+                <button
+                  name={`remove[${this.props.name}]`}
+                  data-value={value}
+                  onClick={this.onClickRemove}
+                >🗙</button>
+              )}
+              <span className='count'>{valueCounts[value]}</span>
+            </span>
           </li>
         ))}
       </ul>
@@ -286,26 +294,30 @@ class RefineGroup extends React.PureComponent {
         <dt className={className}>
           <label className='checkbox'>
             <input
+              name={`include[${this.props.name}]`}
               type='checkbox'
               title='Include these rows'
               checked={!this.props.isBlacklisted}
               onChange={this.onChangeIsBlacklisted}
             />
           </label>
-          <span className='name-and-expand'>
-            <input
-              type='text'
-              name='name'
-              value={this.state.name}
-              onChange={this.onChangeName}
-              onBlur={this.onBlurName}
-              onKeyDown={this.onKeyDown}
-            />
+          <span className='growing'>
+            <span className='autosized-input'>
+              <span className='text-to-size'>{this.state.name}</span>
+              <input
+                type='text'
+                name={`rename[${this.props.name}]`}
+                value={this.state.name}
+                onChange={this.onChangeName}
+                onBlur={this.onBlurName}
+                onKeyDown={this.onKeyDown}
+              />
+            </span>
             {maybeExpandCheckbox}
           </span>
           <span className='count-and-reset'>
-            <span className='count'>{NumberFormatter.format(count)}</span>
             {maybeResetButton}
+            <span className='count'>{NumberFormatter.format(count)}</span>
           </span>
         </dt>
         <dd>

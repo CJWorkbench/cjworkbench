@@ -167,12 +167,27 @@ describe('Refine', () => {
     w.update()
     expect(w.find('dd').at(0).text()).toMatch(/a.*1.*b.*1/)
 
-    w.find('button[name="remove"]').at(0).simulate('click')
+    w.find('.count-and-remove button[data-value="a"]').simulate('click')
     // The change is only applied _after_ we change the prop; outside of the
     // test environment, this is the Redux state.
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
     expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ b: 'c', d: 'e' })
+  })
+
+  it('should not allow un-grouping a value from a group with the same name', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1 },
+      value: JSON.stringify({ renames: { b: 'a' }, blacklist: [] })
+    })
+
+    // expand to see the values:
+    // a 1 [ ]
+    // b 1 [x]
+    w.find('dt').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.update()
+
+    expect(w.find('.count-and-remove button[data-value="a"]')).toHaveLength(0)
   })
 
   it('should migrate a v0 spec', () => {
