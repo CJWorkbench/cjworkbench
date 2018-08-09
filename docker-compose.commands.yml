@@ -20,6 +20,25 @@ services:
     depends_on: [ 'database', 'redis' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
+  develop-module:
+    # Basically a copy-paste of 'migrate' ... but with $MODULE mounted
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - ./:/app/:rw
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
+      - ../${MODULE}:/${MODULE}:ro
+    environment:
+      PYTHONUNBUFFERED: '1'
+      CJW_DB_HOST: database
+      CJW_REDIS_HOST: redis
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+    networks: [ 'dev' ]
+    depends_on: [ 'database', 'redis' ]
+    command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
+
   unittest:
     # It'd be nice to use YAML anchors to copy these parameters ... but
     # PyCharm's YAML parser seems to die when we use YAML anchors.
