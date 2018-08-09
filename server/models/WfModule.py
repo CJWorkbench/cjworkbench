@@ -1,26 +1,13 @@
-# WfModule is a Module that has been applied in a Workflow
-# We also have ParameterSpec and ParameterVal in this file, to avoid circular reference problems
-
 import json
 from typing import Optional
 from django.db import models
-import pandas as pd
 from server import websockets
 from server.modules.types import ProcessResult
 from .CachedRenderResult import CachedRenderResult
-from .Module import Module
 from .ModuleVersion import ModuleVersion
 from .ParameterSpec import ParameterSpec
 from .ParameterVal import ParameterVal
-from django.utils import timezone
-from server.models.StoredObject import StoredObject
-from django.core.files.storage import default_storage
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-# Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
-def current_iso_datetime_ms():
-    return timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+from .StoredObject import StoredObject
 
 
 # ---- Parameter Dictionary Sanitization ----
@@ -28,14 +15,15 @@ def current_iso_datetime_ms():
 # Column sanitization: remove invalid column names
 # We can get bad column names if the module is reordered, for example
 # Never make the render function deal with this.
-def sanitize_column_param(pval, table_cols):
+def _sanitize_column_param(pval, table_cols):
     col = pval.get_value()
     if col in table_cols:
         return col
     else:
         return ''
 
-def sanitize_multicolumn_param(pval, table_cols):
+
+def _sanitize_multicolumn_param(pval, table_cols):
     cols = pval.get_value().split(',')
     cols = [c.strip() for c in cols]
     cols = [c for c in cols if c in table_cols]
@@ -44,6 +32,7 @@ def sanitize_multicolumn_param(pval, table_cols):
 
 
 class WfModule(models.Model):
+    """An instance of a Module in a Workflow."""
     class Meta:
         ordering = ['order']
 
@@ -53,7 +42,6 @@ class WfModule(models.Model):
         else:
             wfstr = ' - deleted from workflow'
         return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
-
 
     def create_parameter_dict(self, table):
         """Present parameters as a dict, with some inconsistent munging.
@@ -70,14 +58,13 @@ class WfModule(models.Model):
             id_name = p.parameter_spec.id_name
 
             if type == ParameterSpec.COLUMN:
-                pdict[id_name] = sanitize_column_param(p, table.columns)
+                pdict[id_name] = _sanitize_column_param(p, table.columns)
             elif type == ParameterSpec.MULTICOLUMN:
-                pdict[id_name] = sanitize_multicolumn_param(p, table.columns)
+                pdict[id_name] = _sanitize_multicolumn_param(p, table.columns)
             else:
                 pdict[id_name] = p.get_value()
 
         return pdict
-
 
     # --- Fields ----
     workflow = models.ForeignKey(
@@ -90,7 +77,8 @@ class WfModule(models.Model):
         ModuleVersion,
         related_name='wf_modules',
         on_delete=models.SET_NULL,
-        null=True)                      # goes null if referenced Module deleted
+        null=True  # goes null if referenced Module deleted
+    )
 
     order = models.IntegerField()
 
@@ -109,15 +97,21 @@ class WfModule(models.Model):
         null=False
     )
 
-    # For modules that fetch data: how often do we check for updates, and do we switch to latest version automatically
+    # For modules that fetch data: how often do we check for updates, and do we
+    # switch to latest version automatically
     auto_update_data = models.BooleanField(default=False)
-    next_update = models.DateTimeField(null=True, blank=True)    # when should next update run?
-    update_interval = models.IntegerField(default=86400)         # time in seconds between updates, default of 1 day
+
+    # when should next update run?
+    next_update = models.DateTimeField(null=True, blank=True)
+    # time in seconds between updates, default of 1 day
+    update_interval = models.IntegerField(default=86400)
     last_update_check = models.DateTimeField(null=True, blank=True)
 
-    notifications = models.BooleanField(default=False) # true means, 'email owner when output changes'
+    # true means, 'email owner when output changes'
+    notifications = models.BooleanField(default=False)
 
-    has_unseen_notification = models.BooleanField(default=False) # true means user has not acknowledged email
+    # true means user has not acknowledged email
+    has_unseen_notification = models.BooleanField(default=False)
 
     # Our undo mechanism assigns None to self.workflow_id sometimes. We need to
     # also store the ID, so we can reference it while deleting.
@@ -151,7 +145,8 @@ class WfModule(models.Model):
         if self.order == 0:
             return None
         else:
-            return WfModule.objects.get(workflow=self.workflow, order=self.order-1)
+            return WfModule.objects.get(workflow=self.workflow,
+                                        order=self.order-1)
 
     def get_module_name(self):
         if self.module_version is not None:
@@ -167,14 +162,14 @@ class WfModule(models.Model):
     def request_authorized_write(self, request):
         return self.workflow.request_authorized_write(request)
 
-
     # ---- Data versions ----
-    # Modules that fetch data, like Load URL or Twitter or scrapers, store versions of all previously fetched data
+    # Modules that fetch data, like Load URL or Twitter or scrapers, store
+    # versions of all previously fetched data
 
     # Note: does not switch to new version automatically
     def store_fetched_table(self, table):
-         stored_object = StoredObject.create_table(self, table)
-         return stored_object.stored_at
+        stored_object = StoredObject.create_table(self, table)
+        return stored_object.stored_at
 
     # Compares against latest version (which may not be current version)
     # Note: does not switch to new version automatically
@@ -202,11 +197,12 @@ class WfModule(models.Model):
     def get_fetched_data_version(self):
         return self.stored_data_version
 
-    # Like all mutators, this should usually be wrapped in a Command so it is undoable
-    # In this case, a ChangeDataVersionCommand
+    # Like all mutators, this should usually be wrapped in a Command so it is
+    # undoable. In this case, a ChangeDataVersionCommand
     def set_fetched_data_version(self, version):
         if version is None or not \
-            StoredObject.objects.filter(wf_module=self, stored_at=version).exists():
+            StoredObject.objects.filter(wf_module=self,
+                                        stored_at=version).exists():
             raise ValueError('No such stored data version')
 
         self.stored_data_version = version
@@ -220,60 +216,67 @@ class WfModule(models.Model):
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
     def create_default_parameters(self):
-        for pspec in ParameterSpec.objects.filter(module_version=self.module_version):
-            pv = ParameterVal.objects.create(wf_module=self, parameter_spec=pspec)
+        for pspec in ParameterSpec.objects \
+                     .filter(module_version__id=self.module_version_id) \
+                     .all():
+            pv = ParameterVal(wf_module=self, parameter_spec=pspec)
             pv.init_from_spec()
             pv.save()
 
-    # Retrieve current parameter values.
-    # Should never throw ValueError on type conversions because ParameterVal.set_value coerces
-    def get_param_raw(self, name, expected_type):
+    def get_parameter_val(self, name, expected_type):
         try:
-            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
+            pspec = ParameterSpec.objects.get(
+                id_name=name,
+                module_version__id=self.module_version_id
+            )
         except ParameterSpec.DoesNotExist:
-            raise ValueError('Request for non-existent ' + expected_type + ' parameter ' + name)
+            raise ValueError(
+                f'Request for non-existent {expected_type} parameter {name}'
+            )
 
         if pspec.type != expected_type:
-            raise ValueError('Request for ' + expected_type + ' parameter ' + name + ' but actual type is ' + pspec.type)
+            raise ValueError(
+                f'Request for {expected_type} parameter {name} '
+                f'but actual type is {pspec.type}'
+            )
 
-        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
+        pval = self.parameter_vals.get(parameter_spec=pspec)
+        return pval
+
+    # Retrieve current parameter values.
+    # Should never throw ValueError on type conversions because
+    # ParameterVal.set_value coerces
+    def get_param_raw(self, name, expected_type):
+        pval = self.get_parameter_val(name, expected_type)
         return pval.value
 
+    def get_param(self, name, expected_type):
+        pval = self.get_parameter_val(name, expected_type)
+        return pval.get_value()
+
     def get_param_string(self, name):
-        return self.get_param_raw(name, ParameterSpec.STRING)
+        return self.get_param(name, ParameterSpec.STRING)
 
     def get_param_integer(self, name):
-        return int(self.get_param_raw(name, ParameterSpec.INTEGER))
+        return self.get_param(name, ParameterSpec.INTEGER)
 
     def get_param_float(self, name):
-        return float(self.get_param_raw(name, ParameterSpec.FLOAT))
+        return self.get_param(name, ParameterSpec.FLOAT)
 
     def get_param_checkbox(self, name):
-        return self.get_param_raw(name, ParameterSpec.CHECKBOX) == 'True'
+        return self.get_param(name, ParameterSpec.CHECKBOX)
 
     def get_param_menu_idx(self, name):
-        try:
-            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
-        except ParameterSpec.DoesNotExist:
-            raise ValueError('Request for non-existent menu parameter ' + name)
-        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
-        return pval.selected_menu_item_idx()
+        return self.get_param(name, ParameterSpec.MENU)
 
     def get_param_menu_string(self, name):
-        try:
-            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
-        except ParameterSpec.DoesNotExist:
-            raise ValueError('Request for non-existent menu parameter ' + name)
-        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
+        pval = self.get_parameter_val(name, ParameterSpec.MENU)
         return pval.selected_menu_item_string()
 
     def get_param_secret_secret(self, id_name: str):
         """Get a secret's "secret" data, or None."""
-        try:
-            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=id_name)
-        except ParameterSpec.DoesNotExist:
-            raise ValueError(f'Request for non-existent secret parameter ' + id_name)
-        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
+        pval = self.get_parameter_val(id_name, ParameterSpec.SECRET)
+
         # Don't use get_value(), since it hides the secret. (We're paranoid
         # about leaking users' secrets.)
         json_val = pval.value
@@ -288,15 +291,16 @@ class WfModule(models.Model):
             return None
 
     def get_param_column(self, name):
-        return self.get_param_raw(name, ParameterSpec.COLUMN)
+        return self.get_param(name, ParameterSpec.COLUMN)
 
     def get_param_multicolumn(self, name):
-        return self.get_param_raw(name, ParameterSpec.MULTICOLUMN)
+        return self.get_param(name, ParameterSpec.MULTICOLUMN)
 
     # --- Status ----
     # set error codes and status lights, notify client of changes
 
-    # busy just changes the light on a single module, no need to reload entire wf
+    # busy just changes the light on a single module, no need to reload entire
+    # workflow
     def set_busy(self, notify=True):
         self.status = self.BUSY
         self.error_msg = ''
@@ -304,8 +308,8 @@ class WfModule(models.Model):
         if notify:
             websockets.ws_client_wf_module_status(self, self.status)
 
-
-    # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
+    # re-render entire workflow when a module goes ready or error, on the
+    # assumption that new output data is available
     def set_ready(self, notify=True):
         self.status = self.READY
         self.error_msg = ''
@@ -351,7 +355,8 @@ class WfModule(models.Model):
 
         # Duplicate the current stored data only, not the history
         if self.stored_data_version is not None:
-            StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).duplicate(new_wfm)
+            self.stored_objects.get(stored_at=self.stored_data_version) \
+                    .duplicate(new_wfm)
             new_wfm.stored_data_version = self.stored_data_version
             new_wfm.save()
 

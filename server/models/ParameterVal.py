@@ -1,5 +1,5 @@
 from django.db import models
-from server.models.ParameterSpec import *
+from server.models.ParameterSpec import ParameterSpec
 import json
 
 # A parameter value, which might be string or float
