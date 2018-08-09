@@ -28,7 +28,7 @@ services:
     volumes:
       - ./:/app/:rw
       - virtualenvs:/root/.local/share/virtualenvs/:rw
-      - ../${MODULE}:/${MODULE}:ro
+      - ../${MODULE:-x}:/${MODULE:-x}:ro
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
