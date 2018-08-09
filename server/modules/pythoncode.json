@@ -12,7 +12,7 @@
       "id_name": "code",
       "type": "custom",
       "multiline": true,
-      "default": "def process(table):\u000a    print('Hello, world!')\u000a    return table"
+      "default": "def process(table):\u000a    print('Hello, World!')\u000a    return table"
     },
     {
       "name": "Run",
