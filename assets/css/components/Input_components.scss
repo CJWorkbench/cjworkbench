@@ -147,6 +147,7 @@ textarea:focus, input:focus{
     border: 0;
     line-height: 1;
     background: transparent;
+    color:$brand-text--dark;
 
     // Hide "spin" arrows
     -moz-appearance: textfield;

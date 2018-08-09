@@ -45,7 +45,7 @@
 
     label.checkbox {
       margin: 0;
-      width: 2.25rem;
+      width: 2rem;
 
       // Line up with the rest
       position: relative;
@@ -67,6 +67,10 @@
         padding: .5rem;
         font-size: 1.3rem;
         background: transparent;
+        color:$brand-text--dark;
+        &:hover {
+          background-color: $dark-accent--soft;
+        }
       }
 
       span {
@@ -86,6 +90,7 @@
       // Show edited values as bold
       span, input {
         font-weight: bold;
+        color: $brand-text--darker;
       }
     }
 
@@ -96,6 +101,11 @@
       margin: 0;
 
       i.icon-caret-down {
+        font-size: .6rem;
+        line-height: 1em;
+        vertical-align: -.5em; // work around broken font
+      }
+      i.icon-caret-up {
         font-size: .6rem;
         line-height: 1em;
         vertical-align: -.5em; // work around broken font
@@ -142,9 +152,10 @@
       display: flex;
       width: 100%;
       overflow: hidden;
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       padding-top: .5rem;
-      padding-left: 2.75rem;
+      padding-left: 2.5rem;
+      font-weight: 100;
 
       .value {
         flex: 1 1 auto;
@@ -160,6 +171,12 @@
         button, span {
           min-width: 3rem;
           text-align: right;
+        }
+
+        // button 
+        .icon-close {
+          font-size: 1.2rem;
+          line-height: 1.4em;
         }
 
         span {

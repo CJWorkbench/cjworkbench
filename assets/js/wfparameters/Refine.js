@@ -255,7 +255,7 @@ class RefineGroup extends React.PureComponent {
           checked={isExpanded}
           onChange={this.onChangeIsExpanded}
         />
-        <i className='icon-caret-down' />
+        <i className={isExpanded ? 'icon-caret-up' : 'icon-caret-down'} />
       </label>
     )
 
@@ -280,7 +280,9 @@ class RefineGroup extends React.PureComponent {
                   name={`remove[${this.props.name}]`}
                   data-value={value}
                   onClick={this.onClickRemove}
-                >🗙</button>
+                  className="icon-close"
+                >
+                </button>
               )}
               <span className='count'>{valueCounts[value]}</span>
             </span>
