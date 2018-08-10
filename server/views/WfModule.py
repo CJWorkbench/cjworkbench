@@ -389,12 +389,12 @@ def wfmodule_columns(request, pk, format=None):
     for col in dtypes:
         # We are simplifying the data types here.
         # More stuff can be added to these lists if we run into anything new.
-        stype = "String"
+        stype = "text"
         if str(dtypes[col]) in ['int64', 'float64', 'bool']:
-            stype = "Number"
+            stype = "number"
         elif str(dtypes[col]) in ['datetime64[ns]']:
-            ret_types.append((col, "Date"))
-            stype = "Date"
+            ret_types.append((col, "datetime"))
+            stype = "datetime"
         ret_types.append({
             "name": col,
             "type": stype

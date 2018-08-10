@@ -4,10 +4,10 @@ exports[`DataGrid tests, Renders the grid 1`] = `
 <DataGrid
   columnTypes={
     Array [
-      "Number",
-      "String",
-      "String",
-      "String",
+      "number",
+      "text",
+      "text",
+      "text",
     ]
   }
   columns={
@@ -45,11 +45,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         Object {
           "editable": true,
           "formatter": <RowTypeFormatter
-            type="Number"
+            type="number"
           />,
           "headerRenderer": <ColumnHeader
             columnKey="aaa"
-            columnType="Number"
+            columnType="number"
             draggingColumnIndex={null}
             dropColumn={[MockFunction]}
             duplicateColumn={[MockFunction]}
@@ -77,11 +77,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         Object {
           "editable": true,
           "formatter": <RowTypeFormatter
-            type="String"
+            type="text"
           />,
           "headerRenderer": <ColumnHeader
             columnKey="bbbb"
-            columnType="String"
+            columnType="text"
             draggingColumnIndex={null}
             dropColumn={[MockFunction]}
             duplicateColumn={[MockFunction]}
@@ -109,11 +109,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         Object {
           "editable": true,
           "formatter": <RowTypeFormatter
-            type="String"
+            type="text"
           />,
           "headerRenderer": <ColumnHeader
             columnKey="ccccc"
-            columnType="String"
+            columnType="text"
             draggingColumnIndex={null}
             dropColumn={[MockFunction]}
             duplicateColumn={[MockFunction]}
@@ -141,11 +141,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         Object {
           "editable": true,
           "formatter": <RowTypeFormatter
-            type="String"
+            type="text"
           />,
           "headerRenderer": <ColumnHeader
             columnKey="rn_"
-            columnType="String"
+            columnType="text"
             draggingColumnIndex={null}
             dropColumn={[MockFunction]}
             duplicateColumn={[MockFunction]}
@@ -261,11 +261,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 Object {
                   "editable": true,
                   "formatter": <RowTypeFormatter
-                    type="Number"
+                    type="number"
                   />,
                   "headerRenderer": <ColumnHeader
                     columnKey="aaa"
-                    columnType="Number"
+                    columnType="number"
                     draggingColumnIndex={null}
                     dropColumn={[MockFunction]}
                     duplicateColumn={[MockFunction]}
@@ -294,11 +294,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 Object {
                   "editable": true,
                   "formatter": <RowTypeFormatter
-                    type="String"
+                    type="text"
                   />,
                   "headerRenderer": <ColumnHeader
                     columnKey="bbbb"
-                    columnType="String"
+                    columnType="text"
                     draggingColumnIndex={null}
                     dropColumn={[MockFunction]}
                     duplicateColumn={[MockFunction]}
@@ -327,11 +327,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 Object {
                   "editable": true,
                   "formatter": <RowTypeFormatter
-                    type="String"
+                    type="text"
                   />,
                   "headerRenderer": <ColumnHeader
                     columnKey="ccccc"
-                    columnType="String"
+                    columnType="text"
                     draggingColumnIndex={null}
                     dropColumn={[MockFunction]}
                     duplicateColumn={[MockFunction]}
@@ -360,11 +360,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 Object {
                   "editable": true,
                   "formatter": <RowTypeFormatter
-                    type="String"
+                    type="text"
                   />,
                   "headerRenderer": <ColumnHeader
                     columnKey="rn_"
-                    columnType="String"
+                    columnType="text"
                     draggingColumnIndex={null}
                     dropColumn={[MockFunction]}
                     duplicateColumn={[MockFunction]}
@@ -408,11 +408,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               Object {
                 "editable": true,
                 "formatter": <RowTypeFormatter
-                  type="Number"
+                  type="number"
                 />,
                 "headerRenderer": <ColumnHeader
                   columnKey="aaa"
-                  columnType="Number"
+                  columnType="number"
                   draggingColumnIndex={null}
                   dropColumn={[MockFunction]}
                   duplicateColumn={[MockFunction]}
@@ -440,11 +440,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               Object {
                 "editable": true,
                 "formatter": <RowTypeFormatter
-                  type="String"
+                  type="text"
                 />,
                 "headerRenderer": <ColumnHeader
                   columnKey="bbbb"
-                  columnType="String"
+                  columnType="text"
                   draggingColumnIndex={null}
                   dropColumn={[MockFunction]}
                   duplicateColumn={[MockFunction]}
@@ -472,11 +472,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               Object {
                 "editable": true,
                 "formatter": <RowTypeFormatter
-                  type="String"
+                  type="text"
                 />,
                 "headerRenderer": <ColumnHeader
                   columnKey="ccccc"
-                  columnType="String"
+                  columnType="text"
                   draggingColumnIndex={null}
                   dropColumn={[MockFunction]}
                   duplicateColumn={[MockFunction]}
@@ -504,11 +504,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               Object {
                 "editable": true,
                 "formatter": <RowTypeFormatter
-                  type="String"
+                  type="text"
                 />,
                 "headerRenderer": <ColumnHeader
                   columnKey="rn_"
-                  columnType="String"
+                  columnType="text"
                   draggingColumnIndex={null}
                   dropColumn={[MockFunction]}
                   duplicateColumn={[MockFunction]}
@@ -645,11 +645,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     Object {
                       "editable": true,
                       "formatter": <RowTypeFormatter
-                        type="Number"
+                        type="number"
                       />,
                       "headerRenderer": <ColumnHeader
                         columnKey="aaa"
-                        columnType="Number"
+                        columnType="number"
                         draggingColumnIndex={null}
                         dropColumn={[MockFunction]}
                         duplicateColumn={[MockFunction]}
@@ -678,11 +678,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     Object {
                       "editable": true,
                       "formatter": <RowTypeFormatter
-                        type="String"
+                        type="text"
                       />,
                       "headerRenderer": <ColumnHeader
                         columnKey="bbbb"
-                        columnType="String"
+                        columnType="text"
                         draggingColumnIndex={null}
                         dropColumn={[MockFunction]}
                         duplicateColumn={[MockFunction]}
@@ -711,11 +711,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     Object {
                       "editable": true,
                       "formatter": <RowTypeFormatter
-                        type="String"
+                        type="text"
                       />,
                       "headerRenderer": <ColumnHeader
                         columnKey="ccccc"
-                        columnType="String"
+                        columnType="text"
                         draggingColumnIndex={null}
                         dropColumn={[MockFunction]}
                         duplicateColumn={[MockFunction]}
@@ -744,11 +744,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     Object {
                       "editable": true,
                       "formatter": <RowTypeFormatter
-                        type="String"
+                        type="text"
                       />,
                       "headerRenderer": <ColumnHeader
                         columnKey="rn_"
-                        columnType="String"
+                        columnType="text"
                         draggingColumnIndex={null}
                         dropColumn={[MockFunction]}
                         duplicateColumn={[MockFunction]}
@@ -823,11 +823,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="Number"
+                          type="number"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="aaa"
-                          columnType="Number"
+                          columnType="number"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -856,11 +856,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="String"
+                          type="text"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="bbbb"
-                          columnType="String"
+                          columnType="text"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -889,11 +889,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="String"
+                          type="text"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="ccccc"
-                          columnType="String"
+                          columnType="text"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -922,11 +922,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="String"
+                          type="text"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="rn_"
-                          columnType="String"
+                          columnType="text"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -1009,11 +1009,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "formatter": <RowTypeFormatter
-                              type="Number"
+                              type="number"
                             />,
                             "headerRenderer": <ColumnHeader
                               columnKey="aaa"
-                              columnType="Number"
+                              columnType="number"
                               draggingColumnIndex={null}
                               dropColumn={[MockFunction]}
                               duplicateColumn={[MockFunction]}
@@ -1048,7 +1048,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         renderer={
                           <ColumnHeader
                             columnKey="aaa"
-                            columnType="Number"
+                            columnType="number"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -1087,11 +1087,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               Object {
                                 "editable": true,
                                 "formatter": <RowTypeFormatter
-                                  type="Number"
+                                  type="number"
                                 />,
                                 "headerRenderer": <ColumnHeader
                                   columnKey="aaa"
-                                  columnType="Number"
+                                  columnType="number"
                                   draggingColumnIndex={null}
                                   dropColumn={[MockFunction]}
                                   duplicateColumn={[MockFunction]}
@@ -1120,7 +1120,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               }
                             }
                             columnKey="aaa"
-                            columnType="Number"
+                            columnType="number"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -1146,7 +1146,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             >
                               <EditableColumnName
                                 columnKey="aaa"
-                                columnType="Number"
+                                columnType="number"
                                 isReadOnly={false}
                                 onRename={[Function]}
                               >
@@ -1481,11 +1481,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "formatter": <RowTypeFormatter
-                              type="String"
+                              type="text"
                             />,
                             "headerRenderer": <ColumnHeader
                               columnKey="bbbb"
-                              columnType="String"
+                              columnType="text"
                               draggingColumnIndex={null}
                               dropColumn={[MockFunction]}
                               duplicateColumn={[MockFunction]}
@@ -1520,7 +1520,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         renderer={
                           <ColumnHeader
                             columnKey="bbbb"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -1559,11 +1559,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               Object {
                                 "editable": true,
                                 "formatter": <RowTypeFormatter
-                                  type="String"
+                                  type="text"
                                 />,
                                 "headerRenderer": <ColumnHeader
                                   columnKey="bbbb"
-                                  columnType="String"
+                                  columnType="text"
                                   draggingColumnIndex={null}
                                   dropColumn={[MockFunction]}
                                   duplicateColumn={[MockFunction]}
@@ -1592,7 +1592,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               }
                             }
                             columnKey="bbbb"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -1618,7 +1618,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             >
                               <EditableColumnName
                                 columnKey="bbbb"
-                                columnType="String"
+                                columnType="text"
                                 isReadOnly={false}
                                 onRename={[Function]}
                               >
@@ -1632,7 +1632,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   <div
                                     className="column-type"
                                   >
-                                    string
+                                    text
                                   </div>
                                 </span>
                               </EditableColumnName>
@@ -1953,11 +1953,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "formatter": <RowTypeFormatter
-                              type="String"
+                              type="text"
                             />,
                             "headerRenderer": <ColumnHeader
                               columnKey="ccccc"
-                              columnType="String"
+                              columnType="text"
                               draggingColumnIndex={null}
                               dropColumn={[MockFunction]}
                               duplicateColumn={[MockFunction]}
@@ -1992,7 +1992,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         renderer={
                           <ColumnHeader
                             columnKey="ccccc"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -2031,11 +2031,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               Object {
                                 "editable": true,
                                 "formatter": <RowTypeFormatter
-                                  type="String"
+                                  type="text"
                                 />,
                                 "headerRenderer": <ColumnHeader
                                   columnKey="ccccc"
-                                  columnType="String"
+                                  columnType="text"
                                   draggingColumnIndex={null}
                                   dropColumn={[MockFunction]}
                                   duplicateColumn={[MockFunction]}
@@ -2064,7 +2064,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               }
                             }
                             columnKey="ccccc"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -2090,7 +2090,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             >
                               <EditableColumnName
                                 columnKey="ccccc"
-                                columnType="String"
+                                columnType="text"
                                 isReadOnly={false}
                                 onRename={[Function]}
                               >
@@ -2104,7 +2104,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   <div
                                     className="column-type"
                                   >
-                                    string
+                                    text
                                   </div>
                                 </span>
                               </EditableColumnName>
@@ -2425,11 +2425,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "formatter": <RowTypeFormatter
-                              type="String"
+                              type="text"
                             />,
                             "headerRenderer": <ColumnHeader
                               columnKey="rn_"
-                              columnType="String"
+                              columnType="text"
                               draggingColumnIndex={null}
                               dropColumn={[MockFunction]}
                               duplicateColumn={[MockFunction]}
@@ -2464,7 +2464,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         renderer={
                           <ColumnHeader
                             columnKey="rn_"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -2503,11 +2503,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               Object {
                                 "editable": true,
                                 "formatter": <RowTypeFormatter
-                                  type="String"
+                                  type="text"
                                 />,
                                 "headerRenderer": <ColumnHeader
                                   columnKey="rn_"
-                                  columnType="String"
+                                  columnType="text"
                                   draggingColumnIndex={null}
                                   dropColumn={[MockFunction]}
                                   duplicateColumn={[MockFunction]}
@@ -2536,7 +2536,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               }
                             }
                             columnKey="rn_"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -2562,7 +2562,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             >
                               <EditableColumnName
                                 columnKey="rn_"
-                                columnType="String"
+                                columnType="text"
                                 isReadOnly={false}
                                 onRename={[Function]}
                               >
@@ -2576,7 +2576,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   <div
                                     className="column-type"
                                   >
-                                    string
+                                    text
                                   </div>
                                 </span>
                               </EditableColumnName>
@@ -2994,11 +2994,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="Number"
+                          type="number"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="aaa"
-                          columnType="Number"
+                          columnType="number"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -3027,11 +3027,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="String"
+                          type="text"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="bbbb"
-                          columnType="String"
+                          columnType="text"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -3060,11 +3060,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="String"
+                          type="text"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="ccccc"
-                          columnType="String"
+                          columnType="text"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -3093,11 +3093,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       Object {
                         "editable": true,
                         "formatter": <RowTypeFormatter
-                          type="String"
+                          type="text"
                         />,
                         "headerRenderer": <ColumnHeader
                           columnKey="rn_"
-                          columnType="String"
+                          columnType="text"
                           draggingColumnIndex={null}
                           dropColumn={[MockFunction]}
                           duplicateColumn={[MockFunction]}
@@ -3218,11 +3218,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         Object {
                           "editable": true,
                           "formatter": <RowTypeFormatter
-                            type="Number"
+                            type="number"
                           />,
                           "headerRenderer": <ColumnHeader
                             columnKey="aaa"
-                            columnType="Number"
+                            columnType="number"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -3251,11 +3251,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         Object {
                           "editable": true,
                           "formatter": <RowTypeFormatter
-                            type="String"
+                            type="text"
                           />,
                           "headerRenderer": <ColumnHeader
                             columnKey="bbbb"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -3284,11 +3284,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         Object {
                           "editable": true,
                           "formatter": <RowTypeFormatter
-                            type="String"
+                            type="text"
                           />,
                           "headerRenderer": <ColumnHeader
                             columnKey="ccccc"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -3317,11 +3317,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         Object {
                           "editable": true,
                           "formatter": <RowTypeFormatter
-                            type="String"
+                            type="text"
                           />,
                           "headerRenderer": <ColumnHeader
                             columnKey="rn_"
-                            columnType="String"
+                            columnType="text"
                             draggingColumnIndex={null}
                             dropColumn={[MockFunction]}
                             duplicateColumn={[MockFunction]}
@@ -3443,11 +3443,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="Number"
+                                      type="number"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
-                                      columnType="Number"
+                                      columnType="number"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3476,11 +3476,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3509,11 +3509,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3542,11 +3542,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3646,11 +3646,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="Number"
+                                      type="number"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
-                                      columnType="Number"
+                                      columnType="number"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3679,11 +3679,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3712,11 +3712,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3745,11 +3745,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -3858,11 +3858,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="Number"
+                                        type="number"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
-                                        columnType="Number"
+                                        columnType="number"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -3891,11 +3891,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -3924,11 +3924,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -3957,11 +3957,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4061,11 +4061,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="Number"
+                                        type="number"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
-                                        columnType="Number"
+                                        columnType="number"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4094,11 +4094,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4127,11 +4127,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4160,11 +4160,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4271,11 +4271,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="Number"
+                                      type="number"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
-                                      columnType="Number"
+                                      columnType="number"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -4304,11 +4304,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -4337,11 +4337,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -4370,11 +4370,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -4472,11 +4472,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="Number"
+                                        type="number"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
-                                        columnType="Number"
+                                        columnType="number"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4515,7 +4515,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="Number"
+                                      type="number"
                                     />
                                   }
                                   height={35}
@@ -4574,11 +4574,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="Number"
+                                                  type="number"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="aaa"
-                                                  columnType="Number"
+                                                  columnType="number"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -4607,12 +4607,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={0}
-                                            type="Number"
+                                            type="number"
                                             value="9"
                                           >
                                             <div
                                               align="right"
-                                              className="row-number"
+                                              className="row-type-number"
                                             >
                                               9
                                             </div>
@@ -4676,11 +4676,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4719,7 +4719,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />
                                   }
                                   height={35}
@@ -4778,11 +4778,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="String"
+                                                  type="text"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="bbbb"
-                                                  columnType="String"
+                                                  columnType="text"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -4811,12 +4811,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={0}
-                                            type="String"
+                                            type="text"
                                             value="foo"
                                           >
                                             <div
                                               align="left"
-                                              className="row-string"
+                                              className="row-type-text"
                                             >
                                               foo
                                             </div>
@@ -4880,11 +4880,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -4923,7 +4923,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />
                                   }
                                   height={35}
@@ -4982,11 +4982,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="String"
+                                                  type="text"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="ccccc"
-                                                  columnType="String"
+                                                  columnType="text"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -5015,12 +5015,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={0}
-                                            type="String"
+                                            type="text"
                                             value="9"
                                           >
                                             <div
                                               align="left"
-                                              className="row-string"
+                                              className="row-type-text"
                                             >
                                               9
                                             </div>
@@ -5084,11 +5084,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -5127,7 +5127,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />
                                   }
                                   height={35}
@@ -5186,11 +5186,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="String"
+                                                  type="text"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="rn_"
-                                                  columnType="String"
+                                                  columnType="text"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -5219,12 +5219,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={0}
-                                            type="String"
+                                            type="text"
                                             value="someval"
                                           >
                                             <div
                                               align="left"
-                                              className="row-string"
+                                              className="row-type-text"
                                             >
                                               someval
                                             </div>
@@ -5427,11 +5427,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="Number"
+                                      type="number"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
-                                      columnType="Number"
+                                      columnType="number"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -5460,11 +5460,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -5493,11 +5493,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -5526,11 +5526,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "editable": true,
                                     "formatter": <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />,
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
-                                      columnType="String"
+                                      columnType="text"
                                       draggingColumnIndex={null}
                                       dropColumn={[MockFunction]}
                                       duplicateColumn={[MockFunction]}
@@ -5628,11 +5628,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="Number"
+                                        type="number"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
-                                        columnType="Number"
+                                        columnType="number"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -5671,7 +5671,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="Number"
+                                      type="number"
                                     />
                                   }
                                   height={35}
@@ -5730,11 +5730,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="Number"
+                                                  type="number"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="aaa"
-                                                  columnType="Number"
+                                                  columnType="number"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -5763,12 +5763,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={1}
-                                            type="Number"
+                                            type="number"
                                             value="9"
                                           >
                                             <div
                                               align="right"
-                                              className="row-number"
+                                              className="row-type-number"
                                             >
                                               9
                                             </div>
@@ -5832,11 +5832,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -5875,7 +5875,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />
                                   }
                                   height={35}
@@ -5934,11 +5934,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="String"
+                                                  type="text"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="bbbb"
-                                                  columnType="String"
+                                                  columnType="text"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -5967,7 +5967,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={1}
-                                            type="String"
+                                            type="text"
                                             value=""
                                           >
                                             <div
@@ -6035,11 +6035,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -6078,7 +6078,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />
                                   }
                                   height={35}
@@ -6137,11 +6137,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="String"
+                                                  type="text"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="ccccc"
-                                                  columnType="String"
+                                                  columnType="text"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -6170,12 +6170,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={1}
-                                            type="String"
+                                            type="text"
                                             value="baz"
                                           >
                                             <div
                                               align="left"
-                                              className="row-string"
+                                              className="row-type-text"
                                             >
                                               baz
                                             </div>
@@ -6239,11 +6239,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "formatter": <RowTypeFormatter
-                                        type="String"
+                                        type="text"
                                       />,
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
-                                        columnType="String"
+                                        columnType="text"
                                         draggingColumnIndex={null}
                                         dropColumn={[MockFunction]}
                                         duplicateColumn={[MockFunction]}
@@ -6282,7 +6282,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   formatter={
                                     <RowTypeFormatter
-                                      type="String"
+                                      type="text"
                                     />
                                   }
                                   height={35}
@@ -6341,11 +6341,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               Object {
                                                 "editable": true,
                                                 "formatter": <RowTypeFormatter
-                                                  type="String"
+                                                  type="text"
                                                 />,
                                                 "headerRenderer": <ColumnHeader
                                                   columnKey="rn_"
-                                                  columnType="String"
+                                                  columnType="text"
                                                   draggingColumnIndex={null}
                                                   dropColumn={[MockFunction]}
                                                   duplicateColumn={[MockFunction]}
@@ -6374,12 +6374,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             }
                                             isExpanded={false}
                                             rowIdx={1}
-                                            type="String"
+                                            type="text"
                                             value="someotherval"
                                           >
                                             <div
                                               align="left"
-                                              className="row-string"
+                                              className="row-type-text"
                                             >
                                               someotherval
                                             </div>

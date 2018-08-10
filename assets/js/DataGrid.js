@@ -13,6 +13,11 @@ import ColumnContextMenu from './ColumnContextMenu'
 import { sortDirectionNone } from './UpdateTableAction'
 
 // --- Row and column formatting ---
+const columnTypeDisplay = {
+  'text': 'text',
+  'number': 'number',
+  'datetime': 'date & time'
+}
 
 // Custom Formatter component, to render row number in a different style
 export class RowNumberFormatter extends React.PureComponent {
@@ -45,7 +50,7 @@ export class RowTypeFormatter extends React.PureComponent {
   render () {
     // Insert types that need to align right
     const alignRight = [
-      'Number'
+      'number'
     ]
     // For init state
     if (this.props.type === '') {
@@ -65,7 +70,7 @@ export class RowTypeFormatter extends React.PureComponent {
     }
     // Left align for text, right align for numeric
     let type = this.props.type
-    let className = 'row-' + type.toLowerCase()
+    let className = 'row-type-' + type
     let align = alignRight.indexOf(type) >= 0 ? 'right' : 'left'
 
     return (
@@ -235,7 +240,7 @@ export class EditableColumnName extends React.Component {
             {this.state.newName}
           </div>
           <div className={'column-type'}>
-            {this.props.columnType.toLowerCase()}
+            {columnTypeDisplay[this.props.columnType]}
           </div>
         </span>
       );

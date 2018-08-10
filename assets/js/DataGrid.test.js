@@ -7,10 +7,10 @@ describe('DataGrid tests,', () => {
     totalRows: 2,
     columns: ['aaa', 'bbbb', 'ccccc', 'rn_'],
     'column_types': [
-      'Number',
-      'String',
-      'String',
-      'String'
+      'number',
+      'text',
+      'text',
+      'text'
     ],
     rows: [
       {
@@ -254,8 +254,8 @@ describe('DataGrid tests,', () => {
     )
 
     setImmediate(() => {
-      expect(tree.find('.row-string').first().prop('align')).toBe('left')
-      expect(tree.find('.row-number').first().prop('align')).toBe('right')
+      expect(tree.find('.row-type-text').first().prop('align')).toBe('left')
+      expect(tree.find('.row-type-number').first().prop('align')).toBe('right')
       tree.unmount()
       done()
     })

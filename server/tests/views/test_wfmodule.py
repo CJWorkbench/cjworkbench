@@ -30,9 +30,9 @@ test_data_json = {
         {'Class': 'economics', 'F': 20, 'M': 20.0}
     ],
     'column_types': [
-        'String',
-        'Number',
-        'Number'
+        'text',
+        'number',
+        'number'
     ]
 }
 
@@ -140,7 +140,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
                                    workflow.wf_modules.first().id)
         self.assertIs(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['column_types'],
-                         ['Number', 'Number', 'Number', 'Number'])
+                         ['number', 'number', 'number', 'number'])
 
     def test_pandas_no_header(self):
         # When no header row, Pandas uses int64s as column names, and
@@ -152,7 +152,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(json.loads(response.content)['columns'],
                          ['1', '2', '3', '4'])
         self.assertEqual(json.loads(response.content)['column_types'],
-                         ['Number', 'Number', 'Number', 'Number'])
+                         ['number', 'number', 'number', 'number'])
 
     def test_wf_module_render_get(self):
         # First module: creates test data
@@ -247,9 +247,9 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/columns' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), [
-            {"name": "Class", "type": "String"},
-            {"name": "M", "type": "Number"},
-            {"name": "F", "type": "Number"}
+            {"name": "Class", "type": "text"},
+            {"name": "M", "type": "number"},
+            {"name": "F", "type": "number"}
         ])
 
     # test stored versions of data: create, retrieve, set, list, and views

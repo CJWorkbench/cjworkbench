@@ -15,7 +15,7 @@
       "name": "Sort as",
       "id_name" : "dtype",
       "type": "menu",
-      "menu_items": "String|Number|Date"
+      "menu_items": "Text|Number|Date & Time"
     },
     {
       "name": "Direction",

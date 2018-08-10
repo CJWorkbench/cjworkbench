@@ -15,7 +15,7 @@ export const updateModuleMapping = {
 }
 
 // Constants for sort module
-const SortTypes = 'String|Number|Date'.split('|')
+const SortTypes = 'text|number|datetime'.split('|')
 export const sortDirectionNone = 0
 export const sortDirectionAsc = 1
 export const sortDirectionDesc = 2

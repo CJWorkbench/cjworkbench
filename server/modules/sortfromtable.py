@@ -11,11 +11,11 @@ def _do_render(table, column, column_type, is_ascending):
         return ProcessResult(table)
 
     untyped_values = table[column]
-    if column_type == 'String':
+    if column_type == 'text':
         typed_values = untyped_values.astype(str)
-    elif column_type == 'Number':
+    elif column_type == 'number':
         typed_values = pd.to_numeric(untyped_values, errors='coerce')
-    elif column_type == 'Date':
+    elif column_type == 'datetime':
         typed_values = pd.to_datetime(untyped_values, errors='coerce')
     else:
         typed_values = untyped_values
@@ -37,9 +37,9 @@ def _do_render(table, column, column_type, is_ascending):
 
 
 _SortTypes = {
-    0: 'String',
-    1: 'Number',
-    2: 'Date',
+    0: 'text',
+    1: 'number',
+    2: 'datetime',
 }
 _SortAscendings = {
     0: None,
@@ -53,7 +53,7 @@ class SortFromTable(ModuleImpl):
         column = wf_module.get_param_column('column')
 
         sort_type_int = int(wf_module.get_param_menu_idx('dtype'))
-        sort_type = _SortTypes.get(sort_type_int, 'String')
+        sort_type = _SortTypes.get(sort_type_int, 'text')
 
         is_ascending_int = int(wf_module.get_param_menu_idx('direction'))
         is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
