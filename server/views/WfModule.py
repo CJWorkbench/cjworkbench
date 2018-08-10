@@ -96,11 +96,11 @@ def get_simple_column_types(table):
     for dt in raw_dtypes:
         # We are simplifying the data types here.
         # More stuff can be added to these lists if we run into anything new.
-        stype = "String"
+        stype = "text"
         if dt in ['int64', 'float64', 'bool']:
-            stype = "Number"
+            stype = "number"
         elif dt in ['datetime64[ns]']:
-            stype = "Date"
+            stype = "datetime"
         ret_types.append(stype)
     return ret_types
 
