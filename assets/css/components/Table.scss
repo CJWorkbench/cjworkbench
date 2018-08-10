@@ -116,7 +116,7 @@
 
       .row-number {
         color:$light-gray;
-        @extend .content-3;
+        font-weight: 100;
         text-align: center;
         font-size: 1.2rem!important;
         line-height: 1.2rem!important;
@@ -144,6 +144,7 @@
     .react-grid-Cell--locked {
       .react-grid-Cell__value {
         margin-left: 0rem!important;
+        margin-right: 0rem!important;
       }
     }
 
@@ -353,6 +354,7 @@
         line-height: 1.2rem!important;
         font-style: italic;
         padding-right: 2px;
+        font-weight: 100;
       }
     }
 
