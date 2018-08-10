@@ -340,7 +340,8 @@
       padding-right:0rem;
       padding-left:0rem;
       border-right: 1px solid $table-border;
-      border-bottom: 0px solid $table-border;
+      border-bottom: 0px solid transparent;
+      border-top: 0;
       //Click and edit a cell
       &:focus {
         padding-left: 0;
@@ -354,6 +355,7 @@
         border-radius: 0;
       	outline: 2px solid $brand-orange;
         font-size: 1.2rem;
+        height: 3.5rem!important;
       }
     }
 
