@@ -222,11 +222,13 @@ const mapStateToProps = (state, ownProps) => {
   const { testHighlight } = lessonSelector(state)
   return {
     isLessonHighlight: testHighlight({ type: 'Module', index: ownProps.index }),
-    modules: state.modules.map(module => (
-      Object.assign({
+    modules: Object.keys(state.modules).map(moduleId => {
+      const module = state.modules[moduleId]
+      return {
+        ...module,
         isLessonHighlight: testHighlight({ type: 'Module', name: module.name, index: ownProps.index })
-      }, module)
-    )),
+      }
+    })
   }
 }
 

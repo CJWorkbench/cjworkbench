@@ -1,10 +1,10 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import WorkbenchAPI from './WorkbenchAPI'
 import { createStore, applyMiddleware, compose } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
 import thunk from 'redux-thunk'
 import { newContext } from 'immutability-helper'
+import api from './WorkbenchAPI'
 
 // Workflow
 const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW'
@@ -32,27 +32,18 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 export const NOP_ACTION = 'NOP_ACTION'
 const NOP = { type: NOP_ACTION, payload: {} }
 
-const WorkflowId = window.initState ? window.initState.workflowId : 'MISSING-WORKFLOW-ID'
-
-var api = WorkbenchAPI() // var so it can be mocked for testing
-
-export function mockAPI (mockApi) {
-  api = mockApi
-}
-
 // ---- Our Store ----
-// Master state for the workflow. Export so that components can store.dispatch()
-// var so it can be mocked for testing
+// Master state for the workflow.
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-export var store = createStore( // TODO make it const
+
+export const middlewares = [ promiseMiddleware(), thunk ]
+
+// TODO do not export store! It makes tests _and_ code hard to write, for zero value gain
+export var store = createStore(
   workflowReducer,
   window.initState,
-  composeEnhancers(applyMiddleware(promiseMiddleware(), thunk))
+  composeEnhancers(applyMiddleware(...middlewares))
 )
-
-export function mockStore (mockStore) {
-  store = mockStore
-}
 
 const reducerFunc = {}
 
@@ -78,7 +69,7 @@ update.extend('$reorder', function (value, original) {
 
 // ---- Utilities for translating between ID and index ----
 
-export function findIdxByProp (searchArray, searchProp, searchValue) {
+function findIdxByProp (searchArray, searchProp, searchValue) {
   let returnIdx
   for (let i = 0; i < searchArray.length; i++) {
     if (searchArray[i][searchProp] === searchValue) {
@@ -87,42 +78,6 @@ export function findIdxByProp (searchArray, searchProp, searchValue) {
     }
   }
   return returnIdx
-}
-
-export function findParamIdxByIdName (wfModule, paramIdName) {
-  let paramIdx
-  let len = wfModule.parameter_vals.length
-  for (let i = 0; i < len; i++) {
-    if (wfModule.parameter_vals[i].parameter_spec.id_name === paramIdName) {
-      paramIdx = i
-      break
-    }
-  }
-  if (paramIdx === len) {
-    return undefined // not found
-  }
-  return paramIdx
-}
-
-// find module that contains parameter
-export function paramIdToIndices (workflow, paramId) {
-  let modules = workflow.wf_modules
-  for (let wfModuleIdx = 0; wfModuleIdx < modules.length; wfModuleIdx++) {
-    let params = modules[wfModuleIdx].parameter_vals
-    for (let paramIdx = 0; paramIdx < params.length; paramIdx++) {
-      if (params[paramIdx].id === paramId) {
-        return {
-          wfModuleIdx,
-          paramIdx
-        }
-      }
-    }
-  }
-
-  return {
-    wfModuleIdx: undefined,
-    paramIdx: undefined
-  }
 }
 
 // ---- Actions ----
@@ -138,31 +93,31 @@ export function paramIdToIndices (workflow, paramId) {
  *
  * TODO get more formal about this; nix this method when we are.
  */
-function omitWorkflowClientOnlyStateInPlace (workflow, prevWorkflow) {
-  const idToNewWfModule = {}
-  for (const newWfModule of workflow.wf_modules) {
-    idToNewWfModule[newWfModule.id] = newWfModule
+function omitWfModuleClientOnlyStateInPlace (wfModules, prevWfModules) {
+  for (const key in wfModules) {
+    const wfModule = wfModules[key]
+    const prevWfModule = prevWfModules[key]
+    if (!prevWfModule) continue
+    wfModule.is_collapsed = prevWfModule.is_collapsed
   }
-  for (const oldWfModule of prevWorkflow.wf_modules) {
-    if (idToNewWfModule.hasOwnProperty(oldWfModule.id)) {
-      idToNewWfModule[oldWfModule.id].is_collapsed = oldWfModule.is_collapsed
-    }
-  }
-  return workflow
 }
 
 // RELOAD_WORKFLOW
 // Re-load the workflow
 export function reloadWorkflowAction () {
-  return {
-    type: RELOAD_WORKFLOW,
-    payload: api.loadWorkflow(WorkflowId)
+  return (dispatch, getState) => {
+    return dispatch({
+      type: RELOAD_WORKFLOW,
+      payload: api.loadWorkflow(getState().workflow.id)
+    })
   }
 }
 registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
-  return update(state, {
-    workflow: {$merge: omitWorkflowClientOnlyStateInPlace(action.payload, state.workflow)}
-  })
+  const { workflow, wfModules } = action.payload
+
+  omitWfModuleClientOnlyStateInPlace(wfModules, state.wfModules)
+
+  return { ...state, workflow, wfModules }
 })
 
 // LOAD_MODULES
@@ -174,15 +129,19 @@ export function loadModulesAction () {
   }
 }
 registerReducerFunc(LOAD_MODULES + '_FULFILLED', (state, action) => {
-  return update(state, {
-    modules: {$set: action.payload}
-  })
+  const modulesArray = action.payload
+  const modules = {}
+  for (const module of modulesArray) {
+    modules[String(module.id)] = module
+  }
+
+  return { ...state, modules }
 })
 
 // SET_WORKFLOW_PUBLIC
 // Set the workflow to public or private
 export function setWorkflowPublicAction (workflowId, isPublic) {
-  return function (dispatch) {
+  return (dispatch) => {
     return dispatch({
       type: SET_WORKFLOW_PUBLIC,
       payload: api.setWorkflowPublic(workflowId, isPublic)
@@ -194,25 +153,25 @@ export function setWorkflowPublicAction (workflowId, isPublic) {
 // MOVE_MODULE
 // Re-order the modules in the module stack
 export function moveModuleAction (oldIndex, newIndex) {
-  if (oldIndex < newIndex) {
-    newIndex -= 1
-  }
-  // todo avoid store.getState() here:
-  let newState = update(store.getState(), {
-    workflow: {
-      wf_modules: { $reorder: [ oldIndex, newIndex ] }
+  return (dispatch, getState) => {
+    if (oldIndex < newIndex) {
+      newIndex -= 1
     }
-  })
-  let newOrder = newState.workflow.wf_modules.map((item, i) => {
-    return { id: item.id, order: i }
-  })
 
-  return {
-    type: MOVE_MODULE,
-    payload: {
-      promise: api.reorderWfModules(WorkflowId, newOrder),
-      data: { oldIndex, newIndex }
-    }
+    const workflow = getState().workflow
+
+    const newIds = workflow.wf_modules.slice()
+    newIds.splice(newIndex, 0, newOrder.splice(oldIndex, 1)[0])
+    // idToOrder: { '2': 1, '13': 2, '12': 0 }
+    const idToOrder = newIds.map((id, order) => ({ id, order }))
+
+    return dispatch({
+      type: MOVE_MODULE,
+      payload: {
+        promise: api.reorderWfModules(workflow.id, idToOrder),
+        data: { oldIndex, newIndex }
+      }
+    })
   }
 }
 registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
@@ -228,139 +187,130 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
 })
 
 // ADD_MODULE
-export function addModuleAction (moduleId, insertBefore, placeholder) {
-  // [adamhooper, 2018-06-19] I do believe this nonce accomplishes nothing useful.
-  // We're guaranteed below that `typeof action.payload.pendingId !== 'undefined'`,
-  // and we _aren't_ guaranteed that methods are called or return values are
-  // received in order.
-  //
-  // Two correct solutions:
-  // 1. Use WebSockets: write changes blindly, and add info to server's messages
-  //    so we can always merge state from the server.
-  // 2. Serialize actions.
-  //
-  // Both are hard. In the meantime, `pendingId` doesn't solve any theoretical
-  // problem. (It may reduce the _odds_ of some specific race hurting the user
-  // -- I haven't researched -- but it doesn't fix the race.)
+export function addModuleAction (moduleId, index) {
+  return (dispatch, getState) => {
+    const nonce = generateNonce(moduleId)
+    const workflow = getState().workflow
 
-  let nonce = generateNonce(moduleId)
-
-  let payload = {
-    promise: api.addModule(WorkflowId, moduleId, insertBefore)
-      .then((response) => {
-        response.pendingId = nonce
-        return response
-      })
-  }
-
-  if (typeof placeholder !== 'undefined') {
-    payload.data = placeholder
-  } else {
-    payload.data = {}
-  }
-
-  payload.data.placeholder = true
-  payload.data.insert_before = insertBefore
-  payload.data.pendingId = nonce
-
-  return {
-    type: ADD_MODULE,
-    payload: payload
+    return dispatch({
+      type: ADD_MODULE,
+      payload: {
+        promise: (
+          api.addModule(workflow.id, moduleId, index)
+            .then(response => {
+              return {
+                nonce: nonce,
+                data: response
+              }
+            })
+        ),
+        data: {
+          nonce,
+          index,
+        }
+      }
+    })
   }
 }
 
 registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
-  let insertBefore = action.payload.insert_before
+  const wfModules = state.workflow.wf_modules.slice()
 
-  if (insertBefore === null) {
-    insertBefore = state.workflow.wf_modules.length - 1
+  let { index, nonce } = action.payload
+  if (index === null) {
+    index = wfModules.length
   }
 
-  delete action.payload.insert_before
+  // Add a nonce to wf_modules Array of IDs. Don't add anything to wfModules:
+  // users must assume that if it isn't in wfModules, it's a placeholder.
+  wfModules.splice(index, 0, nonce)
 
-  return update(state, {
-    workflow: {
-      wf_modules: { $splice: [ [insertBefore, 0, action.payload] ] }
+  return { ...state,
+    workflow: { ...state.workflow,
+      wf_modules: wfModules
     }
-  })
+  }
 })
 registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
-  let insertBefore = null
-  let overwrite = 1
+  const { data, nonce } = action.payload
+  const { wfModule, index } = data
 
-  if (typeof action.payload.pendingId === 'undefined') {
-    // There's no placeholder. Maybe one of our collaborators added this module
-    // on a different client
-    overwrite = 0
-    insertBefore = action.payload.insert_before
-  } else {
-    insertBefore = findIdxByProp(state.workflow.wf_modules, 'pendingId', action.payload.pendingId)
+  // Replace the nonce with the actual id
+  const wfModuleIds = state.workflow.wf_modules
+    .map(id => id === nonce ? wfModule.id : id)
+
+  const wfModules = { ... state.wfModules,
+    [String(data.wfModule.id)]: data.wfModule
   }
 
-  delete action.payload.insert_before
-
-  return update(state, {
-    workflow: {
-      wf_modules: { $splice: [ [
-        insertBefore,
-        overwrite,
-        action.payload
-      ] ] }
+  return { ...state,
+    workflow: { ...state.workflow,
+      wf_modules: wfModuleIds
     },
-    selected_wf_module: { $set: insertBefore }
-  })
+    wfModules: { ...state.wfModules,
+      [String(wfModule.id)]: wfModule
+    },
+    selected_wf_module: index
+  }
 })
 
 // DELETE_MODULE_ACTION
 // Call delete API, then dispatch a reload
-export function deleteModuleAction (idToDelete) {
+export function deleteModuleAction (wfModuleId) {
   return {
     type: DELETE_MODULE,
     payload: {
-      promise: api.deleteModule(idToDelete),
-      data: {
-        wf_module_id: idToDelete
-      }
+      promise: api.deleteModule(wfModuleId),
+      data: { wfModuleId }
     }
   }
 }
 registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
-  const wfModuleId = action.payload.wf_module_id
-  const wfModuleIdx = state.workflow.wf_modules.findIndex(w => w.id === wfModuleId)
+  const wfModuleId = action.payload.wfModuleId
 
-  if (wfModuleIdx === -1) {
-    return state
-  }
+  const wfModuleIds = state.workflow.wf_modules.slice()
+  const index = wfModuleIds.indexOf(wfModuleId)
+  if (index === -1) return state
 
-  const wfModules = state.workflow.wf_modules.filter(w => w.id !== wfModuleId)
+  wfModuleIds.splice(index, 1)
+
+  const wfModules = { ... state.wfModules }
+  delete wfModules[String(wfModuleId)]
 
   // If we are deleting the selected module, then set the previous module
   // in stack as selected (behavior same as in models/Commands.py)
   let selected = state.selected_wf_module
-  if (selected !== null && selected >= wfModuleIdx) {
+  if (selected !== null && selected >= index) {
     selected -= 1
-    if (selected < 0) selected = null
+  }
+  if (selected < 0) {
+    selected = null
   }
 
-  return update(state, {
-    workflow: {
-      wf_modules: { $set: wfModules }
+  return { ...state,
+    workflow: { ...state.workflow,
+      wf_modules: wfModuleIds
     },
-    selected_wf_module: { $set: selected }
-  })
+    wfModules,
+    selected_wf_module: selected
+  }
 })
 
 // SET_SELECTED_MODULE
 // Set the selected module in the workflow
 export function setSelectedWfModuleAction (index) {
-  // Fire-and-forget: tell the server about this new selected_wf_module,
-  // so next time we load the page it will pass it in initState.
-  api.setSelectedWfModule(WorkflowId, index)
-    .catch(console.warn)
+  return (dispatch, getState) => {
+    const workflow = getState().workflow
 
-  return {
-    type: SET_SELECTED_MODULE,
-    payload: index
+    // Fire-and-forget: tell the server about this new selected_wf_module,
+    // so next time we load the page it will pass it in initState.
+    api.setSelectedWfModule(workflow.id, index)
+      .catch(console.warn)
+
+    return dispatch({
+      type: SET_SELECTED_MODULE,
+      payload: index
+    })
   }
 }
 registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
@@ -379,35 +329,34 @@ registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
 // a WfModule here. The backend will reject nonexistent
 // fields, but should we do something on the frontend?
 export function updateWfModuleAction (id, data) {
-  return {
-    type: UPDATE_WF_MODULE,
-    payload: {
-      promise: api.updateWfModule(id, data),
-      data: {
-        id,
-        data
-      }
-    }
-  }
-}
-registerReducerFunc(UPDATE_WF_MODULE + '_PENDING', (state, action) => {
-  let moduleIdx = findIdxByProp(
-    state.workflow.wf_modules,
-    'id',
-    action.payload.id
-  )
+  return (dispatch, getState) => {
+    const { wfModules } = getState()
 
-  if (typeof moduleIdx !== 'undefined') {
-    return update(state, {
-      workflow: {
-        wf_modules: {
-          [moduleIdx]: { $merge: action.payload.data }
+    if (!wfModules[String(id)]) return Promise.resolve(null)
+
+    return dispatch({
+      type: UPDATE_WF_MODULE,
+      payload: {
+        promise: api.updateWfModule(id, data),
+        data: {
+          id,
+          data
         }
       }
     })
   }
+}
+registerReducerFunc(UPDATE_WF_MODULE + '_PENDING', (state, action) => {
+  const { id, data } = action.payload
+  const wfModule = state.wfModules[String(id)]
 
-  return state
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(id)]: { ...wfModule,
+        ...data
+      }
+    }
+  }
 })
 
 // SET_WF_MODULE_STATUS
@@ -416,74 +365,62 @@ export function setWfModuleStatusAction (wfModuleId, status, errorMsg) {
   return {
     type: SET_WF_MODULE_STATUS,
     payload: {
-      id: wfModuleId,
+      wfModuleId,
       status: status,
       error_msg: errorMsg || ''
     }
   }
 }
 registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
-  const payload = action.payload
-  const wfModuleIdx = state.workflow.wf_modules.findIndex(m => m.id === payload.id)
-  const wfModule = state.workflow.wf_modules[wfModuleIdx]
-
+  const { wfModuleId, status, error_msg } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
   if (!wfModule) return state
 
-  if (wfModule.status !== payload.status || wfModule.error_msg !== payload.error_msg) {
-    // Create a copy of the wfModule with new status
-    const newWfmProps = {
-      status: payload.status,
-      error_msg: payload.error_msg
-    }
-
-    return update(state, {
-      workflow: {
-        wf_modules: {
-          [wfModuleIdx]: {$merge: newWfmProps}
-        }
-      }
-    })
-  } else {
+  if (wfModule.status === status && wfModule.error_msg === error_msg) {
     return state
+  }
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        status,
+        error_msg
+      }
+    }
   }
 })
 
 export function setWfModuleCollapsedAction (wfModuleId, isCollapsed, isReadOnly) {
-  let payload = {
-    data: { wf_module_id: wfModuleId, is_collapsed: isCollapsed }
-  }
-
+  let promise
   if (isReadOnly) {
-    payload.promise = Promise.resolve(null)
+    promise = Promise.resolve(null)
   } else {
-    payload.promise = api.setWfModuleCollapsed(wfModuleId, isCollapsed)
+    promise = api.setWfModuleCollapsed(wfModuleId, isCollapsed)
   }
 
   return {
     type: SET_WF_MODULE_COLLAPSED,
-    payload
+    payload: {
+      promise,
+      data: {
+        wfModuleId,
+        isCollapsed
+      }
+    }
   }
 }
 registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
-  if ('wf_modules' in state.workflow) {
-    let wfModuleIdx = findIdxByProp(
-      state.workflow.wf_modules,
-      'id',
-      action.payload.wf_module_id
-    )
+  const { wfModuleId, isCollapsed } = action.payload
+  const wfModule = state.wfModules[wfModuleId]
+  if (!wfModule) return state
 
-    if (typeof wfModuleIdx !== 'undefined') {
-      return update(state, {
-        workflow: {
-          wf_modules: {
-            [wfModuleIdx]: { is_collapsed: { $set: action.payload.is_collapsed } }
-          }
-        }
-      })
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        is_collapsed: isCollapsed
+      }
     }
   }
-
-  return state
 })
 
 // --- Parameter actions ---
@@ -491,65 +428,84 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 // SET_PARAM_VALUE
 
 // Internal API, requires all indices
-function setParamValueActionBase (state, wfModuleIdx, paramIdx, paramId, newValue) {
+function setParamValueActionBase (state, dispatch, wfModuleId, paramId, newValue) {
+  const wfModule = state.wfModules[String(wfModuleId)]
+  if (!wfModule) return Promise.resolve() // no module? Ignore
+
+  const paramVal = wfModule.parameter_vals.find(v => v.id === paramId)
+  if (!paramVal) return Promise.resolve() // no param? Ignore
+
   if (!newValue.hasOwnProperty('value')) {
-    newValue = { value: newValue }
+    newValue = { value: newValue } // Cruft, hard to decipher why we do this
   }
 
-  // Suppress changing to the same value (don't trigger expensive HTTP request)
-  let oldValue = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].value
-  if (newValue.value === oldValue) return NOP
+  if (paramVal.value === newValue.value) return Promise.resolve(null) // no change? Ignore
 
-  return {
+  return dispatch({
     type: SET_PARAM_VALUE,
     payload: {
       promise: api.onParamChanged(paramId, newValue),
       data: {
+        wfModuleId,
         paramId,
         paramValue: newValue.value
+      }
+    }
+  })
+}
+
+// Most common form
+export function setParamValueAction (paramId, paramValue) {
+  return (dispatch, getState) => { // thunk
+    const state = getState()
+    for (const wfModuleIdString in state.wfModules) {
+      const wfModule = state.wfModules[wfModuleIdString]
+      for (const param of wfModule.parameter_vals) {
+        if (param.id === paramId) {
+          return setParamValueActionBase(state, dispatch, wfModule.id, paramId, paramValue)
+        }
+      }
+    }
+
+    return Promise.resolve() // no param? Do nothing
+  }
+}
+
+// This action creator is used when we don't have a parameter id
+export function setParamValueActionByIdName (wfModuleId, paramIdName, paramValue) {
+  return (dispatch, getState) => { // thunk
+    const state = getState()
+    const wfModule = state.wfModules[String(wfModuleId)]
+    if (!wfModule) return Promise.resolve() // no module? Do nothing
+
+    for (const param of wfModule.parameter_vals) {
+      if (param.parameter_spec && param.parameter_spec.id_name === paramIdName) {
+        return setParamValueActionBase(state, dispatch, wfModule.id, param.id, paramValue)
       }
     }
   }
 }
 
-// Most common form
-export function setParamValueAction (paramId, paramValue) {
-  let state = store.getState()
-  let { wfModuleIdx, paramIdx } = paramIdToIndices(state.workflow, paramId)
-  return setParamValueActionBase(state, wfModuleIdx, paramIdx, paramId, paramValue)
-}
-
-// This action creator is used when we don't have a parameter id
-export function setParamValueActionByIdName (wfModuleId, paramIdName, paramValue) {
-  let state = store.getState()
-  let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleId)
-  let paramIdx = findParamIdxByIdName(state.workflow.wf_modules[wfModuleIdx], paramIdName)
-  let paramId = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].id
-  return setParamValueActionBase(state, wfModuleIdx, paramIdx, paramId, paramValue)
-}
-
 registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
-  // Find the index of the module in the stack and the parameter in the module
-  // We may have done this in the action creator, but don't want to rely on stable indices
-  let { wfModuleIdx, paramIdx } = paramIdToIndices(state.workflow, action.payload.paramId)
+  const { wfModuleId, paramId, paramValue } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  if (!wfModule) return state
 
-  if (typeof paramIdx !== 'undefined') {
-    return update(state, {
-      workflow: {
-        wf_modules: {
-          [wfModuleIdx]: {
-            parameter_vals: {
-              [paramIdx]: {
-                value: { $set: action.payload.paramValue }
-              }
-            }
-          }
-        }
-      }
-    })
+  const paramVals = wfModule.parameter_vals.slice()
+  const oldIndex = paramVals.findIndex(pv => pv.id === paramId)
+  if (oldIndex === -1) return state
+
+  paramVals[oldIndex] = { ...paramVals[oldIndex],
+    value: paramValue
   }
 
-  return state
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        parameter_vals: paramVals
+      }
+    }
+  }
 })
 
 // --- Data Version actions ---
@@ -568,67 +524,60 @@ export function setDataVersionAction (wfModuleId, selectedVersion) {
   }
 }
 registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
-  let wfModuleIdx = findIdxByProp(
-    state.workflow.wf_modules,
-    'id',
-    action.payload.wfModuleId
-  )
-  return update(state, {
-    workflow: {
-      wf_modules: {
-        [wfModuleIdx]: {
-          versions: {
-            selected: {$set: action.payload.selectedVersion}
-          }
+  const { wfModuleId, selectedVersion } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  if (!wfModule) return state
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        versions: { ...wfModule.versions,
+          selected: selectedVersion
         }
       }
     }
-  })
+  }
 })
 
 // MARK_DATA_VERSIONS_READ
 // Called when the user views a version that has a "new data" alert on it
-export function markDataVersionsReadAction (id, versions) {
+export function markDataVersionsReadAction (wfModuleId, versions) {
   let versionsToUpdate = [].concat(versions) // will accept one or many
   return {
     type: MARK_DATA_VERSIONS_READ,
     payload: {
-      promise: api.markDataVersionsRead(id, versionsToUpdate),
+      promise: api.markDataVersionsRead(wfModuleId, versionsToUpdate),
       data: {
-        id,
-        versions_to_update: versionsToUpdate
+        wfModuleId,
+        versionsToUpdate
       }
     }
   }
 }
 registerReducerFunc(MARK_DATA_VERSIONS_READ + '_PENDING', (state, action) => {
-  let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', action.payload.id)
-  if (typeof wfModuleIdx !== 'undefined' &&
-      typeof state.workflow.wf_modules[wfModuleIdx].versions !== 'undefined') {
-    return update(state, {
-      workflow: {
-        wf_modules: {
-          [wfModuleIdx]: {
-            // Take the versions array,
-            versions: { versions: { $apply: (versionsArray) => {
-              // For each version,
-              return versionsArray.map((version) => {
-                // If this is a version we want to mark read,
-                if (action.payload.versions_to_update.indexOf(version[0]) >= 0) {
-                  // Set the 'read' bit to true
-                  version[1] = true
-                }
-                // Return the version
-                return version
-              })
-            }}}
-          }
+  const { wfModuleId, versionsToUpdate } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  if (!wfModule) return state
+  if (!wfModule.versions) return state
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        versions: { ...wfModule.versions,
+          versions: wfModule.versions.versions.map(version => {
+            // If this is a version we want to mark read,
+            if (versionsToUpdate.includes(version[0])) {
+              // Set the 'read' bit to true
+              return [ version[0], true ]
+            } else {
+              // Return the version
+              return version
+            }
+          })
         }
       }
-    })
+    }
   }
-
-  return state
 })
 
 export function clearNotificationsAction (wfModuleId) {
@@ -643,23 +592,17 @@ export function clearNotificationsAction (wfModuleId) {
   }
 }
 registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
-  let wfModuleIdx = findIdxByProp(
-    state.workflow.wf_modules,
-    'id',
-    action.payload.wfModuleId
-  )
-  if (typeof wfModuleIdx !== 'undefined') {
-    return update(state, {
-      workflow: {
-        wf_modules: {
-          [wfModuleIdx]: {
-            has_unseen_notification: { $set: false }
-          }
-        }
+  const { wfModuleId } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  if (!wfModule) return state
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        has_unseen_notification: false
       }
-    })
+    }
   }
-  return state
 })
 
 // ---- Reducer ----
@@ -675,4 +618,12 @@ export function workflowReducer (state, action) {
   }
 
   return state
+}
+
+export function mockStore (initialState) {
+  // We don't bother with unit tests: we use more integration-test-y stuff. So
+  // we test both the action generators and the state changes together.
+  // (Rationale: it's rare for one to change without requiring a symmetric
+  // change to the other.)
+  return createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
 }

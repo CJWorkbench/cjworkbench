@@ -234,18 +234,19 @@ OutputPane.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const workflow = state.workflow;
-  const wfModule = workflow.wf_modules[state.selected_wf_module];
+  const { workflow, wfModules, modules } = state
+  const selectedWfModuleId = workflow.wf_modules[state.selected_wf_module || 0] || null
+  const selectedWfModule = wfModules[String(selectedWfModuleId)] || null
+  const selectedModule = modules[String(selectedWfModule ? selectedWfModule.module_version.module : null)] || null
+  const id_name = selectedModule ? selectedModule.id_name : null
 
-  const id_name = wfModule && wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.id_name || null;
-
-  const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns';
+  const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns'
 
   let sortColumn, sortDirection = sortDirectionNone
 
   if (id_name === 'sort-from-table') {
-    const columnParam = findParamValByIdName(wfModule, 'column');
-    const directionParam = findParamValByIdName(wfModule, 'direction').value;
+    const columnParam = findParamValByIdName(selectedWfModule, 'column');
+    const directionParam = findParamValByIdName(selectedWfModule, 'direction').value;
 
     sortColumn = columnParam && columnParam.value || null;
     sortDirection = directionParam || sortDirectionNone
@@ -254,10 +255,10 @@ function mapStateToProps(state, ownProps) {
   return {
     workflowId: workflow.id,
     revision: workflow.revision,
-    selectedWfModuleId: wfModule ? wfModule.id : null,
+    selectedWfModuleId,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
-    htmlOutput: wfModule ? wfModule.html_output : false,
+    htmlOutput: selectedWfModule ? selectedWfModule.html_output : false,
     showColumnLetter,
     sortColumn,
     sortDirection,

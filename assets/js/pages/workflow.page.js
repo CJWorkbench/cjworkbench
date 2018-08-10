@@ -4,10 +4,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import * as Actions from '../workflow-reducer'
 import Workflow from '../Workflow'
-import WorkbenchAPI from '../WorkbenchAPI'
-
-// Global API object, encapsulates all calls to the server
-const api = WorkbenchAPI()
+import api from '../WorkbenchAPI'
 
 function launchWebsocket () {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'

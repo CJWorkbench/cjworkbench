@@ -269,11 +269,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        #'debug_console': {
-        #    'level': 'DEBUG',
-        #    'class': 'logging.StreamHandler',
-        #    'formatter': 'simple'
-        #},
+        'debug_console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         '': {
@@ -288,10 +288,10 @@ LOGGING = {
             # Ignore those WARNINGs and only log ERRORs.
             'level': 'ERROR',
         },
-        #'django.db.backends': {  # only gets messages when settings.DEBUG==True
-        #    'level': 'DEBUG',
-        #    'handlers': ['debug_console'],
-        #},
+        'django.db.backends': {  # only gets messages when settings.DEBUG==True
+            'level': 'DEBUG',
+            'handlers': ['debug_console'],
+        },
     }
 }
 

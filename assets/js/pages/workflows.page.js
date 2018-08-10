@@ -2,10 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Workflows from '../workflows'
-import workbenchAPI from '../WorkbenchAPI'
-
-// Global API object, encapsulates all calls to the server
-const api = workbenchAPI();
+import api from '../WorkbenchAPI'
 
 ReactDOM.render(
     <Workflows api={api}/>,

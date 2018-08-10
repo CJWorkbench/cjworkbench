@@ -21,6 +21,7 @@ describe('WfModule, not read-only mode', () => {
     isZenMode: false,
     name: 'TestModule',
     wfModule: wfModule,
+    module: module,
     changeParam: jest.fn(),
     removeModule: jest.fn(),
     revision: 707,
@@ -62,13 +63,10 @@ describe('WfModule, not read-only mode', () => {
         }
       }
     ],
-    'module_version': {
-      'module': {
-        'id_name': 'loadurl',
-        'name': 'Load from URL'
-      }
-    }
+    module_version: { module: 2 }
   }
+
+  const module = { id_name: 'loadurl', name: 'Load from URL' }
 
   beforeEach(() => {
     // Reset mock functions before each test
@@ -120,22 +118,14 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('has an "enter zen mode" button', () => {
-    const aWfModule = Object.assign({}, wfModule, {
-      module_version: {
-        module: {
-          id_name: 'pythoncode',
-          name: 'Python Code'
-        }
-      }
-    })
-
-    const wrapper = shallow(<WfModule {...props} wfModule={aWfModule} />)
+    const aModule = { id_name: 'pythoncode', name: 'Python Code' }
+    const wrapper = shallow(<WfModule {...props} module={aModule} />)
     let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(false)
     expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false ])
 
     checkbox.simulate('change', { target: { checked: true } })
-    expect(props.setZenMode).toHaveBeenCalledWith(aWfModule.id, true)
+    expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, true)
     wrapper.setProps({ isZenMode: true })
 
     checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
@@ -143,7 +133,7 @@ describe('WfModule, not read-only mode', () => {
     expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true ])
 
     checkbox.simulate('change', { target: { checked: false } })
-    expect(props.setZenMode).toHaveBeenCalledWith(aWfModule.id, false)
+    expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, false)
   })
 
   it('renders notifications, opening and closing a modal', () => {
@@ -210,8 +200,7 @@ describe('WfModule, not read-only mode', () => {
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
         { id: 2, parameter_spec: { id_name: 'b', type: 'String' }, value: 'B' }
-      ],
-      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+      ]
     }
     const wrapper = shallow(
       <WfModule
@@ -247,8 +236,7 @@ describe('WfModule, not read-only mode', () => {
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
         { id: 2, parameter_spec: { id_name: 'b', type: 'String' }, value: 'B' }
-      ],
-      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+      ]
     }
     const wrapper = shallow(
       <WfModule
@@ -279,8 +267,7 @@ describe('WfModule, not read-only mode', () => {
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: '' },
         { id: 2, parameter_spec: { id_name: 'version_select', type: 'String' }, value: 'B' }
-      ],
-      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+      ]
     }
     const wrapper = shallow(
       <WfModule
@@ -305,8 +292,7 @@ describe('WfModule, not read-only mode', () => {
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: 'http://example.org' },
         { id: 2, parameter_spec: { id_name: 'version_select', type: 'String' }, value: 'B' }
-      ],
-      module_version: { module: { id_name: 'foo', name: 'Foo' } }
+      ]
     }
     const wrapper = shallow(
       <WfModule
@@ -340,10 +326,12 @@ describe('WfModule, not read-only mode', () => {
     beforeEach(() => {
       lessonSelector.mockReset()
 
-      // Store just needs to change, to trigger mapStateToProps. We don't care
-      // about its value
       store = createStore((_, action) => ({
-        workflow: { read_only: false, is_anonymous: false, wf_modules: [] },
+        workflow: { read_only: false, is_anonymous: false, wf_modules: [1, 2, 999] },
+        wfModules: {
+          999: { module_version: { module: 2 } }
+        },
+        modules: { 2: { name: 'Load from URL' } },
         ...action.payload
       }))
 

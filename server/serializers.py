@@ -50,7 +50,8 @@ class ModuleSerializer(serializers.ModelSerializer):
         fields = ('id', 'id_name', 'name', 'category', 'description', 'link', 'author', 'icon', 'loads_data', 'help_url')
 
 class ModuleVersionSerializer(serializers.ModelSerializer):
-    module = ModuleSerializer(many=False, read_only=True)
+    module = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+
     class Meta:
         model = ModuleVersion
         fields = ('module', 'source_version_hash', 'last_update_time')
@@ -70,29 +71,29 @@ class WfModuleSerializer(serializers.ModelSerializer):
     parameter_vals = ParameterValSerializer(many=True, read_only=True)
 
     module_version = serializers.SerializerMethodField()
+
     def get_module_version(self, wfm):
         if wfm.module_version is not None:
             s = ModuleVersionSerializer(wfm.module_version)
             return s.data
         else:
             # Minimal fields so front end won't crash
-            return {
-                'module': {
-                    'name':'Missing module',
-                    'loads_data' : False
-                }
-            }
+            return {'module': None}
 
-    # update interval handling is a little tricky as we need to convert seconds to count+units
+    # update interval handling is a little tricky as we need to convert seconds
+    # to count+units
     update_interval = serializers.SerializerMethodField()
+
     def get_update_interval(self, wfm):
         return seconds_to_count_and_units(wfm.update_interval)['count']
 
     update_units = serializers.SerializerMethodField()
+
     def get_update_units(self, wfm):
         return seconds_to_count_and_units(wfm.update_interval)['units']
 
     html_output = serializers.SerializerMethodField()
+
     def get_html_output(self, wfm):
         if wfm.module_version is not None:
             return wfm.module_version.html_output
@@ -100,6 +101,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
             return False
 
     versions = serializers.SerializerMethodField()
+
     def get_versions(self, wfm):
         versions = wfm.list_fetched_data_versions()
         current_version = wfm.get_fetched_data_version()
@@ -113,7 +115,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
-    wf_modules = WfModuleSerializer(many=True, read_only=True)
+    wf_modules = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     revision = serializers.ReadOnlyField()
     read_only = serializers.SerializerMethodField()
     last_update = serializers.SerializerMethodField()
@@ -177,6 +179,7 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'public', 'read_only', 'last_update', 'owner_name')
+
 
 class LessonSerializer(serializers.BaseSerializer):
     def to_representation(self, obj):

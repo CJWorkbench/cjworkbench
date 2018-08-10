@@ -1,5 +1,5 @@
 import { updateTableActionModule } from './UpdateTableAction'
-import {tick} from './test-utils'
+import { tick } from './test-utils'
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
 jest.mock('./workflow-reducer');
@@ -15,81 +15,60 @@ describe("DuplicateFromTable actions", () => {
     updateTableModuleIds: { 'duplicate-column': 77 },
     workflow: {
       id: 127,
-      wf_modules: [
-        {
-          id: 17,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
+      wf_modules: [ 17, 7, 19, 31, 79 ]
+    },
+    modules: {
+      1: { id_name: 'loadurl' },
+      2: { id_name: 'colselect' },
+      3: { id_name: 'filter' },
+      77: { id_name: idName }
+    },
+    wfModules: {
+      17: { module_version: { module: 1 } },
+      7: {
+        // An existing duplicate module
+        id: 7,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_2,
+            parameter_spec: {id_name: 'colnames'},
+            value: 'col_1'
           }
-        },
-        {
-          // An existing duplicate module
-          id: 7,
-          module_version: {
-            module: {
-              id_name: idName
-            }
-          },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_2,
-              parameter_spec: {id_name: 'colnames'},
-              value: 'col_1'
-            }
-          ]
-        },
-        {
-          id: 19,
-          module_version: {
-            module: {
-              id_name: 'colselect'
-            }
+        ]
+      },
+      19: { module_version: { module: 2 } },
+      31: { module_version: { module: 3 } },
+      79: {
+        // Another existing duplicate module, set existing duplicates col_2,col_3
+        id: 79,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_3,
+            parameter_spec: {id_name: 'colnames'},
+            value: 'col_2,col_3'
           }
-        },
-        {
-          id: 31,
-          module_version: {
-            module: {
-              id_name: 'filter'
-            }
-          }
-        },
-        {
-          // Another existing duplicate module, set existing duplicates col_2,col_3
-          id: 79,
-          module_version: {
-            module: {
-              id_name: idName
-            }
-          },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_3,
-              parameter_spec: {id_name: 'colnames'},
-              value: 'col_2,col_3'
-            }
-          ]
-        }
-      ]
+        ]
+      }
     }
   };
 
   const addModuleResponse = {
-    id: 23,
-    module_version: {
-      module: {
-        id_name: idName
+    data: {
+      index: 2,
+      wfModule: {
+        id: 23,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_1,
+            parameter_spec: {id_name: 'colnames'},
+            value: ''
+          }
+        ]
       }
-    },
-    parameter_vals: [
-      {
-        id: COLUMN_PAR_ID_1,
-        parameter_spec: {id_name: 'colnames'},
-        value: ''
-      }
-    ]
+    }
   };
 
   beforeEach(() => {

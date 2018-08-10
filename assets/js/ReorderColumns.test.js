@@ -5,7 +5,6 @@ import { store, addModuleAction, setParamValueAction, setParamValueActionByIdNam
 jest.mock('./workflow-reducer')
 
 describe('ReorderColumns actions', () => {
-
   // A few parameter id constants for better readability
   const idName = 'reorder-columns'
   const LOADURL_WFM_ID = 35
@@ -23,66 +22,55 @@ describe('ReorderColumns actions', () => {
 
   var initialState = {
     updateTableModuleIds: { 'reorder-columns': REORDER_MODULE_ID },
-    workflow: {
-      id: WF_ID,
-      wf_modules: [
-        {
-          id: LOADURL_WFM_ID,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
-          }
-        },
-        {
-          id: FILTER_WFM_ID,
-          module_version: {
-            module: {
-              id_name: 'filter'
-            }
-          }
-        },
-        {
-          id: REORDER_WFM_ID,
-          module_version: {
-            module: {
-              id_name: idName
+    workflow: { id: WF_ID, wf_modules: [ LOADURL_WFM_ID, FILTER_WFM_ID, REORDER_WFM_ID ] },
+    modules: {
+      [REORDER_MODULE_ID]: { id_name: 'reorder-columns' },
+      1: { id_name: 'loadurl' },
+      2: { id_name: 'filter' }
+    },
+    wfModules: {
+      [LOADURL_WFM_ID]: { id: LOADURL_WFM_ID, module_version: { module: 1 } },
+      [FILTER_WFM_ID]: { id: FILTER_WFM_ID, module_version: { module: 2 } },
+      [REORDER_WFM_ID]: {
+        id: REORDER_WFM_ID,
+        module_version: { module: REORDER_MODULE_ID },
+        parameter_vals: [
+          {
+            id: REORDER_HISTORY_PAR_ID,
+            parameter_spec: {
+              id_name: 'reorder-history'
             },
-          },
-          parameter_vals: [
-            {
-              id: REORDER_HISTORY_PAR_ID,
-              parameter_spec: {
-                id_name: 'reorder-history'
-              },
-              value: JSON.stringify([{
-                column: 'existing_test_col',
-                from: 2,
-                to: 4
-              }])
-            }
-          ]
-        }
-      ]
+            value: JSON.stringify([{
+              column: 'existing_test_col',
+              from: 2,
+              to: 4
+            }])
+          }
+        ]
+      }
     }
   }
 
   const addModuleResponse = {
-    id: NEW_REORDER_WFM_ID,
-    module_version: {
-      module: {
-        id_name: idName
-      }
-    },
-    parameter_vals: [
-      {
-        id: NEW_REORDER_HISTORY_PAR_ID,
-        parameter_spec: {
-          id_name: 'reorder-history'
+    data: {
+      wfModule: {
+        id: NEW_REORDER_WFM_ID,
+        module_version: {
+          module: {
+            id_name: idName
+          }
         },
-        value: ''
+        parameter_vals: [
+          {
+            id: NEW_REORDER_HISTORY_PAR_ID,
+            parameter_spec: {
+              id_name: 'reorder-history'
+            },
+            value: ''
+          }
+        ]
       }
-    ]
+    }
   }
 
   beforeEach(() => {

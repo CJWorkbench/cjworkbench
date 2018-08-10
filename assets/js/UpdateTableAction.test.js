@@ -1,5 +1,6 @@
 import { updateTableActionModule, selectColumnDrop, selectColumnKeep, updateModuleMapping } from './UpdateTableAction'
 import {tick} from './test-utils'
+// TODO do not import store
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
 jest.mock('./workflow-reducer')
@@ -7,38 +8,19 @@ jest.mock('./workflow-reducer')
 describe("UpdateTableAction actions", () => {
   // A few parameter id constants for better readability
   const idName = 'filter'
-  const COLUMN_PAR_ID_1 = 35;
+  const COLUMN_PAR_ID_1 = 35
 
-  var initialStateNone = {
-    updateTableModuleIds: {},  // no modules installed, error condition if unchanged
-    workflow: {
-      id: 127,
-      wf_modules: [
-        {
-          id: 17,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
-          }
-        }
-      ]
-    }
-  }
-  var initialState = {
+  const initialState = {
     updateTableModuleIds: { 'filter': 77 },
     workflow: {
       id: 127,
-      wf_modules: [
-        {
-          id: 17,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
-          }
-        }
-      ]
+      wf_modules: [ 17 ]
+    },
+    wfModules: {
+      17: { module_version: { module: 1 } }
+    },
+    modules: {
+      1: { id_name: 'loadurl' }
     }
   }
 
@@ -49,23 +31,43 @@ describe("UpdateTableAction actions", () => {
   }
 
   const addModuleResponse = {
-    id: 23,
-    module_version: {
-      module: {
-        id_name: idName
+    data: {
+      wfModule: {
+        id: 23,
+        module_version: {
+          module: {
+            id_name: idName
+          }
+        },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_1,
+            parameter_spec: { id_name: 'column' },
+            value: ''
+          }
+        ]
       }
-    },
-    parameter_vals: [
-      {
-        id: COLUMN_PAR_ID_1,
-        parameter_spec: {id_name: 'column'},
-        value: ''
-      },
-    ]
-  };
+    }
+  }
+
+  function initStore (moduleIdName) {
+    store = mockStore({ ...initialState,
+      modules: { 1: { id_name: moduleIdName } }
+    })
+
+    // Our shim Redux API:
+    // 1) actions are functions; dispatch returns their retvals in a Promise.
+    //    This is useful when we care about retvals.
+    // 2) actions are _not_ functions; dispatch does nothing. This is useful when
+    //    we care about arguments.
+    window.alert = jest.fn()
+
+    for (let key in updateModuleMapping) {
+      updateModuleMapping[key] = jest.fn()
+    }
+  }
 
   beforeEach(() => {
-    store.getState.mockImplementation(() => initialState);
     // Our shim Redux API:
     // 1) actions are functions; dispatch returns their retvals in a Promise.
     //    This is useful when we care about retvals.
@@ -74,35 +76,58 @@ describe("UpdateTableAction actions", () => {
     store.dispatch.mockImplementation(action => {
       if (typeof action === 'function') {
         return Promise.resolve({ value: action() })
+      } else {
+        return Promise.resolve(null)
       }
-    });
+    })
 
-    window.alert = jest.fn()
-
-    for (var key in updateModuleMapping) {
+    for (let key in updateModuleMapping) {
       updateModuleMapping[key] = jest.fn()
     }
-
   })
 
-  it('should call all functions per mapping', async () => {
-    let params = {}
-    for (let key in updateModuleMapping) {
-      setInitialState(key)
-      updateTableActionModule(17, key, false, params)
+  let _alert
+  beforeEach(() => {
+    _alert = window.alert
+    window.alert = jest.fn()
+  })
+  afterEach(() => {
+    window.alert = _alert
+  })
+
+  for (let moduleIdName in updateModuleMapping) {
+    it(`should call ${moduleIdName} per mapping`, async () => {
+      // TODO use mockStore, not store
+      store.getState.mockImplementation(() => ({
+        ...initialState,
+        updateModuleMapping: { [moduleIdName]: 77 },
+        modules: { 77: { id_name: moduleIdName } }
+      }))
+
+      updateTableActionModule(17, moduleIdName, false, {})
       await tick()
-      expect(updateModuleMapping[key]).toHaveBeenCalled
-    }
-  })
-
+      expect(updateModuleMapping[moduleIdName]).toHaveBeenCalled
+    })
+  }
 
   it('should alert user if module is not imported', async () => {
+    const initialStateNone = {
+      updateTableModuleIds: {},  // no modules installed, error condition if unchanged
+      workflow: {
+        id: 127,
+        wf_modules: [ 17 ]
+      },
+      wfModules: {
+        17: { module_version: { module: 1 } },
+      },
+      modules: {
+        1: { id_name: 'loadurl' }
+      }
+    }
     store.getState.mockImplementation(() => initialStateNone)
     updateTableActionModule(17, 'filter', true, 'col_1')
 
-    await tick();
+    await tick()
     expect(window.alert).toHaveBeenCalledWith("Module 'filter' not imported.")
-  });
-
-
-});
+  })
+})

@@ -83,8 +83,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => {
   const workflow = state.workflow || {}
-  const wfModules = workflow.wf_modules || {}
-  const wfModule = wfModules.find(wfm => wfm.id === ownProps.wfModuleId) || {}
+  const wfModule = state.wfModules[String(ownProps.wfModuleId)] || {}
   // We need a "default" value for everything: wfModule might be a placeholder
 
   const lastCheckString = wfModule.last_update_check // JSON has no date -- that's a STring

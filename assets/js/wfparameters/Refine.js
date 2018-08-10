@@ -380,6 +380,8 @@ export class Refine extends React.PureComponent {
    * * `isBlacklisted`: true if we are omitting this group from output
    */
   get groups () {
+    const { valueCounts } = this.props
+    if (valueCounts === null) return []
     return this.parsedSpec.buildGroupsForValueCounts(this.props.valueCounts)
   }
 

@@ -1,5 +1,5 @@
-import {store, addModuleAction, setParamValueAction, setParamValueActionByIdName} from './workflow-reducer'
-import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from './utils'
+import {store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction} from './workflow-reducer'
+import {findParamValByIdName} from './utils'
 
 // Unit tests written in individual test.js files per module ex: SortFromTable.test.js
 
@@ -24,22 +24,63 @@ export const sortDirectionDesc = 2
 export const selectColumnDrop = 0
 export const selectColumnKeep = 1
 
+function findModuleIdByIdName (state, moduleIdName) {
+  return state.updateTableModuleIds[moduleIdName] || null
+}
+
+// Find if a module of moduleId exists as or is next to module with focusWfModuleId
+function findModuleWithIds (state, focusWfModuleId, moduleId) {
+  const { workflow, wfModules } = state
+
+  // validIdsOrNulls: [ 2, null, null, 65 ] means indices 0 and 3 are for
+  // desired module (and have wfModuleIds 2 and 64), 1 and 2 aren't for
+  // desired module
+  const validIdsOrNulls = workflow.wf_modules
+    .map(id => (wfModules[String(id)].module_version || {}).module === moduleId ? id : null)
+
+  const focusIndex = workflow.wf_modules.indexOf(focusWfModuleId)
+  if (focusIndex === -1) return null
+
+  // Are we already focused on a valid WfModule?
+  const atFocusIndex = validIdsOrNulls[focusIndex]
+  if (atFocusIndex !== null) return wfModules[String(atFocusIndex)]
+
+  // Is the _next_ wfModule valid? If so, return that
+  const nextIndex = focusIndex + 1
+  const atNextIndex = validIdsOrNulls[nextIndex]
+  if (atNextIndex !== null) return wfModules[String(atNextIndex)]
+
+  // Nope, no target module with moduleIdName where we need it
+  return null
+}
+
+function ensureSelectedWfModule (state, wfModule) {
+  const current = state.selected_wf_module
+  let wanted = state.workflow ? state.workflow.wf_modules.indexOf(wfModule.id) : null
+  if (wanted === -1) wanted = null
+
+  if (wanted !== null && wanted !== current) {
+    store.dispatch(setSelectedWfModuleAction(wanted));
+  }
+}
+
 export function updateTableActionModule (wfModuleId, idName, forceNewModule, ...params) {
   const state = store.getState()
   // Check if module imported
-  if (!(idName in state.updateTableModuleIds)) {
+  const moduleId = findModuleIdByIdName(state, idName)
+  if (moduleId === null) {
     window.alert("Module '" + idName + "' not imported.")
     return
   }
-  const existingModule = findModuleWithIdAndIdName(state, wfModuleId, idName)
+  const existingModule = findModuleWithIds(state, wfModuleId, moduleId)
   if (existingModule && !forceNewModule) {
-    DEPRECATED_ensureSelectedWfModule(store, existingModule) // before state's existingModule changes
+    ensureSelectedWfModule(state, existingModule) // before state's existingModule changes
     updateModuleMapping[idName](existingModule, params) // ... changing state's existingModule
   } else {
-    const wfModuleIndex = getWfModuleIndexfromId(state, wfModuleId)
-    store.dispatch(addModuleAction(state.updateTableModuleIds[idName], wfModuleIndex + 1))
+    const wfModuleIndex = state.workflow.wf_modules.indexOf(wfModuleId)
+    store.dispatch(addModuleAction(moduleId, wfModuleIndex + 1))
       .then(fulfilled => {
-        const newWfm = fulfilled.value
+        const newWfm = fulfilled.value.data.wfModule
         updateModuleMapping[idName](newWfm, params)
       })
   }

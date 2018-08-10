@@ -15,74 +15,52 @@ describe("FilterFromTable actions", () => {
     updateTableModuleIds: { 'filter': 77 },
     workflow: {
       id: 127,
-      wf_modules: [
-        {
-          id: 17,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
+      wf_modules: [ 17, 19, 7, 19, 31 ]
+    },
+    modules: {
+      77: { id_name: 'filter' },
+      1: { id_name: 'loadurl' },
+      2: { id_name: 'selectcolumns' }
+    },
+    wfModules: {
+      17: { module_version: { module: 1 } },
+      18: { module_version: { module: 2 } },
+      7: {
+        // An existing select module with 2 columns kept
+        id: 7,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_2,
+            parameter_spec: {id_name: 'column'},
+            value: 'col_1'
           }
-        },
-        {
-          id: 18,
-          module_version: {
-            module: {
-              id_name: 'selectcolumns'
-            }
-          }
-        },
-        {
-          // An existing select module with 2 columns kept
-          id: 7,
-          module_version: {
-            module: {
-              id_name: idName
-            }
-          },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_2,
-              parameter_spec: {id_name: 'column'},
-              value: 'col_1'
-            }
-          ]
-        },
-        {
-          id: 19,
-          module_version: {
-            module: {
-              id_name: 'colselect'
-            }
-          }
-        },
-        {
-          id: 31,
-          module_version: {
-            module: {
-              id_name: 'filter'
-            }
-          }
-        }
-      ]
+        ]
+      },
+      19: { module_version: { module: 2 } },
+      31: { module_version: { module: 2 } }
     }
-  };
+  }
 
   const addModuleResponse = {
-    id: 23,
-    module_version: {
-      module: {
-        id_name: idName
+    data: {
+      wfModule: {
+        id: 23,
+        module_version: {
+          module: {
+            id_name: idName
+          }
+        },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_1,
+            parameter_spec: {id_name: 'column'},
+            value: ''
+          }
+        ]
       }
-    },
-    parameter_vals: [
-      {
-        id: COLUMN_PAR_ID_1,
-        parameter_spec: {id_name: 'column'},
-        value: ''
-      },
-    ]
-  };
+    }
+  }
 
   beforeEach(() => {
     store.getState.mockImplementation(() => initialState);

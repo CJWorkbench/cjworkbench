@@ -9,26 +9,40 @@ describe('Edit Cell actions', () => {
   const Edit2 = { row: 10, col: 'bar', value: 'yippee!' }
   const Edit3 = { row: 3, col: 'foo', value: 'new!' }
 
-  // Stripped down workflow object, only what we need for testing cell editing
-  const test_workflow = {
-    id: 999,
-    wf_modules: [
-      {
-        id: 10,
-        module_version : {
-          module: {
-            id_name: 'loadurl'
+  // mocked data from api.addModule call, looks like a just-added edit cells module
+  const addModuleResponse = {
+    data: {
+      wfModule: {
+        id: 99,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: 999,
+            parameter_spec: { id_name: 'celledits' },
+            value: ''
           }
-        }
-      },
-      {
+        ]
+      }
+    }
+  }
+
+  const initialState = {
+    updateTableModuleIds: { editcells: 77 },
+    workflow: {
+      id: 999,
+      wf_modules: [ 10, 20, 30, 40 ]
+    },
+    modules: {
+      77: { id_name: 'celledits' },
+      1: { id_name: 'loadurl' },
+      2: { id_name: 'filter' }
+    },
+    wfModules: {
+      10: { id: 10, module_version: { module: 1 } },
+      20: {
         // Existing Edit Cells module with existing edits
         id: 20,
-        module_version : {
-          module : {
-            id_name: idName
-          }
-        },
+        module_version: { module: 77 },
         parameter_vals: [
           {
             id: 101,
@@ -37,45 +51,9 @@ describe('Edit Cell actions', () => {
           }
         ]
       },
-      {
-        id: 30,
-        module_version : {
-          module: {
-            id_name: 'filter'
-          }
-        }
-      },
-      {
-        id: 40,
-        module_version : {
-          module: {
-            id_name: 'dropna'
-          }
-        }
-      },
-    ],
-  }
-
-  // mocked data from api.addModule call, looks like a just-added edit cells module
-  const addModuleResponse = {
-    id: 99,
-    module_version : {
-      module : {
-        id_name: idName
-      }
-    },
-    parameter_vals: [
-      {
-        id: 999,
-        parameter_spec: { id_name: 'celledits' },
-        value: ''
-      }
-    ]
-  }
-
-  const initialState = {
-    workflow: test_workflow,
-    updateTableModuleIds: {'editcells': 5000}
+      30: { id: 30, module_version: { module: 2 } },
+      40: { id: 40, module_version: { module: 2 } }
+    }
   }
 
   beforeEach(() => {

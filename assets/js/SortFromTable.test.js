@@ -19,116 +19,97 @@ describe("SortFromTable actions", () => {
   const DTYPE_PAR_ID_3 = 340;
   const DIRECTION_PAR_ID_3 = 540;
 
-  var initialState = {
+  const initialState = {
     updateTableModuleIds: { 'sort-from-table': 77 },
     workflow: {
       id: 127,
-      wf_modules: [
-        {
-          id: 17,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
-          }
-        },
-        {
-          // An existing sort module
-          id: 7,
-          module_version: {
-            module: {
-              id_name: idName
-            }
+      wf_modules: [ 17, 7, 19, 31, 79 ]
+    },
+    modules: {
+      1: { id_name: 'loadurl' },
+      2: { id_name: 'filter' },
+      77: { id_name: 'sort-from-table' }
+    },
+    wfModules: {
+      17: { id: 17, module_version: { module: 1 } },
+      7: {
+        // An existing sort module
+        id: 7,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_2,
+            parameter_spec: {id_name: 'column'},
+            value: ''
           },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_2,
-              parameter_spec: {id_name: 'column'},
-              value: ''
-            },
-            {
-              id: DTYPE_PAR_ID_2,
-              parameter_spec: {id_name: 'dtype'},
-              value: 0   // String
-            },
-            {
-              id: DIRECTION_PAR_ID_2,
-              parameter_spec: {id_name: 'direction'},
-              value: 0     // Select
-            }
-          ]
-        },
-        {
-          id: 19,
-          module_version: {
-            module: {
-              id_name: 'colselect'
-            }
-          }
-        },
-        {
-          id: 31,
-          module_version: {
-            module: {
-              id_name: 'filter'
-            }
-          }
-        },
-        {
-          // Another existing sort module, set to num_col descending
-          id: 79,
-          module_version: {
-            module: {
-              id_name: idName
-            }
+          {
+            id: DTYPE_PAR_ID_2,
+            parameter_spec: {id_name: 'dtype'},
+            value: 0   // String
           },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_3,
-              parameter_spec: {id_name: 'column'},
-              value: 'num_col'
-            },
-            {
-              id: DTYPE_PAR_ID_3,
-              parameter_spec: {id_name: 'dtype'},
-              value: 1   // Number
-            },
-            {
-              id: DIRECTION_PAR_ID_3,
-              parameter_spec: {id_name: 'direction'},
-              value: 2   // Descending
-            }
-          ]
-        }
-      ]
+          {
+            id: DIRECTION_PAR_ID_2,
+            parameter_spec: {id_name: 'direction'},
+            value: 0     // Select
+          }
+        ]
+      },
+      19: { module_version: { module: 2 } },
+      31: { module_version: { module: 2 } },
+      79: {
+        // Another existing sort module, set to num_col descending
+        id: 79,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_3,
+            parameter_spec: {id_name: 'column'},
+            value: 'num_col'
+          },
+          {
+            id: DTYPE_PAR_ID_3,
+            parameter_spec: {id_name: 'dtype'},
+            value: 1   // Number
+          },
+          {
+            id: DIRECTION_PAR_ID_3,
+            parameter_spec: {id_name: 'direction'},
+            value: 2   // Descending
+          }
+        ]
+      }
     }
-  };
+  }
 
   const addModuleResponse = {
-    id: 23,
-    module_version: {
-      module: {
-        id_name: idName
+    data: {
+      wfModule: {
+        id: 23,
+        module_version: {
+          module: {
+            id_name: idName
+          }
+        },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_1,
+            parameter_spec: {id_name: 'column'},
+            value: ''
+          },
+          {
+            id: DTYPE_PAR_ID_1,
+            parameter_spec: {id_name: 'dtype'},
+            value: 0,
+          },
+          {
+            id: DIRECTION_PAR_ID_1,
+            parameter_spec: {id_name: 'direction'},
+            value: 0
+          }
+        ]
       }
-    },
-    parameter_vals: [
-      {
-        id: COLUMN_PAR_ID_1,
-        parameter_spec: {id_name: 'column'},
-        value: ''
-      },
-      {
-        id: DTYPE_PAR_ID_1,
-        parameter_spec: {id_name: 'dtype'},
-        value: 0,
-      },
-      {
-        id: DIRECTION_PAR_ID_1,
-        parameter_spec: {id_name: 'direction'},
-        value: 0
-      }
-    ]
-  };
+    }
+  }
 
   const columnsResponse = [
     {name: "num_col", type: "Number"},

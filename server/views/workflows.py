@@ -1,7 +1,6 @@
 from functools import lru_cache
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponseForbidden, \
-        HttpResponseNotFound, JsonResponse
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
@@ -45,11 +44,18 @@ def make_init_state(request, workflow=None, modules=None):
         ret['workflowId'] = workflow.id
         ret['workflow'] = WorkflowSerializer(workflow,
                                              context={'request': request}).data
+        wf_modules = workflow.wf_modules \
+            .prefetch_related('parameter_vals__parameter_spec',
+                              'module_version')
+        wf_module_data_list = WfModuleSerializer(wf_modules, many=True).data
+        ret['wfModules'] = dict([(wfm['id'], wfm)
+                                 for wfm in wf_module_data_list])
         ret['selected_wf_module'] = workflow.selected_wf_module
         del ret['workflow']['selected_wf_module']
 
     if modules:
-        ret['modules'] = ModuleSerializer(modules, many=True).data
+        modules_data_list = ModuleSerializer(modules, many=True).data
+        ret['modules'] = dict([(m['id'], m) for m in modules_data_list])
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
@@ -188,9 +194,11 @@ def workflow_detail(request, pk, format=None):
     if request.method == 'GET':
         workflow = _lookup_workflow_for_read(pk, request)
         with workflow.cooperative_lock():
-            serializer = WorkflowSerializer(workflow,
-                                            context={'request': request})
-            return Response(serializer.data)
+            data = make_init_state(request, workflow)
+            return Response({
+                'workflow': data['workflow'],
+                'wfModules': data['wfModules'],
+            })
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
@@ -249,7 +257,7 @@ def workflow_addmodule(request, pk, format=None):
         return HttpResponseForbidden()
 
     module_id = int(request.data['moduleId'])
-    insert_before = int(request.data['insertBefore'])
+    insert_before = int(request.data['index'])
     try:
         module = Module.objects.get(pk=module_id)
     except Module.DoesNotExist:
@@ -269,9 +277,11 @@ def workflow_addmodule(request, pk, format=None):
     delta = AddModuleCommand.create(workflow, module_version, insert_before)
     serializer = WfModuleSerializer(delta.wf_module)
     wfmodule_data = serializer.data
-    wfmodule_data['insert_before'] = request.data['insertBefore']
 
-    return Response(wfmodule_data, status.HTTP_201_CREATED)
+    return Response({
+        'wfModule': wfmodule_data,
+        'index': request.data['index'],
+    }, status.HTTP_201_CREATED)
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list

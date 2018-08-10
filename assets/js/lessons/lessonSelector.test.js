@@ -111,9 +111,15 @@ describe('lessonSelector', () => {
         } }
       } },
       workflow: { $set: {
-        wf_modules: [
-          { module_version: { module: { name: 'foo' } } }
-        ]
+        wf_modules: [ 1, 2 ]
+      } },
+      wfModules: { $set: {
+        1: { module_version: { module: 3 } },
+        2: { module_version: { module: 4 } },
+      } },
+      modules: { $set: {
+        3: { name: 'foo' },
+        4: { name: 'bar' }
       } }
     })
     expect(lessonSelector(state).activeStepIndex).toBe(1)
@@ -127,9 +133,15 @@ describe('lessonSelector', () => {
         } }
       } },
       workflow: { $set: {
-        wf_modules: [
-          { id: 1, module_version: { module: { name: 'foo' } } }
-        ]
+        wf_modules: [ 1, 2 ]
+      } },
+      wfModules: { $set: {
+        1: { module_version: { module: 3 } },
+        2: { module_version: { module: 4 } },
+      } },
+      modules: { $set: {
+        3: { name: 'foo' },
+        4: { name: 'bar' }
       } },
       selected_wf_module: { $set: 0 }
     })
