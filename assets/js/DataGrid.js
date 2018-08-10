@@ -411,7 +411,7 @@ export class ColumnHeader extends React.PureComponent {
             {columnMenuSection}
           </div>
           {maybeDropZone('right', index + 1)}
-        
+
       </React.Fragment>
     );
   }
