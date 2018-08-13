@@ -48,14 +48,14 @@ def make_init_state(request, workflow=None, modules=None):
             .prefetch_related('parameter_vals__parameter_spec',
                               'module_version')
         wf_module_data_list = WfModuleSerializer(wf_modules, many=True).data
-        ret['wfModules'] = dict([(wfm['id'], wfm)
+        ret['wfModules'] = dict([(str(wfm['id']), wfm)
                                  for wfm in wf_module_data_list])
         ret['selected_wf_module'] = workflow.selected_wf_module
         del ret['workflow']['selected_wf_module']
 
     if modules:
         modules_data_list = ModuleSerializer(modules, many=True).data
-        ret['modules'] = dict([(m['id'], m) for m in modules_data_list])
+        ret['modules'] = dict([(str(m['id']), m) for m in modules_data_list])
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
@@ -257,7 +257,7 @@ def workflow_addmodule(request, pk, format=None):
         return HttpResponseForbidden()
 
     module_id = int(request.data['moduleId'])
-    insert_before = int(request.data['index'])
+    index = int(request.data['index'])
     try:
         module = Module.objects.get(pk=module_id)
     except Module.DoesNotExist:
@@ -274,13 +274,13 @@ def workflow_addmodule(request, pk, format=None):
     log_user_event(request.user, 'Add Module ' + module.name,
                    {'name': module.name, 'id_name': module.id_name})
 
-    delta = AddModuleCommand.create(workflow, module_version, insert_before)
+    delta = AddModuleCommand.create(workflow, module_version, index)
     serializer = WfModuleSerializer(delta.wf_module)
     wfmodule_data = serializer.data
 
     return Response({
         'wfModule': wfmodule_data,
-        'index': request.data['index'],
+        'index': index,
     }, status.HTTP_201_CREATED)
 
 

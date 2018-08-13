@@ -90,8 +90,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['id'], wf_module.id)
         self.assertEqual(response.data['workflow'], workflow.id)
         self.assertEqual(response.data['notes'], wf_module.notes)
-        self.assertEqual(response.data['module_version']['module']['id'],
-                         module_id)
+        self.assertEqual(response.data['module_version']['module'], module_id)
         self.assertEqual(response.data['status'], wf_module.status)
         self.assertEqual(response.data['error_msg'], wf_module.error_msg)
         self.assertEqual(response.data['is_collapsed'], wf_module.is_collapsed)
@@ -121,10 +120,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
         parsed = json.loads(response.content)
-        self.assertEqual(parsed['module_version']['module']['name'],
-                         'Missing module')
-        self.assertEqual(parsed['module_version']['module']['loads_data'],
-                         False)
+        self.assertEqual(parsed['module_version']['module'], None)
 
         response = self.client.get('/api/wfmodules/%d/render' % wfm.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
