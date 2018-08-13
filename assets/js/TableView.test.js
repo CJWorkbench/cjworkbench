@@ -72,20 +72,20 @@ describe('TableView', () => {
       expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' });
 
       // Calls updateTableActionModule for sorting
-      tree.instance().setSortDirection('a', 'Number', sortDirectionAsc);
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, 'a', 'Number', sortDirectionAsc);
+      tree.instance().setDropdownAction('sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc});
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc});
 
       // Calls updateTableActionModule for duplicating column
-      tree.instance().duplicateColumn('a');
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, 'a');
+      tree.instance().setDropdownAction('duplicate-column', false, {columnKey: 'a'});
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, {columnKey: 'a'});
 
       // Calls updateTableActionModule for filtering column
-      tree.instance().filterColumn('a');
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, 'a');
+      tree.instance().setDropdownAction('filter', true, {columnKey: 'a'});
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, {columnKey: 'a'});
 
       // Calls updateTableActionModule for drop column
-      tree.instance().dropColumn('a');
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, 'a');
+      tree.instance().setDropdownAction('selectcolumns', false, {columnKey: 'a'});
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'});
 
       // Calls updateTableActionModule for column reorder
       // TODO uncomment!

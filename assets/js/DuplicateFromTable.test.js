@@ -112,7 +112,7 @@ describe("DuplicateFromTable actions", () => {
 
   it('adds new duplicate module after the given module and sets column parameter', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(19, idName, false, 'col_1');
+    updateTableActionModule(19, idName, false, {columnKey: 'col_1'});
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
@@ -121,7 +121,7 @@ describe("DuplicateFromTable actions", () => {
 
   it('selects the existing duplicate module and adds a new column to duplicate', async () => {
     store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
-    updateTableActionModule(17, idName, false, 'col_2');
+    updateTableActionModule(17, idName, false, {columnKey: 'col_2'});
 
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'colnames', 'col_1,col_2' ]);
   })

@@ -104,7 +104,7 @@ describe("FilterFromTable actions", () => {
 
   it('adds new filter module after the given module and sets column parameter', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(17, idName, true, 'col_1');
+    updateTableActionModule(17, idName, true, {columnKey: 'col_1'});
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1);
@@ -113,7 +113,7 @@ describe("FilterFromTable actions", () => {
 
   it('selects the existing filter module but forces add new', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(7, idName, true, 'col_2');
+    updateTableActionModule(7, idName, true, {columnKey: 'col_2'});
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);

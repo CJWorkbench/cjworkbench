@@ -42,7 +42,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
       </DropdownItem>
       <DropdownItem
         className="duplicate-column"
-        onClick={[MockFunction]}
+        onClick={[Function]}
         tag="button"
         toggle={false}
       >
@@ -91,7 +91,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
       />
       <DropdownItem
         className="filter-column"
-        onClick={[MockFunction]}
+        onClick={[Function]}
         tag="button"
         toggle={false}
       >
@@ -104,7 +104,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
       </DropdownItem>
       <DropdownItem
         className="drop-column"
-        onClick={[MockFunction]}
+        onClick={[Function]}
         tag="button"
         toggle={false}
       >

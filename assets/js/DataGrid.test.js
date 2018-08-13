@@ -28,10 +28,8 @@ describe('DataGrid tests,', () => {
     ]
   }
 
-  var sortDirectionMock = jest.fn()
-  var duplicateColumnMock = jest.fn()
-  var dropColumnMock = jest.fn()
-  var filterColumnMock = jest.fn()
+  var setDropdownAction = jest.fn()
+  var onRenameColumn = jest.fn()
 
   function getRow (i) {
     return testData.rows[i]
@@ -50,12 +48,10 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         onEditCell={editCellMock}
-        setSortDirection={sortDirectionMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
         isReadOnly={false}
-        duplicateColumn={duplicateColumnMock}
-        filterColumn={filterColumnMock}
-        dropColumn={dropColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />
     )
 
@@ -105,10 +101,8 @@ describe('DataGrid tests,', () => {
         columnTypes={[]}
         getRow={() => {}}
         isReadOnly={false}
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />
     )
     expect(tree.find('HeaderCell')).toHaveLength(0)
@@ -129,10 +123,8 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         showLetter
         isReadOnly={false}
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />
     )
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4)
@@ -153,10 +145,8 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         showLetter={false}
         isReadOnly={false}
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />)
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0)
 
@@ -164,8 +154,6 @@ describe('DataGrid tests,', () => {
   })
 
   it('Calls column rename upon editing a column header', (done) => {
-    var mockRenameColumn = jest.fn()
-
     var tree = mount(
       <DataGrid
         wfModuleId={100}
@@ -174,12 +162,9 @@ describe('DataGrid tests,', () => {
         columns={testData.columns}
         columnTypes={testData.column_types}
         getRow={getRow}
-        onRenameColumn={mockRenameColumn}
+        onRenameColumn={onRenameColumn}
         isReadOnly={false}
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
       />
     )
 
@@ -195,12 +180,12 @@ describe('DataGrid tests,', () => {
       aaaInput.simulate('change', {target: {value: 'aaaa'}})
       aaaInput.simulate('blur')
       setImmediate(() => {
-        expect(mockRenameColumn.mock.calls).toHaveLength(1)
+        expect(onRenameColumn.mock.calls).toHaveLength(1)
         // First argument should be wfModuleId (100)
-        expect(mockRenameColumn.mock.calls[0][0]).toBe(100)
+        expect(onRenameColumn.mock.calls[0][0]).toBe(100)
         // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(mockRenameColumn.mock.calls[0][3].prevName).toBe('aaa')
-        expect(mockRenameColumn.mock.calls[0][3].newName).toBe('aaaa')
+        expect(onRenameColumn.mock.calls[0][3].prevName).toBe('aaa')
+        expect(onRenameColumn.mock.calls[0][3].newName).toBe('aaaa')
         tree.unmount()
         done()
       })
@@ -217,10 +202,8 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         isReadOnly
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />
     )
 
@@ -246,10 +229,8 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         isReadOnly
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />
     )
 
@@ -271,10 +252,8 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         isReadOnly
-        setSortDirection={sortDirectionMock}
-        duplicateColumn={duplicateColumnMock}
-        dropColumn={dropColumnMock}
-        filterColumn={filterColumnMock}
+        setDropdownAction={setDropdownAction}
+        onRenameColumn={onRenameColumn}
       />
     )
 

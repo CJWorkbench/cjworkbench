@@ -257,16 +257,13 @@ export class ColumnHeader extends React.PureComponent {
     index: PropTypes.number.isRequired,
     isSorted: PropTypes.bool.isRequired,
     sortDirection: PropTypes.number, // not required, which is weird
-    setSortDirection: PropTypes.func.isRequired,
     showLetter: PropTypes.bool.isRequired,
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
     onRenameColumn: PropTypes.func,
-    duplicateColumn: PropTypes.func.isRequired,
-    dropColumn: PropTypes.func.isRequired,
-    filterColumn: PropTypes.func.isRequired
+    setDropdownAction: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -280,20 +277,9 @@ export class ColumnHeader extends React.PureComponent {
     };
   }
 
-  onSetSortDirection = (sortDirection) => {
-    this.props.setSortDirection(this.props.columnKey, this.props.columnType, sortDirection);
-  }
-
-  onDropColumn = () => {
-    this.props.dropColumn(this.props.columnKey)
-  }
-
-  onDuplicateColumn = () => {
-    this.props.duplicateColumn(this.props.columnKey)
-  }
-
-  onFilterColumn = () => {
-    this.props.filterColumn(this.props.columnKey)
+  setDropdownAction = (idName, forceNewModule, params) => {
+    params['columnKey'] = this.props.columnKey
+    this.props.setDropdownAction(idName, forceNewModule, params)
   }
 
   onRenameColumn = () => {
@@ -337,12 +323,11 @@ export class ColumnHeader extends React.PureComponent {
 
     return (
       <ColumnContextMenu
-        dropColumn={this.onDropColumn}
-        duplicateColumn={this.onDuplicateColumn}
-        filterColumn={this.onFilterColumn}
+        columnKey={this.props.columnKey}
+        columnType={this.props.columnType}
         renameColumn={this.onRenameColumn}
-        setSortDirection={this.onSetSortDirection}
         sortDirection={this.props.isSorted == true ? this.props.sortDirection : sortDirectionNone}
+        setDropdownAction={this.setDropdownAction}
       />
       );
   }
@@ -460,10 +445,6 @@ function makeFormattedCols(props) {
         index={index}
         isSorted={props.sortColumn === columnKey}
         sortDirection={props.sortDirection}
-        setSortDirection={props.setSortDirection}
-        duplicateColumn={props.duplicateColumn}
-        dropColumn={props.dropColumn}
-        filterColumn={props.filterColumn}
         showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
         onDragEnd={props.onDragEnd}
@@ -471,6 +452,7 @@ function makeFormattedCols(props) {
         onDropColumnIndexAtIndex={props.onDropColumnIndexAtIndex}
         onRenameColumn={props.onRenameColumn}
         isReadOnly={props.isReadOnly}
+        setDropdownAction={props.setDropdownAction}
         />
     ),
   }))
@@ -492,15 +474,12 @@ export default class DataGrid extends React.Component {
     revision:           PropTypes.number,
     resizing:           PropTypes.bool,
     onEditCell:         PropTypes.func,
-    setSortDirection:   PropTypes.func.isRequired,
     sortColumn:         PropTypes.string,
     sortDirection:      PropTypes.number,
-    duplicateColumn:    PropTypes.func.isRequired,
-    dropColumn:         PropTypes.func.isRequired,
-    filterColumn:       PropTypes.func.isRequired,
     showLetter:         PropTypes.bool,
     onReorderColumns:   PropTypes.func.isRequired,
     onRenameColumn:     PropTypes.func.isRequired,
+    setDropdownAction:  PropTypes.func.isRequired,
   };
 
   constructor(props) {

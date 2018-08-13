@@ -22,17 +22,23 @@ var dropdownModifiers = {
 
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {
-    duplicateColumn:  PropTypes.func.isRequired,
-    dropColumn:       PropTypes.func.isRequired,
-    filterColumn:     PropTypes.func.isRequired,
-    renameColumn:     PropTypes.func.isRequired,
-    setSortDirection: PropTypes.func.isRequired,
-    sortDirection:    PropTypes.oneOf([sortDirectionNone, sortDirectionAsc, sortDirectionDesc]).isRequired
+    setDropdownAction: PropTypes.func.isRequired,
+    columnKey:         PropTypes.string.isRequired,
+    columnType:        PropTypes.string.isRequired,
+    renameColumn:      PropTypes.func.isRequired,
+    sortDirection:     PropTypes.oneOf([sortDirectionNone, sortDirectionAsc, sortDirectionDesc]).isRequired
   }
 
-  setSortDirectionAsc = () => this.props.setSortDirection(sortDirectionAsc)
-  setSortDirectionDesc = () => this.props.setSortDirection(sortDirectionDesc)
-
+  // Modules that only need to pass the column name and do not force new modules use setDropdownActionDefault
+  setDropdownActionDefault = (idName) => this.props.setDropdownAction(idName, false, {})
+  setDropdownActionForceNew = (idName) => this.props.setDropdownAction(idName, true, {})
+  setSortDirection (direction) {
+    let params = {
+      'sortType': this.props.columnType,
+      'sortDirection': direction
+    }
+    this.props.setDropdownAction('sort-from-table', false, params)
+  }
 
   render() {
     return (
@@ -46,25 +52,25 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-edit"></i>
               <span>Rename</span>
             </DropdownItem>
-            <DropdownItem onClick={this.props.duplicateColumn} className='duplicate-column' toggle={false}>
+            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'duplicate-column')} className='duplicate-column' toggle={false}>
               <i className="icon-duplicate"></i>
               <span>Duplicate</span>
             </DropdownItem>
             <DropdownItem divider />
-            <DropdownItem onClick={this.setSortDirectionAsc} className='sort-ascending' toggle={false}>
+            <DropdownItem onClick={this.setSortDirection.bind(this, sortDirectionAsc)} className='sort-ascending' toggle={false}>
               <i className="icon-sort-up"></i>
               <span>Sort ascending</span>
             </DropdownItem>
-            <DropdownItem onClick={this.setSortDirectionDesc} className='sort-descending' toggle={false}>
+            <DropdownItem onClick={this.setSortDirection.bind(this, sortDirectionDesc)} className='sort-descending' toggle={false}>
               <i className="icon-sort-down"></i>
               <span>Sort descending</span>
             </DropdownItem>
             <DropdownItem divider />
-            <DropdownItem onClick={this.props.filterColumn} className='filter-column' toggle={false}>
+            <DropdownItem onClick={this.setDropdownActionForceNew.bind(this, 'filter')} className='filter-column' toggle={false}>
               <i className="icon-filter"></i>
               <span>Filter</span>
             </DropdownItem>
-            <DropdownItem onClick={this.props.dropColumn} className='drop-column' toggle={false}>
+            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'selectcolumns')} className='drop-column' toggle={false}>
               <i className="icon-removec"></i>
               <span>Drop column</span>
             </DropdownItem>

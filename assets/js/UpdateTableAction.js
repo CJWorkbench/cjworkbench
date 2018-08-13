@@ -24,7 +24,7 @@ export const sortDirectionDesc = 2
 export const selectColumnDrop = 0
 export const selectColumnKeep = 1
 
-export function updateTableActionModule (wfModuleId, idName, forceNewModule, ...params) {
+export function updateTableActionModule (wfModuleId, idName, forceNewModule, params) {
   const state = store.getState()
   // Check if module imported
   if (!(idName in state.updateTableModuleIds)) {
@@ -46,14 +46,13 @@ export function updateTableActionModule (wfModuleId, idName, forceNewModule, ...
 }
 
 function updateFilterModule (wfm, params) {
-  const filterColumnName = params[0]
-  store.dispatch(setParamValueActionByIdName(wfm.id, 'column', filterColumnName))
+  store.dispatch(setParamValueActionByIdName(wfm.id, 'column', params.columnKey))
 }
 
 function updateSelectModule (wfm, params) {
   let selectedColumns = findParamValByIdName(wfm, 'colnames')
   const action = findParamValByIdName(wfm, 'drop_or_keep')
-  const dropColumnName = params[0]
+  const dropColumnName = params.columnKey
 
   // Case: If module exists and drop already selected
   if (selectedColumns.value && action.value === selectColumnDrop) {
@@ -81,7 +80,7 @@ function updateSelectModule (wfm, params) {
 
 function addEditToEditCellsModule (wfm, params) {
   const param = findParamValByIdName(wfm, 'celledits')
-  const edit = params[0]
+  const edit = params
   let edits
 
   if (param.value) {
@@ -89,7 +88,7 @@ function addEditToEditCellsModule (wfm, params) {
       edits = JSON.parse(param.value)
       // Remove the previous edit to the same cell
       let idx = edits.findIndex((element) => {
-        return element.row === params[0].row && element.col === params[0].col
+        return element.row === params.row && element.col === params.col
       })
       if (idx > -1) {
         edits.splice(idx, idx + 1)
@@ -109,7 +108,7 @@ function addEditToEditCellsModule (wfm, params) {
 
 function updateDuplicateModule (wfm, params) {
   const entriesParam = findParamValByIdName(wfm, 'colnames')
-  const duplicateColumnName = params[0]
+  const duplicateColumnName = params.columnKey
 
   // if params already exist, check if duplicateColumnName already exists
   if (entriesParam.value) {
@@ -124,21 +123,16 @@ function updateDuplicateModule (wfm, params) {
 }
 
 function updateSortModule (wfm, params) {
-  const sortColumn = params[0]
-  const sortType = params[1]
-  const sortDirection = params[2]
-
   // Must be kept in sync with sortfromtable.json
-  const sortTypeIdx = SortTypes.indexOf(sortType)
-  store.dispatch(setParamValueActionByIdName(wfm.id, 'column', sortColumn))
-  store.dispatch(setParamValueActionByIdName(wfm.id, 'direction', sortDirection))
+  const sortTypeIdx = SortTypes.indexOf(params.sortType)
+  store.dispatch(setParamValueActionByIdName(wfm.id, 'column', params.columnKey))
+  store.dispatch(setParamValueActionByIdName(wfm.id, 'direction', params.sortDirection))
   store.dispatch(setParamValueActionByIdName(wfm.id, 'dtype', sortTypeIdx))
 }
 
 // renameInfo format: {prevName: <current column name in table>, newName: <new name>}
 
 function updateRenameModule (wfm, params) {
-  const renameInfo = params[0]
   const entriesParam = findParamValByIdName(wfm, 'rename-entries')
   let entries
 
@@ -156,21 +150,20 @@ function updateRenameModule (wfm, params) {
   // update that entry (since we are renaming a renamed column)
   let entryExists = false
   for (let k in entries) {
-    if (entries[k] === renameInfo.prevName) {
-      entries[k] = renameInfo.newName
+    if (entries[k] === params.prevName) {
+      entries[k] = params.newName
       entryExists = true
       break
     }
   }
   // Otherwise, add the new entry to existing entries.
   if (!entryExists) {
-    entries[renameInfo.prevName] = renameInfo.newName
+    entries[params.prevName] = params.newName
   }
   store.dispatch(setParamValueAction(entriesParam.id, JSON.stringify(entries)))
 }
 
 function updateReorderModule (wfm, params) {
-  const reorderInfo = params[0]
   var historyParam = findParamValByIdName(wfm, 'reorder-history')
   var historyStr = historyParam ? historyParam.value.trim() : ''
   var historyEntries = []
@@ -183,10 +176,10 @@ function updateReorderModule (wfm, params) {
 
   // User must drag two spaces to indicate moving one column right (because drop = place before this column)
   // So to prevent all other code from having to deal with this forever, decrement the index here
-  if (reorderInfo.to > reorderInfo.from) {
-    reorderInfo.to -= 1
+  if (params.to > params.from) {
+    params.to -= 1
   }
 
-  historyEntries.push(reorderInfo)
+  historyEntries.push(params)
   store.dispatch(setParamValueAction(historyParam.id, JSON.stringify(historyEntries)))
 }
