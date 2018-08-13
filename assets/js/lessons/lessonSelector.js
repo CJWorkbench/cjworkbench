@@ -53,6 +53,8 @@ function calculateActiveStep(stateWithHelpers, sections) {
 function testLessonHighlightButThereIsNoLesson(test) { return false }
 
 const getWorkflow = ({ workflow }) => workflow
+const getWfModules = ({ wfModules }) => wfModules
+const getModules = ({ modules }) => modules
 const getSelectedWfModule = ({ selected_wf_module }) => selected_wf_module
 const getLessonData = ({ lessonData }) => lessonData || null
 
@@ -87,8 +89,8 @@ const getLessonData = ({ lessonData }) => lessonData || null
  * suggested.
  */
 const getLesson = createSelector(
-  [ getWorkflow, getSelectedWfModule, getLessonData ],
-  (workflow, selectedWfModule, lessonData) => {
+  [ getWorkflow, getWfModules, getModules, getSelectedWfModule, getLessonData ],
+  (workflow, wfModules, modules, selectedWfModule, lessonData) => {
     if (lessonData === null) {
       return {
         activeSectionIndex: null,
@@ -99,6 +101,8 @@ const getLesson = createSelector(
 
     const stateWithHelpers = new StateWithHelpers({
       workflow,
+      wfModules,
+      modules,
       selected_wf_module: selectedWfModule
     })
     const { activeSectionIndex, activeStepIndex, activeStep } = calculateActiveStep(stateWithHelpers, lessonData.sections)

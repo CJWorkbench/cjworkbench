@@ -14,28 +14,30 @@ import { Provider } from 'react-redux'
 import lessonSelector from './lessons/lessonSelector'
 
 describe('ModuleSearch', () => {
-  const modules = [
-    {
+  const modules = {
+    4: {
       id: 4,
       name: "Load from Enigma",
       category: "Add data",
       icon: "url",
       isLessonHighlight: true,
     },
-    {
+    10: {
       id: 10,
       name: "Filter by Text",
       category: "Filter",
       icon: "filter",
       isLessonHighlight: false,
     }
-  ];
+  }
+  const modulesArray = Object.keys(modules).map(id => modules[id])
+
   let defaultProps
   beforeEach(() => defaultProps = {
     onClickModuleId: jest.fn(),
     onCancel: jest.fn(),
     index: 2,
-    modules,
+    modules: modulesArray,
     isLessonHighlight: false,
   })
 

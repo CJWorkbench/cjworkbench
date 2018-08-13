@@ -97,11 +97,17 @@ describe('DataVersionModal', () => {
     const IdealState = {
       workflow: {
         is_anonymous: false,
-        wf_modules: [
-          {
+        wf_modules: [ 123, 124 ],
+      },
+      modules: {
+        234: { name: 'Fetch Stuff', loads_data: true },
+        345: { name: 'Filter Stuff', loads_data: false }
+      },
+      wfModules: {
+        123: {
             id: 123,
             notifications: true,
-            module_version: { module: { loads_data: true, name: 'Fetch Stuff' } },
+            module_version: { module: 234 },
             versions: {
               versions: [
                 [ '2018-06-22T20:09:41.649Z', true ],
@@ -109,14 +115,13 @@ describe('DataVersionModal', () => {
               ],
               selected: '2018-06-22T20:09:41.649Z',
             }
-          },
-          {
-            id: 124,
-            name: 'Filter Stuff',
-            notifications: true,
-            module_version: { module: { loads_data: false, name: 'Filter Stuff' } },
-          }
-        ]
+        },
+        124: {
+          id: 124,
+          name: 'Filter Stuff',
+          notifications: true,
+          module_version: { module: 345 }
+        }
       }
     }
 

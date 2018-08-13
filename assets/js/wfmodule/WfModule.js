@@ -26,6 +26,7 @@ export class WfModule extends React.PureComponent {
     isZenMode: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.object,
+    module: PropTypes.object,
     selected: PropTypes.bool,
     changeParam: PropTypes.func, // func(paramId, { value: newVal }) => undefined -- icky, prefer onChange
     removeModule: PropTypes.func,
@@ -223,8 +224,7 @@ export class WfModule extends React.PureComponent {
   }
 
   renderZenModeButton () {
-    const { wfModule, isZenMode } = this.props
-    const module = wfModule.module_version.module
+    const { wfModule, module, isZenMode } = this.props
     const zenModeAllowed = module.id_name === 'pythoncode'
 
     if (!zenModeAllowed) return null
@@ -284,8 +284,7 @@ export class WfModule extends React.PureComponent {
   }
 
   renderParam = (p, index) => {
-    const wfModule = this.props.wfModule
-    const module = wfModule.module_version.module
+    const { wfModule, module } = this.props
     const updateSettings = {
       lastUpdateCheck: wfModule.last_update_check,
       autoUpdateData: wfModule.auto_update_data,
@@ -329,8 +328,7 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const wfModule = this.props.wfModule
-    const module = wfModule.module_version.module
+    const { wfModule, module } = this.props
 
     // Each parameter gets a WfParameter
     const paramdivs = wfModule.parameter_vals.map(this.renderParam)
@@ -487,28 +485,39 @@ class WfModuleCollapseButton extends React.PureComponent {
   }
 }
 
-function propsToModuleName (props) {
-  return (props.wfModule && props.wfModule.module_version && props.wfModule.module_version.module && props.wfModule.module_version.module.name) || ''
-}
-
 const getWorkflow = ({ workflow }) => workflow
+const getWfModules = ({ wfModules }) => wfModules
+const getModules = ({ modules }) => modules
 /**
  * Find first WfModule that has a `.loads_data` ModuleVersion.
  */
-const hasFetchWfModule = createSelector([ getWorkflow ], (workflow) => {
-  return (workflow.wf_modules || []).some(wfModule => {
-    return wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.loads_data
-  })
+const hasFetchWfModule = createSelector([ getWorkflow, getWfModules, getModules ], (workflow, wfModules, modules) => {
+  const wfModuleIds = workflow.wf_modules
+  if (!wfModuleIds) return false
+  for (let wfModuleId of wfModuleIds) {
+    const wfModule = wfModules[String(wfModuleId)]
+    if (wfModule) {
+      const moduleId = wfModule.module_version ? wfModule.module_version.module : null
+      if (moduleId) {
+        const module = modules[String(moduleId)]
+        if (module) {
+          if (module.loads_data) return true
+        }
+      }
+    }
+  }
+  return false
 })
 
 function mapStateToProps (state, ownProps) {
   const { testHighlight } = lessonSelector(state)
   const { index } = ownProps
-  const moduleName = propsToModuleName(ownProps)
+  const module = ownProps.wfModule.module_version ? state.modules[String(ownProps.wfModule.module_version.module)] : null
   return {
-    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
-    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),
-    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
+    module,
+    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName: module.name }),
+    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName: module.name }),
+    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName: module.name }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
     fetchModuleExists: hasFetchWfModule(state)

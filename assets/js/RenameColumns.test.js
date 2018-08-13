@@ -22,71 +22,59 @@ describe('RenameColumns actions', () => {
   const RENAME_MODULE_ID = 24;
   const WF_ID = 18;
 
-  var initialState = {
+  const initialState = {
     updateTableModuleIds: { 'rename-columns': RENAME_MODULE_ID },
     workflow: {
       id: WF_ID,
-      wf_modules: [
-        {
-          id: LOADURL_WFM_ID,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
+      wf_modules: [ LOADURL_WFM_ID, FILTER_WFM_ID, RENAME_WFM_ID ],
+    },
+    modules: {
+      24: { id_name: 'rename' },
+      1: { id_name: 'loadurl' },
+      2: { id_name: 'filter' }
+    },
+    wfModules: {
+      [LOADURL_WFM_ID]: { id: LOADURL_WFM_ID, module_version: { module: 1 } },
+      [FILTER_WFM_ID]: { id: FILTER_WFM_ID, module_version: { module: 2 } },
+      [RENAME_WFM_ID]: {
+        id: RENAME_WFM_ID,
+        module_version: { module: 24 },
+        parameter_vals: [
+          {
+            id: RENAME_ENTRIES_ID,
+            parameter_spec: {
+              id_name: 'rename-entries'
+            },
+            value: JSON.stringify({
+              'name': 'host_name',
+              'narrative': 'nrtv'
+            })
           }
-        },
-        {
-          id: FILTER_WFM_ID,
-          module_version: {
-            module: {
-              id_name: 'filter'
-            }
-          }
-        },
-        {
-          id: RENAME_WFM_ID,
-          module_version: {
-            module: {
-              id_name: idName
-            }
-          },
-          parameter_vals: [
-            {
-              id: RENAME_ENTRIES_ID,
-              parameter_spec: {
-                id_name: 'rename-entries'
-              },
-              value: JSON.stringify({
-                'name': 'host_name',
-                'narrative': 'nrtv'
-              })
-            }
-          ]
-        }
-      ]
+        ]
+      }
     }
-  };
+  }
 
   const addModuleResponse = {
-    id: NEW_RENAME_WFM_ID,
-    module_version: {
-      module: {
-        id_name: idName
+    data: {
+      wfModule: {
+        id: NEW_RENAME_WFM_ID,
+        module_version: { module: 24 },
+        parameter_vals: [
+          {
+            id: NEW_RENAME_ENTRIES_ID,
+            parameter_spec: {
+              id_name: 'rename-entries'
+            },
+            value: ''
+          }
+        ]
       }
-    },
-    parameter_vals: [
-      {
-        id: NEW_RENAME_ENTRIES_ID,
-        parameter_spec: {
-          id_name: 'rename-entries'
-        },
-        value: ''
-      }
-    ]
-  };
+    }
+  }
 
   beforeEach(() => {
-    store.getState.mockImplementation(() => initialState);
+    store.getState.mockImplementation(() => initialState)
     // Our shim Redux API:
     // 1) actions are functions; dispatch returns their retvals in a Promise.
     //    This is useful when we care about retvals.
@@ -107,7 +95,7 @@ describe('RenameColumns actions', () => {
     updateTableActionModule(LOADURL_WFM_ID, idName, false, { prevName: 'cornerstone', newName: 'cs' })
 
     await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1);
+    expect(addModuleAction).toHaveBeenCalledWith(24, 1);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', NEW_RENAME_ENTRIES_ID, JSON.stringify({ cornerstone: 'cs' }) ]);
   });
 

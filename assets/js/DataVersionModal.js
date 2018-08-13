@@ -229,13 +229,23 @@ export class DataVersionModal extends React.PureComponent {
 }
 
 const getWorkflow = ({ workflow }) => workflow
+const getWfModules = ({ wfModules }) => wfModules
+const getModules = ({ modules }) => modules
 /**
- * Find first WfModule that has a `.loads_data` ModuleVersion.
+ * Find first (WfModule, Module) that has a `.loads_data` ModuleVersion.
  */
-const getFetchWfModule = createSelector([ getWorkflow ], (workflow) => {
-  return (workflow.wf_modules || []).find(wfModule => {
-    return wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.loads_data
-  }) || null
+const getFetchWfModule = createSelector([ getWorkflow, getWfModules, getModules ], (workflow, wfModules, modules) => {
+  const wfModuleIds = workflow.wf_modules || []
+  for (const wfModuleId of wfModuleIds) {
+    const wfModule = wfModules[String(wfModuleId)] || {}
+    const moduleId = wfModule.module_version ? wfModule.module_version.module : null
+    const module = modules[String(moduleId)] || {}
+    if (module.loads_data) {
+      return { fetchWfModule: wfModule, fetchModule: module }
+    }
+  }
+
+  return { fetchWfModule: null, fetchModule: null }
 })
 
 /**
@@ -256,14 +266,14 @@ const getFetchVersions = memoize(versions => {
 })
 
 function mapStateToProps(state, { wfModuleId }) {
-  const fetchWfModule = getFetchWfModule(state)
+  const { fetchWfModule, fetchModule } = getFetchWfModule(state)
 
-  const wfModule = state.workflow.wf_modules.find(m => m.id === wfModuleId)
+  const wfModule = state.wfModules[String(wfModuleId)]
   const notificationsEnabled = wfModule ? wfModule.notifications : false
 
   return {
     fetchWfModuleId: fetchWfModule ? fetchWfModule.id : null,
-    fetchWfModuleName: fetchWfModule ? fetchWfModule.module_version.module.name : null,
+    fetchWfModuleName: fetchModule ? fetchModule.name : null,
     fetchVersions: fetchWfModule ? getFetchVersions(fetchWfModule.versions.versions || []) : null,
     selectedFetchVersionId: fetchWfModule ? fetchWfModule.versions.selected : null,
     isAnonymous: state.workflow.is_anonymous,

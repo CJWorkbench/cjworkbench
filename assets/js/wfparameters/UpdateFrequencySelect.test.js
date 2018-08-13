@@ -1,15 +1,15 @@
-let mockApi
 jest.mock('../WorkbenchAPI', () => {
-  mockApi = {
+  return {
     updateWfModule: jest.fn(),
   }
-  return () => mockApi
 })
 
+import { mockStore } from '../workflow-reducer'
 import React from 'react'
 import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
 import { shallow, mount } from 'enzyme'
 import { Provider } from 'react-redux'
+import WorkbenchAPI from '../WorkbenchAPI'
 
 describe('UpdateFrequencySelect', () => {
   describe('shallow', () => {
@@ -105,10 +105,11 @@ describe('UpdateFrequencySelect', () => {
       workflow: {
         read_only: false,
         is_anonymous: false,
-        wf_modules: [
-          { id: 1, name: 'Ignore this one' },
-          { id: 212, auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' },
-        ],
+        wf_modules: [ 1, 212 ]
+      },
+      wfModules: {
+        1: { id: 1, name: 'Ignore this one' },
+        212: { id: 212, auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
       }
     }
 
@@ -133,9 +134,11 @@ describe('UpdateFrequencySelect', () => {
     })
 
     it('should not crash on a placeholder', () => {
+      // can this even happen?
       const store = {
         getState: () => ({
-          workflow: { read_only: false, is_anonymous: false, wf_modules: [ { id: 212, placeholder: true } ] },
+          workflow: { read_only: false, is_anonymous: false, wf_modules: [ 'nonce_212' ] },
+          wfModules: {}
         }),
         dispatch: jest.fn(),
         subscribe: jest.fn(),
@@ -152,11 +155,7 @@ describe('UpdateFrequencySelect', () => {
     })
 
     it('should dispatch an update (and call the API method)', () => {
-      const store = {
-        getState: () => sampleState,
-        dispatch: jest.fn(),
-        subscribe: jest.fn(),
-      }
+      const store = mockStore(sampleState)
       wrapper = mount(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
@@ -173,20 +172,11 @@ describe('UpdateFrequencySelect', () => {
         timeNumber: 2,
         timeUnit: 'days',
       })
-      expect(store.dispatch).toHaveBeenCalledWith({
-        type: 'UPDATE_WF_MODULE',
-        payload: {
-          promise: undefined,
-          data: {
-            id: 212,
-            data: {
-              auto_update_data: true,
-              notifications: true,
-              update_interval: 2,
-              update_units: 'days',
-            }
-          }
-        }
+      expect(WorkbenchAPI.updateWfModule).toHaveBeenCalledWith(212, {
+        auto_update_data: true,
+        notifications: true,
+        update_interval: 2,
+        update_units: 'days',
       })
     })
   })

@@ -213,6 +213,7 @@ class ModuleStack extends React.Component {
     api:                PropTypes.object.isRequired,
     workflow:           PropTypes.object,
     selected_wf_module: PropTypes.number,
+    wfModules:          PropTypes.arrayOf(PropTypes.object).isRequired,
     addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
     moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     removeModule:       PropTypes.func.isRequired,
@@ -256,7 +257,7 @@ class ModuleStack extends React.Component {
   static getDerivedStateFromProps(props, state) {
     // If we delete a zen-mode while in zen mode, exit zen mode
     const zenId = state.zenModeWfModuleId
-    if (zenId && !props.workflow.wf_modules.some(m => m.id === zenId)) {
+    if (zenId && !props.workflow.wf_modules.includes(zenId)) {
       return { zenModeWfModuleId: null }
     } else {
       return null
@@ -305,17 +306,17 @@ class ModuleStack extends React.Component {
   }
 
   render() {
-    const wfModules = this.props.wf_modules
+    const wfModules = this.props.wfModules
 
     const spotsAndItems = wfModules.map((item, i) => {
       // If this item is replacing a placeholder, disable the enter animations
-      if (item.placeholder) {
+      if (!item) {
         return (
           <React.Fragment key={`placeholder-${i}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModuleHeader
-              moduleName={item.name}
-              moduleIcon={item.icon}
+              moduleName={''/*item.name*/}
+              moduleIcon={''/*item.icon*/}
               focusModule={this.focusModule}
               isSelected={false}
               />
@@ -333,7 +334,6 @@ class ModuleStack extends React.Component {
               revision={this.props.workflow.revision}
               selected={i === this.props.selected_wf_module}
               api={this.props.api}
-              loads_data={item.moduleVersion && item.module_version.module.loads_data}
               index={i}
               setZenMode={this.setZenMode}
               onDragStart={this.onDragStart}
@@ -370,7 +370,7 @@ const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,
     selected_wf_module: state.selected_wf_module,
-    wf_modules: state.workflow.wf_modules,
+    wfModules: state.workflow.wf_modules.map(id => state.wfModules[String(id)]),
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index }),
   }

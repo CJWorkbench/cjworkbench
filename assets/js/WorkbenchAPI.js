@@ -89,9 +89,9 @@ class WorkbenchAPI {
     return this._patch(`/api/workflows/${workflowId}`, newOrder)
   }
 
-  addModule(workflowId, moduleId, insertBefore) {
+  addModule(workflowId, moduleId, index) {
     return this._put(`/api/workflows/${workflowId}/addmodule`, {
-      insertBefore: insertBefore,
+      index: index,
       moduleId: moduleId
     })
   }
@@ -247,5 +247,5 @@ class WorkbenchAPI {
 }
 
 // Singleton API object for global use
-const api = new WorkbenchAPI();
-export default () => { return api; }
+const api = new WorkbenchAPI()
+export default api

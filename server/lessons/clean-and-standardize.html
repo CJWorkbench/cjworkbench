@@ -40,7 +40,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
-      data-test="return workflow.wfModules[2].parameters.get('colnames') === 'MetroArea,Population'"
+      data-test="const colnames = workflow.wfModules[2].parameters.get('colnames'); return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
       >In the module, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
     </li>
   </ol>
@@ -56,13 +56,13 @@
       >Add the module 'Refine' using the search in the Module Library.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const allJson = JSON.parse(json); const changes = allJson.filter(x => x.type === 'change').map(x => x.content.fromVal); const Expected = [ 'San Jose-San Francisco-Oakland', 'DallasFORTHWorth' ]; for (var i = 0; i < Expected.length; i++) { if (changes.indexOf(Expected[i]) === -1) { console.log('User has yet to rename ' + Expected[i] + '; changes were ' + JSON.stringify(changes)); return false; } } return true;"
-      >Select the column <kbd>MetroArea</kbd> Edit values in the list until each one has a unique spelling.
+      data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const renames = JSON.parse(json).renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
+      >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five groups.
       <figure>
         <img alt="Inspect element" src="/static/images/clean_standardize_lesson/1_refine_row.png">
       </figure>
       <p class="instruction-detail">
-       When you're done, the list should look similar to the following:
+        When you're done, the list should look similar to the following:
       </p>
       <figure>
         <img alt="Inspect element" src="/static/images/clean_standardize_lesson/2_refine_result.png">
@@ -70,7 +70,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.wfModules[3].parameters; const json = JSON.parse(params.get('refine')); return json.filter(x => x.type === 'select' && x.content.value === 'Denver - Aurora').length > 0"
+      data-test="const params = workflow.wfModules[3].parameters; const json = JSON.parse(params.get('refine')); return json.blacklist.join('|') === 'Denver - Aurora'"
     >Un-check <kbd>Denver - Aurora</kbd> which does not contain valid population data.
     </li>
   </ol>

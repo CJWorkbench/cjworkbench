@@ -1,5 +1,5 @@
 import { updateTableActionModule, selectColumnDrop, selectColumnKeep } from './UpdateTableAction'
-import {tick} from './test-utils'
+import { tick } from './test-utils'
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
 jest.mock('./workflow-reducer');
@@ -15,97 +15,85 @@ describe("DropFromTable actions", () => {
     updateTableModuleIds: { 'selectcolumns': 77 },
     workflow: {
       id: 127,
-      wf_modules: [
-        {
-          id: 17,
-          module_version: {
-            module: {
-              id_name: 'loadurl'
-            }
-          }
-        },
-        {
-          // An existing select module with 2 columns kept
-          id: 7,
-          module_version: {
-            module: {
-              id_name: idName
-            }
+      wf_modules: [ 17, 7, 19, 31, 79 ],
+    },
+    wfModules: {
+      17: {
+        id: 17,
+        module_version: { module: 4 }
+      },
+      7: {
+        // An existing select module with 2 columns kept
+        id: 7,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_2,
+            parameter_spec: {id_name: 'colnames'},
+            value: 'col_1,col_2,col_3'
           },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_2,
-              parameter_spec: {id_name: 'colnames'},
-              value: 'col_1,col_2,col_3'
-            },
-            {
-              id: COLUMN_PAR_ID_3,
-              parameter_spec: {id_name: 'drop_or_keep'},
-              value: selectColumnKeep
-            }
-          ]
-        },
-        {
-          id: 19,
-          module_version: {
-            module: {
-              id_name: 'colselect'
-            }
+          {
+            id: COLUMN_PAR_ID_3,
+            parameter_spec: {id_name: 'drop_or_keep'},
+            value: selectColumnKeep
           }
-        },
-        {
-          id: 31,
-          module_version: {
-            module: {
-              id_name: 'filter'
-            }
-          }
-        },
-        {
-          // Another existing select module, set existing drops of col_2,col_3
-          id: 79,
-          module_version: {
-            module: {
-              id_name: idName
-            }
+        ]
+      },
+      19: {
+        id: 19,
+        module_version: { module: 2 }
+      },
+      31: {
+        id: 31,
+        module_version: { module: 3 }
+      },
+      79: {
+        // Another existing select module, set existing drops of col_2,col_3
+        id: 79,
+        module_version: { module: 77 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_3,
+            parameter_spec: {id_name: 'colnames'},
+            value: 'col_2,col_3'
           },
-          parameter_vals: [
-            {
-              id: COLUMN_PAR_ID_3,
-              parameter_spec: {id_name: 'colnames'},
-              value: 'col_2,col_3'
-            },
-            {
-              id: COLUMN_PAR_ID_3,
-              parameter_spec: {id_name: 'drop_or_keep'},
-              value: selectColumnDrop
-            }
-          ]
-        }
-      ]
-    }
-  };
-
-  const addModuleResponse = {
-    id: 23,
-    module_version: {
-      module: {
-        id_name: idName
+          {
+            id: COLUMN_PAR_ID_3,
+            parameter_spec: {id_name: 'drop_or_keep'},
+            value: selectColumnDrop
+          }
+        ]
       }
     },
-    parameter_vals: [
-      {
-        id: COLUMN_PAR_ID_1,
-        parameter_spec: {id_name: 'colnames'},
-        value: ''
-      },
-      {
-        id: COLUMN_PAR_ID_2,
-        parameter_spec: {id_name: 'drop_or_keep'},
-        value: ''
+    modules: {
+      77: { id_name: idName },
+      2: { id_name: 'colselect' },
+      3: { id_name: 'filter' },
+      4: { id_name: 'loadurl' }
+    }
+  }
+
+  const addModuleResponse = {
+    data: {
+      index: 1,
+      wfModule: {
+        id: 23,
+        module_version: { module: 1 },
+        parameter_vals: [
+          {
+            id: COLUMN_PAR_ID_1,
+            parameter_spec: {id_name: 'colnames'},
+            value: ''
+          },
+          {
+            id: COLUMN_PAR_ID_2,
+            parameter_spec: {id_name: 'drop_or_keep'},
+            value: ''
+          }
+        ]
       }
-    ]
-  };
+    }
+  }
 
   beforeEach(() => {
     store.getState.mockImplementation(() => initialState);
@@ -130,7 +118,7 @@ describe("DropFromTable actions", () => {
     updateTableActionModule(19, idName, false, {columnKey: 'col_1'});
 
     await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
+    expect(addModuleAction).toHaveBeenCalledWith(77, 3);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'colnames', 'col_1' ]);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'drop_or_keep', selectColumnDrop ]);
   });

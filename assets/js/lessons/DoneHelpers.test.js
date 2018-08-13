@@ -5,10 +5,16 @@ describe('DoneHelpers', () => {
   describe('WorkflowWithHelpers', () => {
     it('should give wfModules', () => {
       const workflow = new WorkflowWithHelpers({
-        wf_modules: [
-          { module_version: { module: { name: 'Foo' } } },
-          { module_version: { module: { name: 'Bar' } } }
-        ]
+        wf_modules: [ 1, 2 ]
+      }, {
+        wfModules: {
+          1: { module_version: { module: 12 } },
+          2: { module_version: { module: 22 } }
+        },
+        modules: {
+          12: { name: 'Foo' },
+          22: { name: 'Bar' }
+        }
       })
 
       expect(workflow.wfModules.map(wfm => wfm.moduleName)).toEqual([ 'Foo', 'Bar' ])
@@ -16,10 +22,16 @@ describe('DoneHelpers', () => {
 
     it('should give wfModuleNames', () => {
       const workflow = new WorkflowWithHelpers({
-        wf_modules: [
-          { module_version: { module: { name: 'Foo' } } },
-          { module_version: { module: { name: 'Bar' } } }
-        ]
+        wf_modules: [ 1, 2 ]
+      }, {
+        wfModules: {
+          1: { module_version: { module: 12 } },
+          2: { module_version: { module: 22 } }
+        },
+        modules: {
+          12: { name: 'Foo' },
+          22: { name: 'Bar' }
+        }
       })
 
       expect(workflow.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
@@ -43,11 +55,15 @@ describe('DoneHelpers', () => {
 
     it('should have parameters.get()', () => {
       const wfModule = new WorkflowModuleWithHelpers({
-        module_version: { module: { name: 'Foo' } },
+        module_version: { module: 123 },
         parameter_vals: [
           { parameter_spec: { id_name: 'url' }, value: 'foo' },
           { parameter_spec: { id_name: 'bar' }, value: 'baz' }
         ]
+      }, {
+        modules: {
+          123: { name: 'Foo' }
+        }
       })
       const parameters = wfModule.parameters
       expect(parameters.get('url')).toEqual('foo')
@@ -143,10 +159,15 @@ describe('DoneHelpers', () => {
       // when we test the same thing in a StateWithHelpers({ workflow: ... }).
       const state = new StateWithHelpers({
         workflow: {
-          wf_modules: [
-            { module_version: { module: { name: 'Foo' } } },
-            { module_version: { module: { name: 'Bar' } } }
-          ]
+          wf_modules: [ 1, 2 ],
+        },
+        wfModules: {
+          1: { module_version: { module: 3 } },
+          2: { module_version: { module: 4 } }
+        },
+        modules: {
+          3: { name: 'Foo' },
+          4: { name: 'Bar' }
         }
       })
 
@@ -156,10 +177,15 @@ describe('DoneHelpers', () => {
     it('should have a .selectedWfModule', () => {
       const state = new StateWithHelpers({
         workflow: {
-          wf_modules: [
-            { id: 2, module_version: { module: { name: 'Foo' } } },
-            { id: 3, module_version: { module: { name: 'Bar' } } }
-          ]
+          wf_modules: [ 2, 3 ]
+        },
+        wfModules: {
+          2: { module_version: { module: 4 } },
+          3: { module_version: { module: 5 } }
+        },
+        modules: {
+          4: { name: 'Foo' },
+          5: { name: 'Bar' }
         },
         selected_wf_module: 1
       })

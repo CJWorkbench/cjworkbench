@@ -14,7 +14,7 @@ export class StateWithHelpers {
   }
 
   get workflow () {
-    return new WorkflowWithHelpers(this.state.workflow)
+    return new WorkflowWithHelpers(this.state.workflow, this.state)
   }
 
   get selectedWfModule () {
@@ -24,12 +24,15 @@ export class StateWithHelpers {
 }
 
 export class WorkflowWithHelpers {
-  constructor (workflow) {
+  constructor (workflow, state) {
     this.workflow = workflow
+    this.state = state
   }
 
   get wfModules () {
-    return this.workflow.wf_modules.map(wfm => new WorkflowModuleWithHelpers(wfm))
+    return this.workflow.wf_modules.map(wfmId => {
+      return new WorkflowModuleWithHelpers(this.state.wfModules[String(wfmId)], this.state)
+    })
   }
 
   get wfModuleNames () {
@@ -38,8 +41,9 @@ export class WorkflowWithHelpers {
 }
 
 export class WorkflowModuleWithHelpers {
-  constructor (wfModule) {
+  constructor (wfModule, state) {
     this.wfModule = wfModule
+    this.state = state
   }
 
   get id () {
@@ -51,7 +55,8 @@ export class WorkflowModuleWithHelpers {
   }
 
   get module () {
-    return this.moduleVersion ? this.moduleVersion.module : null
+    const moduleId = this.moduleVersion ? this.moduleVersion.module : null
+    return moduleId ? this.state.modules[String(moduleId)] : null
   }
 
   get moduleName () {
