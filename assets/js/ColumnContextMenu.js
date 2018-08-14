@@ -70,13 +70,14 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-filter"></i>
               <span>Filter</span>
             </DropdownItem>
+            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'extract-numbers')} className='extract-numbers' toggle={false}>
+              <i className="icon-number"></i>
+              <span>Extract numbers</span>
+            </DropdownItem>
+            <DropdownItem divider />
             <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'selectcolumns')} className='drop-column' toggle={false}>
               <i className="icon-removec"></i>
               <span>Drop column</span>
-            </DropdownItem>
-            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'extract-numbers')} className='extract-numbers' toggle={false}>
-              <i className="icon-number"></i>
-              <span>Extract Numbers</span>
             </DropdownItem>
           </DropdownMenu>
         </Portal>
