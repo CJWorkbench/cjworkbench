@@ -4,7 +4,8 @@ from django.db import connection
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
-from server.models import Module, ModuleVersion, Workflow, WfModule, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, Workflow, WfModule, \
+        ParameterSpec, ParameterVal
 from server.initmodules import load_module_from_dict
 import os
 import io

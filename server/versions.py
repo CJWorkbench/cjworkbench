@@ -10,6 +10,7 @@ from server.modules.types import ProcessResult
 from server.notifications import \
         find_output_deltas_to_notify_from_fetched_tables, email_output_delta
 from server.triggerrender import notify_client_workflow_version_changed
+from server import websockets
 
 
 # Undo is pretty much just running workflow.last_delta backwards
@@ -53,7 +54,8 @@ def save_result_if_changed(wfm: WfModule,
                            new_result: ProcessResult,
                            stored_object_json: Optional[Dict[str, Any]]=None
                            ) -> datetime.datetime:
-    """Store retrieved data table, if it is a change from wfm's existing data.
+    """
+    Store fetched table, if it is a change from wfm's existing data.
 
     "Change" here means either a changed table or changed error message.
 
@@ -92,7 +94,7 @@ def save_result_if_changed(wfm: WfModule,
         else:
             output_deltas = []
 
-        wfm.error_msg = new_result.error
+        wfm.fetch_error = new_result.error
         wfm.status = (WfModule.ERROR if new_result.error else WfModule.READY)
         wfm.save()
 
@@ -110,7 +112,7 @@ def save_result_if_changed(wfm: WfModule,
     else:
         # no new data version, but we still want client to update WfModule
         # status and last update check time
-        notify_client_workflow_version_changed(wfm.workflow)
+        websockets.ws_client_rerender_workflow(wfm.workflow)
 
     return version_added
 

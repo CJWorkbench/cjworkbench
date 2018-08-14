@@ -66,13 +66,6 @@ class DispatchTests(TestCase):
             json={'output': ''}  # not part of this test
         ))
 
-        wfm.refresh_from_db()
-        self.assertEqual(wfm.status, 'error')
-        self.assertEqual(
-            wfm.error_msg,
-            'Line 1: invalid syntax (user input, line 1)'
-        )
-
     @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_render_static_truncates_table(self):
         table = pd.DataFrame({'a': [1, 2, 3]})
@@ -83,5 +76,3 @@ class DispatchTests(TestCase):
             error='Truncated output from 3 rows to 2'
         ))
         wfm.refresh_from_db()
-        self.assertEqual(wfm.status, 'error')
-        self.assertEqual(wfm.error_msg, 'Truncated output from 3 rows to 2')

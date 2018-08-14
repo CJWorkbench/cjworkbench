@@ -10,10 +10,6 @@ from server.sanitizedataframe import sanitize_dataframe
 class MockWfModule:
     def __init__(self, patch_json):
         self.patch_json = patch_json
-        self.error = None
-
-    def set_error(self, error):
-        self.error = error
 
     def get_param_raw(self, param, param_type):
         if param != 'celledits':

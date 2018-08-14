@@ -14,7 +14,7 @@ class MockWfModule:
         self.params = params
         self.stored_table = stored_table
         self.last_table = None
-        self.error_msg = stored_error
+        self.fetch_error = stored_error
         self.status = WfModule.BUSY
 
         self.set_busy_calls = []

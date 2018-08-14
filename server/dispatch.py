@@ -100,30 +100,17 @@ def module_dispatch_render(wf_module: WfModule,
         render_fn = get_module_render_fn(wf_module)
         result = render_fn(wf_module, table)
 
-    if result.error:
-        wf_module.set_error(result.error, notify=True)
-    else:
-        if wf_module.status != WfModule.READY:
-            # set notify=True to fix #157160567 if bad input is fixed, then
-            # user can click module to refresh it, which notifies, which
-            # clears error message in UI.
-            #
-            # Unresolved ickiness: if we change a parameter to fix an error, we
-            # get two refreshes (the other is from ChangeParameterCommand)
-            wf_module.set_ready(notify=True)
-
     return result
 
 
 def module_dispatch_event(wf_module, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
-        # Clear errors on every new event. (The other place they are cleared is
-        # on parameter change)
-        wf_module.set_ready(notify=False)
         module_dispatch = module_dispatch_tbl[dispatch]
         if hasattr(module_dispatch, 'event'):
-            return module_dispatch.event(wf_module, **kwargs)
+            # Tell client to clear errors before fetch
+            wf_module.set_busy()
+            module_dispatch.event(wf_module, **kwargs)
     else:
         dynamic_module = wf_module_to_dynamic_module(wf_module)
         dynamic_module.fetch(wf_module)

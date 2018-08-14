@@ -43,24 +43,26 @@ class ScrapeTable(ModuleImpl):
             if first_row_is_header:
                 table.columns = list(table.iloc[0, :])
                 table = table[1:]
-        return (table, wf_module.error_msg)
+        return (table, wf_module.fetch_error)
 
     @staticmethod
     def event(wfm, event=None, **kwargs):
+        def fail(error: str) -> None:
+            result = ProcessResult(error=error)
+            ModuleImpl.commit_result(wfm, result)
+
         table = None
         url = wfm.get_param_string('url').strip()
         tablenum = wfm.get_param_integer('tablenum') - 1  # 1 based for user
 
         if tablenum < 0:
-            wfm.set_error(_('Table number must be at least 1'))
-            return
+            return fail(_('Table number must be at least 1'))
 
         validate = URLValidator()
         try:
             validate(url)
         except ValidationError:
-            wfm.set_error(_('That doesn''t seem to be a valid URL'))
-            return
+            return fail(_('That doesn''t seem to be a valid URL'))
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()

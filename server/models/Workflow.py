@@ -146,13 +146,13 @@ class Workflow(models.Model):
             return self.creation_date
         return self.last_delta.datetime
 
-    # use last delta ID as (non sequential) revision number, as later deltas will always have later ids
+    # use last delta ID as (non sequential) revision number, as later deltas
+    # will always have later ids
     def revision(self):
-        if not self.last_delta:
+        if not self.last_delta_id:
             return 0
         else:
-            return self.last_delta.id
-
+            return self.last_delta_id
 
     def _duplicate(self, name: str, owner: Optional[User],
                    session_key: Optional[str]) -> 'Workflow':

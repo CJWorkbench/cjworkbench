@@ -136,7 +136,8 @@ class WfModule(models.Model):
         choices=TYPE_CHOICES,
         default=READY,
     )
-    error_msg = models.CharField('error_msg', max_length=200, blank=True)
+    # There's fetch_error and there's cached_render_result_error.
+    fetch_error = models.CharField('fetch_error', max_length=200, blank=True)
 
     # ---- Utilities ----
 
@@ -153,6 +154,10 @@ class WfModule(models.Model):
             return self.module_version.module.name
         else:
             return 'Missing module'  # deleted from server
+
+    @property
+    def error_msg(self):
+        return self.fetch_error or self.cached_render_result_error or ''
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
@@ -303,7 +308,7 @@ class WfModule(models.Model):
     # workflow
     def set_busy(self, notify=True):
         self.status = self.BUSY
-        self.error_msg = ''
+        self.fetch_error = ''
         self.save()
         if notify:
             websockets.ws_client_wf_module_status(self, self.status)
@@ -312,17 +317,15 @@ class WfModule(models.Model):
     # assumption that new output data is available
     def set_ready(self, notify=True):
         self.status = self.READY
-        self.error_msg = ''
+        self.fetch_error = ''
         self.save()
         if notify:
             websockets.ws_client_rerender_workflow(self.workflow)
 
-    def set_error(self, message, notify=True):
-        self.error_msg = message
+    def set_fetch_error(self, message):
+        self.fetch_error = message
         self.status = self.ERROR
         self.save()
-        if notify:
-            websockets.ws_client_rerender_workflow(self.workflow)
 
     def set_is_collapsed(self, collapsed, notify=True):
         self.is_collapsed = collapsed

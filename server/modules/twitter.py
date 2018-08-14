@@ -7,10 +7,8 @@ from .types import ProcessResult
 from server import oauth
 from django.utils.translation import gettext as _
 
-# ---- Twitter import module ----
 
 class Twitter(ModuleImpl):
-
     # Must match order of items in twitter.json module def
     QUERY_TYPE_USER = 0
     QUERY_TYPE_SEARCH = 1
@@ -91,12 +89,16 @@ class Twitter(ModuleImpl):
     def render(wf_module, table):
         return ProcessResult(
             dataframe=Twitter.get_stored_tweets(wf_module),
-            error=wf_module.error_msg
+            error=wf_module.fetch_error
         )
 
     # Load specified user's timeline
     @staticmethod
     def event(wfm, **kwargs):
+        def fail(error: str) -> None:
+            result = ProcessResult(error=error)
+            ModuleImpl.commit_result(wfm, result)
+
         param_names = {
             Twitter.QUERY_TYPE_USER: 'username',
             Twitter.QUERY_TYPE_SEARCH: 'query',
@@ -108,12 +110,10 @@ class Twitter(ModuleImpl):
         access_token = wfm.get_param_secret_secret('twitter_credentials')
 
         if query.strip() == '':
-            wfm.set_error('Please enter a query')
-            return
+            return fail('Please enter a query')
 
         if not access_token:
-            wfm.set_error('Please sign in to Twitter')
-            return
+            return fail('Please sign in to Twitter')
 
         # fetching could take a while so notify clients/users we're working
         wfm.set_busy(notify=True)
@@ -131,24 +131,18 @@ class Twitter(ModuleImpl):
         except TweepError as e:
             if e.response:
                 if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code == 401:
-                    wfm.set_error(_('User %s\'s tweets are protected') % query)
-                    return
+                    return fail(_('User %s\'s tweets are protected') % query)
                 elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code == 404:
-                    wfm.set_error(_('User %s does not exist') % query)
-                    return
+                    return fail(_('User %s does not exist') % query)
                 elif e.response.status_code == 429:
-                    wfm.set_error(_('Twitter API rate limit exceeded. Please wait a few minutes and try again.'))
-                    return
+                    return fail(_('Twitter API rate limit exceeded. Please wait a few minutes and try again.'))
                 else:
-                    wfm.set_error(_('HTTP error %s fetching tweets' % str(e.response.status_code)))
-                    return
+                    return fail(_('HTTP error %s fetching tweets' % str(e.response.status_code)))
             else:
-                wfm.set_error(_('Error fetching tweets: ' + str(e)))
-                return
+                return fail(_('Error fetching tweets: %s' % str(e)))
 
         except Exception as e:
-            wfm.set_error(_('Error fetching tweets: ' + str(e)))
-            return
+            return fail(_('Error fetching tweets: %s' % str(e)))
 
         result = ProcessResult(dataframe=tweets)
 

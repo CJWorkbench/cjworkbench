@@ -45,11 +45,12 @@ class DynamicModule:
         """Render cached value, or pass-through input.
         """
         stored_table = wf_module.retrieve_fetched_table()
-        if stored_table is not None:
+        fetch_error = wf_module.fetch_error
+        if stored_table is not None or fetch_error:
             # Return cached value
             return ProcessResult(
                 dataframe=stored_table,
-                error=wf_module.error_msg
+                error=fetch_error
             )
         else:
             # Pass-through input

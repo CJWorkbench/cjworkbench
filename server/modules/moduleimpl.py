@@ -20,9 +20,10 @@ class ModuleImpl:
     def commit_result(wf_module: WfModule, result: ProcessResult,
                       stored_object_json: Optional[Dict[str, Any]]=None
                       ) -> None:
-        """Store retrieved data table, if it is a change from wfm's existing data.
+        """
+        Store fetched result, if it is a change from wfm's existing data.
 
-        Save the WfModule's `status` and `error_msg`.
+        Save the WfModule's `status` and `fetch_error`.
 
         Set wfm.last_update_check, regardless.
 
@@ -34,7 +35,7 @@ class ModuleImpl:
         if result.dataframe.empty and result.error:
             with wf_module.workflow.cooperative_lock():
                 wf_module.last_update_check = timezone.now()
-                wf_module.error_msg = result.error
+                wf_module.fetch_error = result.error
                 wf_module.status = WfModule.ERROR
                 wf_module.save()
             websockets.ws_client_rerender_workflow(wf_module.workflow)

@@ -47,8 +47,8 @@ class LoadURL(ModuleImpl):
         try:
             validate(url)
         except ValidationError:
-            wf_module.set_error('Invalid URL')
-            return
+            return ModuleImpl.commit_result(wf_module,
+                                            ProcessResult(error='Invalid URL'))
 
         # fetching could take a while so notify clients/users we're working
         wf_module.set_busy()
