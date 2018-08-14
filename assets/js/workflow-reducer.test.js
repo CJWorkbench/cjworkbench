@@ -51,7 +51,6 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const testWorkflow = {
     id: 999,
-    selected_wf_module: 2,  // different than testState.selected_wf_module so we can test setting state.selected_wf_module
     wf_modules: [ 10, 20, 30 ]
   }
 
@@ -195,7 +194,7 @@ describe('Reducer actions', () => {
     expect(store.getState().selected_wf_module).toEqual(1)
   })
 
-  it('Updates the workflow module with the specified data', () => {
+  it('updates the workflow module with the specified data', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'UPDATE_WF_MODULE_PENDING',
       payload: {
@@ -206,6 +205,34 @@ describe('Reducer actions', () => {
       }
     })
     expect(state.wfModules['20'].notifications).toBe(true)
+  })
+
+  it('overwrites a workflow and its wfModules', () => {
+    const state = wfr.workflowReducer(testState, wfr.setWorkflowAction({
+      workflow: {
+        id: 999,
+        wf_modules: [ 1 ]
+      },
+      wfModules: {
+        1: { id: 1 }
+      }
+    }))
+
+    expect(state.workflow).toEqual({ id: 999, wf_modules: [ 1 ] })
+    expect(state.wfModules).toEqual({ 1: { id: 1 } })
+  })
+
+  it('overwrites some wfModule properties', () => {
+    const state = wfr.workflowReducer(testState, wfr.setWfModuleAction({
+      id: 10,
+      has_unseen_notification: false
+    }))
+    // Does not overwrite other wfModules
+    expect(state.wfModules['20']).toBe(testState.wfModules['20'])
+    // Does not overwrite unspecified properties
+    expect(state.wfModules['10'].versions).toBe(state.wfModules['10'].versions)
+    // Overwrites specified properties
+    expect(state.wfModules['10'].has_unseen_notification).toBe(false)
   })
 
   it('does nothing if we update a nonexistent wfmodule', async () => {

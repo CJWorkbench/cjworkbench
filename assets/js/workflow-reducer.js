@@ -8,6 +8,7 @@ import api from './WorkbenchAPI'
 
 // Workflow
 const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW'
+const SET_WORKFLOW = 'SET_WORKFLOW'
 const LOAD_MODULES = 'LOAD_MODULES'
 const ADD_MODULE = 'ADD_MODULE'
 const DELETE_MODULE = 'DELETE_MODULE'
@@ -19,6 +20,7 @@ const MOVE_MODULE = 'MOVE_MODULE'
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS'
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
+const SET_WF_MODULE = 'SET_WF_MODULE'
 
 // Parameter
 const SET_PARAM_VALUE = 'SET_PARAM_VALUE'
@@ -118,6 +120,20 @@ registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
   omitWfModuleClientOnlyStateInPlace(wfModules, state.wfModules)
 
   return { ...state, workflow, wfModules }
+})
+
+export function setWorkflowAction ({ workflow, wfModules }) {
+  return {
+    type: SET_WORKFLOW,
+    payload: { workflow, wfModules }
+  }
+}
+registerReducerFunc(SET_WORKFLOW, (state, action) => {
+  const { workflow, wfModules } = action.payload
+  return { ...state,
+    workflow,
+    wfModules
+  }
 })
 
 // LOAD_MODULES
@@ -385,6 +401,33 @@ registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
       [String(wfModuleId)]: { ...wfModule,
         status,
         error_msg
+      }
+    }
+  }
+})
+
+export function setWfModuleAction (wfModule) {
+  return {
+    type: SET_WF_MODULE,
+    payload: { wfModule }
+  }
+}
+registerReducerFunc(SET_WF_MODULE, (state, action) => {
+  const { wfModule } = action.payload
+
+  const id = String(wfModule.id)
+
+  const existingWfModule = state.wfModules[id]
+  if (!existingWfModule) {
+    console.warn('Missing WfModule to replace:', wfModule)
+    return state
+  }
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [id]: {
+        ...existingWfModule,
+        ...wfModule
       }
     }
   }
