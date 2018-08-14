@@ -529,19 +529,27 @@ export default class DataGrid extends React.Component {
   }
 
   // Check if column names are changed between props, used for shouldKeyUpdate
-  columnsChanged(prevColumns, nextColumns) {
-    if((prevColumns == null) || (nextColumns == null)) {
-      return true;
+  columnsChanged(props, nextProps) {
+    const prevColumns = props.columns || null
+    const nextColumns = nextProps.columns || null
+    const prevTypes = props.columnTypes || null
+    const nextTypes = nextProps.columnTypes || null
+
+    if (prevColumns === null || nextColumns === null || prevTypes === null || nextTypes === null) {
+      return true // "bug" if they're both null, but who cares? Render will be fast
     }
-    if(prevColumns.length != nextColumns.length) {
-      return true;
+
+    if (prevColumns.length !== nextColumns.length) {
+      return true
     }
-    for(var i = 0; i < prevColumns.length; i ++) {
-      if(prevColumns[i] != nextColumns[i]) {
-        return true;
+
+    for (let i = 0; i < prevColumns.length; i++) {
+      if (prevColumns[i] !== nextColumns[i] || prevTypes[i] !== nextTypes[i]) {
+        return true
       }
     }
-    return false;
+
+    return false
   }
 
   shouldKeyUpdate(nextProps) {
@@ -557,7 +565,7 @@ export default class DataGrid extends React.Component {
     // For some reason, react-data-grid does not change column order
     // in its output when the column order changes when custom header renderer
     // is involved, so we bump the key if columns are changed
-    if(this.columnsChanged(this.props.columns, nextProps.columns)) {
+    if (this.columnsChanged(this.props, nextProps)) {
       return true;
     }
     return false;
