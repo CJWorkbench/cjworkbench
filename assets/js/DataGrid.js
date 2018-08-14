@@ -486,7 +486,9 @@ export default class DataGrid extends React.Component {
     super(props);
 
     this.state = {
-      gridHeight : 100,  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
+      // gridWith and gridHeight start non-0, so rows get rendered in tests
+      gridWidth: 100,
+      gridHeight : 100,
       componentKey: 0,  // a key for the component; updates if the column header needs
       draggingColumnIndex: null,
     };
@@ -497,14 +499,12 @@ export default class DataGrid extends React.Component {
 
   // After the component mounts, and on any change, set the height to parent div height
   updateSize() {
-    var domNode = ReactDOM.findDOMNode(this);
-    if (domNode) {
-      var gridHeight = domNode.parentElement.offsetHeight;
-      var gridWidth = domNode.parentElement.offsetWidth;
-      this.setState({
-        gridHeight: gridHeight,
-        gridWidth: gridWidth
-      });
+    const domNode = ReactDOM.findDOMNode(this);
+    if (domNode && domNode.parentElement) {
+      const container = domNode.parentElement
+      const gridHeight = Math.max(100, container.offsetHeight)
+      const gridWidth = Math.max(100, container.offsetWidth)
+      this.setState({ gridWidth, gridHeight })
     }
   }
 
@@ -632,21 +632,21 @@ export default class DataGrid extends React.Component {
         draggingColumnIndex: this.state.draggingColumnIndex,
         onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
         onRenameColumn: this.onRename,
-      };
-      let columns = makeFormattedCols(draggingProps);
+      }
+      const columns = makeFormattedCols(draggingProps)
 
       return(
         <ReactDataGrid
           columns={columns}
           rowGetter={this.getRow}
           rowsCount={this.props.totalRows}
-          minWidth={this.state.gridWidth -2}
-          minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+          minWidth={this.state.gridWidth - 2}
+          minHeight={this.state.gridHeight - 2}   // -2 because grid has borders, don't want to expand our parent DOM node
           headerRowHeight={this.props.showLetter ? 54 : 48}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
           key={this.state.componentKey}
-          />
+        />
       )
     } else {
       return null;

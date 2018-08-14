@@ -52,8 +52,6 @@ describe('TableView', () => {
       // should have called API for its data, and loaded it
       expect(api.render).toHaveBeenCalledWith(100, 0, NRowsPerPage + 1)
 
-      expect(tree).toMatchSnapshot()
-
       // Header etc should be here
       expect(tree.find('.outputpane-header')).toHaveLength(1)
       expect(tree.find('.outputpane-data')).toHaveLength(1)
@@ -96,8 +94,7 @@ describe('TableView', () => {
     })
   })
 
-
-  it('Blank table when no module id', () => {
+  it('blanks table when no module id', () => {
     const tree = mount(
       <TableView {...defaultProps} selectedWfModuleId={undefined} revision={1} api={{}} isReadOnly={false}/>
     )
@@ -105,10 +102,9 @@ describe('TableView', () => {
 
     expect(tree.find('.outputpane-header')).toHaveLength(1)
     expect(tree.find('.outputpane-data')).toHaveLength(1)
-    expect(tree).toMatchSnapshot()
   })
 
-  it('Lazily loads rows as needed', async () => {
+  it('lazily loads rows as needed', async () => {
     const totalRows = 100000
     const api = {
       render: makeRenderResponse(0, 201, totalRows) // response to expected first call
@@ -140,7 +136,67 @@ describe('TableView', () => {
     expect(api.render).toHaveBeenCalledWith(100, 412, 613)
   })
 
-  it('Passes the the right sortColumn, sortDirection to DataGrid', (done) => {
+  it('keeps previous rows when loading new rows', async () => {
+    const data1 = {
+      total_rows: 2,
+      start_row: 0,
+      end_row: 2,
+      columns: [ 'A', 'B' ],
+      column_types: [ 'Number', 'Number' ],
+      rows: [
+        { 'A': 1, 'B': 2 },
+        { 'A': 3, 'B': 4 }
+      ]
+    }
+
+    const data2 = {
+      ...data1,
+      columns: [ 'C', 'D' ],
+      rows: [
+        { 'C': 5, 'D': 6 },
+        { 'C': 7, 'D': 8 }
+      ]
+    }
+
+    const render = jest.fn()
+      .mockReturnValueOnce(Promise.resolve(data1))
+      .mockReturnValueOnce(Promise.resolve(data2))
+
+    const api = { render }
+
+    const wrapper = mount(
+      <TableView
+        {...defaultProps}
+        selectedWfModuleId={100}
+        revision={1}
+        api={api}
+        isReadOnly={false}
+      />
+    )
+    await tick()
+
+    expect(wrapper.text()).toMatch(/JSON FEED.*A.*B/)
+    expect(wrapper.text()).toMatch(/3.*4/)
+
+    wrapper.setProps({
+      selectedWfModuleId: 101,
+      revision: 2
+    })
+    wrapper.update()
+    // Previous data remains
+    expect(wrapper.text()).toMatch(/A.*B/)
+    expect(wrapper.text()).toMatch(/3.*4/)
+
+    await tick()
+    wrapper.update()
+
+    // Now it's new data
+    expect(api.render).toHaveBeenCalledWith(101, 0, 201)
+    expect(wrapper.text()).toMatch(/JSON FEED.*C.*D/)
+    expect(wrapper.text()).toMatch(/5.*7/)
+  })
+
+  it('passes the the right sortColumn, sortDirection to DataGrid', (done) => {
     const testData = {
       total_rows: 2,
       start_row: 0,
@@ -188,7 +244,7 @@ describe('TableView', () => {
     })
   })
 
-  it('Passes the the right showLetter prop to DataGrid', (done) => {
+  it('passes the the right showLetter prop to DataGrid', (done) => {
     const testData = {
       total_rows: 2,
       start_row: 0,
