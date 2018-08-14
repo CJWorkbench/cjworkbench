@@ -165,8 +165,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
     headerRowHeight={48}
     key="0"
     minColumnWidth={80}
-    minHeight={-2}
-    minWidth={-2}
+    minHeight={98}
+    minWidth={98}
     onBeforeEdit={[Function]}
     onGridRowsUpdated={[Function]}
     overScan={
@@ -189,7 +189,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
       className="react-grid-Container"
       style={
         Object {
-          "width": -2,
+          "width": 98,
         }
       }
     >
@@ -366,7 +366,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 },
               ],
               "minColumnWidth": 80,
-              "totalWidth": -2,
+              "totalWidth": 98,
               "width": 680,
             }
           }
@@ -513,8 +513,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             ]
           }
           minColumnWidth={80}
-          minHeight={-2}
-          minWidth={-2}
+          minHeight={98}
+          minWidth={98}
           onBeforeEdit={[Function]}
           onColumnResize={[Function]}
           onGridRowsUpdated={[Function]}
@@ -545,13 +545,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           sortColumn={null}
           sortDirection={null}
           tabIndex={-1}
-          totalWidth={-2}
+          totalWidth={98}
         >
           <div
             className="react-grid-Grid"
             style={
               Object {
-                "minHeight": -2,
+                "minHeight": 98,
                 "outline": 0,
                 "overflow": "hidden",
                 "position": "relative",
@@ -726,7 +726,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     },
                   ],
                   "minColumnWidth": 80,
-                  "totalWidth": -2,
+                  "totalWidth": 98,
                   "width": 680,
                 }
               }
@@ -745,7 +745,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               onSort={[Function]}
               sortColumn={null}
               sortDirection={null}
-              totalWidth={-2}
+              totalWidth={98}
             >
               <div
                 className="react-grid-Header"
@@ -910,7 +910,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       "overflowX": "hidden",
                       "position": "absolute",
                       "top": 0,
-                      "width": -2,
+                      "width": 98,
                     }
                   }
                   width={680}
@@ -926,7 +926,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         "overflowX": "hidden",
                         "position": "absolute",
                         "top": 0,
-                        "width": -2,
+                        "width": 98,
                       }
                     }
                     width={680}
@@ -3123,12 +3123,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                     ],
                     "minColumnWidth": 80,
-                    "totalWidth": -2,
+                    "totalWidth": 98,
                     "width": 680,
                   }
                 }
                 expandedRows={Array []}
-                minHeight={-2}
+                minHeight={98}
                 onScroll={[Function]}
                 overScan={
                   Object {
@@ -3147,7 +3147,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 rowsCount={2}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
-                totalWidth={-2}
+                totalWidth={98}
                 width={680}
               >
                 <div
@@ -3201,7 +3201,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     }
                     colDisplayEnd={5}
                     colDisplayStart={0}
-                    colVisibleEnd={4}
+                    colVisibleEnd={5}
                     colVisibleStart={0}
                     columns={
                       Array [
@@ -3338,8 +3338,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     displayEnd={2}
                     displayStart={0}
                     expandedRows={Array []}
-                    height={-50}
-                    isScrolling={true}
+                    height={50}
+                    isScrolling={false}
                     onRows={[Function]}
                     onScroll={[Function]}
                     rowGetter={[Function]}
@@ -3351,8 +3351,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     rowsCount={2}
                     scrollToRowIndex={0}
                     selectedRows={Array []}
-                    totalWidth={-2}
-                    visibleEnd={-1}
+                    totalWidth={98}
+                    visibleEnd={2}
                     visibleStart={0}
                     width={680}
                   >
@@ -3361,13 +3361,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       onScroll={[Function]}
                       style={
                         Object {
-                          "height": -50,
+                          "height": 50,
                           "left": 0,
                           "overflowX": "auto",
                           "overflowY": "scroll",
                           "position": "absolute",
                           "top": 0,
-                          "width": -2,
+                          "width": 98,
                         }
                       }
                     >
@@ -3414,7 +3414,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={4}
+                              colVisibleEnd={5}
                               colVisibleStart={0}
                               columns={
                                 Array [
@@ -3551,7 +3551,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               expandedRows={Array []}
                               height={35}
                               idx={0}
-                              isScrolling={true}
+                              isScrolling={false}
                               isSelected={false}
                               onMouseOver={undefined}
                               row={
@@ -3564,7 +3564,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 }
                               }
                               subRowDetails={Object {}}
-                              visibleEnd={-1}
+                              visibleEnd={2}
                               visibleStart={0}
                             />,
                             <Row
@@ -3605,7 +3605,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={4}
+                              colVisibleEnd={5}
                               colVisibleStart={0}
                               columns={
                                 Array [
@@ -3742,7 +3742,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               expandedRows={Array []}
                               height={35}
                               idx={1}
-                              isScrolling={true}
+                              isScrolling={false}
                               isSelected={false}
                               onMouseOver={undefined}
                               row={
@@ -3755,7 +3755,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 }
                               }
                               subRowDetails={Object {}}
-                              visibleEnd={-1}
+                              visibleEnd={2}
                               visibleStart={0}
                             />,
                           ]
@@ -3805,7 +3805,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 cellRenderer={[Function]}
                                 colDisplayEnd={5}
                                 colDisplayStart={0}
-                                colVisibleEnd={4}
+                                colVisibleEnd={5}
                                 colVisibleStart={0}
                                 columns={
                                   Array [
@@ -3942,7 +3942,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 expandedRows={Array []}
                                 height={35}
                                 idx={0}
-                                isScrolling={true}
+                                isScrolling={false}
                                 isSelected={false}
                                 onMouseOver={undefined}
                                 row={
@@ -3955,7 +3955,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                 }
                                 subRowDetails={Object {}}
-                                visibleEnd={-1}
+                                visibleEnd={2}
                                 visibleStart={0}
                               />,
                               <Row
@@ -3996,7 +3996,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 cellRenderer={[Function]}
                                 colDisplayEnd={5}
                                 colDisplayStart={0}
-                                colVisibleEnd={4}
+                                colVisibleEnd={5}
                                 colVisibleStart={0}
                                 columns={
                                   Array [
@@ -4133,7 +4133,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 expandedRows={Array []}
                                 height={35}
                                 idx={1}
-                                isScrolling={true}
+                                isScrolling={false}
                                 isSelected={false}
                                 onMouseOver={undefined}
                                 row={
@@ -4146,7 +4146,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                 }
                                 subRowDetails={Object {}}
-                                visibleEnd={-1}
+                                visibleEnd={2}
                                 visibleStart={0}
                               />,
                             ]
@@ -4194,7 +4194,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={4}
+                              colVisibleEnd={5}
                               colVisibleStart={0}
                               columns={
                                 Array [
@@ -4331,7 +4331,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               expandedRows={Array []}
                               height={35}
                               idx={0}
-                              isScrolling={true}
+                              isScrolling={false}
                               isSelected={false}
                               key="row-0"
                               row={
@@ -4344,7 +4344,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 }
                               }
                               subRowDetails={Object {}}
-                              visibleEnd={-1}
+                              visibleEnd={2}
                               visibleStart={0}
                             >
                               <div
@@ -4446,7 +4446,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="aaa-0"
                                   rowData={
                                     Object {
@@ -4644,7 +4644,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="bbbb-0"
                                   rowData={
                                     Object {
@@ -4842,7 +4842,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="ccccc-0"
                                   rowData={
                                     Object {
@@ -5040,7 +5040,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="rn_-0"
                                   rowData={
                                     Object {
@@ -5212,7 +5212,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="rn__-0"
                                   rowData={
                                     Object {
@@ -5314,7 +5314,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={4}
+                              colVisibleEnd={5}
                               colVisibleStart={0}
                               columns={
                                 Array [
@@ -5451,7 +5451,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               expandedRows={Array []}
                               height={35}
                               idx={1}
-                              isScrolling={true}
+                              isScrolling={false}
                               isSelected={false}
                               key="row-1"
                               row={
@@ -5464,7 +5464,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 }
                               }
                               subRowDetails={Object {}}
-                              visibleEnd={-1}
+                              visibleEnd={2}
                               visibleStart={0}
                             >
                               <div
@@ -5566,7 +5566,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="aaa-1"
                                   rowData={
                                     Object {
@@ -5764,7 +5764,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="bbbb-1"
                                   rowData={
                                     Object {
@@ -5961,7 +5961,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="ccccc-1"
                                   rowData={
                                     Object {
@@ -6159,7 +6159,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="rn_-1"
                                   rowData={
                                     Object {
@@ -6331,7 +6331,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
-                                  isScrolling={true}
+                                  isScrolling={false}
                                   key="rn__-1"
                                   rowData={
                                     Object {

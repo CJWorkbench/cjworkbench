@@ -84,7 +84,7 @@ export default class TableView extends React.PureComponent {
    */
   reset () {
     if (this.scheduleLoadTimeout !== null) {
-      window.cancelTimeout(this.scheduleLoadTimeout)
+      window.clearTimeout(this.scheduleLoadTimeout)
     }
     // Leave old values in this.state, so we keep rendering them until new
     // values are loaded.
