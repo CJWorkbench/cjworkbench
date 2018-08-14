@@ -1360,6 +1360,37 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1376,26 +1407,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -1837,6 +1848,37 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -1853,26 +1895,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -2314,6 +2336,37 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2330,26 +2383,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -2791,6 +2824,37 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -2807,26 +2871,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -10544,6 +10588,37 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -10560,26 +10635,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -11021,6 +11076,37 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -11037,26 +11123,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -11498,6 +11564,37 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -11514,26 +11611,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>
@@ -11975,6 +12052,37 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                         </button>
                                                       </DropdownItem>
                                                       <DropdownItem
+                                                        className="extract-numbers"
+                                                        onClick={[Function]}
+                                                        tag="button"
+                                                        toggle={false}
+                                                      >
+                                                        <button
+                                                          className="extract-numbers dropdown-item"
+                                                          onClick={[Function]}
+                                                          tabIndex="0"
+                                                          type="button"
+                                                        >
+                                                          <i
+                                                            className="icon-number"
+                                                          />
+                                                          <span>
+                                                            Extract numbers
+                                                          </span>
+                                                        </button>
+                                                      </DropdownItem>
+                                                      <DropdownItem
+                                                        divider={true}
+                                                        tag="button"
+                                                        toggle={true}
+                                                      >
+                                                        <div
+                                                          className="dropdown-divider"
+                                                          onClick={[Function]}
+                                                          tabIndex="-1"
+                                                        />
+                                                      </DropdownItem>
+                                                      <DropdownItem
                                                         className="drop-column"
                                                         onClick={[Function]}
                                                         tag="button"
@@ -11991,26 +12099,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns, reorders column
                                                           />
                                                           <span>
                                                             Drop column
-                                                          </span>
-                                                        </button>
-                                                      </DropdownItem>
-                                                      <DropdownItem
-                                                        className="extract-numbers"
-                                                        onClick={[Function]}
-                                                        tag="button"
-                                                        toggle={false}
-                                                      >
-                                                        <button
-                                                          className="extract-numbers dropdown-item"
-                                                          onClick={[Function]}
-                                                          tabIndex="0"
-                                                          type="button"
-                                                        >
-                                                          <i
-                                                            className="icon-number"
-                                                          />
-                                                          <span>
-                                                            Extract Numbers
                                                           </span>
                                                         </button>
                                                       </DropdownItem>

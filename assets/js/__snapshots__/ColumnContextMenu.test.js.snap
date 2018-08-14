@@ -103,6 +103,24 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
         </span>
       </DropdownItem>
       <DropdownItem
+        className="extract-numbers"
+        onClick={[Function]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-number"
+        />
+        <span>
+          Extract numbers
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        divider={true}
+        tag="button"
+        toggle={true}
+      />
+      <DropdownItem
         className="drop-column"
         onClick={[Function]}
         tag="button"
@@ -113,19 +131,6 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
         />
         <span>
           Drop column
-        </span>
-      </DropdownItem>
-      <DropdownItem
-        className="extract-numbers"
-        onClick={[Function]}
-        tag="button"
-        toggle={false}
-      >
-        <i
-          className="icon-number"
-        />
-        <span>
-          Extract Numbers
         </span>
       </DropdownItem>
     </DropdownMenu>
