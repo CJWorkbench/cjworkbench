@@ -1,8 +1,8 @@
-# Run the workflow, generating table output
-
+import pandas as pd
 from server.dispatch import module_dispatch_render
 from server.websockets import ws_client_rerender_workflow
 from server.modules.types import ProcessResult
+from server.models import WfModule
 
 
 # Tell client to reload (we've finished rendering)
@@ -18,39 +18,48 @@ def get_render_cache(wfm, revision) -> ProcessResult:
         return None
 
 
+def _execute_one_wfmodule(wf_module: WfModule, input_table: pd.DataFrame, *,
+                          use_cache: bool,
+                          workflow_revision: int) -> ProcessResult:
+    if use_cache:
+        cached_result = get_render_cache(wf_module, workflow_revision)
+        if cached_result:
+            return cached_result
+
+    result = module_dispatch_render(wf_module, input_table)
+    if use_cache:
+        wf_module.cache_render_result(workflow_revision, result)
+        wf_module.save()
+
+    return result
+
+
 # Return the output of a particular module. Gets from cache if possible
 def execute_wfmodule(wfmodule, nocache=False) -> ProcessResult:
+    """
+    Process all WfModules until the given one; return its result.
+
+    By default, this will both read and write each WfModule's cached render
+    result. Pass nocache=True to avoid modifying the cache.
+
+    You must call this within a workflow.cooperative_lock().
+    """
     workflow = wfmodule.workflow
     target_rev = workflow.revision()
 
-    # Do we already have what we need?
-    cache = None
+    # Do we already have what we need? If so, return quickly.
     if not nocache:
-        cache = get_render_cache(wfmodule, target_rev)
-    if cache:
-        return cache
+        cached_result = get_render_cache(wfmodule, target_rev)
+        if cached_result:
+            return cached_result
 
-    # No, let's render from the top, shortcutting with cache whenever possible
+    # Render from the top, shortcutting with cache whenever possible
     result = ProcessResult()
 
-    # Start from the top, re-rendering any modules which do not have a cache at the current revision
-    # Assumes not possible to have later revision cache after a module which has an earlier revision cache
-    # (i.e. module stack always rendered in order)
-    # If everything is rendered already, this will just return the cache
     for wfm in workflow.wf_modules.all():
-        # Get module output from cache, if available and desired
-        if nocache:
-            cache = None
-        else:
-            cache = get_render_cache(wfm, target_rev)
-
-        # if we did not find an available cache, render
-        if cache:
-            result = cache
-        else:
-            result = module_dispatch_render(wfm, result.dataframe)
-            wfm.cache_render_result(target_rev, result)
-            wfm.save()
+        result = _execute_one_wfmodule(wfm, result.dataframe,
+                                       use_cache=not nocache,
+                                       workflow_revision=target_rev)
 
         # found the module we were looking for, all done
         if wfm == wfmodule:

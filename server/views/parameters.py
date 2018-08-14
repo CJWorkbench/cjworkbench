@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from ..models import Module, Workflow, WfModule, ParameterSpec, ParameterVal, ChangeParameterCommand
 from ..serializers import ParameterValSerializer
-from ..execute import execute_wfmodule
 from ..dispatch import module_dispatch_event
 from .. import triggerrender
 from .. import oauth
