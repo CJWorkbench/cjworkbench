@@ -11,7 +11,8 @@ export const updateModuleMapping = {
   'editcells':        addEditToEditCellsModule,
   'rename-columns':   updateRenameModule,
   'reorder-columns':  updateReorderModule,
-  'sort-from-table':  updateSortModule
+  'sort-from-table':  updateSortModule,
+  'extract-numbers':  updateExtractNumbersModule
 }
 
 // Constants for sort module
@@ -23,6 +24,9 @@ export const sortDirectionDesc = 2
 // Constants for select module
 export const selectColumnDrop = 0
 export const selectColumnKeep = 1
+
+// Constant for extract numbers module
+export const extractNumberAny = 0
 
 function findModuleIdByIdName (state, moduleIdName) {
   return state.updateTableModuleIds[moduleIdName] || null
@@ -83,6 +87,31 @@ export function updateTableActionModule (wfModuleId, idName, forceNewModule, par
         const newWfm = fulfilled.value.data.wfModule
         updateModuleMapping[idName](newWfm, params)
       })
+  }
+}
+
+function updateExtractNumbersModule (wfm, params) {
+  let extractedColumns = findParamValByIdName(wfm, 'colnames')
+
+  if (extractedColumns.value) {
+    let extractedType = findParamValByIdName(wfm, 'type').value
+    let textBeforeFlag = findParamValByIdName(wfm, 'text_before').value
+    let textAfterFlag = findParamValByIdName(wfm, 'text_after').value
+    // If column already an existing module parameter, do nothing
+    if (extractedColumns.value.split(',').includes(params.columnKey)) {}
+    // If existing module not 'Any' state or 1 of text_ before or after, force new
+    else if ((extractedType !== extractNumberAny) | (textBeforeFlag | textAfterFlag)) {
+      updateTableActionModule(wfm.id, 'extract-numbers', true, params)
+    }
+    else {
+      let newColumns = extractedColumns.value + ',' + params.columnKey
+      store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', newColumns))
+    }
+  }
+  // New module with extract type 'Any'
+  else {
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', params.columnKey))
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'type', extractNumberAny))
   }
 }
 

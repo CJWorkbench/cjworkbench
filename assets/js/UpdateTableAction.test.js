@@ -24,6 +24,8 @@ describe("UpdateTableAction actions", () => {
     }
   }
 
+  const forceNewModules = ['filter']
+
   // Change the module in the initial state
   function setInitialState (module) {
     initialState.updateTableModuleIds = { module: 666 }
@@ -97,6 +99,8 @@ describe("UpdateTableAction actions", () => {
 
   for (let moduleIdName in updateModuleMapping) {
     it(`should call ${moduleIdName} per mapping`, async () => {
+      const addModuleResponse = {data: {wfModule: {id: 18}}};
+      addModuleAction.mockImplementation(() => () => addModuleResponse);
       // TODO use mockStore, not store
       store.getState.mockImplementation(() => ({
         ...initialState,
@@ -104,7 +108,12 @@ describe("UpdateTableAction actions", () => {
         modules: { 77: { id_name: moduleIdName } }
       }))
 
-      updateTableActionModule(17, moduleIdName, false, {})
+      if (forceNewModules.includes(moduleIdName)) {
+        updateTableActionModule(17, moduleIdName, true, {})
+      }
+      else {
+        updateTableActionModule(17, moduleIdName, false, {})
+      }
       await tick()
       expect(updateModuleMapping[moduleIdName]).toHaveBeenCalled
     })

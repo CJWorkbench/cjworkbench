@@ -74,6 +74,10 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-removec"></i>
               <span>Drop column</span>
             </DropdownItem>
+            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'extract-numbers')} className='extract-numbers' toggle={false}>
+              <i className="icon-number"></i>
+              <span>Extract Numbers</span>
+            </DropdownItem>
           </DropdownMenu>
         </Portal>
       </UncontrolledDropdown>

@@ -31,7 +31,8 @@ def load_update_table_module_ids():
         'reorder-columns',
         'sort-from-table',
         'duplicate-column',
-        'selectcolumns'
+        'selectcolumns',
+        'extract-numbers'
     ])
     return dict([(m.id_name, m.id) for m in modules])
 
