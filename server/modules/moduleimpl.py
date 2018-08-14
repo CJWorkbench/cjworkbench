@@ -36,7 +36,7 @@ class ModuleImpl:
             with wf_module.workflow.cooperative_lock():
                 wf_module.last_update_check = timezone.now()
                 wf_module.fetch_error = result.error
-                wf_module.status = WfModule.ERROR
+                wf_module.is_busy = False
                 wf_module.save()
             websockets.ws_client_rerender_workflow(wf_module.workflow)
         else:

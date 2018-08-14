@@ -122,20 +122,14 @@ class WfModule(models.Model):
     cached_render_result_error = models.TextField(blank=True)
     cached_render_result_json = models.BinaryField(blank=True)
 
-    # status light and current error message
     READY = "ready"
     BUSY = "busy"
     ERROR = "error"
-    TYPE_CHOICES = (
-        (READY, 'Ready'),
-        (BUSY, 'Busy'),
-        (ERROR, 'Error')
-    )
-    status = models.CharField(
-        max_length=8,
-        choices=TYPE_CHOICES,
-        default=READY,
-    )
+
+    # TODO once we auto-compute stale module outputs, nix is_busy -- it will
+    # be implied by the fact that the cached output revision is wrong.
+    is_busy = models.BooleanField(default=False, null=False)
+
     # There's fetch_error and there's cached_render_result_error.
     fetch_error = models.CharField('fetch_error', max_length=200, blank=True)
 
@@ -154,6 +148,22 @@ class WfModule(models.Model):
             return self.module_version.module.name
         else:
             return 'Missing module'  # deleted from server
+
+    @property
+    def status(self):
+        """
+        Return READY, BUSY or ERROR.
+
+        BUSY: is_busy is True
+        ERROR: fetch_error or cached_render_result_error is set
+        READY: anything else
+        """
+        if self.is_busy:
+            return WfModule.BUSY
+        elif self.fetch_error or self.cached_render_result_error:
+            return WfModule.ERROR
+        else:
+            return WfModule.READY
 
     @property
     def error_msg(self):
@@ -307,8 +317,7 @@ class WfModule(models.Model):
     # busy just changes the light on a single module, no need to reload entire
     # workflow
     def set_busy(self, notify=True):
-        self.status = self.BUSY
-        self.fetch_error = ''
+        self.is_busy = True
         self.save()
         if notify:
             websockets.ws_client_wf_module_status(self, self.status)
@@ -316,13 +325,14 @@ class WfModule(models.Model):
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available
     def set_ready(self, notify=True):
-        self.status = self.READY
+        self.is_busy = False
         self.fetch_error = ''
         self.save()
         if notify:
             websockets.ws_client_rerender_workflow(self.workflow)
 
     def set_fetch_error(self, message):
+        self.is_busy = False
         self.fetch_error = message
         self.status = self.ERROR
         self.save()

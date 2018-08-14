@@ -59,10 +59,11 @@ def save_result_if_changed(wfm: WfModule,
 
     "Change" here means either a changed table or changed error message.
 
-    The WfModule's `status` and `error_msg` will be set, according to
-    `error_message`.
+    Set `fetch_error` to `new_result.error`.
 
-    Set wfm.last_update_check, regardless.
+    Set sfm.is_busy to False.
+
+    Set wfm.last_update_check.
 
     Create (and run) a ChangeDataVersionCommand.
 
@@ -94,8 +95,8 @@ def save_result_if_changed(wfm: WfModule,
         else:
             output_deltas = []
 
+        wfm.is_busy = False
         wfm.fetch_error = new_result.error
-        wfm.status = (WfModule.ERROR if new_result.error else WfModule.READY)
         wfm.save()
 
         # Mark has_unseen_notifications via direct SQL
