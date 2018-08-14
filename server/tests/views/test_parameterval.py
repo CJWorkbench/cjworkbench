@@ -58,7 +58,7 @@ class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
         self.assertEqual(len(parameter_vals), 6)
         valIDs = [self.stringID, self.stringemptyID, self.integerID,
                   self.floatID, self.checkboxID, self.menuID]
-        self.assertEqual(list([p['id'] for p in parameter_vals]), valIDs)
+        self.assertEqual(set([p['id'] for p in parameter_vals]), set(valIDs))
 
         # parameters have correct types and values
         str_val = [p for p in parameter_vals if p['id'] == self.stringID][0]
