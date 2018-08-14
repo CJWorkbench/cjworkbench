@@ -442,6 +442,7 @@ export default class WfParameter extends React.Component {
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}
                 onReset={this.onReset}
+                placeholder={this.props.p.parameter_spec.placeholder || ''}
                 name={id_name}
                 initialValue={this.props.p.value}
                 value={this.props.value}
