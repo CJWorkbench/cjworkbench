@@ -271,7 +271,6 @@
           opacity: 0;
           width:3.5rem;
           background-color: $heading-bg;
-          z-index: 1;
           cursor: pointer;
 
           button {
@@ -299,7 +298,10 @@
           height: 4.8rem;
           flex: 1 1 auto;
           border: 0;
-          z-index: 2;
+
+          & + .dropdown {
+              display: none;
+            }
         }
       }
     }
