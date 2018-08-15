@@ -354,7 +354,7 @@
 
             }
 
-            .react-grid-Cell{
+            .react-grid-Cell {
               padding-right:0rem;
               padding-left:0rem;
               border-right: 1px solid $table-border;
@@ -395,6 +395,8 @@
             }
 
 
+            // Row styling
+
             .react-grid-Row--odd .react-grid-Cell{
               background-color: #ECF4F8;
             }
@@ -402,6 +404,18 @@
             .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
               background-color: #DBEBF3;
             }
+
+            // Cells in last row have a bottom border to form the table's bottom border
+            .react-grid-Row:last-of-type .react-grid-Cell {
+              border-bottom: 1px solid $table-border;
+            }
+
+            // Last cells in any row have a right border to form the table's right border
+            .react-grid-Row .react-grid-Cell:nth-last-child(2) {
+              border-right: 1px solid $table-border;
+            }
+
+
 
             /* This div may be superfluous wrt .outputpane */
 
