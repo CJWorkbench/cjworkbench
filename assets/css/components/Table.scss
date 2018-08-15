@@ -285,14 +285,14 @@
 
                 .dropdown {
                   position: relative;
-                  display: flex;
+                  display: none;
                   justify-content: center;
                   margin-top: -.8rem;
                   top:0;
                   bottom:0;
                   right:0;
-                  opacity: 0;
-                  width:3.5rem;
+                  opacity: 1;
+                  width:5rem;
                   background-color: $heading-bg;
                   cursor: pointer;
 
@@ -330,7 +330,7 @@
             }
 
             .react-grid-HeaderCell:hover .dropdown {
-              opacity: 1;
+              display: flex;
             }
 
 
