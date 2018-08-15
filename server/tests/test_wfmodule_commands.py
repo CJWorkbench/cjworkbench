@@ -1,14 +1,17 @@
-from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersionCommand
-from server.models import ChangeWfModuleNotesCommand,ChangeWfModuleUpdateSettingsCommand
+from server.models import AddModuleCommand, DeleteModuleCommand, \
+        ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
+        ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule
 from django.test import TestCase
-from server.tests.utils import *
+from server.tests.utils import create_testdata_workflow, mock_csv_table, \
+        mock_csv_table2
 from django.utils import timezone
 
 
 class AddDeleteModuleCommandTests(TestCase):
     def setUp(self):
         self.workflow = create_testdata_workflow()
-        self.module_version = ModuleVersion.objects.first()   # defined by create_testdata_workflow
+        # defined by create_testdata_workflow
+        self.module_version = ModuleVersion.objects.first()
 
     # Add another module, then undo, redo
     def test_add_module(self):
@@ -19,8 +22,11 @@ class AddDeleteModuleCommandTests(TestCase):
 
         start_rev = self.workflow.revision()
 
-        # Add a module, insert before the existing one, check to make sure it went there and old one is after
-        cmd = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=0)
+        # Add a module, insert before the existing one, check to make sure it
+        # went there and old one is after
+        cmd = AddModuleCommand.create(self.workflow,
+                                      module_version=self.module_version,
+                                      insert_before=0)
         self.assertEqual(all_modules.count(), 2)
         added_module = WfModule.objects.get(workflow=self.workflow, order=0)
         self.assertNotEqual(added_module, existing_module)
@@ -40,7 +46,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo! undo! ahhhhh everything is on fire! undo!
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
+        self.assertEqual(self.workflow.wf_modules.first(), existing_module)
 
         # wait no, we wanted that module
         cmd.forward()
@@ -50,16 +56,17 @@ class AddDeleteModuleCommandTests(TestCase):
         bumped_module = WfModule.objects.get(workflow=self.workflow, order=1)
         self.assertEqual(bumped_module, existing_module)
 
-        # Undo and test deleting the un-applied command. Should delete dangling WfModule too
+        # Undo and test deleting the un-applied command. Should delete dangling
+        # WfModule too
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
+        self.assertEqual(self.workflow.wf_modules.first(), existing_module)
         cmd.delete()
-        self.assertFalse(WfModule.objects.filter(pk=added_module.id).exists()) # should be gone
+        with self.assertRaises(WfModule.DoesNotExist):
+            WfModule.objects.get(pk=added_module.id)  # should be gone
 
-
-    # Try inserting at various positions to make sure the renumbering works right
-    # Then undo multiple times
+    # Try inserting at various positions to make sure the renumbering works
+    # right Then undo multiple times
     def test_add_many_modules(self):
         # beginning state: one WfModule
         all_modules = WfModule.objects.filter(workflow=self.workflow)
@@ -68,18 +75,24 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertEqual(existing_module.order, 0)
 
         # Insert at beginning
-        cmd1 = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=0)
+        cmd1 = AddModuleCommand.create(self.workflow,
+                                       module_version=self.module_version,
+                                       insert_before=0)
         self.assertEqual(all_modules.count(), 2)
         self.assertEqual(cmd1.wf_module.order, 0)
         self.assertNotEqual(cmd1.wf_module, existing_module)
 
         # Insert at end
-        cmd2 = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=2)
+        cmd2 = AddModuleCommand.create(self.workflow,
+                                       module_version=self.module_version,
+                                       insert_before=2)
         self.assertEqual(all_modules.count(), 3)
         self.assertEqual(cmd2.wf_module.order, 2)
 
         # Insert in between two modules
-        cmd3 = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=2)
+        cmd3 = AddModuleCommand.create(self.workflow,
+                                       module_version=self.module_version,
+                                       insert_before=2)
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
 
@@ -101,7 +114,6 @@ class AddDeleteModuleCommandTests(TestCase):
         cmd2.backward()
         cmd1.backward()
         self.assertEqual(all_modules.count(), 1)
-
 
     # Delete module, then undo, redo
     def test_delete_module(self):
@@ -129,7 +141,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
+        self.assertEqual(self.workflow.wf_modules.first(), existing_module)
 
         # nevermind, redo
         cmd.forward()
@@ -137,10 +149,11 @@ class AddDeleteModuleCommandTests(TestCase):
 
         # Deleting the appplied command should delete dangling WfModule too
         cmd.delete()
-        self.assertFalse(WfModule.objects.filter(pk=existing_module.id).exists())  # should be gone
+        with self.assertRaises(WfModule.DoesNotExist):
+            WfModule.objects.get(pk=existing_module.id)  # should be gone
 
-
-    # ensure that deleting the selected module sets the selected module to null, and is undoable
+    # ensure that deleting the selected module sets the selected module to
+    # null, and is undoable
     def test_delete_selected(self):
         # beginning state: one WfModule
         all_modules = WfModule.objects.filter(workflow=self.workflow)
@@ -159,15 +172,17 @@ class AddDeleteModuleCommandTests(TestCase):
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.selected_wf_module, 0)
 
-
-    # ensure that adding a module, selecting it, then undo add, prevents dangling selected_wf_module
-    # (basically the AddModule equivalent of test_delete_selected)
+    # ensure that adding a module, selecting it, then undo add, prevents
+    # dangling selected_wf_module (basically the AddModule equivalent of
+    # test_delete_selected)
     def test_add_undo_selected(self):
         # beginning state: one WfModule
         all_modules = WfModule.objects.filter(workflow=self.workflow)
         self.assertEqual(all_modules.count(), 1)
 
-        cmd = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=1)
+        cmd = AddModuleCommand.create(self.workflow,
+                                      module_version=self.module_version,
+                                      insert_before=1)
 
         self.workflow.selected_wf_module = cmd.wf_module.order
         self.workflow.save()
@@ -177,13 +192,15 @@ class AddDeleteModuleCommandTests(TestCase):
         self.workflow.refresh_from_db()
         self.assertIsNone(self.workflow.selected_wf_module)
 
-
-    # We had a bug where add then delete caused an error when deleting workflow,
-    # since both commands tried to delete the WfModule
+    # We had a bug where add then delete caused an error when deleting
+    # workflow, since both commands tried to delete the WfModule
     def test_add_delete(self):
-        cmda = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=0)
-        cmdd = DeleteModuleCommand.create(cmda.wf_module)
+        cmda = AddModuleCommand.create(self.workflow,
+                                       module_version=self.module_version,
+                                       insert_before=0)
+        DeleteModuleCommand.create(cmda.wf_module)
         self.workflow.delete()
+        self.assertTrue(True)  # we didn't crash! Yay, we pass
 
 
 class ChangeDataVersionCommandTests(TestCase):
@@ -255,7 +272,8 @@ class ChangeWfModuleUpdateSettingsCommandTests(TestCase):
 
         # do
         mydate = timezone.now()
-        cmd = ChangeWfModuleUpdateSettingsCommand.create(self.wfm, True, mydate, 1000)
+        cmd = ChangeWfModuleUpdateSettingsCommand.create(self.wfm, True,
+                                                         mydate, 1000)
         self.assertTrue(self.wfm.auto_update_data)
         self.assertEqual(self.wfm.next_update, mydate)
         self.assertEqual(self.wfm.update_interval, 1000)
