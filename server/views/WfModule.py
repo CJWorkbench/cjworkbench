@@ -31,6 +31,7 @@ _MaxNRowsPerRequest = 300
 def _client_attributes_that_change_on_render(wf_module):
     return {
         'error_msg': wf_module.error_msg,
+        'status': wf_module.status,
         # TODO add columns here
     }
 
