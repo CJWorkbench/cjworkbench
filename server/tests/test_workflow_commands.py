@@ -1,24 +1,37 @@
-from server.models import WfModule,ModuleVersion,ReorderModulesCommand,ChangeWorkflowTitleCommand
+from server.models import WfModule, ModuleVersion, ReorderModulesCommand, \
+        ChangeWorkflowTitleCommand
 from django.test import TestCase
-from server.tests.utils import *
+from server.tests.utils import DbTestCase, create_testdata_workflow, \
+        add_new_wf_module
 
-class ReorderModulesCommandTests(TestCase):
+
+class ReorderModulesCommandTests(DbTestCase):
     def setUp(self):
         # Create a workflow with two modules
         self.workflow = create_testdata_workflow()
-        self.module_version = ModuleVersion.objects.first()   # defined by create_testdata_workflow
+        # defined by create_testdata_workflow
+        self.module_version = ModuleVersion.objects.first()
         self.module1 = WfModule.objects.first()
-        self.module2 = add_new_wf_module(self.workflow, self.module_version, order=1)
+        self.module2 = add_new_wf_module(self.workflow, self.module_version,
+                                         order=1)
+
+    def assertWfModuleVersions(self, expected_versions):
+        result = list(
+            self.workflow.wf_modules.values_list('last_relevant_delta_id',
+                                                 flat=True)
+        )
+        self.assertEqual(result, expected_versions)
 
     # Switch module orders, then undo, redo
     def test_reorder_modules(self):
-        start_rev = self.workflow.revision()
+        v0 = self.workflow.revision()
 
-        # Switch module orders. Note that objects in this array are not in order; we're testing that
+        # Switch module orders. Note that objects in this array are not in
+        # order; we're testing that
         new_order = [
-                      { 'id': self.module1.id, 'order': 1 },
-                      { 'id': self.module2.id, 'order': 0 }
-                    ]
+            {'id': self.module1.id, 'order': 1},
+            {'id': self.module2.id, 'order': 0},
+        ]
         cmd = ReorderModulesCommand.create(self.workflow, new_order)
         self.assertEqual(WfModule.objects.count(), 2)
         self.module1.refresh_from_db()
@@ -28,7 +41,9 @@ class ReorderModulesCommandTests(TestCase):
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.revision(), start_rev)
+        v1 = self.workflow.revision()
+        self.assertGreater(v1, v0)
+        self.assertWfModuleVersions([v1, v1])
 
         # undo
         cmd.backward()
@@ -37,6 +52,7 @@ class ReorderModulesCommandTests(TestCase):
         self.module2.refresh_from_db()
         self.assertEqual(self.module1.order, 0)
         self.assertEqual(self.module2.order, 1)
+        self.assertWfModuleVersions([v0, v0])
 
         # redo
         cmd.forward()
@@ -45,6 +61,7 @@ class ReorderModulesCommandTests(TestCase):
         self.module2.refresh_from_db()
         self.assertEqual(self.module2.order, 0)
         self.assertEqual(self.module1.order, 1)
+        self.assertWfModuleVersions([v1, v1])
 
 
     # Check error checking

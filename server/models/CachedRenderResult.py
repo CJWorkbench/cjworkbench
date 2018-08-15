@@ -23,10 +23,10 @@ class CachedRenderResult:
     """
 
     def __init__(self, workflow_id: int, wf_module_id: int,
-                 workflow_revision: int, result: ProcessResult):
+                 delta_id: int, result: ProcessResult):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
-        self.workflow_revision = workflow_revision
+        self.delta_id = delta_id
         self.result = result
 
     @property
@@ -36,10 +36,10 @@ class CachedRenderResult:
     @staticmethod
     def from_wf_module(wf_module: 'WfModule') -> 'CachedRenderResult':
         """Reads the CachedRenderResult or None from a WfModule (and disk)."""
-        if wf_module.cached_render_result_workflow_revision is None:
+        if wf_module.cached_render_result_delta_id is None:
             return None
 
-        workflow_revision = wf_module.cached_render_result_workflow_revision
+        delta_id = wf_module.cached_render_result_delta_id
         workflow_id = wf_module.workflow_id
         wf_module_id = wf_module.id
 
@@ -65,7 +65,7 @@ class CachedRenderResult:
                                json=json_dict)
         return CachedRenderResult(workflow_id=workflow_id,
                                   wf_module_id=wf_module_id,
-                                  workflow_revision=workflow_revision,
+                                  delta_id=delta_id,
                                   result=result)
 
     @staticmethod
@@ -73,7 +73,7 @@ class CachedRenderResult:
         workflow_id = wf_module.cached_render_result_workflow_id
 
         wf_module.cached_render_result_workflow_id = None
-        wf_module.cached_render_result_workflow_revision = None
+        wf_module.cached_render_result_delta_id = None
         wf_module.cached_render_result_json = b'null'
         wf_module.cached_render_result_error = ''
 
@@ -88,7 +88,7 @@ class CachedRenderResult:
 
     @staticmethod
     def assign_wf_module(wf_module: 'WfModule',
-                         workflow_revision: Optional[int],
+                         delta_id: Optional[int],
                          result: Optional[ProcessResult]
                          ) -> Optional['CachedRenderResult']:
         """
@@ -96,7 +96,7 @@ class CachedRenderResult:
 
         If either argument is None, clear the fields.
         """
-        if workflow_revision is None or result is None:
+        if delta_id is None or result is None:
             return CachedRenderResult._clear_wf_module(wf_module)
 
         if wf_module.workflow_id is None:
@@ -104,15 +104,14 @@ class CachedRenderResult:
 
         ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
                                  wf_module_id=wf_module.id,
-                                 workflow_revision=workflow_revision,
+                                 delta_id=delta_id,
                                  result=result)
 
         error = result.error
         json_bytes = json.dumps(result.json).encode('utf-8')
-        revision = workflow_revision
 
         wf_module.cached_render_result_workflow_id = wf_module.workflow_id
-        wf_module.cached_render_result_workflow_revision = revision
+        wf_module.cached_render_result_delta_id = delta_id
         wf_module.cached_render_result_error = error
         wf_module.cached_render_result_json = json_bytes
 

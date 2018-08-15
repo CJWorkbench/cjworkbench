@@ -4,7 +4,6 @@ from server.models.Commands import ChangeParameterCommand
 from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 import pandas as pd
-import io
 from unittest import mock
 
 
@@ -14,7 +13,7 @@ table_dataframe = pd.DataFrame({'A': [1, 3], 'B': [2, 4]})
 
 def cached_render_result_revision_list(workflow):
     return list(workflow.wf_modules.values_list(
-        'cached_render_result_workflow_revision',
+        'cached_render_result_delta_id',
         flat=True
     ))
 
@@ -24,9 +23,7 @@ class ExecuteTests(DbTestCase):
         # Don't crash on a new workflow (rev=0, no caches)
         workflow = create_testdata_workflow(table_csv)
         wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
-        self.assertEqual(workflow.revision(), 0)
         result = execute_wfmodule(wf_module2)
-        self.assertEqual(workflow.revision(), 0)
         self.assertEqual(result, ProcessResult(table_dataframe))
         self.assertEqual(cached_render_result_revision_list(workflow), [0, 0])
 
@@ -38,18 +35,18 @@ class ExecuteTests(DbTestCase):
         pval = get_param_by_id_name('colnames', wf_module=wf_module2)
         ChangeParameterCommand.create(pval, 'A')
 
-        workflow.refresh_from_db()
-        revision = workflow.last_delta_id
-        self.assertEqual(workflow.revision(), revision)
         self.assertEqual(cached_render_result_revision_list(workflow),
                          [None, None])
-        wf_module2.refresh_from_db()
+
+        wf_module1 = workflow.wf_modules.first()
+        wf_module1.last_relevant_delta_id = 1
+        wf_module1.save()
+        wf_module2.last_relevant_delta_id = 2
+        wf_module2.save()
+
         result = execute_wfmodule(wf_module2)
         self.assertEqual(result, ProcessResult(table_dataframe[['A']]))
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.revision(), revision)
-        self.assertEqual(cached_render_result_revision_list(workflow),
-                         [revision, revision])
+        self.assertEqual(cached_render_result_revision_list(workflow), [1, 2])
 
     def test_execute_cache_hit(self):
         workflow = create_testdata_workflow(table_csv)
@@ -60,4 +57,24 @@ class ExecuteTests(DbTestCase):
         with mock.patch('server.dispatch.module_dispatch_render') as mdr:
             result = execute_wfmodule(wf_module2)
             self.assertFalse(mdr.called)
+            self.assertEqual(result, expected)
+
+    def test_resume_without_rerunning_unneeded_renders(self):
+        workflow = create_testdata_workflow(table_csv)
+        wf_module1 = workflow.wf_modules.first()
+        wf_module2 = load_and_add_module('selectcolumns', workflow=workflow,
+                                         last_relevant_delta_id=1)
+        wf_module1.last_relevant_delta_id = 1
+        wf_module1.save()
+
+        expected = execute_wfmodule(wf_module2)
+
+        wf_module2.refresh_from_db()
+        wf_module2.last_relevant_delta_id = 2
+        wf_module2.save()
+
+        with mock.patch('server.dispatch.module_dispatch_render') as mdr:
+            mdr.return_value = expected
+            result = execute_wfmodule(wf_module2)
+            mdr.assert_called_once()
             self.assertEqual(result, expected)

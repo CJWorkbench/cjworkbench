@@ -98,6 +98,7 @@ def add_new_parameter_spec(module_version, type, id_name='', order=0, def_value=
         order=order,
         def_value=def_value)
 
+
 def add_new_workflow(name, **kwargs):
     # Workflows have to have an owner, which means we need at least one user
     if 'owner' not in kwargs:
@@ -107,8 +108,15 @@ def add_new_workflow(name, **kwargs):
             kwargs['owner'] = User.objects.first()
     return Workflow.objects.create(name=name, **kwargs)
 
-def add_new_wf_module(workflow, module_version, order=0):
-    wfm = WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)
+
+def add_new_wf_module(workflow, module_version,
+                      order=0, last_relevant_delta_id=0):
+    wfm = WfModule.objects.create(
+        workflow=workflow,
+        module_version=module_version,
+        order=order,
+        last_relevant_delta_id=last_relevant_delta_id
+    )
     wfm.create_default_parameters()
     return wfm
 
@@ -169,17 +177,24 @@ def load_module_version(filename):
 
 # Given a module spec, add it to end of workflow. Create new workflow if null
 # Returns WfModule
-def load_and_add_module_from_dict(module_dict, workflow=None):
+def load_and_add_module_from_dict(module_dict, workflow=None,
+                                  last_relevant_delta_id=0):
     if not workflow:
         workflow = add_new_workflow('Workflow 1')
 
     module_version = load_module_from_dict(module_dict)
     num_modules = WfModule.objects.filter(workflow=workflow).count()
-    wf_module = add_new_wf_module(workflow, module_version, order=num_modules)
+    wf_module = add_new_wf_module(workflow, module_version,
+                                  last_relevant_delta_id=last_relevant_delta_id,
+                                  order=num_modules)
 
     return wf_module
 
 # Given a module spec, add it to end of workflow. Create new workflow if null.
 # Returns WfModule
-def load_and_add_module(filename, workflow=None):
-    return load_and_add_module_from_dict(load_module_dict(filename), workflow=workflow)
+def load_and_add_module(filename, workflow=None, last_relevant_delta_id=0):
+    return load_and_add_module_from_dict(
+        load_module_dict(filename),
+        workflow=workflow,
+        last_relevant_delta_id=last_relevant_delta_id
+    )

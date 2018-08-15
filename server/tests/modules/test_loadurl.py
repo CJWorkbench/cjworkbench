@@ -9,7 +9,7 @@ from django.test import override_settings
 import requests
 import pandas as pd
 from server.execute import execute_wfmodule
-from server.models import WfModule, ParameterVal
+from server.models import ParameterVal
 from server.modules.types import ProcessResult
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         mock_xlsx_path
@@ -62,7 +62,7 @@ def mock_404_response(text):
 @override_settings(MEDIA_ROOT=tempfile.gettempdir())
 class LoadFromURLTests(LoggedInTestCase):
     def setUp(self):
-        super(LoadFromURLTests, self).setUp()  # log in
+        super().setUp()  # log in
         self.wfmodule = load_and_add_module('loadurl')
 
         # save references to our parameter values so we can tweak them later
@@ -74,6 +74,7 @@ class LoadFromURLTests(LoggedInTestCase):
     # send fetch event to button to load data
     def press_fetch_button(self):
         self.client.post('/api/parameters/%d/event' % self.fetch_pval.id)
+        self.wfmodule.refresh_from_db()  # last_relevant_delta_id changed
 
     def test_load_csv(self):
         url = 'http://test.com/the.csv'
@@ -136,7 +137,11 @@ class LoadFromURLTests(LoggedInTestCase):
             get.return_value = mock_text_response('a,b\n"1', 'text/csv')
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
-            self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+            self.assertEqual(
+                self.wfmodule.fetch_error,
+                'Error tokenizing data. C error: EOF inside string '
+                'starting at line 1'
+            )
 
     def test_load_csv_bad_content_type(self):
         # return text/plain type and rely on filename detection, as
@@ -165,7 +170,6 @@ class LoadFromURLTests(LoggedInTestCase):
         expected = ProcessResult(sfpd_table)
         expected.sanitize_in_place()
 
-        # success case
         with patch('requests.get') as get:
             get.return_value = mock_text_response(sfpd_json,
                                                   'application/json')
@@ -173,13 +177,19 @@ class LoadFromURLTests(LoggedInTestCase):
             result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, expected)
 
+    def test_load_json_bad_content(self):
+        url = 'http://test.com/the.json'
+        self.url_pval.set_value(url)
+        self.url_pval.save()
+
         # malformed json should put module in error state
         with patch('requests.get') as get:
             get.return_value = mock_text_response('not json',
                                                   'application/json')
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
-            self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+            self.assertEqual(self.wfmodule.fetch_error,
+                             'Expecting value: line 1 column 1 (char 0)')
 
     def test_load_xlsx(self):
         url = 'http://test.com/the.xlsx'
@@ -189,19 +199,27 @@ class LoadFromURLTests(LoggedInTestCase):
         xlsx_bytes = open(mock_xlsx_path, "rb").read()
         xlsx_table = pd.read_excel(mock_xlsx_path)
 
-        # success case
         with patch('requests.get') as get:
             get.return_value = mock_bytes_response(xlsx_bytes, XLSX_MIME_TYPE)
             self.press_fetch_button()
             result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, ProcessResult(xlsx_table))
 
+    def test_load_xlsx_bad_content(self):
+        url = 'http://test.com/the.xlsx'
+        self.url_pval.set_value(url)
+        self.url_pval.save()
+
         # malformed file  should put module in error state
         with patch('requests.get') as get:
             get.return_value = mock_bytes_response(b'hi', XLSX_MIME_TYPE)
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
-            self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+            self.assertEqual(
+                self.wfmodule.fetch_error,
+                "Error reading Excel file: Unsupported format, or corrupt "
+                "file: Expected BOF record; found b'hi'"
+            )
 
     def test_load_404(self):
         url = 'http://test.com/the.csv'
@@ -213,7 +231,8 @@ class LoadFromURLTests(LoggedInTestCase):
             get.return_value = mock_404_response('Foobar')
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
-            self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+            self.assertEqual(self.wfmodule.fetch_error,
+                             'Error 404 fetching url')
 
     def test_bad_url(self):
         url = 'not a url'
@@ -222,5 +241,4 @@ class LoadFromURLTests(LoggedInTestCase):
 
         self.press_fetch_button()
         self.wfmodule.refresh_from_db()
-        self.assertEqual(self.wfmodule.status, WfModule.ERROR)
-        self.assertEqual(self.wfmodule.error_msg, 'Invalid URL')
+        self.assertEqual(self.wfmodule.fetch_error, 'Invalid URL')

@@ -188,6 +188,7 @@ class URLScraperTests(LoggedInTestCase):
     def press_fetch_button(self):
         version_id = get_param_by_id_name('version_select').id
         self.client.post(f'/api/parameters/{version_id}/event')
+        self.wfmodule.refresh_from_db()  # new last_relevant_workflow_id
 
     def test_initial_nop(self):
         result = execute_wfmodule(self.wfmodule)

@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import List, Optional
 from django.db import models
 from server import websockets
 from server.modules.types import ProcessResult
@@ -117,8 +117,7 @@ class WfModule(models.Model):
     # also store the ID, so we can reference it while deleting.
     cached_render_result_workflow_id = models.IntegerField(null=True,
                                                            blank=True)
-    cached_render_result_workflow_revision = models.IntegerField(null=True,
-                                                                 blank=True)
+    cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
     cached_render_result_error = models.TextField(blank=True)
     cached_render_result_json = models.BinaryField(blank=True)
 
@@ -133,6 +132,11 @@ class WfModule(models.Model):
     # There's fetch_error and there's cached_render_result_error.
     fetch_error = models.CharField('fetch_error', max_length=200, blank=True)
 
+    # Most-recent delta that may possibly affect the output of this module.
+    # This isn't a ForeignKey because many deltas have a foreign key pointing
+    # to the WfModule, so we'd be left with a chicken-and-egg problem.
+    last_relevant_delta_id = models.IntegerField(default=0, null=False)
+
     # ---- Utilities ----
 
     # navigate through a stack
@@ -142,6 +146,10 @@ class WfModule(models.Model):
         else:
             return WfModule.objects.get(workflow=self.workflow,
                                         order=self.order-1)
+
+    def dependent_wf_modules(self) -> List['WfModule']:
+        """QuerySet of all WfModules that come after this one, in order."""
+        return self.workflow.wf_modules.filter(order__gt=self.order)
 
     def get_module_name(self):
         if self.module_version is not None:
@@ -347,7 +355,7 @@ class WfModule(models.Model):
             update_interval=self.update_interval,
             last_update_check=self.last_update_check,
             cached_render_result_workflow_id=None,
-            cached_render_result_workflow_revision=None,
+            cached_render_result_delta_id=None,
             cached_render_result_error='',
             cached_render_result_json=b'null'
         )
@@ -371,11 +379,10 @@ class WfModule(models.Model):
         """Load this WfModule's CachedRenderResult from disk."""
         return CachedRenderResult.from_wf_module(self)
 
-    def cache_render_result(self, workflow_revision_id: Optional[int],
+    def cache_render_result(self, delta_id: Optional[int],
                             result: ProcessResult) -> CachedRenderResult:
         """Save the given ProcessResult (or None) for later viewing."""
-        return CachedRenderResult.assign_wf_module(self, workflow_revision_id,
-                                                   result)
+        return CachedRenderResult.assign_wf_module(self, delta_id, result)
 
     def delete(self, *args, **kwargs):
         self.cache_render_result(None, None)

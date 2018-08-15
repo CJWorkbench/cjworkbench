@@ -21,7 +21,7 @@ class CachedRenderResultTests(DbTestCase):
         cached = self.wf_module.get_cached_render_result()
         self.assertEqual(cached.workflow_id, self.workflow.id)
         self.assertEqual(cached.wf_module_id, self.wf_module.id)
-        self.assertEqual(cached.workflow_revision, 2)
+        self.assertEqual(cached.delta_id, 2)
         self.assertEqual(cached.result, result)
 
         self.assertTrue(os.path.isfile(cached.parquet_path))
@@ -31,7 +31,7 @@ class CachedRenderResultTests(DbTestCase):
         from_db = db_wf_module.get_cached_render_result()
         self.assertEqual(from_db.workflow_id, self.workflow.id)
         self.assertEqual(from_db.wf_module_id, self.wf_module.id)
-        self.assertEqual(cached.workflow_revision, 2)
+        self.assertEqual(cached.delta_id, 2)
         self.assertEqual(from_db.result, result)
 
     def test_set_to_empty(self):

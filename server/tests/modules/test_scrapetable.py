@@ -32,6 +32,7 @@ class ScrapeTableTest(LoggedInTestCase):
     # send fetch event to button to load data
     def press_fetch_button(self):
         self.client.post('/api/parameters/%d/event' % self.fetch_pval.id)
+        self.wfmodule.refresh_from_db()  # new last_relevant_workflow_id
 
     def test_scrape_table(self):
         url = 'http://test.com/tablepage.html'

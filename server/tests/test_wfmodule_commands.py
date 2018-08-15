@@ -1,15 +1,27 @@
 from server.models import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
         ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule
-from django.test import TestCase
-from server.tests.utils import create_testdata_workflow, mock_csv_table, \
-        mock_csv_table2
+from server.tests.utils import DbTestCase, create_testdata_workflow, \
+        mock_csv_table, mock_csv_table2
 from django.utils import timezone
 
 
-class AddDeleteModuleCommandTests(TestCase):
+class CommandTestCase(DbTestCase):
     def setUp(self):
+        super().setUp()
         self.workflow = create_testdata_workflow()
+
+    def assertWfModuleVersions(self, expected_versions):
+        result = list(
+            self.workflow.wf_modules.values_list('last_relevant_delta_id',
+                                                 flat=True)
+        )
+        self.assertEqual(result, expected_versions)
+
+
+class AddDeleteModuleCommandTests(CommandTestCase):
+    def setUp(self):
+        super().setUp()
         # defined by create_testdata_workflow
         self.module_version = ModuleVersion.objects.first()
 
@@ -20,7 +32,8 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertEqual(all_modules.count(), 1)
         existing_module = WfModule.objects.first()
 
-        start_rev = self.workflow.revision()
+        self.workflow.refresh_from_db()
+        v1 = self.workflow.revision()
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
@@ -35,7 +48,7 @@ class AddDeleteModuleCommandTests(TestCase):
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.revision(), start_rev)
+        self.assertGreater(self.workflow.revision(), v1)
 
         # Check the delta chain (short, but should be sweet)
         self.workflow.refresh_from_db()
@@ -68,11 +81,15 @@ class AddDeleteModuleCommandTests(TestCase):
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
     def test_add_many_modules(self):
+        self.workflow.refresh_from_db()
+        v1 = self.workflow.revision()
+
         # beginning state: one WfModule
-        all_modules = WfModule.objects.filter(workflow=self.workflow)
+        all_modules = self.workflow.wf_modules
         self.assertEqual(all_modules.count(), 1)
         existing_module = WfModule.objects.first()
         self.assertEqual(existing_module.order, 0)
+        self.assertWfModuleVersions([v1])
 
         # Insert at beginning
         cmd1 = AddModuleCommand.create(self.workflow,
@@ -81,6 +98,8 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertEqual(all_modules.count(), 2)
         self.assertEqual(cmd1.wf_module.order, 0)
         self.assertNotEqual(cmd1.wf_module, existing_module)
+        v2 = self.workflow.revision()
+        self.assertWfModuleVersions([v2, v2])
 
         # Insert at end
         cmd2 = AddModuleCommand.create(self.workflow,
@@ -88,6 +107,8 @@ class AddDeleteModuleCommandTests(TestCase):
                                        insert_before=2)
         self.assertEqual(all_modules.count(), 3)
         self.assertEqual(cmd2.wf_module.order, 2)
+        v3 = self.workflow.revision()
+        self.assertWfModuleVersions([v2, v2, v3])
 
         # Insert in between two modules
         cmd3 = AddModuleCommand.create(self.workflow,
@@ -95,6 +116,8 @@ class AddDeleteModuleCommandTests(TestCase):
                                        insert_before=2)
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
+        v4 = self.workflow.revision()
+        self.assertWfModuleVersions([v2, v2, v4, v4])
 
         # Check the delta chain, should be 1 <-> 2 <-> 3
         self.workflow.refresh_from_db()
@@ -111,26 +134,33 @@ class AddDeleteModuleCommandTests(TestCase):
 
         # We should be able to go all the way back
         cmd3.backward()
+        self.assertWfModuleVersions([v2, v2, v3])
         cmd2.backward()
+        self.assertWfModuleVersions([v2, v2])
         cmd1.backward()
+        self.assertWfModuleVersions([v1])
         self.assertEqual(all_modules.count(), 1)
 
     # Delete module, then undo, redo
     def test_delete_module(self):
         # beginning state: one WfModule
-        all_modules = WfModule.objects.filter(workflow=self.workflow)
+        all_modules = self.workflow.wf_modules
         self.assertEqual(all_modules.count(), 1)
         existing_module = WfModule.objects.first()
 
-        start_rev = self.workflow.revision()
+        self.workflow.refresh_from_db()
+        v1 = self.workflow.revision()
+        self.assertWfModuleVersions([v1])
 
         # Delete it. Yeah, you better run.
         cmd = DeleteModuleCommand.create(existing_module)
         self.assertEqual(all_modules.count(), 0)
+        self.assertWfModuleVersions([])
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.revision(), start_rev)
+        v2 = self.workflow.revision()
+        self.assertGreater(v2, v1)
 
         # Check the delta chain (short, but should be sweet)
         self.workflow.refresh_from_db()
@@ -141,6 +171,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
+        self.assertWfModuleVersions([v1])
         self.assertEqual(self.workflow.wf_modules.first(), existing_module)
 
         # nevermind, redo
@@ -203,9 +234,9 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
 
-class ChangeDataVersionCommandTests(TestCase):
+class ChangeDataVersionCommandTests(CommandTestCase):
     def setUp(self):
-        self.workflow = create_testdata_workflow()
+        super().setUp()
         self.wfm = WfModule.objects.first()
 
     # Change version, then undo/redo
@@ -213,30 +244,36 @@ class ChangeDataVersionCommandTests(TestCase):
         # Create two data versions, use the second
         firstver = self.wfm.store_fetched_table(mock_csv_table)
         secondver = self.wfm.store_fetched_table(mock_csv_table2)
+
         self.wfm.set_fetched_data_version(secondver)
 
-        start_rev = self.workflow.revision()
+        self.workflow.refresh_from_db()
+        v1 = self.workflow.revision()
 
         # Change back to first version
         cmd = ChangeDataVersionCommand.create(self.wfm, firstver)
         self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
-        # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.revision(), start_rev)
+        v2 = self.workflow.revision()
+        # workflow revision should have been incremented
+        self.assertGreater(v2, v1)
+        self.assertWfModuleVersions([v2])
 
         # undo
         cmd.backward()
+        self.assertWfModuleVersions([v1])
         self.assertEqual(self.wfm.get_fetched_data_version(), secondver)
 
         # redo
         cmd.forward()
+        self.assertWfModuleVersions([v2])
         self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
 
-class ChangeWfModuleNotesCommandTests(TestCase):
+class ChangeWfModuleNotesCommandTests(CommandTestCase):
     def setUp(self):
-        self.workflow = create_testdata_workflow()
+        super().setUp()
         self.wfm = WfModule.objects.first()
 
     # Change notes, then undo/redo
@@ -258,14 +295,13 @@ class ChangeWfModuleNotesCommandTests(TestCase):
         self.assertEqual(self.wfm.notes, secondNote)
 
 
-class ChangeWfModuleUpdateSettingsCommandTests(TestCase):
+class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
     def setUp(self):
-        self.workflow = create_testdata_workflow()
+        super().setUp()
         self.wfm = WfModule.objects.first()
 
     # Change notes, then undo/redo
     def test_change_update_settings(self):
-
         self.wfm.auto_update_data = False
         self.wfm.next_update = None
         self.wfm.update_interval = 100

@@ -1,12 +1,12 @@
 # A Command changes the state of a Workflow, by producing and executing a Delta
-
+import json
+import logging
+import threading  # FIXME nix this -- it can't work for our multi-process env
+from django.core.validators import int_list_validator
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from server.models import WfModule, ParameterVal, Delta
-import json
-import logging
-import threading
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,7 @@ def insert_wf_module(wf_module, workflow, insert_before):
     if wf_module.order != insert_before:
         wf_module.order = insert_before
 
+
 # Forces canonical values of 'order' field: 0..n-1
 # Used after deleting a WfModule
 def renumber_wf_modules(workflow):
@@ -46,21 +47,87 @@ def renumber_wf_modules(workflow):
         pos += 1
 
 
+class _ChangesWfModuleOutputs:
+    # List of wf_module.last_relevant_delta_id from _before_ .forward() was
+    # called, for *this* wf_module and the ones *after* it.
+    dependent_wf_module_last_delta_ids = models.CharField(
+        validators=[int_list_validator],
+        blank=True,
+        max_length=99999
+    )
+
+    def forward_dependent_wf_module_versions(self, wf_module):
+        """
+        Write new last_relevant_delta_id to `wf_module` and its dependents.
+
+        You must call `wf_module.save()` after calling this method. Dependents
+        will be saved as a side-effect.
+        """
+        # Calculate "old" (pre-forward) last_revision_delta_ids, via DB query
+        old_ids = [wf_module.last_relevant_delta_id] + list(
+            wf_module.dependent_wf_modules().values_list(
+                'last_relevant_delta_id',
+                flat=True
+            )
+        )
+        # Save them here -- we're about to overwrite them
+        self.dependent_wf_module_last_delta_ids = ','.join(map(str, old_ids))
+
+        # Overwrite them, for this one and previous ones
+        wf_module.last_relevant_delta_id = self.id
+        wf_module.dependent_wf_modules() \
+            .update(last_relevant_delta_id=self.id)
+
+    def backward_dependent_wf_module_versions(self, wf_module):
+        """
+        Write new last_relevant_delta_id to `wf_module` and its dependents.
+
+        You must call `wf_module.save()` after calling this method. Dependents
+        will be saved as a side-effect.
+        """
+        old_ids = [int(i) for i in
+                   self.dependent_wf_module_last_delta_ids.split(',') if i]
+
+        if not old_ids:
+            # This is an old Delta: it does not know the last relevant delta
+            # IDs. Set all IDs to an over-estimate.
+            wf_module.last_relevant_delta_id = self.prev_delta_id or 0
+            wf_module.dependent_wf_modules() \
+                .update(last_relevant_delta_id=self.prev_delta_id or 0)
+            return
+
+        wf_module.last_relevant_delta_id = old_ids[0] or 0
+
+        dependent_ids = \
+            wf_module.dependent_wf_modules().values_list('id', flat=True)
+        for wfm_id, maybe_delta_id in zip(dependent_ids, old_ids[1:]):
+            if not wfm_id:
+                raise ValueError('More delta IDs than WfModules')
+            delta_id = maybe_delta_id or 0
+            WfModule.objects.filter(id=wfm_id) \
+                .update(last_relevant_delta_id=delta_id)
+
+
+
 # --- Commands ----
 
 # The only tricky part AddModule is what we do with the module in backward()
 # We detach the WfModule from the workflow, but keep it around for possible later forward()
-class AddModuleCommand(Delta):
+class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
     # must not have cascade on WfModule because we may delete it first when we are deleted
-    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    wf_module = models.ForeignKey(WfModule, null=True, default=None,
+                                  blank=True, on_delete=models.SET_DEFAULT)
     order = models.IntegerField()
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
     selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
+    dependent_wf_module_last_delta_ids = \
+        _ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     def forward_impl(self):
         self.selected_wf_module = self.workflow.selected_wf_module
         insert_wf_module(self.wf_module, self.workflow, self.order)     # may alter wf_module.order without saving
         self.wf_module.workflow = self.workflow                         # attach to workflow
+        self.forward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.save()
         self.workflow.selected_wf_module = self.wf_module.order
         self.workflow.save()
@@ -68,6 +135,7 @@ class AddModuleCommand(Delta):
         self.save()
 
     def backward_impl(self):
+        self.backward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         # [adamhooper, 2018-06-19] I don't think there's any hope we can
@@ -112,12 +180,15 @@ def addmodulecommand_delete_callback(sender, instance, **kwargs):
 
 delete_lock = threading.Lock()
 
+
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
-class DeleteModuleCommand(Delta):
+class DeleteModuleCommand(Delta, _ChangesWfModuleOutputs):
     # must not have cascade on WfModule because we may delete it first when we are deleted
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     selected_wf_module = models.IntegerField(null=True, blank=True)
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
+    dependent_wf_module_last_delta_ids = \
+        _ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     def forward_impl(self):
         # If we are deleting the selected module, then set the previous module
@@ -131,6 +202,7 @@ class DeleteModuleCommand(Delta):
                 self.workflow.selected_wf_module = None
             self.workflow.save()
 
+        self.forward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
@@ -140,6 +212,7 @@ class DeleteModuleCommand(Delta):
     def backward_impl(self):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
         self.wf_module.workflow = self.workflow                         # attach to workflow
+        self.backward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.save()
         # [adamhooper, 2018-06-19] I don't think there's any hope we can
         # actually restore selected_wf_module correctly, because sometimes we
@@ -182,23 +255,40 @@ def deletemodulecommand_delete_callback(sender, instance, **kwargs):
             logger.exception("Error deleting wf_module for DeleteModuleCommand " + str(instance))
 
 
-class ReorderModulesCommand(Delta):
+class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
     # For simplicity and compactness, we store the order of modules as json strings
     # in the same format as the patch request: [ { id: x, order: y}, ... ]
     old_order = models.TextField()
     new_order = models.TextField()
+    dependent_wf_module_last_delta_ids = \
+        _ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     def apply_order(self, order):
         for record in order:
-            wfm = self.workflow.wf_modules.get(pk=record['id']) # may raise WfModule.DoesNotExist if bad ID's
+            # may raise WfModule.DoesNotExist if bad ID's
+            wfm = self.workflow.wf_modules.get(pk=record['id'])
             if wfm.order != record['order']:
                 wfm.order = record['order']
                 wfm.save()
 
     def forward_impl(self):
-        self.apply_order(json.loads(self.new_order))
+        new_order = json.loads(self.new_order)
+
+        self.apply_order(new_order)
+
+        min_order = min(record['order'] for record in new_order)
+        wf_module = self.workflow.wf_modules.get(order=min_order)
+        self.forward_dependent_wf_module_versions(wf_module)
+        wf_module.save()
 
     def backward_impl(self):
+        new_order = json.loads(self.new_order)
+
+        min_order = min(record['order'] for record in new_order)
+        wf_module = self.workflow.wf_modules.get(order=min_order)
+        self.backward_dependent_wf_module_versions(wf_module)
+        wf_module.save()
+
         self.apply_order(json.loads(self.old_order))
 
     @staticmethod
@@ -234,15 +324,21 @@ class ReorderModulesCommand(Delta):
         return delta
 
 
-class ChangeDataVersionCommand(Delta):
+class ChangeDataVersionCommand(Delta, _ChangesWfModuleOutputs):
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     old_version = models.DateTimeField('old_version', null=True)    # may not have had a previous version
     new_version = models.DateTimeField('new_version')
+    dependent_wf_module_last_delta_ids = \
+        _ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     def forward_impl(self):
         self.wf_module.set_fetched_data_version(self.new_version)
+        self.forward_dependent_wf_module_versions(self.wf_module)
+        self.wf_module.save()
 
     def backward_impl(self):
+        self.backward_dependent_wf_module_versions(self.wf_module)
+        self.wf_module.save()
         self.wf_module.set_fetched_data_version(self.old_version)
 
     @staticmethod
@@ -262,11 +358,13 @@ class ChangeDataVersionCommand(Delta):
         return delta
 
 
-class ChangeParameterCommand(Delta):
+class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
     parameter_val = models.ForeignKey(ParameterVal, null=True, default=None,
                                       blank=True, on_delete=models.SET_DEFAULT)
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
+    dependent_wf_module_last_delta_ids = \
+        _ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     # Implement wf_module for self.ws_notify()
     @property
@@ -276,7 +374,13 @@ class ChangeParameterCommand(Delta):
     def forward_impl(self):
         self.parameter_val.set_value(self.new_value)
 
+        self.forward_dependent_wf_module_versions(self.wf_module)
+        self.wf_module.save()
+
     def backward_impl(self):
+        self.backward_dependent_wf_module_versions(self.wf_module)
+        self.wf_module.save()
+
         self.parameter_val.set_value(self.old_value)
 
     @staticmethod
