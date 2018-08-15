@@ -258,9 +258,6 @@ class RefineSpecTest(unittest.TestCase):
         expected.sanitize_in_place()
 
         self.assertEqual(result.error, expected.error)
-        if not result.dataframe.equals(expected.dataframe):
-            print(repr(result.dataframe))
-            print(repr(expected.dataframe))
         assert_frame_equal(result.dataframe, expected.dataframe)
 
     def test_render_no_column_is_no_op(self):
