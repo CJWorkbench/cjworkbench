@@ -255,16 +255,16 @@
             font-size: 1.1rem;
             letter-spacing: .3px;
             opacity: .7;
-            position: absolute;
-            bottom:.8rem;
+            position: relative;
+            bottom:0;
           }
         }
 
         .dropdown {
-          position: absolute;
+          position: relative;
           display: flex;
           justify-content: center;
-          margin-top: .8rem;
+          margin-top: -.8rem;
           top:0;
           bottom:0;
           right:0;

@@ -648,9 +648,9 @@ export default class DataGrid extends React.Component {
           columns={columns}
           rowGetter={this.getRow}
           rowsCount={this.props.totalRows}
-          minWidth={this.state.gridWidth - 2}
-          minHeight={this.state.gridHeight - 2}   // -2 because grid has borders, don't want to expand our parent DOM node
-          headerRowHeight={this.props.showLetter ? 54 : 48}
+          minWidth={this.state.gridWidth -2}
+          minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+          headerRowHeight={this.props.showLetter ? 66 : 48}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
           key={this.state.componentKey}
