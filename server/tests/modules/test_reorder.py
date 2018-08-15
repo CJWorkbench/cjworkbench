@@ -1,6 +1,6 @@
 from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 import json
 import pandas as pd
@@ -43,7 +43,7 @@ class ReorderFromTableTests(LoggedInTestCase):
     def test_reorder_empty(self):
         self.history_pval.value = ' '
         self.history_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result,
                          reordered_result(['name', 'date', 'count', 'float']))
 
@@ -69,7 +69,7 @@ class ReorderFromTableTests(LoggedInTestCase):
         ]
         self.history_pval.value = json.dumps(reorder_ops)
         self.history_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result,
                          reordered_result(['count', 'float', 'date', 'name']))
 
@@ -101,6 +101,6 @@ class ReorderFromTableTests(LoggedInTestCase):
         ]
         self.history_pval.value = json.dumps(reorder_ops)
         self.history_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result,
                          reordered_result(['count', 'name', 'float', 'date']))

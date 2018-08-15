@@ -8,7 +8,7 @@ from django.conf import settings
 from django.test import override_settings
 import requests
 import pandas as pd
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.models import WfModule, ParameterVal
 from server.modules.types import ProcessResult
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
@@ -89,7 +89,7 @@ class LoadFromURLTests(LoggedInTestCase):
         with patch('requests.get') as get:
             get.return_value = mock_text_response(mock_csv_text, 'text/csv')
             self.press_fetch_button()
-            result = execute_nocache(self.wfmodule)
+            result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, ProcessResult(mock_csv_table))
 
             # should create a new data version on the WfModule, and a new delta
@@ -120,7 +120,7 @@ class LoadFromURLTests(LoggedInTestCase):
         with patch('requests.get') as get:
             get.return_value = mock_text_response(mock_csv_text2, 'text/csv')
             self.press_fetch_button()
-            result = execute_nocache(self.wfmodule)
+            result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, ProcessResult(mock_csv_table2))
 
             self.wfmodule.refresh_from_db()
@@ -147,7 +147,7 @@ class LoadFromURLTests(LoggedInTestCase):
         with patch('requests.get') as get:
             get.return_value = mock_text_response(mock_csv_text, 'text/plain')
             self.press_fetch_button()
-            result = execute_nocache(self.wfmodule)
+            result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, ProcessResult(mock_csv_table))
 
     def test_load_json(self):
@@ -170,7 +170,7 @@ class LoadFromURLTests(LoggedInTestCase):
             get.return_value = mock_text_response(sfpd_json,
                                                   'application/json')
             self.press_fetch_button()
-            result = execute_nocache(self.wfmodule)
+            result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, expected)
 
         # malformed json should put module in error state
@@ -193,7 +193,7 @@ class LoadFromURLTests(LoggedInTestCase):
         with patch('requests.get') as get:
             get.return_value = mock_bytes_response(xlsx_bytes, XLSX_MIME_TYPE)
             self.press_fetch_button()
-            result = execute_nocache(self.wfmodule)
+            result = execute_wfmodule(self.wfmodule)
             self.assertEqual(result, ProcessResult(xlsx_table))
 
         # malformed file  should put module in error state

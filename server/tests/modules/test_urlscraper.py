@@ -12,7 +12,7 @@ from server.tests.utils import DbTestCase, LoggedInTestCase, \
 # tests
 from server.modules.types import ProcessResult
 from server.modules.urlscraper import URLScraper, is_valid_url, scrape_urls
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 
 # --- Some test data ----
 
@@ -190,7 +190,7 @@ class URLScraperTests(LoggedInTestCase):
         self.client.post(f'/api/parameters/{version_id}/event')
 
     def test_initial_nop(self):
-        result = execute_nocache(self.wfmodule)
+        result = execute_wfmodule(self.wfmodule)
         self.assertEqual(result, self.expected_url_table_result)
 
     def test_nop_with_initial_col_selection(self):
@@ -203,7 +203,7 @@ class URLScraperTests(LoggedInTestCase):
         column_pval = get_param_by_id_name('urlcol')
         column_pval.value = 'url'
         column_pval.save()
-        result = execute_nocache(self.wfmodule)
+        result = execute_wfmodule(self.wfmodule)
         self.assertEqual(result, self.expected_url_table_result)
 
     # Simple test that .event() calls scrape_urls() in the right way
@@ -231,7 +231,7 @@ class URLScraperTests(LoggedInTestCase):
                 scrape.side_effect = mock_scrapeurls
 
                 self.press_fetch_button()
-                result = execute_nocache(self.wfmodule)
+                result = execute_wfmodule(self.wfmodule)
                 self.assertEqual(result, ProcessResult(self.scraped_table))
 
     # Tests scraping from a list of URLs
@@ -261,5 +261,5 @@ class URLScraperTests(LoggedInTestCase):
                 scrape.side_effect = mock_scrapeurls
 
                 self.press_fetch_button()
-                result = execute_nocache(self.wfmodule)
+                result = execute_wfmodule(self.wfmodule)
                 self.assertEqual(result, ProcessResult(self.scraped_table))

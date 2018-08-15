@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 
 test_csv = (
@@ -35,14 +35,14 @@ class RenameFromTableTests(LoggedInTestCase):
         # Should only happen when a module is first created. Return table
         self.entries_pval.value = ' '
         self.entries_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(reference_table))
 
     def test_rename_empty(self):
         # If there are no entries, return table
         self.entries_pval.value = json.dumps({})
         self.entries_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(reference_table))
 
     def test_rename(self):
@@ -51,7 +51,7 @@ class RenameFromTableTests(LoggedInTestCase):
             'count': 'CNT'
         })
         self.entries_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         expected_table = reference_table.copy()
         expected_table.columns = ['name1', 'date', 'CNT', 'float']
         self.assertEqual(result, ProcessResult(expected_table))

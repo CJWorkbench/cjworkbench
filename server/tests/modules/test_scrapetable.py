@@ -1,7 +1,7 @@
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         get_param_by_id_name, mock_csv_table
 from server.models import ParameterSpec, ParameterVal, WfModule
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from django.test import override_settings
 from unittest import mock
 import tempfile
@@ -49,7 +49,7 @@ class ScrapeTableTest(LoggedInTestCase):
             self.assertEqual(readmock.call_args,
                              mock.call(url, flavor='html5lib'))
 
-        result = execute_nocache(self.wfmodule)
+        result = execute_wfmodule(self.wfmodule)
         self.assertEqual(result, ProcessResult(mock_csv_table))
 
         # should create a new data version on the WfModule, and a new delta
@@ -72,7 +72,7 @@ class ScrapeTableTest(LoggedInTestCase):
             self.assertEqual(readmock.call_args,
                              mock.call(url, flavor='html5lib'))
 
-        result = execute_nocache(self.wfmodule)
+        result = execute_wfmodule(self.wfmodule)
         self.assertListEqual(list(result.dataframe.columns),
                              [str(x) for x in mock_csv_table.iloc[0, :]])
         self.assertEqual(len(result.dataframe), len(mock_csv_table) - 1)

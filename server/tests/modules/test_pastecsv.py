@@ -2,7 +2,7 @@ import io
 import pandas as pd
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         get_param_by_id_name, set_string
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 
 count_csv = 'Month,Amount\nJan,10\nFeb,5\nMar,10\n'
@@ -19,15 +19,15 @@ class PasteCSVTests(LoggedInTestCase):
 
     def test_empty(self):
         set_string(self.csv_pval, '')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(pd.DataFrame()))
 
     def test_csv(self):
         set_string(self.csv_pval, count_csv)
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(reference_table))
 
     def test_tsv(self):
         set_string(self.csv_pval, count_tsv)
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(reference_table))

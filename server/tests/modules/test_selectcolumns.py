@@ -2,7 +2,7 @@ import io
 import pandas
 from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name, mock_csv_text
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.models.WfModule import WfModule
 from server.modules.types import ProcessResult
 
@@ -20,28 +20,28 @@ class SelectColumnsTests(LoggedInTestCase):
     def test_render_single_column(self):
         self.cols_pval.value = 'Month'
         self.cols_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         expected = ProcessResult(mock_csv_table[['Month']])
         self.assertEqual(result, expected)
 
     def test_render_strip_whitespace(self):
         self.cols_pval.value = 'Month '
         self.cols_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         expected = ProcessResult(mock_csv_table[['Month']])
         self.assertEqual(result, expected)
 
     def test_render_maintain_input_column_order(self):
         self.cols_pval.value = 'Amount,Month'
         self.cols_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         expected = ProcessResult(mock_csv_table[['Month', 'Amount']])
         self.assertEqual(result, expected)
 
     def test_render_ignore_invalid_column_name(self):
         self.cols_pval.value = 'Amountxxx,Month'
         self.cols_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         expected = ProcessResult(mock_csv_table[['Month']])
         self.assertEqual(result, expected)
         self.wf_module.refresh_from_db()

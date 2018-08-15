@@ -1,6 +1,6 @@
 from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 import pandas as pd
 import numpy as np
@@ -52,7 +52,7 @@ class DuplicateColumnFromTableTests(LoggedInTestCase):
         # Tests duplicating the first column
         self.colnames_pval.value = 'col_1'
         self.colnames_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, duplicated_column(0))
 
 
@@ -60,6 +60,6 @@ class DuplicateColumnFromTableTests(LoggedInTestCase):
         # Tests duplicating the second column when an expected column name already exists
         self.colnames_pval.value = 'col_2'
         self.colnames_pval.save()
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, duplicated_column_with_existing(1,4))
 

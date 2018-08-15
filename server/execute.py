@@ -19,23 +19,21 @@ def get_render_cache(wfm, revision) -> ProcessResult:
 
 
 def _execute_one_wfmodule(wf_module: WfModule, input_table: pd.DataFrame, *,
-                          use_cache: bool,
                           workflow_revision: int) -> ProcessResult:
-    if use_cache:
-        cached_result = get_render_cache(wf_module, workflow_revision)
-        if cached_result:
-            return cached_result
+    cached_result = get_render_cache(wf_module, workflow_revision)
+    if cached_result:
+        return cached_result
 
     result = module_dispatch_render(wf_module, input_table)
-    if use_cache:
-        wf_module.cache_render_result(workflow_revision, result)
-        wf_module.save()
+
+    wf_module.cache_render_result(workflow_revision, result)
+    wf_module.save()
 
     return result
 
 
 # Return the output of a particular module. Gets from cache if possible
-def execute_wfmodule(wfmodule, nocache=False) -> ProcessResult:
+def execute_wfmodule(wfmodule) -> ProcessResult:
     """
     Process all WfModules until the given one; return its result.
 
@@ -48,17 +46,15 @@ def execute_wfmodule(wfmodule, nocache=False) -> ProcessResult:
     target_rev = workflow.revision()
 
     # Do we already have what we need? If so, return quickly.
-    if not nocache:
-        cached_result = get_render_cache(wfmodule, target_rev)
-        if cached_result:
-            return cached_result
+    cached_result = get_render_cache(wfmodule, target_rev)
+    if cached_result:
+        return cached_result
 
     # Render from the top, shortcutting with cache whenever possible
     result = ProcessResult()
 
     for wfm in workflow.wf_modules.all():
         result = _execute_one_wfmodule(wfm, result.dataframe,
-                                       use_cache=not nocache,
                                        workflow_revision=target_rev)
 
         # found the module we were looking for, all done
@@ -66,8 +62,3 @@ def execute_wfmodule(wfmodule, nocache=False) -> ProcessResult:
             break
 
     return result
-
-
-# shortcut to execute without cache, handy for testing
-def execute_nocache(wfm):
-    return execute_wfmodule(wfm, nocache=True)

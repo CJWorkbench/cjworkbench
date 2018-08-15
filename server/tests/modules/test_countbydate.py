@@ -4,7 +4,7 @@ import numpy as np
 from django.test import override_settings
 from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name, set_param
-from server.execute import execute_nocache
+from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
 
 # test data designed to give different output if sorted by freq vs value
@@ -105,7 +105,7 @@ class CountValuesTests(LoggedInTestCase):
             'count': np.int64
         })
         expected = ProcessResult(expected_table)
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, expected)
 
     def test_count_by_date(self):
@@ -182,7 +182,7 @@ class CountValuesTests(LoggedInTestCase):
 
     def test_no_col_gives_noop(self):
         set_param(self.col_pval, '')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(
             result,
             ProcessResult(pandas.read_csv(io.StringIO(count_csv)))
@@ -191,7 +191,7 @@ class CountValuesTests(LoggedInTestCase):
     def test_invalid_colname_gives_error(self):
         # bad column name should produce error
         set_param(self.col_pval, 'hilarious')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(
             result,
             ProcessResult(error="There is no column named 'hilarious'")
@@ -200,7 +200,7 @@ class CountValuesTests(LoggedInTestCase):
     def test_integer_dates_give_error(self):
         # integers are not dates
         set_param(self.col_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(
             result,
             ProcessResult(
@@ -211,7 +211,7 @@ class CountValuesTests(LoggedInTestCase):
     def test_weird_strings_give_error(self):
         # Weird strings are not dates (different error code path)
         set_param(self.col_pval, 'Foo')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(
             result,
             ProcessResult(
@@ -223,7 +223,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.csv_data, count_time_csv)
         set_param(self.col_pval, 'Date')
         set_param(self.group_pval, 5)
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(error=(
             "The column 'Date' only contains time values. "
             'Please group by Second, Minute or Hour.'
@@ -246,7 +246,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.col_pval, 'Date')
         set_param(self.group_pval, 2)
 
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(error=(
             "The column 'Date' only contains date values. "
             'Please group by Day, Month, Quarter or Year.'
@@ -266,7 +266,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.col_pval, 'Date')
         set_param(self.operation_pval, 1)  # 1 = mean
         set_param(self.target_pval, '')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(
             result,
             ProcessResult(pandas.read_csv(io.StringIO(count_csv)))
@@ -276,7 +276,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.col_pval, 'Date')
         set_param(self.operation_pval, 1)  # 1 = mean
         set_param(self.target_pval, 'Invalid')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(error=(
             "There is no column named 'Invalid'"
         )))
@@ -299,7 +299,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.col_pval, 'Date')
         set_param(self.operation_pval, 2)  # 2 = sum
         set_param(self.target_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
             data=[
@@ -342,7 +342,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.include_missing_dates_pval, True)
         set_param(self.operation_pval, 0)  # 0 = count
         set_param(self.target_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         # Output should be integers
         self.assertEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'count'],
@@ -361,7 +361,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.include_missing_dates_pval, True)
         set_param(self.operation_pval, 2)  # 2 = sum
         set_param(self.target_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         # Output should be integers
         self.assertEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
@@ -380,7 +380,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.operation_pval, 2)  # 2 = sum
         set_param(self.include_missing_dates_pval, True)
         set_param(self.target_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         # Output should include 0 for missing values
         self.assertEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
@@ -399,7 +399,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.operation_pval, 3)  # 3 = min
         set_param(self.include_missing_dates_pval, True)
         set_param(self.target_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         # Max should be NaN for missing values
         self.assertEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
@@ -418,7 +418,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.operation_pval, 3)  # 3 = min
         set_param(self.include_missing_dates_pval, True)
         set_param(self.target_pval, 'Amount')
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         # Max should be NaN for missing values ... meaning it's all floats
         self.assertEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
@@ -437,7 +437,7 @@ class CountValuesTests(LoggedInTestCase):
         set_param(self.col_pval, 'Date')
         set_param(self.group_pval, 0)  # 0 = group by seconds
         set_param(self.include_missing_dates_pval, True)
-        result = execute_nocache(self.wf_module)
+        result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(error=(
             'Including missing dates would create 174787201 rows, '
             'but the maximum allowed is 100'
