@@ -218,24 +218,6 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.selected_wf_module, 2)
 
-
-    # /input is just a /render on the previous module
-    def test_wf_module_input(self):
-        # First module: no prior input, should be empty result
-        response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule1.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), empty_data_json)
-
-        # Second module: input should be test data produced by first module
-        response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule2.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), test_data_json)
-
-        # Third module: should be same as second, as second module is NOP
-        response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule3.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), test_data_json)
-
     # tests for the /columns API
     def test_wf_module_columns(self):
         # We only need to check for one module since the output is pretty much the same

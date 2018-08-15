@@ -29,6 +29,7 @@ def execute_wfmodule(wf_module: WfModule) -> ProcessResult:
 
     # Recurse -- ensuring the smallest possible number of renders
     input_wf_module = wf_module.previous_in_stack()
+    print(repr(input_wf_module))
     if input_wf_module:
         input_result = execute_wfmodule(input_wf_module)
     else:

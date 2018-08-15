@@ -42,7 +42,6 @@ urlpatterns = [
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', views.wfmodule_render),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/output$', views.wfmodule_output), #TODO: These names are bad and basically backwards
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', views.wfmodule_input),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/embeddata$', views.wfmodule_embeddata),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/histogram/(?P<col>.*)', views.wfmodule_histogram),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/input-value-counts$', views.wfmodule_input_value_counts),

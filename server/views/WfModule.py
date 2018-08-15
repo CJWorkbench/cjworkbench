@@ -22,9 +22,45 @@ from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
 from server.templatetags.json_filters import escape_potential_hack_chars
+from server import websockets
 
 
 _MaxNRowsPerRequest = 300
+
+
+def _client_attributes_that_change_on_render(wf_module):
+    return {
+        'error_msg': wf_module.error_msg,
+        # TODO add columns here
+    }
+
+
+def execute_and_notify(wf_module):
+    """
+    Render (and cache) a WfModule; send websocket updates and return result.
+    """
+    workflow = wf_module.workflow
+    with workflow.cooperative_lock():
+        priors = {}
+        for wf_module in workflow.wf_modules.all():
+            priors[wf_module.id] = \
+                _client_attributes_that_change_on_render(wf_module)
+        result = execute.execute_wfmodule(wf_module)
+
+        changes = {}
+        for wf_module in workflow.wf_modules.all():
+            prior = priors[wf_module.id]
+            current = _client_attributes_that_change_on_render(wf_module)
+
+            if current != prior:
+                changes[str(wf_module.id)] = current
+
+    if changes:
+        websockets.ws_client_send_delta_sync(wf_module.workflow_id, {
+            'updateWfModules': changes
+        })
+
+    return result
 
 
 def _lookup_wf_module(pk: int) -> WfModule:
@@ -198,8 +234,12 @@ def int_or_none(x):
     return int(x) if x is not None else None
 
 
-# Shared code between /render and /input
-def table_json_response(request, wf_module):
+# /render: return output table of this module
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_render(request, pk, format=None):
+    wf_module = _lookup_wf_module_for_read(pk, request)
+
     # Get first and last row from query parameters, or default to all if not
     # specified
     try:
@@ -209,19 +249,9 @@ def table_json_response(request, wf_module):
         return Response({'message': 'bad row number', 'status_code': 400},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    result = execute.execute_wfmodule(wf_module)
+    result = execute_and_notify(wf_module)
     j = _make_render_dict(result.dataframe, startrow, endrow)
     return JsonResponse(j)
-
-
-# /render: return output table of this module
-@api_view(['GET'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_render(request, pk, format=None):
-    wf_module = _lookup_wf_module_for_read(pk, request)
-
-    with wf_module.workflow.cooperative_lock():
-        return table_json_response(request, wf_module)
 
 
 _html_head_start_re = re.compile(rb'<\s*head[^>]*>', re.IGNORECASE)
@@ -234,7 +264,7 @@ def wfmodule_output(request, pk, format=None):
 
     html = module_get_html_bytes(wf_module)
 
-    result = execute.execute_wfmodule(wf_module)
+    result = execute_and_notify(wf_module)
 
     # TODO nix params. Use result.json_dict instead.
     params = wf_module.create_parameter_dict(result.dataframe)
@@ -267,8 +297,7 @@ def wfmodule_output(request, pk, format=None):
 def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    with wf_module.workflow.cooperative_lock():
-        result = execute.execute_wfmodule(wf_module)
+    result = execute_and_notify(wf_module)
 
     return JsonResponse(result.json)
 
@@ -298,7 +327,7 @@ def wfmodule_input_value_counts(request, pk):
             # User has not yet chosen a column. Empty response.
             return JsonResponse({'values': {}})
 
-        result = execute.execute_wfmodule(input_wf_module)
+        result = execute_and_notify(input_wf_module)
         table = result.dataframe
 
         try:
@@ -330,8 +359,7 @@ def wfmodule_histogram(request, pk, col, format=None):
     if not prev_modules:
         return JsonResponse(_make_render_dict(pd.DataFrame()))
 
-    with wf_module.workflow.cooperative_lock():
-        result = execute.execute_wfmodule(prev_modules.last())
+    result = execute_and_notify(wf_module)
 
     if col not in result.dataframe.columns:
         return JsonResponse({
@@ -361,30 +389,14 @@ def _previous_wf_module(wf_module: WfModule) -> Optional[WfModule]:
         .last()
 
 
-# /input is just /render on the previous wfmodule
-@api_view(['GET'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_input(request, pk, format=None):
-    wf_module = _lookup_wf_module_for_read(pk, request)
-
-    with wf_module.workflow.cooperative_lock():
-        previous_module = _previous_wf_module(wf_module)
-
-        if not previous_module:
-            return JsonResponse(_make_render_dict(pd.DataFrame()))
-        else:
-            return table_json_response(request, previous_module)
-
-
 # returns a list of columns and their simplified types
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    with wf_module.workflow.cooperative_lock():
-        result = execute.execute_wfmodule(wf_module)
-        dtypes = result.dataframe.dtypes.to_dict()
+    result = execute_and_notify(wf_module)
+    dtypes = result.dataframe.dtypes.to_dict()
 
     ret_types = []
     for col in dtypes:
@@ -411,16 +423,16 @@ def wfmodule_columns(request, pk, format=None):
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    with wf_module.workflow.cooperative_lock():
-        result = execute.execute_wfmodule(wf_module)
-        if type == 'json':
-            d = result.dataframe.to_json(orient='records')
-            return HttpResponse(d, content_type="application/json")
-        elif type == 'csv':
-            d = result.dataframe.to_csv(index=False)
-            return HttpResponse(d, content_type="text/csv")
-        else:
-            raise Http404()
+    result = execute_and_notify(wf_module)
+
+    if type == 'json':
+        d = result.dataframe.to_json(orient='records')
+        return HttpResponse(d, content_type="application/json")
+    elif type == 'csv':
+        d = result.dataframe.to_csv(index=False)
+        return HttpResponse(d, content_type="text/csv")
+    else:
+        raise Http404()
 
 
 # Get list of data versions, or set current data version
