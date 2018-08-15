@@ -24,7 +24,7 @@
       "id_name" : "formula_excel",
       "type": "string",
       "default": "",
-      "placeholder": "e.g. =A1+B1",
+      "placeholder": "Begin with equal sign e.g.=A1+B1",
       "visible_if": {
         "id_name": "syntax",
         "value": "Excel"
