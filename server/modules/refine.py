@@ -252,12 +252,12 @@ class Refine(ModuleImpl):
         edits_json = wf_module.get_param_raw('refine', 'custom')
         column = wf_module.get_param_column('column')
 
-        if column not in table.columns:
-            return ProcessResult(error=f'There is no column {column}')
-
         if not edits_json or not column:
             # No user input yet
             return ProcessResult(table)
+
+        if column not in table.columns:
+            return ProcessResult(error=f'There is no column {column}')
 
         try:
             edits = json.loads(edits_json)
