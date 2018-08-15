@@ -181,10 +181,10 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
     username = service.extract_username_from_token(offline_token)
 
     with param.wf_module.workflow.cooperative_lock():
-        # TODO consider ChangeParameterCommand. It might not play nice with 'secret'
+        # TODO use ChangeParameterCommand. (It might not play nice witj
+        # 'secret')
         param.set_value({ 'name': username, 'secret': offline_token })
-        # Copied from ChangeParameterCommand. Clear errors in case the connect fixed things
-        param.wf_module.set_ready(notify=False)
+        param.wf_module.set_ready()
 
     triggerrender.notify_client_workflow_version_changed(param.wf_module.workflow)
     return HttpResponse(b"""<!DOCTYPE html>

@@ -136,9 +136,6 @@ class URLScraper(ModuleImpl):
     # TODO this should be in .render(), right?
     @staticmethod
     def event(wfm, **kwargs):
-        # fetching could take a while so notify clients/users we're working
-        wfm.set_busy()
-
         urls = []
         urlsource = wfm.get_param_menu_string('urlsource')
 

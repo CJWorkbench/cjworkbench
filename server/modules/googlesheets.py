@@ -125,11 +125,11 @@ class GoogleSheets(ModuleImpl):
         # an API request.
 
         if sheet_id:
-            wf_module.set_busy()
-
             secret = wf_module.get_param_secret_secret('google_credentials')
             result = download_data_frame(sheet_id, sheet_mime_type, secret)
             result.truncate_in_place_if_too_big()
             result.sanitize_in_place()
+        else:
+            result = ProcessResult()
 
-            ModuleImpl.commit_result(wf_module, result)
+        ModuleImpl.commit_result(wf_module, result)

@@ -115,9 +115,6 @@ class Twitter(ModuleImpl):
         if not access_token:
             return fail('Please sign in to Twitter')
 
-        # fetching could take a while so notify clients/users we're working
-        wfm.set_busy(notify=True)
-
         try:
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = Twitter.get_stored_tweets(wfm)

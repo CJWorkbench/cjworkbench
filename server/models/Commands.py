@@ -56,6 +56,15 @@ class _ChangesWfModuleOutputs:
         max_length=99999
     )
 
+    def save_wf_module_versions_in_memory_for_ws_notify(self, wf_module):
+        """Save data, specifically for .ws_notify()."""
+        self._changed_wf_module_versions = dict(
+            wf_module.dependent_wf_modules().values_list(
+                'id',
+                'last_relevant_delta_id'
+            )
+        )
+
     def forward_dependent_wf_module_versions(self, wf_module):
         """
         Write new last_relevant_delta_id to `wf_module` and its dependents.
@@ -78,6 +87,8 @@ class _ChangesWfModuleOutputs:
         wf_module.dependent_wf_modules() \
             .update(last_relevant_delta_id=self.id)
 
+        self.save_wf_module_versions_in_memory_for_ws_notify(wf_module)
+
     def backward_dependent_wf_module_versions(self, wf_module):
         """
         Write new last_relevant_delta_id to `wf_module` and its dependents.
@@ -94,6 +105,8 @@ class _ChangesWfModuleOutputs:
             wf_module.last_relevant_delta_id = self.prev_delta_id or 0
             wf_module.dependent_wf_modules() \
                 .update(last_relevant_delta_id=self.prev_delta_id or 0)
+
+            self.save_wf_module_versions_in_memory_for_ws_notify(wf_module)
             return
 
         wf_module.last_relevant_delta_id = old_ids[0] or 0
@@ -106,6 +119,8 @@ class _ChangesWfModuleOutputs:
             delta_id = maybe_delta_id or 0
             WfModule.objects.filter(id=wfm_id) \
                 .update(last_relevant_delta_id=delta_id)
+
+        self.save_wf_module_versions_in_memory_for_ws_notify(wf_module)
 
 
 
@@ -370,6 +385,10 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
     @property
     def wf_module(self):
         return self.parameter_val.wf_module
+
+    @property
+    def wf_module_id(self):
+        return self.parameter_val.wf_module_id
 
     def forward_impl(self):
         self.parameter_val.set_value(self.new_value)

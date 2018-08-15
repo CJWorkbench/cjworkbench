@@ -77,20 +77,25 @@ class Delta(PolymorphicModel):
             del workflow_data['owner_name']
             del workflow_data['read_only']
             data['updateWorkflow'] = _prepare_json(workflow_data)
+            data['updateWfModules'] = {}
+
+            if hasattr(self, '_changed_wf_module_versions'):
+                for id, delta_id in self._changed_wf_module_versions.items():
+                    data['updateWfModules'][str(id)] = {
+                        'last_relevant_delta_id': delta_id,
+                    }
 
             if hasattr(self, 'wf_module'):
                 self.wf_module.refresh_from_db()
                 if self.wf_module.workflow_id:
-                    wf_module_data = {
-                        str(self.wf_module.id):
-                            WfModuleSerializer(self.wf_module).data
-                    }
+                    wf_module_data = WfModuleSerializer(self.wf_module).data
 
-                    data['updateWfModules'] = _prepare_json(wf_module_data)
+                    data['updateWfModules'][str(self.wf_module_id)] = \
+                        _prepare_json(wf_module_data)
                 else:
                     # When we did or undid this command, we removed the
                     # WfModule from the Workflow.
-                    data['clearWfModuleIds'] = [self.wf_module.id]
+                    data['clearWfModuleIds'] = [self.wf_module_id]
 
         websockets.ws_client_send_delta_sync(self.workflow_id, data)
 

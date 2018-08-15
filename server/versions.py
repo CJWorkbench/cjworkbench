@@ -9,7 +9,6 @@ from server.models import ChangeDataVersionCommand, StoredObject
 from server.modules.types import ProcessResult
 from server.notifications import \
         find_output_deltas_to_notify_from_fetched_tables, email_output_delta
-from server.triggerrender import notify_client_workflow_version_changed
 from server import websockets
 
 
@@ -24,9 +23,6 @@ def WorkflowUndo(workflow):
             workflow.refresh_from_db()  # backward() may change it
             workflow.last_delta = delta.prev_delta
             workflow.save()
-
-    # oh, also update the version, and notify the client (after COMMIT)
-    notify_client_workflow_version_changed(workflow)
 
 
 # Redo is pretty much just running workflow.last_delta.next_delta forward
@@ -45,9 +41,6 @@ def WorkflowRedo(workflow):
             workflow.refresh_from_db()  # forward() may change it
             workflow.last_delta = next_delta
             workflow.save()
-
-    # oh, also update the version, and notify the client (after COMMIT)
-    notify_client_workflow_version_changed(workflow)
 
 
 def save_result_if_changed(wfm: WfModule,

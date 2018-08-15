@@ -50,9 +50,6 @@ class LoadURL(ModuleImpl):
             return ModuleImpl.commit_result(wf_module,
                                             ProcessResult(error='Invalid URL'))
 
-        # fetching could take a while so notify clients/users we're working
-        wf_module.set_busy()
-
         mimetypes = ','.join(_ExtensionMimeTypes.values())
 
         try:

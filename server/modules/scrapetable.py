@@ -64,9 +64,6 @@ class ScrapeTable(ModuleImpl):
         except ValidationError:
             return fail(_('That doesn''t seem to be a valid URL'))
 
-        # fetching could take a while so notify clients/users that we're working on it
-        wfm.set_busy()
-
         result = None
 
         try:

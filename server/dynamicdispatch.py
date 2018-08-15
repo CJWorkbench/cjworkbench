@@ -123,7 +123,7 @@ class DynamicModule:
 
         params = wf_module.create_parameter_dict(None)
 
-        wf_module.set_busy(notify=False)
+        wf_module.set_busy()
 
         result = self.call_fetch(params)
         result.truncate_in_place_if_too_big()

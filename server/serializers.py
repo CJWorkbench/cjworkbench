@@ -124,7 +124,8 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'parameter_vals', 'is_collapsed', 'notes',
                   'auto_update_data', 'update_interval', 'update_units',
                   'last_update_check', 'notifications',
-                  'has_unseen_notification', 'html_output', 'versions')
+                  'has_unseen_notification', 'html_output', 'versions',
+                  'last_relevant_delta_id')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
