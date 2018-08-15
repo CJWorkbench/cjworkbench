@@ -70,7 +70,7 @@ export default class DropZone extends Component {
     }
 
     componentDidUpdate(prevProps) {
-      if (prevProps.revision !== this.props.revision) {
+      if (prevProps.lastRelevantDeltaId !== this.props.lastRelevantDeltaId) {
         this.props.api._fetch(`/api/uploadfile?wf_module=${this.props.wfModuleId}`)
           .then(
             res => this.update_filename(null, res),

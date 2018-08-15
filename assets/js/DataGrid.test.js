@@ -42,7 +42,7 @@ describe('DataGrid tests,', () => {
     const tree = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
@@ -95,7 +95,7 @@ describe('DataGrid tests,', () => {
     const tree = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={0}
         columns={[]}
         columnTypes={[]}
@@ -116,7 +116,7 @@ describe('DataGrid tests,', () => {
     const treeWithLetter = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
@@ -138,7 +138,7 @@ describe('DataGrid tests,', () => {
     const treeWithoutLetter = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
@@ -157,7 +157,7 @@ describe('DataGrid tests,', () => {
     var tree = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
@@ -196,7 +196,7 @@ describe('DataGrid tests,', () => {
     var tree = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
@@ -223,7 +223,7 @@ describe('DataGrid tests,', () => {
     var tree = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
@@ -246,7 +246,7 @@ describe('DataGrid tests,', () => {
     var tree = mount(
       <DataGrid
         wfModuleId={100}
-        revision={999}
+        lastRelevantDeltaId={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}

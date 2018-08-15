@@ -26,6 +26,10 @@ export class WfModule extends React.PureComponent {
     isZenMode: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.object,
+    inputWfModule: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      last_relevant_delta_id: PropTypes.number
+    }), // or null
     module: PropTypes.object,
     selected: PropTypes.bool,
     changeParam: PropTypes.func, // func(paramId, { value: newVal }) => undefined -- icky, prefer onChange
@@ -37,7 +41,6 @@ export class WfModule extends React.PureComponent {
     isLessonHighlight: PropTypes.bool.isRequired,
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
-    revision: PropTypes.number.isRequired,
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
     setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
@@ -284,7 +287,7 @@ export class WfModule extends React.PureComponent {
   }
 
   renderParam = (p, index) => {
-    const { wfModule, module } = this.props
+    const { api, wfModule, module, isReadOnly, isZenMode, inputWfModule } = this.props
     const updateSettings = {
       lastUpdateCheck: wfModule.last_update_check,
       autoUpdateData: wfModule.auto_update_data,
@@ -303,11 +306,11 @@ export class WfModule extends React.PureComponent {
     // `name` attribute). TODO add `name` to WfParameter.propTypes.
     return (
       <WfParameter
-        api={this.props.api}
+        api={api}
         name={idName}
         moduleName={module.name}
-        isReadOnly={this.props.isReadOnly}
-        isZenMode={this.props.isZenMode}
+        isReadOnly={isReadOnly}
+        isZenMode={isZenMode}
         wfModuleError={wfModule.error_msg}
         key={index}
         p={p}
@@ -317,7 +320,8 @@ export class WfModule extends React.PureComponent {
         value={value}
         changeParam={this.changeParam}
         wfModuleId={wfModule.id}
-        revision={this.props.revision}
+        inputWfModuleId={inputWfModule ? inputWfModule.id : null}
+        inputLastRelevantDeltaId={inputWfModule ? inputWfModule.last_relevant_delta_id : null}
         updateSettings={updateSettings}
         getParamId={this.getParamId}
         getParamText={this.getParamText}
@@ -328,7 +332,7 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { wfModule, module } = this.props
+    const { isReadOnly, wfModule, module } = this.props
 
     // Each parameter gets a WfParameter
     const paramdivs = wfModule.parameter_vals.map(this.renderParam)
@@ -336,7 +340,7 @@ export class WfModule extends React.PureComponent {
     const notes = (
       <div className={`module-notes${(!!this.state.notes || this.state.isNoteForcedVisible) ? ' visible' : ''}`}>
         <EditableNotes
-          isReadOnly={this.props.isReadOnly}
+          isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
           placeholder='Type something'
           value={this.state.notes}

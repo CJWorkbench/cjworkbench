@@ -11,7 +11,8 @@ describe('ColumnParam', () => {
       name='col'
       prompt='SelectACol'
       isReadOnly={false}
-      workflowRevision={1}
+      inputWfModuleId={123}
+      inputLastRelevantDeltaId={234}
       fetchInputColumns={jest.fn(() => Promise.resolve(['A', 'B', 'C']))}
       onChange={jest.fn()}
       {...props}
@@ -75,7 +76,7 @@ describe('ColumnParam', () => {
     expect(w.find('option.error')).toHaveLength(1)
   })
 
-  it('re-fetches colnames on revision change', async () => {
+  it('re-fetches colnames on delta', async () => {
     const fetchInputColumns = jest.fn()
     fetchInputColumns
       .mockReturnValueOnce(Promise.resolve([ 'A', 'B' ]))
@@ -85,7 +86,7 @@ describe('ColumnParam', () => {
     await tick() // load columns
     w.update()
 
-    w.setProps({ workflowRevision: 2 }) // trigger update
+    w.setProps({ inputLastRelevantDeltaId: 213 }) // trigger update
     await tick() // load columns
     w.update()
 

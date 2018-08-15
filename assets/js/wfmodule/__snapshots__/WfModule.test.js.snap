@@ -102,6 +102,8 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             getParamId={[Function]}
             getParamMenuItems={[Function]}
             getParamText={[Function]}
+            inputLastRelevantDeltaId={707}
+            inputWfModuleId={123}
             isReadOnly={false}
             isZenMode={false}
             key="0"
@@ -120,7 +122,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "value": "http://some.URL.me",
               }
             }
-            revision={707}
             setParamText={[Function]}
             updateSettings={
               Object {
@@ -145,6 +146,8 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             getParamId={[Function]}
             getParamMenuItems={[Function]}
             getParamText={[Function]}
+            inputLastRelevantDeltaId={707}
+            inputWfModuleId={123}
             isReadOnly={false}
             isZenMode={false}
             key="1"
@@ -162,7 +165,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 },
               }
             }
-            revision={707}
             setParamText={[Function]}
             updateSettings={
               Object {

@@ -16,7 +16,8 @@ describe('MapLayerEditor rendering and interactions', () => {
     const WFM_ID = 23;
     const PARAM_NAME = 'Layers';
 
-    var api = undefined;
+    let api
+    let fetchInputColumns
 
     const mockExistingParamData = {
         lastEdited: 'value1',
@@ -43,15 +44,16 @@ describe('MapLayerEditor rendering and interactions', () => {
     const mockChangedColumns = ['location', 'value1', 'value2', 'value3'];
 
     beforeEach(() => {
+        fetchInputColumns = jsonResponseMock(mockDefaultColumns)
         api = {
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
-            inputColumns: jsonResponseMock(mockDefaultColumns)
         };
     });
 
     it('Does not render anything upon initial load without key column, but updates the server with default map appearance', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -68,7 +70,7 @@ describe('MapLayerEditor rendering and interactions', () => {
         expect(tree.find(SingleMapLayerEditor)).toHaveLength(0);
 
         // The module should inquire the server about input columns
-        expect(api.inputColumns).toHaveBeenCalledWith(WFM_ID);
+        expect(fetchInputColumns).toHaveBeenCalledWith(WFM_ID);
 
         // The server should be updated with the default setting for each potential layer
         expect(api.onParamChanged.mock.calls).toHaveLength(1);
@@ -96,6 +98,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Does not update the server upon loading existing data if columns don\'t change', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -112,7 +115,7 @@ describe('MapLayerEditor rendering and interactions', () => {
         expect(tree.find(SingleMapLayerEditor)).toHaveLength(0);
 
         // The module should inquire the server about input columns
-        expect(api.inputColumns).toHaveBeenCalledWith(WFM_ID);
+        expect(fetchInputColumns).toHaveBeenCalledWith(WFM_ID);
 
         // The module should not update the server because columns haven't changed
         expect(api.onParamChanged.mock.calls).toHaveLength(0);
@@ -122,10 +125,11 @@ describe('MapLayerEditor rendering and interactions', () => {
 
     it('Gives a newly appearing column the default settings upon load', async () => {
         // Modify the mock API to return new columns
-        api.inputColumns = jsonResponseMock(mockChangedColumns);
+        fetchInputColumns = jsonResponseMock(mockChangedColumns);
 
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -142,7 +146,7 @@ describe('MapLayerEditor rendering and interactions', () => {
         expect(tree.find(SingleMapLayerEditor)).toHaveLength(0);
 
         // The module should inquire the server about input columns
-        expect(api.inputColumns).toHaveBeenCalledWith(WFM_ID);
+        expect(fetchInputColumns).toHaveBeenCalledWith(WFM_ID);
 
         // The server should be updated with the default setting for each potential layer
         expect(api.onParamChanged.mock.calls).toHaveLength(1);
@@ -180,6 +184,7 @@ describe('MapLayerEditor rendering and interactions', () => {
 
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -222,6 +227,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a layer selection change', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -277,6 +283,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a layer levels change, completed via blur event', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -335,6 +342,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a layer levels change, completed via pressing Enter', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -393,6 +401,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Updates the server upon a color change', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -450,6 +459,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Respects read-only setting', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}
@@ -492,6 +502,7 @@ describe('MapLayerEditor rendering and interactions', () => {
     it('Only accepts positive integers for the levels field', async () => {
         let tree = mount(
             <MapLayerEditor
+                fetchInputColumns={fetchInputColumns}
                 api={api}
                 name={PARAM_NAME}
                 paramId={PARAM_ID}

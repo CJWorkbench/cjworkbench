@@ -98,13 +98,13 @@ export class RenameEntry extends React.Component {
 
 export default class RenameEntries extends React.Component {
     static propTypes = {
+        fetchInputColumns: PropTypes.func.isRequired, // func() => Promise[Array[String]]
         api: PropTypes.shape({
-          inputColumns: PropTypes.func.isRequired,
           onParamChanged: PropTypes.func.isRequired,
         }).isRequired,
         entriesJsonString: PropTypes.string.isRequired,
         wfModuleId: PropTypes.number.isRequired,
-        revision: PropTypes.number,
+        inputLastRelevantDeltaId: PropTypes.number,
         paramId: PropTypes.number.isRequired,
         isReadOnly: PropTypes.bool.isRequired
     };
@@ -130,7 +130,7 @@ export default class RenameEntries extends React.Component {
             //
             // This `entries` will not be in the Redux store until we write it;
             // that'll be the first onColRename/onEntryDelete.
-            this.props.api.inputColumns(this.props.wfModuleId)
+            this.props.fetchInputColumns(this.props.wfModuleId)
                 .then(columns => {
                     // avoid race: if we've already renamed something, clearly
                     // we don't want these values from the server.

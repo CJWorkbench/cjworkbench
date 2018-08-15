@@ -15,7 +15,7 @@ describe('ColumnSelector', () => {
         name="column"
         getColNames={ () => { return Promise.resolve(testcols) } }
         saveState={ () => {} }
-        revision={101}
+        inputLastRelevantDeltaId={101}
         isReadOnly={true}
       />
     ));
@@ -57,7 +57,7 @@ describe('ColumnSelector', () => {
           getColNames={ () => { return Promise.resolve(testcols) } }
           name="column"
           saveState={ () => {} }
-          revision={101}
+          inputLastRelevantDeltaId={101}
           isReadOnly={false}
         />
       );

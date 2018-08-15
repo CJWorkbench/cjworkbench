@@ -3,9 +3,9 @@
 exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
 <ColumnSelector
   getColNames={[Function]}
+  inputLastRelevantDeltaId={101}
   isReadOnly={false}
   name="column"
-  revision={101}
   saveState={[Function]}
   selectedCols="foo,bar,baz"
 >
@@ -181,9 +181,9 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
 exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = `
 <ColumnSelector
   getColNames={[Function]}
+  inputLastRelevantDeltaId={101}
   isReadOnly={true}
   name="column"
-  revision={101}
   saveState={[Function]}
   selectedCols="foo,bar,baz"
 >

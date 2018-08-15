@@ -8,7 +8,7 @@ describe('ChartSeriesMultiSelect', () => {
   function wrapper (props = {}) {
     return mount(
       <ChartSeriesMultiSelect
-        workflowRevision={1}
+        inputLastRelevantDeltaId={1}
         series={[
           { column: 'A', color: '#aaaaaa' },
           { column: 'B', color: '#bbbbbb' }
@@ -136,7 +136,7 @@ describe('ChartSeriesMultiSelect', () => {
     const w = wrapper({ fetchInputColumns })
     await tick() // load columns
     w.update()
-    w.setProps({ 'workflowRevision': 2 })
+    w.setProps({ 'inputLastRelevantDeltaId': 2 })
     expect(fetchInputColumns).toHaveBeenCalledTimes(2)
     await tick() // load columns again
     w.update()

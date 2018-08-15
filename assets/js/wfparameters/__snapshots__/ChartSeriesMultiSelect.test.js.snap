@@ -9,6 +9,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
       ],
     }
   }
+  inputLastRelevantDeltaId={1}
   isReadOnly={false}
   onChange={[MockFunction]}
   prompt="prompt"
@@ -24,7 +25,6 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
       },
     ]
   }
-  workflowRevision={1}
 >
   <div
     className="wf-parameter chart-series-multi-select"

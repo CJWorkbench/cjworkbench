@@ -11,7 +11,7 @@ export let OutputIframeCtrl
 
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
-    revision: PropTypes.number, // null if added to empty workflow
+    lastRelevantDeltaId: PropTypes.number, // null if added to empty workflow
     selectedWfModuleId: PropTypes.number.isRequired,
     isPublic: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired,
@@ -147,9 +147,9 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { selectedWfModuleId, revision } = this.props
+    const { selectedWfModuleId, lastRelevantDeltaId } = this.props
     const { heightFromIframe } = this.state
-    const src = `/api/wfmodules/${selectedWfModuleId}/output#revision=${revision}`
+    const src = `/api/wfmodules/${selectedWfModuleId}/output#revision=${lastRelevantDeltaId}`
 
     const height = heightFromIframe === null ? '100%' : `${Math.ceil(heightFromIframe)}px`
 

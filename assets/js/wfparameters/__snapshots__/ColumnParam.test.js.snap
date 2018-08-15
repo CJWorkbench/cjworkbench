@@ -9,12 +9,13 @@ exports[`ColumnParam matches snapshot 1`] = `
       ],
     }
   }
+  inputLastRelevantDeltaId={234}
+  inputWfModuleId={123}
   isReadOnly={false}
   name="col"
   onChange={[MockFunction]}
   prompt="SelectACol"
   value={null}
-  workflowRevision={1}
 >
   <ColumnParam
     allColumns={

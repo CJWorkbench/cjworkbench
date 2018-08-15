@@ -331,7 +331,7 @@ class ModuleStack extends React.Component {
               isZenMode={this.state.zenModeWfModuleId === item.id}
               wfModule={item}
               removeModule={this.props.removeModule}
-              revision={this.props.workflow.revision}
+              inputWfModule={i === 0 ? null : wfModules[i - 1]}
               selected={i === this.props.selected_wf_module}
               api={this.props.api}
               index={i}

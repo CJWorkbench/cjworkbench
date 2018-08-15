@@ -4,7 +4,7 @@ import ChartSeriesSelect from './ChartSeriesSelect'
 
 export default class ChartSeriesMultiSelect extends React.PureComponent {
   static propTypes = {
-    workflowRevision: PropTypes.number.isRequired,
+    inputLastRelevantDeltaId: PropTypes.number.isRequired,
     series: PropTypes.arrayOf(PropTypes.shape({
       column: PropTypes.string.isRequired,
       color: PropTypes.string.isRequired
@@ -29,7 +29,7 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
   }
 
   componentDidUpdate (prevProps) {
-    if (prevProps.workflowRevision !== this.props.workflowRevision) {
+    if (prevProps.inputLastRelevantDeltaId !== this.props.inputLastRelevantDeltaId) {
       this.refreshAllColumns()
     }
   }
@@ -39,9 +39,9 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
       if (this.mounted) this.setState(state)
     }
 
-    if (this.state.allColumnsWorkflowRevision !== this.props.workflowRevision || (this.state.allColumns === null && this.state.allColumnsFetchError === null)) {
+    if (this.state.allColumnsWorkflowRevision !== this.props.inputLastRelevantDeltaId || (this.state.allColumns === null && this.state.allColumnsFetchError === null)) {
       this.setState({
-        allColumnsWorkflowRevision: this.props.workflowRevision,
+        allColumnsWorkflowRevision: this.props.inputLastRelevantDeltaId,
         allColumns: null,
         allColumnsFetchError: null
       })

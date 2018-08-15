@@ -168,9 +168,9 @@ export default class MapLayerEditor extends React.Component {
      */
 
     static propTypes = {
+        fetchInputColumns: PropTypes.func.isRequired, // func() => Promise[Array[String]]
         api: PropTypes.shape({
             onParamChanged: PropTypes.func.isRequired,
-            inputColumns: PropTypes.func.isRequired,
         }).isRequired,
         name: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired,
@@ -213,7 +213,7 @@ export default class MapLayerEditor extends React.Component {
     }
 
     componentDidMount() {
-        this.props.api.inputColumns(this.props.wfModuleId).then((result) => {
+        this.props.fetchInputColumns(this.props.wfModuleId).then((result) => {
             let newData = Object.assign(this.state.data);
 
             // We update the server whenever new columns are added,

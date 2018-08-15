@@ -33,10 +33,10 @@ export default class ColumnSelector extends React.Component {
   }
 
   // Update our checkboxes when we get new props = new selected columns string
-  // And also column names when workflow revision bumps
+  // And also column names when workflow inputLastRelevantDeltaId bumps
   componentWillReceiveProps(nextProps) {
     this.setState({colNames: this.state.colNames, selected: this.parseSelectedCols(nextProps.selectedCols)});
-    if (this.props.revision != nextProps.revision) {
+    if (this.props.inputLastRelevantDeltaId != nextProps.inputLastRelevantDeltaId) {
       this.loadColNames();
     }
   }
@@ -120,9 +120,9 @@ export default class ColumnSelector extends React.Component {
 
 ColumnSelector.propTypes = {
   selectedCols: PropTypes.string.isRequired,
-  saveState:    PropTypes.func.isRequired,
-  getColNames:  PropTypes.func.isRequired,
-  name:         PropTypes.string.isRequired,
-  isReadOnly:   PropTypes.bool.isRequired,
-  revision:     PropTypes.number.isRequired
+  saveState: PropTypes.func.isRequired,
+  getColNames: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
+  inputLastRelevantDeltaId: PropTypes.number.isRequired
 };

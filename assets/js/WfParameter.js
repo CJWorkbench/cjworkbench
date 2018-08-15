@@ -48,8 +48,10 @@ export default class WfParameter extends React.Component {
     }).isRequired,
     moduleName:     PropTypes.string.isRequired,
     wfModuleError:  PropTypes.string, // module-level error message
-    wfModuleId:   PropTypes.number.isRequired,
-    revision:       PropTypes.number.isRequired,
+    wfModuleId: PropTypes.number.isRequired,
+    inputWfModuleId: PropTypes.number, // or null
+    inputLastRelevantDeltaId: PropTypes.number, // or null
+    lastRelevantDeltaId: PropTypes.number, // or null
     api:            PropTypes.object.isRequired,
     updateSettings: PropTypes.object,             // only for modules that load data
     isReadOnly:     PropTypes.bool.isRequired,
@@ -69,8 +71,6 @@ export default class WfParameter extends React.Component {
     super(props)
 
     this.firstProps = true
-
-    this.getInputColNames = this.getInputColNames.bind(this);
 
     this.state = {
       value: this.props.p.value
@@ -138,8 +138,9 @@ export default class WfParameter extends React.Component {
   }
 
   // Return array of column names available to us, as a promise
-  getInputColNames () {
-    return this.props.api.inputColumns(this.props.wfModuleId)
+  fetchInputColumns = () => {
+    return this.props.api.getColumns(this.props.inputWfModuleId)
+      .then(arr => arr.map(column => column.name))
   }
 
   getInputValueCounts = () => {
@@ -170,10 +171,6 @@ export default class WfParameter extends React.Component {
   onChangeGoogleFileSelectJson = (json) => {
     this.props.onChange(this.props.name, json)
     this.props.onSubmit()
-  }
-
-  fetchInputColumns = () => {
-    return this.props.api.inputColumns(this.props.wfModuleId)
   }
 
   onChangeYColumns = (arr) => {
@@ -242,15 +239,16 @@ export default class WfParameter extends React.Component {
               isReadOnly={this.props.isReadOnly}
               renameParam={renameParam}
               saveState={this.colRenameSaveState}
-              getColNames={this.getInputColNames}
-              revision={this.props.revision}/>
+              getColNames={this.fetchInputColumns}
+              inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+            />
           </div>
-        );
+        )
       case 'file':
         return (
           <DropZone
             wfModuleId={this.props.wfModuleId}
-            revision={this.props.revision}
+            lastRelevantDeltaId={this.props.lastRelevantDeltaId}
             api={this.props.api}
           />
         )
@@ -287,7 +285,7 @@ export default class WfParameter extends React.Component {
         return (
           <Refine
             fetchData={this.getInputValueCounts}
-            workflowRevision={this.props.revision}
+            inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
             value={this.props.p.value}
             onChange={this.paramChanged}
           />
@@ -305,7 +303,8 @@ export default class WfParameter extends React.Component {
             entriesJsonString={this.props.p.value}
             wfModuleId={this.props.wfModuleId}
             paramId={this.props.p.id}
-            revision={this.props.revision}
+            fetchInputColumns={this.fetchInputColumns}
+            inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
             isReadOnly={this.props.isReadOnly}
           />
         )
@@ -314,9 +313,9 @@ export default class WfParameter extends React.Component {
           <ChartSeriesMultiSelect
             prompt='Select a numeric column'
             isReadOnly={this.props.isReadOnly}
-            workflowRevision={this.props.revision}
-            series={JSON.parse(this.props.p.value || '[]')}
             fetchInputColumns={this.fetchInputColumns}
+            inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+            series={JSON.parse(this.props.p.value || '[]')}
             onChange={this.onChangeYColumns}
           />
         )
@@ -517,8 +516,8 @@ export default class WfParameter extends React.Component {
               name={id_name}
               prompt={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
-              workflowRevision={this.props.revision}
-              fetchInputColumns={this.getInputColNames}
+              inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+              fetchInputColumns={this.fetchInputColumns}
               onChange={this.paramChanged}
             />
           </div>
@@ -531,11 +530,13 @@ export default class WfParameter extends React.Component {
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }
-              getColNames={this.getInputColNames}
+              getColNames={this.fetchInputColumns}
               name={id_name}
               isReadOnly={this.props.isReadOnly}
-              revision={this.props.revision} />
-          </div> );
+              inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+            />
+          </div>
+        )
 
       case 'secret':
         return this.render_secret_parameter();

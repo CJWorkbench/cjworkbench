@@ -6,7 +6,7 @@ import {jsonResponseMock} from '../test-utils';
 jest.mock('../workflow-reducer')
 import { store, deleteModuleAction } from '../workflow-reducer';
 
-describe('ReorderEntries rendering and interactions', () => {
+describe('RenameEntries rendering and interactions', () => {
     const testEntries = {
         'name': 'host_name',
         'narrative': 'nrtv'
@@ -18,10 +18,11 @@ describe('ReorderEntries rendering and interactions', () => {
     const PARAM_ID = 2;
 
     let api = null;
+    let fetchInputColumns = null
 
     beforeEach(() => {
+        fetchInputColumns = jsonResponseMock(columns)
         api = {
-            inputColumns: jsonResponseMock(columns),
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
         };
     });
@@ -29,6 +30,7 @@ describe('ReorderEntries rendering and interactions', () => {
     it('Adds all columns when initialized empty', (done) => {
         // This test corresponds to behavior when added from module library.
         let tree = mount(<RenameEntries
+            fetchInputColumns={fetchInputColumns}
             api={api}
             entriesJsonString={''}
             wfModuleId={WFM_ID}
@@ -37,7 +39,7 @@ describe('ReorderEntries rendering and interactions', () => {
         />);
 
         setImmediate(() => {
-            expect(api.inputColumns).toHaveBeenCalledWith(WFM_ID);
+            expect(fetchInputColumns).toHaveBeenCalledWith(WFM_ID);
 
             // Got the tip to call .update() in this thread:
             // https://github.com/airbnb/enzyme/issues/1233#issuecomment-343449560
@@ -53,6 +55,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Displays all columns in entries', (done) => {
         let tree = mount(<RenameEntries
+            fetchInputColumns={fetchInputColumns}
             api={api}
             entriesJsonString={JSON.stringify(testEntries)}
             wfModuleId={1}
@@ -74,6 +77,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via blur', (done) => {
         let tree = mount(<RenameEntries
+            fetchInputColumns={fetchInputColumns}
             api={api}
             entriesJsonString={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
@@ -102,6 +106,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via enter key', (done) => {
         let tree = mount(<RenameEntries
+            fetchInputColumns={fetchInputColumns}
             api={api}
             entriesJsonString={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
@@ -130,6 +135,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon deleting an entry', (done) => {
         let tree = mount(<RenameEntries
+            fetchInputColumns={fetchInputColumns}
             api={api}
             entriesJsonString={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
@@ -175,6 +181,7 @@ describe('ReorderEntries rendering and interactions', () => {
         deleteModuleAction.mockImplementation((...args) => [ 'deleteModuleAction', ...args ])
 
         let tree = mount(<RenameEntries
+            fetchInputColumns={fetchInputColumns}
             api={api}
             entriesJsonString={JSON.stringify({'name': 'host_name'})}
             wfModuleId={WFM_ID}

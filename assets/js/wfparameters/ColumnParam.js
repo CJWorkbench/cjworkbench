@@ -63,7 +63,7 @@ export default class FetchingColumnParam extends React.PureComponent {
     value: PropTypes.string, // or null
     prompt: PropTypes.string, // default 'Select'
     isReadOnly: PropTypes.bool.isRequired,
-    workflowRevision: PropTypes.number.isRequired,
+    inputLastRelevantDeltaId: PropTypes.number.isRequired,
     fetchInputColumns: PropTypes.func.isRequired, // func() => Promise[Array[String]]
     onChange: PropTypes.func.isRequired // func(colnameOrNull) => undefined
   }
@@ -76,17 +76,17 @@ export default class FetchingColumnParam extends React.PureComponent {
 
   loadInputColumns () {
     const { allColumns, allColumnsFetchError, allColumnsWorkflowRevision } = this.state
-    if (allColumnsWorkflowRevision === this.props.workflowRevision) return
+    if (allColumnsWorkflowRevision === this.props.inputLastRelevantDeltaId) return
 
     this.setState({
       allColumns: null,
       allColumnsFetchError: null,
-      allColumnsWorkflowRevision: this.props.workflowRevision
+      allColumnsWorkflowRevision: this.props.inputLastRelevantDeltaId
     })
 
     const setState = (state) => {
       if (!this.mounted) return
-      if (this.state.allColumnsWorkflowRevision !== this.props.workflowRevision) return // race -- two concurrent fetches
+      if (this.state.allColumnsWorkflowRevision !== this.props.inputLastRelevantDeltaId) return // race -- two concurrent fetches
 
       this.setState(state)
     }
@@ -107,7 +107,7 @@ export default class FetchingColumnParam extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.workflowRevision !== this.props.workflowRevision) {
+    if (prevProps.inputLastRelevantDeltaId !== this.props.inputLastRelevantDeltaId) {
       this.loadInputColumns()
     }
   }

@@ -131,11 +131,6 @@ class WorkbenchAPI {
       .then(json => json.values)
   }
 
-  inputColumns(wfModuleId) {
-    return this._fetch(`/api/wfmodules/${wfModuleId}/input?startrow=0&endrow=0`)
-      .then(json => json.columns)
-  }
-
   output(wfModuleId) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/output`)
   }

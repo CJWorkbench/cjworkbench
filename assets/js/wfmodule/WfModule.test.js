@@ -24,7 +24,7 @@ describe('WfModule, not read-only mode', () => {
     module: module,
     changeParam: jest.fn(),
     removeModule: jest.fn(),
-    revision: 707,
+    inputWfModule: { id: 123, last_relevant_delta_id: 707 },
     selected: true,
     api: mockApi,
     index: 2,
