@@ -14,7 +14,7 @@ export class OutputPane extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     workflowId: PropTypes.number.isRequired,
-    revision: PropTypes.number.isRequired,
+    lastRelevantDeltaId: PropTypes.number.isRequired,
     selectedWfModuleId: PropTypes.number,
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -148,13 +148,13 @@ export class OutputPane extends React.Component {
   }
 
   render() {
-    const { isReadOnly, isPublic, sortColumn, sortDirection, showColumnLetter, revision } = this.props
+    const { isReadOnly, isPublic, sortColumn, sortDirection, showColumnLetter, lastRelevantDeltaId } = this.props
 
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView
         selectedWfModuleId={this.props.selectedWfModuleId}
-        revision={revision}
+        lastRelevantDeltaId={lastRelevantDeltaId}
         resizing={this.state.resizing}
         api={this.props.api}
         setBusySpinner={this.setBusySpinner}
@@ -171,7 +171,7 @@ export class OutputPane extends React.Component {
           selectedWfModuleId={this.props.selectedWfModuleId}
           workflowId={this.props.workflowId}
           isPublic={isPublic}
-          revision={revision}
+          lastRelevantDeltaId={lastRelevantDeltaId}
       />
     }
 
@@ -254,7 +254,7 @@ function mapStateToProps(state, ownProps) {
 
   return {
     workflowId: workflow.id,
-    revision: workflow.revision,
+    lastRelevantDeltaId: selectedWfModule ? selectedWfModule.last_relevant_delta_id : null,
     selectedWfModuleId,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,

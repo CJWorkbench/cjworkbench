@@ -52,7 +52,9 @@ class RefineSpec {
 
     // Blacklist groups
     for (const groupName of blacklist) {
-      groupsByName[groupName].isBlacklisted = true
+      if (groupName in groupsByName) {
+        groupsByName[groupName].isBlacklisted = true
+      }
     }
 
     // Sort groups, highest count to lowest

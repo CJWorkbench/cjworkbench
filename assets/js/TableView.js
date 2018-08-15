@@ -34,14 +34,14 @@ const InitialState = {
 export default class TableView extends React.PureComponent {
   static propTypes = {
     selectedWfModuleId: PropTypes.number,             // not actually required, could have no selected module
-    revision:           PropTypes.number.isRequired,
-    api:                PropTypes.object.isRequired,
-    isReadOnly:         PropTypes.bool.isRequired,
-    resizing:           PropTypes.bool.isRequired,
-    setBusySpinner:     PropTypes.func,
-    showColumnLetter:   PropTypes.bool.isRequired,
-    sortColumn:         PropTypes.string,
-    sortDirection:      PropTypes.number,
+    lastRelevantDeltaId: PropTypes.number.isRequired,
+    api: PropTypes.object.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    resizing: PropTypes.bool.isRequired,
+    setBusySpinner: PropTypes.func,
+    showColumnLetter: PropTypes.bool.isRequired,
+    sortColumn: PropTypes.string,
+    sortDirection: PropTypes.number,
   }
 
   constructor(props) {
@@ -90,7 +90,7 @@ export default class TableView extends React.PureComponent {
     const min = this.minMissingRowIndex
     const max = min + NRowsPerPage // don't care about maxMissingRowIndex...
     const wfModuleId = this.props.selectedWfModuleId
-    const revision = this.props.revision
+    const { lastRelevantDeltaId } = this.props
     const { loadedRows } = this.state
 
     this.minMissingRowIndex = null
@@ -113,7 +113,7 @@ export default class TableView extends React.PureComponent {
       .then(json => {
         // Avoid races: return if we've changed what we want to fetch
         if (wfModuleId !== this.props.selectedWfModuleId) return
-        if (revision !== this.props.revision) return
+        if (lastRelevantDeltaId !== this.props.lastRelevantDeltaId) return
         if (json.start_row !== min) return
         if (this.unmounted) return
 
@@ -202,9 +202,9 @@ export default class TableView extends React.PureComponent {
     this.refreshTable()  // refresh, not load, so we get the spinner
   }
 
-  // If the revision changes from under us, or we are displaying a different output, reload the table
+  // If the lastRelevantDeltaId changes from under us, or we are displaying a different output, reload the table
   componentDidUpdate (prevProps) {
-    if (this.props.revision !== prevProps.revision || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
+    if (this.props.lastRelevantDeltaId !== prevProps.lastRelevantDeltaId || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
       this.refreshTable();
     }
   }
@@ -275,7 +275,7 @@ export default class TableView extends React.PureComponent {
             columns={this.state.columns}
             columnTypes={this.state.columnTypes}
             wfModuleId={this.props.selectedWfModuleId}
-            revision={this.props.revision}
+            lastRelevantDeltaId={this.props.lastRelevantDeltaId}
             getRow={this.getRow}
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}

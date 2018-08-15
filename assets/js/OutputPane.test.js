@@ -10,7 +10,7 @@ describe('OutputPane', () => {
       <OutputPane
         api={{}}
         workflowId={123}
-        revision={1}
+        lastRelevantDeltaId={1}
         selectedWfModuleId={987}
         isPublic={false}
         isReadOnly={false}

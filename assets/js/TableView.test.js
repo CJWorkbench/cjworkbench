@@ -44,7 +44,7 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-      <TableView {...defaultProps} selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={100} lastRelevantDeltaId={1} api={api} isReadOnly={false}/>
     )
 
     // wait for promise to resolve, then see what we get
@@ -99,7 +99,7 @@ describe('TableView', () => {
 
   it('Blank table when no module id', () => {
     const tree = mount(
-      <TableView {...defaultProps} selectedWfModuleId={undefined} revision={1} api={{}} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={undefined} lastRelevantDeltaId={1} api={{}} isReadOnly={false}/>
     );
     tree.update();
 
@@ -118,7 +118,7 @@ describe('TableView', () => {
       <TableView
         {...defaultProps}
         selectedWfModuleId={100}
-        revision={1}
+        lastRelevantDeltaId={1}
         api={api}
         isReadOnly={false}
       />
@@ -169,7 +169,7 @@ describe('TableView', () => {
     var tree = mount(
       <TableView
           {...defaultProps}
-          revision={1}
+          lastRelevantDeltaId={1}
           selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
@@ -221,7 +221,7 @@ describe('TableView', () => {
       <TableView
           {...defaultProps}
           showColumnLetter={true}
-          revision={1}
+          lastRelevantDeltaId={1}
           selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}

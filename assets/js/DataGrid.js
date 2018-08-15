@@ -465,22 +465,22 @@ function makeFormattedCols(props) {
 
 export default class DataGrid extends React.Component {
   static propTypes = {
-    totalRows:          PropTypes.number.isRequired,
-    getRow:             PropTypes.func.isRequired,
-    columns:            PropTypes.array.isRequired,
-    isReadOnly:         PropTypes.bool.isRequired,
-    columnTypes:        PropTypes.array,     // not required if blank table
-    wfModuleId:         PropTypes.number,    // not required if blank table
-    revision:           PropTypes.number,
-    resizing:           PropTypes.bool,
-    onEditCell:         PropTypes.func,
-    sortColumn:         PropTypes.string,
-    sortDirection:      PropTypes.number,
-    showLetter:         PropTypes.bool,
-    onReorderColumns:   PropTypes.func.isRequired,
-    onRenameColumn:     PropTypes.func.isRequired,
-    setDropdownAction:  PropTypes.func.isRequired,
-  };
+    totalRows: PropTypes.number.isRequired,
+    getRow: PropTypes.func.isRequired,
+    columns: PropTypes.array.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    columnTypes: PropTypes.array,     // not required if blank table
+    wfModuleId: PropTypes.number,    // not required if blank table
+    lastRelevantDeltaId: PropTypes.number, // triggers a render on change
+    resizing: PropTypes.bool,
+    onEditCell: PropTypes.func,
+    sortColumn: PropTypes.string,
+    sortDirection: PropTypes.number,
+    showLetter: PropTypes.bool,
+    onReorderColumns: PropTypes.func.isRequired,
+    onRenameColumn: PropTypes.func.isRequired,
+    setDropdownAction: PropTypes.func.isRequired
+  }
 
   constructor(props) {
     super(props);
