@@ -167,6 +167,8 @@ class WfModule(models.Model):
 
     @property
     def error_msg(self):
+        if self.is_busy:
+            return ''
         return self.fetch_error or self.cached_render_result_error or ''
 
     # ---- Authorization ----
