@@ -17,6 +17,7 @@
     max-height: calc(60% - 3rem); // ... and this is the max
     position:relative;
     border-bottom: 1px solid $WF-background;
+    border-left: 1px solid $WF-background;
     iframe {
       border:none;
       position: absolute;
@@ -53,6 +54,8 @@
   .outputpane-table {
     position: relative;
     flex: 1 1 auto;
+    border-left:1px solid #E7EAED;
+    height: 100%;
 
     .outputpane-header {
       display: flex;
@@ -111,292 +114,6 @@
         }
       }
     }
-    .react-grid-Cell--locked:last-of-type {
-      border-right: 1px solid $table-border;
-
-      .row-number {
-        color:$medium-gray;
-        font-weight: 100;
-        text-align: center;
-        font-size: 1.2rem!important;
-        line-height: 1.2rem!important;
-      }
-      // Shrinking font sizes based on number of digits
-      // TODO: Can we make the font size a variable?
-      .row-number-3 {
-        @extend .row-number;
-        font-size: 1.0rem!important;
-      }
-      .row-number-4 {
-        @extend .row-number;
-        font-size: 0.9rem!important;
-      }
-      .row-number-5 {
-        @extend .row-number;
-        font-size: 0.8rem!important;
-      }
-      .row-number-6 {
-        @extend .row-number;
-        font-size: 0.7rem!important;
-      }
-    }
-
-    .react-grid-Cell--locked {
-      .react-grid-Cell__value {
-        margin-left: 0rem!important;
-        margin-right: 0rem!important;
-      }
-    }
-
-    .react-grid-Cell.react-grid-Cell--locked:focus{
-      outline: 0px;
-    }
-
-    // This is the only way to disable a react-data-grid editing feature we don't want
-    // https://github.com/adazzle/react-data-grid/issues/822
-    .drag-handle { display: none; }
-
-    .react-grid-Canvas{
-      background-color: $table-background;
-      padding-bottom: 10rem;
-    }
-
-    .react-grid-HeaderRow{
-      background-color: $table-background;
-
-      .react-grid-HeaderCell:not(:last-child) .column-reorder-drop-zone.align-right {
-        // We place a dropzone at the beginning and end of each header cell
-        // because it's easy. However, each .react-grid-HeaderCell has
-        // position:absolute set in its style by react-data-grid. That gives
-        // each subsequent cell a higher effective z-index than the previous
-        // one. We want our .align-right dropzone to extend _past_ the right
-        // of the cell, but that will only work on the final cell: in all other
-        // cells, the next .react-grid-HeaderCell will appear on top.
-        //
-        // So we hide the .align-right dropzone on all but the final cell. We
-        // trust DataGrid.js to place a .align-left dropzone in the next cell
-        // in the same place ... and the .align-left dropzone will be on top,
-        // just the way we want.
-        display: none;
-      }
-    }
-
-    .react-grid-HeaderCell {
-      background-color: $heading-bg;
-      color:white;
-      border-right:1px solid rgba(0,0,0,0.1);
-      border-bottom:0px;
-      @extend %font-nunito-regular;
-      font-size: 1.2rem;
-      padding: 0;
-      display: flex;
-
-      .column-reorder-drop-zone {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 0.5rem;
-        z-index: 1;
-
-        &.align-left {
-          left: -.25rem;
-        }
-        &.align-right {
-          right: -.25rem;
-        }
-
-        &.drag-hover {
-          background-color: $brand-orange;
-        }
-
-        &::before {
-          // Make a bigger, invisible drop zone: when we drag over this,
-          // the user can drop
-          content: '';
-          position: absolute;
-          top: 0;
-          height: 100%;
-          left: -8rem;
-          right: -8rem;
-        }
-      }
-
-      .column-letter {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding-top: .15rem;
-        background-color: #fff;
-        color: $light-gray;
-        height: 1.8rem;
-        font-weight: 300;
-        //box shadow to cover the 1px border from header with a lighter one
-        box-shadow:
-          -1px 0 0 $table-border,
-           1px 0 0 $table-border;
-      }
-
-      .data-grid-column-header  {
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-
-        .column-key {
-          padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
-          flex: 1 1 auto;
-          overflow: hidden;
-          height:100%;
-          cursor: text;
-          height:5rem;
-
-          .column-type {
-            @extend .info-1;
-            font-size: 1.1rem;
-            letter-spacing: .3px;
-            opacity: .7;
-            position: relative;
-            bottom:0;
-          }
-        }
-
-        .dropdown {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          margin-top: -.8rem;
-          top:0;
-          bottom:0;
-          right:0;
-          opacity: 0;
-          width:3.5rem;
-          background-color: $heading-bg;
-          cursor: pointer;
-
-          button {
-            flex: 0 0 auto;
-            height:2.3rem;
-            width: 2.3rem;
-            //height: 5rem;
-            font-size: 1.35rem;
-            border: 0;
-            background-color: transparent;
-            color: inherit;
-            //border-radius: 0;
-            opacity: .85;
-            &:hover {background-color:$header-hover;}
-          }
-        }
-
-        input[name="new-column-key"] {
-          // padding: just 1px off from .column-key
-          padding-top: .9rem;
-          padding-bottom: 2.3rem;
-          outline: 2px solid $brand-orange;
-          padding-left: 1rem;
-          padding-right: 1rem;
-          height: 4.8rem;
-          flex: 1 1 auto;
-          border: 0;
-
-          & + .dropdown {
-              display: none;
-            }
-        }
-      }
-    }
-
-    .react-grid-HeaderCell:hover .dropdown {
-      opacity: 1;
-    }
-
-
-    .react-grid-HeaderCell:active {
-      background-color: $header-hover;
-      cursor: grabbing;
-      cursor: -moz-grabbing;
-      cursor: -webkit-grabbing;
-
-      .dropdown {opacity: 0;}
-    }
-
-    .react-grid-HeaderCell__draggable{
-      z-index: 2;
-      width:8px!important;
-    }
-
-    .react-grid-HeaderCell__draggable:hover,
-    .react-grid-HeaderCell__draggable:active {
-      background-color: $header-hover;
-
-    }
-
-    .react-grid-Grid{
-      border-top:0px solid #E7EAED;
-      border-right:none;
-      border-bottom:none;
-      border-left:none;
-    }
-
-    .react-grid-Cell{
-      padding-right:0rem;
-      padding-left:0rem;
-      border-right: 1px solid $table-border;
-      border-bottom: 0px solid transparent;
-      border-top: 0;
-      //Click and edit a cell
-      &:focus {
-        padding-left: 0;
-        border-radius: 0;
-      	outline: 2px solid $brand-orange;
-        font-size: 1.2rem;
-      }
-      & input {
-        padding-left: 0.8rem;
-        background-color: $white;
-        border-radius: 0;
-      	outline: 2px solid $brand-orange;
-        font-size: 1.2rem;
-        height: 3.5rem!important;
-      }
-    }
-
-    .react-grid-Cell:not(.editing) .react-grid-Cell__value{
-      margin-left: 1rem;
-      margin-right: 1rem;
-      font-size: 1.2rem;
-
-      .row-null {
-        color:$light-gray;
-        @extend .content-3;
-        text-align: right;
-        font-size: 1.2rem!important;
-        line-height: 1.2rem!important;
-        font-style: italic;
-        padding-right: 2px;
-        font-weight: 100;
-      }
-    }
-
-
-    .react-grid-Row--odd .react-grid-Cell{
-      background-color: #ECF4F8;
-    }
-
-    .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-      background-color: #DBEBF3;
-    }
-
-    /* This div may be superfluous wrt .outputpane */
-
-    .outputpane-iframe + .outputpane-table {
-      height: calc(50% - 3rem);
-    }
-    .outputpane-table {
-      height:calc(100% - 5.5rem);
-      position:relative;
-      border-left:1px solid #E7EAED
-    }
 
     .outputpane-data {
       overflow: hidden;
@@ -405,28 +122,314 @@
       left:0;
       right:0;
       bottom:0;
-    }
 
-    .overlapping .outputpane.focus .outputpane-box {
-      z-index: 2;
-      box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
-    }
+      .react-grid-Container {
 
-    /* Create an overlay to absorb click events so we don't change settings or set a different
-    active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
-    div into the DOM, since we don't really want another element, we just want this behavior. */
+        .react-grid-Main {
 
-    .overlapping .outputpane:not(.focus)::after {
-      content:' ';
-      display: block;
-      top:0;
-      left:0;
-      right:0;
-      bottom:0;
-      position:absolute;
+          .react-grid-Grid{
+            border-top:0px solid #E7EAED;
+            border-right:none;
+            border-bottom:none;
+            border-left:none;
+
+
+            .react-grid-Canvas{
+              background-color: $table-background;
+              padding-bottom: 10rem;
+            }
+
+            .react-grid-Cell--locked:last-of-type {
+              border-right: 1px solid $table-border;
+
+              .row-number {
+                color:$medium-gray;
+                font-weight: 100;
+                text-align: center;
+                font-size: 1.2rem!important;
+                line-height: 1.2rem!important;
+              }
+              // Shrinking font sizes based on number of digits
+              // TODO: Can we make the font size a variable?
+              .row-number-3 {
+                @extend .row-number;
+                font-size: 1.0rem!important;
+              }
+              .row-number-4 {
+                @extend .row-number;
+                font-size: 0.9rem!important;
+              }
+              .row-number-5 {
+                @extend .row-number;
+                font-size: 0.8rem!important;
+              }
+              .row-number-6 {
+                @extend .row-number;
+                font-size: 0.7rem!important;
+              }
+            }
+
+            .react-grid-Cell--locked {
+              .react-grid-Cell__value {
+                margin-left: 0rem!important;
+                margin-right: 0rem!important;
+              }
+            }
+
+            .react-grid-Cell.react-grid-Cell--locked:focus{
+              outline: 0px;
+            }
+
+            // This is the only way to disable a react-data-grid editing feature we don't want
+            // https://github.com/adazzle/react-data-grid/issues/822
+            .drag-handle { display: none; }
+
+            .react-grid-HeaderRow{
+              background-color: $table-background;
+
+              .react-grid-HeaderCell:not(:last-child) .column-reorder-drop-zone.align-right {
+                // We place a dropzone at the beginning and end of each header cell
+                // because it's easy. However, each .react-grid-HeaderCell has
+                // position:absolute set in its style by react-data-grid. That gives
+                // each subsequent cell a higher effective z-index than the previous
+                // one. We want our .align-right dropzone to extend _past_ the right
+                // of the cell, but that will only work on the final cell: in all other
+                // cells, the next .react-grid-HeaderCell will appear on top.
+                //
+                // So we hide the .align-right dropzone on all but the final cell. We
+                // trust DataGrid.js to place a .align-left dropzone in the next cell
+                // in the same place ... and the .align-left dropzone will be on top,
+                // just the way we want.
+                display: none;
+              }
+            }
+
+            .react-grid-HeaderCell {
+              background-color: $heading-bg;
+              color:white;
+              border-right:1px solid rgba(0,0,0,0.1);
+              border-bottom:0px;
+              @extend %font-nunito-regular;
+              font-size: 1.2rem;
+              padding: 0;
+              display: flex;
+
+              .column-reorder-drop-zone {
+                position: absolute;
+                top: 0;
+                height: 100%;
+                width: 0.5rem;
+                z-index: 1;
+
+                &.align-left {
+                  left: -.25rem;
+                }
+                &.align-right {
+                  right: -.25rem;
+                }
+
+                &.drag-hover {
+                  background-color: $brand-orange;
+                }
+
+                &::before {
+                  // Make a bigger, invisible drop zone: when we drag over this,
+                  // the user can drop
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  height: 100%;
+                  left: -8rem;
+                  right: -8rem;
+                }
+              }
+
+              .column-letter {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding-top: .15rem;
+                background-color: #fff;
+                color: $light-gray;
+                height: 1.8rem;
+                font-weight: 300;
+                //box shadow to cover the 1px border from header with a lighter one
+                box-shadow:
+                  -1px 0 0 $table-border,
+                   1px 0 0 $table-border;
+              }
+
+              .data-grid-column-header  {
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+
+                .column-key {
+                  padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+                  flex: 1 1 auto;
+                  overflow: hidden;
+                  height:100%;
+                  cursor: text;
+                  height:5rem;
+
+                  .column-type {
+                    @extend .info-1;
+                    font-size: 1.1rem;
+                    letter-spacing: .3px;
+                    opacity: .7;
+                    position: relative;
+                    bottom:0;
+                  }
+                }
+
+                .dropdown {
+                  position: relative;
+                  display: flex;
+                  justify-content: center;
+                  margin-top: -.8rem;
+                  top:0;
+                  bottom:0;
+                  right:0;
+                  opacity: 0;
+                  width:3.5rem;
+                  background-color: $heading-bg;
+                  cursor: pointer;
+
+                  button {
+                    flex: 0 0 auto;
+                    height:2.3rem;
+                    width: 2.3rem;
+                    //height: 5rem;
+                    font-size: 1.35rem;
+                    border: 0;
+                    background-color: transparent;
+                    color: inherit;
+                    //border-radius: 0;
+                    opacity: .85;
+                    &:hover {background-color:$header-hover;}
+                  }
+                }
+
+                input[name="new-column-key"] {
+                  // padding: just 1px off from .column-key
+                  padding-top: .9rem;
+                  padding-bottom: 2.3rem;
+                  outline: 2px solid $brand-orange;
+                  padding-left: 1rem;
+                  padding-right: 1rem;
+                  height: 4.8rem;
+                  flex: 1 1 auto;
+                  border: 0;
+
+                  & + .dropdown {
+                      display: none;
+                    }
+                }
+              }
+            }
+
+            .react-grid-HeaderCell:hover .dropdown {
+              opacity: 1;
+            }
+
+
+            .react-grid-HeaderCell:active {
+              background-color: $header-hover;
+              cursor: grabbing;
+              cursor: -moz-grabbing;
+              cursor: -webkit-grabbing;
+
+              .dropdown {opacity: 0;}
+            }
+
+            .react-grid-HeaderCell__draggable{
+              z-index: 2;
+              width:8px!important;
+            }
+
+            .react-grid-HeaderCell__draggable:hover,
+            .react-grid-HeaderCell__draggable:active {
+              background-color: $header-hover;
+
+            }
+
+            .react-grid-Cell{
+              padding-right:0rem;
+              padding-left:0rem;
+              border-right: 1px solid $table-border;
+              border-bottom: 0px solid transparent;
+              border-top: 0;
+              //Click and edit a cell
+              &:focus {
+                padding-left: 0;
+                border-radius: 0;
+              	outline: 2px solid $brand-orange;
+                font-size: 1.2rem;
+              }
+              & input {
+                padding-left: 0.8rem;
+                background-color: $white;
+                border-radius: 0;
+              	outline: 2px solid $brand-orange;
+                font-size: 1.2rem;
+                height: 3.5rem!important;
+              }
+            }
+
+            .react-grid-Cell:not(.editing) .react-grid-Cell__value{
+              margin-left: 1rem;
+              margin-right: 1rem;
+              font-size: 1.2rem;
+
+              .row-null {
+                color:$light-gray;
+                @extend .content-3;
+                text-align: right;
+                font-size: 1.2rem!important;
+                line-height: 1.2rem!important;
+                font-style: italic;
+                padding-right: 2px;
+                font-weight: 100;
+              }
+            }
+
+
+            .react-grid-Row--odd .react-grid-Cell{
+              background-color: #ECF4F8;
+            }
+
+            .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
+              background-color: #DBEBF3;
+            }
+
+            /* This div may be superfluous wrt .outputpane */
+
+            .overlapping .outputpane.focus .outputpane-box {
+              z-index: 2;
+              box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
+            }
+
+            /* Create an overlay to absorb click events so we don't change settings or set a different
+            active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
+            div into the DOM, since we don't really want another element, we just want this behavior. */
+
+            .overlapping .outputpane:not(.focus)::after {
+              content:' ';
+              display: block;
+              top:0;
+              left:0;
+              right:0;
+              bottom:0;
+              position:absolute;
+            }
+          }
+        }
+      }
     }
   }
 }
+
 
 // in lesson
 .workflow-root.in-lesson {
