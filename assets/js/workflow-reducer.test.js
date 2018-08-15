@@ -243,6 +243,34 @@ describe('Reducer actions', () => {
     expect(store.getState()).toEqual(testState)
   })
 
+  it('applies delta to a Workflow', () => {
+    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
+      updateWorkflow: { foo: 'bar' }
+    }))
+    expect(state.workflow.wf_modules).toBe(testState.workflow.wf_modules) // old property
+    expect(state.workflow.foo).toEqual('bar') // new property
+  })
+
+  it('applies delta to a WfModule', () => {
+    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
+      updateWfModules: { '10': { foo: 'bar' } }
+    }))
+    expect(state.wfModules['10'].foo).toEqual('bar') // new property
+    expect(state.wfModules['10'].parameter_vals).toBe(testState.wfModules['10'].parameter_vals) // old property
+    expect(state.wfModules['20']).toBe(testState.wfModules['20']) // old WfModule
+    expect(state.wfModules).not.toBe(testState.wfModules) // immutable
+  })
+
+  it('applies delta to clearing a WfModule', () => {
+    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
+      updateWorkflow: { wf_modules: [ 10, 30 ] },
+      clearWfModuleIds: [ 20 ]
+    }))
+    expect(state.wfModules).not.toBe(testState.wfModules) // immutable
+    expect(state.wfModules['10']).toBe(testState.wfModules['10']) // leave uncleared modules unchanged
+    expect(state.wfModules['20']).not.toBeDefined()
+  })
+
   it('sets the wfModule status', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'SET_WF_MODULE_STATUS',

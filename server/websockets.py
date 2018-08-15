@@ -1,12 +1,13 @@
 # Receive and send websockets messages.
-# Clients open a socket on a specific workflow, and all clients viewing that workflow are a "group"
-import json
+# Clients open a socket on a specific workflow, and all clients viewing that
+# workflow are a "group"
+from typing import Dict, Any
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
-from typing import Dict, Any
+
 
 def _workflow_channel_name(workflow_id: int) -> str:
     """Given a workflow ID, return a channel_layer channel name.
@@ -94,8 +95,20 @@ def ws_client_rerender_workflow(workflow) -> None:
 async def ws_client_rerender_workflow_async(workflow) -> None:
     """Tell clients of the workflow to re-request it and update themselves.
     """
-    message = { 'type': 'reload-workflow'}
+    message = {'type': 'reload-workflow'}
     await _workflow_group_send(workflow.id, message)
+
+
+def ws_client_send_delta_sync(workflow_id: int, delta: Dict[str, Any]) -> None:
+    """Tell clients how to modify their `workflow` and `wfModules` state."""
+    async_to_sync(ws_client_send_delta_async)(workflow_id, delta)
+
+
+async def ws_client_send_delta_async(workflow_id: int,
+                                     delta: Dict[str, Any]) -> None:
+    """Tell clients how to modify their `workflow` and `wfModules` state."""
+    message = {'type': 'apply-delta', 'data': delta}
+    await _workflow_group_send(workflow_id, message)
 
 
 def ws_client_wf_module_status(wf_module, status):

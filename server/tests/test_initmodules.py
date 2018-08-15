@@ -40,7 +40,6 @@ class InitmoduleTests(LoggedInTestCase):
                     'id_name': 'nodefault',
                     'type': 'string',
                     'multiline': True,
-                    'derived-data' : True
                 },
                 {
                     'name': 'Do it checkbox',
@@ -98,7 +97,6 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec.def_visible, True)
         self.assertEqual(url_spec.ui_only, False)
         self.assertEqual(url_spec.multiline, False)
-        self.assertEqual(url_spec.derived_data, False)
         self.assertEqual(url_spec.order, 0)
 
         name = ParameterSpec.objects.get(id_name='name')
@@ -120,7 +118,6 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(nodef_spec.type, ParameterSpec.STRING)
         self.assertEqual(nodef_spec.def_value, '')
         self.assertEqual(nodef_spec.multiline, True)
-        self.assertEqual(nodef_spec.derived_data, True)
 
         # Make sure checkbox loads with correct default value
         # This tests boolean -> string conversion (JSON is boolean, def_value is string)

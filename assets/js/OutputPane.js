@@ -11,19 +11,31 @@ import { findParamValByIdName} from './utils'
 import { sortDirectionNone } from './UpdateTableAction'
 
 export class OutputPane extends React.Component {
+  static propTypes = {
+    api: PropTypes.object.isRequired,
+    workflowId: PropTypes.number.isRequired,
+    revision: PropTypes.number.isRequired,
+    selectedWfModuleId: PropTypes.number,
+    isPublic: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    showColumnLetter: PropTypes.bool.isRequired,
+    sortColumn: PropTypes.string,
+    sortDirection: PropTypes.number,
+    htmlOutput: PropTypes.bool
+  }
 
   constructor(props) {
     super(props);
 
     this.state = {
-        leftOffset : 0,
+        leftOffset: 0,
         initLeftOffset: 0,
         width: "100%",
         height: "100%",
         maxWidth: "300%",
         pctBase: null,
         resizing: false
-    };
+    }
 
     this.parentBase = React.createRef()
 
@@ -136,13 +148,13 @@ export class OutputPane extends React.Component {
   }
 
   render() {
-    const { isReadOnly, sortColumn, sortDirection, showColumnLetter } = this.props;
+    const { isReadOnly, isPublic, sortColumn, sortDirection, showColumnLetter, revision } = this.props
 
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView
         selectedWfModuleId={this.props.selectedWfModuleId}
-        revision={this.props.revision}
+        revision={revision}
         resizing={this.state.resizing}
         api={this.props.api}
         setBusySpinner={this.setBusySpinner}
@@ -158,8 +170,8 @@ export class OutputPane extends React.Component {
       outputIFrame = <OutputIframe
           selectedWfModuleId={this.props.selectedWfModuleId}
           workflowId={this.props.workflowId}
-          isPublic={this.props.isPublic}
-          revision={this.props.revision}
+          isPublic={isPublic}
+          revision={revision}
       />
     }
 
@@ -216,22 +228,9 @@ export class OutputPane extends React.Component {
 
             </Resizable>
         </div>
-    );
+    )
   }
 }
-
-OutputPane.propTypes = {
-  api:                PropTypes.object.isRequired,
-  workflowId:         PropTypes.number.isRequired,
-  revision:           PropTypes.number.isRequired,
-  selectedWfModuleId: PropTypes.number,
-  isPublic:           PropTypes.bool.isRequired,
-  isReadOnly:         PropTypes.bool.isRequired,
-  showColumnLetter:   PropTypes.bool.isRequired,
-  sortColumn:         PropTypes.string,
-  sortDirection:      PropTypes.number,
-  htmlOutput:         PropTypes.bool,
-};
 
 function mapStateToProps(state, ownProps) {
   const { workflow, wfModules, modules } = state
@@ -242,13 +241,14 @@ function mapStateToProps(state, ownProps) {
 
   const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns'
 
-  let sortColumn, sortDirection = sortDirectionNone
+  let sortColumn = null
+  let sortDirection = sortDirectionNone
 
   if (id_name === 'sort-from-table') {
     const columnParam = findParamValByIdName(selectedWfModule, 'column');
     const directionParam = findParamValByIdName(selectedWfModule, 'direction').value;
 
-    sortColumn = columnParam && columnParam.value || null;
+    sortColumn = columnParam && columnParam.value || null
     sortDirection = directionParam || sortDirectionNone
   }
 
@@ -267,4 +267,4 @@ function mapStateToProps(state, ownProps) {
 
 export default connect(
   mapStateToProps
-)(OutputPane);
+)(OutputPane)

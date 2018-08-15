@@ -56,7 +56,6 @@ class ParameterSpec(models.Model):
     # Flags which cannot be set on a per-instance basis
     ui_only = models.BooleanField(default=False)            # Don't bother pushing value to server
     multiline = models.BooleanField(default=False)          # For edit fields
-    derived_data = models.BooleanField(default=False)       # Don't save in the undo stack, it comes from other params
     placeholder = models.TextField(blank=True, default='')  # Placeholder/help text. Different from default in that it's not actually a value.
 
     # Conditional UI

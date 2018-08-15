@@ -3,8 +3,7 @@
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from server.models import Workflow, WfModule, ParameterVal, Delta, ModuleVersion
-from server.triggerrender import notify_client_workflow_version_changed
+from server.models import WfModule, ParameterVal, Delta
 import json
 import logging
 import threading
@@ -161,12 +160,14 @@ class DeleteModuleCommand(Delta):
                 return None     # this wfm was already deleted, do nothing
 
             description = 'Deleted \'' + wf_module.get_module_name() + '\' module'
-            delta = Delta.create_impl(DeleteModuleCommand,
+            delta = Delta.create_impl(
+                DeleteModuleCommand,
                 workflow=workflow,
                 wf_module=wf_module,
                 selected_wf_module=workflow.selected_wf_module,
-                command_description=description)
-            notify_client_workflow_version_changed(workflow)
+                command_description=description
+            )
+
             return delta
 
 # When we are deleted, delete the module if it's not in use by the Workflow (i.e. if we are currently applied)
@@ -222,13 +223,14 @@ class ReorderModulesCommand(Delta):
             raise ValueError('WfModule orders must be in range 0..n-1')
 
         # Looks good, let's reorder
-        delta = Delta.create_impl(ReorderModulesCommand,
+        delta = Delta.create_impl(
+            ReorderModulesCommand,
             workflow=workflow,
-            old_order=json.dumps([ {'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
+            old_order=json.dumps([{'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
             new_order=json.dumps(new_order),
-            command_description='Reordered modules')
+            command_description='Reordered modules'
+        )
 
-        notify_client_workflow_version_changed(workflow)
         return delta
 
 
@@ -248,22 +250,28 @@ class ChangeDataVersionCommand(Delta):
         description = \
             'Changed \'' + wf_module.get_module_name() + '\' module data version to ' + str(version)
 
-        delta = Delta.create_impl(ChangeDataVersionCommand,
+        delta = Delta.create_impl(
+            ChangeDataVersionCommand,
             wf_module=wf_module,
             new_version=version,
             old_version=wf_module.get_fetched_data_version(),
             workflow=wf_module.workflow,
-            command_description=description)
+            command_description=description
+        )
 
-        notify_client_workflow_version_changed(wf_module.workflow)
         return delta
 
 
-# Rather than saving off the complete ParameterVal object, we just twiddle the value
 class ChangeParameterCommand(Delta):
-    parameter_val = models.ForeignKey(ParameterVal, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    parameter_val = models.ForeignKey(ParameterVal, null=True, default=None,
+                                      blank=True, on_delete=models.SET_DEFAULT)
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
+
+    # Implement wf_module for self.ws_notify()
+    @property
+    def wf_module(self):
+        return self.parameter_val.wf_module
 
     def forward_impl(self):
         self.parameter_val.set_value(self.new_value)
@@ -276,36 +284,20 @@ class ChangeParameterCommand(Delta):
         workflow = parameter_val.wf_module.workflow
         pspec = parameter_val.parameter_spec
 
-        # We don't create a Delta for derived_data parameter. Such parameters are essentially caches,
-        # (e.g. chart output image) and are created either during module render() or in the front end
-        # Instead, we just set the value -- and trust that undo-ing the other parameters will also set
-        # the derived_data parameters.
-        if pspec.derived_data:
-            parameter_val.set_value(value)
-            return None
-
-        # Not derived data, we're doing this.
         description = \
             'Changed parameter \'' + pspec.name + '\' of \'' + parameter_val.wf_module.get_module_name() + '\' module'
 
-        delta = Delta.create_impl(ChangeParameterCommand,
+        delta = Delta.create_impl(
+            ChangeParameterCommand,
             parameter_val=parameter_val,
             new_value=value,
             old_value=parameter_val.get_value(),
             workflow=workflow,
-            command_description=description)
-
-        # Clear wf_module errors, on the theory that user might have fixed them. The next render()
-        # or event() will re-create the errors if there is still a problem. The only other place
-        # errors are cleared is when an event is dispatched.
-        parameter_val.wf_module.set_ready(notify=False)
-
-        # increment workflow version number, triggers global re-render if this parameter can effect output
-        notify = not pspec.ui_only
-        if notify:
-            notify_client_workflow_version_changed(workflow)
+            command_description=description
+        )
 
         return delta
+
 
 class ChangeWorkflowTitleCommand(Delta):
     new_value = models.TextField('new_value')
@@ -324,19 +316,20 @@ class ChangeWorkflowTitleCommand(Delta):
         old_name = workflow.name
         description = 'Changed workflow name from ' + old_name + ' to ' + name
 
-        delta = Delta.create_impl(ChangeWorkflowTitleCommand,
-            workflow = workflow,
-            new_value = name,
-            old_value = old_name,
-            command_description = description
+        delta = Delta.create_impl(
+            ChangeWorkflowTitleCommand,
+            workflow=workflow,
+            new_value=name,
+            old_value=old_name,
+            command_description=description
         )
-
-        # don't notify client b/c client has already updated UI
 
         return delta
 
+
 class ChangeWfModuleNotesCommand(Delta):
-    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    wf_module = models.ForeignKey(WfModule, null=True, default=None,
+                                  blank=True, on_delete=models.SET_DEFAULT)
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
@@ -353,20 +346,21 @@ class ChangeWfModuleNotesCommand(Delta):
         old_value = wf_module.notes if wf_module.notes else ''
         description = 'Changed workflow module note from ' + old_value + ' to ' + notes
 
-        delta = Delta.create_impl(ChangeWfModuleNotesCommand,
-            workflow = wf_module.workflow,
-            wf_module = wf_module,
-            new_value = notes,
-            old_value = old_value,
-            command_description = description
+        delta = Delta.create_impl(
+            ChangeWfModuleNotesCommand,
+            workflow=wf_module.workflow,
+            wf_module=wf_module,
+            new_value=notes,
+            old_value=old_value,
+            command_description=description
         )
-
-        notify_client_workflow_version_changed(wf_module.workflow)
 
         return delta
 
+
 class ChangeWfModuleUpdateSettingsCommand(Delta):
-    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    wf_module = models.ForeignKey(WfModule, null=True, default=None,
+                                  blank=True, on_delete=models.SET_DEFAULT)
     new_auto = models.BooleanField()
     old_auto = models.BooleanField()
     new_next_update = models.DateField(null=True)
@@ -390,19 +384,17 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
     def create(wf_module, auto_update_data, next_update, update_interval):
         description = 'Changed workflow update settings'
 
-        delta = Delta.create_impl(ChangeWfModuleUpdateSettingsCommand,
-            workflow = wf_module.workflow,
-            wf_module = wf_module,
-            old_auto = wf_module.auto_update_data,
-            new_auto = auto_update_data,
-            old_next_update = wf_module.next_update,
-            new_next_update = next_update,
-            old_update_interval = wf_module.update_interval,
-            new_update_interval = update_interval,
-            command_description = description
+        delta = Delta.create_impl(
+            ChangeWfModuleUpdateSettingsCommand,
+            workflow=wf_module.workflow,
+            wf_module=wf_module,
+            old_auto=wf_module.auto_update_data,
+            new_auto=auto_update_data,
+            old_next_update=wf_module.next_update,
+            new_next_update=next_update,
+            old_update_interval=wf_module.update_interval,
+            new_update_interval=update_interval,
+            command_description=description
         )
-
-        # No notification needed as client will do update
-        # notify_client_workflow_version_changed(wf_module.workflow)
 
         return delta

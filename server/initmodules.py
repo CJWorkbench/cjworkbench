@@ -150,7 +150,6 @@ def load_parameter_spec(d, module_version, order):
     pspec.def_visible = d.get('visible', True)
     pspec.ui_only = d.get('ui-only', False)
     pspec.multiline = d.get('multiline', False)
-    pspec.derived_data = d.get('derived-data', False)
     pspec.placeholder = d.get('placeholder', '')
 
     if d['type'] == 'menu':

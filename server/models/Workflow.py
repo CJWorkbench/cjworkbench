@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.http import HttpRequest
-from server.models.WfModule import WfModule
 from django.urls import reverse
 from server.models.Lesson import Lesson
 from typing import Optional

@@ -25,6 +25,9 @@ function launchWebsocket () {
     const data = JSON.parse(ev.data)
     if ('type' in data) {
       switch (data.type) {
+        case 'apply-delta':
+          Actions.store.dispatch(Actions.applyDeltaAction(data.data))
+          return
         case 'wfmodule-status':
           Actions.store.dispatch(
             Actions.setWfModuleStatusAction(
@@ -33,15 +36,12 @@ function launchWebsocket () {
               data.error_msg ? data.error_msg : ''
             ))
           return
-        case 'set-wfmodule':
-          Actions.store.dispatch(
-            Actions.setWfModuleAction(data.wfModule)
-          )
+        case 'set-wf-module':
+          Actions.store.dispatch(Actions.setWfModuleAction(data.data))
           return
         case 'set-workflow':
-          Actions.store.dispatch(
-            Actions.setWorkflowAction(data)
-          )
+          Actions.store.dispatch(Actions.setWorkflowAction(data.data))
+          return
         case 'reload-workflow':
           Actions.store.dispatch(Actions.reloadWorkflowAction())
           return

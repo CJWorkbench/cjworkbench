@@ -145,7 +145,8 @@ def wfmodule_detail(request, pk, format=None):
                     patch_update_settings(wf_module, request.data)
 
                 if 'collapsed' in request.data:
-                    wf_module.set_is_collapsed(request.data['collapsed'], notify=False)
+                    wf_module.is_collapsed = request.data['collapsed']
+                    wf_module.save()
 
                 if 'notifications' in request.data:
                     wf_module.notifications = bool(request.data['notifications'])

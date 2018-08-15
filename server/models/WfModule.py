@@ -331,18 +331,6 @@ class WfModule(models.Model):
         if notify:
             websockets.ws_client_rerender_workflow(self.workflow)
 
-    def set_fetch_error(self, message):
-        self.is_busy = False
-        self.fetch_error = message
-        self.status = self.ERROR
-        self.save()
-
-    def set_is_collapsed(self, collapsed, notify=True):
-        self.is_collapsed = collapsed
-        self.save()
-        if notify:
-            websockets.ws_client_rerender_workflow(self.workflow)
-
     # --- Duplicate ---
     # used when duplicating a whole workflow
     def duplicate(self, to_workflow):

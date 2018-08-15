@@ -16,6 +16,9 @@ const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE'
 const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC'
 const MOVE_MODULE = 'MOVE_MODULE'
 
+// Delta: workflow+wfmodule changes
+const APPLY_DELTA = 'APPLY_DELTA'
+
 // WfModule
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS'
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
@@ -29,10 +32,6 @@ const SET_PARAM_VALUE = 'SET_PARAM_VALUE'
 const SET_DATA_VERSION = 'SET_DATA_VERSION'
 const MARK_DATA_VERSIONS_READ = 'MARK_DATA_VERSIONS_READ'
 const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
-
-// Sometimes, do nothing
-export const NOP_ACTION = 'NOP_ACTION'
-const NOP = { type: NOP_ACTION, payload: {} }
 
 // ---- Our Store ----
 // Master state for the workflow.
@@ -122,15 +121,53 @@ registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
   return { ...state, workflow, wfModules }
 })
 
-export function setWorkflowAction ({ workflow, wfModules }) {
-  return {
-    type: SET_WORKFLOW,
-    payload: { workflow, wfModules }
-  }
+// 'data' is { workflow, wfModules } ... but wfModules is optional
+export function setWorkflowAction (data) {
+  return { type: SET_WORKFLOW, payload: data }
 }
 registerReducerFunc(SET_WORKFLOW, (state, action) => {
-  const { workflow, wfModules } = action.payload
-  return { ...state,
+  return {
+    ...state,
+    ...action.payload
+  }
+})
+
+// 'data' is { updateWorkflow, updateWfModules, clearWfModuleIds }, all
+// optional
+export function applyDeltaAction (data) {
+  return { type: APPLY_DELTA, payload: data }
+}
+registerReducerFunc(APPLY_DELTA, (state, action) => {
+  const data = action.payload
+
+  let workflow = state.workflow
+  if (data.updateWorkflow) {
+    workflow = {
+      ...workflow,
+      ...data.updateWorkflow
+    }
+  }
+
+  let wfModules = state.wfModules
+  if (data.updateWfModules) {
+    wfModules = { ...wfModules }
+    for (const wfModuleId in data.updateWfModules) {
+      wfModules[wfModuleId] = {
+        ...wfModules[wfModuleId],
+        ...data.updateWfModules[wfModuleId]
+      }
+    }
+  }
+
+  if (data.clearWfModuleIds) {
+    wfModules = { ...wfModules }
+    for (const wfModuleId of data.clearWfModuleIds) {
+      delete wfModules[String(wfModuleId)]
+    }
+  }
+
+  return {
+    ...state,
     workflow,
     wfModules
   }
