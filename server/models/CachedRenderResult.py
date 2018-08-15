@@ -113,7 +113,7 @@ class CachedRenderResult:
 
         wf_module.cached_render_result_workflow_id = wf_module.workflow_id
         wf_module.cached_render_result_workflow_revision = revision
-        wf_module.cached_render_result_workflow_error = error
+        wf_module.cached_render_result_error = error
         wf_module.cached_render_result_json = json_bytes
 
         os.makedirs(os.path.dirname(ret.parquet_path), exist_ok=True)

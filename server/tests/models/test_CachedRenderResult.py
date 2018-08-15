@@ -15,7 +15,7 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(self.wf_module.get_cached_render_result())
 
     def test_assign_and_save(self):
-        result = ProcessResult(pandas.DataFrame({'a': [1]}))
+        result = ProcessResult(pandas.DataFrame({'a': [1]}), 'err')
         self.wf_module.cache_render_result(2, result)
 
         cached = self.wf_module.get_cached_render_result()
