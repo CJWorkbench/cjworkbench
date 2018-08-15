@@ -1,12 +1,12 @@
 from django.conf import settings
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from server.models.StoredObject import StoredObject
 from server.modules.types import ProcessResult
-from server.tests.utils import load_and_add_module, mock_csv_table
+from server.tests.utils import DbTestCase, load_and_add_module, mock_csv_table
 from server.versions import save_result_if_changed
 
 
-class VersionTests(TestCase):
+class VersionTests(DbTestCase):
     def setUp(self):
         self.wfm = load_and_add_module('loadurl')
 
