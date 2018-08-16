@@ -15,7 +15,7 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install pipenv
+RUN pip install pipenv==2018.7.1
 
 # Set up /app
 RUN mkdir /app
@@ -25,7 +25,6 @@ WORKDIR /app
 FROM pybase AS pydev
 
 # Need build-essential for:
-# * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
