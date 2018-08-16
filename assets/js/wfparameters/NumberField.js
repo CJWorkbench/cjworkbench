@@ -24,7 +24,7 @@ export default class NumberField extends React.PureComponent {
   }
 
   onChange = (ev) => {
-    const value = Number(ev.target.value)
+    const value = ev.target.value === '' ? null : Number(ev.target.value)
     this.props.onChange(value)
   }
 
