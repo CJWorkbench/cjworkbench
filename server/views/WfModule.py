@@ -336,35 +336,6 @@ def wfmodule_input_value_counts(request, pk):
     return JsonResponse({'values': value_counts})
 
 
-@api_view(['GET'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_histogram(request, pk, col, format=None):
-    wf_module = _lookup_wf_module_for_read(pk, request)
-
-    INTERNAL_COUNT_COLNAME = '__internal_count_column__'
-
-    prev_modules = WfModule.objects.filter(workflow=wf_module.workflow,
-                                           order__lt=wf_module.order)
-    if not prev_modules:
-        return JsonResponse(_make_render_dict(pd.DataFrame()))
-
-    result = execute_and_notify(wf_module)
-
-    if col not in result.dataframe.columns:
-        return JsonResponse({
-            'message': 'Column does not exist in module input',
-            'status_code': 400
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    hist_table = result.dataframe.groupby(col).size().reset_index()
-    hist_table.columns = [col, INTERNAL_COUNT_COLNAME]
-    hist_table = hist_table.sort_values(by=[INTERNAL_COUNT_COLNAME, col],
-                                        ascending=[False, True])
-    hist_table[col] = hist_table[col].astype(str)
-
-    return JsonResponse(_make_render_dict(hist_table))
-
-
 def _previous_wf_module(wf_module: WfModule) -> Optional[WfModule]:
     """
     Find the WfModule whose output is `wf_module`'s input.
