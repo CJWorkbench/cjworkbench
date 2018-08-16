@@ -23,14 +23,3 @@ def import_from_github(request):
                                 content_type='application/json')
         response.status_code = 200  # should really be 400, but we want the WorkbenchAPI.js to pass error messages through
         return response
-
-
-@api_view(['POST'])
-@login_required
-@renderer_classes((JSONRenderer))
-def refresh_from_github(request):
-    try:
-        refresh_module_from_github(request.data["url"])
-        return Response(status=status.HTTP_201_CREATED)
-    except ValidationError as error:
-        return Response(error, status=status.HTTP_400_BAD_REQUEST)
