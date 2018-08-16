@@ -23,6 +23,7 @@ from .modules.sortfromtable import SortFromTable
 from .modules.reorder import ReorderFromTable
 from .modules.rename import RenameFromTable
 from .modules.duplicatecolumn import DuplicateColumn
+from .modules.joinurl import JoinURL
 
 # ---- Test Support ----
 
@@ -60,6 +61,7 @@ module_dispatch_tbl = {
     'reorder-columns':  ReorderFromTable,
     'rename-columns':   RenameFromTable,
     'duplicate-column': DuplicateColumn,
+    'joinurl':          JoinURL,
 
     # For testing
     'NOP':          NOP,
