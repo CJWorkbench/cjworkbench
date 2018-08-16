@@ -93,22 +93,6 @@ def parameterval_event(request, pk, format=None):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# Return a parameter val that is actually an image
-@require_GET
-def parameterval_png(request, pk):
-    param = parameter_val_or_response_for_read(pk, request)
-    if isinstance(param, HttpResponse): return param
-
-    # is this actually in image? totes hardcoded for now
-    if param.parameter_spec.id_name != 'chart':
-        return HttpResponseBadRequest()
-
-    # decode the base64 payload of the data URI into a png
-    image_data = param.value.partition('base64,')[2]
-    binary = base64.b64decode(image_data)
-    return HttpResponse(binary, content_type='image/png')
-
-
 def _oauth_start_authorize(request, param: ParameterVal, id_name: str) -> HttpResponse:
     """Redirects to the specified OAuth service provider.
 

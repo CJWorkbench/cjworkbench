@@ -61,8 +61,6 @@ urlpatterns = [
         views.parameterval_oauth_generate_access_token),
     url(r'^oauth/?$', views.parameterval_oauth_finish_authorize),
 
-    url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png),
-
     # Embeds
     url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),
 
