@@ -25,7 +25,6 @@ from django.conf import settings
 from typing import Union, Optional, Dict, Tuple
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from oauthlib.oauth1.rfc5849.errors import OAuth1Error
-from oauthlib.common import generate_nonce
 import jwt
 import requests
 import requests_oauthlib

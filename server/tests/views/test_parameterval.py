@@ -117,19 +117,3 @@ class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
         # changing a parameter should change the version
         self.workflow.refresh_from_db()
         self.assertNotEqual(old_rev, self.workflow.revision())
-
-    # if we press enter on the url field of loadurl, also "press" the check button
-    def test_parameterval_detail_patch_fetch(self):
-        wfm = load_and_add_module('loadurl')  # creates new workflow too
-        url_param = get_param_by_id_name('url')
-
-        with mock.patch('server.modules.loadurl.LoadURL.event') as event_call:
-
-            request = self._build_patch('/api/parameters/%d/' % url_param.id,
-                                        {'value': '50.456', 'pressed_enter':True },
-                                        user=self.user)
-            response = parameterval_detail(request, pk=url_param.id)
-            self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-            # should have made an call to the LoadURL event handler
-            self.assertIs(event_call.call_count, 1)
