@@ -43,18 +43,18 @@ def execute_and_notify(wf_module):
     workflow = wf_module.workflow
     with workflow.cooperative_lock():
         priors = {}
-        for wf_module in workflow.wf_modules.all():
-            priors[wf_module.id] = \
-                _client_attributes_that_change_on_render(wf_module)
+        for a_wf_module in workflow.wf_modules.all():
+            priors[a_wf_module.id] = \
+                _client_attributes_that_change_on_render(a_wf_module)
         result = execute.execute_wfmodule(wf_module)
 
         changes = {}
-        for wf_module in workflow.wf_modules.all():
-            prior = priors[wf_module.id]
-            current = _client_attributes_that_change_on_render(wf_module)
+        for a_wf_module in workflow.wf_modules.all():
+            prior = priors[a_wf_module.id]
+            current = _client_attributes_that_change_on_render(a_wf_module)
 
             if current != prior:
-                changes[str(wf_module.id)] = current
+                changes[str(a_wf_module.id)] = current
 
     if changes:
         websockets.ws_client_send_delta_sync(wf_module.workflow_id, {
