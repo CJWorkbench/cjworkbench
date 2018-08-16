@@ -2,7 +2,7 @@
   "name": "Join Workflow",
   "id_name": "joinurl" ,
   "category" : "Add data",
-  "icon" : "url",
+  "icon" : "join",
   "description" : "Join a workflow on one or sevral columns via its URL and select which attributes to import.",
   "loads_data": true,
   "parameters": [
