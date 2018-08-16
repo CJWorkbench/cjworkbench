@@ -24,11 +24,12 @@ const InitialValues = {
 }
 
 const InitialState = {
-    loadedRows: [],
-    columns: null,
-    columnTypes: null,
-    totalNRows: null,
-    loading: false
+  loadedRows: [],
+  columns: null,
+  columnTypes: null,
+  totalNRows: null,
+  loading: false,
+  wasJustReset: false
 }
 
 export default class TableView extends React.PureComponent {
@@ -73,20 +74,23 @@ export default class TableView extends React.PureComponent {
   }
 
   /**
-   * Reset us to how we were before our first render: no data.
+   * Mark the table as needing reloading.
+   *
+   * For a fluid UX, we want to leave the existing table in place while
+   * loading new data.
    *
    * This will trigger render(), which will eventually call getRow(), which
-   * will trigger load. But you can load before that if you prefer.
+   * will trigger load. (You may load() before that, if you prefer.)
    */
   reset () {
     if (this.scheduleLoadTimeout !== null) {
-      window.cancelTimeout(this.scheduleLoadTimeout)
+      window.clearTimeout(this.scheduleLoadTimeout)
     }
-    Object.assign(this, InitialValues)
-    this.setState(InitialState)
+    // Leave old values in this.state, so we keep rendering them until new
+    // values are loaded.
   }
 
-  load () {
+  load (wasJustReset=false) {
     const min = this.minMissingRowIndex
     const max = min + NRowsPerPage // don't care about maxMissingRowIndex...
     const wfModuleId = this.props.selectedWfModuleId
@@ -97,7 +101,7 @@ export default class TableView extends React.PureComponent {
     this.maxMissingRowIndex = null
     this.scheduleLoadTimeout = null
 
-    let areAllValuesMissing = true
+    let areAllValuesMissing = !wasJustReset
     for (let i = min; i < max; i++) {
       if (loadedRows[i]) {
         areAllValuesMissing = false
@@ -117,10 +121,10 @@ export default class TableView extends React.PureComponent {
         if (json.start_row !== min) return
         if (this.unmounted) return
 
-        const loadedRows = this.state.loadedRows.slice()
+        const loadedRows = wasJustReset ? [] : this.state.loadedRows.slice()
         const totalNRows = json.total_rows
-        const columns = this.state.columns || json.columns
-        const columnTypes = this.state.columnTypes || json.column_types
+        const columns = (!wasJustReset && this.state.columns) || json.columns
+        const columnTypes = (!wasJustReset && this.state.columnTypes) || json.column_types
 
         // expand the Array (filling undefined for missing values in between)
         loadedRows[json.start_row] = null
@@ -132,7 +136,8 @@ export default class TableView extends React.PureComponent {
           totalNRows,
           loadedRows,
           columns,
-          columnTypes
+          columnTypes,
+          wasJustReset: false
         })
 
         this.setBusySpinner(false)
@@ -164,7 +169,7 @@ export default class TableView extends React.PureComponent {
 
       // Set this.state.loading=true and begin the fetch
       // we know scheduleLoadTimeout is null because reset() reset it
-      this.load()
+      this.load(true)
     }
   }
 

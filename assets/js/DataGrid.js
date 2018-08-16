@@ -486,7 +486,9 @@ export default class DataGrid extends React.Component {
     super(props);
 
     this.state = {
-      gridHeight : 100,  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
+      // gridWith and gridHeight start non-0, so rows get rendered in tests
+      gridWidth: 100,
+      gridHeight : 100,
       componentKey: 0,  // a key for the component; updates if the column header needs
       draggingColumnIndex: null,
     };
@@ -497,14 +499,12 @@ export default class DataGrid extends React.Component {
 
   // After the component mounts, and on any change, set the height to parent div height
   updateSize() {
-    var domNode = ReactDOM.findDOMNode(this);
-    if (domNode) {
-      var gridHeight = domNode.parentElement.offsetHeight;
-      var gridWidth = domNode.parentElement.offsetWidth;
-      this.setState({
-        gridHeight: gridHeight,
-        gridWidth: gridWidth
-      });
+    const domNode = ReactDOM.findDOMNode(this);
+    if (domNode && domNode.parentElement) {
+      const container = domNode.parentElement
+      const gridHeight = Math.max(100, container.offsetHeight)
+      const gridWidth = Math.max(100, container.offsetWidth)
+      this.setState({ gridWidth, gridHeight })
     }
   }
 
@@ -529,19 +529,27 @@ export default class DataGrid extends React.Component {
   }
 
   // Check if column names are changed between props, used for shouldKeyUpdate
-  columnsChanged(prevColumns, nextColumns) {
-    if((prevColumns == null) || (nextColumns == null)) {
-      return true;
+  columnsChanged(props, nextProps) {
+    const prevColumns = props.columns || null
+    const nextColumns = nextProps.columns || null
+    const prevTypes = props.columnTypes || null
+    const nextTypes = nextProps.columnTypes || null
+
+    if (prevColumns === null || nextColumns === null || prevTypes === null || nextTypes === null) {
+      return true // "bug" if they're both null, but who cares? Render will be fast
     }
-    if(prevColumns.length != nextColumns.length) {
-      return true;
+
+    if (prevColumns.length !== nextColumns.length) {
+      return true
     }
-    for(var i = 0; i < prevColumns.length; i ++) {
-      if(prevColumns[i] != nextColumns[i]) {
-        return true;
+
+    for (let i = 0; i < prevColumns.length; i++) {
+      if (prevColumns[i] !== nextColumns[i] || prevTypes[i] !== nextTypes[i]) {
+        return true
       }
     }
-    return false;
+
+    return false
   }
 
   shouldKeyUpdate(nextProps) {
@@ -557,7 +565,7 @@ export default class DataGrid extends React.Component {
     // For some reason, react-data-grid does not change column order
     // in its output when the column order changes when custom header renderer
     // is involved, so we bump the key if columns are changed
-    if(this.columnsChanged(this.props.columns, nextProps.columns)) {
+    if (this.columnsChanged(this.props, nextProps)) {
       return true;
     }
     return false;
@@ -632,8 +640,8 @@ export default class DataGrid extends React.Component {
         draggingColumnIndex: this.state.draggingColumnIndex,
         onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
         onRenameColumn: this.onRename,
-      };
-      let columns = makeFormattedCols(draggingProps);
+      }
+      const columns = makeFormattedCols(draggingProps)
 
       return(
         <ReactDataGrid
@@ -642,11 +650,11 @@ export default class DataGrid extends React.Component {
           rowsCount={this.props.totalRows}
           minWidth={this.state.gridWidth -2}
           minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-          headerRowHeight={this.props.showLetter ? 54 : 48}
+          headerRowHeight={this.props.showLetter ? 66 : 48}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
           key={this.state.componentKey}
-          />
+        />
       )
     } else {
       return null;

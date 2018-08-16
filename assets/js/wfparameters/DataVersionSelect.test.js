@@ -51,21 +51,22 @@ describe('DataVersionSelect', () => {
     const IdealState = {
       workflow: {
         read_only: false,
-        wf_modules: [
-          {
-            id: 123,
-            versions: {
-              versions: [ 
-                [ '2018-06-23T20:09:41.649Z', false ],
-                [ '2018-06-22T20:09:41.649Z', true ],
-              ],
-              selected: '2018-06-22T20:09:41.649Z',
-            }
-          },
-          {
-            id: 124,
+        wf_modules: [ 123, 124 ]
+      },
+      wfModules: {
+        123: {
+          id: 123,
+          versions: {
+            versions: [
+              [ '2018-06-23T20:09:41.649Z', false ],
+              [ '2018-06-22T20:09:41.649Z', true ],
+            ],
+            selected: '2018-06-22T20:09:41.649Z',
           }
-        ]
+        },
+        124: {
+          id: 124,
+        }
       }
     }
 
@@ -93,9 +94,10 @@ describe('DataVersionSelect', () => {
 
     it('finds isReadOnly', () => {
       const w = connectedWrapper({
+        ...IdealState,
         workflow: {
-          read_only: true,
-          wf_modules: IdealState.workflow.wf_modules,
+          ...IdealState.workflow,
+          read_only: true
         }
       })
       expect(w.find('.read-only').text()).toBe('Version 1 of 2')
@@ -103,11 +105,13 @@ describe('DataVersionSelect', () => {
 
     it('handles empty version list', () => {
       const w = connectedWrapper({
-        workflow: {
-          read_only: false,
-          wf_modules: [
-            { id: 123, versions: { versions: [], selected: null } },
-          ]
+        ...IdealState,
+        wfModules: {
+          ...IdealState.wfModules,
+          123: {
+            ...IdealState.wfModules['123'],
+            versions: { versions: [], selected: null }
+          }
         }
       })
       expect(w.find('.no-versions').text()).toBe('–')

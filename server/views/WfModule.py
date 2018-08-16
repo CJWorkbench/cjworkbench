@@ -8,12 +8,13 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
 from django.shortcuts import get_object_or_404
 from django.utils import dateparse, timezone
 from django.views.decorators.clickjacking import xframe_options_exempt
+import numpy as np
+import pandas as pd
+from pandas.api.types import is_numeric_dtype
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-import numpy as np
-import pandas as pd
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
 from server import execute
@@ -126,20 +127,7 @@ def patch_update_settings(wf_module, data):
 
 
 def get_simple_column_types(table):
-    # Get simplified column types of a table
-    # and return as a list in the order of the columns
-    raw_dtypes = list(table.dtypes)
-    ret_types = []
-    for dt in raw_dtypes:
-        # We are simplifying the data types here.
-        # More stuff can be added to these lists if we run into anything new.
-        stype = "text"
-        if dt in ['int64', 'float64', 'bool']:
-            stype = "number"
-        elif dt in ['datetime64[ns]']:
-            stype = "datetime"
-        ret_types.append(stype)
-    return ret_types
+    return list([_column_type(table[c]) for c in table.columns])
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on
@@ -390,6 +378,22 @@ def _previous_wf_module(wf_module: WfModule) -> Optional[WfModule]:
         .last()
 
 
+def _column_type(series: pd.Series) -> str:
+    """
+    Determine whether `series` is 'text', 'number' or 'datetime'.
+
+    Guide: https://github.com/CJWorkbench/cjworkbench/wiki/Column-Types
+    """
+    if hasattr(series, 'cat') or series.dtype == object:
+        return 'text'
+    elif is_numeric_dtype(series):
+        return 'number'
+    elif hasattr(series, 'dt'):
+        return 'datetime'
+    else:
+        raise ValueError(f'Series of unknown type: {series.dtype}')
+
+
 # returns a list of columns and their simplified types
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -397,22 +401,11 @@ def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     result = execute_and_notify(wf_module)
-    dtypes = result.dataframe.dtypes.to_dict()
 
-    ret_types = []
-    for col in dtypes:
-        # We are simplifying the data types here.
-        # More stuff can be added to these lists if we run into anything new.
-        stype = "text"
-        if str(dtypes[col]) in ['int64', 'float64', 'bool']:
-            stype = "number"
-        elif str(dtypes[col]) in ['datetime64[ns]']:
-            ret_types.append((col, "datetime"))
-            stype = "datetime"
-        ret_types.append({
-            "name": col,
-            "type": stype
-        })
+    dataframe = result.dataframe
+    ret_types = list([{'name': c, 'type': _column_type(dataframe[c])}
+                      for c in dataframe.columns])
+
     return HttpResponse(json.dumps(ret_types), content_type="application/json")
 
 

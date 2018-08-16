@@ -89,8 +89,6 @@ export class Workflow extends React.Component {
   }
 
   render() {
-    const selectedWfModule = this.props.workflow.wf_modules[this.props.selected_wf_module];
-
     let className = 'workflow-root'
     if (this.props.lesson) {
       className += ' in-lesson'

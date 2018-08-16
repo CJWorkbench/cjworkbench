@@ -22,6 +22,7 @@ exports[`WfParameter Renders string input field 1`] = `
     onChange={[Function]}
     onReset={[Function]}
     onSubmit={[Function]}
+    placeholder=""
     value="data.sfgov.org"
   />
 </div>

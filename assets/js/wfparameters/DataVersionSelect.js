@@ -61,7 +61,7 @@ export class DataVersionSelect extends React.PureComponent {
 function mapStateToProps(state, { wfModuleId }) {
   const isReadOnly = state.workflow.read_only
 
-  const wfModule = state.workflow.wf_modules.find(m => m.id === wfModuleId)
+  const wfModule = state.wfModules[String(wfModuleId)]
   if (!wfModule || !wfModule.versions || !wfModule.versions.selected) {
     return {
       currentVersionIndex: null,

@@ -33,15 +33,15 @@ describe('TableView', () => {
         "b": '2',
         "c": '3',
       })
-    };
-    return jsonResponseMock(data);
+    }
+    return jsonResponseMock(data)
   }
 
 
   it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', (done) => {
-    var api = {
+    const api = {
       render: makeRenderResponse(0, 3, 1000)
-    };
+    }
 
     const tree = mount(
       <TableView {...defaultProps} selectedWfModuleId={100} lastRelevantDeltaId={1} api={api} isReadOnly={false}/>
@@ -50,67 +50,63 @@ describe('TableView', () => {
     // wait for promise to resolve, then see what we get
     setImmediate(() => {
       // should have called API for its data, and loaded it
-      expect(api.render).toHaveBeenCalledWith(100, 0, NRowsPerPage + 1);
-
-      expect(tree).toMatchSnapshot();
+      expect(api.render).toHaveBeenCalledWith(100, 0, NRowsPerPage + 1)
 
       // Header etc should be here
-      expect(tree.find('.outputpane-header')).toHaveLength(1);
-      expect(tree.find('.outputpane-data')).toHaveLength(1);
+      expect(tree.find('.outputpane-header')).toHaveLength(1)
+      expect(tree.find('.outputpane-data')).toHaveLength(1)
 
       // Row count should have a comma
-      let headerText = tree.find('.outputpane-header').text();
+      let headerText = tree.find('.outputpane-header').text()
       expect(headerText).toContain('1,000');  
 
       // Test calls to UpdateTableAction
       // Don't call updateTableActionModule if the cell value has not changed
-      tree.instance().onEditCell(0, 'c', '3');
-      expect(updateTableActionModule).not.toHaveBeenCalled();
+      tree.instance().onEditCell(0, 'c', '3')
+      expect(updateTableActionModule).not.toHaveBeenCalled()
       // Do call updateTableActionModule if the cell value has changed
-      tree.instance().onEditCell(1, 'b', '1000');
+      tree.instance().onEditCell(1, 'b', '1000')
 
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' });
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' })
 
       // Calls updateTableActionModule for sorting
-      tree.instance().setDropdownAction('sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc});
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc});
+      tree.instance().setDropdownAction('sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
 
       // Calls updateTableActionModule for duplicating column
-      tree.instance().setDropdownAction('duplicate-column', false, {columnKey: 'a'});
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, {columnKey: 'a'});
+      tree.instance().setDropdownAction('duplicate-column', false, {columnKey: 'a'})
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, {columnKey: 'a'})
 
       // Calls updateTableActionModule for filtering column
-      tree.instance().setDropdownAction('filter', true, {columnKey: 'a'});
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, {columnKey: 'a'});
+      tree.instance().setDropdownAction('filter', true, {columnKey: 'a'})
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, {columnKey: 'a'})
 
       // Calls updateTableActionModule for drop column
-      tree.instance().setDropdownAction('selectcolumns', false, {columnKey: 'a'});
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'});
+      tree.instance().setDropdownAction('selectcolumns', false, {columnKey: 'a'})
+      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'})
 
       // Calls updateTableActionModule for column reorder
       // TODO uncomment!
-      // tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
-      // expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 });
+      // tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
+      // expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 })
 
-      done();
-    });
-  });
+      done()
+    })
+  })
 
-
-  it('Blank table when no module id', () => {
+  it('blanks table when no module id', () => {
     const tree = mount(
       <TableView {...defaultProps} selectedWfModuleId={undefined} lastRelevantDeltaId={1} api={{}} isReadOnly={false}/>
-    );
-    tree.update();
+    )
+    tree.update()
 
-    expect(tree.find('.outputpane-header')).toHaveLength(1);
-    expect(tree.find('.outputpane-data')).toHaveLength(1);
-    expect(tree).toMatchSnapshot();
-  });
+    expect(tree.find('.outputpane-header')).toHaveLength(1)
+    expect(tree.find('.outputpane-data')).toHaveLength(1)
+  })
 
-  it('Lazily loads rows as needed', async () => {
+  it('lazily loads rows as needed', async () => {
     const totalRows = 100000
-    var api = {
+    const api = {
       render: makeRenderResponse(0, 201, totalRows) // response to expected first call
     }
 
@@ -140,8 +136,68 @@ describe('TableView', () => {
     expect(api.render).toHaveBeenCalledWith(100, 412, 613)
   })
 
-  it('Passes the the right sortColumn, sortDirection to DataGrid', (done) => {
-    var testData = {
+  it('keeps previous rows when loading new rows', async () => {
+    const data1 = {
+      total_rows: 2,
+      start_row: 0,
+      end_row: 2,
+      columns: [ 'A', 'B' ],
+      column_types: [ 'Number', 'Number' ],
+      rows: [
+        { 'A': 1, 'B': 2 },
+        { 'A': 3, 'B': 4 }
+      ]
+    }
+
+    const data2 = {
+      ...data1,
+      columns: [ 'C', 'D' ],
+      rows: [
+        { 'C': 5, 'D': 6 },
+        { 'C': 7, 'D': 8 }
+      ]
+    }
+
+    const render = jest.fn()
+      .mockReturnValueOnce(Promise.resolve(data1))
+      .mockReturnValueOnce(Promise.resolve(data2))
+
+    const api = { render }
+
+    const wrapper = mount(
+      <TableView
+        {...defaultProps}
+        selectedWfModuleId={100}
+        lastRelevantDeltaId={1}
+        api={api}
+        isReadOnly={false}
+      />
+    )
+    await tick()
+
+    expect(wrapper.text()).toMatch(/JSON FEED.*A.*B/)
+    expect(wrapper.text()).toMatch(/3.*4/)
+
+    wrapper.setProps({
+      selectedWfModuleId: 101,
+      lastRelevantDeltaId: 2
+    })
+    wrapper.update()
+    // Previous data remains
+    expect(wrapper.text()).toMatch(/A.*B/)
+    expect(wrapper.text()).toMatch(/3.*4/)
+
+    await tick()
+    wrapper.update()
+
+    // Now it's new data
+    expect(api.render).toHaveBeenCalledWith(101, 0, 201)
+    expect(wrapper.text()).toMatch(/JSON FEED.*C.*D/)
+    expect(wrapper.text()).toMatch(/5.*7/)
+  })
+
+  it('passes the the right sortColumn, sortDirection to DataGrid', (done) => {
+    const testData = {
       total_rows: 2,
       start_row: 0,
       end_row: 2,
@@ -159,14 +215,14 @@ describe('TableView', () => {
         }
       ],
       column_types: ['Number', 'Number', 'Number']
-    };
+    }
 
-    var api = {
+    const api = {
       render: jsonResponseMock(testData),
-    };
+    }
 
     // Try a mount with the sort module selected, should have sortColumn and sortDirection
-    var tree = mount(
+    const tree = mount(
       <TableView
           {...defaultProps}
           lastRelevantDeltaId={1}
@@ -177,19 +233,19 @@ describe('TableView', () => {
           sortColumn={'b'}
           sortDirection={sortDirectionDesc}
       />
-    );
+    )
 
     setImmediate(() => {
-      tree.update();
-      const dataGrid = tree.find(DataGrid);
-      expect(dataGrid.prop('sortColumn')).toBe('b');
-      expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc);
-      done();
-    });
-  });
+      tree.update()
+      const dataGrid = tree.find(DataGrid)
+      expect(dataGrid.prop('sortColumn')).toBe('b')
+      expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc)
+      done()
+    })
+  })
 
-  it('Passes the the right showLetter prop to DataGrid', (done) => {
-    var testData = {
+  it('passes the the right showLetter prop to DataGrid', (done) => {
+    const testData = {
       total_rows: 2,
       start_row: 0,
       end_row: 2,
@@ -207,17 +263,17 @@ describe('TableView', () => {
         }
       ],
       column_types: ['Number', 'Number', 'Number']
-    };
+    }
 
-    var api = {
+    const api = {
       render: jsonResponseMock(testData),
-    };
+    }
 
-    const NON_SHOWLETTER_ID = 28;
-    const SHOWLETTER_ID = 135;
+    const NON_SHOWLETTER_ID = 28
+    const SHOWLETTER_ID = 135
 
     // Try a mount with the formula module selected, should show letter
-    var tree = mount(
+    const tree = mount(
       <TableView
           {...defaultProps}
           showColumnLetter={true}
@@ -226,15 +282,13 @@ describe('TableView', () => {
           api={api}
           setBusySpinner={jest.fn()}
       />
-    );
+    )
     setImmediate(() => {
-      tree.update();
-      const dataGrid = tree.find(DataGrid);
-      expect(dataGrid).toHaveLength(1);
-      expect(dataGrid.prop('showLetter')).toBe(true);
-      done();
-    });
-  });
-});
-
-
+      tree.update()
+      const dataGrid = tree.find(DataGrid)
+      expect(dataGrid).toHaveLength(1)
+      expect(dataGrid.prop('showLetter')).toBe(true)
+      done()
+    })
+  })
+})
