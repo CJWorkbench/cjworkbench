@@ -119,6 +119,7 @@ export default class GoogleFileSelect extends React.PureComponent {
     api: PropTypes.shape({
       paramOauthGenerateAccessToken: PropTypes.func.isRequired,
     }).isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
     googleCredentialsParamId: PropTypes.number.isRequired,
     googleCredentialsSecretName: PropTypes.string, // when this changes, call api.paramOauthGenerateAccessToken
     fileMetadataJson: PropTypes.string, // may be empty/null
@@ -169,7 +170,7 @@ export default class GoogleFileSelect extends React.PureComponent {
           // avoid race: another race is happening
           return null
         }
-        if (!this._isMounted) {
+        if (this._isUnmounted) {
           // avoid race: we're closed
           return null
         }
@@ -185,17 +186,13 @@ export default class GoogleFileSelect extends React.PureComponent {
   loadPickerFactory() {
     const loadPickerFactory = this.props.loadPickerFactory || loadDefaultPickerFactory
     loadPickerFactory().then(pf => {
-      if (this._isMounted) {
-        this.setState({ pickerFactory: pf })
-      }
-      // otherwise, no prob: next mount, the promise will return quickly
+      if (this._isUnmounted) return
+      this.setState({ pickerFactory: pf })
     })
   }
 
   componentDidMount() {
     this.loadPickerFactory()
-
-    this._isMounted = true
   }
 
   componentWillUnmount() {
@@ -204,16 +201,7 @@ export default class GoogleFileSelect extends React.PureComponent {
       // we leak window.gapi, but that's probably fine
     }
 
-    if (this.state.loadingAccessToken) {
-      // We can't set state when unmounted, and there's an API request
-      // floating about. Ignore the response when it arrives.
-      this.setState({
-        loadingAccessToken: false,
-        unauthenticated: false,
-      })
-    }
-
-    this._isMounted = false
+    this._isUnmounted = true
   }
 
   openPicker = () => {
@@ -237,7 +225,7 @@ export default class GoogleFileSelect extends React.PureComponent {
 
   render() {
     const { pickerFactory, loadingAccessToken, unauthenticated } = this.state
-    const { fileMetadataJson, googleCredentialsSecretName } = this.props
+    const { fileMetadataJson, googleCredentialsSecretName, isReadOnly } = this.props
 
     const defaultFileName = '(no file chosen)'
     const fileMetadata = fileMetadataJson ? JSON.parse(fileMetadataJson) : null
@@ -246,25 +234,27 @@ export default class GoogleFileSelect extends React.PureComponent {
     const fileUrl = fileMetadata ? (fileMetadata.url || null) : null
 
     let button
-    if (loadingAccessToken || !pickerFactory) {
-      button = (
-        <p className="loading">Loading...</p>
-      )
-    } else if (unauthenticated) {
-      button = (
-        <p className="sign-in-error">failure: please reconnect</p>
-      )
-    } else if (!googleCredentialsSecretName) {
-      button = (
-        <p className="not-signed-in">(not signed in)</p>
-      )
-    } else {
-      button = (
-        <button
-          className="change-file action-link"
-          onClick={this.openPicker}
-          >{ fileId ? 'Change' : 'Choose' }</button>
-      )
+    if (!isReadOnly) {
+      if (loadingAccessToken || !pickerFactory) {
+        button = (
+          <p className="loading">Loading...</p>
+        )
+      } else if (unauthenticated) {
+        button = (
+          <p className="sign-in-error">failure: please reconnect</p>
+        )
+      } else if (!googleCredentialsSecretName) {
+        button = (
+          <p className="not-signed-in">(not signed in)</p>
+        )
+      } else {
+        button = (
+          <button
+            className="change-file action-link"
+            onClick={this.openPicker}
+            >{ fileId ? 'Change' : 'Choose' }</button>
+        )
+      }
     }
 
     return (

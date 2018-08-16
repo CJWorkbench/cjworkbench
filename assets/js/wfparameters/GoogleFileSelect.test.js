@@ -40,7 +40,7 @@ describe('GoogleFileSelect', () => {
   })
 
   let mountedWrapper = null
-  let wrapper = () => {
+  let wrapper = (extraProps={}) => {
     // mount(), not shallow(), because we use componentDidMount()
     return mountedWrapper = mount(
       <GoogleFileSelect
@@ -50,6 +50,8 @@ describe('GoogleFileSelect', () => {
         fileMetadataJson={fileMetadataJson}
         onChangeJson={onChangeJson}
         loadPickerFactory={loadPickerFactory}
+        isReadOnly={false}
+        {...extraProps}
         />
     )
   }
@@ -75,6 +77,16 @@ describe('GoogleFileSelect', () => {
     await tick()
     w.update()
     expect(w.find('.loading')).toHaveLength(1)
+  })
+
+  it('shows no button or loading message when isReadOnly', async () => {
+    const w = wrapper({ isReadOnly: true })
+    expect(w.find('button')).toHaveLength(0)
+    expect(w.find('p')).toHaveLength(0)
+    await tick()
+    w.update()
+    expect(w.find('button')).toHaveLength(0)
+    expect(w.find('p')).toHaveLength(0)
   })
 
   it('shows loading when fetching access token', async () => {
