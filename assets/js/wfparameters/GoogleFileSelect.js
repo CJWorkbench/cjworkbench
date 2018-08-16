@@ -258,10 +258,6 @@ export default class GoogleFileSelect extends React.PureComponent {
       button = (
         <p className="not-signed-in">(not signed in)</p>
       )
-    } else if (this.props.isReadOnly) {
-      button = (
-        <p className="read-only--button"></p>
-      )
     } else {
       button = (
         <button

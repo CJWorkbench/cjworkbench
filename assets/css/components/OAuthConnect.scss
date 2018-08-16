@@ -41,9 +41,6 @@
 
   .not-signed-in {display: none}
 
-  // If WF is shared
-  .read-only--button {display:none}
-
 
   .change-file {
     @extend %content-3;
