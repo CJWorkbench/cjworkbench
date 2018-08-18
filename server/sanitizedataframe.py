@@ -32,7 +32,8 @@ def _colname_to_str(c: Any) -> str:
     if isinstance(c, float):
         return '%g' % c
     else:
-        return str(c)
+        # need to strip col names to stay in sync with column selection modules
+        return str(c).strip()
 
 
 def _rename_duplicate_and_nonstr_columns_in_place(table: pd.DataFrame) -> None:
