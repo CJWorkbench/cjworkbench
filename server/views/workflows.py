@@ -301,7 +301,7 @@ def workflow_duplicate(request, pk):
 
 
 # Undo or redo
-@api_view(['PUT'])
+@api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def workflow_undo_redo(request, pk, action, format=None):
     workflow = _lookup_workflow_for_write(pk, request)

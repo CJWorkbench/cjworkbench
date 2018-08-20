@@ -176,7 +176,7 @@ class WorkbenchAPI {
   }
 
   undo(workflowId) {
-    return this._put(`/api/workflows/${workflowId}/undo`, null)
+    return this._post(`/api/workflows/${workflowId}/undo`, null)
   }
 
   redo(workflowId) {
