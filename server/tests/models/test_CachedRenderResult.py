@@ -1,4 +1,5 @@
 import os.path
+import datetime
 import pandas
 from server.tests.utils import DbTestCase
 from server.models import Workflow, WfModule
@@ -48,6 +49,27 @@ class CachedRenderResultTests(DbTestCase):
         db_wf_module = WfModule.objects.get(id=self.wf_module.id)
         self.assertIsNone(db_wf_module.get_cached_render_result())
         self.assertFalse(os.path.isfile(parquet_path))
+
+    def test_column_names_and_types_do_not_read_file(self):
+        result = ProcessResult(pandas.DataFrame({
+            'A': [1],  # int64
+            'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
+            'C': ['foo'],  # str
+        }))
+        result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
+        self.wf_module.cache_render_result(2, result)
+        self.wf_module.save()
+
+        cached_result = self.wf_module.get_cached_render_result()
+        cached_result.parquet_file  # read header
+        os.unlink(cached_result.parquet_path)
+        self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
+        self.assertEqual(cached_result.column_types,
+                         ['number', 'datetime', 'text', 'text'])
+
+        with self.assertRaises(FileNotFoundError):
+            # Prove that we didn't read from the file
+            self.assertIsNone(cached_result.result)
 
     def test_delete_wfmodule(self):
         result = ProcessResult(pandas.DataFrame({'a': [1]}))

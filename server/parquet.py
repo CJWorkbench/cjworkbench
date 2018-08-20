@@ -1,5 +1,6 @@
 from pathlib import Path
 import fastparquet
+from fastparquet import ParquetFile
 import pandas
 import warnings
 
@@ -18,11 +19,22 @@ warnings.filterwarnings(
 )
 
 
+def read_header(path: Path) -> ParquetFile:
+    """
+    Ensure a ParquetFile exists, and return it with headers read.
+
+    `retval.fn` gives the filename; `retval.columns` gives column names;
+    `retval.dtypes` gives pandas dtypes, and `retval.to_pandas()` reads
+    the entire file.
+    """
+    return fastparquet.ParquetFile(path)
+
+
 def read(path: Path) -> pandas.DataFrame:
     """
     Load a Pandas DataFrame from disk or raise FileNotFoundError.
     """
-    pf = fastparquet.ParquetFile(path)
+    pf = read_header(path)
     return pf.to_pandas()  # no need to close? Weird API
 
 

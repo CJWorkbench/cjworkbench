@@ -37,7 +37,7 @@ def _client_attributes_that_change_on_render(wf_module):
     }
 
 
-def execute_and_notify(wf_module):
+def execute_and_notify(wf_module, only_return_headers=False):
     """
     Render (and cache) a WfModule; send websocket updates and return result.
     """
@@ -47,7 +47,11 @@ def execute_and_notify(wf_module):
         for a_wf_module in workflow.wf_modules.all():
             priors[a_wf_module.id] = \
                 _client_attributes_that_change_on_render(a_wf_module)
-        result = execute.execute_wfmodule(wf_module)
+
+        result = execute.execute_wfmodule(
+            wf_module,
+            only_return_headers=only_return_headers
+        )
 
         changes = {}
         for a_wf_module in workflow.wf_modules.all():
@@ -125,9 +129,6 @@ def patch_update_settings(wf_module, data):
     ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data,
                                                next_update, interval)
 
-
-def get_simple_column_types(table):
-    return list([_column_type(table[c]) for c in table.columns])
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on
@@ -208,7 +209,7 @@ def _make_render_dict(table, startrow=None, endrow=None):
     # The workaround is to usr table.to_json to get a string, then parse it.
     rows = json.loads(table.to_json(orient="records", date_format='iso'))
     columns = table.columns.values.tolist()
-    column_types = get_simple_column_types(table)
+    column_types = [_column_type(table[c]) for c in table.columns]
     return {
         'total_rows': nrows,
         'start_row': startrow,
@@ -371,11 +372,9 @@ def _column_type(series: pd.Series) -> str:
 def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    result = execute_and_notify(wf_module)
-
-    dataframe = result.dataframe
-    ret_types = list([{'name': c, 'type': _column_type(dataframe[c])}
-                      for c in dataframe.columns])
+    result = execute_and_notify(wf_module, only_return_headers=True)
+    ret_types = [{'name': c, 'type': t}
+                 for c, t in zip(result.column_names, result.column_types)]
 
     return HttpResponse(json.dumps(ret_types), content_type="application/json")
 
