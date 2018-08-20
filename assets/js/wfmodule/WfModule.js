@@ -28,7 +28,11 @@ export class WfModule extends React.PureComponent {
     wfModule: PropTypes.object,
     inputWfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      last_relevant_delta_id: PropTypes.number
+      last_relevant_delta_id: PropTypes.number,
+      output_columns: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      })), // or null
     }), // or null
     module: PropTypes.object,
     selected: PropTypes.bool,
@@ -322,6 +326,7 @@ export class WfModule extends React.PureComponent {
         wfModuleId={wfModule.id}
         inputWfModuleId={inputWfModule ? inputWfModule.id : null}
         inputLastRelevantDeltaId={inputWfModule ? inputWfModule.last_relevant_delta_id : null}
+        inputColumns={inputWfModule ? inputWfModule.output_columns : null}
         updateSettings={updateSettings}
         getParamId={this.getParamId}
         getParamText={this.getParamText}

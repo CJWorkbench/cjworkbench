@@ -51,6 +51,10 @@ export default class WfParameter extends React.Component {
     wfModuleId: PropTypes.number.isRequired,
     inputWfModuleId: PropTypes.number, // or null
     inputLastRelevantDeltaId: PropTypes.number, // or null
+    inputColumns: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+    })), // or null
     lastRelevantDeltaId: PropTypes.number, // or null
     api:            PropTypes.object.isRequired,
     updateSettings: PropTypes.object,             // only for modules that load data
@@ -179,6 +183,10 @@ export default class WfParameter extends React.Component {
 
   colRenameSaveState = (state) => {
     this.props.setParamText('newcolnames', state)
+  }
+
+  onColumnSelectorChange = (value) => {
+    this.props.setParamText('colnames', value)
   }
 
   render_secret_parameter() {
@@ -526,16 +534,20 @@ export default class WfParameter extends React.Component {
         )
 
       case 'multicolumn':
+        // There's no good reason why we read/write `colnames` instead of our own
+        // id_name. But it'll be a chore to change it: we'll need to change all modules'
+        // id_name to `colnames` so that pre-chore data will migrate over.
+        //
+        // (Then we'll have one more chore: select JSON instead of comma-separated strings)
         return (
           <div {...this.outerDivProps}>
             <div className='t-d-gray content-3 label-margin'>{name}</div>
             <ColumnSelector
-              selectedCols={this.props.getParamText('colnames')}
-              saveState={state => this.props.setParamText('colnames', state) }
-              getColNames={this.fetchInputColumns}
               name={id_name}
               isReadOnly={this.props.isReadOnly}
-              inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+              value={this.props.getParamText('colnames')}
+              inputColumns={this.props.inputColumns}
+              onChange={this.onColumnSelectorChange}
             />
           </div>
         )
