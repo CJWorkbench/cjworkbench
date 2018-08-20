@@ -83,6 +83,8 @@ class Delta(PolymorphicModel):
                 for id, delta_id in self._changed_wf_module_versions.items():
                     data['updateWfModules'][str(id)] = {
                         'last_relevant_delta_id': delta_id,
+                        'error_msg': '',
+                        'output_columns': None
                     }
 
             if hasattr(self, 'wf_module'):

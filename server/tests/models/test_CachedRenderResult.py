@@ -3,7 +3,7 @@ import datetime
 import pandas
 from server.tests.utils import DbTestCase
 from server.models import Workflow, WfModule
-from server.modules.types import ProcessResult
+from server.modules.types import Column, ProcessResult
 
 
 class CachedRenderResultTests(DbTestCase):
@@ -66,6 +66,12 @@ class CachedRenderResultTests(DbTestCase):
         self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
         self.assertEqual(cached_result.column_types,
                          ['number', 'datetime', 'text', 'text'])
+        self.assertEqual(cached_result.columns, [
+            Column('A', 'number'),
+            Column('B', 'datetime'),
+            Column('C', 'text'),
+            Column('D', 'text'),
+        ])
 
         with self.assertRaises(FileNotFoundError):
             # Prove that we didn't read from the file

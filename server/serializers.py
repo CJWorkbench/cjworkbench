@@ -80,8 +80,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class WfModuleSerializer(serializers.ModelSerializer):
     parameter_vals = ParameterValSerializer(many=True, read_only=True)
-
     module_version = serializers.SerializerMethodField()
+    update_interval = serializers.SerializerMethodField()
+    update_units = serializers.SerializerMethodField()
+    html_output = serializers.SerializerMethodField()
+    versions = serializers.SerializerMethodField()
+    output_columns = serializers.SerializerMethodField()
 
     def get_module_version(self, wfm):
         if wfm.module_version is not None:
@@ -93,17 +97,11 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     # update interval handling is a little tricky as we need to convert seconds
     # to count+units
-    update_interval = serializers.SerializerMethodField()
-
     def get_update_interval(self, wfm):
         return seconds_to_count_and_units(wfm.update_interval)['count']
 
-    update_units = serializers.SerializerMethodField()
-
     def get_update_units(self, wfm):
         return seconds_to_count_and_units(wfm.update_interval)['units']
-
-    html_output = serializers.SerializerMethodField()
 
     def get_html_output(self, wfm):
         if wfm.module_version is not None:
@@ -111,12 +109,17 @@ class WfModuleSerializer(serializers.ModelSerializer):
         else:
             return False
 
-    versions = serializers.SerializerMethodField()
-
     def get_versions(self, wfm):
         versions = wfm.list_fetched_data_versions()
         current_version = wfm.get_fetched_data_version()
         return {'versions': versions, 'selected': current_version}
+
+    def get_output_columns(self, wfm):
+        output_columns = wfm.get_cached_output_columns()
+        if output_columns is None:
+            return None
+
+        return [{'name': c.name, 'type': c.type} for c in output_columns]
 
     class Meta:
         model = WfModule
@@ -125,7 +128,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'auto_update_data', 'update_interval', 'update_units',
                   'last_update_check', 'notifications',
                   'has_unseen_notification', 'html_output', 'versions',
-                  'last_relevant_delta_id')
+                  'last_relevant_delta_id', 'output_columns')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):

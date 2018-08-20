@@ -9,8 +9,6 @@ from django.shortcuts import get_object_or_404
 from django.utils import dateparse, timezone
 from django.views.decorators.clickjacking import xframe_options_exempt
 import numpy as np
-import pandas as pd
-from pandas.api.types import is_numeric_dtype
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
@@ -30,10 +28,17 @@ _MaxNRowsPerRequest = 300
 
 
 def _client_attributes_that_change_on_render(wf_module):
+    cached_output_columns = wf_module.get_cached_output_columns()
+    if cached_output_columns is None:
+        output_columns = None
+    else:
+        output_columns = [{'name': c.name, 'type': c.type}
+                          for c in cached_output_columns]
+
     return {
         'error_msg': wf_module.error_msg,
         'status': wf_module.status,
-        # TODO add columns here
+        'output_columns': output_columns,
     }
 
 

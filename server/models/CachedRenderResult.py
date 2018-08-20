@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 from django.core.files.storage import default_storage
 import pandas
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
-from server.modules.types import ProcessResult
+from server.modules.types import Column, ProcessResult
 from server import parquet
 
 
@@ -107,6 +107,12 @@ class CachedRenderResult:
             dtypes = []
 
         return [_dtype_to_column_type(t) for t in dtypes]
+
+    @property
+    def columns(self):
+        """Scan on-disk header for columns and their types."""
+        return [Column(n, t)
+                for n, t in zip(self.column_names, self.column_types)]
 
     @staticmethod
     def from_wf_module(wf_module: 'WfModule') -> 'CachedRenderResult':
