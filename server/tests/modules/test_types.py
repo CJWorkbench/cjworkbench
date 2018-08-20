@@ -1,7 +1,8 @@
+import datetime
 import unittest
 from unittest import mock
-from pandas import DataFrame
-from server.modules.types import ProcessResult
+from pandas import DataFrame, Series
+from server.modules.types import Column, ProcessResult
 
 
 class ProcessResultTests(unittest.TestCase):
@@ -147,3 +148,27 @@ class ProcessResultTests(unittest.TestCase):
         result = ProcessResult(DataFrame({'foo': [[1], [2]]}))
         result.sanitize_in_place()
         self.assertEqual(result, expected)
+
+    def test_columns(self):
+        df = DataFrame({
+            'A': [1],  # number
+            'B': ['foo'],  # str
+            'C': datetime.datetime(2018, 8, 20),  # datetime64
+        })
+        df['D'] = Series(['cat'], dtype='category')
+        result = ProcessResult(df)
+        self.assertEqual(result.column_names, ['A', 'B', 'C', 'D'])
+        self.assertEqual(result.column_types,
+                         ['number', 'text', 'datetime', 'text'])
+        self.assertEqual(result.columns, [
+            Column('A', 'number'),
+            Column('B', 'text'),
+            Column('C', 'datetime'),
+            Column('D', 'text'),
+        ])
+
+    def test_empty_columns(self):
+        result = ProcessResult()
+        self.assertEqual(result.column_names, [])
+        self.assertEqual(result.column_types, [])
+        self.assertEqual(result.columns, [])

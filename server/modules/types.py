@@ -1,7 +1,24 @@
+from collections import namedtuple
 from typing import Any, Dict
 from pandas import DataFrame
+from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server import sanitizedataframe
 from django.utils.translation import gettext as _
+
+
+Column = namedtuple('Column', ['name', 'type'])
+
+
+def _dtype_to_column_type(dtype) -> str:
+    """Return 'text', 'number' or 'datetime'."""
+    if is_numeric_dtype(dtype):
+        return 'number'
+    elif is_datetime64_dtype(dtype):
+        return 'datetime'
+    elif dtype == object or dtype == 'category':
+        return 'text'
+    else:
+        raise ValueError(f'Unknown dtype: {dtype}')
 
 
 class ProcessResult:
@@ -71,6 +88,19 @@ class ProcessResult:
     def sanitize_in_place(self):
         """Coerce dataframe headers to strings and values to simple types."""
         sanitizedataframe.sanitize_dataframe(self.dataframe)
+
+    @property
+    def column_names(self):
+        return list(self.dataframe.columns)
+
+    @property
+    def column_types(self):
+        return [_dtype_to_column_type(t) for t in self.dataframe.dtypes]
+
+    @property
+    def columns(self):
+        return [Column(c, t)
+                for c, t in zip(self.column_names, self.column_types)]
 
     @staticmethod
     def coerce(value: Any) -> 'ProcessResult':

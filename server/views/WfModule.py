@@ -189,8 +189,8 @@ def wfmodule_detail(request, pk, format=None):
 
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
-def _make_render_dict(table, startrow=None, endrow=None):
-    nrows = len(table)
+def _make_render_dict(result, startrow=None, endrow=None):
+    nrows = len(result.dataframe)
     if startrow is None:
         startrow = 0
     if endrow is None:
@@ -198,7 +198,8 @@ def _make_render_dict(table, startrow=None, endrow=None):
 
     startrow = max(0, startrow)
     endrow = min(nrows, endrow, startrow + _MaxNRowsPerRequest)
-    table = table[startrow:endrow]
+
+    table = result.dataframe[startrow:endrow]
 
     # In a sane and just world, we could now just do something like
     #  rows = table.to_dict(orient='records')
@@ -208,15 +209,13 @@ def _make_render_dict(table, startrow=None, endrow=None):
 
     # The workaround is to usr table.to_json to get a string, then parse it.
     rows = json.loads(table.to_json(orient="records", date_format='iso'))
-    columns = table.columns.values.tolist()
-    column_types = [_column_type(table[c]) for c in table.columns]
     return {
         'total_rows': nrows,
         'start_row': startrow,
         'end_row': endrow,
-        'columns': columns,
+        'columns': result.column_names,
         'rows': rows,
-        'column_types': column_types,
+        'column_types': result.column_types,
     }
 
 
@@ -240,7 +239,7 @@ def wfmodule_render(request, pk, format=None):
                         status=status.HTTP_400_BAD_REQUEST)
 
     result = execute_and_notify(wf_module)
-    j = _make_render_dict(result.dataframe, startrow, endrow)
+    j = _make_render_dict(result, startrow, endrow)
     return JsonResponse(j)
 
 
@@ -259,7 +258,7 @@ def wfmodule_output(request, pk, format=None):
     # TODO nix params. Use result.json_dict instead.
     params = wf_module.create_parameter_dict(result.dataframe)
 
-    input_dict = _make_render_dict(result.dataframe)
+    input_dict = _make_render_dict(result)
 
     init_data = {
         'input': input_dict,
@@ -348,22 +347,6 @@ def _previous_wf_module(wf_module: WfModule) -> Optional[WfModule]:
     return wf_module.workflow.wf_modules \
         .filter(order__lt=wf_module.order) \
         .last()
-
-
-def _column_type(series: pd.Series) -> str:
-    """
-    Determine whether `series` is 'text', 'number' or 'datetime'.
-
-    Guide: https://github.com/CJWorkbench/cjworkbench/wiki/Column-Types
-    """
-    if hasattr(series, 'cat') or series.dtype == object:
-        return 'text'
-    elif is_numeric_dtype(series):
-        return 'number'
-    elif hasattr(series, 'dt'):
-        return 'datetime'
-    else:
-        raise ValueError(f'Series of unknown type: {series.dtype}')
 
 
 # returns a list of columns and their simplified types
