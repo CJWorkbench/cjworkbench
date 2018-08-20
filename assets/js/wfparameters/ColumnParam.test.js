@@ -11,9 +11,7 @@ describe('ColumnParam', () => {
       name='col'
       prompt='SelectACol'
       isReadOnly={false}
-      inputWfModuleId={123}
-      inputLastRelevantDeltaId={234}
-      fetchInputColumns={jest.fn(() => Promise.resolve(['A', 'B', 'C']))}
+      allColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}
       onChange={jest.fn()}
       {...props}
     />
@@ -27,7 +25,7 @@ describe('ColumnParam', () => {
   })
 
   it('renders loading', () => {
-    const w = wrapper({ value: 'A', prompt: 'Prompt!' })
+    const w = wrapper({ value: 'A', prompt: 'Prompt!', allColumns: null })
 
     // select has "loading" class
     expect(w.find('select.loading')).toHaveLength(1)
@@ -63,39 +61,6 @@ describe('ColumnParam', () => {
 
     w.find('select').simulate('change', { target: { value: 'B' } })
     expect(w.prop('onChange')).toHaveBeenCalledWith('B')
-  })
-
-  it('renders an error', async () => {
-    const fetchInputColumns = jest.fn()
-    fetchInputColumns.mockReturnValue(Promise.reject(new Error('FOO!')))
-    const w = wrapper({ fetchInputColumns })
-    await tick() // load columns
-    w.update()
-
-    expect(w.find('option')).toHaveLength(1) // nothing but error
-    expect(w.find('option.error')).toHaveLength(1)
-  })
-
-  it('re-fetches colnames on delta', async () => {
-    const fetchInputColumns = jest.fn()
-    fetchInputColumns
-      .mockReturnValueOnce(Promise.resolve([ 'A', 'B' ]))
-      .mockReturnValueOnce(Promise.resolve([ 'A', 'C' ]))
-      .mockReturnValue(Promise.resolve([ 'A', 'D' ]))
-    const w = wrapper({ fetchInputColumns })
-    await tick() // load columns
-    w.update()
-
-    w.setProps({ inputLastRelevantDeltaId: 213 }) // trigger update
-    await tick() // load columns
-    w.update()
-
-    expect(w.find('option').last().text()).toEqual('C')
-
-    w.setProps({ prompt: 'something else' }) // do NOT trigger update
-    await tick() // no-op, but we need it in the test to prove nothing changed
-    w.update()
-    expect(w.find('option').last().text()).toEqual('C') // not D
   })
 
   it('highlights prompt when value is invalid', async () => {

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { ColumnParam } from './ColumnParam'
+import ColumnParam from './ColumnParam'
 import InputGroup from 'reactstrap/lib/InputGroup'
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
 import Input from 'reactstrap/lib/Input'
@@ -15,7 +15,9 @@ export default class ChartSeriesSelect extends React.PureComponent {
     color: PropTypes.string, // null for auto-chosen based on idx
     prompt: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    availableColumns: PropTypes.arrayOf(PropTypes.string).isRequired,
+    availableColumns: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired
+    })), // or null if not loaded
     onChange: PropTypes.func.isRequired, // func(index, column) => undefined
   }
 
@@ -76,7 +78,6 @@ export default class ChartSeriesSelect extends React.PureComponent {
             prompt={prompt}
             isReadOnly={isReadOnly}
             allColumns={availableColumns}
-            allColumnsFetchError={null}
             onChange={this.onSelectColumn}
           />
         </InputGroup>

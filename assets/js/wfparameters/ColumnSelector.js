@@ -7,7 +7,7 @@ export default class ColumnSelector extends React.PureComponent {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     value: PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
+    allColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     })),
     onChange: PropTypes.func.isRequired // onChange('A,B') => undefined
@@ -19,8 +19,8 @@ export default class ColumnSelector extends React.PureComponent {
   }
 
   onClickSelectAll = () => {
-    const { inputColumns } = this.props
-    const names = (inputColumns || []).map(x => x.name)
+    const { allColumns } = this.props
+    const names = (allColumns || []).map(x => x.name)
     this.props.onChange(names.join(','))
   }
 
@@ -48,23 +48,23 @@ export default class ColumnSelector extends React.PureComponent {
   }
 
   render() {
-    const { inputColumns, isReadOnly, name } = this.props
+    const { allColumns, isReadOnly, name } = this.props
     const selected = this.selectedColumns
 
-    if (inputColumns === null) {
+    if (allColumns === null) {
       return (
-        <div className='loading'>
-        </div>
+        <div className='loading'></div>
       )
     }
 
     // use nowrap style to ensure checkbox label is always on same line as checkbox
-    const checkboxes = inputColumns.map(column => (
+    const checkboxes = allColumns.map(column => (
       <label className='checkbox-container' style={{'whiteSpace': 'nowrap'}} key={column.name}>
         <input
           type='checkbox'
           readOnly={isReadOnly}
           name={`${name}[${column.name}]`}
+          value={column.name}
           checked={selected.indexOf(column.name) !== -1}
           onChange={this.onChangeColumn}
         />

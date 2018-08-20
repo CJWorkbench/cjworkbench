@@ -1,68 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ColumnParam matches snapshot 1`] = `
-<FetchingColumnParam
-  fetchInputColumns={
-    [MockFunction] {
-      "calls": Array [
-        Array [],
-      ],
-    }
+<ColumnParam
+  allColumns={
+    Array [
+      Object {
+        "name": "A",
+      },
+      Object {
+        "name": "B",
+      },
+      Object {
+        "name": "C",
+      },
+    ]
   }
-  inputLastRelevantDeltaId={234}
-  inputWfModuleId={123}
   isReadOnly={false}
   name="col"
   onChange={[MockFunction]}
   prompt="SelectACol"
   value={null}
 >
-  <ColumnParam
-    allColumns={
-      Array [
-        "A",
-        "B",
-        "C",
-      ]
-    }
-    allColumnsFetchError={null}
-    isReadOnly={false}
+  <select
+    className="custom-select module-parameter dropdown-selector"
+    disabled={false}
     name="col"
-    onChange={[MockFunction]}
-    prompt="SelectACol"
-    value={null}
+    onChange={[Function]}
+    value=""
   >
-    <select
-      className="custom-select module-parameter dropdown-selector"
-      disabled={false}
-      name="col"
-      onChange={[Function]}
+    <option
+      className="prompt"
+      disabled={true}
+      key="prompt"
       value=""
     >
-      <option
-        className="prompt"
-        disabled={true}
-        key="prompt"
-        value=""
-      >
-        SelectACol
-      </option>
-      <option
-        key="A"
-      >
-        A
-      </option>
-      <option
-        key="B"
-      >
-        B
-      </option>
-      <option
-        key="C"
-      >
-        C
-      </option>
-    </select>
-  </ColumnParam>
-</FetchingColumnParam>
+      SelectACol
+    </option>
+    <option
+      key="A"
+    >
+      A
+    </option>
+    <option
+      key="B"
+    >
+      B
+    </option>
+    <option
+      key="C"
+    >
+      C
+    </option>
+  </select>
+</ColumnParam>
 `;

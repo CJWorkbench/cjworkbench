@@ -2,14 +2,19 @@
 
 exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
 <ChartSeriesMultiSelect
-  fetchInputColumns={
-    [MockFunction] {
-      "calls": Array [
-        Array [],
-      ],
-    }
+  allColumns={
+    Array [
+      Object {
+        "name": "A",
+      },
+      Object {
+        "name": "B",
+      },
+      Object {
+        "name": "C",
+      },
+    ]
   }
-  inputLastRelevantDeltaId={1}
   isReadOnly={false}
   onChange={[MockFunction]}
   prompt="prompt"
@@ -32,9 +37,12 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
     <ChartSeriesSelect
       availableColumns={
         Array [
-          "A",
-          "B",
-          "C",
+          Object {
+            "name": "A",
+          },
+          Object {
+            "name": "C",
+          },
         ]
       }
       color="#aaaaaa"
@@ -93,12 +101,14 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
           <ColumnParam
             allColumns={
               Array [
-                "A",
-                "B",
-                "C",
+                Object {
+                  "name": "A",
+                },
+                Object {
+                  "name": "C",
+                },
               ]
             }
-            allColumnsFetchError={null}
             isReadOnly={false}
             name="column"
             onChange={[Function]}
@@ -126,11 +136,6 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 A
               </option>
               <option
-                key="B"
-              >
-                B
-              </option>
-              <option
                 key="C"
               >
                 C
@@ -143,9 +148,12 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
     <ChartSeriesSelect
       availableColumns={
         Array [
-          "A",
-          "B",
-          "C",
+          Object {
+            "name": "B",
+          },
+          Object {
+            "name": "C",
+          },
         ]
       }
       color="#bbbbbb"
@@ -204,12 +212,14 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
           <ColumnParam
             allColumns={
               Array [
-                "A",
-                "B",
-                "C",
+                Object {
+                  "name": "B",
+                },
+                Object {
+                  "name": "C",
+                },
               ]
             }
-            allColumnsFetchError={null}
             isReadOnly={false}
             name="column"
             onChange={[Function]}
@@ -230,11 +240,6 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 value=""
               >
                 prompt
-              </option>
-              <option
-                key="A"
-              >
-                A
               </option>
               <option
                 key="B"

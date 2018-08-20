@@ -8,7 +8,7 @@ describe('ColumnSelector', () => {
       name='column'
       isReadOnly={false}
       value='A,C'
-      inputColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}, {name: 'D'}]}
+      allColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}, {name: 'D'}]}
       onChange={jest.fn()}
       {...extraProps}
     />
@@ -54,7 +54,7 @@ describe('ColumnSelector', () => {
     })
 
     it('renders empty when no columns', () => {
-      const w = wrapper({ inputColumns: null })
+      const w = wrapper({ allColumns: null })
       expect(w.find('.loading')).toHaveLength(1)
     })
   })

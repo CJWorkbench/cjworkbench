@@ -322,8 +322,7 @@ export default class WfParameter extends React.Component {
           <ChartSeriesMultiSelect
             prompt='Select a numeric column'
             isReadOnly={this.props.isReadOnly}
-            fetchInputColumns={this.fetchInputColumns}
-            inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+            allColumns={this.props.inputColumns}
             series={JSON.parse(this.props.p.value || '[]')}
             onChange={this.onChangeYColumns}
           />
@@ -526,8 +525,7 @@ export default class WfParameter extends React.Component {
               name={id_name}
               prompt={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
-              inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
-              fetchInputColumns={this.fetchInputColumns}
+              allColumns={this.props.inputColumns}
               onChange={this.paramChanged}
             />
           </div>
@@ -546,7 +544,7 @@ export default class WfParameter extends React.Component {
               name={id_name}
               isReadOnly={this.props.isReadOnly}
               value={this.props.getParamText('colnames')}
-              inputColumns={this.props.inputColumns}
+              allColumns={this.props.inputColumns}
               onChange={this.onColumnSelectorChange}
             />
           </div>

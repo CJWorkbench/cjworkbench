@@ -4,8 +4,12 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
 <ChartSeriesSelect
   availableColumns={
     Array [
-      "foo",
-      "bar",
+      Object {
+        "name": "foo",
+      },
+      Object {
+        "name": "bar",
+      },
     ]
   }
   color="#abcdef"
@@ -63,11 +67,14 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
       <ColumnParam
         allColumns={
           Array [
-            "foo",
-            "bar",
+            Object {
+              "name": "foo",
+            },
+            Object {
+              "name": "bar",
+            },
           ]
         }
-        allColumnsFetchError={null}
         isReadOnly={false}
         name="column"
         onChange={[Function]}

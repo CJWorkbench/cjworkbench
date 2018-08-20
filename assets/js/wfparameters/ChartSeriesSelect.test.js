@@ -13,7 +13,7 @@ describe('ChartSeriesSelect', () => {
         color='#abcdef'
         isReadOnly={false}
         prompt={'prompt'}
-        availableColumns={['foo', 'bar']}
+        availableColumns={[{ name: 'foo' }, { name: 'bar' }]}
         onChange={jest.fn()}
         {...props}
       />
