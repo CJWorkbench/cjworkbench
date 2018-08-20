@@ -93,7 +93,7 @@ case "$COMMAND" in
     ;;
 
   "develop-module")
-    MODULE="$1" docker_compose_with_commands run --rm develop-module pipenv run python ./manage.py develop-module /"$1" https://github.com/CJWorkbench/$1.git
+    MODULE="$1" docker_compose_with_commands run --rm develop-module pipenv run python ./manage.py develop-module ../"$1" https://github.com/CJWorkbench/$1.git
     exit 1
     ;;
 
