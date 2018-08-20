@@ -59,16 +59,6 @@ class ExecuteTests(DbTestCase):
             self.assertFalse(mdr.called)
             self.assertEqual(result, expected)
 
-    def test_execute_only_return_header(self):
-        workflow = create_testdata_workflow(table_csv)
-        wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
-        # Execute -- which should cache the result
-        execute_wfmodule(wf_module2)
-
-        result = execute_wfmodule(wf_module2, only_return_headers=True)
-        self.assertEqual(result.column_names, ['A', 'B'])
-        self.assertEqual(result.column_types, ['number', 'number'])
-
     def test_resume_without_rerunning_unneeded_renders(self):
         workflow = create_testdata_workflow(table_csv)
         wf_module1 = workflow.wf_modules.first()

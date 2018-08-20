@@ -42,7 +42,7 @@ def _client_attributes_that_change_on_render(wf_module):
     }
 
 
-def execute_and_notify(wf_module, only_return_headers=False):
+def execute_and_notify(wf_module):
     """
     Render (and cache) a WfModule; send websocket updates and return result.
     """
@@ -53,10 +53,7 @@ def execute_and_notify(wf_module, only_return_headers=False):
             priors[a_wf_module.id] = \
                 _client_attributes_that_change_on_render(a_wf_module)
 
-        result = execute.execute_wfmodule(
-            wf_module,
-            only_return_headers=only_return_headers
-        )
+        result = execute.execute_wfmodule(wf_module)
 
         changes = {}
         for a_wf_module in workflow.wf_modules.all():
@@ -298,30 +295,23 @@ def wfmodule_embeddata(request, pk):
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-def wfmodule_input_value_counts(request, pk):
+def wfmodule_value_counts(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
+    try:
+        column = request.GET['column']
+    except KeyError:
+        return JsonResponse(
+            {'error': 'Missing a "column" parameter'},
+            status=400
+        )
+
+    if not column:
+        # User has not yet chosen a column. Empty response.
+        return JsonResponse({'values': {}})
+
     with wf_module.workflow.cooperative_lock():
-        input_wf_module = _previous_wf_module(wf_module)
-        if not input_wf_module:
-            return JsonResponse(
-                {'error': 'Module has no input'},
-                status=404
-            )
-
-        try:
-            column = wf_module.get_param_column('column')
-        except ValueError:
-            return JsonResponse(
-                {'error': 'Module is missing a "column" parameter'},
-                status=404
-            )
-
-        if not column:
-            # User has not yet chosen a column. Empty response.
-            return JsonResponse({'values': {}})
-
-        result = execute_and_notify(input_wf_module)
+        result = execute_and_notify(wf_module)
         table = result.dataframe
 
         try:
@@ -339,32 +329,6 @@ def wfmodule_input_value_counts(request, pk):
         value_counts = series.value_counts().to_dict()
 
     return JsonResponse({'values': value_counts})
-
-
-def _previous_wf_module(wf_module: WfModule) -> Optional[WfModule]:
-    """
-    Find the WfModule whose output is `wf_module`'s input.
-
-    Return None if there is no previous WfModule.
-
-    Must be called within a `Workflow.cooperative_lock`.
-    """
-    return wf_module.workflow.wf_modules \
-        .filter(order__lt=wf_module.order) \
-        .last()
-
-
-# returns a list of columns and their simplified types
-@api_view(['GET'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_columns(request, pk, format=None):
-    wf_module = _lookup_wf_module_for_read(pk, request)
-
-    result = execute_and_notify(wf_module, only_return_headers=True)
-    ret_types = [{'name': c, 'type': t}
-                 for c, t in zip(result.column_names, result.column_types)]
-
-    return HttpResponse(json.dumps(ret_types), content_type="application/json")
 
 
 # Public access to wfmodule output. Basically just /render with different auth

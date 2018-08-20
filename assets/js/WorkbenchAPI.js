@@ -126,8 +126,8 @@ class WorkbenchAPI {
     return this._fetch(url)
   }
 
-  inputValueCounts(wfModuleId) {
-    return this._fetch(`/api/wfmodules/${wfModuleId}/input-value-counts`)
+  valueCounts(wfModuleId, column) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/value-counts?column=${encodeURIComponent(column)}`)
       .catch(err => {
         if (err instanceof RangeError) {
           return { values: {} }
@@ -140,17 +140,6 @@ class WorkbenchAPI {
 
   output(wfModuleId) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/output`)
-  }
-
-  getColumns(wfModuleId) {
-    return this._fetch(`/api/wfmodules/${wfModuleId}/columns`)
-      .catch(err => {
-        if (err instanceof RangeError) {
-          return []
-        } else {
-          throw err
-        }
-      })
   }
 
   // All available modules in the system

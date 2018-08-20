@@ -218,18 +218,6 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.selected_wf_module, 2)
 
-    # tests for the /columns API
-    def test_wf_module_columns(self):
-        # We only need to check for one module since the output is pretty much the same
-        # Dates are not tested here because the test WF cannot be fed date data
-        response = self.client.get('/api/wfmodules/%d/columns' % self.wfmodule1.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), [
-            {"name": "Class", "type": "text"},
-            {"name": "M", "type": "number"},
-            {"name": "F", "type": "number"}
-        ])
-
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):
         firstver = self.wfmodule1.store_fetched_table(mock_csv_table)
@@ -325,7 +313,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class WfModuleInputValueCountsTest(LoggedInTestCase):
+class WfModuleValueCountsTest(LoggedInTestCase):
     def setUp(self):
         super().setUp()
 
@@ -333,29 +321,15 @@ class WfModuleInputValueCountsTest(LoggedInTestCase):
         self.wf_module1 = self.workflow.wf_modules.create(order=0)
         self.wf_module2 = self.workflow.wf_modules.create(order=1)
 
-    def test_value_counts_missing_input_module(self):
-        self.wf_module1.delete()
-
-        # First module: no prior input, should be 404
-        response = self.client.get(
-            f'/api/wfmodules/{self.wf_module2.id}/input-value-counts'
-        )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(json.loads(response.content), {
-            'error': 'Module has no input'
-        })
-
     @patch('server.execute.execute_wfmodule')
-    @patch('server.models.WfModule.get_param_column')
-    def test_value_counts_str(self, get_param, execute):
-        get_param.return_value = 'A'
+    def test_value_counts_str(self, execute):
         execute.return_value = ProcessResult(pd.DataFrame({
             'A': ['a', 'b', 'b', 'a', 'c', np.nan],
             'B': ['x', 'x', 'x', 'x', 'x', 'x'],
         }))
 
         response = self.client.get(
-            f'/api/wfmodules/{self.wf_module2.id}/input-value-counts'
+            f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=A'
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -365,15 +339,13 @@ class WfModuleInputValueCountsTest(LoggedInTestCase):
         )
 
     @patch('server.execute.execute_wfmodule')
-    @patch('server.models.WfModule.get_param_column')
-    def test_value_counts_cast_to_str(self, get_param, execute):
-        get_param.return_value = 'A'
+    def test_value_counts_cast_to_str(self, execute):
         execute.return_value = ProcessResult(pd.DataFrame({
             'A': [1, 2, 3, 2, 1],
         }))
 
         response = self.client.get(
-            f'/api/wfmodules/{self.wf_module2.id}/input-value-counts'
+            f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=A'
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -382,46 +354,25 @@ class WfModuleInputValueCountsTest(LoggedInTestCase):
             {'values': {'1': 2, '2': 2, '3': 1}}
         )
 
-    @patch('server.execute.execute_wfmodule')
-    @patch('server.models.WfModule.get_param_column')
-    def test_value_counts_no_column(self, get_param, execute):
-        get_param.return_value = ''
-        execute.return_value = ProcessResult(pd.DataFrame({
-            'A': ['a', 'b', 'b', 'a', 'c', np.nan],
-            'B': ['x', 'x', 'x', 'x', 'x', 'x'],
-        }))
-
+    def test_value_counts_param_invalid(self):
         response = self.client.get(
-            f'/api/wfmodules/{self.wf_module2.id}/input-value-counts'
+            f'/api/wfmodules/{self.wf_module2.id}/value-counts'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), {'values': {}})
-
-    @patch('server.models.WfModule.get_param_column')
-    def test_value_counts_param_invalid(self, get_param):
-        get_param.side_effect = ValueError('(WfModule API should probably be KeyError)')
-
-        response = self.client.get(
-            f'/api/wfmodules/{self.wf_module2.id}/input-value-counts'
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(json.loads(response.content), {
-            'error': 'Module is missing a "column" parameter',
+            'error': 'Missing a "column" parameter',
         })
 
     @patch('server.execute.execute_wfmodule')
-    @patch('server.models.WfModule.get_param_column')
-    def test_value_counts_missing_column(self, get_param, execute):
-        get_param.return_value = 'C'
+    def test_value_counts_missing_column(self, execute):
         execute.return_value = ProcessResult(pd.DataFrame({
             'A': ['a', 'b', 'b', 'a', 'c', np.nan],
             'B': ['x', 'x', 'x', 'x', 'x', 'x'],
         }))
 
         response = self.client.get(
-            f'/api/wfmodules/{self.wf_module2.id}/input-value-counts'
+            f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=C'
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

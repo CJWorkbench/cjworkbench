@@ -141,7 +141,10 @@ export default class WfParameter extends React.Component {
   }
 
   getInputValueCounts = () => {
-    return this.props.api.inputValueCounts(this.props.wfModuleId)
+    return this.props.api.valueCounts(
+      this.props.inputWfModuleId,
+      this.props.getParamText('column')
+    )
   }
 
   // set contents of HTML input field corresponding to our type
