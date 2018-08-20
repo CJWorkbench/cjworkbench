@@ -140,12 +140,6 @@ export default class WfParameter extends React.Component {
     this.paramChanged(ev.target.checked)
   }
 
-  // Return array of column names available to us, as a promise
-  fetchInputColumns = () => {
-    return this.props.api.getColumns(this.props.inputWfModuleId)
-      .then(arr => arr.map(column => column.name))
-  }
-
   getInputValueCounts = () => {
     return this.props.api.inputValueCounts(this.props.wfModuleId)
   }
