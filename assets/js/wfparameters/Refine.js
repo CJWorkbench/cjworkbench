@@ -423,7 +423,7 @@ function withFetchedData(WrappedComponent, dataName) {
   return class extends React.PureComponent {
     static propTypes = {
       fetchData: PropTypes.func.isRequired, // fn() => Promise[data]
-      inputLastRelevantDeltaId: PropTypes.number.isRequired,
+      fetchDataCacheId: PropTypes.string.isRequired, // unique string: when it changes, call fetchData()
     }
 
     state = {
@@ -432,7 +432,7 @@ function withFetchedData(WrappedComponent, dataName) {
     }
 
     _reload () {
-      const inputLastRelevantDeltaId = this.props.inputLastRelevantDeltaId
+      const fetchDataCacheId = this.props.fetchDataCacheId
 
       // Keep state.data unchanged, until we solve
       // https://www.pivotaltracker.com/story/show/158034731. After that, we
@@ -442,7 +442,7 @@ function withFetchedData(WrappedComponent, dataName) {
       this.props.fetchData()
         .then(data => {
           if (this.unmounted) return
-          if (this.props.inputLastRelevantDeltaId !== inputLastRelevantDeltaId) return // ignore wrong response in race
+          if (this.props.fetchDataCacheId !== fetchDataCacheId) return // ignore wrong response in race
 
           this.setState({
             loading: false,
@@ -460,7 +460,7 @@ function withFetchedData(WrappedComponent, dataName) {
     }
 
     componentDidUpdate (prevProps) {
-      if (prevProps.inputLastRelevantDeltaId !== this.props.inputLastRelevantDeltaId) {
+      if (prevProps.fetchDataCacheId !== this.props.fetchDataCacheId) {
         this._reload()
       }
     }
@@ -471,7 +471,7 @@ function withFetchedData(WrappedComponent, dataName) {
         loading: this.state.loading
       }, this.props)
       delete props.fetchData
-      delete props.inputLastRelevantDeltaId
+      delete props.fetchDataCacheId
 
       return <WrappedComponent {...props} />
     }

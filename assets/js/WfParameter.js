@@ -286,7 +286,7 @@ export default class WfParameter extends React.Component {
         return (
           <Refine
             fetchData={this.getInputValueCounts}
-            inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
+            fetchDataCacheId={`${this.props.inputLastRelevantDeltaId}-${this.props.getParamText('column')}`}
             value={this.props.p.value}
             onChange={this.paramChanged}
           />
