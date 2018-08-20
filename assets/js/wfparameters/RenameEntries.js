@@ -2,18 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {store, deleteModuleAction} from "../workflow-reducer"
 
-function parseJsonOrEmpty(s) {
-  if (s) {
-    return JSON.parse(s)
-  } else {
-    return {}
-  }
-}
-
-function isEmptyJson(s) {
-  return !s || s == '{}'
-}
-
 export class RenameEntry extends React.Component {
   static propTypes = {
     colname: PropTypes.string.isRequired,
@@ -73,24 +61,24 @@ export class RenameEntry extends React.Component {
     // Changing them would require updating the tests accordingly.
     return (
       <div className="wf-parameter rename-entry" data-column-name={this.props.colname}>
-      <div className={'rename-column'}>{this.props.colname}</div>
-      <div className="rename-container">
-      <input
-      className={'rename-input'}
-      type={'text'}
-      value={this.state.inputValue}
-      onChange={this.handleChange}
-      onBlur={this.handleBlur}
-      onKeyPress={this.handleKeyPress}
-      onFocus={this.handleFocus}
-      disabled={this.props.isReadOnly}
-      />
-      <button
-      className={'rename-delete icon-close'}
-      onClick={this.handleDelete}
-      disabled={this.props.isReadOnly}
-      ></button>
-      </div>
+        <div className={'rename-column'}>{this.props.colname}</div>
+        <div className="rename-container">
+          <input
+            className={'rename-input'}
+            type={'text'}
+            value={this.state.inputValue}
+            onChange={this.handleChange}
+            onBlur={this.handleBlur}
+            onKeyPress={this.handleKeyPress}
+            onFocus={this.handleFocus}
+            readOnly={this.props.isReadOnly}
+          />
+          <button
+            className={'rename-delete icon-close'}
+            onClick={this.handleDelete}
+            disabled={this.props.isReadOnly}
+          ></button>
+        </div>
       </div>
     )
   }
@@ -98,88 +86,69 @@ export class RenameEntry extends React.Component {
 
 export default class RenameEntries extends React.Component {
   static propTypes = {
-    fetchInputColumns: PropTypes.func.isRequired, // func() => Promise[Array[String]]
-    api: PropTypes.shape({
-      onParamChanged: PropTypes.func.isRequired,
-    }).isRequired,
+    allColumns: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired
+    })), // or null for unknown list (loading or stalled)
     entriesJsonString: PropTypes.string.isRequired,
-    wfModuleId: PropTypes.number.isRequired,
-    inputLastRelevantDeltaId: PropTypes.number,
-    paramId: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired, // onChange(JSON.stringify({ old: new, ...})) => undefined
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      entries: parseJsonOrEmpty(this.props.entriesJsonString),
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.entriesJsonString !== this.props.entriesJsonString) {
-      this.setState({ entries: parseJsonOrEmpty(this.props.entriesJsonString) })
-    }
-  }
-
-  componentDidMount() {
-    if (isEmptyJson(this.props.entriesJsonString)) {
-      // This is a brand-new module. Load an initial state from the
-      // server, renaming all columns.
-      //
-      // This `entries` will not be in the Redux store until we write it
-      // that'll be the first onColRename/onEntryDelete.
-      this.props.fetchInputColumns(this.props.wfModuleId)
-        .then(columns => {
-          // avoid race: if we've already renamed something, clearly
-          // we don't want these values from the server.
-          if (!isEmptyJson(this.props.entriesJsonString)) return
-
-          const entries = {}
-          for (const colname of columns) {
-            entries[colname] = colname
-          }
-          this.setState({ entries })
-        })
+  get parsedEntries() {
+    if (!this.props.entriesJsonString || this.props.entriesJsonString === '{}') {
+      // No JSON? Then we probably just created the module manually. Its default
+      // value should be _everything_.
+      const ret = {}
+      for (const column of this.props.allColumns) {
+        ret[column.name] = column.name
+      }
+      return ret
+    } else {
+      return JSON.parse(this.props.entriesJsonString)
     }
   }
 
   onColRename = (prevName, nextName) => {
-    var newEntries = Object.assign({}, this.state.entries)
-    newEntries[prevName] = nextName
-    this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)})
+    const oldEntries = this.parsedEntries
+    if (oldEntries[prevName] === nextName) return // no-op
+
+    const newEntries = {
+      ...oldEntries,
+      [prevName]: nextName
+    }
+    this.props.onChange(JSON.stringify(newEntries))
   }
 
   onEntryDelete = (prevName) => {
-    var newEntries = Object.assign({}, this.state.entries)
-    if (prevName in newEntries) {
-      delete newEntries[prevName]
-      if (Object.keys(newEntries).length == 0) {
-        // I am intermixing actions and API calls here because somehow other combinations
-        // of them do not work
-        store.dispatch(deleteModuleAction(this.props.wfModuleId))
-      } else {
-        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)})
-      }
+    const oldEntries = { ...this.parsedEntries }
+    if (!(prevName in oldEntries)) return // no-op
+
+    const newEntries = { ...oldEntries }
+    delete newEntries[prevName]
+
+    if (Object.keys(newEntries).length == 0) {
+      // FIXME do not use store here
+      store.dispatch(deleteModuleAction(this.props.wfModuleId))
+    } else {
+      this.props.onChange(JSON.stringify(newEntries))
     }
   }
 
   renderEntries() {
-    var entries = []
-    for(let col in this.state.entries) {
-      entries.push(
+    const entries = this.parsedEntries
+
+    return (this.props.allColumns || [])
+      .filter(({ name }) => name in entries)
+      .map(({ name }) => (
         <RenameEntry
-        key={col}
-        colname={col}
-        newColname={this.state.entries[col]}
-        onColRename={this.onColRename}
-        onEntryDelete={this.onEntryDelete}
-        isReadOnly={this.props.isReadOnly}
+          key={name}
+          colname={name}
+          newColname={entries[name]}
+          onColRename={this.onColRename}
+          onEntryDelete={this.onEntryDelete}
+          isReadOnly={this.props.isReadOnly}
         />
-      )
-    }
-    return entries
+      ))
   }
 
   render() {

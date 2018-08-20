@@ -294,13 +294,11 @@ export default class WfParameter extends React.Component {
       case 'rename-entries':
         return (
           <RenameEntries
-            api={this.props.api}
-            entriesJsonString={this.props.p.value}
             wfModuleId={this.props.wfModuleId}
-            paramId={this.props.p.id}
-            fetchInputColumns={this.fetchInputColumns}
-            inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
             isReadOnly={this.props.isReadOnly}
+            entriesJsonString={this.props.p.value}
+            allColumns={this.props.inputColumns}
+            onChange={this.paramChanged}
           />
         )
       case 'y_columns':

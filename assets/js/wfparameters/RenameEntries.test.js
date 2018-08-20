@@ -12,159 +12,77 @@ describe('RenameEntries rendering and interactions', () => {
     'narrative': 'nrtv'
   }
 
-  const columns = ['name', 'build_year', 'narrative', 'cornerstone']
+  const columnNames = ['name', 'build_year', 'narrative', 'cornerstone']
+  const allColumns = columnNames.map(name => ({ name }))
 
   const WFM_ID = 1
-  const PARAM_ID = 2
 
-  let api = null
-  let fetchInputColumns = null
+  const wrapper = (extraProps={}) => mount(
+    <RenameEntries
+      allColumns={allColumns}
+      wfModuleId={WFM_ID}
+      onChange={jest.fn()}
+      entriesJsonString={JSON.stringify(testEntries)}
+      isReadOnly={false}
+      {...extraProps}
+    />
+  )
 
-  beforeEach(() => {
-    fetchInputColumns = jsonResponseMock(columns)
-    api = {
-      onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
-    }
-  })
-
-  it('Adds all columns when initialized empty', (done) => {
+  it('displays all columns when initialized empty', () => {
     // This test corresponds to behavior when added from module library.
-    let tree = mount(<RenameEntries
-      fetchInputColumns={fetchInputColumns}
-      api={api}
-      entriesJsonString={''}
-      wfModuleId={WFM_ID}
-      paramId={PARAM_ID}
-      isReadOnly={false}
-      />)
+    const tree = wrapper({ entriesJsonString: '' })
 
-    setImmediate(() => {
-      expect(fetchInputColumns).toHaveBeenCalledWith(WFM_ID)
+    expect(tree.find('.rename-input')).toHaveLength(4)
+    expect(tree.find('.rename-input').get(0).props.value).toEqual('name')
+    expect(tree.find('.rename-input').get(1).props.value).toEqual('build_year')
+  })
 
-      // Got the tip to call .update() in this thread:
-      // https://github.com/airbnb/enzyme/issues/1233#issuecomment-343449560
-      tree.update()
+  it('displays only columns in entries', () => {
+    const tree = wrapper({ entriesJsonString: JSON.stringify(testEntries) })
 
-      expect(tree.find('.rename-input')).toHaveLength(4)
-      expect(tree.find('.rename-input').get(0).props.value).toEqual('name')
-      expect(tree.find('.rename-input').get(1).props.value).toEqual('build_year')
-      tree.unmount()
-      done()
+    expect(tree.find('.rename-input')).toHaveLength(2)
+    expect(tree.find('.rename-input').get(0).props.value).toEqual('host_name')
+    expect(tree.find('.rename-input').get(1).props.value).toEqual('nrtv')
+  })
+
+  it('updates parameter upon input completion via blur', () => {
+    const tree = wrapper()
+
+    const yearInput = tree.find('input[value="host_name"]')
+    yearInput.simulate('change', { target: { value: 'hn' } })
+    yearInput.simulate('blur')
+
+    expect(tree.prop('onChange')).toHaveBeenCalled()
+    const calls = tree.prop('onChange').mock.calls
+    expect(JSON.parse(calls[0][0])).toEqual({
+      name: 'hn',
+      narrative: 'nrtv'
     })
   })
 
-  it('Displays all columns in entries', (done) => {
-    let tree = mount(<RenameEntries
-      fetchInputColumns={fetchInputColumns}
-      api={api}
-      entriesJsonString={JSON.stringify(testEntries)}
-      wfModuleId={1}
-      paramId={2}
-      isReadOnly={false}
-      />)
+  it('updates parameter upon input completion via enter key', () => {
+    const tree = wrapper()
 
-    setImmediate(() => {
-      // Got the tip to call .update() in this thread:
-      // https://github.com/airbnb/enzyme/issues/1233#issuecomment-343449560
-      tree.update()
-      expect(tree.find('.rename-input')).toHaveLength(2)
-      expect(tree.find('.rename-input').get(0).props.value).toEqual('host_name')
-      expect(tree.find('.rename-input').get(1).props.value).toEqual('nrtv')
-      tree.unmount()
-      done()
+    const yearInput = tree.find('input[value="host_name"]')
+    yearInput.simulate('change', { target: { value: 'hn' } })
+    yearInput.simulate('keypress', { key: 'Enter' })
+
+    expect(tree.prop('onChange')).toHaveBeenCalled()
+    const calls = tree.prop('onChange').mock.calls
+    expect(JSON.parse(calls[0][0])).toEqual({
+      name: 'hn',
+      narrative: 'nrtv'
     })
   })
 
-  it('Updates parameter upon input completion via blur', (done) => {
-    let tree = mount(<RenameEntries
-      fetchInputColumns={fetchInputColumns}
-      api={api}
-      entriesJsonString={JSON.stringify(testEntries)}
-      wfModuleId={WFM_ID}
-      paramId={PARAM_ID}
-      isReadOnly={false}
-      />)
-
-    setImmediate(() => {
-      tree.update()
-      expect(tree.find('input[value="host_name"]')).toHaveLength(1)
-      let yearInput = tree.find('input[value="host_name"]')
-      yearInput.simulate('change', {target: {value: 'hn'}})
-      yearInput.simulate('blur')
-      setImmediate(() => {
-        expect(api.onParamChanged.mock.calls).toHaveLength(1)
-        expect(api.onParamChanged.mock.calls[0]).toHaveLength(2)
-        expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID)
-        let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value)
-        expect(updatedEntries['name']).toBe('hn')
-        expect(updatedEntries['narrative']).toBe('nrtv')
-        tree.unmount()
-        done()
-      })
-    })
+  it('updates parameter upon deleting an entry', () => {
+    const tree = wrapper()
+    tree.find('RenameEntry').first().find('.rename-delete').simulate('click')
+    expect(tree.prop('onChange')).toHaveBeenCalledWith(JSON.stringify({ narrative: 'nrtv' }))
   })
 
-  it('Updates parameter upon input completion via enter key', (done) => {
-    let tree = mount(<RenameEntries
-      fetchInputColumns={fetchInputColumns}
-      api={api}
-      entriesJsonString={JSON.stringify(testEntries)}
-      wfModuleId={WFM_ID}
-      paramId={PARAM_ID}
-      isReadOnly={false}
-      />)
-
-    setImmediate(() => {
-      tree.update()
-      expect(tree.find('input[value="host_name"]')).toHaveLength(1)
-      let nameInput = tree.find('input[value="host_name"]')
-      nameInput.simulate('change', {target: {value: 'host'}})
-      nameInput.simulate('keypress', {key: 'Enter'})
-      setImmediate(() => {
-        expect(api.onParamChanged.mock.calls).toHaveLength(1)
-        expect(api.onParamChanged.mock.calls[0]).toHaveLength(2)
-        expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID)
-        let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value)
-        expect(updatedEntries['name']).toBe('host')
-        expect(updatedEntries['narrative']).toBe('nrtv')
-        tree.unmount()
-        done()
-      })
-    })
-  })
-
-  it('Updates parameter upon deleting an entry', (done) => {
-    let tree = mount(<RenameEntries
-      fetchInputColumns={fetchInputColumns}
-      api={api}
-      entriesJsonString={JSON.stringify(testEntries)}
-      wfModuleId={WFM_ID}
-      paramId={PARAM_ID}
-      isReadOnly={false}
-      />)
-
-    setImmediate(() => {
-      tree.update()
-      expect(tree.find('RenameEntry')).toHaveLength(2)
-      // Should be the "name" entry that we will delete next
-      let nameEntry = tree.find('RenameEntry').first()
-      expect(nameEntry.find('.rename-delete')).toHaveLength(1)
-      let deleteBtn = nameEntry.find('.rename-delete')
-      deleteBtn.simulate('click')
-      setImmediate(() => {
-        expect(api.onParamChanged.mock.calls).toHaveLength(1)
-        expect(api.onParamChanged.mock.calls[0]).toHaveLength(2)
-        expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID)
-        let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value)
-        expect(updatedEntries['name']).toBeUndefined()
-        expect(updatedEntries['narrative']).toBe('nrtv')
-        tree.unmount()
-        done()
-      })
-    })
-  })
-
-  it('Deletes itself if all entries are deleted', (done) => {
+  it('deletes itself if all entries are deleted', () => {
+    // TODO just use a func prop, not Redux
     const state = {
       workflow: {
         wf_modules: [
@@ -180,24 +98,8 @@ describe('RenameEntries rendering and interactions', () => {
     store.getState.mockImplementation(() => state)
     deleteModuleAction.mockImplementation((...args) => [ 'deleteModuleAction', ...args ])
 
-    let tree = mount(<RenameEntries
-      fetchInputColumns={fetchInputColumns}
-      api={api}
-      entriesJsonString={JSON.stringify({'name': 'host_name'})}
-      wfModuleId={WFM_ID}
-      paramId={PARAM_ID}
-      isReadOnly={false}
-      />)
-
-    setImmediate(() => {
-      tree.update()
-      expect(tree.find('RenameEntry')).toHaveLength(1)
-      let firstEntry = tree.find('RenameEntry').first()
-      expect(firstEntry.find('.rename-delete')).toHaveLength(1)
-      firstEntry.find('.rename-delete').simulate('click')
-      expect(store.dispatch).toHaveBeenCalledWith([ 'deleteModuleAction', WFM_ID ])
-      tree.unmount()
-      done()
-    })
+    const tree = wrapper({ entriesJsonString: JSON.stringify({ 'name': 'n' }) })
+    tree.find('RenameEntry .rename-delete').simulate('click')
+    expect(store.dispatch).toHaveBeenCalledWith([ 'deleteModuleAction', WFM_ID ])
   })
 })
