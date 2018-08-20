@@ -63,4 +63,11 @@ describe('NumberField', () => {
     const w = wrapper({ isReadOnly: true })
     expect(w.find('input').prop('readOnly')).toBe(true)
   })
+
+  it('should return null when text field cleared, not 0', () => {
+    const w = wrapper()
+    w.find('input').simulate('change', { target: { value: '' } })
+    expect(w.prop('onChange')).toHaveBeenCalledWith(null)
+  })
+
 })

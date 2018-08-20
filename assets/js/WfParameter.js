@@ -258,6 +258,7 @@ export default class WfParameter extends React.Component {
         return (
           <GoogleFileSelect
             api={this.props.api}
+            isReadOnly={this.props.isReadOnly}
             googleCredentialsParamId={this.props.getParamId('google_credentials')}
             googleCredentialsSecretName={secretName}
             fileMetadataJson={this.props.getParamText('googlefileselect')}
