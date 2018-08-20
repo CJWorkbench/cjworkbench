@@ -6,7 +6,6 @@ import MenuParam from './wfparameters/MenuParam'
 import ChartSeriesMultiSelect from './wfparameters/ChartSeriesMultiSelect'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
-import ColumnRenamer from './wfparameters/ColumnRenamer'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
@@ -239,19 +238,6 @@ export default class WfParameter extends React.Component {
             <DataVersionSelect wfModuleId={this.props.wfModuleId}/>
           </div>
         );
-      case 'colrename':
-        const renameParam = this.props.getParamText('newcolnames');
-        return (
-          <div className=''>
-            <ColumnRenamer
-              isReadOnly={this.props.isReadOnly}
-              renameParam={renameParam}
-              saveState={this.colRenameSaveState}
-              getColNames={this.fetchInputColumns}
-              inputLastRelevantDeltaId={this.props.inputLastRelevantDeltaId}
-            />
-          </div>
-        )
       case 'file':
         return (
           <DropZone
