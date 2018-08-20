@@ -31,6 +31,7 @@ services:
       # Migrate 
       - ./:/app/:rw
       - node_modules:/app/node_modules:rw
+      - jest_cache:/tmp/jest_0:rw
     networks: [ 'dev' ]
     command: node_modules/.bin/webpack --mode development --watch
 
@@ -96,3 +97,4 @@ volumes:
   # to behave a bit differently from Linux bind mounts. Use a Docker volume
   # instead.
   node_modules: {}
+  jest_cache: {}
