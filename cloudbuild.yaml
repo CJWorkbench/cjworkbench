@@ -39,6 +39,7 @@ steps:
   args: [ 'build',
           '--file', 'Dockerfile.integrationtest',
           '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--target', 'cloudbuild',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '.'

@@ -34,16 +34,16 @@ RUN pip install psycopg2-binary capybara-py selenium
 
 WORKDIR /app
 
-# /app/integrationtests is a volume in dev, a COPY in cloudbuild
-CMD [ "sh", "-c", "xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
-
 
 FROM deps AS dev
-
 # We're a VNC server
 EXPOSE 5901
 # The developer can edit tests and re-run them quickly
+# /app/integrationtests is a volume in dev, a COPY in cloudbuild
 VOLUME /app/integrationtests
+CMD [ "sh", "-c", "xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
 
 FROM deps AS cloudbuild
+# /app/integrationtests is a volume in dev, a COPY in cloudbuild
 COPY integrationtests/ /app/integrationtests/
+CMD [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]

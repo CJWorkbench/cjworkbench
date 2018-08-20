@@ -72,6 +72,7 @@ services:
     #image:
     #build:
     depends_on: [ 'db', 'backend', 'frontend', 'git-server' ]
+    command: [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     volumes:
       - importedmodules:/app/importedmodules
