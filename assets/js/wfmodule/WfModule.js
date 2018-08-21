@@ -524,11 +524,12 @@ function mapStateToProps (state, ownProps) {
   const { testHighlight } = lessonSelector(state)
   const { index } = ownProps
   const module = ownProps.wfModule.module_version ? state.modules[String(ownProps.wfModule.module_version.module)] : null
+  const moduleName = module ? module.name : null
   return {
     module,
-    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName: module.name }),
-    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName: module.name }),
-    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName: module.name }),
+    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
+    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),
+    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
     fetchModuleExists: hasFetchWfModule(state)
