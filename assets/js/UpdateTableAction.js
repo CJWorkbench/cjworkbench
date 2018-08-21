@@ -12,7 +12,8 @@ export const updateModuleMapping = {
   'rename-columns':   updateRenameModule,
   'reorder-columns':  updateReorderModule,
   'sort-from-table':  updateSortModule,
-  'extract-numbers':  updateExtractNumbersModule
+  'extract-numbers':  updateExtractNumbersModule,
+  'clean-text':       updateCleanTextModule
 }
 
 // Constants for sort module
@@ -87,6 +88,22 @@ export function updateTableActionModule (wfModuleId, idName, forceNewModule, par
         const newWfm = fulfilled.value.data.wfModule
         updateModuleMapping[idName](newWfm, params)
       })
+  }
+}
+
+// TODO this can be the model for a default multicolumn handler.
+// Will need to pass module name
+function updateCleanTextModule (wfm, params) {
+  let existingColumns = findParamValByIdName(wfm, 'colnames')
+  let newColumn = params.columnKey
+
+  if (existingColumns.value) {
+    // Do nothing if column already exists
+    if (existingColumns.value.split(',').includes(newColumn)) {}
+    else {updateTableActionModule(wfm.id, 'clean-text', true, params)}
+  }
+  else {
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', params.columnKey))
   }
 }
 

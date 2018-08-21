@@ -1350,6 +1350,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   </button>
                                                 </DropdownItem>
                                                 <DropdownItem
+                                                  className="clean-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="clean-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Clean Text
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
                                                   divider={true}
                                                   tag="button"
                                                   toggle={true}
@@ -1836,6 +1856,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     />
                                                     <span>
                                                       Extract numbers
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  className="clean-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="clean-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Clean Text
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2330,6 +2370,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   </button>
                                                 </DropdownItem>
                                                 <DropdownItem
+                                                  className="clean-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="clean-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Clean Text
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
                                                   divider={true}
                                                   tag="button"
                                                   toggle={true}
@@ -2816,6 +2876,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     />
                                                     <span>
                                                       Extract numbers
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  className="clean-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="clean-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Clean Text
                                                     </span>
                                                   </button>
                                                 </DropdownItem>

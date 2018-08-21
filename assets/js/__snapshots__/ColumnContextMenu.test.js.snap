@@ -116,6 +116,19 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
         </span>
       </DropdownItem>
       <DropdownItem
+        className="clean-text"
+        onClick={[Function]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-clean"
+        />
+        <span>
+          Clean Text
+        </span>
+      </DropdownItem>
+      <DropdownItem
         divider={true}
         tag="button"
         toggle={true}

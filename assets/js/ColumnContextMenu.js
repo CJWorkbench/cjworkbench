@@ -74,6 +74,10 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-number"></i>
               <span>Extract numbers</span>
             </DropdownItem>
+            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'clean-text')} className='clean-text' toggle={false}>
+              <i className="icon-clean"></i>
+              <span>Clean Text</span>
+            </DropdownItem>
             <DropdownItem divider />
             <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'selectcolumns')} className='drop-column' toggle={false}>
               <i className="icon-removec"></i>
