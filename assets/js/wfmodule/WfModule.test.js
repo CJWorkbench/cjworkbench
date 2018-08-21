@@ -94,6 +94,15 @@ describe('WfModule, not read-only mode', () => {
     expect(props.focusModule).not.toHaveBeenCalled()
   })
 
+  it('is has .status-busy', () => {
+    const w = shallow(<WfModule {...props} wfModule={{...wfModule, status: 'busy'}} />)
+    expect(w.hasClass('status-busy')).toBe(true)
+    w.setProps({ wfModule: { ...wfModule, status: 'ready' } })
+    w.update()
+    expect(w.hasClass('status-busy')).toBe(false)
+    expect(w.hasClass('status-ready')).toBe(true)
+  })
+
   it('supplies getParamText and setParamText', () => {
     const wrapper = shallow(<WfModule {...props} />)
     const instance = wrapper.instance()

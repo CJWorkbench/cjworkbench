@@ -315,6 +315,7 @@ export class WfModule extends React.PureComponent {
         moduleName={module.name}
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
+        wfModuleStatus={wfModule.status}
         wfModuleError={wfModule.error_msg}
         key={index}
         p={p}
@@ -358,9 +359,9 @@ export class WfModule extends React.PureComponent {
     )
 
     let alertButton
-    if (this.props.fetchModuleExists && !this.props.isReadOnly && !this.props.isAnonymous) {
-      const notifications = this.props.wfModule.notifications
-      const hasUnseen = this.props.wfModule.has_unseen_notification
+    if (this.props.fetchModuleExists && !isReadOnly && !this.props.isAnonymous) {
+      const notifications = wfModule.notifications
+      const hasUnseen = wfModule.has_unseen_notification
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
@@ -431,6 +432,7 @@ export class WfModule extends React.PureComponent {
     }
 
     let className = 'wf-module'
+    className += wfModule.status ? ` status-${wfModule.status}` : ''
     className += wfModule.is_collapsed ? ' collapsed' : ' expanded'
     if (this.props.isLessonHighlight) className += ' lesson-highlight'
     if (this.props.isZenMode) className += ' zen-mode'

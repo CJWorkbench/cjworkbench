@@ -145,41 +145,114 @@ button:focus { outline:0 !important; }
   line-height: 1.4rem;
   padding: 0 1.6rem;
   text-decoration: none;
-  &:hover{
-    color:none;
-    text-decoration: none;
-  }
 }
 
 .action-button { @extend %action-button; }
+
+.action-button:disabled {
+  color: $medium-gray;
+  border-color: $medium-gray;
+}
 
 .action-button + .action-button {
   margin-left: 1rem;
 }
 
-.button-white {
-  color: $white;
-  border: 1px solid $white;
-  background-color: transparent;
-  &:hover {
-  background-color: $light-accent--strong;
+.action-button .spinner {
+  $background-color: white; // default -- we'll override it
+  $spinner-color: $brand-workspace;
+
+  // overlap into the border's margin. There's tons of room because we use
+  // rounded buttons and the spinner is also round
+  left: -.5rem;
+
+  // https://projects.lukehaas.me/css-loaders/
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #ffffff;
+  background: -moz-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
+  background: -webkit-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
+  background: -o-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
+  background: linear-gradient(to right, $spinner-color 10%, rgba($spinner-color, 0) 42%);
+  position: relative;
+  -webkit-animation: spinner-in-button 1.4s infinite linear;
+  animation: spinner-in-button 1.4s infinite linear;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+
+  &::before {
+    width: 50%;
+    height: 50%;
+    background: $spinner-color;
+    border-radius: 100% 0 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
   }
-  &:active {
+
+  &::after {
+    background: $background-color;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    content: '';
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
+@-webkit-keyframes spinner-in-button {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner-in-button {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.button-white {
+  color: white;
+  border: 1px solid white;
+  background-color: transparent;
+  &:hover, &:hover .spinner::after {
+    background-color: $light-accent--strong;
+  }
+  &:active, &:active .spinner::after {
     background-color: $light-accent--Vstrong;
   }
 }
 
 .button-white--fill {
-  background-color: #FFF;
   color: $brand-workspace;
-  border:1px solid #fff;
-  &:hover{
-    background-color:$light-accent--strong;
-    color:$white;
+  border:1px solid white;
+  &, .spinner::after {
+    background-color: white;
   }
-  &:active {
+  &:hover, &:hover .spinner::after {
+    background-color:$light-accent--strong;
+    color: white;
+  }
+  &:active, &:active .spinner::after {
     background-color: $light-accent--Vstrong;
-    border:1px solid $white;
+    border: 1px solid white;
   }
 }
 
@@ -199,18 +272,22 @@ button:focus { outline:0 !important; }
   color: $brand-workspace;
   border: 1px solid $brand-workspace ;
   background-color: transparent;
-  &:hover {background-color: $brand-workspace--light}
-  &:active {
-    background-color: $brand-workspace !important;
-    color: $white !important;
+  &:hover, &:hover .spinner::after {
+    background-color: $brand-workspace--light
+  }
+  &:active, &:active .spinner::after {
+    background-color: $brand-workspace;
+    color: white;
   }
 }
 
-.button-blue { @extend %button-blue; }
+.button-blue {
+  @extend %button-blue;
+}
 
 %button-blue--fill {
   background-color: $brand-workspace;
-  color: $white;
+  color: white;
   border:none;
   &:hover {
     background-color: $brand-workspace--light;
@@ -218,8 +295,8 @@ button:focus { outline:0 !important; }
     color:$brand-workspace;
   }
   &:active {
-    background-color: $brand-workspace !important;
-    color: $white !important;
+    background-color: $brand-workspace;
+    color: white;
   }
 }
 
@@ -233,7 +310,7 @@ button:focus { outline:0 !important; }
   &:hover {background-color: $brand-orange--light}
   &:active {
     background: $brand-orange;
-    color:$white;
+    color: $white;
   }
 }
 

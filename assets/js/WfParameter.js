@@ -8,7 +8,7 @@ import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
-import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
+import VersionSelect from './wfparameters/VersionSelect'
 import OAuthConnect from './wfparameters/OAuthConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
@@ -46,6 +46,7 @@ export default class WfParameter extends React.Component {
       }).isRequired,
     }).isRequired,
     moduleName:     PropTypes.string.isRequired,
+    wfModuleStatus: PropTypes.string, // module status, or null for placeholder
     wfModuleError:  PropTypes.string, // module-level error message
     wfModuleId: PropTypes.number.isRequired,
     inputWfModuleId: PropTypes.number, // or null
@@ -212,23 +213,17 @@ export default class WfParameter extends React.Component {
 
     switch (id_name) {
       case 'version_select':
-        const button = (!this.props.isReadOnly)
-          ? <button className='button-blue action-button mt-0' onClick={this.props.onSubmit}>{name}</button>
-          : null
-
         return (
           <div {...this.outerDivProps}>
-            <UpdateFrequencySelect
+            <VersionSelect
+              name={name}
+              onSubmit={this.props.onSubmit}
               wfModuleId={this.props.wfModuleId}
+              wfModuleStatus={this.props.wfModuleStatus}
               isReadOnly={this.props.isReadOnly}
             />
-            <div className="d-flex justify-content-between mt-2">
-              <DataVersionSelect wfModuleId={this.props.wfModuleId}/>
-              {button}
-            </div>
-
           </div>
-        );
+        )
       case 'version_select_simpler':
         return (
           <div className='versionSelect--uploadFile'>
