@@ -10,7 +10,6 @@
   position: fixed;
   width: 100%;
 
-
   .workflows-page {
     background-color: $Vlight-gray;
     padding-bottom: 20em;
@@ -80,6 +79,8 @@
     display: flex;
     flex-direction: row;
     background-color: $WF-background;
+    position: relative;
+    z-index: 0;
 
     overflow: hidden; // height determined by parent, not children. https://www.pivotaltracker.com/story/show/158034835
   }
