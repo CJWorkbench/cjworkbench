@@ -44,18 +44,18 @@ describe("ExtractNumbers actions", () => {
           },
           {
             id: TYPE_PAR_ID_2,
-            parameter_spec: {id_name: 'type'},
-            value: 0
+            parameter_spec: {id_name: 'extract'},
+            value: false
           },
           {
             id: BEFORE_PAR_ID_2,
-            parameter_spec: {id_name: 'text_before'},
-            value: false
+            parameter_spec: {id_name: 'type_format'},
+            value: 0
           },
           {
             id: AFTER_PAR_ID_2,
-            parameter_spec: {id_name: 'text_after'},
-            value: false
+            parameter_spec: {id_name: 'type_replace'},
+            value: 0
           }
         ]
       },
@@ -72,19 +72,19 @@ describe("ExtractNumbers actions", () => {
             value: 'num_col'
           },
           {
+            id: COLUMN_PAR_ID_3,
+            parameter_spec: {id_name: 'extract'},
+            value: true
+          },
+          {
             id: TYPE_PAR_ID_3,
-            parameter_spec: {id_name: 'type'},
+            parameter_spec: {id_name: 'type_format'},
             value: 0
           },
           {
             id: BEFORE_PAR_ID_3,
-            parameter_spec: {id_name: 'text_before'},
-            value: false
-          },
-          {
-            id: AFTER_PAR_ID_3,
-            parameter_spec: {id_name: 'text_after'},
-            value: true
+            parameter_spec: {id_name: 'type_replace'},
+            value: 1
           }
         ]
       }
@@ -136,7 +136,7 @@ describe("ExtractNumbers actions", () => {
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'type', extractNumberAny ]);
   });
 
-  it('selects the existing extract module with type "Any" and adds column', async () => {
+  it('selects the existing extract module with defaults and adds column', async () => {
     store.getState.mockImplementation(() => Object.assign({}, initialState, { selected_wf_module: 0 }))
     updateTableActionModule(17, idName, false, {columnKey: 'str_col'});
 
@@ -150,7 +150,7 @@ describe("ExtractNumbers actions", () => {
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith(["setSelectedWfModuleAction", 1]);
   })
-  it('should force a new module when an existing one has the before flag set', async () => {
+  it('should force a new module when an existing one has no defaults', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
     updateTableActionModule(79, idName, false, {columnKey: 'str_col'});
 

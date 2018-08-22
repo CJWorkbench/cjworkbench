@@ -111,13 +111,13 @@ function updateExtractNumbersModule (wfm, params) {
   let extractedColumns = findParamValByIdName(wfm, 'colnames')
 
   if (extractedColumns.value) {
-    let extractedType = findParamValByIdName(wfm, 'type').value
-    let textBeforeFlag = findParamValByIdName(wfm, 'text_before').value
-    let textAfterFlag = findParamValByIdName(wfm, 'text_after').value
+    let extract = findParamValByIdName(wfm, 'extract').value
+    let formatType = findParamValByIdName(wfm, 'type_format').value
+    let replaceType = findParamValByIdName(wfm, 'type_replace').value
     // If column already an existing module parameter, do nothing
     if (extractedColumns.value.split(',').includes(params.columnKey)) {}
-    // If existing module not 'Any' state or 1 of text_ before or after, force new
-    else if ((extractedType !== extractNumberAny) | (textBeforeFlag | textAfterFlag)) {
+    // If existing module not defaults, force new
+    else if ((extract) | (formatType !== 0) | (replaceType !== 0)) {
       updateTableActionModule(wfm.id, 'extract-numbers', true, params)
     }
     else {
