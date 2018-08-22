@@ -76,6 +76,10 @@ case "$COMMAND" in
     docker_compose_with_commands rm -f -v # -v removes _anonymous_ volumes
     ;;
 
+  "exec")
+    docker_compose exec "$@"
+    ;;
+
   "npm")
     docker_compose run --rm webpack npm "$@"
     ;;
