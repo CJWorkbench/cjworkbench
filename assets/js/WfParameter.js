@@ -18,9 +18,9 @@ import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
-import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
-import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
-import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
+//import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
+//import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
+//import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -303,38 +303,38 @@ export default class WfParameter extends React.Component {
             onChange={this.onChangeYColumns}
           />
         )
-      case 'map-geojson':
-        return (
-          <MapLocationDropZone
-            api={this.props.api}
-            name={this.props.p.parameter_spec.name}
-            paramData={this.props.p.value}
-            paramId={this.props.p.id}
-            isReadOnly={this.props.isReadOnly}
-          />
-        )
-      case 'map-presets':
-        return (
-          <MapLocationPresets
-            api={this.props.api}
-            name={this.props.p.parameter_spec.name}
-            paramData={this.props.p.value}
-            paramId={this.props.p.id}
-            isReadOnly={this.props.isReadOnly}
-          />
-        )
-      case 'map-layers':
-        return (
-          <MapLayerEditor
-            api={this.props.api}
-            name={this.props.p.parameter_spec.name}
-            paramId={this.props.p.id}
-            keyColumn={this.props.getParamText("key-column")}
-            wfModuleId={this.props.wf_module_id}
-            isReadOnly={this.props.isReadOnly}
-            paramData={this.props.p.value}
-          />
-        )
+//      case 'map-geojson':
+//        return (
+//          <MapLocationDropZone
+//            api={this.props.api}
+//            name={this.props.p.parameter_spec.name}
+//            paramData={this.props.p.value}
+//            paramId={this.props.p.id}
+//            isReadOnly={this.props.isReadOnly}
+//          />
+//        )
+//      case 'map-presets':
+//        return (
+//          <MapLocationPresets
+//            api={this.props.api}
+//            name={this.props.p.parameter_spec.name}
+//            paramData={this.props.p.value}
+//            paramId={this.props.p.id}
+//            isReadOnly={this.props.isReadOnly}
+//          />
+//        )
+//      case 'map-layers':
+//        return (
+//          <MapLayerEditor
+//            api={this.props.api}
+//            name={this.props.p.parameter_spec.name}
+//            paramId={this.props.p.id}
+//            keyColumn={this.props.getParamText("key-column")}
+//            wfModuleId={this.props.wf_module_id}
+//            isReadOnly={this.props.isReadOnly}
+//            paramData={this.props.p.value}
+//          />
+//        )
       default:
         return (
           <p className="error">Custom type {id_name} not handled</p>
