@@ -10,6 +10,16 @@
       "name": "",
       "id_name": "reorder-history",
       "type": "custom"
+    },
+    {
+      "name": "Reorder by dragging column headers in the table",
+      "id_name": "no-param-text",
+      "type": "statictext",
+      "visible_if": {
+        "id_name": "reorder-history",
+        "value": false,
+        "invert": false
+      }
     }
   ]
 }

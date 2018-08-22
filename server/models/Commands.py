@@ -172,10 +172,6 @@ class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
                                              order=insert_before, is_collapsed=False)
             newwfm.create_default_parameters()
 
-            # start EditCells collapsed, just this one module for now
-            if (module_version.module.id_name == 'editcells'):
-                newwfm.is_collapsed = True
-
             description = 'Added \'' + module_version.module.name + '\' module'
             delta = Delta.create_impl(AddModuleCommand,
                 workflow=workflow,

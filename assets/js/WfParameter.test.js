@@ -17,6 +17,10 @@ describe('WfParameter', () => {
     'id_name': 'whatever',
     'value': true
   }
+  const visibilityCond4 = {
+    'id_name': 'whatever',
+    'value': false
+  }
 
   function shallowParameter (p, paramtextReturnValue, value) {
     return shallow(
@@ -156,6 +160,58 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond3),
         }
     }, false);
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
+  });
+  it('Renders a parameter when boolean visible_if conditions are met for non-bool dependency (true)', () => {
+      var wrapper = shallowParameter({
+        visible: true,
+        id: 123,
+        value: 'data.sfgov.org',
+        parameter_spec: {
+          id_name: 'url',
+          type: 'string',
+          visible_if: JSON.stringify(visibilityCond3),
+        }
+    }, 'There is text');
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(1);
+  });
+  it('Does not render a parameter when boolean visible_if conditions are not met for non-bool dependency (true)', () => {
+      var wrapper = shallowParameter({
+        visible: true,
+        id: 123,
+        value: 'data.sfgov.org',
+        parameter_spec: {
+          id_name: 'url',
+          type: 'string',
+          visible_if: JSON.stringify(visibilityCond3),
+        }
+    }, '');
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
+  });
+  it('Renders a parameter when boolean visible_if condition met for non-bool dependency (false)', () => {
+      var wrapper = shallowParameter({
+        visible: true,
+        id: 123,
+        value: 'data.sfgov.org',
+        parameter_spec: {
+          id_name: 'url',
+          type: 'string',
+          visible_if: JSON.stringify(visibilityCond4),
+        }
+    }, '');
+    expect(wrapper.find('SingleLineTextField')).toHaveLength(1);
+  });
+  it('Does not render a parameter when boolean visible_if conditions are not met for non-bool dependency (false)', () => {
+      var wrapper = shallowParameter({
+        visible: true,
+        id: 123,
+        value: 'data.sfgov.org',
+        parameter_spec: {
+          id_name: 'url',
+          type: 'string',
+          visible_if: JSON.stringify(visibilityCond4),
+        }
+    }, 'There is text');
     expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
   });
 });

@@ -10,6 +10,16 @@
       "name": "Cell Editor",
       "id_name" : "celledits",
       "type": "custom"
+    },
+    {
+      "name": "Edit values directly in the table",
+      "id_name": "no-param-text",
+      "type": "statictext",
+      "visible_if": {
+        "id_name": "celledits",
+        "value": false,
+        "invert": false
+      }
     }
   ]
 }
