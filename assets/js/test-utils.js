@@ -1,20 +1,3 @@
-import { Provider } from 'react-redux'
-import React from 'react'
-import { shallow } from 'enzyme'
-
-
-// --- Mock API responses ---
-
-export function mockResponse (status, statusText, response) {
-  return new window.Response(response, {
-    status: status,
-    statusText: statusText,
-    headers: {
-      'Content-type': 'application/json'
-    }
-  });
-};
-
 // Returns new mock function that returns given json. Used for mocking "get" API calls
 export function jsonResponseMock (json) {
   return jest.fn().mockImplementation(()=>
@@ -42,16 +25,3 @@ export function sleep (ms) {
     setTimeout(resolve, ms)
   })
 }
-
-/**
- * Like enzyme's `shallow()`, but child components that depend on redux
- * don't crash the mount.
- *
- * See https://github.com/airbnb/enzyme/issues/472
- */
-export function shallowWithStubbedStore(component) {
-  const stub = () => ({})
-  const store = { getState: stub, subscribe: stub, dispatch: stub }
-  return shallow(<Provider store={store}>{component}</Provider>).dive()
-}
-

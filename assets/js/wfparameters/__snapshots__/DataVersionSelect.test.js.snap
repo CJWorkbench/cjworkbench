@@ -4,20 +4,18 @@ exports[`DataVersionSelect should match snapshot 1`] = `
 <div
   className="version-item"
 >
-  <React.Fragment>
-    <div
-      className="label"
-    >
-      Version
-    </div>
-    <button
-      onClick={[Function]}
-      title="Select version"
-    >
-      7
-       of 
-      7
-    </button>
-  </React.Fragment>
+  <div
+    className="label"
+  >
+    Version
+  </div>
+  <button
+    onClick={[Function]}
+    title="Select version"
+  >
+    7
+     of 
+    7
+  </button>
 </div>
 `;
