@@ -38,16 +38,19 @@ exports[`ColumnParam matches snapshot 1`] = `
     </option>
     <option
       key="A"
+      value="A"
     >
       A
     </option>
     <option
       key="B"
+      value="B"
     >
       B
     </option>
     <option
       key="C"
+      value="C"
     >
       C
     </option>
