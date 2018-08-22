@@ -2,22 +2,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default class MenuParam extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedIdx: this.props.selectedIdx
-    };
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (this.state.selectedIdx != newProps.selectedIdx)
-      this.setState({selectedIdx :  newProps.selectedIdx})
-  }
-
+export default class MenuParam extends React.PureComponent {
   onChange = (evt) => {
     var idx =  evt.target.value;
-    this.setState({selectedIdx: idx });
     this.props.onChange(idx);
   }
 
@@ -31,7 +18,7 @@ export default class MenuParam extends React.Component {
         <select
           className='custom-select module-parameter dropdown-selector'
           name={this.props.name}
-          value={this.state.selectedIdx}
+          value={this.props.selectedIdx}
           onChange={this.onChange}
           disabled={this.props.isReadOnly}
         >
