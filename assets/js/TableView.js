@@ -64,7 +64,7 @@ export default class TableView extends React.PureComponent {
 
   scheduleLoad () {
     if (this.scheduleLoadTimeout === null) {
-      this.scheduleLoadTimeout = window.setTimeout(() => this.load(), 50)
+      this.scheduleLoadTimeout = window.setTimeout(() => this.load(), FetchTimeout)
     }
   }
 

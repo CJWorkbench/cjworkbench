@@ -132,7 +132,14 @@ describe('TableView', () => {
     // a row we haven't loaded yet should be blank
     expect(row).toEqual({ '': '', ' ': '', '  ': '', '   ': '' })
 
-    await sleep(FetchTimeout + 1) // let rows load again
+    // Be careful about a race in this test. We've _started_ a timeout of
+    // FetchTimeout ms, but if we simply schedule another timeout for
+    // (FetchTimeout+1)ms, we risk the second timeout happening before the
+    // first. We can make the race _far_ less likely to stimy us by sleeping
+    // _after_ the initial FetchTimeout ms are done.
+    await sleep(FetchTimeout) // executes the next line around the same time as api.render()
+    await sleep(4) // makes sure the next line comes _after_ api.render()
+
     expect(api.render).toHaveBeenCalledWith(100, 412, 613)
   })
 
