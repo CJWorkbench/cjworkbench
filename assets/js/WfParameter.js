@@ -326,9 +326,14 @@ export default class WfParameter extends React.Component {
     if(('id_name' in condition) && ('value' in condition)) {
       // If the condition value is a boolean:
       if (typeof condition['value'] === typeof true) {
-        // Just return if it matches or not
-        return condition['value'] === this.props.getParamText(condition['id_name']);
-        // TODO: Does this also work with strings? Do we want it to?
+        let conditionValue = this.props.getParamText(condition['id_name']);
+        if (typeof conditionValue === typeof true) {
+          // Just return if it matches or not
+          return condition['value'] === this.props.getParamText(condition['id_name']);
+        } else {
+          // If only condition is bool, compare to string set or not
+          return condition['value'] === !(conditionValue === '')
+        }
       }
 
       // Otherwise, if it's a menu item:
