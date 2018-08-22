@@ -74,8 +74,6 @@ export default class WfParameter extends React.Component {
   constructor(props) {
     super(props)
 
-    this.firstProps = true
-
     this.state = {
       value: this.props.p.value
     }
@@ -146,27 +144,6 @@ export default class WfParameter extends React.Component {
       this.props.inputWfModuleId,
       this.props.getParamText('column')
     )
-  }
-
-  // set contents of HTML input field corresponding to our type
-  setInputValue (val) {
-    const type = this.props.p.parameter_spec.type
-    if (type === 'checkbox' && this.checkboxRef) {
-      this.checkboxRef.value = val
-    } else if ((type === 'integer' || type === 'float') && this.numberRef) {
-      this.numberRef.value = val
-    }
-  }
-
-  // We need to update input contents when we get new props
-  componentWillReceiveProps (newProps) {
-    // If this is our first time through, update form controls to current values
-    // this conditional fixes https://www.pivotaltracker.com/story/show/154104065
-    // TODO WTF? Nix this; React state solves this tidily.
-    if (this.firstProps) {
-      this.setInputValue(newProps.p.value);
-      this.firstProps = false;
-    }
   }
 
   onChangeGoogleFileSelectJson = (json) => {
