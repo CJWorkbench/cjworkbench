@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-//import Dropzone from 'react-dropzone';
 import {store, setWfModuleStatusAction} from '../workflow-reducer'
 import {csrfToken} from '../utils'
 import FineUploaderTraditional from 'fine-uploader-wrappers'
-import Dropzone from 'react-fine-uploader/dropzone'
+import FineUploaderDropZone from 'react-fine-uploader/dropzone'
 import FileInput from 'react-fine-uploader/file-input'
 import ProgressBar from 'react-fine-uploader/progress-bar'
 import Filename from 'react-fine-uploader/filename'
@@ -105,14 +104,14 @@ export default class DropZone extends Component {
             <div className={""}>
                 {this.state.files.length == 0 ? (
                     <div>
-                      <Dropzone
+                      <FineUploaderDropZone
                         className={"dropzone d-flex justify-content-center align-items-center"}
                         multiple={false}
                         uploader={this.uploader}>
                         <div className={"content-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
                         <FileInput className={"content-3 action-link"} multiple={false}
                                    uploader={this.uploader}>Browse</FileInput>
-                      </Dropzone>
+                      </FineUploaderDropZone>
                       {
                           this.state.submittedFiles.map(id => (
                               <div
