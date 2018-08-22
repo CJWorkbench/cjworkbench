@@ -40,6 +40,14 @@ export default class ColumnContextMenu extends React.Component {
     this.props.setDropdownAction('sort-from-table', false, params)
   }
 
+  duplicateColumn = () => this.setDropdownActionDefault('duplicate-column')
+  sortAscending = () => this.setSortDirection(sortDirectionAsc)
+  sortDescending = () => this.setSortDirection(sortDirectionDesc)
+  addNewFilter = () => this.setDropdownActionForceNew('filter')
+  extractNumbers = () => this.setDropdownActionDefault('extract-numbers')
+  cleanText = () => this.setDropdownActionDefault('clean-text')
+  dropColumn = () => this.setDropdownActionDefault('selectcolumns')
+
   render() {
     return (
       <UncontrolledDropdown>
@@ -52,34 +60,34 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-edit"></i>
               <span>Rename</span>
             </DropdownItem>
-            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'duplicate-column')} className='duplicate-column' toggle={false}>
+            <DropdownItem onClick={this.duplicateColumn} className='duplicate-column' toggle={false}>
               <i className="icon-duplicate"></i>
               <span>Duplicate</span>
             </DropdownItem>
             <DropdownItem divider />
-            <DropdownItem onClick={this.setSortDirection.bind(this, sortDirectionAsc)} className='sort-ascending' toggle={false}>
+            <DropdownItem onClick={this.sortAscending} className='sort-ascending' toggle={false}>
               <i className="icon-sort-up"></i>
               <span>Sort ascending</span>
             </DropdownItem>
-            <DropdownItem onClick={this.setSortDirection.bind(this, sortDirectionDesc)} className='sort-descending' toggle={false}>
+            <DropdownItem onClick={this.sortDescending} className='sort-descending' toggle={false}>
               <i className="icon-sort-down"></i>
               <span>Sort descending</span>
             </DropdownItem>
             <DropdownItem divider />
-            <DropdownItem onClick={this.setDropdownActionForceNew.bind(this, 'filter')} className='filter-column' toggle={false}>
+            <DropdownItem onClick={this.addNewFilter} className='filter-column' toggle={false}>
               <i className="icon-filter"></i>
               <span>Filter</span>
             </DropdownItem>
-            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'extract-numbers')} className='extract-numbers' toggle={false}>
+            <DropdownItem onClick={this.extractNumbers} className='extract-numbers' toggle={false}>
               <i className="icon-number"></i>
               <span>Convert to numbers</span>
             </DropdownItem>
-            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'clean-text')} className='clean-text' toggle={false}>
+            <DropdownItem onClick={this.cleanText} className='clean-text' toggle={false}>
               <i className="icon-clean"></i>
               <span>Clean Text</span>
             </DropdownItem>
             <DropdownItem divider />
-            <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'selectcolumns')} className='drop-column' toggle={false}>
+            <DropdownItem onClick={this.dropColumn} className='drop-column' toggle={false}>
               <i className="icon-removec"></i>
               <span>Drop column</span>
             </DropdownItem>
