@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {store, deleteModuleAction} from "../workflow-reducer"
 
-export class RenameEntry extends React.Component {
+export class RenameEntry extends React.PureComponent {
   static propTypes = {
     colname: PropTypes.string.isRequired,
     newColname: PropTypes.string.isRequired,
@@ -25,9 +25,13 @@ export class RenameEntry extends React.Component {
     this.handleDelete = this.handleDelete.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.newColname != this.state.inputValue) {
-      this.setState({inputValue: nextProps.newColname})
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.newColname !== prevState.inputValue) {
+      // Since we commit on blur, the only way for us to receive a newColname
+      // that's different from inputValue is if we aren't focused -- maybe
+      // through "undo" or some other kind of external action. It should always
+      // be safe to reset to the externally-suggested colname.
+      this.setState({ inputValue: this.props.newColname })
     }
   }
 
