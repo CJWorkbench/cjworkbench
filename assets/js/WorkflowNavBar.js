@@ -32,7 +32,6 @@ export class WorkflowNavBar extends React.Component {
     this.state = {
       spinnerVisible: false,
       modalsOpen: false,
-      isPublic: this.props.workflow.public,
       linkCopied: false,
     };
     this.handleDuplicate = this.handleDuplicate.bind(this);
@@ -41,14 +40,6 @@ export class WorkflowNavBar extends React.Component {
     this.onLinkCopy = this.onLinkCopy.bind(this);
     this.onLinkLeave = this.onLinkLeave.bind(this);
     this.logShare =  this.logShare.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.workflow.public !== this.props.workflow.public) {
-      this.setState({
-        isPublic: nextProps.workflow.public
-      })
-    }
   }
 
   handleDuplicate() {
@@ -174,7 +165,7 @@ export class WorkflowNavBar extends React.Component {
 
     if (!this.state.modalsOpen) {
       return null;
-    } else if (this.state.isPublic) {
+    } else if (this.props.workflow.public) {
       return shareModal;
     } else {
       return setPublicModal;
