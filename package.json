@@ -62,12 +62,12 @@
     "redux-mock-store": "^1.5.1",
     "sass-loader": "^7.1.0",
     "standard": "^11.0.1",
-    "style-loader": "^0.21.0",
+    "style-loader": "^0.22.1",
     "svg-react-loader": "^0.4.5",
     "url-loader": "^1.1.1",
-    "webpack": "^4.10.2",
+    "webpack": "^4.17.1",
     "webpack-bundle-tracker": "^0.3.0",
-    "webpack-cli": "^2.1.5"
+    "webpack-cli": "^3.1.0"
   },
   "scripts": {
     "test": "jest",
