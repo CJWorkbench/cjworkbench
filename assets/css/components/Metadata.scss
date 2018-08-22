@@ -21,14 +21,31 @@
   }
 }
 
-// Rendered in WF page
-.navbar .metadata {
-  cursor: default;
+.public-private-modal {
+  .modal-body button {
+    width: 100%;
+  }
+}
 
-  .publicPrivate {
-    color:$white;
-    cursor:pointer;
-    &:hover{text-decoration:underline;}
+// Rendered in both workflow list _and_ navbar
+button.public-private {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  nav .metadata-container & {
+    &, .publicPrivate {
+      color: white;
+    }
+    &:hover, .publicPrivate:hover {
+      color: white;
+      text-decoration: underline;
+    }
   }
 }
 

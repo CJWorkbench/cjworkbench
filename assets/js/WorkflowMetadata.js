@@ -9,49 +9,40 @@ import ModalHeader from 'reactstrap/lib/ModalHeader'
 import ModalBody from 'reactstrap/lib/ModalBody'
 import ModalFooter from 'reactstrap/lib/ModalFooter'
 import { timeDifference } from './utils'
-
+import { connect } from 'react-redux'
 
 export default class WorkflowMetadata extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isPublic: this.props.isPublic,
-      privacyModalOpen: false
-    };
-    this.setPublic = this.setPublic.bind(this);
-    this.togglePrivacyModal = this.togglePrivacyModal.bind(this);
+  static propTypes = {
+    workflow: PropTypes.object.isRequired,
+    onChangeIsPublic: PropTypes.func.isRequired, // func(workflowId, isPublic) => undefined
+    test_now: PropTypes.object  // optional injection for testing, avoid time zone issues for Last Update time
   }
 
-  // Listens for changes from parent
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.workflow === undefined) {
-      return false;
-    }
-
-    this.setState({
-      isPublic: nextProps.isPublic
-    });
+  state = {
+    privacyModalOpen: false
   }
 
-  reloadPageToEnsureConsistencyBecauseNavbarDoesntListenToState() {
-    // hard reload, to ensure consistency of state with Share button in parent Navbar component
-    location.reload();
+  onSetWorkflowPublic = () => {
+    this.props.onChangeIsPublic(this.props.workflow.id, true)
+    this.closePrivacyModal()
   }
 
-  setPublic(isPublic) {
-    // FIXME use redux
-    this.props.api.setWorkflowPublic(this.props.workflow.id, isPublic)
-      .then(() => {
-        this.setState({isPublic: isPublic});
-        this.reloadPageToEnsureConsistencyBecauseNavbarDoesntListenToState()
-      })
-      .catch((error) => {
-        console.log('Request failed', error);
-      });
+  onSetWorkflowPrivate = () => {
+    this.props.onChangeIsPublic(this.props.workflow.id, false)
+    this.closePrivacyModal()
   }
 
-  togglePrivacyModal(e) {
+  openPrivacyModal = (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    this.setState({ privacyModalOpen: true })
+  }
+
+  closePrivacyModal = () => {
+    this.setState({ privacyModalOpen: false })
+  }
+
+  togglePrivacyModal = (e) => {
     e.preventDefault()
     this.setState({ privacyModalOpen: !this.state.privacyModalOpen });
   }
@@ -62,18 +53,20 @@ export default class WorkflowMetadata extends React.Component {
     }
 
     return (
-      <Modal isOpen={this.state.privacyModalOpen} toggle={this.togglePrivacyModal}>
-        <ModalHeader toggle={this.togglePrivacyModal} className='dialog-header' >
+      <Modal className='public-private-modal' isOpen={this.state.privacyModalOpen} toggle={this.closePrivacyModal}>
+        <ModalHeader toggle={this.closePrivacyModal} className='dialog-header' >
           <span className='modal-title'>PRIVACY SETTING</span>
         </ModalHeader>
         <ModalBody >
           <div className="row d-flex align-items-center mb-5">
             <div className="col-sm-3">
-              <div
-                className={"action-button " + (this.state.isPublic ? "button-blue--fill" : "button-gray test-button-gray") }
-                onClick={(e) => {this.setPublic(true); this.togglePrivacyModal(e)}}>
+              <button
+                className={"action-button " + (this.props.workflow.public ? "button-blue--fill" : "button-gray") }
+                title="Make Public"
+                onClick={this.onSetWorkflowPublic}
+              >
                   Public
-              </div>
+              </button>
             </div>
             <div className="col-sm-9">
               <div className='info-2'>Anyone can access and duplicate the workflow or any of its modules</div>
@@ -81,11 +74,13 @@ export default class WorkflowMetadata extends React.Component {
           </div>
           <div className="row d-flex align-items-center">
             <div className="col-sm-3">
-              <div
-                className={"action-button " + (!this.state.isPublic ? "button-blue--fill" : "button-gray test-button-gray")}
-                onClick={(e) => {this.setPublic(false); this.togglePrivacyModal(e)}}>
+              <button
+                className={"action-button " + (!this.props.workflow.public ? "button-blue--fill" : "button-gray")}
+                title="Make Private"
+                onClick={this.onSetWorkflowPrivate}
+              >
                   Private
-              </div>
+              </button>
             </div>
             <div className="col-sm-9">
               <div className='info-2'>Only you can access and edit the workflow</div>
@@ -93,7 +88,7 @@ export default class WorkflowMetadata extends React.Component {
           </div>
         </ModalBody>
         <div className=' modal-footer'>
-          <div onClick={this.togglePrivacyModal} className='action-button button-gray'>Cancel</div>
+          <div onClick={this.closePrivacyModal} className='action-button button-gray'>Cancel</div>
         </div>
       </Modal>
     );
@@ -114,10 +109,10 @@ export default class WorkflowMetadata extends React.Component {
       : null
     var modalLink = (this.props.workflow.read_only)
       ? null
-      : <div className="metadata test-button" onClick={this.togglePrivacyModal}>
+      : <button className="public-private" title="Change privacy" onClick={this.openPrivacyModal}>
           <span className='separator'>-</span>
-          <span className='publicPrivate'>{this.state.isPublic ? 'public' : 'private'}</span>
-        </div>
+          <span className='publicPrivate'>{this.props.workflow.public ? 'public' : 'private'}</span>
+        </button>
 
     return (
       <React.Fragment>
@@ -135,11 +130,3 @@ export default class WorkflowMetadata extends React.Component {
     );
   }
 }
-
-WorkflowMetadata.propTypes = {
-  workflow:   PropTypes.object.isRequired,
-  api:        PropTypes.object.isRequired,
-  isPublic:   PropTypes.bool.isRequired,
-  inWorkflowList: PropTypes.bool, //change styling for use inside WF list
-  test_now:   PropTypes.object  // optional injection for testing, avoid time zone issues for Last Update time
-};

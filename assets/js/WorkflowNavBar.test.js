@@ -1,8 +1,8 @@
 import React from 'react'
-import WorkflowNavBar from './WorkflowNavBar'
+import ConnectedWorkflowNavBar, { WorkflowNavBar } from './WorkflowNavBar'
 import { shallow, mount, ReactWrapper } from 'enzyme'
 const Utils = require('./utils');
-import { jsonResponseMock, okResponseMock } from './test-utils'
+import { jsonResponseMock } from './test-utils'
 
 
 describe('WorkflowNavBar', () => {
@@ -19,16 +19,16 @@ describe('WorkflowNavBar', () => {
 
   let globalGoToUrl;
   beforeEach(() => {
+    wrapper = null
     globalGoToUrl = Utils.goToUrl;
     Utils.goToUrl = jest.fn();
     api = {
       duplicateWorkflow: jsonResponseMock(mockWorkflowCopy),
-      setWorkflowPublic: okResponseMock()
     };
   })
   afterEach(() => {
     Utils.goToUrl = globalGoToUrl
-    wrapper.unmount();
+    if (wrapper) wrapper.unmount();
   })
 
   it('With user logged in, Duplicate button sends user to new copy', (done) => {
@@ -50,13 +50,14 @@ describe('WorkflowNavBar', () => {
         api={api}
         isReadOnly={false}
         loggedInUser={user}
+        onChangeIsPublic={jest.fn()}
       />
     );
 
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.state().spinnerVisible).toBe(false);
 
-    let button = wrapper.find('.test-duplicate-button');
+    let button = wrapper.find('button[name="duplicate"]')
     expect(button).toHaveLength(1);
     button.first().simulate('click');
 
@@ -84,12 +85,13 @@ describe('WorkflowNavBar', () => {
         workflow={workflow}
         api={api}
         isReadOnly={false}      // no loggedInUser prop
+        onChangeIsPublic={jest.fn()}
       />
     );
 
     expect(wrapper).toMatchSnapshot();
 
-    let button = wrapper.find('.test-duplicate-button');
+    let button = wrapper.find('button[name="duplicate"]')
     expect(button).toHaveLength(1);
     button.simulate('click');
 
@@ -102,7 +104,7 @@ describe('WorkflowNavBar', () => {
 
   });
 
-  it('In Private mode, Share button invites user to set to Public', (done) => {
+  it('In Private mode, Share button invites user to set to Public', () => {
     user = {
       id: 99
     };
@@ -119,41 +121,24 @@ describe('WorkflowNavBar', () => {
         api={api}
         isReadOnly={false}
         loggedInUser={user}
+        onChangeIsPublic={jest.fn()}
       />
     );
 
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.state().modalsOpen).toBe(false);
 
-    let button = wrapper.find('.test-share-button');
+    let button = wrapper.find('button[name="share"]')
     expect(button).toHaveLength(1);
     button.simulate('click');
 
     expect(wrapper.state().modalsOpen).toBe(true);
 
-    const setpubModal = wrapper.find('div.test-setpublic-modal');
-    expect(setpubModal).toMatchSnapshot();
-
-    const setPublicButton = setpubModal.find('.test-public-button');
+    const setPublicButton = wrapper.find('button[title="Make Public"]')
     setPublicButton.simulate('click');
 
-    // wait for promise to resolve
-    setImmediate( () => {
-      wrapper.update()
-      // find the Share modal & wrap it
-      const shareModal = wrapper.find('div.test-share-modal');
-      expect(shareModal).toMatchSnapshot();
-
-      // check that link has rendered correctly
-      const linkField = shareModal.find('input.test-link-field');
-      expect(linkField.length).toBe(1);
-      // Need to fix this once correct link string in place
-      // expect(linkField.props().placeholder).toEqual("");
-
-      expect(api.setWorkflowPublic).toHaveBeenCalled();
-      done();
-    });
-  });
+    expect(wrapper.prop('onChangeIsPublic')).toHaveBeenCalledWith(808, true)
+  })
 
 
   it('In Public mode, Share button opens modal with links', () => {
@@ -172,26 +157,24 @@ describe('WorkflowNavBar', () => {
         api={api}
         isReadOnly={false}
         loggedInUser={user}
+        onChangeIsPublic={jest.fn()}
       />
     );
 
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.state().modalsOpen).toBe(false);
 
-    let button = wrapper.find('.test-share-button');
+    let button = wrapper.find('button[name="share"]')
     expect(button).toHaveLength(1);
     button.simulate('click');
 
     expect(wrapper.state().modalsOpen).toBe(true);
 
-    const shareModal = wrapper.find('div.test-share-modal');
-    expect(shareModal).toMatchSnapshot();
-
     // check that link has rendered correctly
-    const linkField = shareModal.find('input.test-link-field');
+    const linkField = wrapper.find('input[name="url"]')
     expect(linkField.length).toBe(1);
     expect(linkField.props().value).toEqual("http://localhost/workflows/808");
 
-    expect(api.setWorkflowPublic).not.toHaveBeenCalled();
+    expect(wrapper.prop('onChangeIsPublic')).not.toHaveBeenCalled()
   });
 });

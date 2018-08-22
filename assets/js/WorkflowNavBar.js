@@ -13,10 +13,20 @@ import FormGroup from 'reactstrap/lib/FormGroup'
 import Label from 'reactstrap/lib/Label'
 import Input from 'reactstrap/lib/Input'
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { setWorkflowPublicAction } from './workflow-reducer'
 import { Share } from 'react-twitter-widgets'
+import { connect } from 'react-redux'
 
 // Workflow page
-export default class WorkflowNavBar extends React.Component {
+export class WorkflowNavBar extends React.Component {
+  static propTypes = {
+    api: PropTypes.object.isRequired,
+    onChangeIsPublic: PropTypes.func.isRequired, // func(workflowId, isPublic) => undefined
+    workflow: PropTypes.object.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    loggedInUser: PropTypes.object // undefined if no user logged in
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +36,6 @@ export default class WorkflowNavBar extends React.Component {
       linkCopied: false,
     };
     this.handleDuplicate = this.handleDuplicate.bind(this);
-    this.setPublic = this.setPublic.bind(this);
     this.renderModals = this.renderModals.bind(this);
     this.toggleModals = this.toggleModals.bind(this);
     this.onLinkCopy = this.onLinkCopy.bind(this);
@@ -57,20 +66,8 @@ export default class WorkflowNavBar extends React.Component {
     }
   }
 
-  setPublic() {
-    this.props.api.setWorkflowPublic(this.props.workflow.id, true)
-      .then(() => {
-        this.setState({isPublic: true});
-        // close current modal
-        this.toggleModals();
-        // ensure that child components are updated
-        this.forceUpdate();
-        // open new modal with sharing feature
-        this.toggleModals();
-      })
-      .catch((error) => {
-        console.log('Request failed', error);
-      });
+  setPublic = () => {
+    this.props.onChangeIsPublic(this.props.workflow.id, true)
   }
 
   // this does not provide the correct link string yet
@@ -125,7 +122,7 @@ export default class WorkflowNavBar extends React.Component {
     var copyLink = this.renderCopyLink();
 
     var setPublicModal =
-      <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
+      <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='setpublic-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
           <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
@@ -134,15 +131,15 @@ export default class WorkflowNavBar extends React.Component {
           <div className='info-2 t-d-gray'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
         </ModalBody>
         <div className="modal-footer ">
-          <div onClick={this.toggleModals} className='button-gray action-button mr-4'>Cancel</div>
-          <div onClick={this.setPublic} className='button-blue action-button test-public-button'>Set Public</div>
+          <button onClick={this.toggleModals} className='button-gray action-button mr-4'>Cancel</button>
+          <button title="Make Public" onClick={this.setPublic} className='button-blue action-button'>Set Public</button>
         </div>
       </Modal>
 
     // TODO: log Twitter shares. Probably need a different component with an "onshare" handler.
 
     var shareModal =
-      <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-share-modal'>
+      <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='share-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
           <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
@@ -153,7 +150,7 @@ export default class WorkflowNavBar extends React.Component {
               {copyLink}
             </div>
             <div className='mb-3'>
-              <Input type='url' className='url-link test-link-field' value={linkString} readOnly/>
+              <Input type='url' name='url' className='url-link' value={linkString} readOnly/>
             </div>
           </FormGroup>
 
@@ -199,11 +196,11 @@ export default class WorkflowNavBar extends React.Component {
       contextMenu = <a href="/account/login" className='nav--link'>Sign in</a>
     }
 
-    var duplicate = <button onClick={this.handleDuplicate} className='button-white--fill action-button test-duplicate-button'>
+    var duplicate = <button name='duplicate' onClick={this.handleDuplicate} className='button-white--fill action-button'>
                       Duplicate
                     </button>
 
-    var share = <button onClick={this.toggleModals} className='button-white action-button test-share-button'>
+    var share = <button name='share' onClick={this.toggleModals} className='button-white action-button'>
                   Share
                 </button>
 
@@ -235,8 +232,7 @@ export default class WorkflowNavBar extends React.Component {
             />
             <WorkflowMetadata
               workflow={this.props.workflow}
-              api={this.props.api}
-              isPublic={this.state.isPublic}
+              onChangeIsPublic={this.props.onChangeIsPublic}
             />
           </div>
           <div className='d-flex flex-row align-items-center'>
@@ -251,9 +247,19 @@ export default class WorkflowNavBar extends React.Component {
   }
 }
 
-WorkflowNavBar.propTypes = {
-  api:            PropTypes.object.isRequired,
-  workflow:       PropTypes.object.isRequired,
-  isReadOnly:     PropTypes.bool.isRequired,
-  loggedInUser:   PropTypes.object            // undefined if no user logged in
-};
+function mapStateToProps () {
+  return {}
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    onChangeIsPublic: (workflowId, isPublic) => {
+      dispatch(setWorkflowPublicAction(workflowId, isPublic))
+    }
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WorkflowNavBar)

@@ -55,6 +55,16 @@ export default class Workflows extends React.Component {
     })
   }
 
+  onChangeIsPublic = (workflowId, isPublic) => {
+    // Change the given workflow to be public
+    const newWorkflows = this.state.workflows
+        .map(w => w.id === workflowId ? { ...w, public: isPublic } : w)
+
+    this.setState({ workflows: newWorkflows })
+
+    this.props.api.setWorkflowPublic(workflowId, isPublic)
+  }
+
   render() {
     return (
       <div className="workflows-page">
@@ -84,9 +94,7 @@ export default class Workflows extends React.Component {
                           <div className='wf-meta--id'>
                             <WorkflowMetadata
                               workflow={workflow}
-                              api={this.props.api}
-                              isPublic={workflow.public}
-                              inWorkflowList
+                              onChangeIsPublic={this.onChangeIsPublic}
                             />
                           </div>
                         </div>

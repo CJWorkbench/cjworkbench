@@ -197,11 +197,23 @@ export function setWorkflowPublicAction (workflowId, isPublic) {
   return (dispatch) => {
     return dispatch({
       type: SET_WORKFLOW_PUBLIC,
-      payload: api.setWorkflowPublic(workflowId, isPublic)
+      payload: {
+        promise: api.setWorkflowPublic(workflowId, isPublic),
+        data: { isPublic }
+      }
     })
-      .then(() => dispatch(reloadWorkflowAction()))
   }
 }
+registerReducerFunc(SET_WORKFLOW_PUBLIC + '_PENDING', (state, action) => {
+  const { isPublic } = action.payload
+  return {
+    ...state,
+    workflow: {
+      ...state.workflow,
+      public: isPublic
+    }
+  }
+})
 
 // MOVE_MODULE
 // Re-order the modules in the module stack

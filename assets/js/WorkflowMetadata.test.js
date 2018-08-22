@@ -1,118 +1,61 @@
 import React from 'react'
-import WorkflowMetadata  from './WorkflowMetadata'
+import WorkflowMetadata from './WorkflowMetadata'
 import { mount, ReactWrapper } from 'enzyme'
 import { okResponseMock } from './test-utils'
 
 
-describe('WorkflowMetadata - private mode', () => {
+describe('WorkflowMetadata', () => {
+  const today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)')
+  const dayBefore = today.setDate(today.getDate() - 2)
 
-  var today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)');
-  var day_before = today.setDate(today.getDate() - 2);
-
-  var workflow = {
+  const defaultWorkflow = {
     id: 100,
     public: false,
     owner_name: "Harry Harrison",
-    last_update: day_before,
+    last_update: dayBefore,
     read_only: false
-  };
+  }
 
-  var wrapper, api;
-
-  beforeEach(() => {
-    api = {
-      setWorkflowPublic: okResponseMock()
-    };
-
-    wrapper = mount(
+  const wrapper = (extraProps={}, workflowExtraProps={}) => {
+    const workflow = { ...defaultWorkflow, ...workflowExtraProps }
+    return mount(
       <WorkflowMetadata
         workflow={workflow}
-        api={api}
         test_now={today}
-        isPublic={false}
-      />);
-  });
-  afterEach(() => wrapper.unmount())
+        onChangeIsPublic={jest.fn()}
+      />
+    )
+  }
 
-
-  it('renders correctly', () => {
-    expect(wrapper).toMatchSnapshot(); // 1
+  it('renders private workflow correctly', () => {
+    expect(wrapper({}, { public: false })).toMatchSnapshot()
   })
 
-  it('modal operates', (done) => {
-    var publicLink = wrapper.find('.test-button');
-    expect(publicLink).toHaveLength(1);
-    publicLink.first().simulate('click');
+  it('converts from private to public', () => {
+    const w = wrapper({}, { public: false })
 
-    setImmediate(() => {
-      const modal = wrapper.find('.modal-content');
-      expect(modal.length).toBe(1); // dialog should be open
+    w.find('button[title="Change privacy"]').simulate('click')
+    w.update()
 
-      wrapper.instance().reloadPageToEnsureConsistencyBecauseNavbarDoesntListenToState = jest.fn()
+    w.find('button[title="Make Public"]').simulate('click')
+    expect(w.prop('onChangeIsPublic')).toHaveBeenCalledWith(defaultWorkflow.id, true)
 
-      // Dialog should be open, and have correct contents
-      expect(wrapper).toMatchSnapshot(); // 2
+    // Test that the modal disappears
+    w.update()
+    expect(w.find('button[title="Make Public"]')).toHaveLength(0)
+  })
 
-      // Click the Private setting
-      var privateButton = modal.find('.test-button-gray');
-      expect(privateButton).toHaveLength(1);
-      privateButton.first().simulate('click');
+  it('converts from public to private', () => {
+    const w = wrapper({}, { public: true })
 
-      setImmediate(() => {
-        // Dialog should be closed, link should now say private
-        //let modal_element = document.getElementsByClassName('modal-dialog');
+    w.find('button[title="Change privacy"]').simulate('click')
+    w.update()
 
-        expect(publicLink.childAt(0).text()).toBe('-');
-        expect(wrapper).toMatchSnapshot(); // 4
+    w.find('button[title="Make Private"]').simulate('click')
+    expect(w.prop('onChangeIsPublic')).toHaveBeenCalledWith(defaultWorkflow.id, false)
 
-        // Check that the API was called
-        expect(api.setWorkflowPublic).toHaveBeenCalledWith(100, true);
-
-        expect(wrapper.state('isPublic')).toBe(true);
-        done();
-      });
-    });
-  });
-});
-
-describe('WorkflowMetadata - private mode', () => {
-
-  var workflow;
-  var wrapper;
-
-  var today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)');
-  var day_before = today.setDate(today.getDate() - 2);
-
-  var api = {
-    setWorkflowPublic: okResponseMock()
-  };
-
-  beforeEach(() => {
-
-    workflow = {
-      id: 100,
-      public: true,
-      owner_name: "Harry Harrison",
-      last_update: day_before,
-      read_only: true
-    };
-
-    wrapper = mount(
-      <WorkflowMetadata
-        workflow={workflow}
-        api={api}
-        test_now={today}
-        isPublic={true}
-      />);
-  });
-  afterEach(() => wrapper.unmount())
-
-    it('renders correctly in read-only mode', () => {
-      expect(wrapper).toMatchSnapshot(); // 5
-
-      // check that privacy modal link does not render
-      var publicLink = wrapper.find('.test-button');
-      expect(publicLink).toHaveLength(0);
-    })
-
-});
+    // Test that the modal disappears
+    w.update()
+    expect(w.find('button[title="Make Private"]')).toHaveLength(0)
+  })
+})

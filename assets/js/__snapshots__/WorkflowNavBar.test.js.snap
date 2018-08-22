@@ -5,7 +5,6 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
   api={
     Object {
       "duplicateWorkflow": [MockFunction],
-      "setWorkflowPublic": [MockFunction],
     }
   }
   isReadOnly={false}
@@ -14,6 +13,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
       "id": 99,
     }
   }
+  onChangeIsPublic={[MockFunction]}
   workflow={
     Object {
       "id": 808,
@@ -42,7 +42,6 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         value="Original Version"
@@ -64,13 +63,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         </div>
       </EditableWorkflowName>
       <WorkflowMetadata
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
-          }
-        }
-        isPublic={false}
+        onChangeIsPublic={[MockFunction]}
         workflow={
           Object {
             "id": 808,
@@ -103,9 +96,10 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
             now
           </li>
           <li>
-            <div
-              className="metadata test-button"
+            <button
+              className="public-private"
               onClick={[Function]}
+              title="Change privacy"
             >
               <span
                 className="separator"
@@ -117,7 +111,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               >
                 private
               </span>
-            </div>
+            </button>
           </li>
         </ul>
       </WorkflowMetadata>
@@ -126,13 +120,15 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
       className="d-flex flex-row align-items-center"
     >
       <button
-        className="button-white--fill action-button test-duplicate-button"
+        className="button-white--fill action-button"
+        name="duplicate"
         onClick={[Function]}
       >
         Duplicate
       </button>
       <button
-        className="button-white action-button test-share-button"
+        className="button-white action-button"
+        name="share"
         onClick={[Function]}
       >
         Share
@@ -141,7 +137,6 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         isReadOnly={false}
@@ -338,238 +333,11 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
 </WorkflowNavBar>
 `;
 
-exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 2`] = `
-<div
-  className="modal-dialog test-setpublic-modal"
-  role="document"
->
-  <div
-    className="modal-content"
-  >
-    <ModalHeader
-      className="dialog-header modal-header d-flex align-items-center"
-      closeAriaLabel="Close"
-      tag="h5"
-      toggle={[Function]}
-      wrapTag="div"
-    >
-      <div
-        className="dialog-header modal-header d-flex align-items-center modal-header"
-      >
-        <h5
-          className="modal-title"
-        >
-          <div
-            className="modal-title"
-          >
-            SHARE THIS WORKFLOW
-          </div>
-        </h5>
-        <button
-          aria-label="Close"
-          className="close"
-          onClick={[Function]}
-          type="button"
-        >
-          <span
-            aria-hidden="true"
-          >
-            ×
-          </span>
-        </button>
-      </div>
-    </ModalHeader>
-    <ModalBody
-      tag="div"
-    >
-      <div
-        className="modal-body"
-      >
-        <div
-          className="title-3 mb-3"
-        >
-          This workflow is currently private
-        </div>
-        <div
-          className="info-2 t-d-gray"
-        >
-          Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
-        </div>
-      </div>
-    </ModalBody>
-    <div
-      className="modal-footer "
-    >
-      <div
-        className="button-gray action-button mr-4"
-        onClick={[Function]}
-      >
-        Cancel
-      </div>
-      <div
-        className="button-blue action-button test-public-button"
-        onClick={[Function]}
-      >
-        Set Public
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 3`] = `
-<div
-  className="modal-dialog test-share-modal"
-  role="document"
->
-  <div
-    className="modal-content"
-  >
-    <ModalHeader
-      className="dialog-header modal-header d-flex align-items-center"
-      closeAriaLabel="Close"
-      tag="h5"
-      toggle={[Function]}
-      wrapTag="div"
-    >
-      <div
-        className="dialog-header modal-header d-flex align-items-center modal-header"
-      >
-        <h5
-          className="modal-title"
-        >
-          <div
-            className="modal-title"
-          >
-            SHARE THIS WORKFLOW
-          </div>
-        </h5>
-        <button
-          aria-label="Close"
-          className="close"
-          onClick={[Function]}
-          type="button"
-        >
-          <span
-            aria-hidden="true"
-          >
-            ×
-          </span>
-        </button>
-      </div>
-    </ModalHeader>
-    <ModalBody
-      tag="div"
-    >
-      <div
-        className="modal-body"
-      >
-        <FormGroup
-          tag="div"
-        >
-          <div
-            className="form-group"
-          >
-            <div
-              className="d-flex align-items-center justify-content-between flex-row"
-            >
-              <Label
-                className="dl-file"
-                tag="label"
-                widths={
-                  Array [
-                    "xs",
-                    "sm",
-                    "md",
-                    "lg",
-                    "xl",
-                  ]
-                }
-              >
-                <label
-                  className="dl-file "
-                >
-                  PUBLIC URL
-                </label>
-              </Label>
-              <CopyToClipboard
-                className="clipboard"
-                onCopy={[Function]}
-                text="http://localhost/workflows/808"
-              >
-                <div
-                  className="clipboard"
-                  onClick={[Function]}
-                >
-                  COPY TO CLIPBOARD
-                </div>
-              </CopyToClipboard>
-            </div>
-            <div
-              className="mb-3"
-            >
-              <Input
-                className="url-link test-link-field"
-                readOnly={true}
-                type="url"
-                value="http://localhost/workflows/808"
-              >
-                <input
-                  className="url-link test-link-field form-control"
-                  readOnly={true}
-                  type="url"
-                  value="http://localhost/workflows/808"
-                />
-              </Input>
-            </div>
-          </div>
-        </FormGroup>
-        <div
-          className="d-flex justify-content-start mt-4"
-        >
-          <div
-            className="twitter-button-container"
-          >
-            <Share
-              onLoad={[Function]}
-              options={
-                Object {
-                  "text": "Check out this chart I made using @cjworkbench:",
-                }
-              }
-              url="http://localhost/workflows/808"
-            >
-              <AbstractWidget
-                ready={[Function]}
-              >
-                <div />
-              </AbstractWidget>
-            </Share>
-          </div>
-          <a
-            className="button-icon facebook-share ml-4"
-            href="https://www.facebook.com/sharer.php?u=http://localhost/workflows/808"
-            onClick={[Function]}
-            target="_blank"
-          >
-            <div
-              className="icon-facebook"
-            />
-            Share
-          </a>
-        </div>
-      </div>
-    </ModalBody>
-  </div>
-</div>
-`;
-
 exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] = `
 <WorkflowNavBar
   api={
     Object {
       "duplicateWorkflow": [MockFunction],
-      "setWorkflowPublic": [MockFunction],
     }
   }
   isReadOnly={false}
@@ -578,6 +346,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
       "id": 47,
     }
   }
+  onChangeIsPublic={[MockFunction]}
   workflow={
     Object {
       "id": 808,
@@ -606,7 +375,6 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         value="Original Version"
@@ -628,13 +396,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         </div>
       </EditableWorkflowName>
       <WorkflowMetadata
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
-          }
-        }
-        isPublic={true}
+        onChangeIsPublic={[MockFunction]}
         workflow={
           Object {
             "id": 808,
@@ -667,9 +429,10 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
             now
           </li>
           <li>
-            <div
-              className="metadata test-button"
+            <button
+              className="public-private"
               onClick={[Function]}
+              title="Change privacy"
             >
               <span
                 className="separator"
@@ -681,7 +444,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
               >
                 public
               </span>
-            </div>
+            </button>
           </li>
         </ul>
       </WorkflowMetadata>
@@ -690,13 +453,15 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
       className="d-flex flex-row align-items-center"
     >
       <button
-        className="button-white--fill action-button test-duplicate-button"
+        className="button-white--fill action-button"
+        name="duplicate"
         onClick={[Function]}
       >
         Duplicate
       </button>
       <button
-        className="button-white action-button test-share-button"
+        className="button-white action-button"
+        name="share"
         onClick={[Function]}
       >
         Share
@@ -705,7 +470,6 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         isReadOnly={false}
@@ -902,162 +666,15 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
 </WorkflowNavBar>
 `;
 
-exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] = `
-<div
-  className="modal-dialog test-share-modal"
-  role="document"
->
-  <div
-    className="modal-content"
-  >
-    <ModalHeader
-      className="dialog-header modal-header d-flex align-items-center"
-      closeAriaLabel="Close"
-      tag="h5"
-      toggle={[Function]}
-      wrapTag="div"
-    >
-      <div
-        className="dialog-header modal-header d-flex align-items-center modal-header"
-      >
-        <h5
-          className="modal-title"
-        >
-          <div
-            className="modal-title"
-          >
-            SHARE THIS WORKFLOW
-          </div>
-        </h5>
-        <button
-          aria-label="Close"
-          className="close"
-          onClick={[Function]}
-          type="button"
-        >
-          <span
-            aria-hidden="true"
-          >
-            ×
-          </span>
-        </button>
-      </div>
-    </ModalHeader>
-    <ModalBody
-      tag="div"
-    >
-      <div
-        className="modal-body"
-      >
-        <FormGroup
-          tag="div"
-        >
-          <div
-            className="form-group"
-          >
-            <div
-              className="d-flex align-items-center justify-content-between flex-row"
-            >
-              <Label
-                className="dl-file"
-                tag="label"
-                widths={
-                  Array [
-                    "xs",
-                    "sm",
-                    "md",
-                    "lg",
-                    "xl",
-                  ]
-                }
-              >
-                <label
-                  className="dl-file "
-                >
-                  PUBLIC URL
-                </label>
-              </Label>
-              <CopyToClipboard
-                className="clipboard"
-                onCopy={[Function]}
-                text="http://localhost/workflows/808"
-              >
-                <div
-                  className="clipboard"
-                  onClick={[Function]}
-                >
-                  COPY TO CLIPBOARD
-                </div>
-              </CopyToClipboard>
-            </div>
-            <div
-              className="mb-3"
-            >
-              <Input
-                className="url-link test-link-field"
-                readOnly={true}
-                type="url"
-                value="http://localhost/workflows/808"
-              >
-                <input
-                  className="url-link test-link-field form-control"
-                  readOnly={true}
-                  type="url"
-                  value="http://localhost/workflows/808"
-                />
-              </Input>
-            </div>
-          </div>
-        </FormGroup>
-        <div
-          className="d-flex justify-content-start mt-4"
-        >
-          <div
-            className="twitter-button-container"
-          >
-            <Share
-              onLoad={[Function]}
-              options={
-                Object {
-                  "text": "Check out this chart I made using @cjworkbench:",
-                }
-              }
-              url="http://localhost/workflows/808"
-            >
-              <AbstractWidget
-                ready={[Function]}
-              >
-                <div />
-              </AbstractWidget>
-            </Share>
-          </div>
-          <a
-            className="button-icon facebook-share ml-4"
-            href="https://www.facebook.com/sharer.php?u=http://localhost/workflows/808"
-            onClick={[Function]}
-            target="_blank"
-          >
-            <div
-              className="icon-facebook"
-            />
-            Share
-          </a>
-        </div>
-      </div>
-    </ModalBody>
-  </div>
-</div>
-`;
-
 exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
 <WorkflowNavBar
   api={
     Object {
       "duplicateWorkflow": [MockFunction],
-      "setWorkflowPublic": [MockFunction],
     }
   }
   isReadOnly={false}
+  onChangeIsPublic={[MockFunction]}
   workflow={
     Object {
       "id": 303,
@@ -1086,7 +703,6 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         value="Original Version"
@@ -1108,13 +724,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         </div>
       </EditableWorkflowName>
       <WorkflowMetadata
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
-          }
-        }
-        isPublic={true}
+        onChangeIsPublic={[MockFunction]}
         workflow={
           Object {
             "id": 303,
@@ -1147,9 +757,10 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
             now
           </li>
           <li>
-            <div
-              className="metadata test-button"
+            <button
+              className="public-private"
               onClick={[Function]}
+              title="Change privacy"
             >
               <span
                 className="separator"
@@ -1161,7 +772,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
               >
                 public
               </span>
-            </div>
+            </button>
           </li>
         </ul>
       </WorkflowMetadata>
@@ -1170,13 +781,15 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
       className="d-flex flex-row align-items-center"
     >
       <button
-        className="button-white--fill action-button test-duplicate-button"
+        className="button-white--fill action-button"
+        name="duplicate"
         onClick={[Function]}
       >
         Duplicate
       </button>
       <button
-        className="button-white action-button test-share-button"
+        className="button-white action-button"
+        name="share"
         onClick={[Function]}
       >
         Share
@@ -1197,7 +810,6 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
   api={
     Object {
       "duplicateWorkflow": [MockFunction],
-      "setWorkflowPublic": [MockFunction],
     }
   }
   isReadOnly={false}
@@ -1206,6 +818,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
       "id": 8,
     }
   }
+  onChangeIsPublic={[MockFunction]}
   workflow={
     Object {
       "id": 12,
@@ -1234,7 +847,6 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         value="Original Version"
@@ -1256,13 +868,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
         </div>
       </EditableWorkflowName>
       <WorkflowMetadata
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
-          }
-        }
-        isPublic={true}
+        onChangeIsPublic={[MockFunction]}
         workflow={
           Object {
             "id": 12,
@@ -1295,9 +901,10 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
             now
           </li>
           <li>
-            <div
-              className="metadata test-button"
+            <button
+              className="public-private"
               onClick={[Function]}
+              title="Change privacy"
             >
               <span
                 className="separator"
@@ -1309,7 +916,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
               >
                 public
               </span>
-            </div>
+            </button>
           </li>
         </ul>
       </WorkflowMetadata>
@@ -1318,13 +925,15 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
       className="d-flex flex-row align-items-center"
     >
       <button
-        className="button-white--fill action-button test-duplicate-button"
+        className="button-white--fill action-button"
+        name="duplicate"
         onClick={[Function]}
       >
         Duplicate
       </button>
       <button
-        className="button-white action-button test-share-button"
+        className="button-white action-button"
+        name="share"
         onClick={[Function]}
       >
         Share
@@ -1333,7 +942,6 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
         api={
           Object {
             "duplicateWorkflow": [MockFunction],
-            "setWorkflowPublic": [MockFunction],
           }
         }
         isReadOnly={false}

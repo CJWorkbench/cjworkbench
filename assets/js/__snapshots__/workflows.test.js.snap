@@ -236,26 +236,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  api={
-                    Object {
-                      "deleteWorkflow": [MockFunction],
-                      "duplicateWorkflow": [MockFunction],
-                      "listWorkflows": [MockFunction] {
-                        "calls": Array [
-                          Array [],
-                        ],
-                        "results": Array [
-                          Object {
-                            "isThrow": false,
-                            "value": Promise {},
-                          },
-                        ],
-                      },
-                      "newWorkflow": [MockFunction],
-                    }
-                  }
-                  inWorkflowList={true}
-                  isPublic={true}
+                  onChangeIsPublic={[Function]}
                   workflow={
                     Object {
                       "id": 1,
@@ -288,9 +269,10 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
-                      <div
-                        className="metadata test-button"
+                      <button
+                        className="public-private"
                         onClick={[Function]}
+                        title="Change privacy"
                       >
                         <span
                           className="separator"
@@ -302,7 +284,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           public
                         </span>
-                      </div>
+                      </button>
                     </li>
                   </ul>
                 </WorkflowMetadata>
@@ -449,26 +431,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  api={
-                    Object {
-                      "deleteWorkflow": [MockFunction],
-                      "duplicateWorkflow": [MockFunction],
-                      "listWorkflows": [MockFunction] {
-                        "calls": Array [
-                          Array [],
-                        ],
-                        "results": Array [
-                          Object {
-                            "isThrow": false,
-                            "value": Promise {},
-                          },
-                        ],
-                      },
-                      "newWorkflow": [MockFunction],
-                    }
-                  }
-                  inWorkflowList={true}
-                  isPublic={false}
+                  onChangeIsPublic={[Function]}
                   workflow={
                     Object {
                       "id": 7,
@@ -501,9 +464,10 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
-                      <div
-                        className="metadata test-button"
+                      <button
+                        className="public-private"
                         onClick={[Function]}
+                        title="Change privacy"
                       >
                         <span
                           className="separator"
@@ -515,7 +479,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           private
                         </span>
-                      </div>
+                      </button>
                     </li>
                   </ul>
                 </WorkflowMetadata>
@@ -662,26 +626,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  api={
-                    Object {
-                      "deleteWorkflow": [MockFunction],
-                      "duplicateWorkflow": [MockFunction],
-                      "listWorkflows": [MockFunction] {
-                        "calls": Array [
-                          Array [],
-                        ],
-                        "results": Array [
-                          Object {
-                            "isThrow": false,
-                            "value": Promise {},
-                          },
-                        ],
-                      },
-                      "newWorkflow": [MockFunction],
-                    }
-                  }
-                  inWorkflowList={true}
-                  isPublic={true}
+                  onChangeIsPublic={[Function]}
                   workflow={
                     Object {
                       "id": 8,
@@ -714,9 +659,10 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
-                      <div
-                        className="metadata test-button"
+                      <button
+                        className="public-private"
                         onClick={[Function]}
+                        title="Change privacy"
                       >
                         <span
                           className="separator"
@@ -728,7 +674,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           public
                         </span>
-                      </div>
+                      </button>
                     </li>
                   </ul>
                 </WorkflowMetadata>
@@ -875,26 +821,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  api={
-                    Object {
-                      "deleteWorkflow": [MockFunction],
-                      "duplicateWorkflow": [MockFunction],
-                      "listWorkflows": [MockFunction] {
-                        "calls": Array [
-                          Array [],
-                        ],
-                        "results": Array [
-                          Object {
-                            "isThrow": false,
-                            "value": Promise {},
-                          },
-                        ],
-                      },
-                      "newWorkflow": [MockFunction],
-                    }
-                  }
-                  inWorkflowList={true}
-                  isPublic={false}
+                  onChangeIsPublic={[Function]}
                   workflow={
                     Object {
                       "id": 9,
@@ -927,9 +854,10 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
-                      <div
-                        className="metadata test-button"
+                      <button
+                        className="public-private"
                         onClick={[Function]}
+                        title="Change privacy"
                       >
                         <span
                           className="separator"
@@ -941,7 +869,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           private
                         </span>
-                      </div>
+                      </button>
                     </li>
                   </ul>
                 </WorkflowMetadata>
