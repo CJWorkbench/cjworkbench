@@ -280,7 +280,10 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   setDropdownAction = (idName, forceNewModule, params) => {
-    params['columnKey'] = this.props.columnKey
+    params = {
+      ...params,
+      columnKey: this.props.columnKey
+    }
     this.props.setDropdownAction(idName, forceNewModule, params)
   }
 
@@ -331,7 +334,7 @@ export class ColumnHeader extends React.PureComponent {
         sortDirection={this.props.isSorted == true ? this.props.sortDirection : sortDirectionNone}
         setDropdownAction={this.setDropdownAction}
       />
-      );
+    )
   }
 
   renderLetter() {
@@ -455,7 +458,7 @@ function makeFormattedCols(props) {
         onRenameColumn={props.onRenameColumn}
         isReadOnly={props.isReadOnly}
         setDropdownAction={props.setDropdownAction}
-        />
+      />
     ),
   }))
 
