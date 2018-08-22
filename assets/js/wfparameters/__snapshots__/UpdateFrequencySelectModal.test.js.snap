@@ -25,6 +25,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
   zIndex={1050}
 >
   <ModalHeader
+    charCode={215}
     className="dialog-header"
     closeAriaLabel="Close"
     tag="h5"

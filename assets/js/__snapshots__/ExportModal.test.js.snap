@@ -73,13 +73,13 @@ exports[`ExportModal should match snapshot 1`] = `
                     class="modal-body"
                   >
                     <div
-                      class="form-group"
+                      class="position-relative form-group"
                     >
                       <div
                         class="d-flex justify-content-between flex-row"
                       >
                         <label
-                          class="dl-file "
+                          class="dl-file"
                         >
                           CSV
                         </label>
@@ -112,7 +112,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="d-flex justify-content-between flex-row"
                       >
                         <label
-                          class="dl-file "
+                          class="dl-file"
                         >
                           JSON FEED
                         </label>
@@ -182,7 +182,9 @@ exports[`ExportModal should match snapshot 1`] = `
           onExit={[Function]}
           onExited={[Function]}
           onExiting={[Function]}
+          onKeyDown={[Function]}
           onKeyUp={[Function]}
+          onMouseDown={[Function]}
           role="dialog"
           style={
             Object {
@@ -212,7 +214,9 @@ exports[`ExportModal should match snapshot 1`] = `
             <div
               className="modal fade"
               onClick={[Function]}
+              onKeyDown={[Function]}
               onKeyUp={[Function]}
+              onMouseDown={[Function]}
               role="dialog"
               style={
                 Object {
@@ -229,6 +233,7 @@ exports[`ExportModal should match snapshot 1`] = `
                   className="modal-content"
                 >
                   <ModalHeader
+                    charCode={215}
                     className="dialog-header modal-header d-flex align-items-center"
                     closeAriaLabel="Close"
                     tag="h5"
@@ -262,7 +267,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         tag="div"
                       >
                         <div
-                          className="form-group"
+                          className="position-relative form-group"
                         >
                           <div
                             className="d-flex justify-content-between flex-row"
@@ -281,7 +286,7 @@ exports[`ExportModal should match snapshot 1`] = `
                               }
                             >
                               <label
-                                className="dl-file "
+                                className="dl-file"
                               >
                                 CSV
                               </label>
@@ -343,7 +348,7 @@ exports[`ExportModal should match snapshot 1`] = `
                               }
                             >
                               <label
-                                className="dl-file "
+                                className="dl-file"
                               >
                                 JSON FEED
                               </label>

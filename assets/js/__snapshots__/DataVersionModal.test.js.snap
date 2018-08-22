@@ -190,7 +190,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
               </div>
             </div>
             <div
-              class="modal-backdrop"
+              class="modal-backdrop show"
             />
           </div>
         </div>
@@ -215,7 +215,9 @@ exports[`DataVersionModal matches snapshot 1`] = `
           onExit={[Function]}
           onExited={[Function]}
           onExiting={[Function]}
+          onKeyDown={[Function]}
           onKeyUp={[Function]}
+          onMouseDown={[Function]}
           role="dialog"
           style={
             Object {
@@ -245,7 +247,9 @@ exports[`DataVersionModal matches snapshot 1`] = `
             <div
               className="modal"
               onClick={[Function]}
+              onKeyDown={[Function]}
               onKeyUp={[Function]}
+              onMouseDown={[Function]}
               role="dialog"
               style={
                 Object {
@@ -262,6 +266,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                   className="modal-content"
                 >
                   <ModalHeader
+                    charCode={215}
                     closeAriaLabel="Close"
                     tag="h5"
                     toggle={[MockFunction]}
@@ -429,45 +434,9 @@ exports[`DataVersionModal matches snapshot 1`] = `
             </div>
           </Transition>
         </Fade>
-        <Fade
-          appear={true}
-          baseClass=""
-          baseClassActive="show"
-          className="modal-backdrop"
-          enter={true}
-          exit={true}
-          in={true}
-          mountOnEnter={true}
-          onEnter={[Function]}
-          onEntered={[Function]}
-          onEntering={[Function]}
-          onExit={[Function]}
-          onExited={[Function]}
-          onExiting={[Function]}
-          tag="div"
-          timeout={0}
-          unmountOnExit={false}
-        >
-          <Transition
-            appear={true}
-            enter={true}
-            exit={true}
-            in={true}
-            mountOnEnter={true}
-            onEnter={[Function]}
-            onEntered={[Function]}
-            onEntering={[Function]}
-            onExit={[Function]}
-            onExited={[Function]}
-            onExiting={[Function]}
-            timeout={0}
-            unmountOnExit={false}
-          >
-            <div
-              className="modal-backdrop"
-            />
-          </Transition>
-        </Fade>
+        <div
+          className="modal-backdrop show"
+        />
       </div>
     </Portal>
   </Modal>
