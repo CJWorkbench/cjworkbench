@@ -1345,7 +1345,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-number"
                                                     />
                                                     <span>
-                                                      Extract numbers
+                                                      Convert to numbers
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -1855,7 +1855,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-number"
                                                     />
                                                     <span>
-                                                      Extract numbers
+                                                      Convert to numbers
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2365,7 +2365,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-number"
                                                     />
                                                     <span>
-                                                      Extract numbers
+                                                      Convert to numbers
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2875,7 +2875,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-number"
                                                     />
                                                     <span>
-                                                      Extract numbers
+                                                      Convert to numbers
                                                     </span>
                                                   </button>
                                                 </DropdownItem>

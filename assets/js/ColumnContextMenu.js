@@ -72,7 +72,7 @@ export default class ColumnContextMenu extends React.Component {
             </DropdownItem>
             <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'extract-numbers')} className='extract-numbers' toggle={false}>
               <i className="icon-number"></i>
-              <span>Extract numbers</span>
+              <span>Convert to numbers</span>
             </DropdownItem>
             <DropdownItem onClick={this.setDropdownActionDefault.bind(this, 'clean-text')} className='clean-text' toggle={false}>
               <i className="icon-clean"></i>

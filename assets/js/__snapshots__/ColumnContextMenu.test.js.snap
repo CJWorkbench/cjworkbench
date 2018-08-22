@@ -112,7 +112,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
           className="icon-number"
         />
         <span>
-          Extract numbers
+          Convert to numbers
         </span>
       </DropdownItem>
       <DropdownItem
