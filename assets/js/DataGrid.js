@@ -266,7 +266,7 @@ export class ColumnHeader extends React.PureComponent {
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
     onRenameColumn: PropTypes.func,
     setDropdownAction: PropTypes.func.isRequired
-  };
+  }
 
   constructor(props) {
     super(props);
@@ -280,7 +280,10 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   setDropdownAction = (idName, forceNewModule, params) => {
-    params['columnKey'] = this.props.columnKey
+    params = {
+      ...params,
+      columnKey: this.props.columnKey
+    }
     this.props.setDropdownAction(idName, forceNewModule, params)
   }
 
@@ -331,7 +334,7 @@ export class ColumnHeader extends React.PureComponent {
         sortDirection={this.props.isSorted == true ? this.props.sortDirection : sortDirectionNone}
         setDropdownAction={this.setDropdownAction}
       />
-      );
+    )
   }
 
   renderLetter() {
@@ -455,7 +458,7 @@ function makeFormattedCols(props) {
         onRenameColumn={props.onRenameColumn}
         isReadOnly={props.isReadOnly}
         setDropdownAction={props.setDropdownAction}
-        />
+      />
     ),
   }))
 
@@ -653,7 +656,7 @@ export default class DataGrid extends React.Component {
           rowsCount={this.props.totalRows}
           minWidth={this.state.gridWidth -2}
           minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-          headerRowHeight={this.props.showLetter ? 66 : 48}
+          headerRowHeight={this.props.showLetter ? 68 : 50}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
           key={this.state.componentKey}

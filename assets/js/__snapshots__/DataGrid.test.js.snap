@@ -158,7 +158,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
     enableCellSelect={true}
     enableRowSelect={false}
     headerFiltersHeight={45}
-    headerRowHeight={48}
+    headerRowHeight={50}
     key="0"
     minColumnWidth={80}
     minHeight={98}
@@ -490,11 +490,11 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           enableRowSelect={false}
           expandedRows={Array []}
           headerFiltersHeight={45}
-          headerRowHeight={48}
+          headerRowHeight={50}
           headerRows={
             Array [
               Object {
-                "height": 48,
+                "height": 50,
                 "ref": [Function],
                 "rowType": "header",
               },
@@ -524,7 +524,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           rowGetter={[Function]}
           rowHeight={35}
           rowKey="id"
-          rowOffsetHeight={48}
+          rowOffsetHeight={50}
           rowScrollTimeout={0}
           rowSelection={null}
           rowsCount={2}
@@ -717,7 +717,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               headerRows={
                 Array [
                   Object {
-                    "height": 48,
+                    "height": 50,
                     "ref": [Function],
                     "rowType": "header",
                   },
@@ -738,7 +738,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 onScroll={[Function]}
                 style={
                   Object {
-                    "height": 48,
+                    "height": 50,
                     "position": "relative",
                   }
                 }
@@ -872,7 +872,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                     ]
                   }
-                  height={48}
+                  height={50}
                   key="function ref(node) {
 	        return _this3.row = node;
 	      }"
@@ -897,7 +897,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 >
                   <div
                     className="react-grid-HeaderRow"
-                    height={48}
+                    height={50}
                     onScroll={[Function]}
                     style={
                       Object {
@@ -914,7 +914,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     <div
                       style={
                         Object {
-                          "height": 48,
+                          "height": 50,
                           "overflowX": "hidden",
                           "overflowY": "hidden",
                           "whiteSpace": "nowrap",
@@ -955,7 +955,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "width": 160,
                           }
                         }
-                        height={48}
+                        height={50}
                         key="1"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
@@ -982,7 +982,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 48,
+                              "height": 50,
                               "left": 40,
                               "margin": 0,
                               "position": "absolute",
@@ -1028,7 +1028,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="aaa"
                             columnType="number"
                             draggingColumnIndex={null}
-                            height={48}
+                            height={50}
                             index={0}
                             isReadOnly={false}
                             isSorted={false}
@@ -1462,7 +1462,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "width": 160,
                           }
                         }
-                        height={48}
+                        height={50}
                         key="2"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
@@ -1489,7 +1489,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 48,
+                              "height": 50,
                               "left": 200,
                               "margin": 0,
                               "position": "absolute",
@@ -1535,7 +1535,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="bbbb"
                             columnType="text"
                             draggingColumnIndex={null}
-                            height={48}
+                            height={50}
                             index={1}
                             isReadOnly={false}
                             isSorted={false}
@@ -1969,7 +1969,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "width": 160,
                           }
                         }
-                        height={48}
+                        height={50}
                         key="3"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
@@ -1996,7 +1996,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 48,
+                              "height": 50,
                               "left": 360,
                               "margin": 0,
                               "position": "absolute",
@@ -2042,7 +2042,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="ccccc"
                             columnType="text"
                             draggingColumnIndex={null}
-                            height={48}
+                            height={50}
                             index={2}
                             isReadOnly={false}
                             isSorted={false}
@@ -2476,7 +2476,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "width": 160,
                           }
                         }
-                        height={48}
+                        height={50}
                         key="4"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
@@ -2503,7 +2503,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 48,
+                              "height": 50,
                               "left": 520,
                               "margin": 0,
                               "position": "absolute",
@@ -2549,7 +2549,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             columnKey="rn_"
                             columnType="text"
                             draggingColumnIndex={null}
-                            height={48}
+                            height={50}
                             index={3}
                             isReadOnly={false}
                             isSorted={false}
@@ -2962,7 +2962,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "width": 40,
                           }
                         }
-                        height={48}
+                        height={50}
                         key="0"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
@@ -2974,7 +2974,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 48,
+                              "height": 50,
                               "left": 0,
                               "margin": 0,
                               "position": "absolute",
@@ -3185,7 +3185,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 rowGetter={[Function]}
                 rowHeight={35}
                 rowKey="id"
-                rowOffsetHeight={48}
+                rowOffsetHeight={50}
                 rowScrollTimeout={0}
                 rowSelection={null}
                 rowsCount={2}
@@ -3204,7 +3204,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       "padding": 0,
                       "position": "absolute",
                       "right": 0,
-                      "top": 48,
+                      "top": 50,
                     }
                   }
                 >
@@ -3378,7 +3378,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     displayEnd={2}
                     displayStart={0}
                     expandedRows={Array []}
-                    height={50}
+                    height={48}
                     isScrolling={false}
                     onRows={[Function]}
                     onScroll={[Function]}
@@ -3401,7 +3401,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       onScroll={[Function]}
                       style={
                         Object {
-                          "height": 50,
+                          "height": 48,
                           "left": 0,
                           "overflowX": "auto",
                           "overflowY": "scroll",

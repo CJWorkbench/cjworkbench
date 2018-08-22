@@ -267,6 +267,7 @@
 
                 .column-key {
                   padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+                  display: block;
                   flex: 1 1 auto;
                   overflow: hidden;
                   height:100%;
@@ -285,16 +286,16 @@
 
                 .dropdown {
                   position: relative;
-                  display: none;
+                  flex: 0 0 auto;
                   justify-content: center;
+                  padding-right: .5rem;
                   margin-top: -.8rem;
-                  top:0;
-                  bottom:0;
-                  right:0;
-                  opacity: 1;
-                  width:5rem;
-                  background-color: $heading-bg;
                   cursor: pointer;
+                  opacity: 0;
+
+                  &.show {
+                    opacity: 1;
+                  }
 
                   button {
                     flex: 0 0 auto;
@@ -307,7 +308,9 @@
                     color: inherit;
                     //border-radius: 0;
                     opacity: .85;
-                    &:hover {background-color:$header-hover;}
+                    &:hover {
+                      background-color:$header-hover;
+                    }
                   }
                 }
 
@@ -323,14 +326,14 @@
                   border: 0;
 
                   & + .dropdown {
-                      display: none;
-                    }
+                    display: none;
+                  }
                 }
               }
             }
 
             .react-grid-HeaderCell:hover .dropdown {
-              display: flex;
+              opacity: 1;
             }
 
 
@@ -340,7 +343,9 @@
               cursor: -moz-grabbing;
               cursor: -webkit-grabbing;
 
-              .dropdown {opacity: 0;}
+              .dropdown {
+                opacity: 0;
+              }
             }
 
             .react-grid-HeaderCell__draggable{
