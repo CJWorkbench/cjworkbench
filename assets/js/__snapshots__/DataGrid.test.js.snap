@@ -5929,6 +5929,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                             value=""
                                           >
                                             <div
+                                              align="left"
                                               className="row-null"
                                             >
                                               null

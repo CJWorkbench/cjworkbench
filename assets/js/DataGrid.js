@@ -60,18 +60,20 @@ export class RowTypeFormatter extends React.PureComponent {
         </div>
       )
     }
+    // Left align for text, right align for numeric
+    let type = this.props.type
+    let align = alignRight.indexOf(type) >= 0 ? 'right' : 'left'
+
     // For null types, adding '' for now but will populate 'null' table at init
     if (this.props.value === null | this.props.value === '') {
       return (
-        <div className={'row-null'}>
+        <div className={'row-null'} align={align}>
           {'null'}
         </div>
       )
     }
-    // Left align for text, right align for numeric
-    let type = this.props.type
+
     let className = 'row-type-' + type
-    let align = alignRight.indexOf(type) >= 0 ? 'right' : 'left'
 
     return (
       <div className={className} align={align} >
