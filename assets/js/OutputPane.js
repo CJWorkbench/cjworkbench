@@ -4,7 +4,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TableView from './TableView'
 import OutputIframe from './OutputIframe'
-import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
 import { findParamValByIdName} from './utils'
@@ -191,43 +190,15 @@ export class OutputPane extends React.Component {
       </div>
 
     return (
-        <div className={"outputpane" + (this.props.focus ? " focus" : "")}
-             ref={this.parentBase}
-             onClick={this.props.setFocus} >
-            <Resizable
-              style={{
-                  transform: "translateX(" + this.state.leftOffset + "px)"
-              }}
-              className="outputpane-box"
-              enable={{
-                  top:false,
-                  right:false,
-                  bottom:false,
-                  left:true,
-                  topRight:false,
-                  bottomRight:false,
-                  bottomLeft:false,
-                  topLeft:false
-              }}
-              size={{
-                  width: this.state.width,
-                  height: this.state.height,
-              }}
-              minWidth="100%"
-              maxWidth={this.state.maxWidth}
-              onResizeStart={this.resizePaneStart}
-              onResize={this.resizePane}
-              onResizeStop={this.resizePaneEnd}
-            >
-
-              {spinner}
-
-              { outputIFrame }
-
-              { tableView }
-
-            </Resizable>
-        </div>
+      <div
+        className={"outputpane" + (this.props.focus ? " focus" : "")}
+        ref={this.parentBase}
+        onClick={this.props.setFocus}
+      >
+        {spinner}
+        {outputIFrame}
+        {tableView}
+      </div>
     )
   }
 }

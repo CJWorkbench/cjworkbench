@@ -4,76 +4,35 @@ exports[`OutputPane matches snapshot 1`] = `
 <div
   className="outputpane"
 >
-  <Resizable
-    className="outputpane-box"
-    enable={
-      Object {
-        "bottom": false,
-        "bottomLeft": false,
-        "bottomRight": false,
-        "left": true,
-        "right": false,
-        "top": false,
-        "topLeft": false,
-        "topRight": false,
-      }
-    }
-    grid={
-      Array [
-        1,
-        1,
-      ]
-    }
-    lockAspectRatio={false}
-    lockAspectRatioExtraHeight={0}
-    lockAspectRatioExtraWidth={0}
-    maxWidth="924%"
-    minWidth="100%"
-    onResize={[Function]}
-    onResizeStart={[Function]}
-    onResizeStop={[Function]}
-    size={
-      Object {
-        "height": "100%",
-        "width": "100%",
-      }
-    }
+  <div
+    id="spinner-container-transparent"
     style={
       Object {
-        "transform": "translateX(0px)",
+        "display": "none",
       }
     }
   >
     <div
-      id="spinner-container-transparent"
-      style={
-        Object {
-          "display": "none",
-        }
-      }
+      id="spinner-l1"
     >
       <div
-        id="spinner-l1"
+        id="spinner-l2"
       >
         <div
-          id="spinner-l2"
-        >
-          <div
-            id="spinner-l3"
-          />
-        </div>
+          id="spinner-l3"
+        />
       </div>
     </div>
-    <TableView
-      api={Object {}}
-      isReadOnly={false}
-      lastRelevantDeltaId={1}
-      resizing={false}
-      selectedWfModuleId={987}
-      setBusySpinner={[Function]}
-      showColumnLetter={false}
-    />
-  </Resizable>
+  </div>
+  <TableView
+    api={Object {}}
+    isReadOnly={false}
+    lastRelevantDeltaId={1}
+    resizing={false}
+    selectedWfModuleId={987}
+    setBusySpinner={[Function]}
+    showColumnLetter={false}
+  />
 </div>
 `;
 
@@ -81,75 +40,34 @@ exports[`OutputPane renders when no module id 1`] = `
 <div
   className="outputpane"
 >
-  <Resizable
-    className="outputpane-box"
-    enable={
-      Object {
-        "bottom": false,
-        "bottomLeft": false,
-        "bottomRight": false,
-        "left": true,
-        "right": false,
-        "top": false,
-        "topLeft": false,
-        "topRight": false,
-      }
-    }
-    grid={
-      Array [
-        1,
-        1,
-      ]
-    }
-    lockAspectRatio={false}
-    lockAspectRatioExtraHeight={0}
-    lockAspectRatioExtraWidth={0}
-    maxWidth="924%"
-    minWidth="100%"
-    onResize={[Function]}
-    onResizeStart={[Function]}
-    onResizeStop={[Function]}
-    size={
-      Object {
-        "height": "100%",
-        "width": "100%",
-      }
-    }
+  <div
+    id="spinner-container-transparent"
     style={
       Object {
-        "transform": "translateX(0px)",
+        "display": "none",
       }
     }
   >
     <div
-      id="spinner-container-transparent"
-      style={
-        Object {
-          "display": "none",
-        }
-      }
+      id="spinner-l1"
     >
       <div
-        id="spinner-l1"
+        id="spinner-l2"
       >
         <div
-          id="spinner-l2"
-        >
-          <div
-            id="spinner-l3"
-          />
-        </div>
+          id="spinner-l3"
+        />
       </div>
     </div>
-    <TableView
-      api={Object {}}
-      isReadOnly={false}
-      lastRelevantDeltaId={1}
-      resizing={false}
-      selectedWfModuleId={null}
-      setBusySpinner={[Function]}
-      showColumnLetter={false}
-    />
-  </Resizable>
+  </div>
+  <TableView
+    api={Object {}}
+    isReadOnly={false}
+    lastRelevantDeltaId={1}
+    resizing={false}
+    selectedWfModuleId={null}
+    setBusySpinner={[Function]}
+    showColumnLetter={false}
+  />
 </div>
 `;
