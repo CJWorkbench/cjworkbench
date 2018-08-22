@@ -190,7 +190,7 @@ describe('WorkflowNavBar', () => {
     // check that link has rendered correctly
     const linkField = shareModal.find('input.test-link-field');
     expect(linkField.length).toBe(1);
-    expect(linkField.props().value).toEqual("/workflows/808");
+    expect(linkField.props().value).toEqual("http://localhost/workflows/808");
 
     expect(api.setWorkflowPublic).not.toHaveBeenCalled();
   });

@@ -419,6 +419,12 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
             true,
           ],
         ],
+        "results": Array [
+          Object {
+            "isThrow": false,
+            "value": Promise {},
+          },
+        ],
       },
     }
   }

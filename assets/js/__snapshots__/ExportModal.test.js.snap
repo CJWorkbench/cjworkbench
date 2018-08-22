@@ -96,7 +96,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           class="url-link test-csv-field form-control"
                           readonly=""
                           type="url"
-                          value="/public/moduledata/live/415.csv"
+                          value="http://localhost/public/moduledata/live/415.csv"
                         />
                         <div
                           class="download-icon-box"
@@ -104,7 +104,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           <a
                             class="icon-download t-d-gray button-icon test-csv-download"
                             download=""
-                            href="/public/moduledata/live/415.csv"
+                            href="http://localhost/public/moduledata/live/415.csv"
                           />
                         </div>
                       </div>
@@ -129,7 +129,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           class="url-link test-json-field form-control"
                           readonly=""
                           type="url"
-                          value="/public/moduledata/live/415.json"
+                          value="http://localhost/public/moduledata/live/415.json"
                         />
                         <div
                           class="download-icon-box"
@@ -137,7 +137,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           <a
                             class="icon-download t-d-gray button-icon test-json-download"
                             download=""
-                            href="/public/moduledata/live/415.json"
+                            href="http://localhost/public/moduledata/live/415.json"
                           />
                         </div>
                       </div>
@@ -289,7 +289,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             <CopyToClipboard
                               className="clipboard test-csv-copy"
                               onCopy={[Function]}
-                              text="/public/moduledata/live/415.csv"
+                              text="http://localhost/public/moduledata/live/415.csv"
                             >
                               <div
                                 className="clipboard test-csv-copy"
@@ -306,13 +306,13 @@ exports[`ExportModal should match snapshot 1`] = `
                               className="url-link test-csv-field"
                               readOnly={true}
                               type="url"
-                              value="/public/moduledata/live/415.csv"
+                              value="http://localhost/public/moduledata/live/415.csv"
                             >
                               <input
                                 className="url-link test-csv-field form-control"
                                 readOnly={true}
                                 type="url"
-                                value="/public/moduledata/live/415.csv"
+                                value="http://localhost/public/moduledata/live/415.csv"
                               />
                             </Input>
                             <div
@@ -321,7 +321,7 @@ exports[`ExportModal should match snapshot 1`] = `
                               <a
                                 className="icon-download t-d-gray button-icon test-csv-download"
                                 download={true}
-                                href="/public/moduledata/live/415.csv"
+                                href="http://localhost/public/moduledata/live/415.csv"
                                 onClick={[Function]}
                               />
                             </div>
@@ -351,7 +351,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             <CopyToClipboard
                               className="clipboard test-json-copy"
                               onCopy={[Function]}
-                              text="/public/moduledata/live/415.json"
+                              text="http://localhost/public/moduledata/live/415.json"
                             >
                               <div
                                 className="clipboard test-json-copy"
@@ -368,13 +368,13 @@ exports[`ExportModal should match snapshot 1`] = `
                               className="url-link test-json-field"
                               readOnly={true}
                               type="url"
-                              value="/public/moduledata/live/415.json"
+                              value="http://localhost/public/moduledata/live/415.json"
                             >
                               <input
                                 className="url-link test-json-field form-control"
                                 readOnly={true}
                                 type="url"
-                                value="/public/moduledata/live/415.json"
+                                value="http://localhost/public/moduledata/live/415.json"
                               />
                             </Input>
                             <div
@@ -383,7 +383,7 @@ exports[`ExportModal should match snapshot 1`] = `
                               <a
                                 className="icon-download t-d-gray button-icon test-json-download"
                                 download={true}
-                                href="/public/moduledata/live/415.json"
+                                href="http://localhost/public/moduledata/live/415.json"
                                 onClick={[Function]}
                               />
                             </div>

@@ -58,7 +58,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onRenameColumn={[Function]}
             setDropdownAction={[MockFunction]}
             showLetter={false}
-            sortDirection={undefined}
           />,
           "key": "aaa",
           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -87,7 +86,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onRenameColumn={[Function]}
             setDropdownAction={[MockFunction]}
             showLetter={false}
-            sortDirection={undefined}
           />,
           "key": "bbbb",
           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -116,7 +114,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onRenameColumn={[Function]}
             setDropdownAction={[MockFunction]}
             showLetter={false}
-            sortDirection={undefined}
           />,
           "key": "ccccc",
           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -145,7 +142,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             onRenameColumn={[Function]}
             setDropdownAction={[MockFunction]}
             showLetter={false}
-            sortDirection={undefined}
           />,
           "key": "rn_",
           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -262,7 +258,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onRenameColumn={[Function]}
                     setDropdownAction={[MockFunction]}
                     showLetter={false}
-                    sortDirection={undefined}
                   />,
                   "key": "aaa",
                   "left": 40,
@@ -292,7 +287,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onRenameColumn={[Function]}
                     setDropdownAction={[MockFunction]}
                     showLetter={false}
-                    sortDirection={undefined}
                   />,
                   "key": "bbbb",
                   "left": 200,
@@ -322,7 +316,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onRenameColumn={[Function]}
                     setDropdownAction={[MockFunction]}
                     showLetter={false}
-                    sortDirection={undefined}
                   />,
                   "key": "ccccc",
                   "left": 360,
@@ -352,7 +345,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     onRenameColumn={[Function]}
                     setDropdownAction={[MockFunction]}
                     showLetter={false}
-                    sortDirection={undefined}
                   />,
                   "key": "rn_",
                   "left": 520,
@@ -397,7 +389,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onRenameColumn={[Function]}
                   setDropdownAction={[MockFunction]}
                   showLetter={false}
-                  sortDirection={undefined}
                 />,
                 "key": "aaa",
                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -426,7 +417,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onRenameColumn={[Function]}
                   setDropdownAction={[MockFunction]}
                   showLetter={false}
-                  sortDirection={undefined}
                 />,
                 "key": "bbbb",
                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -455,7 +445,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onRenameColumn={[Function]}
                   setDropdownAction={[MockFunction]}
                   showLetter={false}
-                  sortDirection={undefined}
                 />,
                 "key": "ccccc",
                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -484,7 +473,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   onRenameColumn={[Function]}
                   setDropdownAction={[MockFunction]}
                   showLetter={false}
-                  sortDirection={undefined}
                 />,
                 "key": "rn_",
                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
@@ -622,7 +610,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onRenameColumn={[Function]}
                         setDropdownAction={[MockFunction]}
                         showLetter={false}
-                        sortDirection={undefined}
                       />,
                       "key": "aaa",
                       "left": 40,
@@ -652,7 +639,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onRenameColumn={[Function]}
                         setDropdownAction={[MockFunction]}
                         showLetter={false}
-                        sortDirection={undefined}
                       />,
                       "key": "bbbb",
                       "left": 200,
@@ -682,7 +668,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onRenameColumn={[Function]}
                         setDropdownAction={[MockFunction]}
                         showLetter={false}
-                        sortDirection={undefined}
                       />,
                       "key": "ccccc",
                       "left": 360,
@@ -712,7 +697,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onRenameColumn={[Function]}
                         setDropdownAction={[MockFunction]}
                         showLetter={false}
-                        sortDirection={undefined}
                       />,
                       "key": "rn_",
                       "left": 520,
@@ -788,7 +772,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "aaa",
                         "left": 40,
@@ -818,7 +801,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "bbbb",
                         "left": 200,
@@ -848,7 +830,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "ccccc",
                         "left": 360,
@@ -878,7 +859,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "rn_",
                         "left": 520,
@@ -962,7 +942,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onRenameColumn={[Function]}
                               setDropdownAction={[MockFunction]}
                               showLetter={false}
-                              sortDirection={undefined}
                             />,
                             "key": "aaa",
                             "left": 40,
@@ -994,7 +973,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -1034,7 +1012,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onRenameColumn={[Function]}
                                   setDropdownAction={[MockFunction]}
                                   showLetter={false}
-                                  sortDirection={undefined}
                                 />,
                                 "key": "aaa",
                                 "left": 40,
@@ -1472,7 +1449,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onRenameColumn={[Function]}
                               setDropdownAction={[MockFunction]}
                               showLetter={false}
-                              sortDirection={undefined}
                             />,
                             "key": "bbbb",
                             "left": 200,
@@ -1504,7 +1480,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -1544,7 +1519,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onRenameColumn={[Function]}
                                   setDropdownAction={[MockFunction]}
                                   showLetter={false}
-                                  sortDirection={undefined}
                                 />,
                                 "key": "bbbb",
                                 "left": 200,
@@ -1982,7 +1956,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onRenameColumn={[Function]}
                               setDropdownAction={[MockFunction]}
                               showLetter={false}
-                              sortDirection={undefined}
                             />,
                             "key": "ccccc",
                             "left": 360,
@@ -2014,7 +1987,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -2054,7 +2026,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onRenameColumn={[Function]}
                                   setDropdownAction={[MockFunction]}
                                   showLetter={false}
-                                  sortDirection={undefined}
                                 />,
                                 "key": "ccccc",
                                 "left": 360,
@@ -2492,7 +2463,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onRenameColumn={[Function]}
                               setDropdownAction={[MockFunction]}
                               showLetter={false}
-                              sortDirection={undefined}
                             />,
                             "key": "rn_",
                             "left": 520,
@@ -2524,7 +2494,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -2564,7 +2533,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onRenameColumn={[Function]}
                                   setDropdownAction={[MockFunction]}
                                   showLetter={false}
-                                  sortDirection={undefined}
                                 />,
                                 "key": "rn_",
                                 "left": 520,
@@ -3099,7 +3067,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "aaa",
                         "left": 40,
@@ -3129,7 +3096,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "bbbb",
                         "left": 200,
@@ -3159,7 +3125,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "ccccc",
                         "left": 360,
@@ -3189,7 +3154,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           onRenameColumn={[Function]}
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
-                          sortDirection={undefined}
                         />,
                         "key": "rn_",
                         "left": 520,
@@ -3311,7 +3275,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />,
                           "key": "aaa",
                           "left": 40,
@@ -3341,7 +3304,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />,
                           "key": "bbbb",
                           "left": 200,
@@ -3371,7 +3333,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />,
                           "key": "ccccc",
                           "left": 360,
@@ -3401,7 +3362,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             onRenameColumn={[Function]}
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
-                            sortDirection={undefined}
                           />,
                           "key": "rn_",
                           "left": 520,
@@ -3524,7 +3484,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "aaa",
                                     "left": 40,
@@ -3554,7 +3513,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "bbbb",
                                     "left": 200,
@@ -3584,7 +3542,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "ccccc",
                                     "left": 360,
@@ -3614,7 +3571,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "rn_",
                                     "left": 520,
@@ -3633,7 +3589,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               idx={0}
                               isScrolling={false}
                               isSelected={false}
-                              onMouseOver={undefined}
                               row={
                                 Object {
                                   "aaa": "9",
@@ -3715,7 +3670,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "aaa",
                                     "left": 40,
@@ -3745,7 +3699,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "bbbb",
                                     "left": 200,
@@ -3775,7 +3728,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "ccccc",
                                     "left": 360,
@@ -3805,7 +3757,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "rn_",
                                     "left": 520,
@@ -3824,7 +3775,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               idx={1}
                               isScrolling={false}
                               isSelected={false}
-                              onMouseOver={undefined}
                               row={
                                 Object {
                                   "aaa": "9",
@@ -3915,7 +3865,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "aaa",
                                       "left": 40,
@@ -3945,7 +3894,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "bbbb",
                                       "left": 200,
@@ -3975,7 +3923,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "ccccc",
                                       "left": 360,
@@ -4005,7 +3952,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "rn_",
                                       "left": 520,
@@ -4024,7 +3970,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 idx={0}
                                 isScrolling={false}
                                 isSelected={false}
-                                onMouseOver={undefined}
                                 row={
                                   Object {
                                     "aaa": "9",
@@ -4106,7 +4051,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "aaa",
                                       "left": 40,
@@ -4136,7 +4080,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "bbbb",
                                       "left": 200,
@@ -4166,7 +4109,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "ccccc",
                                       "left": 360,
@@ -4196,7 +4138,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "rn_",
                                       "left": 520,
@@ -4215,7 +4156,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 idx={1}
                                 isScrolling={false}
                                 isSelected={false}
-                                onMouseOver={undefined}
                                 row={
                                   Object {
                                     "aaa": "9",
@@ -4304,7 +4244,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "aaa",
                                     "left": 40,
@@ -4334,7 +4273,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "bbbb",
                                     "left": 200,
@@ -4364,7 +4302,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "ccccc",
                                     "left": 360,
@@ -4394,7 +4331,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "rn_",
                                     "left": 520,
@@ -4493,7 +4429,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "aaa",
                                       "left": 40,
@@ -4592,7 +4527,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "aaa",
                                                 "left": 40,
@@ -4691,7 +4625,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "bbbb",
                                       "left": 200,
@@ -4790,7 +4723,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "bbbb",
                                                 "left": 200,
@@ -4889,7 +4821,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "ccccc",
                                       "left": 360,
@@ -4988,7 +4919,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "ccccc",
                                                 "left": 360,
@@ -5087,7 +5017,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "rn_",
                                       "left": 520,
@@ -5186,7 +5115,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "rn_",
                                                 "left": 520,
@@ -5424,7 +5352,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "aaa",
                                     "left": 40,
@@ -5454,7 +5381,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "bbbb",
                                     "left": 200,
@@ -5484,7 +5410,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "ccccc",
                                     "left": 360,
@@ -5514,7 +5439,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       onRenameColumn={[Function]}
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
-                                      sortDirection={undefined}
                                     />,
                                     "key": "rn_",
                                     "left": 520,
@@ -5613,7 +5537,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "aaa",
                                       "left": 40,
@@ -5712,7 +5635,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "aaa",
                                                 "left": 40,
@@ -5811,7 +5733,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "bbbb",
                                       "left": 200,
@@ -5910,7 +5831,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "bbbb",
                                                 "left": 200,
@@ -6009,7 +5929,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "ccccc",
                                       "left": 360,
@@ -6108,7 +6027,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "ccccc",
                                                 "left": 360,
@@ -6207,7 +6125,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         onRenameColumn={[Function]}
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
-                                        sortDirection={undefined}
                                       />,
                                       "key": "rn_",
                                       "left": 520,
@@ -6306,7 +6223,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   onRenameColumn={[Function]}
                                                   setDropdownAction={[MockFunction]}
                                                   showLetter={false}
-                                                  sortDirection={undefined}
                                                 />,
                                                 "key": "rn_",
                                                 "left": 520,

@@ -39,11 +39,11 @@ describe('ExportModal', () => {
   it('should render download links', () => {
     const csvField = wrapper.find('input.test-csv-field');
     expect(csvField.length).toBe(1);
-    expect(csvField.props().value).toBe("/public/moduledata/live/415.csv");
+    expect(csvField.props().value).toBe("http://localhost/public/moduledata/live/415.csv");
 
     const jsonField =wrapper.find('input.test-json-field');
     expect(jsonField.length).toBe(1);
-    expect(jsonField.props().value).toBe("/public/moduledata/live/415.json");
+    expect(jsonField.props().value).toBe("http://localhost/public/moduledata/live/415.json");
   });
 
   it('renders copy to clipboard buttons', () => {
@@ -57,9 +57,9 @@ describe('ExportModal', () => {
 
   it('Renders modal links which can be downloaded', () => {
     const csvDownload = wrapper.find('a.test-csv-download');
-    expect(csvDownload.prop('href')).toBe("/public/moduledata/live/415.csv");
+    expect(csvDownload.prop('href')).toBe("http://localhost/public/moduledata/live/415.csv");
 
     const jsonDownload = wrapper.find('a.test-json-download');
-    expect(jsonDownload.prop('href')).toBe("/public/moduledata/live/415.json");
+    expect(jsonDownload.prop('href')).toBe("http://localhost/public/moduledata/live/415.json");
   });
 });

@@ -495,7 +495,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               <CopyToClipboard
                 className="clipboard"
                 onCopy={[Function]}
-                text="/workflows/808"
+                text="http://localhost/workflows/808"
               >
                 <div
                   className="clipboard"
@@ -512,13 +512,13 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                 className="url-link test-link-field"
                 readOnly={true}
                 type="url"
-                value="/workflows/808"
+                value="http://localhost/workflows/808"
               >
                 <input
                   className="url-link test-link-field form-control"
                   readOnly={true}
                   type="url"
-                  value="/workflows/808"
+                  value="http://localhost/workflows/808"
                 />
               </Input>
             </div>
@@ -537,7 +537,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                   "text": "Check out this chart I made using @cjworkbench:",
                 }
               }
-              url="/workflows/808"
+              url="http://localhost/workflows/808"
             >
               <AbstractWidget
                 ready={[Function]}
@@ -548,7 +548,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
           </div>
           <a
             className="button-icon facebook-share ml-4"
-            href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            href="https://www.facebook.com/sharer.php?u=http://localhost/workflows/808"
             onClick={[Function]}
             target="_blank"
           >
@@ -980,7 +980,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
               <CopyToClipboard
                 className="clipboard"
                 onCopy={[Function]}
-                text="/workflows/808"
+                text="http://localhost/workflows/808"
               >
                 <div
                   className="clipboard"
@@ -997,13 +997,13 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
                 className="url-link test-link-field"
                 readOnly={true}
                 type="url"
-                value="/workflows/808"
+                value="http://localhost/workflows/808"
               >
                 <input
                   className="url-link test-link-field form-control"
                   readOnly={true}
                   type="url"
-                  value="/workflows/808"
+                  value="http://localhost/workflows/808"
                 />
               </Input>
             </div>
@@ -1022,7 +1022,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
                   "text": "Check out this chart I made using @cjworkbench:",
                 }
               }
-              url="/workflows/808"
+              url="http://localhost/workflows/808"
             >
               <AbstractWidget
                 ready={[Function]}
@@ -1033,7 +1033,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
           </div>
           <a
             className="button-icon facebook-share ml-4"
-            href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            href="https://www.facebook.com/sharer.php?u=http://localhost/workflows/808"
             onClick={[Function]}
             target="_blank"
           >

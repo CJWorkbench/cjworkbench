@@ -67,6 +67,12 @@ exports[`WfModuleHeader Mounts and focuses 1`] = `
           </div>,
         ],
       ],
+      "results": Array [
+        Object {
+          "isThrow": false,
+          "value": undefined,
+        },
+      ],
     }
   }
   isSelected={true}
