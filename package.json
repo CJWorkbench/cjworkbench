@@ -5,7 +5,6 @@
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^4.1.1",
-    "classnames": "^2.2.5",
     "fast-deep-equal": "^2.0.1",
     "fine-uploader": "^5.16.2",
     "immutability-helper": "^2.7.0",
