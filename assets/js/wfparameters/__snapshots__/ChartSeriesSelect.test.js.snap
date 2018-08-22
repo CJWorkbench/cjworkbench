@@ -98,11 +98,13 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
           </option>
           <option
             key="foo"
+            value="foo"
           >
             foo
           </option>
           <option
             key="bar"
+            value="bar"
           >
             bar
           </option>

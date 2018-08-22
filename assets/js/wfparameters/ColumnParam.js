@@ -24,7 +24,7 @@ export default class ColumnParam extends React.PureComponent {
     let className = 'custom-select module-parameter dropdown-selector'
 
     const options = (allColumns || []).map(({ name }) => (
-      <option key={name}>{name}</option>
+      <option value={name} key={name}>{name}</option>
     ))
 
     // Select prompt when no column is selected, _or_ when an invalid

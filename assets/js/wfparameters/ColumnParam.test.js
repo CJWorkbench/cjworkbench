@@ -71,4 +71,14 @@ describe('ColumnParam', () => {
     // The browser will highlight the current value, even if it's disabled.
     expect(w.find('option.prompt').prop('value')).toEqual('non-existent column')
   })
+
+  it('should retain double spaces in value', async () => {
+    const w = wrapper({ value: 'column  with  double  spaces',
+      allColumns: [{ name: 'column  with  double  spaces' }]})
+    await tick() // load columns
+    w.update()
+
+    w.find('select').simulate('change')
+    expect(w.prop('onChange')).toHaveBeenCalledWith('column  with  double  spaces')
+  })
 })
