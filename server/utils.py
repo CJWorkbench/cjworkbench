@@ -96,7 +96,7 @@ _intercom_client = _setup_intercom_client()
 
 def log_user_event(user, event, metadata=None):
     log_message("_intercom_client is '{}'".format(str(_intercom_client)))
-    log_message("Logging Intercom event '{}': {}".format(event, str(e)))
+    log_message("Logging Intercom event '{}' with metadata {}".format(event, str(metadata)))
     if _intercom_client is not None:
         try:
             if metadata is not None:   # api errors if metadata=None. Who does that?
