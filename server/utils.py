@@ -95,7 +95,6 @@ def _setup_intercom_client():
 _intercom_client = _setup_intercom_client()
 
 def log_user_event(user, event, metadata=None):
-    log_message("_intercom_client is '{}'".format(str(_intercom_client)))
     log_message("Logging Intercom event '{}' with metadata {}".format(event, str(metadata)))
     if _intercom_client is not None:
         try:
@@ -114,5 +113,7 @@ def log_user_event(user, event, metadata=None):
                     created_at=int(time.time()))
         except Exception as e:
             log_message("Error logging Intercom event '{}': {}".format(event, str(e)))
+    else:
+        log_message("Error logging Intercom event: client not initialized (bad CJW_INTERCOM_ACCESS_TOKEN?)")
 
 
