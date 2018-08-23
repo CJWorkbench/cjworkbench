@@ -141,6 +141,7 @@
 
             .react-grid-Cell--locked:last-of-type {
               border-right: 1px solid $table-border;
+              //border-left: 1px solid $table-border;
 
               .row-number {
                 color:$medium-gray;
@@ -285,13 +286,19 @@
                 }
 
                 .dropdown {
-                  position: relative;
+                  position: absolute;
                   flex: 0 0 auto;
+                  display:flex;
+                  width:3.5rem;
                   justify-content: center;
-                  padding-right: .5rem;
-                  margin-top: -.8rem;
                   cursor: pointer;
                   opacity: 0;
+                  z-index: 1;
+                  right:0;
+                  top:0;
+                  bottom:0;
+                  background-color:$heading-bg;
+                  &:active{opacity: 1}
 
                   &.show {
                     opacity: 1;
@@ -301,12 +308,12 @@
                     flex: 0 0 auto;
                     height:2.3rem;
                     width: 2.3rem;
-                    //height: 5rem;
                     font-size: 1.35rem;
                     border: 0;
                     background-color: transparent;
                     color: inherit;
-                    //border-radius: 0;
+                    top:1rem;
+                    position: relative;
                     opacity: .85;
                     &:hover {
                       background-color:$header-hover;
@@ -321,7 +328,7 @@
                   outline: 2px solid $brand-orange;
                   padding-left: 1rem;
                   padding-right: 1rem;
-                  height: 4.8rem;
+                  height: 5rem;
                   flex: 1 1 auto;
                   border: 0;
 
@@ -335,6 +342,9 @@
             .react-grid-HeaderCell:hover .dropdown {
               opacity: 1;
             }
+
+
+
 
 
             .react-grid-HeaderCell:active {
@@ -359,10 +369,11 @@
 
             }
 
+            // Your average cell in the table
             .react-grid-Cell {
               padding-right:0rem;
               padding-left:0rem;
-              border-right: 1px solid $table-border;
+              border-right: 0px solid $table-border;
               border-bottom: 0px solid transparent;
               border-top: 0;
               //Click and edit a cell
@@ -397,7 +408,6 @@
                 font-weight: 100;
               }
             }
-
 
             // Row styling
 
