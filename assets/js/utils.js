@@ -1,6 +1,5 @@
 // ---- Utilities ---
 import * as Cookies from "js-cookie"
-import { setSelectedWfModuleAction } from './workflow-reducer'
 
 export function goToUrl(url) {
   window.location.href = url;

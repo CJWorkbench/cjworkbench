@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
-import debounce from 'lodash/debounce'
+import debounce from 'debounce'
 import { addModuleAction, deleteModuleAction, moveModuleAction } from './workflow-reducer'
 import { scrollTo } from './utils'
 import { connect } from 'react-redux';
