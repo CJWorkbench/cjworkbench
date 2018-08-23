@@ -103,14 +103,14 @@ def log_user_event(user, event, metadata=None):
                 _intercom_client.events.create(
                     event_name=event,
                     email=user.email,
-                    id=user.id,
+                    user_id=user.id,
                     created_at=int(time.time()),
                     metadata=metadata)
             else:
                 _intercom_client.events.create(
                     event_name=event,
                     email=user.email,
-                    id=user.id,
+                    user_id=user.id,
                     created_at=int(time.time()))
         except Exception as e:
             log_message("Error logging Intercom event '{}': {}".format(event, str(e)))
