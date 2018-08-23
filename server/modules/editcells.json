@@ -12,7 +12,7 @@
       "type": "custom"
     },
     {
-      "name": "Edit values directly in the table",
+      "name": "Click on cells to edit values",
       "id_name": "no-param-text",
       "type": "statictext",
       "visible_if": {
