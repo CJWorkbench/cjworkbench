@@ -251,14 +251,11 @@
                 justify-content: center;
                 text-align: center;
                 padding-top: .15rem;
-                background-color: #fff;
-                color: $light-gray;
+                color: $white;
+                opacity: .7;
                 height: 1.8rem;
                 font-weight: 300;
-                //box shadow to cover the 1px border from header with a lighter one
-                box-shadow:
-                  -1px 0 0 $table-border,
-                   1px 0 0 $table-border;
+                border-bottom: 1px solid $dark-accent--soft;
               }
 
               .data-grid-column-header  {
@@ -289,14 +286,16 @@
                   position: absolute;
                   flex: 0 0 auto;
                   display:flex;
-                  width:3.5rem;
+                  width:3.4rem;
                   justify-content: center;
+                  align-items: center;
                   cursor: pointer;
                   opacity: 0;
                   z-index: 1;
                   right:0;
                   top:0;
                   bottom:0;
+                  border-left: 1px solid $dark-accent--soft;
                   background-color:$heading-bg;
                   &:active{opacity: 1}
 
@@ -312,7 +311,6 @@
                     border: 0;
                     background-color: transparent;
                     color: inherit;
-                    top:1rem;
                     position: relative;
                     opacity: .85;
                     &:hover {
