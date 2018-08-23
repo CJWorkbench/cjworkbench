@@ -191,7 +191,7 @@ textarea:focus, input:focus{
   width: 100%;
   padding: 1rem;
   resize: vertical;
-  overflow:hidden;
+  overflow:scroll;
 }
 
 .text-field-readonly {
