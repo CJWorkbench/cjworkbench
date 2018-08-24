@@ -59,8 +59,8 @@ export default class RefineModal extends React.PureComponent {
     const canSubmit = nBinsSelected > 0
 
     return (
-      <Modal className="refine-modal" isOpen={true} fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}>Cluster</ModalHeader>
+      <Modal className="refine-modal" size='lg' isOpen fade={false} toggle={onClose}>
+        <ModalHeader toggle={onClose}>CLUSTER</ModalHeader>
         <ModalBody>
           <RefineClusterer
             bucket={bucket}

@@ -116,7 +116,7 @@ export default class RefineClusterer extends React.PureComponent {
     const options = Algorithms.map(({ name, selectName }) => <option key={name} value={name}>{selectName}</option>)
 
     return (
-      <select value={algorithm.name} onChange={this.selectClusterer}>
+      <select className='custom-select' value={algorithm.name} onChange={this.selectClusterer}>
         {options}
       </select>
     )
