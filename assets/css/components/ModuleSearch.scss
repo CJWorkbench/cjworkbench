@@ -9,6 +9,16 @@
   overflow: hidden; // stay inside the border-radius
   background: $white;
 
+  // Make scrollbar always visible on Mac, as user tests show they don't know there's more menu otherwise
+  ::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 7px;
+  }
+  ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: rgba(50,50,50,0.5);
+  }
+
   ul, li {
     // reset styles. (we'll re-change this later.)
     display: block;
