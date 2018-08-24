@@ -1,3 +1,16 @@
+.refine-modal-prompt {
+  margin-top: 1rem;
+  display: flex;
+
+  button {
+    margin-right: 1rem;
+  }
+
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: $medium-gray;
+}
+
 .refine-groups {
   max-height: 30rem;
   overflow-y: auto;

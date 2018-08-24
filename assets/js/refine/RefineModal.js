@@ -39,7 +39,15 @@ export default class RefineModal extends React.PureComponent {
   }
 
   submit = () => {
-    this.props.onSubmit(this.state.bins)
+    const renames = {}
+    for (const bin of this.state.bins) {
+      if (bin.isSelected) {
+        for (const value in bin.bucket) {
+          renames[value] = bin.name
+        }
+      }
+    }
+    this.props.onSubmit(renames)
   }
 
   render () {

@@ -4,7 +4,7 @@ import RefineModal from '../refine/RefineModal'
 
 const NumberFormatter = new Intl.NumberFormat()
 
-class RefineSpec {
+export class RefineSpec {
   constructor (renames, blacklist) {
     this.renames = renames
     this.blacklist = blacklist
@@ -67,37 +67,52 @@ class RefineSpec {
   }
 
   rename (fromGroup, toGroup) {
+    return this.massRename({ [fromGroup]: toGroup })
+  }
+
+  massRename (groupMap) {
     const { renames, blacklist } = this
     const newRenames = Object.assign({}, renames)
 
     // Start with blacklist as a "Set": { groupA: null, groupB: null, ... }
-    const blacklistSet = {}
+    const oldBlacklistSet = {}
     for (const group of blacklist) {
-      blacklistSet[group] = null
+      oldBlacklistSet[group] = null
     }
+    const newBlacklistSet = Object.assign({}, oldBlacklistSet)
 
     // Rewrite every value=>fromGroup to be value=>toGroup
     for (const oldValue in renames) {
       const oldGroup = renames[oldValue]
-      if (oldGroup === fromGroup) {
+      if (oldGroup in groupMap) {
+        const toGroup = groupMap[oldGroup]
         newRenames[oldValue] = toGroup
 
         // Rename a blacklist entry if we need to
-        if (oldGroup in blacklistSet) {
-          delete blacklistSet[oldGroup]
-          blacklistSet[toGroup] = null
+        if (oldGroup in oldBlacklistSet) {
+          delete newBlacklistSet[oldGroup]
+          newBlacklistSet[toGroup] = null
         }
       }
     }
 
-    newRenames[fromGroup] = toGroup
+    // Now do the simple rewrite of fromGroup=>toGroup
+    for (const fromGroup in groupMap) {
+      if (!(fromGroup in newRenames)) {
+        const toGroup = groupMap[fromGroup]
+        newRenames[fromGroup] = toGroup
 
-    const newBlacklist = Object.keys(blacklistSet)
+        if (fromGroup in oldBlacklistSet) {
+          delete newBlacklistSet[fromGroup]
+          newBlacklistSet[toGroup] = null
+        }
+      }
+    }
+
+    const newBlacklist = Object.keys(newBlacklistSet)
 
     return new RefineSpec(newRenames, newBlacklist)
   }
-
-  massRename (newR
 
   resetGroup (group) {
     const { renames, blacklist } = this
@@ -402,12 +417,13 @@ export class Refine extends React.PureComponent {
     this.setState({ isRefineModalOpen: false })
   }
 
-  addRefineModalBins = (clusters) => {
-    console.log('Got clusters', clusters)
+  onRefineModalSubmit = (renames) => {
+    this.massRename(renames)
     this.closeRefineModal()
   }
 
   rename = buildSpecModifier(this, 'rename')
+  massRename = buildSpecModifier(this, 'massRename')
   setIsBlacklisted = buildSpecModifier(this, 'setIsBlacklisted')
   resetGroup = buildSpecModifier(this, 'resetGroup')
   resetValue = buildSpecModifier(this, 'resetValue')
@@ -441,14 +457,14 @@ export class Refine extends React.PureComponent {
     return (
       <React.Fragment>
         { !canCluster ? null : (
-          <div className="refine-modal">
-            <button name="cluster" onClick={this.openRefineModal}>Cluster</button>
-            <span className="instructions">Group similar values using algorithms</span>
+          <div className='refine-modal-prompt'>
+            <button className="action-button button-orange" name='cluster' onClick={this.openRefineModal}>Cluster</button>
+            <span className='instructions'>Group similar values using algorithms</span>
             { !isRefineModalOpen ? null : (
               <RefineModal
                 bucket={refineModalBucket}
                 onClose={this.closeRefineModal}
-                onSubmit={this.addRefineModalBins}
+                onSubmit={this.onRefineModalSubmit}
               />
             )}
           </div>
