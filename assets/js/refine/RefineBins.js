@@ -54,7 +54,7 @@ class RefineBin extends React.PureComponent {
             <div className="autosize-cluster-input">
               <span className="autosize-cluster-text">{name}</span>
               <textarea
-                name={`value=${index}`}
+                name={`value-${index}`}
                 placeholder='New Value'
                 value={name}
                 onChange={this.onChangeName}
