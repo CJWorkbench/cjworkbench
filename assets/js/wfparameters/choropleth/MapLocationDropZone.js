@@ -179,7 +179,7 @@ export default class MapLocationDropZone extends Component {
                     <div>
                         <div className='label-margin t-d-gray content-3'>Location property</div>
                         <select
-                            className={'custom-select module-parameter dropdown-selector'}
+                            className={'custom-select'}
                             name={'location'}
                             value={this.state.keyProperty}
                             disabled={this.props.isReadOnly}

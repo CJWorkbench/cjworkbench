@@ -81,7 +81,7 @@ export default class MapLocationPresets extends React.Component {
             <div>
                 <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
                 <select
-                    className={'custom-select module-parameter dropdown-selector'}
+                    className={'custom-select'}
                     name={this.props.name}
                     value={this.state.preset}
                     onChange={this.onPresetSelectionChange}

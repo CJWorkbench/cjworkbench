@@ -16,7 +16,7 @@ export default class MenuParam extends React.PureComponent {
 
     return (
         <select
-          className='custom-select module-parameter dropdown-selector'
+          className='custom-select'
           name={this.props.name}
           value={this.props.selectedIdx}
           onChange={this.onChange}

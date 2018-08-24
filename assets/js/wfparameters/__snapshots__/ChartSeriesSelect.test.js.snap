@@ -82,7 +82,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
         value="foo"
       >
         <select
-          className="custom-select module-parameter dropdown-selector"
+          className="custom-select"
           disabled={false}
           name="column"
           onChange={[Function]}

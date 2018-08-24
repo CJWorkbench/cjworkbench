@@ -116,7 +116,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
             value="A"
           >
             <select
-              className="custom-select module-parameter dropdown-selector"
+              className="custom-select"
               disabled={false}
               name="column"
               onChange={[Function]}
@@ -229,7 +229,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
             value="B"
           >
             <select
-              className="custom-select module-parameter dropdown-selector"
+              className="custom-select"
               disabled={false}
               name="column"
               onChange={[Function]}
