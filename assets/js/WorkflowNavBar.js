@@ -14,7 +14,6 @@ import Label from 'reactstrap/lib/Label'
 import Input from 'reactstrap/lib/Input'
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { setWorkflowPublicAction } from './workflow-reducer'
-import { Share } from 'react-twitter-widgets'
 import { connect } from 'react-redux'
 
 // Workflow page
@@ -39,7 +38,6 @@ export class WorkflowNavBar extends React.Component {
     this.toggleModals = this.toggleModals.bind(this);
     this.onLinkCopy = this.onLinkCopy.bind(this);
     this.onLinkLeave = this.onLinkLeave.bind(this);
-    this.logShare =  this.logShare.bind(this);
   }
 
   handleDuplicate() {
@@ -86,6 +84,14 @@ export class WorkflowNavBar extends React.Component {
     logUserEvent('Share workflow ' + type);
   }
 
+  onClickFacebook = () => {
+    this.logShare('Facebook')
+  }
+
+  onClickTwitter = () => {
+    this.logShare('Twitter')
+  }
+
   renderCopyLink() {
     var linkString = this.linkString(this.props.workflow.id);
 
@@ -107,10 +113,10 @@ export class WorkflowNavBar extends React.Component {
   }
 
   renderModals() {
-
-    var linkString = this.linkString(this.props.workflow.id);
-    var facebookUrl = 'https://www.facebook.com/sharer.php?u=' + linkString;
-    var copyLink = this.renderCopyLink();
+    const linkString = this.linkString(this.props.workflow.id)
+    const facebookUrl = `https://www.facebook.com/sharer.php?u=${encodeURIComponent(linkString)}`
+    const twitterUrl = `https://www.twitter.com/share?url=${encodeURIComponent(linkString)}&text=${encodeURIComponent('Check out this chart I made using @cjworkbench:')}`
+    const copyLink = this.renderCopyLink()
 
     var setPublicModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='setpublic-modal'>
@@ -145,19 +151,16 @@ export class WorkflowNavBar extends React.Component {
             </div>
           </FormGroup>
 
-          <div className='d-flex justify-content-start mt-4'>
-
-            <div className='twitter-button-container'>
-              <Share url={linkString}
-                options={{text: "Check out this chart I made using @cjworkbench:"}}
-              />
-            </div>
-
-            <a href={facebookUrl} onClick={() => this.logShare('Facebook')} className='button-icon facebook-share ml-4' target="_blank">
-                  <div className='icon-facebook'/>
+          <div className='share-links'>
+            <a href={twitterUrl} onClick={this.onClickTwitter} className='twitter-share' target='_blank'>
+              <i className='icon-twitter' />
               Share
             </a>
 
+            <a href={facebookUrl} onClick={this.onClickFacebook} className='facebook-share' target='_blank'>
+              <i className='icon-facebook' />
+              Share
+            </a>
           </div>
         </ModalBody>
 
