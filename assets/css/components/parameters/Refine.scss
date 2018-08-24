@@ -222,11 +222,21 @@
 
       .method-select {
         flex: 0 0 auto;
+        margin-right: 1.6rem;
       }
 
       .method-description {
         flex: 1 1 auto;
-        margin-left: 1.6rem;
+      }
+
+      .form-group {
+        margin-top: 1.6rem;
+        width: 100%;
+        display: flex;
+
+        label {
+          margin-right: 1.6rem;
+        }
       }
     }
   }
@@ -249,6 +259,11 @@
       padding-right: 1rem;
     }
 
+    td {
+      vertical-align: top;
+      padding: .5rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
+    }
+
     .value, .new-value {
       // Give these two _all_ the space
       width: 9999rem;
@@ -256,13 +271,16 @@
 
     tr.bin {
       border-top: 1px solid $table-border;
-      padding-top: .5rem;
+    }
+
+    tr.value td {
+      padding-top: 0;
     }
   }
 
   .autosize-cluster-input {
     width: 100%;
-    margin: .5rem;
+    margin: 0 .5rem;
     position: relative;
 
     span, textarea {

@@ -24,7 +24,7 @@ const Algorithms = [
     optionFields: (handlers, options) => (
       <FormGroup>
         <Label for="refine-clusterer-max-distance">Maximum distance</Label>
-        <Input id="refine-clusterer-max-distance" type="number" required name="maxDistance" value={options.maxDistance} min="1" placeholder="3" {...handlers} />
+        <Input id="refine-clusterer-max-distance" type="number" required name="maxDistance" size="2" value={options.maxDistance} min="1" max="999" placeholder="3" {...handlers} />
       </FormGroup>
     ),
     buildClusterer: (bucket, options) => clusterByKnn(bucket, levenshtein(), options.maxDistance)
@@ -131,7 +131,7 @@ export default class RefineClusterer extends React.PureComponent {
     }
 
     return (
-      <div className="method-options">
+      <div className="method-options form-inline">
         {algorithm.optionFields(handlers, clustererOptions)}
       </div>
     )
@@ -147,11 +147,13 @@ export default class RefineClusterer extends React.PureComponent {
           <div className="method-select">
             {this.renderSelect()}
           </div>
-          <div className="method-description">
-            {algorithm.description}
+          <div className="method-form">
+            <div className="method-description">
+              {algorithm.description}
+            </div>
+            {this.renderOptions()}
           </div>
         </div>
-        {this.renderOptions()}
       </div>
     )
   }
