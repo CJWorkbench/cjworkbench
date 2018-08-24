@@ -21,7 +21,7 @@ export default class ColumnParam extends React.PureComponent {
   render() {
     const { allColumns, prompt, value } = this.props
 
-    let className = 'custom-select module-parameter dropdown-selector'
+    let className = 'custom-select'
 
     const options = (allColumns || []).map(({ name }) => (
       <option value={name} key={name}>{name}</option>

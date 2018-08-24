@@ -79,7 +79,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      Data Versions 
+                      Data Versions
                     </h5>
                     <button
                       aria-label="Close"
@@ -278,7 +278,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       <h5
                         className="modal-title"
                       >
-                        Data Versions 
+                        Data Versions
                       </h5>
                       <button
                         aria-label="Close"

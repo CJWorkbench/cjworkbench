@@ -50,12 +50,13 @@
   .dropdown-menu {
     border:2px solid $brand-learn--medium;
   }
-  .custom-select:focus{
-    border: 2px solid $brand-learn;
+
+  .custom-select:focus {
+    border-color: $brand-learn;
     box-shadow: none;
   }
 
-  .module-parameter:focus{
+  .module-parameter:focus {
     border: 2px solid $brand-learn;
     box-shadow: none;
   }
@@ -202,24 +203,23 @@ textarea:focus, input:focus{
   overflow: hidden;
 }
 
-.dropdown-selector {
+.custom-select {
+  @extend .module-parameter;
+
+  background-size: 0px;
+  border: 2px solid transparent;
+  box-shadow: none;
   font-size: 1.3rem;
   color:#686768;
-}
 
-
-
-.custom-select {
-  background-size: 0px;
   &:focus{
-  border: 2px solid $brand-workspace;
-  box-shadow: none;
+    border-color: $brand-workspace;
   }
 }
 
 .chart-series-multi-select {
 
-  .input-group-prepend{
+  .input-group-prepend {
 
     button {
       z-index: 2;

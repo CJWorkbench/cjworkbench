@@ -22,7 +22,7 @@ exports[`ColumnParam matches snapshot 1`] = `
   value={null}
 >
   <select
-    className="custom-select module-parameter dropdown-selector"
+    className="custom-select"
     disabled={false}
     name="col"
     onChange={[Function]}

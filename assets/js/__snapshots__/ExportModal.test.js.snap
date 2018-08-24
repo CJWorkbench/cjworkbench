@@ -54,20 +54,24 @@ exports[`ExportModal should match snapshot 1`] = `
                   class="modal-content"
                 >
                   <div
-                    class="dialog-header modal-header d-flex align-items-center modal-header"
+                    class="modal-header"
                   >
                     <h5
                       class="modal-title"
                     >
-                      <div
-                        class="modal-title"
-                      >
-                        EXPORT DATA
-                      </div>
-                      <div
-                        class="icon-close"
-                      />
+                      EXPORT DATA
                     </h5>
+                    <button
+                      aria-label="Close"
+                      class="close"
+                      type="button"
+                    >
+                      <span
+                        aria-hidden="true"
+                      >
+                        ×
+                      </span>
+                    </button>
                   </div>
                   <div
                     class="modal-body"
@@ -234,27 +238,31 @@ exports[`ExportModal should match snapshot 1`] = `
                 >
                   <ModalHeader
                     charCode={215}
-                    className="dialog-header modal-header d-flex align-items-center"
                     closeAriaLabel="Close"
                     tag="h5"
+                    toggle={[MockFunction]}
                     wrapTag="div"
                   >
                     <div
-                      className="dialog-header modal-header d-flex align-items-center modal-header"
+                      className="modal-header"
                     >
                       <h5
                         className="modal-title"
                       >
-                        <div
-                          className="modal-title"
-                        >
-                          EXPORT DATA
-                        </div>
-                        <div
-                          className="icon-close"
-                          onClick={[MockFunction]}
-                        />
+                        EXPORT DATA
                       </h5>
+                      <button
+                        aria-label="Close"
+                        className="close"
+                        onClick={[MockFunction]}
+                        type="button"
+                      >
+                        <span
+                          aria-hidden="true"
+                        >
+                          ×
+                        </span>
+                      </button>
                     </div>
                   </ModalHeader>
                   <ModalBody

@@ -1,3 +1,16 @@
+.refine-modal-prompt {
+  margin-top: 1rem;
+  display: flex;
+
+  button {
+    margin-right: 1rem;
+  }
+
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: $medium-gray;
+}
+
 .refine-groups {
   max-height: 30rem;
   overflow-y: auto;
@@ -197,5 +210,110 @@
 
   dd + dt {
     border-top: 1px solid $Vlight-gray;
+  }
+}
+
+.refine-modal {
+  font-size: 1.3rem;
+
+  .refine-clusterer {
+    .method {
+      display: flex;
+
+      .method-select {
+        flex: 0 0 auto;
+        margin-right: 1.6rem;
+      }
+
+      .method-description {
+        flex: 1 1 auto;
+      }
+
+      .form-group {
+        margin-top: 1.6rem;
+        width: 100%;
+        display: flex;
+
+        label {
+          margin-right: 1.6rem;
+        }
+      }
+    }
+  }
+
+  .refine-bins {
+    margin-top: 2rem;
+
+    .no-bins {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      white-space: nowrap;
+      padding-right: 1rem;
+    }
+
+    td {
+      vertical-align: top;
+      padding: .5rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
+    }
+
+    .value, .new-value {
+      // Give these two _all_ the space
+      width: 9999rem;
+    }
+
+    tr.bin {
+      border-top: 1px solid $table-border;
+    }
+
+    tr.value td {
+      padding-top: 0;
+    }
+  }
+
+  .autosize-cluster-input {
+    width: 100%;
+    margin: 0 .5rem;
+    position: relative;
+
+    span, textarea {
+      // Exact same font for invisible text and visible textarea
+      font: inherit;
+      padding: 0;
+      border: 0;
+    }
+
+    span {
+      opacity: 0; // invisible text, sets the height of the div
+    }
+
+    textarea {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%; // grow to the same size as the div
+      resize: none;
+      overflow: hidden;
+    }
+  }
+
+  .modal-footer {
+    .actions {
+      display: flex;
+    }
+  }
+
+  .refine-status {
+    flex-grow: 1; // left-align in modal footer
+    text-transform: uppercase;
+    color: $brand-orange;
   }
 }

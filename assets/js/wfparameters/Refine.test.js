@@ -1,6 +1,6 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import LoadingRefine, { Refine } from './Refine'
+import LoadingRefine, { Refine, RefineSpec } from './Refine'
 import { mount } from 'enzyme'
 import { tick } from '../test-utils'
 
@@ -14,6 +14,76 @@ describe('Refine', () => {
       {...props}
     />
   )
+
+  describe('RefineSpec', () => {
+    // Most of this is untested because it's copy/pasted from our Python code
+    // (which has unit tests). So the only possible errors are transcription
+    // errors.
+
+    describe('massRename', () => {
+      function testMassRename (fromRenames, fromBlacklist, renames, toRenames, toBlacklist) {
+        const fromSpec = new RefineSpec(fromRenames, fromBlacklist)
+        const result = fromSpec.massRename(renames)
+        const expected = new RefineSpec(toRenames, toBlacklist)
+        expect(result.renames).toEqual(expected.renames)
+        expect(result.blacklist.sort()).toEqual(expected.blacklist.sort())
+      }
+
+      it('should work in the simplest case', () => {
+        testMassRename({}, [], { foo: 'bar' }, { foo: 'bar' }, [])
+      })
+
+      it('should rename an existing rename', () => {
+        testMassRename({ a: 'b' }, [], { b: 'c' }, { a: 'c', b: 'c' }, [])
+      })
+
+      it('should rename a group that does not have its fromGroup as a member', () => {
+        testMassRename(
+          // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
+          { a: 'b', b: 'c' }, [],
+          // Rename group 'b'
+          { b: 'd' },
+          // New groups: 'd' (contains original 'a') and 'c' (contains original 'b' and 'c')
+          { a: 'd', b: 'c' }, []
+        )
+      })
+
+      it('should rename a group that does have its fromGroup as a member', () => {
+        testMassRename(
+          // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
+          { a: 'b', b: 'c' }, [],
+          // Rename group 'c'
+          { c: 'd' },
+          // New groups: 'b' (contains original 'a') and 'd' (contains original 'b' and 'c')
+          { a: 'b', b: 'd', c: 'd' }, []
+        )
+      })
+
+      it('should blacklist a new group if an old group is blacklisted', () => {
+        testMassRename(
+          { a: 'b' }, [ 'b' ],
+          { b: 'c' },
+          { a: 'c', b: 'c' }, [ 'c' ]
+        )
+      })
+
+      it('should blacklist a new group if it was already blacklisted', () => {
+        testMassRename(
+          { a: 'b' }, [ 'c' ],
+          { b: 'c' },
+          { a: 'c', b: 'c' }, [ 'c' ]
+        )
+      })
+
+      it('should swap two groups', () => {
+        testMassRename(
+          { a: 'x', b: 'x', c: 'y', d: 'y' }, [ 'x' ],
+          { x: 'y', y: 'x' },
+          { a: 'y', b: 'y', x: 'y', c: 'x', d: 'x', y: 'x' }, [ 'y' ]
+        )
+      })
+    })
+  })
 
   it('should render value counts in order', () => {
     const w = wrapper({

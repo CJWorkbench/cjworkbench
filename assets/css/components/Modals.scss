@@ -1,19 +1,15 @@
 /* ---- Dialog Boxes ---- */
 
 .modal-dialog{
-  max-height:50rem;
-  width: 48rem;
+  max-height: 50rem;
   border: 0;
-  position:absolute;
-  margin:auto;
-  top: 0; left: 0; bottom: 0; right: 0;
 
   .modal-content{
     border:0;
-    border-radius:0px;
+    border-radius: 0;
 
     .modal-header {
-      border-radius: 0px;
+      border-radius: 0;
       height: 6rem;
       padding: 2rem;
       background-color: $modal-color;
@@ -23,68 +19,60 @@
       cursor: default;
 
       .modal-title {
-      @extend .title-3;
-      font-weight: bold;
-      color: $white;
-      opacity: .9;
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-
-        //Close modal button
-        .icon-close {
-          cursor: pointer;
-          font-size:1.5rem;
-          color:$white;
-          opacity: .6;
-          &:hover{opacity: 1}
-        }
+        @extend .title-3;
+        font-weight: bold;
+        color: white;
+        opacity: .9; // TODO why white+opacity? Let's pick the color we want.
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .close {
         cursor: pointer;
-        font-size:2.5rem;
-        color:$white;
-        opacity: .6;
-        &:hover{opacity: 1}
-
+        font-size: 2.5rem;
+        color: white;
+        opacity: .6; // TODO why white+opacity? Let's pick the color we want.
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
-    //Contains content of modal window
-    .modal-body{
-      padding:0px;
-      background-color: #FFF;
-      padding:2rem;
+    .modal-body {
+      padding: 0;
+      background-color: white;
+      padding: 2rem;
       border: 0;
-      max-height: 40rem;
+      max-height: 70vh;
       overflow: auto;
 
-      .info-2 {cursor: default;}
+      .info-2 {
+        cursor: default;
+      }
 
       /* from Export Data modal, in WfModuleContextMenu  */
-
-      .url-link{
+      .url-link {
         color: $brand-text--dark;
         @extend .content-2;
         width: 100%;
-        padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+        padding: 1.3rem 1.5rem;
         margin-bottom: 1rem;
         height: 3.5rem;
         border-radius: 3px 0 0 3px;
         border: 0px ;
-        background-color:$Vlight-gray;
-        &:focus{box-shadow: none}
+        background-color: $Vlight-gray;
+        &:focus {
+          box-shadow: none;
+        }
       }
 
       .info {
         @extend .info-2;
         color:$medium-gray;
-
       }
-      .code-snippet{
+
+      .code-snippet {
         margin-top: .5rem;
         background-color: $dark-accent--medium;
         border-radius: 3px;
@@ -98,7 +86,6 @@
           word-wrap:break-word;
         }
       }
-
     }
 
     //When a list is the content of the modal body
@@ -122,9 +109,8 @@
 
 
   /* ImportModuleFromGitHub */
-
   .import-module {
-    border-bottom: 1px solid rgba(255,255,255, .1);
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
   }
 
   .import-module-button {
@@ -138,7 +124,7 @@
 
   .import-module-button:hover {
     cursor: pointer;
-    color: #FFFFFF;
+    color: white;
     opacity: 1;
   }
 
@@ -148,7 +134,7 @@
 
   .import-github-error {
     height: 4rem;
-    color: #E24F4A;
+    color: $brand-red;
     margin-top:2rem;
     padding-left:0rem;
     font-size: 1.3rem;
@@ -164,10 +150,6 @@
     font-size: 1.3rem;
     @extend %font-nunito-extra-light;
     line-height: 1.9rem;
-  }
-
-  .test-button{
-    cursor: pointer;
   }
 
   .input-dropdown {
@@ -188,35 +170,34 @@
     color: $medium-gray;
   }
 
-
   .clipboard {
     @extend .info-1;
     margin-bottom:.5rem;
     text-transform: uppercase;
     cursor: pointer;
-    color:$brand-workspace;
+    color: $brand-workspace;
     &.copied {
-    color: $brand-orange;
+      color: $brand-orange;
     }
   }
 
   .facebook-share {
     height: 2rem;
-    width:6.5rem;
+    width: 6.5rem;
     background-color: #3c5b97;
-    color:#fff;
+    color: white;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-radius:3px;
+    border-radius: 3px;
     @extend %font-nunito-regular;
     font-size: 1.2rem;
     padding: 0 0.5rem;
   }
 
-  .facebook-share:hover{
-    background-color:#2f4e87;
-    color:#fff;
+  .facebook-share:hover {
+    background-color: #2f4e87;
+    color: #fff;
     text-decoration: none;
   }
 }

@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^4.1.3",
+    "clustring": "0.0.9",
     "debounce": "^1.2.0",
     "fine-uploader": "^5.16.2",
     "js-cookie": "^2.1.3",

@@ -195,7 +195,7 @@ export class DataVersionModal extends React.PureComponent {
 
     return (
       <Modal className="data-versions-modal" isOpen={true} fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}>Data Versions </ModalHeader>
+        <ModalHeader toggle={onClose}>Data Versions</ModalHeader>
         <ModalBody>
           <form onSubmit={this.onSubmit} onCancel={this.onClose}>
             {/* <p className="introduction">These are the versions of “{fetchWfModuleName}” that we have stored:</p> */}

@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import RefineModal from '../refine/RefineModal'
 
 const NumberFormatter = new Intl.NumberFormat()
 
-class RefineSpec {
+export class RefineSpec {
   constructor (renames, blacklist) {
     this.renames = renames
     this.blacklist = blacklist
@@ -66,32 +67,49 @@ class RefineSpec {
   }
 
   rename (fromGroup, toGroup) {
+    return this.massRename({ [fromGroup]: toGroup })
+  }
+
+  massRename (groupMap) {
     const { renames, blacklist } = this
     const newRenames = Object.assign({}, renames)
 
     // Start with blacklist as a "Set": { groupA: null, groupB: null, ... }
-    const blacklistSet = {}
+    const oldBlacklistSet = {}
     for (const group of blacklist) {
-      blacklistSet[group] = null
+      oldBlacklistSet[group] = null
     }
+    const newBlacklistSet = Object.assign({}, oldBlacklistSet)
 
     // Rewrite every value=>fromGroup to be value=>toGroup
     for (const oldValue in renames) {
       const oldGroup = renames[oldValue]
-      if (oldGroup === fromGroup) {
+      if (oldGroup in groupMap) {
+        const toGroup = groupMap[oldGroup]
         newRenames[oldValue] = toGroup
 
         // Rename a blacklist entry if we need to
-        if (oldGroup in blacklistSet) {
-          delete blacklistSet[oldGroup]
-          blacklistSet[toGroup] = null
+        if (oldGroup in oldBlacklistSet) {
+          delete newBlacklistSet[oldGroup]
+          newBlacklistSet[toGroup] = null
         }
       }
     }
 
-    newRenames[fromGroup] = toGroup
+    // Now do the simple rewrite of fromGroup=>toGroup
+    for (const fromGroup in groupMap) {
+      if (!(fromGroup in newRenames)) {
+        const toGroup = groupMap[fromGroup]
+        newRenames[fromGroup] = toGroup
 
-    const newBlacklist = Object.keys(blacklistSet)
+        if (fromGroup in oldBlacklistSet) {
+          delete newBlacklistSet[fromGroup]
+          newBlacklistSet[toGroup] = null
+        }
+      }
+    }
+
+    const newBlacklist = Object.keys(newBlacklistSet)
 
     return new RefineSpec(newRenames, newBlacklist)
   }
@@ -368,6 +386,10 @@ export class Refine extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // fn(newValue) => undefined
   }
 
+  state = {
+    isRefineModalOpen: false
+  }
+
   get parsedSpec () {
     return RefineSpec.parse(this.props.value)
   }
@@ -387,14 +409,31 @@ export class Refine extends React.PureComponent {
     return this.parsedSpec.buildGroupsForValueCounts(this.props.valueCounts)
   }
 
+  openRefineModal = () => {
+    this.setState({ isRefineModalOpen: true })
+  }
+
+  closeRefineModal = () => {
+    this.setState({ isRefineModalOpen: false })
+  }
+
+  onRefineModalSubmit = (renames) => {
+    this.massRename(renames)
+    this.closeRefineModal()
+  }
+
   rename = buildSpecModifier(this, 'rename')
+  massRename = buildSpecModifier(this, 'massRename')
   setIsBlacklisted = buildSpecModifier(this, 'setIsBlacklisted')
   resetGroup = buildSpecModifier(this, 'resetGroup')
   resetValue = buildSpecModifier(this, 'resetValue')
 
   render () {
     const { valueCounts } = this.props
-    const groupComponents = this.groups.map(group => (
+    const { isRefineModalOpen } = this.state
+    const groups = this.groups
+
+    const groupComponents = groups.map(group => (
       <RefineGroup
         key={group.name}
         valueCounts={valueCounts}
@@ -406,12 +445,36 @@ export class Refine extends React.PureComponent {
       />
     ))
 
+    const canCluster = isRefineModalOpen || groups.length > 1
+    let refineModalBucket = null
+    if (isRefineModalOpen) {
+      refineModalBucket = {}
+      for (const group of groups) {
+        refineModalBucket[group.name] = group.count
+      }
+    }
+
     return (
-      <div className="refine-groups">
-        <dl>
-          {groupComponents}
-        </dl>
-      </div>
+      <React.Fragment>
+        { !canCluster ? null : (
+          <div className='refine-modal-prompt'>
+            <button className="action-button button-orange" name='cluster' onClick={this.openRefineModal}>Cluster</button>
+            <span className='instructions'>Group similar values using algorithms</span>
+            { !isRefineModalOpen ? null : (
+              <RefineModal
+                bucket={refineModalBucket}
+                onClose={this.closeRefineModal}
+                onSubmit={this.onRefineModalSubmit}
+              />
+            )}
+          </div>
+        )}
+        <div className="refine-groups">
+          <dl>
+            {groupComponents}
+          </dl>
+        </div>
+      </React.Fragment>
     )
   }
 }
