@@ -80,7 +80,7 @@
         padding: .5rem;
         font-size: 1.3rem;
         background: transparent;
-        color:$brand-text--dark;
+        color: $brand-text--dark;
         &:hover {
           background-color: $dark-accent--soft;
         }
@@ -286,12 +286,13 @@
     span, textarea {
       // Exact same font for invisible text and visible textarea
       font: inherit;
+      word-break: break-all;
       padding: 0;
       border: 0;
     }
 
     span {
-      opacity: 0; // invisible text, sets the height of the div
+      visibility: hidden; // invisible text, sets the height of the div
     }
 
     textarea {
