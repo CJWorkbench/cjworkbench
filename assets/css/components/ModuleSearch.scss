@@ -84,6 +84,10 @@
       padding: 0;
       text-shadow: none;
       color: $white;
+      &:hover {
+        color: white;
+        opacity: 1;
+      }
     }
   }
 
