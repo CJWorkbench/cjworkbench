@@ -366,5 +366,27 @@
 // [x][column 1] (x is button for open color picker)
 // [ ][column 2] (should appear _underneath_ open color picker
 .input-group-prepend button.color-picker {
+  border:none;
   z-index: auto;
+  height:100%!important;
+}
+
+//color picker palette
+.pop-over {
+  position: absolute;
+  margin-top: .5rem;
+
+  .twitter-picker  {
+    border: 2px solid $brand-workspace!important;
+    border-radius: 5px!important;
+    box-shadow: $menu-shadow!important;
+    &::before {
+      border: none;
+    }
+    &::after {
+      border: 2px solid transparent;
+      border-right-color: $brand-workspace!important;
+      border-top-color: $brand-workspace!important;
+    }
+  }
 }
