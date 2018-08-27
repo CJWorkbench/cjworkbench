@@ -42,6 +42,10 @@
 
   .new-workflow-button {
     margin-top: 2rem;
+    &:active {
+      background-color: $light-accent--Vstrong;
+      color:$brand-workspace;
+    }
   }
 
   .workflows-list--title {
