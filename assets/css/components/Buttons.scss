@@ -1,7 +1,6 @@
 
 
 
-
 //getting rid of Blue Focus
 button:focus { outline:0 !important; }
 
@@ -174,14 +173,17 @@ button:focus { outline:0 !important; }
   margin-left: 1rem;
 }
 
+.action-button .busy {
+  color:red;
+}
+
 .action-button .spinner {
   $background-color: white; // default -- we'll override it
-  $spinner-color: $brand-workspace;
+  $spinner-color: $brand-orange;
+  position: absolute!important;
 
   // overlap into the border's margin. There's tons of room because we use
   // rounded buttons and the spinner is also round
-  left: -.5rem;
-
   // https://projects.lukehaas.me/css-loaders/
   width: 1.5rem;
   height: 1.5rem;
@@ -210,7 +212,7 @@ button:focus { outline:0 !important; }
   }
 
   &::after {
-    background: $background-color;
+    background: $brand-orange--light;
     width: 75%;
     height: 75%;
     border-radius: 50%;
@@ -223,6 +225,8 @@ button:focus { outline:0 !important; }
     right: 0;
   }
 }
+
+
 @-webkit-keyframes spinner-in-button {
   0% {
     -webkit-transform: rotate(0deg);

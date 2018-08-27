@@ -1,6 +1,21 @@
 .wf-module {
   position: relative;
 
+  .wf-parameter {
+    button[name=fetch] {
+      @extend .action-button;
+      @extend .button-blue;
+      &[disabled] {
+        @extend .button-orange;
+        color:transparent;
+        background-color: $brand-orange--light;
+      }
+    &:hover .spinner::after {
+      background-color: $brand-orange--light;
+      }
+    }
+  }
+
   &::after {
     content: '';
     // vertical bar between modules to show the vertical flow of data.
@@ -18,7 +33,7 @@
   .wf-card {
     width: $module-width;
     margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
-    background-color: #f8f8f8;
+    background-color: $module-background;
     position: relative;
     z-index: 1;
     &:hover {background:#fcfcfc;}
