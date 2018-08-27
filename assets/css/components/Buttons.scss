@@ -150,8 +150,24 @@ button:focus { outline:0 !important; }
 .action-button { @extend %action-button; }
 
 .action-button:disabled {
-  color: $medium-gray;
-  border-color: $medium-gray;
+  color: $light-gray;
+  border-color: $light-gray;
+  &:hover{
+    background-color: transparent;
+    cursor: default;
+  }
+}
+
+// In lesson left pannel:
+.lesson {
+  .action-button:disabled {
+    color: $light-accent--Vstrong;
+    border-color: $light-accent--Vstrong;
+    &:hover{
+      background-color: transparent;
+      cursor: default;
+    }
+  }
 }
 
 .action-button + .action-button {
