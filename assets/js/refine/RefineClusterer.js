@@ -27,7 +27,7 @@ const Algorithms = [
         <Input id="refine-clusterer-max-distance" type="number" required name="maxDistance" size="2" value={options.maxDistance} min="1" max="999" placeholder="3" {...handlers} />
       </FormGroup>
     ),
-    buildClusterer: (bucket, options) => clusterByKnn(bucket, levenshtein(), options.maxDistance)
+    buildClusterer: (bucket, options) => clusterByKnn(bucket, levenshtein(options.maxDistance), options.maxDistance)
   }
 ]
 
