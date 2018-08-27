@@ -226,29 +226,28 @@ export function moveModuleAction (oldIndex, newIndex) {
     const workflow = getState().workflow
 
     const newIds = workflow.wf_modules.slice()
-    newIds.splice(newIndex, 0, newOrder.splice(oldIndex, 1)[0])
+    newIds.splice(newIndex, 0, ...newIds.splice(oldIndex, 1))
     // idToOrder: { '2': 1, '13': 2, '12': 0 }
-    const idToOrder = newIds.map((id, order) => ({ id, order }))
+    const idToOrder = newIds.map((id, order) => ({ id: Number(id), order }))
 
     return dispatch({
       type: MOVE_MODULE,
       payload: {
         promise: api.reorderWfModules(workflow.id, idToOrder),
-        data: { oldIndex, newIndex }
+        data: { newIds }
       }
     })
   }
 }
 registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
-  let { oldIndex, newIndex } = action.payload
-  if (oldIndex < newIndex) {
-    newIndex -= 1
-  }
-  return update(state, {
+  let { newIds } = action.payload
+  return {
+    ...state,
     workflow: {
-      wf_modules: { $reorder: [ oldIndex, newIndex ] }
+      ...state.workflow,
+      wf_modules: newIds
     }
-  })
+  }
 })
 
 // ADD_MODULE

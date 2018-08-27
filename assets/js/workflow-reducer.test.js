@@ -70,6 +70,7 @@ describe('Reducer actions', () => {
     WorkbenchAPI.updateWfModule.mockReset()
     WorkbenchAPI.onParamChanged.mockReset()
     WorkbenchAPI.markDataVersionsRead.mockReset()
+    WorkbenchAPI.reorderWfModules.mockReset()
   })
 
   it('Returns the state if we feed garbage to the reducer', () => {
@@ -241,6 +242,20 @@ describe('Reducer actions', () => {
 
     expect(WorkbenchAPI.updateWfModule).not.toHaveBeenCalled()
     expect(store.getState()).toEqual(testState)
+  })
+
+  it('reorders modules', async () => {
+    const store = mockStore(testState)
+    WorkbenchAPI.reorderWfModules.mockImplementation(() => Promise.resolve(null))
+    await store.dispatch(wfr.moveModuleAction(2, 0))
+
+    // Change happens synchronously. No need to even await the promise :)
+    expect(WorkbenchAPI.reorderWfModules).toHaveBeenCalledWith(999, [
+      { id: 30, order: 0 },
+      { id: 10, order: 1 },
+      { id: 20, order: 2 }
+    ])
+    expect(store.getState().workflow.wf_modules).toEqual([ 30, 10, 20 ])
   })
 
   it('applies delta to a Workflow', () => {
