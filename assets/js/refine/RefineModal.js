@@ -79,6 +79,7 @@ export default class RefineModal extends React.PureComponent {
               >Cancel</button>
             <button
               name="submit"
+              type="submit"
               className="action-button button-blue"
               onClick={this.submit}
               disabled={!canSubmit}

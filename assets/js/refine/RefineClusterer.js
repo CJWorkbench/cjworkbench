@@ -57,7 +57,14 @@ export default class RefineClusterer extends React.PureComponent {
     reportProgressUntilDoneOrCanceled()
 
     clusterer.cluster()
-      .then(this.props.onComplete)
+      .then(bins => {
+        if (clusterer.canceled) {
+          // the only way clusterer is canceled is if another is running --
+          // meaning we don't want to hear from this one. Ignore the result.
+          return
+        }
+        this.props.onComplete(bins)
+      })
       .catch(err => {
         // only error is "canceled". Ignore it.
       })
