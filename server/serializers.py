@@ -56,7 +56,7 @@ class ModuleSerializer(serializers.ModelSerializer):
         model = Module
 
         fields = ('id', 'id_name', 'name', 'category', 'description', 'link',
-                  'author', 'icon', 'loads_data', 'help_url')
+                  'author', 'icon', 'loads_data', 'help_url', 'has_zen_mode')
 
 
 class ModuleVersionSerializer(serializers.ModelSerializer):

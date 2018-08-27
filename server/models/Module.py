@@ -36,6 +36,9 @@ class Module(models.Model):
     # Does this model bring in external data?
     loads_data = models.BooleanField('loads_data', default=False)
 
+    # Can the user zoom to just this module for distraction-free editing?
+    has_zen_mode = models.BooleanField('has_zen_mode', default=False)
+
     # URL for the module's documentation, defaults to our knowledge base root
     help_url = models.CharField('help_url', max_length=200, default="")
 

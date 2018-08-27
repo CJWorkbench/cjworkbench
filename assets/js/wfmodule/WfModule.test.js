@@ -127,7 +127,7 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('has an "enter zen mode" button', () => {
-    const aModule = { id_name: 'pythoncode', name: 'Python Code' }
+    const aModule = { id_name: 'pythoncode', name: 'Python Code', has_zen_mode: true }
     const wrapper = shallow(<WfModule {...props} module={aModule} />)
     let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(false)

@@ -4,6 +4,7 @@
   "category": "Clean",
   "icon": "filter",
   "description": "Histogram-based data cleaning",
+  "has_zen_mode": true,
   "help_url":"modules/clean/refine",
   "parameters": [
     {

@@ -232,7 +232,7 @@ export class WfModule extends React.PureComponent {
 
   renderZenModeButton () {
     const { wfModule, module, isZenMode } = this.props
-    const zenModeAllowed = module.id_name === 'pythoncode'
+    const zenModeAllowed = module.has_zen_mode
 
     if (!zenModeAllowed) return null
 
