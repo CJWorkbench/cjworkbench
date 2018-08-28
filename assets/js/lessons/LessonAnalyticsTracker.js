@@ -26,29 +26,29 @@ export default class LessonAnalyticsTracker extends React.PureComponent {
   track() {
     if (this.state.maxSectionIndex === null) return // we're already done
 
-    const slug = this.props.slug
+    const { slug, activeSectionIndex, activeStepIndex } = this.props
     const send = this.props.trackMaxProgress
 
-    if (this.props.activeSectionIndex === null) {
+    if (activeSectionIndex === null) {
       this.setState({
         maxSectionIndex: null,
         maxStepIndex: null,
       })
-      send(slug, null, null)
-    } else if (this.props.activeSectionIndex > this.state.maxSectionIndex) {
+      send(slug, null, null, null)
+    } else if (activeSectionIndex > this.state.maxSectionIndex) {
       this.setState({
-        maxSectionIndex: this.props.activeSectionIndex,
-        maxStepIndex: this.props.activeStepIndex,
+        maxSectionIndex: activeSectionIndex,
+        maxStepIndex: activeStepIndex,
       })
-      const sectionTitle = this.props.sections[this.props.activeSectionIndex].title
-      send(slug, sectionTitle, this.props.activeStepIndex)
-    } else if (this.props.activeSectionIndex === this.state.maxSectionIndex) {
-      if (this.props.activeStepIndex > this.state.maxStepIndex) {
+      const sectionTitle = this.props.sections[activeSectionIndex].title
+      send(slug, activeSectionIndex, sectionTitle, activeStepIndex)
+    } else if (activeSectionIndex === this.state.maxSectionIndex) {
+      if (activeStepIndex > this.state.maxStepIndex) {
         this.setState({
-          maxStepIndex: this.props.activeStepIndex,
+          maxStepIndex: activeStepIndex,
         })
-        const sectionTitle = this.props.sections[this.props.activeSectionIndex].title
-        send(slug, sectionTitle, this.props.activeStepIndex)
+        const sectionTitle = this.props.sections[activeSectionIndex].title
+        send(slug, activeSectionIndex, sectionTitle, activeStepIndex)
       }
     }
   }

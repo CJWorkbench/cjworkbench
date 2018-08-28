@@ -31,13 +31,13 @@ describe('LessonAnalyticsTracker', () => {
 
   it('sends 0,0 on first load', () => {
     wrapper()
-    expect(send).toHaveBeenCalledWith('a-lesson', 'Section One', 0)
+    expect(send).toHaveBeenCalledWith('a-lesson', 0, 'Section One', 0)
   })
 
   it('sends 0,1 on increment step', () => {
     const w = wrapper()
     w.setProps({ activeStepIndex: 1 })
-    expect(send).toHaveBeenCalledWith('a-lesson', 'Section One', 1)
+    expect(send).toHaveBeenCalledWith('a-lesson', 0, 'Section One', 1)
   })
 
   it('does not re-send 0,0', () => {
@@ -51,7 +51,7 @@ describe('LessonAnalyticsTracker', () => {
     const w = wrapper()
     w.setProps({ activeStepIndex: 2 })
     w.setProps({ activeSectionIndex: 1, activeStepIndex: 0 })
-    expect(send).toHaveBeenCalledWith('a-lesson', 'Section Two', 0)
+    expect(send).toHaveBeenCalledWith('a-lesson', 1, 'Section Two', 0)
   })
 
   it('never decrements section', () => {
@@ -64,7 +64,7 @@ describe('LessonAnalyticsTracker', () => {
   it('sends null on done', () => {
     const w = wrapper()
     w.setProps({ activeSectionIndex: null, activeStepIndex: null })
-    expect(send).toHaveBeenCalledWith('a-lesson', null, null)
+    expect(send).toHaveBeenCalledWith('a-lesson', null, null, null)
   })
 
   it('never sends after nulls', () => {

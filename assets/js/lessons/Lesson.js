@@ -21,12 +21,18 @@ export class Lesson extends React.Component {
     }
   }
 
-  trackMaxProgress = (slug, sectionTitle, stepIndex) => {
+  trackMaxProgress = (slug, sectionIndex, sectionTitle, stepIndex) => {
     const log = this.props.logUserEvent
-    if (sectionTitle === null) {
-      log(`Lesson ${slug}: done`)
+    if (sectionIndex === null) {
+      log(`Lesson ${slug}: done`, {
+        help: 'The user has completed this Lesson'
+      })
     } else {
-      log(`Lesson ${slug}: at ${sectionTitle} step ${stepIndex+1}`)
+      log(`Lesson ${slug}: section ${sectionIndex + 1}`, {
+        help: 'The user has opened this Lesson section and not completed it',
+        sectionTitle,
+        atStep: stepIndex + 1
+      })
     }
   }
 
