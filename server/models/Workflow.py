@@ -40,6 +40,7 @@ class Workflow(models.Model):
 
     public = models.BooleanField(default=False)
     example = models.BooleanField(default=False)    # if set, will be duplicated for new users
+    in_all_users_workflow_lists = models.BooleanField(default=False)
     lesson_slug = models.CharField('lesson_slug', max_length=100,
                                    null=True, blank=True)
 

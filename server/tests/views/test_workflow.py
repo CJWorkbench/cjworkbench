@@ -98,14 +98,25 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.data[1]['name'], 'Workflow 1')
         self.assertEqual(response.data[1]['id'], self.workflow1.id)
 
-    def test_workflow_list_include_example(self):
+    def test_workflow_list_include_example_in_all_users_workflow_lists(self):
         self.other_workflow_public.example = True
+        self.other_workflow_public.in_all_users_workflow_lists = True
         self.other_workflow_public.save()
 
         request = self._build_get('/api/workflows/', user=self.user)
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
+
+    def test_workflow_list_exclude_example_not_in_all_users_lists(self):
+        self.other_workflow_public.example = True
+        self.other_workflow_public.in_all_users_workflow_lists = False
+        self.other_workflow_public.save()
+
+        request = self._build_get('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
     def test_workflow_list_exclude_lesson(self):
         self.workflow1.lesson_slug = 'some-lesson'

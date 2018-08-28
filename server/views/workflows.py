@@ -82,7 +82,8 @@ def workflow_list(request, format=None):
     """List all workflows or create a new workflow."""
     if request.method == 'GET':
         workflows = Workflow.objects \
-                .filter(Q(owner=request.user) | Q(example=True)) \
+                .filter(Q(owner=request.user)
+                        | Q(in_all_users_workflow_lists=True)) \
                 .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
 
         # turn queryset into list so we can sort it ourselves by reverse chron
