@@ -30,9 +30,21 @@ export function idxToLetter(idx) {
 
 // Log to Intercom, if installed
 export function logUserEvent(name, metadata) {
-  if (window.APP_ID) {
-    window.Intercom("trackEvent", name, metadata);
-  }
+  if (!window.APP_ID) return
+
+  // If we're in a lesson, drop the event. (Use logUserEventEvenInLesson
+  // to override.)
+  //
+  // https://www.pivotaltracker.com/story/show/160041803
+  if (window.initState && window.initState.lessonData) return
+
+  window.Intercom('trackEvent', name, metadata)
+}
+
+export function logUserEventEvenInLesson(name, metadata) {
+  if (!window.APP_ID) return
+
+  window.Intercom('trackEvent', name, metadata)
 }
 
 export function timeDifference (start, end) {

@@ -6,7 +6,7 @@ import OutputPane from './OutputPane'
 import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
-import { logUserEvent } from './utils'
+import { logUserEventEvenInLesson } from './utils'
 import { connect } from 'react-redux'
 
 export function MaybeNotYourWorkflow(props) {
@@ -96,7 +96,7 @@ export class Workflow extends React.Component {
 
     return (
         <div className={className}>
-          { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEvent} /> : '' }
+          { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEventEvenInLesson} /> : '' }
 
           <div className="workflow-container">
             <WorkflowNavBar
