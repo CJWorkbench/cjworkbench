@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils.translation import gettext as _
 from django.template.response import TemplateResponse
@@ -18,6 +17,15 @@ def _get_lesson_or_404(slug):
 
 
 def _ensure_workflow(request, lesson):
+    if request.user.is_authenticated:
+        owner = request.user
+        session_key = None
+    else:
+        owner = None
+        if not request.session.session_key:
+            request.session.create()
+        session_key = request.session.session_key
+
     return Workflow.objects.get_or_create(
         defaults={
             'name': _('Lesson: %(lesson_title)s') % {
@@ -26,7 +34,8 @@ def _ensure_workflow(request, lesson):
             'public': False,
             'last_delta': None,
         },
-        owner=request.user,
+        owner=owner,
+        anonymous_owner_session_key=session_key,
         lesson_slug=lesson.slug
     )[0]
 
@@ -41,7 +50,7 @@ def _render_get_lesson_detail(request, lesson):
                             {'initState': init_state})
 
 
-@login_required
+# Even allowed for logged-out users
 def render_lesson_detail(request, slug):
     lesson = _get_lesson_or_404(slug)
 
@@ -54,12 +63,16 @@ def render_lesson_detail(request, slug):
         return _render_get_lesson_detail(request, lesson)
 
 
-@login_required
+# Even allowed for logged-out users
 def render_lesson_list(request):
     lessons = Lesson.objects.all()
+    logged_in_user = None
+    if request.user and request.user.is_authenticated:
+        logged_in_user = UserSerializer(request.user).data
+
     return TemplateResponse(request, 'lessons.html', {
         'initState': json.dumps({
-            'loggedInUser': UserSerializer(request.user).data,
+            'loggedInUser': logged_in_user,
         }),
         'lessons': lessons,
     })

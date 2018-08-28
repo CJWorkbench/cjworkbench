@@ -1,9 +1,7 @@
 # Utilities for integration tests
-import subprocess
 import unittest
 import email.message
 from typing import Optional
-import os
 import re
 
 from integrationtests.browser import Browser
