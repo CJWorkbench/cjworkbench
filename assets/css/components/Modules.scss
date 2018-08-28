@@ -355,7 +355,7 @@
   }
 }
 
-.wf-module--placeholder{
+.wf-module--placeholder {
   width: 26rem;
   display: flex;
   padding-left:1.5rem;
@@ -369,8 +369,8 @@
 
 /*** Module Parameters spacing ***/
 
-.label-margin{
-  color:#b2b2b2;
+.label-margin {
+  color:$labels;
 }
 
 .wf-card .label{

@@ -2,7 +2,7 @@
   "name": "Refine",
   "id_name": "refine",
   "category": "Clean",
-  "icon": "filter",
+  "icon": "clean",
   "description": "Histogram-based data cleaning",
   "has_zen_mode": true,
   "help_url":"modules/clean/refine",

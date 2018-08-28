@@ -1,14 +1,27 @@
 .refine-modal-prompt {
   margin-top: 1rem;
   display: flex;
+  align-items: center;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: $medium-gray;
+  margin-bottom: 1.5rem;
+
+  //launches the clustering modal
+  .cluster {
+    @extend .action-button;
+    @extend .button-orange;
+    margin-top: .5rem;
+  }
+
+  .instructions {
+    margin-top: .5rem;
+    width:15rem;
+  }
 
   button {
     margin-right: 1rem;
   }
-
-  font-size: 1.3rem;
-  line-height: 1.4;
-  color: $medium-gray;
 }
 
 .refine-groups {
@@ -186,7 +199,7 @@
           text-align: right;
         }
 
-        // button 
+        // button
         .icon-close {
           font-size: 1.2rem;
           line-height: 1.4em;
@@ -223,10 +236,35 @@
       .method-select {
         flex: 0 0 auto;
         margin-right: 1.6rem;
+
+        .custom-select {
+          width: 13rem;
+        }
       }
 
-      .method-description {
-        flex: 1 1 auto;
+      .method-form {
+        padding:0 2rem;
+
+        .method-description {
+          @extend .content-3;
+          flex: 1 1 auto;
+          color:$labels;
+        }
+
+        input[id=refine-clusterer-max-distance] {
+          background-color: $Vlight-gray;
+          font-size: 1.4rem;
+          height: 3.5rem;
+          border: 2px solid $Vlight-gray;
+
+          &:hover {
+            border: 2px solid $dark-accent--medium;
+          }
+          &:focus {
+            outline: none;
+            border:2px solid $brand-orange;
+          }
+        }
       }
 
       .form-group {
@@ -245,8 +283,11 @@
     margin-top: 2rem;
 
     .no-bins {
-      text-align: center;
+      @extend .title-3;
+      font-size: 1.5rem;
       margin-bottom: 2rem;
+      color:$brand-orange;
+      margin-left: 16.5rem;
     }
 
     table {
@@ -255,8 +296,10 @@
     }
 
     th {
+      @extend .title-3;
+      font-size: 1.5rem;
       white-space: nowrap;
-      padding-right: 1rem;
+      padding-right: 4.2rem;
     }
 
     td {

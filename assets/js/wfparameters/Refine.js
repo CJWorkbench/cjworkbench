@@ -458,8 +458,8 @@ export class Refine extends React.PureComponent {
       <React.Fragment>
         { !canCluster ? null : (
           <div className='refine-modal-prompt'>
-            <button className="action-button button-orange" name='cluster' onClick={this.openRefineModal}>Cluster</button>
-            <span className='instructions'>Group similar values using algorithms</span>
+            <button className="cluster" name='cluster' onClick={this.openRefineModal}>Cluster</button>
+            <span className='instructions'>Group alternative values using algorithms</span>
             { !isRefineModalOpen ? null : (
               <RefineModal
                 bucket={refineModalBucket}
