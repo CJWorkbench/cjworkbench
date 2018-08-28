@@ -28,7 +28,6 @@ describe('WfModule, not read-only mode', () => {
     selected: true,
     api: mockApi,
     index: 2,
-    focusModule: jest.fn(),
     onDragStart: jest.fn(),
     onDragEnd: jest.fn(),
     isLessonHighlight: false,
@@ -82,16 +81,6 @@ describe('WfModule, not read-only mode', () => {
   it('matches snapshot', () => {
     const wrapper = shallow(<WfModule {...props} />)
     expect(wrapper).toMatchSnapshot()
-  })
-
-  it('auto-focuses if selected', () => {
-    shallow(<WfModule {...props} selected />)
-    expect(props.focusModule).toHaveBeenCalled()
-  })
-
-  it('does not auto-focus if not selected', () => {
-    shallow(<WfModule {...props} selected={false} />)
-    expect(props.focusModule).not.toHaveBeenCalled()
   })
 
   it('is has .status-busy', () => {

@@ -98,72 +98,39 @@ export function escapeHtml(str) {
   return str;
 }
 
-export function scrollTo(scrollTo, scrollDuration, scroller, offset) {
+/**
+ * Scroll `containerEl` vertically by the smallest amount possible to put
+ * `el` in view.
+ *
+ * Set the container CSS `scroll-behavior: smooth` to make this transition
+ * look nice.
+ *
+ * @param el Element we want to focus
+ * @param containerEl Element we'll set scrollTop on so it contains el
+ * @param marginTop Minimum number of pixels between containerEl.top and el.top
+ * @param marginBottom Minimum number of pixels between containerEl.bottom and el.bottom
+ */
+export function scrollTo(el, containerEl, marginTop, marginBottom) {
+  if (marginTop === undefined) marginTop = 10
+  if (marginBottom === undefined) marginBottom = 10
 
-// Smooth scroll-to inspired by:
-// https://gist.github.com/joshcanhelp/a3a669df80898d4097a1e2c01dea52c1
-  let scrollToObj;
+  const elRect = el.getBoundingClientRect()
+  const containerRect = containerEl.getBoundingClientRect()
 
-  if (typeof scroller === 'undefined') {
-	  scroller = window;
+  // Calculate dy: how much do we need to add to containerEl.scrollTop to
+  // make el go where we want it to go?
+  let dy = 0 // Prefer not to scroll
+  if (elRect.bottom + marginBottom > containerRect.bottom) {
+    // Scroll down if we need to.
+    // We do this before up because some els might be taller than containerEl,
+    // and in that case we want scroll-up to override scroll-down (because the
+    // top of el is more important than the bottom).
+    dy += (elRect.bottom + marginBottom - containerRect.bottom)
+  }
+  if (dy + elRect.top - marginTop < containerRect.top) {
+    // Scroll up if we need to.
+    dy -= (containerRect.top - (elRect.top - marginTop))
   }
 
-	if (scrollTo && typeof scrollTo.getBoundingClientRect === 'function') {
-
-		// Assuming this is a selector we can use to find an element
-		scrollToObj = scrollTo;
-		scrollTo = (scroller.scrollTop + (scrollToObj.getBoundingClientRect().y - scroller.getBoundingClientRect().y));
-
-	} else if (typeof scrollTo !== 'number') {
-
-		// If it's nothing above and not an integer, we assume top of the window
-		scrollTo = 0;
-	}
-
-	// Set this a bit higher
-
-	var anchorHeightAdjust = offset || 0;
-
-  scrollTo = scrollTo - anchorHeightAdjust;
-
-	//
-	// Set a default for the duration
-	//
-
-	if ( typeof scrollDuration !== 'number' || scrollDuration < 0 ) {
-		scrollDuration = 1000;
-	}
-
-	var cosParameter = (scroller.scrollTop - scrollTo) / 2,
-		scrollCount = 0,
-		oldTimestamp = window.performance.now();
-
-	function step(newTimestamp) {
-
-		var tsDiff = newTimestamp - oldTimestamp;
-
-		// Performance.now() polyfill loads late so passed-in timestamp is a larger offset
-		// on the first go-through than we want so I'm adjusting the difference down here.
-		// Regardless, we would rather have a slightly slower animation than a big jump so a good
-		// safeguard, even if we're not using the polyfill.
-
-		if (tsDiff > 100) {
-			tsDiff = 30;
-		}
-
-		scrollCount += Math.PI / (scrollDuration / tsDiff);
-
-		// As soon as we cross over Pi, we're about where we need to be
-
-		if (scrollCount >= Math.PI) {
-			return;
-		}
-
-		var moveStep = Math.round(scrollTo + cosParameter + cosParameter * Math.cos(scrollCount));
-		scroller.scrollTo(0, moveStep);
-		oldTimestamp = newTimestamp;
-		window.requestAnimationFrame(step);
-	}
-
-	window.requestAnimationFrame(step);
+  containerEl.scrollTop += dy
 }

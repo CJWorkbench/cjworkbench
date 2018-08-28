@@ -7,12 +7,6 @@ export default class WfModuleHeader extends React.Component {
     this.setModuleRef = this.setModuleRef.bind(this)
   }
 
-  componentDidMount () {
-    if (this.props.isSelected) {
-      this.props.focusModule(this.moduleRef)
-    }
-  }
-
   setModuleRef (ref) {
     this.moduleRef = ref
   }
@@ -43,6 +37,5 @@ export default class WfModuleHeader extends React.Component {
 WfModuleHeader.propTypes = {
   isSelected: PropTypes.bool,
   moduleIcon: PropTypes.string,
-  moduleName: PropTypes.string,
-  focusModule: PropTypes.func
+  moduleName: PropTypes.string
 }

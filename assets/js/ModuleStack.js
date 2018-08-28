@@ -221,17 +221,26 @@ class ModuleStack extends React.Component {
     isReadOnly:         PropTypes.bool.isRequired,
   }
 
-  constructor(props) {
-    super(props)
+  // Track state of where we last auto-scrolled.
+  // Don't store it in this.state because we never want it to lead to a render
+  scrollRef = React.createRef()
+  lastScrolledWfModuleIndex = null
 
-    this.scrollRef = React.createRef()
-    // Debounced so that execution is cancelled if we start
-    // another animation. See note on focusModule definition.
-    this.focusModule = debounce(this.focusModule.bind(this), 200)
+  state = {
+    isDraggingModuleAtIndex: null,
+    zenModeWfModuleId: null
+  }
 
-    this.state = {
-      isDraggingModuleAtIndex: null,
-      zenModeWfModuleId: null
+  componentDidUpdate () {
+    const index = this.props.selected_wf_module
+    if (index !== this.lastScrolledWfModuleIndex) {
+      this.lastScrolledWfModuleIndex = index
+
+      const containerEl = this.scrollRef.current
+      const moduleEl = containerEl.querySelectorAll('.wf-module')[index]
+      if (moduleEl) {
+        scrollTo(moduleEl, containerEl, 15, 50)
+      }
     }
   }
 
@@ -262,22 +271,6 @@ class ModuleStack extends React.Component {
     } else {
       return null
     }
-  }
-
-  focusModule = (module) => {
-    // Wait for the next two browser repaints before animating, because
-    // two repaints gets it about right.
-    // This is a bad hack that's here because JavaScript doesn't have
-    // a global animation queue. We should either find or build one
-    // and use it for all of our animations.
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        const ref = this.scrollRef.current
-        if (ref) {
-          scrollTo(module, 300, ref, ref.getBoundingClientRect().height / 3);
-        }
-      });
-    });
   }
 
   onDragStart = (obj) => {
@@ -317,7 +310,6 @@ class ModuleStack extends React.Component {
             <WfModuleHeader
               moduleName={''/*item.name*/}
               moduleIcon={''/*item.icon*/}
-              focusModule={this.focusModule}
               isSelected={false}
               />
           </React.Fragment>
@@ -338,7 +330,6 @@ class ModuleStack extends React.Component {
               setZenMode={this.setZenMode}
               onDragStart={this.onDragStart}
               onDragEnd={this.onDragEnd}
-              focusModule={this.focusModule}
             />
           </React.Fragment>
         )
@@ -349,7 +340,7 @@ class ModuleStack extends React.Component {
     if (this.state.zenModeWfModuleId !== null) className += ' zen-mode'
 
     return (
-      <div className={className}>
+      <div className={className} ref={this.scrollRef}>
         {spotsAndItems}
         <LastModuleStackInsertSpot
           key="last"

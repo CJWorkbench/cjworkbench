@@ -41,7 +41,6 @@ export class WfModule extends React.PureComponent {
     api: PropTypes.object.isRequired,
     onDragStart: PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
-    focusModule: PropTypes.func, // func(HTMLElement) => undefined (should be called scrollToHtmlElement(el))
     isLessonHighlight: PropTypes.bool.isRequired,
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
@@ -79,13 +78,6 @@ export class WfModule extends React.PureComponent {
     this.setState({
       isDataVersionModalOpen: true
     })
-  }
-
-  // Scroll when we create a new wfmodule
-  componentDidMount () {
-    if (this.props.selected) {
-      this.props.focusModule(this.moduleRef)
-    }
   }
 
   // We become the selected module on any click

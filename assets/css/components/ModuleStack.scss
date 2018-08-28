@@ -4,6 +4,7 @@
   background-color: $WF-background;
   overflow-y: scroll;
   position: relative;
+  scroll-behavior: smooth;
 
   .in-between-modules {
     position: relative;
