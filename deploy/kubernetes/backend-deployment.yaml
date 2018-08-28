@@ -21,10 +21,10 @@ spec:
           resources:
             requests:
               cpu: 0.2
-              memory: 2.5Gi
+              memory: 3.5Gi
             limits:
               cpu: 0.5
-              memory: 2.5Gi
+              memory: 3.5Gi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
