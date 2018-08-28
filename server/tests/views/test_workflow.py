@@ -18,6 +18,10 @@ FakeSession = namedtuple('FakeSession', ['session_key'])
 class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
         super(WorkflowViewTests, self).setUp()  # log in
+
+        self.log_patcher = patch('server.utils.log_user_event')
+        self.log_patch = self.log_patcher.start()
+
         self.factory = APIRequestFactory()
         self.workflow1 = add_new_workflow('Workflow 1')
         self.workflow2 = add_new_workflow('Workflow 2')
@@ -38,6 +42,10 @@ class WorkflowViewTests(LoggedInTestCase):
             owner=self.otheruser,
             public=True
         )
+
+    def tearDown(self):
+        self.log_patcher.stop()
+        super().tearDown()
 
     def _augment_request(self, request, user: User, session_key: str) -> None:
         if user:

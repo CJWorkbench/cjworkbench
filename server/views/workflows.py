@@ -15,7 +15,7 @@ from server.models import AddModuleCommand, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         WorkflowSerializerLite, WfModuleSerializer, UserSerializer
-from server.utils import log_user_event
+import server.utils
 from server.versions import WorkflowUndo, WorkflowRedo
 
 # This id_name->ids mapping is used by the client to execute the add module from table actions
@@ -124,9 +124,8 @@ def _get_anonymous_workflow_for(workflow: Workflow,
                                     anonymous_owner_session_key=session_key)
     except Workflow.DoesNotExist:
         if workflow.example:
-            log_user_event(request,
-                           'Opened Demo Workflow',
-                           {'name': workflow.name})
+            server.utils.log_user_event(request, 'Opened Demo Workflow',
+                                        {'name': workflow.name})
         return workflow.duplicate_anonymous(session_key)
 
 
@@ -273,8 +272,10 @@ def workflow_addmodule(request, pk, format=None):
     # objects to ensure last is always latest?)
     module_version = ModuleVersion.objects.filter(module=module).last()
 
-    log_user_event(request, 'Add Module ' + module.name,
-                   {'name': module.name, 'id_name': module.id_name})
+    server.utils.log_user_event(request, 'Add Module ' + module.name, {
+        'name': module.name,
+        'id_name': module.id_name
+    })
 
     delta = AddModuleCommand.create(workflow, module_version, index)
     serializer = WfModuleSerializer(delta.wf_module)
@@ -296,7 +297,8 @@ def workflow_duplicate(request, pk):
     workflow2 = workflow.duplicate(request.user)
     serializer = WorkflowSerializerLite(workflow2)
 
-    log_user_event(request, 'Duplicate Workflow', {'name': workflow.name})
+    server.utils.log_user_event(request, 'Duplicate Workflow',
+                                {'name': workflow.name})
 
     return Response(serializer.data, status.HTTP_201_CREATED)
 
