@@ -1,6 +1,7 @@
 from integrationtests.utils import WorkbenchBase
 from integrationtests.helpers import accounts
 
+
 class TestExampleWorkflow(WorkbenchBase):
     def setUp(self):
         super().setUp()
@@ -10,7 +11,6 @@ class TestExampleWorkflow(WorkbenchBase):
                                                     is_superuser=True)
 
         self.user1 = self.account_admin.create_user('user1@example.org')
-
 
     def _create_example_workflow(self):
         b = self.browser
@@ -43,13 +43,13 @@ class TestExampleWorkflow(WorkbenchBase):
         b.click_link('Example Workflow', wait=True)
         b.check('Public')
         b.check('Example')
+        b.check('In all users workflow lists')
         b.click_button('Save')
         b.assert_element('li.success')
 
         b.clear_cookies()
 
         return url
-
 
     def test_other_user_can_edit(self):
         self._create_example_workflow()
@@ -71,7 +71,6 @@ class TestExampleWorkflow(WorkbenchBase):
         self.delete_wf_module(1)
         b.assert_element('.column-key', text='baz', wait=True)
 
-
     def test_anonymous_can_edit(self):
         url = self._create_example_workflow()
 
@@ -85,14 +84,14 @@ class TestExampleWorkflow(WorkbenchBase):
         self.delete_wf_module(1)
         b.assert_element('.column-key', text='baz', wait=True)
 
-
     def test_everybody_gets_a_version(self):
         b = self.browser
         url = self._create_example_workflow()
 
         def wait_for_page_load_then_edit():
             # wait for page load _and_ assert the edit has not happened
-            b.assert_element('.module-name', text='Drop empty columns', wait=True)
+            b.assert_element('.module-name', text='Drop empty columns',
+                             wait=True)
             self.delete_wf_module(1)
             # Wait for output to update
             b.assert_element('.column-key', text='baz', wait=True)
