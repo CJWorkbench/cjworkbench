@@ -199,7 +199,7 @@ def wfmodule_detail(request, pk, format=None):
                             }
                         )
 
-        except Exception as e:
+        except ValueError as e:  # TODO make this less generic
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
