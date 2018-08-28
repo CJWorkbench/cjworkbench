@@ -1,7 +1,6 @@
 from datetime import timedelta
 import json
 import re
-from typing import Optional
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
         Http404, HttpResponseNotFound, JsonResponse
@@ -18,6 +17,7 @@ from server.serializers import WfModuleSerializer
 from server import execute
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
+import server.utils
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
 from server.templatetags.json_filters import escape_potential_hack_chars
@@ -117,7 +117,7 @@ def patch_notes(wf_module, data):
     ChangeWfModuleNotesCommand.create(wf_module, data['notes'])
 
 
-def patch_update_settings(wf_module, data):
+def patch_update_settings(wf_module, data, request):
     auto_update_data = data['auto_update_data']
 
     if auto_update_data and (('update_interval' not in data)
@@ -170,15 +170,34 @@ def wfmodule_detail(request, pk, format=None):
                     patch_notes(wf_module, request.data)
 
                 if 'auto_update_data' in request.data:
-                    patch_update_settings(wf_module, request.data)
+                    patch_update_settings(wf_module, request.data, request)
+
+                    if bool(request.data['auto_update_data']):
+                        server.utils.log_user_event(
+                            request,
+                            'Enabled auto-update',
+                            {
+                                'wfModuleId': wf_module.id
+                            }
+                        )
 
                 if 'collapsed' in request.data:
                     wf_module.is_collapsed = request.data['collapsed']
                     wf_module.save()
 
                 if 'notifications' in request.data:
-                    wf_module.notifications = bool(request.data['notifications'])
+                    notifications = bool(request.data['notifications'])
+                    wf_module.notifications = notifications
                     wf_module.save()
+
+                    if notifications:
+                        server.utils.log_user_event(
+                            request,
+                            'Enabled email notifications',
+                            {
+                                'wfModuleId': wf_module.id
+                            }
+                        )
 
         except Exception as e:
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)

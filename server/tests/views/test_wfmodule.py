@@ -49,9 +49,15 @@ empty_data_json = {
 class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
-        super(WfModuleTests, self).setUp()  # log in
+        super().setUp()  # log in
+        self.log_patcher = patch('server.utils.log_user_event')
+        self.log_patch = self.log_patcher.start()
         self.createTestWorkflow()
         self.factory = APIRequestFactory()
+
+    def tearDown(self):
+        self.log_patcher.stop()
+        super().tearDown()
 
     def _augment_request(self, request, user: User,
                          session_key: str) -> None:
@@ -286,6 +292,11 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['auto_update_data'], True)
         self.assertEqual(response.data['update_interval'], 5)
         self.assertEqual(response.data['update_units'], 'weeks')
+
+        # Check we logged the event
+        # #160041803
+        self.log_patch.assert_called_once()
+        self.assertEqual(self.log_patch.call_args[0][1], 'Enabled auto-update')
 
     # Test set/get update interval
     def test_wf_module_update_settings_missing_units(self):
