@@ -130,6 +130,11 @@ def log_user_event(request: HttpRequest, event: str,
         log_message('Not logging an event because of DNT header')
         return
 
+    if '/lessons/' in request.META.get('HTTP_REFERER', ''):
+        # https://www.pivotaltracker.com/story/show/160041803
+        log_message(f"Not logging event '{event}' because it is from a lesson")
+        return
+
     if not request.user.is_authenticated:
         # Intercom has the notion of "leads", but we're basically doomed if we
         # try to associate each request with a potential lead. Our whole point
