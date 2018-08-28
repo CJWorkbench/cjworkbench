@@ -1,48 +1,54 @@
 import io
-import pandas
-from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
-        load_and_add_module, get_param_by_id_name, mock_csv_text
-from server.execute import execute_wfmodule
-from server.models.WfModule import WfModule
+import unittest
+import pandas as pd
+from server.modules.selectcolumns import SelectColumns
 from server.modules.types import ProcessResult
 
-mock_csv_table = pandas.read_csv(io.StringIO(mock_csv_text))
+KEEP = 1
+DROP = 0
 
 
-class SelectColumnsTests(LoggedInTestCase):
+class MockWfModule:
+    def __init__(self, colnames, drop_or_keep):
+        self.colnames = colnames
+        self.drop_or_keep = drop_or_keep
+
+    def get_param_menu_idx(self, name):
+        return getattr(self, name)
+
+    def get_param_string(self, name):
+        return getattr(self, name)
+
+
+def render(table, colnames, drop_or_keep) -> ProcessResult:
+    wf_module = MockWfModule(colnames, drop_or_keep)
+    result = SelectColumns.render(wf_module, table)
+    return result
+
+
+class SelectColumnsTests(unittest.TestCase):
     def setUp(self):
-        super().setUp()  # log in
-        workflow = create_testdata_workflow()
-        self.wf_module = load_and_add_module('selectcolumns',
-                                             workflow=workflow)
-        self.cols_pval = get_param_by_id_name('colnames')
+        super().setUp()
+        self.table = pd.DataFrame({'A': [1, 2], 'B': [2, 3], 'C': [3, 4]})
 
     def test_render_single_column(self):
-        self.cols_pval.value = 'Month'
-        self.cols_pval.save()
-        result = execute_wfmodule(self.wf_module)
-        expected = ProcessResult(mock_csv_table[['Month']])
-        self.assertEqual(result, expected)
+        result = render(self.table, 'A', 1)
+        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1, 2]})))
 
     def test_render_strip_whitespace(self):
-        self.cols_pval.value = 'Month '
-        self.cols_pval.save()
-        result = execute_wfmodule(self.wf_module)
-        expected = ProcessResult(mock_csv_table[['Month']])
-        self.assertEqual(result, expected)
+        result = render(self.table, 'A ', 1)
+        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1, 2]})))
 
     def test_render_maintain_input_column_order(self):
-        self.cols_pval.value = 'Amount,Month'
-        self.cols_pval.save()
-        result = execute_wfmodule(self.wf_module)
-        expected = ProcessResult(mock_csv_table[['Month', 'Amount']])
-        self.assertEqual(result, expected)
+        result = render(self.table, 'B,A', 1)
+        self.assertEqual(result, ProcessResult(
+            pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
+        ))
 
     def test_render_ignore_invalid_column_name(self):
-        self.cols_pval.value = 'Amountxxx,Month'
-        self.cols_pval.save()
-        result = execute_wfmodule(self.wf_module)
-        expected = ProcessResult(mock_csv_table[['Month']])
-        self.assertEqual(result, expected)
-        self.wf_module.refresh_from_db()
-        self.assertEqual(self.wf_module.status, WfModule.READY)
+        result = render(self.table, 'A,X', 1)
+        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1, 2]})))
+
+    def test_render_drop_columns(self):
+        result = render(self.table, 'B,C', 0)
+        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1, 2]})))

@@ -1,6 +1,6 @@
 from .moduleimpl import ModuleImpl
+from server.modules.types import ProcessResult
 
-# ---- SelectColumns ----
 
 class SelectColumns(ModuleImpl):
     def render(wf_module, table):
@@ -10,10 +10,11 @@ class SelectColumns(ModuleImpl):
 
         # if no column has been selected, keep the columns
         if cols == [] or cols == ['']:
-            return table
+            return ProcessResult(table)
 
-        # ensure we do not change the order of the columns, even if they are listed in another order
-        # this also silently removes any nonexistent columns (can happen when re-ordering module, etc.)
+        # ensure we do not change the order of the columns, even if they are
+        # listed in another order this also silently removes any nonexistent
+        # columns (can happen when re-ordering module, etc.)
         existing = list(table.columns)
         newcols = []
         for c in existing:
@@ -24,4 +25,4 @@ class SelectColumns(ModuleImpl):
             newtab = table[newcols]
         else:
             newtab = table.drop(newcols, axis=1)
-        return newtab
+        return ProcessResult(newtab)
