@@ -226,6 +226,12 @@
   }
 }
 
+.zen-mode {
+  .refine-groups {
+    max-height: calc(100vh - 25rem);
+  }
+}
+
 .refine-modal {
   font-size: 1.3rem;
 
