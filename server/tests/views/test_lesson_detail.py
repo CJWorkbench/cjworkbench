@@ -34,9 +34,11 @@ class LessonDetailTests(DbTestCase):
         Workflow.objects.create(owner=self.other_user,
                                 lesson_slug='load-public-data', public=True)
 
+        # This should create the workflow
         response = self.client.get('/lessons/load-public-data/')
-        self.assertNotEqual(response.status_code, 200)
-        self.assertEqual(Workflow.objects.count(), 3)  # don't create Workflow
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('workflow.html')
+        self.assertEqual(Workflow.objects.count(), 4)
 
     def test_get_with_workflow(self):
         self.log_in()
