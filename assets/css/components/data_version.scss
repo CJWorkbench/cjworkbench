@@ -115,6 +115,7 @@
     display: inline;
     width: 5rem;
     @extend .module-parameter;
+    text-align: right;
   }
 
   input[name="timeUnit"] {
