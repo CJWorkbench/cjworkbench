@@ -123,7 +123,7 @@ def _get_anonymous_workflow_for(workflow: Workflow,
                                     anonymous_owner_session_key=session_key)
     except Workflow.DoesNotExist:
         if workflow.example:
-            log_user_event(request.user,
+            log_user_event(request,
                            'Opened Demo Workflow',
                            {'name': workflow.name})
         return workflow.duplicate_anonymous(session_key)
@@ -272,7 +272,7 @@ def workflow_addmodule(request, pk, format=None):
     # objects to ensure last is always latest?)
     module_version = ModuleVersion.objects.filter(module=module).last()
 
-    log_user_event(request.user, 'Add Module ' + module.name,
+    log_user_event(request, 'Add Module ' + module.name,
                    {'name': module.name, 'id_name': module.id_name})
 
     delta = AddModuleCommand.create(workflow, module_version, index)
@@ -295,7 +295,7 @@ def workflow_duplicate(request, pk):
     workflow2 = workflow.duplicate(request.user)
     serializer = WorkflowSerializerLite(workflow2)
 
-    log_user_event(request.user, 'Duplicate Workflow', {'name': workflow.name})
+    log_user_event(request, 'Duplicate Workflow', {'name': workflow.name})
 
     return Response(serializer.data, status.HTTP_201_CREATED)
 
