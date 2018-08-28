@@ -15,9 +15,11 @@ class LessonDetailTests(DbTestCase):
                                                 'alksjdghalskdjfh')
         return self._other_user
 
-    def test_get_requires_login(self):
+    def test_get_anonymous(self):
         response = self.client.get('/lessons/load-public-data/')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('workflow.html')
+        self.assertEqual(Workflow.objects.count(), 1)
 
     def test_get_invalid_slug(self):
         self.log_in()
@@ -49,11 +51,10 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
 
-    def test_post_requires_login(self):
-        response = self.client.post('/lessons/load-public-data/')
-        # login redirect (we'd redirect even if logged in, though)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Workflow.objects.count(), 0)  # don't create Workflow
+    def test_post_without_login(self):
+        response = self.client.post('/lessons/load-public-data/', follow=True)
+        self.assertRedirects(response, '/lessons/load-public-data/')
+        self.assertEqual(Workflow.objects.count(), 1)
 
     def test_post_with_existing(self):
         self.log_in()
