@@ -84,7 +84,11 @@ textarea:focus, input:focus{
   border: 2px solid $Vlight-gray;
   background-color: $Vlight-gray !important;
   &:hover {
-  border: 2px solid $dark-accent--soft;
+    border: 2px solid $dark-accent--soft;
+  }
+  &:focus {
+    border-color: $brand-workspace;
+    outline: none;
   }
 }
 
@@ -205,7 +209,7 @@ textarea:focus, input:focus{
 
 .custom-select {
   @extend .module-parameter;
-
+  box-shadow: none;
   background-size: 0px;
   border: 2px solid transparent;
   box-shadow: none;
@@ -214,6 +218,7 @@ textarea:focus, input:focus{
 
   &:focus{
     border-color: $brand-workspace;
+    box-shadow: none;
   }
 }
 
@@ -250,10 +255,6 @@ textarea:focus, input:focus{
       &:hover {opacity: 1}
     }
   }
-}
-
-.module-parameter:focus{
-  border: 2px solid $brand-workspace;
 }
 
 
