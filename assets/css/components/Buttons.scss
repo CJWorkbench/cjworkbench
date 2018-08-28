@@ -355,26 +355,6 @@ button:focus { outline:0 !important; }
   }
 }
 
-
-
-/* help button --> Help center in the bottom left screen  */
-
-// On Worklow list page
-.help-container{
-  z-index: 2000;
-  position: fixed;
-  bottom: 9rem;
-  left: 4.5rem;
-  display: none; // turned off for now do we need this? Pierre
-}
-
-// On Worklow page
-.workflows-page {
-  .help-container{
-    left: 3.5rem;
-  }
-}
-
 .help-shortcut{
   margin: auto;
   background-color: #769BB0;
@@ -391,10 +371,6 @@ button:focus { outline:0 !important; }
   -webkit-transition: opacity 0.1s;
     transition: opacity 0.1s;
   box-shadow: 0.3rem 0.3rem 2.5rem 0 rgba(0,0,0,0.20);
-}
-
-.help-container a:hover{
-  text-decoration: none;
 }
 
 

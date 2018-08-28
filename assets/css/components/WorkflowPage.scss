@@ -3,12 +3,14 @@
 /* Contains all of Workflow page */
 
 .workflow-root {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
+  &.in-lesson {
+    display: flex;
+    flex-direction: row;
+
+    .workflow-container {
+      flex: 1 1 auto;
+    }
+  }
 
   .workflows-page {
     background-color: $Vlight-gray;
@@ -17,60 +19,14 @@
 
   /* Contains Navbar, Modulestack, and Outputpane */
   .workflow-container {
-    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+  }
 
-    &>.not-your-workflow {
-      cursor: default;
-      position: absolute;
-      bottom:0;
-      left: 0;
-      right:0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      background: $brand-learn;
-      color: white;
-      font-weight: bold;
-      height: 5rem;
-      z-index: 1;
-
-
-      &>* {
-        line-height: 2rem;
-        margin: 0;
-
-      }
-
-      h3 {
-        font-size: 1.8rem;
-        text-transform: uppercase;
-      }
-
-      p {
-        text-transform: uppercase;
-        font-size: 1.3rem;
-
-        a {
-          color:$white;
-          text-decoration: underline;
-        }
-      }
-      .suggestion {
-        display: flex;
-        align-items: center;
-
-        .action-button {
-          @extend .button-white--fill;
-          color: $brand-learn;
-          margin: 0 2rem;
-        }
-      }
-    }
+  nav {
+    flex: 0 0 auto;
   }
 
   /* Contains Modulestack and Outputpane */
@@ -83,6 +39,52 @@
     z-index: 0;
 
     overflow: hidden; // height determined by parent, not children. https://www.pivotaltracker.com/story/show/158034835
+  }
+
+  .not-your-workflow {
+    cursor: default;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    background: $brand-learn;
+    color: white;
+    font-weight: bold;
+    height: 5rem;
+    z-index: 1;
+
+
+    &>* {
+      line-height: 2rem;
+      margin: 0;
+
+    }
+
+    h3 {
+      font-size: 1.8rem;
+      text-transform: uppercase;
+    }
+
+    p {
+      text-transform: uppercase;
+      font-size: 1.3rem;
+
+      a {
+        color:$white;
+        text-decoration: underline;
+      }
+    }
+    .suggestion {
+      display: flex;
+      align-items: center;
+
+      .action-button {
+        @extend .button-white--fill;
+        color: $brand-learn;
+        margin: 0 2rem;
+      }
+    }
   }
 
   .workflow-root.in-lesson .workflow-columns {

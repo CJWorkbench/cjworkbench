@@ -95,48 +95,40 @@ export class Workflow extends React.Component {
     }
 
     return (
-        <div className={className}>
-          { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEventEvenInLesson} /> : '' }
+      <div className={className}>
+        { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEventEvenInLesson} /> : '' }
 
-          <div className="workflow-container">
-            <WorkflowNavBar
-              workflow={this.props.workflow}
+        <div className="workflow-container">
+          <WorkflowNavBar
+            workflow={this.props.workflow}
+            api={this.props.api}
+            isReadOnly={this.props.workflow.read_only}
+            loggedInUser={this.props.loggedInUser}
+          />
+
+          <div className={"workflow-columns" + (this.state.overlapping ? " overlapping" : "")}>
+            <ModuleStack
               api={this.props.api}
-              isReadOnly={this.props.workflow.read_only}
-              loggedInUser={this.props.loggedInUser}
+              focus={this.state.isFocusModuleStack}
+              setFocus={this.setFocusModuleStack}
             />
-
-            <div className={"workflow-columns" + (this.state.overlapping ? " overlapping" : "")}>
-              <ModuleStack
-                api={this.props.api}
-                focus={this.state.isFocusModuleStack}
-                setFocus={this.setFocusModuleStack}
-              />
-              <OutputPane
-                api={this.props.api}
-                focus={!this.state.isFocusModuleStack}
-                setFocus={this.setFocusOutputPane}
-                setOverlapping={this.setOverlapping}
-              />
-            </div>
-
-            <MaybeNotYourWorkflow
-              workflowId={this.props.workflow.url_id}
-              isLoggedIn={!!this.props.loggedInUser}
-              isReadOnly={this.props.isReadOnly}
-              isAnonymous={this.props.isAnonymous}
-              />
-          </div>
-          <div className='help-container'>
-            <a target="_blank" href="http://help.workbenchdata.com/getting-started/build-your-first-workflow" >
-              <div className='help-shortcut btn'>
-                <div className='icon-knowledge' />
-              </div>
-            </a>
+            <OutputPane
+              api={this.props.api}
+              focus={!this.state.isFocusModuleStack}
+              setFocus={this.setFocusOutputPane}
+              setOverlapping={this.setOverlapping}
+            />
           </div>
 
+          <MaybeNotYourWorkflow
+            workflowId={this.props.workflow.url_id}
+            isLoggedIn={!!this.props.loggedInUser}
+            isReadOnly={this.props.isReadOnly}
+            isAnonymous={this.props.isAnonymous}
+            />
         </div>
-    );
+      </div>
+    )
   }
 }
 

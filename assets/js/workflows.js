@@ -110,15 +110,8 @@ export default class Workflows extends React.Component {
             </div>
           </div>
         </div>
-        <div className='help-container'>
-          <a target="_blank" href="http://help.workbenchdata.com/getting-started/build-your-first-workflow" >
-            <div className='help-shortcut btn'>
-              <div className='icon-knowledge' />
-            </div>
-          </a>
-        </div>
       </div>
-    );
+    )
   }
 }
 

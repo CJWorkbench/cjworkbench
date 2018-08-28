@@ -1002,22 +1002,6 @@ exports[`Workflow list page renders correctly 1`] = `
         </div>
       </div>
     </div>
-    <div
-      className="help-container"
-    >
-      <a
-        href="http://help.workbenchdata.com/getting-started/build-your-first-workflow"
-        target="_blank"
-      >
-        <div
-          className="help-shortcut btn"
-        >
-          <div
-            className="icon-knowledge"
-          />
-        </div>
-      </a>
-    </div>
   </div>
 </Workflows>
 `;
