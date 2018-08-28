@@ -4,7 +4,6 @@ from server.dispatch import module_dispatch_event
 from server.utils import get_console_logger
 from django.utils import timezone
 from datetime import timedelta
-import threading
 
 logger = get_console_logger()
 
