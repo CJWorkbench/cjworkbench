@@ -122,6 +122,14 @@ _intercom_client = _setup_intercom_client()
 
 def log_user_event(request: HttpRequest, event: str,
                    metadata=Optional[Dict[str, Any]]) -> None:
+    if request.META.get('HTTP_DNT', '0') == '1':
+        # Don't be evil. The user has specifically asked to _not_ be tracked.
+        #
+        # That should maybe include logs? Let's obfuscate and not show the
+        # event or user name.
+        log_message('Not logging an event because of DNT header')
+        return
+
     if not request.user.is_authenticated:
         # Intercom has the notion of "leads", but we're basically doomed if we
         # try to associate each request with a potential lead. Our whole point
