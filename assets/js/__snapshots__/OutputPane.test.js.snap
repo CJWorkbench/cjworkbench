@@ -24,6 +24,13 @@ exports[`OutputPane matches snapshot 1`] = `
       </div>
     </div>
   </div>
+  <Connect(OutputIframe)
+    isPublic={false}
+    lastRelevantDeltaId={1}
+    selectedWfModuleId={987}
+    visible={false}
+    workflowId={123}
+  />
   <TableView
     api={Object {}}
     isReadOnly={false}
@@ -60,6 +67,13 @@ exports[`OutputPane renders when no module id 1`] = `
       </div>
     </div>
   </div>
+  <Connect(OutputIframe)
+    isPublic={false}
+    lastRelevantDeltaId={1}
+    selectedWfModuleId={null}
+    visible={false}
+    workflowId={123}
+  />
   <TableView
     api={Object {}}
     isReadOnly={false}

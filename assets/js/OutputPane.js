@@ -71,14 +71,14 @@ export class OutputPane extends React.Component {
   }
 
   getWindowWidth() {
-      return window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth;
+    return window.innerWidth
+      || document.documentElement.clientWidth
+      || document.body.clientWidth;
   }
 
   resizePaneStart() {
-      this.props.setOverlapping(true);
-      this.props.setFocus();
+    this.props.setOverlapping(true);
+    this.props.setFocus();
   }
 
   resizePane(e, direction, ref, d) {
@@ -163,16 +163,20 @@ export class OutputPane extends React.Component {
         showColumnLetter={showColumnLetter}
       />
 
-    // This iframe holds the module HTML output, e.g. a visualization
-    var outputIFrame = null;
-    if (this.props.htmlOutput) {
-      outputIFrame = <OutputIframe
-          selectedWfModuleId={this.props.selectedWfModuleId}
-          workflowId={this.props.workflowId}
-          isPublic={isPublic}
-          lastRelevantDeltaId={lastRelevantDeltaId}
+    // This iframe holds the module HTML output, e.g. a visualization.
+    // We leave the component around even when there is no HTML because of
+    // our solution to https://www.pivotaltracker.com/story/show/159637930:
+    // react-data-grid doesn't notice the resize that occurs when the iframe
+    // appears or disappears.
+    const outputIFrame = (
+      <OutputIframe
+        visible={!!this.props.htmlOutput}
+        selectedWfModuleId={this.props.selectedWfModuleId}
+        workflowId={this.props.workflowId}
+        isPublic={isPublic}
+        lastRelevantDeltaId={lastRelevantDeltaId}
       />
-    }
+    )
 
     // Spinner is always rendered, but we toggle 'display: none' in setBusySpinner()
     // Start hidden. TableView will turn it on when needed.

@@ -7,34 +7,32 @@ import { setWorkflowPublicAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
 
-export let OutputIframeCtrl
-
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
+    visible: PropTypes.bool.isRequired, // false means, "zero height"
     lastRelevantDeltaId: PropTypes.number, // null if added to empty workflow
-    selectedWfModuleId: PropTypes.number.isRequired,
+    selectedWfModuleId: PropTypes.number, // null if no wfmodule
     isPublic: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired,
   }
 
-  // TODO nix this, nix postMessage entirely. HTML should watch for hash
-  // change in URL for the forseeable future.
-  hackySetIframe = (iframe) => {
-    OutputIframeCtrl = iframe ? iframe.contentWindow : null
-  }
-
   state = {
     heightFromIframe: null, // if set, the iframe told us how tall it wants to be
-    gotInitFromIframe: null, // if set, iframe told us it will send messages
     isModalOpen: false,
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.selectedWfModuleId !== this.props.selectedWfModuleId) {
       this.setState({
-        heightFromIframe: null,
-        gotInitFromIframe: null,
+        heightFromIframe: null
       })
+    }
+
+    if (prevState.heightFromIframe !== this.state.heightFromIframe || prevProps.visible !== this.props.visible) {
+      console.log('Resize event')
+      const resizeEvent = document.createEvent('Event')
+      resizeEvent.initEvent('resize', true, true)
+      window.dispatchEvent(resizeEvent)
     }
   }
 
@@ -147,22 +145,28 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { selectedWfModuleId, lastRelevantDeltaId } = this.props
+    const { selectedWfModuleId, lastRelevantDeltaId, visible } = this.props
     const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${selectedWfModuleId}/output#revision=${lastRelevantDeltaId}`
 
-    const height = heightFromIframe === null ? '100%' : `${Math.ceil(heightFromIframe)}px`
+    const defaultHeight = visible ? '100%' : '0'
+    const height = heightFromIframe === null ? defaultHeight : `${Math.ceil(heightFromIframe)}px`
+    console.log('height=', height)
 
     return (
       <div className='outputpane-iframe' style={{ height }}>
-        <iframe ref={this.hackySetIframe} src={src} />
-        <div className='outputpane-iframe-control-overlay'>
-          <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.openModal}>
-            <i className='icon icon-code' />
-          </button>
-        </div>
-        {this.renderPublicModal()}
-        {this.renderEmbedModal()}
+        { !visible ? null : (
+          <React.Fragment>
+            <iframe src={src} />
+            <div className='outputpane-iframe-control-overlay'>
+              <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.openModal}>
+                <i className='icon icon-code' />
+              </button>
+            </div>
+            {this.renderPublicModal()}
+            {this.renderEmbedModal()}
+          </React.Fragment>
+        )}
       </div>
     )
   }

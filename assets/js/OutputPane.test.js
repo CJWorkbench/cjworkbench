@@ -33,7 +33,7 @@ describe('OutputPane', () => {
 
   it('does not render an iframe, normally', () => {
     const w = wrapper()
-    expect(w.find(OutputIframe)).toHaveLength(0)
+    expect(w.find(OutputIframe).prop('visible')).toBe(false)
   })
 
   it('renders when no module id', () => {
@@ -44,6 +44,6 @@ describe('OutputPane', () => {
 
   it('renders an iframe when htmlOutput', () => {
     const w = wrapper({ htmlOutput: true })
-    expect(w.find(OutputIframe)).toHaveLength(1)
+    expect(w.find(OutputIframe).prop('visible')).toBe(true)
   })
 })
