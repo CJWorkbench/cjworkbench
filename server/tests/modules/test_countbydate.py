@@ -1,3 +1,4 @@
+import dateutil
 import io
 import pandas
 from pandas.testing import assert_frame_equal
@@ -13,6 +14,10 @@ def read_csv(s, *args, **kwargs):
 
 def render(wf_module, table):
     return ProcessResult.coerce(CountByDate.render(wf_module, table))
+
+
+def dt(s):
+    return dateutil.parser.parse(s)
 
 
 # test data designed to give different output if sorted by freq vs value
@@ -111,20 +116,21 @@ class MockWfModule:
         return getattr(self, name)
 
 
-class CountValuesTests(SimpleTestCase):
+class CountByDateTests(SimpleTestCase):
     def setUp(self):
         super().setUp()
 
         self.table = read_csv(count_csv)
         self.wf_module = MockWfModule()
 
-    def _assertRendersTable(self, table, wf_module, csv_rows):
+    def _assertRendersTable(self, table, wf_module, csv_rows,
+                            parse_dates=['Date']):
         csv = '\n'.join(csv_rows)
         expected_table = read_csv(csv, dtype={
             'Date': str,
             'Time': str,
             'count': np.int64
-        })
+        }, parse_dates=parse_dates)
         expected = ProcessResult(expected_table)
         result = render(wf_module, table)
         self.assertResultEqual(result, expected)
@@ -206,7 +212,8 @@ class CountValuesTests(SimpleTestCase):
                 'Date,count',
                 '2011 Q1,6',
                 '2016 Q3,1',
-            ]
+            ],
+            parse_dates=[]
         )
 
     def test_count_by_years(self):
@@ -274,7 +281,8 @@ class CountValuesTests(SimpleTestCase):
                 '01:00,1',
                 '11:00,2',
                 '12:00,1',
-            ]
+            ],
+            parse_dates=[]
         )
 
     def test_date_only_refuse_time_period(self):
@@ -292,8 +300,8 @@ class CountValuesTests(SimpleTestCase):
             MockWfModule(column='Date', groupby=4),  # 4 = group by month
             [
                 'Date,count',
-                '2011-01,6',
-                '2016-07,1',
+                '2011-01-01,6',
+                '2016-07-01,1',
             ]
         )
 
@@ -339,10 +347,10 @@ class CountValuesTests(SimpleTestCase):
         self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
             data=[
-                ('2018-01-01', 8.0),
-                ('2018-01-03', 9.0),
+                (dt('2018-01-01'), 8.0),
+                (dt('2018-01-03'), 9.0),
                 # 2018-01-04 is omitted because it's NaN
-                ('2018-01-05', 2.0),  # NaN omitted
+                (dt('2018-01-05'), 2.0),  # NaN omitted
             ]
         )))
 
@@ -386,11 +394,11 @@ class CountValuesTests(SimpleTestCase):
         self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'count'],
             data=[
-                ('2018-01-01', 1),
-                ('2018-01-02', 0),
-                ('2018-01-03', 3),
-                ('2018-01-04', 1),  # count row with NA
-                ('2018-01-05', 2),  # count row with NA
+                (dt('2018-01-01'), 1),
+                (dt('2018-01-02'), 0),
+                (dt('2018-01-03'), 3),
+                (dt('2018-01-04'), 1),  # count row with NA
+                (dt('2018-01-05'), 2),  # count row with NA
             ]
         )))
 
@@ -404,11 +412,11 @@ class CountValuesTests(SimpleTestCase):
         self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
             data=[
-                ('2018-01-01', 8),
-                ('2018-01-02', 0),
-                ('2018-01-03', 9),
-                ('2018-01-04', 0),
-                ('2018-01-05', 2),
+                (dt('2018-01-01'), 8),
+                (dt('2018-01-02'), 0),
+                (dt('2018-01-03'), 9),
+                (dt('2018-01-04'), 0),
+                (dt('2018-01-05'), 2),
             ]
         )))
 
@@ -422,11 +430,11 @@ class CountValuesTests(SimpleTestCase):
         self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
             data=[
-                ('2018-01-01', 8.1),
-                ('2018-01-02', 0.0),
-                ('2018-01-03', 9.0),
-                ('2018-01-04', 0.0),
-                ('2018-01-05', 2.0),
+                (dt('2018-01-01'), 8.1),
+                (dt('2018-01-02'), 0.0),
+                (dt('2018-01-03'), 9.0),
+                (dt('2018-01-04'), 0.0),
+                (dt('2018-01-05'), 2.0),
             ]
         )))
 
@@ -440,11 +448,11 @@ class CountValuesTests(SimpleTestCase):
         self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
             data=[
-                ('2018-01-01', 8.1),
-                ('2018-01-02', np.nan),
-                ('2018-01-03', 1.0),
-                ('2018-01-04', np.nan),
-                ('2018-01-05', 2.0),
+                (dt('2018-01-01'), 8.1),
+                (dt('2018-01-02'), np.nan),
+                (dt('2018-01-03'), 1.0),
+                (dt('2018-01-04'), np.nan),
+                (dt('2018-01-05'), 2.0),
             ]
         )))
 
@@ -458,11 +466,11 @@ class CountValuesTests(SimpleTestCase):
         self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
             columns=['Date', 'Amount'],
             data=[
-                ('2018-01-01', 8.0),
-                ('2018-01-02', np.nan),
-                ('2018-01-03', 1.0),
-                ('2018-01-04', np.nan),
-                ('2018-01-05', 2.0),
+                (dt('2018-01-01'), 8.0),
+                (dt('2018-01-02'), np.nan),
+                (dt('2018-01-03'), 1.0),
+                (dt('2018-01-04'), np.nan),
+                (dt('2018-01-05'), 2.0),
             ]
         )))
 
