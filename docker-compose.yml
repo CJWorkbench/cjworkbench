@@ -48,6 +48,7 @@ services:
       CJW_REDIS_HOST: redis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
+      CACHE_MODULES: "${CACHE_MODULES:-}"
     ports: [ '8000:8080' ]
     networks: [ 'dev' ]
     depends_on: [ 'database', 'redis' ]
@@ -68,6 +69,7 @@ services:
       CJW_REDIS_HOST: redis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
+      CACHE_MODULES: "${CACHE_MODULES:-}"
     depends_on: [ 'database', 'redis' ]
     networks: [ 'dev' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'run-background-loop' ]
