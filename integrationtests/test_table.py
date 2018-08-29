@@ -2,9 +2,10 @@ import re
 from integrationtests.utils import LoggedInIntegrationTest
 from integrationtests.browser import Keys
 
+
 class TestTable(LoggedInIntegrationTest):
     def _blur(self):
-        self.browser.click_whatever('div.table-info', text='ROWS')
+        self.browser.click_whatever('.module-name', text='Paste data')
 
     def _create_simple_workflow(self):
         b = self.browser
