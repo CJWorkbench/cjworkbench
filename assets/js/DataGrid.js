@@ -541,7 +541,7 @@ export default class DataGrid extends React.Component {
   }
 
   componentDidMount() {
-    this._resizeListener = debounce(this.updateSize, 200)
+    this._resizeListener = debounce(this.updateSize, 50)
     window.addEventListener("resize", this._resizeListener)
     this.updateSize()
   }
