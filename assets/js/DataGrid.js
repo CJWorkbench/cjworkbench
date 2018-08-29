@@ -495,7 +495,6 @@ export default class DataGrid extends React.Component {
     columnTypes: PropTypes.array,     // not required if blank table
     wfModuleId: PropTypes.number,    // not required if blank table
     lastRelevantDeltaId: PropTypes.number, // triggers a render on change
-    resizing: PropTypes.bool,
     onEditCell: PropTypes.func,
     sortColumn: PropTypes.string,
     sortDirection: PropTypes.number,

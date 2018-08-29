@@ -65,26 +65,19 @@ export class Workflow extends React.Component {
     super(props);
 
     this.state = {
-        isFocusModuleStack: false,
-        overlapping: false, // Does the right pane overlap the left pane? Used to set focus, draw shadows, etc
+      isFocusModuleStack: false
     };
-  }
-
-  setOverlapping = (overlapping) => {
-    this.setState({
-      overlapping
-    });
   }
 
   setFocusModuleStack = () => {
     this.setState({
-      isFocusModuleStack: true,
+      isFocusModuleStack: true
     });
   }
 
   setFocusOutputPane = () => {
     this.setState({
-      isFocusModuleStack: false,
+      isFocusModuleStack: false
     });
   }
 
@@ -106,18 +99,9 @@ export class Workflow extends React.Component {
             loggedInUser={this.props.loggedInUser}
           />
 
-          <div className={"workflow-columns" + (this.state.overlapping ? " overlapping" : "")}>
-            <ModuleStack
-              api={this.props.api}
-              focus={this.state.isFocusModuleStack}
-              setFocus={this.setFocusModuleStack}
-            />
-            <OutputPane
-              api={this.props.api}
-              focus={!this.state.isFocusModuleStack}
-              setFocus={this.setFocusOutputPane}
-              setOverlapping={this.setOverlapping}
-            />
+          <div className='workflow-columns'>
+            <ModuleStack api={this.props.api} />
+            <OutputPane api={this.props.api} />
           </div>
 
           <MaybeNotYourWorkflow

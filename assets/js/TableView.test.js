@@ -10,7 +10,6 @@ import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateTableActi
 
 describe('TableView', () => {
   const defaultProps = {
-    resizing: false,
     showColumnLetter: false,
     isReadOnly: false,
   }

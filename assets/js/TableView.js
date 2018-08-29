@@ -38,7 +38,6 @@ export default class TableView extends React.PureComponent {
     lastRelevantDeltaId: PropTypes.number.isRequired,
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    resizing: PropTypes.bool.isRequired,
     setBusySpinner: PropTypes.func,
     showColumnLetter: PropTypes.bool.isRequired,
     sortColumn: PropTypes.string,
@@ -282,7 +281,6 @@ export default class TableView extends React.PureComponent {
             wfModuleId={this.props.selectedWfModuleId}
             lastRelevantDeltaId={this.props.lastRelevantDeltaId}
             getRow={this.getRow}
-            resizing={this.props.resizing}
             onEditCell={this.onEditCell}
             sortColumn={sortColumn}
             sortDirection={sortDirection}

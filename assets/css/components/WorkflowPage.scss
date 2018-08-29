@@ -91,27 +91,10 @@
     border-left: 1px solid $dark-accent--soft;
   }
 
-
-  .overlapping .module-stack.focus {
-    z-index: 2;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-  }
-
   // contain iframe
   .data-reactroot {
     background-color: $WF-background;
   }
-
-  .overlapping .module-stack:not(.focus)::after {
-    content:' ';
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
-
 }
 
 .workflow-root.in-lesson {

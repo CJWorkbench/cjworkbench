@@ -2,7 +2,7 @@
 
 exports[`OutputPane matches snapshot 1`] = `
 <div
-  className="outputpane"
+  className="outputPane"
 >
   <div
     id="spinner-container-transparent"
@@ -35,7 +35,6 @@ exports[`OutputPane matches snapshot 1`] = `
     api={Object {}}
     isReadOnly={false}
     lastRelevantDeltaId={1}
-    resizing={false}
     selectedWfModuleId={987}
     setBusySpinner={[Function]}
     showColumnLetter={false}
@@ -45,7 +44,7 @@ exports[`OutputPane matches snapshot 1`] = `
 
 exports[`OutputPane renders when no module id 1`] = `
 <div
-  className="outputpane"
+  className="outputPane"
 >
   <div
     id="spinner-container-transparent"
@@ -78,7 +77,6 @@ exports[`OutputPane renders when no module id 1`] = `
     api={Object {}}
     isReadOnly={false}
     lastRelevantDeltaId={1}
-    resizing={false}
     selectedWfModuleId={null}
     setBusySpinner={[Function]}
     showColumnLetter={false}
