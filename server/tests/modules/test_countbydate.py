@@ -139,6 +139,32 @@ class CountByDateTests(SimpleTestCase):
         self.assertEqual(result.error, expected.error)
         assert_frame_equal(result.dataframe, expected.dataframe)
 
+    def test_count_by_date_datetime_input(self):
+        # Most of these tests are with dtype=object. That's kinda silly. _This_
+        # test is for dtype=datetime64[ns], which is the usual thing we want to
+        # group by.
+        #
+        # The reason we worked so hard on date parsing is historical: back in
+        # the day, there was no proper date type.
+        self._assertRendersTable(
+            pandas.DataFrame({'Date': [
+                dt('2011-01-10T23:12:01Z'),
+                dt('2011-01-15T12:11Z'),
+                dt('2016-07-25T00:12:43Z'),
+                dt('2011-01-10T23:11Z'),
+                dt('2011-01-10T13:11Z'),
+                dt('2011-01-10T03:21Z'),
+                dt('2011-01-10T23:13Z'),
+            ]}),
+            MockWfModule(column='Date', groupby=3),  # 3 = group by days
+            [
+                'Date,count',
+                '2011-01-10,5',
+                '2011-01-15,1',
+                '2016-07-25,1',
+            ]
+        )
+
     def test_count_by_date(self):
         self._assertRendersTable(
             read_csv(count_csv),
