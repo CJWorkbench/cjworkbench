@@ -116,6 +116,7 @@
 
     .outputpane-data {
       flex: 1 1 auto; // consume maximum height (unlike header, which is fixed-height)
+      position: relative; // for .react-grid-Container
 
       .react-grid-Container {
         // Do not influence the height of .outputpane-data.
