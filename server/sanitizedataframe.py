@@ -1,5 +1,6 @@
 # --- Dataframe sanitization and truncation ---
 from typing import Any, Optional
+from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import numpy as np
 import pandas as pd
 
@@ -91,7 +92,6 @@ def sanitize_series(series: pd.Series) -> pd.Series:
 
     * Convert unsupported dtypes to string.
     """
-    dtype = pd.api.types.infer_dtype(series[series.notna()])
     if hasattr(series, 'cat'):
         categories = series.cat.categories
         if pd.api.types.is_numeric_dtype(categories):
@@ -104,13 +104,15 @@ def sanitize_series(series: pd.Series) -> pd.Series:
 
         series = series.cat.remove_unused_categories()
         return series
-    elif dtype not in _AllowedDtypes:
+    elif is_numeric_dtype(series.dtype):
+        return series
+    elif is_datetime64_dtype(series.dtype):
+        return series
+    else:
         # convert all non-NA to str
         ret = series.astype(str)
         ret[series.isna()] = np.nan
         return ret
-    else:
-        return series
 
 
 def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:

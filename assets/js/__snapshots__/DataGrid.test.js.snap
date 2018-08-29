@@ -24,6 +24,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
   onEditCell={[MockFunction]}
   onGridSort={[MockFunction]}
   onRenameColumn={[MockFunction]}
+  onReorderColumns={[MockFunction]}
   setDropdownAction={[MockFunction]}
   totalRows={2}
   wfModuleId={100}
@@ -42,9 +43,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         },
         Object {
           "editable": true,
-          "formatter": <RowTypeFormatter
-            type="number"
-          />,
+          "formatter": [Function],
           "headerRenderer": <ColumnHeader
             columnKey="aaa"
             columnType="number"
@@ -70,9 +69,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         },
         Object {
           "editable": true,
-          "formatter": <RowTypeFormatter
-            type="text"
-          />,
+          "formatter": [Function],
           "headerRenderer": <ColumnHeader
             columnKey="bbbb"
             columnType="text"
@@ -98,9 +95,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         },
         Object {
           "editable": true,
-          "formatter": <RowTypeFormatter
-            type="text"
-          />,
+          "formatter": [Function],
           "headerRenderer": <ColumnHeader
             columnKey="ccccc"
             columnType="text"
@@ -126,9 +121,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         },
         Object {
           "editable": true,
-          "formatter": <RowTypeFormatter
-            type="text"
-          />,
+          "formatter": [Function],
           "headerRenderer": <ColumnHeader
             columnKey="rn_"
             columnType="text"
@@ -242,9 +235,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 },
                 Object {
                   "editable": true,
-                  "formatter": <RowTypeFormatter
-                    type="number"
-                  />,
+                  "formatter": [Function],
                   "headerRenderer": <ColumnHeader
                     columnKey="aaa"
                     columnType="number"
@@ -271,9 +262,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 },
                 Object {
                   "editable": true,
-                  "formatter": <RowTypeFormatter
-                    type="text"
-                  />,
+                  "formatter": [Function],
                   "headerRenderer": <ColumnHeader
                     columnKey="bbbb"
                     columnType="text"
@@ -300,9 +289,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 },
                 Object {
                   "editable": true,
-                  "formatter": <RowTypeFormatter
-                    type="text"
-                  />,
+                  "formatter": [Function],
                   "headerRenderer": <ColumnHeader
                     columnKey="ccccc"
                     columnType="text"
@@ -329,9 +316,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 },
                 Object {
                   "editable": true,
-                  "formatter": <RowTypeFormatter
-                    type="text"
-                  />,
+                  "formatter": [Function],
                   "headerRenderer": <ColumnHeader
                     columnKey="rn_"
                     columnType="text"
@@ -373,9 +358,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               },
               Object {
                 "editable": true,
-                "formatter": <RowTypeFormatter
-                  type="number"
-                />,
+                "formatter": [Function],
                 "headerRenderer": <ColumnHeader
                   columnKey="aaa"
                   columnType="number"
@@ -401,9 +384,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               },
               Object {
                 "editable": true,
-                "formatter": <RowTypeFormatter
-                  type="text"
-                />,
+                "formatter": [Function],
                 "headerRenderer": <ColumnHeader
                   columnKey="bbbb"
                   columnType="text"
@@ -429,9 +410,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               },
               Object {
                 "editable": true,
-                "formatter": <RowTypeFormatter
-                  type="text"
-                />,
+                "formatter": [Function],
                 "headerRenderer": <ColumnHeader
                   columnKey="ccccc"
                   columnType="text"
@@ -457,9 +436,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               },
               Object {
                 "editable": true,
-                "formatter": <RowTypeFormatter
-                  type="text"
-                />,
+                "formatter": [Function],
                 "headerRenderer": <ColumnHeader
                   columnKey="rn_"
                   columnType="text"
@@ -594,9 +571,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     },
                     Object {
                       "editable": true,
-                      "formatter": <RowTypeFormatter
-                        type="number"
-                      />,
+                      "formatter": [Function],
                       "headerRenderer": <ColumnHeader
                         columnKey="aaa"
                         columnType="number"
@@ -623,9 +598,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     },
                     Object {
                       "editable": true,
-                      "formatter": <RowTypeFormatter
-                        type="text"
-                      />,
+                      "formatter": [Function],
                       "headerRenderer": <ColumnHeader
                         columnKey="bbbb"
                         columnType="text"
@@ -652,9 +625,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     },
                     Object {
                       "editable": true,
-                      "formatter": <RowTypeFormatter
-                        type="text"
-                      />,
+                      "formatter": [Function],
                       "headerRenderer": <ColumnHeader
                         columnKey="ccccc"
                         columnType="text"
@@ -681,9 +652,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     },
                     Object {
                       "editable": true,
-                      "formatter": <RowTypeFormatter
-                        type="text"
-                      />,
+                      "formatter": [Function],
                       "headerRenderer": <ColumnHeader
                         columnKey="rn_"
                         columnType="text"
@@ -756,9 +725,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="number"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="aaa"
                           columnType="number"
@@ -785,9 +752,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="text"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="bbbb"
                           columnType="text"
@@ -814,9 +779,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="text"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="ccccc"
                           columnType="text"
@@ -843,9 +806,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="text"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="rn_"
                           columnType="text"
@@ -926,9 +887,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
-                            "formatter": <RowTypeFormatter
-                              type="number"
-                            />,
+                            "formatter": [Function],
                             "headerRenderer": <ColumnHeader
                               columnKey="aaa"
                               columnType="number"
@@ -996,9 +955,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             column={
                               Object {
                                 "editable": true,
-                                "formatter": <RowTypeFormatter
-                                  type="number"
-                                />,
+                                "formatter": [Function],
                                 "headerRenderer": <ColumnHeader
                                   columnKey="aaa"
                                   columnType="number"
@@ -1433,9 +1390,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
-                            "formatter": <RowTypeFormatter
-                              type="text"
-                            />,
+                            "formatter": [Function],
                             "headerRenderer": <ColumnHeader
                               columnKey="bbbb"
                               columnType="text"
@@ -1503,9 +1458,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             column={
                               Object {
                                 "editable": true,
-                                "formatter": <RowTypeFormatter
-                                  type="text"
-                                />,
+                                "formatter": [Function],
                                 "headerRenderer": <ColumnHeader
                                   columnKey="bbbb"
                                   columnType="text"
@@ -1940,9 +1893,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
-                            "formatter": <RowTypeFormatter
-                              type="text"
-                            />,
+                            "formatter": [Function],
                             "headerRenderer": <ColumnHeader
                               columnKey="ccccc"
                               columnType="text"
@@ -2010,9 +1961,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             column={
                               Object {
                                 "editable": true,
-                                "formatter": <RowTypeFormatter
-                                  type="text"
-                                />,
+                                "formatter": [Function],
                                 "headerRenderer": <ColumnHeader
                                   columnKey="ccccc"
                                   columnType="text"
@@ -2447,9 +2396,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
-                            "formatter": <RowTypeFormatter
-                              type="text"
-                            />,
+                            "formatter": [Function],
                             "headerRenderer": <ColumnHeader
                               columnKey="rn_"
                               columnType="text"
@@ -2517,9 +2464,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             column={
                               Object {
                                 "editable": true,
-                                "formatter": <RowTypeFormatter
-                                  type="text"
-                                />,
+                                "formatter": [Function],
                                 "headerRenderer": <ColumnHeader
                                   columnKey="rn_"
                                   columnType="text"
@@ -3051,9 +2996,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="number"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="aaa"
                           columnType="number"
@@ -3080,9 +3023,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="text"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="bbbb"
                           columnType="text"
@@ -3109,9 +3050,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="text"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="ccccc"
                           columnType="text"
@@ -3138,9 +3077,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
-                        "formatter": <RowTypeFormatter
-                          type="text"
-                        />,
+                        "formatter": [Function],
                         "headerRenderer": <ColumnHeader
                           columnKey="rn_"
                           columnType="text"
@@ -3259,9 +3196,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         },
                         Object {
                           "editable": true,
-                          "formatter": <RowTypeFormatter
-                            type="number"
-                          />,
+                          "formatter": [Function],
                           "headerRenderer": <ColumnHeader
                             columnKey="aaa"
                             columnType="number"
@@ -3288,9 +3223,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         },
                         Object {
                           "editable": true,
-                          "formatter": <RowTypeFormatter
-                            type="text"
-                          />,
+                          "formatter": [Function],
                           "headerRenderer": <ColumnHeader
                             columnKey="bbbb"
                             columnType="text"
@@ -3317,9 +3250,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         },
                         Object {
                           "editable": true,
-                          "formatter": <RowTypeFormatter
-                            type="text"
-                          />,
+                          "formatter": [Function],
                           "headerRenderer": <ColumnHeader
                             columnKey="ccccc"
                             columnType="text"
@@ -3346,9 +3277,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         },
                         Object {
                           "editable": true,
-                          "formatter": <RowTypeFormatter
-                            type="text"
-                          />,
+                          "formatter": [Function],
                           "headerRenderer": <ColumnHeader
                             columnKey="rn_"
                             columnType="text"
@@ -3468,9 +3397,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="number"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
                                       columnType="number"
@@ -3497,9 +3424,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
                                       columnType="text"
@@ -3526,9 +3451,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
                                       columnType="text"
@@ -3555,9 +3478,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
                                       columnType="text"
@@ -3591,7 +3512,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               isSelected={false}
                               row={
                                 Object {
-                                  "aaa": "9",
+                                  "aaa": 9,
                                   "bbbb": "foo",
                                   "ccccc": "9",
                                   "rn_": "someval",
@@ -3654,9 +3575,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="number"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
                                       columnType="number"
@@ -3683,9 +3602,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
                                       columnType="text"
@@ -3712,9 +3629,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
                                       columnType="text"
@@ -3741,9 +3656,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
                                       columnType="text"
@@ -3777,7 +3690,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               isSelected={false}
                               row={
                                 Object {
-                                  "aaa": "9",
+                                  "aaa": 9,
                                   "bbbb": "",
                                   "ccccc": "baz",
                                   "rn_": "someotherval",
@@ -3849,9 +3762,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="number"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
                                         columnType="number"
@@ -3878,9 +3789,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
                                         columnType="text"
@@ -3907,9 +3816,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
                                         columnType="text"
@@ -3936,9 +3843,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
                                         columnType="text"
@@ -3972,7 +3877,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 isSelected={false}
                                 row={
                                   Object {
-                                    "aaa": "9",
+                                    "aaa": 9,
                                     "bbbb": "foo",
                                     "ccccc": "9",
                                     "rn_": "someval",
@@ -4035,9 +3940,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="number"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
                                         columnType="number"
@@ -4064,9 +3967,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
                                         columnType="text"
@@ -4093,9 +3994,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
                                         columnType="text"
@@ -4122,9 +4021,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     },
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
                                         columnType="text"
@@ -4158,7 +4055,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 isSelected={false}
                                 row={
                                   Object {
-                                    "aaa": "9",
+                                    "aaa": 9,
                                     "bbbb": "",
                                     "ccccc": "baz",
                                     "rn_": "someotherval",
@@ -4228,9 +4125,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="number"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
                                       columnType="number"
@@ -4257,9 +4152,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
                                       columnType="text"
@@ -4286,9 +4179,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
                                       columnType="text"
@@ -4315,9 +4206,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
                                       columnType="text"
@@ -4352,7 +4241,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               key="row-0"
                               row={
                                 Object {
-                                  "aaa": "9",
+                                  "aaa": 9,
                                   "bbbb": "foo",
                                   "ccccc": "9",
                                   "rn_": "someval",
@@ -4413,9 +4302,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="number"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
                                         columnType="number"
@@ -4451,11 +4338,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="number"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={1}
                                   isCellValueChanging={[Function]}
@@ -4465,7 +4348,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="aaa-0"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "foo",
                                       "ccccc": "9",
                                       "rn_": "someval",
@@ -4474,7 +4357,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   rowIdx={0}
                                   tabIndex={0}
-                                  value="9"
+                                  value={9}
                                 >
                                   <div
                                     className="react-grid-Cell"
@@ -4494,7 +4377,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       }
                                     }
                                     tabIndex={0}
-                                    value="9"
+                                    value={9}
                                   >
                                     <div
                                       className="react-grid-Cell__value"
@@ -4507,50 +4390,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="number"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="aaa"
-                                                  columnType="number"
-                                                  draggingColumnIndex={null}
-                                                  index={0}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "aaa",
-                                                "left": 40,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "aaa",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={0}
-                                            type="number"
-                                            value="9"
+                                          <NumberCellFormatter
+                                            value={9}
                                           >
                                             <div
-                                              align="right"
-                                              className="row-type-number"
+                                              className="cell-number"
                                             >
                                               9
                                             </div>
-                                          </RowTypeFormatter>
+                                          </NumberCellFormatter>
                                         </span>
                                          
                                          
@@ -4609,9 +4457,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
                                         columnType="text"
@@ -4647,11 +4493,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="text"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={2}
                                   isCellValueChanging={[Function]}
@@ -4661,7 +4503,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="bbbb-0"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "foo",
                                       "ccccc": "9",
                                       "rn_": "someval",
@@ -4703,50 +4545,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="text"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="bbbb"
-                                                  columnType="text"
-                                                  draggingColumnIndex={null}
-                                                  index={1}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "bbbb",
-                                                "left": 200,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "bbbb",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={0}
-                                            type="text"
+                                          <TextCellFormatter
                                             value="foo"
                                           >
                                             <div
-                                              align="left"
-                                              className="row-type-text"
+                                              className="cell-text"
                                             >
                                               foo
                                             </div>
-                                          </RowTypeFormatter>
+                                          </TextCellFormatter>
                                         </span>
                                          
                                          
@@ -4805,9 +4612,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
                                         columnType="text"
@@ -4843,11 +4648,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="text"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={3}
                                   isCellValueChanging={[Function]}
@@ -4857,7 +4658,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="ccccc-0"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "foo",
                                       "ccccc": "9",
                                       "rn_": "someval",
@@ -4899,50 +4700,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="text"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="ccccc"
-                                                  columnType="text"
-                                                  draggingColumnIndex={null}
-                                                  index={2}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "ccccc",
-                                                "left": 360,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "ccccc",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={0}
-                                            type="text"
+                                          <TextCellFormatter
                                             value="9"
                                           >
                                             <div
-                                              align="left"
-                                              className="row-type-text"
+                                              className="cell-text"
                                             >
                                               9
                                             </div>
-                                          </RowTypeFormatter>
+                                          </TextCellFormatter>
                                         </span>
                                          
                                          
@@ -5001,9 +4767,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
                                         columnType="text"
@@ -5039,11 +4803,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="text"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={4}
                                   isCellValueChanging={[Function]}
@@ -5053,7 +4813,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="rn_-0"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "foo",
                                       "ccccc": "9",
                                       "rn_": "someval",
@@ -5095,50 +4855,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="text"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="rn_"
-                                                  columnType="text"
-                                                  draggingColumnIndex={null}
-                                                  index={3}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "rn_",
-                                                "left": 520,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "rn_",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={0}
-                                            type="text"
+                                          <TextCellFormatter
                                             value="someval"
                                           >
                                             <div
-                                              align="left"
-                                              className="row-type-text"
+                                              className="cell-text"
                                             >
                                               someval
                                             </div>
-                                          </RowTypeFormatter>
+                                          </TextCellFormatter>
                                         </span>
                                          
                                          
@@ -5224,7 +4949,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="rn__-0"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "foo",
                                       "ccccc": "9",
                                       "rn_": "someval",
@@ -5266,15 +4991,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowNumberFormatter
+                                          <RowIndexFormatter
                                             value={1}
                                           >
                                             <div
-                                              className="row-number"
+                                              className="row-number row-number-1"
                                             >
                                               1
                                             </div>
-                                          </RowNumberFormatter>
+                                          </RowIndexFormatter>
                                         </span>
                                          
                                          
@@ -5336,9 +5061,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="number"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="aaa"
                                       columnType="number"
@@ -5365,9 +5088,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="bbbb"
                                       columnType="text"
@@ -5394,9 +5115,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="ccccc"
                                       columnType="text"
@@ -5423,9 +5142,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
-                                    "formatter": <RowTypeFormatter
-                                      type="text"
-                                    />,
+                                    "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
                                       columnKey="rn_"
                                       columnType="text"
@@ -5460,7 +5177,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               key="row-1"
                               row={
                                 Object {
-                                  "aaa": "9",
+                                  "aaa": 9,
                                   "bbbb": "",
                                   "ccccc": "baz",
                                   "rn_": "someotherval",
@@ -5521,9 +5238,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="number"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="aaa"
                                         columnType="number"
@@ -5559,11 +5274,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="number"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={1}
                                   isCellValueChanging={[Function]}
@@ -5573,7 +5284,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="aaa-1"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "",
                                       "ccccc": "baz",
                                       "rn_": "someotherval",
@@ -5582,7 +5293,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   rowIdx={1}
                                   tabIndex={0}
-                                  value="9"
+                                  value={9}
                                 >
                                   <div
                                     className="react-grid-Cell"
@@ -5602,7 +5313,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       }
                                     }
                                     tabIndex={0}
-                                    value="9"
+                                    value={9}
                                   >
                                     <div
                                       className="react-grid-Cell__value"
@@ -5615,50 +5326,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="number"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="aaa"
-                                                  columnType="number"
-                                                  draggingColumnIndex={null}
-                                                  index={0}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "aaa",
-                                                "left": 40,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "aaa",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={1}
-                                            type="number"
-                                            value="9"
+                                          <NumberCellFormatter
+                                            value={9}
                                           >
                                             <div
-                                              align="right"
-                                              className="row-type-number"
+                                              className="cell-number"
                                             >
                                               9
                                             </div>
-                                          </RowTypeFormatter>
+                                          </NumberCellFormatter>
                                         </span>
                                          
                                          
@@ -5717,9 +5393,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="bbbb"
                                         columnType="text"
@@ -5755,11 +5429,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="text"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={2}
                                   isCellValueChanging={[Function]}
@@ -5769,7 +5439,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="bbbb-1"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "",
                                       "ccccc": "baz",
                                       "rn_": "someotherval",
@@ -5811,50 +5481,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="text"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="bbbb"
-                                                  columnType="text"
-                                                  draggingColumnIndex={null}
-                                                  index={1}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "bbbb",
-                                                "left": 200,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "bbbb",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={1}
-                                            type="text"
+                                          <TextCellFormatter
                                             value=""
                                           >
                                             <div
-                                              align="left"
-                                              className="row-null"
-                                            >
-                                              null
-                                            </div>
-                                          </RowTypeFormatter>
+                                              className="cell-text"
+                                            />
+                                          </TextCellFormatter>
                                         </span>
                                          
                                          
@@ -5913,9 +5546,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="ccccc"
                                         columnType="text"
@@ -5951,11 +5582,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="text"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={3}
                                   isCellValueChanging={[Function]}
@@ -5965,7 +5592,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="ccccc-1"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "",
                                       "ccccc": "baz",
                                       "rn_": "someotherval",
@@ -6007,50 +5634,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="text"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="ccccc"
-                                                  columnType="text"
-                                                  draggingColumnIndex={null}
-                                                  index={2}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "ccccc",
-                                                "left": 360,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "ccccc",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={1}
-                                            type="text"
+                                          <TextCellFormatter
                                             value="baz"
                                           >
                                             <div
-                                              align="left"
-                                              className="row-type-text"
+                                              className="cell-text"
                                             >
                                               baz
                                             </div>
-                                          </RowTypeFormatter>
+                                          </TextCellFormatter>
                                         </span>
                                          
                                          
@@ -6109,9 +5701,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
-                                      "formatter": <RowTypeFormatter
-                                        type="text"
-                                      />,
+                                      "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
                                         columnKey="rn_"
                                         columnType="text"
@@ -6147,11 +5737,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={
-                                    <RowTypeFormatter
-                                      type="text"
-                                    />
-                                  }
+                                  formatter={[Function]}
                                   height={35}
                                   idx={4}
                                   isCellValueChanging={[Function]}
@@ -6161,7 +5747,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="rn_-1"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "",
                                       "ccccc": "baz",
                                       "rn_": "someotherval",
@@ -6203,50 +5789,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowTypeFormatter
-                                            column={
-                                              Object {
-                                                "editable": true,
-                                                "formatter": <RowTypeFormatter
-                                                  type="text"
-                                                />,
-                                                "headerRenderer": <ColumnHeader
-                                                  columnKey="rn_"
-                                                  columnType="text"
-                                                  draggingColumnIndex={null}
-                                                  index={3}
-                                                  isReadOnly={false}
-                                                  isSorted={false}
-                                                  onDragEnd={[Function]}
-                                                  onDragStartColumnIndex={[Function]}
-                                                  onDropColumnIndexAtIndex={[Function]}
-                                                  onRenameColumn={[Function]}
-                                                  setDropdownAction={[MockFunction]}
-                                                  showLetter={false}
-                                                />,
-                                                "key": "rn_",
-                                                "left": 520,
-                                                "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
-                                                "maybeTriggerRenderIfChangeIsSorted": false,
-                                                "maybeTriggerRenderIfChangeShowLetter": undefined,
-                                                "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                                "name": "rn_",
-                                                "resizable": true,
-                                                "width": 160,
-                                              }
-                                            }
-                                            isExpanded={false}
-                                            rowIdx={1}
-                                            type="text"
+                                          <TextCellFormatter
                                             value="someotherval"
                                           >
                                             <div
-                                              align="left"
-                                              className="row-type-text"
+                                              className="cell-text"
                                             >
                                               someotherval
                                             </div>
-                                          </RowTypeFormatter>
+                                          </TextCellFormatter>
                                         </span>
                                          
                                          
@@ -6332,7 +5883,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   key="rn__-1"
                                   rowData={
                                     Object {
-                                      "aaa": "9",
+                                      "aaa": 9,
                                       "bbbb": "",
                                       "ccccc": "baz",
                                       "rn_": "someotherval",
@@ -6374,15 +5925,15 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         }
                                       >
                                         <span>
-                                          <RowNumberFormatter
+                                          <RowIndexFormatter
                                             value={2}
                                           >
                                             <div
-                                              className="row-number"
+                                              className="row-number row-number-1"
                                             >
                                               2
                                             </div>
-                                          </RowNumberFormatter>
+                                          </RowIndexFormatter>
                                         </span>
                                          
                                          
@@ -6416,6 +5967,7 @@ exports[`DataGrid tests, matches snapshot without data 1`] = `
   isReadOnly={false}
   lastRelevantDeltaId={999}
   onRenameColumn={[MockFunction]}
+  onReorderColumns={[MockFunction]}
   setDropdownAction={[MockFunction]}
   totalRows={0}
   wfModuleId={100}

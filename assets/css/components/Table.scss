@@ -153,19 +153,15 @@
               // Shrinking font sizes based on number of digits
               // TODO: Can we make the font size a variable?
               .row-number-3 {
-                @extend .row-number;
                 font-size: 1.0rem!important;
               }
               .row-number-4 {
-                @extend .row-number;
                 font-size: 0.9rem!important;
               }
               .row-number-5 {
-                @extend .row-number;
                 font-size: 0.8rem!important;
               }
-              .row-number-6 {
-                @extend .row-number;
+              .row-number-6, .row-number-7, .row-number-8 {
                 font-size: 0.7rem!important;
               }
             }
@@ -396,7 +392,7 @@
               margin-right: 1rem;
               font-size: 1.2rem;
 
-              .row-null {
+              .cell-null {
                 color:$light-gray;
                 @extend .content-3;
                 font-size: 1.2rem!important;
@@ -404,6 +400,10 @@
                 font-style: italic;
                 padding-right: 2px;
                 font-weight: 100;
+              }
+
+              .cell-number {
+                text-align: right;
               }
             }
 

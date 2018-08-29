@@ -14,13 +14,13 @@ describe('DataGrid tests,', () => {
     ],
     rows: [
       {
-        'aaa': '9',
+        'aaa': 9,
         'bbbb': 'foo',
         'ccccc': '9', // use digits that will not appear in our row numbers, so we can test
         'rn_': 'someval' // deliberately conflict with DataGrid's default row number column key
       },
       {
-        'aaa': '9',
+        'aaa': 9,
         'bbbb': '',
         'ccccc': 'baz',
         'rn_': 'someotherval'
@@ -51,6 +51,7 @@ describe('DataGrid tests,', () => {
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
         isReadOnly={false}
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />
     )
@@ -102,6 +103,7 @@ describe('DataGrid tests,', () => {
         getRow={() => {}}
         isReadOnly={false}
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />
     )
@@ -124,6 +126,7 @@ describe('DataGrid tests,', () => {
         showLetter
         isReadOnly={false}
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />
     )
@@ -146,6 +149,7 @@ describe('DataGrid tests,', () => {
         showLetter={false}
         isReadOnly={false}
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />)
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0)
@@ -162,6 +166,7 @@ describe('DataGrid tests,', () => {
         columns={testData.columns}
         columnTypes={testData.column_types}
         getRow={getRow}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
         isReadOnly={false}
         setDropdownAction={setDropdownAction}
@@ -203,6 +208,7 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         isReadOnly
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />
     )
@@ -219,7 +225,7 @@ describe('DataGrid tests,', () => {
     })
   })
 
-  it('Should respect alignment by type', (done) => {
+  it('Should set className to include type', (done) => {
     var tree = mount(
       <DataGrid
         wfModuleId={100}
@@ -230,13 +236,14 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         isReadOnly
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />
     )
 
     setImmediate(() => {
-      expect(tree.find('.row-type-text').first().prop('align')).toBe('left')
-      expect(tree.find('.row-type-number').first().prop('align')).toBe('right')
+      expect(tree.find('.cell-text').first()).toHaveLength(1)
+      expect(tree.find('.cell-number').first()).toHaveLength(1)
       tree.unmount()
       done()
     })
@@ -250,15 +257,16 @@ describe('DataGrid tests,', () => {
         totalRows={testData.totalRows}
         columns={testData.columns}
         columnTypes={testData.column_types}
-        getRow={getRow}
+        getRow={(i) => ({ aaa: null, bbbb: null, ccccc: null, rn_: 'rn'})}
         isReadOnly
         setDropdownAction={setDropdownAction}
+        onReorderColumns={jest.fn()}
         onRenameColumn={onRenameColumn}
       />
     )
 
     setImmediate(() => {
-      expect(tree.find('.row-null').first().text()).toBe('null')
+      expect(tree.find('.cell-null').first().text()).toBe('null')
       tree.unmount()
       done()
     })

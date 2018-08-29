@@ -20,72 +20,90 @@ const columnTypeDisplay = {
 }
 
 // Custom Formatter component, to render row number in a different style
-export class RowNumberFormatter extends React.PureComponent {
-
-  render() {
-
-    var rowNumber = this.props.value;
-    var rowNumberDigits = rowNumber.toString().length;
-    var numberClass = 'row-number';
-    if (rowNumberDigits > 2 && rowNumberDigits < 7 ) {
-      numberClass = 'row-number-' + rowNumberDigits;
-    } else if (rowNumberDigits >= 7) {
-      numberClass = 'row-number-6'
-    }
-
-    return (
-      <div className={numberClass}>
-        {rowNumber}
-      </div>)
+export class RowIndexFormatter extends React.PureComponent {
+  static propTypes = {
+    value: PropTypes.number.isRequired
   }
-}
-
-RowNumberFormatter.propTypes = {
-  value:    PropTypes.node.isRequired
-};
-
-// General class for type formatting
-export class RowTypeFormatter extends React.PureComponent {
 
   render () {
-    // Insert types that need to align right
-    const alignRight = [
-      'number'
-    ]
-    // For init state
-    if (this.props.type === '') {
-      return (
-        <div className={'row-init'} >
-          {this.props.value}
-        </div>
-      )
-    }
-    // Left align for text, right align for numeric
-    let type = this.props.type
-    let align = alignRight.indexOf(type) >= 0 ? 'right' : 'left'
+    const text = String(this.props.value) // no commas -- horizontal space is at a premium
 
-    // For null types, adding '' for now but will populate 'null' table at init
-    if (this.props.value === null | this.props.value === '') {
-      return (
-        <div className={'row-null'} align={align}>
-          {'null'}
-        </div>
-      )
-    }
-
-    let className = 'row-type-' + type
-
-    return (
-      <div className={className} align={align} >
-        {this.props.value}
-      </div>)
+    return <div className={`row-number row-number-${text.length}`}>{text}</div>
   }
 }
 
-RowTypeFormatter.propTypes = {
-  value:    PropTypes.node,   // not required because can be null
-  type:     PropTypes.string.isRequired
-};
+// Unfortunately, ReactDataGrid will send "new" values to "old" columns when
+// switching to another version of a table that has the same column with a
+// different type. So all formatters need to support all types. (We don't care
+// about their output. though.)
+const ReactDataGridValuePropType = PropTypes.oneOfType([
+  PropTypes.string.isRequired,
+  PropTypes.number.isRequired
+])
+
+class AbstractCellFormatter extends React.PureComponent {
+  render () {
+    const value = this.props.value
+    if (value === null) {
+      return <div className='cell-null'>{'null'}</div>
+    }
+
+    return this.renderNonNull()
+  }
+}
+
+export class TextCellFormatter extends AbstractCellFormatter {
+  static propTypes = {
+    value: ReactDataGridValuePropType // string
+  }
+
+  renderNonNull () {
+    return <div className='cell-text'>{this.props.value}</div>
+  }
+}
+
+const numberFormat = new Intl.NumberFormat()
+export class NumberCellFormatter extends AbstractCellFormatter {
+  static propTypes = {
+    value: ReactDataGridValuePropType // number
+  }
+
+  renderNonNull () {
+    return <div className='cell-number'>{numberFormat.format(this.props.value)}</div>
+  }
+}
+
+const ZeroEndOfDate = /(?:(?:T00:00)?:00)?\.000Z$/
+export class DatetimeCellFormatter extends AbstractCellFormatter {
+  static propTypes = {
+    value: ReactDataGridValuePropType // string: -- ISO8601-formatted date
+  }
+
+  renderNonNull () {
+    const value = this.props.value
+    const date = new Date(value)
+
+    if (isNaN(date)) {
+      // A race! The input isn't a date because ReactDataGrid fed us "new"
+      // data and we're the "old" formatter.
+      return null // nobody will see it anyway
+    }
+
+    // Strip the end of the ISO string if it's all-zero. Restore the 'Z' at
+    // the very end iff there's no time component. (The time component starts
+    // with 'T'.)
+    const text = date.toISOString()
+      .replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
+
+    return <div className='cell-datetime'>{text}</div>
+  }
+}
+
+const TypeToCellFormatter = {
+  'text': TextCellFormatter,
+  'datetime': DatetimeCellFormatter,
+  'number': NumberCellFormatter
+}
 
 class ReorderColumnDropZone extends React.PureComponent {
   static propTypes = {
@@ -420,10 +438,10 @@ function makeFormattedCols(props) {
   const rowNumberColumn = {
     key: props.rowNumKey,
     name: '',
-    formatter: RowNumberFormatter,
+    formatter: RowIndexFormatter,
     width: 40,
     locked: true,
-  };
+  }
 
   // We can have an empty table, but we need to give these props to ColumnHeader anyway
   const safeColumns = props.columns || [];
@@ -435,7 +453,7 @@ function makeFormattedCols(props) {
     name: columnKey,
     resizable: true,
     editable: editable,
-    formatter: <RowTypeFormatter type={columnTypes[index]} />,
+    formatter: TypeToCellFormatter[columnTypes[index]] || TextCellFormatter,
     width: 160,
     // react-data-grid normally won't re-render if we change headerRenderer.
     // So we need to change _other_ props, forcing it to re-render.

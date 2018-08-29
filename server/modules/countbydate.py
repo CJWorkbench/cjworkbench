@@ -120,13 +120,13 @@ def get_period_time_formatter(freq: str,
                               is_time_only: bool) -> Optional[str]:
     """Build a template for `pandas.Period.strftime()`."""
     return {
-        (False, 'S'): "%Y-%m-%dT%H:%M:%S",  # Seconds
-        (False, 'T'): "%Y-%m-%dT%H:%M",  # Minutes
-        (False, 'H'): "%Y-%m-%dT%H:00",  # Hours
-        (False, 'D'): "%Y-%m-%d",  # Days
-        (False, 'M'): "%Y-%m",  # Months
+        (False, 'S'): None,  # Seconds
+        (False, 'T'): None,  # Minutes
+        (False, 'H'): None,  # Hours
+        (False, 'D'): None,  # Days
+        (False, 'M'): None,  # Months
         (False, 'Q'): "%Y Q%q",  # Quarters -- pandas.Period-specific format
-        (False, 'Y'): "%Y",  # Years
+        (False, 'Y'): None,  # Years
         (True, 'S'): "%H:%M:%S",  # Seconds
         (True, 'T'): "%H:%M",  # Minutes
         (True, 'H'): "%H:00",  # Hours
@@ -279,9 +279,14 @@ class CountByDate(ModuleImpl):
             freq,
             time_type == InputTimeType.TIME_OF_DAY
         )
-        output = pd.DataFrame({
+        if time_format:
             # convert dates->str. This is the only slow part of this module.
-            col: return_series.index.strftime(time_format).values,
+            return_index = return_series.index.strftime(time_format).values
+        else:
+            return_index = return_series.index.to_timestamp()
+
+        output = pd.DataFrame({
+            col: return_index,
             return_series.name: return_series.values,
         })
 
