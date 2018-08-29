@@ -2,7 +2,7 @@
 
 exports[`OutputPane matches snapshot 1`] = `
 <div
-  className="outputPane"
+  className="outputpane"
 >
   <div
     id="spinner-container-transparent"
@@ -44,7 +44,7 @@ exports[`OutputPane matches snapshot 1`] = `
 
 exports[`OutputPane renders when no module id 1`] = `
 <div
-  className="outputPane"
+  className="outputpane"
 >
   <div
     id="spinner-container-transparent"

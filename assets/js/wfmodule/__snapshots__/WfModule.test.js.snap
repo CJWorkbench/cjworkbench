@@ -52,7 +52,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             onExpand={[Function]}
           />
           <i
-            className="icon-undefined WFmodule-icon"
+            className="icon-icon WFmodule-icon"
           />
           <div
             className="module-name"
@@ -64,6 +64,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           >
             <a
               className="help-button"
+              href="http://help-url"
               target="_blank"
               title="Help for this module"
             >

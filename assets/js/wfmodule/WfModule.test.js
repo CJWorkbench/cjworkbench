@@ -19,6 +19,10 @@ describe('WfModule, not read-only mode', () => {
     isReadOnly: false,
     isAnonymous: false,
     isZenMode: false,
+    isZenModeAllowed: false,
+    moduleName: 'Load from URL',
+    moduleIcon: 'icon',
+    moduleHelpUrl: 'http://help-url',
     name: 'TestModule',
     wfModule: wfModule,
     module: module,
@@ -64,8 +68,6 @@ describe('WfModule, not read-only mode', () => {
     ],
     module_version: { module: 2 }
   }
-
-  const module = { id_name: 'loadurl', name: 'Load from URL' }
 
   beforeEach(() => {
     // Reset mock functions before each test
@@ -116,8 +118,7 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('has an "enter zen mode" button', () => {
-    const aModule = { id_name: 'pythoncode', name: 'Python Code', has_zen_mode: true }
-    const wrapper = shallow(<WfModule {...props} module={aModule} />)
+    const wrapper = shallow(<WfModule {...props} isZenModeAllowed />)
     let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(false)
     expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false ])

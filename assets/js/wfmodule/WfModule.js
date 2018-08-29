@@ -24,6 +24,10 @@ export class WfModule extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
+    isZenModeAllowed: PropTypes.bool.isRequired,
+    moduleHelpUrl: PropTypes.string, // or null
+    moduleName: PropTypes.string, // or null
+    moduleIcon: PropTypes.string, // or null
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.object,
     inputWfModule: PropTypes.shape({
@@ -223,10 +227,9 @@ export class WfModule extends React.PureComponent {
   }
 
   renderZenModeButton () {
-    const { wfModule, module, isZenMode } = this.props
-    const zenModeAllowed = module.has_zen_mode
+    const { wfModule, module, isZenMode, isZenModeAllowed } = this.props
 
-    if (!zenModeAllowed) return null
+    if (!isZenModeAllowed) return null
 
     const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
     const title = isZenMode ? 'exit Zen mode' : 'enter Zen mode'
@@ -283,7 +286,7 @@ export class WfModule extends React.PureComponent {
   }
 
   renderParam = (p, index) => {
-    const { api, wfModule, module, isReadOnly, isZenMode, inputWfModule } = this.props
+    const { api, wfModule, moduleName, isReadOnly, isZenMode, inputWfModule } = this.props
     const updateSettings = {
       lastUpdateCheck: wfModule.last_update_check,
       autoUpdateData: wfModule.auto_update_data,
@@ -304,7 +307,7 @@ export class WfModule extends React.PureComponent {
       <WfParameter
         api={api}
         name={idName}
-        moduleName={module.name}
+        moduleName={moduleName}
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
         wfModuleStatus={wfModule.status}
@@ -330,10 +333,10 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, wfModule, module } = this.props
+    const { isReadOnly, wfModule, module, moduleHelpUrl, moduleName, moduleIcon } = this.props
 
     // Each parameter gets a WfParameter
-    const paramdivs = wfModule.parameter_vals.map(this.renderParam)
+    const paramdivs = moduleName ? wfModule.parameter_vals.map(this.renderParam) : null
 
     const notes = (
       <div className={`module-notes${(!!this.state.notes || this.state.isNoteForcedVisible) ? ' visible' : ''}`}>
@@ -369,7 +372,7 @@ export class WfModule extends React.PureComponent {
     let helpIcon
     if (!this.props.isReadOnly) {
       helpIcon = (
-        <a title='Help for this module' className='help-button' href={module.help_url} target='_blank'>
+        <a title='Help for this module' className='help-button' href={moduleHelpUrl} target='_blank'>
           <i className='icon-help' />
         </a>
       )
@@ -411,7 +414,7 @@ export class WfModule extends React.PureComponent {
       </div>
     )
 
-    const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon'
+    const moduleIconClassName = 'icon-' + moduleIcon + ' WFmodule-icon'
 
     let maybeDataVersionModal = null
     if (this.state.isDataVersionModalOpen) {
@@ -431,7 +434,7 @@ export class WfModule extends React.PureComponent {
 
     // Putting it all together: name, status, parameters, output
     return (
-      <div onClick={this.click} className={className} data-module-name={module.name}>
+      <div onClick={this.click} className={className} data-module-name={moduleName}>
         {notes}
         <div className={'wf-card ' + (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
@@ -447,8 +450,8 @@ export class WfModule extends React.PureComponent {
                   onCollapse={this.collapse}
                   onExpand={this.expand}
                 />
-                <i className={moduleIcon} />
-                <div className='module-name'>{module.name}</div>
+                <i className={moduleIconClassName} />
+                <div className='module-name'>{moduleName}</div>
                 {contextBtns}
               </div>
               {/* --- Error message --- */}
@@ -519,6 +522,10 @@ function mapStateToProps (state, ownProps) {
   const moduleName = module ? module.name : null
   return {
     module,
+    moduleName,
+    moduleIcon: module ? module.icon : null,
+    moduleHelpUrl: module ? module.help_url : null,
+    isZenModeAllowed: module ? !!module.has_zen_mode : false,
     isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
