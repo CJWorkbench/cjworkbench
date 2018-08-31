@@ -97,3 +97,35 @@ class ParseBytesIoTest(SimpleTestCase):
                              dtype=str)
         )
         self.assertEqual(result, expected)
+
+    @override_settings(CATEGORY_FILE_SIZE_MIN=3)
+    def test_determine_dtype(self):
+        # Dataframe should be string
+        result = parse_bytesio(io.BytesIO(b'A\nB'),
+                               'text/csv', None)
+        self.assertTrue(all(result.dataframe.dtypes == object))
+
+        # Dataframe should be category
+        result = parse_bytesio(io.BytesIO(b'A;B;C\nD;E;F'),
+                               'text/txt', None)
+        self.assertTrue(all(result.dataframe.dtypes == 'category'))
+
+    def test_txt_separator_detection(self):
+        expected = ProcessResult(
+            pandas.DataFrame({'A': ['B'], 'C': ['D']})
+        )
+
+        result = parse_bytesio(io.BytesIO(b'A;C\nB;D'),
+                               'text/txt', 'utf-8')
+
+        self.assertEqual(result, expected)
+
+        result = parse_bytesio(io.BytesIO(b'A\tC\nB\tD'),
+                               'text/txt', 'utf-8')
+
+        self.assertEqual(result, expected)
+
+        result = parse_bytesio(io.BytesIO(b'A,C\nB,D'),
+                               'text/txt', 'utf-8')
+
+        self.assertEqual(result, expected)

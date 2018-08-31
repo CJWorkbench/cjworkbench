@@ -16,6 +16,7 @@ _ExtensionMimeTypes = {
     '.csv': 'text/csv',
     '.tsv': 'text/tab-separated-values',
     '.json': 'application/json',
+    '.txt': 'text/txt'
 }
 
 
@@ -33,8 +34,10 @@ def upload_to_table(wf_module, uploaded_file):
         bytesio = uploaded_file.file
         try:
             result = parse_bytesio(bytesio, mime_type, None)
-        except:
+        except Exception as e:
             uploaded_file.file.close()
+            result = ProcessResult(error=(
+                e.args[0]))
     else:
         result = ProcessResult(error=(
             f'Error parsing {uploaded_file.file.name}: '

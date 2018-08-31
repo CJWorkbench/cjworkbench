@@ -181,7 +181,10 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
             return series.astype(series.cat.categories.dtype)
         except ValueError as err:
             return series
-
+    # Setting dtype=None in read_csv infers types, must account for numerical series
+    # otherwise sets column to null
+    else:
+        return series
 
 def autocast_dtypes_in_place(table: pd.DataFrame) -> None:
     """

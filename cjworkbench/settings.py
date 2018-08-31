@@ -36,6 +36,12 @@ SCRAPER_TIMEOUT = 30 # seconds
 # Chunk size for chardet file encoding detection
 CHARDET_CHUNK_SIZE = 1024*1024
 
+# Chunk size for separator detection
+SEP_DETECT_CHUNK_SIZE = 1024*1024
+
+# Use categories if file over this size
+CATEGORY_FILE_SIZE_MIN = 250*1024*1024
+
 # ----- App Boilerplate -----
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

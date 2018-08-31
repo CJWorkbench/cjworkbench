@@ -12,6 +12,7 @@ from .types import ProcessResult
 import cchardet as chardet
 from server.sanitizedataframe import autocast_dtypes_in_place
 from django.conf import settings
+from django.db.models.fields.files import FieldFile
 
 _TextEncoding = Optional[str]
 
@@ -116,8 +117,9 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
+    dtype = _determine_dtype(bytesio)
     with _wrap_text(bytesio, text_encoding) as textio:
-        data = pandas.read_csv(textio, dtype='category')
+        data = pandas.read_csv(textio, dtype=dtype)
         autocast_dtypes_in_place(data)
         return data
 
@@ -131,8 +133,9 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
+    dtype = _determine_dtype(bytesio)
     with _wrap_text(bytesio, text_encoding) as textio:
-        data = pandas.read_table(textio, dtype='category')
+        data = pandas.read_table(textio, dtype=dtype)
         autocast_dtypes_in_place(data)
         return data
 
@@ -163,7 +166,60 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     * Error can be xlrd.XLRDError or pandas error
     * We read the entire file contents into memory before parsing
     """
-    return pandas.read_excel(bytesio, dtype='category')
+    dtype = _determine_dtype(bytesio)
+    return pandas.read_excel(bytesio, dtype=dtype)
+
+def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
+    """
+        Build a DataFrame from txt bytes or raise parse error.
+
+        Peculiarities:
+
+        * The file encoding defaults to UTF-8.
+        * Data types. Call _detect_separator to determine separator
+    """
+    dtype = _determine_dtype(bytesio)
+    with _wrap_text(bytesio, text_encoding) as textio:
+        sep = _detect_separator(textio)
+        data = pandas.read_table(textio, dtype=dtype, sep=sep)
+        autocast_dtypes_in_place(data)
+        return data
+
+def _determine_dtype(bytesio: io.BytesIO):
+    """
+        Either improve read performance time or save memory depending on file size
+
+        Peculiarities:
+
+        * Unittests pass bytesio as io.BytesIO
+        * Django passes as FieldFile.
+        * Both have different methods to determine buffer size
+    """
+
+    if type(bytesio) == FieldFile:
+        size = bytesio.size
+    elif type(bytesio) == io.BytesIO:
+        size = bytesio.getbuffer().nbytes
+    else:
+        return None
+
+    if size > settings.CATEGORY_FILE_SIZE_MIN:
+        return 'category'
+    else:
+        return None
+
+def _detect_separator(textio: io.TextIOWrapper) -> str:
+    """
+    Detect most common char of '\t', ';', ',' in first MB
+
+    TODO: Could be a tie or no counts at all, keep going until you find a winner
+    """
+    map = [',', ';', '\t']
+    chunk = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
+    textio.seek(0)
+    results = [chunk.count(x) for x in map]
+
+    return map[results.index(max(results))]
 
 def _detect_encoding(bytesio: io.BytesIO):
     """
@@ -196,6 +252,7 @@ _Parsers = {
     'application/vnd.ms-excel': _parse_xls,
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': _parse_xlsx,
     'application/json': _parse_json,
+    'text/txt': _parse_txt
 }
 
 
