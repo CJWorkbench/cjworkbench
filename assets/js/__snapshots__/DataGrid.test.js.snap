@@ -1264,6 +1264,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   </button>
                                                 </DropdownItem>
                                                 <DropdownItem
+                                                  className="convert-date"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-date dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-calendar"
+                                                    />
+                                                    <span>
+                                                      Convert to date & time
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
                                                   className="extract-numbers"
                                                   onClick={[Function]}
                                                   tag="button"
@@ -1280,6 +1300,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     />
                                                     <span>
                                                       Convert to numbers
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  className="convert-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Convert to text
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -1767,6 +1807,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   </button>
                                                 </DropdownItem>
                                                 <DropdownItem
+                                                  className="convert-date"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-date dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-calendar"
+                                                    />
+                                                    <span>
+                                                      Convert to date & time
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
                                                   className="extract-numbers"
                                                   onClick={[Function]}
                                                   tag="button"
@@ -1783,6 +1843,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     />
                                                     <span>
                                                       Convert to numbers
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  className="convert-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Convert to text
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2270,6 +2350,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   </button>
                                                 </DropdownItem>
                                                 <DropdownItem
+                                                  className="convert-date"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-date dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-calendar"
+                                                    />
+                                                    <span>
+                                                      Convert to date & time
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
                                                   className="extract-numbers"
                                                   onClick={[Function]}
                                                   tag="button"
@@ -2286,6 +2386,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     />
                                                     <span>
                                                       Convert to numbers
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  className="convert-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Convert to text
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2773,6 +2893,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   </button>
                                                 </DropdownItem>
                                                 <DropdownItem
+                                                  className="convert-date"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-date dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-calendar"
+                                                    />
+                                                    <span>
+                                                      Convert to date & time
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
                                                   className="extract-numbers"
                                                   onClick={[Function]}
                                                   tag="button"
@@ -2789,6 +2929,26 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     />
                                                     <span>
                                                       Convert to numbers
+                                                    </span>
+                                                  </button>
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  className="convert-text"
+                                                  onClick={[Function]}
+                                                  tag="button"
+                                                  toggle={false}
+                                                >
+                                                  <button
+                                                    className="convert-text dropdown-item"
+                                                    onClick={[Function]}
+                                                    tabIndex="0"
+                                                    type="button"
+                                                  >
+                                                    <i
+                                                      className="icon-clean"
+                                                    />
+                                                    <span>
+                                                      Convert to text
                                                     </span>
                                                   </button>
                                                 </DropdownItem>

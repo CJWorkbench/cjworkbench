@@ -103,6 +103,19 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
         </span>
       </DropdownItem>
       <DropdownItem
+        className="convert-date"
+        onClick={[Function]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-calendar"
+        />
+        <span>
+          Convert to date & time
+        </span>
+      </DropdownItem>
+      <DropdownItem
         className="extract-numbers"
         onClick={[Function]}
         tag="button"
@@ -113,6 +126,19 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
         />
         <span>
           Convert to numbers
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        className="convert-text"
+        onClick={[Function]}
+        tag="button"
+        toggle={false}
+      >
+        <i
+          className="icon-clean"
+        />
+        <span>
+          Convert to text
         </span>
       </DropdownItem>
       <DropdownItem

@@ -47,6 +47,8 @@ export default class ColumnContextMenu extends React.Component {
   extractNumbers = () => this.setDropdownActionDefault('extract-numbers')
   cleanText = () => this.setDropdownActionDefault('clean-text')
   dropColumn = () => this.setDropdownActionDefault('selectcolumns')
+  convertDate = () => this.setDropdownActionDefault('convert-date')
+  convertText = () => this.setDropdownActionDefault('convert-text')
 
   render() {
     return (
@@ -78,9 +80,17 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-filter"></i>
               <span>Filter</span>
             </DropdownItem>
+            <DropdownItem onClick={this.convertDate} className='convert-date' toggle={false}>
+              <i className="icon-calendar"></i>
+              <span>Convert to date & time</span>
+            </DropdownItem>
             <DropdownItem onClick={this.extractNumbers} className='extract-numbers' toggle={false}>
               <i className="icon-number"></i>
               <span>Convert to numbers</span>
+            </DropdownItem>
+            <DropdownItem onClick={this.convertText} className='convert-text' toggle={false}>
+              <i className="icon-clean"></i>
+              <span>Convert to text</span>
             </DropdownItem>
             <DropdownItem onClick={this.cleanText} className='clean-text' toggle={false}>
               <i className="icon-clean"></i>

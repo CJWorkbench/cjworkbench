@@ -33,7 +33,9 @@ def load_update_table_module_ids():
         'duplicate-column',
         'selectcolumns',
         'extract-numbers',
-        'clean-text'
+        'clean-text',
+        'convert-date',
+        'convert-text'
     ])
     return dict([(m.id_name, m.id) for m in modules])
 

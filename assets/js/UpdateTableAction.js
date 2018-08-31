@@ -13,7 +13,9 @@ export const updateModuleMapping = {
   'reorder-columns':  updateReorderModule,
   'sort-from-table':  updateSortModule,
   'extract-numbers':  updateExtractNumbersModule,
-  'clean-text':       updateCleanTextModule
+  'clean-text':       updateCleanTextModule,
+  'convert-date':     updateConvertDateModule,
+  'convert-text':     updateConvertTextModule
 }
 
 // Constants for sort module
@@ -104,6 +106,38 @@ function updateCleanTextModule (wfm, params) {
   }
   else {
     store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', params.columnKey))
+  }
+}
+
+//TODO candicate for default multicolumn handler.
+function updateConvertDateModule (wfm, params) {
+  let existingColumns = findParamValByIdName(wfm, 'colnames')
+  let newColumn = params.columnKey
+
+  if (existingColumns.value) {
+    // Do nothing if column already exists
+    if (existingColumns.value.split(',').includes(newColumn)) {}
+    else {updateTableActionModule(wfm.id, 'convert-date', true, params)}
+  }
+  else {
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', params.columnKey))
+  }
+}
+
+function updateConvertTextModule (wfm, params) {
+  let existingColumns = findParamValByIdName(wfm, 'colnames')
+  let newColumn = params.columnKey
+
+  if (existingColumns.value) {
+    // Do nothing if column already exists
+    if (existingColumns.value.split(',').includes(newColumn)) {}
+    else {
+      let entries = existingColumns.value + ',' + newColumn
+      store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', entries))
+    }
+  }
+  else {
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', newColumn))
   }
 }
 
