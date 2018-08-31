@@ -96,12 +96,10 @@ article.lesson {
       margin: 0 auto; // in case image is too small
 
       figcaption {
-        margin-top: 1rem;
         @extend %info-1;
         font-size: 1.3rem;
         line-height: 2.5rem;
         text-align: center;
-        margin: 0 1rem 1rem;
       }
     }
 

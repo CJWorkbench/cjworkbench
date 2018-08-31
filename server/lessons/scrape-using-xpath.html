@@ -23,13 +23,14 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'http://www.atlaudit.org/audit-reports.html'"
-      >Paste in the following URL, where all the public reports are listed.
+      >Paste in the following URL, where all the public reports are listed:
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
+      <p class="instruction-detail">Next, let's find the XPath selector</p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>2. Find an XPath selector in your web browser</h2>
+  <h2>2. Find the XPath selector in your web browser</h2>
   <p>
     Now we need an “XPath selector” to tell Workbench which parts of the web page to scrape. Modern web browsers include “Inspector” tools to help.
   </p>
@@ -44,7 +45,7 @@
     </p>
     <figure>
       <img alt="Inspect element" src="/static/images/xpath_list_lesson/inspect_list.svg">
-      <figcaption>Right click and 'Inspect' a link to open the inspector</figcaption>
+      <figcaption>Right click to inspect a link in the inspector</figcaption>
     </figure>
     <p class="instruction-detail">
       In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted. Right-click that element and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
