@@ -169,8 +169,8 @@ article.lesson {
           margin-left: -2rem;
         }
         &.active::before {
-          content: "\e939";
-          color:$brand-learn;
+          content: "\e938";
+          color: $light-accent--Vstrong;
         }
         &.done::before {
           content: "\e904"; // icon-check
