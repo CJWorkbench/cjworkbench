@@ -190,6 +190,10 @@
   .attribution, .test-duplicate-button, .test-share-button {
     display: none;
   }
+
+  button[name=duplicate] {
+    display: none;
+  }
 }
 
 //No navbar at login / signup
