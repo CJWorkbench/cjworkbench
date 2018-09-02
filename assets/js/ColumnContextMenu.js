@@ -80,6 +80,11 @@ export default class ColumnContextMenu extends React.Component {
               <i className="icon-filter"></i>
               <span>Filter</span>
             </DropdownItem>
+            <DropdownItem onClick={this.cleanText} className='clean-text' toggle={false}>
+              <i className="icon-clean"></i>
+              <span>Clean Text</span>
+            </DropdownItem>
+            <DropdownItem divider />
             <DropdownItem onClick={this.convertDate} className='convert-date' toggle={false}>
               <i className="icon-calendar"></i>
               <span>Convert to date & time</span>
@@ -89,12 +94,8 @@ export default class ColumnContextMenu extends React.Component {
               <span>Convert to numbers</span>
             </DropdownItem>
             <DropdownItem onClick={this.convertText} className='convert-text' toggle={false}>
-              <i className="icon-clean"></i>
+              <i className="icon-text"></i>
               <span>Convert to text</span>
-            </DropdownItem>
-            <DropdownItem onClick={this.cleanText} className='clean-text' toggle={false}>
-              <i className="icon-clean"></i>
-              <span>Clean Text</span>
             </DropdownItem>
             <DropdownItem divider />
             <DropdownItem onClick={this.dropColumn} className='drop-column' toggle={false}>
