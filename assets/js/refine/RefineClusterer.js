@@ -11,7 +11,7 @@ const Algorithms = [
   {
     name: 'fingerprint',
     selectName: 'Fingerprint',
-    description: 'Generates a "fingerprint" for each value and matches by fingerprint. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".',
+    description: 'Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".',
     defaultOptions: null,
     optionFields: null,
     buildClusterer: (bucket) => clusterByKey(bucket, fingerprint())
@@ -19,7 +19,7 @@ const Algorithms = [
   {
     name: 'levenshtein',
     selectName: 'Edit distance',
-    description: 'Groups values when their "edit distance" (number of characters added, changed or deleted to get from one to the other) is low enough. For instance, the distance between "Cafés" and "cafe" is 3.',
+    description: 'Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.',
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
       <FormGroup>
