@@ -139,12 +139,13 @@
     }
 
     .count-and-reset {
-      padding-left: .5rem;
+      min-width: 1.5rem;
+      margin-left: .8rem;
+      text-align: right;
 
       // Display the count normally. If there are edits, display a reset
       // button instead, only when the user hovers.
       button, span {
-        min-width: 3rem;
         text-align: right;
       }
 
@@ -157,10 +158,19 @@
         display: none;
         font-size: 1rem;
       }
-      &:hover {
-        button { display: block; }
-        button + span { display: none; }
+
+    }
+    &:hover {
+      button {
+        display: block;
+
+        i {
+          font-size: 1.3rem;
+          color: $brand-text--dark;
+          &:hover {color: $brand-text--darker; }
+        }
       }
+      button + span { display: none; }
     }
   }
 
@@ -189,7 +199,9 @@
       }
 
       .count-and-remove {
-        padding-left: .5rem;
+        min-width: 1.5rem;
+        margin-left: .8rem;
+        text-align: right;
 
         // Display the count normally. If the user hovers, display a remove
         // button instead -- but only if the button exists. (One can't remove
@@ -203,6 +215,8 @@
         .icon-close {
           font-size: 1.2rem;
           line-height: 1.4em;
+          color: $brand-text--dark;
+          &:hover {color: $brand-text--darker; }
         }
 
         span {
@@ -213,11 +227,11 @@
           display: none;
           font-size: .9rem;
         }
-        &:hover {
-          button { display: block; }
-          button + span { display: none; }
-        }
       }
+    }
+    li:hover {
+      button { display: block; }
+      button + span { display: none; }
     }
   }
 
