@@ -324,7 +324,7 @@
 
     td {
       vertical-align: top;
-      padding: .5rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
+      padding: .8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
     }
 
     .value, .new-value {
@@ -333,7 +333,7 @@
     }
 
     tr.bin {
-      border-top: 1px solid $table-border;
+      border-top: 1px solid $dark-accent--medium;
     }
 
     tr.value td {
@@ -343,8 +343,9 @@
 
   .autosize-cluster-input {
     width: 100%;
-    margin: 0 .5rem;
+    margin: 0rem;
     position: relative;
+    @extend .single-line-text-field;
 
     span, textarea {
       // Exact same font for invisible text and visible textarea
@@ -360,9 +361,9 @@
 
     textarea {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
+      top: .5rem;
+      left: 1rem;
+      width: 93%;
       height: 100%; // grow to the same size as the div
       resize: none;
       overflow: hidden;
