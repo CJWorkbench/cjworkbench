@@ -1,0 +1,281 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+import ColumnContextMenu from './ColumnContextMenu'
+import { idxToLetter } from '../utils'
+import { sortDirectionNone } from './UpdateTableAction'
+
+const columnTypeDisplay = {
+  'text': 'text',
+  'number': 'number',
+  'datetime': 'date & time'
+}
+
+export class EditableColumnName extends React.Component {
+  static propTypes = {
+    columnKey: PropTypes.string.isRequired,
+    columnType: PropTypes.string.isRequired,
+    onRename: PropTypes.func.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      newName: props.columnKey,
+      editMode: false,
+    };
+
+    this.inputRef = React.createRef();
+
+    this.enterEditMode = this.enterEditMode.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleInputBlur = this.handleInputBlur.bind(this);
+    this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (!prevState.editMode && this.state.editMode) {
+      const input = this.inputRef.current;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+  }
+
+  enterEditMode() {
+    if(!this.props.isReadOnly) {
+      this.setState({editMode: true});
+    }
+  }
+
+  exitEditMode() {
+    this.setState({editMode: false});
+  }
+
+  handleInputChange(event) {
+    this.setState({newName: event.target.value});
+  }
+
+  handleInputCommit() {
+    this.setState({
+        editMode: false
+    });
+    if(this.state.newName != this.props.columnKey) {
+      this.props.onRename({
+        prevName: this.props.columnKey,
+        newName: this.state.newName
+      });
+    }
+  }
+
+  handleInputBlur() {
+    this.handleInputCommit();
+  }
+
+  handleInputKeyDown(event) {
+    // Changed to keyDown as esc does not fire keyPress
+    if(event.key == 'Enter') {
+      this.handleInputCommit();
+    } else if (event.key == 'Escape') {
+      this.setState({newName: this.props.columnKey});
+      this.exitEditMode();
+    }
+  }
+
+  render() {
+    if(this.state.editMode) {
+      // The class name 'column-key-input' is used in
+      // the code to prevent dragging while editing,
+      // please keep it as-is.
+      return (
+        <input
+          name='new-column-key'
+          type='text'
+          ref={this.inputRef}
+          value={this.state.newName}
+          onChange={this.handleInputChange}
+          onBlur={this.handleInputBlur}
+          onKeyDown={this.handleInputKeyDown}
+        />
+      )
+    } else {
+      return (
+        <span
+          className={'column-key'}
+          onClick={this.enterEditMode}
+        >
+          <div>
+            {this.state.newName}
+          </div>
+          <div className={'column-type'}>
+            {columnTypeDisplay[this.props.columnType]}
+          </div>
+        </span>
+      )
+    }
+  }
+}
+
+// Sort arrows, A-Z letter identifiers
+export default class ColumnHeader extends React.PureComponent {
+  static propTypes = {
+    columnKey: PropTypes.string.isRequired,
+    columnType: PropTypes.string.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    index: PropTypes.number.isRequired,
+    isSorted: PropTypes.bool.isRequired,
+    sortDirection: PropTypes.number, // not required, which is weird
+    showLetter: PropTypes.bool.isRequired,
+    onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
+    onDragEnd: PropTypes.func.isRequired, // func() => undefined
+    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
+    draggingColumnIndex: PropTypes.number, // if set, we are dragging
+    onRenameColumn: PropTypes.func,
+    setDropdownAction: PropTypes.func.isRequired
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.inputRef = React.createRef();
+
+    this.state = {
+      isHovered: false,
+      newName: props.columnKey
+    };
+  }
+
+  setDropdownAction = (idName, forceNewModule, params) => {
+    params = {
+      ...params,
+      columnKey: this.props.columnKey
+    }
+    this.props.setDropdownAction(idName, forceNewModule, params)
+  }
+
+  onRenameColumn = () => {
+    this.inputRef.current.enterEditMode()
+  }
+
+  onMouseEnter = () => {
+    this.setState({isHovered: true});
+  }
+
+  onMouseLeave = () => {
+    this.setState({isHovered: false});
+  }
+
+  onDragStart = (ev) => {
+    if(this.props.isReadOnly) {
+      ev.preventDefault();
+      return;
+    }
+
+    if(ev.target.classList.contains('column-key-input')) {
+      ev.preventDefault();
+      return;
+    }
+
+    this.props.onDragStartColumnIndex(this.props.index)
+
+    ev.dataTransfer.effectAllowed = [ 'move' ]
+    ev.dataTransfer.dropEffect = 'move'
+    ev.dataTransfer.setData('text/plain', this.props.columnKey)
+  }
+
+  onDragEnd = () => {
+    this.props.onDragEnd()
+  }
+
+  renderColumnMenu() {
+    if(this.props.isReadOnly) {
+      return null;
+    }
+
+    return (
+      <ColumnContextMenu
+        columnKey={this.props.columnKey}
+        columnType={this.props.columnType}
+        renameColumn={this.onRenameColumn}
+        sortDirection={this.props.isSorted == true ? this.props.sortDirection : sortDirectionNone}
+        setDropdownAction={this.setDropdownAction}
+      />
+    )
+  }
+
+  renderLetter() {
+    if (this.props.showLetter) {
+      return (
+          // The 'column-letter' class name is used in the test so please be careful with it
+          <div className='column-letter'>
+            {idxToLetter(this.props.index)}
+          </div>
+      );
+    } else {
+      return null
+    }
+  }
+
+  render() {
+    const {
+      columnKey,
+      columnType,
+      index,
+      onDropColumnIndexAtIndex,
+      draggingColumnIndex,
+    } = this.props
+
+    const columnMenuSection = this.renderColumnMenu();
+    const letterSection = this.renderLetter();
+
+    function maybeDropZone(leftOrRight, toIndex) {
+      if (draggingColumnIndex === null) return null
+      if (draggingColumnIndex === toIndex) return null
+
+      // Also, dragging to fromIndex+1 is a no-op
+      if (draggingColumnIndex === toIndex - 1) return null
+
+      return (
+        <ReorderColumnDropZone
+          leftOrRight={leftOrRight}
+          fromIndex={draggingColumnIndex}
+          toIndex={toIndex}
+          onDropColumnIndexAtIndex={onDropColumnIndexAtIndex}
+          />
+      )
+    }
+
+    const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
+
+
+    //<span className="column-key">{columnKey}</span>
+    return (
+      <React.Fragment>
+        {letterSection}
+        <div
+          className={`data-grid-column-header ${draggingClass}`}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+          draggable={true}
+          onDragStart={this.onDragStart}
+          onDragEnd={this.onDragEnd}
+          >
+          {maybeDropZone('left', index)}
+
+            <EditableColumnName
+              columnKey={columnKey}
+              columnType={columnType}
+              onRename={this.props.onRenameColumn}
+              isReadOnly={this.props.isReadOnly}
+              ref={this.inputRef}
+            />
+            {columnMenuSection}
+          </div>
+          {maybeDropZone('right', index + 1)}
+
+      </React.Fragment>
+    );
+  }
+}
