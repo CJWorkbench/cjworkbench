@@ -10,6 +10,61 @@ const columnTypeDisplay = {
   'datetime': 'date & time'
 }
 
+class ReorderColumnDropZone extends React.PureComponent {
+  static propTypes = {
+    leftOrRight: PropTypes.oneOf([ 'left', 'right' ]).isRequired,
+    fromIndex: PropTypes.number.isRequired,
+    toIndex: PropTypes.number.isRequired,
+    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(fromIndex, toIndex) => undefined
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isDragHover: false,
+    }
+  }
+
+  onDragEnter = (ev) => {
+    this.setState({
+      isDragHover: true,
+    })
+  }
+
+  onDragLeave = (ev) => {
+    this.setState({
+      isDragHover: false,
+    })
+  }
+
+  onDragOver = (ev) => {
+    ev.preventDefault() // allow drop by preventing the default, which is "no drop"
+  }
+
+  onDrop = (ev) => {
+    const { fromIndex, toIndex, onDropColumnIndexAtIndex } = this.props
+    onDropColumnIndexAtIndex(fromIndex, toIndex)
+  }
+
+  render() {
+    let className = 'column-reorder-drop-zone'
+    className += ' align-' + this.props.leftOrRight
+    if (this.state.isDragHover) className += ' drag-hover'
+
+    return (
+      <div
+        className={className}
+        onDragEnter={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragOver={this.onDragOver}
+        onDrop={this.onDrop}
+        >
+      </div>
+    )
+  }
+}
+
 export class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,

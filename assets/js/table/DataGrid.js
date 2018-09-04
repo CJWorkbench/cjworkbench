@@ -11,61 +11,6 @@ import debounce from 'debounce'
 import ColumnHeader from './ColumnHeader'
 import { RowIndexFormatter, typeToCellFormatter } from './CellFormatters'
 
-class ReorderColumnDropZone extends React.PureComponent {
-  static propTypes = {
-    leftOrRight: PropTypes.oneOf([ 'left', 'right' ]).isRequired,
-    fromIndex: PropTypes.number.isRequired,
-    toIndex: PropTypes.number.isRequired,
-    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(fromIndex, toIndex) => undefined
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      isDragHover: false,
-    }
-  }
-
-  onDragEnter = (ev) => {
-    this.setState({
-      isDragHover: true,
-    })
-  }
-
-  onDragLeave = (ev) => {
-    this.setState({
-      isDragHover: false,
-    })
-  }
-
-  onDragOver = (ev) => {
-    ev.preventDefault() // allow drop by preventing the default, which is "no drop"
-  }
-
-  onDrop = (ev) => {
-    const { fromIndex, toIndex, onDropColumnIndexAtIndex } = this.props
-    onDropColumnIndexAtIndex(fromIndex, toIndex)
-  }
-
-  render() {
-    let className = 'column-reorder-drop-zone'
-    className += ' align-' + this.props.leftOrRight
-    if (this.state.isDragHover) className += ' drag-hover'
-
-    return (
-      <div
-        className={className}
-        onDragEnter={this.onDragEnter}
-        onDragLeave={this.onDragLeave}
-        onDragOver={this.onDragOver}
-        onDrop={this.onDrop}
-        >
-      </div>
-    )
-  }
-}
-
 // Add row number col and make all cols resizeable
 function makeFormattedCols(props) {
   const editable = (props.onEditCell !== undefined) && props.wfModuleId !== undefined; // no wfModuleId means blank table
@@ -79,9 +24,9 @@ function makeFormattedCols(props) {
   }
 
   // We can have an empty table, but we need to give these props to ColumnHeader anyway
-  const safeColumns = props.columns || [];
-  const columnTypes = props.columnTypes || safeColumns.map(_ => '');
-  const showLetter = props.showLetter || false;
+  const safeColumns = props.columns || []
+  const columnTypes = props.columnTypes || safeColumns.map(_ => '')
+  const showLetter = props.showLetter || false
 
   const columns = safeColumns.map((columnKey, index) => ({
     key: columnKey,
@@ -140,7 +85,7 @@ export default class DataGrid extends React.Component {
   }
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       // gridWith and gridHeight start non-0, so rows get rendered in tests
@@ -150,7 +95,7 @@ export default class DataGrid extends React.Component {
       draggingColumnIndex: null,
     }
 
-    this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
+    this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this)
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -167,11 +112,11 @@ export default class DataGrid extends React.Component {
   // Each ReactDataGrid col needs a unique key. Make one for our row number column
   get rowNumKey() {
     const columnKeys = this.props.columns
-    let ret = 'rn_';
+    let ret = 'rn_'
     while (columnKeys.includes(ret)) {
-      ret += '_';
+      ret += '_'
     }
-    return ret;
+    return ret
   }
 
   componentDidMount() {
@@ -181,7 +126,7 @@ export default class DataGrid extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this._resizeListener);
+    window.removeEventListener("resize", this._resizeListener)
   }
 
   // Check if column names are changed between props, used for shouldKeyUpdate
@@ -239,8 +184,8 @@ export default class DataGrid extends React.Component {
 
   // Add row number as first column, when we look up data
   getRow = (i) => {
-    const row = this.props.getRow(i);
-    if (row === null) return null;
+    const row = this.props.getRow(i)
+    if (row === null) return null
     // 1 based row numbers
     return { [this.rowNumKey]: i + 1, ...row }
   }
@@ -252,41 +197,41 @@ export default class DataGrid extends React.Component {
     }
 
     if(this.props.isReadOnly) {
-      throw new Error("Attempting to edit cells in a read-only workflow.");
+      throw new Error("Attempting to edit cells in a read-only workflow.")
     }
 
     if (this.props.onEditCell)
-      var colKey = Object.keys(updated)[0];
-      var newVal = updated[colKey];
+      var colKey = Object.keys(updated)[0]
+      var newVal = updated[colKey]
       this.props.onEditCell(fromRow, colKey, newVal)  // column key is also column name
   }
 
   onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
-    const sourceKey = this.props.columns[fromIndex];
+    const sourceKey = this.props.columns[fromIndex]
     let reorderInfo = {
         column: sourceKey,
         from: fromIndex,
         to: toIndex,
       }
 
-    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', false, reorderInfo);
-  };
+    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', false, reorderInfo)
+  }
 
   onDragStartColumnIndex = (index) => {
     this.setState({
       draggingColumnIndex: index,
     })
-  };
+  }
 
   onDragEnd = () => {
     this.setState({
       draggingColumnIndex: null,
     })
-  };
+  }
 
   onRename = (renameInfo) => {
-    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', false, renameInfo);
-  };
+    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', false, renameInfo)
+  }
 
   render() {
     if (this.props.totalRows > 0) {
@@ -315,7 +260,7 @@ export default class DataGrid extends React.Component {
         />
       )
     } else {
-      return null;
+      return null
     }
   }
 }
