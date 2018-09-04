@@ -117,7 +117,7 @@
 
   h4 {
     @extend .info-2;
-    color: $light-gray;
+    color: $brand-text--medium;
     margin-top: 1rem;
     text-transform: uppercase;
   }
@@ -126,7 +126,7 @@
     border: 2px solid transparent;
     color: $brand-text--dark;
     cursor: pointer;
-    opacity: .7;
+
 
     i {
       width: 1.5rem;
@@ -134,7 +134,8 @@
     }
 
     &:hover {
-      opacity: 1;
+
+      color: $brand-text--darker;
       background-color: $dark-accent--soft;
     }
 
