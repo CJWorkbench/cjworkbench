@@ -208,7 +208,7 @@
               border-right:1px solid rgba(0,0,0,0.1);
               border-bottom:0px;
               @extend %font-nunito-regular;
-              font-size: 1.2rem;
+              font-size: 1.3rem;
               padding: 0;
               display: flex;
 
@@ -367,19 +367,24 @@
               border-right: 0px solid $table-border;
               border-bottom: 0px solid transparent;
               border-top: 0;
+
+              .cell-text {
+                font-size: 1.3rem;
+              }
+
               //Click and edit a cell
               &:focus {
                 padding-left: 0;
                 border-radius: 0;
               	outline: 2px solid $brand-orange;
-                font-size: 1.2rem;
+                font-size: 1.3rem;
               }
               & input {
                 padding-left: 0.8rem;
                 background-color: $white;
                 border-radius: 0;
               	outline: 2px solid $brand-orange;
-                font-size: 1.2rem;
+                font-size: 1.3rem;
                 height: 3.5rem!important;
               }
             }
