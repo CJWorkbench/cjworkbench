@@ -274,6 +274,33 @@ class TwitterTests(unittest.TestCase):
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')
+    def test_accumulate_recover_after_bug_160258591(self, cursor, auth_service):
+        # https://www.pivotaltracker.com/story/show/160258591
+        # 'id', 'retweet_count' and 'favorite_count' had wrong type after
+        # accumulating an empty table. Now the bad data is in our database;
+        # let's convert back to the type we want.
+        self.wf_module.accumulate = True
+
+        auth_service.return_value.consumer_key = 'a-key'
+        auth_service.return_value.consumer_secret = 'a-secret'
+
+        bad_table = mock_tweet_table.copy()
+        for column in ['id', 'retweet_count', 'favorite_count']:
+            bad_table[column] = bad_table[column].astype(str)
+        self.wf_module.fetched_table = bad_table
+
+        # Fix it _no matter what_ -- even if we aren't adding any data.
+        instance = cursor.return_value
+        instance.pages.return_value = []
+        Twitter.event(self.wf_module)
+
+        self.commit_result.assert_called()
+        result = self.commit_result.call_args[0][1]
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, mock_tweet_table)
+
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('tweepy.Cursor')
     def test_twitter_search(self, cursor, auth_service):
         self.wf_module.querytype = 1
         self.wf_module.query = 'cat'

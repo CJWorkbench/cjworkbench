@@ -1,5 +1,6 @@
 import tweepy
 from tweepy import TweepError
+import numpy as np
 import pandas as pd
 import re
 from .moduleimpl import ModuleImpl
@@ -13,9 +14,18 @@ QUERY_TYPE_SEARCH = 1
 QUERY_TYPE_LIST = 2
 
 
+def _recover_from_160258591(table):
+    # https://www.pivotaltracker.com/story/show/160258591
+    for column in ['id', 'retweet_count', 'favorite_count']:
+        table[column] = table[column].astype(np.int64)
+
+
 # Get dataframe of last tweets fron our storage,
 def get_stored_tweets(wf_module):
-    return wf_module.retrieve_fetched_table()
+    table = wf_module.retrieve_fetched_table()
+    if table is not None:
+        _recover_from_160258591(table)
+    return table
 
 
 # Get from Twitter, return as dataframe
