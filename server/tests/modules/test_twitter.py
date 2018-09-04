@@ -216,7 +216,7 @@ class TwitterTests(unittest.TestCase):
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')
-    def test_user_timeline_and_accumulate(self, cursor, auth_service):
+    def test_user_timeline_accumulate(self, cursor, auth_service):
         self.wf_module.querytype = 0  # user timeline, as opposed to search
         self.wf_module.username = 'foouser'
         self.wf_module.accumulate = True
@@ -249,6 +249,28 @@ class TwitterTests(unittest.TestCase):
             list(result2.dataframe['id']),
             [795018956507582465, 795017539831103489, 795017147651162112]
         )
+
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('tweepy.Cursor')
+    def test_accumulate_empty(self, cursor, auth_service):
+        # https://www.pivotaltracker.com/story/show/160258591
+        # Empty dataframe shouldn't change types
+        self.wf_module.accumulate = True
+
+        auth_service.return_value.consumer_key = 'a-key'
+        auth_service.return_value.consumer_secret = 'a-secret'
+
+        self.wf_module.fetched_table = mock_tweet_table
+
+        instance = cursor.return_value
+        instance.pages.return_value = []
+
+        Twitter.event(self.wf_module)
+
+        self.commit_result.assert_called()
+        result = self.commit_result.call_args[0][1]
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')

@@ -77,11 +77,15 @@ def get_new_tweets(access_token, querytype, query, old_tweets):
 # Combine this set of tweets with previous set of tweets
 def merge_tweets(wf_module, new_table):
     old_table = get_stored_tweets(wf_module)
-    if old_table is not None:
-        new_table = pd.concat([new_table, old_table]) \
+
+    if old_table is None or old_table.empty:
+        return new_table
+    elif new_table is None or new_table.empty:
+        return old_table
+    else:
+        return pd.concat([new_table, old_table]) \
                 .sort_values('id', ascending=False) \
                 .reset_index(drop=True)
-    return new_table
 
 
 class Twitter(ModuleImpl):
