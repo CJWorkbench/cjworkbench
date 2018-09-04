@@ -29,7 +29,6 @@ export class OutputIframe extends React.PureComponent {
     }
 
     if (prevState.heightFromIframe !== this.state.heightFromIframe || prevProps.visible !== this.props.visible) {
-      console.log('Resize event')
       const resizeEvent = document.createEvent('Event')
       resizeEvent.initEvent('resize', true, true)
       window.dispatchEvent(resizeEvent)
@@ -151,7 +150,6 @@ export class OutputIframe extends React.PureComponent {
 
     const defaultHeight = visible ? '100%' : '0'
     const height = heightFromIframe === null ? defaultHeight : `${Math.ceil(heightFromIframe)}px`
-    console.log('height=', height)
 
     return (
       <div className='outputpane-iframe' style={{ height }}>
