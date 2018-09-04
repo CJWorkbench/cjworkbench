@@ -85,7 +85,6 @@ describe('TableView', () => {
       expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'})
 
       // Calls updateTableActionModule for column reorder
-      // TODO uncomment!
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
       expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 })
 
