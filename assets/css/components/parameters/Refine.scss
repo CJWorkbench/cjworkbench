@@ -4,7 +4,7 @@
   align-items: center;
   font-size: 1.3rem;
   line-height: 1.4;
-  color: $medium-gray;
+  color: $brand-text--medium;
   margin-bottom: 1.5rem;
 
   //launches the clustering modal
@@ -268,7 +268,7 @@
         .method-description {
           @extend .content-3;
           flex: 1 1 auto;
-          color:$labels;
+          color:$brand-text--medium;
         }
 
         input[id=refine-clusterer-max-distance] {
