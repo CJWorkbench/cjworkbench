@@ -4,26 +4,6 @@ exports[`OutputPane matches snapshot 1`] = `
 <div
   className="outputpane"
 >
-  <div
-    id="spinner-container-transparent"
-    style={
-      Object {
-        "display": "none",
-      }
-    }
-  >
-    <div
-      id="spinner-l1"
-    >
-      <div
-        id="spinner-l2"
-      >
-        <div
-          id="spinner-l3"
-        />
-      </div>
-    </div>
-  </div>
   <Connect(OutputIframe)
     isPublic={false}
     lastRelevantDeltaId={1}
@@ -46,26 +26,6 @@ exports[`OutputPane renders when no module id 1`] = `
 <div
   className="outputpane"
 >
-  <div
-    id="spinner-container-transparent"
-    style={
-      Object {
-        "display": "none",
-      }
-    }
-  >
-    <div
-      id="spinner-l1"
-    >
-      <div
-        id="spinner-l2"
-      >
-        <div
-          id="spinner-l3"
-        />
-      </div>
-    </div>
-  </div>
   <Connect(OutputIframe)
     isPublic={false}
     lastRelevantDeltaId={1}

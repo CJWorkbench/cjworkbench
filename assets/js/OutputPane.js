@@ -23,39 +23,17 @@ export class OutputPane extends React.Component {
     htmlOutput: PropTypes.bool
   }
 
-  constructor(props) {
-    super(props);
-
-    this.spinnerRef = React.createRef()
-    this.spinning = false
+  state = {
+    spinning: false
   }
 
-  // Spinner state did not work as part of component state, conditionally visible in render()
-  // It didn't appear when refreshing a large table. My guess is that is because React updates are batched,
-  // the spinner on and spinner off updates are combined and we never see it when the table re-render is long.
-  // So, now we turn the spinner on and off immediately through direct DOM styling
-  setBusySpinner = (visible) => {
-    const spinnerEl = this.spinnerRef.current
-    if (this.spinnerEl && visible != this.spinning) {
-      this.spinnerEl.style.display = visible ? 'flex' : 'none'
-      this.spinning = visible
-    }
-  }
-
-  // Can't do this as an anonymous function like ref={ (el) => {this.spinnerEl=el} }
-  // because el will sometimes be null if we do. See https://reactjs.org/docs/refs-and-the-dom.html#caveats
-  saveSpinnerEl(el) {
-    this.spinnerEl = el;
-  }
-
-  getWindowWidth() {
-    return window.innerWidth
-      || document.documentElement.clientWidth
-      || document.body.clientWidth;
+  setBusySpinner = (spinning) => {
+    this.setState({ spinning })
   }
 
   render() {
     const { isReadOnly, isPublic, sortColumn, sortDirection, showColumnLetter, lastRelevantDeltaId } = this.props
+    const { spinning } = this.state
 
     // Make a table component even if no module ID (should still show an empty table)
     const tableView =
@@ -87,12 +65,8 @@ export class OutputPane extends React.Component {
 
     // Spinner is always rendered, but we toggle 'display: none' in setBusySpinner()
     // Start hidden. TableView will turn it on when needed.
-    const spinner = (
-      <div
-        id="spinner-container-transparent"
-        style={{display:'none'}}
-        ref={this.spinnerRef}
-      >
+    const spinner = !spinning ? null : (
+      <div id="spinner-container-transparent">
         <div id="spinner-l1">
           <div id="spinner-l2">
             <div id="spinner-l3"></div>
@@ -103,9 +77,9 @@ export class OutputPane extends React.Component {
 
     return (
       <div className='outputpane'>
-        {spinner}
         {outputIFrame}
         {tableView}
+        {spinner}
       </div>
     )
   }
