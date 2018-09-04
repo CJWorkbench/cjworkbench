@@ -6,7 +6,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDataGrid, { HeaderCell } from 'react-data-grid'
-import {idxToLetter} from "./utils";
+import { idxToLetter } from '../utils'
 import PropTypes from 'prop-types'
 import debounce from 'debounce'
 import ColumnContextMenu from './ColumnContextMenu'

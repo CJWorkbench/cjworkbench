@@ -1,8 +1,8 @@
 import { updateTableActionModule } from './UpdateTableAction'
-import {tick} from "./test-utils"
+import { tick } from '../test-utils'
 
-jest.mock('./workflow-reducer');
-import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from './workflow-reducer'
+jest.mock('../workflow-reducer');
+import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 
 describe('RenameColumns actions', () => {

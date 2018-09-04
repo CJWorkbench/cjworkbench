@@ -5,10 +5,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
-import ExportModal from "./ExportModal"
+import ExportModal from '../ExportModal'
 import update from 'immutability-helper'
 import * as UpdateTableAction from './UpdateTableAction'
-import { findParamValByIdName } from './utils'
 
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 50 // ms after scroll before fetch

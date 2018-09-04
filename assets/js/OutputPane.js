@@ -2,12 +2,12 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import TableView from './TableView'
+import TableView from './table/TableView'
 import OutputIframe from './OutputIframe'
 import debounce from 'debounce'
 import { connect } from 'react-redux'
 import { findParamValByIdName} from './utils'
-import { sortDirectionNone } from './UpdateTableAction'
+import { sortDirectionNone } from './table/UpdateTableAction'
 
 export class OutputPane extends React.Component {
   static propTypes = {

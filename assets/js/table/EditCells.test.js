@@ -1,7 +1,7 @@
-import {updateTableActionModule} from './UpdateTableAction'
+import { updateTableActionModule } from './UpdateTableAction'
 
-jest.mock('./workflow-reducer')
-import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from './workflow-reducer'
+jest.mock('../workflow-reducer')
+import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 describe('Edit Cell actions', () => {
   const idName = 'editcells'

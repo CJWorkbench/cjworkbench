@@ -1,5 +1,5 @@
-import {store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction} from './workflow-reducer'
-import {findParamValByIdName} from './utils'
+import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from '../workflow-reducer'
+import { findParamValByIdName } from '../utils'
 
 // Unit tests written in individual test.js files per module ex: SortFromTable.test.js
 

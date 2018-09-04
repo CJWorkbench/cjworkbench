@@ -1,9 +1,9 @@
 import { updateTableActionModule, selectColumnDrop, selectColumnKeep, updateModuleMapping } from './UpdateTableAction'
-import {tick} from './test-utils'
+import { tick } from '../test-utils'
 // TODO do not import store
-import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
+import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from '../workflow-reducer'
 
-jest.mock('./workflow-reducer')
+jest.mock('../workflow-reducer')
 
 describe("UpdateTableAction actions", () => {
   // A few parameter id constants for better readability

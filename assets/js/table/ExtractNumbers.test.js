@@ -1,8 +1,8 @@
 import { extractNumberAny, updateTableActionModule } from './UpdateTableAction'
-import {tick} from './test-utils'
-import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
+import { tick } from '../test-utils'
+import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from '../workflow-reducer'
 
-jest.mock('./workflow-reducer');
+jest.mock('../workflow-reducer');
 
 describe("ExtractNumbers actions", () => {
   // A few parameter id constants for better readability

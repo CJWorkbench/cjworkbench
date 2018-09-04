@@ -1,7 +1,7 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { mount } from 'enzyme'
-import { jsonResponseMock, sleep, tick } from './test-utils'
+import { jsonResponseMock, sleep, tick } from '../test-utils'
 import TableView, { NRowsPerPage, FetchTimeout } from './TableView'
 import DataGrid from './DataGrid'
 

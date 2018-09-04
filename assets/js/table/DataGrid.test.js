@@ -1,6 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import DataGrid, {ColumnHeader, EditableColumnName} from "./DataGrid"
+import DataGrid, {ColumnHeader, EditableColumnName} from './DataGrid'
 
 describe('DataGrid tests,', () => {
   var testData = {
