@@ -6,8 +6,8 @@ import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
 import DropdownToggle from 'reactstrap/lib/DropdownToggle'
 import DropdownMenu from 'reactstrap/lib/DropdownMenu'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
-import ExportModal from './ExportModal'
 import Portal from 'reactstrap/lib/Portal'
+import ExportModal from '../ExportModal'
 
 
 export default class WfModuleContextMenu extends React.Component {

@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WfModuleContextMenu should match snapshot 1`] = `
+<WfModuleContextMenu
+  className="menu-test-class"
+  id={415}
+  removeModule={[MockFunction]}
+>
+  <UncontrolledDropdown
+    onClick={[Function]}
+  >
+    <Dropdown
+      active={false}
+      addonType={false}
+      direction="down"
+      inNavbar={false}
+      isOpen={false}
+      nav={false}
+      onClick={[Function]}
+      setActiveFromChild={false}
+      toggle={[Function]}
+    >
+      <Manager
+        className="dropdown"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        tag="div"
+      >
+        <div
+          className="dropdown"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+        >
+          <DropdownToggle
+            aria-haspopup={true}
+            className="context-button"
+            color="secondary"
+            title="more"
+          >
+            <Target
+              aria-expanded={false}
+              aria-haspopup={true}
+              className="context-button"
+              color="secondary"
+              component={[Function]}
+              onClick={[Function]}
+              title="more"
+            >
+              <Button
+                aria-expanded={false}
+                aria-haspopup={true}
+                className="context-button"
+                color="secondary"
+                innerRef={[Function]}
+                onClick={[Function]}
+                tag="button"
+                title="more"
+              >
+                <button
+                  aria-expanded={false}
+                  aria-haspopup={true}
+                  className="context-button btn btn-secondary"
+                  onClick={[Function]}
+                  title="more"
+                  type="button"
+                >
+                  <i
+                    className="context-button--icon icon-more"
+                  />
+                </button>
+              </Button>
+            </Target>
+          </DropdownToggle>
+          <Portal>
+            <DropdownMenu
+              flip={true}
+              persist={true}
+              position="left"
+              tag="div"
+            >
+              <Popper
+                aria-hidden={true}
+                className="dropdown-menu"
+                component="div"
+                eventsEnabled={true}
+                modifiers={Object {}}
+                placement="bottom-start"
+                position="left"
+                positionFixed={false}
+                role="menu"
+                tabIndex="-1"
+                x-placement="bottom-start"
+              >
+                <div
+                  aria-hidden={true}
+                  className="dropdown-menu"
+                  position="left"
+                  role="menu"
+                  style={
+                    Object {
+                      "opacity": 0,
+                      "pointerEvents": "none",
+                      "position": "absolute",
+                    }
+                  }
+                  tabIndex="-1"
+                  x-placement="bottom-start"
+                >
+                  <DropdownItem
+                    className="test-export-button"
+                    key="1"
+                    onClick={[Function]}
+                    tag="button"
+                    toggle={true}
+                  >
+                    <button
+                      className="test-export-button dropdown-item"
+                      onClick={[Function]}
+                      tabIndex="0"
+                      type="button"
+                    >
+                      <i
+                        className="icon-download"
+                      />
+                      <span>
+                        Export data
+                      </span>
+                      <ExportModal
+                        onClose={[Function]}
+                        open={false}
+                        wfModuleId={415}
+                      />
+                    </button>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="test-delete-button"
+                    key="2"
+                    onClick={[Function]}
+                    tag="button"
+                    toggle={true}
+                  >
+                    <button
+                      className="test-delete-button dropdown-item"
+                      onClick={[Function]}
+                      tabIndex="0"
+                      type="button"
+                    >
+                      <i
+                        className="icon-bin"
+                      />
+                      <span>
+                        Delete
+                      </span>
+                    </button>
+                  </DropdownItem>
+                </div>
+              </Popper>
+            </DropdownMenu>
+          </Portal>
+        </div>
+      </Manager>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfModuleContextMenu>
+`;
