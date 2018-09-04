@@ -84,18 +84,12 @@ export default class DataGrid extends React.Component {
     setDropdownAction: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      // gridWith and gridHeight start non-0, so rows get rendered in tests
-      gridWidth: 100,
-      gridHeight : 100,
-      componentKey: 0,  // a key for the component; updates if the column header needs
-      draggingColumnIndex: null,
-    }
-
-    this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this)
+  state = {
+    // gridWith and gridHeight start non-0, so rows get rendered in tests
+    gridWidth: 100,
+    gridHeight : 100,
+    componentKey: 0, // upon change, force delete-and-recreate of ReactDataGrid
+    draggingColumnIndex: null
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -190,7 +184,7 @@ export default class DataGrid extends React.Component {
     return { [this.rowNumKey]: i + 1, ...row }
   }
 
-  onGridRowsUpdated({ fromRow, toRow, updated }) {
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
     if (fromRow !== toRow) {
       // possible if drag handle not hidden, see https://github.com/adazzle/react-data-grid/issues/822
       console.log('More than one row changed at a time in DataGrid, how?')
@@ -251,8 +245,8 @@ export default class DataGrid extends React.Component {
           columns={columns}
           rowGetter={this.getRow}
           rowsCount={this.props.totalRows}
-          minWidth={this.state.gridWidth -2}
-          minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+          minWidth={this.state.gridWidth - 2}
+          minHeight={this.state.gridHeight - 2}   // -2 because grid has borders, don't want to expand our parent DOM node
           headerRowHeight={this.props.showLetter ? 68 : 50}
           enableCellSelect={true}
           onGridRowsUpdated={this.onGridRowsUpdated}
