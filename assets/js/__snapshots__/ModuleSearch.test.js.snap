@@ -7,18 +7,18 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
   modules={
     Array [
       Object {
-        "category": "Add data",
-        "icon": "url",
-        "id": 4,
-        "isLessonHighlight": true,
-        "name": "Load from Enigma",
-      },
-      Object {
         "category": "Filter",
         "icon": "filter",
         "id": 10,
         "isLessonHighlight": false,
         "name": "Filter by Text",
+      },
+      Object {
+        "category": "Add data",
+        "icon": "url",
+        "id": 4,
+        "isLessonHighlight": true,
+        "name": "Load from Enigma",
       },
     ]
   }
