@@ -16,7 +16,6 @@ exports[`OutputPane matches snapshot 1`] = `
     isReadOnly={false}
     lastRelevantDeltaId={1}
     selectedWfModuleId={987}
-    setBusySpinner={[Function]}
     showColumnLetter={false}
   />
 </div>
@@ -38,7 +37,6 @@ exports[`OutputPane renders when no module id 1`] = `
     isReadOnly={false}
     lastRelevantDeltaId={1}
     selectedWfModuleId={null}
-    setBusySpinner={[Function]}
     showColumnLetter={false}
   />
 </div>

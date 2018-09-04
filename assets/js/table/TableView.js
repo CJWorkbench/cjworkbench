@@ -27,8 +27,7 @@ const InitialState = {
   columns: null,
   columnTypes: null,
   totalNRows: null,
-  loading: false,
-  wasJustReset: false
+  spinning: false // not "loading": we often load in bg, without an indicator
 }
 
 export default class TableView extends React.PureComponent {
@@ -37,7 +36,6 @@ export default class TableView extends React.PureComponent {
     lastRelevantDeltaId: PropTypes.number.isRequired,
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    setBusySpinner: PropTypes.func,
     showColumnLetter: PropTypes.bool.isRequired,
     sortColumn: PropTypes.string,
     sortDirection: PropTypes.number,
@@ -49,15 +47,22 @@ export default class TableView extends React.PureComponent {
     // componentDidMount will trigger first load
     this.state = Object.assign({
       isExportModalOpen: false,
+      spinning: false
     }, InitialState)
+
+    // Quick refresher: `this.loading` is synchornous; `this.state.loading` is
+    // async. In the example
+    // `this.setState({ loading: true }); console.log(this.state.loading)`,
+    // `console.log` will be called with the _previous_ value of
+    // `this.state.loading`, which is not necessarily `true`. That's useless to
+    // us. Only fill the state with stuff we want to render.
+    this.loading = false
 
     // Missing row indexes: every call to getRow() we might set these and run
     // this.scheduleLoad().
     //
     // They aren't in this.state because editing them shouldn't cause re-render
     Object.assign(this, InitialValues)
-
-    this.setDropdownAction = this.setDropdownAction.bind(this)
   }
 
   scheduleLoad () {
@@ -107,10 +112,10 @@ export default class TableView extends React.PureComponent {
       }
     }
     if (areAllValuesMissing) {
-      this.setBusySpinner(true)
+      this.setState({ spinning: true })
     }
 
-    this.setState({ loading: true })
+    this.loading = true
     this.props.api.render(this.props.selectedWfModuleId, min, max + 1) // +1: of-by-one oddness in API
       .then(json => {
         // Avoid races: return if we've changed what we want to fetch
@@ -129,16 +134,14 @@ export default class TableView extends React.PureComponent {
         // add the new rows
         loadedRows.splice(json.start_row, json.rows.length, ...json.rows)
 
+        this.loading = false
         this.setState({
-          loading: false,
           totalNRows,
           loadedRows,
           columns,
           columnTypes,
-          wasJustReset: false
+          spinning: false
         })
-
-        this.setBusySpinner(false)
       })
   }
 
@@ -150,35 +153,29 @@ export default class TableView extends React.PureComponent {
     this.setState({ isExportModalOpen: false })
   }
 
-  // safe wrapper as setBusySpinner prop is optional
-  setBusySpinner(visible) {
-    if (this.props.setBusySpinner)
-      this.props.setBusySpinner(visible);
-  }
-
   // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
   refreshTable() {
     if (this.props.selectedWfModuleId) {
-      this.setBusySpinner(true)
+      this.setState({ spinning: true })
 
       this.reset()
       this.minMissingRowIndex = 0
       this.maxMissingRowIndex = NRowsPerPage
 
-      // Set this.state.loading=true and begin the fetch
+      // Set this.loading=true and begin the fetch
       // we know scheduleLoadTimeout is null because reset() reset it
       this.load(true)
     }
   }
 
   // Load more table data from render API. Spinner if we're going to see blanks.
-  loadTable(toRow) {
+  loadTable (toRow) {
     if (this.props.selectedWfModuleId) {
-      this.loading = true;
+      this.loading = true
 
       // Spinner if we've used up all our preloaded rows (we're now seeing blanks)
       if (toRow >= this.state.lastLoadedRow + preloadRows + deltaRows) {
-        this.setBusySpinner(true);
+        this.setState({ spinning: true })
       }
 
       this.props.api.render(this.props.selectedWfModuleId, this.state.lastLoadedRow, toRow)
@@ -192,12 +189,12 @@ export default class TableView extends React.PureComponent {
 
           this.emptyRow = json.columns.reduce((obj, col) => { obj[col] = null; return obj }, {})
 
-          this.loading = false;
-          this.setBusySpinner(false);
+          this.loading = false
           this.setState({
             tableData: json,
-          });
-        });
+            spinning: false
+          })
+        })
     }
   }
 
@@ -213,13 +210,13 @@ export default class TableView extends React.PureComponent {
   }
 
   getRow = (i) => {
-    const { loadedRows, loading } = this.state
+    const { loadedRows } = this.state
 
     if (loadedRows[i]) {
       this.renderedAtLeastOneNonEmptyRow = true
       return loadedRows[i]
     } else {
-      if (!loading) {
+      if (!this.loading) {
         // Queue load for when we have time
         this.minMissingRowIndex = Math.min(i, this.minMissingRowIndex || i)
         this.maxMissingRowIndex = Math.max(i, this.maxMissingRowIndex || i)
@@ -252,7 +249,7 @@ export default class TableView extends React.PureComponent {
     }
   }
 
-  setDropdownAction (idName, forceNewModule, params) {
+  setDropdownAction = (idName, forceNewModule, params) => {
     UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, idName, forceNewModule, params);
       this.refreshTable();
   }
@@ -262,6 +259,7 @@ export default class TableView extends React.PureComponent {
     let nRowsString
     let nColsString
     let gridView
+    const { spinning } = this.state
 
     if (this.props.selectedWfModuleId && this.state.totalNRows > 0) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
@@ -314,33 +312,44 @@ export default class TableView extends React.PureComponent {
       nColsString = ''
     }
 
+    const maybeSpinner = !spinning ? null : (
+      <div id="spinner-container-transparent">
+        <div id="spinner-l1">
+          <div id="spinner-l2">
+            <div id="spinner-l3"></div>
+          </div>
+        </div>
+      </div>
+    )
+
     return (
       <div className="outputpane-table">
-          <div className="outputpane-header">
-            <div className="table-info-container">
-              <div className='table-info'>
-                  <div className='data'>Rows</div>
-                  <div className='value'>{nRowsString}</div>
-              </div>
-              <div className='table-info'>
-                  <div className='data'>Columns</div>
-                  <div className='value'>{nColsString}</div>
-              </div>
+        <div className="outputpane-header">
+          <div className="table-info-container">
+            <div className='table-info'>
+              <div className='data'>Rows</div>
+              <div className='value'>{nRowsString}</div>
             </div>
-            {this.props.selectedWfModuleId ? (
-              <div className="export-table" onClick={this.openExportModal}>
-                <i className="icon-download"></i>
-                <span>CSV</span>
-                <span className="feed">JSON FEED</span>
-                <ExportModal
-                  open={this.state.isExportModalOpen}
-                  wfModuleId={this.props.selectedWfModuleId}
-                  onClose={this.closeExportModal}
-                />
-              </div>
-            ) : null}
+            <div className='table-info'>
+              <div className='data'>Columns</div>
+              <div className='value'>{nColsString}</div>
+            </div>
           </div>
-          {gridView}
+          {!this.props.selectedWfModuleId ? null : (
+            <div className="export-table" onClick={this.openExportModal}>
+              <i className="icon-download" />
+              <span>CSV</span>
+              <span className="feed">JSON FEED</span>
+              <ExportModal
+                open={this.state.isExportModalOpen}
+                wfModuleId={this.props.selectedWfModuleId}
+                onClose={this.closeExportModal}
+              />
+            </div>
+          )}
+        </div>
+        {gridView}
+        {maybeSpinner}
       </div>
     )
   }

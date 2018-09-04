@@ -27,11 +27,7 @@ describe('TableView', () => {
       end_row: end,
       columns: ["a", "b", "c"],
       column_types: ["Number", "Number", "Number"],
-      rows: Array(nRows).fill({
-        "a": 1,
-        "b": 2,
-        "c": 3,
-      })
+      rows: Array(nRows).fill({ a: 1, b: 2, c: 3 })
     }
     return jsonResponseMock(data)
   }
@@ -149,8 +145,8 @@ describe('TableView', () => {
       columns: [ 'A', 'B' ],
       column_types: [ 'Number', 'Number' ],
       rows: [
-        { 'A': 1, 'B': 2 },
-        { 'A': 3, 'B': 4 }
+        { A: 1, B: 2 },
+        { A: 3, B: 4 }
       ]
     }
 
@@ -158,8 +154,8 @@ describe('TableView', () => {
       ...data1,
       columns: [ 'C', 'D' ],
       rows: [
-        { 'C': 5, 'D': 6 },
-        { 'C': 7, 'D': 8 }
+        { C: 5, D: 6 },
+        { C: 7, D: 8 }
       ]
     }
 
@@ -208,16 +204,8 @@ describe('TableView', () => {
       end_row: 2,
       columns: ["a", "b", "c"],
       rows: [
-        {
-          "a": 1,
-          "b": 2,
-          "c": 3
-        },
-        {
-          "a": 4,
-          "b": 5,
-          "c": 6
-        }
+        { a: 1, b: 2, c: 3 },
+        { a: 4, b: 5, c: 6 }
       ],
       column_types: ['Number', 'Number', 'Number']
     }
@@ -233,7 +221,6 @@ describe('TableView', () => {
           lastRelevantDeltaId={1}
           selectedWfModuleId={100}
           api={api}
-          setBusySpinner={jest.fn()}
           isReadOnly={false}
           sortColumn={'b'}
           sortDirection={sortDirectionDesc}
@@ -249,6 +236,43 @@ describe('TableView', () => {
     })
   })
 
+  it('shows a spinner on initial load', async () => {
+    const testData = {
+      total_rows: 2,
+      start_row: 0,
+      end_row: 2,
+      columns: ["a", "b", "c"],
+      rows: [
+        { a: 1, b: 2, c: 3 },
+        { a: 4, b: 5, c: 6 }
+      ],
+      column_types: ['Number', 'Number', 'Number']
+    }
+
+    const api = {
+      render: jsonResponseMock(testData),
+    }
+
+    const NON_SHOWLETTER_ID = 28
+    const SHOWLETTER_ID = 135
+
+    // Try a mount with the formula module selected, should show letter
+    const tree = mount(
+      <TableView
+        {...defaultProps}
+        showColumnLetter={true}
+        lastRelevantDeltaId={1}
+        selectedWfModuleId={100}
+        api={api}
+      />
+    )
+
+    expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
+    await tick()
+    tree.update()
+    expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
+  })
+
   it('passes the the right showLetter prop to DataGrid', (done) => {
     const testData = {
       total_rows: 2,
@@ -256,16 +280,8 @@ describe('TableView', () => {
       end_row: 2,
       columns: ["a", "b", "c"],
       rows: [
-        {
-          "a": 1,
-          "b": 2,
-          "c": 3
-        },
-        {
-          "a": 4,
-          "b": 5,
-          "c": 6
-        }
+        { a: 1, b: 2, c: 3 },
+        { a: 4, b: 5, c: 6 }
       ],
       column_types: ['Number', 'Number', 'Number']
     }
@@ -285,7 +301,6 @@ describe('TableView', () => {
           lastRelevantDeltaId={1}
           selectedWfModuleId={100}
           api={api}
-          setBusySpinner={jest.fn()}
       />
     )
     setImmediate(() => {

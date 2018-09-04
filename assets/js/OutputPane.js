@@ -23,17 +23,8 @@ export class OutputPane extends React.Component {
     htmlOutput: PropTypes.bool
   }
 
-  state = {
-    spinning: false
-  }
-
-  setBusySpinner = (spinning) => {
-    this.setState({ spinning })
-  }
-
   render() {
     const { isReadOnly, isPublic, sortColumn, sortDirection, showColumnLetter, lastRelevantDeltaId } = this.props
-    const { spinning } = this.state
 
     // Make a table component even if no module ID (should still show an empty table)
     const tableView =
@@ -41,7 +32,6 @@ export class OutputPane extends React.Component {
         selectedWfModuleId={this.props.selectedWfModuleId}
         lastRelevantDeltaId={lastRelevantDeltaId}
         api={this.props.api}
-        setBusySpinner={this.setBusySpinner}
         isReadOnly={isReadOnly}
         sortColumn={sortColumn}
         sortDirection={sortDirection}
@@ -63,23 +53,10 @@ export class OutputPane extends React.Component {
       />
     )
 
-    // Spinner is always rendered, but we toggle 'display: none' in setBusySpinner()
-    // Start hidden. TableView will turn it on when needed.
-    const spinner = !spinning ? null : (
-      <div id="spinner-container-transparent">
-        <div id="spinner-l1">
-          <div id="spinner-l2">
-            <div id="spinner-l3"></div>
-          </div>
-        </div>
-      </div>
-    )
-
     return (
       <div className='outputpane'>
         {outputIFrame}
         {tableView}
-        {spinner}
       </div>
     )
   }
