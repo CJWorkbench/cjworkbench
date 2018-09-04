@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { RowIndexFormatter, DatetimeCellFormatter, NumberCellFormatter, TextCellFormatter } from './DataGrid'
+import { RowIndexFormatter, typeToCellFormatter } from './CellFormatters'
 
 describe('RowIndexFormatter', () => {
   const wrapper = (value) => shallow(<RowIndexFormatter value={value} />)
@@ -22,7 +22,8 @@ describe('RowIndexFormatter', () => {
 })
 
 describe('NumberCellFormatter', () => {
-  const wrapper = (value) => shallow(<NumberCellFormatter value={value} />)
+  const Formatter = typeToCellFormatter('number')
+  const wrapper = (value) => shallow(<Formatter value={value} />)
   const numberFormat = new Intl.NumberFormat() // different on different test platforms
 
   it('renders integers with numberFormat', () => {
@@ -54,7 +55,8 @@ describe('NumberCellFormatter', () => {
 })
 
 describe('TextCellFormatter', () => {
-  const wrapper = (value) => shallow(<TextCellFormatter value={value} />)
+  const Formatter = typeToCellFormatter('text')
+  const wrapper = (value) => shallow(<Formatter value={value} />)
 
   it('renders the text', () => {
     const w = wrapper('hi')
@@ -80,7 +82,8 @@ describe('TextCellFormatter', () => {
 })
 
 describe('DatetimeCellFormatter', () => {
-  const wrapper = (value) => shallow(<DatetimeCellFormatter value={value} />)
+  const Formatter = typeToCellFormatter('datetime')
+  const wrapper = (value) => shallow(<Formatter value={value} />)
 
   it('renders with millisecond precision', () => {
     const w = wrapper('2018-08-29T18:34:01.002Z')
