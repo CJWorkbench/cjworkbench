@@ -78,11 +78,12 @@
     .suggestion {
       display: flex;
       align-items: center;
+      margin-left: 1rem;
 
       .action-button {
         @extend .button-white--fill;
         color: $brand-learn;
-        margin: 0 2rem;
+        margin: 0 3rem 0 2rem;
       }
     }
   }
