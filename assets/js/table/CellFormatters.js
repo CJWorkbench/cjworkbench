@@ -74,10 +74,10 @@ export class DatetimeCellFormatter extends AbstractCellFormatter {
     // Strip the end of the ISO string if it's all-zero. Restore the 'Z' at
     // the very end iff there's no time component. (The time component starts
     // with 'T'.)
-    const text = date.toISOString()
-      .replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
+    const isoText = date.toISOString()
+    const text = isoText.replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
 
-    return <div className='cell-datetime'>{text}</div>
+    return <time className='cell-datetime' datetime={isoText}>{text}</time>
   }
 }
 
