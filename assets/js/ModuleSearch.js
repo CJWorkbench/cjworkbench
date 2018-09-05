@@ -25,9 +25,17 @@ function compareGroups(a, b) {
   return ai - bi;
 }
 
+// Function to sort modules in alphabetical order
+function compareModules(a, b) {
+  if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+  else if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
+  else return 0
+}
+
 function groupModules(items) {
   const ret = []
   const temp = {}
+  items.sort(compareModules)
 
   items.forEach(item => {
     if (temp[item.category]) {
