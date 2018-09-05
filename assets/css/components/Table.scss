@@ -118,13 +118,20 @@
       flex: 1 1 auto; // consume maximum height (unlike header, which is fixed-height)
       position: relative; // for .react-grid-Container
 
+      // DataGrid is the heaviest DOM tree we have, and it effects the
+      // performance of the custom drag layer (and probably everything else). By
+      // putting a no-op translate3d property on it, we coerce browsers into
+      // rendering it and all of its children in a seperate compositing layer,
+      // improving the rendering of everything else in the app.
+      transform: translate3d(0, 0, 0);
+
       .react-grid-Container {
         // Do not influence the height of .outputpane-data.
         position: absolute;
         top: 0;
-        bottom: 0;
         left: 0;
-        right: 0;
+        width: 100%;
+        height: 100%;
       }
 
       .react-grid-Grid{

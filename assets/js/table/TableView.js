@@ -5,13 +5,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
-import ExportModal from '../ExportModal'
+import TableInfo from './TableInfo'
 import * as UpdateTableAction from './UpdateTableAction'
 
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 50 // ms after scroll before fetch
-
-const NumberFormat = new Intl.NumberFormat('en-US')
 
 // We'll cache some data on TableView that isn't props or state.
 const InitialValues = {
@@ -45,7 +43,6 @@ export default class TableView extends React.PureComponent {
 
     // componentDidMount will trigger first load
     this.state = Object.assign({
-      isExportModalOpen: false,
       selectedRowIndexes: []
     }, InitialState)
 
@@ -142,14 +139,6 @@ export default class TableView extends React.PureComponent {
           spinning: false
         })
       })
-  }
-
-  openExportModal = () => {
-    this.setState({ isExportModalOpen: true })
-  }
-
-  closeExportModal = () => {
-    this.setState({ isExportModalOpen: false })
   }
 
   // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
@@ -260,64 +249,50 @@ export default class TableView extends React.PureComponent {
 
   render() {
     // Make a table component if we have the data
-    let nRowsString
-    let nColsString
-    let gridView
-    const { spinning, selectedRowIndexes } = this.state
+    const { spinning, selectedRowIndexes, totalNRows, columns, columnTypes } = this.state
+    const { selectedWfModuleId, lastRelevantDeltaId, isReadOnly } = this.props
 
-    if (this.props.selectedWfModuleId && this.state.totalNRows > 0) {
+    let gridView
+    if (selectedWfModuleId && totalNRows !== null) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
 
-      // DataGrid is the heaviest DOM tree we have, and it effects the
-      // performance of the custom drag layer (and probably everything else). By
-      // putting a no-op translate3d property on it, we coerce browsers into
-      // rendering it and all of its children in a seperate compositing layer,
-      // improving the rendering of everything else in the app.
       gridView = (
-        <div className="outputpane-data" style={{transform:'translate3d(0, 0, 0)'}}>
-          <DataGrid
-            totalRows={this.state.totalNRows}
-            columns={this.state.columns}
-            columnTypes={this.state.columnTypes}
-            wfModuleId={this.props.selectedWfModuleId}
-            lastRelevantDeltaId={this.props.lastRelevantDeltaId}
-            getRow={this.getRow}
-            onEditCell={this.onEditCell}
-            sortColumn={sortColumn}
-            sortDirection={sortDirection}
-            showLetter={showColumnLetter}
-            onReorderColumns={UpdateTableAction.updateTableActionModule}
-            onRenameColumn={UpdateTableAction.updateTableActionModule}
-            isReadOnly={this.props.isReadOnly}
-            setDropdownAction={this.setDropdownAction}
-            selectedRowIndexes={selectedRowIndexes}
-            onSetSelectedRowIndexes={this.setSelectedRowIndexes}
-          />
-        </div>
+        <DataGrid
+          totalRows={totalNRows}
+          columns={columns}
+          columnTypes={columnTypes}
+          wfModuleId={selectedWfModuleId}
+          lastRelevantDeltaId={lastRelevantDeltaId}
+          getRow={this.getRow}
+          onEditCell={this.onEditCell}
+          sortColumn={sortColumn}
+          sortDirection={sortDirection}
+          showLetter={showColumnLetter}
+          onReorderColumns={UpdateTableAction.updateTableActionModule}
+          onRenameColumn={UpdateTableAction.updateTableActionModule}
+          isReadOnly={isReadOnly}
+          setDropdownAction={this.setDropdownAction}
+          selectedRowIndexes={selectedRowIndexes}
+          onSetSelectedRowIndexes={this.setSelectedRowIndexes}
+        />
       )
-      nRowsString = NumberFormat.format(this.state.totalNRows)
-      nColsString = NumberFormat.format(this.state.columns.length)
     } else {
       // Empty grid, big enough to fill screen.
       // 10 rows by four blank columns (each with a different number of spaces, for unique names)
       gridView = (
-        <div className="outputpane-data">
-          <DataGrid
-            id={undefined}
-            totalRows={10}
-            columns={['',' ','   ','    ']}
-            getRow={() => {return {}}}
-            isReadOnly={this.props.isReadOnly}
-            setDropdownAction={this.setDropdownAction}
-            selectedRowIndexes={selectedRowIndexes}
-            onSetSelectedRowIndexes={() => null}
-            onRenameColumn={() => null}
-            onReorderColumns={() => null}
-          />
-        </div>
+        <DataGrid
+          id={undefined}
+          totalRows={10}
+          columns={['',' ','   ','    ']}
+          getRow={() => {return {}}}
+          isReadOnly={isReadOnly}
+          setDropdownAction={this.setDropdownAction}
+          selectedRowIndexes={selectedRowIndexes}
+          onSetSelectedRowIndexes={() => null}
+          onRenameColumn={() => null}
+          onReorderColumns={() => null}
+        />
       )
-      nRowsString = ''
-      nColsString = ''
     }
 
     const maybeSpinner = !spinning ? null : (
@@ -332,31 +307,15 @@ export default class TableView extends React.PureComponent {
 
     return (
       <div className="outputpane-table">
-        <div className="outputpane-header">
-          <div className="table-info-container">
-            <div className='table-info'>
-              <div className='data'>Rows</div>
-              <div className='value'>{nRowsString}</div>
-            </div>
-            <div className='table-info'>
-              <div className='data'>Columns</div>
-              <div className='value'>{nColsString}</div>
-            </div>
-          </div>
-          {!this.props.selectedWfModuleId ? null : (
-            <div className="export-table" onClick={this.openExportModal}>
-              <i className="icon-download" />
-              <span>CSV</span>
-              <span className="feed">JSON FEED</span>
-              <ExportModal
-                open={this.state.isExportModalOpen}
-                wfModuleId={this.props.selectedWfModuleId}
-                onClose={this.closeExportModal}
-              />
-            </div>
-          )}
+        <TableInfo
+          selectedWfModuleId={selectedWfModuleId}
+          nRows={totalNRows}
+          nColumns={columns ? columns.length : null}
+          selectedRowIndexes={selectedRowIndexes}
+        />
+        <div className="outputpane-data">
+          {gridView}
         </div>
-        {gridView}
         {maybeSpinner}
       </div>
     )
