@@ -77,6 +77,10 @@ def load_module_from_dict(d):
         module.loads_data = d.get('loads_data', False)
         module.help_url = d.get('help_url', '')
         module.has_zen_mode = d.get('has_zen_mode', False)
+        module.row_action_menu_entry_title = d.get(
+            'row_action_menu_entry_title',
+            False
+        )
 
         module.save()
 

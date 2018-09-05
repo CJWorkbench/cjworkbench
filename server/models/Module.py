@@ -42,5 +42,12 @@ class Module(models.Model):
     # URL for the module's documentation, defaults to our knowledge base root
     help_url = models.CharField('help_url', max_length=200, default="")
 
+    # If set, add a row-selection menu option to create a module with its
+    # `rows` parameter set to the selected rows in string form
+    row_action_menu_entry_title = models.CharField(
+        'row_action_menu_entry_title',
+        max_length=200, default=''
+    )
+
     def __str__(self):
         return self.name
