@@ -145,7 +145,7 @@ describe('WfParameter', () => {
           type: 'string',
           visible_if: JSON.stringify(visibilityCond3),
         }
-    }, true);
+    }, 'a value');
     expect(wrapper.find('SingleLineTextField')).toHaveLength(1);
   });
 
@@ -159,7 +159,7 @@ describe('WfParameter', () => {
           type: 'string',
           visible_if: JSON.stringify(visibilityCond3),
         }
-    }, false);
+    }, '');
     expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
   });
   it('Renders a parameter when boolean visible_if conditions are met for non-bool dependency (true)', () => {
