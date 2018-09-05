@@ -6,7 +6,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
 import ExportModal from '../ExportModal'
-import update from 'immutability-helper'
 import * as UpdateTableAction from './UpdateTableAction'
 
 export const NRowsPerPage = 200 // exported to help tests
@@ -47,7 +46,7 @@ export default class TableView extends React.PureComponent {
     // componentDidMount will trigger first load
     this.state = Object.assign({
       isExportModalOpen: false,
-      spinning: false
+      selectedRowIndexes: []
     }, InitialState)
 
     // Quick refresher: `this.loading` is synchornous; `this.state.loading` is
@@ -198,6 +197,11 @@ export default class TableView extends React.PureComponent {
     }
   }
 
+  setSelectedRowIndexes = (selectedRowIndexes) => {
+    // TODO enable this, and do something when rows are selected
+    //this.setState({ selectedRowIndexes })
+  }
+
   componentDidMount () {
     this.refreshTable()  // refresh, not load, so we get the spinner
   }
@@ -259,7 +263,7 @@ export default class TableView extends React.PureComponent {
     let nRowsString
     let nColsString
     let gridView
-    const { spinning } = this.state
+    const { spinning, selectedRowIndexes } = this.state
 
     if (this.props.selectedWfModuleId && this.state.totalNRows > 0) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
@@ -286,6 +290,8 @@ export default class TableView extends React.PureComponent {
             onRenameColumn={UpdateTableAction.updateTableActionModule}
             isReadOnly={this.props.isReadOnly}
             setDropdownAction={this.setDropdownAction}
+            selectedRowIndexes={selectedRowIndexes}
+            onSetSelectedRowIndexes={this.setSelectedRowIndexes}
           />
         </div>
       )
@@ -303,6 +309,8 @@ export default class TableView extends React.PureComponent {
             getRow={() => {return {}}}
             isReadOnly={this.props.isReadOnly}
             setDropdownAction={this.setDropdownAction}
+            selectedRowIndexes={selectedRowIndexes}
+            onSetSelectedRowIndexes={() => null}
             onRenameColumn={() => null}
             onReorderColumns={() => null}
           />

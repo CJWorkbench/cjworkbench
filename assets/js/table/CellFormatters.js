@@ -1,19 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-// Custom Formatter component, to render row number in a different style
-export class RowIndexFormatter extends React.PureComponent {
-  static propTypes = {
-    value: PropTypes.number.isRequired
-  }
-
-  render () {
-    const text = String(this.props.value) // no commas -- horizontal space is at a premium
-
-    return <div className={`row-number row-number-${text.length}`}>{text}</div>
-  }
-}
-
 // Unfortunately, ReactDataGrid will send "new" values to "old" columns when
 // switching to another version of a table that has the same column with a
 // different type. So all formatters need to support all types. (We don't care

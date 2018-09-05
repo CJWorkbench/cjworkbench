@@ -3,58 +3,47 @@ import { mount } from 'enzyme'
 import DataGrid, {ColumnHeader, EditableColumnName} from './DataGrid'
 
 describe('DataGrid tests,', () => {
-  var testData = {
-    totalRows: 2,
-    columns: ['aaa', 'bbbb', 'ccccc', 'rn_'],
-    'column_types': [
-      'number',
-      'text',
-      'text',
-      'text'
-    ],
-    rows: [
-      {
-        'aaa': 9,
-        'bbbb': 'foo',
-        'ccccc': '9', // use digits that will not appear in our row numbers, so we can test
-        'rn_': 'someval' // deliberately conflict with DataGrid's default row number column key
-      },
-      {
-        'aaa': 9,
-        'bbbb': '',
-        'ccccc': 'baz',
-        'rn_': 'someotherval'
-      }
-    ]
-  }
+  // Column names are chosen to trigger
+  // https://github.com/adazzle/react-data-grid/issues/1269 and
+  // https://github.com/adazzle/react-data-grid/issues/1270
+  const testColumns = [ 'aaa', 'bbbb', 'getCell', 'select-row' ]
+  const testColumnTypes = [ 'number', 'text', 'text', 'text' ]
+  const testRows = [
+    {
+      'aaa': 9,
+      'bbbb': 'foo',
+      'getCell': '9', // deliberately try and trigger https://github.com/adazzle/react-data-grid/issues/1270
+      'select-row': 'someval' // deliberately try and trigger https://github.com/adazzle/react-data-grid/issues/1269
+    },
+    {
+      'aaa': 9,
+      'bbbb': '',
+      'getCell': 'baz',
+      'select-row': 'someotherval'
+    }
+  ]
 
-  var setDropdownAction = jest.fn()
-  var onRenameColumn = jest.fn()
-
-  function getRow (i) {
-    return testData.rows[i]
-  }
+  const wrapper = (extraProps={}) => mount(
+    <DataGrid
+      wfModuleId={100}
+      totalRows={testRows.length}
+      columns={testColumns}
+      columnTypes={testColumnTypes}
+      getRow={(i) => testRows[i]}
+      onEditCell={jest.fn()}
+      onGridSort={jest.fn()}
+      isReadOnly={false}
+      selectedRowIndexes={[]}
+      setDropdownAction={jest.fn()}
+      onSetSelectedRowIndexes={jest.fn()}
+      onReorderColumns={jest.fn()}
+      onRenameColumn={jest.fn()}
+      {...extraProps}
+    />
+  )
 
   it('Renders the grid', () => {
-    var editCellMock = jest.fn()
-    var sortMock = jest.fn()
-
-    const tree = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={getRow}
-        onEditCell={editCellMock}
-        onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
-        isReadOnly={false}
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />
-    )
+    const tree = wrapper()
 
     // Check that we ended up with five columns (first is row number), with the right names
     // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
@@ -64,10 +53,10 @@ describe('DataGrid tests,', () => {
     expect(tree.find('EditableColumnName')).toHaveLength(4)
     expect(tree.find('EditableColumnName').get(0).props.columnKey).toBe('aaa')
     expect(tree.find('EditableColumnName').get(1).props.columnKey).toBe('bbbb')
-    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('ccccc')
-    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('rn_')
+    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('getCell')
+    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('select-row')
 
-    let text = tree.text()
+    const text = tree.text()
 
     expect(text).toContain('foo') // some cell values
     expect(text).toContain('someval')
@@ -75,201 +64,93 @@ describe('DataGrid tests,', () => {
     expect(text).toContain('1') // row numbers
     expect(text).toContain('2')
 
-    // row number column should not have the same name as any of our cols
-    expect(testData.columns.includes(tree.find('DataGrid').instance().rowNumKey)).toBeFalsy()
-
     expect(tree).toMatchSnapshot()
-
-    tree.unmount()
-
-    // Double click on a cell, enter text, enter, and ensure onCellEdit is called
-    // Sadly, can't get this to work
-    // var cell = tree.find('Cell').first();
-    // expect(cell).toHaveLength(1)
-    // cell.simulate('doubleclick');
-    // cell.simulate('keydown', { which: 'X' });
-    // cell.simulate('keydown', { which: '\n' });
-    // expect(editCellMock.mock.calls).toHaveLength(1);
   })
 
-  it('matches snapshot without data', () => {
-    const tree = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={0}
-        columns={[]}
-        columnTypes={[]}
-        getRow={() => {}}
-        isReadOnly={false}
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />
-    )
+  it('should edit a cell', () => {
+    const tree = wrapper()
+    // weird incantation to simulate double-click
+    tree.find('.react-grid-Cell').first().simulate('click')
+    tree.find('.react-grid-Cell').first().simulate('doubleClick')
+    const input = tree.find('EditorContainer')
+    input.find('input').instance().value = 'X' // react-data-grid has a weird way of editing cells
+    input.simulate('keyDown', { key: 'Enter' })
+    expect(tree.prop('onEditCell')).toHaveBeenCalledWith(0, 'aaa', 'X')
+  })
+
+  it('should not edit a cell when its value does not change', () => {
+    const tree = wrapper()
+    // weird incantation to simulate double-click
+    tree.find('.react-grid-Cell').first().simulate('click')
+    tree.find('.react-grid-Cell').first().simulate('doubleClick')
+    const input = tree.find('EditorContainer')
+    input.simulate('keyDown', { key: 'Enter' })
+    expect(tree.prop('onEditCell')).not.toHaveBeenCalled()
+  })
+
+  it('should match snapshot without data', () => {
+    const tree = wrapper({ totalRows: 0 })
+    expect(tree).toMatchSnapshot()
     expect(tree.find('HeaderCell')).toHaveLength(0)
-
-    expect(tree).toMatchSnapshot()
-
-    tree.unmount()
   })
 
-  it('Shows/hides letters in the header according to props', () => {
-    const treeWithLetter = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={getRow}
-        showLetter
-        isReadOnly={false}
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />
-    )
-    expect(treeWithLetter.find('.column-letter')).toHaveLength(4)
-    expect(treeWithLetter.find('.column-letter').at(0).text()).toEqual('A')
-    expect(treeWithLetter.find('.column-letter').at(1).text()).toEqual('B')
-    expect(treeWithLetter.find('.column-letter').at(2).text()).toEqual('C')
-    expect(treeWithLetter.find('.column-letter').at(3).text()).toEqual('D')
+  it('should show letters in the header according to props', () => {
+    const tree = wrapper({ showLetter: true })
+    expect(tree.find('.column-letter')).toHaveLength(4)
+    expect(tree.find('.column-letter').at(0).text()).toEqual('A')
+    expect(tree.find('.column-letter').at(1).text()).toEqual('B')
+    expect(tree.find('.column-letter').at(2).text()).toEqual('C')
+    expect(tree.find('.column-letter').at(3).text()).toEqual('D')
+	})
 
-    treeWithLetter.unmount()
-
-    const treeWithoutLetter = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={getRow}
-        showLetter={false}
-        isReadOnly={false}
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />)
-    expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0)
-
-    treeWithoutLetter.unmount()
+  it('should hide letters in the header according to props', () => {
+    const tree = wrapper({ showLetter: false })
+    expect(tree.find('.column-letter')).toHaveLength(0)
   })
 
-  it('Calls column rename upon editing a column header', (done) => {
-    var tree = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={getRow}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-        isReadOnly={false}
-        setDropdownAction={setDropdownAction}
-      />
-    )
+  it('should call column rename upon editing a column header', () => {
+    const tree = wrapper()
 
     expect(tree.find('EditableColumnName')).toHaveLength(4)
     // Tests rename on aaaColumn
-    let aaaColumn = tree.find('EditableColumnName').first()
-    aaaColumn.simulate('click')
-    setImmediate(() => {
-      // tree.update();
-      let newAaaColumn = tree.find('EditableColumnName').first()
-      expect(newAaaColumn.find('input[value="aaa"]')).toHaveLength(1)
-      let aaaInput = newAaaColumn.find('input[value="aaa"]')
-      aaaInput.simulate('change', {target: {value: 'aaaa'}})
-      aaaInput.simulate('blur')
-      setImmediate(() => {
-        expect(onRenameColumn.mock.calls).toHaveLength(1)
-        // First argument should be wfModuleId (100)
-        expect(onRenameColumn.mock.calls[0][0]).toBe(100)
-        // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
-        expect(onRenameColumn.mock.calls[0][3].prevName).toBe('aaa')
-        expect(onRenameColumn.mock.calls[0][3].newName).toBe('aaaa')
-        tree.unmount()
-        done()
-      })
-    })
+    tree.find('EditableColumnName').first().simulate('click')
+    tree.update()
+    const input = tree.find('EditableColumnName input[value="aaa"]')
+    input.simulate('change', { target: { value: 'aaaa' }})
+    input.simulate('blur')
+
+    expect(tree.prop('onRenameColumn')).toHaveBeenCalledWith(100, 'rename-columns', false, { prevName: 'aaa', newName: 'aaaa' })
   })
 
-  it('Respects isReadOnly setting for rename columns', (done) => {
-    var tree = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={getRow}
-        isReadOnly
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />
-    )
-
-    expect(tree.find('EditableColumnName')).toHaveLength(4)
-    // Tests rename on aaa column
-    let aaaColumn = tree.find('EditableColumnName').first()
-    aaaColumn.simulate('click')
-    setImmediate(() => {
-      // In the read-only case, the header should not turn into an input box
-      let newAaaColumn = tree.find('EditableColumnName').first()
-      expect(newAaaColumn.find('input.column-key-input')).toHaveLength(0)
-      done()
-    })
+  it('should respect isReadOnly for rename columns', () => {
+    const tree = wrapper({ isReadOnly: true })
+    tree.find('EditableColumnName').first().simulate('click')
+    tree.update()
+    expect(tree.find('EditableColumnName input')).toHaveLength(0)
   })
 
-  it('Should set className to include type', (done) => {
-    var tree = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={getRow}
-        isReadOnly
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />
-    )
-
-    setImmediate(() => {
-      expect(tree.find('.cell-text').first()).toHaveLength(1)
-      expect(tree.find('.cell-number').first()).toHaveLength(1)
-      tree.unmount()
-      done()
-    })
+  it('should set className to include type', () => {
+    const tree = wrapper()
+    expect(tree.find('.cell-text')).toHaveLength(6)
+    expect(tree.find('.cell-number')).toHaveLength(2)
   })
 
-  it('Should display "null" for none types', (done) => {
-    var tree = mount(
-      <DataGrid
-        wfModuleId={100}
-        lastRelevantDeltaId={999}
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        columnTypes={testData.column_types}
-        getRow={(i) => ({ aaa: null, bbbb: null, ccccc: null, rn_: 'rn'})}
-        isReadOnly
-        setDropdownAction={setDropdownAction}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={onRenameColumn}
-      />
-    )
-
-    setImmediate(() => {
-      expect(tree.find('.cell-null').first().text()).toBe('null')
-      tree.unmount()
-      done()
-    })
+  it('should display "null" for none types', () => {
+    const tree = wrapper({ getRow: (i) => ({ aaa: null, bbbb: null, getCell: null, 'select-row': null }) })
+    expect(tree.find('.cell-null')).toHaveLength(8)
   })
 
+  it('should select a row', () => {
+    const tree = wrapper()
+    expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(false)
+    tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: true } })
+    expect(tree.prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([1])
+  })
+
+  it('should deselect a row', () => {
+    const tree = wrapper({ selectedRowIndexes: [ 1 ] })
+    expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(true)
+    tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: false } })
+    expect(tree.prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([])
+  })
 })

@@ -14,17 +14,18 @@ exports[`DataGrid tests, Renders the grid 1`] = `
     Array [
       "aaa",
       "bbbb",
-      "ccccc",
-      "rn_",
+      "getCell",
+      "select-row",
     ]
   }
   getRow={[Function]}
   isReadOnly={false}
-  lastRelevantDeltaId={999}
   onEditCell={[MockFunction]}
   onGridSort={[MockFunction]}
   onRenameColumn={[MockFunction]}
   onReorderColumns={[MockFunction]}
+  onSetSelectedRowIndexes={[MockFunction]}
+  selectedRowIndexes={Array []}
   setDropdownAction={[MockFunction]}
   totalRows={2}
   wfModuleId={100}
@@ -34,13 +35,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
     columnEquality={[Function]}
     columns={
       Array [
-        Object {
-          "formatter": [Function],
-          "key": "rn__",
-          "locked": true,
-          "name": "",
-          "width": 40,
-        },
         Object {
           "editable": true,
           "formatter": [Function],
@@ -97,7 +91,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           "editable": true,
           "formatter": [Function],
           "headerRenderer": <ColumnHeader
-            columnKey="ccccc"
+            columnKey="getCell"
             columnType="text"
             draggingColumnIndex={null}
             index={2}
@@ -110,12 +104,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             setDropdownAction={[MockFunction]}
             showLetter={false}
           />,
-          "key": "ccccc",
+          "key": "getCell",
           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
           "maybeTriggerRenderIfChangeIsSorted": false,
           "maybeTriggerRenderIfChangeShowLetter": undefined,
           "maybeTriggerRenderIfChangeSortDirection": undefined,
-          "name": "ccccc",
+          "name": "getCell",
           "resizable": true,
           "width": 160,
         },
@@ -123,7 +117,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           "editable": true,
           "formatter": [Function],
           "headerRenderer": <ColumnHeader
-            columnKey="rn_"
+            columnKey="select-row"
             columnType="text"
             draggingColumnIndex={null}
             index={3}
@@ -136,12 +130,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             setDropdownAction={[MockFunction]}
             showLetter={false}
           />,
-          "key": "rn_",
+          "key": "select-row",
           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
           "maybeTriggerRenderIfChangeIsSorted": false,
           "maybeTriggerRenderIfChangeShowLetter": undefined,
           "maybeTriggerRenderIfChangeSortDirection": undefined,
-          "name": "rn_",
+          "name": "select-row",
           "resizable": true,
           "width": 160,
         },
@@ -149,7 +143,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
     }
     enableCellAutoFocus={true}
     enableCellSelect={true}
-    enableRowSelect={false}
+    enableRowSelect={true}
     headerFiltersHeight={45}
     headerRowHeight={50}
     key="0"
@@ -166,12 +160,25 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         "rowsStart": 5,
       }
     }
+    rowActionsCell={[Function]}
     rowGetter={[Function]}
     rowHeight={35}
     rowKey="id"
+    rowRenderer={[Function]}
     rowScrollTimeout={0}
+    rowSelection={
+      Object {
+        "enableShiftSelect": true,
+        "onRowsDeselected": [Function],
+        "onRowsSelected": [Function],
+        "selectBy": Object {
+          "indexes": Array [],
+        },
+      }
+    }
     rowsCount={2}
     scrollToRowIndex={0}
+    selectAllRenderer={[Function]}
     tabIndex={-1}
   >
     <div
@@ -226,11 +233,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
             Object {
               "columns": Array [
                 Object {
-                  "formatter": [Function],
-                  "key": "rn__",
+                  "cellClass": "rdg-row-actions-cell",
+                  "editable": false,
+                  "filterable": false,
+                  "formatter": <RowActionsCell
+                    rowSelection={
+                      Object {
+                        "enableShiftSelect": true,
+                        "onRowsDeselected": [Function],
+                        "onRowsSelected": [Function],
+                        "selectBy": Object {
+                          "indexes": Array [],
+                        },
+                      }
+                    }
+                  />,
+                  "getRowMetaData": [Function],
+                  "headerRenderer": <renderNull
+                    inputRef={[Function]}
+                    onChange={[Function]}
+                  />,
+                  "key": "select-row",
                   "left": 0,
                   "locked": true,
                   "name": "",
+                  "onCellChange": [Function],
                   "width": 40,
                 },
                 Object {
@@ -291,7 +318,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   "editable": true,
                   "formatter": [Function],
                   "headerRenderer": <ColumnHeader
-                    columnKey="ccccc"
+                    columnKey="getCell"
                     columnType="text"
                     draggingColumnIndex={null}
                     index={2}
@@ -304,13 +331,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     setDropdownAction={[MockFunction]}
                     showLetter={false}
                   />,
-                  "key": "ccccc",
+                  "key": "getCell",
                   "left": 360,
                   "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                   "maybeTriggerRenderIfChangeIsSorted": false,
                   "maybeTriggerRenderIfChangeShowLetter": undefined,
                   "maybeTriggerRenderIfChangeSortDirection": undefined,
-                  "name": "ccccc",
+                  "name": "getCell",
                   "resizable": true,
                   "width": 160,
                 },
@@ -318,7 +345,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   "editable": true,
                   "formatter": [Function],
                   "headerRenderer": <ColumnHeader
-                    columnKey="rn_"
+                    columnKey="select-row"
                     columnType="text"
                     draggingColumnIndex={null}
                     index={3}
@@ -331,13 +358,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     setDropdownAction={[MockFunction]}
                     showLetter={false}
                   />,
-                  "key": "rn_",
+                  "key": "select-row",
                   "left": 520,
                   "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                   "maybeTriggerRenderIfChangeIsSorted": false,
                   "maybeTriggerRenderIfChangeShowLetter": undefined,
                   "maybeTriggerRenderIfChangeSortDirection": undefined,
-                  "name": "rn_",
+                  "name": "select-row",
                   "resizable": true,
                   "width": 160,
                 },
@@ -349,13 +376,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           }
           columns={
             Array [
-              Object {
-                "formatter": [Function],
-                "key": "rn__",
-                "locked": true,
-                "name": "",
-                "width": 40,
-              },
               Object {
                 "editable": true,
                 "formatter": [Function],
@@ -412,7 +432,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 "editable": true,
                 "formatter": [Function],
                 "headerRenderer": <ColumnHeader
-                  columnKey="ccccc"
+                  columnKey="getCell"
                   columnType="text"
                   draggingColumnIndex={null}
                   index={2}
@@ -425,12 +445,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   setDropdownAction={[MockFunction]}
                   showLetter={false}
                 />,
-                "key": "ccccc",
+                "key": "getCell",
                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                 "maybeTriggerRenderIfChangeIsSorted": false,
                 "maybeTriggerRenderIfChangeShowLetter": undefined,
                 "maybeTriggerRenderIfChangeSortDirection": undefined,
-                "name": "ccccc",
+                "name": "getCell",
                 "resizable": true,
                 "width": 160,
               },
@@ -438,7 +458,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 "editable": true,
                 "formatter": [Function],
                 "headerRenderer": <ColumnHeader
-                  columnKey="rn_"
+                  columnKey="select-row"
                   columnType="text"
                   draggingColumnIndex={null}
                   index={3}
@@ -451,12 +471,12 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   setDropdownAction={[MockFunction]}
                   showLetter={false}
                 />,
-                "key": "rn_",
+                "key": "select-row",
                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                 "maybeTriggerRenderIfChangeIsSorted": false,
                 "maybeTriggerRenderIfChangeShowLetter": undefined,
                 "maybeTriggerRenderIfChangeSortDirection": undefined,
-                "name": "rn_",
+                "name": "select-row",
                 "resizable": true,
                 "width": 160,
               },
@@ -464,7 +484,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
           }
           enableCellAutoFocus={true}
           enableCellSelect={true}
-          enableRowSelect={false}
+          enableRowSelect={true}
           expandedRows={Array []}
           headerFiltersHeight={45}
           headerRowHeight={50}
@@ -498,15 +518,22 @@ exports[`DataGrid tests, Renders the grid 1`] = `
               "rowsStart": 5,
             }
           }
+          rowActionsCell={[Function]}
           rowGetter={[Function]}
           rowHeight={35}
           rowKey="id"
           rowOffsetHeight={50}
+          rowRenderer={[Function]}
           rowScrollTimeout={0}
-          rowSelection={null}
+          rowSelection={
+            Object {
+              "indexes": Array [],
+            }
+          }
           rowsCount={2}
           scrollToRowIndex={0}
-          selectedRows={Array []}
+          selectAllRenderer={[Function]}
+          selectedRows={null}
           sortColumn={null}
           sortDirection={null}
           tabIndex={-1}
@@ -562,11 +589,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 Object {
                   "columns": Array [
                     Object {
-                      "formatter": [Function],
-                      "key": "rn__",
+                      "cellClass": "rdg-row-actions-cell",
+                      "editable": false,
+                      "filterable": false,
+                      "formatter": <RowActionsCell
+                        rowSelection={
+                          Object {
+                            "enableShiftSelect": true,
+                            "onRowsDeselected": [Function],
+                            "onRowsSelected": [Function],
+                            "selectBy": Object {
+                              "indexes": Array [],
+                            },
+                          }
+                        }
+                      />,
+                      "getRowMetaData": [Function],
+                      "headerRenderer": <renderNull
+                        inputRef={[Function]}
+                        onChange={[Function]}
+                      />,
+                      "key": "select-row",
                       "left": 0,
                       "locked": true,
                       "name": "",
+                      "onCellChange": [Function],
                       "width": 40,
                     },
                     Object {
@@ -627,7 +674,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       "editable": true,
                       "formatter": [Function],
                       "headerRenderer": <ColumnHeader
-                        columnKey="ccccc"
+                        columnKey="getCell"
                         columnType="text"
                         draggingColumnIndex={null}
                         index={2}
@@ -640,13 +687,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         setDropdownAction={[MockFunction]}
                         showLetter={false}
                       />,
-                      "key": "ccccc",
+                      "key": "getCell",
                       "left": 360,
                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                       "maybeTriggerRenderIfChangeIsSorted": false,
                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                      "name": "ccccc",
+                      "name": "getCell",
                       "resizable": true,
                       "width": 160,
                     },
@@ -654,7 +701,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       "editable": true,
                       "formatter": [Function],
                       "headerRenderer": <ColumnHeader
-                        columnKey="rn_"
+                        columnKey="select-row"
                         columnType="text"
                         draggingColumnIndex={null}
                         index={3}
@@ -667,13 +714,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         setDropdownAction={[MockFunction]}
                         showLetter={false}
                       />,
-                      "key": "rn_",
+                      "key": "select-row",
                       "left": 520,
                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                       "maybeTriggerRenderIfChangeIsSorted": false,
                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                      "name": "rn_",
+                      "name": "select-row",
                       "resizable": true,
                       "width": 160,
                     },
@@ -716,11 +763,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   columns={
                     Array [
                       Object {
-                        "formatter": [Function],
-                        "key": "rn__",
+                        "cellClass": "rdg-row-actions-cell",
+                        "editable": false,
+                        "filterable": false,
+                        "formatter": <RowActionsCell
+                          rowSelection={
+                            Object {
+                              "enableShiftSelect": true,
+                              "onRowsDeselected": [Function],
+                              "onRowsSelected": [Function],
+                              "selectBy": Object {
+                                "indexes": Array [],
+                              },
+                            }
+                          }
+                        />,
+                        "getRowMetaData": [Function],
+                        "headerRenderer": <renderNull
+                          inputRef={[Function]}
+                          onChange={[Function]}
+                        />,
+                        "key": "select-row",
                         "left": 0,
                         "locked": true,
                         "name": "",
+                        "onCellChange": [Function],
                         "width": 40,
                       },
                       Object {
@@ -781,7 +848,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         "editable": true,
                         "formatter": [Function],
                         "headerRenderer": <ColumnHeader
-                          columnKey="ccccc"
+                          columnKey="getCell"
                           columnType="text"
                           draggingColumnIndex={null}
                           index={2}
@@ -794,13 +861,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
                         />,
-                        "key": "ccccc",
+                        "key": "getCell",
                         "left": 360,
                         "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                         "maybeTriggerRenderIfChangeIsSorted": false,
                         "maybeTriggerRenderIfChangeShowLetter": undefined,
                         "maybeTriggerRenderIfChangeSortDirection": undefined,
-                        "name": "ccccc",
+                        "name": "getCell",
                         "resizable": true,
                         "width": 160,
                       },
@@ -808,7 +875,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         "editable": true,
                         "formatter": [Function],
                         "headerRenderer": <ColumnHeader
-                          columnKey="rn_"
+                          columnKey="select-row"
                           columnType="text"
                           draggingColumnIndex={null}
                           index={3}
@@ -821,13 +888,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
                         />,
-                        "key": "rn_",
+                        "key": "select-row",
                         "left": 520,
                         "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                         "maybeTriggerRenderIfChangeIsSorted": false,
                         "maybeTriggerRenderIfChangeShowLetter": undefined,
                         "maybeTriggerRenderIfChangeSortDirection": undefined,
-                        "name": "rn_",
+                        "name": "select-row",
                         "resizable": true,
                         "width": 160,
                       },
@@ -1997,7 +2064,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "editable": true,
                             "formatter": [Function],
                             "headerRenderer": <ColumnHeader
-                              columnKey="ccccc"
+                              columnKey="getCell"
                               columnType="text"
                               draggingColumnIndex={null}
                               index={2}
@@ -2010,13 +2077,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               setDropdownAction={[MockFunction]}
                               showLetter={false}
                             />,
-                            "key": "ccccc",
+                            "key": "getCell",
                             "left": 360,
                             "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                             "maybeTriggerRenderIfChangeIsSorted": false,
                             "maybeTriggerRenderIfChangeShowLetter": undefined,
                             "maybeTriggerRenderIfChangeSortDirection": undefined,
-                            "name": "ccccc",
+                            "name": "getCell",
                             "resizable": true,
                             "rowType": "header",
                             "width": 160,
@@ -2028,7 +2095,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onResizeEnd={[Function]}
                         renderer={
                           <ColumnHeader
-                            columnKey="ccccc"
+                            columnKey="getCell"
                             columnType="text"
                             draggingColumnIndex={null}
                             index={2}
@@ -2065,7 +2132,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 "editable": true,
                                 "formatter": [Function],
                                 "headerRenderer": <ColumnHeader
-                                  columnKey="ccccc"
+                                  columnKey="getCell"
                                   columnType="text"
                                   draggingColumnIndex={null}
                                   index={2}
@@ -2078,19 +2145,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   setDropdownAction={[MockFunction]}
                                   showLetter={false}
                                 />,
-                                "key": "ccccc",
+                                "key": "getCell",
                                 "left": 360,
                                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                 "maybeTriggerRenderIfChangeIsSorted": false,
                                 "maybeTriggerRenderIfChangeShowLetter": undefined,
                                 "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                "name": "ccccc",
+                                "name": "getCell",
                                 "resizable": true,
                                 "rowType": "header",
                                 "width": 160,
                               }
                             }
-                            columnKey="ccccc"
+                            columnKey="getCell"
                             columnType="text"
                             draggingColumnIndex={null}
                             height={50}
@@ -2113,7 +2180,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onMouseLeave={[Function]}
                             >
                               <EditableColumnName
-                                columnKey="ccccc"
+                                columnKey="getCell"
                                 columnType="text"
                                 isReadOnly={false}
                                 onRename={[Function]}
@@ -2123,7 +2190,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onClick={[Function]}
                                 >
                                   <div>
-                                    ccccc
+                                    getCell
                                   </div>
                                   <div
                                     className="column-type"
@@ -2133,7 +2200,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 </span>
                               </EditableColumnName>
                               <ColumnContextMenu
-                                columnKey="ccccc"
+                                columnKey="getCell"
                                 columnType="text"
                                 renameColumn={[Function]}
                                 setDropdownAction={[Function]}
@@ -2551,7 +2618,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             "editable": true,
                             "formatter": [Function],
                             "headerRenderer": <ColumnHeader
-                              columnKey="rn_"
+                              columnKey="select-row"
                               columnType="text"
                               draggingColumnIndex={null}
                               index={3}
@@ -2564,13 +2631,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               setDropdownAction={[MockFunction]}
                               showLetter={false}
                             />,
-                            "key": "rn_",
+                            "key": "select-row",
                             "left": 520,
                             "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                             "maybeTriggerRenderIfChangeIsSorted": false,
                             "maybeTriggerRenderIfChangeShowLetter": undefined,
                             "maybeTriggerRenderIfChangeSortDirection": undefined,
-                            "name": "rn_",
+                            "name": "select-row",
                             "resizable": true,
                             "rowType": "header",
                             "width": 160,
@@ -2582,7 +2649,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         onResizeEnd={[Function]}
                         renderer={
                           <ColumnHeader
-                            columnKey="rn_"
+                            columnKey="select-row"
                             columnType="text"
                             draggingColumnIndex={null}
                             index={3}
@@ -2619,7 +2686,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 "editable": true,
                                 "formatter": [Function],
                                 "headerRenderer": <ColumnHeader
-                                  columnKey="rn_"
+                                  columnKey="select-row"
                                   columnType="text"
                                   draggingColumnIndex={null}
                                   index={3}
@@ -2632,19 +2699,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   setDropdownAction={[MockFunction]}
                                   showLetter={false}
                                 />,
-                                "key": "rn_",
+                                "key": "select-row",
                                 "left": 520,
                                 "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                 "maybeTriggerRenderIfChangeIsSorted": false,
                                 "maybeTriggerRenderIfChangeShowLetter": undefined,
                                 "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                "name": "rn_",
+                                "name": "select-row",
                                 "resizable": true,
                                 "rowType": "header",
                                 "width": 160,
                               }
                             }
-                            columnKey="rn_"
+                            columnKey="select-row"
                             columnType="text"
                             draggingColumnIndex={null}
                             height={50}
@@ -2667,7 +2734,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               onMouseLeave={[Function]}
                             >
                               <EditableColumnName
-                                columnKey="rn_"
+                                columnKey="select-row"
                                 columnType="text"
                                 isReadOnly={false}
                                 onRename={[Function]}
@@ -2677,7 +2744,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   onClick={[Function]}
                                 >
                                   <div>
-                                    rn_
+                                    select-row
                                   </div>
                                   <div
                                     className="column-type"
@@ -2687,7 +2754,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 </span>
                               </EditableColumnName>
                               <ColumnContextMenu
-                                columnKey="rn_"
+                                columnKey="select-row"
                                 columnType="text"
                                 renameColumn={[Function]}
                                 setDropdownAction={[Function]}
@@ -3102,11 +3169,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                       <HeaderCell
                         column={
                           Object {
-                            "formatter": [Function],
-                            "key": "rn__",
+                            "cellClass": "rdg-row-actions-cell",
+                            "editable": false,
+                            "filterable": false,
+                            "formatter": <RowActionsCell
+                              rowSelection={
+                                Object {
+                                  "enableShiftSelect": true,
+                                  "onRowsDeselected": [Function],
+                                  "onRowsSelected": [Function],
+                                  "selectBy": Object {
+                                    "indexes": Array [],
+                                  },
+                                }
+                              }
+                            />,
+                            "getRowMetaData": [Function],
+                            "headerRenderer": <renderNull
+                              inputRef={[Function]}
+                              onChange={[Function]}
+                            />,
+                            "key": "select-row",
                             "left": 0,
                             "locked": true,
                             "name": "",
+                            "onCellChange": [Function],
                             "rowType": "header",
                             "width": 40,
                           }
@@ -3115,11 +3202,16 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         key="0"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
-                        renderer={[Function]}
+                        renderer={
+                          <renderNull
+                            inputRef={[Function]}
+                            onChange={[Function]}
+                          />
+                        }
                         resizing={false}
                       >
                         <div
-                          className="react-grid-HeaderCell react-grid-HeaderCell--locked"
+                          className="react-grid-HeaderCell react-grid-HeaderCell--locked rdg-row-actions-cell"
                           style={
                             Object {
                               "display": "inline-block",
@@ -3133,8 +3225,41 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             }
                           }
                         >
-                          <div
-                            className="widget-HeaderCell__value"
+                          <renderNull
+                            column={
+                              Object {
+                                "cellClass": "rdg-row-actions-cell",
+                                "editable": false,
+                                "filterable": false,
+                                "formatter": <RowActionsCell
+                                  rowSelection={
+                                    Object {
+                                      "enableShiftSelect": true,
+                                      "onRowsDeselected": [Function],
+                                      "onRowsSelected": [Function],
+                                      "selectBy": Object {
+                                        "indexes": Array [],
+                                      },
+                                    }
+                                  }
+                                />,
+                                "getRowMetaData": [Function],
+                                "headerRenderer": <renderNull
+                                  inputRef={[Function]}
+                                  onChange={[Function]}
+                                />,
+                                "key": "select-row",
+                                "left": 0,
+                                "locked": true,
+                                "name": "",
+                                "onCellChange": [Function],
+                                "rowType": "header",
+                                "width": 40,
+                              }
+                            }
+                            height={50}
+                            inputRef={[Function]}
+                            onChange={[Function]}
                           />
                         </div>
                       </HeaderCell>
@@ -3191,11 +3316,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                   Object {
                     "columns": Array [
                       Object {
-                        "formatter": [Function],
-                        "key": "rn__",
+                        "cellClass": "rdg-row-actions-cell",
+                        "editable": false,
+                        "filterable": false,
+                        "formatter": <RowActionsCell
+                          rowSelection={
+                            Object {
+                              "enableShiftSelect": true,
+                              "onRowsDeselected": [Function],
+                              "onRowsSelected": [Function],
+                              "selectBy": Object {
+                                "indexes": Array [],
+                              },
+                            }
+                          }
+                        />,
+                        "getRowMetaData": [Function],
+                        "headerRenderer": <renderNull
+                          inputRef={[Function]}
+                          onChange={[Function]}
+                        />,
+                        "key": "select-row",
                         "left": 0,
                         "locked": true,
                         "name": "",
+                        "onCellChange": [Function],
                         "width": 40,
                       },
                       Object {
@@ -3256,7 +3401,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         "editable": true,
                         "formatter": [Function],
                         "headerRenderer": <ColumnHeader
-                          columnKey="ccccc"
+                          columnKey="getCell"
                           columnType="text"
                           draggingColumnIndex={null}
                           index={2}
@@ -3269,13 +3414,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
                         />,
-                        "key": "ccccc",
+                        "key": "getCell",
                         "left": 360,
                         "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                         "maybeTriggerRenderIfChangeIsSorted": false,
                         "maybeTriggerRenderIfChangeShowLetter": undefined,
                         "maybeTriggerRenderIfChangeSortDirection": undefined,
-                        "name": "ccccc",
+                        "name": "getCell",
                         "resizable": true,
                         "width": 160,
                       },
@@ -3283,7 +3428,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                         "editable": true,
                         "formatter": [Function],
                         "headerRenderer": <ColumnHeader
-                          columnKey="rn_"
+                          columnKey="select-row"
                           columnType="text"
                           draggingColumnIndex={null}
                           index={3}
@@ -3296,13 +3441,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           setDropdownAction={[MockFunction]}
                           showLetter={false}
                         />,
-                        "key": "rn_",
+                        "key": "select-row",
                         "left": 520,
                         "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                         "maybeTriggerRenderIfChangeIsSorted": false,
                         "maybeTriggerRenderIfChangeShowLetter": undefined,
                         "maybeTriggerRenderIfChangeSortDirection": undefined,
-                        "name": "rn_",
+                        "name": "select-row",
                         "resizable": true,
                         "width": 160,
                       },
@@ -3327,11 +3472,16 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                 rowHeight={35}
                 rowKey="id"
                 rowOffsetHeight={50}
+                rowRenderer={[Function]}
                 rowScrollTimeout={0}
-                rowSelection={null}
+                rowSelection={
+                  Object {
+                    "indexes": Array [],
+                  }
+                }
                 rowsCount={2}
                 scrollToRowIndex={0}
-                selectedRows={Array []}
+                selectedRows={null}
                 totalWidth={98}
                 width={680}
               >
@@ -3391,11 +3541,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     columns={
                       Array [
                         Object {
-                          "formatter": [Function],
-                          "key": "rn__",
+                          "cellClass": "rdg-row-actions-cell",
+                          "editable": false,
+                          "filterable": false,
+                          "formatter": <RowActionsCell
+                            rowSelection={
+                              Object {
+                                "enableShiftSelect": true,
+                                "onRowsDeselected": [Function],
+                                "onRowsSelected": [Function],
+                                "selectBy": Object {
+                                  "indexes": Array [],
+                                },
+                              }
+                            }
+                          />,
+                          "getRowMetaData": [Function],
+                          "headerRenderer": <renderNull
+                            inputRef={[Function]}
+                            onChange={[Function]}
+                          />,
+                          "key": "select-row",
                           "left": 0,
                           "locked": true,
                           "name": "",
+                          "onCellChange": [Function],
                           "width": 40,
                         },
                         Object {
@@ -3456,7 +3626,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           "editable": true,
                           "formatter": [Function],
                           "headerRenderer": <ColumnHeader
-                            columnKey="ccccc"
+                            columnKey="getCell"
                             columnType="text"
                             draggingColumnIndex={null}
                             index={2}
@@ -3469,13 +3639,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
                           />,
-                          "key": "ccccc",
+                          "key": "getCell",
                           "left": 360,
                           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                           "maybeTriggerRenderIfChangeIsSorted": false,
                           "maybeTriggerRenderIfChangeShowLetter": undefined,
                           "maybeTriggerRenderIfChangeSortDirection": undefined,
-                          "name": "ccccc",
+                          "name": "getCell",
                           "resizable": true,
                           "width": 160,
                         },
@@ -3483,7 +3653,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                           "editable": true,
                           "formatter": [Function],
                           "headerRenderer": <ColumnHeader
-                            columnKey="rn_"
+                            columnKey="select-row"
                             columnType="text"
                             draggingColumnIndex={null}
                             index={3}
@@ -3496,13 +3666,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                             setDropdownAction={[MockFunction]}
                             showLetter={false}
                           />,
-                          "key": "rn_",
+                          "key": "select-row",
                           "left": 520,
                           "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                           "maybeTriggerRenderIfChangeIsSorted": false,
                           "maybeTriggerRenderIfChangeShowLetter": undefined,
                           "maybeTriggerRenderIfChangeSortDirection": undefined,
-                          "name": "rn_",
+                          "name": "select-row",
                           "resizable": true,
                           "width": 160,
                         },
@@ -3520,10 +3690,14 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                     rowKey="id"
                     rowRenderer={[Function]}
                     rowScrollTimeout={0}
-                    rowSelection={null}
+                    rowSelection={
+                      Object {
+                        "indexes": Array [],
+                      }
+                    }
                     rowsCount={2}
                     scrollToRowIndex={0}
-                    selectedRows={Array []}
+                    selectedRows={null}
                     totalWidth={98}
                     visibleEnd={2}
                     visibleStart={0}
@@ -3592,11 +3766,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columns={
                                 Array [
                                   Object {
-                                    "formatter": [Function],
-                                    "key": "rn__",
+                                    "cellClass": "rdg-row-actions-cell",
+                                    "editable": false,
+                                    "filterable": false,
+                                    "formatter": <RowActionsCell
+                                      rowSelection={
+                                        Object {
+                                          "enableShiftSelect": true,
+                                          "onRowsDeselected": [Function],
+                                          "onRowsSelected": [Function],
+                                          "selectBy": Object {
+                                            "indexes": Array [],
+                                          },
+                                        }
+                                      }
+                                    />,
+                                    "getRowMetaData": [Function],
+                                    "headerRenderer": <renderNull
+                                      inputRef={[Function]}
+                                      onChange={[Function]}
+                                    />,
+                                    "key": "select-row",
                                     "left": 0,
                                     "locked": true,
                                     "name": "",
+                                    "onCellChange": [Function],
                                     "width": 40,
                                   },
                                   Object {
@@ -3657,7 +3851,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="ccccc"
+                                      columnKey="getCell"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={2}
@@ -3670,13 +3864,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "ccccc",
+                                    "key": "getCell",
                                     "left": 360,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "ccccc",
+                                    "name": "getCell",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -3684,7 +3878,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="rn_"
+                                      columnKey="select-row"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={3}
@@ -3697,13 +3891,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "rn_",
+                                    "key": "select-row",
                                     "left": 520,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "rn_",
+                                    "name": "select-row",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -3718,9 +3912,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 Object {
                                   "aaa": 9,
                                   "bbbb": "foo",
-                                  "ccccc": "9",
-                                  "rn_": "someval",
-                                  "rn__": 1,
+                                  "getCell": "9",
+                                  "select-row": "someval",
                                 }
                               }
                               subRowDetails={Object {}}
@@ -3770,11 +3963,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columns={
                                 Array [
                                   Object {
-                                    "formatter": [Function],
-                                    "key": "rn__",
+                                    "cellClass": "rdg-row-actions-cell",
+                                    "editable": false,
+                                    "filterable": false,
+                                    "formatter": <RowActionsCell
+                                      rowSelection={
+                                        Object {
+                                          "enableShiftSelect": true,
+                                          "onRowsDeselected": [Function],
+                                          "onRowsSelected": [Function],
+                                          "selectBy": Object {
+                                            "indexes": Array [],
+                                          },
+                                        }
+                                      }
+                                    />,
+                                    "getRowMetaData": [Function],
+                                    "headerRenderer": <renderNull
+                                      inputRef={[Function]}
+                                      onChange={[Function]}
+                                    />,
+                                    "key": "select-row",
                                     "left": 0,
                                     "locked": true,
                                     "name": "",
+                                    "onCellChange": [Function],
                                     "width": 40,
                                   },
                                   Object {
@@ -3835,7 +4048,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="ccccc"
+                                      columnKey="getCell"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={2}
@@ -3848,13 +4061,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "ccccc",
+                                    "key": "getCell",
                                     "left": 360,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "ccccc",
+                                    "name": "getCell",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -3862,7 +4075,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="rn_"
+                                      columnKey="select-row"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={3}
@@ -3875,13 +4088,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "rn_",
+                                    "key": "select-row",
                                     "left": 520,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "rn_",
+                                    "name": "select-row",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -3896,9 +4109,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 Object {
                                   "aaa": 9,
                                   "bbbb": "",
-                                  "ccccc": "baz",
-                                  "rn_": "someotherval",
-                                  "rn__": 2,
+                                  "getCell": "baz",
+                                  "select-row": "someotherval",
                                 }
                               }
                               subRowDetails={Object {}}
@@ -3957,11 +4169,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 columns={
                                   Array [
                                     Object {
-                                      "formatter": [Function],
-                                      "key": "rn__",
+                                      "cellClass": "rdg-row-actions-cell",
+                                      "editable": false,
+                                      "filterable": false,
+                                      "formatter": <RowActionsCell
+                                        rowSelection={
+                                          Object {
+                                            "enableShiftSelect": true,
+                                            "onRowsDeselected": [Function],
+                                            "onRowsSelected": [Function],
+                                            "selectBy": Object {
+                                              "indexes": Array [],
+                                            },
+                                          }
+                                        }
+                                      />,
+                                      "getRowMetaData": [Function],
+                                      "headerRenderer": <renderNull
+                                        inputRef={[Function]}
+                                        onChange={[Function]}
+                                      />,
+                                      "key": "select-row",
                                       "left": 0,
                                       "locked": true,
                                       "name": "",
+                                      "onCellChange": [Function],
                                       "width": 40,
                                     },
                                     Object {
@@ -4022,7 +4254,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="ccccc"
+                                        columnKey="getCell"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={2}
@@ -4035,13 +4267,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "ccccc",
+                                      "key": "getCell",
                                       "left": 360,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "ccccc",
+                                      "name": "getCell",
                                       "resizable": true,
                                       "width": 160,
                                     },
@@ -4049,7 +4281,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="rn_"
+                                        columnKey="select-row"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={3}
@@ -4062,13 +4294,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "rn_",
+                                      "key": "select-row",
                                       "left": 520,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "rn_",
+                                      "name": "select-row",
                                       "resizable": true,
                                       "width": 160,
                                     },
@@ -4083,9 +4315,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "aaa": 9,
                                     "bbbb": "foo",
-                                    "ccccc": "9",
-                                    "rn_": "someval",
-                                    "rn__": 1,
+                                    "getCell": "9",
+                                    "select-row": "someval",
                                   }
                                 }
                                 subRowDetails={Object {}}
@@ -4135,11 +4366,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 columns={
                                   Array [
                                     Object {
-                                      "formatter": [Function],
-                                      "key": "rn__",
+                                      "cellClass": "rdg-row-actions-cell",
+                                      "editable": false,
+                                      "filterable": false,
+                                      "formatter": <RowActionsCell
+                                        rowSelection={
+                                          Object {
+                                            "enableShiftSelect": true,
+                                            "onRowsDeselected": [Function],
+                                            "onRowsSelected": [Function],
+                                            "selectBy": Object {
+                                              "indexes": Array [],
+                                            },
+                                          }
+                                        }
+                                      />,
+                                      "getRowMetaData": [Function],
+                                      "headerRenderer": <renderNull
+                                        inputRef={[Function]}
+                                        onChange={[Function]}
+                                      />,
+                                      "key": "select-row",
                                       "left": 0,
                                       "locked": true,
                                       "name": "",
+                                      "onCellChange": [Function],
                                       "width": 40,
                                     },
                                     Object {
@@ -4200,7 +4451,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="ccccc"
+                                        columnKey="getCell"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={2}
@@ -4213,13 +4464,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "ccccc",
+                                      "key": "getCell",
                                       "left": 360,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "ccccc",
+                                      "name": "getCell",
                                       "resizable": true,
                                       "width": 160,
                                     },
@@ -4227,7 +4478,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="rn_"
+                                        columnKey="select-row"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={3}
@@ -4240,13 +4491,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "rn_",
+                                      "key": "select-row",
                                       "left": 520,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "rn_",
+                                      "name": "select-row",
                                       "resizable": true,
                                       "width": 160,
                                     },
@@ -4261,9 +4512,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   Object {
                                     "aaa": 9,
                                     "bbbb": "",
-                                    "ccccc": "baz",
-                                    "rn_": "someotherval",
-                                    "rn__": 2,
+                                    "getCell": "baz",
+                                    "select-row": "someotherval",
                                   }
                                 }
                                 subRowDetails={Object {}}
@@ -4320,11 +4570,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columns={
                                 Array [
                                   Object {
-                                    "formatter": [Function],
-                                    "key": "rn__",
+                                    "cellClass": "rdg-row-actions-cell",
+                                    "editable": false,
+                                    "filterable": false,
+                                    "formatter": <RowActionsCell
+                                      rowSelection={
+                                        Object {
+                                          "enableShiftSelect": true,
+                                          "onRowsDeselected": [Function],
+                                          "onRowsSelected": [Function],
+                                          "selectBy": Object {
+                                            "indexes": Array [],
+                                          },
+                                        }
+                                      }
+                                    />,
+                                    "getRowMetaData": [Function],
+                                    "headerRenderer": <renderNull
+                                      inputRef={[Function]}
+                                      onChange={[Function]}
+                                    />,
+                                    "key": "select-row",
                                     "left": 0,
                                     "locked": true,
                                     "name": "",
+                                    "onCellChange": [Function],
                                     "width": 40,
                                   },
                                   Object {
@@ -4385,7 +4655,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="ccccc"
+                                      columnKey="getCell"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={2}
@@ -4398,13 +4668,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "ccccc",
+                                    "key": "getCell",
                                     "left": 360,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "ccccc",
+                                    "name": "getCell",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -4412,7 +4682,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="rn_"
+                                      columnKey="select-row"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={3}
@@ -4425,13 +4695,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "rn_",
+                                    "key": "select-row",
                                     "left": 520,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "rn_",
+                                    "name": "select-row",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -4447,9 +4717,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 Object {
                                   "aaa": 9,
                                   "bbbb": "foo",
-                                  "ccccc": "9",
-                                  "rn_": "someval",
-                                  "rn__": 1,
+                                  "getCell": "9",
+                                  "select-row": "someval",
                                 }
                               }
                               subRowDetails={Object {}}
@@ -4468,7 +4737,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                 }
                               >
-                                <Cell
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -4549,14 +4818,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="aaa-0"
+                                  key="aaa-1"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
+                                      "getCell": "9",
+                                      "select-row": "someval",
                                     }
                                   }
                                   rowIdx={0}
@@ -4586,44 +4854,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <NumberCellFormatter
+                                        value={9}
                                       >
-                                        <span>
-                                          <NumberCellFormatter
-                                            value={9}
-                                          >
-                                            <div
-                                              className="cell-number"
-                                            >
-                                              9
-                                            </div>
-                                          </NumberCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-number"
+                                        >
+                                          9
+                                        </div>
+                                      </NumberCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -4704,14 +4947,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="bbbb-0"
+                                  key="bbbb-2"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
+                                      "getCell": "9",
+                                      "select-row": "someval",
                                     }
                                   }
                                   rowIdx={0}
@@ -4741,44 +4983,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <TextCellFormatter
+                                        value="foo"
                                       >
-                                        <span>
-                                          <TextCellFormatter
-                                            value="foo"
-                                          >
-                                            <div
-                                              className="cell-text"
-                                            >
-                                              foo
-                                            </div>
-                                          </TextCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-text"
+                                        >
+                                          foo
+                                        </div>
+                                      </TextCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -4818,7 +5035,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="ccccc"
+                                        columnKey="getCell"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={2}
@@ -4831,13 +5048,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "ccccc",
+                                      "key": "getCell",
                                       "left": 360,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "ccccc",
+                                      "name": "getCell",
                                       "resizable": true,
                                       "width": 160,
                                     }
@@ -4859,14 +5076,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="ccccc-0"
+                                  key="getCell-3"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
+                                      "getCell": "9",
+                                      "select-row": "someval",
                                     }
                                   }
                                   rowIdx={0}
@@ -4896,44 +5112,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <TextCellFormatter
+                                        value="9"
                                       >
-                                        <span>
-                                          <TextCellFormatter
-                                            value="9"
-                                          >
-                                            <div
-                                              className="cell-text"
-                                            >
-                                              9
-                                            </div>
-                                          </TextCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-text"
+                                        >
+                                          9
+                                        </div>
+                                      </TextCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -4973,7 +5164,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="rn_"
+                                        columnKey="select-row"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={3}
@@ -4986,13 +5177,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "rn_",
+                                      "key": "select-row",
                                       "left": 520,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "rn_",
+                                      "name": "select-row",
                                       "resizable": true,
                                       "width": 160,
                                     }
@@ -5014,14 +5205,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="rn_-0"
+                                  key="select-row-4"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
+                                      "getCell": "9",
+                                      "select-row": "someval",
                                     }
                                   }
                                   rowIdx={0}
@@ -5051,44 +5241,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <TextCellFormatter
+                                        value="someval"
                                       >
-                                        <span>
-                                          <TextCellFormatter
-                                            value="someval"
-                                          >
-                                            <div
-                                              className="cell-text"
-                                            >
-                                              someval
-                                            </div>
-                                          </TextCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-text"
+                                        >
+                                          someval
+                                        </div>
+                                      </TextCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -5125,11 +5290,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   column={
                                     Object {
-                                      "formatter": [Function],
-                                      "key": "rn__",
+                                      "cellClass": "rdg-row-actions-cell",
+                                      "editable": false,
+                                      "filterable": false,
+                                      "formatter": <RowActionsCell
+                                        rowSelection={
+                                          Object {
+                                            "enableShiftSelect": true,
+                                            "onRowsDeselected": [Function],
+                                            "onRowsSelected": [Function],
+                                            "selectBy": Object {
+                                              "indexes": Array [],
+                                            },
+                                          }
+                                        }
+                                      />,
+                                      "getRowMetaData": [Function],
+                                      "headerRenderer": <renderNull
+                                        inputRef={[Function]}
+                                        onChange={[Function]}
+                                      />,
+                                      "key": "select-row",
                                       "left": 0,
                                       "locked": true,
                                       "name": "",
+                                      "onCellChange": [Function],
                                       "width": 40,
                                     }
                                   }
@@ -5143,29 +5328,41 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={[Function]}
+                                  formatter={
+                                    <RowActionsCell
+                                      rowSelection={
+                                        Object {
+                                          "enableShiftSelect": true,
+                                          "onRowsDeselected": [Function],
+                                          "onRowsSelected": [Function],
+                                          "selectBy": Object {
+                                            "indexes": Array [],
+                                          },
+                                        }
+                                      }
+                                    />
+                                  }
                                   height={35}
                                   idx={0}
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="rn__-0"
+                                  key="select-row-0"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
+                                      "getCell": "9",
+                                      "select-row": "someval",
                                     }
                                   }
                                   rowIdx={0}
                                   tabIndex={0}
-                                  value={1}
+                                  value={false}
                                 >
                                   <div
-                                    className="react-grid-Cell react-grid-Cell--locked"
+                                    className="rdg-row-actions-cell react-grid-Cell react-grid-Cell--locked"
                                     height={35}
                                     onClick={[Function]}
                                     onContextMenu={[Function]}
@@ -5182,35 +5379,83 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       }
                                     }
                                     tabIndex={0}
-                                    value={1}
+                                    value={false}
                                   >
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
+                                      <RowActionsCell
+                                        column={
                                           Object {
-                                            "marginLeft": 0,
+                                            "cellClass": "rdg-row-actions-cell",
+                                            "editable": false,
+                                            "filterable": false,
+                                            "formatter": <RowActionsCell
+                                              rowSelection={
+                                                Object {
+                                                  "enableShiftSelect": true,
+                                                  "onRowsDeselected": [Function],
+                                                  "onRowsSelected": [Function],
+                                                  "selectBy": Object {
+                                                    "indexes": Array [],
+                                                  },
+                                                }
+                                              }
+                                            />,
+                                            "getRowMetaData": [Function],
+                                            "headerRenderer": <renderNull
+                                              inputRef={[Function]}
+                                              onChange={[Function]}
+                                            />,
+                                            "key": "select-row",
+                                            "left": 0,
+                                            "locked": true,
+                                            "name": "",
+                                            "onCellChange": [Function],
+                                            "width": 40,
                                           }
                                         }
+                                        dependentValues={
+                                          Object {
+                                            "aaa": 9,
+                                            "bbbb": "foo",
+                                            "getCell": "9",
+                                            "select-row": "someval",
+                                          }
+                                        }
+                                        isExpanded={false}
+                                        rowIdx={0}
+                                        rowSelection={
+                                          Object {
+                                            "enableShiftSelect": true,
+                                            "onRowsDeselected": [Function],
+                                            "onRowsSelected": [Function],
+                                            "selectBy": Object {
+                                              "indexes": Array [],
+                                            },
+                                          }
+                                        }
+                                        value={false}
                                       >
-                                        <span>
-                                          <RowIndexFormatter
-                                            value={1}
+                                        <label
+                                          className="is-row-selected"
+                                        >
+                                          <input
+                                            checked={false}
+                                            name="row-selected-0"
+                                            onChange={[Function]}
+                                            type="checkbox"
+                                          />
+                                          <span
+                                            className="row-number row-number-1"
                                           >
-                                            <div
-                                              className="row-number row-number-1"
-                                            >
-                                              1
-                                            </div>
-                                          </RowIndexFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
+                                            1
+                                          </span>
+                                        </label>
+                                      </RowActionsCell>
                                     </div>
                                   </div>
-                                </Cell>
+                                </CellWithoutGarbage>
                               </div>
                             </Row>
                             <Row
@@ -5256,11 +5501,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               columns={
                                 Array [
                                   Object {
-                                    "formatter": [Function],
-                                    "key": "rn__",
+                                    "cellClass": "rdg-row-actions-cell",
+                                    "editable": false,
+                                    "filterable": false,
+                                    "formatter": <RowActionsCell
+                                      rowSelection={
+                                        Object {
+                                          "enableShiftSelect": true,
+                                          "onRowsDeselected": [Function],
+                                          "onRowsSelected": [Function],
+                                          "selectBy": Object {
+                                            "indexes": Array [],
+                                          },
+                                        }
+                                      }
+                                    />,
+                                    "getRowMetaData": [Function],
+                                    "headerRenderer": <renderNull
+                                      inputRef={[Function]}
+                                      onChange={[Function]}
+                                    />,
+                                    "key": "select-row",
                                     "left": 0,
                                     "locked": true,
                                     "name": "",
+                                    "onCellChange": [Function],
                                     "width": 40,
                                   },
                                   Object {
@@ -5321,7 +5586,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="ccccc"
+                                      columnKey="getCell"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={2}
@@ -5334,13 +5599,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "ccccc",
+                                    "key": "getCell",
                                     "left": 360,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "ccccc",
+                                    "name": "getCell",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -5348,7 +5613,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     "editable": true,
                                     "formatter": [Function],
                                     "headerRenderer": <ColumnHeader
-                                      columnKey="rn_"
+                                      columnKey="select-row"
                                       columnType="text"
                                       draggingColumnIndex={null}
                                       index={3}
@@ -5361,13 +5626,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       setDropdownAction={[MockFunction]}
                                       showLetter={false}
                                     />,
-                                    "key": "rn_",
+                                    "key": "select-row",
                                     "left": 520,
                                     "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                     "maybeTriggerRenderIfChangeIsSorted": false,
                                     "maybeTriggerRenderIfChangeShowLetter": undefined,
                                     "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                    "name": "rn_",
+                                    "name": "select-row",
                                     "resizable": true,
                                     "width": 160,
                                   },
@@ -5383,9 +5648,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                 Object {
                                   "aaa": 9,
                                   "bbbb": "",
-                                  "ccccc": "baz",
-                                  "rn_": "someotherval",
-                                  "rn__": 2,
+                                  "getCell": "baz",
+                                  "select-row": "someotherval",
                                 }
                               }
                               subRowDetails={Object {}}
@@ -5404,7 +5668,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                 }
                               >
-                                <Cell
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -5490,9 +5754,8 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
+                                      "getCell": "baz",
+                                      "select-row": "someotherval",
                                     }
                                   }
                                   rowIdx={1}
@@ -5522,44 +5785,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <NumberCellFormatter
+                                        value={9}
                                       >
-                                        <span>
-                                          <NumberCellFormatter
-                                            value={9}
-                                          >
-                                            <div
-                                              className="cell-number"
-                                            >
-                                              9
-                                            </div>
-                                          </NumberCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-number"
+                                        >
+                                          9
+                                        </div>
+                                      </NumberCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -5640,14 +5878,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="bbbb-1"
+                                  key="bbbb-2"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
+                                      "getCell": "baz",
+                                      "select-row": "someotherval",
                                     }
                                   }
                                   rowIdx={1}
@@ -5677,42 +5914,17 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <TextCellFormatter
+                                        value=""
                                       >
-                                        <span>
-                                          <TextCellFormatter
-                                            value=""
-                                          >
-                                            <div
-                                              className="cell-text"
-                                            />
-                                          </TextCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-text"
+                                        />
+                                      </TextCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -5752,7 +5964,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="ccccc"
+                                        columnKey="getCell"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={2}
@@ -5765,13 +5977,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "ccccc",
+                                      "key": "getCell",
                                       "left": 360,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "ccccc",
+                                      "name": "getCell",
                                       "resizable": true,
                                       "width": 160,
                                     }
@@ -5793,14 +6005,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="ccccc-1"
+                                  key="getCell-3"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
+                                      "getCell": "baz",
+                                      "select-row": "someotherval",
                                     }
                                   }
                                   rowIdx={1}
@@ -5830,44 +6041,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <TextCellFormatter
+                                        value="baz"
                                       >
-                                        <span>
-                                          <TextCellFormatter
-                                            value="baz"
-                                          >
-                                            <div
-                                              className="cell-text"
-                                            >
-                                              baz
-                                            </div>
-                                          </TextCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-text"
+                                        >
+                                          baz
+                                        </div>
+                                      </TextCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -5907,7 +6093,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "editable": true,
                                       "formatter": [Function],
                                       "headerRenderer": <ColumnHeader
-                                        columnKey="rn_"
+                                        columnKey="select-row"
                                         columnType="text"
                                         draggingColumnIndex={null}
                                         index={3}
@@ -5920,13 +6106,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                         setDropdownAction={[MockFunction]}
                                         showLetter={false}
                                       />,
-                                      "key": "rn_",
+                                      "key": "select-row",
                                       "left": 520,
                                       "maybeTriggerRenderIfChangeDraggingColumnIndex": null,
                                       "maybeTriggerRenderIfChangeIsSorted": false,
                                       "maybeTriggerRenderIfChangeShowLetter": undefined,
                                       "maybeTriggerRenderIfChangeSortDirection": undefined,
-                                      "name": "rn_",
+                                      "name": "select-row",
                                       "resizable": true,
                                       "width": 160,
                                     }
@@ -5948,14 +6134,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="rn_-1"
+                                  key="select-row-4"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
+                                      "getCell": "baz",
+                                      "select-row": "someotherval",
                                     }
                                   }
                                   rowIdx={1}
@@ -5985,44 +6170,19 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
-                                          Object {
-                                            "marginLeft": 0,
-                                          }
-                                        }
+                                      <TextCellFormatter
+                                        value="someotherval"
                                       >
-                                        <span>
-                                          <TextCellFormatter
-                                            value="someotherval"
-                                          >
-                                            <div
-                                              className="cell-text"
-                                            >
-                                              someotherval
-                                            </div>
-                                          </TextCellFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="drag-handle"
-                                      draggable="true"
-                                      onDoubleClick={[Function]}
-                                    >
-                                      <span
-                                        style={
-                                          Object {
-                                            "display": "none",
-                                          }
-                                        }
-                                      />
+                                        <div
+                                          className="cell-text"
+                                        >
+                                          someotherval
+                                        </div>
+                                      </TextCellFormatter>
                                     </div>
                                   </div>
-                                </Cell>
-                                <Cell
+                                </CellWithoutGarbage>
+                                <CellWithoutGarbage
                                   cellMetaData={
                                     Object {
                                       "copied": null,
@@ -6059,11 +6219,31 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                   }
                                   column={
                                     Object {
-                                      "formatter": [Function],
-                                      "key": "rn__",
+                                      "cellClass": "rdg-row-actions-cell",
+                                      "editable": false,
+                                      "filterable": false,
+                                      "formatter": <RowActionsCell
+                                        rowSelection={
+                                          Object {
+                                            "enableShiftSelect": true,
+                                            "onRowsDeselected": [Function],
+                                            "onRowsSelected": [Function],
+                                            "selectBy": Object {
+                                              "indexes": Array [],
+                                            },
+                                          }
+                                        }
+                                      />,
+                                      "getRowMetaData": [Function],
+                                      "headerRenderer": <renderNull
+                                        inputRef={[Function]}
+                                        onChange={[Function]}
+                                      />,
+                                      "key": "select-row",
                                       "left": 0,
                                       "locked": true,
                                       "name": "",
+                                      "onCellChange": [Function],
                                       "width": 40,
                                     }
                                   }
@@ -6077,29 +6257,41 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       "treeDepth": undefined,
                                     }
                                   }
-                                  formatter={[Function]}
+                                  formatter={
+                                    <RowActionsCell
+                                      rowSelection={
+                                        Object {
+                                          "enableShiftSelect": true,
+                                          "onRowsDeselected": [Function],
+                                          "onRowsSelected": [Function],
+                                          "selectBy": Object {
+                                            "indexes": Array [],
+                                          },
+                                        }
+                                      }
+                                    />
+                                  }
                                   height={35}
                                   idx={0}
                                   isCellValueChanging={[Function]}
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={false}
-                                  key="rn__-1"
+                                  key="select-row-0"
                                   rowData={
                                     Object {
                                       "aaa": 9,
                                       "bbbb": "",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
+                                      "getCell": "baz",
+                                      "select-row": "someotherval",
                                     }
                                   }
                                   rowIdx={1}
                                   tabIndex={0}
-                                  value={2}
+                                  value={false}
                                 >
                                   <div
-                                    className="react-grid-Cell react-grid-Cell--locked"
+                                    className="rdg-row-actions-cell react-grid-Cell react-grid-Cell--locked"
                                     height={35}
                                     onClick={[Function]}
                                     onContextMenu={[Function]}
@@ -6116,35 +6308,83 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                       }
                                     }
                                     tabIndex={0}
-                                    value={2}
+                                    value={false}
                                   >
                                     <div
                                       className="react-grid-Cell__value"
                                     >
-                                      <div
-                                        style={
+                                      <RowActionsCell
+                                        column={
                                           Object {
-                                            "marginLeft": 0,
+                                            "cellClass": "rdg-row-actions-cell",
+                                            "editable": false,
+                                            "filterable": false,
+                                            "formatter": <RowActionsCell
+                                              rowSelection={
+                                                Object {
+                                                  "enableShiftSelect": true,
+                                                  "onRowsDeselected": [Function],
+                                                  "onRowsSelected": [Function],
+                                                  "selectBy": Object {
+                                                    "indexes": Array [],
+                                                  },
+                                                }
+                                              }
+                                            />,
+                                            "getRowMetaData": [Function],
+                                            "headerRenderer": <renderNull
+                                              inputRef={[Function]}
+                                              onChange={[Function]}
+                                            />,
+                                            "key": "select-row",
+                                            "left": 0,
+                                            "locked": true,
+                                            "name": "",
+                                            "onCellChange": [Function],
+                                            "width": 40,
                                           }
                                         }
+                                        dependentValues={
+                                          Object {
+                                            "aaa": 9,
+                                            "bbbb": "",
+                                            "getCell": "baz",
+                                            "select-row": "someotherval",
+                                          }
+                                        }
+                                        isExpanded={false}
+                                        rowIdx={1}
+                                        rowSelection={
+                                          Object {
+                                            "enableShiftSelect": true,
+                                            "onRowsDeselected": [Function],
+                                            "onRowsSelected": [Function],
+                                            "selectBy": Object {
+                                              "indexes": Array [],
+                                            },
+                                          }
+                                        }
+                                        value={false}
                                       >
-                                        <span>
-                                          <RowIndexFormatter
-                                            value={2}
+                                        <label
+                                          className="is-row-selected"
+                                        >
+                                          <input
+                                            checked={false}
+                                            name="row-selected-1"
+                                            onChange={[Function]}
+                                            type="checkbox"
+                                          />
+                                          <span
+                                            className="row-number row-number-1"
                                           >
-                                            <div
-                                              className="row-number row-number-1"
-                                            >
-                                              2
-                                            </div>
-                                          </RowIndexFormatter>
-                                        </span>
-                                         
-                                         
-                                      </div>
+                                            2
+                                          </span>
+                                        </label>
+                                      </RowActionsCell>
                                     </div>
                                   </div>
-                                </Cell>
+                                </CellWithoutGarbage>
                               </div>
                             </Row>
                           </div>
@@ -6163,15 +6403,32 @@ exports[`DataGrid tests, Renders the grid 1`] = `
 </DataGrid>
 `;
 
-exports[`DataGrid tests, matches snapshot without data 1`] = `
+exports[`DataGrid tests, should match snapshot without data 1`] = `
 <DataGrid
-  columnTypes={Array []}
-  columns={Array []}
+  columnTypes={
+    Array [
+      "number",
+      "text",
+      "text",
+      "text",
+    ]
+  }
+  columns={
+    Array [
+      "aaa",
+      "bbbb",
+      "getCell",
+      "select-row",
+    ]
+  }
   getRow={[Function]}
   isReadOnly={false}
-  lastRelevantDeltaId={999}
+  onEditCell={[MockFunction]}
+  onGridSort={[MockFunction]}
   onRenameColumn={[MockFunction]}
   onReorderColumns={[MockFunction]}
+  onSetSelectedRowIndexes={[MockFunction]}
+  selectedRowIndexes={Array []}
   setDropdownAction={[MockFunction]}
   totalRows={0}
   wfModuleId={100}

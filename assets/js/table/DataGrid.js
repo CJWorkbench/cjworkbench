@@ -8,20 +8,69 @@ import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
 import debounce from 'debounce'
+import memoize from 'memoize-one'
 import ColumnHeader from './ColumnHeader'
-import { RowIndexFormatter, typeToCellFormatter } from './CellFormatters'
+import Row from './Row'
+import RowActionsCell from './RowActionsCell'
+import { typeToCellFormatter } from './CellFormatters'
+
+const getRowSelection = memoize((indexes, onRowsSelected, onRowsDeselected) => ({
+  enableShiftSelect: true,
+  onRowsSelected,
+  onRowsDeselected,
+  selectBy: { indexes }
+}))
+
+function renderNull () {
+  return null
+}
+
+function mergeSortedArrays (a, b) {
+  const c = []
+  for (let i = 0, j = 0; i < a.length || j < b.length; ) {
+    if (i === a.length) {
+      c.push(b[j])
+      j += 1
+    } else if (j === b.length) {
+      c.push(a[i])
+      i += 1
+    } else {
+      if (a[i] === b[j]) {
+        c.push(a[i])
+        i += 1
+        j += 1
+      } else if (a[i] < b[i]) {
+        c.push(a[i])
+        i += 1
+      } else {
+        c.push(b[j])
+        j += 1
+      }
+    }
+  }
+
+  return c
+}
+
+/**
+ * ReactDataGrid, with a thinner hard-coded actions-column width.
+ */
+class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
+  _superSetupGridColumns = this.setupGridColumns
+
+  setupGridColumns = (...args) => {
+    const ret = this._superSetupGridColumns(...args)
+    if (ret[0].cellClass === 'rdg-row-actions-cell') {
+      ret[0].width = 40
+      ret[0].editable = false
+    }
+    return ret
+  }
+}
 
 // Add row number col and make all cols resizeable
 function makeFormattedCols(props) {
   const editable = (props.onEditCell !== undefined) && props.wfModuleId !== undefined; // no wfModuleId means blank table
-
-  const rowNumberColumn = {
-    key: props.rowNumKey,
-    name: '',
-    formatter: RowIndexFormatter,
-    width: 40,
-    locked: true,
-  }
 
   // We can have an empty table, but we need to give these props to ColumnHeader anyway
   const safeColumns = props.columns || []
@@ -57,10 +106,10 @@ function makeFormattedCols(props) {
         isReadOnly={props.isReadOnly}
         setDropdownAction={props.setDropdownAction}
       />
-    ),
+    )
   }))
 
-  return [ rowNumberColumn ].concat(columns)
+  return columns
 }
 
 
@@ -74,14 +123,15 @@ export default class DataGrid extends React.Component {
     isReadOnly: PropTypes.bool.isRequired,
     columnTypes: PropTypes.array,     // not required if blank table
     wfModuleId: PropTypes.number,    // not required if blank table
-    lastRelevantDeltaId: PropTypes.number, // triggers a render on change
     onEditCell: PropTypes.func,
     sortColumn: PropTypes.string,
     sortDirection: PropTypes.number,
     showLetter: PropTypes.bool,
     onReorderColumns: PropTypes.func.isRequired,
     onRenameColumn: PropTypes.func.isRequired,
-    setDropdownAction: PropTypes.func.isRequired
+    setDropdownAction: PropTypes.func.isRequired,
+    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired, // may be empty
+    onSetSelectedRowIndexes: PropTypes.func.isRequired // func([idx, ...]) => undefined
   }
 
   state = {
@@ -101,16 +151,6 @@ export default class DataGrid extends React.Component {
       const gridWidth = Math.max(100, container.offsetWidth)
       this.setState({ gridWidth, gridHeight })
     }
-  }
-
-  // Each ReactDataGrid col needs a unique key. Make one for our row number column
-  get rowNumKey() {
-    const columnKeys = this.props.columns
-    let ret = 'rn_'
-    while (columnKeys.includes(ret)) {
-      ret += '_'
-    }
-    return ret
   }
 
   componentDidMount() {
@@ -176,28 +216,25 @@ export default class DataGrid extends React.Component {
     }
   }
 
-  // Add row number as first column, when we look up data
-  getRow = (i) => {
-    const row = this.props.getRow(i)
-    if (row === null) return null
-    // 1 based row numbers
-    return { [this.rowNumKey]: i + 1, ...row }
-  }
+  onGridRowsUpdated = (data, ...args) => {
+    const { fromRow, fromRowData, toRow, cellKey, updated } = data
 
-  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
     if (fromRow !== toRow) {
-      // possible if drag handle not hidden, see https://github.com/adazzle/react-data-grid/issues/822
-      console.log('More than one row changed at a time in DataGrid, how?')
+      throw new Error('Attempting to edit more than one cell at a time')
     }
 
-    if(this.props.isReadOnly) {
-      throw new Error("Attempting to edit cells in a read-only workflow.")
+    if (this.props.isReadOnly) {
+      throw new Error('Attempting to edit cells in a read-only workflow.')
     }
 
-    if (this.props.onEditCell)
-      var colKey = Object.keys(updated)[0]
-      var newVal = updated[colKey]
-      this.props.onEditCell(fromRow, colKey, newVal)  // column key is also column name
+    if (this.props.onEditCell) {
+      const oldValue = String(fromRowData[cellKey])
+      const newValue = updated[cellKey]
+
+      if (newValue !== oldValue) {
+        this.props.onEditCell(fromRow, cellKey, newValue)
+      }
+    }
   }
 
   onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
@@ -227,34 +264,61 @@ export default class DataGrid extends React.Component {
     this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', false, renameInfo)
   }
 
-  render() {
-    if (this.props.totalRows > 0) {
-      const draggingProps = {
-        ...this.props,
-        rowNumKey: this.rowNumKey,
-        onDragStartColumnIndex: this.onDragStartColumnIndex,
-        onDragEnd: this.onDragEnd,
-        draggingColumnIndex: this.state.draggingColumnIndex,
-        onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
-        onRenameColumn: this.onRename,
-      }
-      const columns = makeFormattedCols(draggingProps)
+  onRowsSelected = (newRows) => {
+    // Merge is O(n lg n), better than O(n^2) of naive algo
+    const newIndexes = newRows.map(r => r.rowIdx).sort()
+    const oldIndexes = this.props.selectedRowIndexes.slice().sort()
+    const indexes = mergeSortedArrays(oldIndexes, newIndexes)
+    this.props.onSetSelectedRowIndexes(indexes)
+  }
 
-      return(
-        <ReactDataGrid
-          columns={columns}
-          rowGetter={this.getRow}
-          rowsCount={this.props.totalRows}
-          minWidth={this.state.gridWidth - 2}
-          minHeight={this.state.gridHeight - 2}   // -2 because grid has borders, don't want to expand our parent DOM node
-          headerRowHeight={this.props.showLetter ? 68 : 50}
-          enableCellSelect={true}
-          onGridRowsUpdated={this.onGridRowsUpdated}
-          key={this.state.componentKey}
-        />
-      )
-    } else {
+  onRowsDeselected = (rows) => {
+    // Nix by hash-map is slow, but it scales O(n) and we need that
+    const nix = {}
+    for (let i = 0; i < rows.length; i++) {
+      nix[String(rows[i].rowIdx)] = null
+    }
+
+    const selectedRowIndexes = this.props.selectedRowIndexes
+      .filter(i => !nix.hasOwnProperty(String(i)))
+    this.props.onSetSelectedRowIndexes(selectedRowIndexes)
+  }
+
+  render () {
+    if (!this.props.totalRows) {
       return null
     }
+
+    const { selectedRowIndexes } = this.props
+
+    const draggingProps = {
+      ...this.props,
+      onDragStartColumnIndex: this.onDragStartColumnIndex,
+      onDragEnd: this.onDragEnd,
+      draggingColumnIndex: this.state.draggingColumnIndex,
+      onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
+      onRenameColumn: this.onRename,
+    }
+    const columns = makeFormattedCols(draggingProps)
+    const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
+
+    return(
+      <ReactDataGridWithThinnerActionsColumn
+        columns={columns}
+        rowActionsCell={RowActionsCell}
+        rowGetter={this.props.getRow}
+        rowsCount={this.props.totalRows}
+        minWidth={this.state.gridWidth - 2}
+        minHeight={this.state.gridHeight - 2}   // -2 because grid has borders, don't want to expand our parent DOM node
+        headerRowHeight={this.props.showLetter ? 68 : 50}
+        enableCellSelect={true}
+        selectAllRenderer={renderNull}
+        onGridRowsUpdated={this.onGridRowsUpdated}
+        enableRowSelect={true}
+        rowRenderer={Row}
+        rowSelection={rowSelection}
+        key={this.state.componentKey}
+      />
+    )
   }
 }

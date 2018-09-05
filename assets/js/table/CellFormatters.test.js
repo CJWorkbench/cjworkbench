@@ -1,25 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { RowIndexFormatter, typeToCellFormatter } from './CellFormatters'
-
-describe('RowIndexFormatter', () => {
-  const wrapper = (value) => shallow(<RowIndexFormatter value={value} />)
-
-  it('renders number of digits in class name', () => {
-    const w1 = wrapper(4)
-    const w2 = wrapper(10)
-    const w3 = wrapper(100)
-
-    expect(w1.find('.row-number.row-number-1')).toHaveLength(1)
-    expect(w2.find('.row-number.row-number-2')).toHaveLength(1)
-    expect(w3.find('.row-number.row-number-3')).toHaveLength(1)
-  })
-
-  it('does not add commas on long numbers', () => {
-    const w = wrapper(1234567)
-    expect(w.text()).toEqual('1234567')
-  })
-})
+import { typeToCellFormatter } from './CellFormatters'
 
 describe('NumberCellFormatter', () => {
   const Formatter = typeToCellFormatter('number')
