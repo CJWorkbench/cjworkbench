@@ -87,10 +87,13 @@ describe('SelectedRowsActions', () => {
     })
 
     it('should not render modules that do not belong', () => {
-      const w = wrapper({ '15': { name: 'Baz columns' } })
+      const w = wrapper({
+        '15': {}, // the dream: JSON does not contain title
+        '16': { row_action_menu_entry_title: '' } // reality: JSON contains empty-string title
+      })
       w.find('button').at(0).simulate('click')
       w.update()
-      expect(w.text()).not.toMatch(/Baz/)
+      expect(w.find('button')).toHaveLength(1)
     })
 
     it('should dispatch the correct actions', async () => {
