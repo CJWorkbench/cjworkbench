@@ -24,7 +24,7 @@ describe('NumberCellFormatter', () => {
 
   it('renders null as null', () => {
     const w = wrapper(null)
-    expect(w.find('.cell-null').text()).toEqual('null')
+    expect(w.find('.cell-null.cell-number')).toHaveLength(1)
   })
 
   it('does not crash on text input', () => {
@@ -51,7 +51,7 @@ describe('TextCellFormatter', () => {
 
   it('renders null as null', () => {
     const w = wrapper(null)
-    expect(w.find('.cell-null').text()).toEqual('null')
+    expect(w.find('.cell-null.cell-text')).toHaveLength(1)
   })
 
   it('does not crash on numeric input', () => {
@@ -93,7 +93,7 @@ describe('DatetimeCellFormatter', () => {
 
   it('renders null as null', () => {
     const w = wrapper(null)
-    expect(w.find('.cell-null').text()).toEqual('null')
+    expect(w.find('.cell-null.cell-datetime')).toHaveLength(1)
   })
 
   it('does not crash on string input', () => {
