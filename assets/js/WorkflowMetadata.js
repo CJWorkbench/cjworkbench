@@ -94,16 +94,14 @@ export default class WorkflowMetadata extends React.Component {
     );
   }
 
-  render() {
+  render () {
 
     var now = this.props.test_now || new Date();
 
-
-    // only list User attribution if one exists & is not just whitespace
-    var user = this.props.workflow.owner_name.trim();
-    var attribution = user.length
+    // don't show author if this workflow is anonymous
+    var attribution = !this.props.workflow.is_anonymous
       ? <li className="attribution">
-          <span className="metadata">by {user}</span>
+          <span className="metadata">by {this.props.workflow.owner_name.trim()}</span>
           <span className="separator">-</span>
         </li>
       : null
