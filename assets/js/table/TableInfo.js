@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ExportModal from '../ExportModal'
+import SelectedRowsActions from './SelectedRowsActions'
 
 const numberFormat = new Intl.NumberFormat('en-US')
 
@@ -8,6 +9,7 @@ export default class TableInfo extends React.PureComponent {
   static propTypes = {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown
+    isReadOnly: PropTypes.bool.isRequired,
     selectedWfModuleId: PropTypes.number, // or null if none selected
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired
   }
@@ -25,7 +27,7 @@ export default class TableInfo extends React.PureComponent {
   }
 
   render () {
-    const { nRows, nColumns, selectedWfModuleId } = this.props
+    const { nRows, nColumns, selectedWfModuleId, selectedRowIndexes, isReadOnly } = this.props
     const { isExportModalOpen } = this.state
 
     const nRowsString = nRows === null ? '' : numberFormat.format(nRows)
@@ -42,6 +44,12 @@ export default class TableInfo extends React.PureComponent {
             <div className='data'>Columns</div>
             <div className='value'>{nColumnsString}</div>
           </div>
+          {isReadOnly ? null : (
+            <SelectedRowsActions
+              selectedRowIndexes={selectedRowIndexes}
+              selectedWfModuleId={selectedWfModuleId}
+            />
+          )}
         </div>
               
         {!selectedWfModuleId ? null : (

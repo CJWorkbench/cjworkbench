@@ -64,36 +64,37 @@ button:focus { outline:0 !important; }
 }
 
 
-
-.context-button {
-  cursor: pointer;
-  border: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color:$dark-gray;
-  border-radius: 5rem;
-  opacity: 0.6;
-  margin-right:0;
-  font-size: 1.4rem;
-  &:hover {
-    border: none;
+.navbar, .react-data-grid, .module-stack {
+  // TODO move these .context-button to their specific homes
+  .context-button {
+    cursor: pointer;
+    border: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
     color:$dark-gray;
-    opacity: 1;
+    border-radius: 5rem;
+    opacity: 0.6;
+    margin-right:0;
+    font-size: 1.4rem;
+    &:hover {
+      border: none;
+      color:$dark-gray;
+      opacity: 1;
+    }
+  }
+
+  .context-button.btn-secondary.active{
+    background-color: #E7EAEB;
+    border:0px;
+    border-radius: 5rem;
+    color:#686768;
+    opacity:1;
   }
 }
-
-.context-button.btn-secondary.active{
-  background-color: #E7EAEB;
-  border:0px;
-  border-radius: 5rem;
-  color:#686768;
-  opacity:1;
-}
-
 
 .navbar {
 

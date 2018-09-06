@@ -1,6 +1,8 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { mount } from 'enzyme'
+import configureStore from 'redux-mock-store'
+import { Provider } from 'react-redux'
 import { jsonResponseMock, sleep, tick } from '../test-utils'
 import TableView, { NRowsPerPage, FetchTimeout } from './TableView'
 import DataGrid from './DataGrid'
@@ -8,10 +10,49 @@ import DataGrid from './DataGrid'
 jest.mock('./UpdateTableAction')
 import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateTableActionModule } from './UpdateTableAction'
 
+// Ugly hack - let us setProps() on the mounted component
+// See https://github.com/airbnb/enzyme/issues/947
+//
+// The problem is: we _must_ use mount() and not shallow() because we want to
+// test TableView's componentDidMount() behavior (the loading of data). And
+// since one of TableView's descendents uses react-redux, we must use a
+// <Provider> to make mount() succeed.
+//
+// We want to test setProps(), because we do things when props change. But
+// mounted components' setProps() only work on the root component.
+//
+// So here's a root component that handles setProps() and the <Provider>, all
+// in one.
+function ConnectedTableView (props) {
+  props = { ...props } // clone
+  const store = props.store
+  delete props.store
+
+  return (
+    <Provider store={store}>
+      <TableView {...props} />
+    </Provider>
+  )
+}
+
 describe('TableView', () => {
-  const defaultProps = {
-    showColumnLetter: false,
-    isReadOnly: false,
+  const mockStore = configureStore()
+  let store
+
+  const wrapper = (extraProps={}) => {
+    // mock store for <SelectedRowsActions>, a descendent
+    store = mockStore({ modules: {}, workflow: { wf_modules: [ 99, 100, 101 ] } })
+
+    return mount(
+      <ConnectedTableView
+        store={store}
+        showColumnLetter={false}
+        isReadOnly={false}
+        selectedWfModuleId={100}
+        lastRelevantDeltaId={1}
+        {...extraProps}
+      />
+    )
   }
 
   beforeEach(() => {
@@ -33,69 +74,58 @@ describe('TableView', () => {
   }
 
 
-  it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', (done) => {
-    const api = {
-      render: makeRenderResponse(0, 3, 1000)
-    }
+  it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', async () => {
+    const api = { render: makeRenderResponse(0, 3, 1000) }
+    const tree = wrapper({ api })
 
-    const tree = mount(
-      <TableView {...defaultProps} selectedWfModuleId={100} lastRelevantDeltaId={1} api={api} isReadOnly={false}/>
-    )
+    await tick() // let rows load
 
-    // wait for promise to resolve, then see what we get
-    setImmediate(() => {
-      // should have called API for its data, and loaded it
-      expect(api.render).toHaveBeenCalledWith(100, 0, NRowsPerPage + 1)
+    // should have called API for its data, and loaded it
+    expect(api.render).toHaveBeenCalledWith(100, 0, NRowsPerPage + 1)
 
-      // Header etc should be here
-      expect(tree.find('.outputpane-header')).toHaveLength(1)
-      expect(tree.find('.outputpane-data')).toHaveLength(1)
+    // Header etc should be here
+    expect(tree.find('.outputpane-header')).toHaveLength(1)
+    expect(tree.find('.outputpane-data')).toHaveLength(1)
 
-      // Row count should have a comma
-      let headerText = tree.find('.outputpane-header').text()
-      expect(headerText).toContain('1,000');  
+    // Row count should have a comma
+    let headerText = tree.find('.outputpane-header').text()
+    expect(headerText).toContain('1,000');  
 
-      // Test calls to UpdateTableAction
-      //// Don't call updateTableActionModule if the cell value has not changed
-      //tree.instance().onEditCell(0, 'c', '3')
-      //expect(updateTableActionModule).not.toHaveBeenCalled()
-      // Do call updateTableActionModule if the cell value has changed
-      tree.instance().onEditCell(1, 'b', '1000')
+    // Test calls to UpdateTableAction
+    //// Don't call updateTableActionModule if the cell value has not changed
+    //tree.find(TableView).instance().onEditCell(0, 'c', '3')
+    //expect(updateTableActionModule).not.toHaveBeenCalled()
+    // Do call updateTableActionModule if the cell value has changed
+    tree.find(TableView).instance().onEditCell(1, 'b', '1000')
 
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' })
+    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' })
 
-      // Calls updateTableActionModule for sorting
-      tree.instance().setDropdownAction('sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
+    // Calls updateTableActionModule for sorting
+    tree.find(TableView).instance().setDropdownAction('sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
+    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
 
-      // Calls updateTableActionModule for duplicating column
-      tree.instance().setDropdownAction('duplicate-column', false, {columnKey: 'a'})
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, {columnKey: 'a'})
+    // Calls updateTableActionModule for duplicating column
+    tree.find(TableView).instance().setDropdownAction('duplicate-column', false, {columnKey: 'a'})
+    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, {columnKey: 'a'})
 
-      // Calls updateTableActionModule for filtering column
-      tree.instance().setDropdownAction('filter', true, {columnKey: 'a'})
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, {columnKey: 'a'})
+    // Calls updateTableActionModule for filtering column
+    tree.find(TableView).instance().setDropdownAction('filter', true, {columnKey: 'a'})
+    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, {columnKey: 'a'})
 
-      // Calls updateTableActionModule for drop column
-      tree.instance().setDropdownAction('selectcolumns', false, {columnKey: 'a'})
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'})
+    // Calls updateTableActionModule for drop column
+    tree.find(TableView).instance().setDropdownAction('selectcolumns', false, {columnKey: 'a'})
+    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'})
 
-      // Calls updateTableActionModule for column reorder
-      tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
-      expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 })
-
-      done()
-    })
+    // Calls updateTableActionModule for column reorder
+    tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
+    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 })
   })
 
   it('blanks table when no module id', () => {
-    const tree = mount(
-      <TableView {...defaultProps} selectedWfModuleId={undefined} lastRelevantDeltaId={1} api={{}} isReadOnly={false}/>
-    )
-    tree.update()
-
+    const tree = wrapper({ selectedWfModuleId: undefined, api: {} })
     expect(tree.find('.outputpane-header')).toHaveLength(1)
     expect(tree.find('.outputpane-data')).toHaveLength(1)
+    // And we can see it did not call api.render, because that does not exist
   })
 
   it('lazily loads rows as needed', async () => {
@@ -104,15 +134,7 @@ describe('TableView', () => {
       render: makeRenderResponse(0, 201, totalRows) // response to expected first call
     }
 
-    const wrapper = mount(
-      <TableView
-        {...defaultProps}
-        selectedWfModuleId={100}
-        lastRelevantDeltaId={1}
-        api={api}
-        isReadOnly={false}
-      />
-    )
+    const tree = wrapper({ api })
 
     // Should load 0..initialRows at first
     expect(api.render).toHaveBeenCalledWith(100, 0, 201)
@@ -121,7 +143,7 @@ describe('TableView', () => {
 
     // force load by reading past initialRows
     api.render = makeRenderResponse(412, 613, totalRows)
-    const row = wrapper.instance().getRow(412)
+    const row = tree.find(TableView).instance().getRow(412)
 
     // a row we haven't loaded yet should be blank
     expect(row).toEqual({ '': '', ' ': '', '  ': '', '   ': '' })
@@ -165,39 +187,34 @@ describe('TableView', () => {
 
     const api = { render }
 
-    const wrapper = mount(
-      <TableView
-        {...defaultProps}
-        selectedWfModuleId={100}
-        lastRelevantDeltaId={1}
-        api={api}
-        isReadOnly={false}
-      />
-    )
+    const tree = wrapper({ api })
     await tick()
 
-    expect(wrapper.text()).toMatch(/JSON FEED.*A.*B/)
-    expect(wrapper.text()).toMatch(/3.*4/)
+    expect(tree.text()).toMatch(/JSON FEED.*A.*B/)
+    expect(tree.text()).toMatch(/3.*4/)
 
-    wrapper.setProps({
+    tree.setProps({
       selectedWfModuleId: 101,
       lastRelevantDeltaId: 2
     })
-    wrapper.update()
+    tree.update()
     // Previous data remains
-    expect(wrapper.text()).toMatch(/A.*B/)
-    expect(wrapper.text()).toMatch(/3.*4/)
+    expect(tree.text()).toMatch(/A.*B/)
+    expect(tree.text()).toMatch(/3.*4/)
+    expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
 
     await tick()
-    wrapper.update()
+    tree.update()
 
     // Now it's new data
+    expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
+    expect(tree.text()).not.toMatch(/A.*B/)
     expect(api.render).toHaveBeenCalledWith(101, 0, 201)
-    expect(wrapper.text()).toMatch(/JSON FEED.*C.*D/)
-    expect(wrapper.text()).toMatch(/5.*7/)
+    expect(tree.text()).toMatch(/JSON FEED.*C.*D/)
+    expect(tree.text()).toMatch(/5.*7/)
   })
 
-  it('passes the the right sortColumn, sortDirection to DataGrid', (done) => {
+  it('passes the the right sortColumn, sortDirection to DataGrid', async () => {
     const testData = {
       total_rows: 2,
       start_row: 0,
@@ -210,30 +227,20 @@ describe('TableView', () => {
       column_types: ['Number', 'Number', 'Number']
     }
 
-    const api = {
-      render: jsonResponseMock(testData),
-    }
+    const api = { render: jsonResponseMock(testData) }
 
     // Try a mount with the sort module selected, should have sortColumn and sortDirection
-    const tree = mount(
-      <TableView
-          {...defaultProps}
-          lastRelevantDeltaId={1}
-          selectedWfModuleId={100}
-          api={api}
-          isReadOnly={false}
-          sortColumn={'b'}
-          sortDirection={sortDirectionDesc}
-      />
-    )
-
-    setImmediate(() => {
-      tree.update()
-      const dataGrid = tree.find(DataGrid)
-      expect(dataGrid.prop('sortColumn')).toBe('b')
-      expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc)
-      done()
+    const tree = wrapper({
+      api,
+      sortColumn: 'b',
+      sortDirection: sortDirectionDesc
     })
+
+    await tick() // wait for rows to load
+    tree.update()
+    const dataGrid = tree.find(DataGrid)
+    expect(dataGrid.prop('sortColumn')).toBe('b')
+    expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc)
   })
 
   it('shows a spinner on initial load', async () => {
@@ -249,23 +256,8 @@ describe('TableView', () => {
       column_types: ['Number', 'Number', 'Number']
     }
 
-    const api = {
-      render: jsonResponseMock(testData),
-    }
-
-    const NON_SHOWLETTER_ID = 28
-    const SHOWLETTER_ID = 135
-
-    // Try a mount with the formula module selected, should show letter
-    const tree = mount(
-      <TableView
-        {...defaultProps}
-        showColumnLetter={true}
-        lastRelevantDeltaId={1}
-        selectedWfModuleId={100}
-        api={api}
-      />
-    )
+    const api = { render: jsonResponseMock(testData) }
+    const tree = wrapper({ api })
 
     expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
     await tick()
@@ -273,7 +265,7 @@ describe('TableView', () => {
     expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
   })
 
-  it('passes the the right showLetter prop to DataGrid', (done) => {
+  it('passes the the right showLetter prop to DataGrid', async () => {
     const testData = {
       total_rows: 2,
       start_row: 0,
@@ -286,29 +278,13 @@ describe('TableView', () => {
       column_types: ['Number', 'Number', 'Number']
     }
 
-    const api = {
-      render: jsonResponseMock(testData),
-    }
+    const api = { render: jsonResponseMock(testData) }
+    const tree = wrapper({ api, showColumnLetter: true })
 
-    const NON_SHOWLETTER_ID = 28
-    const SHOWLETTER_ID = 135
-
-    // Try a mount with the formula module selected, should show letter
-    const tree = mount(
-      <TableView
-          {...defaultProps}
-          showColumnLetter={true}
-          lastRelevantDeltaId={1}
-          selectedWfModuleId={100}
-          api={api}
-      />
-    )
-    setImmediate(() => {
-      tree.update()
-      const dataGrid = tree.find(DataGrid)
-      expect(dataGrid).toHaveLength(1)
-      expect(dataGrid.prop('showLetter')).toBe(true)
-      done()
-    })
+    await tick() // wait for rows to load
+    tree.update()
+    const dataGrid = tree.find(DataGrid)
+    expect(dataGrid).toHaveLength(1)
+    expect(dataGrid.prop('showLetter')).toBe(true)
   })
 })

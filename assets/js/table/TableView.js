@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
 import * as UpdateTableAction from './UpdateTableAction'
+import { addModuleAction, setParamValueActionByIdName } from '../workflow-reducer'
+import { connect } from 'react-redux'
 
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 50 // ms after scroll before fetch
@@ -35,7 +37,7 @@ export default class TableView extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     showColumnLetter: PropTypes.bool.isRequired,
     sortColumn: PropTypes.string,
-    sortDirection: PropTypes.number,
+    sortDirection: PropTypes.number
   }
 
   constructor(props) {
@@ -187,8 +189,7 @@ export default class TableView extends React.PureComponent {
   }
 
   setSelectedRowIndexes = (selectedRowIndexes) => {
-    // TODO enable this, and do something when rows are selected
-    //this.setState({ selectedRowIndexes })
+    this.setState({ selectedRowIndexes })
   }
 
   componentDidMount () {
@@ -308,6 +309,7 @@ export default class TableView extends React.PureComponent {
     return (
       <div className="outputpane-table">
         <TableInfo
+          isReadOnly={isReadOnly}
           selectedWfModuleId={selectedWfModuleId}
           nRows={totalNRows}
           nColumns={columns ? columns.length : null}
