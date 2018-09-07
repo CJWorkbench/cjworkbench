@@ -13,22 +13,6 @@ import { connect } from 'react-redux'
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 50 // ms after scroll before fetch
 
-// We'll cache some data on TableView that isn't props or state.
-const InitialValues = {
-  minMissingRowIndex: null,
-  maxMissingRowIndex: null,
-  scheduleLoadTimeout: null,
-  emptyRow: { '': '', ' ': '', '  ': '', '   ': '' }
-}
-
-const InitialState = {
-  loadedRows: [],
-  columns: null,
-  columnTypes: null,
-  totalNRows: null,
-  spinning: false // not "loading": we often load in bg, without an indicator
-}
-
 export default class TableView extends React.PureComponent {
   static propTypes = {
     selectedWfModuleId: PropTypes.number,             // not actually required, could have no selected module
@@ -40,28 +24,31 @@ export default class TableView extends React.PureComponent {
     sortDirection: PropTypes.number
   }
 
-  constructor(props) {
-    super(props)
-
-    // componentDidMount will trigger first load
-    this.state = Object.assign({
-      selectedRowIndexes: []
-    }, InitialState)
-
-    // Quick refresher: `this.loading` is synchornous; `this.state.loading` is
-    // async. In the example
-    // `this.setState({ loading: true }); console.log(this.state.loading)`,
-    // `console.log` will be called with the _previous_ value of
-    // `this.state.loading`, which is not necessarily `true`. That's useless to
-    // us. Only fill the state with stuff we want to render.
-    this.loading = false
-
-    // Missing row indexes: every call to getRow() we might set these and run
-    // this.scheduleLoad().
-    //
-    // They aren't in this.state because editing them shouldn't cause re-render
-    Object.assign(this, InitialValues)
+  // componentDidMount will trigger first load
+  state = {
+    selectedRowIndexes: [],
+    loadedRows: [],
+    columns: null,
+    columnTypes: null,
+    totalNRows: null,
+    spinning: false // not "loading": we often load in bg, without an indicator
   }
+
+  // We'll cache some data on TableView that isn't props or state.
+  //
+  // Quick refresher: `this.loading` is synchornous; `this.state.loading` is
+  // async. In the example
+  // `this.setState({ loading: true }); console.log(this.state.loading)`,
+  // `console.log` will be called with the _previous_ value of
+  // `this.state.loading`, which is not necessarily `true`. That's useless to
+  // us. Only fill this.state with stuff we want to render.
+  loading = false
+  minMissingRowIndex = null
+  maxMissingRowIndex = null
+  scheduleLoadTimeout = null
+  // Missing row indexes: every call to getRow() we might set these and run
+  // this.scheduleLoad().
+  emptyRow = { '': '', ' ': '', '  ': '', '   ': '' }
 
   scheduleLoad () {
     if (this.scheduleLoadTimeout === null) {
@@ -101,6 +88,10 @@ export default class TableView extends React.PureComponent {
     this.minMissingRowIndex = null
     this.maxMissingRowIndex = null
     this.scheduleLoadTimeout = null
+
+    if (wasJustReset) {
+      this.setState({ selectedRowIndexes: [] })
+    }
 
     let areAllValuesMissing = !wasJustReset
     for (let i = min; i < max; i++) {
@@ -199,7 +190,7 @@ export default class TableView extends React.PureComponent {
   // If the lastRelevantDeltaId changes from under us, or we are displaying a different output, reload the table
   componentDidUpdate (prevProps) {
     if (this.props.lastRelevantDeltaId !== prevProps.lastRelevantDeltaId || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
-      this.refreshTable();
+      this.refreshTable()
     }
   }
 
@@ -244,8 +235,7 @@ export default class TableView extends React.PureComponent {
   }
 
   setDropdownAction = (idName, forceNewModule, params) => {
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, idName, forceNewModule, params);
-      this.refreshTable();
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, idName, forceNewModule, params)
   }
 
   render() {

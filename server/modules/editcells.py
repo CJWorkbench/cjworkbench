@@ -1,12 +1,12 @@
 from itertools import groupby
 from typing import List, Union
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 import numpy as np
 from .moduleimpl import ModuleImpl
 from server.models import WfModule
 import json
 import logging
-from server.sanitizedataframe import safe_column_to_string
 
 logger = logging.getLogger(__name__)
 
@@ -30,26 +30,26 @@ def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
     keys = [edit.row for edit in edits]
     str_values = pd.Series([edit.value for edit in edits], dtype=str)
 
-    if series.dtype == np.int64 or series.dtype == np.float64:
+    if is_numeric_dtype(series):
         try:
             num_values = pd.to_numeric(str_values)
             # pandas will upcast int64 col to float64 if needed
             series[keys] = num_values
+            return series
         except ValueError:
             # convert numbers to string, replacing NaN with ''
-            series = safe_column_to_string(series)
-            series[keys] = str_values
-    elif hasattr(series, 'cat'):
+            pass  # don't return: we'll handle this in the default case below
+
+    if hasattr(series, 'cat'):
         series.cat.add_categories(set(str_values) - set(series.cat.categories),
                                   inplace=True)
         series[keys] = str_values
-    else:
-        if series.dtype != np.object:
-            logger.warning('Unknown Pandas column type %s in edit cells' %
-                           str(series.dtype))
+        return series
 
-        # Column type is str (see sanitize_dataframe) so assign directly
-        series[keys] = str_values
+    t = series
+    series = t.astype(str)
+    series[t.isna()] = np.nan
+    series[keys] = str_values
 
     return series
 

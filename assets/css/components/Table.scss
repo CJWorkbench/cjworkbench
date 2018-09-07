@@ -393,21 +393,21 @@
           text-overflow: ellipsis;
         }
 
-        .cell-null {
-          color: $light-gray;
-          @extend .content-3;
-          font-size: 1.2rem;
-          line-height: 1.2rem;
-          font-style: italic;
-          padding-right: 2px;
-          font-weight: 100;
-          text-align: center;
-        }
-
         .cell-number {
           margin: 0 1rem;
           text-align: right;
           font-size: 1.2rem;
+        }
+
+        .cell-null {
+          // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
+          &::before {
+            // Add 'null' text in CSS, not React, so copy/paste won't copy it
+            content: 'null';
+            color: $light-gray;
+            font-style: italic;
+            font-weight: 100;
+          }
         }
 
         //Click and edit a cell

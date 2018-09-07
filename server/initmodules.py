@@ -79,7 +79,7 @@ def load_module_from_dict(d):
         module.has_zen_mode = d.get('has_zen_mode', False)
         module.row_action_menu_entry_title = d.get(
             'row_action_menu_entry_title',
-            False
+            ''
         )
 
         module.save()

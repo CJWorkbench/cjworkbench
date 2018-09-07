@@ -10,48 +10,50 @@ const ReactDataGridValuePropType = PropTypes.oneOfType([
   PropTypes.number.isRequired
 ])
 
-class AbstractCellFormatter extends React.PureComponent {
-  render () {
-    const value = this.props.value
-    if (value === null) {
-      return <div className='cell-null'>{'null'}</div>
-    }
-
-    return this.renderNonNull()
-  }
-}
-
-export class TextCellFormatter extends AbstractCellFormatter {
+export class TextCellFormatter extends React.PureComponent {
   static propTypes = {
     value: ReactDataGridValuePropType // string
   }
 
-  renderNonNull () {
-    return <div className='cell-text'>{this.props.value}</div>
+  render () {
+    const value = this.props.value
+    if (value === null) {
+      return <div className='cell-null cell-text' />
+    }
+
+    return <div className='cell-text'>{value}</div>
   }
 }
 
 const numberFormat = new Intl.NumberFormat()
-export class NumberCellFormatter extends AbstractCellFormatter {
+export class NumberCellFormatter extends React.PureComponent {
   static propTypes = {
     value: ReactDataGridValuePropType // number
   }
 
-  renderNonNull () {
-    return <div className='cell-number'>{numberFormat.format(this.props.value)}</div>
+  render () {
+    const value = this.props.value
+    if (value === null) {
+      return <div className='cell-null cell-number' />
+    }
+
+    return <div className='cell-number'>{numberFormat.format(value)}</div>
   }
 }
 
 const ZeroEndOfDate = /(?:(?:T00:00)?:00)?\.000Z$/
-export class DatetimeCellFormatter extends AbstractCellFormatter {
+export class DatetimeCellFormatter extends React.PureComponent {
   static propTypes = {
     value: ReactDataGridValuePropType // string: -- ISO8601-formatted date
   }
 
-  renderNonNull () {
+  render () {
     const value = this.props.value
-    const date = new Date(value)
+    if (value === null) {
+      return <div className='cell-null cell-datetime' />
+    }
 
+    const date = new Date(value)
     if (isNaN(date)) {
       // A race! The input isn't a date because ReactDataGrid fed us "new"
       // data and we're the "old" formatter.

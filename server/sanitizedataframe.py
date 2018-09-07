@@ -5,24 +5,6 @@ import numpy as np
 import pandas as pd
 
 
-def value_str_or_empty_str(v: Any) -> str:
-    """
-    Convert v to str, or empty string for null-like values.
-
-    str(np.nan) is 'nan', and we don't want that. This function returns ''
-    instead.
-    """
-    if v is np.nan or v is pd.NaT or v is None:
-        return ''
-    else:
-        return str(v)
-
-
-def safe_column_to_string(col: pd.Series) -> pd.Series:
-    """Convert numbers to str, replacing NaN with ''."""
-    return col.apply(value_str_or_empty_str)
-
-
 def _colname_to_str(c: Any) -> str:
     """
     Cast a column name to str.

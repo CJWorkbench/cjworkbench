@@ -193,6 +193,11 @@ describe('TableView', () => {
     expect(tree.text()).toMatch(/JSON FEED.*A.*B/)
     expect(tree.text()).toMatch(/3.*4/)
 
+    // Select the last row
+    tree.find('input[name="row-selected-1"]').simulate('change', { target: { checked: true } })
+    tree.update()
+    expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(1)
+
     tree.setProps({
       selectedWfModuleId: 101,
       lastRelevantDeltaId: 2
@@ -202,6 +207,8 @@ describe('TableView', () => {
     expect(tree.text()).toMatch(/A.*B/)
     expect(tree.text()).toMatch(/3.*4/)
     expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
+    // ... except the selection, which is gone
+    expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(0)
 
     await tick()
     tree.update()
@@ -212,6 +219,8 @@ describe('TableView', () => {
     expect(api.render).toHaveBeenCalledWith(101, 0, 201)
     expect(tree.text()).toMatch(/JSON FEED.*C.*D/)
     expect(tree.text()).toMatch(/5.*7/)
+    // ... and the selection is still gone
+    expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(0)
   })
 
   it('passes the the right sortColumn, sortDirection to DataGrid', async () => {
