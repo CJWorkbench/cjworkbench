@@ -101,7 +101,7 @@ export class SelectedRowsActions extends React.PureComponent {
 
     return (
       <UncontrolledDropdown>
-        <DropdownToggle title='menu' className='context-button'>
+        <DropdownToggle title='menu'>
           {numberFormat.format(selectedRowIndexes.length)} rows selected
         </DropdownToggle>
         <DropdownMenu right>
