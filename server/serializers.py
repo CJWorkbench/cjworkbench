@@ -214,6 +214,10 @@ class LessonSerializer(serializers.BaseSerializer):
             },
             'sections': list(self._section_to_representation(section)
                              for section in obj.sections),
+            'footer': {
+                'title': obj.footer.title,
+                'html': obj.footer.html,
+            }
         }
 
     def _section_to_representation(self, obj):

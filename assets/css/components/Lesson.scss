@@ -24,6 +24,7 @@ article.lesson {
   }
 
   section {
+    position: relative; // for confetti placement
     cursor: default;
     display: flex;
     flex-direction: column;
@@ -40,6 +41,12 @@ article.lesson {
     }
 
     &.not-current { display: none; }
+
+    .confetti {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+    }
 
     .backToLessons {
       @extend .info-1;
@@ -62,10 +69,12 @@ article.lesson {
     &>.description {
       margin-top: 1rem;
       color:#fff;
+    }
 
-      p {
-        color:#fff;
-      }
+    .description, ol.steps {
+      @extend %font-nunito-extra-light;
+      font-size: 1.6rem;
+      line-height: 2.8rem;
     }
 
     .copy-txt {
@@ -119,7 +128,6 @@ article.lesson {
     }
 
     kbd {
-      @extend .lesson-content--1;
       font-weight: 400;
       color:$brand-learn;
       background-color: transparent;

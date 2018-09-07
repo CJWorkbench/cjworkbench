@@ -1,5 +1,4 @@
 from django.conf import settings
-from enum import Enum
 from io import StringIO
 import pathlib
 from xml.etree import ElementTree
@@ -7,23 +6,22 @@ import html5lib
 import json
 import os.path
 
+
 def _build_inner_html(el):
-    """
-    Returns HTML of a xml.etree.ElementTree.
-    """
-    outer_html = ElementTree.tostring(el, encoding='unicode', method='html', short_empty_elements=True)
+    """Extract HTML text from a xml.etree.ElementTree."""
+    outer_html = ElementTree.tostring(el, encoding='unicode', method='html',
+                                      short_empty_elements=True)
     open_tag_end = outer_html.index('>')
     close_tag_begin = outer_html.rindex('<')
-    inner_html = outer_html[open_tag_end+1 : close_tag_begin]
+    inner_html = outer_html[(open_tag_end + 1):close_tag_begin]
 
     return inner_html
+
 
 # a fake django.db.models.Manager that reads from the filesystem
 class LessonManager:
     def __init__(self, path):
         self.path = path
-        self._cache = {}
-        self._all_cache = None # cached self.all() response
 
     def get(self, slug):
         path = os.path.join(self.path, slug + '.html')
@@ -53,13 +51,15 @@ class LessonManager:
 # We implement Lessons in HTML, so they're stored as code, not in the database.
 # This interface mimics django.db.models.Model.
 class Lesson:
-    def __init__(self, slug, header, sections):
+    def __init__(self, slug, header, sections, footer):
         self.slug = slug
         self.header = header
         self.sections = sections
+        self.footer = footer
 
     def __eq__(self, other):
-        return (self.slug, self.header, self.sections) == (other.slug, other.header, other.sections)
+        return (self.slug, self.header, self.sections) == \
+                (other.slug, other.header, other.sections)
 
     def __repr__(self):
         return 'Lesson' + repr((self.slug, self.header, self.sections))
@@ -88,15 +88,23 @@ class Lesson:
         lesson_header = LessonHeader._from_etree(header_el)
 
         section_els = root.findall('./section')
-        lesson_sections = list(LessonSection._from_etree(el) for el in section_els)
+        lesson_sections = list(LessonSection._from_etree(el)
+                               for el in section_els)
 
-        return Lesson(slug, lesson_header, lesson_sections)
+        footer_el = root.find('./footer')
+        if footer_el is None:
+            raise LessonParseError('Lesson HTML needs a top-level <footer>')
+        lesson_footer = LessonFooter._from_etree(footer_el)
+
+        return Lesson(slug, lesson_header, lesson_sections, lesson_footer)
 
     class DoesNotExist(Exception):
         pass
 
     # fake django.db.models.Manager
-    objects = LessonManager(os.path.join(settings.BASE_DIR, 'server', 'lessons'))
+    objects = LessonManager(os.path.join(settings.BASE_DIR, 'server',
+                                         'lessons'))
+
 
 class LessonHeader:
     def __init__(self, title, html):
@@ -113,14 +121,17 @@ class LessonHeader:
     def _from_etree(el):
         title_el = el.find('./h1')
         if title_el is None or not title_el.text:
-            raise LessonParseError('Lesson <header> needs a non-empty <h1> title')
+            raise LessonParseError(
+                'Lesson <header> needs a non-empty <h1> title'
+            )
         title = title_el.text
 
         # Now get the rest of the HTML, minus the <h1>
-        el.remove(title_el) # hacky mutation
+        el.remove(title_el)  # hacky mutation
         html = _build_inner_html(el)
 
         return LessonHeader(title, html)
+
 
 class LessonSection:
     def __init__(self, title, html, steps):
@@ -129,7 +140,8 @@ class LessonSection:
         self.steps = steps
 
     def __eq__(self, other):
-        return (self.title, self.html, self.steps) == (other.title, other.html, other.steps)
+        return (self.title, self.html, self.steps) == \
+                (other.title, other.html, other.steps)
 
     def __repr__(self):
         return 'LessonSection' + repr((self.title, self.html, self.steps))
@@ -138,7 +150,9 @@ class LessonSection:
     def _from_etree(el):
         title_el = el.find('./h2')
         if title_el is None or not title_el.text:
-            raise LessonParseError('Lesson <section> needs a non-empty <h2> title')
+            raise LessonParseError(
+                'Lesson <section> needs a non-empty <h2> title'
+            )
         title = title_el.text
 
         steps_el = el.find('./ol[@class="steps"]')
@@ -148,11 +162,13 @@ class LessonSection:
             steps = list(LessonSectionStep._from_etree(el) for el in steps_el)
 
         # Now get the rest of the HTML, minus the <h1> and <ol>
-        el.remove(title_el) # hacky mutation
-        if steps_el is not None: el.remove(steps_el) # hacky mutation
+        el.remove(title_el)  # hacky mutation
+        if steps_el is not None:
+            el.remove(steps_el)  # hacky mutation
         html = _build_inner_html(el)
 
         return LessonSection(title, html, steps)
+
 
 class LessonSectionStep:
     def __init__(self, html, highlight, test_js):
@@ -161,17 +177,20 @@ class LessonSectionStep:
         self.test_js = test_js
 
     def __eq__(self, other):
-        return (self.html, self.highlight, self.test_js) == (other.html, other.highlight, other.test_js)
+        return (self.html, self.highlight, self.test_js) == \
+                (other.html, other.highlight, other.test_js)
 
     def __repr__(self):
-        return 'LessonSectionStep' + repr((self.html, self.highlight, self.test_js))
+        return ('LessonSectionStep'
+                + repr((self.html, self.highlight, self.test_js)))
 
     @staticmethod
     def _from_etree(el):
         html = _build_inner_html(el)
 
         highlight_s = el.get('data-highlight')
-        if not highlight_s: highlight_s = '[]'
+        if not highlight_s:
+            highlight_s = '[]'
         try:
             highlight = json.loads(highlight_s)
         except json.decoder.JSONDecodeError:
@@ -179,9 +198,39 @@ class LessonSectionStep:
 
         test_js = el.get('data-test')
         if not test_js:
-            raise LessonParseError('missing data-test attribute, which must be JavaScript')
+            raise LessonParseError(
+                'missing data-test attribute, which must be JavaScript'
+            )
 
         return LessonSectionStep(html, highlight, test_js)
+
+
+class LessonFooter:
+    def __init__(self, title, html):
+        self.title = title
+        self.html = html
+
+    def __eq__(self, other):
+        return (self.title, self.html) == (other.title, other.html)
+
+    def __repr__(self):
+        return 'LessonFooter' + repr((self.title, self.html))
+
+    @staticmethod
+    def _from_etree(el):
+        title_el = el.find('./h2')
+        if title_el is None or not title_el.text:
+            raise LessonParseError(
+                'Lesson <footer> needs a non-empty <h2> title'
+            )
+        title = title_el.text
+
+        # Now get the rest of the HTML, minus the <h2>
+        el.remove(title_el)  # hacky mutation
+        html = _build_inner_html(el)
+
+        return LessonFooter(title, html)
+
 
 class LessonParseError(Exception):
     def __init__(self, message):

@@ -112,4 +112,7 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Column Chart"] .module-name'
         )
 
+        # Navigate to footer
+        self.expect_highlight_next(wait=True)
+        self.click_next()
         b.assert_no_element('.lesson-highlight')

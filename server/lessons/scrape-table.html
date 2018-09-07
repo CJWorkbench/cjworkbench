@@ -56,7 +56,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
       data-test="const url = workflow.wfModules[0].parameters.get('url'); return url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
-      >Paste in the URL of the new page we want to scrape the table  from:
+      >Paste in the URL of the new page we want to scrape:
       <div class="copy-txt content-3 t-white">https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)</div>
     </li>
     <li
@@ -71,8 +71,12 @@
       data-test="return new Date() - workflow.wfModules[0].lastFetchCheckAt < 10000"
       >Click <kbd>Scrape</kbd>
       <!-- the data-test= here is sketchy. It only works as final step in the whole lesson. -->
-      <p class="instruction-detail highlight">Congratulations!</p>
-      <span class="instruction-detail"> Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" >how to scrape and monitor content on a web page.</a></span>
     </li>
   </ol>
 </section>
+<footer>
+  <h2>Lesson Complete</h2>
+  <p>Congratulations! You have loaded the web page's table into Workbench.</p>
+  <h3>Next:</h3>
+  <p><a href="/workflows">Create your own workflow</a></p>
+</footer>

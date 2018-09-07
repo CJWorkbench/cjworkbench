@@ -3,6 +3,18 @@ import PropTypes from 'prop-types'
 import LessonStep from './LessonStep'
 
 export default class LessonSection extends React.PureComponent {
+  static ropTypes = {
+    title: PropTypes.string.isRequired,
+    html: PropTypes.string.isRequired,
+    steps: PropTypes.arrayOf(PropTypes.shape({
+      html: PropTypes.string.isRequired,
+    })).isRequired,
+    isCurrent: PropTypes.bool.isRequired,
+    index: PropTypes.number.isRequired, // to compare with activeSectionIndex
+    activeSectionIndex: PropTypes.number, // or null
+    activeStepIndex: PropTypes.number, // or null
+  }
+
   _stepStatus(stepIndex) {
     const { activeSectionIndex, activeStepIndex } = this.props
     const sectionIndex = this.props.index
@@ -56,21 +68,9 @@ export default class LessonSection extends React.PureComponent {
       <section className={ isCurrent ? 'current' : 'not-current' }>
         <a href='/lessons/' className="backToLessons">Tutorials</a>
         <h2>{title}</h2>
-        <div className="description lesson-content--1" dangerouslySetInnerHTML={({__html: html})}></div>
+        <div className='description' dangerouslySetInnerHTML={({__html: html})}></div>
         { this.renderSteps(steps) }
       </section>
     )
   }
-}
-
-LessonSection.propTypes = {
-  title: PropTypes.string.isRequired,
-  html: PropTypes.string.isRequired,
-  steps: PropTypes.arrayOf(PropTypes.shape({
-    html: PropTypes.string.isRequired,
-  })).isRequired,
-  isCurrent: PropTypes.bool.isRequired,
-  index: PropTypes.number.isRequired, // to compare with activeSectionIndex
-  activeSectionIndex: PropTypes.number, // or null
-  activeStepIndex: PropTypes.number, // or null
 }

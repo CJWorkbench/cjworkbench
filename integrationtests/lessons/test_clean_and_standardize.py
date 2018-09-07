@@ -146,4 +146,7 @@ class TestLesson(LessonTest):
         )
         self.select_column('varcol', 'MetroArea')
 
+        # Navigate to footer
+        self.expect_highlight_next(wait=True)
+        self.click_next()
         b.assert_no_element('.lesson-highlight')
