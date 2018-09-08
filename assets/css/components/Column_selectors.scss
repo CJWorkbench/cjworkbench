@@ -1,0 +1,66 @@
+//dropdown select with aut-complete
+.react-select__control {
+  @extend .module-parameter;
+  height: auto;
+
+    .react-select__placeholder {
+      color:$brand-text--dark;
+    }
+
+
+  &.react-select__control--is-focused {
+    box-shadow: none;
+    border-color: $brand-orange!important;
+
+  }
+
+  // button to open dropdown
+  .react-select__indicator {
+    opacity: .6;
+
+    svg {
+      color:$brand-text--dark;
+    }
+
+    &:hover{opacity: 1;}
+  }
+
+  .react-select__multi-value {
+    border-radius: 3px;
+    border: 1px solid $brand-orange;
+    background-color: $brand-orange--light;
+
+    .react-select__multi-value__label {
+      @extend .content-3;
+      color:$brand-orange;
+    }
+  }
+  .react-select__multi-value__remove {
+    border-radius: 0 3px 3px 0;
+    color:$brand-orange;
+
+    &:hover {
+    color: $white;
+    background-color: $brand-orange;
+    }
+  }
+}
+
+.react-select__menu {
+  background-color: $white;
+  border: 2px solid $brand-orange;
+  box-shadow: $menu-shadow!important;
+  outline: none;
+
+  .react-select__option {
+    height: 3.5rem;
+    background-color: $white;
+    color: $brand-text--dark;
+    @extend .content-3;
+
+  }
+  .react-select__option--is-focused {
+    background-color: $dark-accent--soft;
+    color:$brand-text--darker;
+  }
+}

@@ -1,5 +1,4 @@
-// Dropdown menus
-
+// Dropdown menus -- Used in module context menus and WF context menus
 
 .dropdown-menu {
   position: absolute;
@@ -11,7 +10,8 @@
 
   .dropdown-item {
     @extend .content-3;
-    height: 4rem;
+    height: 3.5rem;
+    min-width: 12rem;
     background-color: $white;
     display: flex;
     align-items: center;
@@ -81,13 +81,13 @@ textarea:focus, input:focus{
   @extend .content-3;
   height:3.5rem;
   border-radius: 3px;
-  border: 2px solid $Vlight-gray;
+  border: 2px solid $Vlight-gray!important;
   background-color: $Vlight-gray !important;
   &:hover {
-    border: 2px solid $dark-accent--soft;
+    border: 2px solid $dark-accent--soft!important;
   }
   &:focus {
-    border-color: $brand-workspace;
+    border-color: $brand-orange!important;
     outline: none;
   }
 }
@@ -217,10 +217,12 @@ textarea:focus, input:focus{
   color:#686768;
 
   &:focus{
-    border-color: $brand-workspace;
+    border-color: $brand-orange;
     box-shadow: none;
   }
 }
+
+
 
 .chart-series-multi-select {
 

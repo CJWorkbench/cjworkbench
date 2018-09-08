@@ -85,7 +85,7 @@ export default class ColumnSelector extends React.PureComponent {
           isMulti
           name="columns"
           options={columnOptions}
-          className="basic-multi-select"
+          
           classNamePrefix="react-select"
           onChange={this.onSelectColumn}
           value={selectedColumns}
