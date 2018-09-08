@@ -42,12 +42,6 @@ article.lesson {
 
     &.not-current { display: none; }
 
-    .confetti {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-    }
-
     .backToLessons {
       @extend .info-1;
       color:$white;
@@ -96,7 +90,7 @@ article.lesson {
 
     .highlight {
       font-weight: 400;
-      color:$brand-learn;
+      color:$brand-text--learn;
     }
 
     figure {
@@ -129,7 +123,7 @@ article.lesson {
 
     kbd {
       font-weight: 400;
-      color:$brand-learn;
+      color:$brand-text--learn;
       background-color: transparent;
     }
 
@@ -184,6 +178,43 @@ article.lesson {
           content: "\e904"; // icon-check
           color:$brand-learn;
           font-size: 1rem;
+        }
+      }
+    }
+
+    .confetti {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+    }
+
+    // Completion message at end ot lesson
+    .completed {
+      margin-top: 10rem;
+      margin-bottom: 1rem;
+    }
+    // Suggestions to continue learning
+    .next {
+      margin-top: 4rem;
+
+      li {
+        list-style-type: none;
+
+        &::before {
+          content: "\e938";
+          color: $white;
+          font-size: .8rem;
+          font-family: Workbench;
+          position: absolute;
+          margin-left: -4rem;
+        }
+        a {
+          @extend .highlight;
+          margin-left: -2rem;
+          text-decoration: none;
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
     }
