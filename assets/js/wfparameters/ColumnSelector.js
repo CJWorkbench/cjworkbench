@@ -1,6 +1,7 @@
 // Choose some columns
 import React from 'react'
 import PropTypes from 'prop-types'
+import Select from 'react-select'
 
 export default class ColumnSelector extends React.PureComponent {
   static propTypes = {
@@ -28,23 +29,9 @@ export default class ColumnSelector extends React.PureComponent {
     this.props.onChange('')
   }
 
-  onChangeColumn = (ev) => {
-    const column = ev.target.value
-    const checked = ev.target.checked
-
-    const columns = this.selectedColumns
-    let changed = false
-    if (checked && columns.indexOf(column) === -1) {
-      columns.push(column)
-      changed = true
-    } else if (!checked && columns.indexOf(column) !== -1) {
-      columns.splice(columns.indexOf(column), 1)
-      changed = true
-    }
-
-    if (changed) {
-      this.props.onChange(columns.join(','))
-    }
+  onSelectColumn = (ev) => {
+    const columns = ev.map(column => column.value)
+    this.props.onChange(columns.join(','))
   }
 
   render() {
@@ -57,19 +44,18 @@ export default class ColumnSelector extends React.PureComponent {
       )
     }
 
-    // use nowrap style to ensure checkbox label is always on same line as checkbox
-    const checkboxes = allColumns.map(column => (
-      <label className='checkbox-container' style={{'whiteSpace': 'nowrap'}} key={column.name}>
-        <input
-          type='checkbox'
-          readOnly={isReadOnly}
-          name={`${name}[${column.name}]`}
-          value={column.name}
-          checked={selected.indexOf(column.name) !== -1}
-          onChange={this.onChangeColumn}
-        />
-        <span className='t-d-gray checkbox-content content-3'>{column.name}</span>
-      </label>
+    const columnOptions = allColumns.map(column => (
+      {
+        label: column.name,
+        value: column.name
+      }
+    ))
+
+    const selectedColumns = this.selectedColumns.map(column => (
+      {
+        label: column,
+        value: column
+      }
     ))
 
     return (
@@ -95,11 +81,17 @@ export default class ColumnSelector extends React.PureComponent {
             None
           </button>
         </div>
-        <div className='container list-wrapper'>
-          <div className='row list-scroll'>
-            {checkboxes}
-          </div>
-        </div>
+        <Select
+          isMulti
+          name="columns"
+          options={columnOptions}
+          className="basic-multi-select"
+          classNamePrefix="react-select"
+          onChange={this.onSelectColumn}
+          value={selectedColumns}
+          isClearable={false}
+          placeholder="Select columns"
+        />
       </div>
     )
   }

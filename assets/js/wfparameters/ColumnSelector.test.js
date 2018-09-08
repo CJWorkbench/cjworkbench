@@ -17,28 +17,17 @@ describe('ColumnSelector', () => {
   describe('read-only', () => {
     it('renders read-only column names', () => {
       const w = wrapper({ isReadOnly: true })
-      expect(w.find('input[type="checkbox"]')).toHaveLength(4)
-      expect(w.find('input[type="checkbox"][readOnly]')).toHaveLength(4)
+      expect(w.find('Select[name="columns"]').prop('options')).toHaveLength(4)
     })
   })
 
   describe('NOT Read-only', () => {
     it('renders column names', () => {
       const w = wrapper()
-      expect(w.find('input[type="checkbox"]')).toHaveLength(4)
-      expect(w.find('label').map(x => x.text())).toEqual(['A', 'B', 'C', 'D'])
-    })
-
-    it('deselects column on click', () => {
-      const w = wrapper()
-      w.find('input[name="column[A]"]').simulate('change', { target: { checked: false, value: 'A'} })
-      expect(w.prop('onChange')).toHaveBeenCalledWith('C')
-    })
-
-    it('selects column on click', () => {
-      const w = wrapper()
-      w.find('input[name="column[D]"]').simulate('change', { target: { checked: true, value: 'D'} })
-      expect(w.prop('onChange')).toHaveBeenCalledWith('A,C,D')
+      expect(w.find('Select[name="columns"]').prop('options')).toHaveLength(4)
+      expect(w.find('Select[name="columns"]').prop('options')).toEqual([{
+        "label": "A", "value": "A"}, {"label": "B", "value": "B"}, {"label": "C", "value": "C"}, {"label": "D", "value": "D"
+      }])
     })
 
     it('selects all columns when "select all" is clicked', () => {

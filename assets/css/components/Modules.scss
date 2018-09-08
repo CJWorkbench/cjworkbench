@@ -257,6 +257,15 @@
       .wf-parameter.wf-parameter-checkbox {
         margin-top: 0.4rem;
       }
+
+      .react-select__value-container {
+        width:50%;
+      }
+
+      .react-select__menu-list {
+        z-index: 5 !important;
+      }
+
     }
   }
   .wf-module-error-msg {
