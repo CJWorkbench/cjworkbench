@@ -185,13 +185,17 @@ article.lesson {
     .confetti {
       position: absolute;
       left: 50%;
-      top: 40%;
+      top: 20%;
     }
 
     // Completion message at end ot lesson
     .completed {
       margin-top: 10rem;
       margin-bottom: 1rem;
+      .summary {
+        @extend h4;
+        line-height: 2.5rem;
+      }
     }
     // Suggestions to continue learning
     .next {
@@ -208,6 +212,7 @@ article.lesson {
           position: absolute;
           margin-left: -4rem;
         }
+
         a {
           @extend .highlight;
           margin-left: -2rem;
