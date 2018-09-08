@@ -69,8 +69,8 @@ class TestLesson(LessonTest):
         )
 
         # Wait for checkboxes to load
-        b.check('colnames[MetroArea]', wait=True)
-        b.check('colnames[Population]')
+        # b.check('colnames[MetroArea]', wait=True)
+        # b.check('colnames[Population]')
 
         self.expect_highlight_next()
         self.click_next()
