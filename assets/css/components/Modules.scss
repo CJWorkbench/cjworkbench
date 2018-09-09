@@ -272,8 +272,7 @@
     border: 0px;
     padding: 1rem 1.5rem;
     border-radius: 0px;
-    //border: 2px solid $error-prompt;
-    //background-color: $error-prompt--light;
+    background-color: transparent;
     color: $brand-red;
     font-size: 1.2rem;
     @extend %font-nunito-regular;
@@ -294,7 +293,7 @@
   /* all good & selected */
   .module-output--selected {
     height: 100%;
-    border: 2px solid $module-action;
+    outline: 2px solid $module-action;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -303,14 +302,14 @@
     content: " ";
     border-left-color: rgba(118,155,176,0.3);
     border-width: 1.8rem 0 1.8rem 1rem;
-    margin-left: 26.2rem
+    margin-left: 26.6rem
     }
   }
 
   /* standby  */
   .module-output-bar-orange {
     height: 100%;
-    border:2px solid rgba(251,170,109,0.7);
+    outline:2px solid rgba(251,170,109,0.7);
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -319,14 +318,14 @@
   	content: " ";
   	border-left-color: rgba(251,170,109,0);
   	border-width: 2rem 0 2.25rem 1rem;
-    margin-left: 26.3rem
+    margin-left: 26.7rem
     }
   }
 
   /* error  */
   .module-output--error {
     height: 100%;
-    border:2px solid transparent;
+    outline:2px solid transparent;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -334,7 +333,7 @@
     	content: " ";
     	position: absolute;
     	border:2px solid $error-prompt;
-      margin-left: 26.5rem;
+      margin-left: 26.9rem;
       height: 4rem;
     }
   }
@@ -342,7 +341,7 @@
   /* error & selected */
   .module-output--error-selected {
     height: 100%;
-    border:2px solid $error-prompt;
+    outline:2px solid $error-prompt;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -350,7 +349,7 @@
       content: " ";
     	position: absolute;
     	border:2px solid $error-prompt;
-      margin-left: 26.5rem;
+      margin-left: 26.9rem;
       height: 4rem;
     }
   }

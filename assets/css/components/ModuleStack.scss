@@ -58,7 +58,7 @@
     width: $module-width;
     margin-left: $module-margin;
     position: relative;
-    height: .5rem;
+    height: 1rem;
 
     &.searching {
       z-index: 2; // appear above other modules/in-betweens

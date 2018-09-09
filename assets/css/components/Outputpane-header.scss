@@ -51,11 +51,9 @@
   }
 
   .export-table {
-    display: inline-block;
-    white-space: nowrap;
-    padding: .5rem 1.5rem;
+    @extend .action-button;
     margin-right: 2.25rem;
-    border-radius: 2rem;
+    border-color: transparent;
     color: $table-element;
     background-color: white;
     cursor: pointer;
