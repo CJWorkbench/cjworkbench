@@ -4,7 +4,7 @@ import numpy
 import pandas
 from django.test import SimpleTestCase, override_settings
 from server.modules.types import ProcessResult
-from server.modules.utils import build_globals_for_eval, parse_bytesio
+from server.modules.utils import build_globals_for_eval, parse_bytesio, push_header
 
 
 class SafeExecTest(unittest.TestCase):
@@ -129,3 +129,11 @@ class ParseBytesIoTest(SimpleTestCase):
                                'text/txt', 'utf-8')
 
         self.assertEqual(result, expected)
+
+    def test_push_header(self):
+        result = push_header(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+        expected = pandas.DataFrame({0: ['A', 'B'], 1: ['C', 'D']})
+        pandas.testing.assert_frame_equal(result, expected)
+
+        # Function should return None when a table has not been uploaded yet
+        self.assertIsNone(push_header(None))

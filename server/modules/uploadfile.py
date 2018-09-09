@@ -4,7 +4,7 @@ from server.models import ChangeDataVersionCommand
 from django.utils.translation import gettext as _
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
-from .utils import parse_bytesio
+from .utils import parse_bytesio, push_header
 import pandas as pd
 import os
 import json
@@ -63,5 +63,11 @@ def upload_to_table(wf_module, uploaded_file):
 class UploadFile(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
-        return ProcessResult(wf_module.retrieve_fetched_table(),
+        # Must perform header operation here in the event the header checkbox state changes
+        has_header = wf_module.get_param_checkbox("has_header")
+        if not has_header:
+            return ProcessResult(push_header(wf_module.retrieve_fetched_table()),
+                             wf_module.error_msg)
+        else:
+            return ProcessResult(wf_module.retrieve_fetched_table(),
                              wf_module.error_msg)

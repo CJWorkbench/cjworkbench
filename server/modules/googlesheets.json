@@ -18,6 +18,12 @@
       "type": "custom"
     },
     {
+      "name": "Has header row",
+      "id_name": "has_header",
+      "type": "checkbox",
+      "default": "True"
+    },
+    {
       "name": "Update",
       "id_name" : "version_select",
       "type": "custom"

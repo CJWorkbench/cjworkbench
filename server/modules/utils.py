@@ -242,6 +242,15 @@ def _detect_encoding(bytesio: io.BytesIO):
     bytesio.seek(0)
     return detector.result['encoding']
 
+def push_header(table: pandas.DataFrame) -> pandas.DataFrame:
+    # Table may not be uploaded yet
+    if type(table) == pandas.DataFrame:
+        table.loc[-1] = table.columns
+        table.columns = range(0, len(table.columns))
+        table.index = table.index + 1
+        return table.sort_index()
+    else:
+        return None
 
 _parse_xls = _parse_xlsx
 
