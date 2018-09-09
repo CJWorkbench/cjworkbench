@@ -21,12 +21,12 @@
     padding-left: 1rem;
     cursor:pointer;
 
-    i, span {color: $brand-text--medium;}
+    i, span {color: $brand-text--dark;}
 
     &:hover {
       background-color: $dark-accent--soft;
 
-    i, span {color: $brand-text--dark;}
+    //i, span {color: $brand-text--darker;}
     }
     &:active {
       background-color: $dark-accent--medium;
@@ -54,7 +54,7 @@
   }
 
   .custom-select:focus {
-    border-color: $brand-learn;
+    border: $data-action--border;
     box-shadow: none;
   }
 
@@ -89,7 +89,7 @@ textarea:focus, input:focus{
     border: 2px solid $dark-accent--soft!important;
   }
   &:focus {
-    border-color: $brand-orange!important;
+    border: $data-action--border!important;
     outline: none;
   }
 }
@@ -219,7 +219,6 @@ textarea:focus, input:focus{
   color:#686768;
 
   &:focus{
-    border-color: $brand-orange;
     box-shadow: none;
   }
 }

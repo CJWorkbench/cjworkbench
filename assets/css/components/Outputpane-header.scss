@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: space-between;
   background-color: white;
-  padding:2rem;
+  padding:1.5rem;
 
   .table-info-container {
     display: flex;
@@ -32,17 +32,33 @@
       }
     }
 
-    // Row Acction buton and menu
+    // Row Action buton and menu
     .dropdown .table-action {
       @extend .action-button;
       @extend .button-orange;
+
+      &:Active {
+        background-color: lighten($brand-orange,18%);
+        color: $brand-orange;
+      }
+
+      &:focus {
+        background-color: lighten($brand-orange,23%);
+        color: darken($brand-orange,10%);
+      }
     }
+
     .dropdown-menu {
-      border-color:$brand-orange;
+      border-color:$data-action--border;
 
       &.show {
         button {
           @extend .dropdown-item;
+          color:$brand-text--dark;
+
+          &:hover {
+            color:$brand-text--dark;
+          }
 
         }
       }

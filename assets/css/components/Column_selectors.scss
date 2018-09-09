@@ -10,8 +10,7 @@
 
   &.react-select__control--is-focused {
     box-shadow: none;
-    border-color: $brand-orange!important;
-
+    border: $data-action--border!important;
   }
 
   // button to open dropdown
@@ -47,8 +46,12 @@
 }
 
 .react-select__menu {
+  z-index: 2;
+  border-radius: 0 0 5px 5px!important;
+  margin-top: -.3rem!important;
   background-color: $white;
-  border: 2px solid $brand-orange;
+  border: $data-action--border!important;
+  border-top-width: 1px!important;
   box-shadow: $menu-shadow!important;
   outline: none;
 
