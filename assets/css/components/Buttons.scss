@@ -491,23 +491,24 @@ input[type=checkbox]:checked:after {
 .addremove label {
   @extend .icon;
   background: transparent;
-  width:1.3rem;
-  height:1.3rem;
-  font-size:1.3rem;
+  width:1.5rem;
+  height:1.5rem;
+  font-size:1.5rem;
   display:block;
-  color: #B4B4B4;
+  color: $brand-text--dark;
   cursor: pointer;
+  opacity: .7;
 }
 
 .addremove label:hover{
-  color: #686768;
+  opacity: 1;
 }
 
 .addremove .checkbox + label {
   @extend .icon-addc;
   position: relative;
   padding:0 0.5rem;
-  left: 21.2rem;
+  left: 21rem;
   top:0.2rem;
 }
 
@@ -518,7 +519,7 @@ input[type=checkbox]:checked:after {
 
 .addremove .checkbox:checked + label, .addremove + .addremove label {
   padding:0 0.5rem;
-  left: 19.25rem;
+  left: 19rem;
   top:0.2rem;
 }
 
