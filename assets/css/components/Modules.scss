@@ -326,7 +326,7 @@
   /* error  */
   .module-output--error {
     height: 100%;
-    border:2px solid $error-prompt;
+    border:2px solid transparent;
     display: flex;
     align-items: center;
     flex-direction: row;
