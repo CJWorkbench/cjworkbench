@@ -77,16 +77,15 @@ textarea:focus, input:focus{
 // Shared style to all paramters in modules
 
 .module-parameter {
+  @extend .content-3;
   cursor: pointer;
   width:100%;
   color: $brand-text--dark;
-  @extend .content-3;
-  height:3.5rem;
   border-radius: 3px;
   border: 2px solid $Vlight-gray!important;
   background-color: $Vlight-gray !important;
   &:hover {
-    border: 2px solid $dark-accent--soft!important;
+  border: 2px solid $dark-accent--soft!important;
   }
   &:focus {
     border: $data-action--border!important;
@@ -95,10 +94,9 @@ textarea:focus, input:focus{
 }
 
 .single-line-text-field {
-  @extend .module-parameter;
   position: relative; // so we can position button absolute
   height: auto;
-  padding: .5rem 1rem;
+
 
   .resize-calculator, textarea {
     word-break: break-all;
@@ -111,14 +109,15 @@ textarea:focus, input:focus{
   }
 
   textarea {
+    @extend .module-parameter;
+    padding: .5rem 1rem!important;
     display: block;
-    font: inherit;
+    cursor: text;
     padding: 0;
     margin: 0;
     border: 0;
     background: transparent;
     width: 100%;
-    height: 100%;
     resize: none;
     overflow: hidden;
     color: $brand-text--dark;
@@ -127,31 +126,34 @@ textarea:focus, input:focus{
   button {
     cursor: pointer;
     position: absolute;
-    right: 1.2rem;
-    bottom: .9rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    text-align: center;
+    top: 0;
+    right: 0;
+    height: 3.4rem;
+    padding-top:.5rem;
+    padding-right: 1rem;
     border: 0;
     background: transparent;
-    color: $brand-orange;
+    font-size: 1.2rem;
+    color: lighten($brand-orange,6%);
+    &:hover {color: $brand-orange}
   }
 }
 
 .number-field {
-  @extend .module-parameter;
+
   display: flex; // so button can align to the right
   height: auto;
   padding: 0;
 
   input {
+    @extend .module-parameter;
+    cursor:text;
     flex: 1 1 auto; // almost all horizontal space
     display: block;
-    font: inherit;
-    padding: .7rem 1rem;
+    padding: .5rem 1rem;
+    width: 100%;
     margin: 0;
     border: 0;
-    line-height: 1;
     background: transparent;
     color:$brand-text--dark;
 
@@ -162,19 +164,20 @@ textarea:focus, input:focus{
       margin: 0;
     }
   }
-
+  // submit
   button {
-    flex: 0 0 auto; // just a bit of space on the right
     cursor: pointer;
-    width: 1.6rem;
-    height: 3.2rem;
-    line-height: 1;
-    text-align: center;
+    position: absolute;
+    right: 1.5rem;
+    height: 3.4rem;
     border: 0;
-    padding: 0;
+    padding-top:.5rem;
+    padding-right: 1rem;
     margin: 0;
     background: transparent;
-    color: $brand-orange;
+    font-size: 1.2rem;
+    color: lighten($brand-orange,6%);
+    &:hover {color: $brand-orange}
   }
 }
 
