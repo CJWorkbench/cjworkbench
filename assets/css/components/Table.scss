@@ -135,7 +135,7 @@
       }
 
       .react-grid-Grid{
-        border-top: 0px solid #E7EAED;
+        border-top: 0;
         border-right: none;
         border-bottom: none;
         border-left: none;
@@ -332,9 +332,64 @@
         border-bottom: 0px solid transparent;
         border-top: 0;
 
+        .cell-text, .cell-datetime {
+          margin: 0 1rem;
+          font-size: 1.3rem;
+          overflow: hidden;
+          word-wrap: nowrap;
+          text-overflow: ellipsis;
+          color:$brand-text--dark;
+        }
+
+
+        .cell-null {
+          // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
+          &::before {
+            // Add 'null' text in CSS, not React, so copy/paste won't copy it
+            content: 'null';
+            color: lighten($brand-text--dark,30%);
+            font-style: italic;
+            font-weight: 100;
+          }
+        }
+        .row-number {
+          color: lighten($brand-text--dark,30%);
+          font-weight: 100;
+          text-align: center;
+          font-size: 1.2rem;
+          line-height: 35px; // 35px is react-data-grid's hard-coded row height
+        }
+
+        // Shrinking font sizes based on number of digits
+        .row-number-3 {
+          font-size: 1.0rem;
+        }
+        .row-number-4 {
+          font-size: 0.9rem;
+        }
+        .row-number-5 {
+          font-size: 0.8rem;
+        }
+        .row-number-6, .row-number-7, .row-number-8 {
+          font-size: 0.7rem;
+        }
+
+        // cell #
         &.rdg-row-actions-cell {
+          border-left: 1px solid transparent;
           border-right: 1px solid $table-border;
-          //border-left: 1px solid $table-border;
+
+
+          // selected
+          &.row-selected {
+            //background-color: lighten($brand-orange, 10%)!important;
+            border-left: 1px solid $brand-orange;
+            border-right: 1px solid lighten($brand-orange, 11%);
+
+            span {
+              color:$brand-orange!important;
+            }
+          }
 
           &, * {
             // react-data-grid adds lots of children. We want them _all_ to
@@ -362,52 +417,6 @@
               opacity: 0;
             }
           }
-
-          .row-number {
-            color: $medium-gray;
-            font-weight: 100;
-            text-align: center;
-            font-size: 1.2rem;
-            line-height: 35px; // 35px is react-data-grid's hard-coded row height
-          }
-          // Shrinking font sizes based on number of digits
-          .row-number-3 {
-            font-size: 1.0rem;
-          }
-          .row-number-4 {
-            font-size: 0.9rem;
-          }
-          .row-number-5 {
-            font-size: 0.8rem;
-          }
-          .row-number-6, .row-number-7, .row-number-8 {
-            font-size: 0.7rem;
-          }
-        }
-
-        .cell-text, .cell-datetime {
-          margin: 0 1rem;
-          font-size: 1.3rem;
-          overflow: hidden;
-          word-wrap: nowrap;
-          text-overflow: ellipsis;
-        }
-
-        .cell-number {
-          margin: 0 1rem;
-          text-align: right;
-          font-size: 1.2rem;
-        }
-
-        .cell-null {
-          // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
-          &::before {
-            // Add 'null' text in CSS, not React, so copy/paste won't copy it
-            content: 'null';
-            color: $light-gray;
-            font-style: italic;
-            font-weight: 100;
-          }
         }
 
         //Click and edit a cell
@@ -425,11 +434,11 @@
           border-radius: 0;
           outline: 2px solid $brand-orange;
           font-size: 1.3rem;
-          height: 3.5rem;
+          height: 3.5rem!important;
         }
       }
 
-      // Row styling
+      // Entire Row styling
 
       .react-grid-Row--odd .react-grid-Cell {
         background-color: #ECF4F8;
@@ -439,20 +448,60 @@
         background-color: #DBEBF3;
       }
 
-      .react-grid-Row.row-selected {
-        &, .react-grid-Cell {
-          background-color: lighten($brand-orange, 10%);
+      .react-grid-Row:hover .rdg-row-actions-cell {
+        border-left: 1px solid $table-border;
+        border-right: 1px solid $dark-accent--medium;
+
+        .row-number {
+          color: lighten($brand-text--dark,5%);
         }
+      }
+
+      // Selected rows
+
+      // cancel row background - we style cells
+      .react-grid-Row.row-selected {
+        background-color: transparent;
+      }
+
+      // Cells in selected rows:
+
+      .react-grid-Row.row-selected .react-grid-Cell {
+        background-color: lighten($brand-orange, 23%);
+      }
+      .react-grid-Row--odd.row-selected .react-grid-Cell {
+        background-color: lighten($brand-orange, 19%);
+      }
+
+      // Selected row and hover
+
+      .row-selected:hover .rdg-row-actions-cell {
+        border-color: lighten($brand-orange,5%);
+
+        .row-number {
+          color:darken($brand-orange, 12%)!important;
+        }
+      }
+
+      .row-selected:hover .react-grid-Cell {
+        background-color: lighten($brand-orange, 15%)
       }
 
       // Cells in last row have a bottom border to form the table's bottom border
       .react-grid-Row:last-of-type .react-grid-Cell {
         border-bottom: 1px solid $table-border;
       }
+      // Last row selected has orange border at the bottom -- not working as intended, what we want is the last row *selected* not the last row *if selected *
+      .row-selected:last-of-type .react-grid-Cell {
+        border-bottom: 1px solid $brand-orange;
+      }
 
       // Last cells in any row have a right border to form the table's right border
       .react-grid-Row .react-grid-Cell:nth-last-child(2) {
         border-right: 1px solid $table-border;
+      }
+      .react-grid-Row.row-selected .react-grid-Cell:nth-last-child(2) {
+        border-right: 1px solid $brand-orange;
       }
     }
   }
