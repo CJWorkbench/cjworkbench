@@ -273,7 +273,8 @@
         border-bottom: 0px solid transparent;
         border-top: 0;
 
-        .cell-text, .cell-datetime {
+        // content of those cells
+        .cell-text, .cell-datetime, .cell-number {
           margin: 0 1rem;
           font-size: 1.3rem;
           overflow: hidden;
@@ -282,7 +283,7 @@
           color:$brand-text--dark;
         }
 
-
+        // when a cell value cannot be rendered
         .cell-null {
           // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
           &::before {
@@ -293,6 +294,8 @@
             font-weight: 100;
           }
         }
+
+        // fix number column on the left
         .row-number {
           color: lighten($brand-text--dark,30%);
           font-weight: 100;
