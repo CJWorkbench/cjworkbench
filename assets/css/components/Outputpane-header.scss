@@ -1,0 +1,77 @@
+.outputpane-header {
+  flex: 0 0 auto; // fixed vertical size (unlike grid, which grows)
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding:2rem;
+
+  .table-info-container {
+    display: flex;
+    margin-left: 3.25rem;
+    align-items: center;
+    height: 3.5rem;
+
+    .table-info {
+      text-align: center;
+      margin-right: 3rem;
+      background-color: transparent;
+
+      .data {
+        color: $labels;
+        text-transform: uppercase;
+        font-size: 1rem;
+        line-height: 1;
+        cursor: default;
+      }
+      .value {
+        color: $dark-gray;
+        font-size: 1.4rem;
+        line-height: 1;
+        margin-top: .7rem;
+      }
+    }
+
+    // Row Acction buton and menu
+    .dropdown .table-action {
+      @extend .action-button;
+      @extend .button-orange;
+    }
+    .dropdown-menu {
+      border-color:$brand-orange;
+
+      &.show {
+        button {
+          @extend .dropdown-item;
+
+        }
+      }
+    }
+
+  }
+
+  .export-table {
+    display: inline-block;
+    white-space: nowrap;
+    padding: .5rem 1.5rem;
+    margin-right: 2.25rem;
+    border-radius: 2rem;
+    color: $table-element;
+    background-color: white;
+    cursor: pointer;
+    &:hover{
+      background-color: $dark-accent--soft;
+    }
+    font-size: 1.4rem;
+
+    .icon-download {
+      font-size: 1.5rem;
+      margin-right:1rem;
+    }
+    .feed {
+      margin-left: 1rem;
+      padding-left: 1rem;
+      border-left: 2px solid $table-element--light;
+    }
+  }
+}

@@ -79,11 +79,11 @@
   }
 
   .big-radio-checked>label span {
-    @extend %action-button;
+    @extend .action-button;
     @extend %button-blue--fill;
   }
   .big-radio-unchecked>label span {
-    @extend %action-button;
+    @extend .action-button;
     @extend %button-blue;
   }
 
@@ -233,7 +233,7 @@
         margin-left: 2rem;
 
         label {
-          @extend %action-button;
+          @extend .action-button;
           @extend %button-gray;
           margin-bottom: 0;
 
@@ -246,7 +246,7 @@
       flex: 0 0 auto;
 
       button {
-        @extend %action-button;
+        @extend .action-button;
         @extend %button-blue;
       }
     }

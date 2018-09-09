@@ -131,8 +131,9 @@ button:focus { outline:0 !important; }
 
 //* - Action button - */
 
-%action-button {
+.action-button {
   cursor: pointer;
+  border: 2px solid $brand-workspace;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -144,8 +145,6 @@ button:focus { outline:0 !important; }
   padding: 0 1.6rem;
   text-decoration: none;
 }
-
-.action-button { @extend %action-button; }
 
 .action-button:disabled {
   color: $light-gray;
@@ -249,7 +248,7 @@ button:focus { outline:0 !important; }
 
 .button-white {
   color: white;
-  border: 1px solid white;
+  border-color: $white;
   background-color: transparent;
   &:hover, &:hover .spinner::after {
     background-color: $light-accent--strong;
@@ -261,7 +260,7 @@ button:focus { outline:0 !important; }
 
 .button-white--fill {
   color: $brand-workspace;
-  border:1px solid white;
+  border-color: $white;
   &, .spinner::after {
     background-color: white;
   }
@@ -271,13 +270,13 @@ button:focus { outline:0 !important; }
   }
   &:active, &:active .spinner::after {
     background-color: $light-accent--Vstrong;
-    border: 1px solid white;
+    border: 2px solid white;
   }
 }
 
 %button-gray {
   color: $medium-gray;
-  border: 1px solid $medium-gray;
+  border-color: $medium-gray;
   background-color: transparent;
   &:hover {background-color:$light-accent--Vstrong;}
   &:active {
@@ -289,7 +288,7 @@ button:focus { outline:0 !important; }
 
 %button-blue {
   color: $brand-workspace;
-  border: 1px solid $brand-workspace ;
+  border-color: $brand-workspace ;
   background-color: transparent;
   &:hover, &:hover .spinner::after {
     background-color: $brand-workspace--light
@@ -307,10 +306,10 @@ button:focus { outline:0 !important; }
 %button-blue--fill {
   background-color: $brand-workspace;
   color: white;
-  border:none;
+  border-color:transparent;
   &:hover {
     background-color: $brand-workspace--light;
-    border: 1px solid $brand-workspace;
+    border-color: $brand-workspace;
     color:$brand-workspace;
   }
   &:active {
@@ -324,7 +323,7 @@ button:focus { outline:0 !important; }
 
 .button-orange {
   color: $brand-orange;
-  border: 1px solid $brand-orange ;
+  border-color: $brand-orange ;
   background-color: transparent;
   &:hover {background-color: $brand-orange--light}
   &:active {
