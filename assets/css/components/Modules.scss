@@ -271,13 +271,14 @@
   .wf-module-error-msg {
     border: 0px;
     padding: 1rem 1.5rem;
-    margin:0 1.5rem;
     border-radius: 0px;
-    background-color: $error-prompt;
-    color: #fff;
+    border: 2px solid $error-prompt;
+    background-color: $error-prompt--light;
+    color: $brand-red;
     font-size: 1.2rem;
     @extend %font-nunito-regular;
     text-align: left;
+    word-wrap: break-word;
   }
 }
 
@@ -341,14 +342,14 @@
   /* error & selected */
   .module-output--error-selected {
     height: 100%;
-    border:2px solid rgba(232,114,110,0.5);
+    border:2px solid $error-prompt;
     display: flex;
     align-items: center;
     flex-direction: row;
     &:after {
       content: " ";
     	position: absolute;
-    	border:2px solid rgba(232,114,110,0.3);
+    	border:2px solid $error-prompt;
       margin-left: 26.5rem;
       height: 4rem;
     }

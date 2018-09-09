@@ -34,7 +34,8 @@ $input-alt-bg: #96afc3;
 $input-alt: $white;
 $input-alt-placeholder: $SuperLightGray;
 
-$error-prompt: rgba(232,114,110,0.6);
+$error-prompt: lighten($brand-red,18%);
+$error-prompt--light: lighten($brand-red,35%);
 
 // Text colors ＼(＾O＾)／
 $brand-text--darker: #2B2A2A;
