@@ -103,6 +103,7 @@ button:focus { outline:0 !important; }
     &:hover {
       background-color: $light-accent--medium;
       opacity: 1;
+      color:$white;
     }
   }
 
