@@ -68,9 +68,11 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Drop empty rows"]',
         )
 
-        # Wait for checkboxes to load
-        b.check('colnames[MetroArea]', wait=True)
-        b.check('colnames[Population]')
+        # Wait for column selector to load
+        b.click_whatever('.react-select__indicator', wait=True)
+        b.click_whatever('.react-select__option', text='MetroArea', wait=True)
+        b.click_whatever('.react-select__indicator', wait=True)
+        b.click_whatever('.react-select__option', text='Population', wait=True)
 
         self.expect_highlight_next()
         self.click_next()
