@@ -7,9 +7,30 @@
   "help_url":"modules/clean/rename-columns",
   "parameters": [
     {
+      "name": "Paste list of new names",
+      "id_name": "custom_list",
+      "type": "checkbox",
+      "default": "False"
+    },
+    {
+      "name": "",
+      "id_name": "list_string",
+      "type": "string",
+      "multiline": "True",
+      "placeholder":"Paste values of column names",
+      "visible_if": {
+        "id_name": "custom_list",
+        "value": true
+      }
+    },
+    {
       "name": "",
       "id_name": "rename-entries",
-      "type": "custom"
+      "type": "custom",
+      "visible_if": {
+        "id_name": "custom_list",
+        "value": false
+      }
     }
   ]
 }
