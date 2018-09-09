@@ -3,8 +3,10 @@
   @extend .module-parameter;
   height: auto;
 
-    .react-select__placeholder {
-      color:$brand-text--dark;
+  .react-select__value-container {cursor: text}
+
+  .react-select__placeholder {
+    color:$brand-text--dark;
     }
 
 
@@ -15,6 +17,7 @@
 
   // button to open dropdown
   .react-select__indicator {
+    cursor: pointer;
     opacity: .6;
 
     svg {

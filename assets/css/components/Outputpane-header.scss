@@ -49,7 +49,7 @@
     }
 
     .dropdown-menu {
-      border-color:$data-action--border;
+      border:$data-action--border;
 
       &.show {
         button {
