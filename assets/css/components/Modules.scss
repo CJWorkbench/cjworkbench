@@ -272,8 +272,8 @@
     border: 0px;
     padding: 1rem 1.5rem;
     border-radius: 0px;
-    border: 2px solid $error-prompt;
-    background-color: $error-prompt--light;
+    //border: 2px solid $error-prompt;
+    //background-color: $error-prompt--light;
     color: $brand-red;
     font-size: 1.2rem;
     @extend %font-nunito-regular;
@@ -326,14 +326,14 @@
   /* error  */
   .module-output--error {
     height: 100%;
-    border:2px solid rgba(0,114,110,0);
+    border:2px solid $error-prompt;
     display: flex;
     align-items: center;
     flex-direction: row;
     &:after {
     	content: " ";
     	position: absolute;
-    	border:2px solid rgba(232,114,110,0.3);
+    	border:2px solid $error-prompt;
       margin-left: 26.5rem;
       height: 4rem;
     }
