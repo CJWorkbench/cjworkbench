@@ -15,7 +15,8 @@ def parse_list(wf_module, table):
         return (table, 'Separator between names not detected.')
 
     separator = s_map[separator_counts.index(max(separator_counts))]
-    new_columns = list_string.split(separator)
+    # Strip values and remove null values
+    new_columns = [x.strip() for x in list_string.split(separator) if x.strip()]
 
     if table_width != len(new_columns):
         return (table, f"Length of input list ({len(new_columns)}) does not match width of table ({table_width}).")
