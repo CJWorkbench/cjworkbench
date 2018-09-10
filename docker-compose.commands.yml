@@ -16,6 +16,10 @@ services:
       CJW_REDIS_HOST: redis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio
+      MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
     depends_on: [ 'database', 'redis' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
@@ -35,6 +39,10 @@ services:
       CJW_REDIS_HOST: redis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio
+      MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
     depends_on: [ 'database', 'redis' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
@@ -54,6 +62,10 @@ services:
       CJW_REDIS_HOST: testredis
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://testminio
+      MINIO_BUCKET_PREFIX: test
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testredis' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'test' ]

@@ -53,12 +53,32 @@ kubectl -n production apply -f saveddata-pv.yaml
 kubectl -n production apply -f importedmodules-pvc.yaml
 kubectl -n production apply -f importedmodules-pv.yaml
 
-# 2. Start database+redis
+# 1.4 Prepare Google Cloud Storage and Minio
+# 1.4.1 GCS account, so minio can create buckets/objects
+gcloud iam service-accounts create minio-service-account --display-name minio-service-account
+gcloud projects add-iam-policy-binding cj-workbench \
+  --member "serviceAccount:minio-service-account@cj-workbench.iam.gserviceaccount.com" \
+  --role "roles/storage.admin"
+gcloud iam service-accounts keys create application_default_credentials.json \
+  --iam-account minio-service-account@cj-workbench.iam.gserviceaccount.com
+kubectl -n production create secret generic minio-gcs-credentials \
+  --from-file=./application_default_credentials.json
+rm application_default_credentials.json
+gsutil mb gs://uploaded-files.workbenchdata.com
+# 1.4.2 minio access key and secret key
+#docker run --name minio-genkey --rm minio/minio server /nodata and after it prints info, Ctrl+C
+kubectl -n production create secret generic minio-access-key \
+  --from-literal=access_key="$MINIO_ACCESS_KEY" \
+  --from-literal=secret_key="$MINIO_SECRET_KEY"
+
+# 2. Start database+redis+minio
 kubectl -n production apply -f dbdata-pvc.yaml
 kubectl -n production apply -f database-service.yaml
 kubectl -n production apply -f database-deployment.yaml
 kubectl -n production apply -f redis-service.yaml
 kubectl -n production apply -f redis-deployment.yaml
+kubectl -n production apply -f minio-service.yaml
+kubectl -n production apply -f minio-deployment.yaml
 
 # 3. Create secrets! You'll need to be very careful here....
 : ${CJW_SECRET_KEY:?"Must set CJW_SECRET_KEY"}
@@ -112,6 +132,7 @@ kubectl -n ingress-nginx patch service nginx-ingress-lb -p '{"spec":{"loadBalanc
 gcloud compute addresses create nginx-ingress-lb --addresses "$EXTERNAL_IP" --region us-central1
 
 kubectl apply -f frontend-production-ingress.yaml
+kubectl apply -f minio-production-ingress.yaml
 ???
 
 # 7. Backups

@@ -2,8 +2,6 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.UploadedFileView import UploadedFileView
-from rest_framework import routers
 from .views.user import current_user
 
 urlpatterns = [
@@ -12,6 +10,7 @@ urlpatterns = [
 
     url(r'^$', RedirectView.as_view(url='/workflows')),
 
+    url(r'^api/uploadfile/
     url(r'^api/uploadfile/?$', UploadedFileView.as_view()),
     url(r'^api/uploadfile/(?P<qquuid>\S+)?$', UploadedFileView.as_view()),
 
@@ -23,7 +22,7 @@ urlpatterns = [
     url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', views.render_lesson_detail),
 
     # workflows
-    #TODO: Name the rest of the urls or implement some kind of naming scheme
+    # TODO: Name the rest of the urls or implement some kind of naming scheme
     url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow, name="workflow"),
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
 

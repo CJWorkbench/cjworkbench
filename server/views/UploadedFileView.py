@@ -9,6 +9,10 @@ from django.http import HttpResponse
 from server.models import WfModule, StoredObject
 import json
 
+
+
+
+
 class UploadedFileView(APIView):
     renderer_classes = [renderers.JSONRenderer]
     parser_classes = (MultiPartParser,)
@@ -16,30 +20,41 @@ class UploadedFileView(APIView):
 
     @staticmethod
     def post(request):
-        form = UploadedFileForm(request.POST, request.FILES)
+        if request.POST.get('success', ''):
+            form = UploadedFileForm(request.POST, request.FILES)
 
-        if form.is_valid():
-            uploaded_file = form.save()
-            upload_to_table(uploaded_file.wf_module, uploaded_file)
-            return HttpResponse('{"success":true}', content_type="application/json", status=status.HTTP_201_CREATED)
+            if form.is_valid():
+                uploaded_file = form.save()
+                upload_to_table(uploaded_file.wf_module, uploaded_file)
+                return HttpResponse('{"success":true}',
+                                    content_type="application/json",
+                                    status=status.HTTP_201_CREATED)
+            else:
+                err = json.dumps({'success': False,
+                                  'error': '%s' % repr(form.errors)})
+                return HttpResponse(err, content_type="application/json",
+                                    status=status.HTTP_400_BAD_REQUEST)
         else:
-            err = json.dumps({'success': False, 'error': '%s' % repr(form.errors)})
-            return HttpResponse(err, content_type="application/json", status=status.HTTP_400_BAD_REQUEST)
+            return sign_put_request(request)
 
-
-    # Called by the client to get the uuid and filename of a previously uploaded file
+    # Called to get the uuid and filename of a previously uploaded file
     @staticmethod
     def get(request):
         wf_module_id = request.GET.get('wf_module', '')
         if wf_module_id == '':
-            return Response({'success': False, 'error': 'Missing wf_module query parameter'},
+            return Response({'success': False,
+                             'error': 'Missing wf_module query parameter'},
                             status=status.HTTP_400_BAD_REQUEST)
         wf_module = WfModule.objects.get(pk=wf_module_id)
 
-        # the UploadedFile is converted to a StoredObject when the UploadFile module first renders
-        so = StoredObject.objects.filter(wf_module=wf_module, stored_at=wf_module.stored_data_version).first()
+        # the UploadedFile is converted to a StoredObject when the UploadFile
+        # module first renders
+        so = StoredObject.objects.filter(
+            wf_module=wf_module,
+            stored_at=wf_module.stored_data_version
+        ).first()
         if so and so.metadata:
             return HttpResponse(so.metadata, content_type="application/json")
         else:
-            return HttpResponse('[]', content_type="application/json")  # no file has yet been uploaded
-
+            # no file has yet been uploaded
+            return HttpResponse('[]', content_type="application/json")

@@ -34,6 +34,7 @@ workbenchdata-pandas = "==0.24.0a3"
 cchardet = "*"
 python-snappy = "*"
 workbenchdata-fastparquet = "==0.1.6a2"
+minio = "*"
 
 [dev-packages]
 mock = "==2.0.0"
@@ -43,3 +44,6 @@ watchdog = "*"
 
 [requires]
 python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

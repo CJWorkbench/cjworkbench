@@ -1,0 +1,59 @@
+# https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/kubernetes-yaml/minio-gcs-gateway-deployment.yaml
+# On production, we use Google Cloud Storage to store data.
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  # This name uniquely identifies the Deployment
+  name: minio-deployment
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        # Label is used as selector in the service.
+        app: minio-app
+    spec:
+      # Refer to the secret created earlier
+      volumes:
+      - name: minio-gcs-credentials
+        secret:
+          # Name of the Secret created earlier
+          secretName: minio-gcs-credentials
+      containers:
+      - name: minio
+        # Pulls the default Minio image from Docker Hub
+        image: minio/minio:RELEASE.2018-09-01T00-38-25Z
+        args:
+        - gateway
+        - gcs
+        env:
+        # Minio access key and secret key determine which clients have access
+        # to minio (and thus all uploaded files). For us, the correct answer is
+        # "frontend and backend". So we'll set the secret here _and_ in
+        # frontend/backend.
+        #
+        # The secret is called "minio-access-key" and its paths are "access_key"
+        # and "secret_key".
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-access-key
+              key: access_key
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-access-key
+              key: secret_key
+        # Google Cloud Service uses this variable
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/etc/credentials/application_default_credentials.json"
+        - name: MINIO_BROWSER
+          value: 'off'
+        ports:
+        - containerPort: 9000
+        # Mount the volume into the pod
+        volumeMounts:
+        - name: minio-gcs-credentials
+          mountPath: "/etc/credentials"
+          readOnly: true

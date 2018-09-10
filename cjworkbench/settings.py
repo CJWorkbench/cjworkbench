@@ -410,3 +410,17 @@ if I_AM_TESTING:
 CACHE_MODULES = os.getenv('CACHE_MODULES', 'true').upper() != 'FALSE'
 
 TEST_RUNNER = 'server.tests.runner.TimeLoggingDiscoverRunner'
+
+if 'MINIO_URL' not in os.environ:
+    sys.exit('Must set MINIO_URL')
+if 'MINIO_ACCESS_KEY' not in os.environ:
+    sys.exit('Must set MINIO_ACCESS_KEY')
+if 'MINIO_SECRET_KEY' not in os.environ:
+    sys.exit('Must set MINIO_SECRET_KEY')
+if 'MINIO_BUCKET_PREFIX' not in os.environ:
+    sys.exit('Must set MINIO_BUCKET_PREFIX')
+MINIO_URL = os.environ['MINIO_URL']
+MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
+MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
+MINIO_BUCKET_PREFIX = os.environ['MINIO_BUCKET_PREFIX']
+MINIO_BUCKET_SUFFIX = os.environ.get('MINIO_BUCKET_SUFFIX', '')
