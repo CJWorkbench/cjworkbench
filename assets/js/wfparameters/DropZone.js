@@ -10,142 +10,130 @@ import Filename from 'react-fine-uploader/filename'
 import 'react-fine-uploader/gallery/gallery.css'
 
 export default class DropZone extends Component {
-    // onDrop(files){
-    //     console.log(this.props.wfModuleId)
-    //   var req=request
-    //             .post('/api/uploadfile/')
-    //             .field('file', files[0])
-    //             .field('wf_module', this.props.wfModuleId)
-    //             .set('X-CSRFToken', csrfToken);
-    //   req.end();
-    // }
+  // onDrop(files){
+  //     console.log(this.props.wfModuleId)
+  //   var req=request
+  //             .post('/api/uploadfile/')
+  //             .field('file', files[0])
+  //             .field('wf_module', this.props.wfModuleId)
+  //             .set('X-CSRFToken', csrfToken);
+  //   req.end();
+  // }
 
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            files: [],
-            submittedFiles: [],
-            filename: ''
+  state = {
+    files: [],
+    submittedFileId: null,
+    filename: ''
+  }
+
+  uploader = new FineUploaderTraditional({
+    options: {
+      request: {
+        endpoint: '/api/uploadfile',
+        customHeaders: {
+          'X-CSRFToken': csrfToken
+        },
+        filenameParam: 'name',
+        inputName: 'file',
+        uuidName: 'uuid',
+        totalFileSizeName: 'size',
+        params: {
+          'wf_module': this.props.wfModuleId
         }
-
-        this.uploader = new FineUploaderTraditional({
-            options: {
-                request: {
-                    endpoint: '/api/uploadfile',
-                    customHeaders: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    filenameParam: 'name',
-                    inputName: 'file',
-                    uuidName: 'uuid',
-                    totalFileSizeName: 'size',
-                    params: {
-                        'wf_module': this.props.wfModuleId
-                    }
-                },
-                session: {
-                    endpoint: '/api/uploadfile',
-                    customHeaders: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    params: {
-                        'wf_module': this.props.wfModuleId
-                    }
-                },
-                multiple: false
-            }
-        })
+      },
+      session: {
+        endpoint: '/api/uploadfile',
+        customHeaders: {
+          'X-CSRFToken': csrfToken
+        },
+        params: {
+          'wf_module': this.props.wfModuleId
+        }
+      },
+      multiple: false
     }
+  })
 
-    update_filename(err, res){
-      if (err === null) {
+  updateFilename (res) {
+    this.setState({
+      filename: res[0].name,
+    })
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.lastRelevantDeltaId !== this.props.lastRelevantDeltaId) {
+      this.props.api._fetch(`/api/uploadfile?wf_module=${this.props.wfModuleId}`)
+        .then(updateFilename, console.warn)
+    }
+  }
+
+  componentDidMount() {
+    this.uploader.on('statusChange', (id, oldStatus, newStatus) => {
+      if (newStatus === 'submitted') {
+        store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'busy'))
+        this.setState({ submittedFileId: id })
+      }
+      else if (newStatus === 'upload successful') {
         this.setState({
-          filename: res[0].name,
+          files: [ id ],
+          submittedFileId: null,
+          filename: this.uploader.methods.getName(id)
         })
-      } else {
-        console.warn(err)
       }
-    }
-
-    componentDidUpdate(prevProps) {
-      if (prevProps.lastRelevantDeltaId !== this.props.lastRelevantDeltaId) {
-        this.props.api._fetch(`/api/uploadfile?wf_module=${this.props.wfModuleId}`)
-          .then(
-            res => this.update_filename(null, res),
-            err => this.update_filename(err, null)
-          )
+      else if (newStatus === 'canceled') {
+        this.setState({ submittedFileId: null })
       }
-    }
+    })
+  }
 
-    componentDidMount() {
-        this.uploader.on('statusChange', (id, oldStatus, newStatus) => {
-            if (newStatus === 'submitted') {
-                store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'busy'))
-                const submittedFiles = [id]
-                this.setState({submittedFiles})
-            }
-            else if (newStatus === 'upload successful') {
-                const files = [id]
-                const submittedFiles = []
-                const filename = this.uploader.methods.getName(id)
-                this.setState({files, submittedFiles, filename})
-            }
-            else if (newStatus === 'canceled') {
-                const submittedFiles = []
-                this.setState({submittedFiles})
-            }
-        })
-    }
+  render() {
+    const { files, submittedFileId, filename } = this.state
 
-    render() {
-      // Classe names are in brackets becaue of : --->> [Fine Uploader 5.15.3] Caught exception in 'onStatusChange' callback - input is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`. Check the render method of DropZone.
-        return (
-            <div className={""}>
-                {this.state.files.length == 0 ? (
-                    <div>
-                      <FineUploaderDropZone
-                        className={"dropzone d-flex justify-content-center align-items-center"}
-                        multiple={false}
-                        uploader={this.uploader}>
-                        <div className={"content-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
-                        <FileInput className={"content-3 action-link"} multiple={false}
-                                   uploader={this.uploader}>Browse</FileInput>
-                      </FineUploaderDropZone>
-                      {
-                          this.state.submittedFiles.map(id => (
-                              <div
-                                  className={"loader-empty react-fine-uploader-gallery-total-progress-bar-container"}
-                                  key={id}>
-                                  <ProgressBar className={"react-fine-uploader-gallery-total-progress-bar"} id={id}
-                                               uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
-                              </div>
-                          ))
-                      }
-                    </div>
-                ) : (
-                    <div>
-                      <div className={"upload-box"}>
-                        <div>
-                          <div className={"label-margin t-d-gray content-3"}>File name</div>
-                          <div className={"t-d-gray content-3 text-field-readonly"}>{this.state.filename}</div>
-                        </div>
-                          <FileInput className={"button-blue dropzone-button action-button"} multiple={false}
-                                     uploader={this.uploader}>Replace</FileInput>
-                        </div>
-                        {
-                          this.state.submittedFiles.map(id => (
-                              <div className={"loader-replace react-fine-uploader-gallery-progress-bar-container"} key={id}>
-                                  <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"}
-                                               uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
-                              </div>
-                          ))
-                        }
-                    </div>
-                )}
+    const fileInput = (
+      <FileInput
+        className={files.length ? 'button-blue dropzone-button action-button' : 'content-3 action-link'}
+        multiple={false}
+        uploader={this.uploader}
+      >
+        {files.length ? 'Replace' : 'Browse'}
+      </FileInput>
+    )
+
+    const maybeProgressBar = submittedFileId === null ? null : (
+      <div className={`${files.length ? 'loader-replace' : 'loader-empty'} react-fine-uploader-gallery-total-progress-bar-container`}>
+        <ProgressBar
+          id={submittedFileId}
+          className='react-fine-uploader-gallery-total-progress-bar'
+          uploader={this.uploader}
+          hideBeforeStart
+          hideOnComplete
+        />
+      </div>
+    )
+
+    return (
+      <div>
+        {files.length == 0 ? (
+          <FineUploaderDropZone
+            className='dropzone d-flex justify-content-center align-items-center'
+            multiple={false}
+            uploader={this.uploader}
+          >
+            <div className='content-3 ml-4 mr-2'>Drag file here, or&nbsp;</div>
+            {fileInput}
+          </FineUploaderDropZone>
+        ) : (
+          <div className='upload-box'>
+            <div>
+              <div className='label-margin t-d-gray content-3'>File name</div>
+              <div className='t-d-gray content-3 text-field-readonly'>{this.state.filename}</div>
             </div>
-        )
-
-    }
-
+            {fileInput}
+          </div>
+        )}
+        {maybeProgressBar}
+      </div>
+    )
+  }
 }
