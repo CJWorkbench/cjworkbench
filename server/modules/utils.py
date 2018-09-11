@@ -117,9 +117,9 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    dtype = _determine_dtype(bytesio)
+    bytesio.seek(0)
     with _wrap_text(bytesio, text_encoding) as textio:
-        data = pandas.read_csv(textio, dtype=dtype)
+        data = pandas.read_csv(textio, dtype='category')
         autocast_dtypes_in_place(data)
         return data
 
@@ -133,9 +133,8 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    dtype = _determine_dtype(bytesio)
     with _wrap_text(bytesio, text_encoding) as textio:
-        data = pandas.read_table(textio, dtype=dtype)
+        data = pandas.read_table(textio, dtype='category')
         autocast_dtypes_in_place(data)
         return data
 
@@ -166,34 +165,35 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     * Error can be xlrd.XLRDError or pandas error
     * We read the entire file contents into memory before parsing
     """
-    dtype = _determine_dtype(bytesio)
-    return pandas.read_excel(bytesio, dtype=dtype)
+    # dtype='category' crashes as of 2018-09-11
+    return pandas.read_excel(bytesio, dtype=str)
+
 
 def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     """
-        Build a DataFrame from txt bytes or raise parse error.
+    Build a DataFrame from txt bytes or raise parse error.
 
-        Peculiarities:
+    Peculiarities:
 
-        * The file encoding defaults to UTF-8.
-        * Data types. Call _detect_separator to determine separator
+    * The file encoding defaults to UTF-8.
+    * Data types. Call _detect_separator to determine separator
     """
-    dtype = _determine_dtype(bytesio)
     with _wrap_text(bytesio, text_encoding) as textio:
         sep = _detect_separator(textio)
-        data = pandas.read_table(textio, dtype=dtype, sep=sep)
+        data = pandas.read_table(textio, dtype='category', sep=sep)
         autocast_dtypes_in_place(data)
         return data
 
+
 def _determine_dtype(bytesio: io.BytesIO):
     """
-        Either improve read performance time or save memory depending on file size
+    Either improve read performance time or save memory depending on file size
 
-        Peculiarities:
+    Peculiarities:
 
-        * Unittests pass bytesio as io.BytesIO
-        * Django passes as FieldFile.
-        * Both have different methods to determine buffer size
+    * Unittests pass bytesio as io.BytesIO
+    * Django passes as FieldFile.
+    * Both have different methods to determine buffer size
     """
 
     if type(bytesio) == FieldFile:
@@ -208,11 +208,13 @@ def _determine_dtype(bytesio: io.BytesIO):
     else:
         return None
 
+
 def _detect_separator(textio: io.TextIOWrapper) -> str:
     """
     Detect most common char of '\t', ';', ',' in first MB
 
-    TODO: Could be a tie or no counts at all, keep going until you find a winner
+    TODO: Could be a tie or no counts at all, keep going until you find a
+    winner.
     """
     map = [',', ';', '\t']
     chunk = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
@@ -220,6 +222,7 @@ def _detect_separator(textio: io.TextIOWrapper) -> str:
     results = [chunk.count(x) for x in map]
 
     return map[results.index(max(results))]
+
 
 def _detect_encoding(bytesio: io.BytesIO):
     """
@@ -242,26 +245,29 @@ def _detect_encoding(bytesio: io.BytesIO):
     bytesio.seek(0)
     return detector.result['encoding']
 
+
 def push_header(table: pandas.DataFrame) -> pandas.DataFrame:
     # Table may not be uploaded yet
-    if type(table) == pandas.DataFrame:
-        table.loc[-1] = table.columns
-        table.columns = range(0, len(table.columns))
-        table.index = table.index + 1
-        return table.sort_index()
-    else:
+    if table is None:
         return None
+
+    table.loc[-1] = table.columns
+    table.columns = range(0, len(table.columns))
+    table.index = table.index + 1
+    return table.sort_index()
+
 
 _parse_xls = _parse_xlsx
 
 
 _Parsers = {
-    'text/csv': _parse_csv,
-    'text/tab-separated-values': _parse_tsv,
-    'application/vnd.ms-excel': _parse_xls,
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': _parse_xlsx,
-    'application/json': _parse_json,
-    'text/txt': _parse_txt
+    'text/csv': (_parse_csv, True),
+    'text/tab-separated-values': (_parse_tsv, True),
+    'application/vnd.ms-excel': (_parse_xls, True),
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        (_parse_xlsx, False),
+    'application/json': (_parse_json, True),
+    'text/plain': (_parse_txt, True),
 }
 
 
@@ -280,8 +286,8 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
                      (which may be incorrect)
     """
     if mime_type in _Parsers:
-        parser = _Parsers[mime_type]
-        if not text_encoding:
+        parser, need_encoding = _Parsers[mime_type]
+        if need_encoding and not text_encoding:
             text_encoding = _detect_encoding(bytesio)
         return _safe_parse(bytesio, parser, text_encoding)
     else:

@@ -24,12 +24,15 @@ services:
     networks: [ 'dev' ]
 
   minio:
-    image: minio/minio:RELEASE.2018-09-01T00-38-25Z
+    image: minio/minio:RELEASE.2018-09-11T01-39-21Z
     networks: [ 'dev' ]
+    ports: [ '8001:9000' ]
     environment:
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
-    command: server http://minio/data
+    volumes:
+      - minio_data:/data
+    command: server /data
 
   webpack:
     build:
@@ -58,7 +61,8 @@ services:
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio
+      MINIO_URL: http://minio:9000
+      MINIO_EXTERNAL_URL: http://localhost:8001
       MINIO_BUCKET_PREFIX: dev
       CACHE_MODULES: "${CACHE_MODULES:-}"
     ports: [ '8000:8080' ]
@@ -83,7 +87,7 @@ services:
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio
+      MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
       CACHE_MODULES: "${CACHE_MODULES:-}"
     depends_on: [ 'database', 'redis' ]
@@ -105,14 +109,12 @@ services:
     networks: [ 'test' ]
 
   testminio:
-    image: minio/minio:RELEASE.2018-09-01T00-38-25Z
+    image: minio/minio:RELEASE.2018-09-11T01-39-21Z
     networks: [ 'test' ]
-    volumes:
-      - fileuploads:/data
     environment:
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
-    command: server http://testminio/data
+    command: server /data
 
 networks:
   dev: {}
@@ -120,7 +122,7 @@ networks:
 
 volumes:
   dbdata: {}
-  fileuploads: {}
+  minio_data: {}
   virtualenvs: {}
   # Let's not make node_modules a bind mount: Windows bind mounts seem
   # to behave a bit differently from Linux bind mounts. Use a Docker volume

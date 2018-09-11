@@ -1,22 +1,19 @@
-from django.conf import settings
-from server.models.StoredObject import StoredObject
-from server.models import ChangeDataVersionCommand
-from django.utils.translation import gettext as _
+from io import BufferedReader
+from server.minio import open_for_read, ResponseError
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 from .utils import parse_bytesio, push_header
-import pandas as pd
-import os
-import json
+from server.utils import TempfileBackedReader
 
 
 _ExtensionMimeTypes = {
     '.xls': 'application/vnd.ms-excel',
-    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.xlsx':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     '.csv': 'text/csv',
     '.tsv': 'text/tab-separated-values',
     '.json': 'application/json',
-    '.txt': 'text/txt'
+    '.txt': 'text/plain'
 }
 
 
@@ -30,14 +27,13 @@ def upload_to_table(wf_module, uploaded_file):
     ext = '.' + uploaded_file.name.split('.')[-1]
     mime_type = _ExtensionMimeTypes.get(ext, None)
     if mime_type:
-        uploaded_file.file.open()  # Django FileField weirdness
-        bytesio = uploaded_file.file
         try:
-            result = parse_bytesio(bytesio, mime_type, None)
-        except Exception as e:
-            uploaded_file.file.close()
-            result = ProcessResult(error=(
-                e.args[0]))
+            with open_for_read(uploaded_file.bucket, uploaded_file.key) as s3:
+                with TempfileBackedReader(s3) as tempio:
+                    with BufferedReader(tempio) as bufio:
+                        result = parse_bytesio(bufio, mime_type, None)
+        except ResponseError as err:
+            result = ProcessResult(error=str(err))
     else:
         result = ProcessResult(error=(
             f'Error parsing {uploaded_file.file.name}: '
@@ -63,11 +59,16 @@ def upload_to_table(wf_module, uploaded_file):
 class UploadFile(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
-        # Must perform header operation here in the event the header checkbox state changes
-        has_header = wf_module.get_param_checkbox("has_header")
+        # Must perform header operation here in the event the header checkbox
+        # state changes
+        has_header = wf_module.get_param_checkbox('has_header')
         if not has_header:
-            return ProcessResult(push_header(wf_module.retrieve_fetched_table()),
-                             wf_module.error_msg)
+            return ProcessResult(
+                push_header(wf_module.retrieve_fetched_table()),
+                wf_module.error_msg
+            )
         else:
-            return ProcessResult(wf_module.retrieve_fetched_table(),
-                             wf_module.error_msg)
+            return ProcessResult(
+                wf_module.retrieve_fetched_table(),
+                wf_module.error_msg
+            )

@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import {store, setWfModuleStatusAction} from '../workflow-reducer'
 import {csrfToken} from '../utils'
-import FineUploaderTraditional from 'fine-uploader-wrappers'
+import FineUploaderS3 from 'fine-uploader-wrappers/s3'
 import FineUploaderDropZone from 'react-fine-uploader/dropzone'
 import FileInput from 'react-fine-uploader/file-input'
 import ProgressBar from 'react-fine-uploader/progress-bar'
 import Filename from 'react-fine-uploader/filename'
 
 import 'react-fine-uploader/gallery/gallery.css'
+
+const UploadConfig = window.initState.uploadConfig
 
 export default class DropZone extends Component {
   // onDrop(files){
@@ -27,29 +29,35 @@ export default class DropZone extends Component {
     filename: ''
   }
 
-  uploader = new FineUploaderTraditional({
+  uploader = new FineUploaderS3({
     options: {
+      objectProperties: {
+        bucket: UploadConfig.bucket,
+        key: 'uuid',
+      },
       request: {
-        endpoint: '/api/uploadfile',
-        customHeaders: {
-          'X-CSRFToken': csrfToken
-        },
+        accessKey: UploadConfig.accessKey,
+        endpoint: `${UploadConfig.server}/${UploadConfig.bucket}`,
         filenameParam: 'name',
         inputName: 'file',
         uuidName: 'uuid',
-        totalFileSizeName: 'size',
+        totalFileSizeName: 'size'
+      },
+      signature: {
+        endpoint: '/api/uploadfile',
+        customHeaders: { 'X-CSRFToken': csrfToken }
+      },
+      uploadSuccess: {
+        endpoint: '/api/uploadfile',
+        customHeaders: { 'X-CSRFToken': csrfToken },
         params: {
+          'success': true,
           'wf_module': this.props.wfModuleId
         }
       },
       session: {
         endpoint: '/api/uploadfile',
-        customHeaders: {
-          'X-CSRFToken': csrfToken
-        },
-        params: {
-          'wf_module': this.props.wfModuleId
-        }
+        customHeaders: { 'X-CSRFToken': csrfToken }
       },
       multiple: false
     }

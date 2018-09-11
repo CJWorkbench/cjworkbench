@@ -1,4 +1,5 @@
 from functools import lru_cache
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.template.response import TemplateResponse
@@ -10,6 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from server.minio import UserFilesBucket
 from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
@@ -55,6 +57,12 @@ def make_init_state(request, workflow=None, modules=None):
         ret['wfModules'] = dict([(str(wfm['id']), wfm)
                                  for wfm in wf_module_data_list])
         ret['selected_wf_module'] = workflow.selected_wf_module
+        ret['uploadConfig'] = {
+            'bucket': UserFilesBucket,
+            'accessKey': settings.MINIO_ACCESS_KEY,  # never _SECRET_KEY
+            'server': settings.MINIO_EXTERNAL_URL
+        }
+        ret['user_files_bucket'] = UserFilesBucket
         del ret['workflow']['selected_wf_module']
 
     if modules:
