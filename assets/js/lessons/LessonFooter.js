@@ -2,6 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Confetti from 'react-dom-confetti'
 
+const ConfettiConfig = {
+  colors: [
+    '#FFAAD2',
+    '#48C8D7',
+    '#E24F4A',
+    '#FBAA6D',
+    '#EDECEC'
+  ]
+}
+
 export default class LessonFooter extends React.PureComponent {
   static propTypes = {
     title: PropTypes.string.isRequired,
@@ -30,7 +40,7 @@ export default class LessonFooter extends React.PureComponent {
         <a href='/lessons/' className='backToLessons'>Tutorials</a>
         <h2>{title}</h2>
         <div className='description' dangerouslySetInnerHTML={({__html: html})}></div>
-        <Confetti active={isFinished} className='confetti' />
+        <Confetti active={isFinished} config={ConfettiConfig} className='confetti' />
       </section>
     )
   }
