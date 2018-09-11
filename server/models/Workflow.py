@@ -133,7 +133,7 @@ class Workflow(models.Model):
         return (
             self.public \
             or (user and user == self.owner) \
-            or (session.session_key \
+            or (session and session.session_key \
                 and session.session_key == self.anonymous_owner_session_key)
         )
 

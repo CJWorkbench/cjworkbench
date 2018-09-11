@@ -159,6 +159,7 @@ def set_param(pval, value):
 
 set_integer = set_param
 set_string = set_param
+set_checkbox = set_param
 
 
 # ---- Load Modules ----

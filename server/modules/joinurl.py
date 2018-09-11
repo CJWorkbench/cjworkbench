@@ -63,7 +63,7 @@ class JoinURL(ModuleImpl):
         except Exception:
             right_table = None
 
-        if right_table is None or right_table.empty:
+        if right_table is None or right_table.empty or table is None:
             return ProcessResult(table,
                                  wf_module.error_msg)
 

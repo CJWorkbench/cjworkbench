@@ -15,7 +15,7 @@ class ConcatURL(ModuleImpl):
         except Exception:
             right_table = None
 
-        if right_table is None or right_table.empty:
+        if right_table is None or right_table.empty or table is None:
             return ProcessResult(table,
                                  wf_module.error_msg)
 
@@ -25,10 +25,11 @@ class ConcatURL(ModuleImpl):
 
         try:
             right_id = get_id_from_url(url)
-            concat_table = pd.concat([table, right_table], keys=['Current', right_id], join=_join_type_map[type])
+            concat_table = pd.concat([table, right_table], keys=['Current', right_id], join=_join_type_map[type], sort=False)
         except Exception as err:
             return ProcessResult(table, error=str(err.args[0]))
 
+        # Default, only includes columns of left table
         if type == 0:
             concat_table = concat_table[table.columns]
 

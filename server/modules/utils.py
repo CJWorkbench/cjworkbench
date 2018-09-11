@@ -309,11 +309,11 @@ def _validate_url(url):
         validate = URLValidator()
         validate(url)
     except ValidationError:
-        return ValidationError('Invalid URL')
+        raise ValidationError('Invalid URL')
 
 def get_id_from_url(url):
     #TODO: Environment check
-    path = url.split('/')
+    path = url.strip().split('/')
     try:
         _validate_url(url)
         _id = int(path[path.index('workflows') + 1])
@@ -340,7 +340,10 @@ def store_external_workflow(wf_module, url):
     right_wf_module = right_wf_module.wf_modules.last()
 
     # Always pull the cached result, so we can't execute() an infinite loop
-    right_result = right_wf_module.get_cached_render_result().result
+    try:
+        right_result = right_wf_module.get_cached_render_result().result
+    except:
+        raise Exception('Internal Error. Could not retrieve workflow.')
     result = ProcessResult(dataframe=right_result.dataframe)
 
     result.truncate_in_place_if_too_big()
