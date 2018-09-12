@@ -13,7 +13,7 @@
       "visible_if": {
         "id_name": "reorder-history",
         "value": true,
-        "invert": true
+        "invert": false
       }
     },
     {
