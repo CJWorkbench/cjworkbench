@@ -55,6 +55,50 @@
     display: flex;
     flex-direction: column;
 
+    .overlay {
+      background: #ffffff;
+      height: 100%;
+      width: 100%;
+      opacity: 0.5;
+      top: 0;
+      left: 0;
+      position: absolute;
+      padding: 0;
+
+      .text {
+        text-align: center;
+        opacity: 1;
+        font-size: 4rem;
+        position: relative;
+      }
+
+      button.add-select-module {
+        opacity: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26rem;
+        border-radius: 2rem;
+        border: 2px solid $module-action;
+        background: #ffffff;
+        cursor: pointer;
+        text-transform: uppercase;
+        color: $table-element;
+        font-size: 1.4rem;
+        height: 3.5rem;
+        &:hover{
+          background-color: $module-action;
+          opacity: 1;
+        }
+        i {
+          font-size: 1.8rem;
+          margin-right:.5rem;
+        }
+        span {margin-top: .1rem;}
+      }
+    }
+
     .outputpane-data {
       flex: 1 1 auto; // consume maximum height (unlike header, which is fixed-height)
       position: relative; // for .react-grid-Container

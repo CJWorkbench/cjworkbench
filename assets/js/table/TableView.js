@@ -11,6 +11,7 @@ import { addModuleAction, setParamValueActionByIdName } from '../workflow-reduce
 import { connect } from 'react-redux'
 
 export const NRowsPerPage = 200 // exported to help tests
+export const NMaxColumns = 100
 export const FetchTimeout = 50 // ms after scroll before fetch
 
 export default class TableView extends React.PureComponent {
@@ -234,6 +235,11 @@ export default class TableView extends React.PureComponent {
     }
   }
 
+  onSelectColumns = () => {
+    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId,
+      'selectcolumns', false, {columnKey: '', keep: true})
+  }
+
   setDropdownAction = (idName, forceNewModule, params) => {
     UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, idName, forceNewModule, params)
   }
@@ -242,9 +248,9 @@ export default class TableView extends React.PureComponent {
     // Make a table component if we have the data
     const { spinning, selectedRowIndexes, totalNRows, columns, columnTypes } = this.state
     const { selectedWfModuleId, lastRelevantDeltaId, isReadOnly } = this.props
-
+    let tooWide = (columns && columns.length > NMaxColumns)
     let gridView
-    if (selectedWfModuleId && totalNRows !== null) {
+    if (selectedWfModuleId && totalNRows !== null && !tooWide) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       gridView = (
@@ -295,6 +301,15 @@ export default class TableView extends React.PureComponent {
         </div>
       </div>
     )
+    const maybeOverlay = !tooWide ? null : (
+      <div className="overlay">
+        <div className="text">
+          There are too many columns in this dataset to be displayed<br />
+          Select a maximum of 100 columns
+        </div>
+        <button className="add-select-module" onClick={this.onSelectColumns}>Add Select Column</button>
+      </div>
+    )
 
     return (
       <div className="outputpane-table">
@@ -307,6 +322,7 @@ export default class TableView extends React.PureComponent {
         />
         <div className="outputpane-data">
           {gridView}
+          {maybeOverlay}
         </div>
         {maybeSpinner}
       </div>

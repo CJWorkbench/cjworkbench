@@ -174,9 +174,17 @@ function updateSelectModule (wfm, params) {
   let selectedColumns = findParamValByIdName(wfm, 'colnames')
   const action = findParamValByIdName(wfm, 'drop_or_keep')
   const dropColumnName = params.columnKey
+  const keepOverride = params.hasOwnProperty('keep') ? params.keep : false
 
+  if (keepOverride) {
+    // Do module already exists, do nothing
+    if (selectedColumns.value || action.value === selectColumnKeep) {}
+    else {
+      store.dispatch(setParamValueActionByIdName(wfm.id, 'drop_or_keep', selectColumnKeep))
+    }
+  }
   // Case: If module exists and drop already selected
-  if (selectedColumns.value && action.value === selectColumnDrop) {
+  else if (selectedColumns.value && action.value === selectColumnDrop) {
     if (!(selectedColumns.value.split(',').includes(dropColumnName))) {
       let entries = selectedColumns.value + ',' + dropColumnName
       store.dispatch(setParamValueActionByIdName(wfm.id, 'colnames', entries))
