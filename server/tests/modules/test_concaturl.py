@@ -27,9 +27,9 @@ class ConcatURLTests(LoggedInTestCase):
 
         self.ref_inner_concat = pd.DataFrame(['b', 'c', 'b', 'd'], columns=['key'])
 
-        self.ref_outer_concat = pd.DataFrame([['a', np.NaN, 'b'], ['a', np.NaN, 'c'],
-                                              [np.NaN, 'c', 'b'], [np.NaN, 'a', 'd']],
-                                             columns=['col1', 'col2', 'key'])
+        self.ref_outer_concat = pd.DataFrame([['a', 'b', np.NaN], ['a', 'c', np.NaN],
+                                              [np.NaN, 'b', 'c'], [np.NaN, 'd', 'a']],
+                                             columns=['col1', 'key', 'col2'])
 
     def test_first_applied(self):
         # no upload state
