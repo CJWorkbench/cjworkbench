@@ -122,7 +122,7 @@ class SeriesParams:
                     "labelPadding": 10,
                     "labelFontSize": 12,
                     "labelColor":"#383838",
-                    
+
                 },
                 {
                     "title": self.y_axis_label,
@@ -260,8 +260,8 @@ class UserParams:
         """
         if len(table.index) >= MaxNBars:
             raise ValueError(
-                f'Refusing to build column chart with '
-                f'more than {MaxNBars} bars'
+                f'Column chart can visualize '
+                f'a maximum of {MaxNBars} bars'
             )
 
         if self.x_column not in table.columns:
