@@ -303,11 +303,12 @@ export default class TableView extends React.PureComponent {
     )
     const maybeOverlay = !tooWide ? null : (
       <div className="overlay">
-        <div className="text">
-          There are too many columns in this dataset to be displayed<br />
-          Select a maximum of 100 columns
+        <div>
+          <div className="text">
+            A maximum of 100 columns can be displayed
+          </div>
+          <button className="add-select-module" onClick={this.onSelectColumns}>Select columns</button>
         </div>
-        <button className="add-select-module" onClick={this.onSelectColumns}>Add Select Column</button>
       </div>
     )
 
