@@ -77,7 +77,7 @@
 </section>
 <section>
   <h2>3. Changing table format</h2>
-  <p>The table is currently in a 'long' format, where each row is a unique combination of variables (Year, MetroArea) and values (Population).</p>
+  <p>The table is currently in a 'long' format, where each row is a unique combination of variables (Date, MetroArea) and values (Population).</p>
   <p>To make it more legible, we must display it in a 'wide' format, commonly found in spreadsheets.</p>
   <p>In the 'wide' format, a variable is used as a 'Row variable', and another variable as the 'Column variable'. All remaining cells are populated with corresponding values.</p>
   <figure>
@@ -97,8 +97,8 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.wfModules[4].parameters.get('colnames') == 'Year'"
-      >Choose <kbd>Year</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
+      data-test="return workflow.wfModules[4].parameters.get('colnames') == 'Date'"
+      >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
