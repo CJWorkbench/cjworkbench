@@ -90,6 +90,7 @@ def save_result_if_changed(wfm: WfModule,
 
         wfm.is_busy = False
         wfm.fetch_error = new_result.error
+        wfm.cached_render_result_error = new_result.error   # clears error for good fetch after bad #160367251
         wfm.save()
 
         # Mark has_unseen_notifications via direct SQL
