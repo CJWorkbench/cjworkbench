@@ -22,9 +22,10 @@
   }
 
   // button to open dropdown
-  .react-select__indicator {
+  .css-1ep9fjw.react-select__indicator {
     cursor: pointer;
     opacity: .6;
+    padding:.6rem;
 
     svg {
       color:$brand-text--dark;
