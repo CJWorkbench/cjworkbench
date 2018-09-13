@@ -248,7 +248,10 @@ def _detect_encoding(bytesio: io.BytesIO):
     bytesio.seek(0)
     return detector.result['encoding']
 
-def push_header(table: pandas.DataFrame) -> pandas.DataFrame:
+
+# Move dataframe column names into the first row of data, and replace column names with numbers
+# Used to undo first row of data incorrectly read as header
+def turn_header_into_first_row(table: pandas.DataFrame) -> pandas.DataFrame:
     # Table may not be uploaded yet
     if type(table) == pandas.DataFrame:
         table.loc[-1] = table.columns

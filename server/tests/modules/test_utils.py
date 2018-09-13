@@ -4,7 +4,7 @@ import numpy
 import pandas
 from django.test import SimpleTestCase, override_settings
 from server.modules.types import ProcessResult
-from server.modules.utils import build_globals_for_eval, parse_bytesio, push_header, get_id_from_url, store_external_workflow
+from server.modules.utils import build_globals_for_eval, parse_bytesio, turn_header_into_first_row, get_id_from_url, store_external_workflow
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         mock_csv_path, create_test_user, add_new_workflow
 
@@ -133,13 +133,13 @@ class ParseBytesIoTest(SimpleTestCase):
         self.assertEqual(result, expected)
 
 class OtherUtilsTests(SimpleTestCase):
-    def test_push_header(self):
-        result = push_header(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+    def test_turn_header_into_first_row(self):
+        result = turn_header_into_first_row(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
         expected = pandas.DataFrame({0: ['A', 'B'], 1: ['C', 'D']})
         pandas.testing.assert_frame_equal(result, expected)
 
         # Function should return None when a table has not been uploaded yet
-        self.assertIsNone(push_header(None))
+        self.assertIsNone(turn_header_into_first_row(None))
 
     def test_get_id_from_url(self):
         result_map = {
