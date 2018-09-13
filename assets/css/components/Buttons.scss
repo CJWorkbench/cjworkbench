@@ -376,19 +376,23 @@ button:focus { outline:0 !important; }
 
 // All - none selectors
 
-.mc-select-all{
-  border: 0px;
+.mc-select-all, .mc-select-none {
+  font-weight: 400;
+  @extend .content-2;
+  color: $brand-text--dark;
   background-color: transparent;
-  border-right:1px solid $light-gray;
-  padding: 0 1rem 0 0;
   cursor: pointer;
+  border: 0px;
+  text-transform: uppercase;
+}
+
+.mc-select-all {
+  border-right: 1px solid $dark-accent--strong;
+  padding: 0 .6rem 0 0;
 }
 
 .mc-select-none {
-  background-color: transparent;
-  border: 0px;
-  padding: 0 0 0 1rem;
-  cursor: pointer;
+  padding: 0 0 0 .6rem;
 }
 
 .mc-select-all:hover,
