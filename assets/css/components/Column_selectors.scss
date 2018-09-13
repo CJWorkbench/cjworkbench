@@ -3,7 +3,10 @@
   @extend .module-parameter;
   height: auto;
 
-  .react-select__value-container { cursor: text}
+  .css-1rtrksz.react-select__value-container {
+    cursor: text;
+    padding: .2rem;
+  }
 
   .react-select__placeholder {
     color:$brand-text--dark;
