@@ -250,7 +250,7 @@ export default class TableView extends React.PureComponent {
     const { selectedWfModuleId, lastRelevantDeltaId, isReadOnly } = this.props
     let tooWide = (columns && columns.length > NMaxColumns)
     let gridView
-    if (selectedWfModuleId && totalNRows !== null && !tooWide) {
+    if (selectedWfModuleId && totalNRows !== null && totalNRows !== 0 && !tooWide) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       gridView = (
