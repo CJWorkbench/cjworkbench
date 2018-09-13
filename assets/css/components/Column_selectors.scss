@@ -3,12 +3,15 @@
   @extend .module-parameter;
   height: auto;
 
-  .react-select__value-container {cursor: text}
+  .react-select__value-container { cursor: text}
 
   .react-select__placeholder {
     color:$brand-text--dark;
-    }
+  }
 
+  .css-d8oujb.react-select__indicator-separator {
+    opacity: .5;
+  }
 
   &.react-select__control--is-focused {
     box-shadow: none;

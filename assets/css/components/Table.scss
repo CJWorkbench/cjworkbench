@@ -110,14 +110,16 @@
         left: 0;
         width: 100%;
         height: 100%;
+
+        .react-grid-Main {
+          outline: none;
+
+          .react-grid-Grid{
+            border: none;
+          }          
+        }
       }
 
-      .react-grid-Grid{
-        border-top: 0;
-        border-right: none;
-        border-bottom: none;
-        border-left: none;
-      }
 
       .react-grid-Canvas {
         background-color: $table-background;

@@ -2,7 +2,7 @@
   "name": "Reorder columns",
   "id_name": "reorder-columns",
   "category": "Clean",
-  "icon": "filter",
+  "icon": "transform",
   "description": "Reorder columns",
   "help_url":"modules/clean/reorder columns",
   "parameters": [
