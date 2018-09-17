@@ -202,7 +202,7 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
       <div className={className}>
         <button className="search" onClick={this.onClickSearch}>
           <i className="icon-addc"></i>{' '}
-          <span>Add Module</span>
+          <span>ADD STEP</span>
         </button>
         {this.renderModuleSearchIfSearching()}
       </div>
