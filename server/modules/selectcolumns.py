@@ -4,7 +4,7 @@ from server.modules.types import ProcessResult
 
 class SelectColumns(ModuleImpl):
     def render(wf_module, table):
-        drop_or_keep = wf_module.get_param_menu_idx("drop_or_keep")
+        drop_or_keep = wf_module.get_param_radio_idx("drop_or_keep")
         cols = wf_module.get_param_string('colnames').split(',')
         cols = [c.strip() for c in cols]
 

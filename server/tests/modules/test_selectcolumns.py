@@ -13,7 +13,7 @@ class MockWfModule:
         self.colnames = colnames
         self.drop_or_keep = drop_or_keep
 
-    def get_param_menu_idx(self, name):
+    def get_param_radio_idx(self, name):
         return getattr(self, name)
 
     def get_param_string(self, name):

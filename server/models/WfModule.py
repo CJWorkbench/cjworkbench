@@ -291,6 +291,13 @@ class WfModule(models.Model):
     def get_param_checkbox(self, name):
         return self.get_param(name, ParameterSpec.CHECKBOX)
 
+    def get_param_radio_idx(self, name):
+        return self.get_param(name, ParameterSpec.RADIO)
+
+    def get_param_radio_string(self, name):
+        pval = self.get_parameter_val(name, ParameterSpec.RADIO)
+        return pval.selected_radio_item_string()
+
     def get_param_menu_idx(self, name):
         return self.get_param(name, ParameterSpec.MENU)
 

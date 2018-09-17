@@ -160,7 +160,12 @@ def load_parameter_spec(d, module_version, order):
     if d['type'] == 'menu':
         if (not 'menu_items' in d) or (d['menu_items']==''):
             raise ValueError("Menu parameter specification missing menu_items")
-        pspec.def_menu_items = d['menu_items']
+        pspec.def_items = d['menu_items']
+
+    if d['type'] == 'radio':
+        if (not 'radio_items' in d) or (d['radio_items']==''):
+            raise ValueError("Radio parameter specification missing radio_items")
+        pspec.def_items = d['radio_items']
 
     if 'visible_if' in d:
         if 'id_name' in d['visible_if'] and 'value' in d['visible_if']:
@@ -183,13 +188,27 @@ def create_parameter_val(wfm, new_spec):
     pval.init_from_spec()
     pval.save()
 
+# (old, new) pairs of parameter specs that _could_ be safe to maintain _if_
+# dependent attributes have the same value
+_safe_param_types_to_migrate = {
+    (ParameterSpec.MENU, ParameterSpec.RADIO): ['def_items'],
+    (ParameterSpec.RADIO, ParameterSpec.MENU): ['def_items']
+}
+
+# Checks if old parameter value can safely be maintained according to mapping in _safe_param_types_to_migrate
+def _is_pval_safe_to_keep(old_spec, new_spec):
+    rel = (old_spec.type, new_spec.type)
+    if rel in _safe_param_types_to_migrate:
+        result = [(getattr(old_spec, x) == getattr(new_spec, x)) for x in _safe_param_types_to_migrate[rel]]
+        return all(result)
+    return False
 
 # Update a parameter value from one ParameterSpec to another. Resets to default if type changes.
 def migrate_parameter_val(pval, old_spec, new_spec):
     type_changed = old_spec.type != new_spec.type
     pval.order = new_spec.order
     pval.parameter_spec = new_spec
-    if type_changed:
+    if type_changed and not _is_pval_safe_to_keep(old_spec, new_spec):
         pval.init_from_spec()
     pval.save()
 

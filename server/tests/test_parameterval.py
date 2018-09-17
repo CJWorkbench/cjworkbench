@@ -47,8 +47,15 @@ class ParameterValTestHelpers:
             id_name='menuparam',
             module_version=self.module_version,
             type=ParameterSpec.MENU,
-            def_menu_items='Item A|Item B|Item C',
+            def_items='Item A|Item B|Item C',
             def_value='1')  # should refer to Item B
+        radioSpec = ParameterSpec.objects.create(
+            name='RadioParam',
+            id_name='radioparam',
+            module_version=self.module_version,
+            type=ParameterSpec.RADIO,
+            def_items='Item A|Item B|Item C',
+            def_value='0')  # should refer to Item A
 
         self.workflow = add_new_workflow(name="Test Workflow")
         self.workflowID = self.workflow.id
@@ -72,8 +79,11 @@ class ParameterValTestHelpers:
         checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, value='True')
         self.checkboxID = checkboxVal.id
 
-        menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, value='2')
+        menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, value='2', items=menuSpec.def_items)
         self.menuID = menuVal.id
+
+        radioVal = ParameterVal.objects.create(parameter_spec=radioSpec, wf_module=self.wfmodule, value='0', items=radioSpec.def_items)
+        self.radioID = radioVal.id
 
 
 # Unit tests on ParameterVal
@@ -116,6 +126,15 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         m = self.wfmodule.get_param_menu_idx('menuparam')
         self.assertEqual(m, 2)
 
+        m = self.wfmodule.get_param_menu_string('menuparam')
+        self.assertEqual(m, 'Item C')
+
+        m = self.wfmodule.get_param_radio_idx('radioparam')
+        self.assertEqual(m, 0)
+
+        m = self.wfmodule.get_param_radio_string('radioparam')
+        self.assertEqual(m, 'Item A')
+
         # Retrieving value of wrong type should raise exception
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_string('integerparam')
@@ -129,6 +148,8 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
             self.wfmodule.get_param_checkbox('stringparam')
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_checkbox('menuparam')
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_radio_string('menuparam')
 
         # error if no param by that name
         with self.assertRaises(ValueError):
@@ -146,7 +167,7 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         self.assertEqual(spd.wf_module, wfmodule2)
         self.assertEqual(sp.parameter_spec, spd.parameter_spec)
         self.assertEqual(sp.value, spd.value)
-        self.assertEqual(sp.menu_items, spd.menu_items)
+        self.assertEqual(sp.items, spd.items)
         self.assertEqual(sp.visible, spd.visible)
         self.assertEqual(sp.order, spd.order)
 

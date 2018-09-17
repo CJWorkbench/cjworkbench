@@ -15,8 +15,8 @@
     {
       "name" : "",
       "id_name" : "drop_or_keep",
-      "type" : "menu",
-      "menu_items" : "Drop|Keep",
+      "type" : "radio",
+      "radio_items" : "Drop|Keep",
       "default": "1"
     },
     {

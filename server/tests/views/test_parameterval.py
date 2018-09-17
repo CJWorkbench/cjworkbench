@@ -55,9 +55,9 @@ class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
         # wfmodule has correct parameters
         parameter_vals = \
             response.data['wfModules'][str(self.wfmoduleID)]['parameter_vals']
-        self.assertEqual(len(parameter_vals), 6)
+        self.assertEqual(len(parameter_vals), 7)
         valIDs = [self.stringID, self.stringemptyID, self.integerID,
-                  self.floatID, self.checkboxID, self.menuID]
+                  self.floatID, self.checkboxID, self.menuID, self.radioID]
         self.assertEqual(set([p['id'] for p in parameter_vals]), set(valIDs))
 
         # parameters have correct types and values
@@ -99,6 +99,12 @@ class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
         self.assertEqual(menu_val['parameter_spec']['id_name'], 'menuparam')
         self.assertEqual(menu_val['parameter_spec']['type'], ParameterSpec.MENU)
         self.assertEqual(menu_val['value'], 2)
+
+        radio_val = [p for p in parameter_vals if p['id'] == self.radioID][0]
+        self.assertEqual(radio_val['parameter_spec']['name'], 'RadioParam')
+        self.assertEqual(radio_val['parameter_spec']['id_name'], 'radioparam')
+        self.assertEqual(radio_val['parameter_spec']['type'], ParameterSpec.RADIO)
+        self.assertEqual(radio_val['value'], 0)
 
     # test parameter change API
     def test_parameterval_detail_patch(self):

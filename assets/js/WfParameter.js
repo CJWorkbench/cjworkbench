@@ -18,6 +18,7 @@ import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
+import RadioParam from './wfparameters/RadioParam'
 //import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 //import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 //import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
@@ -461,20 +462,30 @@ export default class WfParameter extends React.Component {
             </div>
           </div>
         );
-
+      case 'radio':
+        return (
+          <div {...this.outerDivProps}>
+            <div className='d-flex align-items-center'>{name}</div>
+            <RadioParam
+              name={id_name}
+              items={this.props.p.items}
+              selectedIdx={this.props.p.value}
+              isReadOnly={this.props.isReadOnly}
+              onChange={this.paramChanged}
+            />
+          </div> );
       case 'menu':
         return (
           <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <MenuParam
               name={id_name}
-              items={this.props.p.menu_items}
+              items={this.props.p.items}
               selectedIdx={parseInt(this.props.p.value)}
               isReadOnly={this.props.isReadOnly}
               onChange={this.paramChanged}
             />
           </div> );
-
       case 'column':
         return (
           <div {...this.outerDivProps}>
