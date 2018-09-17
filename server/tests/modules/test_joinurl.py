@@ -4,7 +4,7 @@ import numpy as np
 from server.modules.joinurl import JoinURL, _join_type_map
 from server.modules.types import ProcessResult
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        add_new_workflow, set_string, \
+        add_new_workflow, set_string, set_checkbox, \
         set_integer, get_param_by_id_name
 
 class JoinURLTests(LoggedInTestCase):
@@ -15,6 +15,7 @@ class JoinURLTests(LoggedInTestCase):
         self.colnames_pval = get_param_by_id_name('colnames')
         self.importcols_pval = get_param_by_id_name('importcols')
         self.type_pval = get_param_by_id_name('type')
+        self.select_columns_pval = get_param_by_id_name('select_columns')
 
         self.valid_workflow_URL = 'https://app.workbenchdata.com/workflows/2/'
 
@@ -60,13 +61,20 @@ class JoinURLTests(LoggedInTestCase):
         set_string(self.url_pval, self.valid_workflow_URL)
         set_string(self.colnames_pval, 'key')
         set_string(self.importcols_pval, 'col2')
+        set_checkbox(self.select_columns_pval, True)
 
         set_integer(self.type_pval, _join_type_map.index("inner"))
-        result = JoinURL.render(self.wfm, self.table)
+        result = JoinURL.render(self.wfm, self.table.copy())
         assert_frame_equal(self.ref_left_join[['col1', 'key', 'col2']], result.dataframe)
+
+        # When select_column false, should import all columns
+        set_checkbox(self.select_columns_pval, False)
+        result = JoinURL.render(self.wfm, self.table.copy())
+        assert_frame_equal(self.ref_left_join, result.dataframe)
 
     def test_columns_no_exist(self):
         # Should throw error for select column not existing
+        set_checkbox(self.select_columns_pval, True)
         set_string(self.importcols_pval, 'non_existent_col')
         set_string(self.colnames_pval, 'key')
         result = JoinURL.render(self.wfm, self.table)

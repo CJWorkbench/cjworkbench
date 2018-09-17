@@ -32,11 +32,22 @@
       "menu_items": "Left|Inner|Right"
     },
     {
+      "name": "Specify which columns to import",
+      "id_name": "select_columns",
+      "type": "checkbox",
+      "default": "False"
+    },
+    {
       "name": "Columns to import",
       "id_name" : "importcols",
       "type": "string",
       "default": "",
-      "placeholder":"Optional: Column 1, Column 2"
+      "placeholder":"Column 1, Column 2",
+      "visible_if": {
+        "id_name": "select_columns",
+        "value": true,
+        "invert": false
+      }
     },
     {
       "name": "Update",

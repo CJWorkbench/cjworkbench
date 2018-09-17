@@ -70,6 +70,7 @@ class JoinURL(ModuleImpl):
         key_cols = wf_module.get_param_string('colnames')
         join_type_idx = wf_module.get_param('type', 'menu')
         join_type = _join_type_map[join_type_idx]
+        select_columns = wf_module.get_param_checkbox('select_columns')
 
         if key_cols == '':
             return ProcessResult(table)
@@ -78,7 +79,7 @@ class JoinURL(ModuleImpl):
 
         try:
             # Check if import columns exists in right table
-            if wf_module.get_param_string('importcols').strip():
+            if select_columns and wf_module.get_param_string('importcols').strip():
                 import_cols = wf_module.get_param_string('importcols').strip().split(',')
                 check_cols_right(right_table, key_cols, import_cols)
                 right_table = right_table[key_cols + import_cols]
