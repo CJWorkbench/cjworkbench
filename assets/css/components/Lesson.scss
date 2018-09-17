@@ -201,24 +201,32 @@ article.lesson {
     .next {
       margin-top: 4rem;
 
-      li {
-        list-style-type: none;
+      h2 {
+        margin-top: 2rem;
+      }
 
-        &::before {
-          content: "\e938";
-          color: $white;
-          font-size: .8rem;
-          font-family: Workbench;
-          position: absolute;
-          margin-left: -4rem;
-        }
+      ol {
+        margin-left: -2rem;
 
-        a {
-          @extend .highlight;
-          margin-left: -2rem;
-          text-decoration: none;
-          &:hover {
-            text-decoration: underline;
+        li {
+          list-style-type: none;
+
+          &::before {
+            content: "\e938";
+            color: $white;
+            font-size: .8rem;
+            font-family: Workbench;
+            position: absolute;
+            margin-left: -2rem;
+          }
+
+          a {
+            @extend .highlight;
+            @extend .description;
+            text-decoration: none;
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
