@@ -113,7 +113,7 @@ class WorkbenchBase(unittest.TestCase):
                 'Feb,666,Fred Frederson',
             ])
 
-        self.browser.click_button('Add Module')
+        self.browser.click_button('ADD STEP')
         self.browser.fill_in('moduleQ', 'Paste data')
         self.browser.click_whatever('.module-search-result', text='Paste data')
 

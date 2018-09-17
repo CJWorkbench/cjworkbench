@@ -193,7 +193,7 @@ def original_module_lineno(line):
 
 
 # Ensure the Python file compiles
-# This function rewrites the file to add module definition boilerplate.
+# This function rewrites the file to ADD STEP definition boilerplate.
 def add_boilerplate_and_check_syntax(destination_directory, python_file):
     filename = os.path.join(destination_directory, python_file)
 
