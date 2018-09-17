@@ -54,7 +54,7 @@ export default class ColumnContextMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <i className='icon-more'></i>
+          <i className='icon-caret-down'></i>
         </DropdownToggle>
         <Portal>
           <DropdownMenu persist flip={false} modifiers={dropdownModifiers}>

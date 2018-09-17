@@ -116,7 +116,7 @@
 
           .react-grid-Grid{
             border: none;
-          }          
+          }
         }
       }
 
@@ -227,7 +227,7 @@
             position: absolute;
             flex: 0 0 auto;
             display:flex;
-            width:3.4rem;
+            width: 3rem;
             justify-content: center;
             align-items: center;
             cursor: pointer;
@@ -246,14 +246,14 @@
 
             button {
               flex: 0 0 auto;
-              height:2.3rem;
-              width: 2.3rem;
-              font-size: 1.35rem;
+              height:2.5rem;
+              width: 2.5rem;
+              font-size: .7rem;
               border: 0;
               background-color: transparent;
               color: inherit;
               position: relative;
-              opacity: .85;
+              opacity: .9;
               &:hover {
                 background-color:$header-hover;
               }
@@ -261,7 +261,6 @@
           }
 
           input[name="new-column-key"] {
-            // padding: just 1px off from .column-key
             padding-top: .9rem;
             padding-bottom: 2.3rem;
             outline: 2px solid $brand-orange;
@@ -272,7 +271,7 @@
             border: 0;
 
             & + .dropdown {
-              display: none;
+            //  display: none; -- un-comment to hide menu when text field input is selected
             }
           }
         }
