@@ -1448,7 +1448,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-removec"
                                                     />
                                                     <span>
-                                                      Drop column
+                                                      Delete column
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2002,7 +2002,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-removec"
                                                     />
                                                     <span>
-                                                      Drop column
+                                                      Delete column
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -2556,7 +2556,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-removec"
                                                     />
                                                     <span>
-                                                      Drop column
+                                                      Delete column
                                                     </span>
                                                   </button>
                                                 </DropdownItem>
@@ -3110,7 +3110,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                       className="icon-removec"
                                                     />
                                                     <span>
-                                                      Drop column
+                                                      Delete column
                                                     </span>
                                                   </button>
                                                 </DropdownItem>

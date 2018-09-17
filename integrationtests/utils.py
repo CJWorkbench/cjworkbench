@@ -72,11 +72,11 @@ class WorkbenchBase(unittest.TestCase):
 
         if position is None:
             with b.scope('.in-between-modules:last-child'):
-                b.click_button('Add Module')
+                b.click_button('Add step')
         else:
             i = position * 2 + 1
             with b.scope(f'.in-between-modules:nth-child({i})'):
-                b.click_button('Add Module')
+                b.click_button('Add step')
 
         # Search. That way, we won't need to worry about overflow:auto
         b.fill_in('moduleQ', name)

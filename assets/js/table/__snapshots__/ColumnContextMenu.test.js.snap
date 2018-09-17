@@ -174,7 +174,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
           className="icon-removec"
         />
         <span>
-          Drop column
+          Delete column
         </span>
       </DropdownItem>
     </DropdownMenu>
