@@ -100,7 +100,7 @@ export default class ColumnContextMenu extends React.Component {
             <DropdownItem divider />
             <DropdownItem onClick={this.dropColumn} className='drop-column' toggle={false}>
               <i className="icon-removec"></i>
-              <span>Drop column</span>
+              <span>Delete column</span>
             </DropdownItem>
           </DropdownMenu>
         </Portal>
