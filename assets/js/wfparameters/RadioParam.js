@@ -9,7 +9,8 @@ export default class RadioParam extends React.PureComponent {
   }
 
   isChecked = (idx) => {
-    return idx == this.props.selectedIdx
+    // Cast to string because this.props.selectedIdx comes in both as int and string, for some reason.
+    return idx === this.props.selectedIdx.toString()
   }
 
   render() {
