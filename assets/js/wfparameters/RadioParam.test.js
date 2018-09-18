@@ -25,7 +25,7 @@ describe('RadioButtons', () => {
 
   it('returns correct value when clicked', () => {
     const w = wrapper({isReadOnly: false});
-    w.find('input[name="Banana"]').simulate('change')
+    w.find('input[value="2"]').simulate('change')
     expect(w.prop('onChange')).toHaveBeenCalledWith('2')
   });
 
@@ -33,7 +33,7 @@ describe('RadioButtons', () => {
     let items = 'Apple|Kittens|Banana'.split('|')
     const w = wrapper({isReadOnly: true});
     for (let item in items) {
-      let button = w.find(('input[name="' + items[item] + '"]'))
+      let button = w.find(('input[value="' + item + '"]'))
       expect(button.prop('disabled')).toEqual(true)
     }
   });

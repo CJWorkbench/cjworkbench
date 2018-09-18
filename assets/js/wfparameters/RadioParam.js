@@ -21,7 +21,6 @@ export default class RadioParam extends React.PureComponent {
         <label className='t-d-gray content-3'>
           <input
             className='radio-button'
-            name={name}
             type='radio'
             value={strIdx}
             checked={this.isChecked(strIdx)}
