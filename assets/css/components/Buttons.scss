@@ -436,7 +436,7 @@ button:focus { outline:0 !important; }
 .checkbox-wrapper {
   margin-top: 0.3rem;
   margin-right: 2rem;
-  display:flex;
+  display:inline-flex;
   align-items: center;
 
   label {
