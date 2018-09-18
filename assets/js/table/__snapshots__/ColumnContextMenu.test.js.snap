@@ -8,7 +8,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
     color="secondary"
   >
     <i
-      className="icon-more"
+      className="icon-caret-down"
     />
   </DropdownToggle>
   <Portal>

@@ -1148,7 +1148,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 type="button"
                                               >
                                                 <i
-                                                  className="icon-more"
+                                                  className="icon-caret-down"
                                                 />
                                               </button>
                                             </Button>
@@ -1702,7 +1702,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 type="button"
                                               >
                                                 <i
-                                                  className="icon-more"
+                                                  className="icon-caret-down"
                                                 />
                                               </button>
                                             </Button>
@@ -2256,7 +2256,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 type="button"
                                               >
                                                 <i
-                                                  className="icon-more"
+                                                  className="icon-caret-down"
                                                 />
                                               </button>
                                             </Button>
@@ -2810,7 +2810,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 type="button"
                                               >
                                                 <i
-                                                  className="icon-more"
+                                                  className="icon-caret-down"
                                                 />
                                               </button>
                                             </Button>
