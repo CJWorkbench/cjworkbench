@@ -7,12 +7,6 @@
   "help_url":"modules/clean/column-selector",
   "parameters": [
     {
-      "name": "Select numeric range",
-      "id_name": "select_range",
-      "type": "checkbox",
-      "default": "False"
-    },
-    {
       "name": "",
       "id_name": "colselect",
       "type": "multicolumn",
@@ -36,10 +30,16 @@
       }
     },
     {
+      "name": "Select range",
+      "id_name": "select_range",
+      "type": "checkbox",
+      "default": "False"
+    },
+    {
       "name" : "",
       "id_name" : "drop_or_keep",
       "type" : "radio",
-      "radio_items" : "Drop|Keep",
+      "radio_items" : "Delete|Keep",
       "default": "1"
     },
     {

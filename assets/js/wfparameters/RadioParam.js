@@ -27,6 +27,7 @@ export default class RadioParam extends React.PureComponent {
             onChange={this.onChange}
             disabled={this.props.isReadOnly}
           />
+          <span className="button"></span>
           {name}
         </label>
       )});

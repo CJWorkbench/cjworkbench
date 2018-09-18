@@ -1,0 +1,45 @@
+
+.wf-parameter-radio {
+
+  .button-group {
+    display: flex;
+    align-items: center;
+
+    // each radio group
+    label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      margin-right: 1.5rem;
+
+      .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 2rem;
+        width: 2rem;
+        background-color: $brand-orange;
+        border-radius: 1.5rem;
+        margin-right: .8rem;
+
+        &:after {  // the white circle checkmark
+          display: none;
+          content: '';
+          height: 1.2rem;
+          width: 1.2rem;
+          border-radius: 1rem;
+          background-color: $white;
+        }
+      }
+
+      input[type=radio] {
+        display: none;
+        position: absolute;
+
+        &:checked + .button:after {
+        display: block;
+        }
+      }
+    }
+  }
+}
