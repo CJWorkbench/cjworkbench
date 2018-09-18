@@ -449,7 +449,6 @@ export default class WfParameter extends React.Component {
       case 'checkbox':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' checkbox-wrapper'}>
-            <div className='d-flex align-items-center'>
               <input
                 disabled={this.props.isReadOnly}
                 type="checkbox" className="checkbox"
@@ -458,8 +457,7 @@ export default class WfParameter extends React.Component {
                 name={id_name}
                 ref={ el => this.checkboxRef = el}
                 id={this.props.p.id} />
-              <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{name}</label>
-            </div>
+              <label htmlFor={this.props.p.id}>{name}</label>
           </div>
         );
       case 'radio':
