@@ -46,5 +46,23 @@ describe('ColumnSelector', () => {
       const w = wrapper({ allColumns: null })
       expect(w.find('.loading')).toHaveLength(1)
     })
+
+    it('should sort the selected columns in order', () => {
+      const w = mount(
+        <ColumnSelector
+          name='column'
+          isReadOnly={false}
+          value='C,A,D'
+          allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
+          onChange={jest.fn()}
+        />
+      )
+      const expected = [
+        {label: 'D', value: 'D'},
+        {label: 'A', value: 'A'},
+        {label: 'C', value: 'C'}
+      ]
+      expect(w.find('Select[name="columns"]').prop('value')).toEqual(expected)
+    })
   })
 })
