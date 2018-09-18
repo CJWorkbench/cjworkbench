@@ -7,10 +7,33 @@
   "help_url":"modules/clean/column-selector",
   "parameters": [
     {
+      "name": "Select numeric range",
+      "id_name": "select_range",
+      "type": "checkbox",
+      "default": "False"
+    },
+    {
       "name": "",
       "id_name": "colselect",
       "type": "multicolumn",
-      "ui-only": true
+      "ui-only": true,
+      "visible_if": {
+        "id_name": "select_range",
+        "value": false,
+        "invert": false
+      }
+    },
+    {
+      "name": "Column numbers",
+      "id_name": "column_numbers",
+      "type": "string",
+      "default": "",
+      "placeholder": "1-5, 8",
+      "visible_if": {
+        "id_name": "select_range",
+        "value": true,
+        "invert": false
+      }
     },
     {
       "name" : "",
