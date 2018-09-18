@@ -32,7 +32,7 @@
       "menu_items": "Left|Inner|Right"
     },
     {
-      "name": "Specify which columns to import",
+      "name": "Select columns to import",
       "id_name": "select_columns",
       "type": "checkbox",
       "default": "False"
