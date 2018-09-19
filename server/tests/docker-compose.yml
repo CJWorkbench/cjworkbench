@@ -12,10 +12,17 @@ services:
   testredis:
     image: redis:4.0.10
 
+  testminio:
+    image: minio/minio:RELEASE.2018-09-11T01-39-21Z
+    environment:
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+    command: server /data
+
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
     command: [ 'bash', '-c', 'until PGPASSWORD=cjworkbench psql -h testdb -U cjworkbench -c "\\q"; do echo "Waiting for Postgres..."; sleep 1; done; ./manage.py test -v2' ]
-    depends_on: [ 'testdb', 'testredis' ]
+    depends_on: [ 'testdb', 'testredis', 'testminio' ]
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_REDIS_HOST: testredis
@@ -24,4 +31,8 @@ services:
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://testminio:9000
+      MINIO_BUCKET_PREFIX: unittest
     # importedmodules and saveddata don't get volumes
