@@ -1,10 +1,8 @@
 # Tests for our websockets (Channels) handling
 
-import asyncio
 from aiounittest import async_test
 from channels.testing import WebsocketCommunicator
 import json
-from collections import namedtuple
 
 from cjworkbench.asgi import create_url_router
 from server.models import Workflow
@@ -14,7 +12,9 @@ from server.tests.utils import DbTestCase, add_new_workflow, \
         add_new_module_version, add_new_wf_module, create_test_user
 
 
-FakeSession = namedtuple('FakeSession', ['session_key'])
+class FakeSession(dict):
+    def __init__(self, session_key):
+        self.session_key = session_key
 
 
 class ChannelTests(DbTestCase):

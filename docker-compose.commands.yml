@@ -64,7 +64,7 @@ services:
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://testminio
+      MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: test
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testredis' ]

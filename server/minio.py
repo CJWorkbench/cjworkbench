@@ -3,7 +3,7 @@ import hmac
 import hashlib
 from django.conf import settings
 from minio import Minio
-from minio.error import ResponseError  # for export
+from minio.error import ResponseError  # noqa: F401 -- users may import it
 
 # https://localhost:9000/ => [ https:, localhost:9000 ]
 _protocol, _unused, _endpoint = settings.MINIO_URL.split('/')
@@ -18,6 +18,24 @@ UserFilesBucket = ''.join([
     'user-files',
     settings.MINIO_BUCKET_SUFFIX
 ])
+
+
+def _ensure_user_files_bucket_exists():
+    # 1. If bucket exists, return. This is good on production where we don't
+    # have permission to run `minio_client.make_bucket()`
+    if minio_client.bucket_exists(UserFilesBucket):
+        return
+
+    # 2. Bucket doesn't exist, so attempt to create it
+    try:
+        minio_client.make_bucket(UserFilesBucket)
+    except ResponseError as err:
+        raise RuntimeError(
+            f'There is no bucket "{UserFilesBucket}" on the S3 server at '
+            f'"{settings.MINIO_URL}", and we do not have permission to create '
+            'it. Please create it manually and then restart Workbench.',
+            cause=err
+        )
 
 
 def sign(b: bytes) -> bytes:
@@ -42,7 +60,9 @@ def open_for_read(bucket: str, key: str):
     """
     response = minio_client.get_object(bucket, key)
     try:
-        print(repr(response))
         yield response
     finally:
         response.release_conn()
+
+
+_ensure_user_files_bucket_exists()

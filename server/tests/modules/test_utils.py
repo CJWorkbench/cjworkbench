@@ -2,9 +2,11 @@ import io
 import unittest
 import numpy
 import pandas
+from pandas.testing import assert_frame_equal
 from django.test import SimpleTestCase, override_settings
 from server.modules.types import ProcessResult
-from server.modules.utils import build_globals_for_eval, parse_bytesio, push_header
+from server.modules.utils import build_globals_for_eval, parse_bytesio, \
+        push_header
 
 
 class SafeExecTest(unittest.TestCase):
@@ -98,42 +100,28 @@ class ParseBytesIoTest(SimpleTestCase):
         )
         self.assertEqual(result, expected)
 
-    @override_settings(CATEGORY_FILE_SIZE_MIN=3)
-    def test_determine_dtype(self):
-        # Dataframe should be string
-        result = parse_bytesio(io.BytesIO(b'A\nB'),
-                               'text/csv', None)
-        self.assertTrue(all(result.dataframe.dtypes == object))
-
-        # Dataframe should be category
-        result = parse_bytesio(io.BytesIO(b'A;B;C\nD;E;F'),
-                               'text/txt', None)
-        self.assertTrue(all(result.dataframe.dtypes == 'category'))
-
-    def test_txt_separator_detection(self):
-        expected = ProcessResult(
-            pandas.DataFrame({'A': ['B'], 'C': ['D']})
-        )
-
+    def test_txt_detect_separator_semicolon(self):
         result = parse_bytesio(io.BytesIO(b'A;C\nB;D'),
-                               'text/txt', 'utf-8')
-
+                               'text/plain', 'utf-8')
+        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
+    def test_txt_detect_separator_tab(self):
         result = parse_bytesio(io.BytesIO(b'A\tC\nB\tD'),
-                               'text/txt', 'utf-8')
-
+                               'text/plain', 'utf-8')
+        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
+    def test_txt_detect_separator_comma(self):
         result = parse_bytesio(io.BytesIO(b'A,C\nB,D'),
-                               'text/txt', 'utf-8')
-
+                               'text/plain', 'utf-8')
+        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
     def test_push_header(self):
         result = push_header(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
         expected = pandas.DataFrame({0: ['A', 'B'], 1: ['C', 'D']})
-        pandas.testing.assert_frame_equal(result, expected)
+        assert_frame_equal(result, expected)
 
         # Function should return None when a table has not been uploaded yet
         self.assertIsNone(push_header(None))

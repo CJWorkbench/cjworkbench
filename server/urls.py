@@ -4,7 +4,7 @@ from django.views.generic.base import RedirectView
 from . import views
 from .views.user import current_user
 from .views import uploads
-from .views.UploadedFileView import UploadedFileView
+from .views.UploadedFileView import get_uploadedfile
 
 urlpatterns = [
     # ex: /
@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/workflows')),
 
     url(r'^api/uploadfile/?$', uploads.handle_s3),
-    url(r'^api/uploadfile/(?P<qquuid>\S+)?$', UploadedFileView.as_view()),
+    url(r'^api/uploadfile/(?P<qquuid>\S+)?$', get_uploadedfile),
 
     # list all workflows
     url(r'^workflows/$', views.render_workflows, name='workflows'),

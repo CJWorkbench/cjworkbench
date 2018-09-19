@@ -4,31 +4,65 @@ import base64
 import json
 from typing import Any, Dict, Optional
 from django.conf import settings
+from rest_framework.decorators import api_view
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from minio.error import ResponseError
 from server.forms import UploadedFileForm
 from server.minio import minio_client, UserFilesBucket, sign
+from server.models import WfModule
 from server.modules.uploadfile import upload_to_table
+
+
+def _delete_uploaded_file(uploaded_file):
+    minio_client.remove_object(uploaded_file.bucket, uploaded_file.key)
 
 
 def handle_completed_upload(request: HttpRequest):
     """Accept the client's POST after the file has been stored in S3."""
     form = UploadedFileForm(request.POST)
 
-    if form.is_valid():
-        uploaded_file = form.save(commit=False)  # does not write to DB
-        uploaded_file.size = minio_client.stat_object(
-            uploaded_file.bucket,
-            uploaded_file.key
-        ).size
-        uploaded_file.save()
-        upload_to_table(uploaded_file.wf_module, uploaded_file)
-        return JsonResponse({'success': True}, status=201)
-    else:
+    if not form.is_valid():
         return JsonResponse({'success': False, 'error': repr(form.errors)},
                             status=400)
 
+    uploaded_file = form.save(commit=False)  # does not write to DB
 
+    # Auth/sanity checks delete the uploaded file when they fail. We assume the
+    # user who POSTed is the user who uploaded the file (since otherwise, how
+    # would they know the UUID?) -- so if we aren't going to handle the file,
+    # we have no more use for it.
+    try:
+        wf_module = uploaded_file.wf_module
+    except WfModule.DoesNotExist:
+        _delete_uploaded_file(uploaded_file)
+        return JsonResponse({'success': False,
+                             'error': 'WfModule does not exist'},
+                            status=404)
+
+    workflow = wf_module.workflow
+    if not workflow:
+        # Can this happen?
+        _delete_uploaded_file(uploaded_file)
+        return JsonResponse({'success': False,
+                             'error': 'WfModule has no Workflow'},
+                            status=404)
+
+    if not workflow.request_authorized_write(request):
+        _delete_uploaded_file(uploaded_file)
+        return JsonResponse({'success': False,
+                             'error': 'You do not own this WfModule'},
+                            status=403)
+
+    uploaded_file.size = minio_client.stat_object(
+        uploaded_file.bucket,
+        uploaded_file.key
+    ).size
+    uploaded_file.save()
+    upload_to_table(wf_module, uploaded_file)
+    return JsonResponse({'success': True}, status=201)
+
+
+@api_view(['POST', 'DELETE'])
 def handle_s3(request):
     """ View which handles all POST and DELETE requests sent by Fine Uploader
     S3. You will need to adjust these paths/conditions based on your setup.

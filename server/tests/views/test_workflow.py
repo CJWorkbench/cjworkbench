@@ -5,7 +5,6 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.models import Module, ModuleVersion, User, WfModule, Workflow
-from server.serializers import WfModuleSerializer
 from server.tests.utils import LoggedInTestCase, add_new_workflow, \
         add_new_module_version, add_new_wf_module, load_module_version
 from server.views import workflow_list, workflow_addmodule, workflow_detail, \

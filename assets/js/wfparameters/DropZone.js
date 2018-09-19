@@ -9,7 +9,7 @@ import Filename from 'react-fine-uploader/filename'
 
 import 'react-fine-uploader/gallery/gallery.css'
 
-const UploadConfig = window.initState.uploadConfig
+const UploadConfig = window.initState ? window.initState.uploadConfig : undefined
 
 export default class DropZone extends Component {
   // onDrop(files){
