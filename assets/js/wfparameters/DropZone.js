@@ -31,9 +31,12 @@ export default class DropZone extends Component {
 
   uploader = new FineUploaderS3({
     options: {
+      chunking: {
+        enabled: true
+      },
       objectProperties: {
         bucket: UploadConfig.bucket,
-        key: 'uuid',
+        key: 'uuid'
       },
       request: {
         accessKey: UploadConfig.accessKey,

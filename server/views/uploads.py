@@ -148,6 +148,7 @@ def sign_policy_document(policy_document):
 
 def sign_headers(headers):
     """ Sign and return the headers for a chunked upload. """
+    header_bytes = headers.encode('utf-8')
     return {
-        'signature': str(base64.b64encode(sign(headers)), 'ascii'),
+        'signature': str(base64.b64encode(sign(header_bytes)), 'ascii'),
     }
