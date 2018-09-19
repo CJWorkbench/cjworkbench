@@ -27,6 +27,27 @@ spec:
               value: 'True'
             - name: CJW_SOCIALACCOUNT_SECRETS
               value: secrets/socialaccount-secrets/socialaccount-secrets.json
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-access-key
+                  key: access_key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-access-key
+                  key: secret_key
+            - name: MINIO_BUCKET_PREFIX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MINIO_EXTERNAL_URL
+              valueFrom:
+                secretKeyRef:
+                  name: minio-access-key
+                  key: external_url
+            - name: MINIO_BUCKET_SUFFIX
+              value: '.workbenchdata.com'
           volumeMounts:
             # TODO make sure no migrations depend on mounted volumes, then nix mounts
             - mountPath: /app/importedmodules

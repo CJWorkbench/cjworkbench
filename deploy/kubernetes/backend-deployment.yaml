@@ -69,6 +69,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: MINIO_EXTERNAL_URL
+              valueFrom:
+                secretKeyRef:
+                  name: minio-access-key
+                  key: external_url
             - name: MINIO_BUCKET_SUFFIX
               value: '.workbenchdata.com'
           volumeMounts:

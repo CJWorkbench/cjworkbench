@@ -12,10 +12,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - user-files.workbenchdata.com
-      secretName: user-files.workbenchdata.com-secret
+      - production-user-files.workbenchdata.com
+      secretName: production-user-files.workbenchdata.com-secret
   rules:
-    - host: user-files.workbenchdata.com
+    - host: production-user-files.workbenchdata.com
       http:
         paths:
           - path: /

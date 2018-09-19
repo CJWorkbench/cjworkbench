@@ -55,21 +55,21 @@ kubectl -n production apply -f importedmodules-pv.yaml
 
 # 1.4 Prepare Google Cloud Storage and Minio
 # 1.4.1 GCS account, so minio can create buckets/objects
-gcloud iam service-accounts create minio-service-account --display-name minio-service-account
-gcloud projects add-iam-policy-binding cj-workbench \
-  --member "serviceAccount:minio-service-account@cj-workbench.iam.gserviceaccount.com" \
-  --role "roles/storage.admin"
+gcloud iam service-accounts create production-minio --display-name production-minio
+gsutil mb gs://uploaded-files.workbenchdata.com
+gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://uploaded-files.workbenchdata.com
 gcloud iam service-accounts keys create application_default_credentials.json \
-  --iam-account minio-service-account@cj-workbench.iam.gserviceaccount.com
+  --iam-account production-minio@cj-workbench.iam.gserviceaccount.com
 kubectl -n production create secret generic minio-gcs-credentials \
   --from-file=./application_default_credentials.json
 rm application_default_credentials.json
-gsutil mb gs://uploaded-files.workbenchdata.com
 # 1.4.2 minio access key and secret key
 #docker run --name minio-genkey --rm minio/minio server /nodata and after it prints info, Ctrl+C
 kubectl -n production create secret generic minio-access-key \
   --from-literal=access_key="$MINIO_ACCESS_KEY" \
-  --from-literal=secret_key="$MINIO_SECRET_KEY"
+  --from-literal=secret_key="$MINIO_SECRET_KEY" \
+  --from-literal=external_url="https://production-user-files.workbenchdata.com" \
+  --from-literal=bucket_prefix=""
 
 # 2. Start database+redis+minio
 kubectl -n production apply -f dbdata-pvc.yaml
