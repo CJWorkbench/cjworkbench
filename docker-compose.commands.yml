@@ -21,7 +21,7 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'redis' ]
+    depends_on: [ 'database', 'redis', 'minio' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   develop-module:
@@ -44,7 +44,7 @@ services:
       MINIO_URL: http://minio
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'redis' ]
+    depends_on: [ 'database', 'redis', 'minio' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   unittest:
@@ -67,5 +67,5 @@ services:
       MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: test
     networks: [ 'test' ]
-    depends_on: [ 'testdatabase', 'testredis' ]
+    depends_on: [ 'testdatabase', 'testredis', 'testminio' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'test' ]

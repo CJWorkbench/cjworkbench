@@ -67,7 +67,7 @@ services:
       CACHE_MODULES: "${CACHE_MODULES:-}"
     ports: [ '8000:8080' ]
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'redis' ]
+    depends_on: [ 'database', 'redis', 'minio' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
 
   backend:
@@ -90,7 +90,7 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
       CACHE_MODULES: "${CACHE_MODULES:-}"
-    depends_on: [ 'database', 'redis' ]
+    depends_on: [ 'database', 'redis', 'minio' ]
     networks: [ 'dev' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'run-background-loop' ]
 
