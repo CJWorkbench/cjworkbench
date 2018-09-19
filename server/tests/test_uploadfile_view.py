@@ -122,7 +122,7 @@ class UploadFileViewTests(LoggedInTestCase):
 
         expected_table = pd.DataFrame({
             'Month': ['Jan', 'Feb'],
-            'Amount': ['10', '20']
+            'Amount': [10, 20]
         })
 
         self._test_successful_upload(

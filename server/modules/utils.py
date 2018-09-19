@@ -172,7 +172,9 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     * We read the entire file contents into memory before parsing
     """
     # dtype='category' crashes as of 2018-09-11
-    return pandas.read_excel(bytesio, dtype=str)
+    data = pandas.read_excel(bytesio, dtype=object)
+    autocast_dtypes_in_place(data)
+    return data
 
 
 def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
