@@ -23,11 +23,9 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     def workflow_id(self):
         return int(self.scope['url_route']['kwargs']['workflow_id'])
 
-
     @property
     def workflow_channel_name(self):
         return _workflow_channel_name(self.workflow_id)
-
 
     @database_sync_to_async
     def get_workflow(self):
@@ -49,27 +47,25 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         return ret
 
-
     async def connect(self):
-        if await self.get_workflow() is None: raise DenyConnection()
+        if await self.get_workflow() is None:
+            raise DenyConnection()
 
         await self.channel_layer.group_add(self.workflow_channel_name,
                                            self.channel_name)
         await self.accept()
 
-
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.workflow_channel_name,
                                                self.channel_name)
-
 
     async def send_data_to_workflow_client(self, message):
         await self.send_json(message['data'])
 
 
-async def _workflow_group_send(workflow_id: int, message_dict: Dict[str,Any]) -> None:
-    """Send message_dict as JSON to all clients connected to the workflow.
-    """
+async def _workflow_group_send(workflow_id: int,
+                               message_dict: Dict[str, Any]) -> None:
+    """Send message_dict as JSON to all clients connected to the workflow."""
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
     await channel_layer.group_send(channel_name, {
@@ -78,14 +74,15 @@ async def _workflow_group_send(workflow_id: int, message_dict: Dict[str,Any]) ->
     })
 
 
-def _workflow_group_send_sync(workflow_id: int, message_dict: Dict[str,Any]) -> None:
-    """Send message_dict as JSON to all clients connected to the workflow.
-    """
+def _workflow_group_send_sync(workflow_id: int,
+                              message_dict: Dict[str, Any]) -> None:
+    """Send message_dict as JSON to all clients connected to the workflow."""
     async_to_sync(_workflow_group_send)(workflow_id, message_dict)
 
 
 def ws_client_rerender_workflow(workflow) -> None:
-    """Tell clients of the workflow to re-request it and update themselves.
+    """
+    Tell clients of the workflow to re-request it and update themselves.
 
     TODO rename this to _sync, and make _async the default
     """
@@ -93,8 +90,7 @@ def ws_client_rerender_workflow(workflow) -> None:
 
 
 async def ws_client_rerender_workflow_async(workflow) -> None:
-    """Tell clients of the workflow to re-request it and update themselves.
-    """
+    """Tell clients of the workflow to re-request it and update themselves."""
     message = {'type': 'reload-workflow'}
     await _workflow_group_send(workflow.id, message)
 
@@ -127,5 +123,9 @@ async def ws_client_wf_module_status_async(wf_module, status):
         # [adamhooper, 2018-05-22] when does this happen?
         return
 
-    message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
+    message = {
+        'type': 'wfmodule-status',
+        'id': wf_module.id,
+        'status': status
+    }
     await _workflow_group_send(workflow.id, message)

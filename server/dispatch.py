@@ -24,6 +24,7 @@ from .modules.reorder import ReorderFromTable
 from .modules.rename import RenameFromTable
 from .modules.duplicatecolumn import DuplicateColumn
 from .modules.joinurl import JoinURL
+from .modules.concaturl import ConcatURL
 
 # ---- Test Support ----
 
@@ -62,6 +63,7 @@ module_dispatch_tbl = {
     'rename-columns':   RenameFromTable,
     'duplicate-column': DuplicateColumn,
     'joinurl':          JoinURL,
+    'concaturl':        ConcatURL,
 
     # For testing
     'NOP':          NOP,

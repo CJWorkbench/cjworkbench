@@ -1,9 +1,9 @@
 {
-  "name": "Join Workflow",
+  "name": "Join",
   "id_name": "joinurl" ,
   "category" : "Add data",
   "icon" : "join",
-  "description" : "Join a workflow on one or sevral columns via its URL and select which attributes to import.",
+  "description" : "Join a workflow on one or several columns via its URL and select which attributes to import.",
   "loads_data": true,
   "parameters": [
     {
@@ -14,9 +14,16 @@
       "placeholder":"http://…"
     },
     {
-      "name": "Column to join on",
-      "id_name": "key",
-      "type": "column"
+       "name" : "Columns to join on",
+       "id_name" : "source-columns",
+       "type" : "multicolumn",
+       "ui-only": true
+    },
+    {
+       "name": "Column Names",
+       "id_name": "colnames",
+       "type": "string",
+       "visible": false
     },
     {
       "name": "Join type",
@@ -25,11 +32,22 @@
       "menu_items": "Left|Inner|Right"
     },
     {
+      "name": "Select columns to import",
+      "id_name": "select_columns",
+      "type": "checkbox",
+      "default": "False"
+    },
+    {
       "name": "Columns to import",
       "id_name" : "importcols",
       "type": "string",
       "default": "",
-      "placeholder":"Optional: Column 1, Column 2"
+      "placeholder":"Column 1, Column 2",
+      "visible_if": {
+        "id_name": "select_columns",
+        "value": true,
+        "invert": false
+      }
     },
     {
       "name": "Update",

@@ -2,7 +2,7 @@ from io import BufferedReader
 from server.minio import open_for_read, ResponseError
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
-from .utils import parse_bytesio, push_header
+from .utils import parse_bytesio, turn_header_into_first_row
 from server.utils import TempfileBackedReader
 
 
@@ -64,7 +64,7 @@ class UploadFile(ModuleImpl):
         has_header = wf_module.get_param_checkbox('has_header')
         if not has_header:
             return ProcessResult(
-                push_header(wf_module.retrieve_fetched_table()),
+                turn_header_into_first_row(wf_module.retrieve_fetched_table()),
                 wf_module.error_msg
             )
         else:

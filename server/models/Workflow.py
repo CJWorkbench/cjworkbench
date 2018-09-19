@@ -131,9 +131,9 @@ class Workflow(models.Model):
 
     def user_session_authorized_read(self, user, session):
         return (
-            self.public \
-            or (user and user == self.owner) \
-            or (session.session_key \
+            self.public
+            or (user and user == self.owner)
+            or (session and session.session_key
                 and session.session_key == self.anonymous_owner_session_key)
         )
 

@@ -13,6 +13,12 @@ import cchardet as chardet
 from server.sanitizedataframe import autocast_dtypes_in_place
 from django.conf import settings
 from django.db.models.fields.files import FieldFile
+from django.db import transaction
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from server.models.Workflow import Workflow
+from .moduleimpl import ModuleImpl
+
 
 _TextEncoding = Optional[str]
 
@@ -246,7 +252,9 @@ def _detect_encoding(bytesio: io.BytesIO):
     return detector.result['encoding']
 
 
-def push_header(table: pandas.DataFrame) -> pandas.DataFrame:
+# Move dataframe column names into the first row of data, and replace column
+# names with numbers. Used to undo first row of data incorrectly read as header
+def turn_header_into_first_row(table: pandas.DataFrame) -> pandas.DataFrame:
     # Table may not be uploaded yet
     if table is None:
         return None
@@ -292,3 +300,60 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
         return _safe_parse(bytesio, parser, text_encoding)
     else:
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
+
+# Utility functions for workflow import modules
+
+def _get_wf_module_by_id(wf_id):
+    try:
+        with transaction.atomic():
+            return Workflow.objects.select_for_update(nowait=False).get(id=wf_id)
+    except Workflow.DoesNotExist:
+        raise Exception('Target workflow does not exist')
+    except Exception as e:
+        raise e
+
+def _validate_url(url):
+    try:
+        validate = URLValidator()
+        validate(url)
+    except ValidationError:
+        raise ValidationError('Invalid URL')
+
+def get_id_from_url(url):
+    #TODO: Environment check
+    path = url.strip().split('/')
+    try:
+        _validate_url(url)
+        _id = int(path[path.index('workflows') + 1])
+        return _id
+    except ValueError:
+        raise ValueError(f'Error fetching {url}: '
+                'Invalid workflow URL')
+
+def store_external_workflow(wf_module, url):
+    right_wf_id = get_id_from_url(url)
+    # fetching could take a while so notify clients/users we're working
+    wf_module.set_busy()
+    right_wf_module = _get_wf_module_by_id(right_wf_id)
+
+    # Check to see if workflow_id the same
+    if wf_module.workflow_id == right_wf_module.id:
+        raise Exception('Cannot import the current workflow')
+
+    # Make sure _this_ workflow's owner has access permissions to the _other_ workflow
+    user = wf_module.workflow.owner
+    if not right_wf_module.user_session_authorized_read(user, None):
+        raise Exception('Access denied to the target workflow')
+
+    right_wf_module = right_wf_module.wf_modules.last()
+
+    # Always pull the cached result, so we can't execute() an infinite loop
+    try:
+        right_result = right_wf_module.get_cached_render_result().result
+    except:
+        raise Exception('Internal Error. Could not retrieve workflow.')
+    result = ProcessResult(dataframe=right_result.dataframe)
+
+    result.truncate_in_place_if_too_big()
+    result.sanitize_in_place()
+    ModuleImpl.commit_result(wf_module, result)

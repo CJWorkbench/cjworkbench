@@ -15,6 +15,7 @@ class ParameterSpec(models.Model):
     MENU = 'menu'               # menu like HTML <select>
     BUTTON = 'button'
     COLUMN = 'column'
+    RADIO = 'radio'
     MULTICOLUMN = 'multicolumn'
     SECRET = 'secret'
     CUSTOM = 'custom'           # rendered in front end
@@ -29,6 +30,7 @@ class ParameterSpec(models.Model):
         (MENU, 'Menu'),
         (COLUMN, 'Column'),
         (MULTICOLUMN, 'Multiple columns'),
+        (RADIO, 'Radio'),
         (SECRET, 'Secret'),
         (CUSTOM, 'Custom'),
     )
@@ -48,7 +50,7 @@ class ParameterSpec(models.Model):
     order = models.IntegerField('order', default=0)         # relative to other parameters
 
     def_value = models.TextField(blank=True, default='')    # string representation, will be cast to field via setvalue
-    def_menu_items = models.TextField(null=True, blank=True)  # initial menu items here
+    def_items = models.TextField(null=True, blank=True)     # initial menu and radio items here
 
     # Flags which can be set per-instance
     def_visible = models.BooleanField(default=True)         # Displayed in UI?

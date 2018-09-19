@@ -42,7 +42,7 @@ button.public-private {
     &, .publicPrivate {
       color: white;
     }
-    &:hover, .publicPrivate:hover {
+    & .publicPrivate:hover {
       color: white;
       text-decoration: underline;
     }

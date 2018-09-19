@@ -10,13 +10,36 @@
       "name": "",
       "id_name": "colselect",
       "type": "multicolumn",
-      "ui-only": true
+      "ui-only": true,
+      "visible_if": {
+        "id_name": "select_range",
+        "value": false,
+        "invert": false
+      }
+    },
+    {
+      "name": "Column numbers",
+      "id_name": "column_numbers",
+      "type": "string",
+      "default": "",
+      "placeholder": "1-5, 8",
+      "visible_if": {
+        "id_name": "select_range",
+        "value": true,
+        "invert": false
+      }
+    },
+    {
+      "name": "Select range",
+      "id_name": "select_range",
+      "type": "checkbox",
+      "default": "False"
     },
     {
       "name" : "",
       "id_name" : "drop_or_keep",
-      "type" : "menu",
-      "menu_items" : "Drop|Keep",
+      "type" : "radio",
+      "radio_items" : "Delete|Keep",
       "default": "1"
     },
     {

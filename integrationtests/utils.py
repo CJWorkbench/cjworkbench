@@ -72,11 +72,11 @@ class WorkbenchBase(unittest.TestCase):
 
         if position is None:
             with b.scope('.in-between-modules:last-child'):
-                b.click_button('Add Module')
+                b.click_button('ADD STEP')
         else:
             i = position * 2 + 1
             with b.scope(f'.in-between-modules:nth-child({i})'):
-                b.click_button('Add Module')
+                b.click_button('ADD STEP')
 
         # Search. That way, we won't need to worry about overflow:auto
         b.fill_in('moduleQ', name)
@@ -113,7 +113,7 @@ class WorkbenchBase(unittest.TestCase):
                 'Feb,666,Fred Frederson',
             ])
 
-        self.browser.click_button('Add Module')
+        self.browser.click_button('ADD STEP')
         self.browser.fill_in('moduleQ', 'Paste data')
         self.browser.click_whatever('.module-search-result', text='Paste data')
 

@@ -53,6 +53,7 @@ $brand-text--learn:#FFB5D8; // for lesson panel
 $dark-accent--soft: rgba(0,0,0,.05);
 $dark-accent--soft-M:rgba(0,0,0,.075);
 $dark-accent--medium: rgba(0,0,0,.1);
+$dark-accent--strong: rgba(0,0,0,.15);
 
 $light-accent--soft: rgba(255,255,255,.05);
 $light-accent--medium: rgba(255,255,255,.1);
@@ -71,6 +72,9 @@ $brand-learn--Vlight:lighten($brand-learn,15%);
 $brand-learn--light:lighten($brand-learn,13%);
 $brand-learn--medium:lighten($brand-learn,5%);
 
+// Overlays
+
+$light-overlay: rgba(255,255,255,.5);
 
 
 // Input fields  ᕕ( ᐛ )ᕗ

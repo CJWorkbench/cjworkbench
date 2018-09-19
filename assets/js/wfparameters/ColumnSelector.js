@@ -34,9 +34,14 @@ export default class ColumnSelector extends React.PureComponent {
     this.props.onChange(columns.join(','))
   }
 
+  compareSelected = (a, b) => {
+    const indexA = this.props.allColumns.findIndex(p => p.name === a)
+    const indexB = this.props.allColumns.findIndex(p => p.name === b)
+    return indexA - indexB
+  }
+
   render() {
     const { allColumns, isReadOnly, name } = this.props
-    const selected = this.selectedColumns
 
     if (allColumns === null) {
       return (
@@ -51,7 +56,7 @@ export default class ColumnSelector extends React.PureComponent {
       }
     ))
 
-    const selectedColumns = this.selectedColumns.map(column => (
+    const selectedColumns = this.selectedColumns.sort(this.compareSelected).map(column => (
       {
         label: column,
         value: column

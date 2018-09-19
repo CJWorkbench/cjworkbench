@@ -105,3 +105,23 @@ class RenameFromTableTests(LoggedInTestCase):
         result = execute_wfmodule(self.wf_module)
         self.assertEqual(result, ProcessResult(reference_table,
                                     'Length of input list (5) does not match width of table (4).'))
+
+    def test_remove_null_values(self):
+        self.custom_list.value = True
+        self.custom_list.save()
+        self.list_string.value = 'a,b,,\t,\n,c,d,,,'
+        self.list_string.save()
+        expected_table = reference_table.copy()
+        expected_table.columns = ['a', 'b', 'c', 'd']
+        result = execute_wfmodule(self.wf_module)
+        self.assertEqual(result, ProcessResult(expected_table))
+
+    def test_short_input(self):
+        self.custom_list.value = True
+        self.custom_list.save()
+        self.list_string.value = 'Column 3\nColumn 3_1'
+        self.list_string.save()
+        expected_table = reference_table.copy()
+        expected_table.columns = ['Column 3', 'Column 3_1', 'Column 3_2', 'Column 4']
+        result = execute_wfmodule(self.wf_module)
+        self.assertEqual(result, ProcessResult(expected_table))

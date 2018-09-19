@@ -66,6 +66,43 @@
       // improving the rendering of everything else in the app.
       transform: translate3d(0, 0, 0);
 
+      .overlay {
+        position: absolute;
+        background-color: $light-overlay;
+        display: flex;
+        //justify-content: center; cancelling justification because it should be positioned over the table, not the canvas -- same for the spinner
+        height: 100%;
+        width: 100%;
+        bottom: 0;
+        padding: 0;
+
+        div {
+          border-radius: .5rem;
+          width: 40rem;
+          margin: 8rem 16rem;
+          padding: 2rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .text {
+            @extend .title-3;
+            color: $brand-text--dark;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+          }
+
+          button {
+            @extend .action-button;
+            @extend .button-blue--fill;
+            margin-top: 3rem;
+            text-transform: uppercase;
+
+          }
+        }
+      }
+
       .react-grid-Container {
         // Do not influence the height of .outputpane-data.
         position: absolute;
@@ -73,14 +110,16 @@
         left: 0;
         width: 100%;
         height: 100%;
+
+        .react-grid-Main {
+          outline: none;
+
+          .react-grid-Grid{
+            border: none;
+          }
+        }
       }
 
-      .react-grid-Grid{
-        border-top: 0;
-        border-right: none;
-        border-bottom: none;
-        border-left: none;
-      }
 
       .react-grid-Canvas {
         background-color: $table-background;
@@ -188,7 +227,7 @@
             position: absolute;
             flex: 0 0 auto;
             display:flex;
-            width:3.4rem;
+            width: 3rem;
             justify-content: center;
             align-items: center;
             cursor: pointer;
@@ -207,14 +246,14 @@
 
             button {
               flex: 0 0 auto;
-              height:2.3rem;
-              width: 2.3rem;
-              font-size: 1.35rem;
+              height:2.5rem;
+              width: 2.5rem;
+              font-size: .7rem;
               border: 0;
               background-color: transparent;
               color: inherit;
               position: relative;
-              opacity: .85;
+              opacity: .9;
               &:hover {
                 background-color:$header-hover;
               }
@@ -222,7 +261,6 @@
           }
 
           input[name="new-column-key"] {
-            // padding: just 1px off from .column-key
             padding-top: .9rem;
             padding-bottom: 2.3rem;
             outline: 2px solid $brand-orange;
@@ -233,7 +271,7 @@
             border: 0;
 
             & + .dropdown {
-              display: none;
+            //  display: none; -- un-comment to hide menu when text field input is selected
             }
           }
         }

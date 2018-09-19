@@ -157,8 +157,8 @@ export class WfModule extends React.PureComponent {
     const p = this.getParameterValue(paramIdName)
 
     if (p) {
-      if (p.menu_items) {
-        return p.menu_items.split('|').map(s => s.trim())
+      if (p.items) {
+        return p.items.split('|').map(s => s.trim())
       }
     }
     return []

@@ -16,14 +16,14 @@ class ParameterVal(models.Model):
 
     value = models.TextField(blank=True, default='')
 
-    menu_items = models.TextField(null=True, blank=True)
+    items = models.TextField(null=True, blank=True)
 
     visible = models.BooleanField(default=True)
 
     def init_from_spec(self):
         self.set_value(self.parameter_spec.def_value)
         self.order = self.parameter_spec.order
-        self.menu_items = self.parameter_spec.def_menu_items
+        self.items = self.parameter_spec.def_items
         self.visible = self.parameter_spec.def_visible
 
     def duplicate(self, to_wf_module):
@@ -37,7 +37,7 @@ class ParameterVal(models.Model):
             parameter_spec=self.parameter_spec,
             order=self.order,
             value=value,
-            menu_items=self.menu_items,
+            items=self.items,
             visible=self.visible
         )
         return newval
@@ -61,7 +61,7 @@ class ParameterVal(models.Model):
         if self.parameter_spec.type != ParameterSpec.MENU:
             raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
 
-        items = self.menu_items
+        items = self.items
         if (items is not None):
             items = items.split('|')
             idx = int(self.value)
@@ -69,6 +69,26 @@ class ParameterVal(models.Model):
                 return items[idx]
             else:
                 return ''  # return empty if bad idx, to allow for possible errors when menu items changed
+
+    # Return selected radio item index. Insensitive to menu item text, either in config json or at runtime.
+    def selected_radio_item_idx(self):
+        if self.parameter_spec.type != ParameterSpec.RADIO:
+            raise ValueError('Request for current item of non-radio parameter ' + self.parameter_spec.name)
+        return int(self.value)
+
+    # Return text of currently selected radio item. Warning: will vary between locales etc.
+    def selected_radio_item_string(self):
+        if self.parameter_spec.type != ParameterSpec.RADIO:
+            raise ValueError('Request for current item of non-radio parameter ' + self.parameter_spec.name)
+
+        items = self.items
+        if (items is not None):
+            items = items.split('|')
+            idx = int(self.value)
+            if items != [''] and idx >= 0 and idx < len(items):
+                return items[idx]
+            else:
+                return ''  # return empty if bad idx, to allow for possible errors when radio items changed
 
     # This is where type checking / coercion happens.
     def set_value(self, new_value):
@@ -102,6 +122,12 @@ class ParameterVal(models.Model):
                 self.value = 'False'
 
         elif ptype == ParameterSpec.MENU:
+            try:
+                self.value = str(int(new_value))
+            except ValueError:
+                self.value = '0'
+
+        elif ptype == ParameterSpec.RADIO:
             try:
                 self.value = str(int(new_value))
             except ValueError:
@@ -143,6 +169,8 @@ class ParameterVal(models.Model):
         elif ptype == ParameterSpec.CHECKBOX:
             return self.value == 'True'
         elif ptype == ParameterSpec.MENU:
+            return int(self.value) if self.value != '' else 0
+        elif ptype == ParameterSpec.RADIO:
             return int(self.value) if self.value != '' else 0
         elif ptype == ParameterSpec.COLUMN or \
              ptype == ParameterSpec.MULTICOLUMN or \

@@ -53,7 +53,7 @@
       "name": "",
       "id_name": "keep",
       "type": "menu",
-      "menu_items": "Keep|Drop",
+      "menu_items": "Keep|Delete",
       "visible_if": {
         "invert":true,
         "id_name": "condition",

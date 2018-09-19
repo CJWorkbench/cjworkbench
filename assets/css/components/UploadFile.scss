@@ -1,9 +1,8 @@
 
 
-.dropzone{
+.dropzone {
   height:8rem;
   border: 3px dashed $brand-orange;
-  opacity: 0.6;
   color:$brand-orange;
   margin-bottom: 1.5rem;
 }
@@ -11,7 +10,8 @@
 
 // Version box, before and after loading
 
-.versionSelect--uploadFile{
+.versionSelect--uploadFile {
+  margin-top: 1rem;
   border-top: 1px solid $Vlight-gray;
   padding-top: 2rem;
   margin-bottom: 0.8rem;
@@ -20,8 +20,9 @@
 
 
 
-.upload-box{
-  padding-bottom: 0.5rem;
+.upload-box {
+  padding-bottom: .5rem;
+  margin-bottom: .5rem;
 
   /*positioning of 'replace button after loading'*/
   .dropzone-button{
@@ -31,11 +32,11 @@
   }
 
   // Button 'browse' before loading and 'replace' after loading
-  .react-fine-uploader-file-input-container{
+  .react-fine-uploader-file-input-container {
     display: flex!important;
     align-items: center;
 
-    .react-fine-uploader-file-input{
+    .react-fine-uploader-file-input {
       cursor: pointer!important;
     }
   }
@@ -45,26 +46,28 @@
 
 ////////Containers
 .react-fine-uploader-gallery-total-progress-bar-container,
-.react-fine-uploader-gallery-progress-bar-container{
+.react-fine-uploader-gallery-progress-bar-container {
   background-color:transparent;
   box-shadow: none;
   width: 23rem;
   height:2px;
+  margin-bottom: .5rem;
+
 
   ///placing container before and after loading
 
-  //Empty -->loading
-  .loader-empty{
-    top:13rem;
-    left:-.5rem;
-  }
-  //Loaded -->Replace
-  .loader-replace{
-    top:9rem;
-    left:12rem;
-  }
+  // //Empty -->loading these don't seem to be relevant anymore -- Setp 12 2018 - Pierre
+  // .loader-empty {
+  //   top:13rem;
+  //   left:-.5rem;
+  // }
+  // //Loaded -->Replace
+  // .loader-replace {
+  //   top:9rem;
+  //   left:12rem;
+  // }
   //Upload bar
-  .react-fine-uploader-gallery-total-progress-bar{
+  .react-fine-uploader-gallery-total-progress-bar {
    height:2px;
    opacity:1;
    width: 23rem;

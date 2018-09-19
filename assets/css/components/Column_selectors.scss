@@ -3,12 +3,18 @@
   @extend .module-parameter;
   height: auto;
 
-  .react-select__value-container {cursor: text}
+  .css-1rtrksz.react-select__value-container {
+    cursor: text;
+    padding: .2rem;
+  }
 
   .react-select__placeholder {
     color:$brand-text--dark;
-    }
+  }
 
+  .css-d8oujb.react-select__indicator-separator {
+    opacity: .5;
+  }
 
   &.react-select__control--is-focused {
     box-shadow: none;
@@ -16,9 +22,10 @@
   }
 
   // button to open dropdown
-  .react-select__indicator {
+  .css-1ep9fjw.react-select__indicator {
     cursor: pointer;
     opacity: .6;
+    padding:.6rem;
 
     svg {
       color:$brand-text--dark;
@@ -38,6 +45,7 @@
     }
   }
   .react-select__multi-value__remove {
+    cursor: pointer;
     border-radius: 0 3px 3px 0;
     color:$brand-orange;
 

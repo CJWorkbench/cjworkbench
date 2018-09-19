@@ -46,7 +46,14 @@ class InitmoduleTests(LoggedInTestCase):
                     'id_name': 'doitcheckbox',
                     'type': 'checkbox',
                     'default': True
-                }
+                },
+                {
+                    'name': 'Radio Option',
+                    'id_name': 'radio_options',
+                    'type': 'radio',
+                    'radio_items': 'Cheese|Chocolate|Pudding',
+                    'default': 1
+                },
             ]
         }
 
@@ -87,7 +94,7 @@ class InitmoduleTests(LoggedInTestCase):
 
         # parameters
         pspecs = ParameterSpec.objects.all()
-        self.assertEqual(len(pspecs), 5)
+        self.assertEqual(len(pspecs), 6)
 
         url_spec = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec.name, 'URL')
@@ -215,6 +222,11 @@ class InitmoduleTests(LoggedInTestCase):
         ParameterSpec.objects.get(id_name='fetch')
         self.assertEqual(m1.source_version_hash, '1.0')  # internal modules get this version
 
+        radio_spec = ParameterSpec.objects.get(id_name='radio_options')
+        self.assertEqual(radio_spec.type, ParameterSpec.RADIO)
+        self.assertEqual(radio_spec.def_value, '1')
+        self.assertEqual(radio_spec.def_items, 'Cheese|Chocolate|Pudding')
+
         # create wf_modules in two different workflows that reference this module
         wf1 = add_new_workflow(name='Worky')
         wfm1 = add_new_wf_module(workflow=wf1, module_version=m1, order=1)
@@ -255,7 +267,7 @@ class InitmoduleTests(LoggedInTestCase):
         menu_spec = ParameterSpec.objects.get(id_name='caketype')
         self.assertEqual(menu_spec.type, ParameterSpec.MENU)
         self.assertEqual(menu_spec.def_value, '1')
-        self.assertEqual(menu_spec.def_menu_items, 'Cheese|Chocolate')
+        self.assertEqual(menu_spec.def_items, 'Cheese|Chocolate')
         self.assertEqual(menu_spec.order, 0)
         menu_pval1 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm1)
         self.assertEqual(menu_pval1.value, '1')
@@ -350,9 +362,36 @@ class InitmoduleTests(LoggedInTestCase):
         # added
         ParameterVal.objects.get(parameter_spec=added_spec2)
 
+        # Test specs that change type but are still compatible (ie. Menu to Radio)
+        module = Module.objects.create()
+        module_version3 = ModuleVersion.objects.create(module=module)
+        unchanged_spec3 = ParameterSpec.objects.create(id_name='unchanged', type='menu', module_version=module_version3,
+                                                       def_items='Option 1|Option 2|Option 3', def_value='0')
+        changed_spec3 = ParameterSpec.objects.create(id_name='changed', type='menu', module_version=module_version3,
+                                                       def_items='Option 1|Option 2|Option 3', def_value='0')
 
 
+        wf2 = add_new_workflow(name='Ancient Workflow')
+        wfm2 = add_new_wf_module(workflow=wf2, module_version=module_version3)
 
+        unchanged_pval = ParameterVal.objects.create(parameter_spec=unchanged_spec3, wf_module=wfm2, value='2')
+        unchanged_pval_id = unchanged_pval.id
+        changed_pval = ParameterVal.objects.create(parameter_spec=changed_spec3, wf_module=wfm2, value='2')
+        changed_pval_id = changed_pval.id
 
+        module_version4 = ModuleVersion.objects.create(module=module)
+        unchanged_spec4 = ParameterSpec.objects.create(id_name='unchanged', type='radio', module_version=module_version4,
+                                                       def_items='Option 1|Option 2|Option 3')
+        changed_spec4 = ParameterSpec.objects.create(id_name='changed', type='radio', module_version=module_version4,
+                                                     def_items='Option 1|Option 2')
 
+        update_wfm_parameters_to_new_version(wfm2, module_version4)
+        self.assertEqual(wfm2.module_version, module_version4)
 
+        # changed type, but def_items the same. Value should stay the same.
+        unchanged_pval = ParameterVal.objects.get(pk=unchanged_pval_id)
+        self.assertEqual(unchanged_pval.value, '2')
+
+        # changed type, but def_items different. Value should reset to default.
+        changed_pval = ParameterVal.objects.get(pk=changed_pval_id)
+        self.assertEqual(changed_pval.value, '0')

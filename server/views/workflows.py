@@ -20,7 +20,7 @@ from server.serializers import WorkflowSerializer, ModuleSerializer, \
 import server.utils
 from server.versions import WorkflowUndo, WorkflowRedo
 
-# This id_name->ids mapping is used by the client to execute the add module from table actions
+# This id_name->ids mapping is used by the client to execute the ADD STEP from table actions
 # We cannot nix these, because modules without a UI in the stack (e.g. reorder) do not appear
 # in the regular modules list in init_state, because that list is for the module menu
 @lru_cache(maxsize=1)
@@ -282,7 +282,7 @@ def workflow_addmodule(request, pk, format=None):
     # objects to ensure last is always latest?)
     module_version = ModuleVersion.objects.filter(module=module).last()
 
-    server.utils.log_user_event(request, 'Add Module ' + module.name, {
+    server.utils.log_user_event(request, 'ADD STEP ' + module.name, {
         'name': module.name,
         'id_name': module.id_name
     })

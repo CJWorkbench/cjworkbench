@@ -138,7 +138,7 @@ class TestLesson(LessonTest):
             wait=True
         )
         with b.scope('.wf-module[data-module-name="Reshape"]'):
-            self.select_column('colnames', 'Year')
+            self.select_column('colnames', 'Date')
 
         # Wait for param change to register
         self.expect_highlight(

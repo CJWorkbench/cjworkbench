@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Union
 import requests
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
-from .utils import parse_bytesio, push_header
+from .utils import parse_bytesio, turn_header_into_first_row
 from server import oauth
 
 
@@ -107,7 +107,7 @@ class GoogleSheets(ModuleImpl):
         # Must perform header operation here in the event the header checkbox state changes
         has_header = wf_module.get_param_checkbox("has_header")
         if not has_header:
-            return ProcessResult(push_header(wf_module.retrieve_fetched_table()),
+            return ProcessResult(turn_header_into_first_row(wf_module.retrieve_fetched_table()),
                                  wf_module.error_msg)
         else:
             return ProcessResult(wf_module.retrieve_fetched_table(),

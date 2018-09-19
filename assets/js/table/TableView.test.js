@@ -4,7 +4,7 @@ import { mount } from 'enzyme'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 import { jsonResponseMock, sleep, tick } from '../test-utils'
-import TableView, { NRowsPerPage, FetchTimeout } from './TableView'
+import TableView, { NRowsPerPage, FetchTimeout, NMaxColumns } from './TableView'
 import DataGrid from './DataGrid'
 
 jest.mock('./UpdateTableAction')
@@ -295,5 +295,26 @@ describe('TableView', () => {
     const dataGrid = tree.find(DataGrid)
     expect(dataGrid).toHaveLength(1)
     expect(dataGrid.prop('showLetter')).toBe(true)
+  })
+  it('should not allow more than 100 columns to display', async () => {
+    let testData = {
+      total_rows: 2,
+      start_row: 0,
+      end_row: 2,
+      columns: [...Array(NMaxColumns + 1).keys()],
+      rows: [
+        { a: 1, b: 2, c: 3 },
+        { a: 4, b: 5, c: 6 }
+      ],
+      column_types: ['Number', 'Number', 'Number']
+    }
+
+    const api = { render: jsonResponseMock(testData) }
+    const tree = wrapper({api, showColumnLetter: true })
+
+    await tick() // wait for rows to load
+    tree.update()
+    const overlay = tree.find('.overlay')
+    expect(overlay).toHaveLength(1)
   })
 })
