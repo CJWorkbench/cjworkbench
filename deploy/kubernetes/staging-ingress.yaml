@@ -6,8 +6,7 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    # Let server take 10min to respond: Twitter is sometimes slow
     nginx.ingress.kubernetes.io/proxy-read-timeout: "6000"
 spec:
   tls:

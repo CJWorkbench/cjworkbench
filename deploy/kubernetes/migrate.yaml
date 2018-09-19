@@ -46,6 +46,8 @@ spec:
                 secretKeyRef:
                   name: minio-access-key
                   key: external_url
+            - name: MINIO_URL
+              value: 'http://minio-service'
             - name: MINIO_BUCKET_SUFFIX
               value: '.workbenchdata.com'
           volumeMounts:
