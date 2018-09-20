@@ -93,7 +93,13 @@ class StoredObject(models.Model):
         if not self.size:
             return pd.DataFrame()  # empty table
 
-        return parquet.read(self.file.name)
+        try:
+            return parquet.read(self.file.name)
+        except FileNotFoundError:
+            # Spotted on production for a duplicated workflow dated
+            # 2018-08-01. [adamhooper, 2018-09-20] I can think of no harm in
+            # returning an empty dataframe here.
+            return pd.DataFrame()  # empty table
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
