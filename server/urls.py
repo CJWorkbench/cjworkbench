@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/workflows')),
 
     url(r'^api/uploadfile/?$', uploads.handle_s3),
-    url(r'^api/uploadfile/(?P<qquuid>\S+)?$', get_uploadedfile),
+    url(r'^api/uploadfile/([0-9]+)$', get_uploadedfile),
 
     # list all workflows
     url(r'^workflows/$', views.render_workflows, name='workflows'),

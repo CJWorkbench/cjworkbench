@@ -59,7 +59,7 @@ export default class DropZone extends Component {
         }
       },
       session: {
-        endpoint: '/api/uploadfile',
+        endpoint: `/api/uploadfile/${this.props.wfModuleId}`,
         customHeaders: { 'X-CSRFToken': csrfToken }
       },
       multiple: false

@@ -1,16 +1,11 @@
+import json
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from rest_framework import status
-from django.http import HttpResponse, JsonResponse
-from server.models import WfModule, StoredObject
+from server.models import WfModule, StoredObject, UploadedFile
 
 
 @api_view(['GET'])
-def get_uploadedfile(request):
-    wf_module_id = request.GET.get('wf_module', '')
-    if wf_module_id == '':
-        return JsonResponse({'success': False,
-                             'error': 'Missing wf_module query parameter'},
-                            status=status.HTTP_400_BAD_REQUEST)
+def get_uploadedfile(request, wf_module_id):
     wf_module = WfModule.objects.get(pk=wf_module_id)
 
     # the UploadedFile is converted to a StoredObject when the UploadFile
@@ -20,7 +15,15 @@ def get_uploadedfile(request):
         stored_at=wf_module.stored_data_version
     ).first()
     if so and so.metadata:
-        return HttpResponse(so.metadata, content_type="application/json")
+        metadata = json.loads(so.metadata)[0]
+        uploaded_file = UploadedFile.objects.get(uuid=metadata['uuid'])
+        return JsonResponse([{
+            'name': uploaded_file.name,
+            'uuid': uploaded_file.uuid,
+            's3Key': uploaded_file.key,
+            's3Bucket': uploaded_file.bucket,
+            'size': uploaded_file.size,
+        }], safe=False)
     else:
         # no file has yet been uploaded
         return JsonResponse([])
