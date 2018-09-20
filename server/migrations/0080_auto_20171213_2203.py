@@ -5,14 +5,11 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.utils.timezone
 
-# Simplest migration: delete all previous StoredObjects. Will require "check now" on existing wf, or re-upload files
+
 def migrate_files(apps, schema_editor):
-    stored_objects = apps.get_model('server', 'StoredObject')
-    for so in stored_objects.objects.all():
-        wfm = so.wf_module
-        wfm.set_fetched_data_version(None)
-        wfm.save()
-        so.delete()
+    # Deprecated code commented out out for squashmigrations
+    pass
+
 
 class Migration(migrations.Migration):
 
@@ -57,6 +54,5 @@ class Migration(migrations.Migration):
             name='uuid',
             field=models.CharField(default=None, max_length=255, null=True),
         ),
-        migrations.RunPython(migrate_files, lambda apps, schema_editor: None)
-        # lambda, scheme make reversing possible, a NOP
+        migrations.RunPython(migrate_files, migrate_files)
     ]
