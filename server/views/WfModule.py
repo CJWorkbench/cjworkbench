@@ -79,7 +79,10 @@ def _lookup_wf_module(pk: int) -> WfModule:
     wf_module = get_object_or_404(WfModule, pk=pk)
 
     # Look up workflow now, so we don't look it up later
-    wf_module.workflow  # or ObjectDoesNotExist
+    if not wf_module.workflow:
+        # We can't read the data in here, because we don't know the workflow so
+        # we can't lock it.
+        raise Http404()
 
     return wf_module
 
