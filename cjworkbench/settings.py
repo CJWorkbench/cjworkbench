@@ -15,11 +15,13 @@ import os
 import sys
 import json
 from json.decoder import JSONDecodeError
-from os.path import abspath, basename, dirname, join, normpath
+from os.path import abspath, dirname, join, normpath
 from server.settingsutils import workbench_user_display
 
 if sys.version_info[0] < 3:
     raise RuntimeError('CJ Workbench requires Python 3')
+
+SITE_ID = 1
 
 # ----- Configurable Parameters -----
 
@@ -49,9 +51,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Configuration below uses these instead of BASE_DIR
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
-SITE_ROOT = dirname(DJANGO_ROOT)
-SITE_NAME = basename(DJANGO_ROOT)
-SITE_ID = 1
 
 # /media is where uploaded files, fetched data, and cached tables are strored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
