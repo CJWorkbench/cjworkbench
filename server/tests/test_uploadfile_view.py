@@ -78,17 +78,18 @@ class UploadFileViewTests(LoggedInTestCase):
         self.assertEqual(UploadedFile.objects.count(), 1)
 
         # calling .get on this object must return filename and uuid
-        request = self.factory.get(f'/api/uploadfile?wf_module={self.wfm.id}')
+        request = self.factory.get(f'/api/uploadfile/{self.wfm.id}')
         self._augment_request(request, self.user)
-        response = get_uploadedfile(request=request)
+        response = get_uploadedfile(request, self.wfm.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        get_content = [{
+        self.assertEqual(json.loads(response.content.decode('utf-8')), [{
             'name': filename,
             'uuid': uuid,
-        }]
-        self.assertEqual(json.loads(response.content.decode('utf-8')),
-                         get_content)
+            's3Key': f'{uuid}.{ext}',
+            's3Bucket': 'our-bucket',
+            'size': size,
+        }])
 
     @patch('minio.api.Minio.get_object')
     @patch('minio.api.Minio.stat_object')
