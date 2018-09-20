@@ -114,6 +114,45 @@ def _wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
         yield textio
 
 
+def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
+                 text_encoding: _TextEncoding) -> DataFrame:
+    with _wrap_text(bytesio, text_encoding) as textio:
+        if not sep:
+            sep = _detect_separator(textio)
+
+        # Pandas CSV parser looks like this:
+        #
+        # 1. "Tokenize" the input stream: copy all its _data_ bytes into
+        #    memory, and maintain arrays of "words" and "lines" pointers
+        #    into that array.
+        # 2. Determine list of columns
+        # 3. Per-column, convert dtypes to array
+        # 4. Smoosh arrays together into a pd.DataFrame.
+        #
+        # When `low_memory=True`, all this happens in a bigger loop, so
+        # that the tokenized data structure is smaller.
+        #
+        # `low_memory=True` forces re-coding categories. That's `O(Ch * N
+        # * Ca lg Ca)`, where Ch is number of column-chunks (9,000 * 60
+        # in this case), N is number of records, Ch is number of chunks
+        # (8, in this case), and Ca is the number of categories.
+        #
+        # This `rc11.txt` file has enormous `Ch`: 9,000 * 60 = 540,000.
+        # `general.csv` (our 1.2GB file) is much smaller, at ~4,000, even
+        # though it has 250x more rows. Pandas doesn't let us adjust
+        # chunk size, and its heuristic is terrible for`rc11.txt`.
+        #
+        # Let's try `low_memory=False`. That makes the CPU cost
+        # `O(N * Co * Ca lg Ca)`, where Co is the number of columns. Memory
+        # usage grows by the number of cells. In the case of `general.csv`,
+        # the cost is an extra 1GB.
+        data = pandas.read_csv(textio, dtype='category', sep=sep,
+                               low_memory=False)
+
+        autocast_dtypes_in_place(data)
+        return data
+
+
 def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     """Build a DataFrame or raise parse error.
 
@@ -123,11 +162,7 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    bytesio.seek(0)
-    with _wrap_text(bytesio, text_encoding) as textio:
-        data = pandas.read_csv(textio, dtype='category')
-        autocast_dtypes_in_place(data)
-        return data
+    return _parse_table(bytesio, ',', text_encoding)
 
 
 def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
@@ -139,10 +174,7 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    with _wrap_text(bytesio, text_encoding) as textio:
-        data = pandas.read_table(textio, dtype='category')
-        autocast_dtypes_in_place(data)
-        return data
+    return _parse_table(bytesio, '\t', text_encoding)
 
 
 def _parse_json(bytesio: io.BytesIO,
@@ -186,11 +218,7 @@ def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * The file encoding defaults to UTF-8.
     * Data types. Call _detect_separator to determine separator
     """
-    with _wrap_text(bytesio, text_encoding) as textio:
-        sep = _detect_separator(textio)
-        data = pandas.read_table(textio, dtype='category', sep=sep)
-        autocast_dtypes_in_place(data)
-        return data
+    return _parse_table(bytesio, None, text_encoding)
 
 
 def _determine_dtype(bytesio: io.BytesIO):
