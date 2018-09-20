@@ -130,7 +130,7 @@ class WfModule(models.Model):
     is_busy = models.BooleanField(default=False, null=False)
 
     # There's fetch_error and there's cached_render_result_error.
-    fetch_error = models.CharField('fetch_error', max_length=200, blank=True)
+    fetch_error = models.CharField('fetch_error', max_length=2000, blank=True)
 
     # Most-recent delta that may possibly affect the output of this module.
     # This isn't a ForeignKey because many deltas have a foreign key pointing
