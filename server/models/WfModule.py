@@ -352,6 +352,8 @@ class WfModule(models.Model):
         new_wfm = WfModule.objects.create(
             workflow=to_workflow,
             module_version=self.module_version,
+            fetch_error=self.fetch_error,
+            stored_data_version=self.stored_data_version,
             order=self.order,
             notes=self.notes,
             is_collapsed=self.is_collapsed,
@@ -373,10 +375,6 @@ class WfModule(models.Model):
         if self.stored_data_version is not None:
             self.stored_objects.get(stored_at=self.stored_data_version) \
                     .duplicate(new_wfm)
-            new_wfm.stored_data_version = self.stored_data_version
-            new_wfm.save()
-
-        # don't set status/error as first render on this wfm will set that
 
         return new_wfm
 
