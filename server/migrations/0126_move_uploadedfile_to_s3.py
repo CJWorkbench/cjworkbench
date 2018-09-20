@@ -13,7 +13,7 @@ ext_re = re.compile('\.[0-9a-zA-Z]{1,4}\Z')
 
 
 def move_uploadedfile_to_s3(uploadedfile):
-    ext_match = ext_re.match(uploadedfile.name)
+    ext_match = ext_re.search(uploadedfile.name)
 
     if ext_match:
         ext = ext_match.group(0)  # '.csv', for instance
