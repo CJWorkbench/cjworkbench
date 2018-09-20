@@ -13,22 +13,14 @@ class UploadedFile(models.Model):
     wf_module = models.ForeignKey('WfModule', related_name='uploaded_files',
                                   on_delete=models.CASCADE)
 
-    file = models.CharField(default=None, max_length=100, null=True)
-    name = models.CharField(default=None, max_length=255, null=True)
+    name = models.CharField(max_length=255)
     size = models.IntegerField(default=0)
-    uuid = models.CharField(default=None, max_length=255, null=True)
-    bucket = models.CharField(default=None, max_length=255, null=True)
-    key = models.CharField(default=None, max_length=255, null=True)
+    uuid = models.CharField(max_length=255)
+    bucket = models.CharField(max_length=255)
+    key = models.CharField(max_length=255)
 
 
 @receiver(models.signals.post_delete, sender=UploadedFile)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    # Deletes file from filesystem when corresponding UploadedFile object is
-    # deleted.
-    if instance.file:
-        path = os.path.join(settings.BASE_DIR, 'media', instance.file)
-        if os.path.isfile(path):
-            os.remove(path)
-
-    if instance.bucket and instance.key:
-        minio_client.remove_object(instance.bucket, instance.key)
+    # Delete S3 data when UploadedFile is deleted
+    minio_client.remove_object(instance.bucket, instance.key)
