@@ -38,11 +38,20 @@ def move_uploadedfile_to_s3(uploadedfile):
 
 def move_uploadedfiles_to_s3(apps, schema_editor):
     UploadedFile = apps.get_model('server', 'UploadedFile')
-    for uploadedfile in UploadedFile.objects.filter(file__isnull=False).all():
+
+    fs_files = list(UploadedFile.objects.filter(file__isnull=False).all())
+    for uploadedfile in fs_files:
         move_uploadedfile_to_s3(uploadedfile)
 
 
 class Migration(migrations.Migration):
+    # Don't use transactions for the RunPython bit: set atomic = False, so each
+    # save happens right away. That way, if the migration crashes we'll be able
+    # to resume.
+    #
+    # The downside is that the AlterField bits aren't atomic. We should have
+    # put them in a separate migration, but it's too late. Oh well.
+    atomic = False
 
     dependencies = [
         ('server', '0001_squashed_0125_merge_20180919_1835'),
