@@ -41,7 +41,7 @@ services:
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio
+      MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
     depends_on: [ 'database', 'redis', 'minio' ]
