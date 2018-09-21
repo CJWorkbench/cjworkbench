@@ -18,7 +18,7 @@ export default class RadioParam extends React.PureComponent {
     var itemDivs = items.map( (name, idx) => {
       const strIdx = idx.toString()
       return (
-        <label className='t-d-gray content-3'>
+        <label key={idx} className='t-d-gray content-3'>
           <input
             className='radio-button'
             type='radio'
