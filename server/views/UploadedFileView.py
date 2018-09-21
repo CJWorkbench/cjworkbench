@@ -26,4 +26,4 @@ def get_uploadedfile(request, wf_module_id):
         }], safe=False)
     else:
         # no file has yet been uploaded
-        return JsonResponse([])
+        return JsonResponse([], safe=False)
