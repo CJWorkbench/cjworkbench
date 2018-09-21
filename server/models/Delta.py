@@ -34,8 +34,6 @@ class Delta(PolymorphicModel):
     # These fields must be set by any child classes, when instantiating
     workflow = models.ForeignKey('Workflow', related_name='deltas',
                                  on_delete=models.CASCADE)
-    command_description = models.CharField('command_description',
-                                           max_length=200)  # User-readable str
 
     # Next and previous Deltas on this workflow, a doubly linked list
     # Use related_name = '+' to indicate we don't want back links (we already
@@ -151,8 +149,12 @@ class Delta(PolymorphicModel):
             # we're already in the linked list, just save
             super(Delta, self).save(*args, **kwargs)
 
+    @property
+    def command_description(self):
+        raise NotImplemented
+
     def __str__(self):
-        return str(self.datetime) + " " + self.command_description
+        return str(self.datetime) + ' ' + self.command_description
 
 
 # Deletes every delta on the workflow that is not currently applied

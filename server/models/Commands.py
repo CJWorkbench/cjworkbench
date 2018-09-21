@@ -168,18 +168,22 @@ class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
     @staticmethod
     def create(workflow, module_version, insert_before):
         with workflow.cooperative_lock():
-            newwfm = WfModule.objects.create(workflow=None, module_version=module_version,
-                                             order=insert_before, is_collapsed=False)
+            newwfm = WfModule.objects.create(workflow=None,
+                                             module_version=module_version,
+                                             order=insert_before,
+                                             is_collapsed=False)
             newwfm.create_default_parameters()
 
-            description = 'Added \'' + module_version.module.name + '\' module'
             delta = Delta.create_impl(AddModuleCommand,
-                workflow=workflow,
-                wf_module=newwfm,
-                order=insert_before,
-                command_description=description)
+                                      workflow=workflow,
+                                      wf_module=newwfm,
+                                      order=insert_before)
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Add WfModule {self.wf_module}'
 
 
 # When we are deleted, delete the module if it's not in use by the Workflow (if we are *not* currently applied)
@@ -243,16 +247,18 @@ class DeleteModuleCommand(Delta, _ChangesWfModuleOutputs):
             if workflow is None:
                 return None     # this wfm was already deleted, do nothing
 
-            description = 'Deleted \'' + wf_module.get_module_name() + '\' module'
             delta = Delta.create_impl(
                 DeleteModuleCommand,
                 workflow=workflow,
                 wf_module=wf_module,
-                selected_wf_module=workflow.selected_wf_module,
-                command_description=description
+                selected_wf_module=workflow.selected_wf_module
             )
 
             return delta
+
+    @property
+    def command_description(self):
+        return f'Delete WfModule {self.wf_module}'
 
 # When we are deleted, delete the module if it's not in use by the Workflow (i.e. if we are currently applied)
 @receiver(pre_delete, sender=DeleteModuleCommand, dispatch_uid='deletemodulecommand')
@@ -307,7 +313,7 @@ class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
         # Validation: all id's and orders exist and orders are in range 0..n-1
         wfms = WfModule.objects.filter(workflow=workflow)
 
-        ids = [ wfm.id for wfm in wfms]
+        ids = [wfm.id for wfm in wfms]
         for record in new_order:
             if not isinstance(record, dict):
                 raise ValueError('JSON data must be an array of {id:x, order:y} objects')
@@ -328,11 +334,14 @@ class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
             ReorderModulesCommand,
             workflow=workflow,
             old_order=json.dumps([{'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
-            new_order=json.dumps(new_order),
-            command_description='Reordered modules'
+            new_order=json.dumps(new_order)
         )
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Reorder modules to {self.new_order}'
 
 
 class ChangeDataVersionCommand(Delta, _ChangesWfModuleOutputs):
@@ -354,19 +363,19 @@ class ChangeDataVersionCommand(Delta, _ChangesWfModuleOutputs):
 
     @staticmethod
     def create(wf_module, version):
-        description = \
-            'Changed \'' + wf_module.get_module_name() + '\' module data version to ' + str(version)
-
         delta = Delta.create_impl(
             ChangeDataVersionCommand,
             wf_module=wf_module,
             new_version=version,
             old_version=wf_module.get_fetched_data_version(),
-            workflow=wf_module.workflow,
-            command_description=description
+            workflow=wf_module.workflow
         )
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Change {self.wf_module.get_module_name()} data version to {self.version}'
 
 
 class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
@@ -401,21 +410,20 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
     @staticmethod
     def create(parameter_val, value):
         workflow = parameter_val.wf_module.workflow
-        pspec = parameter_val.parameter_spec
-
-        description = \
-            'Changed parameter \'' + pspec.name + '\' of \'' + parameter_val.wf_module.get_module_name() + '\' module'
 
         delta = Delta.create_impl(
             ChangeParameterCommand,
             parameter_val=parameter_val,
             new_value=value,
             old_value=parameter_val.get_value(),
-            workflow=workflow,
-            command_description=description
+            workflow=workflow
         )
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Change param {self.parameter_val} to {self.new_value}'
 
 
 class ChangeWorkflowTitleCommand(Delta):
@@ -433,17 +441,19 @@ class ChangeWorkflowTitleCommand(Delta):
     @staticmethod
     def create(workflow, name):
         old_name = workflow.name
-        description = 'Changed workflow name from ' + old_name + ' to ' + name
 
         delta = Delta.create_impl(
             ChangeWorkflowTitleCommand,
             workflow=workflow,
             new_value=name,
-            old_value=old_name,
-            command_description=description
+            old_value=old_name
         )
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Change workflow name to {self.new_value}'
 
 
 class ChangeWfModuleNotesCommand(Delta):
@@ -463,18 +473,20 @@ class ChangeWfModuleNotesCommand(Delta):
     @staticmethod
     def create(wf_module, notes):
         old_value = wf_module.notes if wf_module.notes else ''
-        description = 'Changed workflow module note from ' + old_value + ' to ' + notes
 
         delta = Delta.create_impl(
             ChangeWfModuleNotesCommand,
             workflow=wf_module.workflow,
             wf_module=wf_module,
             new_value=notes,
-            old_value=old_value,
-            command_description=description
+            old_value=old_value
         )
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Change WfModule note to {self.new_value}'
 
 
 class ChangeWfModuleUpdateSettingsCommand(Delta):
@@ -501,8 +513,6 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
 
     @staticmethod
     def create(wf_module, auto_update_data, next_update, update_interval):
-        description = 'Changed workflow update settings'
-
         delta = Delta.create_impl(
             ChangeWfModuleUpdateSettingsCommand,
             workflow=wf_module.workflow,
@@ -512,8 +522,11 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
             old_next_update=wf_module.next_update,
             new_next_update=next_update,
             old_update_interval=wf_module.update_interval,
-            new_update_interval=update_interval,
-            command_description=description
+            new_update_interval=update_interval
         )
 
         return delta
+
+    @property
+    def command_description(self):
+        return f'Change Workflow update settings'
