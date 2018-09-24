@@ -66,7 +66,7 @@ export class DatetimeCellFormatter extends React.PureComponent {
     const isoText = date.toISOString()
     const text = isoText.replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
 
-    return <time className='cell-datetime' datetime={isoText}>{text}</time>
+    return <time className='cell-datetime' dateTime={isoText}>{text}</time>
   }
 }
 
