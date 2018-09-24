@@ -64,6 +64,15 @@ describe('WfModule, not read-only mode', () => {
           'id_name': 'version_select',
           'type': 'custom'
         }
+      },
+      {
+        'id': 102,
+        'parameter_spec': {
+          'id_name': 'menu_select',
+          'type': 'menu'
+        },
+        'value': 1,
+        'items': 'Mango|Banana'
       }
     ],
     module_version: { module: 2 }
@@ -106,6 +115,12 @@ describe('WfModule, not read-only mode', () => {
     expect(wfModule.parameter_vals[0].value).toEqual('http://some.URL.me')
   })
 
+  it('supplies getParamMenuItems', () => {
+    const wrapper = shallow(<WfModule {...props} />)
+    const instance = wrapper.instance()
+    expect(instance.getParamMenuItems('menu_select')).toEqual(['Mango', 'Banana'])
+  })
+
   it('renders a note', () => {
     const wrapper = shallow(<WfModule {...props} wfModule={Object.assign({}, wfModule, { notes: 'some notes' })} />)
     expect(wrapper.find('EditableNotes').prop('value')).toEqual('some notes')
@@ -114,14 +129,14 @@ describe('WfModule, not read-only mode', () => {
   it('renders in Zen mode', () => {
     const wrapper = shallow(<WfModule {...props} isZenMode />)
     expect(wrapper.prop('className')).toMatch(/\bzen-mode\b/)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true ])
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true ])
   })
 
   it('has an "enter zen mode" button', () => {
     const wrapper = shallow(<WfModule {...props} isZenModeAllowed />)
     let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(false)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false ])
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false, false ])
 
     checkbox.simulate('change', { target: { checked: true } })
     expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, true)
@@ -129,7 +144,7 @@ describe('WfModule, not read-only mode', () => {
 
     checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(true)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true ])
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true ])
 
     checkbox.simulate('change', { target: { checked: false } })
     expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, false)
