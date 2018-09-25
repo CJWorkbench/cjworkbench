@@ -312,13 +312,19 @@
         border-top: 0;
 
         // content of those cells
-        .cell-text, .cell-datetime, .cell-number {
+        .cell-text, .cell-datetime {
           margin: 0 1rem;
           font-size: 1.3rem;
           overflow: hidden;
           word-wrap: nowrap;
           text-overflow: ellipsis;
           color:$brand-text--dark;
+        }
+
+        .cell-number {
+          margin: 0 1rem;
+          text-align: right;
+          font-size: 1.2rem;
         }
 
         // when a cell value cannot be rendered
