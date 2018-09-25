@@ -173,39 +173,38 @@ def wfmodule_detail(request, pk, format=None):
             if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed", "notifications"}):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
-            with wf_module.workflow.cooperative_lock():
-                if 'notes' in request.data:
-                    patch_notes(wf_module, request.data)
+            if 'notes' in request.data:
+                patch_notes(wf_module, request.data)
 
-                if 'auto_update_data' in request.data:
-                    patch_update_settings(wf_module, request.data, request)
+            if 'auto_update_data' in request.data:
+                patch_update_settings(wf_module, request.data, request)
 
-                    if bool(request.data['auto_update_data']):
-                        server.utils.log_user_event(
-                            request,
-                            'Enabled auto-update',
-                            {
-                                'wfModuleId': wf_module.id
-                            }
-                        )
+                if bool(request.data['auto_update_data']):
+                    server.utils.log_user_event(
+                        request,
+                        'Enabled auto-update',
+                        {
+                            'wfModuleId': wf_module.id
+                        }
+                    )
 
-                if 'collapsed' in request.data:
-                    wf_module.is_collapsed = request.data['collapsed']
-                    wf_module.save()
+            if 'collapsed' in request.data:
+                wf_module.is_collapsed = request.data['collapsed']
+                wf_module.save(update_fields=['is_collapsed'])
 
-                if 'notifications' in request.data:
-                    notifications = bool(request.data['notifications'])
-                    wf_module.notifications = notifications
-                    wf_module.save()
+            if 'notifications' in request.data:
+                notifications = bool(request.data['notifications'])
+                wf_module.notifications = notifications
+                wf_module.save(update_fields=['notifications'])
 
-                    if notifications:
-                        server.utils.log_user_event(
-                            request,
-                            'Enabled email notifications',
-                            {
-                                'wfModuleId': wf_module.id
-                            }
-                        )
+                if notifications:
+                    server.utils.log_user_event(
+                        request,
+                        'Enabled email notifications',
+                        {
+                            'wfModuleId': wf_module.id
+                        }
+                    )
 
         except ValueError as e:  # TODO make this less generic
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -395,39 +394,38 @@ def wfmodule_dataversion(request, pk, format=None):
     elif request.method == 'PATCH':
         wf_module = _lookup_wf_module_for_write(pk, request)
 
-        with wf_module.workflow.cooperative_lock():
-            date_s = request.data.get('selected', '')
-            date = dateparse.parse_datetime(date_s)
+        date_s = request.data.get('selected', '')
+        date = dateparse.parse_datetime(date_s)
 
-            if not date:
-                return HttpResponseBadRequest(f'"selected" parameter must be an ISO8601 date; got "{date_s}"')
+        if not date:
+            return HttpResponseBadRequest(f'"selected" parameter must be an ISO8601 date; got "{date_s}"')
 
-            try:
-                # TODO maybe let's not use microsecond-precision numbers as
-                # StoredObject IDs and then send the client
-                # millisecond-precision identifiers. We _could_ just pass
-                # clients the IDs, for instance.
-                #
-                # Select a version within 1ms of the (rounded _or_ truncated)
-                # version we sent the client.
-                #
-                # (Let's not change the way we JSON-format dates just to avoid
-                # this hack. That would be even worse.)
-                stored_object = wf_module.stored_objects.get(
-                    stored_at__gte=date - timedelta(microseconds=500),
-                    stored_at__lt=date + timedelta(milliseconds=1)
-                )
-            except StoredObject.DoesNotExist:
-                return HttpResponseNotFound(f'No StoredObject with stored_at={date_s}')
-
-            async_to_sync(ChangeDataVersionCommand.create)(
-                wf_module,
-                stored_object.stored_at
+        try:
+            # TODO maybe let's not use microsecond-precision numbers as
+            # StoredObject IDs and then send the client
+            # millisecond-precision identifiers. We _could_ just pass
+            # clients the IDs, for instance.
+            #
+            # Select a version within 1ms of the (rounded _or_ truncated)
+            # version we sent the client.
+            #
+            # (Let's not change the way we JSON-format dates just to avoid
+            # this hack. That would be even worse.)
+            stored_object = wf_module.stored_objects.get(
+                stored_at__gte=date - timedelta(microseconds=500),
+                stored_at__lt=date + timedelta(milliseconds=1)
             )
+        except StoredObject.DoesNotExist:
+            return HttpResponseNotFound(f'No StoredObject with stored_at={date_s}')
 
-            if not stored_object.read:
-                stored_object.read = True
-                stored_object.save()
+        async_to_sync(ChangeDataVersionCommand.create)(
+            wf_module,
+            stored_object.stored_at
+        )
+
+        if not stored_object.read:
+            stored_object.read = True
+            stored_object.save(update_fields=['read'])
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

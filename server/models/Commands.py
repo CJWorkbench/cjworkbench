@@ -167,17 +167,16 @@ class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
 
     @staticmethod
     async def create(workflow, module_version, insert_before):
-        with workflow.cooperative_lock():
-            newwfm = WfModule.objects.create(workflow=None,
-                                             module_version=module_version,
-                                             order=insert_before,
-                                             is_collapsed=False)
-            newwfm.create_default_parameters()
+        newwfm = WfModule.objects.create(workflow=None,
+                                         module_version=module_version,
+                                         order=insert_before,
+                                         is_collapsed=False)
+        newwfm.create_default_parameters()
 
-            delta = await Delta.create_impl(AddModuleCommand,
-                                            workflow=workflow,
-                                            wf_module=newwfm,
-                                            order=insert_before)
+        delta = await Delta.create_impl(AddModuleCommand,
+                                        workflow=workflow,
+                                        wf_module=newwfm,
+                                        order=insert_before)
 
         return delta
 

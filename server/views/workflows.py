@@ -233,22 +233,21 @@ def workflow_detail(request, pk, format=None):
             if not set(request.data.keys()).intersection(valid_fields):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
-            with workflow.cooperative_lock():
-                if 'newName' in request.data:
-                    async_to_sync(ChangeWorkflowTitleCommand.create)(
-                        workflow,
-                        request.data['newName']
-                    )
+            if 'newName' in request.data:
+                async_to_sync(ChangeWorkflowTitleCommand.create)(
+                    workflow,
+                    request.data['newName']
+                )
 
-                if 'public' in request.data:
-                    # TODO this should be a command, so it's undoable
-                    workflow.public = request.data['public']
-                    workflow.save()
+            if 'public' in request.data:
+                # TODO this should be a command, so it's undoable
+                workflow.public = request.data['public']
+                workflow.save(update_fields=['public'])
 
-                if 'selected_wf_module' in request.data:
-                    workflow.selected_wf_module = \
-                            request.data['selected_wf_module']
-                    workflow.save()
+            if 'selected_wf_module' in request.data:
+                workflow.selected_wf_module = \
+                        request.data['selected_wf_module']
+                workflow.save(update_fields=['selected_wf_module'])
 
         except Exception as e:
             return JsonResponse({'message': str(e), 'status_code': 400},

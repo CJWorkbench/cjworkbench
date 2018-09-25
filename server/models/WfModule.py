@@ -343,7 +343,7 @@ class WfModule(models.Model):
     def set_ready(self):
         self.is_busy = False
         self.fetch_error = ''
-        self.save()
+        self.save(update_fields=['is_busy', 'fetch_error'])
 
     # --- Duplicate ---
     # used when duplicating a whole workflow
