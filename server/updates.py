@@ -29,16 +29,15 @@ async def update_wf_module(wf_module, now):
     """Fetch `wf_module` and notify user of changes via email/websockets."""
     logger.debug(f'Updating {wf_module} - interval '
                  f'{wf_module.update_interval}')
-    with wf_module.workflow.cooperative_lock():
-        try:
-            await module_dispatch_event(wf_module)
-            # Only set last_update_check if succeeded. TODO reconsider.
-            wf_module.last_update_check = now
-        except Exception as e:
-            # Log exceptions but keep going
-            logger.exception(f'Error fetching {wf_module}')
+    try:
+        await module_dispatch_event(wf_module)
+        # Only set last_update_check if succeeded. TODO reconsider.
+        wf_module.last_update_check = now
+    except Exception as e:
+        # Log exceptions but keep going
+        logger.exception(f'Error fetching {wf_module}')
 
-        update_next_update_time(wf_module, now)
+    update_next_update_time(wf_module, now)
 
 
 def update_next_update_time(wf_module, now):
