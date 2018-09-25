@@ -114,7 +114,7 @@ class GoogleSheets(ModuleImpl):
                                  wf_module.error_msg)
 
     @staticmethod
-    def event(wf_module, **kwargs):
+    async def event(wf_module, **kwargs):
         file_meta_json = wf_module.get_param_raw('googlefileselect', 'custom')
         if not file_meta_json:
             return
@@ -138,4 +138,4 @@ class GoogleSheets(ModuleImpl):
         else:
             result = ProcessResult()
 
-        ModuleImpl.commit_result(wf_module, result)
+        await ModuleImpl.commit_result(wf_module, result)

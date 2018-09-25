@@ -166,7 +166,7 @@ class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
         self.save()
 
     @staticmethod
-    def create(workflow, module_version, insert_before):
+    async def create(workflow, module_version, insert_before):
         with workflow.cooperative_lock():
             newwfm = WfModule.objects.create(workflow=None,
                                              module_version=module_version,
@@ -174,10 +174,10 @@ class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
                                              is_collapsed=False)
             newwfm.create_default_parameters()
 
-            delta = Delta.create_impl(AddModuleCommand,
-                                      workflow=workflow,
-                                      wf_module=newwfm,
-                                      order=insert_before)
+            delta = await Delta.create_impl(AddModuleCommand,
+                                            workflow=workflow,
+                                            wf_module=newwfm,
+                                            order=insert_before)
 
         return delta
 
@@ -239,15 +239,14 @@ class DeleteModuleCommand(Delta, _ChangesWfModuleOutputs):
         self.save()
 
     @staticmethod
-    def create(wf_module):
-
+    async def create(wf_module):
         # critical section to make double delete check work correctly
         with delete_lock:
             workflow = wf_module.workflow
             if workflow is None:
                 return None     # this wfm was already deleted, do nothing
 
-            delta = Delta.create_impl(
+            delta = await Delta.create_impl(
                 DeleteModuleCommand,
                 workflow=workflow,
                 wf_module=wf_module,
@@ -309,7 +308,7 @@ class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
         self.apply_order(json.loads(self.old_order))
 
     @staticmethod
-    def create(workflow, new_order):
+    async def create(workflow, new_order):
         # Validation: all id's and orders exist and orders are in range 0..n-1
         wfms = WfModule.objects.filter(workflow=workflow)
 
@@ -330,7 +329,7 @@ class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
             raise ValueError('WfModule orders must be in range 0..n-1')
 
         # Looks good, let's reorder
-        delta = Delta.create_impl(
+        delta = await Delta.create_impl(
             ReorderModulesCommand,
             workflow=workflow,
             old_order=json.dumps([{'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
@@ -362,8 +361,8 @@ class ChangeDataVersionCommand(Delta, _ChangesWfModuleOutputs):
         self.wf_module.set_fetched_data_version(self.old_version)
 
     @staticmethod
-    def create(wf_module, version):
-        delta = Delta.create_impl(
+    async def create(wf_module, version):
+        delta = await Delta.create_impl(
             ChangeDataVersionCommand,
             wf_module=wf_module,
             new_version=version,
@@ -408,10 +407,10 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
         self.parameter_val.set_value(self.old_value)
 
     @staticmethod
-    def create(parameter_val, value):
+    async def create(parameter_val, value):
         workflow = parameter_val.wf_module.workflow
 
-        delta = Delta.create_impl(
+        delta = await Delta.create_impl(
             ChangeParameterCommand,
             parameter_val=parameter_val,
             new_value=value,
@@ -432,17 +431,17 @@ class ChangeWorkflowTitleCommand(Delta):
 
     def forward_impl(self):
         self.workflow.name = self.new_value
-        self.workflow.save()
+        self.workflow.save(update_fields=['name'])
 
     def backward_impl(self):
         self.workflow.name = self.old_value
-        self.workflow.save()
+        self.workflow.save(update_fields=['name'])
 
     @staticmethod
-    def create(workflow, name):
+    async def create(workflow, name):
         old_name = workflow.name
 
-        delta = Delta.create_impl(
+        delta = await Delta.create_impl(
             ChangeWorkflowTitleCommand,
             workflow=workflow,
             new_value=name,
@@ -471,10 +470,10 @@ class ChangeWfModuleNotesCommand(Delta):
         self.wf_module.save()
 
     @staticmethod
-    def create(wf_module, notes):
+    async def create(wf_module, notes):
         old_value = wf_module.notes if wf_module.notes else ''
 
-        delta = Delta.create_impl(
+        delta = await Delta.create_impl(
             ChangeWfModuleNotesCommand,
             workflow=wf_module.workflow,
             wf_module=wf_module,
@@ -512,8 +511,9 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
         self.wf_module.save()
 
     @staticmethod
-    def create(wf_module, auto_update_data, next_update, update_interval):
-        delta = Delta.create_impl(
+    async def create(wf_module, auto_update_data,
+                     next_update, update_interval):
+        delta = await Delta.create_impl(
             ChangeWfModuleUpdateSettingsCommand,
             workflow=wf_module.workflow,
             wf_module=wf_module,

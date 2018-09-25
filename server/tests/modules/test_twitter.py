@@ -1,5 +1,7 @@
+import asyncio
 import json
 import unittest
+from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from unittest.mock import patch
@@ -134,14 +136,17 @@ def make_mock_statuses(json_text):
     statuses = Status.parse_list(None, tweet_array)
     return statuses
 
+
 # Turn those status objects into a Pandas table
 def make_mock_tweet_table(statuses):
-    cols = ['created_at', 'full_text', 'retweet_count', 'favorite_count', 'in_reply_to_screen_name', 'source', 'id']
+    cols = ['created_at', 'full_text', 'retweet_count', 'favorite_count',
+            'in_reply_to_screen_name', 'source', 'id']
 
     tweets = [[getattr(t, x) for x in cols] for t in statuses]
     table = pd.DataFrame(tweets, columns=cols)
     table.insert(0, 'screen_name', [t.user.screen_name for t in statuses])
-    table.rename(columns={'full_text': 'text'}, inplace=True)  # 280 chars should still be called 'text', meh
+    # 280 chars should still be called 'text', meh
+    table.rename(columns={'full_text': 'text'}, inplace=True)
     return table
 
 
@@ -182,6 +187,10 @@ mock_statuses2 = make_mock_statuses(user_timeline2_json)
 mock_tweet_table = make_mock_tweet_table(mock_statuses)
 
 
+def run_event(wf_module):
+    async_to_sync(Twitter.event)(wf_module)
+
+
 class TwitterTests(unittest.TestCase):
     def setUp(self):
         super().setUp()
@@ -192,6 +201,11 @@ class TwitterTests(unittest.TestCase):
             patch('server.modules.moduleimpl.ModuleImpl.commit_result')
         self.commit_result = self.commit_result_patch.start()
 
+        # Mock commit_result by making it return None, asynchronously
+        future = asyncio.Future()
+        future.set_result(None)
+        self.commit_result.return_value = future
+
     def tearDown(self):
         self.commit_result_patch.stop()
 
@@ -200,7 +214,7 @@ class TwitterTests(unittest.TestCase):
     def test_empty_query(self):
         self.wf_module.querytype = 1
         self.wf_module.query = ''
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
         self.commit_result.assert_called_with(
             self.wf_module,
             ProcessResult(error='Please enter a query')
@@ -208,7 +222,7 @@ class TwitterTests(unittest.TestCase):
 
     def test_empty_secret(self):
         self.wf_module.twitter_credentials = None
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
         self.commit_result.assert_called_with(
             self.wf_module,
             ProcessResult(error='Please sign in to Twitter')
@@ -228,7 +242,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Actually fetch!
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -240,7 +254,7 @@ class TwitterTests(unittest.TestCase):
         self.wf_module.fetched_table = result.dataframe
         # add only one tweet, mocking since_id
         instance.pages.return_value = [[mock_statuses2[0]]]
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
         self.assertEqual(cursor.call_args[1]['since_id'], mock_statuses[0].id)
         result2 = self.commit_result.call_args[0][1]
         # output should be only new tweets (in this case, one new tweet)
@@ -265,7 +279,7 @@ class TwitterTests(unittest.TestCase):
         instance = cursor.return_value
         instance.pages.return_value = []
 
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -292,7 +306,7 @@ class TwitterTests(unittest.TestCase):
         # Fix it _no matter what_ -- even if we aren't adding any data.
         instance = cursor.return_value
         instance.pages.return_value = []
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -312,7 +326,7 @@ class TwitterTests(unittest.TestCase):
         instance.items.return_value = mock_statuses
 
         # Actually fetch!
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
         self.assertEqual(result.error, '')
@@ -335,7 +349,7 @@ class TwitterTests(unittest.TestCase):
         instance.pages.return_value = [mock_statuses]
 
         # Actually fetch!
-        Twitter.event(self.wf_module)
+        run_event(self.wf_module)
         self.commit_result.assert_called()
         self.assertEqual(cursor.mock_calls[0][2]['owner_screen_name'],
                          'thatuser')

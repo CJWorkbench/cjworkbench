@@ -21,7 +21,8 @@ class ReorderFromTable(ModuleImpl):
             from_idx = int(entry['from'])
             to_idx = int(entry['to'])
 
-            # Our original input columns can get moved or deleted, but we'll give it a shot if indices are in range
+            # Our original input columns can get moved or deleted, but we'll
+            # give it a shot if indices are in range
             if from_idx >= len(columns) or to_idx >= len(columns):
                 continue
 

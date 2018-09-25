@@ -1,4 +1,5 @@
 from functools import lru_cache
+from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
@@ -216,7 +217,7 @@ def workflow_detail(request, pk, format=None):
         workflow = _lookup_workflow_for_write(pk, request)
 
         try:
-            ReorderModulesCommand.create(workflow, request.data)
+            async_to_sync(ReorderModulesCommand.create)(workflow, request.data)
         except ValueError as e:
             # Caused by bad id or order keys not in range 0..n-1
             # (though they don't need to be sorted)
@@ -234,8 +235,10 @@ def workflow_detail(request, pk, format=None):
 
             with workflow.cooperative_lock():
                 if 'newName' in request.data:
-                    ChangeWorkflowTitleCommand.create(workflow,
-                                                      request.data['newName'])
+                    async_to_sync(ChangeWorkflowTitleCommand.create)(
+                        workflow,
+                        request.data['newName']
+                    )
 
                 if 'public' in request.data:
                     # TODO this should be a command, so it's undoable
@@ -287,7 +290,8 @@ def workflow_addmodule(request, pk, format=None):
         'id_name': module.id_name
     })
 
-    delta = AddModuleCommand.create(workflow, module_version, index)
+    delta = async_to_sync(AddModuleCommand.create)(workflow, module_version,
+                                                   index)
     serializer = WfModuleSerializer(delta.wf_module)
     wfmodule_data = serializer.data
 
@@ -320,9 +324,9 @@ def workflow_undo_redo(request, pk, action, format=None):
     workflow = _lookup_workflow_for_write(pk, request)
 
     if action == 'undo':
-        WorkflowUndo(workflow)
+        async_to_sync(WorkflowUndo)(workflow)
     elif action == 'redo':
-        WorkflowRedo(workflow)
+        async_to_sync(WorkflowRedo)(workflow)
     else:
         return JsonResponse({'message': '"action" must be "undo" or "redo"'},
                             status=status.HTTP_400_BAD_REQUEST)

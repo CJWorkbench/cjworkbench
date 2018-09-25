@@ -3,10 +3,11 @@
 import base64
 import json
 from typing import Any, Dict, Optional
+from asgiref.sync import async_to_sync
 from django.conf import settings
-from rest_framework.decorators import api_view
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from minio.error import ResponseError
+from rest_framework.decorators import api_view
 from server.forms import UploadedFileForm
 from server.minio import minio_client, UserFilesBucket, sign
 from server.models import WfModule
@@ -58,7 +59,7 @@ def handle_completed_upload(request: HttpRequest):
         uploaded_file.key
     ).size
     uploaded_file.save()
-    upload_to_table(wf_module, uploaded_file)
+    async_to_sync(upload_to_table)(wf_module, uploaded_file)
     return JsonResponse({'success': True}, status=201)
 
 

@@ -2,8 +2,9 @@ import io
 import unittest
 import numpy
 import pandas
-from pandas.testing import assert_frame_equal
+from asgiref.sync import async_to_sync
 from django.test import SimpleTestCase, override_settings
+from pandas.testing import assert_frame_equal
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, get_id_from_url, store_external_workflow
@@ -146,6 +147,10 @@ class OtherUtilsTests(SimpleTestCase):
                 self.assertEqual(get_id_from_url(url), expected_result)
 
 
+def store_external_workflow_sync(*args, **kwargs):
+    async_to_sync(store_external_workflow)(*args, **kwargs)
+
+
 class WorkflowImport(LoggedInTestCase):
     def setUp(self):
         super(WorkflowImport, self).setUp()  # log in
@@ -160,7 +165,7 @@ class WorkflowImport(LoggedInTestCase):
         self.ext_wfm.save()
 
     def test_store_external(self):
-        store_external_workflow(self.wfm, f'https://app.workbenchdata.com/workflows/{self.ext_wfm.workflow_id}/')
+        store_external_workflow_sync(self.wfm, f'https://app.workbenchdata.com/workflows/{self.ext_wfm.workflow_id}/')
         pandas.testing.assert_frame_equal(self.wfm.retrieve_fetched_table(), self.ext_wfm.retrieve_fetched_table())
 
     def test_auth(self):
@@ -170,21 +175,21 @@ class WorkflowImport(LoggedInTestCase):
         wfm = load_and_add_module('concaturl', workflow=wf)
 
         try:
-            store_external_workflow(wfm, f'https://app.workbenchdata.com/workflows/{self.ext_wfm.workflow_id}/')
+            store_external_workflow_sync(wfm, f'https://app.workbenchdata.com/workflows/{self.ext_wfm.workflow_id}/')
             raise Exception("Did not fail")
         except Exception as err:
             self.assertEqual('Access denied to the target workflow', str(err.args[0]))
 
     def test_same_workflow(self):
         try:
-            store_external_workflow(self.wfm, f'https://app.workbenchdata.com/workflows/{self.wfm.workflow_id}/')
+            store_external_workflow_sync(self.wfm, f'https://app.workbenchdata.com/workflows/{self.wfm.workflow_id}/')
             raise Exception("Did not fail")
         except Exception as err:
             self.assertEqual('Cannot import the current workflow', str(err.args[0]))
 
     def test_workflow_no_exist(self):
         try:
-            store_external_workflow(self.wfm, f'https://app.workbenchdata.com/workflows/99999999999/')
+            store_external_workflow_sync(self.wfm, f'https://app.workbenchdata.com/workflows/99999999999/')
             raise Exception("Did not fail")
         except Exception as err:
             self.assertEqual('Target workflow does not exist', str(err.args[0]))

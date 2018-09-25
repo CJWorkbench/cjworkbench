@@ -6,12 +6,11 @@ import aiohttp
 from django.test import override_settings
 from django.utils import timezone
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from server.tests.utils import DbTestCase, LoggedInTestCase, \
         create_testdata_workflow, load_and_add_module, get_param_by_id_name
-# TODO do not import is_valid_url -- it's code under test, not code used _by_
-# tests
 from server.modules.types import ProcessResult
-from server.modules.urlscraper import URLScraper, is_valid_url, scrape_urls
+from server.modules.urlscraper import scrape_urls, URLScraper
 from server.execute import execute_wfmodule
 
 # --- Some test data ----
@@ -26,41 +25,48 @@ simple_result_table = pd.DataFrame([
     ['http://c.com/file/dir',  testdate,   '200', '<h1>What a page!</h1>'],
 ], columns=['url', 'date', 'status', 'html'])
 
-invalid_url_table = simple_result_table.copy()
-invalid_url_table.iloc[1, :] = [
-    'just not a url',
-    testdate,
-    URLScraper.STATUS_INVALID_URL,
-    '',
-]
+invalid_url_table = pd.DataFrame([
+    ['http://a.com/file',      testdate,   '200', '<div>all good</div>'],
+    ['just not a url',         testdate,   'Invalid URL', ''],
+    ['http://c.com/file/dir',  testdate,   '200', '<h1>What a page!</h1>'],
+], columns=['url', 'date', 'status', 'html'])
 
-timeout_table = simple_result_table.copy()
-timeout_table.iloc[1, 2] = URLScraper.STATUS_TIMEOUT
+timeout_table = pd.DataFrame([
+    ['http://a.com/file',      testdate,   '200', '<div>all good</div>'],
+    ['https://b.com/file2',    testdate,   'Timed out', ''],
+    ['http://c.com/file/dir',  testdate,   '200', '<h1>What a page!</h1>'],
+], columns=['url', 'date', 'status', 'html'])
 
-no_connection_table = simple_result_table.copy()
-no_connection_table.iloc[1, 2] = URLScraper.STATUS_NO_CONNECTION
+no_connection_table = pd.DataFrame([
+    ['http://a.com/file',      testdate,   '200', '<div>all good</div>'],
+    ['https://b.com/file2',    testdate,   "Can't connect: blah", ''],
+    ['http://c.com/file/dir',  testdate,   '200', '<h1>What a page!</h1>'],
+], columns=['url', 'date', 'status', 'html'])
+
+url_table = simple_result_table.loc[0:, ['url']].copy()
 
 
-# --- Test our async multiple url scraper ---
+# mock for aiohttp.ClientResponse. Note async text()
+class MockResponse:
+    def __init__(self, status, text):
+        self.status = status
+        self._text = text
+
+    async def text(self):
+        return self._text
+
 
 # this replaces aiohttp.get. Wait for a lag, then a test response
 # If the status is an error, throw the appropriate exception
 async def mock_async_get(status, text, lag):
     await asyncio.sleep(lag)
 
-    if status == URLScraper.STATUS_TIMEOUT:
+    if status == 'Timed out':
         raise asyncio.TimeoutError
-    elif status == URLScraper.STATUS_NO_CONNECTION:
-        raise aiohttp.client_exceptions.ClientConnectionError
-
-    # mock for aiohttp.ClientResponse. Note async text()
-    class MockResponse:
-        def __init__(self, status, text):
-            self.status = status
-            self._text = text
-
-        async def text(self):
-            return self._text
+    elif status == 'Invalid URL':
+        raise aiohttp.InvalidURL()
+    elif status == "Can't connect: blah":
+        raise aiohttp.client_exceptions.ClientConnectionError('blah')
 
     return MockResponse(status, text)
 
@@ -71,14 +77,13 @@ def make_test_tasks(results, response_times):
     # making tasks
     results_tasks = []
     for i in range(len(results)):
-        if is_valid_url(results['url'][i]):
-            results_tasks.append(
-                mock_async_get(
-                    results['status'][i],
-                    results['html'][i],
-                    response_times[i]
-                )
+        results_tasks.append(
+            mock_async_get(
+                results['status'][i],
+                results['html'][i],
+                response_times[i]
             )
+        )
 
     return results_tasks
 
@@ -87,12 +92,32 @@ class ScrapeUrlsTest(DbTestCase):
     # does the hard work for a set of urls/timings/results
     @override_settings(SCRAPER_TIMEOUT=0.2)  # all our test data lags 0.25s max
     def scraper_result_test(self, results, response_times):
+        async def session_get(url, *, timeout=None):
+            # Silly mock HTTP GET computes the test's input based on its
+            # expected output. This defeats the purpose of a test.
+            row = results[results['url'] == url]
+            if row.empty:
+                raise ValueError('called with URL we did not expect')
+            index = row.index[0]
+            delay = response_times[index]
+            await asyncio.sleep(delay)
+
+            status = row.at[index, 'status']
+            text = row.at[index, 'html']
+
+            if status == 'Timed out':
+                raise asyncio.TimeoutError
+            elif status == 'Invalid URL':
+                raise aiohttp.InvalidURL(url)
+            elif status == "Can't connect: blah":
+                raise aiohttp.client_exceptions.ClientConnectionError('blah')
+            else:
+                return MockResponse(int(status), text)
+
         with mock.patch('aiohttp.ClientSession') as session:
-            urls = results['url']
-            results_tasks = make_test_tasks(results, response_times)
-            # get the mock obj returned by aoihttp.ClientSession()
+            urls = results['url'].tolist()
             session_mock = session.return_value
-            session_mock.get.side_effect = results_tasks
+            session_mock.get.side_effect = session_get
 
             # mock the output table format scraper expects
             out_table = pd.DataFrame(
@@ -103,46 +128,49 @@ class ScrapeUrlsTest(DbTestCase):
             event_loop = asyncio.get_event_loop()
             event_loop.run_until_complete(scrape_urls(urls, out_table))
 
-            # ensure aiohttp.get() called with the right sequence of urls
-            valid_urls = [x for x in urls if is_valid_url(x)]
-            call_urls = []
-            for call in session_mock.get.mock_calls:
-                name, args, kwargs = call
-                call_urls.append(args[0])
-            self.assertEqual(call_urls, valid_urls)
+            assert_frame_equal(
+                out_table[['url', 'status', 'html']],
+                results[['url', 'status', 'html']]
+            )
 
-            # ensure we saved the right results
-            self.assertTrue(out_table['status'].equals(results['status']))
-            self.assertTrue(out_table['html'].equals(results['html']))
+            # ensure aiohttp.get() called with the right sequence of urls
+            call_urls = [args[0] for name, args, kwargs
+                         in session_mock.get.mock_calls]
+            self.assertEqual(set(call_urls), set(urls))
 
     # basic tests, number of urls smaller than max simultaneous connections
-    def test_few_urls(self):
-        response_times = [0.05, 0.02, 0.08]
+    def test_simple_urls(self):
+        response_times = [0.005, 0.002, 0.008]
         self.scraper_result_test(simple_result_table, response_times)
 
+    def test_invalid_url(self):
+        response_times = [0.005, 0.002, 0.008]
         self.scraper_result_test(invalid_url_table, response_times)
 
+    def test_timeout_url(self):
+        response_times = [0.005, 0.002, 0.008]
         self.scraper_result_test(timeout_table, response_times)
 
+    def test_no_connection_url(self):
+        response_times = [0.005, 0.002, 0.008]
         self.scraper_result_test(no_connection_table, response_times)
 
     # Number of urls greater than max simultaneous connections.
     # Various errors.
     def test_many_urls(self):
-
         # make some random, but repeatable test data
         random.seed(42)
-        num_urls = 100
+        num_urls = 20
         url_range = range(num_urls)
 
         def random_status():
             p = random.uniform(0, 1)
             if p < 0.1:
-                return URLScraper.STATUS_TIMEOUT
+                return 'Timed out'
             elif p < 0.2:
-                return URLScraper.STATUS_INVALID_URL
+                return 'Invalid URL'
             elif p < 0.3:
-                return URLScraper.STATUS_NO_CONNECTION
+                return "Can't connect: blah"
             elif p < 0.4:
                 return '404'
             else:
@@ -150,11 +178,11 @@ class ScrapeUrlsTest(DbTestCase):
 
         urls = [f'https://example{i}.com/foofile/{i * 43}' for i in url_range]
         status = [random_status() for i in url_range]
-        content = [f'<h1>Headline {i}</h1>' if status[i] == 200 else ''
+        content = [f'<h1>Headline {i}</h1>' if status[i] == '200' else ''
                    for i in url_range]
 
         # seconds before the "server" responds
-        response_times = [random.uniform(0, 0.01) for i in url_range]
+        response_times = [random.uniform(0, 0.002) for i in url_range]
 
         results_table = pd.DataFrame({
             'url': urls,
@@ -165,6 +193,33 @@ class ScrapeUrlsTest(DbTestCase):
 
         self.scraper_result_test(results_table, response_times)
 
+    def test_module_initial_nop(self):
+        wf_module = MockWfModule('List', '')
+        result = URLScraper.render(wf_module, url_table.copy())
+        assert_frame_equal(result, url_table)
+
+    def test_module_nop_with_initial_col_selection(self):
+        wf_module = MockWfModule('Input column', '', None, '')
+        result = URLScraper.render(wf_module, url_table.copy())
+        assert_frame_equal(result, url_table)
+
+
+class MockWfModule:
+    def __init__(self, urlsource, urlcol, fetched_table=None, fetch_error=''):
+        self.urlsource = urlsource
+        self.urlcol = urlcol
+        self.fetched_table = fetched_table
+        self.fetch_error = fetch_error
+
+    def get_param_menu_string(self, key):
+        return getattr(self, key)
+
+    def get_param_column(self, key):
+        return getattr(self, key)
+
+    def retrieve_fetched_table(self):
+        return self.fetched_table
+
 
 # override b/c we depend on StoredObject to transmit data between event() and
 # render(), so make sure not leave files around
@@ -173,12 +228,10 @@ class URLScraperTests(LoggedInTestCase):
     def setUp(self):
         super().setUp()  # log in
 
-        self.scraped_table = simple_result_table
-        self.urls = list(self.scraped_table['url'])
+        self.urls = list(simple_result_table['url'])
 
         # create a workflow that feeds our urls via PasteCSV into a URLScraper
-        self.url_table = pd.DataFrame(self.urls, columns=['url'])
-        self.expected_url_table_result = ProcessResult(self.url_table)
+        self.expected_url_table_result = ProcessResult(url_table)
         self.expected_url_table_result.sanitize_in_place()
 
         url_csv = 'url\n' + '\n'.join(self.urls)
@@ -189,23 +242,6 @@ class URLScraperTests(LoggedInTestCase):
         version_id = get_param_by_id_name('version_select').id
         self.client.post(f'/api/parameters/{version_id}/event')
         self.wfmodule.refresh_from_db()  # new last_relevant_workflow_id
-
-    def test_initial_nop(self):
-        result = execute_wfmodule(self.wfmodule)
-        self.assertEqual(result, self.expected_url_table_result)
-
-    def test_nop_with_initial_col_selection(self):
-        # When a column is first selected and no scraping is performed, the
-        # initial table should be returned
-        source_options = "List of URLs|Load from column".split('|')
-        source_pval = get_param_by_id_name('urlsource')
-        source_pval.value = source_options.index('Load from column')
-        source_pval.save()
-        column_pval = get_param_by_id_name('urlcol')
-        column_pval.value = 'url'
-        column_pval.save()
-        result = execute_wfmodule(self.wfmodule)
-        self.assertEqual(result, self.expected_url_table_result)
 
     # Simple test that .event() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are
@@ -218,10 +254,12 @@ class URLScraperTests(LoggedInTestCase):
 
         get_param_by_id_name('urlcol').set_value('url')
 
+        scraped_table = simple_result_table.copy()
+
         # modifies the table in place to add results, just like the real thing
         async def mock_scrapeurls(urls, table):
-            table['status'] = self.scraped_table['status']
-            table['html'] = self.scraped_table['html']
+            table['status'] = scraped_table['status']
+            table['html'] = scraped_table['html']
             return
 
         with mock.patch('django.utils.timezone.now') as now:
@@ -233,7 +271,7 @@ class URLScraperTests(LoggedInTestCase):
 
                 self.press_fetch_button()
                 result = execute_wfmodule(self.wfmodule)
-                self.assertEqual(result, ProcessResult(self.scraped_table))
+                self.assertEqual(result, ProcessResult(scraped_table))
 
     # Tests scraping from a list of URLs
     def test_scrape_list(self):
@@ -248,10 +286,12 @@ class URLScraperTests(LoggedInTestCase):
             'c.com/file/dir'  # Removed 'http://' to test the URL-fixing part
         ]))
 
+        scraped_table = simple_result_table.copy()
+
         # Code below mostly lifted from the column test
         async def mock_scrapeurls(urls, table):
-            table['status'] = self.scraped_table['status']
-            table['html'] = self.scraped_table['html']
+            table['status'] = scraped_table['status']
+            table['html'] = scraped_table['html']
             return
 
         with mock.patch('django.utils.timezone.now') as now:
@@ -263,4 +303,4 @@ class URLScraperTests(LoggedInTestCase):
 
                 self.press_fetch_button()
                 result = execute_wfmodule(self.wfmodule)
-                self.assertEqual(result, ProcessResult(self.scraped_table))
+                self.assertEqual(result, ProcessResult(scraped_table))

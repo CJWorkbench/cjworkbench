@@ -1,41 +1,50 @@
 # Check for updated data
+import logging
 from server.models import WfModule
 from server.dispatch import module_dispatch_event
-from server.utils import get_console_logger
 from django.utils import timezone
 from datetime import timedelta
 
-logger = get_console_logger()
+logger = logging.getLogger(__name__)
+
 
 # update all modules' data. But only ever one at a time,
-def update_wfm_data_scan():
+async def update_wfm_data_scan():
     logger.debug('Scanning for updating modules')
-    # Loop through every workflow module attached to a workflow
-    for wfm in WfModule.objects.filter(workflow__isnull=False):
-        # only check if an interval has been set (i.e. this module can load data)
-        if wfm.auto_update_data and wfm.update_interval>0:
-            check_for_wfm_data_update(wfm)
 
-
-# schedule next update, skipping missed updates if any
-def update_next_update_time(wfm, now):
-    while (wfm.next_update <= now):
-        wfm.next_update += timedelta(seconds=wfm.update_interval)
-    wfm.save()
-
-# Call this periodically corresponding to smallest possible update cycle (currently every minute)
-def check_for_wfm_data_update(wfm):
     now = timezone.now()
-    if now > wfm.next_update:
-        logger.debug('updating wfm ' + str(wfm) + ' - interval ' +  str(wfm.update_interval))
-        with wfm.workflow.cooperative_lock():
-            try:
-                module_dispatch_event(wfm)
-            except Exception as e:
-                # Log exceptions but keep going
-                update_next_update_time(wfm, now)     # Avoid throwing same exception until time for next update
-                logger.exception("Error updating data for module " + str(wfm))
-            else:
-                # It worked, update the checked time
-                wfm.last_update_check = now
-                update_next_update_time(wfm, now)
+
+    wf_modules = list(
+        WfModule.objects
+        .filter(workflow__isnull=False)  # ignore deleted WfModules
+        .filter(auto_update_data=True)  # user wants auto-update
+        .filter(next_update__lte=now)  # enough time has passed
+    )
+
+    for wf_module in wf_modules:
+        await update_wf_module(wf_module, now)
+
+
+async def update_wf_module(wf_module, now):
+    """Fetch `wf_module` and notify user of changes via email/websockets."""
+    logger.debug(f'Updating {wf_module} - interval '
+                 f'{wf_module.update_interval}')
+    with wf_module.workflow.cooperative_lock():
+        try:
+            await module_dispatch_event(wf_module)
+            # Only set last_update_check if succeeded. TODO reconsider.
+            wf_module.last_update_check = now
+        except Exception as e:
+            # Log exceptions but keep going
+            logger.exception(f'Error fetching {wf_module}')
+
+        update_next_update_time(wf_module, now)
+
+
+def update_next_update_time(wf_module, now):
+    """Schedule next update, skipping missed updates if any."""
+    tick = timedelta(seconds=max(wf_module.update_interval, 1))
+
+    while wf_module.next_update <= now:
+        wf_module.next_update += tick
+    wf_module.save(update_fields=['last_update_check', 'next_update'])

@@ -1,8 +1,6 @@
 import aiohttp
 import asyncio
 import re
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
 import pandas as pd
@@ -10,132 +8,91 @@ from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 
 
-# --- Asynchornous URL scraping ---
+async def async_get_url(row, url):
+    """
+    Return a Future (row, status, text).
 
-# get or create an event loop for the current thread.
-def get_thread_event_loop():
-    try:
-        loop = asyncio.get_event_loop()  # try to get previously set event loop
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop
+    The Future will resolve within settings.SCRAPER_TIMEOUT seconds. `status`
+    may be '
 
-
-def is_valid_url(url):
-    validate = URLValidator()
-    try:
-        validate(url)
-        return True
-    except ValidationError:
-        return False
-
-
-async def async_get_url(url):
-    """Returns a Future { 'status': ..., 'text': ... } dict.
-
-    The Future will resolve within settings.SCRAPER_TIMEOUT seconds: either
-    to a dict, an asyncio.TimeoutError, or an
-    aiohttp.client_exceptions.ClientError. (The most obvious ClientError is
-    ClientConnectionError, but there are others.)
+    The Future will resolve within settings.SCRAPER_TIMEOUT seconds. The
+    exception may be `asyncio.TimeoutError`, `ValueError` (invalid URL) or
+    `aiohttp.client_exceptions.ClientError`.
     """
     session = aiohttp.ClientSession()
-    response = await session.get(url, timeout=settings.SCRAPER_TIMEOUT)
-    # We have the header. Now read the content.
-    # response.text() times out according to SCRAPER_TIMEOUT above. See
-    # https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts
-    text = await response.text()
-    return {'status': response.status, 'text': text}
 
+    try:
+        response = await session.get(url, timeout=settings.SCRAPER_TIMEOUT)
+        # We have the header. Now read the content.
+        # response.text() times out according to SCRAPER_TIMEOUT above. See
+        # https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts
+        text = await response.text()
 
-# Parses the HTTP response object and stores it as a row in our table
-def add_result_to_table(table, i, response):
-    table.loc[i,'status'] = str(response['status'])
-    table.loc[i,'html'] = response['text']
-
-
-# Server didn't get back to us in time
-def add_error_to_table(table, i, errmsg):
-    table.loc[i,'status'] = errmsg
-    table.loc[i,'html'] = ''
+        return (row, str(response.status), text)
+    except asyncio.TimeoutError:
+        return (row, 'Timed out', '')
+    except aiohttp.InvalidURL:
+        return (row, 'Invalid URL', '')
+    except aiohttp.ClientError as err:
+        return (row, f"Can't connect: {err}", '')
+    except Exception as err:
+        return (row, f'Unknown error: {err}', '')
 
 
 # Asynchronously scrape many urls, and store the results in the table
 async def scrape_urls(urls, result_table):
-    event_loop = get_thread_event_loop()
+    next_queued_row = 0  # index into urls
+    fetching = set()  # {Future<response>}
 
     max_fetchers = settings.SCRAPER_NUM_CONNECTIONS
 
-    tasks_to_rows = {}  # double as our list of currently active tasks
-    num_urls = len(urls)
-    started_urls = 0
-    finished_urls = 0
-
-    while finished_urls < num_urls:
-
+    while next_queued_row < len(urls) or fetching:
         # start tasks until we max out connections, or run out of urls
-        while ( len(tasks_to_rows) < max_fetchers ) and ( started_urls < num_urls ):
-            url = urls[started_urls].strip()
-            if is_valid_url(url):
-                newtask = event_loop.create_task(async_get_url(url))
-                tasks_to_rows[newtask] = started_urls
-            else:
-                add_error_to_table(result_table, started_urls, URLScraper.STATUS_INVALID_URL)
-                finished_urls += 1
-            started_urls += 1
+        while next_queued_row < len(urls) and len(fetching) < max_fetchers:
+            row = next_queued_row
+            url = urls[row].strip()
+            fetching.add(async_get_url(row, url))
 
-        # Wait for any of the fetches to finish (if there are any)
-        if len(tasks_to_rows) > 0:
-            finished, pending = await asyncio.wait(tasks_to_rows.keys(), return_when=asyncio.FIRST_COMPLETED)
+            next_queued_row += 1
 
-            # process any results we got
-            for task in finished:
-                try:
-                    response = task.result()
-                    add_result_to_table(result_table, tasks_to_rows[task], response)
-                except asyncio.TimeoutError:
-                    add_error_to_table(result_table, tasks_to_rows[task], URLScraper.STATUS_TIMEOUT)
-                except aiohttp.client_exceptions.ClientConnectionError:
-                    add_error_to_table(result_table, tasks_to_rows[task], URLScraper.STATUS_NO_CONNECTION)
+        assert fetching
 
-                del tasks_to_rows[task]
+        # finish one or more tasks, then loop
+        done, pending = await asyncio.wait(fetching,
+                                           return_when=asyncio.FIRST_COMPLETED)
 
-            finished_urls += len(finished)
+        for task in done:
+            row, status, text = await task
+            result_table.loc[row, 'status'] = status
+            result_table.loc[row, 'html'] = text
 
+        fetching = pending  # delete done tasks
 
-
-# --- URLScraper module ---
 
 class URLScraper(ModuleImpl):
-    STATUS_INVALID_URL = "Invalid URL"
-    STATUS_TIMEOUT = "No response"
-    STATUS_NO_CONNECTION = "Can't connect"
-
     @staticmethod
     def render(wf_module, table):
         urlsource = wf_module.get_param_menu_string('urlsource')
         if urlsource == 'Input column':
             urlcol = wf_module.get_param_column('urlcol')
             if urlcol != '':
-                # Check if we have a fetched table; if not, return the table itself.
+                # Check if we have a fetched table; if not, return table itself
                 fetched_table = wf_module.retrieve_fetched_table()
                 if fetched_table is not None:
-                    return (fetched_table, wf_module.error_msg)
+                    return (fetched_table, wf_module.fetch_error)
                 return table
             else:
-                return table # nop if column not set
+                return table  # nop if column not set
         elif urlsource == 'List':
             fetched_table = wf_module.retrieve_fetched_table()
             if fetched_table is not None:
-                return (fetched_table, wf_module.error_msg)
+                return (fetched_table, wf_module.fetch_error)
             else:
                 return table
 
     # Scrapy scrapy scrapy
-    #
-    # TODO this should be in .render(), right?
     @staticmethod
-    def event(wfm, **kwargs):
+    async def event(wfm, **kwargs):
         urls = []
         urlsource = wfm.get_param_menu_string('urlsource')
 
@@ -170,17 +127,16 @@ class URLScraper(ModuleImpl):
                 columns=['url', 'date', 'status', 'html']
             )
 
-            event_loop = get_thread_event_loop()
-            event_loop.run_until_complete(scrape_urls(urls, table))
+            await scrape_urls(urls, table)
 
         else:
             table = pd.DataFrame()
 
         table['date'] = timezone.now().isoformat(timespec='seconds') \
-                .replace('+00:00', 'Z')
+            .replace('+00:00', 'Z')
 
         result = ProcessResult(dataframe=table)
         # No need to truncate: input is already truncated
         # No need to sanitize: we only added text+date+status
 
-        ModuleImpl.commit_result(wfm, result)
+        await ModuleImpl.commit_result(wfm, result)

@@ -1,9 +1,12 @@
+import asyncio
 import os
 import re
 import shutil
 import unittest
 from unittest import mock
+from asgiref.sync import async_to_sync
 from pandas import DataFrame
+from server import dynamicdispatch
 from server.dynamicdispatch import DynamicModule, load_module
 from server.models import WfModule
 from server.modules.types import ProcessResult
@@ -26,7 +29,7 @@ class MockWfModule:
     def retrieve_fetched_table(self):
         return self.stored_table
 
-    def set_busy(self, **kwargs):
+    async def set_busy(self, **kwargs):
         self.set_busy_calls.append(kwargs)
 
 
@@ -55,7 +58,8 @@ class DynamicDispatchTest(unittest.TestCase):
             'imported'
         ), versiondir)
 
-        self.module = DynamicModule('imported', 'abcdef')
+        with self.assertLogs(dynamicdispatch.__name__):
+            self.module = DynamicModule('imported', 'abcdef')
 
     def tearDown(self):
         shutil.rmtree(os.path.join(
@@ -172,7 +176,12 @@ class DynamicDispatchTest(unittest.TestCase):
     def fetch(self, wf_module):
         out_func = 'server.modules.moduleimpl.ModuleImpl.commit_result'
         with mock.patch(out_func) as m:
-            self.module.fetch(wf_module)
+            # Mock commit_result by making it return None, asynchronously
+            future = asyncio.Future()
+            future.set_result(None)
+            m.return_value = future
+
+            async_to_sync(self.module.fetch)(wf_module)
             return m
 
     def mock_fetch(self, func):

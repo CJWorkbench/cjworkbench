@@ -33,7 +33,7 @@ MAX_STORAGE_PER_MODULE = 1024*1024*1024
 
 # configuration for urlscraper
 SCRAPER_NUM_CONNECTIONS = 8
-SCRAPER_TIMEOUT = 30 # seconds
+SCRAPER_TIMEOUT = 30  # seconds
 
 # Chunk size for chardet file encoding detection
 CHARDET_CHUNK_SIZE = 1024*1024

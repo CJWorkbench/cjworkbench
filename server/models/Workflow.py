@@ -68,6 +68,13 @@ class Workflow(models.Model):
 
         It is safe to call cooperative_lock() within a cooperative_lock(). The
         inner one will behave as a no-op.
+
+        Take care with async functions. Transactions don't cross async
+        boundaries, anything you `await` while you hold the cooperative lock
+        won't be rolled back with the same rules as non-awaited code. You
+        should still use cooperative_lock(); but instead of behaving like a
+        database transaction, it will behave like a simple advisory lock; and
+        _it cannot be nested_.
         """
         with transaction.atomic():
             # Lock the workflow, in the database.

@@ -12,21 +12,22 @@ from server.notifications import \
 from server import websockets
 
 
-# Undo is pretty much just running workflow.last_delta backwards
-def WorkflowUndo(workflow):
+async def WorkflowUndo(workflow):
+    """Run workflow.last_delta, backwards."""
     with workflow.cooperative_lock():
         delta = workflow.last_delta
 
         # Undo, if not at the very beginning of undo chain
         if delta:
-            delta.backward()
-            workflow.refresh_from_db()  # backward() may change it
+            await delta.backward()
+            # Only update last_delta_id: other columns may have been edited in
+            # delta.backward().
             workflow.last_delta = delta.prev_delta
-            workflow.save()
+            workflow.save(update_fields=['last_delta_id'])
 
 
-# Redo is pretty much just running workflow.last_delta.next_delta forward
-def WorkflowRedo(workflow):
+async def WorkflowRedo(workflow):
+    """Run workflow.last_delta.next_delta, forward."""
     with workflow.cooperative_lock():
         # if we are at very beginning of delta chain, find first delta from db
         if workflow.last_delta:
@@ -37,16 +38,18 @@ def WorkflowRedo(workflow):
 
         # Redo, if not at very end of undo chain
         if next_delta:
-            next_delta.forward()
-            workflow.refresh_from_db()  # forward() may change it
+            await next_delta.forward()
+            # Only update last_delta_id: other columns may have been edited in
+            # delta.backward().
             workflow.last_delta = next_delta
-            workflow.save()
+            workflow.save(update_fields=['last_delta_id'])
 
 
-def save_result_if_changed(wfm: WfModule,
-                           new_result: ProcessResult,
-                           stored_object_json: Optional[Dict[str, Any]]=None
-                           ) -> datetime.datetime:
+async def save_result_if_changed(
+    wfm: WfModule,
+    new_result: ProcessResult,
+    stored_object_json: Optional[Dict[str, Any]]=None
+) -> datetime.datetime:
     """
     Store fetched table, if it is a change from wfm's existing data.
 
@@ -90,7 +93,9 @@ def save_result_if_changed(wfm: WfModule,
 
         wfm.is_busy = False
         wfm.fetch_error = new_result.error
-        wfm.cached_render_result_error = new_result.error   # clears error for good fetch after bad #160367251
+        # clears error for good fetch after bad #160367251
+        # TODO why not simply call render()?
+        wfm.cached_render_result_error = new_result.error
         wfm.save()
 
         # Mark has_unseen_notifications via direct SQL
@@ -100,14 +105,16 @@ def save_result_if_changed(wfm: WfModule,
 
     # un-indent: COMMIT so we notify the client _after_ COMMIT
     if version_added:
-        ChangeDataVersionCommand.create(wfm, version_added)  # notifies client
+        # notifies client
+        await ChangeDataVersionCommand.create(wfm, version_added)
 
         for output_delta in output_deltas:
             email_output_delta(output_delta, version_added)
     else:
         # no new data version, but we still want client to update WfModule
         # status and last update check time
-        websockets.ws_client_rerender_workflow(wfm.workflow)
+        # TODO why not just send WfModule?
+        await websockets.ws_client_rerender_workflow_async(wfm.workflow)
 
     return version_added
 

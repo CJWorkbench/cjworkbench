@@ -1,47 +1,44 @@
+from asgiref.sync import async_to_sync
+from server.tests.utils import load_and_add_module_from_dict, \
+        get_param_by_id_name, DbTestCase
 from server.models import ChangeParameterCommand
-from django.test import TestCase
-from server.tests.utils import *
 
-class ParameterValTests(TestCase):
-    def setUp(self):
+
+class ParameterValTests(DbTestCase):
+    # Change a value, then undo, redo
+    def test_change(self):
         testmodule = {
             'name': 'Parameter Change Test',
             'id_name': 'pchangetest',
             'category': 'tests',
             'parameters': [
                 {
-                  'name': 'Happy String',
-                  'id_name' : 'hstring',
-                  'type': 'string',
-                  'default': 'value 1'
+                    'name': 'Happy String',
+                    'id_name': 'hstring',
+                    'type': 'string',
+                    'default': 'value 1'
                 },
                 {
-                  'name': 'Happy Number',
-                  'id_name' : 'hnumber',
-                  'type': 'integer',
-                  'default': '1'
+                    'name': 'Happy Number',
+                    'id_name': 'hnumber',
+                    'type': 'integer',
+                    'default': '1'
                 },
                 {
-                  'name': 'Happy Checkbox',
-                  'id_name': 'hcheckbox',
-                  'type': 'checkbox',
-                  'default': True,
-                }
-              ]
-            }
-        self.wf_module = load_and_add_module_from_dict(testmodule)
+                    'name': 'Happy Checkbox',
+                    'id_name': 'hcheckbox',
+                    'type': 'checkbox',
+                    'default': True,
+                },
+            ]
+        }
+        load_and_add_module_from_dict(testmodule)
 
-    # Change a value, then undo, redo
-    def test_change(self):
         pval = get_param_by_id_name('hstring')
         self.assertEqual(pval.value, 'value 1')
-        cmd = ChangeParameterCommand.create(pval, 'value 2')
+        cmd = async_to_sync(ChangeParameterCommand.create)(pval, 'value 2')
         self.assertEqual(pval.value, 'value 2')
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(pval.value, 'value 1')
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertEqual(pval.value, 'value 2')
-
-
-
-

@@ -1,15 +1,23 @@
-from server.tests.utils import *
-from server.updates import update_wfm_data_scan
-from server import dispatch
-from unittest.mock import MagicMock, patch
-from django.utils import timezone
-from dateutil import parser
+import asyncio
 from datetime import timedelta
 import logging
+from unittest.mock import patch
+from asgiref.sync import async_to_sync
+from dateutil import parser
+from server import updates
+from server.updates import update_wfm_data_scan
+from server.tests.utils import LoggedInTestCase, add_new_workflow, \
+        load_module_version, add_new_wf_module
+from server.utils import get_console_logger
+
+
+# Mock fetch by making it return None, asynchronously
+future_none = asyncio.Future()
+future_none.set_result(None)
+
 
 # Test the scan loop that updates all auto-updating modules
 class UpdatesTests(LoggedInTestCase):
-
     def setUp(self):
         super(UpdatesTests, self).setUp()  # log in
 
@@ -22,14 +30,11 @@ class UpdatesTests(LoggedInTestCase):
         # fake out the current time so we can run the test just-so
         self.nowtime = parser.parse('Aug 28 1999 2:35PM UTC')
 
-        # several tests log exceptions or print status, but don't print that every test
-        logging.disable(logging.CRITICAL)
-
-
     @patch('server.updates.module_dispatch_event')
-    @patch('server.updates.timezone.now')
+    @patch('django.utils.timezone.now')
     def test_update_scan(self, mock_now, mock_dispatch):
         mock_now.return_value = self.nowtime
+        mock_dispatch.return_value = future_none
 
         # This module does not auto update
         self.wfm1.auto_update_data = False
@@ -51,29 +56,32 @@ class UpdatesTests(LoggedInTestCase):
         self.wfm3.update_interval = 1200
         self.wfm3.save()
 
-        update_wfm_data_scan()
+        # eat log messages
+        with self.assertLogs(updates.__name__, logging.DEBUG):
+            async_to_sync(update_wfm_data_scan)()
 
         # only wfm2 should have been updated, to update ten minutes from now
-        self.assertEqual(mock_dispatch.call_count,1)
-        self.assertTrue(mock_dispatch.call_args == ((self.wfm2,),{}))  # module_dispatch_event(wfm) call
+        self.assertEqual(mock_dispatch.call_count, 1)
+        # module_dispatch_event(wfm) call
+        self.assertTrue(mock_dispatch.call_args == ((self.wfm2,), {}))
         self.wfm2.refresh_from_db()
         self.assertEqual(self.wfm2.last_update_check, self.nowtime)
-        self.assertEqual(self.wfm2.next_update, due_for_update + timedelta(seconds=600))
+        self.assertEqual(self.wfm2.next_update,
+                         due_for_update + timedelta(seconds=600))
 
         # wfm1, wfm3 should not have updates
         self.assertEqual(self.wfm3.next_update, not_due_for_update)
-
 
     @patch('server.updates.module_dispatch_event')
     @patch('server.updates.timezone.now')
     def test_crashing_module(self, mock_now, mock_dispatch):
         mock_now.return_value = self.nowtime
 
-        # When a module throws an exception, it should get updated to the correct time
-        # and all others should still be called
+        # When a module throws an exception, it should get updated to the
+        # correct time and all others should still be called
 
         # Mocked return values. First call raises exception.
-        mock_dispatch.side_effect = [Exception('Totes crashed'), None]
+        mock_dispatch.side_effect = [Exception('Totes crashed'), future_none]
 
         # Ready to update, will crash
         self.wfm1.auto_update_data = True
@@ -91,18 +99,18 @@ class UpdatesTests(LoggedInTestCase):
         self.wfm2.update_interval = 600
         self.wfm2.save()
 
-        update_wfm_data_scan()
+        # eat log messages
+        with self.assertLogs(updates.__name__, logging.DEBUG):
+            async_to_sync(update_wfm_data_scan)()
 
-        # First module should not have updated, but both should have next update time incremented
-        self.assertEqual(mock_dispatch.call_count,2)
+        # First module should not have updated, but both should have next
+        # update time incremented
+        self.assertEqual(mock_dispatch.call_count, 2)
 
         self.wfm1.refresh_from_db()
-        self.assertEqual(self.wfm1.last_update_check, last_update1)     # unchanged, we crashed
-        self.assertTrue(self.wfm1.next_update > self.nowtime)           # changed
+        self.assertEqual(self.wfm1.last_update_check, last_update1)  # crashed
+        self.assertGreater(self.wfm1.next_update, self.nowtime)  # changed
 
         self.wfm2.refresh_from_db()
-        self.assertEqual(self.wfm2.last_update_check, self.nowtime)     # changed
-        self.assertTrue(self.wfm2.next_update > self.nowtime)           # changed
-
-        logging.disable(logging.NOTSET)
-
+        self.assertEqual(self.wfm2.last_update_check, self.nowtime)  # changed
+        self.assertTrue(self.wfm2.next_update > self.nowtime)  # changed

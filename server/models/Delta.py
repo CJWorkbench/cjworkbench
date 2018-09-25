@@ -45,19 +45,19 @@ class Delta(PolymorphicModel):
     datetime = models.DateTimeField('datetime',
                                     default=django.utils.timezone.now)
 
-    def forward(self):
+    async def forward(self):
         """Call forward_impl() with workflow.cooperative_lock()."""
         with self.workflow.cooperative_lock():
             self.forward_impl()
-        self.ws_notify()
+        await self.ws_notify()
 
-    def backward(self):
+    async def backward(self):
         """Call backward_impl() with workflow.cooperative_lock()."""
         with self.workflow.cooperative_lock():
             self.backward_impl()
-        self.ws_notify()
+        await self.ws_notify()
 
-    def ws_notify(self):
+    async def ws_notify(self):
         """
         Notify WebSocket clients that we just undid or redid.
 
@@ -97,26 +97,27 @@ class Delta(PolymorphicModel):
                     # WfModule from the Workflow.
                     data['clearWfModuleIds'] = [self.wf_module_id]
 
-        websockets.ws_client_send_delta_sync(self.workflow_id, data)
+        await websockets.ws_client_send_delta_async(self.workflow_id, data)
 
     @staticmethod
-    def create_impl(klass, **kwargs) -> None:
+    async def create_impl(klass, **kwargs) -> None:
         """Create the given Delta and run .forward(), in a Workflow.cooperative_lock().
 
         Keyword arguments vary by klass, but `workflow` is always required.
 
         Example:
 
-            delta = Delta.create_impl(ChangeWfModuleNotesCommand,
+            delta = await Delta.create_impl(ChangeWfModuleNotesCommand,
                 workflow=wf_module.workflow,
                 # ... other kwargs
             )
-            # now delta has been applied and committed to the database.
+            # now delta has been applied and committed to the database, and
+            # websockets users have been notified.
         """
         workflow = kwargs['workflow']
         with workflow.cooperative_lock():
             delta = klass.objects.create(**kwargs)
-            delta.forward()
+            await delta.forward()
 
         return delta
 

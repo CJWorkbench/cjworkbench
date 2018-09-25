@@ -2,9 +2,11 @@ import unittest
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
+from server import maintenance
 from server.maintenance import delete_expired_anonymous_workflows
 from server.models import Workflow
 from server.tests.utils import clear_db
+
 
 class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
     def setUp(self):
@@ -31,7 +33,8 @@ class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
         owner = self._create_user('Alice')
         self._create_workflow('Workflow', owner=owner)
 
-        delete_expired_anonymous_workflows()
+        with self.assertLogs(maintenance.__name__):
+            delete_expired_anonymous_workflows()
 
         self.assertEqual(Workflow.objects.count(), 1)
 
@@ -39,7 +42,8 @@ class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
         self._create_session('a-key')
         self._create_workflow('Workflow', session_key='a-key')
 
-        delete_expired_anonymous_workflows()
+        with self.assertLogs(maintenance.__name__):
+            delete_expired_anonymous_workflows()
 
         self.assertEqual(Workflow.objects.count(), 1)
 
@@ -47,6 +51,7 @@ class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
         self._create_session('a-key')
         self._create_workflow('Workflow', session_key='another-key')
 
-        delete_expired_anonymous_workflows()
+        with self.assertLogs(maintenance.__name__):
+            delete_expired_anonymous_workflows()
 
         self.assertEqual(Workflow.objects.count(), 0)

@@ -109,7 +109,7 @@ class Twitter(ModuleImpl):
 
     # Load specified user's timeline
     @staticmethod
-    def event(wfm, **_kwargs):
+    async def event(wfm, **_kwargs):
         def fail(error: str) -> None:
             result = ProcessResult(error=error)
             ModuleImpl.commit_result(wfm, result)
@@ -158,4 +158,4 @@ class Twitter(ModuleImpl):
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
 
-        ModuleImpl.commit_result(wfm, result)
+        await ModuleImpl.commit_result(wfm, result)

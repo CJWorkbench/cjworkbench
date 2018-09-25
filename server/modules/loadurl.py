@@ -46,15 +46,17 @@ class LoadURL(ModuleImpl):
 
     # Load a CSV from file when fetch pressed
     @staticmethod
-    def event(wf_module, **kwargs):
+    async def event(wf_module, **kwargs):
         url = wf_module.get_param_string('url').strip()
 
         validate = URLValidator()
         try:
             validate(url)
         except ValidationError:
-            return ModuleImpl.commit_result(wf_module,
-                                            ProcessResult(error='Invalid URL'))
+            return await ModuleImpl.commit_result(
+                wf_module,
+                ProcessResult(error='Invalid URL')
+            )
 
         mimetypes = ','.join(_ExtensionMimeTypes.values())
 
@@ -85,4 +87,4 @@ class LoadURL(ModuleImpl):
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
 
-        ModuleImpl.commit_result(wf_module, result)
+        await ModuleImpl.commit_result(wf_module, result)

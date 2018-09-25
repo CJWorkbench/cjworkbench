@@ -2,7 +2,6 @@
 # Clients open a socket on a specific workflow, and all clients viewing that
 # workflow are a "group"
 from typing import Dict, Any
-from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -74,30 +73,10 @@ async def _workflow_group_send(workflow_id: int,
     })
 
 
-def _workflow_group_send_sync(workflow_id: int,
-                              message_dict: Dict[str, Any]) -> None:
-    """Send message_dict as JSON to all clients connected to the workflow."""
-    async_to_sync(_workflow_group_send)(workflow_id, message_dict)
-
-
-def ws_client_rerender_workflow(workflow) -> None:
-    """
-    Tell clients of the workflow to re-request it and update themselves.
-
-    TODO rename this to _sync, and make _async the default
-    """
-    async_to_sync(ws_client_rerender_workflow_async)(workflow)
-
-
 async def ws_client_rerender_workflow_async(workflow) -> None:
     """Tell clients of the workflow to re-request it and update themselves."""
     message = {'type': 'reload-workflow'}
     await _workflow_group_send(workflow.id, message)
-
-
-def ws_client_send_delta_sync(workflow_id: int, delta: Dict[str, Any]) -> None:
-    """Tell clients how to modify their `workflow` and `wfModules` state."""
-    async_to_sync(ws_client_send_delta_async)(workflow_id, delta)
 
 
 async def ws_client_send_delta_async(workflow_id: int,
@@ -105,14 +84,6 @@ async def ws_client_send_delta_async(workflow_id: int,
     """Tell clients how to modify their `workflow` and `wfModules` state."""
     message = {'type': 'apply-delta', 'data': delta}
     await _workflow_group_send(workflow_id, message)
-
-
-def ws_client_wf_module_status(wf_module, status):
-    """Tell clients of the wf_module's workflow to reload the wf_module.
-
-    TODO rename this to _sync, and make _async the default
-    """
-    async_to_sync(ws_client_wf_module_status_async)(wf_module, status)
 
 
 async def ws_client_wf_module_status_async(wf_module, status):

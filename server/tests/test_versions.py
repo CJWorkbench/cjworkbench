@@ -1,3 +1,4 @@
+from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.test import override_settings
 from server.models.StoredObject import StoredObject
@@ -12,16 +13,16 @@ class VersionTests(DbTestCase):
 
     def test_store_if_changed(self):
         table = mock_csv_table.copy()
-        save_result_if_changed(self.wfm, ProcessResult(table))
+        async_to_sync(save_result_if_changed)(self.wfm, ProcessResult(table))
         self.assertEqual(StoredObject.objects.count(), 1)
 
         # store same table again, should not create a new one
-        save_result_if_changed(self.wfm, ProcessResult(table))
+        async_to_sync(save_result_if_changed)(self.wfm, ProcessResult(table))
         self.assertEqual(StoredObject.objects.count(), 1)
 
         # changed table should create new
         table = table.append(table, ignore_index=True)
-        save_result_if_changed(self.wfm, ProcessResult(table))
+        async_to_sync(save_result_if_changed)(self.wfm, ProcessResult(table))
         self.assertEqual(StoredObject.objects.count(), 2)
 
     @override_settings(MAX_STORAGE_PER_MODULE=1000)
@@ -33,7 +34,8 @@ class VersionTests(DbTestCase):
             # double table size, mimicking real-world growth of a table (but
             # faster)
             table = table.append(table, ignore_index=True)
-            save_result_if_changed(self.wfm, ProcessResult(table))
+            async_to_sync(save_result_if_changed)(self.wfm,
+                                                  ProcessResult(table))
 
             total_size = sum(stored_objects.values_list('size', flat=True))
             self.assertLessEqual(total_size, settings.MAX_STORAGE_PER_MODULE)

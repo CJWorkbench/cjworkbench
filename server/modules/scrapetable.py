@@ -46,27 +46,28 @@ class ScrapeTable(ModuleImpl):
         return (table, wf_module.fetch_error)
 
     @staticmethod
-    def event(wfm, event=None, **kwargs):
-        def fail(error: str) -> None:
+    async def event(wfm, event=None, **kwargs):
+        async def fail(error: str) -> None:
             result = ProcessResult(error=error)
-            ModuleImpl.commit_result(wfm, result)
+            await ModuleImpl.commit_result(wfm, result)
 
         table = None
         url = wfm.get_param_string('url').strip()
         tablenum = wfm.get_param_integer('tablenum') - 1  # 1 based for user
 
         if tablenum < 0:
-            return fail(_('Table number must be at least 1'))
+            return await fail(_('Table number must be at least 1'))
 
         validate = URLValidator()
         try:
             validate(url)
         except ValidationError:
-            return fail(_('That doesn''t seem to be a valid URL'))
+            return await fail(_('That doesn''t seem to be a valid URL'))
 
         result = None
 
         try:
+            # TODO async HTML fetch
             tables = pd.read_html(url, flavor='html5lib')
         except ValueError as e:
             result = ProcessResult(
@@ -97,4 +98,4 @@ class ScrapeTable(ModuleImpl):
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
 
-        ModuleImpl.commit_result(wfm, result)
+        await ModuleImpl.commit_result(wfm, result)

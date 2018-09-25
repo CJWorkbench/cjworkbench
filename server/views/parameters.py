@@ -1,4 +1,5 @@
 import json
+from asgiref.sync import async_to_sync
 from typing import Union
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
@@ -58,7 +59,8 @@ def parameterval_detail(request, pk, format=None):
         param = parameter_val_or_response_for_write(pk, request)
         if isinstance(param, HttpResponse):
             return param
-        ChangeParameterCommand.create(param, request.data['value'])
+        async_to_sync(ChangeParameterCommand.create)(param,
+                                                     request.data['value'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -70,11 +72,14 @@ def parameterval_event(request, pk, format=None):
     param = parameter_val_or_response_for_write(pk, request)
     if isinstance(param, HttpResponse):
         return param
-
-    # change parameter value
     data = request.data
-    dispatch_response = module_dispatch_event(param.wf_module, parameter=param,
-                                              event=data, request=request)
+
+    dispatch_response = async_to_sync(module_dispatch_event)(
+        param.wf_module,
+        parameter=param,
+        event=data,
+        request=request
+    )
     if dispatch_response:
         return dispatch_response
 
@@ -126,7 +131,7 @@ def parameterval_oauth_start_authorize(request, pk):
     elif request.method == 'DELETE':
         with param.wf_module.workflow.cooperative_lock():
             param.set_value('')
-        triggerrender.notify_client_workflow_version_changed(
+        async_to_sync(triggerrender.notify_client_workflow_version_changed)(
             param.wf_module.workflow
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -169,7 +174,7 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
         # fixed things
         param.wf_module.set_ready()
 
-    triggerrender.notify_client_workflow_version_changed(
+    async_to_sync(triggerrender.notify_client_workflow_version_changed)(
         param.wf_module.workflow
     )
     return HttpResponse(b"""<!DOCTYPE html>

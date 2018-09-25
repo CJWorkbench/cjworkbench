@@ -98,14 +98,14 @@ class JoinURL(ModuleImpl):
 
     # Load external workflow and store
     @staticmethod
-    def event(wf_module, **kwargs):
+    async def event(wf_module, **kwargs):
         url = wf_module.get_param_string('url').strip()
 
         if not url:
             return
 
         try:
-            store_external_workflow(wf_module, url)
+            await store_external_workflow(wf_module, url)
         except Exception as err:
-            ModuleImpl.commit_result(wf_module, ProcessResult(error=str(err.args[0])))
+            await ModuleImpl.commit_result(wf_module, ProcessResult(error=str(err.args[0])))
             return

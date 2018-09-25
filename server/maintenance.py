@@ -1,11 +1,11 @@
+import logging
 import warnings
 from django.conf import settings
 from django.contrib.sessions.models import Session
 from server.models import Workflow
-from server.utils import get_console_logger
 
 
-_logger = get_console_logger()
+_logger = logging.getLogger(__name__)
 
 
 def delete_expired_anonymous_workflows() -> None:
@@ -23,16 +23,24 @@ def delete_expired_anonymous_workflows() -> None:
     this function's logic to simply delete old workflows.
     """
     if settings.SESSION_ENGINE != 'django.contrib.sessions.backends.db':
-        warnings.warn('WARNING: not deleting anonymous workflows because we do not know which sessions are expired. Rewrite delete_expired_anonymous_workflows() to fix this problem.')
+        warnings.warn(
+            'WARNING: not deleting anonymous workflows because we do not know '
+            'which sessions are expired. Rewrite '
+            'delete_expired_anonymous_workflows() to fix this problem.'
+        )
         return
 
     _logger.info('Scanning for anonymous workflows with expired sessions')
 
     active_session_keys = Session.objects.all().values_list('session_key',
                                                             flat=True)
-    workflows = Workflow.objects \
-            .filter(owner__isnull=True) \
+    # TODO fix race here: new workflows created right now will be deleted
+    # immediately. (DB Transactions don't prevent this race.)
+    workflows = list(
+            Workflow.objects
+            .filter(owner__isnull=True)
             .exclude(anonymous_owner_session_key__in=active_session_keys)
+    )
 
     for workflow in workflows:
         with workflow.cooperative_lock():

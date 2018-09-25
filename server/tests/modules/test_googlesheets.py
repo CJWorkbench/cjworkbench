@@ -2,6 +2,7 @@ import os.path
 import io
 import json
 from unittest.mock import patch, Mock
+from asgiref.sync import async_to_sync
 import requests.exceptions
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -33,6 +34,10 @@ class MockResponse:
             self.content = text.encode('utf-8')
         else:
             self.content = text
+
+
+def run_event(wf_module):
+    async_to_sync(GoogleSheets.event)(wf_module)
 
 
 class GoogleSheetsTests(LoggedInTestCase):
@@ -96,7 +101,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertEqual(result, ProcessResult(pd.DataFrame()))
 
     def _assert_file_event_happy_path(self):
-        GoogleSheets.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.requests.get.assert_called_with(
             'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
@@ -132,7 +137,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.credentials_param.value = ''
         self.credentials_param.save()
 
-        GoogleSheets.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertEqual(self.wf_module.error_msg,
@@ -140,14 +145,14 @@ class GoogleSheetsTests(LoggedInTestCase):
 
     def test_no_table_on_http_error(self):
         self.requests.get.side_effect = requests.exceptions.ReadTimeout('read timeout')
-        GoogleSheets.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertEqual(self.wf_module.error_msg, 'read timeout')
 
     def test_no_table_on_missing_table(self):
         self.requests.get.return_value = MockResponse(404, 'not found')
-        GoogleSheets.event(self.wf_module)
+        run_event(self.wf_module)
 
         self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertEqual(

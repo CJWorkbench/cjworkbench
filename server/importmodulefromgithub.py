@@ -345,17 +345,19 @@ def import_module_from_directory(url, reponame, version, importdir,
         for wfm in WfModule.objects.filter(module_version__module=module):
             update_wfm_parameters_to_new_version(wfm, module_version)
 
-    except Exception as e:
-        log_message('Error importing module %s: %s' % (url, str(e)))
-        if destination_directory is not None:
+    except Exception:
+        # On exception, clean up and raise
+        if destination_directory:
             try:
                 shutil.rmtree(destination_directory)
-            except:
+            except FileNotFoundError:
                 pass
+
             try:
                 shutil.rmtree(destination_directory + '-original')
-            except:
+            except FileNotFoundError:
                 pass
+
         raise
 
     # return data that we probably want displayed in the UI.

@@ -1,9 +1,10 @@
+from asgiref.sync import async_to_sync
+from django.utils import timezone
 from server.models import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
         ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         mock_csv_table, mock_csv_table2
-from django.utils import timezone
 
 
 class CommandTestCase(DbTestCase):
@@ -37,9 +38,11 @@ class AddDeleteModuleCommandTests(CommandTestCase):
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
-        cmd = AddModuleCommand.create(self.workflow,
-                                      module_version=self.module_version,
-                                      insert_before=0)
+        cmd = async_to_sync(AddModuleCommand.create)(
+            self.workflow,
+            module_version=self.module_version,
+            insert_before=0
+        )
         self.assertEqual(all_modules.count(), 2)
         added_module = WfModule.objects.get(workflow=self.workflow, order=0)
         self.assertNotEqual(added_module, existing_module)
@@ -57,12 +60,12 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertIsNone(cmd.next_delta)
 
         # undo! undo! ahhhhh everything is on fire! undo!
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(self.workflow.wf_modules.first(), existing_module)
 
         # wait no, we wanted that module
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertEqual(all_modules.count(), 2)
         added_module = WfModule.objects.get(workflow=self.workflow, order=0)
         self.assertNotEqual(added_module, existing_module)
@@ -71,7 +74,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
 
         # Undo and test deleting the un-applied command. Should delete dangling
         # WfModule too
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(self.workflow.wf_modules.first(), existing_module)
         cmd.delete()
@@ -92,9 +95,11 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v1])
 
         # Insert at beginning
-        cmd1 = AddModuleCommand.create(self.workflow,
-                                       module_version=self.module_version,
-                                       insert_before=0)
+        cmd1 = async_to_sync(AddModuleCommand.create)(
+            self.workflow,
+            module_version=self.module_version,
+            insert_before=0
+        )
         self.assertEqual(all_modules.count(), 2)
         self.assertEqual(cmd1.wf_module.order, 0)
         self.assertNotEqual(cmd1.wf_module, existing_module)
@@ -102,18 +107,22 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v2, v2])
 
         # Insert at end
-        cmd2 = AddModuleCommand.create(self.workflow,
-                                       module_version=self.module_version,
-                                       insert_before=2)
+        cmd2 = async_to_sync(AddModuleCommand.create)(
+            self.workflow,
+            module_version=self.module_version,
+            insert_before=2
+        )
         self.assertEqual(all_modules.count(), 3)
         self.assertEqual(cmd2.wf_module.order, 2)
         v3 = self.workflow.revision()
         self.assertWfModuleVersions([v2, v2, v3])
 
         # Insert in between two modules
-        cmd3 = AddModuleCommand.create(self.workflow,
-                                       module_version=self.module_version,
-                                       insert_before=2)
+        cmd3 = async_to_sync(AddModuleCommand.create)(
+            self.workflow,
+            module_version=self.module_version,
+            insert_before=2
+        )
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
         v4 = self.workflow.revision()
@@ -133,11 +142,11 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertIsNone(cmd1.prev_delta)
 
         # We should be able to go all the way back
-        cmd3.backward()
+        async_to_sync(cmd3.backward)()
         self.assertWfModuleVersions([v2, v2, v3])
-        cmd2.backward()
+        async_to_sync(cmd2.backward)()
         self.assertWfModuleVersions([v2, v2])
-        cmd1.backward()
+        async_to_sync(cmd1.backward)()
         self.assertWfModuleVersions([v1])
         self.assertEqual(all_modules.count(), 1)
 
@@ -153,7 +162,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v1])
 
         # Delete it. Yeah, you better run.
-        cmd = DeleteModuleCommand.create(existing_module)
+        cmd = async_to_sync(DeleteModuleCommand.create)(existing_module)
         self.assertEqual(all_modules.count(), 0)
         self.assertWfModuleVersions([])
 
@@ -169,13 +178,13 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertIsNone(cmd.next_delta)
 
         # undo
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(all_modules.count(), 1)
         self.assertWfModuleVersions([v1])
         self.assertEqual(self.workflow.wf_modules.first(), existing_module)
 
         # nevermind, redo
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertEqual(all_modules.count(), 0)
 
         # Deleting the appplied command should delete dangling WfModule too
@@ -194,12 +203,12 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.workflow.selected_wf_module = 0
         self.workflow.save()
 
-        cmd = DeleteModuleCommand.create(existing_module)
+        cmd = async_to_sync(DeleteModuleCommand.create)(existing_module)
 
         self.workflow.refresh_from_db()
         self.assertIsNone(self.workflow.selected_wf_module)
 
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.selected_wf_module, 0)
 
@@ -211,14 +220,16 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         all_modules = WfModule.objects.filter(workflow=self.workflow)
         self.assertEqual(all_modules.count(), 1)
 
-        cmd = AddModuleCommand.create(self.workflow,
-                                      module_version=self.module_version,
-                                      insert_before=1)
+        cmd = async_to_sync(AddModuleCommand.create)(
+            self.workflow,
+            module_version=self.module_version,
+            insert_before=1
+        )
 
         self.workflow.selected_wf_module = cmd.wf_module.order
         self.workflow.save()
 
-        cmd.backward()
+        async_to_sync(cmd.backward)()
 
         self.workflow.refresh_from_db()
         self.assertIsNone(self.workflow.selected_wf_module)
@@ -226,10 +237,12 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule
     def test_add_delete(self):
-        cmda = AddModuleCommand.create(self.workflow,
-                                       module_version=self.module_version,
-                                       insert_before=0)
-        DeleteModuleCommand.create(cmda.wf_module)
+        cmda = async_to_sync(AddModuleCommand.create)(
+            self.workflow,
+            module_version=self.module_version,
+            insert_before=0
+        )
+        async_to_sync(DeleteModuleCommand.create)(cmda.wf_module)
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
@@ -251,7 +264,8 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         v1 = self.workflow.revision()
 
         # Change back to first version
-        cmd = ChangeDataVersionCommand.create(self.wfm, firstver)
+        cmd = async_to_sync(ChangeDataVersionCommand.create)(self.wfm,
+                                                             firstver)
         self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
         self.workflow.refresh_from_db()
@@ -261,12 +275,12 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v2])
 
         # undo
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertWfModuleVersions([v1])
         self.assertEqual(self.wfm.get_fetched_data_version(), secondver)
 
         # redo
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertWfModuleVersions([v2])
         self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
@@ -283,15 +297,16 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
         self.wfm.notes = firstNote
 
         # do
-        cmd = ChangeWfModuleNotesCommand.create(self.wfm, secondNote)
+        cmd = async_to_sync(ChangeWfModuleNotesCommand.create)(self.wfm,
+                                                               secondNote)
         self.assertEqual(self.wfm.notes, secondNote)
 
         # undo
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(self.wfm.notes, firstNote)
 
         # redo
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertEqual(self.wfm.notes, secondNote)
 
 
@@ -308,20 +323,24 @@ class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
 
         # do
         mydate = timezone.now()
-        cmd = ChangeWfModuleUpdateSettingsCommand.create(self.wfm, True,
-                                                         mydate, 1000)
+        cmd = async_to_sync(ChangeWfModuleUpdateSettingsCommand.create)(
+            self.wfm,
+            True,
+            mydate,
+            1000
+        )
         self.assertTrue(self.wfm.auto_update_data)
         self.assertEqual(self.wfm.next_update, mydate)
         self.assertEqual(self.wfm.update_interval, 1000)
 
         # undo
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertFalse(self.wfm.auto_update_data)
         self.assertEqual(self.wfm.next_update, None)
         self.assertEqual(self.wfm.update_interval, 100)
 
         # redo
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertTrue(self.wfm.auto_update_data)
         self.assertEqual(self.wfm.next_update, mydate)
         self.assertEqual(self.wfm.update_interval, 1000)

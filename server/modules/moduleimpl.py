@@ -13,13 +13,13 @@ class ModuleImpl:
         return table
 
     @staticmethod
-    def event(wfm: WfModule, **kwargs):
+    async def event(wfm: WfModule, **kwargs):
         pass
 
     @staticmethod
-    def commit_result(wf_module: WfModule, result: ProcessResult,
-                      stored_object_json: Optional[Dict[str, Any]]=None
-                      ) -> None:
+    async def commit_result(wf_module: WfModule, result: ProcessResult,
+                            stored_object_json: Optional[Dict[str, Any]]=None
+                            ) -> None:
         """
         Store fetched result, if it is a change from wfm's existing data.
 
@@ -33,14 +33,15 @@ class ModuleImpl:
         Notify the user.
         """
         if result.dataframe.empty and result.error:
-            with wf_module.workflow.cooperative_lock():
+            workflow = wf_module.workflow
+            with workflow.cooperative_lock():
                 wf_module.last_update_check = timezone.now()
                 wf_module.fetch_error = result.error
                 wf_module.is_busy = False
                 wf_module.save()
-            websockets.ws_client_rerender_workflow(wf_module.workflow)
+            await websockets.ws_client_rerender_workflow_async(workflow)
         else:
-            save_result_if_changed(
+            await save_result_if_changed(
                 wf_module,
                 result,
                 stored_object_json=stored_object_json

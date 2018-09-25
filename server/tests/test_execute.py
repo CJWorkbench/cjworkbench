@@ -1,10 +1,11 @@
+from unittest import mock
+from asgiref.sync import async_to_sync
+import pandas as pd
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
 from server.models.Commands import ChangeParameterCommand
 from server.execute import execute_wfmodule
 from server.modules.types import ProcessResult
-import pandas as pd
-from unittest import mock
 
 
 table_csv = 'A,B\n1,2\n3,4'
@@ -33,7 +34,7 @@ class ExecuteTests(DbTestCase):
 
         # Add command, modifying revision
         pval = get_param_by_id_name('colnames', wf_module=wf_module2)
-        ChangeParameterCommand.create(pval, 'A')
+        async_to_sync(ChangeParameterCommand.create)(pval, 'A')
 
         self.assertEqual(cached_render_result_revision_list(workflow),
                          [None, None])

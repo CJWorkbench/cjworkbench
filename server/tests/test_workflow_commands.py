@@ -1,6 +1,7 @@
+from asgiref.sync import async_to_sync
+from django.test import TestCase
 from server.models import WfModule, ModuleVersion, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
-from django.test import TestCase
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_wf_module
 
@@ -32,7 +33,8 @@ class ReorderModulesCommandTests(DbTestCase):
             {'id': self.module1.id, 'order': 1},
             {'id': self.module2.id, 'order': 0},
         ]
-        cmd = ReorderModulesCommand.create(self.workflow, new_order)
+        cmd = async_to_sync(ReorderModulesCommand.create)(self.workflow,
+                                                          new_order)
         self.assertEqual(WfModule.objects.count(), 2)
         self.module1.refresh_from_db()
         self.module2.refresh_from_db()
@@ -46,7 +48,7 @@ class ReorderModulesCommandTests(DbTestCase):
         self.assertWfModuleVersions([v1, v1])
 
         # undo
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(WfModule.objects.count(), 2)
         self.module1.refresh_from_db()
         self.module2.refresh_from_db()
@@ -55,7 +57,7 @@ class ReorderModulesCommandTests(DbTestCase):
         self.assertWfModuleVersions([v0, v0])
 
         # redo
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertEqual(WfModule.objects.count(), 2)
         self.module1.refresh_from_db()
         self.module2.refresh_from_db()
@@ -73,19 +75,24 @@ class ReorderModulesCommandTests(DbTestCase):
         missing_order = [{'id': self.module1.id}, {'id': self.module2.id, 'order': 1}]
 
         with self.assertRaises(ValueError):
-            ReorderModulesCommand.create(self.workflow, total_crap)
+            async_to_sync(ReorderModulesCommand.create)(self.workflow,
+                                                        total_crap)
 
         with self.assertRaises(ValueError):
-            ReorderModulesCommand.create(self.workflow, bad_id)
+            async_to_sync(ReorderModulesCommand.create)(self.workflow,
+                                                        bad_id)
 
         with self.assertRaises(ValueError):
-            ReorderModulesCommand.create(self.workflow, bad_order)
+            async_to_sync(ReorderModulesCommand.create)(self.workflow,
+                                                        bad_order)
 
         with self.assertRaises(ValueError):
-            ReorderModulesCommand.create(self.workflow, missing_id)
+            async_to_sync(ReorderModulesCommand.create)(self.workflow,
+                                                        missing_id)
 
         with self.assertRaises(ValueError):
-            ReorderModulesCommand.create(self.workflow, missing_order)
+            async_to_sync(ReorderModulesCommand.create)(self.workflow,
+                                                        missing_order)
 
 
 class ChangeWorkflowTitleCommandTests(TestCase):
@@ -100,13 +107,14 @@ class ChangeWorkflowTitleCommandTests(TestCase):
         self.workflow.name = firstTitle
 
         # Change back to second title, see if it saved
-        cmd = ChangeWorkflowTitleCommand.create(self.workflow, secondTitle)
+        cmd = async_to_sync(ChangeWorkflowTitleCommand.create)(self.workflow,
+                                                               secondTitle)
         self.assertEqual(self.workflow.name, secondTitle)
 
         # undo
-        cmd.backward()
+        async_to_sync(cmd.backward)()
         self.assertEqual(self.workflow.name, firstTitle)
 
         # redo
-        cmd.forward()
+        async_to_sync(cmd.forward)()
         self.assertEqual(self.workflow.name, secondTitle)

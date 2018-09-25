@@ -333,11 +333,10 @@ class WfModule(models.Model):
 
     # busy just changes the light on a single module, no need to reload entire
     # workflow
-    def set_busy(self, notify=True):
+    async def set_busy(self):
         self.is_busy = True
-        self.save()
-        if notify:
-            websockets.ws_client_wf_module_status(self, self.status)
+        self.save(update_fields=['is_busy'])
+        await websockets.ws_client_wf_module_status_async(self, self.status)
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available

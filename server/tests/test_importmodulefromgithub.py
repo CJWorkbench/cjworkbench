@@ -5,12 +5,19 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from server.importmodulefromgithub import *
-from server.importmodulefromgithub import sanitise_url
-from server.dispatch import module_dispatch_render
-from server.modules.types import ProcessResult
-from server.tests.utils import *
+from django.test import override_settings
 import pandas as pd
+from server.importmodulefromgithub import sanitise_url, \
+        retrieve_project_name, validate_module_structure, \
+        get_module_config_from_json, create_destination_directory, \
+        add_boilerplate_and_check_syntax, validate_python_functions, \
+        extract_version, import_module_from_directory, ValidationError
+from server import dynamicdispatch
+from server.dispatch import module_dispatch_render
+from server.models import Module, ModuleVersion
+from server.modules.types import ProcessResult
+from server.tests.utils import LoggedInTestCase, add_new_workflow, \
+        add_new_wf_module, get_param_by_id_name
 
 
 # Patch get_already_imported from importmodulefromgithub
@@ -19,6 +26,7 @@ def overriden_get_already_imported():
         "accio": "www.github.com/something",
         "lumos": ""
     }
+
 
 class ImportFromGitHubTest(LoggedInTestCase):
     def setUp(self):
@@ -29,11 +37,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         self.cleanup()
 
-        # several tests are supposed to log an exception, but don't print that
-        # every test
-        logging.disable(logging.CRITICAL)
-
-        self.clone_temp_dir = tempfile.TemporaryDirectory('importedmodules-test')
+        self.clone_temp_dir = tempfile.TemporaryDirectory(
+            'importedmodules-test'
+        )
 
     def tearDown(self):
         self.cleanup()
@@ -112,7 +118,6 @@ class ImportFromGitHubTest(LoggedInTestCase):
         with self.assertRaisesMessage(ValidationError, 'Invalid Git repo URL entered: %s' % (input_url)):
             sanitise_url(input_url)
 
-
     def test_retrieve_project_name(self):
         #Here, we assume that we have a _clean_/_sanitised_ URL; if we didn't, the code should've thrown an exception
         #earlier in the stack. Hence, we don't test _bad_ urls.
@@ -121,7 +126,6 @@ class ImportFromGitHubTest(LoggedInTestCase):
         git_url = "https://github.com/anothercookiecrumbles/somerepo"
         project_name = retrieve_project_name(git_url)
         self.assertEqual(project_name, "somerepo")
-
 
     def test_validate_module_structure(self):
         # We don't want to rely on a remote repo existing, so we drive this test off a local repo equivalent
@@ -173,13 +177,11 @@ class ImportFromGitHubTest(LoggedInTestCase):
         with self.assertRaises(ValidationError):
             mapping = validate_module_structure(test_dir)
 
-
     def test_ignore_setup_py(self):
         test_dir = self.fake_github_clone()
         open(os.path.join(test_dir, 'setup.py'), 'w').close()
         mapping = validate_module_structure(test_dir)
         self.assertEqual(mapping['py'], 'importable.py')
-
 
     def test_extract_version_hash(self):
         test_dir = self.fake_github_clone()
@@ -187,28 +189,40 @@ class ImportFromGitHubTest(LoggedInTestCase):
                   os.path.join(test_dir, '.git'))
         self.assertTrue(os.path.isdir(os.path.join(test_dir, ".git")))
         version = extract_version(test_dir)
-        self.assertEquals(version, '7832830',
-                          "The hash of the git repo should be {}, but the function returned {}.".format('427847c',
-                                                                                                        version))
+        self.assertEquals(
+            version,
+            '7832830',
+            ('The hash of the git repo should be {}, '
+             'but the function returned {}.'.format('427847c', version))
+        )
 
-
-    @mock.patch('server.importmodulefromgithub.get_already_imported_module_urls', side_effect=overriden_get_already_imported)
+    @mock.patch(
+        'server.importmodulefromgithub.get_already_imported_module_urls',
+        side_effect=overriden_get_already_imported
+    )
     def test_validate_json(self, get_already_imported_function):
         test_dir = self.fake_github_clone()
 
-        #ensure we get a ValidationError if the mapping doesn't have a json key, i.e. missing json file.
+        # ensure we get a ValidationError if the mapping doesn't have a json
+        # key, i.e. missing json file.
         mapping = {}
         with self.assertRaises(ValidationError):
             get_module_config_from_json("", mapping, test_dir)
 
-        #check valid scenario, i.e. the system successfully parses the JSON configuration.
+        # check valid scenario, i.e. the system successfully parses the JSON
+        # configuration.
         mapping = {'json': 'importable.json', 'py': 'importable.py'}
         module_config = get_module_config_from_json("", mapping, test_dir)
-        self.assertTrue(len(module_config) == 5, 'The configuration should have loaded 5 items, but it loaded ' +
-                                                 ' {} items.'.format(len(module_config)))
-        self.assertTrue(all (k in module_config for k in ("id_name", "description", "name", "category", "parameters")),
-                        "Not all mandatory keys exist in the module_config/json file.")
-
+        self.assertTrue(
+            len(module_config) == 5,
+            ('The configuration should have loaded 5 items, but it loaded '
+             ' {} items.').format(len(module_config)))
+        self.assertTrue(
+            all(k in module_config
+                for k in ("id_name", "description", "name",
+                          "category", "parameters")),
+            "Not all mandatory keys exist in the module_config/json file."
+        )
 
     def test_create_destination_directory(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
@@ -334,11 +348,13 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         test_dir = self.fake_github_clone() # import moves files, so get same files again
         with self.assertRaises(ValidationError):
-            import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)
+            with self.assertLogs():
+                import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)
 
 
     # THE BIG TEST. Load a module and test that we can render it correctly
     # This is really an integration test, runs both load and dispatch code
+    @override_settings(CACHE_MODULES=False)
     def test_load_and_dispatch(self):
         test_dir = self.fake_github_clone()
 
@@ -352,7 +368,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         workflow = add_new_workflow('Dynamic Dispatch Test Workflow')
         wfm = add_new_wf_module(workflow, module_version, order=1)
 
-        # These will fail if we haven't correctly loaded the json describing the parameters
+        # These will fail if we haven't correctly loaded the json describing
+        # the parameters
         stringparam = get_param_by_id_name('test', wf_module=wfm)
         colparam = get_param_by_id_name('test_column', wf_module=wfm)
         multicolparam = get_param_by_id_name('test_multicolumn', wf_module=wfm)
@@ -363,21 +380,24 @@ class ImportFromGitHubTest(LoggedInTestCase):
                    'english,,7\,200\n' \
                    'history,11,13,\n' \
                    'economics,20,20,20'
-        test_table = pd.read_csv(io.StringIO(test_csv), header=0, skipinitialspace=True)
+        test_table = pd.read_csv(io.StringIO(test_csv), header=0,
+                                 skipinitialspace=True)
         test_table_out = test_table.copy()
         test_table_out['M'] *= 2
-        test_table_out[['F','Other']] *= 3
+        test_table_out[['F', 'Other']] *= 3
 
-        colparam.set_value('M') # double this
-        multicolparam.set_value('F,Other') # triple these
-        result = module_dispatch_render(wfm, test_table)
+        colparam.set_value('M')  # double this
+        multicolparam.set_value('F,Other')  # triple these
+        with self.assertLogs(dynamicdispatch.__name__):
+            result = module_dispatch_render(wfm, test_table)
         self.assertEqual(result, ProcessResult(test_table_out))
 
         # Test that bad column parameter values are removed
         colparam.set_value('missing_column_name')
         multicolparam.set_value('Other,junk_column_name')
         test_table_out = test_table.copy()
-        test_table_out[['Other']] *= 3   # multicolumn parameter has only one valid col
+        # multicolumn parameter has only one valid col
+        test_table_out[['Other']] *= 3
         result = module_dispatch_render(wfm, test_table)
         self.assertEqual(result, ProcessResult(test_table_out))
 

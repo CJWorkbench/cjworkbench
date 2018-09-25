@@ -107,17 +107,17 @@ def module_dispatch_render(wf_module: WfModule,
     return result
 
 
-def module_dispatch_event(wf_module, **kwargs):
+async def module_dispatch_event(wf_module, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
         module_dispatch = module_dispatch_tbl[dispatch]
         if hasattr(module_dispatch, 'event'):
             # Tell client to clear errors before fetch
-            wf_module.set_busy()
-            module_dispatch.event(wf_module, **kwargs)
+            await wf_module.set_busy()
+            await module_dispatch.event(wf_module, **kwargs)
     else:
         dynamic_module = wf_module_to_dynamic_module(wf_module)
-        dynamic_module.fetch(wf_module)
+        await dynamic_module.fetch(wf_module)
 
 
 def module_get_html_bytes(wf_module) -> Optional[bytes]:

@@ -1,6 +1,7 @@
 from datetime import timedelta
 import json
 import re
+from asgiref.sync import async_to_sync
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
         Http404, HttpResponseNotFound, JsonResponse
@@ -64,9 +65,10 @@ def execute_and_notify(wf_module):
                 changes[str(a_wf_module.id)] = current
 
     if changes:
-        websockets.ws_client_send_delta_sync(wf_module.workflow_id, {
-            'updateWfModules': changes
-        })
+        async_to_sync(websockets.ws_client_send_delta_async)(
+            wf_module.workflow_id,
+            {'updateWfModules': changes}
+        )
 
     return result
 
@@ -117,7 +119,7 @@ def _lookup_wf_module_for_write(pk: int, request: HttpRequest) -> WfModule:
 
 # The guts of patch commands for various WfModule fields
 def patch_notes(wf_module, data):
-    ChangeWfModuleNotesCommand.create(wf_module, data['notes'])
+    async_to_sync(ChangeWfModuleNotesCommand.create)(wf_module, data['notes'])
 
 
 def patch_update_settings(wf_module, data, request):
@@ -131,9 +133,12 @@ def patch_update_settings(wf_module, data, request):
     interval = units_to_seconds(int(data['update_interval']),
                                 data['update_units'])
     next_update = timezone.now() + timedelta(seconds=interval)
-    ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data,
-                                               next_update, interval)
-
+    async_to_sync(ChangeWfModuleUpdateSettingsCommand.create)(
+        wf_module,
+        auto_update_data,
+        next_update,
+        interval
+    )
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on
@@ -152,7 +157,7 @@ def wfmodule_detail(request, pk, format=None):
             return Response(serializer.data)
 
     elif request.method == 'DELETE':
-        delta = DeleteModuleCommand.create(wf_module)
+        delta = async_to_sync(DeleteModuleCommand.create)(wf_module)
         if delta:
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -415,7 +420,10 @@ def wfmodule_dataversion(request, pk, format=None):
             except StoredObject.DoesNotExist:
                 return HttpResponseNotFound(f'No StoredObject with stored_at={date_s}')
 
-            ChangeDataVersionCommand.create(wf_module, stored_object.stored_at)
+            async_to_sync(ChangeDataVersionCommand.create)(
+                wf_module,
+                stored_object.stored_at
+            )
 
             if not stored_object.read:
                 stored_object.read = True

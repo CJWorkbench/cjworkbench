@@ -23,7 +23,7 @@ _ExtensionMimeTypes = {
 
 # Read an UploadedFile, parse it, store it as the WfModule's "fetched table"
 # Public entrypoint, called by the view
-def upload_to_table(wf_module, uploaded_file):
+async def upload_to_table(wf_module, uploaded_file):
     ext = '.' + uploaded_file.name.split('.')[-1]
     mime_type = _ExtensionMimeTypes.get(ext, None)
     if mime_type:
@@ -47,7 +47,7 @@ def upload_to_table(wf_module, uploaded_file):
     result.truncate_in_place_if_too_big()
     result.sanitize_in_place()
 
-    ModuleImpl.commit_result(wf_module, result, stored_object_json=[
+    await ModuleImpl.commit_result(wf_module, result, stored_object_json=[
         {'uuid': uploaded_file.uuid, 'name': uploaded_file.name}
     ])
 

@@ -110,7 +110,7 @@ class DynamicModule:
         """
         return self._call_method('fetch', params)
 
-    def fetch(self, wf_module: WfModule) -> None:
+    async def fetch(self, wf_module: WfModule) -> None:
         """Run `call_fetch(wf_module)` and write to `wf_module`.
 
         `wf_module` will be set to `busy` until the fetch completes. After,
@@ -123,13 +123,13 @@ class DynamicModule:
 
         params = wf_module.create_parameter_dict(None)
 
-        wf_module.set_busy()
+        await wf_module.set_busy()
 
         result = self.call_fetch(params)
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
 
-        ModuleImpl.commit_result(wf_module, result)
+        await ModuleImpl.commit_result(wf_module, result)
 
 
 def load_module(module_id_name: str, version_sha1: str) -> ModuleType:
