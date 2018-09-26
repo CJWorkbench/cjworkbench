@@ -207,16 +207,14 @@ class CountByDateTests(SimpleTestCase):
         # bad column name should produce error
         wf_module = MockWfModule(column='hilarious')
         result = render(wf_module, count_table)
-        expected = ProcessResult(error='There is no column named "hilarious"')
-        self.assertResultEqual(result, expected)
+        self.assertEqual(result.error, 'There is no column named "hilarious"')
 
     def test_integer_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': [1], 'B': [2]})
         wf_module = MockWfModule(column='A')
         result = render(wf_module, table)
-        expected = ProcessResult(error='Column "A" must be date and time')
-        self.assertResultEqual(result, expected)
+        self.assertEqual(result.error, 'Column "A" must be date and time')
 
     def test_string_dates_give_error(self):
         # integers are not dates
@@ -239,9 +237,7 @@ class CountByDateTests(SimpleTestCase):
         wf_module = MockWfModule(column='Date', operation=1,
                                  targetcolumn='Invalid')
         result = render(wf_module, count_table)
-        self.assertResultEqual(result, ProcessResult(error=(
-            'There is no column named "Invalid"'
-        )))
+        self.assertEqual(result.error, 'There is no column named "Invalid"')
 
     def test_average_by_date(self):
         self._assertRendersTable(
@@ -383,7 +379,8 @@ class CountByDateTests(SimpleTestCase):
         wf_module = MockWfModule(column='Date', groupby=0,
                                  include_missing_dates=True)
         result = render(wf_module, count_table)
-        self.assertResultEqual(result, ProcessResult(error=(
-            'Including missing dates would create 174787201 rows, '
-            'but the maximum allowed is 100'
-        )))
+        self.assertEqual(
+            result.error,
+            ('Including missing dates would create 174787201 rows, '
+             'but the maximum allowed is 100')
+        )

@@ -326,7 +326,7 @@ class CountByDate(ModuleImpl):
         try:
             form = Form.parse(params)
         except ValueError as err:
-            return str(err)
+            return (table, str(err))
         if form is None:
             return table
 
@@ -338,9 +338,9 @@ class CountByDate(ModuleImpl):
                 'quick_fixes': err.quick_fixes
             }
         except ValueError as err:
-            return str(err)
+            return (table, str(err))
 
         try:
             return validated_form.run()
         except ValueError as err:
-            return str(err)
+            return (table, str(err))
