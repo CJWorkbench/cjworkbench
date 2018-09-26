@@ -286,7 +286,7 @@ button:focus { outline:0 !important; }
 
 .button-gray { @extend %button-gray; }
 
-%button-blue {
+.button-blue {
   color: $brand-workspace;
   border-color: $brand-workspace ;
   background-color: transparent;
@@ -299,11 +299,21 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-blue {
-  @extend %button-blue;
+.button-red {
+  color: $brand-red;
+  border-color: $brand-red ;
+  background-color: transparent;
+  &:hover, &:hover .spinner::after {
+    background-color: $error-prompt--light;
+  }
+  &:active, &:active .spinner::after {
+    background-color: $error-prompt;
+    color: white;
+  }
 }
 
-%button-blue--fill {
+
+.button-blue--fill {
   background-color: $brand-workspace;
   color: white;
   border-color:transparent;
@@ -317,8 +327,6 @@ button:focus { outline:0 !important; }
     color: white;
   }
 }
-
-.button-blue--fill { @extend %button-blue--fill; }
 
 
 .button-orange {

@@ -80,11 +80,11 @@
 
   .big-radio-checked>label span {
     @extend .action-button;
-    @extend %button-blue--fill;
+    @extend .button-blue--fill;
   }
   .big-radio-unchecked>label span {
     @extend .action-button;
-    @extend %button-blue;
+    @extend .button-blue;
   }
 
   .big-radio-unchecked {
@@ -247,7 +247,7 @@
 
       button {
         @extend .action-button;
-        @extend %button-blue;
+        @extend .button-blue;
       }
     }
   }

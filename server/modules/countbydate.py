@@ -178,16 +178,16 @@ class QuickFixableError(ValueError):
 
 class NumericIsNotDatetime(ValueError):
     def __init__(self, column):
-        super().__init__(f'Column "{column}" must be date and time')
+        super().__init__(f'Column "{column}" must be Date & Time')
 
 
 class TextIsNotDatetime(QuickFixableError):
     def __init__(self, column):
         super().__init__(
-            f'Column "{column}" must be date and time',
+            f'Column "{column}" must be Date & Time',
             [
                 {
-                    'text': 'Convert to date and time',
+                    'text': 'Convert',
                     'action': 'prependModule',
                     'args': ['convert-date', {
                         'colnames': column,  # TODO make 'colnames' an Array
