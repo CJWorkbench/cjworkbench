@@ -11,10 +11,10 @@ const QuickFixPropTypes = {
     args: PropTypes.array.isRequired
 }
 
-
 class QuickFix extends React.Component {
   static propTypes = {
     ...QuickFixPropTypes,
+    disabled: PropTypes.bool.isRequired,
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
   }
 
@@ -24,10 +24,16 @@ class QuickFix extends React.Component {
   }
 
   render () {
-    const { text } = this.props
+    const { disabled, text } = this.props
 
     return (
-      <button className="quick-fix" onClick={this.onClick}>{text}</button>
+      <button
+        disabled={disabled}
+        className="quick-fix action-button button-orange"
+        onClick={this.onClick}
+      >
+        {text}
+      </button>
     )
   }
 }
@@ -40,8 +46,18 @@ export default class StatusLine extends React.Component {
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
   }
 
+  state = {
+    clickedAnyQuickFix: false
+  }
+
+  applyQuickFix = (...args) => {
+    this.setState({ clickedAnyQuickFix: true })
+    this.props.applyQuickFix(...args)
+  }
+
   render () {
-    const { status, error, applyQuickFix, quickFixes } = this.props
+    const { status, error, quickFixes } = this.props
+    const { clickedAnyQuickFix } = this.state
 
     if (!error && !quickFixes.length) return null
 
@@ -49,7 +65,15 @@ export default class StatusLine extends React.Component {
     if (quickFixes.length) {
       quickFixUl = (
         <ul className="quick-fixes">
-          {quickFixes.map(qf => <li key={qf.text}><QuickFix {...qf} applyQuickFix={applyQuickFix} /></li>)}
+          {quickFixes.map(qf => (
+            <li key={qf.text}>
+              <QuickFix
+                {...qf}
+                disabled={clickedAnyQuickFix}
+                applyQuickFix={this.applyQuickFix}
+              />
+            </li>
+          ))}
         </ul>
       )
     }
