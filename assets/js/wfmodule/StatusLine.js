@@ -35,7 +35,7 @@ class QuickFix extends React.Component {
 export default class StatusLine extends React.Component {
   static propTypes = {
     status: PropTypes.oneOf(['busy', 'ready', 'error']).isRequired,
-    error: PropTypes.string, // may be null
+    error: PropTypes.string, // may be empty string
     quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
   }

@@ -462,9 +462,9 @@ export class WfModule extends React.PureComponent {
               </div>
               {/* --- Error message --- */}
               <StatusLine
-                status={wfModule.status}
-                error={wfModule.error_msg}
-                quickFixes={wfModule.quick_fixes}
+                status={wfModule.status || 'ready'}
+                error={wfModule.error_msg || ''}
+                quickFixes={wfModule.quick_fixes || []}
                 applyQuickFix={this.applyQuickFix}
               />
               <div className='module-card-params'>

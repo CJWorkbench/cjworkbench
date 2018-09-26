@@ -1,27 +1,46 @@
 /* globals describe, it, expect */
 import React from 'react'
 import StatusLine from './StatusLine'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 describe('Status line', () => {
-  it('Renders an error message', () => {
-    let wrapper = shallow(
-      <StatusLine
-        status='error'
-        error_msg="There's an error"
-      />
-    )
-    expect(wrapper).toMatchSnapshot()
-    expect(wrapper.find('div').first().text()).toEqual("There's an error")
-  })
-
-  it('Renders nothing for other statuses', () => {
-    let wrapper = shallow(
+  const wrapper = (extraProps) => {
+    return mount(
       <StatusLine
         status='ready'
-        error_msg='This should never happen'
+        error=''
+        quickFixes={[]}
+        applyQuickFix={jest.fn()}
+        {...extraProps}
       />
     )
-    expect(wrapper.find('div').length).toEqual(0)
+  }
+
+  it('renders an error message', () => {
+    const w = wrapper({ status: 'error', error: 'foo' })
+    expect(w.find('p').text()).toEqual('foo')
+  })
+
+  it('renders a quick fix', () => {
+    const w = wrapper({
+      status: 'error',
+      error: 'Wrong type',
+      quickFixes: [
+        {
+          'text': 'Fix it',
+          'action': 'prependModule',
+          'args': [1, 2]
+        }
+      ]
+    })
+
+    expect(w.find('button').text()).toEqual('Fix it')
+    w.find('button').simulate('click')
+    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith('prependModule', [1, 2])
+  })
+
+  it('renders null when no error', () => {
+    const w = wrapper({ status: 'ready', error: '' })
+    expect(w.text()).toBe(null)
   })
 })

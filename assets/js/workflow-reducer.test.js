@@ -166,13 +166,47 @@ describe('Reducer actions', () => {
     }))
 
     const store = mockStore(testState)
-    await store.dispatch(wfr.addModuleAction(1, 2))
+    await store.dispatch(wfr.addModuleAction(1, 2, { x: 'y' }))
 
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2)
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
     const state = store.getState()
     expect(state.workflow.wf_modules).toEqual([ 10, 20, 40, 30 ])
     expect(state.wfModules['40']).toEqual({ id: 40, foo: 'bar' })
     expect(state.selected_wf_module).toEqual(2)
+  })
+
+  it('adds a module by idName', async () => {
+    WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve({
+      index: 2,
+      wfModule: { id: 40, foo: 'bar' }
+    }))
+
+    const store = mockStore(testState)
+    await store.dispatch(wfr.addModuleAction('module2', 2, { x: 'y' }))
+
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 2, 2, { x: 'y' })
+  })
+
+  it('adds a module before another', async () => {
+    WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve({
+      index: 2,
+      wfModule: { id: 40, foo: 'bar' }
+    }))
+
+    const store = mockStore(testState)
+    await store.dispatch(wfr.addModuleAction(1, { beforeWfModuleId: 20 }, { x: 'y' }))
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 1, { x: 'y' })
+  })
+
+  it('adds a module after another', async () => {
+    WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve({
+      index: 2,
+      wfModule: { id: 40, foo: 'bar' }
+    }))
+
+    const store = mockStore(testState)
+    await store.dispatch(wfr.addModuleAction(1, { afterWfModuleId: 20 }, { x: 'y' }))
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
   })
 
   it('Deletes a module', async () => {
