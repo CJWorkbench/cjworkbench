@@ -13,7 +13,7 @@
     height: 100%; // OutputIframe.js will override this ...
     max-height: calc(60% - 3rem); // ... and this is the max
     position:relative;
-    border-bottom: 1px solid $WF-background;
+    //border-bottom: 1px solid $WF-background; //border always present, even if nothing displayed in i-frame
     border-left: 1px solid $WF-background;
     iframe {
       border:none;
