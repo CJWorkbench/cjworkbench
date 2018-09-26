@@ -11,7 +11,7 @@ const QuickFixPropTypes = {
     args: PropTypes.array.isRequired
 }
 
-class QuickFix extends React.Component {
+class QuickFix extends React.PureComponent {
   static propTypes = {
     ...QuickFixPropTypes,
     disabled: PropTypes.bool.isRequired,
@@ -38,7 +38,7 @@ class QuickFix extends React.Component {
   }
 }
 
-export default class StatusLine extends React.Component {
+export default class StatusLine extends React.PureComponent {
   static propTypes = {
     status: PropTypes.oneOf(['busy', 'ready', 'error']).isRequired,
     error: PropTypes.string, // may be empty string
@@ -48,6 +48,19 @@ export default class StatusLine extends React.Component {
 
   state = {
     clickedAnyQuickFix: false
+  }
+
+  componentDidUpdate (prevProps) {
+    // Reset clickedAnyQuickFix, so newly-rendered quick-fix buttons will be
+    // clickable.
+    //
+    // The "correct" approach here would probably be for the parent to supply
+    // a `key=...` attribute. But at the moment, this hack takes less code.
+    const props = this.props
+    if (props.status !== prevProps.status || props.error !== prevProps.error || props.quickFixes !== prevProps.quickFixes) {
+      // Whenever the error state changes, let users click things again.
+      this.setState({ clickedAnyQuickFix: false })
+    }
   }
 
   applyQuickFix = (...args) => {
