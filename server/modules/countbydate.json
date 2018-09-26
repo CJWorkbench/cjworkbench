@@ -16,7 +16,7 @@
       "name": "Group by",
       "id_name" : "groupby",
       "type" : "menu",
-      "menu_items" : "Second|Minute|Hour|Day|Month|Quarter - Calendar|Year",
+      "menu_items" : "Second|Minute|Hour|Day|Month|Quarter - Calendar|Year|Second (time-of-day)|Minute (time-of-day)|Hour (time-of-day)",
       "default": "3"
     },
     {

@@ -1,27 +1,106 @@
 /* globals describe, it, expect */
 import React from 'react'
 import StatusLine from './StatusLine'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 describe('Status line', () => {
-  it('Renders an error message', () => {
-    let wrapper = shallow(
-      <StatusLine
-        status='error'
-        error_msg="There's an error"
-      />
-    )
-    expect(wrapper).toMatchSnapshot()
-    expect(wrapper.find('div').first().text()).toEqual("There's an error")
-  })
-
-  it('Renders nothing for other statuses', () => {
-    let wrapper = shallow(
+  const wrapper = (extraProps) => {
+    return mount(
       <StatusLine
         status='ready'
-        error_msg='This should never happen'
+        error=''
+        quickFixes={[]}
+        applyQuickFix={jest.fn()}
+        {...extraProps}
       />
     )
-    expect(wrapper.find('div').length).toEqual(0)
+  }
+
+  it('renders an error message', () => {
+    const w = wrapper({ status: 'error', error: 'foo' })
+    expect(w.find('p').text()).toEqual('foo')
+  })
+
+  it('renders and applies a quick fix', () => {
+    const w = wrapper({
+      status: 'error',
+      error: 'Wrong type',
+      quickFixes: [
+        {
+          'text': 'Fix it',
+          'action': 'prependModule',
+          'args': [1, 2]
+        }
+      ]
+    })
+
+    expect(w.find('button').text()).toEqual('Fix it')
+    w.find('button').simulate('click')
+    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith('prependModule', [1, 2])
+  })
+
+  it('prevents double-applying a quick fix', () => {
+    const w = wrapper({
+      status: 'error',
+      error: 'Wrong type',
+      quickFixes: [
+        {
+          'text': 'Fix it',
+          'action': 'prependModule',
+          'args': [1, 2]
+        },
+        {
+          'text': 'Fix it more',
+          'action': 'prependModule',
+          'args': [2, 3]
+        }
+      ]
+    })
+
+    w.find('button').at(0).simulate('click')
+
+    w.update()
+    expect(w.find('button').at(0).prop('disabled')).toBe(true)
+    expect(w.find('button').at(1).prop('disabled')).toBe(true)
+
+    w.find('button').at(0).simulate('click')
+    w.find('button').at(1).simulate('click')
+    expect(w.prop('applyQuickFix')).not.toHaveBeenCalledTimes(2)
+  })
+
+  it('re-allows applying a quick fix when input changes', () => {
+    // 1. Quick-fix to add something
+    // 2. Click "Undo"
+    //
+    // expected results: you can quick fix again
+    const errorProps = {
+      status: 'error',
+      error: 'Wrong type',
+      quickFixes: [
+        {
+          'text': 'Fix it',
+          'action': 'prependModule',
+          'args': [1, 2]
+        }
+      ]
+    }
+
+    const w = wrapper(errorProps)
+
+    w.find('button').at(0).simulate('click')
+
+    w.update()
+    expect(w.find('button').at(0).prop('disabled')).toBe(true)
+
+    w.setProps({ status: 'ready', error: '' })
+    w.setProps(errorProps)
+
+    w.update()
+    expect(w.find('button').at(0).prop('disabled')).toBe(false)
+  })
+
+  it('renders null when no error', () => {
+    const w = wrapper({ status: 'ready', error: '' })
+    expect(w.text()).toBe(null)
   })
 })

@@ -1,4 +1,5 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
+jest.mock('../WorkbenchAPI')
 import React from 'react'
 import ConnectedWfModule, { WfModule } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
@@ -7,13 +8,21 @@ import { shallow, mount } from 'enzyme'
 import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
+import { mockStore } from '../workflow-reducer'
 import lessonSelector from '../lessons/lessonSelector'
+import WorkbenchAPI from '../WorkbenchAPI'
+
 
 jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 describe('WfModule, not read-only mode', () => {
   let props
   let mockApi
+
+  beforeEach(() => {
+    WorkbenchAPI.addModule.mockReset()
+    WorkbenchAPI.setSelectedWfModule.mockReset()
+  })
 
   const buildShallowProps = () => ({
     isReadOnly: false,
@@ -41,7 +50,8 @@ describe('WfModule, not read-only mode', () => {
     clearNotifications: jest.fn(),
     setSelectedWfModule: jest.fn(),
     setWfModuleCollapsed: jest.fn(),
-    setZenMode: jest.fn()
+    setZenMode: jest.fn(),
+    applyQuickFix: jest.fn()
   })
 
   // A mock module that looks like LoadURL
@@ -82,7 +92,6 @@ describe('WfModule, not read-only mode', () => {
     // Reset mock functions before each test
     mockApi = {
       postParamEvent: okResponseMock(),
-      onParamChanged: okResponseMock(),
       setWfModuleNotes: okResponseMock()
     }
 
@@ -318,6 +327,50 @@ describe('WfModule, not read-only mode', () => {
     wrapper.find('WfParameter[name="version_select"]').prop('onSubmit')()
 
     expect(mockApi.postParamEvent).toHaveBeenCalledWith(2)
+  })
+
+  it('applies a quick fix', () => {
+    // Scenario: user is on linechart and chose non-numeric Y axis
+    const store = mockStore({
+      workflow: { id: 99, wf_modules: [10, 20], read_only: false, is_anonymous: false },
+      wfModules: {
+        10: { id: 10 },
+        20: { id: 20 }
+      },
+      modules: {
+        100: { id: 100, id_name: 'pastecsv' },
+        200: { id: 200, id_name: 'linechart' },
+        300: { id: 300, id_name: 'fixtype' }
+      }
+    })
+
+    lessonSelector.mockReset()
+    lessonSelector.mockReturnValue({
+      testHighlight: _ => false
+    })
+
+    const w = mount(
+      <ConnectedWfModule
+        store={store}
+        isReadOnly={false}
+        isAnonymous={false}
+        isZenMode={false}
+        isZenModeAllowed={false}
+        index={1}
+        wfModule={{ id: 20, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+        selected={true}
+        onDragStart={jest.fn()}
+        onDragEnd={jest.fn()}
+        setZenMode={jest.fn()}
+        api={WorkbenchAPI}
+      />
+    )
+
+    WorkbenchAPI.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
+    WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve(null))
+
+    w.find('button.quick-fix').simulate('click')
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(99, 300, 1, {foo: 'bar'})
   })
 
   describe('lesson highlights', () => {

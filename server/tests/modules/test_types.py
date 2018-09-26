@@ -2,7 +2,7 @@ import datetime
 import unittest
 from unittest import mock
 from pandas import DataFrame, Series
-from server.modules.types import Column, ProcessResult
+from server.modules.types import Column, ProcessResult, QuickFix
 
 
 class ProcessResultTests(unittest.TestCase):
@@ -49,7 +49,7 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_tuple_dataframe_str_dict(self):
         df = DataFrame({'foo': ['bar']})
-        expected = ProcessResult(df, 'hi', {'a': 'b'})
+        expected = ProcessResult(df, 'hi', json={'a': 'b'})
         result = ProcessResult.coerce((df, 'hi', {'a': 'b'}))
         self.assertEqual(result, expected)
 
@@ -61,7 +61,7 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_tuple_dataframe_none_dict(self):
         df = DataFrame({'foo': ['bar']})
-        expected = ProcessResult(df, '', {'a': 'b'})
+        expected = ProcessResult(df, '', json={'a': 'b'})
         result = ProcessResult.coerce((df, None, {'a': 'b'}))
         self.assertEqual(result, expected)
 
@@ -102,6 +102,65 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_3tuple_no_dataframe(self):
         result = ProcessResult.coerce(('foo', 'bar', {'a': 'b'}))
         self.assertIsNotNone(result.error)
+
+    def test_coerce_dict_with_quickfix_tuple(self):
+        dataframe = DataFrame({'A': [1, 2]})
+        quick_fix = QuickFix('Hi', 'prependModule',
+                             ['texttodate', {'column': 'created_at'}])
+        result = ProcessResult.coerce({
+            'dataframe': dataframe,
+            'error': 'an error',
+            'json': {'foo': 'bar'},
+            'quick_fixes': [
+                ('Hi', 'prependModule', 'texttodate', { 'column': 'created_at' }),
+            ]
+        })
+        expected = ProcessResult(dataframe, 'an error', json={'foo': 'bar'},
+                                 quick_fixes=[quick_fix])
+        self.assertEqual(result, expected)
+
+    def test_coerce_dict_with_quickfix_dict(self):
+        dataframe = DataFrame({'A': [1, 2]})
+        quick_fix = QuickFix('Hi', 'prependModule',
+                             ['texttodate', {'column': 'created_at'}])
+        result = ProcessResult.coerce({
+            'dataframe': dataframe,
+            'error': 'an error',
+            'json': {'foo': 'bar'},
+            'quick_fixes': [
+                {
+                    'text': 'Hi',
+                    'action': 'prependModule',
+                    'args': ['texttodate', {'column': 'created_at'}],
+                },
+            ]
+        })
+        expected = ProcessResult(dataframe, 'an error', json={'foo': 'bar'},
+                                 quick_fixes=[quick_fix])
+        self.assertEqual(result, expected)
+
+    def test_coerce_dict_bad_quickfix_dict(self):
+        with self.assertRaises(ValueError):
+            ProcessResult.coerce({
+                'error': 'an error',
+                'json': {'foo': 'bar'},
+                'quick_fixes': [
+                    {
+                        'text': 'Hi',
+                        'action': 'prependModule',
+                        'arguments': ['texttodate', {'column': 'created_at'}],
+                    },
+                ]
+            })
+
+    def test_coerce_dict_wrong_key(self):
+        with self.assertRaises(ValueError):
+            ProcessResult.coerce({'table': DataFrame({'A': [1]})})
+
+    def test_coerce_empty_dict(self):
+        result = ProcessResult.coerce({})
+        expected = ProcessResult()
+        self.assertEqual(result, expected)
 
     def test_coerce_invalid_value(self):
         result = ProcessResult.coerce([None, 'foo'])

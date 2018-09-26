@@ -87,14 +87,18 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             />
           </div>
         </div>
-        <StatusLine />
+        <StatusLine
+          applyQuickFix={[Function]}
+          error=""
+          quickFixes={Array []}
+          status="ready"
+        />
         <div
           className="module-card-params"
         >
           <WfParameter
             api={
               Object {
-                "onParamChanged": [MockFunction],
                 "postParamEvent": [MockFunction],
                 "setWfModuleNotes": [MockFunction],
               }
@@ -138,7 +142,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           <WfParameter
             api={
               Object {
-                "onParamChanged": [MockFunction],
                 "postParamEvent": [MockFunction],
                 "setWfModuleNotes": [MockFunction],
               }
@@ -180,7 +183,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           <WfParameter
             api={
               Object {
-                "onParamChanged": [MockFunction],
                 "postParamEvent": [MockFunction],
                 "setWfModuleNotes": [MockFunction],
               }

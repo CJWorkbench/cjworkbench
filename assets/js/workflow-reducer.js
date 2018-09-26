@@ -103,6 +103,14 @@ function omitWfModuleClientOnlyStateInPlace (wfModules, prevWfModules) {
   }
 }
 
+function moduleIdNameToModuleId (modules, idName) {
+  const key = Object.keys(modules).find(m => modules[m].id_name === idName)
+  if (!key) {
+    alert(`Cannot find module "${idName}"`)
+  }
+  return Number(key)
+}
+
 // RELOAD_WORKFLOW
 // Re-load the workflow
 export function reloadWorkflowAction () {
@@ -251,16 +259,51 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
 })
 
 // ADD_MODULE
-export function addModuleAction (moduleId, index) {
+/**
+ * Add a placeholder (phony String WfModule ID) to workflow.wf_modules and
+ * send an API request to add the module; on completion, add to wfModules and
+ * replace the placeholder in workflow.wf_modules with the new wfModule ID.
+ *
+ * Parameters:
+ * @param moduleId String module id_name or Number module ID.
+ * @param position Number or Object. If Number: position where this module
+ *                 should be (i.e., position of the current module we will go
+ *                 _before_). If Object, its `beforeWfModuleId` or
+ *                 `afterWfModuleId` Number property will determine position.
+ * @param parameterValues {id_name:value} Object of parameters for the
+ *                        newly-created WfModule.
+ */
+export function addModuleAction (moduleId, position, parameterValues) {
   return (dispatch, getState) => {
+    const { modules, workflow } = getState()
+    if (typeof moduleId === 'string' || moduleId instanceof String) {
+      moduleId = moduleIdNameToModuleId(modules, moduleId)
+    }
     const nonce = generateNonce(moduleId)
-    const workflow = getState().workflow
+
+    let index = position
+    if (position.beforeWfModuleId) {
+      const previous = workflow.wf_modules.indexOf(position.beforeWfModuleId)
+      if (previous === -1) {
+        console.warn("Ignoring addModuleAction with invalid position", position)
+        return
+      }
+      index = previous
+    }
+    if (position.afterWfModuleId) {
+      const previous = workflow.wf_modules.indexOf(position.afterWfModuleId)
+      if (previous === -1) {
+        console.warn("Ignoring addModuleAction with invalid position", position)
+        return
+      }
+      index = previous + 1
+    }
 
     return dispatch({
       type: ADD_MODULE,
       payload: {
         promise: (
-          api.addModule(workflow.id, moduleId, index)
+          api.addModule(workflow.id, moduleId, index, parameterValues || {})
             .then(response => {
               return {
                 nonce: nonce,
@@ -695,6 +738,16 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
     }
   }
 })
+
+function quickFixPrependModule(wfModuleId, moduleIdName, parameterValues) {
+  return addModuleAction(moduleIdName, { beforeWfModuleId: wfModuleId }, parameterValues)
+}
+
+export function quickFixAction(action, wfModuleId, args) {
+  return {
+    prependModule: quickFixPrependModule
+  }[action](wfModuleId, ...args)
+}
 
 // ---- Reducer ----
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion

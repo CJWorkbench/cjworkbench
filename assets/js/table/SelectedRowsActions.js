@@ -6,7 +6,7 @@ import DropdownMenu from 'reactstrap/lib/DropdownMenu'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import { addModuleAction, setParamValueActionByIdName } from '../workflow-reducer'
+import { addModuleAction } from '../workflow-reducer'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -136,16 +136,11 @@ function mapStateToProps (state) {
 }
 
 function addWfModuleForRowsAction(currentWfModuleId, moduleId, rowsString) {
-  return (dispatch, getState) => {
-    const index = getState().workflow.wf_modules.indexOf(currentWfModuleId)
-    if (index === -1) return null
-
-    return dispatch(addModuleAction(moduleId, index + 1))
-      .then(fulfilled => {
-        const newWfm = fulfilled.value.data.wfModule
-        return dispatch(setParamValueActionByIdName(newWfm.id, 'rows', rowsString))
-      })
-  }
+  return addModuleAction(
+    moduleId,
+    { afterWfModuleId: currentWfModuleId },
+    { rows: rowsString }
+  )
 }
 
 const mapDispatchToProps = (dispatch) => {

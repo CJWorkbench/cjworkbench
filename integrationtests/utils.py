@@ -94,7 +94,7 @@ class WorkbenchBase(unittest.TestCase):
         b = self.browser
 
         with b.scope(f'.wf-module:nth-child({position * 2 + 2})'):
-            b.click_button('more')
+            b.click_button('more', visible='all')
 
         # Dropdown menu is at root of document (in a <Portal>)
         with b.scope('.dropdown-menu'):

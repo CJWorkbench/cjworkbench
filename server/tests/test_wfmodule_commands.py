@@ -38,14 +38,18 @@ class AddDeleteModuleCommandTests(CommandTestCase):
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
-        cmd = async_to_sync(AddModuleCommand.create)(
-            self.workflow,
-            module_version=self.module_version,
-            insert_before=0
+        cmd = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                     self.module_version, 0,
+                                                     {'csv': 'A,B\n1,2'}
         )
         self.assertEqual(all_modules.count(), 2)
         added_module = WfModule.objects.get(workflow=self.workflow, order=0)
         self.assertNotEqual(added_module, existing_module)
+        # Test that supplied param is written
+        self.assertEqual(
+            len(added_module.parameter_vals.filter(value='A,B\n1,2')),
+            1
+        )
         bumped_module = WfModule.objects.get(workflow=self.workflow, order=1)
         self.assertEqual(bumped_module, existing_module)
 
@@ -95,11 +99,9 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v1])
 
         # Insert at beginning
-        cmd1 = async_to_sync(AddModuleCommand.create)(
-            self.workflow,
-            module_version=self.module_version,
-            insert_before=0
-        )
+        cmd1 = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                      self.module_version,
+                                                      0, {})
         self.assertEqual(all_modules.count(), 2)
         self.assertEqual(cmd1.wf_module.order, 0)
         self.assertNotEqual(cmd1.wf_module, existing_module)
@@ -107,22 +109,18 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v2, v2])
 
         # Insert at end
-        cmd2 = async_to_sync(AddModuleCommand.create)(
-            self.workflow,
-            module_version=self.module_version,
-            insert_before=2
-        )
+        cmd2 = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                      self.module_version,
+                                                      2, {})
         self.assertEqual(all_modules.count(), 3)
         self.assertEqual(cmd2.wf_module.order, 2)
         v3 = self.workflow.revision()
         self.assertWfModuleVersions([v2, v2, v3])
 
         # Insert in between two modules
-        cmd3 = async_to_sync(AddModuleCommand.create)(
-            self.workflow,
-            module_version=self.module_version,
-            insert_before=2
-        )
+        cmd3 = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                      self.module_version,
+                                                      2, {})
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
         v4 = self.workflow.revision()
@@ -220,11 +218,9 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         all_modules = WfModule.objects.filter(workflow=self.workflow)
         self.assertEqual(all_modules.count(), 1)
 
-        cmd = async_to_sync(AddModuleCommand.create)(
-            self.workflow,
-            module_version=self.module_version,
-            insert_before=1
-        )
+        cmd = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                     self.module_version,
+                                                     1, {})
 
         self.workflow.selected_wf_module = cmd.wf_module.order
         self.workflow.save()
@@ -237,11 +233,9 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule
     def test_add_delete(self):
-        cmda = async_to_sync(AddModuleCommand.create)(
-            self.workflow,
-            module_version=self.module_version,
-            insert_before=0
-        )
+        cmda = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                      self.module_version,
+                                                      0, {})
         async_to_sync(DeleteModuleCommand.create)(cmda.wf_module)
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass

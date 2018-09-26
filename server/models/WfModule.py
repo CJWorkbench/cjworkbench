@@ -1,5 +1,6 @@
 import json
 from typing import List, Optional
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from server import websockets
 from server.modules.types import Column, ProcessResult
@@ -119,7 +120,9 @@ class WfModule(models.Model):
                                                            blank=True)
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
     cached_render_result_error = models.TextField(blank=True)
+    # should be JSONField but we need backwards-compatibility
     cached_render_result_json = models.BinaryField(blank=True)
+    cached_render_result_quick_fixes = JSONField(blank=True, default=list)
 
     READY = "ready"
     BUSY = "busy"
@@ -240,12 +243,19 @@ class WfModule(models.Model):
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
-    def create_default_parameters(self):
+    def create_parametervals(self, values={}):
         for pspec in ParameterSpec.objects \
                      .filter(module_version__id=self.module_version_id) \
                      .all():
             pv = ParameterVal(wf_module=self, parameter_spec=pspec)
-            pv.init_from_spec()
+            pv.order = pspec.order
+            pv.items = pspec.def_items
+            pv.visible = pspec.def_visible
+            try:
+                value = values[pspec.id_name]
+            except KeyError:
+                value = pspec.def_value
+            pv.set_value(value)
             pv.save()
 
     def get_parameter_val(self, name, expected_type):

@@ -3,7 +3,7 @@ import datetime
 import pandas
 from server.tests.utils import DbTestCase
 from server.models import Workflow, WfModule
-from server.modules.types import Column, ProcessResult
+from server.modules.types import Column, ProcessResult, QuickFix
 
 
 class CachedRenderResultTests(DbTestCase):
@@ -16,7 +16,9 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(self.wf_module.get_cached_render_result())
 
     def test_assign_and_save(self):
-        result = ProcessResult(pandas.DataFrame({'a': [1]}), 'err')
+        result = ProcessResult(pandas.DataFrame({'a': [1]}), 'err',
+                               json={'foo': 'bar'},
+                               quick_fixes=[QuickFix('X', 'prependModule', 'x')])
         self.wf_module.cache_render_result(2, result)
 
         cached = self.wf_module.get_cached_render_result()

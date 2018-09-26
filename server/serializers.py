@@ -87,6 +87,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
     output_columns = serializers.SerializerMethodField()
+    quick_fixes = serializers.SerializerMethodField()
 
     def get_module_version(self, wfm):
         if wfm.module_version is not None:
@@ -122,6 +123,9 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
         return [{'name': c.name, 'type': c.type} for c in output_columns]
 
+    def get_quick_fixes(self, wfm):
+        return wfm.cached_render_result_quick_fixes
+
     class Meta:
         model = WfModule
         fields = ('id', 'module_version', 'workflow', 'status', 'error_msg',
@@ -129,7 +133,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'auto_update_data', 'update_interval', 'update_units',
                   'last_update_check', 'notifications',
                   'has_unseen_notification', 'html_output', 'versions',
-                  'last_relevant_delta_id', 'output_columns')
+                  'last_relevant_delta_id', 'output_columns', 'quick_fixes')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):

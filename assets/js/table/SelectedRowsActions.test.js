@@ -125,8 +125,7 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(321, 15, 1)
-      expect(WorkbenchAPI.onParamChanged).toHaveBeenCalledWith(123, { value: '2, 4-5' })
+      expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(321, 15, 1, { rows: '2, 4-5' })
     })
   })
 })

@@ -1,0 +1,34 @@
+{
+  "name": "Convert to date & time",
+  "id_name": "convert-date",
+  "category" : "Clean",
+  "help_url":"modules/convert-to-date-time",
+  "icon": "calendar",
+  "description": "",
+  "parameters": [
+    {
+      "name": "In columns",
+      "id_name": "source-columns",
+      "type": "multicolumn",
+      "ui-only": true
+    },
+    {
+         "name": "Column Names",
+         "id_name": "colnames",
+         "type": "string",
+         "visible": false
+    },
+    {
+      "name": "Input format",
+      "id_name": "type_date",
+      "type": "menu",
+      "menu_items": "AUTO|Date (U.S.) MM/DD/YYYY|Date (E.U.) MM/DD/YYYY"
+    },
+    {
+      "name": "Convert non-dates to null",
+      "id_name": "type_null",
+      "type": "checkbox",
+      "default": "True"
+    }
+  ]
+}

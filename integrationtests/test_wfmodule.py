@@ -32,7 +32,8 @@ class TestWfModule(LoggedInIntegrationTest):
         b.click_button('more')
         b.click_button('Export')
 
-        b.assert_element('a[download][href$=csv]')
+        # Wait for modal to appear
+        b.assert_element('a[download][href$=csv]', wait=True)
         b.assert_element('a[download][href$=json]')
         # TODO actually test the export.
 

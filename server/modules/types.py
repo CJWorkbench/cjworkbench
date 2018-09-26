@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Any, Dict
+from typing import Any, Dict, List
 from pandas import DataFrame
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server import sanitizedataframe
@@ -21,6 +21,66 @@ def _dtype_to_column_type(dtype) -> str:
         raise ValueError(f'Unknown dtype: {dtype}')
 
 
+class QuickFix:
+    """
+    Suggestion from a module on how the user can improve the workflow.
+
+    The canonical example is: "input is wrong type." What an icky error
+    message! Let's add a button. "Input is wrong type. <Click to Fix>" -- much
+    better.
+
+    There's very little server-side code here: QuickFix is a client-only
+    concept, so essentially our only test on the server is that it has an
+    "action".
+
+    Etymology: "Quick Fix" is a helpful Eclipse feature.
+    """
+    def __init__(self, text, action, args):
+        self.text = text
+        self.action = action
+        self.args = args
+
+    @staticmethod
+    def coerce(value):
+        """Convert tuple/dict to QuickFix."""
+        if isinstance(value, QuickFix):
+            return value
+        elif isinstance(value, tuple):
+            if len(value) < 2:
+                raise ValueError(f'QuickFix must have (action,text)')
+            else:
+                return QuickFix(value[0], value[1], list(value[2:]))
+        elif isinstance(value, dict):
+            try:
+                return QuickFix(value['text'], value['action'], value['args'])
+            except KeyError:
+                raise ValueError(
+                    'QuickFix needs "text", "action" and "args" keys: {value}'
+                )
+        else:
+            raise ValueError(f'QuickFix is not a tuple or dict: {value}')
+
+    def to_dict(self):
+        return {
+            'text': self.text,
+            'action': self.action,
+            'args': self.args,
+        }
+
+    def __eq__(self, other) -> bool:
+        """Fuzzy equality operator, for unit tests."""
+        return (
+            isinstance(other, QuickFix)
+            and self.text == other.text
+            and self.action == other.action
+            and self.args == other.args
+        )
+
+    def __repr__(self) -> str:
+        tup = (self.text, self.action, self.args)
+        return 'QuickFix' + repr(tup)
+
+
 class ProcessResult:
     """
     Output from a module's process() method.
@@ -35,8 +95,8 @@ class ProcessResult:
 
     A ProcessResult object may be pickled.
     """
-    def __init__(self, dataframe: DataFrame=None, error: str='',
-                 json: Dict[str, Any]=None):
+    def __init__(self, dataframe: DataFrame=None, error: str='', *,
+                 json: Dict[str, Any]={}, quick_fixes: List[QuickFix]=[]):
         if dataframe is None:
             dataframe = DataFrame()
         if not isinstance(dataframe, DataFrame):
@@ -45,23 +105,20 @@ class ProcessResult:
         if not isinstance(error, str):
             raise ValueError('error must be a str')
 
-        if json is None:
-            json = {}
         if not isinstance(json, dict):
             raise ValueError('json must be a dict')
+
+        if not isinstance(quick_fixes, list):
+            raise ValueError('quick_fixes must be a list')
 
         self.dataframe = dataframe
         self.error = error
         self.json = json
+        self.quick_fixes = quick_fixes
 
     def __repr__(self) -> str:
-        return (
-            'ProcessResult('
-            f'{repr(self.dataframe)}, '
-            f'{repr(self.error)}, '
-            f'{repr(self.json)}'
-            ')'
-        )
+        return 'ProcessResult' + repr((self.dataframe, self.error, self.json,
+                                       self.quick_fixes))
 
     def __eq__(self, other) -> bool:
         """Fuzzy equality operator, for unit tests."""
@@ -73,6 +130,7 @@ class ProcessResult:
             )
             and self.error == other.error
             and self.json == other.json
+            and self.quick_fixes == other.quick_fixes
         )
 
     def truncate_in_place_if_too_big(self) -> 'ProcessResult':
@@ -115,17 +173,34 @@ class ProcessResult:
         * value is a str => error=str, empty dataframe and json
         * value is a (DataFrame, err) => empty json (either may be None)
         * value is a (DataFrame, err, dict) => obvious (any may be None)
+        * value is a dict => pass it as kwargs
         * else we generate an error with empty dataframe and json
         """
         if value is None:
             return ProcessResult(dataframe=DataFrame())
-        if isinstance(value, ProcessResult):
+        elif isinstance(value, ProcessResult):
             return value
-        if isinstance(value, DataFrame):
+        elif isinstance(value, DataFrame):
             return ProcessResult(dataframe=value)
-        if isinstance(value, str):
+        elif isinstance(value, str):
             return ProcessResult(error=value)
-        if isinstance(value, tuple):
+        elif isinstance(value, dict):
+            value = dict(value)  # shallow copy
+            # Coerce quick_fixes, if it's there
+            try:
+                value['quick_fixes'] = [QuickFix.coerce(v)
+                                        for v in value['quick_fixes']]
+            except KeyError:
+                pass
+
+            try:
+                return ProcessResult(**value)
+            except TypeError as err:
+                raise ValueError(
+                    ('ProcessResult input must only contain '
+                     '{dataframe, error, json, quick_fixes} keys'),
+                ) from err
+        elif isinstance(value, tuple):
             if len(value) == 2:
                 dataframe, error = value
                 if dataframe is None:

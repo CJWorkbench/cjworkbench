@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 from django.core.files.storage import default_storage
 import pandas
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
-from server.modules.types import Column, ProcessResult
+from server.modules.types import Column, ProcessResult, QuickFix
 from server import parquet
 
 
@@ -39,12 +39,14 @@ class CachedRenderResult:
     """
 
     def __init__(self, workflow_id: int, wf_module_id: int,
-                 delta_id: int, error: str, json: Dict[str, Any]):
+                 delta_id: int, error: str, json: Optional[Dict[str, Any]],
+                 quick_fixes: List[QuickFix]):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
         self.delta_id = delta_id
         self.error = error
         self.json = json
+        self.quick_fixes = quick_fixes
 
     @property
     def parquet_path(self):
@@ -80,6 +82,11 @@ class CachedRenderResult:
 
     @property
     def result(self):
+        """
+        Convert to ProcessResult -- which means reading the parquet file.
+
+        It's best to avoid this operation when possible.
+        """
         if not hasattr(self, '_result'):
             if self.parquet_file:
                 # At this point, we know the file exists. (It may be an empty
@@ -88,7 +95,9 @@ class CachedRenderResult:
             else:
                 dataframe = pandas.DataFrame()
 
-            self._result = ProcessResult(dataframe, self.error, self.json)
+            self._result = ProcessResult(dataframe, self.error,
+                                         json=self.json,
+                                         quick_fixes=self.quick_fixes)
 
         return self._result
 
@@ -151,6 +160,7 @@ class CachedRenderResult:
         wf_module_id = wf_module.id
 
         error = wf_module.cached_render_result_error
+
         # cached_render_result_json is sometimes a memoryview
         json_bytes = bytes(wf_module.cached_render_result_json)
         if json_bytes:
@@ -158,9 +168,16 @@ class CachedRenderResult:
         else:
             json_dict = None
 
+        quick_fixes = wf_module.cached_render_result_quick_fixes
+        if not quick_fixes:
+            quick_fixes = []
+        # Coerce from tuples to QuickFixes
+        quick_fixes = [QuickFix.coerce(qf) for qf in quick_fixes]
+
         ret = CachedRenderResult(workflow_id=workflow_id,
                                  wf_module_id=wf_module_id, delta_id=delta_id,
-                                 error=error, json=json_dict)
+                                 error=error, json=json_dict,
+                                 quick_fixes=quick_fixes)
         # Keep in mind: ret.parquet_file has not been loaded yet. That means
         # this result is _not_ a snapshot in time, and you must be careful not
         # to treat it as such.
@@ -172,8 +189,9 @@ class CachedRenderResult:
 
         wf_module.cached_render_result_workflow_id = None
         wf_module.cached_render_result_delta_id = None
-        wf_module.cached_render_result_json = b'null'
         wf_module.cached_render_result_error = ''
+        wf_module.cached_render_result_json = b'null'
+        wf_module.cached_render_result_quick_fixes = []
 
         if workflow_id is not None:
             # We're setting non-None to None. That means there's probably
@@ -204,15 +222,19 @@ class CachedRenderResult:
             error = result.error
             json_dict = result.json
             json_bytes = json.dumps(result.json).encode('utf-8')
+            quick_fixes = result.quick_fixes
         else:
             error = ''
             json_dict = None
             json_bytes = ''
+            quick_fixes = []
 
         wf_module.cached_render_result_workflow_id = wf_module.workflow_id
         wf_module.cached_render_result_delta_id = delta_id
         wf_module.cached_render_result_error = error
         wf_module.cached_render_result_json = json_bytes
+        wf_module.cached_render_result_quick_fixes = [qf.to_dict()
+                                                      for qf in quick_fixes]
 
         parquet_path = _parquet_path(wf_module.workflow_id, wf_module.id)
 
@@ -230,4 +252,5 @@ class CachedRenderResult:
             return CachedRenderResult(workflow_id=wf_module.workflow_id,
                                       wf_module_id=wf_module.id,
                                       delta_id=delta_id,
-                                      error=error, json=json_dict)
+                                      error=error, json=json_dict,
+                                      quick_fixes=quick_fixes)
