@@ -19,7 +19,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Add from URL'"
-      >Add the module 'Add from URL'.
+      >Add the data source 'Add from URL'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
@@ -31,17 +31,17 @@
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Drop empty columns"}]'
       data-test="return workflow.wfModules.length > 1 && workflow.wfModules[1].moduleName === 'Drop empty columns'"
-      >Add the module 'Drop empty columns.'
+      >Add the step 'Drop empty columns.'
     </li>
     <li
       data-highlight='[{"type":"Module","index":2,"name":"Drop empty rows"}]'
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
-      >Add the module 'Drop empty rows'.
+      >Add the step 'Drop empty rows'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
       data-test="const colnames = workflow.wfModules[2].parameters.get('colnames'); return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
-      >In the module, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
+      >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
     </li>
   </ol>
 </section>
@@ -53,7 +53,7 @@
     <li
       data-highlight='[{"type":"Module","index":3,"name":"Refine"}]'
       data-test="return workflow.wfModules.length > 3 && workflow.wfModules[3].moduleName === 'Refine'"
-      >Add the module 'Refine' using the search in the Module Library.</li>
+      >Add the step 'Refine' using the search.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
       data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const renames = JSON.parse(json).renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
@@ -88,7 +88,7 @@
     <li
       data-highlight='[{"type":"Module","index":4,"name":"Reshape" }]'
       data-test="return workflow.wfModules.length > 4 && workflow.wfModules[4].moduleName === 'Reshape'"
-      >Add the module ‘Reshape’.
+      >Add the step ‘Reshape’.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'

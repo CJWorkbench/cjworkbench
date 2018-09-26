@@ -18,7 +18,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Scrape with Xpath"}]'
       data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Scrape with Xpath'"
-      >Add the module 'Scrape with XPath'.
+      >Add the Scraper 'Scrape with XPath'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
@@ -58,7 +58,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
-      >Back in Workbench, paste the XPath selector you just copied into the module, and click <kbd>Scrape</kbd>.
+      >Back in Workbench, paste the XPath selector you just copied into the scraper, and click <kbd>Scrape</kbd>.
     </li>
   </ol>
 </section>
@@ -88,21 +88,21 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.parameters.get('selector'))"
-      >In the module, edit the XPath selector to select all the items in the list, and click <kbd>Scrape</kbd>.
+      >In the scraper, edit the XPath selector to select all the items in the list, and click <kbd>Scrape</kbd>.
     </li>
   </ol>
 </section>
 <section>
   <h2>4. Monitor the website for changes</h2>
   <p>
-    Let's set up the module to monitor the webpage and automatically scrape it if a new list is published.
+    Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
-      >In the module, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd> and check “Email me when data changes”. Click <kbd>Apply</kbd>.
+      >In the scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd> and check “Email me when data changes”. Click <kbd>Apply</kbd>.
     </li>
   </ol>
 </section>

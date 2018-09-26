@@ -16,11 +16,11 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Add from URL'"
-      >Add the module ‘Add from URL’.</li>
+      >Add the data source ‘Add from URL’.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/affordable_housing_1.csv' && wfModule.selectedVersion"
-      >Paste in the URL of the dataset in the module. Click <kbd>Update</kbd> to load the data.
+      >Paste the URL of the dataset in the field. Click <kbd>Update</kbd> to load the data.
       <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/affordable_housing_1.csv</div>
     </li>
     <li
@@ -30,7 +30,7 @@
       <span>
         <img class="icon-insert" src="/static/images/url_chart_lesson/note_button.svg">
       </span>
-      to the module, for example:
+      to the step, for example:
       <div class="copy-txt content-3 t-white">Data from datasf.org</div>
     </li>
     <li
@@ -40,7 +40,7 @@
       <span>
         <img class="icon-insert" src="/static/images/url_chart_lesson/collapse_button.svg">
       </span>
-      the module.</li>
+      the 'Add from URL'.</li>
   </ol>
 </section>
 <section>
@@ -51,7 +51,7 @@
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Column Chart"}]'
       data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column Chart'"
-      >Add the module ‘Column Chart’ using the search in the module library.</li>
+      >Add the step ‘Column Chart’ using the search</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; const p = wfModule.parameters; if (p.get('x_column') !== 'city_neighborhood') return false; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return yColumns.length === 1 && yColumns[0].column === 'affordable_units';"
@@ -71,7 +71,7 @@
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
-      >Add the module ‘Filter’ between 'Add from URL' and 'Column Chart'.</li>
+      >Add the step ‘Filter’ between 'Add from URL' and 'Column Chart'.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
       data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
@@ -79,14 +79,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
-      >Click the ‘Column chart’ module back to see the updated chart.
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
-      >Get the embed code by clicking on the
-      <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg" />
-      button at the top right of the chart panel.
+      >Click the ‘Column chart’ step back to see the updated chart.
     </li>
   </ol>
 </section>
@@ -97,6 +90,12 @@
     <p class="summary"> You created your first chart and learned workflow basics.</p>
   </div>
   <div class="next">
+    <h2>Next</h4>
+    <p>
+      Get the embed code to publish the chart by clicking on the
+      <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg" />
+      button at the top right of the chart panel.
+    </p>
     <h2>Continue learning:</h4>
     <ol>
       <li><a href="/lessons/clean-and-standardize/">Clean and standardize data</a></li>

@@ -10,14 +10,14 @@
 </section>
 <section>
   <h2>1. Set up automatic updates</h2>
-  <p>First, connect to the data source and set up the module to download any new available data. </p>
+  <p>First, connect to the data source and set up the connector to download any new available data. </p>
   <p>The dataset 'Police department Incidents' from the City of San Francisco is published and documented <a href="https://data.sfgov.org/Public-Safety/-Change-Notice-Police-Department-Incidents/tmnf-yvry" class="highlight" target="_blank">here</a>.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Add from URL'"
-      >Add the module 'Add from URL'.
+      >Add the data source 'Add from URL'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
@@ -44,7 +44,7 @@
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
       data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
-      >Add the module 'Filter'.
+      >Add the step 'Filter'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
@@ -56,7 +56,7 @@
     <li
       data-highlight='[{"type":"Module","index":2,"name":"Group"}]'
       data-test="return workflow.wfModules[2] && workflow.wfModules[2].moduleName === 'Group'"
-      >Add the module 'Group'.
+      >Add the step 'Group'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
@@ -72,20 +72,20 @@
     <li
       data-highlight='[{"type":"Module","index":3,"name":"Filter"}]'
       data-test="return workflow.wfModules[3] && workflow.wfModules[3].moduleName === 'Filter'"
-      >Add the module 'Filter'.
+      >Add the step 'Filter'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","index":3,"moduleName":"Filter"}]'
       data-test="const params = workflow.wfModules[3].parameters; return params.get('column') === 'Group Size' && params.get('condition') === 10 && params.get('value') === '8000'"
       >Select the column <kbd>Group Size</kbd> to filter by. Choose <kbd>Greater than</kbd> as a condition, and type in <kbd>8000</kbd>
       <p class="instruction-detail">
-        Turn this module's alert on to be notified if the list of neighborhoods matching the condition changes
+        Turn this step's alert on to be notified if the list of neighborhoods matching the condition changes
       </p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","index":3,"moduleName":"Filter"}]'
       data-test="return workflow.wfModules[3].isEmailUpdates"
-      >In the filter module, click on the
+      >In the filter step, click on the
       <img class="icon-insert" src="/static/images/monitor_lesson/alert_button.svg"> icon. Turn the alert <kbd>ON</kbd>and close the window.
     </li>
   </ol>
@@ -94,7 +94,7 @@
   <h2>Lesson Complete</h2>
   <div class="completed">
     <h2>Congratulations!</h2>
-    <p class="summary"> Your worfklow is live! It will automatically update to reflect changes in the data and send you an email if the output of the filter module changes.</p>
+    <p class="summary"> Your worfklow is live! It will automatically update to reflect changes in the data and send you an email if the output of the filter changes.</p>
   </div>
   <div class="next">
     <h2>Continue learning:</h4>
