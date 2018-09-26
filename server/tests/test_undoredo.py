@@ -41,7 +41,7 @@ class UndoRedoTests(DbTestCase):
 
         # Add a module
         cmd1 = async_to_sync(AddModuleCommand.create)(self.workflow,
-                                                      self.csv, 0)
+                                                      self.csv, 0, {})
         self.assertEqual(all_modules.count(), 1)
         self.assertNotEqual(self.workflow.last_delta_id, None)
         v1 = self.workflow.revision()
