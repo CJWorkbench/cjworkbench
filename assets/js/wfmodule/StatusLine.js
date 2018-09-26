@@ -5,19 +5,60 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default class StatusLine extends React.Component {
+const QuickFixPropTypes = {
+    text: PropTypes.string.isRequired,
+    action: PropTypes.oneOf(['prependModule']).isRequired,
+    args: PropTypes.array.isRequired
+}
+
+
+class QuickFix extends React.Component {
+  static propTypes = {
+    ...QuickFixPropTypes,
+    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
+  }
+
+  onClick = () => {
+    const { action, args, applyQuickFix } = this.props
+    applyQuickFix(action, args)
+  }
+
   render () {
-    if (this.props.status === 'error') {
-      return <div className='wf-module-error-msg mb-3'>{this.props.error_msg}</div>
-    // } else if (this.props.status == 'busy') {
-    //   return <div className='wf-module-error-msg mb-3'>Working...</div>
-    } else {
-      return false
-    }
+    const { text } = this.props
+
+    return (
+      <button className="quick-fix" onClick={this.onClick}>{text}</button>
+    )
   }
 }
 
-StatusLine.propTypes = {
-  status: PropTypes.string,
-  error_msg: PropTypes.string
+export default class StatusLine extends React.Component {
+  static propTypes = {
+    status: PropTypes.oneOf(['busy', 'ready', 'error']).isRequired,
+    error: PropTypes.string, // may be null
+    quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
+    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
+  }
+
+  render () {
+    const { status, error, applyQuickFix, quickFixes } = this.props
+
+    if (!error && !quickFixes.length) return null
+
+    let quickFixUl = null
+    if (quickFixes.length) {
+      quickFixUl = (
+        <ul className="quick-fixes">
+          {quickFixes.map(qf => <li key={qf.text}><QuickFix {...qf} applyQuickFix={applyQuickFix} /></li>)}
+        </ul>
+      )
+    }
+
+    return (
+      <div className="wf-module-error-msg">
+        <p>{error}</p>
+        {quickFixUl}
+      </div>
+    )
+  }
 }

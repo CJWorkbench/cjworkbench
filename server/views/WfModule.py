@@ -38,6 +38,7 @@ def _client_attributes_that_change_on_render(wf_module):
 
     return {
         'error_msg': wf_module.error_msg,
+        'quick_fixes': wf_module.cached_render_result_quick_fixes,
         'status': wf_module.status,
         'output_columns': output_columns,
     }

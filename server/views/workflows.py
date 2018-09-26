@@ -276,6 +276,13 @@ def workflow_addmodule(request, pk, format=None):
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    try:
+        values = dict(request.data['values'])
+    except KeyError:
+        values = {}
+    except TypeError:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
     # don't allow python code module in anonymous workflow
     if module.id_name == 'pythoncode' and workflow.is_anonymous:
         return HttpResponseForbidden()
@@ -290,7 +297,7 @@ def workflow_addmodule(request, pk, format=None):
     })
 
     delta = async_to_sync(AddModuleCommand.create)(workflow, module_version,
-                                                   index)
+                                                   index, values)
     serializer = WfModuleSerializer(delta.wf_module)
     wfmodule_data = serializer.data
 

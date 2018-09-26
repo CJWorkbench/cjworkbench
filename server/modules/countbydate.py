@@ -1,293 +1,346 @@
 from datetime import datetime
-from enum import Enum
+import enum
 import re
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 from django.conf import settings
 from dateutil.parser import parse
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 from pandas.core.dtypes.common import is_dtype_equal
 from .moduleimpl import ModuleImpl
 
 # ---- CountByDate ----
 # group column by unique value, discard all other columns
 
-DEFAULT_DATETIME = datetime(1970, 1, 1, 0, 0, 0)
-ALT_DEFAULT_DATETIME = datetime(1971, 2, 2, 1, 1, 1)
 
-
-class InputTimeType(Enum):
+class InputTimeType(enum.Enum):
     DATE = 1
     DATETIME = 2
     TIME_OF_DAY = 3
 
 
-InvalidDate = re.compile('^\d+$')
+class Period(enum.Enum):
+    SECOND = 0
+    MINUTE = 1
+    HOUR = 2
+    DAY = 3
+    MONTH = 4
+    QUARTER = 5
+    YEAR = 6
+    SECOND_OF_DAY = 7
+    MINUTE_OF_DAY = 8
+    HOUR_OF_DAY = 9
+
+    @property
+    def is_time_of_day(self):
+        return (
+            self == Period.SECOND_OF_DAY
+            or self == Period.MINUTE_OF_DAY
+            or self == Period.HOUR_OF_DAY
+        )
+
+    @property
+    def pandas_freq(self):
+        return 'STHDMQYSTH'[self.value]
+
+    @property
+    def strftime_format(self):
+        """If set, output must be cast to str using this format."""
+        return [
+            None,
+            None,
+            None,
+            None,
+            None,
+            '%Y Q%q',
+            None,
+            '%H:%M:%S',
+            '%H:%M',
+            '%H:00',
+        ][self.value]
 
 
-def _parse_datetime_with_type(date_str: str) -> Tuple[datetime,
-                                                      Optional[InputTimeType]]:
-    """Return date with its type, or raise ValueError."""
-    if not date_str:
-        return (None, None)  # NaT
+class Operation(enum.Enum):
+    COUNT = 0
+    AVERAGE = 1
+    SUM = 2
+    MIN = 3
+    MAX = 4
 
-    if len(date_str) < 3 or InvalidDate.fullmatch(date_str):
-        raise ValueError(f'"{date_str}" is not a date')
+    @property
+    def only_numeric(self):
+        return (
+            self == Operation.AVERAGE
+            or self == Operation.SUM
+        )
 
-    ret = parse(date_str, default=DEFAULT_DATETIME)  # or raise ValueError
+    @property
+    def agg_function_name(self):
+        """Pandas agg() function name."""
+        return [
+            'size',
+            'mean',
+            'sum',
+            'min',
+            'max',
+        ][self.value]
 
-    input_time_type = InputTimeType.DATETIME
-
-    if ret.hour == DEFAULT_DATETIME.hour \
-       and ret.minute == DEFAULT_DATETIME.minute \
-       and ret.second == DEFAULT_DATETIME.second:
-        # suspicious: did parse() fill in the default hour/minute/second?
-        # If so, perhaps this is just a plain date.
-        alt = parse(date_str, default=ALT_DEFAULT_DATETIME)
-        if alt.hour == ALT_DEFAULT_DATETIME.hour \
-           and alt.minute == ALT_DEFAULT_DATETIME.minute \
-           and alt.second == ALT_DEFAULT_DATETIME.second:
-            # now we _know_ parse() filled in defaults. This date has no time.
-            input_time_type = InputTimeType.DATE
-
-    if ret.year == DEFAULT_DATETIME.year \
-       and ret.month == DEFAULT_DATETIME.month \
-       and ret.day == DEFAULT_DATETIME.day:
-        # suspicious: did parse() fill in the default year/month/day?
-        # If so, perhaps this is just a plain time.
-        alt = parse(date_str, default=ALT_DEFAULT_DATETIME)
-        if alt.year == ALT_DEFAULT_DATETIME.year \
-           and alt.month == ALT_DEFAULT_DATETIME.month \
-           and alt.day == ALT_DEFAULT_DATETIME.day:
-            # now we _know_ parse() filled in defaults. This time has no date.
-            input_time_type = InputTimeType.TIME_OF_DAY
-
-    return (ret, input_time_type)
+    @property
+    def zero_value(self):
+        """Value to impute when there are no inputs to agg_function_name."""
+        return [
+            0,
+            np.NaN,
+            0,
+            np.NaN,
+            np.NaN,
+        ][self.value]
 
 
-def cast_to_datetime_index(series: pd.Series
-                           ) -> Tuple[pd.DatetimeIndex, InputTimeType]:
-    """
-    Parse an input series to `(DatetimeIndex, metadata)`.
+class ValidatedForm:
+    """User input, (almost) free of potential errors."""
+    def __init__(self, date_series: pd.Series, period: Period,
+                 operation: Operation, value_series: Optional[pd.Series],
+                 output_date_column: str, output_value_column: str,
+                 include_missing_dates: bool):
+        self.date_series = date_series
+        self.period = period
+        self.operation = operation
+        self.value_series = value_series
+        self.output_date_column = output_date_column
+        self.output_value_column = output_value_column
+        self.include_missing_dates = include_missing_dates
 
-    On invalid input, raise ValueError or TypeError.
-    """
-    str_series = series.astype(str)  # raise on invalid obj.__str__()
-    # raise on non-date string
-    date_and_type_series = str_series.apply(_parse_datetime_with_type)
+    def run(self):
+        # input_dataframe: drop all rows for which either date or value (if
+        # specified) is NA
+        input_data = {'date': self.date_series}
+        if self.value_series is None:
+            input_data['value'] = 1
+        else:
+            input_data['value'] = self.value_series
+        input_dataframe = pd.DataFrame(input_data)
+        input_dataframe.dropna(inplace=True)
 
-    date_index = pd.DatetimeIndex(
-        date_and_type_series.apply(lambda pair: pair[0]),
-        name=series.name
-    )
+        # input_series: Series indexed by PeriodIndex
+        period_index = pd.PeriodIndex(input_dataframe['date'].values,
+                                      freq=self.period.pandas_freq)
+        input_series = pd.Series(input_dataframe['value'].values,
+                                 index=period_index)
 
-    # What do we have most? Date? Time? Datetime?
-    type_series = date_and_type_series.apply(lambda pair: pair[1])
-    input_type_counts = type_series.value_counts()
-    if input_type_counts.max() / len(input_type_counts) > 0.8:
-        # If we have predominantly one type, use that
-        input_type = input_type_counts.idxmax()
+        # output_series: Grouped
+        grouped_series = input_series.groupby(input_series.index) \
+            .agg(self.operation.agg_function_name)
 
-        if input_type == InputTimeType.TIME_OF_DAY:
-            # Make sure all datetimes have the same DATE (nix time-of-day)
-            date_index = pd.DatetimeIndex(
-                date_index.values
-                - date_index.values.astype('datetime64[D]')  # timediff
-                + np.datetime64('1970-01-01'),  # time after epoch
-                name=series.name
+        # Sort by date
+        grouped_series.sort_index(inplace=True)
+
+        # Impute missing values
+        if self.include_missing_dates:
+            start = period_index.min()
+            end = period_index.max()
+            n_rows = (end - start).n + 1
+
+            if n_rows > settings.MAX_ROWS_PER_TABLE:
+                raise ValueError(
+                    f'Including missing dates would create {n_rows} rows, '
+                    f'but the maximum allowed is {settings.MAX_ROWS_PER_TABLE}'
+                )
+            new_index = pd.PeriodIndex(start=start, end=end,
+                                       freq=period_index.freq)
+            grouped_series = grouped_series.reindex(
+                new_index,
+                fill_value=self.operation.zero_value
             )
-        elif input_type == InputTimeType.DATE:
-            # Make sure all datetimes have the same TIME (nix date)
-            date_index = date_index.normalize()
-    else:
-        # Be safe: use DateTime
-        input_type = InputTimeType.DATETIME
 
-    return (date_index, input_type)
+        # Prepare output dataframe
+        output_periods = grouped_series.index
+        output_values = grouped_series.values
 
+        # strftime if needed
+        if self.period.strftime_format:
+            output_dates = output_periods.strftime(self.period.strftime_format)
+        else:
+            output_dates = output_periods.to_timestamp()
 
-def cast_to_numeric_series(series: pd.Series) -> pd.Series:
-    """Return a (int|float)64 series or raise ValueError."""
-    if series.dtype == np.float64 or series.dtype == np.int64:
-        return series
-    else:
-        series = series.str.replace(',', '')  # raise ValueError on bad __str__
-        series.astype(np.float64, inplace=True)  # raise ValueError on non-num
-        return series
+        return pd.DataFrame({
+            self.output_date_column: output_dates,
+            self.output_value_column: output_values,
+        })
 
 
-def get_period_time_formatter(freq: str,
-                              is_time_only: bool) -> Optional[str]:
-    """Build a template for `pandas.Period.strftime()`."""
-    return {
-        (False, 'S'): None,  # Seconds
-        (False, 'T'): None,  # Minutes
-        (False, 'H'): None,  # Hours
-        (False, 'D'): None,  # Days
-        (False, 'M'): None,  # Months
-        (False, 'Q'): "%Y Q%q",  # Quarters -- pandas.Period-specific format
-        (False, 'Y'): None,  # Years
-        (True, 'S'): "%H:%M:%S",  # Seconds
-        (True, 'T'): "%H:%M",  # Minutes
-        (True, 'H'): "%H:00",  # Hours
-    }.get((is_time_only, freq), None)
+class QuickFixableError(ValueError):
+    def __init__(self, message, quick_fixes=[]):
+        super().__init__(message)
+        self.quick_fixes = list(quick_fixes)
 
 
-def get_freq(groupby: int) -> Optional[str]:
-    """Build a `freq` specifier for a `pandas.DatetimeIndex.to_period."""
-    return {
-        0: 'S',
-        1: 'T',
-        2: 'H',
-        3: 'D',
-        4: 'M',
-        5: 'Q',
-        6: 'Y',
-    }.get(int(groupby), None)
+class NumericIsNotDatetime(ValueError):
+    def __init__(self, column):
+        super().__init__(f'Column "{column}" must be date and time')
 
 
-def get_operation(index: int,
-                  input_colname: Optional[str]) -> Tuple[str, Any,
-                                                         Optional[str],
-                                                         Optional[type]]:
-    """
-    Look up `(agg, zero_value, colname, out_type)` for an op by its index.
+class TextIsNotDatetime(QuickFixableError):
+    def __init__(self, column):
+        super().__init__(
+            f'Column "{column}" must be date and time',
+            [
+                {
+                    'text': 'Convert to date and time',
+                    'action': 'prependModule',
+                    'args': ['convert-date', {
+                        'colnames': column,  # TODO make 'colnames' an Array
+                        'type_date': 0,  # AUTO
+                        'type_null': False,  # error on invalid date
+                    }]
+                }
+            ]
+        )
 
-    `agg` is an argument to pandas.DataFrame.aggregate(). `zero_value` is the
-    value we add when the user asks to include dates that were not in the data.
 
-    Returning an `out_type` of `None` means, "use the same encoding as the
-    input" (unless we add NaN, in which case output is float64).
+class TextIsNotNumeric(QuickFixableError):
+    def __init__(self, column):
+        super().__init__(
+            f'Column "{column}" must be numbers',
+            [
+                {
+                    'text': 'Convert text to numbers',
+                    'action': 'prependModule',
+                    'args': ['extractnumbers', {
+                        'colnames': column,  # TODO make 'colnames' Array
+                        'extract': False,  # "anywhere in text"
+                        'type_format': 0,  # U.S.-style "1,000.23"
+                        'type_replace': 0,  # raise error on invalid
+                    }]
+                }
+            ]
+        )
 
-    On invalid input, return (None, None, None, None).
-    """
-    return {
-        0: ('size', 0, None, np.int64),
-        1: ('mean', np.NaN, input_colname, np.float64),
-        2: ('sum', 0, input_colname, None),
-        3: ('min', np.NaN, input_colname, None),
-        4: ('max', np.NaN, input_colname, None),
-    }.get(int(index), (None, None, None, None))
+
+class DatetimeIsNotNumeric(ValueError):
+    def __init__(self, column):
+        super().__init__(f'Column "{column}" must be numbers')
+
+
+class Form:
+    """Raw user input."""
+    def __init__(self, date_column: str, period: Period, operation: Operation,
+                 value_column: str, include_missing_dates: bool):
+        self.date_column = date_column
+        self.period = period
+        self.operation = operation
+        self.value_column = value_column
+        self.include_missing_dates = include_missing_dates
+
+    @staticmethod
+    def parse(d: Dict[str, Any]) -> Optional['Form']:
+        """
+        Create a Form, raising IndexError/KeyError/ValueError on invalid input.
+
+        The Form isn't validated against any data, so the only errors we raise
+        here are errors in client code or in Workbench proper -- for instance,
+        missing dict entries.
+        """
+        date_column = str(d['column'] or '')
+        if not date_column:
+            return None
+
+        value_column = str(d['targetcolumn'] or '')
+        period = Period(d['groupby'])
+        operation = Operation(d['operation'])
+        include_missing_dates = bool(d['include_missing_dates'])
+
+        if operation != Operation.COUNT and not value_column:
+            return None  # waiting for user to finish filling out the form....
+
+        return Form(date_column, period, operation, value_column,
+                    include_missing_dates)
+
+    def validate(self, table):
+        """
+        Create a ValidatedForm or raise ValueError/PromptingError.
+
+        Features ([ ] unit-tested):
+
+        [ ] date column must exist
+        [ ] if date column is numeric, error
+        [ ] if date column is text, error+quickfix
+        [ ] if period is time-of-day, dates are all 1970-01-01
+        [ ] if operation isn't count, value column must exist
+        [ ] if operation is sum/average, and value is datetime, error
+        [ ] if operation is sum/average, and value is text, error+quickfix
+        [ ] if operation is count, output column is 'count'; else it is value
+        """
+        try:
+            date_series = table[self.date_column]
+        except KeyError:
+            raise ValueError(f'There is no column named "{self.date_column}"')
+
+        if not hasattr(date_series, 'dt'):
+            if is_numeric_dtype(date_series):
+                raise NumericIsNotDatetime(self.date_column)
+            else:
+                raise TextIsNotDatetime(self.date_column)
+
+        if self.period.is_time_of_day:
+            # Convert all dates to 1970-01-01
+            date_series = (
+                date_series
+                - date_series.dt.normalize()   # drop the actual date
+                + np.datetime64('1970-01-01')  # and put 1970-01-01 instead
+            )
+
+        if self.operation != Operation.COUNT:
+            output_value_column = self.value_column
+            try:
+                value_series = table[self.value_column]
+            except KeyError:
+                raise ValueError(
+                    f'There is no column named "{self.value_column}"'
+                )
+
+            if self.operation.only_numeric \
+               and not is_numeric_dtype(value_series):
+                if hasattr(value_series, 'dt'):
+                    raise DatetimeIsNotNumeric(self.value_column)
+                else:
+                    raise TextIsNotNumeric(self.value_column)
+        else:
+            output_value_column = 'count'
+            value_series = None
+
+        return ValidatedForm(date_series, self.period, self.operation,
+                             value_series, self.date_column,
+                             output_value_column, self.include_missing_dates)
 
 
 class CountByDate(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
         if table is None:
-            return None
+            return table
 
-        col = wf_module.get_param_column('column')
-        if not col:
-            # Still waiting on user input
-            # return (table, 'Please select a column containing dates')
-            return table  # user has not input things yet
-        if col not in table.columns:
-            return f'There is no column named \'{col}\''
+        params = wf_module.create_parameter_dict(table)
 
-        target = wf_module.get_param_column('targetcolumn')
-
-        freq = get_freq(wf_module.get_param_menu_idx('groupby'))
-        if freq is None:
-            return (table, 'Please select a valid time period')
-
-        agg, zero_value, output_colname, output_type = get_operation(
-            wf_module.get_param_menu_idx('operation'),
-            target
-        )
-        if agg is None:  # should never happen
-            return (table, 'Please select an operation')
-        if output_colname == target:
-            if not target:
-                # Still waiting on user input
-                return table
-            elif target not in table.columns:
-                return f'There is no column named \'{target}\''
-
-        include_missing_dates = bool(
-            wf_module.get_param_checkbox('include_missing_dates')
-        )
-
-        # convert the date column to actual datetimes
         try:
-            dates, time_type = cast_to_datetime_index(table[col])
-        except (ValueError, TypeError):
-            return f'The column \'{col}\' does not appear to be dates or times'
+            form = Form.parse(params)
+        except ValueError as err:
+            return str(err)
+        if form is None:
+            return table
 
-        # Figure out our groupby options and groupby
-        # behavior based on the input format.
+        try:
+            validated_form = form.validate(table)
+        except QuickFixableError as err:
+            return {
+                'error': str(err),
+                'quick_fixes': err.quick_fixes
+            }
+        except ValueError as err:
+            return str(err)
 
-        if time_type == InputTimeType.DATE and freq in ['S', 'T', 'H']:
-            return (
-                f'The column \'{col}\' only contains date values. '
-                'Please group by Day, Month, Quarter or Year.'
-            )
-        if time_type == InputTimeType.TIME_OF_DAY and freq not in ['S', 'T', 'H']:
-            return (
-                f'The column \'{col}\' only contains time values. '
-                'Please group by Second, Minute or Hour.'
-            )
-
-        periods = dates.to_period(freq)
-
-        if output_colname is None:
-            values = periods  # count the dates
-        else:
-            try:
-                values = cast_to_numeric_series(table[target]).values
-            except ValueError:
-                return f'Can\'t convert {target} to numeric values'
-
-        value_series = pd.Series(values, index=periods)
-        value_series = value_series.dropna()
-        grouped_values = value_series.groupby(value_series.index)
-        # return_series has a PeriodIndex and numeric values
-        return_series = grouped_values.agg(agg)
-        return_series.name = output_colname or 'count'
-
-        if include_missing_dates:
-            end = periods.max()
-            start = periods.min()
-            n_rows = (end - start).n + 1
-            if n_rows > settings.MAX_ROWS_PER_TABLE:
-                return (
-                    f'Including missing dates would create {n_rows} rows, '
-                    f'but the maximum allowed is {settings.MAX_ROWS_PER_TABLE}'
-                )
-
-            index = pd.PeriodIndex(start=start, end=end,
-                                   freq=periods.freq)
-            return_series = return_series.reindex(index)
-            if zero_value is not np.nan:
-                return_series.fillna(zero_value, inplace=True)
-
-        if output_type is None:
-            output_type = values.dtype
-
-        if is_dtype_equal(output_type, np.int64) \
-           and return_series.isna().any():
-            pass
-        elif is_dtype_equal(output_type, np.float64):
-            # we'd need a proof ... but basically: we're always float at this
-            # point
-            pass
-        else:
-            return_series = return_series.astype(output_type)
-
-        return_series.sort_index(inplace=True)  # sort by date (index)
-
-        time_format = get_period_time_formatter(
-            freq,
-            time_type == InputTimeType.TIME_OF_DAY
-        )
-        if time_format:
-            # convert dates->str. This is the only slow part of this module.
-            return_index = return_series.index.strftime(time_format).values
-        else:
-            return_index = return_series.index.to_timestamp()
-
-        output = pd.DataFrame({
-            col: return_index,
-            return_series.name: return_series.values,
-        })
-
-        return output
+        try:
+            return validated_form.run()
+        except ValueError as err:
+            return str(err)

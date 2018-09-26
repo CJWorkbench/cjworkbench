@@ -1,15 +1,11 @@
 import dateutil
 import io
+import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
-import numpy as np
 from django.test import override_settings, SimpleTestCase
 from server.modules.countbydate import CountByDate
 from server.modules.types import ProcessResult
-
-
-def read_csv(s, *args, **kwargs):
-    return pandas.read_csv(io.StringIO(s), *args, **kwargs)
 
 
 def render(wf_module, table):
@@ -21,16 +17,13 @@ def dt(s):
 
 
 # test data designed to give different output if sorted by freq vs value
-count_csv = '\n'.join([
-    'Date,Amount,Foo',
-    'Jan 10 2011,10,Foo',
-    'Jul 25 2016,5,Goo',
-    '2011-01-10T01:00:00.000,1,Hoo',
-    'Jan 10 2011 00:00:01,1,Hoo',
-    'Jan 10 2011 00:00:01,1,Hoo',
-    'Jan 10 2011 00:01:00,1,Hoo',
-    'Jan 15 2011,1,Too'
-])
+count_table = pandas.DataFrame({
+    'Date': [dt('2011-01-10T00:00:00.000Z'), dt('2016-07-25T00:00:00.000Z'),
+             dt('2011-01-10T00:00:01.321Z'), dt('2011-01-10T00:00:01.123Z'),
+             dt('2011-01-10T00:01:00.000Z'), dt('2011-01-10T01:00:00.001Z'),
+             dt('2011-01-15T00:00:00.000Z')],
+    'Amount': [10, 5, 1, 1, 1, 1, 1],
+})
 
 # aggregating rules are a bit different.
 # 2018-01-01: single value
@@ -38,62 +31,24 @@ count_csv = '\n'.join([
 # 2018-01-03: several values
 # 2018-01-04: one NA
 # 2018-01-05: one value, one NA
-agg_csv = '\n'.join([
-    'Date,Amount',
-    '2018-01-01,8',
-    '2018-01-03,5',
-    '2018-01-03,1',
-    '2018-01-03,3',
-    '2018-01-04,NaN',
-    '2018-01-05,2',
-    '2018-01-05,NaN',
-])
+agg_table = pandas.DataFrame({
+    'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-03'),
+             dt('2018-01-03'), dt('2018-01-04'), dt('2018-01-05'),
+             dt('2018-01-05')],
+    'Amount': [8, 5, 1, 3, np.nan, 2, np.nan],
+})
 
 # aggregating with integers (no NaN) can be different
 # 2018-01-01: single value
 # 2018-01-02: nothing
 # 2018-01-03: several values
-agg_int_csv = '\n'.join([
-    'Date,Amount',
-    '2018-01-01,8',
-    '2018-01-03,5',
-    '2018-01-03,1',
-    '2018-01-03,3',
-    '2018-01-05,2',
-])
-
-count_time_csv = '\n'.join([
-    'Date,Amount,Foo',
-    '11:00,10,Foo',
-    '12:00,5,Goo',
-    '01:00:00,1,Hoo',
-    '00:00:01,1,Hoo',
-    '00:00:01,1,Hoo',
-    '00:01:00,1,Hoo',
-    'December 15 2017 11:05,1,Too',
-])
-
-count_date_csv = '\n'.join([
-    'Date,Amount,Foo',
-    'Jan 10 2011,10,Foo',
-    'Jul 25 2016,5,Goo',
-    'Jan 10 2011,1,Hoo',
-    'Jan 10 2011,1,Hoo',
-    'Jan 10 2011,1,Hoo',
-    'Jan 10 2011,1,Hoo',
-    'Jan 15 2011 6:00pm,1,Too',
-])
-
-# count_unix_timestamp_csv = '\n'.join([
-#     'Date,Amount,Foo',
-#     '1294617600,10,Foo',
-#     '1469404800,5,Goo',
-#     '1294621200,1,Hoo',
-#     '1294617601,1,Hoo',
-#     '1294617601,1,Hoo',
-#     '1294617661,1,Hoo',
-#     '1295071201,1,Too',
-# ])
+# 2018-01-04: nothing
+# 2018-01-05: single value
+agg_int_table = pandas.DataFrame({
+    'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-03'),
+             dt('2018-01-03'), dt('2018-01-05')],
+    'Amount': [8, 5, 1, 3, 2],
+})
 
 
 class MockWfModule:
@@ -106,407 +61,328 @@ class MockWfModule:
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def get_param_column(self, name, *args, **kwargs):
-        return getattr(self, name)
-
-    def get_param_menu_idx(self, name, *args, **kwargs):
-        return getattr(self, name)
-
-    def get_param_checkbox(self, name, *args, **kwargs):
-        return getattr(self, name)
+    def create_parameter_dict(self, table):
+        return {
+            'column': self.column,
+            'groupby': self.groupby,
+            'operation': self.operation,
+            'targetcolumn': self.targetcolumn,
+            'include_missing_dates': self.include_missing_dates,
+        }
 
 
 class CountByDateTests(SimpleTestCase):
-    def setUp(self):
-        super().setUp()
+    def _assertRendersTable(self, in_table, wf_module, expected_table):
+        result = render(wf_module, in_table)
 
-        self.table = read_csv(count_csv)
-        self.wf_module = MockWfModule()
+        if hasattr(expected_table['Date'], 'dt'):
+            expected_table['Date'] = \
+                expected_table['Date'].dt.tz_localize(None)
 
-    def _assertRendersTable(self, table, wf_module, csv_rows,
-                            parse_dates=['Date']):
-        csv = '\n'.join(csv_rows)
-        expected_table = read_csv(csv, dtype={
-            'Date': str,
-            'Time': str,
-            'count': np.int64
-        }, parse_dates=parse_dates)
-        expected = ProcessResult(expected_table)
-        result = render(wf_module, table)
-        self.assertResultEqual(result, expected)
+        self.assertEqual(result.error, '')
+        self.assertEqual(result.quick_fixes, [])
+        assert_frame_equal(result.dataframe, expected_table)
 
     def assertResultEqual(self, result, expected):
         self.assertEqual(result.error, expected.error)
         assert_frame_equal(result.dataframe, expected.dataframe)
 
-    def test_count_by_date_datetime_input(self):
-        # Most of these tests are with dtype=object. That's kinda silly. _This_
-        # test is for dtype=datetime64[ns], which is the usual thing we want to
-        # group by.
-        #
-        # The reason we worked so hard on date parsing is historical: back in
-        # the day, there was no proper date type.
-        self._assertRendersTable(
-            pandas.DataFrame({'Date': [
-                dt('2011-01-10T23:12:01Z'),
-                dt('2011-01-15T12:11Z'),
-                dt('2016-07-25T00:12:43Z'),
-                dt('2011-01-10T23:11Z'),
-                dt('2011-01-10T13:11Z'),
-                dt('2011-01-10T03:21Z'),
-                dt('2011-01-10T23:13Z'),
-            ]}),
-            MockWfModule(column='Date', groupby=3),  # 3 = group by days
-            [
-                'Date,count',
-                '2011-01-10,5',
-                '2011-01-15,1',
-                '2016-07-25,1',
-            ]
-        )
-
     def test_count_by_date(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=3),  # 3 = group by days
-            [
-                'Date,count',
-                '2011-01-10,5',
-                '2011-01-15,1',
-                '2016-07-25,1',
-            ]
+            pandas.DataFrame({
+                'Date': [dt('2011-01-10'), dt('2011-01-15'), dt('2016-07-25')],
+                'count': [5, 1, 1],
+            })
         )
 
     def test_count_by_seconds(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=0),  # 0 = group by second
-            [
-                'Date,count',
-                '2011-01-10T00:00:00,1',
-                '2011-01-10T00:00:01,2',
-                '2011-01-10T00:01:00,1',
-                '2011-01-10T01:00:00,1',
-                '2011-01-15T00:00:00,1',
-                '2016-07-25T00:00:00,1',
-            ]
+            pandas.DataFrame({
+                'Date': [
+                    dt('2011-01-10T00:00:00Z'),
+                    dt('2011-01-10T00:00:01Z'),
+                    dt('2011-01-10T00:01:00Z'),
+                    dt('2011-01-10T01:00:00Z'),
+                    dt('2011-01-15T00:00:00Z'),
+                    dt('2016-07-25T00:00:00Z'),
+                ],
+                'count': [1, 2, 1, 1, 1, 1],
+            })
         )
 
     def test_count_by_minutes(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=1),  # 1 = group by minute
-            [
-                'Date,count',
-                '2011-01-10T00:00,3',
-                '2011-01-10T00:01,1',
-                '2011-01-10T01:00,1',
-                '2011-01-15T00:00,1',
-                '2016-07-25T00:00,1',
-            ]
+            pandas.DataFrame({
+                'Date': [dt('2011-01-10T00:00Z'), dt('2011-01-10T00:01Z'),
+                         dt('2011-01-10T01:00Z'), dt('2011-01-15T00:00Z'),
+                         dt('2016-07-25T00:00Z')],
+                'count': [3, 1, 1, 1, 1],
+            })
         )
 
     def test_count_by_hours(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=2),  # 2 = group by hour
-            [
-                'Date,count',
-                '2011-01-10T00:00,4',
-                '2011-01-10T01:00,1',
-                '2011-01-15T00:00,1',
-                '2016-07-25T00:00,1',
-            ]
+            pandas.DataFrame({
+                'Date': [dt('2011-01-10T00:00Z'), dt('2011-01-10T01:00Z'),
+                         dt('2011-01-15T00:00Z'), dt('2016-07-25T00:00Z')],
+                'count': [4, 1, 1, 1],
+            })
         )
 
     def test_count_by_months(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=4),  # 4 = group by month
-            [
-                'Date,count',
-                '2011-01,6',
-                '2016-07,1',
-            ]
+            pandas.DataFrame({
+                'Date': [dt('2011-01-01'), dt('2016-07-01')],
+                'count': [6, 1],
+            })
         )
 
     def test_count_by_quarters(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=5),  # 5 = group by quarter
-            [
-                'Date,count',
-                '2011 Q1,6',
-                '2016 Q3,1',
-            ],
-            parse_dates=[]
+            pandas.DataFrame({
+                'Date': ['2011 Q1', '2016 Q3'],
+                'count': [6, 1]
+            })
         )
 
     def test_count_by_years(self):
         self._assertRendersTable(
-            read_csv(count_csv),
+            count_table,
             MockWfModule(column='Date', groupby=6),  # 6 = group by year
-            [
-                'Date,count',
-                '2011,6',
-                '2016,1',
-            ]
+            pandas.DataFrame({
+                'Date': [dt('2011-01-01'), dt('2016-01-01')],
+                'count': [6, 1],
+            })
+        )
+
+    def test_count_by_second_of_day(self):
+        self._assertRendersTable(
+            count_table,
+            MockWfModule(column='Date', groupby=7),  # 7 = second of day
+            pandas.DataFrame({
+                'Date': ['00:00:00', '00:00:01', '00:01:00', '01:00:00'],
+                'count': [3, 2, 1, 1],
+            })
+        )
+
+    def test_count_by_minute_of_day(self):
+        self._assertRendersTable(
+            count_table,
+            MockWfModule(column='Date', groupby=8),  # 8 = minute of day
+            pandas.DataFrame({
+                'Date': ['00:00', '00:01', '01:00'],
+                'count': [5, 1, 1],
+            })
+        )
+
+    def test_count_by_hour_of_day(self):
+        self._assertRendersTable(
+            count_table,
+            MockWfModule(column='Date', groupby=9),  # 9 = hour of day
+            pandas.DataFrame({
+                'Date': ['00:00', '01:00'],
+                'count': [6, 1],
+            })
         )
 
     def test_no_col_gives_noop(self):
-        table = read_csv(count_csv)
         wf_module = MockWfModule(column='')
-        result = render(wf_module, table)
-        expected = ProcessResult(read_csv(count_csv))
-        self.assertResultEqual(expected, result)
+        result = render(wf_module, count_table)
+        expected = ProcessResult(count_table)
+        self.assertResultEqual(result, expected)
 
     def test_invalid_colname_gives_error(self):
         # bad column name should produce error
-        table = read_csv(count_csv)
         wf_module = MockWfModule(column='hilarious')
-        result = render(wf_module, table)
-        expected = ProcessResult(error="There is no column named 'hilarious'")
-        self.assertResultEqual(expected, result)
+        result = render(wf_module, count_table)
+        expected = ProcessResult(error='There is no column named "hilarious"')
+        self.assertResultEqual(result, expected)
 
     def test_integer_dates_give_error(self):
         # integers are not dates
-        table = read_csv(count_csv)
-        wf_module = MockWfModule(column='Amount')
+        table = pandas.DataFrame({'A': [1], 'B': [2]})
+        wf_module = MockWfModule(column='A')
         result = render(wf_module, table)
-        expected = ProcessResult(
-            error="The column 'Amount' does not appear to be dates or times"
-        )
-        self.assertResultEqual(expected, result)
+        expected = ProcessResult(error='Column "A" must be date and time')
+        self.assertResultEqual(result, expected)
 
-    def test_weird_strings_give_error(self):
-        # Weird strings are not dates (different error code path)
-        table = read_csv(count_csv)
-        wf_module = MockWfModule(column='Foo')
+    def test_string_dates_give_error(self):
+        # integers are not dates
+        table = pandas.DataFrame({'A': ['2018'], 'B': [2]})
+        wf_module = MockWfModule(column='A')
         result = render(wf_module, table)
-        expected = ProcessResult(
-            error="The column 'Foo' does not appear to be dates or times"
-        )
-        self.assertResultEqual(expected, result)
-
-    def test_time_only_refuse_date_period(self):
-        table = read_csv(count_time_csv)
-        wf_module = MockWfModule(column='Date', groupby=5)
-        result = render(wf_module, table)
-        self.assertResultEqual(result, ProcessResult(error=(
-            "The column 'Date' only contains time values. "
-            'Please group by Second, Minute or Hour.'
-        )))
-
-    def test_time_only_format_hours(self):
-        self._assertRendersTable(
-            read_csv(count_time_csv),
-            MockWfModule(column='Date', groupby=2),  # 2 = group by hour
-            [
-                'Date,count',
-                '00:00,3',
-                '01:00,1',
-                '11:00,2',
-                '12:00,1',
-            ],
-            parse_dates=[]
-        )
-
-    def test_date_only_refuse_time_period(self):
-        table = read_csv(count_date_csv)
-        wf_module = MockWfModule(column='Date', groupby=2)  # 2 = group by hour
-        result = render(wf_module, table)
-        self.assertResultEqual(result, ProcessResult(error=(
-            "The column 'Date' only contains date values. "
-            'Please group by Day, Month, Quarter or Year.'
-        )))
-
-    def test_date_only(self):
-        self._assertRendersTable(
-            read_csv(count_date_csv),
-            MockWfModule(column='Date', groupby=4),  # 4 = group by month
-            [
-                'Date,count',
-                '2011-01-01,6',
-                '2016-07-01,1',
-            ]
-        )
+        self.assertEqual(result.error, 'Column "A" must be date and time')
+        self.assertEqual(len(result.quick_fixes), 1)
 
     def test_average_no_error_when_missing_target(self):
-        table = read_csv(count_csv)
         # 1 = mean
         wf_module = MockWfModule(column='Date', operation=1, targetcolumn='')
-        result = render(wf_module, table)
+        result = render(wf_module, count_table)
         self.assertResultEqual(
             result,
-            ProcessResult(read_csv(count_csv))
+            ProcessResult(count_table)
         )
 
     def test_average_require_target(self):
-        table = read_csv(count_csv)
         wf_module = MockWfModule(column='Date', operation=1,
                                  targetcolumn='Invalid')
-        result = render(wf_module, table)
+        result = render(wf_module, count_table)
         self.assertResultEqual(result, ProcessResult(error=(
-            "There is no column named 'Invalid'"
+            'There is no column named "Invalid"'
         )))
 
     def test_average_by_date(self):
         self._assertRendersTable(
-            read_csv(agg_csv),
+            agg_table,
             MockWfModule(column='Date', groupby=3, operation=1,
                          targetcolumn='Amount'),
-            [
-                'Date,Amount',
-                '2018-01-01,8.0',
-                '2018-01-03,3.0',
-                # NaN for 2018-01-04 omitted
-                '2018-01-05,2.0',  # NaN omitted
-            ]
+            pandas.DataFrame({
+                # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
+                'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
+                'Amount': [8.0, 3.0, 2.0],
+            })
         )
 
     def test_sum_by_date(self):
-        table = read_csv(agg_csv)
         # 2 = sum
-        wf_module = MockWfModule(column='Date', groupby=3, operation=2,
-                                 targetcolumn='Amount')
-        result = render(wf_module, table)
-        self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
-            columns=['Date', 'Amount'],
-            data=[
-                (dt('2018-01-01'), 8.0),
-                (dt('2018-01-03'), 9.0),
-                # 2018-01-04 is omitted because it's NaN
-                (dt('2018-01-05'), 2.0),  # NaN omitted
-            ]
-        )))
+        self._assertRendersTable(
+            agg_table,
+            MockWfModule(column='Date', groupby=3, operation=2,
+                         targetcolumn='Amount'),
+            pandas.DataFrame({
+                # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
+                'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
+                'Amount': [8.0, 9.0, 2.0],
+            })
+        )
 
     def test_min_by_date(self):
         self._assertRendersTable(
-            read_csv(agg_csv),
+            agg_table,
             # 3 = min
             MockWfModule(column='Date', groupby=3, operation=3,
                          targetcolumn='Amount'),
-            [
-                'Date,Amount',
-                '2018-01-01,8.0',
-                '2018-01-03,1.0',
-                # NaN for 2018-01-04 omitted
-                '2018-01-05,2.0',  # NaN omitted
-            ]
+            pandas.DataFrame({
+                # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
+                'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
+                'Amount': [8.0, 1.0, 2.0],
+            })
         )
 
     def test_max_by_date(self):
         self._assertRendersTable(
-            read_csv(agg_csv),
+            agg_table,
             # 4 = max
             MockWfModule(column='Date', groupby=3, operation=4,
                          targetcolumn='Amount'),
-            [
-                'Date,Amount',
-                '2018-01-01,8.0',
-                '2018-01-03,5.0',
-                # NaN for 2018-01-04 omitted
-                '2018-01-05,2.0',  # NaN omitted
-            ]
+            pandas.DataFrame({
+                # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
+                'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
+                'Amount': [8.0, 5.0, 2.0],
+            })
         )
 
     def test_include_missing_dates_with_count(self):
-        table = read_csv(agg_csv)
-        # 0 = count
-        wf_module = MockWfModule(column='Date', include_missing_dates=True,
-                                 groupby=3, operation=0, targetcolumn='Amount')
-        result = render(wf_module, table)
-        # Output should be integers
-        self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
-            columns=['Date', 'count'],
-            data=[
-                (dt('2018-01-01'), 1),
-                (dt('2018-01-02'), 0),
-                (dt('2018-01-03'), 3),
-                (dt('2018-01-04'), 1),  # count row with NA
-                (dt('2018-01-05'), 2),  # count row with NA
-            ]
-        )))
+        self._assertRendersTable(
+            agg_table,
+            # 0 = count
+            MockWfModule(column='Date', include_missing_dates=True,
+                         groupby=3, operation=0),
+            # Output should be integers
+            pandas.DataFrame({
+                'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
+                         dt('2018-01-04'), dt('2018-01-05')],
+                'count': [1, 0, 3, 1, 2]
+            })
+        )
 
     def test_include_missing_dates_with_int_sum(self):
-        table = read_csv(agg_int_csv)
-        # 2 = sum
-        wf_module = MockWfModule(column='Date', include_missing_dates=True,
-                                 groupby=3, operation=2, targetcolumn='Amount')
-        result = render(wf_module, table)
-        # Output should be integers
-        self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
-            columns=['Date', 'Amount'],
-            data=[
-                (dt('2018-01-01'), 8),
-                (dt('2018-01-02'), 0),
-                (dt('2018-01-03'), 9),
-                (dt('2018-01-04'), 0),
-                (dt('2018-01-05'), 2),
-            ]
-        )))
+        self._assertRendersTable(
+            agg_int_table,
+            # 2 = sum
+            MockWfModule(column='Date', include_missing_dates=True,
+                         groupby=3, operation=2, targetcolumn='Amount'),
+            # Output should be integers
+            pandas.DataFrame({
+                'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
+                         dt('2018-01-04'), dt('2018-01-05')],
+                'Amount': [8, 0, 9, 0, 2],
+            })
+        )
 
     def test_include_missing_dates_with_float_sum(self):
-        table = read_csv(agg_csv.replace(',8\n', ',8.1\n'))
-        # 2 = sum
-        wf_module = MockWfModule(column='Date', include_missing_dates=True,
-                                 groupby=3, operation=2, targetcolumn='Amount')
-        result = render(wf_module, table)
-        # Output should include 0 for missing values
-        self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
-            columns=['Date', 'Amount'],
-            data=[
-                (dt('2018-01-01'), 8.1),
-                (dt('2018-01-02'), 0.0),
-                (dt('2018-01-03'), 9.0),
-                (dt('2018-01-04'), 0.0),
-                (dt('2018-01-05'), 2.0),
-            ]
-        )))
+        self._assertRendersTable(
+            agg_table,
+            # 2 = sum
+            MockWfModule(column='Date', include_missing_dates=True,
+                         groupby=3, operation=2, targetcolumn='Amount'),
+            # Output should be integers
+            pandas.DataFrame({
+                'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
+                         dt('2018-01-04'), dt('2018-01-05')],
+                'Amount': [8.0, 0.0, 9.0, 0.0, 2.0],
+            })
+        )
 
     def test_include_missing_dates_with_float_min(self):
-        table = read_csv(agg_csv.replace(',8\n', ',8.1\n'))
-        # 3 = min
-        wf_module = MockWfModule(column='Date', include_missing_dates=True,
-                                 groupby=3, operation=3, targetcolumn='Amount')
-        result = render(wf_module, table)
-        # Max should be NaN for missing values
-        self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
-            columns=['Date', 'Amount'],
-            data=[
-                (dt('2018-01-01'), 8.1),
-                (dt('2018-01-02'), np.nan),
-                (dt('2018-01-03'), 1.0),
-                (dt('2018-01-04'), np.nan),
-                (dt('2018-01-05'), 2.0),
-            ]
-        )))
+        self._assertRendersTable(
+            agg_table,
+            # 3 = min
+            MockWfModule(column='Date', include_missing_dates=True,
+                         groupby=3, operation=3, targetcolumn='Amount'),
+            # Output should be integers
+            pandas.DataFrame({
+                'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
+                         dt('2018-01-04'), dt('2018-01-05')],
+                'Amount': [8.0, np.nan, 1.0, np.nan, 2.0],
+            })
+        )
 
     def test_include_missing_dates_with_int_min(self):
-        table = read_csv(agg_int_csv)
-        # 3 = min
-        wf_module = MockWfModule(column='Date', include_missing_dates=True,
-                                 groupby=3, operation=3, targetcolumn='Amount')
-        result = render(wf_module, table)
-        # Max should be NaN for missing values ... meaning it's all floats
-        self.assertResultEqual(result, ProcessResult(pandas.DataFrame(
-            columns=['Date', 'Amount'],
-            data=[
-                (dt('2018-01-01'), 8.0),
-                (dt('2018-01-02'), np.nan),
-                (dt('2018-01-03'), 1.0),
-                (dt('2018-01-04'), np.nan),
-                (dt('2018-01-05'), 2.0),
-            ]
-        )))
+        # Same as float_min: missing values are NaN
+        self._assertRendersTable(
+            agg_int_table,
+            # 3 = min
+            MockWfModule(column='Date', include_missing_dates=True,
+                         groupby=3, operation=3, targetcolumn='Amount'),
+            # Output should be integers
+            pandas.DataFrame({
+                'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
+                         dt('2018-01-04'), dt('2018-01-05')],
+                'Amount': [8.0, np.nan, 1.0, np.nan, 2.0],
+            })
+        )
+
+    def test_nix_missing_dates(self):
+        # https://www.pivotaltracker.com/story/show/160632877
+        self._assertRendersTable(
+            pandas.DataFrame({
+                'Date': [dt('2018-01-01'), None, dt('2018-01-02')],
+                'Amount': [np.nan, 2, 3],
+            }),
+            MockWfModule(column='Date', groupby=3, operation=3,
+                         targetcolumn='Amount'),
+            pandas.DataFrame({'Date': [dt('2018-01-02')], 'Amount': 3.0})
+        )
 
     @override_settings(MAX_ROWS_PER_TABLE=100)
     def test_include_too_many_missing_dates(self):
-        table = read_csv(count_csv)
         # 0 - group by seconds
         wf_module = MockWfModule(column='Date', groupby=0,
                                  include_missing_dates=True)
-        result = render(wf_module, table)
+        result = render(wf_module, count_table)
         self.assertResultEqual(result, ProcessResult(error=(
             'Including missing dates would create 174787201 rows, '
             'but the maximum allowed is 100'

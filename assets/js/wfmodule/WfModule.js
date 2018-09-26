@@ -11,7 +11,8 @@ import {
   setWfModuleCollapsedAction,
   clearNotificationsAction,
   setSelectedWfModuleAction,
-  setParamValueAction
+  setParamValueAction,
+  quickFixAction,
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -52,7 +53,8 @@ export class WfModule extends React.PureComponent {
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
     setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
-    setZenMode: PropTypes.func.isRequired // func(wfModuleId, bool) => undefined
+    setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
+    applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
   }
 
   constructor (props) {
@@ -220,6 +222,10 @@ export class WfModule extends React.PureComponent {
 
   setModuleRef (ref) {
     this.moduleRef = ref
+  }
+
+  applyQuickFix = (...args) => {
+    this.props.applyQuickFix(this.props.wfModule.id, ...args)
   }
 
   onChangeIsZenMode = (ev) => {
@@ -455,7 +461,12 @@ export class WfModule extends React.PureComponent {
                 {contextBtns}
               </div>
               {/* --- Error message --- */}
-              <StatusLine status={wfModule.status} error_msg={wfModule.error_msg} />
+              <StatusLine
+                status={wfModule.status}
+                error={wfModule.error_msg}
+                quickFixes={wfModule.quick_fixes}
+                applyQuickFix={this.applyQuickFix}
+              />
               <div className='module-card-params'>
                 {paramdivs}
               </div>
@@ -535,7 +546,7 @@ function mapStateToProps (state, ownProps) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps (dispatch, ownProps) {
   return {
     clearNotifications (wfModuleId) {
       dispatch(clearNotificationsAction(wfModuleId))
@@ -552,6 +563,10 @@ function mapDispatchToProps (dispatch) {
     changeParam (paramId, newVal) {
       const action = setParamValueAction(paramId, newVal)
       dispatch(action)
+    },
+
+    applyQuickFix (wfModuleId, action, args) {
+      dispatch(quickFixAction(action, wfModuleId, args))
     }
   }
 }

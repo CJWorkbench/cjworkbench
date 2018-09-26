@@ -117,7 +117,7 @@ def add_new_wf_module(workflow, module_version,
         order=order,
         last_relevant_delta_id=last_relevant_delta_id
     )
-    wfm.create_default_parameters()
+    wfm.create_parametervals({})
     return wfm
 
 # setup a workflow with some test data loaded into a PasteCSV module

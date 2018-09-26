@@ -89,10 +89,11 @@ class WorkbenchAPI {
     return this._patch(`/api/workflows/${workflowId}`, newOrder)
   }
 
-  addModule(workflowId, moduleId, index) {
+  addModule(workflowId, moduleId, index, values={}) {
     return this._put(`/api/workflows/${workflowId}/addmodule`, {
       index: index,
-      moduleId: moduleId
+      moduleId: moduleId,
+      values: values
     })
   }
 

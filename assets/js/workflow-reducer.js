@@ -103,6 +103,14 @@ function omitWfModuleClientOnlyStateInPlace (wfModules, prevWfModules) {
   }
 }
 
+function moduleIdNameToModuleId ({ modules }, idName) {
+  const moduleId = +Object.keys(modules).find(m => modules[m].id_name === idName)
+  if (!moduleId) {
+    alert(`Cannot find module "${idName}"`)
+  }
+  return moduleId
+}
+
 // RELOAD_WORKFLOW
 // Re-load the workflow
 export function reloadWorkflowAction () {
@@ -251,7 +259,7 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
 })
 
 // ADD_MODULE
-export function addModuleAction (moduleId, index) {
+export function addModuleAction (moduleId, index, parameterValues) {
   return (dispatch, getState) => {
     const nonce = generateNonce(moduleId)
     const workflow = getState().workflow
@@ -260,7 +268,7 @@ export function addModuleAction (moduleId, index) {
       type: ADD_MODULE,
       payload: {
         promise: (
-          api.addModule(workflow.id, moduleId, index)
+          api.addModule(workflow.id, moduleId, index, parameterValues)
             .then(response => {
               return {
                 nonce: nonce,
@@ -695,6 +703,24 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
     }
   }
 })
+
+function quickFixPrependModule(wfModuleId, moduleIdName, parameterValues) {
+  return (dispatch, getState) => {
+    const state = getState()
+    const moduleId = moduleIdNameToModuleId(state, moduleIdName)
+    if (!moduleId) return
+    const index = state.workflow.wf_modules.indexOf(wfModuleId)
+    if (index === -1) return
+
+    return dispatch(addModuleAction(moduleId, index, parameterValues))
+  }
+}
+
+export function quickFixAction(action, wfModuleId, args) {
+  return {
+    prependModule: quickFixPrependModule
+  }[action](wfModuleId, ...args)
+}
 
 // ---- Reducer ----
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
