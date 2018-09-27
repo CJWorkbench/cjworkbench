@@ -34,7 +34,7 @@ class TestTable(LoggedInIntegrationTest):
     #         b.click_button('Sort', wait=True)  # wait for it to appear
     #
     #     # Wait for sort module to appear, selected
-    #     b.assert_element('.wf-module[data-module-name=Sort] .module-output--selected', wait=True)
+    #     b.assert_element('.wf-module[data-module-name=Sort].selected', wait=True)
     #     # Wait for table to load
     #     b.assert_element('.wf-module[data-module-name=Sort] select[name=column] option:checked', text='string')
     #     b.assert_element('.wf-module[data-module-name=Sort] select[name=dtype] option:checked', text='String')
@@ -65,7 +65,7 @@ class TestTable(LoggedInIntegrationTest):
         b.send_keys('new-column-key', Keys.ENTER)
 
         # Wait for rename module to appear, selected and set
-        b.assert_element('.wf-module[data-module-name="Rename columns"] .module-output--selected', wait=True)
+        b.assert_element('.wf-module[data-module-name="Rename columns"].selected', wait=True)
         b.assert_element('.rename-entry[data-column-name="string"] input[value="Column A"]', wait=True)
 
         # Wait for table to reload. This is crazy-hard, so we hack with sleep()
@@ -120,7 +120,7 @@ class TestTable(LoggedInIntegrationTest):
     #     self._blur()  # commit
     #
     #     # Wait for edit module to appear, selected and set
-    #     b.assert_element('.wf-module[data-module-name="Edit Cells"] .module-output--selected', wait=True)
+    #     b.assert_element('.wf-module[data-module-name="Edit Cells"].selected', wait=True)
     #     b.assert_no_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1', wait=True)
     #     b.assert_element('.react-grid-Cell', text='4', wait=True)
     #
