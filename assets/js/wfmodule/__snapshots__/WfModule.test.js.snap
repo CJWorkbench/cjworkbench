@@ -2,7 +2,7 @@
 
 exports[`WfModule, not read-only mode matches snapshot 1`] = `
 <div
-  className="wf-module expanded"
+  className="wf-module selected"
   data-module-name="Load from URL"
   onClick={[Function]}
 >
@@ -24,207 +24,201 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
       value=""
     />
   </div>
+  <h3>
+    3
+    .
+  </h3>
   <div
-    className="wf-card "
+    className="module-card"
     draggable={true}
     onDragEnd={[Function]}
     onDragStart={[Function]}
   >
-    <div>
+    <div
+      className="module-card-header"
+    >
+      <WfModuleCollapseButton
+        isCollapsed={false}
+        isLessonHighlight={false}
+        onCollapse={[Function]}
+        onExpand={[Function]}
+      />
+      <i
+        className="icon-icon WFmodule-icon"
+      />
       <div
-        className="output-bar-container"
+        className="module-name"
       >
-        <StatusBar
-          isDragging={false}
-          isSelected={true}
-        />
+        Load from URL
       </div>
       <div
-        className="module-content"
+        className="context-buttons"
       >
-        <div
-          className="module-card-header"
+        <a
+          className="help-button"
+          href="http://help-url"
+          target="_blank"
+          title="Help for this module"
         >
-          <WfModuleCollapseButton
-            isCollapsed={false}
-            isLessonHighlight={false}
-            onCollapse={[Function]}
-            onExpand={[Function]}
-          />
           <i
-            className="icon-icon WFmodule-icon"
+            className="icon-help"
           />
-          <div
-            className="module-name"
-          >
-            Load from URL
-          </div>
-          <div
-            className="context-buttons"
-          >
-            <a
-              className="help-button"
-              href="http://help-url"
-              target="_blank"
-              title="Help for this module"
-            >
-              <i
-                className="icon-help"
-              />
-            </a>
-            <button
-              className="btn edit-note"
-              onClick={[Function]}
-              title="Edit Note"
-            >
-              <i
-                className="icon-note"
-              />
-            </button>
-            <WfModuleContextMenu
-              id={999}
-              removeModule={[Function]}
-            />
-          </div>
-        </div>
-        <StatusLine
-          applyQuickFix={[Function]}
-          error=""
-          quickFixes={Array []}
-          status="ready"
-        />
-        <div
-          className="module-card-params"
+        </a>
+        <button
+          className="btn edit-note"
+          onClick={[Function]}
+          title="Edit Note"
         >
-          <WfParameter
-            api={
-              Object {
-                "postParamEvent": [MockFunction],
-                "setWfModuleNotes": [MockFunction],
-              }
-            }
-            changeParam={[Function]}
-            getParamId={[Function]}
-            getParamMenuItems={[Function]}
-            getParamText={[Function]}
-            inputLastRelevantDeltaId={707}
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            key="0"
-            moduleName="Load from URL"
-            name="url"
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            p={
-              Object {
-                "id": 100,
-                "parameter_spec": Object {
-                  "id_name": "url",
-                  "type": "string",
-                },
-                "value": "http://some.URL.me",
-              }
-            }
-            setParamText={[Function]}
-            updateSettings={
-              Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
-            }
-            value="http://some.URL.me"
-            wfModuleId={999}
+          <i
+            className="icon-note"
           />
-          <WfParameter
-            api={
-              Object {
-                "postParamEvent": [MockFunction],
-                "setWfModuleNotes": [MockFunction],
-              }
+        </button>
+        <WfModuleContextMenu
+          id={999}
+          removeModule={[Function]}
+        />
+      </div>
+    </div>
+    <div
+      className="module-card-details expanded"
+    >
+      <StatusLine
+        applyQuickFix={[Function]}
+        error=""
+        quickFixes={Array []}
+        status="ready"
+      />
+      <div
+        className="module-card-params"
+      >
+        <WfParameter
+          api={
+            Object {
+              "postParamEvent": [MockFunction],
+              "setWfModuleNotes": [MockFunction],
             }
-            changeParam={[Function]}
-            getParamId={[Function]}
-            getParamMenuItems={[Function]}
-            getParamText={[Function]}
-            inputLastRelevantDeltaId={707}
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            key="1"
-            moduleName="Load from URL"
-            name="version_select"
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            p={
-              Object {
-                "id": 101,
-                "parameter_spec": Object {
-                  "id_name": "version_select",
-                  "type": "custom",
-                },
-              }
+          }
+          changeParam={[Function]}
+          getParamId={[Function]}
+          getParamMenuItems={[Function]}
+          getParamText={[Function]}
+          inputLastRelevantDeltaId={707}
+          inputWfModuleId={123}
+          isReadOnly={false}
+          isZenMode={false}
+          key="0"
+          moduleName="Load from URL"
+          name="url"
+          onChange={[Function]}
+          onReset={[Function]}
+          onSubmit={[Function]}
+          p={
+            Object {
+              "id": 100,
+              "parameter_spec": Object {
+                "id_name": "url",
+                "type": "string",
+              },
+              "value": "http://some.URL.me",
             }
-            setParamText={[Function]}
-            updateSettings={
-              Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
+          }
+          setParamText={[Function]}
+          updateSettings={
+            Object {
+              "autoUpdateData": undefined,
+              "lastUpdateCheck": undefined,
+              "updateInterval": undefined,
+              "updateUnits": undefined,
             }
-            wfModuleId={999}
-          />
-          <WfParameter
-            api={
-              Object {
-                "postParamEvent": [MockFunction],
-                "setWfModuleNotes": [MockFunction],
-              }
+          }
+          value="http://some.URL.me"
+          wfModuleId={999}
+        />
+        <WfParameter
+          api={
+            Object {
+              "postParamEvent": [MockFunction],
+              "setWfModuleNotes": [MockFunction],
             }
-            changeParam={[Function]}
-            getParamId={[Function]}
-            getParamMenuItems={[Function]}
-            getParamText={[Function]}
-            inputLastRelevantDeltaId={707}
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            key="2"
-            moduleName="Load from URL"
-            name="menu_select"
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            p={
-              Object {
-                "id": 102,
-                "items": "Mango|Banana",
-                "parameter_spec": Object {
-                  "id_name": "menu_select",
-                  "type": "menu",
-                },
-                "value": 1,
-              }
+          }
+          changeParam={[Function]}
+          getParamId={[Function]}
+          getParamMenuItems={[Function]}
+          getParamText={[Function]}
+          inputLastRelevantDeltaId={707}
+          inputWfModuleId={123}
+          isReadOnly={false}
+          isZenMode={false}
+          key="1"
+          moduleName="Load from URL"
+          name="version_select"
+          onChange={[Function]}
+          onReset={[Function]}
+          onSubmit={[Function]}
+          p={
+            Object {
+              "id": 101,
+              "parameter_spec": Object {
+                "id_name": "version_select",
+                "type": "custom",
+              },
             }
-            setParamText={[Function]}
-            updateSettings={
-              Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
+          }
+          setParamText={[Function]}
+          updateSettings={
+            Object {
+              "autoUpdateData": undefined,
+              "lastUpdateCheck": undefined,
+              "updateInterval": undefined,
+              "updateUnits": undefined,
             }
-            value={1}
-            wfModuleId={999}
-          />
-        </div>
+          }
+          wfModuleId={999}
+        />
+        <WfParameter
+          api={
+            Object {
+              "postParamEvent": [MockFunction],
+              "setWfModuleNotes": [MockFunction],
+            }
+          }
+          changeParam={[Function]}
+          getParamId={[Function]}
+          getParamMenuItems={[Function]}
+          getParamText={[Function]}
+          inputLastRelevantDeltaId={707}
+          inputWfModuleId={123}
+          isReadOnly={false}
+          isZenMode={false}
+          key="2"
+          moduleName="Load from URL"
+          name="menu_select"
+          onChange={[Function]}
+          onReset={[Function]}
+          onSubmit={[Function]}
+          p={
+            Object {
+              "id": 102,
+              "items": "Mango|Banana",
+              "parameter_spec": Object {
+                "id_name": "menu_select",
+                "type": "menu",
+              },
+              "value": 1,
+            }
+          }
+          setParamText={[Function]}
+          updateSettings={
+            Object {
+              "autoUpdateData": undefined,
+              "lastUpdateCheck": undefined,
+              "updateInterval": undefined,
+              "updateUnits": undefined,
+            }
+          }
+          value={1}
+          wfModuleId={999}
+        />
       </div>
     </div>
   </div>

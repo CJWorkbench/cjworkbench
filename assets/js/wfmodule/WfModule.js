@@ -5,7 +5,6 @@ import DataVersionModal from '../DataVersionModal'
 import WfParameter from '../WfParameter'
 import WfModuleContextMenu from './WfModuleContextMenu'
 import EditableNotes from '../EditableNotes'
-import StatusBar from './StatusBar'
 import StatusLine from './StatusLine'
 import {
   setWfModuleCollapsedAction,
@@ -18,6 +17,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
 import { createSelector } from 'reselect'
+
+const numberFormat = new Intl.NumberFormat()
 
 // ---- WfModule ----
 export class WfModule extends React.PureComponent {
@@ -339,7 +340,7 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, wfModule, module, moduleHelpUrl, moduleName, moduleIcon } = this.props
+    const { isReadOnly, index, wfModule, module, moduleHelpUrl, moduleName, moduleIcon } = this.props
 
     // Each parameter gets a WfParameter
     const paramdivs = moduleName ? wfModule.parameter_vals.map(this.renderParam) : null
@@ -434,42 +435,42 @@ export class WfModule extends React.PureComponent {
 
     let className = 'wf-module'
     className += wfModule.status ? ` status-${wfModule.status}` : ''
-    className += wfModule.is_collapsed ? ' collapsed' : ' expanded'
+    className += this.state.isDragging ? ' dragging' : ''
+    className += this.props.selected ? ' selected' : ''
     if (this.props.isLessonHighlight) className += ' lesson-highlight'
     if (this.props.isZenMode) className += ' zen-mode'
 
     // Putting it all together: name, status, parameters, output
     return (
-      <div onClick={this.click} className={className} data-module-name={moduleName}>
+      <div
+        className={className}
+        data-module-name={moduleName}
+        onClick={this.click}
+      >
         {notes}
-        <div className={'wf-card ' + (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-
-          <div>
-            <div className='output-bar-container'>
-              <StatusBar status={wfModule.status} isSelected={this.props.selected} isDragging={this.state.isDragging} />
-            </div>
-            <div className='module-content'>
-              <div className='module-card-header'>
-                <WfModuleCollapseButton
-                  isCollapsed={wfModule.is_collapsed}
-                  isLessonHighlight={this.props.isLessonHighlightCollapse}
-                  onCollapse={this.collapse}
-                  onExpand={this.expand}
-                />
-                <i className={moduleIconClassName} />
-                <div className='module-name'>{moduleName}</div>
-                {contextBtns}
-              </div>
-              {/* --- Error message --- */}
-              <StatusLine
-                status={wfModule.status || 'ready'}
-                error={wfModule.error_msg || ''}
-                quickFixes={wfModule.quick_fixes || []}
-                applyQuickFix={this.applyQuickFix}
-              />
-              <div className='module-card-params'>
-                {paramdivs}
-              </div>
+        <h3>{numberFormat.format(index + 1)}.</h3>
+        <div className='module-card' ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+          <div className='module-card-header'>
+            <WfModuleCollapseButton
+              isCollapsed={wfModule.is_collapsed}
+              isLessonHighlight={this.props.isLessonHighlightCollapse}
+              onCollapse={this.collapse}
+              onExpand={this.expand}
+            />
+            <i className={moduleIconClassName} />
+            <div className='module-name'>{moduleName}</div>
+            {contextBtns}
+          </div>
+          <div className={`module-card-details ${wfModule.is_collapsed ? 'collapsed' : 'expanded'}`}>
+            {/* --- Error message --- */}
+            <StatusLine
+              status={wfModule.status || 'ready'}
+              error={wfModule.error_msg || ''}
+              quickFixes={wfModule.quick_fixes || []}
+              applyQuickFix={this.applyQuickFix}
+            />
+            <div className='module-card-params'>
+              {paramdivs}
             </div>
           </div>
         </div>

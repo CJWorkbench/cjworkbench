@@ -42,43 +42,42 @@
     align-items: center;
     font-size: 1.5rem;
     position: relative;
-    left:-7.7rem;
+    left: -7.7rem;
     height:100%;
     top: .8rem;
     cursor: pointer;
 
     a {
-      color:$white;
-      &:hover{
+      color: $white;
+      &:hover {
         text-decoration: none;
       }
     }
 
-    .LS-toggle--link,
-    .WF-toggle--link {
+    .LS-toggle--link, .WF-toggle--link {
       text-transform: uppercase;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin:0 2rem;
+      margin: 0 2rem;
       padding-top: .5rem;
-      height:4.5rem;
-      -webkit-transition:$buttons-anim;
+      height: 4.5rem;
+      -webkit-transition: $buttons-anim;
 
-      .WF-link--under,
-      .LS-link--under{
+      .WF-link--under, .LS-link--under {
         height:.5rem;
         background-color: $white;
         position: relative ;
         top:1.2rem;
-        -webkit-transition:$buttons-anim;
-      }
-      .WF-link--under{
-        width:10.2rem;
+        -webkit-transition: $buttons-anim;
       }
 
-      .LS-link--under{
-        width:8.5rem;
+      .WF-link--under {
+        width: 10.2rem;
+      }
+
+      .LS-link--under {
+        width: 8.5rem;
       }
     }
   }

@@ -326,19 +326,6 @@ select.form-control {
   background: none;
 }
 
-.module-notes {
-  // By default, notes aren't shown. We only show them if they are in focused or
-  // if they are non-empty. But we cannot set display:none, because the user
-  // may call notesInputRef.current.focus() before they become visible.
-  padding: .5rem 0 .2rem 0;
-  &:not(.visible) {
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    height: 0;
-  }
-}
-
 textarea[name="notes"], .editable-notes-read-only {
   @extend %content-3;
   border: none;

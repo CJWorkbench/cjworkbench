@@ -11,14 +11,14 @@
     margin: 0;
 
     &.read-only {
-      height: .5rem;
+      height: 2rem;
     }
   }
 
   .add-module-search {
     width: $module-width;
-    margin: 0 $module-margin;
-    top:1.2rem;
+    margin: 0 $module-margin-right 0 $module-margin-left;
+    top: 1.2rem;
     margin-bottom: 40rem; // so there's always a scrollbar, and clicking "ADD STEP" doesn't add one
     position: relative;
 
@@ -26,7 +26,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 26rem;
+      width: $module-width;
       border-radius: 2rem;
       border: 2px solid $module-action;
       background: transparent;
@@ -42,9 +42,11 @@
       }
       i {
         font-size: 1.8rem;
-        margin-right:.5rem;
+        margin-right: .5rem;
       }
-      span {margin-top: .1rem;}
+      span {
+        margin-top: .1rem;
+      }
     }
 
     &.lesson-highlight button.search {
@@ -56,10 +58,9 @@
 
   .add-module-in-between-search {
     width: $module-width;
-    margin-left: $module-margin;
+    margin-left: $module-margin-left;
     position: relative;
-    height: .7rem;
-    top:.5rem;
+    height: 2rem;
 
     &.searching {
       z-index: 3; // appear above other modules/in-betweens
@@ -71,8 +72,8 @@
       // clickable/hoverable.
       display: block;
       position: absolute;
-      width: 26rem;
-      height: .7rem;
+      width: $module-width;
+      height: 100%;
       cursor: pointer;
       border: .1rem solid transparent;
       font-size: 1rem;
@@ -80,36 +81,29 @@
       background: transparent;
       margin: 0;
       padding: 0;
-      &::before {
-        content: '';
-        position: absolute;
-        top: -1rem;
-        bottom: -1rem;
-        left: 0;
-        right: 0;
-      }
 
       i {
         position: absolute;
-        left: 12.5rem;
-        top: -.6rem;
+        left: 50%;
+        width: 1.8rem;
+        margin-left: -.9rem;
+        top: 50%;
+        height: 1.8rem;
+        margin-top: -.9rem;
         font-size: 1.2rem;
         line-height: 1;
-        width: 1.8rem;
-        height: 1.8rem;
         border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 5;
       }
     }
 
     .add-hover {
       position: absolute;
+      width: 100%;
+      height: 100%;
       z-index: 2;
-      top:-.5rem;
-      bottom:-.5rem;
 
       &:hover button.search {
         background: $brand-orange;
@@ -139,8 +133,8 @@
     top: 0;
     left: 0;
     width: $module-width;
-    margin: 0 $module-margin;
-    height: .5rem;
+    margin: 0 $module-margin-right 0 $module-margin-left;
+    bottom: 0;
     z-index: 2;
     background: transparent;
 

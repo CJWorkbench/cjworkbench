@@ -1,6 +1,57 @@
 .wf-module {
   position: relative;
 
+  h3 {
+    position: absolute;
+    @extend %font-lato-regular;
+    font-size: 2.25rem;
+    width: 4rem;
+    text-align: center;
+    padding-top: .65rem; // center with collapsed .wf-card
+    padding-bottom: .65rem; // so vertical line's distance is same above as below
+    color: $brand-workspace;
+    background-color: $WF-background; // appear atop vertical line
+  }
+
+  // Show a vertical line to the left of the module stack
+  &::before, & + .in-between-modules::before {
+    content: '';
+    display: block;
+    width: 2px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: $brand-workspace;
+    left: 2rem;
+    margin-left: -1px;
+  }
+  &:nth-child(2) .module-notes::before {
+    // ... but don't show the vertical line to the left of the first note,
+    // which is above the number 1.
+    content: '';
+    display: block;
+    width: 3rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: $WF-background;
+  }
+
+  .module-notes {
+    // By default, notes aren't shown. We only show them if they are in focused or
+    // if they are non-empty. But we cannot set display:none, because the user
+    // may call notesInputRef.current.focus() before they become visible.
+    padding: .5rem 0 .2rem 0;
+    position: relative; // so we can position `.wf-module .module-notes::before`
+    &:not(.visible) {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      height: 0;
+    }
+  }
+
   .wf-parameter {
     button[name=fetch] {
       @extend .action-button;
@@ -16,29 +67,18 @@
     }
   }
 
-  &::after {
-    content: '';
-    // vertical bar between modules to show the vertical flow of data.
-    // We add it to the bottom of each module, even the last one: below the
-    // last module is a button to add more, so the last bar points there.
-    position: absolute;
-    bottom: -1.4rem;
-    height: 1.4rem;
-    left: 50.85%;
-    width: 3px;
-    background: $module-action;
-    pointer-events: none;
-  }
-
-  .wf-card {
+  .module-card {
     width: $module-width;
-    margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
+    margin: 0 $module-margin-right 0 $module-margin-left; // most of the in-between margin comes from .add-module-in-between-search
     background-color: $module-background;
     position: relative;
-    z-index: 1;
-    &:hover {background:#fcfcfc;}
+    border: 2px solid transparent;
 
-    &.wf-card:hover .context-buttons {
+    .module-card-details.collapsed {
+      display: none;
+    }
+
+    &:hover .context-buttons {
       a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
         opacity: 1;
       }
@@ -52,14 +92,93 @@
     }
   }
 
-  .module-card-params {
-    display: none;
-  }
-  &.expanded .module-card-params {
-    display: block;
+  @mixin module-colors($card-border-color, $number-color, $line-color) {
+    // Color card border
+    .module-card {
+      border-color: $card-border-color;
+    }
+
+    // Color number
+    h3 {
+      color: $number-color;
+    }
+
+    // Color line to the left of the module stack
+    &::before, & + .in-between-modules::before {
+      background-color: $line-color;
+    }
+
+    // Color line to the right of the module card, which only appears if the
+    // module is .selected
+    .module-card::after {
+      background-color: $card-border-color;
+    }
   }
 
-  // Header of module in stack. Includes everything showm when collapsed.
+  // Coloring. Keep the cascade in mind: if a module matches multiple
+  // selectors, the most-precise selector (greatest number of classes)
+  // wins; in case of a tie the last one wins.
+  &.selected {
+    @include module-colors($module-color-selected, $brand-workspace, $brand-workspace);
+
+    // Show line to the right of module card
+    .module-card::after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      margin-top: -1px;
+      height: 2px;
+      width: $module-margin-right;
+    }
+
+    // Hide all lines after the selected module
+    &, & ~ * { // this .wf-module and all subsequent elements
+      &::before {
+        // `!important` will outrank all the other rules (e.g.,
+        // `&.status-busy`) so the line background-color won't be overwritten
+        // by other rules.
+        background-color: transparent !important;
+      }
+    }
+  }
+
+  &.status-busy {
+    @include module-colors($module-color-busy, $brand-workspace, $module-color-busy);
+  }
+
+  &.status-error {
+    @include module-colors($module-color-error, $module-color-error, $module-color-error);
+
+    &.selected {
+      @include module-colors($module-color-selected, $module-color-error, $module-color-error);
+    }
+  }
+
+  .module-card-params {
+    padding: 0 1.5rem 1rem 1.5rem;
+
+    // Spacing on top of each parameter, excpet the first one in module
+    .wf-parameter:not(:first-child) {
+      margin-top: 0.8rem;
+    }
+
+    //spacing for add/remove param button
+    .wf-parameter.wf-parameter-checkbox {
+      margin-top: 0.4rem;
+    }
+
+    .react-select__value-container {
+      width:50%;
+    }
+
+    .react-select__menu-list {
+      z-index: 5 !important;
+    }
+  }
+
+  // Header of module in stack. Includes everything shown when collapsed.
   .module-card-header {
     display: flex;
     align-items: center;
@@ -240,35 +359,6 @@
     }
   }
 
-  .module-content {
-    position:relative;
-    width:100%;
-    padding:0;
-
-    .module-card-params {
-      padding: 0 1.5rem 1rem 1.5rem;
-
-      // Spacing on top of each parameter, excpet the first one in module
-      .wf-parameter:not(:first-child) {
-        margin-top: 0.8rem;
-      }
-
-      //spacing for add/remove param button
-      .wf-parameter.wf-parameter-checkbox {
-        margin-top: 0.4rem;
-      }
-
-      .react-select__value-container {
-        width:50%;
-      }
-
-      .react-select__menu-list {
-        z-index: 5 !important;
-      }
-
-    }
-  }
-
   .wf-module-error-msg {
     border: 0;
     padding: 1rem 1.5rem;
@@ -296,70 +386,6 @@
   position: absolute;
   height: 100%;
   width:100%;
-
-  /* all good & selected */
-  .module-output--selected {
-    height: 100%;
-    outline: 2px solid $module-action;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    &:after {
-    border: solid transparent;
-    content: " ";
-    border-left-color: rgba(118,155,176,0.3);
-    border-width: 1.8rem 0 1.8rem 1rem;
-    margin-left: 26.6rem
-    }
-  }
-
-  /* standby  */
-  .module-output-bar-orange {
-    height: 100%;
-    outline:2px solid rgba(251,170,109,0.7);
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    :after {
-    border: solid transparent;
-  	content: " ";
-  	border-left-color: rgba(251,170,109,0);
-  	border-width: 2rem 0 2.25rem 1rem;
-    margin-left: 26.7rem
-    }
-  }
-
-  /* error  */
-  .module-output--error {
-    height: 100%;
-    outline:2px solid transparent;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    &:after {
-    	content: " ";
-    	position: absolute;
-    	border:2px solid $error-prompt;
-      margin-left: 26.9rem;
-      height: 4rem;
-    }
-  }
-
-  /* error & selected */
-  .module-output--error-selected {
-    height: 100%;
-    outline:2px solid $error-prompt;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    &:after {
-      content: " ";
-    	position: absolute;
-    	border:2px solid $error-prompt;
-      margin-left: 26.9rem;
-      height: 4rem;
-    }
-  }
 }
 
 
@@ -376,9 +402,9 @@
   padding-left:1.5rem;
   align-items: center;
   margin-bottom: 0.5rem;
-  background-color:$module-action;
+  background-color: $module-action;
   position: relative;
-  height:1rem;
+  height: 1rem;
   font-size: 1.2rem;
 }
 

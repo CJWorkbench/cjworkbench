@@ -23,8 +23,6 @@ $dark-gray: #8b8b8b;
 $modal-footer: #F5F7F8;
 $table-border:#D7E4E7;
 
-$module-action: #C2D2DB;
-
 $dark-blue: #577485;
 $dark-orange:#F88630;
 
@@ -93,9 +91,14 @@ $overlay-shadow:-0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
 
 // Modules (ᵔᴥᵔ)
 
+$module-action: #c2d2db;
 $module-width: 26rem;
-$module-margin: 2rem;
+$module-margin-right: 2rem;
+$module-margin-left: 4rem;
+$module-color-selected: $module-action;
+$module-color-busy: $brand-orange;
+$module-color-error: $error-prompt;
 
 // Animations
 
-$buttons-anim:all 0.1s;
+$buttons-anim: all 0.1s;
