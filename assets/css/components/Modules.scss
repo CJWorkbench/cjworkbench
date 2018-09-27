@@ -363,17 +363,22 @@
     border: 0;
     padding: 1rem 1.5rem;
     border-radius: 0px;
-    background-color: transparent;
+    background-color: $error-prompt--Vlight;
     color: $brand-red;
-    font-size: 1.2rem;
+    @extend .info-2;
     @extend %font-nunito-regular;
     text-align: left;
     word-wrap: break-word;
+    margin-bottom: 1rem;
 
     ul.quick-fixes {
       list-style: none;
       margin: 0;
       padding: 0;
+
+      button {
+        @extend .button-red;
+      }
     }
   }
 }

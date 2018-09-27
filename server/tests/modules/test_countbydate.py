@@ -214,14 +214,14 @@ class CountByDateTests(SimpleTestCase):
         table = pandas.DataFrame({'A': [1], 'B': [2]})
         wf_module = MockWfModule(column='A')
         result = render(wf_module, table)
-        self.assertEqual(result.error, 'Column "A" must be date and time')
+        self.assertEqual(result.error, 'Column "A" must be Date & Time')
 
     def test_string_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': ['2018'], 'B': [2]})
         wf_module = MockWfModule(column='A')
         result = render(wf_module, table)
-        self.assertEqual(result.error, 'Column "A" must be date and time')
+        self.assertEqual(result.error, 'Column "A" must be Date & Time')
         self.assertEqual(len(result.quick_fixes), 1)
 
     def test_average_no_error_when_missing_target(self):
