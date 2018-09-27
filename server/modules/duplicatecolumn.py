@@ -2,8 +2,6 @@ from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 import pandas as pd
 
-duplicate_column_prefix = 'Copy of'
-
 def _do_render(table, columns):
     cols = columns.split(',')
     cols = [c.strip() for c in cols]
@@ -12,17 +10,19 @@ def _do_render(table, columns):
     if cols == [] or cols == ['']:
         return ProcessResult(table)
 
+    colnames = set(table.columns)
+
     for c in cols:
-        new_column_name = '{0} {1}'.format(duplicate_column_prefix, c)
+        new_column_name = f'Copy of {c}'
 
         # Append numbers if column name happens to exist
-        if new_column_name in list(table.columns):
-            count = 0
-            while True:
-                count += 1
-                if '{0} {1}'.format(new_column_name, count) not in list(table.columns):
-                    new_column_name = '{0} {1}'.format(new_column_name, count)
-                    break
+        count = 0
+        try_column_name = new_column_name
+        while try_column_name in colnames:
+            count += 1
+            try_column_name = f'{new_column_name} {count}'
+        new_column_name = try_column_name
+        colnames.add(new_column_name)
 
         # Add new column next to reference column
         column_idx = table.columns.tolist().index(c)
