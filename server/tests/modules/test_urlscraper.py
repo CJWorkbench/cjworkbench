@@ -1,14 +1,12 @@
 import asyncio
 import random
-import tempfile
-from unittest import mock
+from unittest.mock import patch
 import aiohttp
-from django.test import override_settings
+from asgiref.sync import async_to_sync
+from django.test import override_settings, SimpleTestCase
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.tests.utils import DbTestCase, LoggedInTestCase, \
-        create_testdata_workflow, load_and_add_module, get_param_by_id_name
 from server.modules.types import ProcessResult
 from server.modules.urlscraper import scrape_urls, URLScraper
 from server.execute import execute_wfmodule
@@ -56,6 +54,11 @@ class MockResponse:
         return self._text
 
 
+class MockCachedRenderResult:
+    def __init__(self, dataframe: pd.DataFrame):
+        self.result = ProcessResult(dataframe)
+
+
 # this replaces aiohttp.get. Wait for a lag, then a test response
 # If the status is an error, throw the appropriate exception
 async def mock_async_get(status, text, lag):
@@ -88,7 +91,7 @@ def make_test_tasks(results, response_times):
     return results_tasks
 
 
-class ScrapeUrlsTest(DbTestCase):
+class ScrapeUrlsTest(SimpleTestCase):
     # does the hard work for a set of urls/timings/results
     @override_settings(SCRAPER_TIMEOUT=0.2)  # all our test data lags 0.25s max
     def scraper_result_test(self, results, response_times):
@@ -114,7 +117,7 @@ class ScrapeUrlsTest(DbTestCase):
             else:
                 return MockResponse(int(status), text)
 
-        with mock.patch('aiohttp.ClientSession') as session:
+        with patch('aiohttp.ClientSession') as session:
             urls = results['url'].tolist()
             session_mock = session.return_value
             session_mock.get.side_effect = session_get
@@ -205,11 +208,15 @@ class ScrapeUrlsTest(DbTestCase):
 
 
 class MockWfModule:
-    def __init__(self, urlsource, urlcol, fetched_table=None, fetch_error=''):
+    def __init__(self, urlsource, urlcol, urllist='',
+                 fetched_table=None, fetch_error=''):
         self.urlsource = urlsource
         self.urlcol = urlcol
+        self.urllist = urllist
         self.fetched_table = fetched_table
         self.fetch_error = fetch_error
+        self.previous = None
+        self.cached_render_result = None
 
     def get_param_menu_string(self, key):
         return getattr(self, key)
@@ -217,42 +224,42 @@ class MockWfModule:
     def get_param_column(self, key):
         return getattr(self, key)
 
+    def get_param_string(self, key):
+        return getattr(self, key)
+
     def retrieve_fetched_table(self):
         return self.fetched_table
 
+    def get_cached_render_result(self):
+        return self.cached_render_result
 
-# override b/c we depend on StoredObject to transmit data between event() and
-# render(), so make sure not leave files around
-@override_settings(MEDIA_ROOT=tempfile.gettempdir())
-class URLScraperTests(LoggedInTestCase):
+    def previous_in_stack(self):
+        return self.previous
+
+
+async def _commit(wf_module, result, *_, **__):
+    wf_module.fetched_table = result.dataframe
+    wf_module.fetch_error = result.error
+
+@patch('server.modules.moduleimpl.ModuleImpl.commit_result', _commit)
+def fetch(wf_module):
+    async_to_sync(URLScraper.event)(wf_module)
+
+
+class URLScraperTests(SimpleTestCase):
     def setUp(self):
-        super().setUp()  # log in
+        super().setUp()
 
         self.urls = list(simple_result_table['url'])
 
-        # create a workflow that feeds our urls via PasteCSV into a URLScraper
         self.expected_url_table_result = ProcessResult(url_table)
         self.expected_url_table_result.sanitize_in_place()
-
-        url_csv = 'url\n' + '\n'.join(self.urls)
-        workflow = create_testdata_workflow(url_csv)
-        self.wfmodule = load_and_add_module('urlscraper', workflow=workflow)
-
-    def press_fetch_button(self):
-        version_id = get_param_by_id_name('version_select').id
-        self.client.post(f'/api/parameters/{version_id}/event')
-        self.wfmodule.refresh_from_db()  # new last_relevant_workflow_id
 
     # Simple test that .event() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are
     # tested above
     def test_scrape_column(self):
-        source_options = "List|Input column".split('|')
-        source_pval = get_param_by_id_name('urlsource')
-        source_pval.value = source_options.index('Input column')
-        source_pval.save()
-
-        get_param_by_id_name('urlcol').set_value('url')
+        wf_module = MockWfModule('Input column', 'url')
 
         scraped_table = simple_result_table.copy()
 
@@ -262,25 +269,27 @@ class URLScraperTests(LoggedInTestCase):
             table['html'] = scraped_table['html']
             return
 
-        with mock.patch('django.utils.timezone.now') as now:
+        with patch('django.utils.timezone.now') as now:
             now.return_value = testnow
 
-            with mock.patch('server.modules.urlscraper.scrape_urls') as scrape:
+            with patch('server.modules.urlscraper.scrape_urls') as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                self.press_fetch_button()
-                result = execute_wfmodule(self.wfmodule)
+                wf_module.previous = MockWfModule('', '')
+                wf_module.previous.cached_render_result = \
+                    MockCachedRenderResult(pd.DataFrame({
+                        'url': self.urls,
+                    }))
+
+                fetch(wf_module)
+                result = URLScraper.render(wf_module, pd.DataFrame())
+                result = ProcessResult.coerce(result)
                 self.assertEqual(result, ProcessResult(scraped_table))
 
     # Tests scraping from a list of URLs
     def test_scrape_list(self):
-        source_options = "List|Input column".split('|')
-        source_pval = get_param_by_id_name('urlsource')
-        source_pval.value = source_options.index('List')
-        source_pval.save()
-
-        get_param_by_id_name('urllist').set_value('\n'.join([
+        wf_module = MockWfModule('List', '', '\n'.join([
             'http://a.com/file',
             'https://b.com/file2',
             'c.com/file/dir'  # Removed 'http://' to test the URL-fixing part
@@ -294,13 +303,14 @@ class URLScraperTests(LoggedInTestCase):
             table['html'] = scraped_table['html']
             return
 
-        with mock.patch('django.utils.timezone.now') as now:
+        with patch('django.utils.timezone.now') as now:
             now.return_value = testnow
 
-            with mock.patch('server.modules.urlscraper.scrape_urls') as scrape:
+            with patch('server.modules.urlscraper.scrape_urls') as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                self.press_fetch_button()
-                result = execute_wfmodule(self.wfmodule)
+                fetch(wf_module)
+                result = URLScraper.render(wf_module, pd.DataFrame())
+                result = ProcessResult.coerce(result)
                 self.assertEqual(result, ProcessResult(scraped_table))

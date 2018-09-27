@@ -113,8 +113,14 @@ class URLScraper(ModuleImpl):
             urlcol = wfm.get_param_column('urlcol')
             if urlcol == '':
                 return
-            from server.execute import execute_wfmodule
-            prev_table = execute_wfmodule(wfm.previous_in_stack()).dataframe
+
+            # We won't execute here -- there's no need: the user clicked a
+            # button so should be pretty clear on what the input is.
+            input_cache = wfm.previous_in_stack().get_cached_render_result()
+            if input_cache:
+                prev_table = input_cache.result.dataframe
+            else:
+                prev_table = pd.DataFrame()
 
             # column parameters are not sanitized here, could be missing
             # this col
