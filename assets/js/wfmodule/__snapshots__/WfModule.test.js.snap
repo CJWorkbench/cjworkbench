@@ -26,7 +26,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
   </div>
   <h3>
     3
-    .
   </h3>
   <div
     className="module-card"
