@@ -1,33 +1,45 @@
-import io
+import unittest
 import pandas as pd
-from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        get_param_by_id_name, set_string
-from server.execute import execute_wfmodule
+from server.modules.pastecsv import PasteCSV
 from server.modules.types import ProcessResult
 
-count_csv = 'Month,Amount\nJan,10\nFeb,5\nMar,10\n'
-count_tsv = 'Month\tAmount\nJan\t10\nFeb\t5\nMar\t10\n'
-reference_table = pd.read_csv(io.StringIO(count_csv))  # same table as TSV
+
+class MockWfModule:
+    def __init__(self, csv='', has_header_row=True):
+        self.csv = csv
+        self.has_header_row = has_header_row
+
+    def get_param_string(self, _):
+        return self.csv
+
+    def get_param_checkbox(self, _):
+        return self.has_header_row
 
 
-class PasteCSVTests(LoggedInTestCase):
-    def setUp(self):
-        super(PasteCSVTests, self).setUp()  # log in
+def render(*args, **kwargs):
+    wf_module = MockWfModule(*args, **kwargs)
+    result = PasteCSV.render(wf_module, pd.DataFrame())
+    result = ProcessResult.coerce(result)
+    return result
 
-        self.wf_module = load_and_add_module('pastecsv')  # creates workflow
-        self.csv_pval = get_param_by_id_name('csv')
 
+class PasteCSVTests(unittest.TestCase):
     def test_empty(self):
-        set_string(self.csv_pval, '')
-        result = execute_wfmodule(self.wf_module)
-        self.assertEqual(result, ProcessResult(pd.DataFrame()))
+        result = render('', True)
+        self.assertEqual(result, ProcessResult())
 
     def test_csv(self):
-        set_string(self.csv_pval, count_csv)
-        result = execute_wfmodule(self.wf_module)
-        self.assertEqual(result, ProcessResult(reference_table))
+        result = render('A,B\n1,foo\n2,bar')
+        expected = pd.DataFrame({
+            'A': [1, 2],
+            'B': ['foo', 'bar']
+        })
+        self.assertEqual(result, ProcessResult(expected))
 
     def test_tsv(self):
-        set_string(self.csv_pval, count_tsv)
-        result = execute_wfmodule(self.wf_module)
-        self.assertEqual(result, ProcessResult(reference_table))
+        result = render('A\tB\n1\tfoo\n2\tbar')
+        expected = pd.DataFrame({
+            'A': [1, 2],
+            'B': ['foo', 'bar']
+        })
+        self.assertEqual(result, ProcessResult(expected))
