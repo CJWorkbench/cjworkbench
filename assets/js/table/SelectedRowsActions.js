@@ -33,7 +33,7 @@ class Action extends React.PureComponent {
 export class SelectedRowsActions extends React.PureComponent {
   static propTypes = {
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
-    selectedWfModuleId: PropTypes.number, // or null/undefined if none selected
+    wfModuleId: PropTypes.number, // or null/undefined if none selected
     rowActionModules: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired
@@ -85,15 +85,15 @@ export class SelectedRowsActions extends React.PureComponent {
   }
 
   onClickAction = (idName) => {
-    const { selectedWfModuleId } = this.props
+    const { wfModuleId } = this.props
 
-    this.props.onClickRowsAction(selectedWfModuleId, idName, this.rowString)
+    this.props.onClickRowsAction(wfModuleId, idName, this.rowString)
   }
 
   render () {
-    const { selectedRowIndexes, selectedWfModuleId, rowActionModules } = this.props
+    const { selectedRowIndexes, wfModuleId, rowActionModules } = this.props
 
-    if (!selectedWfModuleId || selectedRowIndexes.length === 0) return null
+    if (!wfModuleId || selectedRowIndexes.length === 0) return null
 
     const actions = rowActionModules.map(({ id, title }) => (
       <Action key={id} id={id} title={title} onClick={this.onClickAction} />

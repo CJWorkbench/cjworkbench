@@ -11,7 +11,8 @@ describe('OutputPane', () => {
         api={{}}
         workflowId={123}
         lastRelevantDeltaId={1}
-        selectedWfModuleId={987}
+        wfModuleId={987}
+        wfModuleStatus='ready'
         isPublic={false}
         isReadOnly={false}
         htmlOutput={false}
@@ -37,7 +38,7 @@ describe('OutputPane', () => {
   })
 
   it('renders when no module id', () => {
-    const w = wrapper({ selectedWfModuleId: null })
+    const w = wrapper({ wfModuleId: null })
     expect(w).toMatchSnapshot()
     expect(w.find('TableView')).toHaveLength(1)
   })

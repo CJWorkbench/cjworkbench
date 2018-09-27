@@ -2,42 +2,42 @@
 
 exports[`OutputPane matches snapshot 1`] = `
 <div
-  className="outputpane"
+  className="outputpane module-ready"
 >
   <Connect(OutputIframe)
     isPublic={false}
     lastRelevantDeltaId={1}
-    selectedWfModuleId={987}
     visible={false}
+    wfModuleId={987}
     workflowId={123}
   />
   <TableView
     api={Object {}}
     isReadOnly={false}
     lastRelevantDeltaId={1}
-    selectedWfModuleId={987}
     showColumnLetter={false}
+    wfModuleId={987}
   />
 </div>
 `;
 
 exports[`OutputPane renders when no module id 1`] = `
 <div
-  className="outputpane"
+  className="outputpane module-ready"
 >
   <Connect(OutputIframe)
     isPublic={false}
     lastRelevantDeltaId={1}
-    selectedWfModuleId={null}
     visible={false}
+    wfModuleId={null}
     workflowId={123}
   />
   <TableView
     api={Object {}}
     isReadOnly={false}
     lastRelevantDeltaId={1}
-    selectedWfModuleId={null}
     showColumnLetter={false}
+    wfModuleId={null}
   />
 </div>
 `;

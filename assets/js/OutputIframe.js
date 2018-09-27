@@ -11,7 +11,7 @@ export class OutputIframe extends React.PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired, // false means, "zero height"
     lastRelevantDeltaId: PropTypes.number, // null if added to empty workflow
-    selectedWfModuleId: PropTypes.number, // null if no wfmodule
+    wfModuleId: PropTypes.number, // null if no wfmodule
     isPublic: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired,
   }
@@ -22,7 +22,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.selectedWfModuleId !== this.props.selectedWfModuleId) {
+    if (prevProps.wfModuleId !== this.props.wfModuleId) {
       this.setState({
         heightFromIframe: null
       })
@@ -46,7 +46,7 @@ export class OutputIframe extends React.PureComponent {
   onMessage = (ev) => {
     const data = ev.data
     if (data && data.from === 'outputIframe') {
-      if (data.wfModuleId !== this.props.selectedWfModuleId) {
+      if (data.wfModuleId !== this.props.wfModuleId) {
         // This message isn't from the iframe we created.
         //
         // This check works around a race:
@@ -121,7 +121,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   renderEmbedModal () {
-    let iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.selectedWfModuleId + '" width="560" height="315" frameborder="0" />')
+    let iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wfModuleId + '" width="560" height="315" frameborder="0" />')
 
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal} className='test-setpublic-modal'>
@@ -144,9 +144,9 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { selectedWfModuleId, lastRelevantDeltaId, visible } = this.props
+    const { wfModuleId, lastRelevantDeltaId, visible } = this.props
     const { heightFromIframe } = this.state
-    const src = `/api/wfmodules/${selectedWfModuleId}/output#revision=${lastRelevantDeltaId}`
+    const src = `/api/wfmodules/${wfModuleId}/output#revision=${lastRelevantDeltaId}`
 
     const defaultHeight = visible ? '100%' : '0'
     const height = heightFromIframe === null ? defaultHeight : `${Math.ceil(heightFromIframe)}px`

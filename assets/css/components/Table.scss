@@ -6,6 +6,18 @@
   display: flex;
   flex-direction: column;
 
+  border-left: 1px solid transparent;
+
+  &.module-ready {
+    border-color: $module-color-selected;
+  }
+  &.module-error {
+    border-color: $module-color-error;
+  }
+  &.module-busy {
+    border-color: $module-color-busy;
+  }
+
   // iframe for charts
   .outputpane-iframe {
     flex: 0 0 auto;
@@ -13,8 +25,7 @@
     height: 100%; // OutputIframe.js will override this ...
     max-height: calc(60% - 3rem); // ... and this is the max
     position:relative;
-    //border-bottom: 1px solid $WF-background; //border always present, even if nothing displayed in i-frame
-    border-left: 1px solid $WF-background;
+
     iframe {
       border:none;
       position: absolute;
@@ -23,6 +34,7 @@
       height: 100%;
       width: 100%;
     }
+
     .outputpane-iframe-control-overlay {
       position: absolute;
       margin-top: 1.6rem;
@@ -32,6 +44,7 @@
       background-color: transparent;
       i {color:$brand-text--dark;}
     }
+
     .outputpane-iframe-control-overlay .btn {
       position: absolute;
       width: 3.5rem;
@@ -43,6 +56,7 @@
       border: 2px solid $Vlight-gray;
       font-size: 1.6rem;
     }
+
     .outputpane-iframe-control-overlay .btn:hover{
       border:2px solid $light-gray;
     }
@@ -51,7 +65,6 @@
   .outputpane-table {
     position: relative;
     flex: 1 1 auto;
-    border-left:1px solid #E7EAED;
     display: flex;
     flex-direction: column;
 

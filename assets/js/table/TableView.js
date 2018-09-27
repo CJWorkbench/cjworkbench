@@ -16,7 +16,7 @@ export const FetchTimeout = 50 // ms after scroll before fetch
 
 export default class TableView extends React.PureComponent {
   static propTypes = {
-    selectedWfModuleId: PropTypes.number,             // not actually required, could have no selected module
+    wfModuleId: PropTypes.number,             // not actually required, could have no selected module
     lastRelevantDeltaId: PropTypes.number.isRequired,
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -82,8 +82,7 @@ export default class TableView extends React.PureComponent {
   load (wasJustReset=false) {
     const min = this.minMissingRowIndex
     const max = min + NRowsPerPage // don't care about maxMissingRowIndex...
-    const wfModuleId = this.props.selectedWfModuleId
-    const { lastRelevantDeltaId } = this.props
+    const { lastRelevantDeltaId, wfModuleId } = this.props
     const { loadedRows } = this.state
 
     this.minMissingRowIndex = null
@@ -106,10 +105,10 @@ export default class TableView extends React.PureComponent {
     }
 
     this.loading = true
-    this.props.api.render(this.props.selectedWfModuleId, min, max + 1) // +1: of-by-one oddness in API
+    this.props.api.render(this.props.wfModuleId, min, max + 1) // +1: of-by-one oddness in API
       .then(json => {
         // Avoid races: return if we've changed what we want to fetch
-        if (wfModuleId !== this.props.selectedWfModuleId) return
+        if (wfModuleId !== this.props.wfModuleId) return
         if (lastRelevantDeltaId !== this.props.lastRelevantDeltaId) return
         if (json.start_row !== min) return
         if (this.unmounted) return
@@ -137,7 +136,7 @@ export default class TableView extends React.PureComponent {
 
   // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
   refreshTable() {
-    if (this.props.selectedWfModuleId) {
+    if (this.props.wfModuleId) {
       this.setState({ spinning: true })
 
       this.reset()
@@ -152,7 +151,7 @@ export default class TableView extends React.PureComponent {
 
   // Load more table data from render API. Spinner if we're going to see blanks.
   loadTable (toRow) {
-    if (this.props.selectedWfModuleId) {
+    if (this.props.wfModuleId) {
       this.loading = true
 
       // Spinner if we've used up all our preloaded rows (we're now seeing blanks)
@@ -160,7 +159,7 @@ export default class TableView extends React.PureComponent {
         this.setState({ spinning: true })
       }
 
-      this.props.api.render(this.props.selectedWfModuleId, this.state.lastLoadedRow, toRow)
+      this.props.api.render(this.props.wfModuleId, this.state.lastLoadedRow, toRow)
         .then(json => {
 
           // Add just retrieved rows to current data, if any
@@ -190,7 +189,7 @@ export default class TableView extends React.PureComponent {
 
   // If the lastRelevantDeltaId changes from under us, or we are displaying a different output, reload the table
   componentDidUpdate (prevProps) {
-    if (this.props.lastRelevantDeltaId !== prevProps.lastRelevantDeltaId || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
+    if (this.props.lastRelevantDeltaId !== prevProps.lastRelevantDeltaId || this.props.wfModuleId !== prevProps.wfModuleId) {
       this.refreshTable()
     }
   }
@@ -231,26 +230,26 @@ export default class TableView extends React.PureComponent {
       loadedRows[rowIndex] = newRow
       this.setState({ loadedRows })
 
-      UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, 'editcells', false, {row: rowIndex, col: colName, value: newVal})
+      UpdateTableAction.updateTableActionModule(this.props.wfModuleId, 'editcells', false, {row: rowIndex, col: colName, value: newVal})
     }
   }
 
   onSelectColumns = () => {
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId,
+    UpdateTableAction.updateTableActionModule(this.props.wfModuleId,
       'selectcolumns', false, {columnKey: '', keep: true})
   }
 
   setDropdownAction = (idName, forceNewModule, params) => {
-    UpdateTableAction.updateTableActionModule(this.props.selectedWfModuleId, idName, forceNewModule, params)
+    UpdateTableAction.updateTableActionModule(this.props.wfModuleId, idName, forceNewModule, params)
   }
 
   render() {
     // Make a table component if we have the data
     const { spinning, selectedRowIndexes, totalNRows, columns, columnTypes } = this.state
-    const { selectedWfModuleId, lastRelevantDeltaId, isReadOnly } = this.props
+    const { wfModuleId, lastRelevantDeltaId, isReadOnly } = this.props
     let tooWide = (columns && columns.length > NMaxColumns)
     let gridView
-    if (selectedWfModuleId && totalNRows !== null && totalNRows !== 0 && !tooWide) {
+    if (wfModuleId && totalNRows !== null && totalNRows !== 0 && !tooWide) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       gridView = (
@@ -258,7 +257,7 @@ export default class TableView extends React.PureComponent {
           totalRows={totalNRows}
           columns={columns}
           columnTypes={columnTypes}
-          wfModuleId={selectedWfModuleId}
+          wfModuleId={wfModuleId}
           lastRelevantDeltaId={lastRelevantDeltaId}
           getRow={this.getRow}
           onEditCell={this.onEditCell}
@@ -316,7 +315,7 @@ export default class TableView extends React.PureComponent {
       <div className="outputpane-table">
         <TableInfo
           isReadOnly={isReadOnly}
-          selectedWfModuleId={selectedWfModuleId}
+          wfModuleId={wfModuleId}
           nRows={totalNRows}
           nColumns={columns ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}

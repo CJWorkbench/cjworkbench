@@ -14,7 +14,7 @@ describe('SelectedRowsActions', () => {
       return mount(
         <SelectedRowsActions
           selectedRowIndexes={[3, 1, 4]}
-          selectedWfModuleId={99}
+          wfModuleId={99}
           rowActionModules={[
             { id: 10, title: 'Foo these rows' },
             { id: 20, title: 'Bar these rows' }
@@ -35,8 +35,8 @@ describe('SelectedRowsActions', () => {
       expect(w.text()).toBe(null)
     })
 
-    it('should not appear when there is no selectedWfModuleId', () => {
-      const w = wrapper({ selectedWfModuleId: null })
+    it('should not appear when there is no wfModuleId', () => {
+      const w = wrapper({ wfModuleId: null })
       expect(w.text()).toBe(null)
     })
 
@@ -72,7 +72,7 @@ describe('SelectedRowsActions', () => {
         <Provider store={store}>
           <ConnectedSelectedRowsActions
             selectedRowIndexes={[3, 1, 4]}
-            selectedWfModuleId={99}
+            wfModuleId={99}
             onClickRowsAction={jest.fn()}
           />
         </Provider>

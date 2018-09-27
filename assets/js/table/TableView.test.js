@@ -48,7 +48,7 @@ describe('TableView', () => {
         store={store}
         showColumnLetter={false}
         isReadOnly={false}
-        selectedWfModuleId={100}
+        wfModuleId={100}
         lastRelevantDeltaId={1}
         {...extraProps}
       />
@@ -122,7 +122,7 @@ describe('TableView', () => {
   })
 
   it('blanks table when no module id', () => {
-    const tree = wrapper({ selectedWfModuleId: undefined, api: {} })
+    const tree = wrapper({ wfModuleId: undefined, api: {} })
     expect(tree.find('.outputpane-header')).toHaveLength(1)
     expect(tree.find('.outputpane-data')).toHaveLength(1)
     // And we can see it did not call api.render, because that does not exist
@@ -199,7 +199,7 @@ describe('TableView', () => {
     expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(1)
 
     tree.setProps({
-      selectedWfModuleId: 101,
+      wfModuleId: 101,
       lastRelevantDeltaId: 2
     })
     tree.update()

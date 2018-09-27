@@ -10,7 +10,7 @@ export default class TableInfo extends React.PureComponent {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown
     isReadOnly: PropTypes.bool.isRequired,
-    selectedWfModuleId: PropTypes.number, // or null if none selected
+    wfModuleId: PropTypes.number, // or null if none selected
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired
   }
 
@@ -27,7 +27,7 @@ export default class TableInfo extends React.PureComponent {
   }
 
   render () {
-    const { nRows, nColumns, selectedWfModuleId, selectedRowIndexes, isReadOnly } = this.props
+    const { nRows, nColumns, wfModuleId, selectedRowIndexes, isReadOnly } = this.props
     const { isExportModalOpen } = this.state
 
     const nRowsString = nRows === null ? '' : numberFormat.format(nRows)
@@ -47,19 +47,19 @@ export default class TableInfo extends React.PureComponent {
           {isReadOnly ? null : (
             <SelectedRowsActions
               selectedRowIndexes={selectedRowIndexes}
-              selectedWfModuleId={selectedWfModuleId}
+              wfModuleId={wfModuleId}
             />
           )}
         </div>
               
-        {!selectedWfModuleId ? null : (
+        {!wfModuleId ? null : (
           <div className="export-table" onClick={this.openExportModal}>
             <i className="icon-download" />
             <span>CSV</span>
             <span className="feed">JSON FEED</span>
             <ExportModal
               open={isExportModalOpen}
-              wfModuleId={selectedWfModuleId}
+              wfModuleId={wfModuleId}
               onClose={this.closeExportModal}
             />
           </div>
