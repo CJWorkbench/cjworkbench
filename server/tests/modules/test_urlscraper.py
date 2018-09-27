@@ -9,7 +9,6 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from server.modules.types import ProcessResult
 from server.modules.urlscraper import scrape_urls, URLScraper
-from server.execute import execute_wfmodule
 
 # --- Some test data ----
 

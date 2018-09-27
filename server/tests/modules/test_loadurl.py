@@ -10,8 +10,6 @@ from asgiref.sync import async_to_sync
 from django.conf import settings
 import requests
 import pandas as pd
-from server.execute import execute_wfmodule
-from server.models import ParameterVal
 from server.modules.loadurl import LoadURL
 from server.modules.types import ProcessResult
 from server.tests.utils import mock_xlsx_path
