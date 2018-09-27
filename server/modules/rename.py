@@ -19,7 +19,13 @@ def parse_list(wf_module, table):
     new_columns = [x.strip() for x in list_string.split(separator) if x.strip()]
 
     if table_width < len(new_columns):
-        return (table, f"Length of input list ({len(new_columns)}) does not match width of table ({table_width}).")
+        return (
+            table,
+            (
+                f'You supplied {len(new_columns)} column names, '
+                f'but the table has {table_width} columns'
+            )
+        )
     elif table_width > len(new_columns):
         new_columns = fill_column_names(new_columns, table_width)
 
