@@ -38,15 +38,19 @@ class ScrapeTable(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
         table = wf_module.retrieve_fetched_table()
+        if table is None:
+            return None
+
         first_row_is_header = wf_module.get_param_checkbox('first_row_is_header')
-        if table is not None:
-            if first_row_is_header:
-                table.columns = list(table.iloc[0, :])
-                table = table[1:]
+        if first_row_is_header:
+            table.columns = [str(c) for c in list(table.iloc[0, :])]
+            table = table[1:]
+            table.reset_index(drop=True, inplace=True)
+
         return (table, wf_module.fetch_error)
 
     @staticmethod
-    async def event(wfm, event=None, **kwargs):
+    async def event(wfm, **kwargs):
         async def fail(error: str) -> None:
             result = ProcessResult(error=error)
             await ModuleImpl.commit_result(wfm, result)
@@ -62,7 +66,7 @@ class ScrapeTable(ModuleImpl):
         try:
             validate(url)
         except ValidationError:
-            return await fail(_('That doesn''t seem to be a valid URL'))
+            return await fail(_('Invalid URL'))
 
         result = None
 
@@ -82,18 +86,18 @@ class ScrapeTable(ModuleImpl):
             result = ProcessResult(error=str(err))
 
         if not result:
-            if len(tables) == 0:
+            if not tables:
                 result = ProcessResult(
                     error=_('Did not find any <table> tags on that page')
                 )
-            if tablenum >= len(tables):
+            elif tablenum >= len(tables):
                 result = ProcessResult(error=(
                     _('The maximum table number on this page is %d') % len(tables)
                 ))
-
-            table = tables[tablenum]
-            merge_colspan_headers_in_place(table)
-            result = ProcessResult(dataframe=table)
+            else:
+                table = tables[tablenum]
+                merge_colspan_headers_in_place(table)
+                result = ProcessResult(dataframe=table)
 
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
