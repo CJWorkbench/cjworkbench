@@ -448,7 +448,7 @@ export class WfModule extends React.PureComponent {
         onClick={this.click}
       >
         {notes}
-        <h3>{numberFormat.format(index + 1)}.</h3>
+        <h3>{numberFormat.format(index + 1)}</h3>
         <div className='module-card' ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
           <div className='module-card-header'>
             <WfModuleCollapseButton
