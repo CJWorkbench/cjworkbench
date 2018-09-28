@@ -124,7 +124,7 @@ class ParseBytesIoTest(SimpleTestCase):
 class OtherUtilsTests(SimpleTestCase):
     def test_turn_header_into_first_row(self):
         result = turn_header_into_first_row(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
-        expected = pandas.DataFrame({0: ['A', 'B'], 1: ['C', 'D']})
+        expected = pandas.DataFrame({'0': ['A', 'B'], '1': ['C', 'D']})
         assert_frame_equal(result, expected)
 
         # Function should return None when a table has not been uploaded yet

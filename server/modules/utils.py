@@ -289,10 +289,13 @@ def turn_header_into_first_row(table: pandas.DataFrame) -> pandas.DataFrame:
     if table is None:
         return None
 
-    table.loc[-1] = table.columns
-    table.columns = range(0, len(table.columns))
-    table.index = table.index + 1
-    return table.sort_index()
+    new_line = DataFrame([table.columns], columns=table.columns)
+    new_table = pandas.concat([new_line, table], ignore_index=True)
+
+    new_table.columns = [str(i) for i in range(len(new_table.columns))]
+    autocast_dtypes_in_place(new_table)
+
+    return new_table
 
 
 _parse_xls = _parse_xlsx

@@ -105,19 +105,19 @@ class GoogleSheets(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
         # Must perform header operation here in the event the header checkbox state changes
-        has_header = wf_module.get_param_checkbox("has_header")
-        if not has_header:
-            return ProcessResult(turn_header_into_first_row(wf_module.retrieve_fetched_table()),
-                                 wf_module.error_msg)
-        else:
-            return ProcessResult(wf_module.retrieve_fetched_table(),
-                                 wf_module.error_msg)
+        out = wf_module.retrieve_fetched_table()
+        error = wf_module.fetch_error
+
+        if not out.empty and not wf_module.get_param_checkbox('has_header'):
+            out = turn_header_into_first_row(out)
+
+        return ProcessResult(out, error)
 
     @staticmethod
     async def event(wf_module, **kwargs):
         file_meta_json = wf_module.get_param_raw('googlefileselect', 'custom')
         if not file_meta_json:
-            return
+            return await ModuleImpl.commit_result(wf_module, ProcessResult())
 
         file_meta = json.loads(file_meta_json)
         sheet_id = file_meta['id']
