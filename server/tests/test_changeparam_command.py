@@ -1,9 +1,16 @@
+from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from server.tests.utils import load_and_add_module_from_dict, \
         get_param_by_id_name, DbTestCase
 from server.models import ChangeParameterCommand
 
 
+async def async_noop(*args, **kwargs):
+    pass
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ParameterValTests(DbTestCase):
     # Change a value, then undo, redo
     def test_change(self):

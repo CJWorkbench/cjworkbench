@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from server.models import AddModuleCommand, ChangeParameterCommand, \
         ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand, Delta
@@ -6,6 +7,12 @@ from server.tests.utils import DbTestCase, load_module_version, \
 from server.versions import WorkflowUndo, WorkflowRedo
 
 
+async def async_noop(*args, **kwargs):
+    pass
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class UndoRedoTests(DbTestCase):
     def setUp(self):
         # Define two types of modules we are going to use

@@ -108,7 +108,9 @@ class CachedRenderResult:
 
         This does not read the entire DataFrame.
         """
-        if self.parquet_file:
+        if hasattr(self, '_result'):
+            return self._result.column_names
+        elif self.parquet_file:
             return self.parquet_file.columns
         else:
             return []
@@ -120,7 +122,9 @@ class CachedRenderResult:
 
         This does not read the entire DataFrame.
         """
-        if self.parquet_file:
+        if hasattr(self, '_result'):
+            return self._result.column_types
+        elif self.parquet_file:
             dtypes = self.parquet_file.dtypes.values()
         else:
             dtypes = []
@@ -249,8 +253,10 @@ class CachedRenderResult:
         else:
             parquet.write(parquet_path, result.dataframe)
 
-            return CachedRenderResult(workflow_id=wf_module.workflow_id,
-                                      wf_module_id=wf_module.id,
-                                      delta_id=delta_id,
-                                      error=error, json=json_dict,
-                                      quick_fixes=quick_fixes)
+            ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
+                                     wf_module_id=wf_module.id,
+                                     delta_id=delta_id,
+                                     error=error, json=json_dict,
+                                     quick_fixes=quick_fixes)
+            ret._result = result  # no need to read from disk
+            return ret

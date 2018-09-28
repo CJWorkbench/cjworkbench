@@ -1,3 +1,5 @@
+from collections import namedtuple
+from unittest.mock import patch
 from django.contrib.auth.models import User
 from server.tests.test_parameterval import ParameterValTestHelpers
 from server.models import ParameterSpec
@@ -6,14 +8,17 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         get_param_by_id_name
-import mock
-from collections import namedtuple
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
 
 
-# Test views that ultimately get/set ParameterVal
+async def async_noop(*args, **kwargs):
+    pass
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
     def setUp(self):
         super().setUp()

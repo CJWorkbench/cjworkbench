@@ -14,6 +14,12 @@ from server.views import workflow_list, workflow_addmodule, workflow_detail, \
 FakeSession = namedtuple('FakeSession', ['session_key'])
 
 
+async def async_noop(*args, **kwargs):
+    pass
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
         super(WorkflowViewTests, self).setUp()  # log in

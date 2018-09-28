@@ -18,6 +18,7 @@ from server.serializers import WfModuleSerializer
 from server import execute
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
+from server.modules.types import ProcessResult
 import server.utils
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
@@ -153,6 +154,7 @@ def wfmodule_detail(request, pk, format=None):
         wf_module = _lookup_wf_module_for_write(pk, request)
 
     if request.method == 'GET':
+        # No need to execute_and_wait(): out-of-date response is fine
         with wf_module.workflow.cooperative_lock():
             serializer = WfModuleSerializer(wf_module)
             return Response(serializer.data)
@@ -218,7 +220,12 @@ def wfmodule_detail(request, pk, format=None):
 
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
-def _make_render_dict(result, startrow=None, endrow=None):
+def _make_render_dict(cached_result, startrow=None, endrow=None):
+    if not cached_result:
+        result = ProcessResult()
+    else:
+        result = cached_result.result
+
     nrows = len(result.dataframe)
     if startrow is None:
         startrow = 0
@@ -267,8 +274,9 @@ def wfmodule_render(request, pk, format=None):
         return Response({'message': 'bad row number', 'status_code': 400},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    result = execute_and_notify(wf_module)
-    j = _make_render_dict(result, startrow, endrow)
+    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
+
+    j = _make_render_dict(cached_result, startrow, endrow)
     return JsonResponse(j)
 
 
@@ -282,17 +290,11 @@ def wfmodule_output(request, pk, format=None):
 
     html = module_get_html_bytes(wf_module)
 
-    result = execute_and_notify(wf_module)
-
-    # TODO nix params. Use result.json_dict instead.
-    params = wf_module.create_parameter_dict(result.dataframe)
-
-    input_dict = _make_render_dict(result)
+    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
+    result_json = cached_result.json
 
     init_data = {
-        'input': input_dict,
-        'params': params,
-        'embeddata': result.json,
+        'embeddata': result_json,
     }
     init_data_bytes = escape_potential_hack_chars(json.dumps(init_data)) \
         .encode('utf-8')
@@ -315,9 +317,10 @@ def wfmodule_output(request, pk, format=None):
 def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    result = execute_and_notify(wf_module)
+    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
+    result_json = cached_result.json
 
-    return JsonResponse(result.json)
+    return JsonResponse(result_json)
 
 
 @api_view(['GET'])
@@ -337,23 +340,22 @@ def wfmodule_value_counts(request, pk):
         # User has not yet chosen a column. Empty response.
         return JsonResponse({'values': {}})
 
-    with wf_module.workflow.cooperative_lock():
-        result = execute_and_notify(wf_module)
-        table = result.dataframe
+    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
+    table = cached_result.result.dataframe
 
-        try:
-            series = table[column]
-        except KeyError:
-            return JsonResponse({'error': f'column "{column}" not found'},
-                                status=404)
+    try:
+        series = table[column]
+    except KeyError:
+        return JsonResponse({'error': f'column "{column}" not found'},
+                            status=404)
 
-        # We only handle string. If it's not string, convert to string.
-        if not (series.dtype == object or hasattr(series, 'cat')):
-            t = series.astype(str)
-            t[series.isna()] = np.nan
-            series = t
+    # We only handle string. If it's not string, convert to string.
+    if not (series.dtype == object or hasattr(series, 'cat')):
+        t = series.astype(str)
+        t[series.isna()] = np.nan
+        series = t
 
-        value_counts = series.value_counts().to_dict()
+    value_counts = series.value_counts().to_dict()
 
     return JsonResponse({'values': value_counts})
 
@@ -366,7 +368,8 @@ def wfmodule_value_counts(request, pk):
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    result = execute_and_notify(wf_module)
+    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
+    result = cached_result.result
 
     if type == 'json':
         d = result.dataframe.to_json(orient='records')

@@ -18,6 +18,14 @@ from server.tests.utils import LoggedInTestCase, mock_csv_table, \
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
 
+
+FakeCachedRenderResult = namedtuple('FakeCachedRenderResult', ['result'])
+
+
+async def async_noop(*args, **kwargs):
+    pass
+
+
 test_data_json = {
     'total_rows': 4,
     'start_row': 0,
@@ -46,6 +54,8 @@ empty_data_json = {
 }
 
 
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
@@ -332,12 +342,14 @@ class WfModuleValueCountsTest(LoggedInTestCase):
         self.wf_module1 = self.workflow.wf_modules.create(order=0)
         self.wf_module2 = self.workflow.wf_modules.create(order=1)
 
-    @patch('server.execute.execute_wfmodule')
+    @patch('server.execute.execute_and_wait')
     def test_value_counts_str(self, execute):
-        execute.return_value = ProcessResult(pd.DataFrame({
-            'A': ['a', 'b', 'b', 'a', 'c', np.nan],
-            'B': ['x', 'x', 'x', 'x', 'x', 'x'],
-        }))
+        execute.return_value = FakeCachedRenderResult(ProcessResult(
+            pd.DataFrame({
+                'A': ['a', 'b', 'b', 'a', 'c', np.nan],
+                'B': ['x', 'x', 'x', 'x', 'x', 'x'],
+            })
+        ))
 
         response = self.client.get(
             f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=A'
@@ -349,11 +361,11 @@ class WfModuleValueCountsTest(LoggedInTestCase):
             {'values': {'a': 2, 'b': 2, 'c': 1}}
         )
 
-    @patch('server.execute.execute_wfmodule')
+    @patch('server.execute.execute_and_wait')
     def test_value_counts_cast_to_str(self, execute):
-        execute.return_value = ProcessResult(pd.DataFrame({
-            'A': [1, 2, 3, 2, 1],
-        }))
+        execute.return_value = FakeCachedRenderResult(ProcessResult(
+            pd.DataFrame({'A': [1, 2, 3, 2, 1]})
+        ))
 
         response = self.client.get(
             f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=A'
@@ -375,12 +387,14 @@ class WfModuleValueCountsTest(LoggedInTestCase):
             'error': 'Missing a "column" parameter',
         })
 
-    @patch('server.execute.execute_wfmodule')
+    @patch('server.execute.execute_and_wait')
     def test_value_counts_missing_column(self, execute):
-        execute.return_value = ProcessResult(pd.DataFrame({
-            'A': ['a', 'b', 'b', 'a', 'c', np.nan],
-            'B': ['x', 'x', 'x', 'x', 'x', 'x'],
-        }))
+        execute.return_value = FakeCachedRenderResult(ProcessResult(
+            pd.DataFrame({
+                'A': ['a', 'b', 'b', 'a', 'c', np.nan],
+                'B': ['x', 'x', 'x', 'x', 'x', 'x'],
+            })
+        ))
 
         response = self.client.get(
             f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=C'

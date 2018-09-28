@@ -2,6 +2,7 @@
 # A single change to state of a workflow
 # You can also think of this as a "command." Contains a specification of what
 # actually happened.
+import asyncio
 import json
 from typing import Any, Dict
 from django.core.serializers.json import DjangoJSONEncoder
@@ -50,12 +51,14 @@ class Delta(PolymorphicModel):
         with self.workflow.cooperative_lock():
             self.forward_impl()
         await self.ws_notify()
+        await self.schedule_execute()
 
     async def backward(self):
         """Call backward_impl() with workflow.cooperative_lock()."""
         with self.workflow.cooperative_lock():
             self.backward_impl()
         await self.ws_notify()
+        await self.schedule_execute()
 
     async def ws_notify(self):
         """
@@ -82,6 +85,12 @@ class Delta(PolymorphicModel):
                     data['updateWfModules'][str(id)] = {
                         'last_relevant_delta_id': delta_id,
                         'error_msg': '',
+                        # Tell clients this WfModule is "busy". Don't actually
+                        # _set_ the busy flag: the busy flag is set exclusively
+                        # by "fetch" (`module_dispatch_event`) and we can't
+                        # override that safely. We don't need another busy flag
+                        # for renders: this transient status is enough.
+                        'status': 'busy',
                         'quick_fixes': [],
                         'output_columns': None
                     }
@@ -90,6 +99,7 @@ class Delta(PolymorphicModel):
                 self.wf_module.refresh_from_db()
                 if self.wf_module.workflow_id:
                     wf_module_data = WfModuleSerializer(self.wf_module).data
+                    wf_module_data['status'] = 'busy'  # rationale above
 
                     data['updateWfModules'][str(self.wf_module_id)] = \
                         _prepare_json(wf_module_data)
@@ -99,6 +109,11 @@ class Delta(PolymorphicModel):
                     data['clearWfModuleIds'] = [self.wf_module_id]
 
         await websockets.ws_client_send_delta_async(self.workflow_id, data)
+
+    async def schedule_execute(self) -> None:
+        import server.execute
+        coro = server.execute.execute_ignoring_error(self.workflow)
+        asyncio.ensure_future(coro)
 
     @staticmethod
     async def create_impl(klass, **kwargs) -> None:

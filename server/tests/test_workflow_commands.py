@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.test import TestCase
 from server.models import WfModule, ModuleVersion, ReorderModulesCommand, \
@@ -6,6 +7,12 @@ from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_wf_module
 
 
+async def async_noop(*args, **kwargs):
+    pass
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ReorderModulesCommandTests(DbTestCase):
     def setUp(self):
         # Create a workflow with two modules
@@ -95,6 +102,8 @@ class ReorderModulesCommandTests(DbTestCase):
                                                         missing_order)
 
 
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ChangeWorkflowTitleCommandTests(TestCase):
     def setUp(self):
         self.workflow = create_testdata_workflow()

@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.utils import timezone
 from server.models import AddModuleCommand, DeleteModuleCommand, \
@@ -5,6 +6,10 @@ from server.models import AddModuleCommand, DeleteModuleCommand, \
         ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         mock_csv_table, mock_csv_table2
+
+
+async def async_noop(*args, **kwargs):
+    pass
 
 
 class CommandTestCase(DbTestCase):
@@ -20,6 +25,8 @@ class CommandTestCase(DbTestCase):
         self.assertEqual(result, expected_versions)
 
 
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class AddDeleteModuleCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()
@@ -241,6 +248,8 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
 
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ChangeDataVersionCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()
@@ -279,6 +288,8 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
 
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ChangeWfModuleNotesCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()
@@ -304,6 +315,8 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
         self.assertEqual(self.wfm.notes, secondNote)
 
 
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()

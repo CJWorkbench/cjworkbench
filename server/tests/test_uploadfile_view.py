@@ -41,6 +41,12 @@ Csv = """A,B
 XlsxType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 
+async def async_noop(*args, **kwargs):
+    pass
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
 class UploadFileViewTests(LoggedInTestCase):
     def setUp(self):
         super(UploadFileViewTests, self).setUp()  # log in
