@@ -9,7 +9,7 @@ from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, get_id_from_url, store_external_workflow
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        mock_csv_path, create_test_user, add_new_workflow
+        create_test_user, add_new_workflow
 
 
 class SafeExecTest(unittest.TestCase):

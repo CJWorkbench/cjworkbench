@@ -1,17 +1,16 @@
 import os.path
 import io
 import json
+import unittest
 from unittest.mock import patch, Mock
 from asgiref.sync import async_to_sync
-import requests.exceptions
 import pandas as pd
+import requests.exceptions
 from pandas.testing import assert_frame_equal
 from server.sanitizedataframe import sanitize_dataframe
 from server import oauth
 from server.modules.googlesheets import GoogleSheets
 from server.modules.types import ProcessResult
-from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        get_param_by_id_name
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
 # binary representations
@@ -90,7 +89,7 @@ def fetch(*args, **kwargs):
     return wf_module
 
 
-class GoogleSheetsTests(LoggedInTestCase):
+class GoogleSheetsTests(unittest.TestCase):
     def setUp(self):
         super().setUp()
 

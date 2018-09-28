@@ -1,8 +1,8 @@
 # --- Dataframe sanitization and truncation ---
-from typing import Any, Optional
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
+from typing import Any, List, Optional
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 
 
 def _colname_to_str(c: Any) -> str:
@@ -19,7 +19,7 @@ def _colname_to_str(c: Any) -> str:
         return str(c).strip()
 
 
-def _rename_duplicate_and_nonstr_columns_in_place(table: pd.DataFrame) -> None:
+def _normalize_colnames(colnames: List[Any]) -> None:
     """
     Modify column names so they are all unique and str.
     """
@@ -45,8 +45,7 @@ def _rename_duplicate_and_nonstr_columns_in_place(table: pd.DataFrame) -> None:
         backup_name = f'{ideal_name}_{count}'
         return unique_name(backup_name)
 
-    table.columns = list([unique_name(_colname_to_str(name))
-                          for name in table.columns])
+    return [unique_name(_colname_to_str(c)) for c in colnames]
 
 
 # full type list:
@@ -63,37 +62,39 @@ _AllowedDtypes = {
 }
 
 
-def sanitize_series(series: pd.Series) -> pd.Series:
+def sanitize_values(values):
     """
-    Build a Series conforming to Workbench data types.
+    Enforce type rules on input pandas `Series.values`.
 
-    The return value is a valid argument to `hash_pandas_object()` and can be
-    written to a parquet file.
+    The return value is anything that can be passed to the `pandas.Series()`
+    constructor.
 
     Specific fixes:
 
+    * Make sure categories have no excess values.
+    * Convert numeric categories to 
     * Convert unsupported dtypes to string.
     """
-    if hasattr(series, 'cat'):
-        categories = series.cat.categories
-        if pd.api.types.is_numeric_dtype(categories):
+    if hasattr(values, 'categories'):
+        categories = values.categories
+        if pd.api.types.is_numeric_dtype(categories.values):
             # Un-categorize: make array of int/float
-            return pd.to_numeric(series)
+            return pd.to_numeric(values)
         elif categories.dtype != object \
-                or pd.api.types.infer_dtype(categories) != 'string':
+                or pd.api.types.infer_dtype(categories.values) != 'string':
             # Cast non-Strings to String
-            series = series.cat.rename_categories(categories.astype(str))
+            values.rename_categories(categories.astype(str), inplace=True)
 
-        series = series.cat.remove_unused_categories()
-        return series
-    elif is_numeric_dtype(series.dtype):
-        return series
-    elif is_datetime64_dtype(series.dtype):
-        return series
+        values.remove_unused_categories(inplace=True)
+        return values
+    elif is_numeric_dtype(values.dtype):
+        return values
+    elif is_datetime64_dtype(values.dtype):
+        return values
     else:
-        # convert all non-NA to str
-        ret = series.astype(str)
-        ret[series.isna()] = np.nan
+        # Force it to be a str column: every object is either str or np.nan
+        ret = pd.Series(values).astype(str).values
+        ret[pd.isna(values)] = np.nan
         return ret
 
 
@@ -114,16 +115,20 @@ def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:
     if table is None:
         return pd.DataFrame()
 
-    # renumber row indices so always 0..n
-    table.index = pd.RangeIndex(len(table.index))
+    table.reset_index(drop=True, inplace=True)
 
-    _rename_duplicate_and_nonstr_columns_in_place(table)
+    colnames = _normalize_colnames(table.columns)
+    table.columns = _normalize_colnames(colnames)
 
-    for colname in table.columns:
-        column = table[colname]
-        sane_column = sanitize_series(column)
-        if sane_column is not column:  # avoid SettingWithCopyWarning
-            table[colname] = sane_column
+    # Ignore spurious SettingWithCopyWarning
+    #
+    # Also, the SettingWithCopyWarning test runs a gc cycle, which is slow.
+    # [adamhooper, 2018-09-28] A slew of sanitize tests dropped from 0.67s to
+    # 0.48s when I changed mode.chained_assignment to None.
+    with pd.option_context('mode.chained_assignment', None):
+        # Sanitize one column at a time: that's more memory-friendly
+        for colname in colnames:
+            table[colname] = sanitize_values(table[colname].values)
 
     return table
 
