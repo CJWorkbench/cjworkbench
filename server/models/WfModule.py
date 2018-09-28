@@ -119,14 +119,17 @@ class WfModule(models.Model):
     cached_render_result_workflow_id = models.IntegerField(null=True,
                                                            blank=True)
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
+    cached_render_result_status = models.CharField(
+        null=True,
+        blank=True,
+        choices=[('ok', 'ok'), ('error', 'error'),
+                 ('unreachable', 'unreachable')],
+        max_length=20
+    )
     cached_render_result_error = models.TextField(blank=True)
     # should be JSONField but we need backwards-compatibility
     cached_render_result_json = models.BinaryField(blank=True)
     cached_render_result_quick_fixes = JSONField(blank=True, default=list)
-
-    READY = "ready"
-    BUSY = "busy"
-    ERROR = "error"
 
     # TODO once we auto-compute stale module outputs, nix is_busy -- it will
     # be implied by the fact that the cached output revision is wrong.
@@ -163,18 +166,20 @@ class WfModule(models.Model):
     @property
     def status(self):
         """
-        Return READY, BUSY or ERROR.
+        Return 'ok', 'waiting', 'busy', 'error' or 'unreachable'.
 
-        BUSY: is_busy is True
-        ERROR: fetch_error or cached_render_result_error is set
-        READY: anything else
+        'busy': is_busy us True
+        'error': render produced an error and no table
+        'unreachable': a previous module had 'error' so we will not run this
+        'waiting': in time, the status will change
+        'ok': render produced a table
         """
         if self.is_busy:
-            return WfModule.BUSY
-        elif self.fetch_error or self.cached_render_result_error:
-            return WfModule.ERROR
+            return 'busy'
+        elif self.cached_render_result_delta_id != self.last_relevant_delta_id:
+            return 'waiting'
         else:
-            return WfModule.READY
+            return self.cached_render_result_status
 
     @property
     def error_msg(self):
@@ -337,9 +342,6 @@ class WfModule(models.Model):
 
     def get_param_multicolumn(self, name):
         return self.get_param(name, ParameterSpec.MULTICOLUMN)
-
-    # --- Status ----
-    # set error codes and status lights, notify client of changes
 
     # busy just changes the light on a single module, no need to reload entire
     # workflow

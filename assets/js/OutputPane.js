@@ -15,7 +15,8 @@ export class OutputPane extends React.Component {
     workflowId: PropTypes.number.isRequired,
     lastRelevantDeltaId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number,
-    wfModuleStatus: PropTypes.oneOf(['ready', 'busy', 'error']).isRequired,
+    wfModuleStatus: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
+    isInputBecauseOutputIsError: PropTypes.bool.isRequired,
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     showColumnLetter: PropTypes.bool.isRequired,
@@ -30,6 +31,7 @@ export class OutputPane extends React.Component {
     // Make a table component even if no module ID (should still show an empty table)
     return (
       <TableView
+        key='table'
         wfModuleId={wfModuleId}
         lastRelevantDeltaId={lastRelevantDeltaId}
         api={api}
@@ -51,6 +53,7 @@ export class OutputPane extends React.Component {
     // appears or disappears.
     return (
       <OutputIframe
+        key='iframe'
         visible={!!htmlOutput}
         wfModuleId={wfModuleId}
         workflowId={workflowId}
@@ -60,6 +63,21 @@ export class OutputPane extends React.Component {
     )
   }
 
+  renderShowingInput () {
+    if (this.props.isInputBecauseOutputIsError) {
+      return (
+        <p
+          key='error'
+          className='showing-input-because-error'
+        >
+          This was the data that led to an error. Please correct the error in the left pane.
+        </p>
+      )
+    } else {
+      return null
+    }
+  }
+
   render () {
     const { wfModuleStatus } = this.props
 
@@ -67,6 +85,7 @@ export class OutputPane extends React.Component {
 
     return (
       <div className={className}>
+        {this.renderShowingInput()}
         {this.renderOutputIFrame()}
         {this.renderTableView()}
       </div>
@@ -74,11 +93,39 @@ export class OutputPane extends React.Component {
   }
 }
 
+const NullWfModule = {
+  id: null,
+  last_relevant_delta_id: null,
+  html_output: false,
+  status: 'unreachable',
+}
+
 function mapStateToProps(state, ownProps) {
   const { workflow, wfModules, modules } = state
-  const wfModuleId = workflow.wf_modules[state.selected_wf_module || 0] || null
-  const wfModule = wfModules[String(wfModuleId)] || null
-  const selectedModule = modules[String(wfModule ? wfModule.module_version.module : null)] || null
+
+  const selectedWfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
+
+  let wfModule
+  let isInputBecauseOutputIsError = false
+  if (!selectedWfModule) {
+    wfModule = NullWfModule
+  } else if (selectedWfModule.status === 'error' || selectedWfModule.status === 'unreachable') {
+    // Show the first WfModule _before_ this one.
+    wfModule = workflow.wf_modules.slice(0, state.selected_wf_module)
+      .reverse()
+      .map(id => wfModules[id])
+      .find(wfm => wfm.status === 'ok')
+
+    if (wfModule) {
+      isInputBecauseOutputIsError = true
+    } else {
+      wfModule = NullWfModule
+    }
+  } else {
+    wfModule = selectedWfModule
+  }
+
+  const selectedModule = modules[String(selectedWfModule ? selectedWfModule.module_version.module : null)] || null
   const id_name = selectedModule ? selectedModule.id_name : null
 
   const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns'
@@ -96,12 +143,13 @@ function mapStateToProps(state, ownProps) {
 
   return {
     workflowId: workflow.id,
-    lastRelevantDeltaId: wfModule ? wfModule.last_relevant_delta_id : null,
-    wfModuleId,
+    wfModuleId: wfModule.id,
+    lastRelevantDeltaId: wfModule.last_relevant_delta_id,
+    wfModuleStatus: wfModule.status,
+    isInputBecauseOutputIsError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
-    htmlOutput: wfModule ? wfModule.html_output : false,
-    wfModuleStatus: wfModule ? wfModule.status : 'ready',
+    htmlOutput: wfModule.html_output,
     showColumnLetter,
     sortColumn,
     sortDirection,

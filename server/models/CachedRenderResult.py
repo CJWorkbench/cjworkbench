@@ -38,12 +38,13 @@ class CachedRenderResult:
     Part of this result is also stored on disk. Read it as `parquet_file`.
     """
 
-    def __init__(self, workflow_id: int, wf_module_id: int,
-                 delta_id: int, error: str, json: Optional[Dict[str, Any]],
+    def __init__(self, workflow_id: int, wf_module_id: int, delta_id: int,
+                 status: str, error: str, json: Optional[Dict[str, Any]],
                  quick_fixes: List[QuickFix]):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
         self.delta_id = delta_id
+        self.status = status
         self.error = error
         self.json = json
         self.quick_fixes = quick_fixes
@@ -88,7 +89,7 @@ class CachedRenderResult:
         It's best to avoid this operation when possible.
         """
         if not hasattr(self, '_result'):
-            if self.parquet_file:
+            if self.status == 'ok' and self.parquet_file:
                 # At this point, we know the file exists. (It may be an empty
                 # DataFrame.)
                 dataframe = self.parquet_file.to_pandas()
@@ -163,6 +164,7 @@ class CachedRenderResult:
         workflow_id = wf_module.workflow_id
         wf_module_id = wf_module.id
 
+        status = wf_module.cached_render_result_status
         error = wf_module.cached_render_result_error
 
         # cached_render_result_json is sometimes a memoryview
@@ -180,7 +182,7 @@ class CachedRenderResult:
 
         ret = CachedRenderResult(workflow_id=workflow_id,
                                  wf_module_id=wf_module_id, delta_id=delta_id,
-                                 error=error, json=json_dict,
+                                 status=status, error=error, json=json_dict,
                                  quick_fixes=quick_fixes)
         # Keep in mind: ret.parquet_file has not been loaded yet. That means
         # this result is _not_ a snapshot in time, and you must be careful not
@@ -224,11 +226,13 @@ class CachedRenderResult:
 
         if result:
             error = result.error
+            status = result.status
             json_dict = result.json
             json_bytes = json.dumps(result.json).encode('utf-8')
             quick_fixes = result.quick_fixes
         else:
             error = ''
+            status = None
             json_dict = None
             json_bytes = ''
             quick_fixes = []
@@ -236,6 +240,7 @@ class CachedRenderResult:
         wf_module.cached_render_result_workflow_id = wf_module.workflow_id
         wf_module.cached_render_result_delta_id = delta_id
         wf_module.cached_render_result_error = error
+        wf_module.cached_render_result_status = status
         wf_module.cached_render_result_json = json_bytes
         wf_module.cached_render_result_quick_fixes = [qf.to_dict()
                                                       for qf in quick_fixes]
@@ -255,7 +260,7 @@ class CachedRenderResult:
 
             ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
                                      wf_module_id=wf_module.id,
-                                     delta_id=delta_id,
+                                     delta_id=delta_id, status=status,
                                      error=error, json=json_dict,
                                      quick_fixes=quick_fixes)
             ret._result = result  # no need to read from disk

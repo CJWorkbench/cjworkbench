@@ -34,7 +34,7 @@ class UploadFileTests(LoggedInTestCase):
 
         self.assertEqual(len(self.wfm.list_fetched_data_versions()), 1)
         self.assertEqual(len(wfm2.list_fetched_data_versions()), 1)
-        self.assertEqual(wfm2.status, WfModule.READY)
+        self.assertEqual(wfm2.status, 'waiting')
 
         result = UploadFile.render(wfm2, None)
         self.assertEqual(result, ProcessResult(self.csv_table))

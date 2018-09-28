@@ -1,10 +1,12 @@
-from typing import Optional
+import contextlib
+from typing import Any, Dict, Optional
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from django.db import transaction
 from pandas import DataFrame
 from server import dispatch
 from server.models import CachedRenderResult, WfModule, Workflow
+from server.modules.types import ProcessResult
 from server import websockets
 
 
@@ -20,11 +22,64 @@ class UnneededExecution(Exception):
     pass
 
 
+@contextlib.contextmanager
+def locked_wf_module(wf_module):
+    """
+    Supplies concurrency guarantees for execute_wfmodule().
+
+    Usage:
+
+    with locked_wf_module(wf_module) as safe_wf_module:
+        ...
+
+    Raises UnneededExecution.
+    """
+    with wf_module.workflow.cooperative_lock():
+        # safe_wf_module: locked at the database level.
+        delta_id = wf_module.last_relevant_delta_id
+        try:
+            safe_wf_module = WfModule.objects \
+                .filter(workflow_id=wf_module.workflow_id) \
+                .filter(last_relevant_delta_id=delta_id) \
+                .get(pk=wf_module.pk)
+        except WfModule.DoesNotExist:
+            # Module was deleted or changed input/params _after_ we requested
+            # render but _before_ we start rendering
+            raise UnneededExecution
+
+        retval = yield safe_wf_module
+
+    return retval
+
+
+@database_sync_to_async
+def mark_wfmodule_unreachable(wf_module: WfModule):
+    """
+    Writes that a WfModule is unreachable.
+
+    CONCURRENCY NOTES: same as in execute_wfmodule().
+    """
+    with locked_wf_module(wf_module) as safe_wf_module:
+        unreachable = ProcessResult()
+        cached_render_result = safe_wf_module.cache_render_result(
+            safe_wf_module.last_relevant_delta_id,
+            unreachable
+        )
+
+        # Save safe_wf_module, not wf_module, because we know we've only
+        # changed the cached_render_result columns. (We know because we
+        # locked the row before fetching it.) `wf_module.save()` might
+        # overwrite some newer values.
+        safe_wf_module.save()
+
+        return cached_render_result
+
+
 @database_sync_to_async
 def execute_wfmodule(wf_module: WfModule,
-                     input_table: DataFrame) -> CachedRenderResult:
+                     last_result: ProcessResult) -> CachedRenderResult:
     """
-    Render a single WfModule; cache and return its output.
+    Render a single WfModule; cache and return output.
 
     CONCURRENCY NOTES: This function is reasonably concurrency-friendly:
 
@@ -54,40 +109,48 @@ def execute_wfmodule(wf_module: WfModule,
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    with wf_module.workflow.cooperative_lock():
-        # safe_wf_module: locked at the database level.
-        delta_id = wf_module.last_relevant_delta_id
-        try:
-            safe_wf_module = WfModule.objects \
-                .filter(workflow_id=wf_module.workflow_id) \
-                .filter(last_relevant_delta_id=delta_id) \
-                .get(pk=wf_module.pk)
-        except WfModule.DoesNotExist:
-            # Module was deleted or changed input/params _after_ we requested
-            # render but _before_ we start rendering
-            raise UnneededExecution
-
+    with locked_wf_module(wf_module) as safe_wf_module:
         cached_render_result = wf_module.get_cached_render_result()
 
-        # If we've run twice concurrently, we can skip the second render and
-        # just use the cached result.
+        # If the cache is good, just return it -- skipping the render() call
         if (
-            not cached_render_result
-            or (cached_render_result.delta_id
-                != wf_module.last_relevant_delta_id)
+            cached_render_result
+            and (cached_render_result.delta_id
+                 == wf_module.last_relevant_delta_id)
         ):
-            result = dispatch.module_dispatch_render(wf_module, input_table)
-            cached_render_result = safe_wf_module.cache_render_result(
-                safe_wf_module.last_relevant_delta_id,
-                result
-            )
-            # Save safe_wf_module, not wf_module, because we know we've only
-            # changed the cached_render_result columns. (We know because we
-            # locked the row before fetching it.) `wf_module.save()` might
-            # overwrite some newer values.
-            safe_wf_module.save()
+            return cached_render_result
+
+        result = dispatch.module_dispatch_render(safe_wf_module,
+                                                 last_result.dataframe)
+        cached_render_result = safe_wf_module.cache_render_result(
+            safe_wf_module.last_relevant_delta_id,
+            result
+        )
+
+        # Save safe_wf_module, not wf_module, because we know we've only
+        # changed the cached_render_result columns. (We know because we
+        # locked the row before fetching it.) `wf_module.save()` might
+        # overwrite some newer values.
+        safe_wf_module.save()
 
         return cached_render_result
+
+
+def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
+    quick_fixes = [qf.to_dict()
+                   for qf in cached_result.quick_fixes]
+
+    output_columns = [{'name': c.name, 'type': c.type}
+                      for c in cached_result.columns]
+
+    return {
+        'error_msg': cached_result.error,
+        'status': cached_result.status,
+        'quick_fixes': quick_fixes,
+        'output_columns': output_columns,
+        'last_relevant_delta_id': cached_result.delta_id,
+    }
+
 
 
 @database_sync_to_async
@@ -170,11 +233,13 @@ async def execute_workflow(workflow: Workflow,
     we notify clients of its new columns and status.
     """
 
-    wf_modules, last_result = await _load_wf_modules_and_input(workflow,
-                                                               until_wf_module)
+    wf_modules, last_cached_result = await _load_wf_modules_and_input(
+        workflow,
+        until_wf_module
+    )
 
     if not wf_modules:
-        return last_result
+        return last_cached_result
 
     # Execute one module at a time.
     #
@@ -182,37 +247,28 @@ async def execute_workflow(workflow: Workflow,
     # time; it might be run multiple times simultaneously (even on different
     # computers); and `await` doesn't work with locks.
     for wf_module in wf_modules:
-        # only this line uses locks
-        if last_result:
-            last_table = last_result.result.dataframe
+        # The first module in the Workflow has last_cached_result=None.
+        # Other than that, there's no recovering from any non='ok' result:
+        # all subsequent results should be 'unreachable'
+        if last_cached_result and last_cached_result.status != 'ok':
+            last_cached_result = await mark_wfmodule_unreachable(wf_module)
         else:
-            last_table = DataFrame()
+            if last_cached_result:
+                last_result = last_cached_result.result
+            else:
+                # First module has empty-DataFrame input.
+                last_result = ProcessResult()
 
-        last_result = await execute_wfmodule(wf_module, last_table)
-
-        quick_fixes = [qf.to_dict() for qf in last_result.quick_fixes]
-
-        if last_result.error:
-            status = 'error'
-        else:
-            status = 'ready'
-
-        output_columns = [{'name': c.name, 'type': c.type}
-                          for c in last_result.columns]
+            last_cached_result = await execute_wfmodule(wf_module, last_result)
 
         await websockets.ws_client_send_delta_async(workflow.id, {
             'updateWfModules': {
-                str(wf_module.id): {
-                    'error_msg': last_result.error,
-                    'quick_fixes': quick_fixes,
-                    'status': status,
-                    'output_columns': output_columns,
-                }
+                str(wf_module.id): build_status_dict(last_cached_result)
             }
         })
 
     if until_wf_module:
-        return last_result
+        return last_cached_result
 
 
 def execute_and_wait(workflow: Workflow,

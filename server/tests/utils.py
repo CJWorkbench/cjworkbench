@@ -109,15 +109,15 @@ def add_new_workflow(name, **kwargs):
     return Workflow.objects.create(name=name, **kwargs)
 
 
-def add_new_wf_module(workflow, module_version,
-                      order=0, last_relevant_delta_id=0):
+def add_new_wf_module(workflow, module_version, order=0,
+                      param_values={}, last_relevant_delta_id=0):
     wfm = WfModule.objects.create(
         workflow=workflow,
         module_version=module_version,
         order=order,
         last_relevant_delta_id=last_relevant_delta_id
     )
-    wfm.create_parametervals({})
+    wfm.create_parametervals(param_values)
     return wfm
 
 # setup a workflow with some test data loaded into a PasteCSV module
@@ -178,7 +178,7 @@ def load_module_version(filename):
 
 # Given a module spec, add it to end of workflow. Create new workflow if null
 # Returns WfModule
-def load_and_add_module_from_dict(module_dict, workflow=None,
+def load_and_add_module_from_dict(module_dict, workflow=None, param_values={},
                                   last_relevant_delta_id=0):
     if not workflow:
         workflow = add_new_workflow('Workflow 1')
@@ -186,6 +186,7 @@ def load_and_add_module_from_dict(module_dict, workflow=None,
     module_version = load_module_from_dict(module_dict)
     num_modules = WfModule.objects.filter(workflow=workflow).count()
     wf_module = add_new_wf_module(workflow, module_version,
+                                  param_values=param_values,
                                   last_relevant_delta_id=last_relevant_delta_id,
                                   order=num_modules)
 
@@ -193,9 +194,11 @@ def load_and_add_module_from_dict(module_dict, workflow=None,
 
 # Given a module spec, add it to end of workflow. Create new workflow if null.
 # Returns WfModule
-def load_and_add_module(filename, workflow=None, last_relevant_delta_id=0):
+def load_and_add_module(filename, workflow=None, param_values={},
+                        last_relevant_delta_id=0):
     return load_and_add_module_from_dict(
         load_module_dict(filename),
         workflow=workflow,
+        param_values=param_values,
         last_relevant_delta_id=last_relevant_delta_id
     )
