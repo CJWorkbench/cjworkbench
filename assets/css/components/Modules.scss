@@ -420,11 +420,11 @@
 .wf-module--placeholder {
   width: 26rem;
   display: flex;
-  padding-left:1.5rem;
   align-items: center;
   margin-bottom: 0.5rem;
   background-color: $module-action;
   position: relative;
+  left:1rem;
   height: 1rem;
   font-size: 1.2rem;
 }
