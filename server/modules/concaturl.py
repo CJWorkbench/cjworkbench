@@ -1,7 +1,7 @@
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
-from .utils import store_external_workflow, get_id_from_url
 import pandas as pd
+from .moduleimpl import ModuleImpl
+from .utils import store_external_workflow, get_id_from_url
+from .types import ProcessResult
 
 _type_map = "Only include this workflow's columns|Only include matching columns|Include columns from both workflows".lower().split('|')
 _join_type_map = 'outer|inner|outer'.split('|')
@@ -48,7 +48,8 @@ class ConcatURL(ModuleImpl):
             return
 
         try:
-            await store_external_workflow(wf_module, url)
+            result = store_external_workflow(wf_module, url)
         except Exception as err:
-            await ModuleImpl.commit_result(wf_module, ProcessResult(error=str(err.args[0])))
-            return
+            result = ProcessResult(error=str(err))
+
+        await ModuleImpl.commit_result(wf_module, result)

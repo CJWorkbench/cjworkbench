@@ -105,7 +105,8 @@ class JoinURL(ModuleImpl):
             return
 
         try:
-            await store_external_workflow(wf_module, url)
+            result = store_external_workflow(wf_module, url)
         except Exception as err:
-            await ModuleImpl.commit_result(wf_module, ProcessResult(error=str(err.args[0])))
-            return
+            result = ProcessResult(error=str(err))
+
+        await ModuleImpl.commit_result(wf_module, result)

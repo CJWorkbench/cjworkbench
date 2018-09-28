@@ -332,15 +332,6 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
 
 
-def _get_wf_module_by_id(wf_id):
-    try:
-        return Workflow.objects.select_for_update(nowait=False).get(id=wf_id)
-    except Workflow.DoesNotExist:
-        raise Exception('Target workflow does not exist')
-    except Exception as e:
-        raise e
-
-
 def _validate_url(url):
     try:
         validate = URLValidator()
@@ -360,32 +351,29 @@ def get_id_from_url(url):
         raise ValueError(f'Error fetching {url}: Invalid workflow URL')
 
 
-async def store_external_workflow(wf_module, url):
+def store_external_workflow(wf_module, url) -> ProcessResult:
     right_wf_id = get_id_from_url(url)
-    # fetching could take a while so notify clients/users we're working
-    await wf_module.set_busy()
+
     with transaction.atomic():
-        right_wf_module = _get_wf_module_by_id(right_wf_id)
+        try:
+            right_wf_module = Workflow.objects \
+                .select_for_update() \
+                .get(id=right_wf_id)
+        except Workflow.DoesNotExist:
+            return ProcessResult(error='Target workflow does not exist')
 
         # Check to see if workflow_id the same
         if wf_module.workflow_id == right_wf_module.id:
-            raise Exception('Cannot import the current workflow')
+            return ProcessResult(error='Cannot import the current workflow')
 
         # Make sure _this_ workflow's owner has access permissions to the _other_ workflow
         user = wf_module.workflow.owner
         if not right_wf_module.user_session_authorized_read(user, None):
-            raise Exception('Access denied to the target workflow')
+            return ProcessResult(error='Access denied to the target workflow')
 
         right_wf_module = right_wf_module.wf_modules.last()
 
         # Always pull the cached result, so we can't execute() an infinite loop
-        try:
-            right_result = right_wf_module.get_cached_render_result().result
-        except:
-            raise Exception('Internal Error. Could not retrieve workflow.')
+        right_result = right_wf_module.get_cached_render_result().result
 
-    result = ProcessResult(dataframe=right_result.dataframe)
-
-    result.truncate_in_place_if_too_big()
-    result.sanitize_in_place()
-    await ModuleImpl.commit_result(wf_module, result)
+    return ProcessResult(dataframe=right_result.dataframe)
