@@ -150,13 +150,16 @@
 
   &.status-busy {
     @include module-colors($module-color-busy, $brand-workspace, $module-color-busy);
+    .module-card::after {
+      background-color: $brand-orange;
+    }
   }
 
   &.status-error {
     @include module-colors($module-color-error, $module-color-error, $module-color-error);
 
     .module-card::after {
-      opacity: 0
+      opacity: 0;
     }
 
     &.selected {
