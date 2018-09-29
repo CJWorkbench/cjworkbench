@@ -296,4 +296,66 @@ describe('Refine', () => {
       blacklist: []
     })
   })
+
+  it('should find search results within both group names and members', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      value: JSON.stringify({ renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] })
+    })
+    // Ensure 3 groups initially rendered
+    expect(w.find('dl').children()).toHaveLength(3)
+
+    let searchField = w.find('input[type="search"]')
+    searchField.simulate('change', {target: {value: 'b'}})
+    w.update()
+    expect(w.find('dl').children()).toHaveLength(2)
+  })
+
+  it('should set the blacklist to full when "None" pressed', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      value: JSON.stringify({ renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] })
+    })
+    w.find('button[title="Select None"]').simulate('click')
+    w.update()
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).blacklist).toEqual(['a', 'b', 'd'])
+  })
+
+  it('should clear the blacklist when "All" pressed', () => {
+    const w = wrapper({
+      valueCounts: {'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      value: JSON.stringify({renames: {'c': 'b', 'bb': 'a'}, blacklist: ['a', 'b', 'd']})
+    })
+    w.find('button[title="Select All"]').simulate('click')
+    w.update()
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(JSON.parse(changeCalls[0][0]).blacklist).toEqual([])
+  })
+
+  it('All and None buttons should be disabled when a search has taken place', () => {
+    const w = wrapper({
+      valueCounts: {'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1},
+      value: JSON.stringify({renames: {'c': 'b', 'BB': 'a'}, blacklist: ['a']})
+    })
+    // Search for 'a' even though it is blacklisted
+    let searchField = w.find('input[type="search"]')
+    searchField.simulate('change', {target: {value: 'a'}})
+    w.update()
+    expect(w.find('dl').children()).toHaveLength(1)
+
+    // Select All should be disabled
+    expect(w.find('button[title="Select All"]').prop('disabled')).toEqual(true)
+    w.find('button[title="Select All"]').simulate('click')
+    w.update()
+    expect(w.prop('onChange').mock.calls).toHaveLength(0)
+
+    // Select None should be disabled
+    expect(w.find('button[title="Select None"]').prop('disabled')).toEqual(true)
+    w.find('button[title="Select None"]').simulate('click')
+    w.update()
+    expect(w.prop('onChange').mock.calls).toHaveLength(0)
+  })
 })
