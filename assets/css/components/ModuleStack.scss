@@ -9,6 +9,13 @@
   .in-between-modules {
     position: relative;
     margin: 0;
+    &:last-child {
+      height:1rem;
+
+      .module-search {
+        top:0;
+      }
+    }
 
     &.read-only {
       height: 2rem;
