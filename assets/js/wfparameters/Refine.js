@@ -562,7 +562,7 @@ export class Refine extends React.PureComponent {
         { !canSearch ? null : (
           <div>
             <div className="refine-search">
-              <form className="refine-search-field" onSubmit={this.onSubmit} onReset={this.onReset}>
+              <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
                 <input
                   type='search'
                   placeholder='Search Facets...'
@@ -588,7 +588,7 @@ export class Refine extends React.PureComponent {
           </dl>
         </div>
         { ( canSearch && displayedGroups.length == 0 ) ? (
-          <div>
+          <div className='wf-module-error-msg'>
             <span className='no-search-results'>No Results</span>
           </div>) : null
         }
