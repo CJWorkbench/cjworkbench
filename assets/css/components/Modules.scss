@@ -43,6 +43,7 @@
     // if they are non-empty. But we cannot set display:none, because the user
     // may call notesInputRef.current.focus() before they become visible.
     padding: .5rem 0 .2rem 0;
+    left:1rem;
     position: relative; // so we can position `.wf-module .module-notes::before`
     &:not(.visible) {
       overflow: hidden;
