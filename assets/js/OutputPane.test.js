@@ -11,6 +11,7 @@ describe('OutputPane', () => {
         api={{}}
         workflowId={123}
         lastRelevantDeltaId={1}
+        isInputBecauseOutputIsError={false}
         wfModuleId={987}
         wfModuleStatus='ok'
         isPublic={false}

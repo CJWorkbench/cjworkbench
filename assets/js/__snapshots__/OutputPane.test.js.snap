@@ -6,6 +6,7 @@ exports[`OutputPane matches snapshot 1`] = `
 >
   <Connect(OutputIframe)
     isPublic={false}
+    key="iframe"
     lastRelevantDeltaId={1}
     visible={false}
     wfModuleId={987}
@@ -14,6 +15,7 @@ exports[`OutputPane matches snapshot 1`] = `
   <TableView
     api={Object {}}
     isReadOnly={false}
+    key="table"
     lastRelevantDeltaId={1}
     showColumnLetter={false}
     wfModuleId={987}
@@ -27,6 +29,7 @@ exports[`OutputPane renders when no module id 1`] = `
 >
   <Connect(OutputIframe)
     isPublic={false}
+    key="iframe"
     lastRelevantDeltaId={1}
     visible={false}
     wfModuleId={null}
@@ -35,6 +38,7 @@ exports[`OutputPane renders when no module id 1`] = `
   <TableView
     api={Object {}}
     isReadOnly={false}
+    key="table"
     lastRelevantDeltaId={1}
     showColumnLetter={false}
     wfModuleId={null}
