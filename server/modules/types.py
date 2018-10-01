@@ -148,6 +148,23 @@ class ProcessResult:
         sanitizedataframe.sanitize_dataframe(self.dataframe)
 
     @property
+    def status(self):
+        """
+        Whether this data means 'ok', 'error' or 'unreachable'.
+
+        'ok': there is a DataFrame. (If error is set, it's a warning.)
+        'error': there is no DataFrame, and error is set.
+        'unreachable': there is no DataFrame or error.
+        """
+        if self.dataframe.empty:
+            if self.error:
+                return 'error'
+            else:
+                return 'unreachable'
+        else:
+            return 'ok'
+
+    @property
     def column_names(self):
         return list(self.dataframe.columns)
 

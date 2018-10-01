@@ -40,7 +40,7 @@ class QuickFix extends React.PureComponent {
 
 export default class StatusLine extends React.PureComponent {
   static propTypes = {
-    status: PropTypes.oneOf(['busy', 'ready', 'error']).isRequired,
+    status: PropTypes.oneOf(['ok', 'waiting', 'busy', 'error', 'unreachable']).isRequired,
     error: PropTypes.string, // may be empty string
     quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined

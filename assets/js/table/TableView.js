@@ -16,7 +16,7 @@ export const FetchTimeout = 50 // ms after scroll before fetch
 
 export default class TableView extends React.PureComponent {
   static propTypes = {
-    wfModuleId: PropTypes.number,             // not actually required, could have no selected module
+    wfModuleId: PropTypes.number, // null means no selected module
     lastRelevantDeltaId: PropTypes.number.isRequired,
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,

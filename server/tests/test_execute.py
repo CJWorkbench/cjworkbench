@@ -14,6 +14,10 @@ table_csv = 'A,B\n1,2\n3,4'
 table_dataframe = pd.DataFrame({'A': [1, 3], 'B': [2, 4]})
 
 
+fake_future = asyncio.Future()
+fake_future.set_result(None)
+
+
 async def fake_send(*args, **kwargs):
     pass
 
@@ -57,6 +61,69 @@ class ExecuteTests(DbTestCase):
 
         self.assertEqual(result, ProcessResult(table_dataframe[['A']]))
         self.assertEqual(cached_render_result_revision_list(workflow), [0, 2])
+
+    @patch('server.websockets.ws_client_send_delta_async')
+    def test_execute_mark_unreachable(self, send_delta_async):
+        send_delta_async.return_value = fake_future
+
+        workflow = create_testdata_workflow(table_csv)
+        # Default pythoncode value is passthru
+        wf_module2 = load_and_add_module('pythoncode', workflow=workflow)
+        wf_module3 = load_and_add_module('selectcolumns', workflow=workflow,
+                                         param_values={'drop_or_keep': 1,
+                                                       'colnames': 'A,B'})
+
+        async_to_sync(execute_workflow)(workflow)
+
+        # Should set status of all modules to 'ok'
+        wf_module3.refresh_from_db()
+        self.assertEqual(wf_module3.status, 'ok')
+
+        # Update parameter. Now module 2 will return an error.
+        wf_module2.get_parameter_val('code', 'custom').set_value('=ERROR')
+        wf_module2.last_relevant_delta_id = 2
+        wf_module3.last_relevant_delta_id = 2
+        wf_module2.save(update_fields=['last_relevant_delta_id'])
+        wf_module3.save(update_fields=['last_relevant_delta_id'])
+
+        # (more integration-test-y) now their statuses are 'waiting'
+        wf_module2.refresh_from_db()
+        self.assertEqual(wf_module3.status, 'waiting')
+        wf_module3.refresh_from_db()
+        self.assertEqual(wf_module3.status, 'waiting')
+
+        async_to_sync(execute_workflow)(workflow)
+
+        # Now we expect module 2 to have 'error', 3 to have 'unreachable'
+        wf_module2.refresh_from_db()
+        self.assertEqual(wf_module2.status, 'error')
+        wf_module3.refresh_from_db()
+        self.assertEqual(wf_module3.status, 'unreachable')
+
+        #send_delta_async.assert_called_with(workflow.id, {
+        #    'updateWfModules': {
+        #        str(wf_module2.id): {
+        #            'error_msg': 'ERROR',
+        #            'status': 'error',
+        #            'quick_fixes': [],
+        #            'output_columns': [],
+        #            'last_relevant_delta_id': wf_module2.last_relevant_delta_id
+        #        }
+        #    }
+        #})
+
+        send_delta_async.assert_called_with(workflow.id, {
+            'updateWfModules': {
+                str(wf_module3.id): {
+                    'error_msg': '',
+                    'status': 'unreachable',
+                    'quick_fixes': [],
+                    'output_columns': [],
+                    'last_relevant_delta_id': wf_module3.last_relevant_delta_id
+                }
+            }
+        })
+
 
     def test_execute_cache_hit(self):
         workflow = create_testdata_workflow(table_csv)

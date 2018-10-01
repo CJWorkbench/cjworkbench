@@ -23,7 +23,6 @@ import server.utils
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
 from server.templatetags.json_filters import escape_potential_hack_chars
-from server import websockets
 
 
 _MaxNRowsPerRequest = 300
@@ -43,36 +42,6 @@ def _client_attributes_that_change_on_render(wf_module):
         'status': wf_module.status,
         'output_columns': output_columns,
     }
-
-
-def execute_and_notify(wf_module):
-    """
-    Render (and cache) a WfModule; send websocket updates and return result.
-    """
-    workflow = wf_module.workflow
-    with workflow.cooperative_lock():
-        priors = {}
-        for a_wf_module in workflow.wf_modules.all():
-            priors[a_wf_module.id] = \
-                _client_attributes_that_change_on_render(a_wf_module)
-
-        result = execute.execute_wfmodule(wf_module)
-
-        changes = {}
-        for a_wf_module in workflow.wf_modules.all():
-            prior = priors[a_wf_module.id]
-            current = _client_attributes_that_change_on_render(a_wf_module)
-
-            if current != prior:
-                changes[str(a_wf_module.id)] = current
-
-    if changes:
-        async_to_sync(websockets.ws_client_send_delta_async)(
-            wf_module.workflow_id,
-            {'updateWfModules': changes}
-        )
-
-    return result
 
 
 def _lookup_wf_module(pk: int) -> WfModule:

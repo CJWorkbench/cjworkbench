@@ -85,7 +85,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         applyQuickFix={[Function]}
         error=""
         quickFixes={Array []}
-        status="ready"
+        status="waiting"
       />
       <div
         className="module-card-params"

@@ -7,7 +7,7 @@ describe('Status line', () => {
   const wrapper = (extraProps) => {
     return mount(
       <StatusLine
-        status='ready'
+        status='ok'
         error=''
         quickFixes={[]}
         applyQuickFix={jest.fn()}
@@ -92,7 +92,7 @@ describe('Status line', () => {
     w.update()
     expect(w.find('button').at(0).prop('disabled')).toBe(true)
 
-    w.setProps({ status: 'ready', error: '' })
+    w.setProps({ status: 'ok', error: '' })
     w.setProps(errorProps)
 
     w.update()
@@ -100,7 +100,7 @@ describe('Status line', () => {
   })
 
   it('renders null when no error', () => {
-    const w = wrapper({ status: 'ready', error: '' })
+    const w = wrapper({ status: 'ok', error: '' })
     expect(w.text()).toBe(null)
   })
 })
