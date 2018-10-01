@@ -1,3 +1,5 @@
+# See https://cloud.google.com/cloud-build/docs/build-debug-locally for debug
+# instructions.
 timeout: 1800s
 steps:
 # cache-from doesn't work well with multi-stage builds yet: see
