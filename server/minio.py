@@ -20,18 +20,26 @@ UserFilesBucket = ''.join([
 ])
 
 
-def _ensure_user_files_bucket_exists():
+StaticFilesBucket = ''.join([
+    settings.MINIO_BUCKET_PREFIX,
+    '-',
+    'static',
+    settings.MINIO_BUCKET_SUFFIX
+])
+
+
+def ensure_bucket_exists(bucket_name):
     # 1. If bucket exists, return. This is good on production where we don't
     # have permission to run `minio_client.make_bucket()`
-    if minio_client.bucket_exists(UserFilesBucket):
+    if minio_client.bucket_exists(bucket_name):
         return
 
     # 2. Bucket doesn't exist, so attempt to create it
     try:
-        minio_client.make_bucket(UserFilesBucket)
+        minio_client.make_bucket(bucket_name)
     except ResponseError as err:
         raise RuntimeError(
-            f'There is no bucket "{UserFilesBucket}" on the S3 server at '
+            f'There is no bucket "{bucket_name}" on the S3 server at '
             f'"{settings.MINIO_URL}", and we do not have permission to create '
             'it. Please create it manually and then restart Workbench.',
             cause=err
@@ -65,4 +73,4 @@ def open_for_read(bucket: str, key: str):
         response.release_conn()
 
 
-_ensure_user_files_bucket_exists()
+ensure_bucket_exists(UserFilesBucket)

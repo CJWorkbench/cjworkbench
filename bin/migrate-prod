@@ -10,7 +10,4 @@ until PGPASSWORD="$CJW_DB_PASSWORD" psql -q --host="$CJW_DB_HOST" --username=cjw
 	sleep 1
 done
 
-"$DIR"/manage.py migrate sites
-"$DIR"/manage.py migrate
-"$DIR"/manage.py load_socialaccounts
-"$DIR"/manage.py reload-internal-modules
+"$DIR"/manage.py migrate-prod

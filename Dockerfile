@@ -141,5 +141,7 @@ CMD [ "./manage.py", "run-background-loop" ]
 FROM base AS frontend
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
-# TODO nix --insecure; serve static files elsewhere
-CMD [ "./manage.py", "runserver", "--insecure", "0.0.0.0:8080" ]
+# TODO serve static files elsewhere
+# Beware: our daphne does not serve static files! Use migrate-prod to push them
+# to GCS and publish them there.
+CMD [ "daphne", "-b", "0.0.0.0", "-p", "8080", "cjworkbench.asgi:application" ]

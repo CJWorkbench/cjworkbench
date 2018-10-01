@@ -241,13 +241,19 @@ USE_TZ = True
 
 # Static files. CSS, JavaScript are bundled by webpack, but fonts, test data,
 # images, etc. are not
-STATIC_URL = '/static/'
 STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
 STATICFILES_DIRS = (
-    # We do this so that django's collectstatic copies or our bundles to the
-    # STATIC_ROOT or syncs them to whatever storage we use.
-    os.path.join(BASE_DIR, 'assets'),
+    ('bundles', os.path.join(BASE_DIR, 'assets', 'bundles')),
+    ('data', os.path.join(BASE_DIR, 'assets', 'data')),
+    ('fonts', os.path.join(BASE_DIR, 'assets', 'fonts')),
+    ('images', os.path.join(BASE_DIR, 'assets', 'images')),
 )
+# Make `collectstatic` command upload to the right place
+STATICFILES_STORAGE = 'server.storage.minio_storage_for_collectstatic.MinioStorage'
+
+# In dev mode, we'll serve local files. But in prod we can overwrite STATIC_URL
+# to serve from S3
+STATIC_URL = os.environ.get('STATIC_URL', '/static/')
 
 # Webpack loads all our js/css into handy bundles
 WEBPACK_LOADER = {

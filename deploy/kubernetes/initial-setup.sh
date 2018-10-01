@@ -57,7 +57,9 @@ kubectl -n production apply -f importedmodules-pv.yaml
 # 1.4.1 GCS account, so minio can create buckets/objects
 gcloud iam service-accounts create production-minio --display-name production-minio
 gsutil mb gs://production-user-files.workbenchdata.com
+gsutil mb gs://production-static.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-user-files.workbenchdata.com
+gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-static.workbenchdata.com
 gcloud iam service-accounts keys create application_default_credentials.json \
   --iam-account production-minio@cj-workbench.iam.gserviceaccount.com
 kubectl -n production create secret generic minio-gcs-credentials \

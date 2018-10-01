@@ -4,14 +4,17 @@ ASGI config for cjworkbench project.
 Used for websockets
 """
 
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cjworkbench.settings")
+
+#import django
+#django.setup()
+
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from django.conf.urls import url
-import os
 
 from server.websockets import WorkflowConsumer
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cjworkbench.settings")
 
 def create_url_router() -> AuthMiddlewareStack:
     return AuthMiddlewareStack(URLRouter([
