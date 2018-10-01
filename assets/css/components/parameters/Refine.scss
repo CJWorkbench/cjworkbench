@@ -66,6 +66,15 @@
     }
   }
 }
+
+button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disabled, {
+  color:$grayed--out;
+  cursor: default;
+  &:hover {
+    color:$grayed--out;
+  }
+}
+
 .refine-modal-prompt {
   margin-top: 1.5rem;
   display: flex;
