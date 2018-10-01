@@ -66,10 +66,11 @@ class TestLesson(LessonTest):
         self.expect_highlight(
             4,
             '.wf-module[data-module-name="Drop empty rows"]',
+            wait=True
         )
 
         # Wait for column selector to load
-        b.click_whatever('.react-select__indicator', wait=True)
+        b.click_whatever('.react-select__indicator', wait=15)
         b.click_whatever('.react-select__option', text='MetroArea', wait=True)
         b.click_whatever('.react-select__indicator', wait=True)
         b.click_whatever('.react-select__option', text='Population', wait=True)
