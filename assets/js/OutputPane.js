@@ -20,14 +20,14 @@ export class OutputPane extends React.Component {
     wfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
       lastRelevantDeltaId: PropTypes.number.isRequired,
+      htmlOutput: PropTypes.bool.isRequired,
       status: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     showColumnLetter: PropTypes.bool.isRequired,
     sortColumn: PropTypes.string,
-    sortDirection: PropTypes.number,
-    htmlOutput: PropTypes.bool
+    sortDirection: PropTypes.number
   }
 
   renderTableView () {
@@ -66,10 +66,11 @@ export class OutputPane extends React.Component {
     // we showed the _input_ module's iframe we wouldn't render the stack
     // trace.
 
-    const { htmlOutput, wfModule, workflowId, isPublic } = this.props
+    const { wfModule, workflowId, isPublic } = this.props
 
     const wfModuleId = wfModule ? wfModule.id : null
     const lastRelevantDeltaId = wfModule ? wfModule.lastRelevantDeltaId : null
+    const htmlOutput = wfModule ? wfModule.htmlOutput : false
 
     // This iframe holds the module HTML output, e.g. a visualization.
     // We leave the component around even when there is no HTML because of
@@ -79,7 +80,7 @@ export class OutputPane extends React.Component {
     return (
       <OutputIframe
         key='iframe'
-        visible={!!htmlOutput}
+        visible={htmlOutput}
         workflowId={workflowId}
         isPublic={isPublic}
         wfModuleId={wfModuleId}
@@ -159,7 +160,8 @@ function mapStateToProps(state, ownProps) {
     wfModule: wfModule ? {
       id: wfModule.id,
       status: wfModule.status,
-      lastRelevantDeltaId: wfModule.last_relevant_delta_id
+      lastRelevantDeltaId: wfModule.last_relevant_delta_id,
+      htmlOutput: wfModule.html_output
     } : null,
     wfModuleBeforeError: wfModuleBeforeError ? {
       id: wfModuleBeforeError.id,
@@ -167,7 +169,6 @@ function mapStateToProps(state, ownProps) {
     } : null,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
-    htmlOutput: wfModule.html_output,
     showColumnLetter,
     sortColumn,
     sortDirection,
