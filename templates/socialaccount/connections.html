@@ -7,8 +7,13 @@
 {% block content %}
 
 {% if form.accounts %}
-<div class='content-1 t-d-gray text-center mb-4'>{% blocktrans %}Linked third party accounts:{% endblocktrans %}</div>
+<div class='title-1 t-d-gray text-center mb-3'>{% blocktrans %}Account linked!{% endblocktrans %}</div>
+<div class="d-flex justify-content-center">
+  <a href="{% url "account_login" %}" style="text-decoration:none"class="content-3 button-white action-button mb-5">{% trans "Sign in" %}</a>
+</div>
 
+
+<div class='content-1 t-d-gray text-center mb-3'>{% blocktrans %}Remove linked accounts{% endblocktrans %}</div>
 
 <form method="post" action="{% url 'socialaccount_connections' %}">
 {% csrf_token %}
@@ -33,11 +38,9 @@
 {% endfor %}
 
 <div class="text-center">
-  <button style="border:0px" class="action-link content-2 text-center mb-4" type="submit">{% trans 'Remove' %}</button>
+  <button class="remove-account" type="submit">{% trans 'Remove' %}</button>
 </div>
-<div class="d-flex justify-content-center">
-  <a href="{% url "account_login" %}" style="text-decoration:none"class="content-3 button-blue action-link action-button mb-5">{% trans "Go to app" %}</a>
-</div>
+
 </fieldset>
 
 </form>
@@ -46,7 +49,7 @@
 <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
 {% endif %}
 
-<div class='content-1 t-d-gray text-center mt-4 mb-4'>{% trans 'Or add another account' %}</div>
+<div class='content-1 t-d-gray text-center mt-4 mb-4'>{% trans 'Add another account' %}</div>
 
 <div class="socialaccount_providers mx-auto">
 {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
