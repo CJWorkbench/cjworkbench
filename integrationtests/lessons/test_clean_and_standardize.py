@@ -62,12 +62,21 @@ class TestLesson(LessonTest):
         )
         self.add_wf_module('Drop empty rows')
 
+        # Debugging on Google Cloud Build -- .react-select__indicator is never
+        # appearing
+        import time
+        time.sleep(2)
+
         # Wait for module to load
         self.expect_highlight(
             4,
             '.wf-module[data-module-name="Drop empty rows"]',
             wait=True
         )
+
+        # Debugging on Google Cloud Build -- .react-select__indicator is never
+        # appearing
+        time.sleep(2)
 
         # Wait for column selector to load
         b.click_whatever('.react-select__indicator', wait=15)
