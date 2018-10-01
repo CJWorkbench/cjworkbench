@@ -9,7 +9,6 @@
 
 	.edited-column {
 		@extend .info-2;
-		margin-left: .7rem;
 	}
 
 	.cell-edits--row {
@@ -25,7 +24,7 @@
 			width: 3.5rem;
 			display: flex;
 			align-items: center;
-			justify-content: center;
+			justify-content: flex-start;
 			padding: 0;
 			font-size:1.2rem;
 			overflow-x: hidden;
