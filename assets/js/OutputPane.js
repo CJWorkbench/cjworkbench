@@ -163,10 +163,7 @@ function mapStateToProps(state, ownProps) {
       lastRelevantDeltaId: wfModule.last_relevant_delta_id,
       htmlOutput: wfModule.html_output
     } : null,
-    wfModuleBeforeError: wfModuleBeforeError ? {
-      id: wfModuleBeforeError.id,
-      lastRelevantDeltaId: wfModuleBeforeError.last_relevant_delta_id
-    } : null,
+    wfModuleBeforeError: wfModuleBeforeError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
     showColumnLetter,
