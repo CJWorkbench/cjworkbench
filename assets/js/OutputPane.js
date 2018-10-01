@@ -13,10 +13,15 @@ export class OutputPane extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     workflowId: PropTypes.number.isRequired,
-    lastRelevantDeltaId: PropTypes.number.isRequired,
-    wfModuleId: PropTypes.number,
-    wfModuleStatus: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
-    isInputBecauseOutputIsError: PropTypes.bool.isRequired,
+    wfModuleBeforeError: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      lastRelevantDeltaId: PropTypes.number.isRequired
+    }), // or null if no error
+    wfModule: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      lastRelevantDeltaId: PropTypes.number.isRequired,
+      status: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
+    }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     showColumnLetter: PropTypes.bool.isRequired,
@@ -26,7 +31,19 @@ export class OutputPane extends React.Component {
   }
 
   renderTableView () {
-    const { wfModuleId, lastRelevantDeltaId, api, isReadOnly, sortColumn, sortDirection, showColumnLetter } = this.props
+    const { wfModuleBeforeError, wfModule } = this.props
+
+    let wfModuleId = null
+    let lastRelevantDeltaId = -1 // TableView requires it
+    if (wfModuleBeforeError) {
+      wfModuleId = wfModuleBeforeError.id
+      lastRelevantDeltaId = wfModuleBeforeError.lastRelevantDeltaId
+    } else if (wfModule) {
+      wfModuleId = wfModule.id
+      lastRelevantDeltaId = wfModule.lastRelevantDeltaId
+    }
+
+    const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter } = this.props
 
     // Make a table component even if no module ID (should still show an empty table)
     return (
@@ -44,7 +61,15 @@ export class OutputPane extends React.Component {
   }
 
   renderOutputIFrame () {
-    const { htmlOutput, wfModuleId, workflowId, isPublic, lastRelevantDeltaId } = this.props
+    // Always show _this_ module's iframe. If this module has status 'error'
+    // and it's the Python console, the iframe contains the stack trace. If
+    // we showed the _input_ module's iframe we wouldn't render the stack
+    // trace.
+
+    const { htmlOutput, wfModule, workflowId, isPublic } = this.props
+
+    const wfModuleId = wfModule ? wfModule.id : null
+    const lastRelevantDeltaId = wfModule ? wfModule.lastRelevantDeltaId : null
 
     // This iframe holds the module HTML output, e.g. a visualization.
     // We leave the component around even when there is no HTML because of
@@ -55,16 +80,16 @@ export class OutputPane extends React.Component {
       <OutputIframe
         key='iframe'
         visible={!!htmlOutput}
-        wfModuleId={wfModuleId}
         workflowId={workflowId}
         isPublic={isPublic}
+        wfModuleId={wfModuleId}
         lastRelevantDeltaId={lastRelevantDeltaId}
       />
     )
   }
 
   renderShowingInput () {
-    if (this.props.isInputBecauseOutputIsError) {
+    if (this.props.wfModuleBeforeError) {
       return (
         <p
           key='error'
@@ -79,53 +104,41 @@ export class OutputPane extends React.Component {
   }
 
   render () {
-    const { wfModuleStatus } = this.props
+    const { wfModule } = this.props
+    const status = wfModule ? wfModule.status : 'unreachable'
 
-    const className = 'outputpane module-' + wfModuleStatus
+    const className = 'outputpane module-' + status
 
     return (
       <div className={className}>
-        {this.renderShowingInput()}
         {this.renderOutputIFrame()}
+        {this.renderShowingInput()}
         {this.renderTableView()}
       </div>
     )
   }
 }
 
-const NullWfModule = {
-  id: null,
-  last_relevant_delta_id: null,
-  html_output: false,
-  status: 'unreachable',
-}
-
 function mapStateToProps(state, ownProps) {
   const { workflow, wfModules, modules } = state
 
-  const selectedWfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
+  let wfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
+  let wfModuleBeforeError
 
-  let wfModule
-  let isInputBecauseOutputIsError = false
-  if (!selectedWfModule) {
-    wfModule = NullWfModule
-  } else if (selectedWfModule.status === 'error' || selectedWfModule.status === 'unreachable') {
-    // Show the first WfModule _before_ this one.
-    wfModule = workflow.wf_modules.slice(0, state.selected_wf_module)
-      .reverse()
-      .map(id => wfModules[id])
-      .find(wfm => wfm.status === 'ok')
+  if (wfModule && (wfModule.status === 'error' || wfModule.status === 'unreachable')) {
+    const errorIndex = workflow.wf_modules
+      .findIndex(id => wfModules[String(id)].status === 'error')
 
-    if (wfModule) {
-      isInputBecauseOutputIsError = true
-    } else {
-      wfModule = NullWfModule
+    if (errorIndex > 0) {
+      const lastGood = wfModules[String(workflow.wf_modules[errorIndex - 1])]
+      wfModuleBeforeError = {
+        id: lastGood.id,
+        lastRelevantDeltaId: lastGood.last_relevant_delta_id
+      }
     }
-  } else {
-    wfModule = selectedWfModule
   }
 
-  const selectedModule = modules[String(selectedWfModule ? selectedWfModule.module_version.module : null)] || null
+  const selectedModule = modules[String(wfModule ? wfModule.module_version.module : null)] || null
   const id_name = selectedModule ? selectedModule.id_name : null
 
   const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns'
@@ -143,10 +156,15 @@ function mapStateToProps(state, ownProps) {
 
   return {
     workflowId: workflow.id,
-    wfModuleId: wfModule.id,
-    lastRelevantDeltaId: wfModule.last_relevant_delta_id,
-    wfModuleStatus: wfModule.status,
-    isInputBecauseOutputIsError,
+    wfModule: wfModule ? {
+      id: wfModule.id,
+      status: wfModule.status,
+      lastRelevantDeltaId: wfModule.last_relevant_delta_id
+    } : null,
+    wfModuleBeforeError: wfModuleBeforeError ? {
+      id: wfModuleBeforeError.id,
+      lastRelevantDeltaId: wfModuleBeforeError.last_relevant_delta_id
+    } : null,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
     htmlOutput: wfModule.html_output,
