@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import RefineModal from '../refine/RefineModal'
 
 const NumberFormatter = new Intl.NumberFormat()
-const blacklistEmpty = 0
-const blacklistFill = 1
 
 export class RefineSpec {
   constructor (renames, blacklist) {
@@ -383,26 +381,26 @@ export class AllNoneButtons extends React.PureComponent {
 
   render() {
     return (
-      <div className="d-flex mb-2 mt-2 ">
-          <button
-            disabled={this.props.isReadOnly}
-            name={`refine-select-all`}
-            title='Select All'
-            onClick={this.setAll}
-            className='mc-select-all content-4 t-d-gray'
-            >
-            All
-          </button>
-          <button
-            disabled={this.props.isReadOnly}
-            name={`refine-select-none`}
-            title='Select None'
-            onClick={this.setNone}
-            className='mc-select-none content-4 t-d-gray'
-            >
-            None
-          </button>
-        </div>
+      <div className="all-none-buttons">
+        <button
+          disabled={this.props.isReadOnly}
+          name={`refine-select-all`}
+          title='Select All'
+          onClick={this.setAll}
+          className='mc-select-all'
+        >
+          All
+        </button>
+        <button
+          disabled={this.props.isReadOnly}
+          name={`refine-select-none`}
+          title='Select None'
+          onClick={this.setNone}
+          className='mc-select-none'
+        >
+          None
+        </button>
+      </div>
     )
   }
 }
@@ -435,8 +433,7 @@ export class Refine extends React.PureComponent {
 
   state = {
     isRefineModalOpen: false,
-    searchInput: '',
-    searchMode: false
+    searchInput: ''
   }
 
   get parsedSpec () {
@@ -475,12 +472,9 @@ export class Refine extends React.PureComponent {
     this.setInput('')
   }
 
-  setInput(input) {
-    const searchMode = input == '' ? false : true
-
+  setInput = (input) => {
     this.setState({
-      searchInput: input,
-      searchMode: searchMode
+      searchInput: input
     })
   }
 
@@ -496,7 +490,7 @@ export class Refine extends React.PureComponent {
   filterResults = (groups) => {
     // Search for the search string in both the group name or group members
     return groups.filter(group =>
-      ( group.name.toLowerCase().includes(this.state.searchInput.toLowerCase()) || this.searchInGroup(group.values))
+      (group.name.toLowerCase().includes(this.state.searchInput.toLowerCase()) || this.searchInGroup(group.values))
     )
   }
 
@@ -506,6 +500,8 @@ export class Refine extends React.PureComponent {
     }
     return false
   }
+
+  isSearchActive = () => { return !!this.state.searchInput }
 
   rename = buildSpecModifier(this, 'rename')
   massRename = buildSpecModifier(this, 'massRename')
@@ -517,7 +513,8 @@ export class Refine extends React.PureComponent {
 
   render () {
     const { valueCounts } = this.props
-    const { isRefineModalOpen, searchInput, searchMode } = this.state
+    const { isRefineModalOpen, searchInput } = this.state
+    const searchMode = this.isSearchActive()
     const groups = this.groups
     const displayedGroups = searchMode ? this.filterResults(groups) : groups
     const groupNames = groups.map(group => group.name)
@@ -560,40 +557,35 @@ export class Refine extends React.PureComponent {
           </div>
         )}
         { !canSearch ? null : (
-          <div>
-            <div className="refine-search">
-              <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
-                <input
-                  type='search'
-                  placeholder='Search Facets...'
-                  autoComplete='off'
-                  value={searchInput}
-                  onChange={this.onInputChange}
-                  onKeyDown={this.onKeyDown}
-                />
-                <button type="reset" className="close" title="Close Search"><i className="icon-close"></i></button>
-              </form>
-            </div>
+          <React.Fragment>
+            <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
+              <input
+                type='search'
+                placeholder='Search Facets...'
+                autoComplete='off'
+                value={searchInput}
+                onChange={this.onInputChange}
+                onKeyDown={this.onKeyDown}
+              />
+              <button type="reset" className="close" title="Close Search"><i className="icon-close"></i></button>
+            </form>
             <AllNoneButtons
               isReadOnly={searchMode}
               clearBlackList={this.clearBlackList}
               fillBlackList={this.fillBlackList}
               allGroups={groupNames}
             />
-          </div>
-        )}
+          </React.Fragment>)
+        }
         <div className="refine-groups">
           <dl>
             {groupComponents}
           </dl>
         </div>
-        { ( canSearch && displayedGroups.length == 0 ) ? (
-          <div className='wf-module-error-msg'>
-            <span className='no-search-results'>No Results</span>
-          </div>) : null
+        { (canSearch && displayedGroups.length === 0) ? (
+          <div className='wf-module-error-msg'>No Results</div>) : null
         }
-      </React.Fragment>
-    )
+      </React.Fragment>)
   }
 }
 
