@@ -561,7 +561,7 @@ export class Refine extends React.PureComponent {
             <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
               <input
                 type='search'
-                placeholder='Search Facets...'
+                placeholder='Search facets...'
                 autoComplete='off'
                 value={searchInput}
                 onChange={this.onInputChange}
