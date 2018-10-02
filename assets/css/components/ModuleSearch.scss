@@ -135,9 +135,12 @@
     }
 
     &:hover {
-
       color: $brand-text--darker;
       background-color: $dark-accent--soft;
+    }
+
+    &:active {
+      background-color: $dark-accent--medium;
     }
 
     &.lesson-highlight {

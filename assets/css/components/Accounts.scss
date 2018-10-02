@@ -38,6 +38,25 @@
     border: none;
     border-radius: 0px;
 
+    .action-link {
+      color:$white!important;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .remove-account {
+      @extend .content-3;
+      @extend .action-button;
+      @extend .button-white;
+      margin:auto;
+      margin-bottom: 2rem;
+      margin-top: 1rem;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
     .content-4 {
       cursor: default;
     }

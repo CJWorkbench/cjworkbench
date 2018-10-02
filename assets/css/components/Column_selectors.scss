@@ -5,18 +5,18 @@
 
   .css-1rtrksz.react-select__value-container {
     cursor: text;
-    padding: .2rem;
   }
 
-  .react-select__placeholder {
+  .react-select__placeholder.css-1492t68 {
     color:$brand-text--dark;
+    margin-left: .3rem;
   }
 
   .css-d8oujb.react-select__indicator-separator {
     opacity: .5;
   }
 
-  &.react-select__control--is-focused {
+  &.css-2o5izw.react-select__control--is-focused {
     box-shadow: none;
     border: $data-action--border!important;
   }
@@ -56,14 +56,14 @@
   }
 }
 
-.react-select__menu {
+.css-15k3avv.react-select__menu {
   z-index: 2;
-  border-radius: 0 0 5px 5px!important;
-  margin-top: -.3rem!important;
+  border-radius: 0 0 5px 5px;
+  margin-top: -.3rem;
   background-color: $white;
-  border: $data-action--border!important;
-  border-top-width: 1px!important;
-  box-shadow: $menu-shadow!important;
+  border: $data-action--border;
+  border-top-width: 1px;
+  box-shadow: $menu-shadow;
   outline: none;
 
   .react-select__option {
