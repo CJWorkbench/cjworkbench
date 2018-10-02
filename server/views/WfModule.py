@@ -328,6 +328,52 @@ def wfmodule_value_counts(request, pk):
 
     return JsonResponse({'values': value_counts})
 
+N_ROWS_PER_TILE = 200
+N_COLUMNS_PER_TILE = 50
+
+@api_view(['GET'])
+def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
+    wf_module = _lookup_wf_module_for_read(pk, request)
+
+    if str(wf_module.last_relevant_delta_id) != delta_id:
+        return HttpResponseNotFound(
+            f'Requested delta {delta_id} but wf_module is '
+            f'at delta {wf_module.last_relevant_delta_id}'
+        )
+
+    if wf_module.status != 'ok':
+        return HttpResponseNotFound(
+            f'Requested wf_module has status "{wf_module.status}" but '
+            'we only render "ok" modules'
+        )
+
+    cached_result = wf_module.get_cached_render_result()
+
+    if not cached_result:
+        return HttpResponseNotFound(f'This module has no cached result')
+
+    if str(cached_result.delta_id) != delta_id:
+        return HttpResponseNotFound(
+            f'Requested delta {delta_id} but cached render result is '
+            f'at delta {cached_result.delta_id}'
+        )
+
+    # cbegin/cend: column indexes
+    cbegin = N_COLUMNS_PER_TILE * int(tile_column)
+    cend = N_COLUMNS_PER_TILE * (int(tile_column) + 1)
+
+    # TODO handle races in the following file reads....
+    pf = cached_result.parquet_file
+    df = pf.to_pandas(columns=cached_result.column_names[cbegin:cend])
+
+    rbegin = N_ROWS_PER_TILE * int(tile_row)
+    rend = N_ROWS_PER_TILE * (int(tile_row) + 1)
+
+    df = df.iloc[rbegin:rend]
+
+    json_string = df.to_json(orient='values', date_format='iso')
+
+    return HttpResponse(json_string, content_type='application/json')
 
 # Public access to wfmodule output. Basically just /render with different auth
 # and output format
