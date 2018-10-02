@@ -27,7 +27,7 @@ class MinioStorage(Storage):
             # hashed filenames. Logos and whatnot don't. So let's tell the
             # browser to cache for one day, to time-bound the damage when we
             # deploy a new version of our logo and users keep the old one.
-            'Cache-Control': 'public, max-age=86400',
+            #'Cache-Control': 'public, max-age=86400',
         }
 
         if (
