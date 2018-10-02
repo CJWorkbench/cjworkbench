@@ -37,6 +37,9 @@ class MinioStorage(Storage):
             data = gzip.compress(data)
             metadata['Content-Encoding'] = 'gzip'
 
+        print(repr(('minio_client.put_object', StaticFilesBucket, name,
+                    len(data), content_type, metadata)))
+
         minio_client.put_object(StaticFilesBucket, name, io.BytesIO(data),
                                 length=len(data), content_type=content_type,
                                 metadata=metadata)
