@@ -10,7 +10,7 @@ exports[`WorkflowListNavBar Renders correctly 1`] = `
     >
       <img
         className="logo"
-        src="/static/images/logo.svg"
+        src="undefinedimages/logo.svg"
       />
       <div
         className="logo-1"

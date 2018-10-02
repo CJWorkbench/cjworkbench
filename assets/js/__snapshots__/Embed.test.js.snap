@@ -21,7 +21,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
           href="/"
         >
           <img
-            src="/static/images/logo.png"
+            src="undefinedimages/logo.png"
             width="35"
           />
         </a>
@@ -131,7 +131,7 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       className="embed-footer-logo"
     >
       <img
-        src="/static/images/logo.png"
+        src="undefinedimages/logo.png"
         width="21"
       />
     </div>

@@ -215,7 +215,7 @@ export class WorkflowNavBar extends React.Component {
         {spinner}
         <nav className="navbar">
           <a href="/workflows/" className="logo-navbar">
-            <img className="image" src="/static/images/logo.svg"/>
+            <img className="image" src={`${window.STATIC_URL}images/logo.svg`}/>
           </a>
           <div className='title-metadata-stack'>
             <EditableWorkflowName

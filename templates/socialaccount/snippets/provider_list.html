@@ -1,24 +1,25 @@
 {% load socialaccount %}
+{% load static %}
 
 {% get_providers as socialaccount_providers %}
 
 {% for provider in socialaccount_providers %}
-{% if provider.id == "openid" %}
-{% for brand in provider.get_brands %}
-<li>
-  <a title="{{brand.name}}"
-     class="socialaccount_provider {{provider.id}} {{brand.id}}"
-     href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
-     >{{brand.name}}</a>
-</li>
-{% endfor %}
-{% endif %}
-<div class="socialLoginWrap">
-  <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
-    <div class="socialLoginButton t-d-gray d-flex align-items-center ">
-      <img src="/static/images/{{provider.name|slugify}}-small.png" width="25" class="mr-3"/>
-      <div title="{{provider.name}}" class="{{provider.id}}">Use {{provider.name}} account</div>
+    {% if provider.id == "openid" %}
+        {% for brand in provider.get_brands %}
+            <li>
+              <a title="{{brand.name}}"
+                 class="socialaccount_provider {{provider.id}} {{brand.id}}"
+                 href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
+                 >{{brand.name}}</a>
+            </li>
+        {% endfor %}
+    {% endif %}
+    <div class="socialLoginWrap">
+        <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+            <div class="socialLoginButton t-d-gray d-flex align-items-center ">
+                <img src="{% get_static_prefix %}images/{{provider.name|slugify}}-small.png" width="25" class="mr-3"/>
+                <div title="{{provider.name}}" class="{{provider.id}}">Use {{provider.name}} account</div>
+            </div>
+        </a>
     </div>
-  </a>
-</div>
 {% endfor %}

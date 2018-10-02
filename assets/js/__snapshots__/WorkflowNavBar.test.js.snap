@@ -32,7 +32,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
     >
       <img
         className="image"
-        src="/static/images/logo.svg"
+        src="undefinedimages/logo.svg"
       />
     </a>
     <div
@@ -365,7 +365,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
     >
       <img
         className="image"
-        src="/static/images/logo.svg"
+        src="undefinedimages/logo.svg"
       />
     </a>
     <div
@@ -693,7 +693,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
     >
       <img
         className="image"
-        src="/static/images/logo.svg"
+        src="undefinedimages/logo.svg"
       />
     </a>
     <div
@@ -837,7 +837,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
     >
       <img
         className="image"
-        src="/static/images/logo.svg"
+        src="undefinedimages/logo.svg"
       />
     </a>
     <div

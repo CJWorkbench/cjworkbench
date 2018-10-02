@@ -1,5 +1,6 @@
 {% load analytics_tags %}
 {% load render_bundle from webpack_loader %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,14 +8,15 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/app-icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/app-icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/app-icons/favicon-16x16.png">
-    <link rel="manifest" href="/static/images/app-icons/manifest.json">
-    <link rel="mask-icon" href="/static/images/app-icons/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="/static/images/app-icons/favicon.ico">
-    <meta name="msapplication-config" content="/static/images/app-icons/browserconfig.xml">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/app-icons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/app-icons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/app-icons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/app-icons/manifest.json' %}">
+    <link rel="mask-icon" href="{% static 'images/app-icons/safari-pinned-tab.svg' %}" color="#5bbad5">
+    <link rel="shortcut icon" href="{% static 'images/app-icons/favicon.ico' %}">
+    <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
     <meta name="theme-color" content="$white">
+    <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
 
     {% google_analytics_id as google_analytics_id_var %}
     {% if google_analytics_id_var %}
@@ -46,7 +48,7 @@
           
           <div class="col"></div>
           <div class="col6 login-bigbrand d-flex flex-row align-items-center">
-            <img src="/static/images/logo.svg" class="logo"/>
+            <img src="{% static 'images/logo.svg' %}" class="logo"/>
             <h1 className="login-bigbrand"><a href="http://workbenchdata.com">Workbench</a></h1>
           </div>
           <div class="col"></div>

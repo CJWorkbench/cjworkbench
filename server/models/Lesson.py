@@ -15,6 +15,14 @@ def _build_inner_html(el):
     close_tag_begin = outer_html.rindex('<')
     inner_html = outer_html[(open_tag_end + 1):close_tag_begin]
 
+    # HACK: lessons can have <img> tags, which are always relative. Make them
+    # point to staticfiles. This hack will bite us sometime, but [2018-10-02]
+    # things are hectic today and future pain costs less than today's pain.
+    #
+    # Of course, the _correct_ way to do this would be through the element tree
+    # -- which we already have. TODO rewrite to use the element tree.
+    inner_html = inner_html.replace('src="', 'src="' + settings.STATIC_URL)
+
     return inner_html
 
 

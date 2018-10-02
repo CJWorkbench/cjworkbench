@@ -1,7 +1,7 @@
 <header>
   <h1>II. Clean and standardize data</h1>
   <p>Clean a messy dataset and format it in order to build a chart series</p>
-  <img src="/static/images/lesson_banners/clean_standard_banner.svg">
+  <img src="images/lesson_banners/clean_standard_banner.svg">
 </header>
 <section>
   <h2>Overview</h2>
@@ -59,13 +59,13 @@
       data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const renames = JSON.parse(json).renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five groups.
       <figure>
-        <img alt="Inspect element" src="/static/images/clean_standardize_lesson/1_refine_row.png">
+        <img alt="Inspect element" src="images/clean_standardize_lesson/1_refine_row.png">
       </figure>
       <p class="instruction-detail">
         When you're done, the list should look similar to the following:
       </p>
       <figure>
-        <img alt="Inspect element" src="/static/images/clean_standardize_lesson/2_refine_result.png">
+        <img alt="Inspect element" src="images/clean_standardize_lesson/2_refine_result.png">
       </figure>
     </li>
     <li
@@ -81,7 +81,7 @@
   <p>To make it more legible, we must display it in a 'wide' format, commonly found in spreadsheets.</p>
   <p>In the 'wide' format, a variable is used as a 'Row variable', and another variable as the 'Column variable'. All remaining cells are populated with corresponding values.</p>
   <figure>
-    <img alt="Inspect element" src="/static/images/clean_standardize_lesson/3_reshape_long_wide.png">
+    <img alt="Inspect element" src="images/clean_standardize_lesson/3_reshape_long_wide.png">
   </figure>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">

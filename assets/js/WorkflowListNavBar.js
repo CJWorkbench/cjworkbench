@@ -30,7 +30,7 @@ export default class WorkflowListNavBar extends React.Component {
       <div>
         <nav className="navbar">
           <div className="d-flex align-items-center">
-            <img src="/static/images/logo.svg" className="logo"/>
+            <img src={`${window.STATIC_URL}images/logo.svg`} className="logo"/>
             <div className="logo-1">Workbench</div>
           </div>
           {links}

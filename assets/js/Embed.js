@@ -25,7 +25,7 @@ export default class Embed extends React.Component {
         </div>
         <div className="embed-footer">
           <div className="embed-footer-logo">
-            <img src="/static/images/logo.png" width="21" />
+            <img src={`${window.STATIC_URL}images/logo.png`} width="21" />
           </div>
           <div className="embed-footer-meta">
             <h1>WORKBENCH</h1>
@@ -51,7 +51,7 @@ export default class Embed extends React.Component {
           <div className="metadata-stack">
             <div className="embed-footer-logo">
               <a href="/">
-                <img src="/static/images/logo.png" width="35" />
+                <img src={`${window.STATIC_URL}images/logo.png`} width="35" />
               </a>
             </div>
             <div className="embed-footer-meta">
