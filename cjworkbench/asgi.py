@@ -7,8 +7,10 @@ Used for websockets
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cjworkbench.settings")
 
-#import django
-#django.setup()
+from django.conf import settings
+if not settings.I_AM_TESTING:
+    import django
+    django.setup()
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
