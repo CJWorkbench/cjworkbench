@@ -254,6 +254,8 @@ STATICFILES_STORAGE = 'server.storage.minio_storage_for_collectstatic.MinioStora
 # In dev mode, we'll serve local files. But in prod we can overwrite STATIC_URL
 # to serve from S3
 STATIC_URL = os.environ.get('STATIC_URL', '/static/')
+if STATIC_URL != '/static/':
+    print(f'Serving static files from {STATIC_URL}')
 
 # Webpack loads all our js/css into handy bundles
 WEBPACK_LOADER = {
