@@ -22,7 +22,13 @@ class MinioStorage(Storage):
         content_type, _ = mimetypes.guess_type(name, strict=False)
         content_type = content_type or "application/octet-stream"
 
-        metadata = {}
+        metadata = {
+            # These are static files, but only Webpack-generated files have
+            # hashed filenames. Logos and whatnot don't. So let's tell the
+            # browser to cache for one day, to time-bound the damage when we
+            # deploy a new version of our logo and users keep the old one.
+            'Cache-Control': 'public, max-age=86400',
+        }
 
         if (
             content_type.startswith('text')
