@@ -98,6 +98,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: MINIO_BUCKET_SUFFIX
               value: '.workbenchdata.com'
+            - name: MINIO_STATIC_URL_PATTERN
+              value: 'https://storage.googleapis.com/{MINIO_BUCKET_PREFIX}-static.workbenchdata.com/'
           volumeMounts:
             - mountPath: /app/importedmodules
               name: importedmodules-pv

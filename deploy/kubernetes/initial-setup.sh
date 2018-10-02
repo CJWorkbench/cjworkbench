@@ -60,6 +60,11 @@ gsutil mb gs://production-user-files.workbenchdata.com
 gsutil mb gs://production-static.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-user-files.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-static.workbenchdata.com
+gsutil acl set public-read gs://production-static.workbenchdata.com
+gcloud dns record-sets transaction start --zone=workbenchdata-com
+gcloud dns record-sets transaction add --zone workbenchdata-com --name production-static.workbenchdata.com. --ttl 7200 --type CNAME c.storage.googleapis.com.
+gcloud dns record-sets transaction execute --zone workbenchdata-com
+
 gcloud iam service-accounts keys create application_default_credentials.json \
   --iam-account production-minio@cj-workbench.iam.gserviceaccount.com
 kubectl -n production create secret generic minio-gcs-credentials \
