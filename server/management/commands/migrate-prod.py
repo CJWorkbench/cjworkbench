@@ -55,4 +55,9 @@ class Command(BaseCommand):
         # would be too slow/complex-to-set-up.
         if not settings.DEBUG:
             management.call_command('collectstatic', '--no-input')
+
+        # ICK ugly hack. TODO there must be a better place to make uploaded
+        # files readable 
+        # for integration tests....
+        if settings.MINIO_BUCKET_PREFIX == 'integrationtest':
             minio_client.set_bucket_policy(StaticFilesBucket, BUCKET_POLICY)
