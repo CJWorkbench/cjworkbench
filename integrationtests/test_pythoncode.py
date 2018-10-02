@@ -9,7 +9,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
 
         # Empty module stack
         b.wait_for_element('.module-stack', wait=True)
-        self.add_wf_module('Python editor')
+        self.add_wf_module('Python')
 
     def _execute_code(self, code):
         """Sets code in the in-browser ACE editor."""
