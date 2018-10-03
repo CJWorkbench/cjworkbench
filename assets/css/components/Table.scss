@@ -9,7 +9,7 @@
   border-left: 2px solid transparent;
 
   &.module-ok {
-    border-color: $brand-workspace--medium;
+    border-color: $brand-workspace--medium!important;
   }
   &.module-error {
     border-color: $module-color-error;

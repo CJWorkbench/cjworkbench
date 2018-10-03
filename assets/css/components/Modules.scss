@@ -136,6 +136,13 @@
       margin-left: 2px;
       height: 3px;
       width: $module-margin-right;
+      background-color: transparent;
+    }
+
+    &.status-ok {
+      .module-card::after {
+        background-color: $brand-workspace--medium;
+      }
     }
 
     // Hide all lines after the selected module
@@ -152,7 +159,7 @@
   &.status-busy {
     @include module-colors($module-color-busy, $brand-workspace, $module-color-busy);
     .module-card::after {
-      background-color: $brand-orange;
+      background-color: transparent;
     }
   }
 
