@@ -326,11 +326,14 @@ select.form-control {
   background: none;
 }
 
+// notes above module
 textarea[name="notes"], .editable-notes-read-only {
   @extend %content-3;
+  position: relative;
   border: none;
   outline: none;
   width: 25rem;
+  left:1rem;
   min-height: 3rem;
   resize: none;
   @extend %font-nunito-regular;
