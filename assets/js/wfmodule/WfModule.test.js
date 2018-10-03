@@ -38,7 +38,8 @@ describe('WfModule, not read-only mode', () => {
     changeParam: jest.fn(),
     removeModule: jest.fn(),
     inputWfModule: { id: 123, last_relevant_delta_id: 707 },
-    selected: true,
+    isSelected: true,
+    isAfterSelected: false,
     api: mockApi,
     index: 2,
     onDragStart: jest.fn(),
@@ -358,7 +359,8 @@ describe('WfModule, not read-only mode', () => {
         isZenModeAllowed={false}
         index={1}
         wfModule={{ id: 20, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
-        selected={true}
+        isSelected={true}
+        isAfterSelected={false}
         onDragStart={jest.fn()}
         onDragEnd={jest.fn()}
         setZenMode={jest.fn()}

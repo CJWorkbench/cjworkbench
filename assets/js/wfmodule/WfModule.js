@@ -41,7 +41,8 @@ export class WfModule extends React.PureComponent {
       })), // or null
     }), // or null
     module: PropTypes.object,
-    selected: PropTypes.bool,
+    isSelected: PropTypes.bool.isRequired,
+    isAfterSelected: PropTypes.bool.isRequired,
     changeParam: PropTypes.func, // func(paramId, { value: newVal }) => undefined -- icky, prefer onChange
     removeModule: PropTypes.func,
     api: PropTypes.object.isRequired,
@@ -436,7 +437,8 @@ export class WfModule extends React.PureComponent {
     let className = 'wf-module'
     className += wfModule.status ? ` status-${wfModule.status}` : ''
     className += this.state.isDragging ? ' dragging' : ''
-    className += this.props.selected ? ' selected' : ''
+    className += this.props.isSelected ? ' selected' : ''
+    className += this.props.isAfterSelected ? ' after-selected' : ''
     if (this.props.isLessonHighlight) className += ' lesson-highlight'
     if (this.props.isZenMode) className += ' zen-mode'
 
@@ -532,6 +534,7 @@ function mapStateToProps (state, ownProps) {
   const { index } = ownProps
   const module = ownProps.wfModule.module_version ? state.modules[String(ownProps.wfModule.module_version.module)] : null
   const moduleName = module ? module.name : null
+
   return {
     module,
     moduleName,
