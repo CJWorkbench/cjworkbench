@@ -189,7 +189,7 @@ class WorkbenchAPI {
   }
 
   duplicateWorkflow(workflowId) {
-    return this._fetch(`/api/workflows/${workflowId}/duplicate`)
+    return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
   currentUser() {

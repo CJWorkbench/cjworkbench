@@ -1,12 +1,13 @@
 from functools import lru_cache
 from asgiref.sync import async_to_sync
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
-from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Q
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
+from django.views import View
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -20,6 +21,9 @@ from server.serializers import WorkflowSerializer, ModuleSerializer, \
         WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 import server.utils
 from server.versions import WorkflowUndo, WorkflowRedo
+from .auth import lookup_workflow_for_read, lookup_workflow_for_write, \
+        loads_workflow_for_read, loads_workflow_for_write, \
+        lookup_workflow_for_owner
 
 # This id_name->ids mapping is used by the client to execute the ADD STEP from table actions
 # We cannot nix these, because modules without a UI in the stack (e.g. reorder) do not appear
@@ -150,40 +154,9 @@ def visible_modules(request):
         return Module.objects.exclude(id_name='pythoncode').all()
 
 
-def _lookup_workflow_for_read(pk: int, request: HttpRequest) -> Workflow:
-    """
-    Find a Workflow based on its id.
-
-    Raise Http404 if the Workflow does not exist and PermissionDenied if the
-    workflow _does_ exist but the user does not have read access.
-    """
-    workflow = get_object_or_404(Workflow, pk=pk)
-
-    if not workflow.request_authorized_read(request):
-        raise PermissionDenied()
-
-    return workflow
-
-
-def _lookup_workflow_for_write(pk: int, request: HttpRequest) -> Workflow:
-    """
-    Find a Workflow based on its id.
-
-    Raise Http404 if the Workflow does not exist and PermissionDenied if the
-    workflow _does_ exist but the user does not have write access.
-    """
-    workflow = get_object_or_404(Workflow, pk=pk)
-
-    if not workflow.request_authorized_write(request):
-        raise PermissionDenied()
-
-    return workflow
-
-
 # no login_required as logged out users can view example/public workflows
-def render_workflow(request, pk=None):
-    workflow = _lookup_workflow_for_read(pk, request)
-
+@loads_workflow_for_read
+def render_workflow(request: HttpRequest, workflow: Workflow):
     if workflow.lesson and workflow.owner == request.user:
         return redirect(workflow.lesson)
     else:
@@ -202,9 +175,9 @@ def render_workflow(request, pk=None):
 # Or reorder modules
 @api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
-def workflow_detail(request, pk, format=None):
+def workflow_detail(request, workflow_id, format=None):
     if request.method == 'GET':
-        workflow = _lookup_workflow_for_read(pk, request)
+        workflow = lookup_workflow_for_read(workflow_id, request)
         with workflow.cooperative_lock():
             data = make_init_state(request, workflow)
             return Response({
@@ -214,19 +187,19 @@ def workflow_detail(request, pk, format=None):
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
-        workflow = _lookup_workflow_for_write(pk, request)
+        workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:
             async_to_sync(ReorderModulesCommand.create)(workflow, request.data)
         except ValueError as e:
             # Caused by bad id or order keys not in range 0..n-1
             # (though they don't need to be sorted)
-            return JsonResponse({'message': str(e), 'status_code': 400},
-                                status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': str(e), 'status_code': 400},
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'POST':
-        workflow = _lookup_workflow_for_write(pk, request)
+        workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:
             valid_fields = {'newName', 'public', 'selected_wf_module'}
@@ -255,20 +228,15 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        workflow = _lookup_workflow_for_write(pk, request)
+        workflow = lookup_workflow_for_owner(workflow_id, request)
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # Invoked when user adds a module
 @api_view(['PUT'])
-@renderer_classes((JSONRenderer,))
-def workflow_addmodule(request, pk, format=None):
-    workflow = get_object_or_404(Workflow, pk=pk)
-
-    if not workflow.request_authorized_write(request):
-        return HttpResponseForbidden()
-
+@loads_workflow_for_write
+def workflow_addmodule(request: HttpRequest, workflow: Workflow):
     module_id = int(request.data['moduleId'])
     index = int(request.data['index'])
     try:
@@ -308,27 +276,22 @@ def workflow_addmodule(request, pk, format=None):
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
-@api_view(['GET'])
-@login_required
-@renderer_classes((JSONRenderer,))
-def workflow_duplicate(request, pk):
-    workflow = _lookup_workflow_for_read(pk, request)
+class Duplicate(View):
+    @method_decorator(loads_workflow_for_read)
+    def post(self, request: HttpRequest, workflow: Workflow):
+        workflow2 = workflow.duplicate(request.user)
+        serializer = WorkflowSerializerLite(workflow2)
 
-    workflow2 = workflow.duplicate(request.user)
-    serializer = WorkflowSerializerLite(workflow2)
+        server.utils.log_user_event(request, 'Duplicate Workflow',
+                                    {'name': workflow.name})
 
-    server.utils.log_user_event(request, 'Duplicate Workflow',
-                                {'name': workflow.name})
-
-    return Response(serializer.data, status.HTTP_201_CREATED)
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # Undo or redo
 @api_view(['POST'])
-@renderer_classes((JSONRenderer,))
-def workflow_undo_redo(request, pk, action, format=None):
-    workflow = _lookup_workflow_for_write(pk, request)
-
+@loads_workflow_for_write
+def workflow_undo_redo(request: HttpRequest, workflow: Workflow, action):
     if action == 'undo':
         async_to_sync(WorkflowUndo)(workflow)
     elif action == 'redo':
