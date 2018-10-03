@@ -22,6 +22,10 @@
     }
   }
 
+  .after-selected h3{
+    color:$module-action!important;
+  }
+
   .add-module-search {
     width: $module-width;
     margin: 0 $module-margin-right 0 $module-margin-left;
