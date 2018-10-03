@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, \
-        Module, ModuleVersion, StoredObject
+from server.models import AclEntry, Workflow, WfModule, ParameterVal, \
+        ParameterSpec, Module, ModuleVersion, StoredObject
 from server.utils import seconds_to_count_and_units
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
@@ -10,6 +10,12 @@ from cjworkbench.settings import KB_ROOT_URL
 import re
 
 User = get_user_model()
+
+
+class AclEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AclEntry
+        fields = ('workflow_id', 'email', 'created_at', 'can_edit')
 
 
 class StoredObjectSerializer(serializers.ModelSerializer):

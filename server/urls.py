@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
 from .views.user import current_user
-from .views import uploads
+from .views import acl, uploads, workflows
 from .views.UploadedFileView import get_uploadedfile
 
 urlpatterns = [
@@ -24,12 +24,17 @@ urlpatterns = [
 
     # workflows
     # TODO: Name the rest of the urls or implement some kind of naming scheme
-    url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow, name="workflow"),
-    url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
+    url(r'^workflows/(?P<workflow_id>[0-9]+)/$', views.render_workflow, name="workflow"),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/?$', views.workflow_detail),
 
-    url(r'^api/workflows/(?P<pk>[0-9]+)/addmodule/?$', views.workflow_addmodule),
-    url(r'^api/workflows/(?P<pk>[0-9]+)/duplicate/?$', views.workflow_duplicate),
-    url(r'^api/workflows/(?P<pk>[0-9]+)/(?P<action>(undo|redo))/?$', views.workflow_undo_redo),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/addmodule/?$', views.workflow_addmodule),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$',
+        workflows.Duplicate.as_view()),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/(?P<action>(undo|redo))/?$', views.workflow_undo_redo),
+
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl$', views.acl.List.as_view()),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$',
+        views.acl.Entry.as_view()),
 
     # modules
     url(r'^api/modules/?$', views.module_list),

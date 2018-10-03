@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from .AclEntry import AclEntry
 from .CachedRenderResult import CachedRenderResult
 from .Workflow import Workflow
 from .Lesson import Lesson

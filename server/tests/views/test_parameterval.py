@@ -49,7 +49,7 @@ class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
         # This test _actually_ tests Workflow.get. TODO move to test_workflow
         request = self._build_get('/api/workflows/%d/' % self.workflowID,
                                   user=self.user)
-        response = workflow_detail(request, pk=self.workflowID)
+        response = workflow_detail(request, workflow_id=self.workflowID)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['workflow']['name'], 'Test Workflow')
 
