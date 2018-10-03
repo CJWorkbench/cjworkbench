@@ -171,7 +171,6 @@ describe('Reducer actions', () => {
     expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
     const state = store.getState()
     expect(state.workflow.wf_modules).toEqual([ 10, 20, 40, 30 ])
-    expect(state.wfModules['40']).toEqual({ id: 40, foo: 'bar' })
     expect(state.selected_wf_module).toEqual(2)
   })
 

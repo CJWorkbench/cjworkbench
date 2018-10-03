@@ -1,6 +1,5 @@
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
-from django.test import TestCase
 from server.models import WfModule, ModuleVersion, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
@@ -104,7 +103,7 @@ class ReorderModulesCommandTests(DbTestCase):
 
 @patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
-class ChangeWorkflowTitleCommandTests(TestCase):
+class ChangeWorkflowTitleCommandTests(DbTestCase):
     def setUp(self):
         self.workflow = create_testdata_workflow()
 
@@ -118,12 +117,18 @@ class ChangeWorkflowTitleCommandTests(TestCase):
         # Change back to second title, see if it saved
         cmd = async_to_sync(ChangeWorkflowTitleCommand.create)(self.workflow,
                                                                secondTitle)
-        self.assertEqual(self.workflow.name, secondTitle)
+        self.assertEqual(self.workflow.name, secondTitle)  # test var change
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.name, secondTitle)  # test DB change
 
         # undo
         async_to_sync(cmd.backward)()
-        self.assertEqual(self.workflow.name, firstTitle)
+        self.assertEqual(self.workflow.name, firstTitle)  # test var change
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.name, firstTitle)  # test DB change
 
         # redo
         async_to_sync(cmd.forward)()
+        self.assertEqual(self.workflow.name, secondTitle)
+        self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.name, secondTitle)

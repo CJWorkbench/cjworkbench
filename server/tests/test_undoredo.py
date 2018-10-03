@@ -15,6 +15,8 @@ async def async_noop(*args, **kwargs):
 @patch('server.models.Delta.ws_notify', async_noop)
 class UndoRedoTests(DbTestCase):
     def setUp(self):
+        super().setUp()
+
         # Define two types of modules we are going to use
         self.csv = load_module_version('pastecsv')
         self.workflow = add_new_workflow('My Undoable Workflow')

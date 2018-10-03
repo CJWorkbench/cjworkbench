@@ -354,9 +354,9 @@ registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
     workflow: { ...state.workflow,
       wf_modules: wfModuleIds
     },
-    wfModules: { ...state.wfModules,
-      [String(wfModule.id)]: wfModule
-    },
+    // Do _not_ overwrite the wfModule itself. We receive the wfModule over a
+    // separate WebSockets message, so we don't know whether that message will
+    // arrive before or after this one.
     selected_wf_module: index
   }
 })

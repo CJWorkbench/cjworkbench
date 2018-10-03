@@ -14,35 +14,30 @@ from server import websockets
 
 async def WorkflowUndo(workflow):
     """Run workflow.last_delta, backwards."""
-    with workflow.cooperative_lock():
-        delta = workflow.last_delta
+    # TODO avoid race undoing the same delta twice (or make it a no-op)
+    delta = workflow.last_delta
 
-        # Undo, if not at the very beginning of undo chain
-        if delta:
-            await delta.backward()
-            # Only update last_delta_id: other columns may have been edited in
-            # delta.backward().
-            workflow.last_delta = delta.prev_delta
-            workflow.save(update_fields=['last_delta_id'])
+    # Undo, if not at the very beginning of undo chain
+    if delta:
+        # Make sure delta.backward() edits the passed `workflow` argument.
+        delta.workflow = workflow
+        await delta.backward()  # uses cooperative lock
 
 
 async def WorkflowRedo(workflow):
     """Run workflow.last_delta.next_delta, forward."""
-    with workflow.cooperative_lock():
-        # if we are at very beginning of delta chain, find first delta from db
-        if workflow.last_delta:
-            next_delta = workflow.last_delta.next_delta
-        else:
-            next_delta = Delta.objects.filter(workflow=workflow) \
-                    .order_by('datetime').first()
+    # TODO avoid race undoing the same delta twice (or make it a no-op)
+    if workflow.last_delta:
+        delta = workflow.last_delta.next_delta
+    else:
+        # we are at very beginning of delta chain; find first delta
+        delta = workflow.deltas.filter(prev_delta__isnull=True).first()
 
-        # Redo, if not at very end of undo chain
-        if next_delta:
-            await next_delta.forward()
-            # Only update last_delta_id: other columns may have been edited in
-            # delta.backward().
-            workflow.last_delta = next_delta
-            workflow.save(update_fields=['last_delta_id'])
+    # Redo, if not at very end of undo chain
+    if delta:
+        # Make sure delta.forward() edits the passed `workflow` argument.
+        delta.workflow = workflow
+        await delta.forward()
 
 
 async def save_result_if_changed(

@@ -5,6 +5,7 @@
 import asyncio
 import json
 from typing import Any, Dict
+from channels.db import database_sync_to_async
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 import django.utils
@@ -46,69 +47,90 @@ class Delta(PolymorphicModel):
     datetime = models.DateTimeField('datetime',
                                     default=django.utils.timezone.now)
 
-    async def forward(self):
-        """Call forward_impl() with workflow.cooperative_lock()."""
+    @database_sync_to_async
+    def _call_forward_and_load_ws_data(self):
         with self.workflow.cooperative_lock():
             self.forward_impl()
-        await self.ws_notify()
+
+            # Point workflow to us
+            self.workflow.last_delta = self
+            self.workflow.save(update_fields=['last_delta_id'])
+
+            return self.load_ws_data()
+
+    @database_sync_to_async
+    def _call_backward_and_load_ws_data(self):
+        with self.workflow.cooperative_lock():
+            self.backward_impl()
+
+            # Point workflow to previous delta
+            # Only update last_delta_id: other columns may have been edited in
+            # backward_impl().
+            self.workflow.last_delta = self.prev_delta
+            self.workflow.save(update_fields=['last_delta_id'])
+
+            return self.load_ws_data()
+
+    async def forward(self):
+        """Call forward_impl() with workflow.cooperative_lock()."""
+        ws_data = await self._call_forward_and_load_ws_data()
+        await self.ws_notify(ws_data)
         await self.schedule_execute()
 
     async def backward(self):
         """Call backward_impl() with workflow.cooperative_lock()."""
-        with self.workflow.cooperative_lock():
-            self.backward_impl()
-        await self.ws_notify()
+        ws_data = await self._call_backward_and_load_ws_data()
+        await self.ws_notify(ws_data)
         await self.schedule_execute()
 
-    async def ws_notify(self):
+    async def ws_notify(self, ws_data):
+        await websockets.ws_client_send_delta_async(self.workflow_id, ws_data)
+
+    def load_ws_data(self):
         """
         Notify WebSocket clients that we just undid or redid.
 
         This default implementation sends a 'delta' command. It will always
         include a 'set-workflow' property; it may include a 'set-wf-module'
         command and may include a 'clear-wf-module' command.
+
+        This must be called within the same Workflow.cooperative_lock() that
+        triggered the change in the first place.
         """
         data = {}
 
-        with self.workflow.cooperative_lock():
-            workflow_data = WorkflowSerializer(self.workflow).data
-            # Remove the data we didn't generate correctly because we had no
-            # HTTP request.
-            del workflow_data['is_anonymous']
-            del workflow_data['owner_name']
-            del workflow_data['read_only']
-            data['updateWorkflow'] = _prepare_json(workflow_data)
-            data['updateWfModules'] = {}
+        workflow_data = WorkflowSerializer(self.workflow).data
+        # Remove the data we didn't generate correctly because we had no
+        # HTTP request.
+        del workflow_data['is_anonymous']
+        del workflow_data['owner_name']
+        del workflow_data['read_only']
+        data['updateWorkflow'] = _prepare_json(workflow_data)
+        data['updateWfModules'] = {}
 
-            if hasattr(self, '_changed_wf_module_versions'):
-                for id, delta_id in self._changed_wf_module_versions.items():
-                    data['updateWfModules'][str(id)] = {
-                        'last_relevant_delta_id': delta_id,
-                        'error_msg': '',
-                        # Tell clients this WfModule is "busy". Don't actually
-                        # _set_ the busy flag: the busy flag is set exclusively
-                        # by "fetch" (`module_dispatch_event`) and we can't
-                        # override that safely. We don't need another busy flag
-                        # for renders: this transient status is enough.
-                        'status': 'busy',
-                        'quick_fixes': [],
-                        'output_columns': None
-                    }
+        if hasattr(self, '_changed_wf_module_versions'):
+            for id, delta_id in self._changed_wf_module_versions.items():
+                data['updateWfModules'][str(id)] = {
+                    'last_relevant_delta_id': delta_id,
+                    'error_msg': '',
+                    'status': 'waiting',
+                    'quick_fixes': [],
+                    'output_columns': None
+                }
 
-            if hasattr(self, 'wf_module'):
-                self.wf_module.refresh_from_db()
-                if self.wf_module.workflow_id:
-                    wf_module_data = WfModuleSerializer(self.wf_module).data
-                    wf_module_data['status'] = 'busy'  # rationale above
+        if hasattr(self, 'wf_module'):
+            self.wf_module.refresh_from_db()
+            if self.wf_module.workflow_id:
+                wf_module_data = WfModuleSerializer(self.wf_module).data
 
-                    data['updateWfModules'][str(self.wf_module_id)] = \
-                        _prepare_json(wf_module_data)
-                else:
-                    # When we did or undid this command, we removed the
-                    # WfModule from the Workflow.
-                    data['clearWfModuleIds'] = [self.wf_module_id]
+                data['updateWfModules'][str(self.wf_module_id)] = \
+                    _prepare_json(wf_module_data)
+            else:
+                # When we did or undid this command, we removed the
+                # WfModule from the Workflow.
+                data['clearWfModuleIds'] = [self.wf_module_id]
 
-        await websockets.ws_client_send_delta_async(self.workflow_id, data)
+        return data
 
     async def schedule_execute(self) -> None:
         import server.execute
@@ -116,8 +138,8 @@ class Delta(PolymorphicModel):
         asyncio.ensure_future(coro)
 
     @staticmethod
-    async def create_impl(klass, **kwargs) -> None:
-        """Create the given Delta and run .forward(), in a Workflow.cooperative_lock().
+    async def create_impl(klass, *args, **kwargs) -> None:
+        """Create the given Delta and run .forward().
 
         Keyword arguments vary by klass, but `workflow` is always required.
 
@@ -130,16 +152,39 @@ class Delta(PolymorphicModel):
             # now delta has been applied and committed to the database, and
             # websockets users have been notified.
         """
-        workflow = kwargs['workflow']
-        with workflow.cooperative_lock():
-            delta = klass.objects.create(**kwargs)
-            await delta.forward()
+
+        delta, ws_data = await Delta._first_forward_and_save_returning_ws_data(
+            klass,
+            *args,
+            **kwargs
+        )
+        await delta.ws_notify(ws_data)
+        await delta.schedule_execute()
 
         return delta
 
+    @staticmethod
+    @database_sync_to_async
+    def _first_forward_and_save_returning_ws_data(klass, *args, **kwargs):
+        """
+        Create and execute command, returning WebSockets data.
+
+        All this, in a cooperative lock.
+        """
+        workflow = kwargs['workflow']
+        with workflow.cooperative_lock():
+            delta = klass.objects.create(*args, **kwargs)
+            delta.forward_impl()
+
+            # Point workflow to us
+            workflow.last_delta = delta
+            workflow.save(update_fields=['last_delta_id'])
+
+            return (delta, delta.load_ws_data())
+
     def save(self, *args, **kwargs):
         # We only get here from create_impl(), forward_impl() and
-        # backward_impl(). So we already hold self.workflow.cooperative_lock().
+        # backward_impl(). Each guarantees a cooperative_lock().
         if not self.pk:
             # On very first save, add this Delta to the linked list
             # The workflow lock is important here: we need to update three
@@ -157,11 +202,7 @@ class Delta(PolymorphicModel):
             super(Delta, self).save(*args, **kwargs)
             if last_delta:
                 last_delta.next_delta = self  # after save: we need our new pk
-                last_delta.save()
-
-            # Point workflow to us
-            self.workflow.last_delta = self
-            self.workflow.save()
+                last_delta.save(update_fields=['next_delta_id'])
         else:
             # we're already in the linked list, just save
             super(Delta, self).save(*args, **kwargs)
