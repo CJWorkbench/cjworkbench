@@ -1,7 +1,7 @@
 from integrationtests.lessons import LessonTest
 import time
 
-DataUrl = 'https://app.workbenchdata.com/static/data/affordable_housing_1.csv'
+DataUrl = 'http://production-static.workbenchdata.com/data/affordable_housing_1.csv'
 
 
 class TestLesson(LessonTest):

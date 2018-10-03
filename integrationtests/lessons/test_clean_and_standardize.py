@@ -1,6 +1,6 @@
 from integrationtests.lessons import LessonTest
 
-DataUrl = 'https://app.workbenchdata.com/static/data/population_dirty_data.csv'
+DataUrl = 'http://production-static.workbenchdata.com/data/population_dirty_data.csv'
 
 
 class TestLesson(LessonTest):
