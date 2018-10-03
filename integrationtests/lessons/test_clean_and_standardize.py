@@ -25,9 +25,9 @@ class TestLesson(LessonTest):
                          wait=True)
 
         self.import_module('dropna')
-        #self.import_module('linechart')
+        self.import_module('linechart')
         self.import_module('nulldropper')
-        #self.import_module('reshape')
+        self.import_module('reshape')
 
         # 1. Introduction
         self.expect_highlight_next()
