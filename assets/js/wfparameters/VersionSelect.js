@@ -9,7 +9,7 @@ import UpdateFrequencySelect from './UpdateFrequencySelect'
 export default class VersionSelect extends React.PureComponent {
   static propTypes = {
     wfModuleId: PropTypes.number.isRequired,
-    wfModuleStatus: PropTypes.oneOf(['ready', 'busy', 'error']).isRequired,
+    wfModuleStatus: PropTypes.oneOf(['ok', 'busy', 'error', 'waiting', 'unreachable']).isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired, // onSubmit() => undefined
     name: PropTypes.string.isRequired // e.g., "Update"
@@ -51,7 +51,7 @@ export default class VersionSelect extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, isReadOnly, onSubmit, name, wfModuleStatus } = this.props
+    const { wfModuleId, isReadOnly, onSubmit, name } = this.props
 
     return (
       <React.Fragment>
