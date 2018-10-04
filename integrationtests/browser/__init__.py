@@ -307,15 +307,20 @@ class Browser:
         return self.page.find(*selector, **kwargs).all_text
 
     @contextmanager
-    def scope(self, selector: str) -> None:
+    def scope(self, *selector, **kwargs) -> None:
         """Within the given block, scopes all selectors within 'selector'.
 
         Example:
 
             with browser.scope('#root'):
                 browser.assert_element('h2')
+
+        Keyword arguments:
+        wait -- seconds to poll (default 0)
+        text -- text the element must contain
         """
-        with self.page.scope(selector):
+        self._capybarize_kwargs(kwargs)
+        with self.page.scope(*selector, **kwargs):
             yield
 
     @contextmanager
