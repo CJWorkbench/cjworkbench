@@ -269,21 +269,16 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
-                        onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          public
-                        </span>
+                        public
                       </button>
                     </li>
                   </ul>
@@ -464,21 +459,16 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
-                        onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          private
-                        </span>
+                        private
                       </button>
                     </li>
                   </ul>
@@ -659,21 +649,16 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
-                        onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          public
-                        </span>
+                        public
                       </button>
                     </li>
                   </ul>
@@ -854,21 +839,16 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
-                        onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          private
-                        </span>
+                        private
                       </button>
                     </li>
                   </ul>
