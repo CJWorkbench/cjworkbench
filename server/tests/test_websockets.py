@@ -7,8 +7,8 @@ from django.contrib.auth.models import AnonymousUser
 from server.models import Workflow
 from server.websockets import ws_client_rerender_workflow_async, \
         ws_client_wf_module_status_async
-from server.tests.utils import DbTestCase, clear_db, add_new_workflow, \
-        add_new_module_version, add_new_wf_module, create_test_user
+from server.tests.utils import DbTestCase, clear_db, add_new_module_version, \
+        add_new_wf_module, create_test_user
 
 
 def async_test(f):
@@ -90,7 +90,8 @@ class ChannelTests(DbTestCase):
 
         self.user = create_test_user(username='usual',
                                      email='usual@example.org')
-        self.workflow = add_new_workflow('Workflow 1')
+        self.workflow = Workflow.objects.create(name='Workflow 1',
+                                                owner=self.user)
         self.wf_id = self.workflow.id
         self.module = add_new_module_version('Module')
         self.wf_module = add_new_wf_module(self.workflow, self.module)
@@ -113,8 +114,8 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_deny_other_users_workflow(self, communicate):
-        other_workflow = add_new_workflow(
-                'Workflow 2',
+        other_workflow = Workflow.objects.create(
+                name='Workflow 2',
                 owner=create_test_user('other', 'other@example.org')
         )
         comm = communicate(self.application,

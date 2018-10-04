@@ -11,7 +11,7 @@ from django.db import models
 import django.utils
 from polymorphic.models import PolymorphicModel
 from server import websockets
-from server.serializers import WorkflowSerializer, WfModuleSerializer
+from server.serializers import WfModuleSerializer
 
 
 def _prepare_json(data: Any) -> Any:
@@ -97,16 +97,18 @@ class Delta(PolymorphicModel):
         This must be called within the same Workflow.cooperative_lock() that
         triggered the change in the first place.
         """
-        data = {}
-
-        workflow_data = WorkflowSerializer(self.workflow).data
-        # Remove the data we didn't generate correctly because we had no
-        # HTTP request.
-        del workflow_data['is_anonymous']
-        del workflow_data['owner_name']
-        del workflow_data['read_only']
-        data['updateWorkflow'] = _prepare_json(workflow_data)
-        data['updateWfModules'] = {}
+        workflow = self.workflow
+        data = {
+            'updateWorkflow': {
+                'name': workflow.name,
+                'revision': workflow.revision(),
+                'wf_modules': list(workflow.wf_modules.values_list('id',
+                                                                   flat=True)),
+                'public': workflow.public,
+                'last_update': workflow.last_update().isoformat(),
+            },
+            'updateWfModules': {}
+        }
 
         if hasattr(self, '_changed_wf_module_versions'):
             for id, delta_id in self._changed_wf_module_versions.items():

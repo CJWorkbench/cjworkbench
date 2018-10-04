@@ -117,7 +117,8 @@ def workflow_list(request, format=None):
             name='New Workflow',
             owner=request.user
         )
-        serializer = WorkflowSerializerLite(workflow)
+        serializer = WorkflowSerializerLite(workflow,
+                                            context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -281,7 +282,8 @@ class Duplicate(View):
     @method_decorator(loads_workflow_for_read)
     def post(self, request: HttpRequest, workflow: Workflow):
         workflow2 = workflow.duplicate(request.user)
-        serializer = WorkflowSerializerLite(workflow2)
+        serializer = WorkflowSerializerLite(workflow2,
+                                            context={'request': request})
 
         server.utils.log_user_event(request, 'Duplicate Workflow',
                                     {'name': workflow.name})

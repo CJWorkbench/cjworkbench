@@ -106,6 +106,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.data[0]['id'], self.workflow2.id)
         self.assertEqual(response.data[0]['public'], self.workflow1.public)
         self.assertEqual(response.data[0]['read_only'], False)  # user is owner
+        self.assertEqual(response.data[0]['is_owner'], True)  # user is owner
         self.assertIsNotNone(response.data[0]['last_update'])
         self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
 
@@ -153,6 +154,7 @@ class WorkflowViewTests(LoggedInTestCase):
     # This is the HTTP response, as opposed to the API
     def test_workflow_view(self):
         # View own non-public workflow
+        self.client.force_login(self.user)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
