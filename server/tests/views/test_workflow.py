@@ -309,21 +309,6 @@ class WorkflowViewTests(LoggedInTestCase):
         response = workflow_detail(request, workflow_id=self.other_workflow_private.id)
         self.assertEqual(response.status_code, 403)
 
-    def test_email_leakage(self):  # TODO nix this feature
-        # We user email as display name if the user has not set first,last
-        # But don't ever give this out for a public workflow, either through page or API
-        request = self._build_get('/workflows/%d/' % self.other_workflow_public.id,
-                                  user=None)
-        response = workflow_detail(request, workflow_id=self.other_workflow_public.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertNotContains(response, self.otheruser.email)
-
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
-                                  user=self.user)
-        response = workflow_detail(request, workflow_id=self.other_workflow_public.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertNotContains(response, self.otheruser.email)
-
     # --- Writing to workflows ---
     def test_workflow_addmodule_put(self):
         pk_workflow = Workflow.objects.get(name='Workflow 1').id

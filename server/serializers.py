@@ -4,8 +4,7 @@ from server.models import AclEntry, Workflow, WfModule, ParameterVal, \
 from server.utils import seconds_to_count_and_units
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from server.settingsutils import workbench_user_display, \
-        workbench_user_display_public
+from server.settingsutils import workbench_user_display
 from cjworkbench.settings import KB_ROOT_URL
 import re
 
@@ -166,13 +165,10 @@ class WorkflowSerializer(serializers.ModelSerializer):
         except KeyError:
             request = None
 
-        if request and obj.request_authorized_write(request):
-            return workbench_user_display(obj.owner)
-        elif obj.example:
+        if obj.example:
             return 'Workbench'
         else:
-            # don't leak user info (e.g. email) if viewer is not owner.
-            return workbench_user_display_public(obj.owner)
+            return workbench_user_display(obj.owner)
 
     class Meta:
         model = Workflow
