@@ -35,7 +35,9 @@ export default class ModalLoader extends React.PureComponent {
   }
 
   updateAclEntry = (email, canEdit) => {
-    const { workflowId } = this.props
+    const { ownerEmail, workflowId } = this.props
+    if (email === ownerEmail) return
+
     WorkbenchAPI.updateAclEntry(workflowId, email, canEdit)
 
     this.setState(state => {
@@ -54,7 +56,9 @@ export default class ModalLoader extends React.PureComponent {
   }
 
   deleteAclEntry = (email) => {
-    const { workflowId } = this.props
+    const { ownerEmail, workflowId } = this.props
+    if (email === ownerEmail) return
+
     WorkbenchAPI.deleteAclEntry(workflowId, email)
 
     this.setState(state => {
