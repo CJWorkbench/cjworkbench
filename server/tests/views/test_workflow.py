@@ -6,8 +6,8 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.models import Module, ModuleVersion, User, WfModule, Workflow
-from server.tests.utils import LoggedInTestCase, add_new_workflow, \
-        add_new_module_version, add_new_wf_module, load_module_version
+from server.tests.utils import LoggedInTestCase, add_new_module_version, \
+        add_new_wf_module, load_module_version
 from server.views import workflow_list, workflow_addmodule, workflow_detail, \
         render_workflow, load_update_table_module_ids
 
@@ -29,8 +29,8 @@ class WorkflowViewTests(LoggedInTestCase):
         self.log_patch = self.log_patcher.start()
 
         self.factory = APIRequestFactory()
-        self.workflow1 = add_new_workflow('Workflow 1')
-        self.workflow2 = add_new_workflow('Workflow 2')
+        self.workflow1 = Workflow.objects.create(name='Workflow 1', owner=self.user)
+        self.workflow2 = Workflow.objects.create(name='Workflow 2', owner=self.user)
         self.module_version1 = add_new_module_version('Module 1')
         add_new_module_version('Module 2')
         add_new_module_version('Module 3')
@@ -105,7 +105,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.data[0]['name'], 'Workflow 2')
         self.assertEqual(response.data[0]['id'], self.workflow2.id)
         self.assertEqual(response.data[0]['public'], self.workflow1.public)
-        self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
+        self.assertEqual(response.data[0]['read_only'], False)  # user is owner
         self.assertIsNotNone(response.data[0]['last_update'])
         self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
 

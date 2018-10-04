@@ -108,7 +108,8 @@ def workflow_list(request, format=None):
         workflows = list(workflows)
         workflows.sort(key=lambda wf: wf.last_update(), reverse=True)
 
-        serializer = WorkflowSerializerLite(workflows, many=True)
+        serializer = WorkflowSerializerLite(workflows, many=True,
+                                            context={'request': request})
         return Response(serializer.data)
 
     elif request.method == 'POST':

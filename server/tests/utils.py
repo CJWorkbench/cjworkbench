@@ -100,7 +100,7 @@ def add_new_parameter_spec(module_version, type, id_name='', order=0, def_value=
         def_value=def_value)
 
 
-def add_new_workflow(name, **kwargs):
+def add_new_workflow(name, *, owner=None, **kwargs):
     # Workflows have to have an owner, which means we need at least one user
     if 'owner' not in kwargs:
         if not User.objects.exists():

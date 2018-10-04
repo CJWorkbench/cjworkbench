@@ -141,12 +141,28 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'last_relevant_delta_id', 'output_columns', 'quick_fixes')
 
 
-class WorkflowSerializer(serializers.ModelSerializer):
-    wf_modules = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    revision = serializers.ReadOnlyField()
+# Lite Workflow: Don't include any of the modules, just name and ID.
+# For /workflows page
+class WorkflowSerializerLite(serializers.ModelSerializer):
     read_only = serializers.SerializerMethodField()
     last_update = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
+    owner_email = serializers.SerializerMethodField()
+
+    def get_owner_name(self, obj):
+        if obj.example:
+            return 'Workbench'
+        else:
+            return workbench_user_display(obj.owner)
+
+    def get_owner_email(self, obj):
+        if obj.owner and not obj.owner.is_anonymous:
+            return obj.owner.email
+        else:
+            return None
+
+    def get_last_update(self, obj):
+        return obj.last_update()
 
     def get_read_only(self, obj):
         try:
@@ -156,58 +172,21 @@ class WorkflowSerializer(serializers.ModelSerializer):
 
         return obj.request_read_only(request)
 
-    def get_last_update(self, obj):
-        return obj.last_update()
+    class Meta:
+        model = Workflow
+        fields = ('id', 'name', 'public', 'read_only', 'last_update',
+                  'owner_email', 'owner_name')
 
-    def get_owner_name(self, obj):
-        try:
-            request = self.context['request']
-        except KeyError:
-            request = None
 
-        if obj.example:
-            return 'Workbench'
-        else:
-            return workbench_user_display(obj.owner)
+class WorkflowSerializer(WorkflowSerializerLite):
+    wf_modules = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    revision = serializers.ReadOnlyField()
 
     class Meta:
         model = Workflow
         fields = ('id', 'url_id', 'name', 'revision', 'wf_modules', 'public',
-                  'read_only', 'last_update', 'owner_name',
+                  'read_only', 'last_update', 'owner_email', 'owner_name',
                   'selected_wf_module', 'is_anonymous')
-
-
-# Lite Workflow: Don't include any of the modules, just name and ID.
-# For /workflows page
-class WorkflowSerializerLite(serializers.ModelSerializer):
-    owner_name = serializers.SerializerMethodField()
-
-    def get_owner_name(self, obj):
-        if obj.example:
-            return 'Workbench'
-        else:
-            # Different from WorkflowSerializer because WorkflowSerializer
-            # takes an extra context['request'] argument, and we don't.
-            return user_display(obj.owner)
-
-    last_update = serializers.SerializerMethodField()
-
-    def get_last_update(self, obj):
-        if not obj.last_delta:
-            return obj.creation_date
-        return obj.last_delta.datetime
-
-    read_only = serializers.SerializerMethodField()
-
-    def get_read_only(self, obj):
-        # lite serializer is only used when listing workflows, which only owner
-        # can do
-        return False
-
-    class Meta:
-        model = Workflow
-        fields = ('id', 'name', 'public', 'read_only',
-                  'last_update', 'owner_name')
 
 
 class LessonSerializer(serializers.BaseSerializer):
