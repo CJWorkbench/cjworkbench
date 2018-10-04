@@ -25,7 +25,7 @@ export default class Role extends React.PureComponent {
     const { canEdit } = this.props
 
     return (
-      <UncontrolledDropdown>
+      <UncontrolledDropdown className='role'>
         <DropdownToggle caret>
           {canEdit ? 'Can edit' : 'Can view'}
         </DropdownToggle>

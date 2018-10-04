@@ -10,7 +10,8 @@ function mapStateToProps (state) {
   return {
     url,
     workflowId: state.workflow.id,
-    isPublic: state.workflow.public
+    isPublic: state.workflow.public,
+    ownerEmail: state.workflow.owner_email
   }
 }
 

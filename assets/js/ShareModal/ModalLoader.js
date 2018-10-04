@@ -11,6 +11,7 @@ export default class ModalLoader extends React.PureComponent {
     workflowId: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
     isPublic: PropTypes.bool.isRequired,
+    ownerEmail: PropTypes.string.isRequired,
     onChangeIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
     logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
     onClickClose: PropTypes.func.isRequired // func() => undefined
@@ -62,13 +63,14 @@ export default class ModalLoader extends React.PureComponent {
   }
 
   render () {
-    const { url, isPublic, onChangeIsPublic, logShare, onClickClose } = this.props
+    const { url, isPublic, onChangeIsPublic, ownerEmail, logShare, onClickClose } = this.props
     const { acl } = this.state
 
     return (
       <Modal
         url={url}
         isPublic={isPublic}
+        ownerEmail={ownerEmail}
         onChangeIsPublic={onChangeIsPublic}
         logShare={logShare}
         acl={acl}

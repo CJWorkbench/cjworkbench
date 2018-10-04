@@ -14,6 +14,7 @@ export default class Modal extends React.PureComponent {
     isPublic: PropTypes.bool.isRequired,
     onChangeIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
     logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
+    ownerEmail: PropTypes.string.isRequired,
     acl: PropTypes.arrayOf(PropTypes.shape({
       email: PropTypes.string.isRequired,
       canEdit: PropTypes.bool.isRequired
@@ -25,7 +26,8 @@ export default class Modal extends React.PureComponent {
   }
 
   render () {
-    const { url, isPublic, onChangeIsPublic, logShare, acl, onChangeAclEntry, onCreateAclEntry, onClickDeleteAclEntry, onClickClose } = this.props
+    const { url, isPublic, onChangeIsPublic, logShare, ownerEmail, acl,
+      onChangeAclEntry, onCreateAclEntry, onClickDeleteAclEntry, onClickClose } = this.props
 
     return (
       <ReactstrapModal className='share-modal' isOpen={true} toggle={onClickClose}>
@@ -40,6 +42,7 @@ export default class Modal extends React.PureComponent {
           <h6>Share with collaborators</h6>
           {acl ? (
             <Acl
+              ownerEmail={ownerEmail}
               acl={acl}
               onChange={onChangeAclEntry}
               onCreate={onCreateAclEntry}
