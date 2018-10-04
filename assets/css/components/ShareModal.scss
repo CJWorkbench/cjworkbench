@@ -1,0 +1,89 @@
+.share-modal {
+  h6 {
+    @extend %font-lato-regular;
+    font-size: 1.6rem;
+    margin-bottom: 1.6rem;
+
+    &:not(:first-child) {
+      margin-top: 2.5rem;
+    }
+  }
+
+  .public-private {
+    label input {
+      top: 2px; // align checkbox with text
+    }
+
+    label span {
+      font-size: 1.3rem;
+    }
+  }
+
+  ul.acl {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0 2rem;
+    font-size: 1.3rem;
+
+    &>li {
+      display: block;
+    }
+
+    .acl-entry {
+      display: flex;
+      margin: 1rem 0;
+    }
+
+    .email {
+      flex: 1 1 auto;
+    }
+
+    button.delete {
+      margin-left: 1rem;
+    }
+  }
+
+  .copy-url {
+    display: flex;
+    font-size: 1.3rem;
+    @extend %font-nunito-extra-light;
+    position: relative; // to position copied-flash
+
+    .url {
+      flex: 1 1 auto;
+    }
+
+    button[name="copy"] {
+      flex: 0 0 auto;
+      cursor: pointer;
+      // pretend to be a link
+      border: 0;
+      margin: 0;
+      padding: 0;
+      display: block;
+      color: $brand-workspace;
+      background-color: white;
+      &:hover {
+        color: $link-hover-success;
+      }
+    }
+
+    .copied-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: white;
+      opacity: 0;
+      animation: .25s flash-copied;
+    }
+  }
+}
+
+@keyframes flash-copied {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

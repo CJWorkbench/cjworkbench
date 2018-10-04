@@ -31,13 +31,13 @@ export default class Modal extends React.PureComponent {
       <ReactstrapModal className='share-modal' isOpen={true} toggle={onClickClose}>
         <ModalHeader toggle={onClickClose}>SHARING SETTINGS</ModalHeader>
         <ModalBody>
-          <h5>Share with the world</h5>
+          <h6>Share with the world</h6>
           <PublicPrivate
             isPublic={isPublic}
             onChangeIsPublic={onChangeIsPublic}
           />
 
-          <h5>Share with specific collaborators</h5>
+          <h6>Share with collaborators</h6>
           {acl ? (
             <Acl
               acl={acl}

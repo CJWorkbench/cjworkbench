@@ -61,11 +61,11 @@ export default class Url extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <h5 key='heading'>{heading}</h5>
+        <h6 key='heading'>{heading}</h6>
         <div key='url' className='copy-url'>
           <div className='url'>{url}</div>
           <button name='copy' onClick={this.onClickCopy}>Copy to clipboard</button>
-          {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied}>Copied</div> : null}
+          {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied} /> : null}
         </div>
         {isPublic ? this.renderSocialLinks() : null}
       </React.Fragment>

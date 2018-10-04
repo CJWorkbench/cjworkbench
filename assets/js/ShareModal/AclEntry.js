@@ -27,7 +27,7 @@ export default class AclEntry extends React.PureComponent {
       <div className='acl-entry'>
         <div className='email'>{email}</div>
         <Role canEdit={canEdit} onChange={this.onChangeCanEdit} />
-        <button className='delete' onClick={this.onClickDelete}>✖</button>
+        <button className='btn btn-danger delete' onClick={this.onClickDelete}>✖</button>
       </div>
     )
   }

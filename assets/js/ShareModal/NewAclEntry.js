@@ -32,9 +32,11 @@ export default class NewAclEntry extends React.PureComponent {
     // Uncontrolled form -- we'll use HTML5 validation, with its :valid and
     // :invalid classes.
     return (
-      <form className='new-acl-entry' onSubmit={this.onSubmit}>
-        <input type='email' name='email' ref={this.emailRef} required placeholder='user@example.org' />
-        <button type='submit'>Grant access</button>
+      <form className='new-acl-entry input-group' onSubmit={this.onSubmit}>
+        <input className='form-control' type='email' name='email' ref={this.emailRef} required placeholder='user@example.org' />
+        <div className='input-group-append'>
+          <button type='submit' className='btn btn-outline-secondary'>Grant access</button>
+        </div>
       </form>
     )
   }
