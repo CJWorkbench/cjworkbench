@@ -1,59 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowMetadata renders private workflow correctly 1`] = `
-<WorkflowMetadata
-  onChangeIsPublic={[MockFunction]}
-  test_now={2017-09-20T21:03:52.000Z}
-  workflow={
-    Object {
-      "id": 100,
-      "last_update": 1505941432000,
-      "owner_name": "Harry Harrison",
-      "public": false,
-      "read_only": false,
-    }
-  }
+<ul
+  className="metadata-container"
 >
-  <ul
-    className="metadata-container"
+  <li
+    className="attribution"
   >
-    <li
-      className="attribution"
+    <span
+      className="metadata"
     >
-      <span
-        className="metadata"
-      >
-        by 
-        Harry Harrison
-      </span>
-      <span
-        className="separator"
-      >
-        -
-      </span>
-    </li>
-    <li>
-      Updated 
-      now
-    </li>
-    <li>
-      <button
-        className="public-private"
-        onClick={[Function]}
-        title="Change privacy"
-      >
-        <span
-          className="separator"
-        >
-          -
-        </span>
-        <span
-          className="publicPrivate"
-        >
-          private
-        </span>
-      </button>
-    </li>
-  </ul>
-</WorkflowMetadata>
+      by 
+      Harry Harrison
+    </span>
+    <span
+      className="separator"
+    >
+      -
+    </span>
+  </li>
+  <li>
+    Updated 
+    now
+  </li>
+  <li>
+    <span
+      className="separator"
+    >
+      -
+    </span>
+    <button
+      className="public-private"
+      onClick={[Function]}
+      title="Change privacy"
+    >
+      private
+    </button>
+  </li>
+</ul>
 `;

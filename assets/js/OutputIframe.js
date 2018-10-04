@@ -104,7 +104,7 @@ export class OutputIframe extends React.PureComponent {
 
   renderPublicModal () {
     return (
-      <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal} className='test-setpublic-modal'>
+      <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal} className='dialog-header modal-header d-flex align-items-center'>
           <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
@@ -124,7 +124,7 @@ export class OutputIframe extends React.PureComponent {
     let iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wfModuleId + '" width="560" height="315" frameborder="0" />')
 
     return (
-      <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal} className='test-setpublic-modal'>
+      <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal} className='dialog-header modal-header d-flex align-items-center'>
           <div className='modal-title'>EMBED THIS CHART</div>
         </ModalHeader>

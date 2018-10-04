@@ -34,11 +34,11 @@ class WorkbenchAPI {
         if (!res.ok) {
           throw new RangeError(`Server responded with non-200 status code ${res.status}`)
         }
-        if (res.headers.get('content-type') && res.headers.get('content-type').toLowerCase().indexOf('application/json') === -1) {
-          throw new TypeError("Server response is not JSON", res)
-        }
         if (res.status === 204) {
           return null // No content
+        }
+        if (res.headers.get('content-type') && res.headers.get('content-type').toLowerCase().indexOf('application/json') === -1) {
+          throw new TypeError("Server response is not JSON", res)
         }
         return res.json()
       })
@@ -83,6 +83,22 @@ class WorkbenchAPI {
 
   deleteWorkflow(workflowId) {
     return this._delete(`/api/workflows/${workflowId}`)
+  }
+
+  getAcl (workflowId) {
+    return this._fetch(`/api/workflows/${workflowId}/acl`)
+      .then(json => {
+        // rename can_edit => canEdit
+        return json.map(({ email, can_edit }) => ({ email, canEdit: can_edit }))
+      })
+  }
+
+  updateAclEntry (workflowId, email, canEdit) {
+    return this._put(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`, { can_edit: canEdit })
+  }
+
+  deleteAclEntry (workflowId, email) {
+    return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
   }
 
   reorderWfModules(workflowId, newOrder) {
@@ -189,7 +205,7 @@ class WorkbenchAPI {
   }
 
   duplicateWorkflow(workflowId) {
-    return this._fetch(`/api/workflows/${workflowId}/duplicate`)
+    return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
   currentUser() {

@@ -236,7 +236,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  onChangeIsPublic={[Function]}
+                  openShareModal={[Function]}
                   workflow={
                     Object {
                       "id": 1,
@@ -269,21 +269,17 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
                         onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          public
-                        </span>
+                        public
                       </button>
                     </li>
                   </ul>
@@ -431,7 +427,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  onChangeIsPublic={[Function]}
+                  openShareModal={[Function]}
                   workflow={
                     Object {
                       "id": 7,
@@ -464,21 +460,17 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
                         onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          private
-                        </span>
+                        private
                       </button>
                     </li>
                   </ul>
@@ -626,7 +618,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  onChangeIsPublic={[Function]}
+                  openShareModal={[Function]}
                   workflow={
                     Object {
                       "id": 8,
@@ -659,21 +651,17 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
                         onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          public
-                        </span>
+                        public
                       </button>
                     </li>
                   </ul>
@@ -821,7 +809,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="wf-meta--id"
               >
                 <WorkflowMetadata
-                  onChangeIsPublic={[Function]}
+                  openShareModal={[Function]}
                   workflow={
                     Object {
                       "id": 9,
@@ -854,21 +842,17 @@ exports[`Workflow list page renders correctly 1`] = `
                       now
                     </li>
                     <li>
+                      <span
+                        className="separator"
+                      >
+                        -
+                      </span>
                       <button
                         className="public-private"
                         onClick={[Function]}
                         title="Change privacy"
                       >
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <span
-                          className="publicPrivate"
-                        >
-                          private
-                        </span>
+                        private
                       </button>
                     </li>
                   </ul>

@@ -83,6 +83,7 @@ class AccountAdmin:
     def clear_data_from_previous_tests(self):
         """Delete all accounts and related data."""
         _Tables = [
+            'server_aclentry',
             'server_addmodulecommand',
             'server_changedataversioncommand',
             'server_changeparametercommand',

@@ -5,11 +5,12 @@ import pandas
 from asgiref.sync import async_to_sync
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
+from server.models import Workflow
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, get_id_from_url, store_external_workflow
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        create_test_user, add_new_workflow
+        create_test_user
 
 
 class SafeExecTest(unittest.TestCase):
@@ -160,7 +161,7 @@ class WorkflowImport(LoggedInTestCase):
     def test_auth(self):
         # Create otheruser and try to access workflow owned by default user
         other_user = create_test_user(username='otheruser', email='otheruser@email.com')
-        wf = add_new_workflow('New Workflow', owner=other_user)
+        wf = Workflow.objects.create(name='New Workflow', owner=other_user)
         wfm = load_and_add_module('concaturl', workflow=wf)
 
         result = store_external_workflow(

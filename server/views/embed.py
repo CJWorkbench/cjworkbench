@@ -18,7 +18,9 @@ def embed(request, wfmodule_id):
 
     if wf_module:
         workflow_module_serializer = WfModuleSerializer(wf_module)
-        workflow_serializer = WorkflowSerializerLite(wf_module.workflow)
+        workflow_serializer = WorkflowSerializerLite(wf_module.workflow,
+                                                     context={'request':
+                                                              request})
         init_state = {
             'workflow': workflow_serializer.data,
             'wf_module': workflow_module_serializer.data

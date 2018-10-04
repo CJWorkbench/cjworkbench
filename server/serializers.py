@@ -1,15 +1,20 @@
 from rest_framework import serializers
-from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, \
-        Module, ModuleVersion, StoredObject
+from server.models import AclEntry, Workflow, WfModule, ParameterVal, \
+        ParameterSpec, Module, ModuleVersion, StoredObject
 from server.utils import seconds_to_count_and_units
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from server.settingsutils import workbench_user_display, \
-        workbench_user_display_public
+from server.settingsutils import workbench_user_display
 from cjworkbench.settings import KB_ROOT_URL
 import re
 
 User = get_user_model()
+
+
+class AclEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AclEntry
+        fields = ('workflow_id', 'email', 'created_at', 'can_edit')
 
 
 class StoredObjectSerializer(serializers.ModelSerializer):
@@ -136,76 +141,53 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'last_relevant_delta_id', 'output_columns', 'quick_fixes')
 
 
-class WorkflowSerializer(serializers.ModelSerializer):
-    wf_modules = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    revision = serializers.ReadOnlyField()
-    read_only = serializers.SerializerMethodField()
-    last_update = serializers.SerializerMethodField()
-    owner_name = serializers.SerializerMethodField()
-
-    def get_read_only(self, obj):
-        try:
-            request = self.context['request']
-        except KeyError:
-            return True
-
-        return obj.request_read_only(request)
-
-    def get_last_update(self, obj):
-        return obj.last_update()
-
-    def get_owner_name(self, obj):
-        try:
-            request = self.context['request']
-        except KeyError:
-            request = None
-
-        if request and obj.request_authorized_write(request):
-            return workbench_user_display(obj.owner)
-        elif obj.example:
-            return 'Workbench'
-        else:
-            # don't leak user info (e.g. email) if viewer is not owner.
-            return workbench_user_display_public(obj.owner)
-
-    class Meta:
-        model = Workflow
-        fields = ('id', 'url_id', 'name', 'revision', 'wf_modules', 'public',
-                  'read_only', 'last_update', 'owner_name',
-                  'selected_wf_module', 'is_anonymous')
-
-
 # Lite Workflow: Don't include any of the modules, just name and ID.
 # For /workflows page
 class WorkflowSerializerLite(serializers.ModelSerializer):
+    read_only = serializers.SerializerMethodField()
+    last_update = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
+    owner_email = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     def get_owner_name(self, obj):
         if obj.example:
             return 'Workbench'
         else:
-            # Different from WorkflowSerializer because WorkflowSerializer
-            # takes an extra context['request'] argument, and we don't.
-            return user_display(obj.owner)
+            return workbench_user_display(obj.owner)
 
-    last_update = serializers.SerializerMethodField()
+    def get_owner_email(self, obj):
+        if obj.owner and not obj.owner.is_anonymous:
+            return obj.owner.email
+        else:
+            return None
 
     def get_last_update(self, obj):
-        if not obj.last_delta:
-            return obj.creation_date
-        return obj.last_delta.datetime
-
-    read_only = serializers.SerializerMethodField()
+        return obj.last_update()
 
     def get_read_only(self, obj):
-        # lite serializer is only used when listing workflows, which only owner
-        # can do
-        return False
+        request = self.context['request']
+        return obj.request_read_only(request)
+
+    def get_is_owner(self, obj):
+        request = self.context['request']
+        return obj.request_authorized_owner(request)
 
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'public', 'read_only',
-                  'last_update', 'owner_name')
+        fields = ('id', 'name', 'public', 'read_only', 'is_owner', 'last_update',
+                  'owner_email', 'owner_name')
+
+
+class WorkflowSerializer(WorkflowSerializerLite):
+    wf_modules = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    revision = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Workflow
+        fields = ('id', 'url_id', 'name', 'revision', 'wf_modules', 'public',
+                  'read_only', 'last_update', 'is_owner', 'owner_email',
+                  'owner_name', 'selected_wf_module', 'is_anonymous')
 
 
 class LessonSerializer(serializers.BaseSerializer):

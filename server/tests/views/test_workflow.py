@@ -1,12 +1,13 @@
 from collections import namedtuple
+import json
 from unittest.mock import patch
 from allauth.account.utils import user_display
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.models import Module, ModuleVersion, User, WfModule, Workflow
-from server.tests.utils import LoggedInTestCase, add_new_workflow, \
-        add_new_module_version, add_new_wf_module, load_module_version
+from server.tests.utils import LoggedInTestCase, add_new_module_version, \
+        add_new_wf_module, load_module_version
 from server.views import workflow_list, workflow_addmodule, workflow_detail, \
         render_workflow, load_update_table_module_ids
 
@@ -28,8 +29,8 @@ class WorkflowViewTests(LoggedInTestCase):
         self.log_patch = self.log_patcher.start()
 
         self.factory = APIRequestFactory()
-        self.workflow1 = add_new_workflow('Workflow 1')
-        self.workflow2 = add_new_workflow('Workflow 2')
+        self.workflow1 = Workflow.objects.create(name='Workflow 1', owner=self.user)
+        self.workflow2 = Workflow.objects.create(name='Workflow 2', owner=self.user)
         self.module_version1 = add_new_module_version('Module 1')
         add_new_module_version('Module 2')
         add_new_module_version('Module 3')
@@ -104,7 +105,8 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.data[0]['name'], 'Workflow 2')
         self.assertEqual(response.data[0]['id'], self.workflow2.id)
         self.assertEqual(response.data[0]['public'], self.workflow1.public)
-        self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
+        self.assertEqual(response.data[0]['read_only'], False)  # user is owner
+        self.assertEqual(response.data[0]['is_owner'], True)  # user is owner
         self.assertIsNotNone(response.data[0]['last_update'])
         self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
 
@@ -152,6 +154,7 @@ class WorkflowViewTests(LoggedInTestCase):
     # This is the HTTP response, as opposed to the API
     def test_workflow_view(self):
         # View own non-public workflow
+        self.client.force_login(self.user)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -195,6 +198,36 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')
 
+    def test_workflow_acl_reader_reads_but_does_not_write(self):
+        # Looking at an example workflow as an anonymous user should create a new workflow
+        self.workflow1.acl.create(email='user2@users.com', can_edit=False)
+        self.client.force_login(self.otheruser)
+
+        # GET: works
+        response = self.client.get(f'/api/workflows/{self.workflow1.id}/')
+        self.assertEqual(response.status_code, 200)
+
+        # POST: does not work
+        response = self.client.post(f'/api/workflows/{self.workflow1.id}/',
+                                    data='{"newName":"X"}',
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_workflow_acl_writer_reads_and_writes(self):
+        # Looking at an example workflow as an anonymous user should create a new workflow
+        self.workflow1.acl.create(email='user2@users.com', can_edit=True)
+        self.client.force_login(self.otheruser)
+
+        # GET: works
+        response = self.client.get(f'/api/workflows/{self.workflow1.id}/')
+        self.assertEqual(response.status_code, 200)
+
+        # POST: works
+        response = self.client.post(f'/api/workflows/{self.workflow1.id}/',
+                                    data='{"newName":"X"}',
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+
     def test_workflow_anonymous_user(self):
         # Looking at an example workflow as an anonymous user should create a new workflow
         num_workflows = Workflow.objects.count()
@@ -206,7 +239,7 @@ class WorkflowViewTests(LoggedInTestCase):
         load_module_version('pythoncode')
 
         request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id, user=AnonymousUser())
-        response = render_workflow(request, pk=self.other_workflow_public.id)
+        response = render_workflow(request, workflow_id=self.other_workflow_public.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(Workflow.objects.count(), num_workflows + 1)  # should have duplicated the  wf with this API call
@@ -216,27 +249,29 @@ class WorkflowViewTests(LoggedInTestCase):
 
     def test_workflow_duplicate_view(self):
         old_ids = [w.id for w in Workflow.objects.all()] # list of all current workflow ids
-        response = self.client.get('/api/workflows/%d/duplicate' % self.workflow1.id)
+        response = self.client.post('/api/workflows/%d/duplicate' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        new_id = response.data['id']
-        self.assertFalse(new_id in old_ids)         # created at entirely new id
-        self.assertEqual(response.data['name'], 'Copy of ' + self.workflow1.name)
-        new_wf = Workflow.objects.get(pk=new_id)    # will fail if no Workflow created
+        data = json.loads(response.content)
+        self.assertFalse(data['id'] in old_ids) # created at entirely new id
+        self.assertEqual(data['name'], 'Copy of Workflow 1')
+        self.assertTrue(Workflow.objects.filter(pk=data['id']).exists())
 
+    def test_workflow_duplicate_missing_gives_404(self):
         # Ensure 404 with bad id
-        response = self.client.get('/api/workflows/%d/duplicate' % 999999)
+        response = self.client.post('/api/workflows/99999/duplicate')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_workflow_duplicate_restricted_gives_403(self):
         # Ensure 403 when another user tries to clone private workflow
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
-        response = self.client.get('/api/workflows/%d/duplicate' % self.workflow1.id)
+        response = self.client.post('/api/workflows/%d/duplicate' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        # But another user can duplicate public workflow
+    def test_workflow_duplicate_public(self):
         self.workflow1.public = True
         self.workflow1.save()
-        response = self.client.get('/api/workflows/%d/duplicate' % self.workflow1.id)
+        response = self.client.post('/api/workflows/%d/duplicate' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_workflow_detail_get(self):
@@ -244,7 +279,7 @@ class WorkflowViewTests(LoggedInTestCase):
         pk_workflow = self.workflow1.id
         request = self._build_get('/api/workflows/%d/' % pk_workflow,
                                   user=self.user)
-        response = workflow_detail(request, pk = pk_workflow)
+        response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['workflow']['name'], 'Workflow 1')
         self.assertEqual(response.data['workflow']['public'], False)
@@ -252,13 +287,13 @@ class WorkflowViewTests(LoggedInTestCase):
         # bad ID should give 404
         request = self._build_get('/api/workflows/%d/' % 10000,
                                   user=self.user)
-        response = workflow_detail(request, pk = 10000)
+        response = workflow_detail(request, workflow_id=10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # someone else's public workflow should be gettable
         request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
                                   user=self.user)
-        response = workflow_detail(request, pk = self.other_workflow_public.id)
+        response = workflow_detail(request, workflow_id=self.other_workflow_public.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['workflow']['name'], 'Other workflow public')
 
@@ -267,30 +302,14 @@ class WorkflowViewTests(LoggedInTestCase):
         # help them debug that case)
         request = self._build_get('/api/workflows/%d/' % pk_workflow,
                                   user=AnonymousUser())
-        response = workflow_detail(request, pk = pk_workflow)
+        response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertEqual(response.status_code, 403)
 
         # similarly, someone else's private workflow should 403
         request = self._build_get('/api/workflows/%d/' % self.other_workflow_private.id,
                                   user=self.user)
-        response = workflow_detail(request, pk=self.other_workflow_private.id)
+        response = workflow_detail(request, workflow_id=self.other_workflow_private.id)
         self.assertEqual(response.status_code, 403)
-
-    def test_email_leakage(self):
-        # We user email as display name if the user has not set first,last
-        # But don't ever give this out for a public workflow, either through page or API
-        request = self._build_get('/workflows/%d/' % self.other_workflow_public.id,
-                                  user=None)
-        response = workflow_detail(request, pk=self.other_workflow_public.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertNotContains(response, self.otheruser.email)
-
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
-                                  user=self.user)
-        response = workflow_detail(request, pk = self.other_workflow_public.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertNotContains(response, self.otheruser.email)
-
 
     # --- Writing to workflows ---
     def test_workflow_addmodule_put(self):
@@ -305,7 +324,7 @@ class WorkflowViewTests(LoggedInTestCase):
         request = self._build_put('/api/workflows/%d/addmodule/' % pk_workflow,
                                   {'moduleId': module1.id, 'index': 0},
                                   user=self.user)
-        response = workflow_addmodule(request, pk=pk_workflow)
+        response = workflow_addmodule(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 1)
         wfm1 = WfModule.objects.filter(module_version__module=module1.id).first()
@@ -318,7 +337,7 @@ class WorkflowViewTests(LoggedInTestCase):
         request = self._build_put('/api/workflows/%d/addmodule/' % pk_workflow,
                                   {'moduleId': module2.id, 'index': 0},
                                   user=self.user)
-        response = workflow_addmodule(request, pk=pk_workflow)
+        response = workflow_addmodule(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 2)
         wfm2 = WfModule.objects.filter(module_version__module=module2.id).first()
@@ -328,7 +347,7 @@ class WorkflowViewTests(LoggedInTestCase):
         request = self._build_put('/api/workflows/%d/addmodule/' % pk_workflow,
                                   {'moduleId': module3.id, 'index': 1},
                                   user=self.user)
-        response = workflow_addmodule(request, pk=pk_workflow)
+        response = workflow_addmodule(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 3)
         wfm3 = WfModule.objects.filter(module_version__module=module3.id).first()
@@ -344,14 +363,14 @@ class WorkflowViewTests(LoggedInTestCase):
         request = self._build_put('/api/workflows/%d/addmodule/' % 10000,
                                   {'moduleId': module1.id, 'index': 0},
                                   user=self.user)
-        response = workflow_addmodule(request, pk=10000)
+        response = workflow_addmodule(request, workflow_id=10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # bad module id
         request = self._build_put('/api/workflows/%d/addmodule/' % Workflow.objects.get(name='Workflow 1').id,
                                   {'moduleId': 10000, 'index': 0},
                                   user=self.user)
-        response = workflow_addmodule(request, pk=Workflow.objects.get(name='Workflow 1').id)
+        response = workflow_addmodule(request, workflow_id=Workflow.objects.get(name='Workflow 1').id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_workflow_reorder_modules(self):
@@ -366,7 +385,7 @@ class WorkflowViewTests(LoggedInTestCase):
                                           {'id': wfm3.id, 'order': 1}],
                                     format='json',
                                     user=self.user)
-        response = workflow_detail(request, pk = self.workflow1.id)
+        response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(list(WfModule.objects.order_by('order').values_list('id', flat=True)),
                          [wfm2.id, wfm3.id, wfm1.id])
@@ -377,14 +396,14 @@ class WorkflowViewTests(LoggedInTestCase):
                                     data=[{'problem':'bad data'}],
                                     format='json',
                                     user=self.user)
-        response = workflow_detail(request, pk = self.workflow1.id)
+        response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_workflow_detail_delete(self):
         pk_workflow = Workflow.objects.get(name='Workflow 1').id
         request = self._build_delete('/api/workflows/%d/' % pk_workflow,
                                      user=self.user)
-        response = workflow_detail(request, pk = pk_workflow)
+        response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Workflow.objects.filter(name='Workflow 1').count(), 0)
 
@@ -395,7 +414,7 @@ class WorkflowViewTests(LoggedInTestCase):
         request = self._build_post('/api/workflows/%d' % pk_workflow,
                                    {'newName': 'Billy Bob Thornton'},
                                    user=self.user)
-        response = workflow_detail(request, pk=pk_workflow)
+        response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         workflow.refresh_from_db()
         self.assertEqual(workflow.name, 'Billy Bob Thornton')
@@ -406,7 +425,7 @@ class WorkflowViewTests(LoggedInTestCase):
         pk_workflow = workflow.id
         request = self._build_post('/api/workflows/%d' % pk_workflow,
                                    {'public': True}, user=self.user)
-        response = workflow_detail(request, pk=pk_workflow)
+        response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         workflow.refresh_from_db()
         self.assertEqual(workflow.public, True)
@@ -418,7 +437,7 @@ class WorkflowViewTests(LoggedInTestCase):
         request = self._build_post('/api/workflows/%d' % pk_workflow,
                                    {'selected_wf_module': 808},
                                    user=self.user)
-        response = workflow_detail(request, pk=pk_workflow)
+        response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_wf_module, 808)

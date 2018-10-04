@@ -1,6 +1,6 @@
 import React from 'react'
 import WorkflowMetadata from './WorkflowMetadata'
-import { mount, ReactWrapper } from 'enzyme'
+import { shallow, ReactWrapper } from 'enzyme'
 import { okResponseMock } from './test-utils'
 
 
@@ -18,11 +18,12 @@ describe('WorkflowMetadata', () => {
 
   const wrapper = (extraProps={}, workflowExtraProps={}) => {
     const workflow = { ...defaultWorkflow, ...workflowExtraProps }
-    return mount(
+    return shallow(
       <WorkflowMetadata
         workflow={workflow}
         test_now={today}
-        onChangeIsPublic={jest.fn()}
+        openShareModal={jest.fn()}
+        {...extraProps}
       />
     )
   }
@@ -31,31 +32,19 @@ describe('WorkflowMetadata', () => {
     expect(wrapper({}, { public: false })).toMatchSnapshot()
   })
 
-  it('converts from private to public', () => {
-    const w = wrapper({}, { public: false })
-
-    w.find('button[title="Change privacy"]').simulate('click')
-    w.update()
-
-    w.find('button[title="Make Public"]').simulate('click')
-    expect(w.prop('onChangeIsPublic')).toHaveBeenCalledWith(defaultWorkflow.id, true)
-
-    // Test that the modal disappears
-    w.update()
-    expect(w.find('button[title="Make Public"]')).toHaveLength(0)
+  it('shows "public" when public', () => {
+    const w1 = wrapper({}, { public: true })
+    expect(w1.text()).toMatch(/public/)
   })
 
-  it('converts from public to private', () => {
-    const w = wrapper({}, { public: true })
+  it('shows "private" when private', () => {
+    const w1 = wrapper({}, { public: false })
+    expect(w1.text()).toMatch(/private/)
+  })
 
-    w.find('button[title="Change privacy"]').simulate('click')
-    w.update()
-
-    w.find('button[title="Make Private"]').simulate('click')
-    expect(w.prop('onChangeIsPublic')).toHaveBeenCalledWith(defaultWorkflow.id, false)
-
-    // Test that the modal disappears
-    w.update()
-    expect(w.find('button[title="Make Private"]')).toHaveLength(0)
+  it('opens share modal', () => {
+    const w = wrapper()
+    w.find('button.public-private').simulate('click', { preventDefault: jest.fn(), stopPropagation: jest.fn() })
+    expect(w.instance().props.openShareModal).toHaveBeenCalled()
   })
 })

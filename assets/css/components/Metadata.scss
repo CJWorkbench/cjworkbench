@@ -10,20 +10,9 @@
   color:$labels;
   @extend .content-3;
 
-  .publicPrivate {
-    color:$brand-workspace;
-    &:hover{color:$link-hover-success;}
-  }
-
   .separator {
     margin:0 0.5rem 0 0.5rem;
     text-align: center;
-  }
-}
-
-.public-private-modal {
-  .modal-body button {
-    width: 100%;
   }
 }
 
@@ -39,11 +28,9 @@ button.public-private {
   color: inherit;
 
   nav .metadata-container & {
-    &, .publicPrivate {
-      color: white;
-    }
-    & .publicPrivate:hover {
-      color: white;
+    color: white;
+
+    &:hover {
       text-decoration: underline;
     }
   }
@@ -55,5 +42,9 @@ button.public-private {
 }
 
 .workflow-root.in-lesson {
-  .publicPrivate, .separator {display: none}
+  .metadata-container {
+    .public-private, .separator {
+      display: none
+    }
+  }
 }

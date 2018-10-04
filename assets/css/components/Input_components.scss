@@ -11,10 +11,20 @@
   .dropdown-item {
     @extend .content-3;
     height: 3.5rem;
-    min-width: 12rem;
     border-radius: 0;
     border: 0;
-    background-color: $white;
+    &:not(.active) { // [adamhooper, 2018-10-04] Bootstrap did something right, and the enclosing .dropdown-item rule breaks it
+      background-color: $white;
+
+      &:hover {
+        background-color: $dark-accent--soft;
+
+      //i, span {color: $brand-text--darker;}
+      }
+      &:active {
+        background-color: $dark-accent--medium;
+      }
+    }
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -22,15 +32,6 @@
     cursor:pointer;
 
     i, span {color: $brand-text--dark;}
-
-    &:hover {
-      background-color: $dark-accent--soft;
-
-    //i, span {color: $brand-text--darker;}
-    }
-    &:active {
-      background-color: $dark-accent--medium;
-    }
   }
 
   .dropdown-divider{

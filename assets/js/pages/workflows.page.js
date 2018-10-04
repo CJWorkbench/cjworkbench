@@ -7,7 +7,7 @@ import api from '../WorkbenchAPI'
 ReactDOM.render(
     <Workflows api={api}/>,
     document.getElementById('root')
-);
+)
 
 // Start Intercom, if we're that sort of installation
 if (window.APP_ID) {
@@ -18,5 +18,5 @@ if (window.APP_ID) {
     alignment: 'right',
     horizontal_padding: 20,
     vertical_padding: 20
-  });
+  })
 }

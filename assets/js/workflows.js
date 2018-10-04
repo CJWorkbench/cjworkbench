@@ -5,44 +5,81 @@ import WorkflowListNavBar from './WorkflowListNavBar'
 import WfContextMenu from './WfContextMenu'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
-import { goToUrl } from "./utils";
+import ShareModal from './ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
+import { goToUrl, logUserEvent } from "./utils"
 
 export default class Workflows extends React.Component {
-  constructor(props) {
-    super(props)
+  static propTypes = {
+    api: PropTypes.object.isRequired
+  }
 
-    this.click = this.click.bind(this)
-    this.deleteWorkflow = this.deleteWorkflow.bind(this)
-    this.duplicateWorkflow = this.duplicateWorkflow.bind(this)
-    this.state = { workflows: [] }
+  state = {
+    workflows: [],
+    shareModalWorkflowId: null
+  }
+
+  openShareModal = (workflowId) => {
+    this.setState({ shareModalWorkflowId: workflowId })
+  }
+
+  closeShareModal = () => {
+    this.setState({ shareModalWorkflowId: null })
+  }
+
+  logShare = (type) => {
+    logUserEvent('Share workflow ' + type)
+  }
+
+  renderShareModal = () => {
+    const { shareModalWorkflowId } = this.state
+
+    if (shareModalWorkflowId === null) return null
+
+    const workflow = this.state.workflows.find(w => w.id === shareModalWorkflowId)
+    if (!workflow) return null
+
+    const url = `${window.origin}/workflows/${workflow.id}`
+
+    return (
+      <ShareModal
+        url={url}
+        ownerEmail={workflow.owner_email}
+        workflowId={workflow.id}
+        isReadOnly={workflow.is_owner}
+        isPublic={workflow.public}
+        onChangeIsPublic={this.setIsPublicFromShareModal}
+        logShare={this.logShare}
+        onClickClose={this.closeShareModal}
+      />
+    )
   }
 
   // Make a new workflow when button clicked, and navigate to its Module List page
-  click(e) {
+  click = (e) => {
     this.props.api.newWorkflow()
       .then(json => {
         // navigate to new WF page
-        goToUrl('/workflows/' + json.id);
+        goToUrl('/workflows/' + json.id)
       })
   }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server
-  deleteWorkflow(id) {
+  deleteWorkflow = (id) => {
     if (!confirm("Permanently delete this workflow?"))
-      return;
+      return
 
     this.props.api.deleteWorkflow(id)
     .then(response => {
-      var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
+      var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id)
       this.setState({workflows: workflowsMinusID})
     })
   }
 
-  duplicateWorkflow(id) {
+  duplicateWorkflow = (id) => {
     this.props.api.duplicateWorkflow(id)
       .then(json => {
         // Add to beginning of list because wf list is reverse chron
-        var workflowsPlusDup = this.state.workflows.slice();
+        var workflowsPlusDup = this.state.workflows.slice()
         workflowsPlusDup.unshift(json)
         this.setState({workflows: workflowsPlusDup})
       })
@@ -55,7 +92,9 @@ export default class Workflows extends React.Component {
     })
   }
 
-  onChangeIsPublic = (workflowId, isPublic) => {
+  setIsPublicFromShareModal = (isPublic) => {
+    const workflowId = this.state.shareModalWorkflowId
+
     // Change the given workflow to be public
     const newWorkflows = this.state.workflows
         .map(w => w.id === workflowId ? { ...w, public: isPublic } : w)
@@ -63,6 +102,10 @@ export default class Workflows extends React.Component {
     this.setState({ workflows: newWorkflows })
 
     this.props.api.setWorkflowPublic(workflowId, isPublic)
+  }
+
+  preventDefault = (ev) => {
+    ev.preventDefault()
   }
 
   render() {
@@ -86,35 +129,30 @@ export default class Workflows extends React.Component {
           <div className="mx-auto workflows-list">
             <h3 className="workflows-list--title">WORKFLOWS</h3>
             <div className="workflows-item--wrap">
-              {this.state.workflows.map( workflow => {
-                return (
-                    <a href={"/workflows/" + workflow.id} className="workflow-item"key={workflow.id}>
-                        <div className='mt-1'>
-                          <div className='workflow-title'>{workflow.name}</div>
-                          <div className='wf-meta--id'>
-                            <WorkflowMetadata
-                              workflow={workflow}
-                              onChangeIsPublic={this.onChangeIsPublic}
-                            />
-                          </div>
-                        </div>
-                        <div onClick={(e) => e.preventDefault()} className='menu-test-class'>
-                          <WfContextMenu
-                            duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }
-                            deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }
-                          />
-                        </div>
-                    </a>
-                  );
-                })}
+              {this.state.workflows.map( workflow => (
+                <a href={"/workflows/" + workflow.id} className="workflow-item"key={workflow.id}>
+                  <div className='mt-1'>
+                    <div className='workflow-title'>{workflow.name}</div>
+                    <div className='wf-meta--id'>
+                      <WorkflowMetadata
+                        workflow={workflow}
+                        openShareModal={this.openShareModal}
+                      />
+                    </div>
+                  </div>
+                  <div onClick={this.preventDefault} className='menu-test-class'>
+                    <WfContextMenu
+                      duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }
+                      deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }
+                    />
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         </div>
+        {this.renderShareModal()}
       </div>
     )
   }
 }
-
-Workflows.propTypes = {
-  api:        PropTypes.object.isRequired
-};
