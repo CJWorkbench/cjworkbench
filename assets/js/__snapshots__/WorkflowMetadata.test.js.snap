@@ -31,7 +31,7 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
     </span>
     <button
       className="public-private"
-      onClick={[MockFunction]}
+      onClick={[Function]}
       title="Change privacy"
     >
       private

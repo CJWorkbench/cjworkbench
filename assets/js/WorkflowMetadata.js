@@ -8,8 +8,19 @@ import { timeDifference } from './utils'
 export default class WorkflowMetadata extends React.Component {
   static propTypes = {
     workflow: PropTypes.object.isRequired,
-    openShareModal: PropTypes.func.isRequired, // func() => undefined
+    openShareModal: PropTypes.func.isRequired, // func(workflowId) => undefined
     test_now: PropTypes.object  // optional injection for testing, avoid time zone issues for Last Update time
+  }
+
+  openShareModal = (ev) => {
+    // On the Workflows page, this button is rendered within an <a>. Make sure
+    // the browser's usual <a> handling doesn't happen.
+    ev.preventDefault()
+    ev.stopPropagation()
+
+    // Grab workflow ID -- WorkflowMetadata appears on the "workflows" page,
+    // which can have several workflows.
+    this.props.openShareModal(this.props.workflow.id)
   }
 
   render () {
@@ -26,7 +37,7 @@ export default class WorkflowMetadata extends React.Component {
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-        <button className="public-private" title="Change privacy" onClick={this.props.openShareModal}>
+        <button className="public-private" title="Change privacy" onClick={this.openShareModal}>
           {this.props.workflow.public ? 'public' : 'private'}
         </button>
       </li>

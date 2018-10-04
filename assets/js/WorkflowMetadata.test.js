@@ -44,7 +44,7 @@ describe('WorkflowMetadata', () => {
 
   it('opens share modal', () => {
     const w = wrapper()
-    w.find('button.public-private').simulate('click')
+    w.find('button.public-private').simulate('click', { preventDefault: jest.fn(), stopPropagation: jest.fn() })
     expect(w.instance().props.openShareModal).toHaveBeenCalled()
   })
 })

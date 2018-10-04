@@ -6,22 +6,18 @@ import WorkbenchAPI from '../WorkbenchAPI'
 /**
  * Wraps a Modal with HTTP requests to maintain the collaborator list.
  */
-export default class LoadingModal extends React.PureComponent {
+export default class ModalLoader extends React.PureComponent {
   static propTypes = {
     workflowId: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
     isPublic: PropTypes.bool.isRequired,
     onChangeIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
     logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
-    acl: PropTypes.arrayOf(PropTypes.shape({
-      email: PropTypes.string.isRequired,
-      canEdit: PropTypes.bool.isRequired
-    }).isRequired), // or null if loading
     onClickClose: PropTypes.func.isRequired // func() => undefined
   }
 
   state = {
-    acl: null
+    acl: null // null when loading
   }
 
   componentDidMount () {
