@@ -309,7 +309,7 @@ class WorkflowViewTests(LoggedInTestCase):
         response = workflow_detail(request, workflow_id=self.other_workflow_private.id)
         self.assertEqual(response.status_code, 403)
 
-    def test_email_leakage(self):
+    def test_email_leakage(self):  # TODO nix this feature
         # We user email as display name if the user has not set first,last
         # But don't ever give this out for a public workflow, either through page or API
         request = self._build_get('/workflows/%d/' % self.other_workflow_public.id,
