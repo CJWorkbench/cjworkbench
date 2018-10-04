@@ -11,6 +11,7 @@ function mapStateToProps (state) {
     url,
     workflowId: state.workflow.id,
     isPublic: state.workflow.public,
+    isReadOnly: !state.workflow.is_owner,
     ownerEmail: state.workflow.owner_email
   }
 }

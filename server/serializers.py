@@ -148,6 +148,7 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
     last_update = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
     owner_email = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     def get_owner_name(self, obj):
         if obj.example:
@@ -165,16 +166,16 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
         return obj.last_update()
 
     def get_read_only(self, obj):
-        try:
-            request = self.context['request']
-        except KeyError:
-            return True
-
+        request = self.context['request']
         return obj.request_read_only(request)
+
+    def get_is_owner(self, obj):
+        request = self.context['request']
+        return obj.request_authorized_owner(request)
 
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'public', 'read_only', 'last_update',
+        fields = ('id', 'name', 'public', 'read_only', 'is_owner', 'last_update',
                   'owner_email', 'owner_name')
 
 
@@ -185,8 +186,8 @@ class WorkflowSerializer(WorkflowSerializerLite):
     class Meta:
         model = Workflow
         fields = ('id', 'url_id', 'name', 'revision', 'wf_modules', 'public',
-                  'read_only', 'last_update', 'owner_email', 'owner_name',
-                  'selected_wf_module', 'is_anonymous')
+                  'read_only', 'last_update', 'is_owner', 'owner_email',
+                  'owner_name', 'selected_wf_module', 'is_anonymous')
 
 
 class LessonSerializer(serializers.BaseSerializer):

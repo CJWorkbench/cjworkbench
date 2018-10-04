@@ -8,6 +8,7 @@ import WorkbenchAPI from '../WorkbenchAPI'
  */
 export default class ModalLoader extends React.PureComponent {
   static propTypes = {
+    isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     workflowId: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
     isPublic: PropTypes.bool.isRequired,
@@ -35,7 +36,8 @@ export default class ModalLoader extends React.PureComponent {
   }
 
   updateAclEntry = (email, canEdit) => {
-    const { ownerEmail, workflowId } = this.props
+    const { isReadOnly, ownerEmail, workflowId } = this.props
+    if (isReadOnly) return // should be redundant
     if (email === ownerEmail) return
 
     WorkbenchAPI.updateAclEntry(workflowId, email, canEdit)
@@ -56,7 +58,8 @@ export default class ModalLoader extends React.PureComponent {
   }
 
   deleteAclEntry = (email) => {
-    const { ownerEmail, workflowId } = this.props
+    const { isReadOnly, ownerEmail, workflowId } = this.props
+    if (isReadOnly) return // should be redundant
     if (email === ownerEmail) return
 
     WorkbenchAPI.deleteAclEntry(workflowId, email)
@@ -67,12 +70,13 @@ export default class ModalLoader extends React.PureComponent {
   }
 
   render () {
-    const { url, isPublic, onChangeIsPublic, ownerEmail, logShare, onClickClose } = this.props
+    const { url, isPublic, isReadOnly, onChangeIsPublic, ownerEmail, logShare, onClickClose } = this.props
     const { acl } = this.state
 
     return (
       <Modal
         url={url}
+        isReadOnly={isReadOnly}
         isPublic={isPublic}
         ownerEmail={ownerEmail}
         onChangeIsPublic={onChangeIsPublic}

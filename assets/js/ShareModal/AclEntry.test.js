@@ -6,6 +6,7 @@ describe('AclEntry', () => {
   // We mount() because we're testing both Role and AclEntry together.
   const wrapper = (props={}) => mount(
     <AclEntry
+      isReadOnly={false}
       email='user@example.org'
       canEdit={false}
       onChange={jest.fn()}
@@ -52,5 +53,11 @@ describe('AclEntry', () => {
     const w = wrapper({ email: 'a@example.com' })
     w.find('button.delete').simulate('click')
     expect(w.prop('onClickDelete')).toHaveBeenCalledWith('a@example.com')
+  })
+
+  it('should render read-only', () => {
+    const w = wrapper({ isReadOnly: true, canEdit: true })
+    expect(w.find('.role').text()).toEqual('Can edit')
+    expect(w.find('button')).toHaveLength(0)
   })
 })

@@ -6,6 +6,7 @@ import OwnerAclEntry from './OwnerAclEntry'
 
 export default class Acl extends React.PureComponent {
   static propTypes = {
+    isReadOnly: PropTypes.bool.isRequired, // are we owner? otherwise ACL is read-only
     ownerEmail: PropTypes.string.isRequired,
     acl: PropTypes.arrayOf(PropTypes.shape({
       email: PropTypes.string.isRequired,
@@ -17,7 +18,7 @@ export default class Acl extends React.PureComponent {
   }
 
   render () {
-    const { acl, onChange, onCreate, onClickDelete, ownerEmail } = this.props
+    const { acl, isReadOnly, onChange, onCreate, onClickDelete, ownerEmail } = this.props
 
     return (
       <ul className='acl'>
@@ -26,12 +27,14 @@ export default class Acl extends React.PureComponent {
         </li>
         {acl.map(entry => (
           <li key={entry.email}>
-            <AclEntry {...entry} onChange={onChange} onClickDelete={onClickDelete} />
+            <AclEntry {...entry} isReadOnly={isReadOnly} onChange={onChange} onClickDelete={onClickDelete} />
           </li>
         ))}
-        <li key='new'>
-          <NewAclEntry onCreate={onCreate} />
-        </li>
+        {isReadOnly ? null : (
+          <li key='new'>
+            <NewAclEntry onCreate={onCreate} />
+          </li>
+        )}
       </ul>
     )
   }

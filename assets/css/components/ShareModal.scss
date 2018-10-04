@@ -9,13 +9,19 @@
     }
   }
 
+  p {
+    // We use <p> for "read-only" replacements of components. For instance,
+    // non-owners see <p class="role"> instead of a <div class="dropdown role">
+    margin: 0;
+    padding: 0;
+    font: inherit;
+  }
+
   .public-private {
+    font-size: 1.3rem;
+
     label input {
       top: 2px; // align checkbox with text
-    }
-
-    label span {
-      font-size: 1.3rem;
     }
   }
 

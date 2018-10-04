@@ -10,6 +10,7 @@ import Url from './Url'
 
 export default class Modal extends React.PureComponent {
   static propTypes = {
+    isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     url: PropTypes.string.isRequired,
     isPublic: PropTypes.bool.isRequired,
     onChangeIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
@@ -26,7 +27,7 @@ export default class Modal extends React.PureComponent {
   }
 
   render () {
-    const { url, isPublic, onChangeIsPublic, logShare, ownerEmail, acl,
+    const { url, isReadOnly, isPublic, onChangeIsPublic, logShare, ownerEmail, acl,
       onChangeAclEntry, onCreateAclEntry, onClickDeleteAclEntry, onClickClose } = this.props
 
     return (
@@ -35,6 +36,7 @@ export default class Modal extends React.PureComponent {
         <ModalBody>
           <h6>Share with the world</h6>
           <PublicPrivate
+            isReadOnly={isReadOnly}
             isPublic={isPublic}
             onChangeIsPublic={onChangeIsPublic}
           />
@@ -42,6 +44,7 @@ export default class Modal extends React.PureComponent {
           <h6>Share with collaborators</h6>
           {acl ? (
             <Acl
+              isReadOnly={isReadOnly}
               ownerEmail={ownerEmail}
               acl={acl}
               onChange={onChangeAclEntry}
@@ -59,9 +62,10 @@ export default class Modal extends React.PureComponent {
           />
         </ModalBody>
         <ModalFooter>
-          <div className="actions">
+          <div className='actions'>
             <button
-              name="close"
+              name='close'
+              className='action-button button-gray'
               onClick={onClickClose}
               >Close</button>
           </div>

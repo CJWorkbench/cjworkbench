@@ -45,6 +45,7 @@ export default class Workflows extends React.Component {
         url={url}
         ownerEmail={workflow.owner_email}
         workflowId={workflow.id}
+        isReadOnly={workflow.is_owner}
         isPublic={workflow.public}
         onChangeIsPublic={this.setIsPublicFromShareModal}
         logShare={this.logShare}
