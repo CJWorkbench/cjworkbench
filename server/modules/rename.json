@@ -3,7 +3,7 @@
   "id_name": "rename-columns",
   "category": "Clean",
   "icon": "edit",
-  "description": "Rename columns",
+  "description": "Rename columns.",
   "help_url":"modules/clean/rename-columns",
   "parameters": [
     {

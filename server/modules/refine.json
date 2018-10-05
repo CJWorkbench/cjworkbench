@@ -3,7 +3,7 @@
   "id_name": "refine",
   "category": "Clean",
   "icon": "clean",
-  "description": "Histogram-based data cleaning",
+  "description": "Find and edit facets in seconds. Search and edit manually or use algorythms",
   "has_zen_mode": true,
   "help_url":"modules/clean/refine",
   "parameters": [

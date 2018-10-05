@@ -3,7 +3,7 @@
   "id_name": "urlscraper" ,
   "category" : "Scrape",
   "icon" : "scraper",
-  "description" : "",
+  "description" : "Scrape the entire HTML from a webpage to be able to search its content or monitor if it changes.",
   "loads_data": true,
   "help_url":"modules/scrape/Scrape-html",
   "parameters": [

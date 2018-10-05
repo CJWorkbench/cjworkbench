@@ -3,7 +3,7 @@
   "id_name": "loadurl" ,
   "category" : "Add data",
   "icon" : "url",
-  "description" : "Connect a dataset via its URL and keep it updated with its source.",
+  "description" : "Connect a dataset or JSON feed via its URL and keep it updated when the source changes.",
   "loads_data": true,
   "help_url":"modules/add-data/add-from-url",
   "parameters": [

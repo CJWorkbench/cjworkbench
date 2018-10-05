@@ -3,7 +3,7 @@
   "id_name": "googlesheets" ,
   "category" : "Add data",
   "icon" : "google-drive",
-  "description" : "Connect to a Google Spreadsheet and stay updated with its source.",
+  "description" : "Connect data from your Google Drive account and keep it updated when the source changes.",
   "help_url":"modules/add-data/google-drive",
   "loads_data": true,
   "parameters": [
