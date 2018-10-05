@@ -166,6 +166,21 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(json.loads(response.content)['column_types'],
                          ['number', 'number', 'number', 'number'])
 
+    def test_max_columns_returned(self):
+        # Only at most 101 columns should be returned to the client
+        # since we do not display more than 100
+        csv_text = ','.join(['1']*200) + '\n' + ','.join(['1']*200)
+        workflow = create_testdata_workflow(csv_text=csv_text)
+        response = self.client.get('/api/wfmodules/%d/render' %
+                                   workflow.wf_modules.first().id)
+        self.assertIs(response.status_code, 200)
+        # Max 101 columns of data
+        self.assertEqual(len(json.loads(response.content)['rows'][0]),
+                         101)
+        # Retain column header length for correct sum of columns
+        self.assertEqual(len(json.loads(response.content)['columns']),
+                         200)
+
     def test_wf_module_render_get(self):
         # First module: creates test data
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)

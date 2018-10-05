@@ -1,6 +1,7 @@
 from datetime import timedelta
 import json
 import re
+import pandas as pd
 from asgiref.sync import async_to_sync
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
@@ -183,19 +184,22 @@ def wfmodule_detail(request, pk, format=None):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+N_COLUMNS_PER_TABLE = 101
 # ---- render / input / livedata ----
 # These endpoints return actual table data
 
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
+# Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_dict(cached_result, startrow=None, endrow=None):
     if not cached_result:
-        result = ProcessResult()
+        #result = ProcessResult()
+        dataframe = pd.DataFrame()
     else:
-        result = cached_result.result
+        #result = cached_result.result
+        dataframe = cached_result.parquet_file.to_pandas(columns=cached_result.column_names[:N_COLUMNS_PER_TABLE])
 
-    nrows = len(result.dataframe)
+    nrows = len(dataframe)
     if startrow is None:
         startrow = 0
     if endrow is None:
@@ -204,7 +208,7 @@ def _make_render_dict(cached_result, startrow=None, endrow=None):
     startrow = max(0, startrow)
     endrow = min(nrows, endrow, startrow + _MaxNRowsPerRequest)
 
-    table = result.dataframe[startrow:endrow]
+    table = dataframe[startrow:endrow]
 
     # In a sane and just world, we could now just do something like
     #  rows = table.to_dict(orient='records')
@@ -213,14 +217,16 @@ def _make_render_dict(cached_result, startrow=None, endrow=None):
     # does not convert NaN to null. It also fails on int64 columns.
 
     # The workaround is to usr table.to_json to get a string, then parse it.
+    # Keeping the column names and types at original lengths so that correct
+    # column total is displayed above table
     rows = json.loads(table.to_json(orient="records", date_format='iso'))
     return {
         'total_rows': nrows,
         'start_row': startrow,
         'end_row': endrow,
-        'columns': result.column_names,
+        'columns': cached_result.column_names,
         'rows': rows,
-        'column_types': result.column_types,
+        'column_types': cached_result.column_types,
     }
 
 
