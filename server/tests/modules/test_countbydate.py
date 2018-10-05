@@ -6,10 +6,15 @@ from pandas.testing import assert_frame_equal
 from django.test import override_settings, SimpleTestCase
 from server.modules.countbydate import CountByDate
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 
-def render(wf_module, table):
-    return ProcessResult.coerce(CountByDate.render(wf_module, table))
+P = MockParams.factory(column='', groupby=0, operation=0, targetcolumn='',
+                       include_missing_dates=False)
+
+
+def render(params, table):
+    return ProcessResult.coerce(CountByDate.render(params, table))
 
 
 def dt(s):
@@ -51,29 +56,9 @@ agg_int_table = pandas.DataFrame({
 })
 
 
-class MockWfModule:
-    def __init__(self, **kwargs):
-        self.column = ''
-        self.groupby = 0
-        self.operation = 0
-        self.targetcolumn = ''
-        self.include_missing_dates = False
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def create_parameter_dict(self, table):
-        return {
-            'column': self.column,
-            'groupby': self.groupby,
-            'operation': self.operation,
-            'targetcolumn': self.targetcolumn,
-            'include_missing_dates': self.include_missing_dates,
-        }
-
-
 class CountByDateTests(SimpleTestCase):
-    def _assertRendersTable(self, in_table, wf_module, expected_table):
-        result = render(wf_module, in_table)
+    def _assertRendersTable(self, in_table, params, expected_table):
+        result = render(params, in_table)
 
         if hasattr(expected_table['Date'], 'dt'):
             expected_table['Date'] = \
@@ -90,7 +75,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_date(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=3),  # 3 = group by days
+            P(column='Date', groupby=3),  # 3 = group by days
             pandas.DataFrame({
                 'Date': [dt('2011-01-10'), dt('2011-01-15'), dt('2016-07-25')],
                 'count': [5, 1, 1],
@@ -100,7 +85,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_seconds(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=0),  # 0 = group by second
+            P(column='Date', groupby=0),  # 0 = group by second
             pandas.DataFrame({
                 'Date': [
                     dt('2011-01-10T00:00:00Z'),
@@ -117,7 +102,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_minutes(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=1),  # 1 = group by minute
+            P(column='Date', groupby=1),  # 1 = group by minute
             pandas.DataFrame({
                 'Date': [dt('2011-01-10T00:00Z'), dt('2011-01-10T00:01Z'),
                          dt('2011-01-10T01:00Z'), dt('2011-01-15T00:00Z'),
@@ -129,7 +114,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_hours(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=2),  # 2 = group by hour
+            P(column='Date', groupby=2),  # 2 = group by hour
             pandas.DataFrame({
                 'Date': [dt('2011-01-10T00:00Z'), dt('2011-01-10T01:00Z'),
                          dt('2011-01-15T00:00Z'), dt('2016-07-25T00:00Z')],
@@ -140,7 +125,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_months(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=4),  # 4 = group by month
+            P(column='Date', groupby=4),  # 4 = group by month
             pandas.DataFrame({
                 'Date': [dt('2011-01-01'), dt('2016-07-01')],
                 'count': [6, 1],
@@ -150,7 +135,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_quarters(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=5),  # 5 = group by quarter
+            P(column='Date', groupby=5),  # 5 = group by quarter
             pandas.DataFrame({
                 'Date': ['2011 Q1', '2016 Q3'],
                 'count': [6, 1]
@@ -160,7 +145,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_years(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=6),  # 6 = group by year
+            P(column='Date', groupby=6),  # 6 = group by year
             pandas.DataFrame({
                 'Date': [dt('2011-01-01'), dt('2016-01-01')],
                 'count': [6, 1],
@@ -170,7 +155,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_second_of_day(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=7),  # 7 = second of day
+            P(column='Date', groupby=7),  # 7 = second of day
             pandas.DataFrame({
                 'Date': ['00:00:00', '00:00:01', '00:01:00', '01:00:00'],
                 'count': [3, 2, 1, 1],
@@ -180,7 +165,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_minute_of_day(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=8),  # 8 = minute of day
+            P(column='Date', groupby=8),  # 8 = minute of day
             pandas.DataFrame({
                 'Date': ['00:00', '00:01', '01:00'],
                 'count': [5, 1, 1],
@@ -190,7 +175,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_hour_of_day(self):
         self._assertRendersTable(
             count_table,
-            MockWfModule(column='Date', groupby=9),  # 9 = hour of day
+            P(column='Date', groupby=9),  # 9 = hour of day
             pandas.DataFrame({
                 'Date': ['00:00', '01:00'],
                 'count': [6, 1],
@@ -198,52 +183,46 @@ class CountByDateTests(SimpleTestCase):
         )
 
     def test_no_col_gives_noop(self):
-        wf_module = MockWfModule(column='')
-        result = render(wf_module, count_table)
+        result = render(P(column=''), count_table)
         expected = ProcessResult(count_table)
         self.assertResultEqual(result, expected)
 
     def test_invalid_colname_gives_error(self):
         # bad column name should produce error
-        wf_module = MockWfModule(column='hilarious')
-        result = render(wf_module, count_table)
+        result = render(P(column='hilarious'), count_table)
         self.assertEqual(result.error, 'There is no column named "hilarious"')
 
     def test_integer_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': [1], 'B': [2]})
-        wf_module = MockWfModule(column='A')
-        result = render(wf_module, table)
+        result = render(P(column='A'), table)
         self.assertEqual(result.error, 'Column "A" must be Date & Time')
 
     def test_string_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': ['2018'], 'B': [2]})
-        wf_module = MockWfModule(column='A')
-        result = render(wf_module, table)
+        result = render(P(column='A'), table)
         self.assertEqual(result.error, 'Column "A" must be Date & Time')
         self.assertEqual(len(result.quick_fixes), 1)
 
     def test_average_no_error_when_missing_target(self):
         # 1 = mean
-        wf_module = MockWfModule(column='Date', operation=1, targetcolumn='')
-        result = render(wf_module, count_table)
+        params = P(column='Date', operation=1, targetcolumn='')
+        result = render(params, count_table)
         self.assertResultEqual(
             result,
             ProcessResult(count_table)
         )
 
     def test_average_require_target(self):
-        wf_module = MockWfModule(column='Date', operation=1,
-                                 targetcolumn='Invalid')
-        result = render(wf_module, count_table)
+        params = P(column='Date', operation=1, targetcolumn='Invalid')
+        result = render(params, count_table)
         self.assertEqual(result.error, 'There is no column named "Invalid"')
 
     def test_average_by_date(self):
         self._assertRendersTable(
             agg_table,
-            MockWfModule(column='Date', groupby=3, operation=1,
-                         targetcolumn='Amount'),
+            P(column='Date', groupby=3, operation=1, targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -255,8 +234,7 @@ class CountByDateTests(SimpleTestCase):
         # 2 = sum
         self._assertRendersTable(
             agg_table,
-            MockWfModule(column='Date', groupby=3, operation=2,
-                         targetcolumn='Amount'),
+            P(column='Date', groupby=3, operation=2, targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -268,8 +246,7 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 3 = min
-            MockWfModule(column='Date', groupby=3, operation=3,
-                         targetcolumn='Amount'),
+            P(column='Date', groupby=3, operation=3, targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -281,8 +258,7 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 4 = max
-            MockWfModule(column='Date', groupby=3, operation=4,
-                         targetcolumn='Amount'),
+            P(column='Date', groupby=3, operation=4, targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -294,8 +270,7 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 0 = count
-            MockWfModule(column='Date', include_missing_dates=True,
-                         groupby=3, operation=0),
+            P(column='Date', include_missing_dates=True, groupby=3, operation=0),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -308,8 +283,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_int_table,
             # 2 = sum
-            MockWfModule(column='Date', include_missing_dates=True,
-                         groupby=3, operation=2, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby=3,
+              operation=2, targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -322,8 +297,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 2 = sum
-            MockWfModule(column='Date', include_missing_dates=True,
-                         groupby=3, operation=2, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby=3,
+              operation=2, targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -336,8 +311,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 3 = min
-            MockWfModule(column='Date', include_missing_dates=True,
-                         groupby=3, operation=3, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby=3,
+              operation=3, targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -351,8 +326,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_int_table,
             # 3 = min
-            MockWfModule(column='Date', include_missing_dates=True,
-                         groupby=3, operation=3, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby=3,
+              operation=3, targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -368,17 +343,15 @@ class CountByDateTests(SimpleTestCase):
                 'Date': [dt('2018-01-01'), None, dt('2018-01-02')],
                 'Amount': [np.nan, 2, 3],
             }),
-            MockWfModule(column='Date', groupby=3, operation=3,
-                         targetcolumn='Amount'),
+            P(column='Date', groupby=3, operation=3, targetcolumn='Amount'),
             pandas.DataFrame({'Date': [dt('2018-01-02')], 'Amount': 3.0})
         )
 
     @override_settings(MAX_ROWS_PER_TABLE=100)
     def test_include_too_many_missing_dates(self):
         # 0 - group by seconds
-        wf_module = MockWfModule(column='Date', groupby=0,
-                                 include_missing_dates=True)
-        result = render(wf_module, count_table)
+        params = P(column='Date', groupby=0, include_missing_dates=True)
+        result = render(params, count_table)
         self.assertEqual(
             result.error,
             ('Including missing dates would create 174787201 rows, '

@@ -3,30 +3,18 @@ import unittest
 import pandas as pd
 from server.modules.selectcolumns import SelectColumns
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 KEEP = 1
 DROP = 0
 
-
-class MockWfModule:
-    def __init__(self, colnames, drop_or_keep, select_range, column_numbers):
-        self.colnames = colnames
-        self.drop_or_keep = drop_or_keep
-        self.select_range = select_range
-        self.column_numbers = column_numbers
-
-    def get_param_radio_idx(self, name):
-        return getattr(self, name)
-
-    def get_param_string(self, name):
-        return getattr(self, name)
-
-    def get_param_checkbox(self, name):
-        return getattr(self, name)
+def P(colnames, drop_or_keep, select_range, column_numbers):
+    return MockParams(colnames=colnames, drop_or_keep=drop_or_keep,
+                      select_range=select_range, column_numbers=column_numbers)
 
 def render(table, colnames, drop_or_keep, select_range, column_numbers) -> ProcessResult:
-    wf_module = MockWfModule(colnames, drop_or_keep, select_range, column_numbers)
-    result = SelectColumns.render(wf_module, table)
+    params = P(colnames, drop_or_keep, select_range, column_numbers)
+    result = SelectColumns.render(params, table)
     return result
 
 

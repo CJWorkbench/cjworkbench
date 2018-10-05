@@ -36,18 +36,21 @@ def merge_colspan_headers_in_place(table) -> None:
 
 class ScrapeTable(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
-        table = wf_module.retrieve_fetched_table()
-        if table is None:
-            return None
+    def render(params, table, *, fetch_result, **kwargs):
+        if not fetch_result:
+            return table
 
-        first_row_is_header = wf_module.get_param_checkbox('first_row_is_header')
-        if first_row_is_header:
+        if fetch_result.status == 'error':
+            return fetch_result
+
+        table = fetch_result.dataframe
+
+        if params.get_param_checkbox('first_row_is_header'):
             table.columns = [str(c) for c in list(table.iloc[0, :])]
             table = table[1:]
             table.reset_index(drop=True, inplace=True)
 
-        return (table, wf_module.fetch_error)
+        return (table, fetch_result.error)
 
     @staticmethod
     async def event(wfm, **kwargs):
@@ -55,9 +58,11 @@ class ScrapeTable(ModuleImpl):
             result = ProcessResult(error=error)
             await ModuleImpl.commit_result(wfm, result)
 
+        params = wfm.get_params()
+
         table = None
-        url = wfm.get_param_string('url').strip()
-        tablenum = wfm.get_param_integer('tablenum') - 1  # 1 based for user
+        url = params.get_param_string('url').strip()
+        tablenum = params.get_param_integer('tablenum') - 1  # 1 based for user
 
         if tablenum < 0:
             return await fail(_('Table number must be at least 1'))

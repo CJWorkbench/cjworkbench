@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any
 from django.utils import timezone
-from server.models import WfModule
+import pandas as pd
+from server.models import Params, WfModule
 from server.versions import save_result_if_changed
 from server import websockets
 from .types import ProcessResult
@@ -9,7 +10,7 @@ from .types import ProcessResult
 # Base class for all modules. Really just a reminder of function signatures
 class ModuleImpl:
     @staticmethod
-    def render(wfmodule: WfModule, table):
+    def render(params: Params, table: pd.DataFrame, **kwargs):
         return table
 
     @staticmethod

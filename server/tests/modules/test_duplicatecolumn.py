@@ -2,18 +2,11 @@ import unittest
 import pandas as pd
 from server.modules.duplicatecolumn import DuplicateColumn
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 
-class MockWfModule:
-    def __init__(self, colnames):
-        self.colnames = colnames
-
-    def get_param_string(self, x):
-        return self.colnames
-
-
-def render(wf_module, table):
-    result = DuplicateColumn.render(wf_module, table)
+def render(colnames, table):
+    result = DuplicateColumn.render(MockParams(colnames=colnames), table)
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()  # important: duplicate makes colname conflicts
     return result
@@ -26,8 +19,7 @@ class DuplicateColumnTests(unittest.TestCase):
             'B': [2, 3],
             'C': [3, 4],
         })
-        wf_module = MockWfModule('A,C')
-        result = render(wf_module, table)
+        result = render(['A', 'C'], table)
 
         expected = ProcessResult(pd.DataFrame({
             'A': [1, 2],
@@ -45,8 +37,7 @@ class DuplicateColumnTests(unittest.TestCase):
             'Copy of A 1': [3, 4],
             'C': [4, 5],
         })
-        wf_module = MockWfModule('A')
-        result = render(wf_module, table)
+        result = render(['A'], table)
 
         expected = ProcessResult(pd.DataFrame({
             'A': [1, 2],

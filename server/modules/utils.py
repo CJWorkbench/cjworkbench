@@ -355,6 +355,15 @@ def get_id_from_url(url):
 
 
 def store_external_workflow(wf_module, url) -> ProcessResult:
+    """
+    Return a ProcessResult based on a URL.
+
+    Misnomers abound:
+
+        * This does not store anything anywhere
+        * 'url' is not a URL: it's just something that ends in an integer. (We
+          only use the integer.)
+    """
     right_wf_id = get_id_from_url(url)
 
     with transaction.atomic():

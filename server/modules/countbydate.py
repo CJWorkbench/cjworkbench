@@ -317,14 +317,12 @@ class Form:
 
 class CountByDate(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
-        if table is None:
-            return table
-
-        params = wf_module.create_parameter_dict(table)
+    def render(params, table, **kwargs):
+        if table is None or table.empty:
+            return ProcessResult()
 
         try:
-            form = Form.parse(params)
+            form = Form.parse(params.to_painful_dict(table))
         except ValueError as err:
             return (table, str(err))
         if form is None:

@@ -4,6 +4,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from server import websockets
 from server.modules.types import Column, ProcessResult
+from .Params import Params
 from .CachedRenderResult import CachedRenderResult
 from .ModuleVersion import ModuleVersion
 from .ParameterSpec import ParameterSpec
@@ -12,25 +13,6 @@ from .StoredObject import StoredObject
 
 
 # ---- Parameter Dictionary Sanitization ----
-
-# Column sanitization: remove invalid column names
-# We can get bad column names if the module is reordered, for example
-# Never make the render function deal with this.
-def _sanitize_column_param(pval, table_cols):
-    col = pval.get_value()
-    if col in table_cols:
-        return col
-    else:
-        return ''
-
-
-def _sanitize_multicolumn_param(pval, table_cols):
-    cols = pval.get_value().split(',')
-    cols = [c.strip() for c in cols]
-    cols = [c for c in cols if c in table_cols]
-
-    return ','.join(cols)
-
 
 class WfModule(models.Model):
     """An instance of a Module in a Workflow."""
@@ -45,27 +27,18 @@ class WfModule(models.Model):
         return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
 
     def create_parameter_dict(self, table):
-        """Present parameters as a dict, with some inconsistent munging.
+        """
+        Present parameters as a dict, with some inconsistent munging.
 
         A `column` parameter that refers to an invalid column will be renamed
         to the empty string.
 
         A `multicolumn` parameter will have its values `strip()`ed and have
         invalid columns removed.
+
+        TODO use params throughout? Or some-such.
         """
-        pdict = {}
-        for p in self.parameter_vals.all().prefetch_related('parameter_spec'):
-            type = p.parameter_spec.type
-            id_name = p.parameter_spec.id_name
-
-            if type == ParameterSpec.COLUMN:
-                pdict[id_name] = _sanitize_column_param(p, table.columns)
-            elif type == ParameterSpec.MULTICOLUMN:
-                pdict[id_name] = _sanitize_multicolumn_param(p, table.columns)
-            else:
-                pdict[id_name] = p.get_value()
-
-        return pdict
+        return self.get_params().to_painful_dict(table)
 
     # --- Fields ----
     workflow = models.ForeignKey(
@@ -226,6 +199,14 @@ class WfModule(models.Model):
         else:
             return None
 
+    def get_fetch_result(self) -> Optional[ProcessResult]:
+        """Load the result of a Fetch, if there was one."""
+        table = self.retrieve_fetched_table()
+        if table is None:
+            return None
+
+        return ProcessResult(table, self.fetch_error)
+
     # versions are ISO datetimes
     def get_fetched_data_version(self):
         return self.stored_data_version
@@ -262,6 +243,16 @@ class WfModule(models.Model):
                 value = pspec.def_value
             pv.set_value(value)
             pv.save()
+
+    def get_params(self) -> Params:
+        """
+        Load ParameterVals from the database for easy access.
+
+        The Params object is a "snapshot" of database values. You can call
+        `get_params()` in a lock and then safely release the lock.
+        """
+        vals = self.parameter_vals.prefetch_related('parameter_spec').all()
+        return Params(vals)
 
     def get_parameter_val(self, name, expected_type):
         try:

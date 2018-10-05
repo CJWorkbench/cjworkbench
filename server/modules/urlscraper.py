@@ -71,33 +71,28 @@ async def scrape_urls(urls, result_table):
 
 class URLScraper(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
-        urlsource = wf_module.get_param_menu_string('urlsource')
+    def render(params, table, *, fetch_result, **kwargs):
+        urlsource = params.get_param_menu_string('urlsource')
         if urlsource == 'Input column':
-            urlcol = wf_module.get_param_column('urlcol')
-            if urlcol != '':
-                # Check if we have a fetched table; if not, return table itself
-                fetched_table = wf_module.retrieve_fetched_table()
-                if fetched_table is not None:
-                    return (fetched_table, wf_module.fetch_error)
-                return table
-            else:
-                return table  # nop if column not set
-        elif urlsource == 'List':
-            fetched_table = wf_module.retrieve_fetched_table()
-            if fetched_table is not None:
-                return (fetched_table, wf_module.fetch_error)
-            else:
-                return table
+            urlcol = params.get_param_column('urlcol', table)
+            if not urlcol:
+                return table  # input not specified
+        else:
+            urllist = params.get_param_string('urllist')
+            if not urllist:
+                return table  # input not specified
+
+        return fetch_result
 
     # Scrapy scrapy scrapy
     @staticmethod
     async def event(wfm, **kwargs):
         urls = []
-        urlsource = wfm.get_param_menu_string('urlsource')
+        params = wfm.get_params()
+        urlsource = params.get_param_menu_string('urlsource')
 
         if urlsource == 'List':
-            urllist_text = wfm.get_param_string('urllist')
+            urllist_text = params.get_param_string('urllist')
             urllist_raw = urllist_text.split('\n')
             for url in urllist_raw:
                 s_url = url.strip()
@@ -109,11 +104,6 @@ class URLScraper(ModuleImpl):
                 else:
                     urls.append(s_url)
         elif urlsource == 'Input column':
-            # get our list of URLs from a column in the input table
-            urlcol = wfm.get_param_column('urlcol')
-            if urlcol == '':
-                return
-
             # We won't execute here -- there's no need: the user clicked a
             # button so should be pretty clear on what the input is.
             input_cache = wfm.previous_in_stack().get_cached_render_result()
@@ -122,10 +112,12 @@ class URLScraper(ModuleImpl):
             else:
                 prev_table = pd.DataFrame()
 
-            # column parameters are not sanitized here, could be missing
-            # this col
-            if urlcol in prev_table.columns:
+            # get our list of URLs from a column in the input table
+            urlcol = params.get_param_column('urlcol', prev_table)
+            if urlcol:
                 urls = prev_table[urlcol].tolist()
+            else:
+                urls = []
 
         if len(urls) > 0:
             table = pd.DataFrame(

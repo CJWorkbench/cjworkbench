@@ -34,20 +34,23 @@ def guess_mime_type_or_none(content_type: str, url: str) -> str:
 class LoadURL(ModuleImpl):
     # Input table ignored.
     @staticmethod
-    def render(wf_module, table):
-        # Must perform header operation here in the event the header checkbox state changes
-        has_header = wf_module.get_param_checkbox("has_header")
-        if not has_header:
-            return ProcessResult(turn_header_into_first_row(wf_module.retrieve_fetched_table()),
-                                 wf_module.error_msg)
-        else:
-            return ProcessResult(wf_module.retrieve_fetched_table(),
-                                 wf_module.error_msg)
+    def render(params, table, *, fetch_result, **kwargs):
+        if not fetch_result:
+            return ProcessResult(table)  # no-op
+
+        table = fetch_result.dataframe
+        error = fetch_result.error
+
+        if not params.get_param_checkbox('has_header'):
+            table = turn_header_into_first_row(table)
+
+        return ProcessResult(table, error)
 
     # Load a CSV from file when fetch pressed
     @staticmethod
     async def event(wf_module, **kwargs):
-        url = wf_module.get_param_string('url').strip()
+        params = wf_module.get_params()
+        url = params.get_param_string('url').strip()
 
         validate = URLValidator()
         try:

@@ -247,22 +247,15 @@ class RefineSpec:
 
 
 class Refine(ModuleImpl):
-    def render(wf_module, table):
+    @staticmethod
+    def render(params, table, **kwargs):
         # 'refine' holds the edits
-        edits_json = wf_module.get_param_raw('refine', 'custom')
-        column = wf_module.get_param_column('column')
+        edits = params.get_param_json('refine')
+        column = params.get_param_column('column', table)
 
-        if not edits_json or not column:
+        if not edits or not column:
             # No user input yet
             return ProcessResult(table)
-
-        if column not in table.columns:
-            return ProcessResult(error=f'There is no column {column}')
-
-        try:
-            edits = json.loads(edits_json)
-        except ValueError:
-            return ProcessResult(error='Internal error: Invalid JSON')
 
         try:
             spec = RefineSpec.parse(column, edits)

@@ -58,17 +58,12 @@ async def upload_to_table(wf_module, uploaded_file):
 
 class UploadFile(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
-        # Must perform header operation here in the event the header checkbox
-        # state changes
-        has_header = wf_module.get_param_checkbox('has_header')
-        if not has_header:
-            return ProcessResult(
-                turn_header_into_first_row(wf_module.retrieve_fetched_table()),
-                wf_module.error_msg
-            )
-        else:
-            return ProcessResult(
-                wf_module.retrieve_fetched_table(),
-                wf_module.error_msg
-            )
+    def render(params, table, *, fetch_result, **kwargs):
+        if not fetch_result or fetch_result.status == 'error':
+            return fetch_result
+
+        table = fetch_result.dataframe
+        if not params.get_param_checkbox('has_header'):
+            table = turn_header_into_first_row(table)
+
+        return ProcessResult(table, fetch_result.error)

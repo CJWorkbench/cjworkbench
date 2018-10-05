@@ -1,5 +1,5 @@
 from itertools import groupby
-from typing import List, Union
+from typing import Any, Dict, List, Union
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 import numpy as np
@@ -54,15 +54,10 @@ def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
     return series
 
 
-def parse_json(edits_str: str) -> Union[List[Edit], str]:
+def parse_json(edits_arr: List[Dict[str, Any]]) -> Union[List[Edit], str]:
     """Parse a list of Edits from a str, or return an error string."""
-    if edits_str == '':
+    if not edits_arr:  # "empty JSON" is {}, which matches
         return []
-
-    try:
-        edits_arr = json.loads(edits_str)
-    except json.JSONDecodeError as str:
-        return f'Internal error: invalid JSON'
 
     if not isinstance(edits_arr, list):
         return 'Internal error: invalid JSON: not an Array'
@@ -89,11 +84,10 @@ class EditCells(ModuleImpl):
     #    ...
     #  ]
     @staticmethod
-    def render(wfm: WfModule,
-               table: pd.DataFrame) -> Union[str, pd.DataFrame]:
-        edits = parse_json(wfm.get_param_raw('celledits', 'custom'))
+    def render(params, table, **kwargs):
+        edits = parse_json(params.get_param_json('celledits'))
         if isinstance(edits, str):
-            return edits
+            return ProcessResult(error=edits)
 
         # Ignore missing columns and rows: delete them from the Array of edits
         edits = [edit for edit in edits

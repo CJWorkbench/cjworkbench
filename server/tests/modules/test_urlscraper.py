@@ -9,6 +9,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from server.modules.types import ProcessResult
 from server.modules.urlscraper import scrape_urls, URLScraper
+from .util import MockParams
 
 # --- Some test data ----
 
@@ -197,34 +198,29 @@ class ScrapeUrlsTest(SimpleTestCase):
 
     def test_module_initial_nop(self):
         wf_module = MockWfModule('List', '')
-        result = URLScraper.render(wf_module, url_table.copy())
+        result = URLScraper.render(wf_module.get_params(), url_table.copy(),
+                                   fetch_result=None)
         assert_frame_equal(result, url_table)
 
     def test_module_nop_with_initial_col_selection(self):
         wf_module = MockWfModule('Input column', '', None, '')
-        result = URLScraper.render(wf_module, url_table.copy())
+        result = URLScraper.render(wf_module.get_params(), url_table.copy(),
+                                   fetch_result=None)
         assert_frame_equal(result, url_table)
 
 
 class MockWfModule:
     def __init__(self, urlsource, urlcol, urllist='',
                  fetched_table=None, fetch_error=''):
-        self.urlsource = urlsource
-        self.urlcol = urlcol
-        self.urllist = urllist
+        self.params = MockParams(urlsource=urlsource, urlcol=urlcol,
+                                 urllist=urllist)
         self.fetched_table = fetched_table
         self.fetch_error = fetch_error
         self.previous = None
         self.cached_render_result = None
 
-    def get_param_menu_string(self, key):
-        return getattr(self, key)
-
-    def get_param_column(self, key):
-        return getattr(self, key)
-
-    def get_param_string(self, key):
-        return getattr(self, key)
+    def get_params(self):
+        return self.params
 
     def retrieve_fetched_table(self):
         return self.fetched_table
@@ -239,6 +235,7 @@ class MockWfModule:
 async def _commit(wf_module, result, *_, **__):
     wf_module.fetched_table = result.dataframe
     wf_module.fetch_error = result.error
+    wf_module.fetch_result = result
 
 @patch('server.modules.moduleimpl.ModuleImpl.commit_result', _commit)
 def fetch(wf_module):
@@ -282,7 +279,8 @@ class URLScraperTests(SimpleTestCase):
                     }))
 
                 fetch(wf_module)
-                result = URLScraper.render(wf_module, pd.DataFrame())
+                result = URLScraper.render(wf_module.get_params(), pd.DataFrame(),
+                                           fetch_result=wf_module.fetch_result)
                 result = ProcessResult.coerce(result)
                 self.assertEqual(result, ProcessResult(scraped_table))
 
@@ -310,6 +308,7 @@ class URLScraperTests(SimpleTestCase):
                 scrape.side_effect = mock_scrapeurls
 
                 fetch(wf_module)
-                result = URLScraper.render(wf_module, pd.DataFrame())
+                result = URLScraper.render(wf_module.get_params(), pd.DataFrame(),
+                                           fetch_result=wf_module.fetch_result)
                 result = ProcessResult.coerce(result)
                 self.assertEqual(result, ProcessResult(scraped_table))

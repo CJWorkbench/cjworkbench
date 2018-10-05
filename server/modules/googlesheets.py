@@ -103,23 +103,26 @@ def download_data_frame(sheet_id: str, sheet_mime_type: str,
 
 class GoogleSheets(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
+    def render(params, _unused_table, *, fetch_result, **kwargs):
         # Must perform header operation here in the event the header checkbox state changes
-        out = wf_module.retrieve_fetched_table()
-        error = wf_module.fetch_error
+        if not fetch_result:
+            return ProcessResult()  # user hasn't fetched yet
 
-        if not out.empty and not wf_module.get_param_checkbox('has_header'):
-            out = turn_header_into_first_row(out)
+        table = fetch_result.dataframe
 
-        return ProcessResult(out, error)
+        if not params.get_param_checkbox('has_header'):
+            table = turn_header_into_first_row(table)
+
+        return ProcessResult(table, fetch_result.error)
 
     @staticmethod
     async def event(wf_module, **kwargs):
-        file_meta_json = wf_module.get_param_raw('googlefileselect', 'custom')
-        if not file_meta_json:
+        params = wf_module.get_params()
+
+        file_meta = params.get_param_json('googlefileselect')
+        if not file_meta:
             return await ModuleImpl.commit_result(wf_module, ProcessResult())
 
-        file_meta = json.loads(file_meta_json)
         sheet_id = file_meta['id']
         # backwards-compat for old entries without 'mimeType', 2018-06-13
         sheet_mime_type = file_meta.get(
@@ -131,7 +134,7 @@ class GoogleSheets(ModuleImpl):
         # an API request.
 
         if sheet_id:
-            secret = wf_module.get_param_secret_secret('google_credentials')
+            secret = params.get_param_secret_secret('google_credentials')
             result = download_data_frame(sheet_id, sheet_mime_type, secret)
             result.truncate_in_place_if_too_big()
             result.sanitize_in_place()

@@ -12,28 +12,13 @@ _join_type_map = 'Left|Inner|Right'.lower().split('|')
 lsuffix='_source'
 rsuffix='_imported'
 
-def check_cols_right(right, keys, import_cols=None):
-    diff = set(keys) - set(right.columns)
-    if diff:
-        raise Exception(
-            f'Key columns not in target workflow: {diff}'
-        )
-    if import_cols:
-        diff = set(import_cols) - set(right.columns)
-        if diff:
-            raise Exception(
-                f'Import columns not in target workflow: {diff}'
-            )
-    return
-
-
 #TODO: Check that types match, maybe cast if necessary (or user requests)
 def check_key_types(left_dtypes, right_dtypes):
     for key in left_dtypes.index:
         l_type = _dtype_to_column_type(left_dtypes.loc[key])
         r_type = _dtype_to_column_type(right_dtypes.loc[key])
         if l_type != r_type:
-            raise TypeError(f"Types do not match for key column '{key}' ({l_type} and {r_type}). " \
+            raise TypeError(f'Types do not match for key column "{key}" ({l_type} and {r_type}). ' \
                             f'Please use a type conversion module to make these column types consistent.')
 
 # If column types are numeric but do not match (ie. int and float) cast as float to match
@@ -57,40 +42,57 @@ def sort_columns(og_columns, new_columns):
 
 class JoinURL(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
-        try:
-            right_table = wf_module.retrieve_fetched_table()
-        except Exception:
-            right_table = None
+    def render(params, table, *, fetch_result, **kwargs):
+        if not fetch_result:
+            # User hasn't fetched yet
+            return ProcessResult()
 
-        if right_table is None or right_table.empty or table is None:
-            return ProcessResult(table,
-                                 wf_module.error_msg)
+        if fetch_result.status == 'error':
+            return fetch_result
 
-        key_cols = wf_module.get_param_string('colnames')
-        join_type_idx = wf_module.get_param('type', 'menu')
-        join_type = _join_type_map[join_type_idx]
-        select_columns = wf_module.get_param_checkbox('select_columns')
+        right_table = fetch_result.dataframe
 
-        if key_cols == '':
+        key_cols, errs = params.get_param_multicolumn('colnames', table)
+
+        if errs:
+            return ProcessResult(error=(
+                'Key columns not in this workflow: '
+                + ', '.join(errs)
+            ))
+
+        if not key_cols:
             return ProcessResult(table)
 
-        key_cols = key_cols.split(',')
+        _, errs = params.get_param_multicolumn('colnames', right_table)
+        if errs:
+            return ProcessResult(error=(
+                'Key columns not in target workflow: '
+                + ', '.join(errs)
+            ))
+
+        join_type_idx = params.get_param('type', 'menu')
+        join_type = _join_type_map[join_type_idx]
+        select_columns = params.get_param_checkbox('select_columns')
+
+        if select_columns:
+            import_cols, errs = params.get_param_multicolumn('importcols',
+                                                             right_table)
+            if errs:
+                return ProcessResult(error=(
+                    'Selected columns not in target workflow: '
+                    + ', '.join(errs)
+                ))
+            right_table = right_table[key_cols + import_cols]
 
         try:
-            # Check if import columns exists in right table
-            if select_columns and wf_module.get_param_string('importcols').strip():
-                import_cols = wf_module.get_param_string('importcols').strip().split(',')
-                check_cols_right(right_table, key_cols, import_cols)
-                right_table = right_table[key_cols + import_cols]
-            else:
-                check_cols_right(right_table, key_cols)
-
-            check_key_types(table[key_cols].dtypes, right_table[key_cols].dtypes)
+            check_key_types(table[key_cols].dtypes,
+                            right_table[key_cols].dtypes)
             cast_numerical_types(table, right_table, key_cols)
-            new_table = table.join(right_table.set_index(key_cols), on=key_cols, how=join_type, lsuffix=lsuffix, rsuffix=rsuffix)
-        except Exception as err:
-            return ProcessResult(table, error=(str(err.args[0])))
+            new_table = table.join(right_table.set_index(key_cols),
+                                   on=key_cols, how=join_type,
+                                   lsuffix=lsuffix, rsuffix=rsuffix)
+        except Exception as err:  # TODO catch something specific
+            return ProcessResult(error=(str(err.args[0])))
 
         new_table = new_table[sort_columns(table.columns, new_table.columns)]
 
@@ -99,7 +101,8 @@ class JoinURL(ModuleImpl):
     # Load external workflow and store
     @staticmethod
     async def event(wf_module, **kwargs):
-        url = wf_module.get_param_string('url').strip()
+        params = wf_module.get_params()
+        url = params.get_param_string('url').strip()
 
         if not url:
             return

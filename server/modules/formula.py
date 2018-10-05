@@ -137,24 +137,23 @@ def excel_formula(table, formula, all_rows):
 
 
 class Formula(ModuleImpl):
-
-    def render(wf_module, table):
-
+    @staticmethod
+    def render(params, table, **kwargs):
         if table is None:
             return None     # no rows to process
 
-        syntax = wf_module.get_param_menu_idx('syntax')
+        syntax = params.get_param_menu_idx('syntax')
         if syntax == 0:
-            formula = wf_module.get_param_string('formula_excel').strip()
+            formula = params.get_param_string('formula_excel').strip()
             if formula == '':
                 return table
-            all_rows = wf_module.get_param_checkbox('all_rows')
+            all_rows = params.get_param_checkbox('all_rows')
             try:
                 newcol = excel_formula(table, formula, all_rows)
             except Exception as e:
                 return str(e)
         else:
-            formula = wf_module.get_param_string('formula_python').strip()
+            formula = params.get_param_string('formula_python').strip()
             if formula == '':
                 return table
             try:
@@ -163,7 +162,7 @@ class Formula(ModuleImpl):
                 return str(e)
 
         # if no output column supplied, use result0, result1, etc.
-        out_column = wf_module.get_param_string('out_column')
+        out_column = params.get_param_string('out_column')
         if out_column == '':
             if 'result' not in table.columns:
                 out_column = 'result'

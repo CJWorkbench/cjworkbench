@@ -3,13 +3,14 @@ import unittest
 import pandas as pd
 from server.modules.reorder import ReorderFromTable
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 
 a_table = pd.DataFrame({
     'name': [1, 2],
     'date': [2, 3],
     'count': [3, 4],
-    'float': [4.0, 5.0]
+    'float': [4.0, 5.0],
 })
 
 
@@ -25,15 +26,15 @@ def fake_result(colnames):
     return ProcessResult(a_table[colnames])
 
 
-def render(reorder_history_json, table):
-    wf_module = MockWfModule(reorder_history_json)
-    return ProcessResult.coerce(ReorderFromTable.render(wf_module,
-                                                        table.copy()))
+def render(reorder_history, table):
+    params = MockParams(reorder_history=reorder_history)
+    result = ReorderFromTable.render(params, table.copy())
+    return ProcessResult.coerce(result)
 
 
 class ReorderTest(unittest.TestCase):
     def test_reorder_empty(self):
-        result = render(' ', a_table)
+        result = render({}, a_table)
         self.assertEqual(result,
                          fake_result(['name', 'date', 'count', 'float']))
 
@@ -57,7 +58,7 @@ class ReorderTest(unittest.TestCase):
                 'to': 1
             },  # gives ['count', 'float', 'date', 'name']
         ]
-        result = render(json.dumps(reorder_ops), a_table)
+        result = render(reorder_ops, a_table)
         self.assertEqual(result,
                          fake_result(['count', 'float', 'date', 'name']))
 
@@ -87,6 +88,6 @@ class ReorderTest(unittest.TestCase):
                 'to': 2
             },  # gives ['count', 'name', 'float', 'date']
         ]
-        result = render(json.dumps(reorder_ops), a_table)
+        result = render(reorder_ops, a_table)
         self.assertEqual(result,
                          fake_result(['count', 'name', 'float', 'date']))

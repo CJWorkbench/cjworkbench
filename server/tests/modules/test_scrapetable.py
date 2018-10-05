@@ -5,46 +5,21 @@ import pandas as pd
 from urllib.error import URLError, HTTPError
 from server.modules.scrapetable import ScrapeTable
 from server.modules.types import ProcessResult
+from .util import MockParams, fetch_factory
 
 
-class MockWfModule:
-    def __init__(self, url='', tablenum=1, first_row_is_header=False):
-        self.url = url
-        self.tablenum = tablenum
-        self.first_row_is_header = first_row_is_header
-        self.fetched_result = None
-        self.fetch_error = ''
-
-    def get_param_checkbox(self, _):
-        return self.first_row_is_header
-
-    def get_param_string(self, _):
-        return self.url
-
-    def get_param_integer(self, _):
-        return self.tablenum
-
-    def retrieve_fetched_table(self):
-        if self.fetched_result:
-            return self.fetched_result.dataframe
-        else:
-            return None
-
-
-async def _commit(wf_module, result, json=None):
-    wf_module.fetched_result = result
-    wf_module.fetch_error = result.error
-
-
-@mock.patch('server.modules.moduleimpl.ModuleImpl.commit_result', _commit)
-def fetch(*args, **kwargs):
-    wf_module = MockWfModule(*args, **kwargs)
-    async_to_sync(ScrapeTable.event)(wf_module)
-    return wf_module
+P = MockParams.factory(url='', tablenum=1, first_row_is_header=False)
+fetch = fetch_factory(ScrapeTable.event, P)
 
 
 def render(wf_module):
-    result = ScrapeTable.render(wf_module, pd.DataFrame())
+    if hasattr(wf_module, 'fetch_result'):
+        fetch_result = wf_module.fetch_result
+    else:
+        fetch_result = None
+
+    result = ScrapeTable.render(wf_module.get_params(), pd.DataFrame(),
+                                fetch_result=fetch_result)
     result = ProcessResult.coerce(result)
     return result
 
@@ -69,11 +44,11 @@ class ScrapeTableTest(unittest.TestCase):
         self.assertEqual(result, ProcessResult(a_table))
 
     def test_first_row_is_header(self):
-        wf_module = MockWfModule(url='http://example.com',
-                                 first_row_is_header=True)
-        wf_module.fetched_result = ProcessResult(a_table.copy())
-
-        result = render(wf_module)
+        fetch_result = ProcessResult(pd.DataFrame(a_table.copy()))
+        result = ScrapeTable.render(P(first_row_is_header=True),
+                                    pd.DataFrame(),
+                                    fetch_result=fetch_result)
+        result = ProcessResult.coerce(result)
         expected = pd.DataFrame({'1': [2], '2': [3]})
         self.assertEqual(result, ProcessResult(pd.DataFrame(expected)))
 

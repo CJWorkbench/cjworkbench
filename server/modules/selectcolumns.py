@@ -9,17 +9,17 @@ commas = re.compile('\\s*,\\s*')
 numbers = re.compile('(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
 
 class SelectColumns(ModuleImpl):
-    def render(wf_module, table):
-        drop_or_keep = wf_module.get_param_radio_idx('drop_or_keep')
-        select_range = wf_module.get_param_checkbox('select_range')
+    def render(params, table, **kwargs):
+        drop_or_keep = params.get_param_radio_idx('drop_or_keep')
+        select_range = params.get_param_checkbox('select_range')
 
         if not select_range:
-            cols = wf_module.get_param_string('colnames').split(',')
+            cols = params.get_param_string('colnames').split(',')
             cols = [c.strip() for c in cols]
             return select_columns_by_name(table, cols, drop_or_keep)
 
         else:
-            str_col_nums = wf_module.get_param_string('column_numbers')
+            str_col_nums = params.get_param_string('column_numbers')
             return select_columns_by_number(table, str_col_nums, drop_or_keep)
 
 

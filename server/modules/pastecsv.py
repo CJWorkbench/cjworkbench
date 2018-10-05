@@ -9,10 +9,10 @@ from ..sanitizedataframe import autocast_dtypes_in_place
 # ---- PasteCSV ----
 # Lets the user paste in text which it interprets as CSV or TSV
 class PasteCSV(ModuleImpl):
-    def render(wf_module, table):
-        tablestr = wf_module.get_param_string("csv")
+    def render(params, table, **kwargs):
+        tablestr = params.get_param_string('csv')
 
-        has_header_row = wf_module.get_param_checkbox("has_header_row")
+        has_header_row = params.get_param_checkbox("has_header_row")
 
         if has_header_row:
             header_row = 0

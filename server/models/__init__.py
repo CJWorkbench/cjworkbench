@@ -7,6 +7,7 @@ from .Module import Module
 from .WfModule import WfModule
 from .ParameterSpec import ParameterSpec
 from .ParameterVal import ParameterVal
+from .Params import Params
 from .ModuleVersion import ModuleVersion
 from .Delta import Delta
 from .Commands import AddModuleCommand, DeleteModuleCommand, \

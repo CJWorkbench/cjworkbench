@@ -49,13 +49,13 @@ _SortAscendings = {
 
 
 class SortFromTable(ModuleImpl):
-    def render(wf_module, table):
-        column = wf_module.get_param_column('column')
+    def render(params, table, **kwargs):
+        column = params.get_param_column('column', table)
 
-        sort_type_int = int(wf_module.get_param_menu_idx('dtype'))
+        sort_type_int = int(params.get_param_menu_idx('dtype'))
         sort_type = _SortTypes.get(sort_type_int, 'text')
 
-        is_ascending_int = int(wf_module.get_param_menu_idx('direction'))
+        is_ascending_int = int(params.get_param_menu_idx('direction'))
         is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
 
         return _do_render(table, column, sort_type, is_ascending)

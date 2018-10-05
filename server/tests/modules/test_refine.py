@@ -6,18 +6,11 @@ from typing import Any, Dict, List
 from pandas.testing import assert_frame_equal
 from server.modules.refine import Refine, RefineSpec
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 
-class MockWfModule:
-    def __init__(self, column: str, refine: str):
-        self.column = column
-        self.refine = refine
-
-    def get_param_raw(self, param, _unused=''):
-        return getattr(self, param)
-
-    def get_param_column(self, param):
-        return getattr(self, param)
+def P(column: str, refine: Dict[str, Any]) -> MockParams:
+    return MockParams(column=column, refine=refine)
 
 
 class RefineSpecTest(unittest.TestCase):
@@ -246,12 +239,12 @@ class RefineSpecTest(unittest.TestCase):
         )
 
     def _test_render(self, in_table: pd.DataFrame, column: str,
-                     edits_json: str,
+                     edits_json: Dict[str, Any],
                      expected_out: pd.DataFrame=pd.DataFrame(),
                      expected_error: str='') -> None:
         """Test that the render method works (kinda an integration test)."""
-        wf_module = MockWfModule(column, edits_json)
-        result = Refine.render(wf_module, in_table)
+        params = P(column, edits_json)
+        result = Refine.render(params, in_table)
         result.sanitize_in_place()
 
         expected = ProcessResult(expected_out, expected_error)
@@ -263,8 +256,8 @@ class RefineSpecTest(unittest.TestCase):
     def test_render_no_column_is_no_op(self):
         self._test_render(
             pd.DataFrame({'A': ['b']}, dtype='category'),
-            '',
-            json.dumps({'renames': {}, 'blacklist': []}),
+            {},
+            {'renames': {}, 'blacklist': []},
             pd.DataFrame({'A': ['b']}, dtype='category')
         )
 
@@ -272,7 +265,7 @@ class RefineSpecTest(unittest.TestCase):
         self._test_render(
             pd.DataFrame({'A': ['b']}, dtype='category'),
             'A',
-            '',
+            {},
             pd.DataFrame({'A': ['b']}, dtype='category')
         )
 
@@ -280,11 +273,11 @@ class RefineSpecTest(unittest.TestCase):
         self._test_render(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
             'A',
-            json.dumps([
+            [
                 {'type': 'change', 'column': 'A',
                  'content': {'fromVal': 'a', 'toVal': 'c'}},
                 {'type': 'select', 'column': 'A', 'content': {'value': 'b'}},
-            ]),
+            ],
             pd.DataFrame({'A': ['c']}, dtype='category')
         )
 
@@ -292,30 +285,15 @@ class RefineSpecTest(unittest.TestCase):
         self._test_render(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
             'A',
-            json.dumps({
-                'renames': {'a': 'c'},
-                'blacklist': ['b'],
-            }),
+            {'renames': {'a': 'c'}, 'blacklist': ['b']},
             pd.DataFrame({'A': ['c']}, dtype='category')
-        )
-
-    def test_render_json_error(self):
-        self._test_render(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            'this is not json',
-            pd.DataFrame(),
-            'Internal error: Invalid JSON'
         )
 
     def test_render_parse_error(self):
         self._test_render(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
             'A',
-            json.dumps({
-                'renames': ['foo', 'bar'],
-                'blacklist': 4,
-            }),
+            {'renames': ['foo', 'bar'], 'blacklist': 4},
             pd.DataFrame(),
             'Internal error: "renames" must be a dict from old value to new'
         )

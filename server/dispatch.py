@@ -1,5 +1,6 @@
 # Module dispatch table and implementations
 import pandas as pd
+import traceback
 from typing import Optional
 from server.models import WfModule
 from server.modules.types import ProcessResult
@@ -31,13 +32,13 @@ from .modules.concaturl import ConcatURL
 
 class NOP(ModuleImpl):
     @staticmethod
-    def render(wfmodule, table):
+    def render(params, table, **kwargs):
         return table
 
 
 class DoubleMColumn(ModuleImpl):
     @staticmethod
-    def render(wfmodule, table):
+    def render(params, table, **kwargs):
         table['M'] *= 2
         return table
 
@@ -75,8 +76,15 @@ module_dispatch_tbl = {
 
 # TODO make all modules look like the ones in dynamicdispatch.py, then nix
 # this method.
-def _module_dispatch_render_static(dispatch, wf_module, table):
-    result = dispatch.render(wf_module, table)
+def _module_dispatch_render_static(dispatch, wf_module, input_table):
+    fetch_result = wf_module.get_fetch_result()
+    params = wf_module.get_params()
+
+    try:
+        result = dispatch.render(params, input_table, fetch_result=fetch_result)
+    except Exception as err:
+        traceback.print_exc()
+        result = ProcessResult(error=f'Internal error: {err}')
     result = ProcessResult.coerce(result)
     result.truncate_in_place_if_too_big()
     result.sanitize_in_place()

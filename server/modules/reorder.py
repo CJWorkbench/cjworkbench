@@ -4,16 +4,13 @@ import json
 
 class ReorderFromTable(ModuleImpl):
     @staticmethod
-    def render(wf_module, table):
-        history = wf_module.get_param_raw('reorder-history', 'custom')
-
-        # NOP if history is empty
-        if len(history.strip()) == 0:
-            return table
-
+    def render(params, table, **kwargs):
         # Entries should appear in chronological order as new
         # operations are appended to the end of the stack
-        history_entries = json.loads(history)
+        history_entries = params.get_param_json('reorder-history')
+
+        if not history_entries:
+            return table  # no reorders
 
         columns = table.columns.tolist()
 

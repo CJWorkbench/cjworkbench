@@ -5,34 +5,18 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from server.modules.formula import Formula
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 
-class MockWfModule:
-    def __init__(self, **kwargs):
-        self.syntax = 0
-        self.out_column = 'R'
-        self.formula_excel = ''
-        self.all_rows = False
-        self.formula_python = ''
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def get_param_menu_idx(self, param_name):
-        return getattr(self, param_name)
-
-    def get_param_string(self, param_name):
-        return getattr(self, param_name)
-
-    def get_param_checkbox(self, param_name):
-        return getattr(self, param_name)
+P = MockParams.factory(syntax=0, out_column='R', formula_excel='',
+                       all_rows=False, formula_python='')
 
 
 class FormulaTests(unittest.TestCase):
     def _test(self, table: pd.DataFrame, params: Dict[str, Any]={},
               expected_table: pd.DataFrame=pd.DataFrame(),
               expected_error: str=''):
-        wf_module = MockWfModule(**params)
-        result = ProcessResult.coerce(Formula.render(wf_module, table))
+        result = ProcessResult.coerce(Formula.render(P(**params), table))
         result.sanitize_in_place()
 
         expected = ProcessResult(expected_table, expected_error)

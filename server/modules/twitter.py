@@ -101,11 +101,16 @@ def merge_tweets(wf_module, new_table):
 class Twitter(ModuleImpl):
     # Render just returns previously retrieved tweets
     @staticmethod
-    def render(wf_module, table):
-        return ProcessResult(
-            dataframe=get_stored_tweets(wf_module),
-            error=wf_module.fetch_error
-        )
+    def render(params, table, *, fetch_result, **kwargs):
+        if not fetch_result:
+            return table
+
+        if fetch_result.status == 'error':
+            return fetch_result
+
+        table = _recover_from_160258591(fetch_result.dataframe)
+
+        return ProcessResult(table, fetch_result.error)
 
     # Load specified user's timeline
     @staticmethod

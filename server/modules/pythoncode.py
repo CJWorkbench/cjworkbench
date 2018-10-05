@@ -9,6 +9,7 @@ import traceback
 import math
 import numpy
 import pandas
+from server.models import Params
 from .types import ProcessResult
 from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
@@ -196,8 +197,8 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
     return result
 
 
-def render(wf_module: 'WfModule', table: pandas.DataFrame) -> ProcessResult:
-    code = wf_module.get_param_raw('code', 'custom')
+def render(params: Params, table: pandas.DataFrame, **kwargs) -> ProcessResult:
+    code = params.get_param_raw('code', 'custom')
 
     if not code.strip():
         # empty code, NOP

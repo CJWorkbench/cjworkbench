@@ -2,17 +2,10 @@ from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 import pandas as pd
 
-def _do_render(table, columns):
-    cols = columns.split(',')
-    cols = [c.strip() for c in cols]
-
-    # if no column has been selected, return table
-    if cols == [] or cols == ['']:
-        return ProcessResult(table)
-
+def _do_render(table, dup_columns):
     colnames = set(table.columns)
 
-    for c in cols:
+    for c in dup_columns:
         new_column_name = f'Copy of {c}'
 
         # Append numbers if column name happens to exist
@@ -32,7 +25,7 @@ def _do_render(table, columns):
 
 
 class DuplicateColumn(ModuleImpl):
-    def render(wf_module, table):
-        columns = wf_module.get_param_string('colnames')
+    def render(params, table, **kwargs):
+        columns = params.get_param_multicolumn('colnames', table)
 
         return _do_render(table, columns)
