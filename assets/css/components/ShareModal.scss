@@ -1,8 +1,9 @@
 .share-modal {
   h6 {
-    @extend %font-lato-regular;
+    @extend %font-nunito-regular;
+    font-weight: 400;
     font-size: 1.6rem;
-    margin-bottom: 1.6rem;
+    margin-bottom: 1rem;
 
     &:not(:first-child) {
       margin-top: 2.5rem;
@@ -105,6 +106,7 @@
 
         &.form-control:focus {
           box-shadow: none;
+          border-color: $brand-orange!important
         }
       }
       .input-group-append {
