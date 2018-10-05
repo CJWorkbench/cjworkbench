@@ -41,7 +41,7 @@ export default class Modal extends React.PureComponent {
             onChangeIsPublic={onChangeIsPublic}
           />
 
-          <h6>Share with collaborators</h6>
+          <h6>Collaborators</h6>
           {acl ? (
             <Acl
               isReadOnly={isReadOnly}
