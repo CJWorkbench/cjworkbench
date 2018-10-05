@@ -4,20 +4,39 @@
  * -Search bar will render suggestions of modules matching input
  * 
  */
-jest.mock('./lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
+jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
+
+// https://github.com/FezVrasta/popper.js#how-to-use-popperjs-in-jest
+jest.mock('popper.js', () => {
+  const PopperJS = jest.requireActual('popper.js')
+
+  return class {
+    static placements = PopperJS.placements
+
+    constructor() {
+      return {
+        destroy: () => {},
+        scheduleUpdate: () => {}
+      }
+    }
+  }
+})
+
 
 import React from 'react'
-import ConnectedModuleSearch, { ModuleSearch } from './ModuleSearch'
+import ConnectedModuleSearch, { ModuleSearch } from './index'
+import Popover from 'reactstrap/lib/Popover'
 import { mount, shallow } from 'enzyme'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import lessonSelector from './lessons/lessonSelector'
+import lessonSelector from '../lessons/lessonSelector'
 
 describe('ModuleSearch', () => {
   const modules = {
     4: {
       id: 4,
       name: "Load from Enigma",
+      description: 'Enigma description',
       category: "Add data",
       icon: "url",
       isLessonHighlight: true,
@@ -25,6 +44,7 @@ describe('ModuleSearch', () => {
     10: {
       id: 10,
       name: "Filter by Text",
+      description: 'Text description',
       category: "Filter",
       icon: "filter",
       isLessonHighlight: false,
@@ -92,6 +112,7 @@ describe('ModuleSearch', () => {
         4: {
           id: 4,
           name: "Z",
+          description: 'desc',
           category: "Add data",
           icon: "url",
           isLessonHighlight: true,
@@ -99,6 +120,7 @@ describe('ModuleSearch', () => {
         1: {
           id: 1,
           name: "Y",
+          description: 'desc',
           category: "Filter",
           icon: "filter",
           isLessonHighlight: false,
@@ -106,6 +128,7 @@ describe('ModuleSearch', () => {
         6: {
           id: 6,
           name: "H",
+          description: 'desc',
           category: "Filter",
           icon: "filter",
           isLessonHighlight: false,
@@ -113,6 +136,7 @@ describe('ModuleSearch', () => {
         7: {
           id: 7,
           name: "A",
+          description: 'desc',
           category: "Add data",
           icon: "filter",
           isLessonHighlight: false,
@@ -120,6 +144,7 @@ describe('ModuleSearch', () => {
         5: {
           id: 5,
           name: "A",
+          description: 'desc',
           category: "Filter",
           icon: "filter",
           isLessonHighlight: false,
@@ -140,6 +165,13 @@ describe('ModuleSearch', () => {
       let resultList = wrapper.prop('modules').map(x => x.name)
       let expectedResult = ['A', 'A', 'H', 'Y', 'Z']
       expect(resultList).toEqual(expectedResult)
+    })
+
+    it('should show a popover when hovering on a module', () => {
+      expect(wrapper.find(Popover)).toHaveLength(0)
+      wrapper.find('li[data-module-name="Filter by Text"]').simulate('mouseEnter')
+      wrapper.update()
+      expect(wrapper.find(Popover)).toHaveLength(1)
     })
   })
     

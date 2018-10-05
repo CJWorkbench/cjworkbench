@@ -127,7 +127,7 @@
     border: 2px solid transparent;
     color: $brand-text--dark;
     cursor: pointer;
-
+    position: relative; // to position .tooltip
 
     i {
       width: 1.5rem;
@@ -145,6 +145,41 @@
 
     &.lesson-highlight {
       background-color: $brand-learn--medium;
+    }
+  }
+}
+
+.popover.module-search-result {
+  $module-popover-border-width: 2px;
+  $module-popover-arrow-size: 8px;
+
+  font-size: 1.3rem;
+  border-width: $module-popover-border-width;
+  border-color: $brand-workspace;
+
+  .popover-inner {
+    background-color: white;
+  }
+
+  h3 {
+    font: inherit;
+    background-color: transparent;
+    border-bottom: none;
+  }
+
+  span.arrow {
+    left: calc((#{$module-popover-arrow-size} + #{$module-popover-border-width}) * -1);
+    margin-top: -2px; // Bootstrap's calculations assume a much smaller arrow
+
+    &::before {
+      border-right-color: $brand-workspace;
+    }
+    &::after {
+      left: $module-popover-border-width;
+    }
+
+    &::before, &::after {
+      border-width: $module-popover-arrow-size $module-popover-arrow-size $module-popover-arrow-size 0;
     }
   }
 }

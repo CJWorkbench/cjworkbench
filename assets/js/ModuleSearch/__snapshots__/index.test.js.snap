@@ -8,6 +8,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
     Array [
       Object {
         "category": "Filter",
+        "description": "Text description",
         "icon": "filter",
         "id": 10,
         "isLessonHighlight": false,
@@ -15,6 +16,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
       },
       Object {
         "category": "Add data",
+        "description": "Enigma description",
         "icon": "url",
         "id": 4,
         "isLessonHighlight": true,
@@ -56,11 +58,13 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
       className="module-search-result-groups"
     >
       <ModuleSearchResultGroup
+        activeModuleId={null}
         key="Add data"
         modules={
           Array [
             Object {
               "category": "Add data",
+              "description": "Enigma description",
               "icon": "url",
               "id": 4,
               "isLessonHighlight": true,
@@ -70,6 +74,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
         }
         name="Add data"
         onClickModuleId={[Function]}
+        onMouseEnterModuleId={[Function]}
       >
         <li
           className="module-search-result-group"
@@ -81,19 +86,24 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
           <ul
             className="module-search-results"
           >
-            <ModuleSearchResult
+            <SearchResult
               category="Add data"
+              description="Enigma description"
               icon="url"
               id={4}
+              isActive={false}
               isLessonHighlight={true}
               key="Load from Enigma"
               name="Load from Enigma"
               onClick={[Function]}
+              onMouseEnter={[Function]}
             >
               <li
                 className="module-search-result lesson-highlight"
                 data-module-name="Load from Enigma"
+                id="module-search-result-4"
                 onClick={[Function]}
+                onMouseEnter={[Function]}
               >
                 <i
                   className="icon-url"
@@ -104,16 +114,18 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
                   Load from Enigma
                 </span>
               </li>
-            </ModuleSearchResult>
+            </SearchResult>
           </ul>
         </li>
       </ModuleSearchResultGroup>
       <ModuleSearchResultGroup
+        activeModuleId={null}
         key="Filter"
         modules={
           Array [
             Object {
               "category": "Filter",
+              "description": "Text description",
               "icon": "filter",
               "id": 10,
               "isLessonHighlight": false,
@@ -123,6 +135,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
         }
         name="Filter"
         onClickModuleId={[Function]}
+        onMouseEnterModuleId={[Function]}
       >
         <li
           className="module-search-result-group"
@@ -134,19 +147,24 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
           <ul
             className="module-search-results"
           >
-            <ModuleSearchResult
+            <SearchResult
               category="Filter"
+              description="Text description"
               icon="filter"
               id={10}
+              isActive={false}
               isLessonHighlight={false}
               key="Filter by Text"
               name="Filter by Text"
               onClick={[Function]}
+              onMouseEnter={[Function]}
             >
               <li
                 className="module-search-result"
                 data-module-name="Filter by Text"
+                id="module-search-result-10"
                 onClick={[Function]}
+                onMouseEnter={[Function]}
               >
                 <i
                   className="icon-filter"
@@ -157,7 +175,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
                   Filter by Text
                 </span>
               </li>
-            </ModuleSearchResult>
+            </SearchResult>
           </ul>
         </li>
       </ModuleSearchResultGroup>

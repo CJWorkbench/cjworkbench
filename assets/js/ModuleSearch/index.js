@@ -6,8 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import SearchResultGroup from './SearchResultGroup'
 
-import lessonSelector from './lessons/lessonSelector'
+import lessonSelector from '../lessons/lessonSelector'
 
 const GroupOrder = {
   // dont use 0 -- we use the "||" operator to detect misses
@@ -52,78 +53,33 @@ function groupModules(items) {
   return ret
 }
 
-class ModuleSearchResult extends React.PureComponent {
-  onClick = () => {
-    this.props.onClick(this.props.id)
-  }
-
-  render() {
-    const { isLessonHighlight, isMatch, name, icon } = this.props
-
-    const className = [ 'module-search-result' ]
-    if (isLessonHighlight) className.push('lesson-highlight')
-
-    return (
-      <li className={className.join(' ')} data-module-name={this.props.name} onClick={this.onClick}>
-        <i className={'icon-' + this.props.icon}></i>
-        <span className='name'>{this.props.name}</span>
-      </li>
-    )
-  }
-}
-ModuleSearchResult.propTypes = {
-  isLessonHighlight: PropTypes.bool.isRequired,
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-}
-
-class ModuleSearchResultGroup extends React.PureComponent {
-  render() {
-    const { name, modules, hasMatch } = this.props
-
-    const children = modules.map(module => (
-      <ModuleSearchResult
-        key={module.name}
-        {...module}
-        onClick={this.props.onClickModuleId}
-        />
-    ))
-
-    return (
-      <li className="module-search-result-group" data-name={name}>
-        <h4>{name}</h4>
-        <ul className="module-search-results">{children}</ul>
-      </li>
-    )
-  }
-}
-ModuleSearchResultGroup.propTypes = {
-  name: PropTypes.string.isRequired,
-  modules: PropTypes.arrayOf(PropTypes.shape({
-    isLessonHighlight: PropTypes.bool.isRequired,
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-  })).isRequired,
-  onClickModuleId: PropTypes.func.isRequired, // func(moduleId) => undefined
-}
-
 const escapeRegexCharacters = (str) => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export class ModuleSearch extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      input: '',
-      resultGroups: groupModules(this.props.modules),
-    }
-
-    this.inputRef = React.createRef()
+  static propTypes = {
+    modules: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      isLessonHighlight: PropTypes.bool.isRequired,
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      category: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
+    })).isRequired,
+    index: PropTypes.number.isRequired, // helps mapStateToProps() calculate isLessonHighlight
+    isLessonHighlight: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired, // func() => undefined
+    onClickModuleId: PropTypes.func.isRequired, // func(moduleId) => undefined
   }
+
+  state = {
+    input: '',
+    resultGroups: groupModules(this.props.modules),
+    activeModuleId: null
+  }
+
+  inputRef = React.createRef()
 
   findResultGroups(input) {
     const escapedValue = escapeRegexCharacters(input.trim())
@@ -158,6 +114,10 @@ export class ModuleSearch extends React.Component {
     this.props.onClickModuleId(moduleId)
   }
 
+  onMouseEnterModuleId = (moduleId) => {
+    this.setState({ activeModuleId: moduleId })
+  }
+
   onSubmit = (ev) => {
     ev.preventDefault()
   }
@@ -172,15 +132,17 @@ export class ModuleSearch extends React.Component {
   }
 
   render () {
-    const { input, resultGroups } = this.state
+    const { input, resultGroups, activeModuleId } = this.state
 
     const resultGroupComponents = resultGroups.map(rg => (
-      <ModuleSearchResultGroup
+      <SearchResultGroup
         key={rg.name}
         name={rg.name}
         modules={rg.modules}
+        activeModuleId={activeModuleId}
         onClickModuleId={this.onClickModuleId}
-        />
+        onMouseEnterModuleId={this.onMouseEnterModuleId}
+      />
     ))
     const resultGroupsComponent = (
       <ul className="module-search-result-groups">
@@ -210,20 +172,6 @@ export class ModuleSearch extends React.Component {
       </div>
     )
   }
-}
-
-ModuleSearch.propTypes = {
-  modules: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    isLessonHighlight: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-  })).isRequired,
-  index: PropTypes.number.isRequired, // helps mapStateToProps() calculate isLessonHighlight
-  isLessonHighlight: PropTypes.bool.isRequired,
-  onCancel: PropTypes.func.isRequired, // func() => undefined
-  onClickModuleId: PropTypes.func.isRequired, // func(moduleId) => undefined
 }
 
 const mapStateToProps = (state, ownProps) => {
