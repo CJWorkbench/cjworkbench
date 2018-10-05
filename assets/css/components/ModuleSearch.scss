@@ -157,6 +157,11 @@
   box-shadow: $menu-shadow;
   padding: 1rem;
 
+  transition-delay: .5s;
+  transition-property: opacity;
+
+
+
   .popover-inner {
     background-color: white;
     border-radius: 3px;
