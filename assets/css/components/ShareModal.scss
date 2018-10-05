@@ -1,9 +1,13 @@
 .share-modal {
+
+  cursor: default;
+
   h6 {
     @extend %font-nunito-regular;
     font-weight: 400;
     font-size: 1.6rem;
     margin-bottom: 1rem;
+    cursor: default;
 
     &:not(:first-child) {
       margin-top: 2.5rem;
@@ -21,15 +25,18 @@
   .public-private {
     span {
       @extend .content-3;
+      cursor: pointer;
     }
 
     label {
       margin-bottom: 0;
       margin-left: 2rem;
+      cursor: pointer;
     }
 
     label input {
       top: 3px; // align checkbox with text
+      cursor: pointer;
     }
   }
 
@@ -37,7 +44,7 @@
     display: block;
     list-style: none;
     margin: 0;
-    padding: 0 2rem;
+    padding: 0 0 0 2rem;
     font-size: 1.3rem;
 
     &>li {
@@ -65,6 +72,8 @@
           border-color: $dark-accent--medium;
         }
       }
+
+
 
       .dropdown-item.active {
         background-color: $dark-accent--medium;
@@ -130,16 +139,18 @@
   }
 
   .copy-url {
-    display: flex;
+    display: block;
     margin-left: 2rem;
     font-size: 1.5rem;
     @extend .info-2;
     @extend .url-link;
     color: $brand-orange;
     position: relative; // to position copied-flash
+    cursor: text;
 
     .url {
       flex: 1 1 auto;
+      margin-bottom: .5rem;
     }
 
     button[name="copy"] {
@@ -147,10 +158,11 @@
       cursor: pointer;
       // pretend to be a link
       border: 0;
-      margin: 0 2rem 0 0;
+      margin: 0;
       padding: 0;
       display: block;
       color: $brand-workspace;
+      font-size: 1.3rem;
       background-color: white;
       &:hover {
         color: $link-hover-success;
