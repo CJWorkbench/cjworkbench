@@ -20,7 +20,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
       onCancel={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
-      placeholder="Type something"
+      placeholder="Type a note..."
       value=""
     />
   </div>
