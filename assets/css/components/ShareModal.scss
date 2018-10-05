@@ -18,10 +18,17 @@
   }
 
   .public-private {
-    font-size: 1.3rem;
+    span {
+      @extend .content-3;
+    }
+
+    label {
+      margin-bottom: 0;
+      margin-left: 2rem;
+    }
 
     label input {
-      top: 2px; // align checkbox with text
+      top: 3px; // align checkbox with text
     }
   }
 
@@ -36,13 +43,83 @@
       display: block;
     }
 
+    // email shared with
     .acl-entry {
       display: flex;
+      align-items: center;
       margin: 1rem 0;
+
+      .dropdown-toggle {
+        background-color: $dark-accent--soft;
+        height: 2.6rem;
+        color: $brand-text--dark;
+        border: 2px solid transparent;
+        @extend .info-1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 8rem;
+        border-radius: 3px 0 0 3px;
+        &:hover {
+          border-color: $dark-accent--medium;
+        }
+      }
+
+      .dropdown-item.active {
+        background-color: $dark-accent--medium;
+        color: $brand-text--darker;
+      }
+
+      .btn-danger {
+        background-color: $brand-orange;
+        border: 0;
+        height: 2.6rem;
+        width: 2.6rem;
+        @extend .content-3;
+        font-size: 1.3rem;
+        border-radius: 0 3px 3px 0;
+        margin: 0;
+
+        &:hover {
+          background-color: $brand-red;
+        }
+
+      }
     }
 
+    // text field and button to share with new email
     .email {
       flex: 1 1 auto;
+    }
+    .input-group {
+      display: flex;
+
+      input {
+        @extend .single-line-text-field;
+        z-index: 1;
+        cursor: text;
+
+        &.form-control:hover {
+          border-color: $dark-accent--medium!important;
+        }
+
+        &.form-control:focus {
+          box-shadow: none;
+        }
+      }
+      .input-group-append {
+        z-index: 2;
+        right: 2px;
+        position: absolute;
+
+        button {
+          @extend .button-icon;
+          border: 0;
+          width: 10.5rem;
+          height: 3rem;
+          top: 2px;
+        }
+      }
     }
 
     button.delete {
@@ -52,8 +129,11 @@
 
   .copy-url {
     display: flex;
+    margin-left: 2rem;
     font-size: 1.3rem;
-    @extend %font-nunito-extra-light;
+    @extend .info-2;
+    @extend .url-link;
+    color: $brand-orange;
     position: relative; // to position copied-flash
 
     .url {
@@ -65,7 +145,7 @@
       cursor: pointer;
       // pretend to be a link
       border: 0;
-      margin: 0;
+      margin: 0 2rem 0 0;
       padding: 0;
       display: block;
       color: $brand-workspace;
@@ -86,6 +166,9 @@
       opacity: 0;
       animation: .25s flash-copied;
     }
+  }
+  .share-links {
+    margin-left: 2rem;
   }
 }
 
