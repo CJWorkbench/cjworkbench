@@ -3,7 +3,7 @@
   "id_name": "scrapetable" ,
   "category" : "Scrape",
   "icon" : "scraper",
-  "description" : "Scrape an HTML table on a web page",
+  "description" : "Scrape and load a table from a webpage and get updates if it changes.",
   "loads_data": true,
   "help_url":"modules/scrape/scrape-table",
   "parameters": [

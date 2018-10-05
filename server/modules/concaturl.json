@@ -3,7 +3,7 @@
   "id_name": "concaturl" ,
   "category" : "Add data",
   "icon" : "concatenate",
-  "description" : "Concatenate two workflows together using another workflow's URL.",
+  "description" : "Concatenate two workflows together using a another workflow's URL.",
   "loads_data": true,
   "parameters": [
     {

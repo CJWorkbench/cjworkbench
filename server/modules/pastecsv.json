@@ -3,7 +3,7 @@
   "id_name": "pastecsv",
   "category" : "Add data",
   "icon" : "doc",
-  "description" : "Paste in a CSV or TSV file",
+  "description" : "Enter data manually or Copy and paste data from a spreadsheet or CSV.",
   "help_url":"modules/add-data/paste-data",
   "parameters": [
     {

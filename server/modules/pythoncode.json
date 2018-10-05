@@ -3,7 +3,7 @@
   "id_name": "pythoncode",
   "category": "Code",
   "icon": "code",
-  "description": "Write a 'render' function that takes a Pandas dataframe called 'table' and returns a dataframe.",
+  "description": "Python code editor.",
   "has_zen_mode": true,
   "html_output": true,
   "help_url":"modules/code/python-editor",
