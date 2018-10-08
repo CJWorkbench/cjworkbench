@@ -12,9 +12,17 @@ from server.models import WfModule
 from server.modules.types import ProcessResult
 
 
+class MockParams:
+    def __init__(self, d={}):
+        self.d = d
+
+    def to_painful_dict(self, _table):
+        return self.d
+
+
 class MockWfModule:
     def __init__(self, params={}, stored_table=None, stored_error=''):
-        self.params = params
+        self.params = MockParams(params)
         self.stored_table = stored_table
         self.last_table = None
         self.fetch_error = stored_error
@@ -22,12 +30,14 @@ class MockWfModule:
 
         self.set_busy_calls = []
 
-    def create_parameter_dict(self, table):
-        self.last_table = table
+    def get_params(self):
         return self.params
 
     def retrieve_fetched_table(self):
         return self.stored_table
+
+    def get_fetch_result(self):
+        return ProcessResult(self.stored_table)
 
     async def set_busy(self, **kwargs):
         self.set_busy_calls.append(kwargs)
@@ -85,11 +95,11 @@ class DynamicDispatchTest(unittest.TestCase):
             self.assertEqual(mocked.call_count, 0)
 
     def test_render_none(self):
-        self.assertEqual(self.render(MockWfModule(), None), None)
+        self.assertEqual(self.render(MockParams(), None, None), None)
 
     def test_render_exception(self):
         self.mock_render(lambda x, y: 1 / 0)  # raise exception
-        result = self.render(MockWfModule(), DataFrame())
+        result = self.render(MockParams(), DataFrame(), None)
         result.error = re.sub('at line \d+', 'at line N', result.error)
         self.assertEqual(result, ProcessResult(error=(
             'ZeroDivisionError: division by zero '
@@ -101,20 +111,20 @@ class DynamicDispatchTest(unittest.TestCase):
         table = DataFrame({'a': ['b']})
         out = DataFrame({'b': ['c']})
         self.mock_render(lambda x, y: out)
-        result = self.render(MockWfModule(), table)
+        result = self.render(MockParams(), table, None)
         self.assertEqual(result, ProcessResult(out))
 
     def test_render_error(self):
         self.mock_render(lambda x, y: (None, 'error'))
-        result = self.render(MockWfModule(), DataFrame())
+        result = self.render(MockParams(), DataFrame(), None)
         self.assertEqual(result, ProcessResult(error='error'))
 
     def test_render_arg_params(self):
         # Render error=repr(args) and test they appear
         self.mock_render(lambda x, y: ProcessResult(x, repr(y)))
-        wf_module = MockWfModule({'a': 'b'})
+        params = MockParams({'a': 'b'})
         table = DataFrame()
-        result = self.render(wf_module, table)
+        result = self.render(params, table, None)
 
         self.assertEqual(result, ProcessResult(
             dataframe=table,
@@ -125,7 +135,7 @@ class DynamicDispatchTest(unittest.TestCase):
         with mock.patch('django.conf.settings.MAX_ROWS_PER_TABLE', 2):
             out = DataFrame({'a': [1, 2, 3]})
             self.mock_render(lambda x, y: ProcessResult(out))
-            result = self.render(MockWfModule(), DataFrame())
+            result = self.render(MockParams(), DataFrame(), None)
             self.assertEqual(len(out), 2)  # truncated in-place
             self.assertEqual(result, ProcessResult(
                 dataframe=out,
@@ -136,7 +146,7 @@ class DynamicDispatchTest(unittest.TestCase):
         with mock.patch('django.conf.settings.MAX_ROWS_PER_TABLE', 2):
             out = DataFrame({'a': [1, 2, 3]})
             self.mock_render(lambda x, y: ProcessResult(out, 'error1'))
-            result = self.render(MockWfModule(), DataFrame())
+            result = self.render(MockParams(), DataFrame(), None)
             self.assertEqual(
                 result.error,
                 'error1\nTruncated output from 3 rows to 2'
@@ -144,33 +154,28 @@ class DynamicDispatchTest(unittest.TestCase):
 
     def test_render_sanitize_table(self):
         self.mock_render(lambda x, y: ProcessResult(DataFrame({'a': [['b']]})))
-        result = self.render(MockWfModule(), DataFrame())
+        result = self.render(MockParams(), DataFrame(), None)
         # Test that non-string value was coerced to string with repr()
         self.assertEqual(result, ProcessResult(DataFrame({'a': ["['b']"]})))
 
     def test_render_default_passthrough(self):
         del self.module.module.render
         table = DataFrame({'a': [1]})
-        result = self.render(MockWfModule(), table)
+        result = self.render(MockParams(), table, None)
         self.assertEqual(result, ProcessResult(table))
 
     def test_render_default_cached(self):
         del self.module.module.render
         table1 = DataFrame({'a': [1]})
         table2 = DataFrame({'b': [2]})
-        result = self.render(
-            MockWfModule(stored_table=table2, stored_error=''),
-            table1
-        )
+        result = self.render(MockParams(), table1, ProcessResult(table2))
         self.assertEqual(result, ProcessResult(table2))
 
     def test_render_default_error(self):
         del self.module.module.render
         table = DataFrame()
-        result = self.render(
-            MockWfModule(stored_table=table, stored_error='Error'),
-            table
-        )
+        result = self.render(MockParams(), table,
+                             ProcessResult(error='Error'))
         self.assertEqual(result, ProcessResult(table, 'Error'))
 
     def fetch(self, wf_module):

@@ -124,7 +124,29 @@ class Params:
 
         Columns will be ordered as they are ordered in `table`.
         """
-        cols = self.get_param(name, ParameterSpec.MULTICOLUMN).split(',')
+        # multicolumn params have had a horrible hack, until at least
+        # 2018-10-08 (when this comment is written and the problem is still
+        # not solved). The param 'colnames' is a hidden string and the actual
+        # multi-column selector doesn't have a value. So when testing types, we
+        # test that the parameter name is 'colnames', _not_ the parameter type
+        # (which we assume is STRING).
+        try:
+            pval = self.vals[name]
+        except KeyError:
+            raise KeyError(
+                f'Request for non-existent multicolumn parameter {name}'
+            )
+
+        if (
+            pval.parameter_spec.type != ParameterSpec.MULTICOLUMN
+            and pval.parameter_spec.id_name != 'colnames'
+        ):
+            raise ValueError(
+                f'Request for multicolumn parameter {name} '
+                f'but actual type is {pval.parameter_spec.type}'
+            )
+
+        cols = pval.value.split(',')
         cols = [c.strip() for c in cols if c.strip()]
 
         table_columns = list(table.columns)
@@ -167,7 +189,7 @@ class Params:
 
             if type == ParameterSpec.COLUMN:
                 pdict[id_name] = _sanitize_column_param(p, table.columns)
-            elif type == ParameterSpec.MULTICOLUMN:
+            elif type == ParameterSpec.MULTICOLUMN or id_name == 'colnames':
                 pdict[id_name] = _sanitize_multicolumn_param(p, table.columns)
             else:
                 pdict[id_name] = p.get_value()

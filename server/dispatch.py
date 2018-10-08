@@ -2,10 +2,10 @@
 import pandas as pd
 import traceback
 from typing import Optional
-from server.models import WfModule
+from server.models import ModuleVersion, Params
 from server.modules.types import ProcessResult
 from .dynamicdispatch import get_module_render_fn, \
-        get_module_html_path, wf_module_to_dynamic_module
+        get_module_html_path, module_version_to_dynamic_module
 from .modules.countbydate import CountByDate
 from .modules.formula import Formula
 from .modules.loadurl import LoadURL
@@ -76,15 +76,13 @@ module_dispatch_tbl = {
 
 # TODO make all modules look like the ones in dynamicdispatch.py, then nix
 # this method.
-def _module_dispatch_render_static(dispatch, wf_module, input_table):
-    fetch_result = wf_module.get_fetch_result()
-    params = wf_module.get_params()
-
+def _module_dispatch_render_static(dispatch, params, table, fetch_result):
     try:
-        result = dispatch.render(params, input_table, fetch_result=fetch_result)
+        result = dispatch.render(params, table, fetch_result=fetch_result)
     except Exception as err:
         traceback.print_exc()
         result = ProcessResult(error=f'Internal error: {err}')
+
     result = ProcessResult.coerce(result)
     result.truncate_in_place_if_too_big()
     result.sanitize_in_place()
@@ -92,31 +90,39 @@ def _module_dispatch_render_static(dispatch, wf_module, input_table):
 
 
 # Main render entrypoint.
-def module_dispatch_render(wf_module: WfModule,
-                           table: pd.DataFrame) -> ProcessResult:
-    """Sets wf_module error/status and returns its ProcessResult.
+def module_dispatch_render(module_version: ModuleVersion,
+                           params: Params,
+                           table: pd.DataFrame,
+                           fetch_result: Optional[ProcessResult]
+                          ) -> ProcessResult:
     """
-    if wf_module.module_version is None:
-        return ProcessResult(pd.DataFrame())  # happens if module deleted
+    Calls a module's `render()` and returns a sane ProcessResult.
+    """
+    if not module_version:  # module was deleted
+        return ProcessResult(
+            error='This module code has been uninstalled. Please delete it.'
+        )
 
     render_fn = None
 
-    dispatch = wf_module.module_version.module.dispatch
+    dispatch = module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
         result = _module_dispatch_render_static(
             module_dispatch_tbl[dispatch],
-            wf_module,
-            table
+            params,
+            table,
+            fetch_result
         )
     else:
-        render_fn = get_module_render_fn(wf_module)
-        result = render_fn(wf_module, table)
+        render_fn = get_module_render_fn(module_version)
+        result = render_fn(params, table, fetch_result)
 
     return result
 
 
 async def module_dispatch_event(wf_module, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
+
     if dispatch in module_dispatch_tbl:
         module_dispatch = module_dispatch_tbl[dispatch]
         if hasattr(module_dispatch, 'event'):
@@ -124,7 +130,9 @@ async def module_dispatch_event(wf_module, **kwargs):
             await wf_module.set_busy()
             await module_dispatch.event(wf_module, **kwargs)
     else:
-        dynamic_module = wf_module_to_dynamic_module(wf_module)
+        dynamic_module = module_version_to_dynamic_module(
+            wf_module.module_version
+        )
         await dynamic_module.fetch(wf_module)
 
 

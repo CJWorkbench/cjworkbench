@@ -389,7 +389,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         colparam.set_value('M')  # double this
         multicolparam.set_value('F,Other')  # triple these
         with self.assertLogs(dynamicdispatch.__name__):
-            result = module_dispatch_render(wfm, test_table)
+            result = module_dispatch_render(module_version, wfm.get_params(),
+                                            test_table, None)
         self.assertEqual(result, ProcessResult(test_table_out))
 
         # Test that bad column parameter values are removed
@@ -398,12 +399,14 @@ class ImportFromGitHubTest(LoggedInTestCase):
         test_table_out = test_table.copy()
         # multicolumn parameter has only one valid col
         test_table_out[['Other']] *= 3
-        result = module_dispatch_render(wfm, test_table)
+        result = module_dispatch_render(module_version, wfm.get_params(),
+                                        test_table, None)
         self.assertEqual(result, ProcessResult(test_table_out))
 
         # if the module crashes, we should get an error with a line number
         stringparam.set_value('crashme')
-        result = module_dispatch_render(wfm, test_table)
+        result = module_dispatch_render(module_version, wfm.get_params(),
+                                        test_table, None)
         self.assertEqual(result, ProcessResult(
             error='ValueError: we crashed! at line 7 of importable.py'
         ))

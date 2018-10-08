@@ -9,7 +9,7 @@ from types import ModuleType
 from typing import Any, Dict, Optional
 from django.conf import settings
 from pandas import DataFrame
-from server.models import WfModule
+from server.models import ModuleVersion, WfModule
 from server.modules.types import ProcessResult
 from server.modules.moduleimpl import ModuleImpl
 
@@ -41,17 +41,11 @@ class DynamicModule:
         """
         return hasattr(self.module, 'fetch')
 
-    def _default_render(self, wf_module, table) -> ProcessResult:
+    def _default_render(self, params, table, fetch_result) -> ProcessResult:
         """Render cached value, or pass-through input.
         """
-        stored_table = wf_module.retrieve_fetched_table()
-        fetch_error = wf_module.fetch_error
-        if stored_table is not None or fetch_error:
-            # Return cached value
-            return ProcessResult(
-                dataframe=stored_table,
-                error=fetch_error
-            )
+        if fetch_result:
+            return fetch_result
         else:
             # Pass-through input
             return ProcessResult(dataframe=table)
@@ -84,8 +78,9 @@ class DynamicModule:
         out.sanitize_in_place()
         return out
 
-    def render(self, wf_module: WfModule,
-               table: Optional[DataFrame]) -> ProcessResult:
+    def render(self, params: WfModule,
+               table: Optional[DataFrame],
+               fetch_result: Optional[ProcessResult]) -> ProcessResult:
         """Process `table` with module `render` method, for a ProcessResult.
 
         If the `render` method raises an exception, this method will return an
@@ -95,11 +90,10 @@ class DynamicModule:
             return None  # TODO disallow?
 
         if not hasattr(self.module, 'render'):
-            return self._default_render(wf_module, table)
+            return self._default_render(params, table, fetch_result)
 
-        params = wf_module.create_parameter_dict(table)
-
-        return self._call_method('render', table, params)
+        return self._call_method('render', table,
+                                 params.to_painful_dict(table))
 
     def call_fetch(self, params: Dict[str, Any]) -> ProcessResult:
         """
@@ -121,7 +115,7 @@ class DynamicModule:
         if not hasattr(self.module, 'fetch'):
             return
 
-        params = wf_module.create_parameter_dict(None)
+        params = wf_module.get_params().to_painful_dict(None)
 
         await wf_module.set_busy()
 
@@ -180,8 +174,8 @@ if settings.CACHE_MODULES:
     load_module = lru_cache(maxsize=None)(load_module)
 
 
-def wf_module_to_dynamic_module(wf_module: WfModule) -> DynamicModule:
-    """Return module referenced by `wf_module`.
+def module_version_to_dynamic_module(module_version: ModuleVersion) -> DynamicModule:
+    """Return module referenced by `module_version`.
 
     We assume:
 
@@ -194,22 +188,22 @@ def wf_module_to_dynamic_module(wf_module: WfModule) -> DynamicModule:
 
     ... in short: this function shouldn't raise an error.
     """
-    module_id_name = wf_module.module_version.module.id_name
-    version_sha1 = wf_module.module_version.source_version_hash
+    module_id_name = module_version.module.id_name
+    version_sha1 = module_version.source_version_hash
 
     return DynamicModule(module_id_name, version_sha1)
 
 
 # -- Main entrypoints --
 
-def get_module_render_fn(wf_module):
-    dynamic_module = wf_module_to_dynamic_module(wf_module)
+def get_module_render_fn(module_version):
+    dynamic_module = module_version_to_dynamic_module(module_version)
     return dynamic_module.render  # bound method
 
 
-def get_module_html_path(wf_module):
-    module_id_name = wf_module.module_version.module.id_name
-    version_sha1 = wf_module.module_version.source_version_hash
+def get_module_html_path(module_version):
+    module_id_name = module_version.module.id_name
+    version_sha1 = module_version.source_version_hash
 
     path_to_file = os.path.join(_DYNAMIC_MODULES_BASE_DIRECTORY,
                                 module_id_name, version_sha1)

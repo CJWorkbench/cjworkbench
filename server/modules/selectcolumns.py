@@ -14,8 +14,7 @@ class SelectColumns(ModuleImpl):
         select_range = params.get_param_checkbox('select_range')
 
         if not select_range:
-            cols = params.get_param_string('colnames').split(',')
-            cols = [c.strip() for c in cols]
+            cols, _ = params.get_param_multicolumn('colnames', table)
             return select_columns_by_name(table, cols, drop_or_keep)
 
         else:

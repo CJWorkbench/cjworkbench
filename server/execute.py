@@ -83,8 +83,6 @@ def execute_wfmodule(wf_module: WfModule,
 
     CONCURRENCY NOTES: This function is reasonably concurrency-friendly:
 
-    * It locks the workflow, so two renders won't happen on the same workflow
-      at the same time.
     * It returns a valid cache result immediately.
     * It checks with the database that `wf_module` hasn't been deleted from
       its workflow.
@@ -94,14 +92,13 @@ def execute_wfmodule(wf_module: WfModule,
       is very common for a user to request a module's output -- kicking off a
       sequence of `execute_wfmodule` -- and then change a param in a prior
       module, making all those calls obsolete.
-    * It runs in a transaction (obviously -- FOR UPDATE and all), which will
-      stall `models.Delta` as it tries to write last_relevant_delta_id,
-      effectively stalling users' update HTTP requests until after the
-      `wf_module`'s render is complete.
+    * It locks the workflow while collecting `render()` input data.
+    * When writing results to the database, it avoids writing if the module has
+      changed.
 
     These guarantees mean:
 
-    * It's relatively cheap to render twice.
+    * TODO It's relatively cheap to render twice.
     * Users who modify a WfModule while it's rendering will be stalled -- for
       as short a duration as possible.
     * When a user changes a workflow significantly, all prior renders will end
@@ -120,18 +117,30 @@ def execute_wfmodule(wf_module: WfModule,
         ):
             return cached_render_result
 
-        result = dispatch.module_dispatch_render(safe_wf_module,
-                                                 last_result.dataframe)
-        cached_render_result = safe_wf_module.cache_render_result(
-            safe_wf_module.last_relevant_delta_id,
+        module_version = wf_module.module_version
+        params = safe_wf_module.get_params()
+        fetch_result = safe_wf_module.get_fetch_result()
+
+    # Release lock, so user gets a responsive experience from other threads
+    table = last_result.dataframe
+    result = dispatch.module_dispatch_render(module_version, params,
+                                             table, fetch_result)
+
+    with locked_wf_module(safe_wf_module) as safe_wf_module_2:
+        if (safe_wf_module_2.last_relevant_delta_id
+            != safe_wf_module.last_relevant_delta_id):
+            raise UnneededExecution
+
+        cached_render_result = safe_wf_module_2.cache_render_result(
+            safe_wf_module_2.last_relevant_delta_id,
             result
         )
 
-        # Save safe_wf_module, not wf_module, because we know we've only
+        # Save safe_wf_module_2, not wf_module, because we know we've only
         # changed the cached_render_result columns. (We know because we
         # locked the row before fetching it.) `wf_module.save()` might
         # overwrite some newer values.
-        safe_wf_module.save()
+        safe_wf_module_2.save()
 
         return cached_render_result
 
