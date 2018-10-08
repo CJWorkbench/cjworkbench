@@ -19,7 +19,6 @@ from server.serializers import WfModuleSerializer
 from server import execute
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
-from server.modules.types import ProcessResult
 import server.utils
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
@@ -27,22 +26,6 @@ from server.templatetags.json_filters import escape_potential_hack_chars
 
 
 _MaxNRowsPerRequest = 300
-
-
-def _client_attributes_that_change_on_render(wf_module):
-    cached_output_columns = wf_module.get_cached_output_columns()
-    if cached_output_columns is None:
-        output_columns = None
-    else:
-        output_columns = [{'name': c.name, 'type': c.type}
-                          for c in cached_output_columns]
-
-    return {
-        'error_msg': wf_module.error_msg,
-        'quick_fixes': wf_module.cached_render_result_quick_fixes,
-        'status': wf_module.status,
-        'output_columns': output_columns,
-    }
 
 
 def _lookup_wf_module(pk: int) -> WfModule:
@@ -143,7 +126,9 @@ def wfmodule_detail(request, pk, format=None):
         # TODO: replace all of these with the generic patch method, most of
         # this is unnecessary
         try:
-            if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed", "notifications"}):
+            if not set(request.data.keys()).intersection(
+                {'notes', 'auto_update_data', 'collapsed', 'notifications'}
+            ):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
             if 'notes' in request.data:
@@ -180,11 +165,15 @@ def wfmodule_detail(request, pk, format=None):
                     )
 
         except ValueError as e:  # TODO make this less generic
-            return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': str(e), 'status_code': 400},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 N_COLUMNS_PER_TABLE = 101
+
+
 # ---- render / input / livedata ----
 # These endpoints return actual table data
 
@@ -193,11 +182,10 @@ N_COLUMNS_PER_TABLE = 101
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_dict(cached_result, startrow=None, endrow=None):
     if not cached_result:
-        #result = ProcessResult()
         dataframe = pd.DataFrame()
     else:
-        #result = cached_result.result
-        dataframe = cached_result.parquet_file.to_pandas(columns=cached_result.column_names[:N_COLUMNS_PER_TABLE])
+        column_names = cached_result.column_names[:N_COLUMNS_PER_TABLE]
+        dataframe = cached_result.parquet_file.to_pandas(column_names)
 
     nrows = len(dataframe)
     if startrow is None:
@@ -334,8 +322,10 @@ def wfmodule_value_counts(request, pk):
 
     return JsonResponse({'values': value_counts})
 
+
 N_ROWS_PER_TILE = 200
 N_COLUMNS_PER_TILE = 50
+
 
 @api_view(['GET'])
 def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
@@ -381,6 +371,7 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
 
     return HttpResponse(json_string, content_type='application/json')
 
+
 # Public access to wfmodule output. Basically just /render with different auth
 # and output format
 # NOTE: does not support startrow/endrow at the moment
@@ -423,7 +414,9 @@ def wfmodule_dataversion(request, pk, format=None):
         date = dateparse.parse_datetime(date_s)
 
         if not date:
-            return HttpResponseBadRequest(f'"selected" parameter must be an ISO8601 date; got "{date_s}"')
+            return HttpResponseBadRequest(
+                f'"selected" parameter must be an ISO8601 date; got "{date_s}"'
+            )
 
         try:
             # TODO maybe let's not use microsecond-precision numbers as
@@ -441,7 +434,9 @@ def wfmodule_dataversion(request, pk, format=None):
                 stored_at__lt=date + timedelta(milliseconds=1)
             )
         except StoredObject.DoesNotExist:
-            return HttpResponseNotFound(f'No StoredObject with stored_at={date_s}')
+            return HttpResponseNotFound(
+                f'No StoredObject with stored_at={date_s}'
+            )
 
         async_to_sync(ChangeDataVersionCommand.create)(
             wf_module,
