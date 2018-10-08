@@ -351,7 +351,7 @@ export class WfModule extends React.PureComponent {
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
-          placeholder='Type something'
+          placeholder='Type a note...'
           value={this.state.notes}
           onChange={this.onChangeNote}
           onFocus={this.onFocusNote}
