@@ -108,16 +108,16 @@ class Twitter(ModuleImpl):
         if fetch_result.status == 'error':
             return fetch_result
 
-        table = _recover_from_160258591(fetch_result.dataframe)
+        _recover_from_160258591(fetch_result.dataframe)
 
-        return ProcessResult(table, fetch_result.error)
+        return fetch_result
 
     # Load specified user's timeline
     @staticmethod
     async def event(wfm, **_kwargs):
-        def fail(error: str) -> None:
+        async def fail(error: str) -> None:
             result = ProcessResult(error=error)
-            ModuleImpl.commit_result(wfm, result)
+            await ModuleImpl.commit_result(wfm, result)
 
         param_names = {
             QUERY_TYPE_USER: 'username',
@@ -130,33 +130,32 @@ class Twitter(ModuleImpl):
         access_token = wfm.get_param_secret_secret('twitter_credentials')
 
         if query.strip() == '':
-            return fail('Please enter a query')
+            return await fail('Please enter a query')
 
         if not access_token:
-            return fail('Please sign in to Twitter')
+            return await fail('Please sign in to Twitter')
 
         try:
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = get_stored_tweets(wfm)
                 tweets = get_new_tweets(access_token, querytype, query,
-                                                old_tweets)
+                                        old_tweets)
                 tweets = merge_tweets(wfm, tweets)
             else:
-                tweets = get_new_tweets(access_token, querytype, query,
-                                                None)
+                tweets = get_new_tweets(access_token, querytype, query, None)
 
         except TweepError as e:
             if e.response:
                 if querytype==QUERY_TYPE_USER and e.response.status_code == 401:
-                    return fail(_('User %s\'s tweets are protected') % query)
+                    return await fail(_('User %s\'s tweets are protected') % query)
                 elif querytype==QUERY_TYPE_USER and e.response.status_code == 404:
-                    return fail(_('User %s does not exist') % query)
+                    return await fail(_('User %s does not exist') % query)
                 elif e.response.status_code == 429:
-                    return fail(_('Twitter API rate limit exceeded. Please wait a few minutes and try again.'))
+                    return await fail(_('Twitter API rate limit exceeded. Please wait a few minutes and try again.'))
                 else:
-                    return fail(_('HTTP error %s fetching tweets' % str(e.response.status_code)))
+                    return await fail(_('HTTP error %s fetching tweets' % str(e.response.status_code)))
             else:
-                return fail(_('Error fetching tweets: %s' % str(e)))
+                return await fail(_('Error fetching tweets: %s' % str(e)))
 
         result = ProcessResult(dataframe=tweets)
 
