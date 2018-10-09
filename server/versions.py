@@ -89,7 +89,7 @@ async def save_result_if_changed(
                 str(wfm.id): {
                     'status': wfm.status,
                     'error_msg': wfm.error_msg,
-                    'last_update_check': wfm.last_update_check,
+                    'last_update_check': wfm.last_update_check.isoformat(),
                 }
             }
         })
