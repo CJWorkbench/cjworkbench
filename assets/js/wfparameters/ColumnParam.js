@@ -1,6 +1,7 @@
 // Pick a single column
 import React from 'react'
 import PropTypes from 'prop-types'
+import Select from 'react-select'
 
 export default class ColumnParam extends React.PureComponent {
   static propTypes = {
@@ -15,42 +16,44 @@ export default class ColumnParam extends React.PureComponent {
   }
 
   onChange = (ev) => {
-    this.props.onChange(ev.target.value || null)
+    this.props.onChange(ev.value || null)
   }
 
   render() {
-    const { allColumns, prompt, value } = this.props
+    const {allColumns, prompt, value} = this.props
+    let className = "react-select"
+    let columnOptions
 
-    let className = 'custom-select'
-
-    const options = (allColumns || []).map(({ name }) => (
-      <option value={name} key={name}>{name}</option>
-    ))
-
-    // Select prompt when no column is selected, _or_ when an invalid
-    // column is selected. `value || ''` is the currently-selected value.
-    //
-    // When a column is selected, set the prompt to '' so it is _not_
-    // selected.
-    const valueIsSelectable = (allColumns || []).some(({ name }) => name === value)
-    const promptValue = valueIsSelectable ? '' : (value || '')
-    options.unshift(<option disabled className="prompt" key="prompt" value={promptValue}>{prompt || 'Select'}</option>)
-
+    // Set dropdown list to 1 option of 'loading' as we wait. When clicked, onChange passes null to callback
     if (allColumns === null) {
       className += ' loading'
-      options.push(<option disabled className="loading" key="loading" value="">Loading columns</option>)
+      columnOptions = [
+        {
+          label: 'loading',
+          value: ''
+        }
+      ]}
+    else {
+      columnOptions = allColumns.map(column => (
+        {
+          label: column.name,
+          value: column.name
+        }
+      ))
     }
-
+    // Keeping classNamePrefix since CSS definitions already exist
     return (
-      <select
-        className={className}
-        value={value || ''}
-        onChange={this.onChange}
+      <Select
         name={this.props.name}
-        disabled={this.props.isReadOnly}
-      >
-        {options}
-      </select>
+        options={columnOptions}
+        className={className}
+        classNamePrefix="react-select"
+        menuPortalTarget={document.body}
+        onChange={this.onChange}
+        isClearable={true}
+        isDisabled={this.props.isReadOnly}
+        placeholder={prompt || 'Select'}
+      />
     )
   }
 }

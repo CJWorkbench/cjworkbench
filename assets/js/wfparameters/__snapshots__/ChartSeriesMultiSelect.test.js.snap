@@ -115,34 +115,900 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
             prompt="prompt"
             value="A"
           >
-            <select
-              className="custom-select"
-              disabled={false}
+            <StateManager
+              className="react-select"
+              classNamePrefix="react-select"
+              defaultInputValue=""
+              defaultMenuIsOpen={false}
+              defaultValue={null}
+              isClearable={true}
+              isDisabled={false}
+              menuPortalTarget={<body />}
               name="column"
               onChange={[Function]}
-              value="A"
+              options={
+                Array [
+                  Object {
+                    "label": "A",
+                    "value": "A",
+                  },
+                  Object {
+                    "label": "C",
+                    "value": "C",
+                  },
+                ]
+              }
+              placeholder="prompt"
             >
-              <option
-                className="prompt"
-                disabled={true}
-                key="prompt"
-                value=""
+              <Select
+                backspaceRemovesValue={true}
+                blurInputOnSelect={true}
+                captureMenuScroll={false}
+                className="react-select"
+                classNamePrefix="react-select"
+                closeMenuOnScroll={false}
+                closeMenuOnSelect={true}
+                components={Object {}}
+                controlShouldRenderValue={true}
+                defaultInputValue=""
+                defaultMenuIsOpen={false}
+                defaultValue={null}
+                escapeClearsValue={false}
+                filterOption={[Function]}
+                formatGroupLabel={[Function]}
+                getOptionLabel={[Function]}
+                getOptionValue={[Function]}
+                inputValue=""
+                isClearable={true}
+                isDisabled={false}
+                isLoading={false}
+                isMulti={false}
+                isOptionDisabled={[Function]}
+                isRtl={false}
+                isSearchable={true}
+                loadingMessage={[Function]}
+                maxMenuHeight={300}
+                menuIsOpen={false}
+                menuPlacement="bottom"
+                menuPortalTarget={<body />}
+                menuPosition="absolute"
+                menuShouldBlockScroll={false}
+                menuShouldScrollIntoView={true}
+                minMenuHeight={140}
+                name="column"
+                noOptionsMessage={[Function]}
+                onChange={[Function]}
+                onInputChange={[Function]}
+                onMenuClose={[Function]}
+                onMenuOpen={[Function]}
+                openMenuOnClick={true}
+                openMenuOnFocus={false}
+                options={
+                  Array [
+                    Object {
+                      "label": "A",
+                      "value": "A",
+                    },
+                    Object {
+                      "label": "C",
+                      "value": "C",
+                    },
+                  ]
+                }
+                pageSize={5}
+                placeholder="prompt"
+                screenReaderStatus={[Function]}
+                styles={Object {}}
+                tabIndex="0"
+                tabSelectsValue={true}
+                value={null}
               >
-                prompt
-              </option>
-              <option
-                key="A"
-                value="A"
-              >
-                A
-              </option>
-              <option
-                key="C"
-                value="C"
-              >
-                C
-              </option>
-            </select>
+                <SelectContainer
+                  className="react-select"
+                  clearValue={[Function]}
+                  cx={[Function]}
+                  getStyles={[Function]}
+                  getValue={[Function]}
+                  hasValue={false}
+                  innerProps={
+                    Object {
+                      "id": undefined,
+                      "onKeyDown": [Function],
+                    }
+                  }
+                  isDisabled={false}
+                  isFocused={false}
+                  isMulti={false}
+                  isRtl={false}
+                  options={
+                    Array [
+                      Object {
+                        "label": "A",
+                        "value": "A",
+                      },
+                      Object {
+                        "label": "C",
+                        "value": "C",
+                      },
+                    ]
+                  }
+                  selectOption={[Function]}
+                  selectProps={
+                    Object {
+                      "backspaceRemovesValue": true,
+                      "blurInputOnSelect": true,
+                      "captureMenuScroll": false,
+                      "className": "react-select",
+                      "classNamePrefix": "react-select",
+                      "closeMenuOnScroll": false,
+                      "closeMenuOnSelect": true,
+                      "components": Object {},
+                      "controlShouldRenderValue": true,
+                      "defaultInputValue": "",
+                      "defaultMenuIsOpen": false,
+                      "defaultValue": null,
+                      "escapeClearsValue": false,
+                      "filterOption": [Function],
+                      "formatGroupLabel": [Function],
+                      "getOptionLabel": [Function],
+                      "getOptionValue": [Function],
+                      "inputValue": "",
+                      "isClearable": true,
+                      "isDisabled": false,
+                      "isLoading": false,
+                      "isMulti": false,
+                      "isOptionDisabled": [Function],
+                      "isRtl": false,
+                      "isSearchable": true,
+                      "loadingMessage": [Function],
+                      "maxMenuHeight": 300,
+                      "menuIsOpen": false,
+                      "menuPlacement": "bottom",
+                      "menuPortalTarget": <body />,
+                      "menuPosition": "absolute",
+                      "menuShouldBlockScroll": false,
+                      "menuShouldScrollIntoView": true,
+                      "minMenuHeight": 140,
+                      "name": "column",
+                      "noOptionsMessage": [Function],
+                      "onChange": [Function],
+                      "onInputChange": [Function],
+                      "onMenuClose": [Function],
+                      "onMenuOpen": [Function],
+                      "openMenuOnClick": true,
+                      "openMenuOnFocus": false,
+                      "options": Array [
+                        Object {
+                          "label": "A",
+                          "value": "A",
+                        },
+                        Object {
+                          "label": "C",
+                          "value": "C",
+                        },
+                      ],
+                      "pageSize": 5,
+                      "placeholder": "prompt",
+                      "screenReaderStatus": [Function],
+                      "styles": Object {},
+                      "tabIndex": "0",
+                      "tabSelectsValue": true,
+                      "value": null,
+                    }
+                  }
+                  setValue={[Function]}
+                >
+                  <div
+                    className="css-10nd86i react-select"
+                    onKeyDown={[Function]}
+                  >
+                    <Control
+                      clearValue={[Function]}
+                      cx={[Function]}
+                      getStyles={[Function]}
+                      getValue={[Function]}
+                      hasValue={false}
+                      innerProps={
+                        Object {
+                          "onMouseDown": [Function],
+                          "onTouchEnd": [Function],
+                        }
+                      }
+                      innerRef={[Function]}
+                      isDisabled={false}
+                      isFocused={false}
+                      isMulti={false}
+                      isRtl={false}
+                      options={
+                        Array [
+                          Object {
+                            "label": "A",
+                            "value": "A",
+                          },
+                          Object {
+                            "label": "C",
+                            "value": "C",
+                          },
+                        ]
+                      }
+                      selectOption={[Function]}
+                      selectProps={
+                        Object {
+                          "backspaceRemovesValue": true,
+                          "blurInputOnSelect": true,
+                          "captureMenuScroll": false,
+                          "className": "react-select",
+                          "classNamePrefix": "react-select",
+                          "closeMenuOnScroll": false,
+                          "closeMenuOnSelect": true,
+                          "components": Object {},
+                          "controlShouldRenderValue": true,
+                          "defaultInputValue": "",
+                          "defaultMenuIsOpen": false,
+                          "defaultValue": null,
+                          "escapeClearsValue": false,
+                          "filterOption": [Function],
+                          "formatGroupLabel": [Function],
+                          "getOptionLabel": [Function],
+                          "getOptionValue": [Function],
+                          "inputValue": "",
+                          "isClearable": true,
+                          "isDisabled": false,
+                          "isLoading": false,
+                          "isMulti": false,
+                          "isOptionDisabled": [Function],
+                          "isRtl": false,
+                          "isSearchable": true,
+                          "loadingMessage": [Function],
+                          "maxMenuHeight": 300,
+                          "menuIsOpen": false,
+                          "menuPlacement": "bottom",
+                          "menuPortalTarget": <body />,
+                          "menuPosition": "absolute",
+                          "menuShouldBlockScroll": false,
+                          "menuShouldScrollIntoView": true,
+                          "minMenuHeight": 140,
+                          "name": "column",
+                          "noOptionsMessage": [Function],
+                          "onChange": [Function],
+                          "onInputChange": [Function],
+                          "onMenuClose": [Function],
+                          "onMenuOpen": [Function],
+                          "openMenuOnClick": true,
+                          "openMenuOnFocus": false,
+                          "options": Array [
+                            Object {
+                              "label": "A",
+                              "value": "A",
+                            },
+                            Object {
+                              "label": "C",
+                              "value": "C",
+                            },
+                          ],
+                          "pageSize": 5,
+                          "placeholder": "prompt",
+                          "screenReaderStatus": [Function],
+                          "styles": Object {},
+                          "tabIndex": "0",
+                          "tabSelectsValue": true,
+                          "value": null,
+                        }
+                      }
+                      setValue={[Function]}
+                    >
+                      <div
+                        className="css-1aya2g8 react-select__control"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <ValueContainer
+                          clearValue={[Function]}
+                          cx={[Function]}
+                          getStyles={[Function]}
+                          getValue={[Function]}
+                          hasValue={false}
+                          isDisabled={false}
+                          isMulti={false}
+                          isRtl={false}
+                          options={
+                            Array [
+                              Object {
+                                "label": "A",
+                                "value": "A",
+                              },
+                              Object {
+                                "label": "C",
+                                "value": "C",
+                              },
+                            ]
+                          }
+                          selectOption={[Function]}
+                          selectProps={
+                            Object {
+                              "backspaceRemovesValue": true,
+                              "blurInputOnSelect": true,
+                              "captureMenuScroll": false,
+                              "className": "react-select",
+                              "classNamePrefix": "react-select",
+                              "closeMenuOnScroll": false,
+                              "closeMenuOnSelect": true,
+                              "components": Object {},
+                              "controlShouldRenderValue": true,
+                              "defaultInputValue": "",
+                              "defaultMenuIsOpen": false,
+                              "defaultValue": null,
+                              "escapeClearsValue": false,
+                              "filterOption": [Function],
+                              "formatGroupLabel": [Function],
+                              "getOptionLabel": [Function],
+                              "getOptionValue": [Function],
+                              "inputValue": "",
+                              "isClearable": true,
+                              "isDisabled": false,
+                              "isLoading": false,
+                              "isMulti": false,
+                              "isOptionDisabled": [Function],
+                              "isRtl": false,
+                              "isSearchable": true,
+                              "loadingMessage": [Function],
+                              "maxMenuHeight": 300,
+                              "menuIsOpen": false,
+                              "menuPlacement": "bottom",
+                              "menuPortalTarget": <body />,
+                              "menuPosition": "absolute",
+                              "menuShouldBlockScroll": false,
+                              "menuShouldScrollIntoView": true,
+                              "minMenuHeight": 140,
+                              "name": "column",
+                              "noOptionsMessage": [Function],
+                              "onChange": [Function],
+                              "onInputChange": [Function],
+                              "onMenuClose": [Function],
+                              "onMenuOpen": [Function],
+                              "openMenuOnClick": true,
+                              "openMenuOnFocus": false,
+                              "options": Array [
+                                Object {
+                                  "label": "A",
+                                  "value": "A",
+                                },
+                                Object {
+                                  "label": "C",
+                                  "value": "C",
+                                },
+                              ],
+                              "pageSize": 5,
+                              "placeholder": "prompt",
+                              "screenReaderStatus": [Function],
+                              "styles": Object {},
+                              "tabIndex": "0",
+                              "tabSelectsValue": true,
+                              "value": null,
+                            }
+                          }
+                          setValue={[Function]}
+                        >
+                          <div
+                            className="css-1rtrksz react-select__value-container"
+                          >
+                            <Placeholder
+                              clearValue={[Function]}
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              getValue={[Function]}
+                              hasValue={false}
+                              isDisabled={false}
+                              isMulti={false}
+                              isRtl={false}
+                              key="placeholder"
+                              options={
+                                Array [
+                                  Object {
+                                    "label": "A",
+                                    "value": "A",
+                                  },
+                                  Object {
+                                    "label": "C",
+                                    "value": "C",
+                                  },
+                                ]
+                              }
+                              selectOption={[Function]}
+                              selectProps={
+                                Object {
+                                  "backspaceRemovesValue": true,
+                                  "blurInputOnSelect": true,
+                                  "captureMenuScroll": false,
+                                  "className": "react-select",
+                                  "classNamePrefix": "react-select",
+                                  "closeMenuOnScroll": false,
+                                  "closeMenuOnSelect": true,
+                                  "components": Object {},
+                                  "controlShouldRenderValue": true,
+                                  "defaultInputValue": "",
+                                  "defaultMenuIsOpen": false,
+                                  "defaultValue": null,
+                                  "escapeClearsValue": false,
+                                  "filterOption": [Function],
+                                  "formatGroupLabel": [Function],
+                                  "getOptionLabel": [Function],
+                                  "getOptionValue": [Function],
+                                  "inputValue": "",
+                                  "isClearable": true,
+                                  "isDisabled": false,
+                                  "isLoading": false,
+                                  "isMulti": false,
+                                  "isOptionDisabled": [Function],
+                                  "isRtl": false,
+                                  "isSearchable": true,
+                                  "loadingMessage": [Function],
+                                  "maxMenuHeight": 300,
+                                  "menuIsOpen": false,
+                                  "menuPlacement": "bottom",
+                                  "menuPortalTarget": <body />,
+                                  "menuPosition": "absolute",
+                                  "menuShouldBlockScroll": false,
+                                  "menuShouldScrollIntoView": true,
+                                  "minMenuHeight": 140,
+                                  "name": "column",
+                                  "noOptionsMessage": [Function],
+                                  "onChange": [Function],
+                                  "onInputChange": [Function],
+                                  "onMenuClose": [Function],
+                                  "onMenuOpen": [Function],
+                                  "openMenuOnClick": true,
+                                  "openMenuOnFocus": false,
+                                  "options": Array [
+                                    Object {
+                                      "label": "A",
+                                      "value": "A",
+                                    },
+                                    Object {
+                                      "label": "C",
+                                      "value": "C",
+                                    },
+                                  ],
+                                  "pageSize": 5,
+                                  "placeholder": "prompt",
+                                  "screenReaderStatus": [Function],
+                                  "styles": Object {},
+                                  "tabIndex": "0",
+                                  "tabSelectsValue": true,
+                                  "value": null,
+                                }
+                              }
+                              setValue={[Function]}
+                            >
+                              <div
+                                className="css-1492t68 react-select__placeholder"
+                              >
+                                prompt
+                              </div>
+                            </Placeholder>
+                            <Input
+                              aria-autocomplete="list"
+                              autoCapitalize="none"
+                              autoComplete="off"
+                              autoCorrect="off"
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              id="react-select-2-input"
+                              innerRef={[Function]}
+                              isDisabled={false}
+                              isHidden={false}
+                              onBlur={[Function]}
+                              onChange={[Function]}
+                              onFocus={[Function]}
+                              spellCheck="false"
+                              tabIndex="0"
+                              type="text"
+                              value=""
+                            >
+                              <div
+                                className="css-rsyb7x"
+                              >
+                                <AutosizeInput
+                                  aria-autocomplete="list"
+                                  autoCapitalize="none"
+                                  autoComplete="off"
+                                  autoCorrect="off"
+                                  className="react-select__input"
+                                  disabled={false}
+                                  id="react-select-2-input"
+                                  injectStyles={true}
+                                  inputRef={[Function]}
+                                  inputStyle={
+                                    Object {
+                                      "background": 0,
+                                      "border": 0,
+                                      "color": "inherit",
+                                      "fontSize": "inherit",
+                                      "opacity": 1,
+                                      "outline": 0,
+                                      "padding": 0,
+                                    }
+                                  }
+                                  minWidth={1}
+                                  onBlur={[Function]}
+                                  onChange={[Function]}
+                                  onFocus={[Function]}
+                                  spellCheck="false"
+                                  tabIndex="0"
+                                  type="text"
+                                  value=""
+                                >
+                                  <div
+                                    className="react-select__input"
+                                    style={
+                                      Object {
+                                        "display": "inline-block",
+                                      }
+                                    }
+                                  >
+                                    <input
+                                      aria-autocomplete="list"
+                                      autoCapitalize="none"
+                                      autoComplete="off"
+                                      autoCorrect="off"
+                                      disabled={false}
+                                      id="react-select-2-input"
+                                      onBlur={[Function]}
+                                      onChange={[Function]}
+                                      onFocus={[Function]}
+                                      spellCheck="false"
+                                      style={
+                                        Object {
+                                          "background": 0,
+                                          "border": 0,
+                                          "boxSizing": "content-box",
+                                          "color": "inherit",
+                                          "fontSize": "inherit",
+                                          "opacity": 1,
+                                          "outline": 0,
+                                          "padding": 0,
+                                          "width": "2px",
+                                        }
+                                      }
+                                      tabIndex="0"
+                                      type="text"
+                                      value=""
+                                    />
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": 0,
+                                          "left": 0,
+                                          "overflow": "scroll",
+                                          "position": "absolute",
+                                          "top": 0,
+                                          "visibility": "hidden",
+                                          "whiteSpace": "pre",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </AutosizeInput>
+                              </div>
+                            </Input>
+                          </div>
+                        </ValueContainer>
+                        <IndicatorsContainer
+                          clearValue={[Function]}
+                          cx={[Function]}
+                          getStyles={[Function]}
+                          getValue={[Function]}
+                          hasValue={false}
+                          isDisabled={false}
+                          isMulti={false}
+                          isRtl={false}
+                          options={
+                            Array [
+                              Object {
+                                "label": "A",
+                                "value": "A",
+                              },
+                              Object {
+                                "label": "C",
+                                "value": "C",
+                              },
+                            ]
+                          }
+                          selectOption={[Function]}
+                          selectProps={
+                            Object {
+                              "backspaceRemovesValue": true,
+                              "blurInputOnSelect": true,
+                              "captureMenuScroll": false,
+                              "className": "react-select",
+                              "classNamePrefix": "react-select",
+                              "closeMenuOnScroll": false,
+                              "closeMenuOnSelect": true,
+                              "components": Object {},
+                              "controlShouldRenderValue": true,
+                              "defaultInputValue": "",
+                              "defaultMenuIsOpen": false,
+                              "defaultValue": null,
+                              "escapeClearsValue": false,
+                              "filterOption": [Function],
+                              "formatGroupLabel": [Function],
+                              "getOptionLabel": [Function],
+                              "getOptionValue": [Function],
+                              "inputValue": "",
+                              "isClearable": true,
+                              "isDisabled": false,
+                              "isLoading": false,
+                              "isMulti": false,
+                              "isOptionDisabled": [Function],
+                              "isRtl": false,
+                              "isSearchable": true,
+                              "loadingMessage": [Function],
+                              "maxMenuHeight": 300,
+                              "menuIsOpen": false,
+                              "menuPlacement": "bottom",
+                              "menuPortalTarget": <body />,
+                              "menuPosition": "absolute",
+                              "menuShouldBlockScroll": false,
+                              "menuShouldScrollIntoView": true,
+                              "minMenuHeight": 140,
+                              "name": "column",
+                              "noOptionsMessage": [Function],
+                              "onChange": [Function],
+                              "onInputChange": [Function],
+                              "onMenuClose": [Function],
+                              "onMenuOpen": [Function],
+                              "openMenuOnClick": true,
+                              "openMenuOnFocus": false,
+                              "options": Array [
+                                Object {
+                                  "label": "A",
+                                  "value": "A",
+                                },
+                                Object {
+                                  "label": "C",
+                                  "value": "C",
+                                },
+                              ],
+                              "pageSize": 5,
+                              "placeholder": "prompt",
+                              "screenReaderStatus": [Function],
+                              "styles": Object {},
+                              "tabIndex": "0",
+                              "tabSelectsValue": true,
+                              "value": null,
+                            }
+                          }
+                          setValue={[Function]}
+                        >
+                          <div
+                            className="css-1wy0on6 react-select__indicators"
+                          >
+                            <IndicatorSeparator
+                              clearValue={[Function]}
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              getValue={[Function]}
+                              hasValue={false}
+                              isDisabled={false}
+                              isFocused={false}
+                              isMulti={false}
+                              isRtl={false}
+                              options={
+                                Array [
+                                  Object {
+                                    "label": "A",
+                                    "value": "A",
+                                  },
+                                  Object {
+                                    "label": "C",
+                                    "value": "C",
+                                  },
+                                ]
+                              }
+                              selectOption={[Function]}
+                              selectProps={
+                                Object {
+                                  "backspaceRemovesValue": true,
+                                  "blurInputOnSelect": true,
+                                  "captureMenuScroll": false,
+                                  "className": "react-select",
+                                  "classNamePrefix": "react-select",
+                                  "closeMenuOnScroll": false,
+                                  "closeMenuOnSelect": true,
+                                  "components": Object {},
+                                  "controlShouldRenderValue": true,
+                                  "defaultInputValue": "",
+                                  "defaultMenuIsOpen": false,
+                                  "defaultValue": null,
+                                  "escapeClearsValue": false,
+                                  "filterOption": [Function],
+                                  "formatGroupLabel": [Function],
+                                  "getOptionLabel": [Function],
+                                  "getOptionValue": [Function],
+                                  "inputValue": "",
+                                  "isClearable": true,
+                                  "isDisabled": false,
+                                  "isLoading": false,
+                                  "isMulti": false,
+                                  "isOptionDisabled": [Function],
+                                  "isRtl": false,
+                                  "isSearchable": true,
+                                  "loadingMessage": [Function],
+                                  "maxMenuHeight": 300,
+                                  "menuIsOpen": false,
+                                  "menuPlacement": "bottom",
+                                  "menuPortalTarget": <body />,
+                                  "menuPosition": "absolute",
+                                  "menuShouldBlockScroll": false,
+                                  "menuShouldScrollIntoView": true,
+                                  "minMenuHeight": 140,
+                                  "name": "column",
+                                  "noOptionsMessage": [Function],
+                                  "onChange": [Function],
+                                  "onInputChange": [Function],
+                                  "onMenuClose": [Function],
+                                  "onMenuOpen": [Function],
+                                  "openMenuOnClick": true,
+                                  "openMenuOnFocus": false,
+                                  "options": Array [
+                                    Object {
+                                      "label": "A",
+                                      "value": "A",
+                                    },
+                                    Object {
+                                      "label": "C",
+                                      "value": "C",
+                                    },
+                                  ],
+                                  "pageSize": 5,
+                                  "placeholder": "prompt",
+                                  "screenReaderStatus": [Function],
+                                  "styles": Object {},
+                                  "tabIndex": "0",
+                                  "tabSelectsValue": true,
+                                  "value": null,
+                                }
+                              }
+                              setValue={[Function]}
+                            >
+                              <span
+                                className="css-d8oujb react-select__indicator-separator"
+                              />
+                            </IndicatorSeparator>
+                            <DropdownIndicator
+                              clearValue={[Function]}
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              getValue={[Function]}
+                              hasValue={false}
+                              innerProps={
+                                Object {
+                                  "aria-hidden": "true",
+                                  "onMouseDown": [Function],
+                                  "onTouchEnd": [Function],
+                                }
+                              }
+                              isDisabled={false}
+                              isFocused={false}
+                              isMulti={false}
+                              isRtl={false}
+                              options={
+                                Array [
+                                  Object {
+                                    "label": "A",
+                                    "value": "A",
+                                  },
+                                  Object {
+                                    "label": "C",
+                                    "value": "C",
+                                  },
+                                ]
+                              }
+                              selectOption={[Function]}
+                              selectProps={
+                                Object {
+                                  "backspaceRemovesValue": true,
+                                  "blurInputOnSelect": true,
+                                  "captureMenuScroll": false,
+                                  "className": "react-select",
+                                  "classNamePrefix": "react-select",
+                                  "closeMenuOnScroll": false,
+                                  "closeMenuOnSelect": true,
+                                  "components": Object {},
+                                  "controlShouldRenderValue": true,
+                                  "defaultInputValue": "",
+                                  "defaultMenuIsOpen": false,
+                                  "defaultValue": null,
+                                  "escapeClearsValue": false,
+                                  "filterOption": [Function],
+                                  "formatGroupLabel": [Function],
+                                  "getOptionLabel": [Function],
+                                  "getOptionValue": [Function],
+                                  "inputValue": "",
+                                  "isClearable": true,
+                                  "isDisabled": false,
+                                  "isLoading": false,
+                                  "isMulti": false,
+                                  "isOptionDisabled": [Function],
+                                  "isRtl": false,
+                                  "isSearchable": true,
+                                  "loadingMessage": [Function],
+                                  "maxMenuHeight": 300,
+                                  "menuIsOpen": false,
+                                  "menuPlacement": "bottom",
+                                  "menuPortalTarget": <body />,
+                                  "menuPosition": "absolute",
+                                  "menuShouldBlockScroll": false,
+                                  "menuShouldScrollIntoView": true,
+                                  "minMenuHeight": 140,
+                                  "name": "column",
+                                  "noOptionsMessage": [Function],
+                                  "onChange": [Function],
+                                  "onInputChange": [Function],
+                                  "onMenuClose": [Function],
+                                  "onMenuOpen": [Function],
+                                  "openMenuOnClick": true,
+                                  "openMenuOnFocus": false,
+                                  "options": Array [
+                                    Object {
+                                      "label": "A",
+                                      "value": "A",
+                                    },
+                                    Object {
+                                      "label": "C",
+                                      "value": "C",
+                                    },
+                                  ],
+                                  "pageSize": 5,
+                                  "placeholder": "prompt",
+                                  "screenReaderStatus": [Function],
+                                  "styles": Object {},
+                                  "tabIndex": "0",
+                                  "tabSelectsValue": true,
+                                  "value": null,
+                                }
+                              }
+                              setValue={[Function]}
+                            >
+                              <div
+                                aria-hidden="true"
+                                className="css-1ep9fjw react-select__indicator react-select__dropdown-indicator"
+                                onMouseDown={[Function]}
+                                onTouchEnd={[Function]}
+                              >
+                                <DownChevron>
+                                  <Svg
+                                    size={20}
+                                  >
+                                    <svg
+                                      aria-hidden="true"
+                                      className="css-19bqh2r"
+                                      focusable="false"
+                                      height={20}
+                                      viewBox="0 0 20 20"
+                                      width={20}
+                                    >
+                                      <path
+                                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                      />
+                                    </svg>
+                                  </Svg>
+                                </DownChevron>
+                              </div>
+                            </DropdownIndicator>
+                          </div>
+                        </IndicatorsContainer>
+                      </div>
+                    </Control>
+                    <input
+                      name="column"
+                      type="hidden"
+                      value=""
+                    />
+                  </div>
+                </SelectContainer>
+              </Select>
+            </StateManager>
           </ColumnParam>
         </div>
       </InputGroup>
@@ -228,34 +1094,900 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
             prompt="prompt"
             value="B"
           >
-            <select
-              className="custom-select"
-              disabled={false}
+            <StateManager
+              className="react-select"
+              classNamePrefix="react-select"
+              defaultInputValue=""
+              defaultMenuIsOpen={false}
+              defaultValue={null}
+              isClearable={true}
+              isDisabled={false}
+              menuPortalTarget={<body />}
               name="column"
               onChange={[Function]}
-              value="B"
+              options={
+                Array [
+                  Object {
+                    "label": "B",
+                    "value": "B",
+                  },
+                  Object {
+                    "label": "C",
+                    "value": "C",
+                  },
+                ]
+              }
+              placeholder="prompt"
             >
-              <option
-                className="prompt"
-                disabled={true}
-                key="prompt"
-                value=""
+              <Select
+                backspaceRemovesValue={true}
+                blurInputOnSelect={true}
+                captureMenuScroll={false}
+                className="react-select"
+                classNamePrefix="react-select"
+                closeMenuOnScroll={false}
+                closeMenuOnSelect={true}
+                components={Object {}}
+                controlShouldRenderValue={true}
+                defaultInputValue=""
+                defaultMenuIsOpen={false}
+                defaultValue={null}
+                escapeClearsValue={false}
+                filterOption={[Function]}
+                formatGroupLabel={[Function]}
+                getOptionLabel={[Function]}
+                getOptionValue={[Function]}
+                inputValue=""
+                isClearable={true}
+                isDisabled={false}
+                isLoading={false}
+                isMulti={false}
+                isOptionDisabled={[Function]}
+                isRtl={false}
+                isSearchable={true}
+                loadingMessage={[Function]}
+                maxMenuHeight={300}
+                menuIsOpen={false}
+                menuPlacement="bottom"
+                menuPortalTarget={<body />}
+                menuPosition="absolute"
+                menuShouldBlockScroll={false}
+                menuShouldScrollIntoView={true}
+                minMenuHeight={140}
+                name="column"
+                noOptionsMessage={[Function]}
+                onChange={[Function]}
+                onInputChange={[Function]}
+                onMenuClose={[Function]}
+                onMenuOpen={[Function]}
+                openMenuOnClick={true}
+                openMenuOnFocus={false}
+                options={
+                  Array [
+                    Object {
+                      "label": "B",
+                      "value": "B",
+                    },
+                    Object {
+                      "label": "C",
+                      "value": "C",
+                    },
+                  ]
+                }
+                pageSize={5}
+                placeholder="prompt"
+                screenReaderStatus={[Function]}
+                styles={Object {}}
+                tabIndex="0"
+                tabSelectsValue={true}
+                value={null}
               >
-                prompt
-              </option>
-              <option
-                key="B"
-                value="B"
-              >
-                B
-              </option>
-              <option
-                key="C"
-                value="C"
-              >
-                C
-              </option>
-            </select>
+                <SelectContainer
+                  className="react-select"
+                  clearValue={[Function]}
+                  cx={[Function]}
+                  getStyles={[Function]}
+                  getValue={[Function]}
+                  hasValue={false}
+                  innerProps={
+                    Object {
+                      "id": undefined,
+                      "onKeyDown": [Function],
+                    }
+                  }
+                  isDisabled={false}
+                  isFocused={false}
+                  isMulti={false}
+                  isRtl={false}
+                  options={
+                    Array [
+                      Object {
+                        "label": "B",
+                        "value": "B",
+                      },
+                      Object {
+                        "label": "C",
+                        "value": "C",
+                      },
+                    ]
+                  }
+                  selectOption={[Function]}
+                  selectProps={
+                    Object {
+                      "backspaceRemovesValue": true,
+                      "blurInputOnSelect": true,
+                      "captureMenuScroll": false,
+                      "className": "react-select",
+                      "classNamePrefix": "react-select",
+                      "closeMenuOnScroll": false,
+                      "closeMenuOnSelect": true,
+                      "components": Object {},
+                      "controlShouldRenderValue": true,
+                      "defaultInputValue": "",
+                      "defaultMenuIsOpen": false,
+                      "defaultValue": null,
+                      "escapeClearsValue": false,
+                      "filterOption": [Function],
+                      "formatGroupLabel": [Function],
+                      "getOptionLabel": [Function],
+                      "getOptionValue": [Function],
+                      "inputValue": "",
+                      "isClearable": true,
+                      "isDisabled": false,
+                      "isLoading": false,
+                      "isMulti": false,
+                      "isOptionDisabled": [Function],
+                      "isRtl": false,
+                      "isSearchable": true,
+                      "loadingMessage": [Function],
+                      "maxMenuHeight": 300,
+                      "menuIsOpen": false,
+                      "menuPlacement": "bottom",
+                      "menuPortalTarget": <body />,
+                      "menuPosition": "absolute",
+                      "menuShouldBlockScroll": false,
+                      "menuShouldScrollIntoView": true,
+                      "minMenuHeight": 140,
+                      "name": "column",
+                      "noOptionsMessage": [Function],
+                      "onChange": [Function],
+                      "onInputChange": [Function],
+                      "onMenuClose": [Function],
+                      "onMenuOpen": [Function],
+                      "openMenuOnClick": true,
+                      "openMenuOnFocus": false,
+                      "options": Array [
+                        Object {
+                          "label": "B",
+                          "value": "B",
+                        },
+                        Object {
+                          "label": "C",
+                          "value": "C",
+                        },
+                      ],
+                      "pageSize": 5,
+                      "placeholder": "prompt",
+                      "screenReaderStatus": [Function],
+                      "styles": Object {},
+                      "tabIndex": "0",
+                      "tabSelectsValue": true,
+                      "value": null,
+                    }
+                  }
+                  setValue={[Function]}
+                >
+                  <div
+                    className="css-10nd86i react-select"
+                    onKeyDown={[Function]}
+                  >
+                    <Control
+                      clearValue={[Function]}
+                      cx={[Function]}
+                      getStyles={[Function]}
+                      getValue={[Function]}
+                      hasValue={false}
+                      innerProps={
+                        Object {
+                          "onMouseDown": [Function],
+                          "onTouchEnd": [Function],
+                        }
+                      }
+                      innerRef={[Function]}
+                      isDisabled={false}
+                      isFocused={false}
+                      isMulti={false}
+                      isRtl={false}
+                      options={
+                        Array [
+                          Object {
+                            "label": "B",
+                            "value": "B",
+                          },
+                          Object {
+                            "label": "C",
+                            "value": "C",
+                          },
+                        ]
+                      }
+                      selectOption={[Function]}
+                      selectProps={
+                        Object {
+                          "backspaceRemovesValue": true,
+                          "blurInputOnSelect": true,
+                          "captureMenuScroll": false,
+                          "className": "react-select",
+                          "classNamePrefix": "react-select",
+                          "closeMenuOnScroll": false,
+                          "closeMenuOnSelect": true,
+                          "components": Object {},
+                          "controlShouldRenderValue": true,
+                          "defaultInputValue": "",
+                          "defaultMenuIsOpen": false,
+                          "defaultValue": null,
+                          "escapeClearsValue": false,
+                          "filterOption": [Function],
+                          "formatGroupLabel": [Function],
+                          "getOptionLabel": [Function],
+                          "getOptionValue": [Function],
+                          "inputValue": "",
+                          "isClearable": true,
+                          "isDisabled": false,
+                          "isLoading": false,
+                          "isMulti": false,
+                          "isOptionDisabled": [Function],
+                          "isRtl": false,
+                          "isSearchable": true,
+                          "loadingMessage": [Function],
+                          "maxMenuHeight": 300,
+                          "menuIsOpen": false,
+                          "menuPlacement": "bottom",
+                          "menuPortalTarget": <body />,
+                          "menuPosition": "absolute",
+                          "menuShouldBlockScroll": false,
+                          "menuShouldScrollIntoView": true,
+                          "minMenuHeight": 140,
+                          "name": "column",
+                          "noOptionsMessage": [Function],
+                          "onChange": [Function],
+                          "onInputChange": [Function],
+                          "onMenuClose": [Function],
+                          "onMenuOpen": [Function],
+                          "openMenuOnClick": true,
+                          "openMenuOnFocus": false,
+                          "options": Array [
+                            Object {
+                              "label": "B",
+                              "value": "B",
+                            },
+                            Object {
+                              "label": "C",
+                              "value": "C",
+                            },
+                          ],
+                          "pageSize": 5,
+                          "placeholder": "prompt",
+                          "screenReaderStatus": [Function],
+                          "styles": Object {},
+                          "tabIndex": "0",
+                          "tabSelectsValue": true,
+                          "value": null,
+                        }
+                      }
+                      setValue={[Function]}
+                    >
+                      <div
+                        className="css-1aya2g8 react-select__control"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <ValueContainer
+                          clearValue={[Function]}
+                          cx={[Function]}
+                          getStyles={[Function]}
+                          getValue={[Function]}
+                          hasValue={false}
+                          isDisabled={false}
+                          isMulti={false}
+                          isRtl={false}
+                          options={
+                            Array [
+                              Object {
+                                "label": "B",
+                                "value": "B",
+                              },
+                              Object {
+                                "label": "C",
+                                "value": "C",
+                              },
+                            ]
+                          }
+                          selectOption={[Function]}
+                          selectProps={
+                            Object {
+                              "backspaceRemovesValue": true,
+                              "blurInputOnSelect": true,
+                              "captureMenuScroll": false,
+                              "className": "react-select",
+                              "classNamePrefix": "react-select",
+                              "closeMenuOnScroll": false,
+                              "closeMenuOnSelect": true,
+                              "components": Object {},
+                              "controlShouldRenderValue": true,
+                              "defaultInputValue": "",
+                              "defaultMenuIsOpen": false,
+                              "defaultValue": null,
+                              "escapeClearsValue": false,
+                              "filterOption": [Function],
+                              "formatGroupLabel": [Function],
+                              "getOptionLabel": [Function],
+                              "getOptionValue": [Function],
+                              "inputValue": "",
+                              "isClearable": true,
+                              "isDisabled": false,
+                              "isLoading": false,
+                              "isMulti": false,
+                              "isOptionDisabled": [Function],
+                              "isRtl": false,
+                              "isSearchable": true,
+                              "loadingMessage": [Function],
+                              "maxMenuHeight": 300,
+                              "menuIsOpen": false,
+                              "menuPlacement": "bottom",
+                              "menuPortalTarget": <body />,
+                              "menuPosition": "absolute",
+                              "menuShouldBlockScroll": false,
+                              "menuShouldScrollIntoView": true,
+                              "minMenuHeight": 140,
+                              "name": "column",
+                              "noOptionsMessage": [Function],
+                              "onChange": [Function],
+                              "onInputChange": [Function],
+                              "onMenuClose": [Function],
+                              "onMenuOpen": [Function],
+                              "openMenuOnClick": true,
+                              "openMenuOnFocus": false,
+                              "options": Array [
+                                Object {
+                                  "label": "B",
+                                  "value": "B",
+                                },
+                                Object {
+                                  "label": "C",
+                                  "value": "C",
+                                },
+                              ],
+                              "pageSize": 5,
+                              "placeholder": "prompt",
+                              "screenReaderStatus": [Function],
+                              "styles": Object {},
+                              "tabIndex": "0",
+                              "tabSelectsValue": true,
+                              "value": null,
+                            }
+                          }
+                          setValue={[Function]}
+                        >
+                          <div
+                            className="css-1rtrksz react-select__value-container"
+                          >
+                            <Placeholder
+                              clearValue={[Function]}
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              getValue={[Function]}
+                              hasValue={false}
+                              isDisabled={false}
+                              isMulti={false}
+                              isRtl={false}
+                              key="placeholder"
+                              options={
+                                Array [
+                                  Object {
+                                    "label": "B",
+                                    "value": "B",
+                                  },
+                                  Object {
+                                    "label": "C",
+                                    "value": "C",
+                                  },
+                                ]
+                              }
+                              selectOption={[Function]}
+                              selectProps={
+                                Object {
+                                  "backspaceRemovesValue": true,
+                                  "blurInputOnSelect": true,
+                                  "captureMenuScroll": false,
+                                  "className": "react-select",
+                                  "classNamePrefix": "react-select",
+                                  "closeMenuOnScroll": false,
+                                  "closeMenuOnSelect": true,
+                                  "components": Object {},
+                                  "controlShouldRenderValue": true,
+                                  "defaultInputValue": "",
+                                  "defaultMenuIsOpen": false,
+                                  "defaultValue": null,
+                                  "escapeClearsValue": false,
+                                  "filterOption": [Function],
+                                  "formatGroupLabel": [Function],
+                                  "getOptionLabel": [Function],
+                                  "getOptionValue": [Function],
+                                  "inputValue": "",
+                                  "isClearable": true,
+                                  "isDisabled": false,
+                                  "isLoading": false,
+                                  "isMulti": false,
+                                  "isOptionDisabled": [Function],
+                                  "isRtl": false,
+                                  "isSearchable": true,
+                                  "loadingMessage": [Function],
+                                  "maxMenuHeight": 300,
+                                  "menuIsOpen": false,
+                                  "menuPlacement": "bottom",
+                                  "menuPortalTarget": <body />,
+                                  "menuPosition": "absolute",
+                                  "menuShouldBlockScroll": false,
+                                  "menuShouldScrollIntoView": true,
+                                  "minMenuHeight": 140,
+                                  "name": "column",
+                                  "noOptionsMessage": [Function],
+                                  "onChange": [Function],
+                                  "onInputChange": [Function],
+                                  "onMenuClose": [Function],
+                                  "onMenuOpen": [Function],
+                                  "openMenuOnClick": true,
+                                  "openMenuOnFocus": false,
+                                  "options": Array [
+                                    Object {
+                                      "label": "B",
+                                      "value": "B",
+                                    },
+                                    Object {
+                                      "label": "C",
+                                      "value": "C",
+                                    },
+                                  ],
+                                  "pageSize": 5,
+                                  "placeholder": "prompt",
+                                  "screenReaderStatus": [Function],
+                                  "styles": Object {},
+                                  "tabIndex": "0",
+                                  "tabSelectsValue": true,
+                                  "value": null,
+                                }
+                              }
+                              setValue={[Function]}
+                            >
+                              <div
+                                className="css-1492t68 react-select__placeholder"
+                              >
+                                prompt
+                              </div>
+                            </Placeholder>
+                            <Input
+                              aria-autocomplete="list"
+                              autoCapitalize="none"
+                              autoComplete="off"
+                              autoCorrect="off"
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              id="react-select-3-input"
+                              innerRef={[Function]}
+                              isDisabled={false}
+                              isHidden={false}
+                              onBlur={[Function]}
+                              onChange={[Function]}
+                              onFocus={[Function]}
+                              spellCheck="false"
+                              tabIndex="0"
+                              type="text"
+                              value=""
+                            >
+                              <div
+                                className="css-rsyb7x"
+                              >
+                                <AutosizeInput
+                                  aria-autocomplete="list"
+                                  autoCapitalize="none"
+                                  autoComplete="off"
+                                  autoCorrect="off"
+                                  className="react-select__input"
+                                  disabled={false}
+                                  id="react-select-3-input"
+                                  injectStyles={true}
+                                  inputRef={[Function]}
+                                  inputStyle={
+                                    Object {
+                                      "background": 0,
+                                      "border": 0,
+                                      "color": "inherit",
+                                      "fontSize": "inherit",
+                                      "opacity": 1,
+                                      "outline": 0,
+                                      "padding": 0,
+                                    }
+                                  }
+                                  minWidth={1}
+                                  onBlur={[Function]}
+                                  onChange={[Function]}
+                                  onFocus={[Function]}
+                                  spellCheck="false"
+                                  tabIndex="0"
+                                  type="text"
+                                  value=""
+                                >
+                                  <div
+                                    className="react-select__input"
+                                    style={
+                                      Object {
+                                        "display": "inline-block",
+                                      }
+                                    }
+                                  >
+                                    <input
+                                      aria-autocomplete="list"
+                                      autoCapitalize="none"
+                                      autoComplete="off"
+                                      autoCorrect="off"
+                                      disabled={false}
+                                      id="react-select-3-input"
+                                      onBlur={[Function]}
+                                      onChange={[Function]}
+                                      onFocus={[Function]}
+                                      spellCheck="false"
+                                      style={
+                                        Object {
+                                          "background": 0,
+                                          "border": 0,
+                                          "boxSizing": "content-box",
+                                          "color": "inherit",
+                                          "fontSize": "inherit",
+                                          "opacity": 1,
+                                          "outline": 0,
+                                          "padding": 0,
+                                          "width": "2px",
+                                        }
+                                      }
+                                      tabIndex="0"
+                                      type="text"
+                                      value=""
+                                    />
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": 0,
+                                          "left": 0,
+                                          "overflow": "scroll",
+                                          "position": "absolute",
+                                          "top": 0,
+                                          "visibility": "hidden",
+                                          "whiteSpace": "pre",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </AutosizeInput>
+                              </div>
+                            </Input>
+                          </div>
+                        </ValueContainer>
+                        <IndicatorsContainer
+                          clearValue={[Function]}
+                          cx={[Function]}
+                          getStyles={[Function]}
+                          getValue={[Function]}
+                          hasValue={false}
+                          isDisabled={false}
+                          isMulti={false}
+                          isRtl={false}
+                          options={
+                            Array [
+                              Object {
+                                "label": "B",
+                                "value": "B",
+                              },
+                              Object {
+                                "label": "C",
+                                "value": "C",
+                              },
+                            ]
+                          }
+                          selectOption={[Function]}
+                          selectProps={
+                            Object {
+                              "backspaceRemovesValue": true,
+                              "blurInputOnSelect": true,
+                              "captureMenuScroll": false,
+                              "className": "react-select",
+                              "classNamePrefix": "react-select",
+                              "closeMenuOnScroll": false,
+                              "closeMenuOnSelect": true,
+                              "components": Object {},
+                              "controlShouldRenderValue": true,
+                              "defaultInputValue": "",
+                              "defaultMenuIsOpen": false,
+                              "defaultValue": null,
+                              "escapeClearsValue": false,
+                              "filterOption": [Function],
+                              "formatGroupLabel": [Function],
+                              "getOptionLabel": [Function],
+                              "getOptionValue": [Function],
+                              "inputValue": "",
+                              "isClearable": true,
+                              "isDisabled": false,
+                              "isLoading": false,
+                              "isMulti": false,
+                              "isOptionDisabled": [Function],
+                              "isRtl": false,
+                              "isSearchable": true,
+                              "loadingMessage": [Function],
+                              "maxMenuHeight": 300,
+                              "menuIsOpen": false,
+                              "menuPlacement": "bottom",
+                              "menuPortalTarget": <body />,
+                              "menuPosition": "absolute",
+                              "menuShouldBlockScroll": false,
+                              "menuShouldScrollIntoView": true,
+                              "minMenuHeight": 140,
+                              "name": "column",
+                              "noOptionsMessage": [Function],
+                              "onChange": [Function],
+                              "onInputChange": [Function],
+                              "onMenuClose": [Function],
+                              "onMenuOpen": [Function],
+                              "openMenuOnClick": true,
+                              "openMenuOnFocus": false,
+                              "options": Array [
+                                Object {
+                                  "label": "B",
+                                  "value": "B",
+                                },
+                                Object {
+                                  "label": "C",
+                                  "value": "C",
+                                },
+                              ],
+                              "pageSize": 5,
+                              "placeholder": "prompt",
+                              "screenReaderStatus": [Function],
+                              "styles": Object {},
+                              "tabIndex": "0",
+                              "tabSelectsValue": true,
+                              "value": null,
+                            }
+                          }
+                          setValue={[Function]}
+                        >
+                          <div
+                            className="css-1wy0on6 react-select__indicators"
+                          >
+                            <IndicatorSeparator
+                              clearValue={[Function]}
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              getValue={[Function]}
+                              hasValue={false}
+                              isDisabled={false}
+                              isFocused={false}
+                              isMulti={false}
+                              isRtl={false}
+                              options={
+                                Array [
+                                  Object {
+                                    "label": "B",
+                                    "value": "B",
+                                  },
+                                  Object {
+                                    "label": "C",
+                                    "value": "C",
+                                  },
+                                ]
+                              }
+                              selectOption={[Function]}
+                              selectProps={
+                                Object {
+                                  "backspaceRemovesValue": true,
+                                  "blurInputOnSelect": true,
+                                  "captureMenuScroll": false,
+                                  "className": "react-select",
+                                  "classNamePrefix": "react-select",
+                                  "closeMenuOnScroll": false,
+                                  "closeMenuOnSelect": true,
+                                  "components": Object {},
+                                  "controlShouldRenderValue": true,
+                                  "defaultInputValue": "",
+                                  "defaultMenuIsOpen": false,
+                                  "defaultValue": null,
+                                  "escapeClearsValue": false,
+                                  "filterOption": [Function],
+                                  "formatGroupLabel": [Function],
+                                  "getOptionLabel": [Function],
+                                  "getOptionValue": [Function],
+                                  "inputValue": "",
+                                  "isClearable": true,
+                                  "isDisabled": false,
+                                  "isLoading": false,
+                                  "isMulti": false,
+                                  "isOptionDisabled": [Function],
+                                  "isRtl": false,
+                                  "isSearchable": true,
+                                  "loadingMessage": [Function],
+                                  "maxMenuHeight": 300,
+                                  "menuIsOpen": false,
+                                  "menuPlacement": "bottom",
+                                  "menuPortalTarget": <body />,
+                                  "menuPosition": "absolute",
+                                  "menuShouldBlockScroll": false,
+                                  "menuShouldScrollIntoView": true,
+                                  "minMenuHeight": 140,
+                                  "name": "column",
+                                  "noOptionsMessage": [Function],
+                                  "onChange": [Function],
+                                  "onInputChange": [Function],
+                                  "onMenuClose": [Function],
+                                  "onMenuOpen": [Function],
+                                  "openMenuOnClick": true,
+                                  "openMenuOnFocus": false,
+                                  "options": Array [
+                                    Object {
+                                      "label": "B",
+                                      "value": "B",
+                                    },
+                                    Object {
+                                      "label": "C",
+                                      "value": "C",
+                                    },
+                                  ],
+                                  "pageSize": 5,
+                                  "placeholder": "prompt",
+                                  "screenReaderStatus": [Function],
+                                  "styles": Object {},
+                                  "tabIndex": "0",
+                                  "tabSelectsValue": true,
+                                  "value": null,
+                                }
+                              }
+                              setValue={[Function]}
+                            >
+                              <span
+                                className="css-d8oujb react-select__indicator-separator"
+                              />
+                            </IndicatorSeparator>
+                            <DropdownIndicator
+                              clearValue={[Function]}
+                              cx={[Function]}
+                              getStyles={[Function]}
+                              getValue={[Function]}
+                              hasValue={false}
+                              innerProps={
+                                Object {
+                                  "aria-hidden": "true",
+                                  "onMouseDown": [Function],
+                                  "onTouchEnd": [Function],
+                                }
+                              }
+                              isDisabled={false}
+                              isFocused={false}
+                              isMulti={false}
+                              isRtl={false}
+                              options={
+                                Array [
+                                  Object {
+                                    "label": "B",
+                                    "value": "B",
+                                  },
+                                  Object {
+                                    "label": "C",
+                                    "value": "C",
+                                  },
+                                ]
+                              }
+                              selectOption={[Function]}
+                              selectProps={
+                                Object {
+                                  "backspaceRemovesValue": true,
+                                  "blurInputOnSelect": true,
+                                  "captureMenuScroll": false,
+                                  "className": "react-select",
+                                  "classNamePrefix": "react-select",
+                                  "closeMenuOnScroll": false,
+                                  "closeMenuOnSelect": true,
+                                  "components": Object {},
+                                  "controlShouldRenderValue": true,
+                                  "defaultInputValue": "",
+                                  "defaultMenuIsOpen": false,
+                                  "defaultValue": null,
+                                  "escapeClearsValue": false,
+                                  "filterOption": [Function],
+                                  "formatGroupLabel": [Function],
+                                  "getOptionLabel": [Function],
+                                  "getOptionValue": [Function],
+                                  "inputValue": "",
+                                  "isClearable": true,
+                                  "isDisabled": false,
+                                  "isLoading": false,
+                                  "isMulti": false,
+                                  "isOptionDisabled": [Function],
+                                  "isRtl": false,
+                                  "isSearchable": true,
+                                  "loadingMessage": [Function],
+                                  "maxMenuHeight": 300,
+                                  "menuIsOpen": false,
+                                  "menuPlacement": "bottom",
+                                  "menuPortalTarget": <body />,
+                                  "menuPosition": "absolute",
+                                  "menuShouldBlockScroll": false,
+                                  "menuShouldScrollIntoView": true,
+                                  "minMenuHeight": 140,
+                                  "name": "column",
+                                  "noOptionsMessage": [Function],
+                                  "onChange": [Function],
+                                  "onInputChange": [Function],
+                                  "onMenuClose": [Function],
+                                  "onMenuOpen": [Function],
+                                  "openMenuOnClick": true,
+                                  "openMenuOnFocus": false,
+                                  "options": Array [
+                                    Object {
+                                      "label": "B",
+                                      "value": "B",
+                                    },
+                                    Object {
+                                      "label": "C",
+                                      "value": "C",
+                                    },
+                                  ],
+                                  "pageSize": 5,
+                                  "placeholder": "prompt",
+                                  "screenReaderStatus": [Function],
+                                  "styles": Object {},
+                                  "tabIndex": "0",
+                                  "tabSelectsValue": true,
+                                  "value": null,
+                                }
+                              }
+                              setValue={[Function]}
+                            >
+                              <div
+                                aria-hidden="true"
+                                className="css-1ep9fjw react-select__indicator react-select__dropdown-indicator"
+                                onMouseDown={[Function]}
+                                onTouchEnd={[Function]}
+                              >
+                                <DownChevron>
+                                  <Svg
+                                    size={20}
+                                  >
+                                    <svg
+                                      aria-hidden="true"
+                                      className="css-19bqh2r"
+                                      focusable="false"
+                                      height={20}
+                                      viewBox="0 0 20 20"
+                                      width={20}
+                                    >
+                                      <path
+                                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                      />
+                                    </svg>
+                                  </Svg>
+                                </DownChevron>
+                              </div>
+                            </DropdownIndicator>
+                          </div>
+                        </IndicatorsContainer>
+                      </div>
+                    </Control>
+                    <input
+                      name="column"
+                      type="hidden"
+                      value=""
+                    />
+                  </div>
+                </SelectContainer>
+              </Select>
+            </StateManager>
           </ColumnParam>
         </div>
       </InputGroup>
