@@ -22,10 +22,10 @@
   }
 
   .disconnect {
-    @extend %content-3;
+    @extend .content-3;
     padding: 0!important;
     margin-top:.3rem;
-    font-weight: 400;
+    font-weight: regular;
   }
 
 }
@@ -43,7 +43,7 @@
 
 
   .change-file {
-    @extend %content-3;
+    @extend .content-3;
     cursor: pointer;
     border:0;
     margin-top:-.2rem;

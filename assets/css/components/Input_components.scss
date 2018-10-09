@@ -296,7 +296,7 @@ select.form-control {
 
 // notes above module
 textarea[name="notes"], .editable-notes-read-only {
-  @extend %content-3;
+  @extend .content-3;
   position: relative;
   border: none;
   outline: none;

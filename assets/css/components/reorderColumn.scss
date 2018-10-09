@@ -12,7 +12,7 @@
   //body
   tbody tr {
     @extend .content-3;
-    font-weight: 400;
+    font-weight: regular;
     height:3.5rem;
     border-top: 1px solid $dark-accent--soft;
   }

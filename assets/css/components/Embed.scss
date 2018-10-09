@@ -46,12 +46,12 @@
       }
       .title {
         @extend .title-4;
-        font-weight: 400;
+        font-weight: regular;
         color: $brand-text--dark;
       }
       .WF-meta {
         color:$medium-gray;
-        font-weight: 100;
+        font-weight: 200;
         display: flex;
         align-items: center;
         margin-top: .3rem;

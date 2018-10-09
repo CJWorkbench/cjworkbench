@@ -31,7 +31,7 @@
 
 .title-1 {
 	font-size: 2.5rem;
-	font-weight: 300;
+	font-weight: regular;
 	line-height: 2.5rem;
 	@extend %font-nunito-regular;
 }
@@ -52,57 +52,56 @@
 
 .title-4 {
 	font-size: 1.3rem;
-	font-weight: 500;
+	font-weight: regular;
 	line-height: 1.4rem;
 }
 .title-5 {
 	font-size: 1.1rem;
-	font-weight: 900;
+	font-weight: regular;
 	line-height: 2rem;
 }
 
 .content-1 {
 	font-size: 1.4rem;
-	font-weight: 900;
+	font-weight: regular;
   line-height: 1.4rem;
   opacity: 0.6;
 }
-%content-2 {
+.content-2 {
 	font-size: 1.4rem;
-	font-weight: 500;
+	font-weight: regular;
 	line-height: 1.4rem;
 }
-.content-2 {
-	@extend %content-2;
-}
 
-%content-3 {
-	font-size: 1.3rem;
+.content-3 {
+	font-size: 1.4rem;
 	line-height: 2rem;
 }
-.content-3{
-	@extend %content-3;
+
+.table-content {
+	font-size: 1.4rem;
+	line-height: 2rem;
 }
 
-%content-4 {
+.content-4 {
 	font-size: 1.1rem;
-	font-weight: 300;
+	font-weight: regular;
 	line-height: 1.1rem;
 }
 .content-4 {
-	@extend %content-4;
+	@extend .content-4;
 }
 .content-5 {
 	font-size: 1.2rem;
 	line-height: 1.4rem;
-  font-weight: 400;
+  font-weight: regular;
 }
 
 %code-1 {
   font-family: "PT Mono";
 	font-size: 1.4rem;
 	line-height: 2.4rem;
-	font-weight: 300;
+	font-weigth: 400;
 }
 .code-1 {@extend %code-1;}
 
@@ -136,6 +135,6 @@
 }
 .table-2 {
 	font-size: 1rem;
-	font-weight: 500;
+	font-weight: regular;
 	line-height: 1.1rem;
 }

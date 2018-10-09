@@ -208,7 +208,7 @@
           color: $white;
           opacity: .7;
           height: 1.8rem;
-          font-weight: 300;
+          font-weigth: 400;
           border-bottom: 1px solid $dark-accent--soft;
         }
 
@@ -228,9 +228,8 @@
 
             .column-type {
               @extend .info-1;
-              font-size: 1.1rem;
+              font-size: 1.3rem;
               letter-spacing: .3px;
-              opacity: .7;
               position: relative;
               bottom:-.2rem;
             }
@@ -329,8 +328,8 @@
 
         // content of those cells
         .cell-text, .cell-datetime {
+          @extend .table-content;
           margin: 0 1rem;
-          font-size: 1.3rem;
           overflow: hidden;
           word-wrap: nowrap;
           text-overflow: ellipsis;
@@ -338,9 +337,10 @@
         }
 
         .cell-number {
+          @extend .table-content;
+          font-size: 1.3rem;
           margin: 0 1rem;
           text-align: right;
-          font-size: 1.2rem;
         }
 
         // when a cell value cannot be rendered
@@ -351,14 +351,14 @@
             content: 'null';
             color: lighten($brand-text--dark,30%);
             font-style: italic;
-            font-weight: 100;
+            font-weight: 200;
           }
         }
 
         // fix number column on the left
         .row-number {
-          color: lighten($brand-text--dark,30%);
-          font-weight: 100;
+          color: $labels;
+          font-weight: 400;
           text-align: center;
           font-size: 1.2rem;
           line-height: 35px; // 35px is react-data-grid's hard-coded row height
@@ -392,7 +392,7 @@
 
             span {
               color:darken($brand-orange, 18%)!important;
-              font-weight: 400;
+              font-weight: regular;
             }
           }
 
@@ -434,11 +434,11 @@
         }
 
         & input {
+          @extend .table-content;
           padding-left: 0.8rem;
           background-color: white;
           border-radius: 0;
           outline: 2px solid $brand-orange;
-          font-size: 1.3rem;
           height: 3.5rem!important;
         }
       }
