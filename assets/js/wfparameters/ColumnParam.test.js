@@ -25,21 +25,13 @@ describe('ColumnParam', () => {
   })
 
   it('renders loading', () => {
-    const w = wrapper({ value: 'A', prompt: 'Prompt!', allColumns: null })
+    const w = wrapper({value: 'A', prompt: 'Prompt!', allColumns: null})
 
-    // select has "loading" class
-    expect(w.find('select.loading')).toHaveLength(1)
-
-    // prompt appears as first option
-    const promptOption = w.find('option').at(0)
-    expect(promptOption.text()).toEqual('Prompt!')
-    expect(promptOption.is('.prompt')).toBe(true)
-    expect(promptOption.prop('disabled')).toBe(true)
-
-    // loading appears below
-    const loadingOption = w.find('option').at(1)
-    expect(loadingOption.prop('disabled')).toBe(true)
-    expect(loadingOption.is('.loading')).toBe(true)
+    // dropdown has 1 option, prompt as placeholder
+    let select = w.find('Select')
+    expect(select.prop('options')).toHaveLength(1)
+    expect(select.prop('options')[0].label).toBe('loading')
+    expect(select.prop('placeholder')).toBe('Prompt!')
   })
 
   it('renders a prompt', async () => {
@@ -48,10 +40,8 @@ describe('ColumnParam', () => {
     w.update()
 
     // prompt appears as first option
-    const promptOption = w.find('option').at(0)
-    expect(promptOption.is('.prompt')).toBe(true)
-    expect(promptOption.text()).toEqual('Prompt!')
-    expect(promptOption.prop('disabled')).toBe(true)
+    const select = w.find('Select')
+    expect(select.prop('placeholder')).toBe('Prompt!')
   })
 
   it('lets the user choose an option', async () => {
@@ -59,18 +49,19 @@ describe('ColumnParam', () => {
     await tick() // load columns
     w.update()
 
-    w.find('select').simulate('change', { target: { value: 'B' } })
+    w.find('Select').at(0).props().onChange({ value: 'B' })
     expect(w.prop('onChange')).toHaveBeenCalledWith('B')
   })
 
-  it('highlights prompt when value is invalid', async () => {
-    const w = wrapper({ value: 'non-existent column' })
-    await tick() // load columns
-    w.update()
+  // react-select should take care of this, but saving test in case there's an issue
+  //it('highlights prompt when value is invalid', async () => {
+  //  const w = wrapper({ value: 'non-existent column' })
+  //  await tick() // load columns
+  //  w.update()
 
     // The browser will highlight the current value, even if it's disabled.
-    expect(w.find('option.prompt').prop('value')).toEqual('non-existent column')
-  })
+  //  expect(w.find('option.prompt').prop('value')).toEqual('non-existent column')
+  //})
 
   it('should retain double spaces in value', async () => {
     const w = wrapper({ value: 'column  with  double  spaces',
@@ -78,7 +69,7 @@ describe('ColumnParam', () => {
     await tick() // load columns
     w.update()
 
-    w.find('select').simulate('change')
+    w.find('Select').at(0).props().onChange({ value: 'column  with  double  spaces' })
     expect(w.prop('onChange')).toHaveBeenCalledWith('column  with  double  spaces')
   })
 })
