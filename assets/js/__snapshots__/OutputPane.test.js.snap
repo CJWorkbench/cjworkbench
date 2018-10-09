@@ -5,18 +5,18 @@ exports[`OutputPane matches snapshot 1`] = `
   className="outputpane module-ok"
 >
   <Connect(OutputIframe)
+    deltaId={1}
     isPublic={false}
     key="iframe"
-    lastRelevantDeltaId={1}
     visible={false}
     wfModuleId={987}
     workflowId={123}
   />
   <TableView
     api={Object {}}
+    deltaId={1}
     isReadOnly={false}
     key="table"
-    lastRelevantDeltaId={1}
     showColumnLetter={false}
     wfModuleId={987}
   />
@@ -28,18 +28,18 @@ exports[`OutputPane renders when no module id 1`] = `
   className="outputpane module-unreachable"
 >
   <Connect(OutputIframe)
+    deltaId={null}
     isPublic={false}
     key="iframe"
-    lastRelevantDeltaId={null}
     visible={false}
     wfModuleId={null}
     workflowId={123}
   />
   <TableView
     api={Object {}}
+    deltaId={-1}
     isReadOnly={false}
     key="table"
-    lastRelevantDeltaId={-1}
     showColumnLetter={false}
     wfModuleId={null}
   />

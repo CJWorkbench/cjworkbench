@@ -117,7 +117,8 @@ class Delta(PolymorphicModel):
                     'error_msg': '',
                     'status': 'waiting',
                     'quick_fixes': [],
-                    'output_columns': None
+                    'output_columns': None,
+                    'cached_render_result_id': None,
                 }
 
         if hasattr(self, 'wf_module'):

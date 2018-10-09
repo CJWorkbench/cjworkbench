@@ -16,7 +16,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
-from server import execute
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 import server.utils
@@ -237,9 +236,13 @@ def wfmodule_render(request, pk, format=None):
         return Response({'message': 'bad row number', 'status_code': 400},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
+    with wf_module.workflow.cooperative_lock():
+        cached_result = wf_module.get_cached_render_result()
+        if not cached_result:
+            # assume we'll get another request after execute finishes
+            return JsonResponse({})
+        j = _make_render_dict(cached_result, startrow, endrow)
 
-    j = _make_render_dict(cached_result, startrow, endrow)
     return JsonResponse(j)
 
 
@@ -253,8 +256,13 @@ def wfmodule_output(request, pk, format=None):
 
     html = module_get_html_bytes(wf_module)
 
-    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
-    result_json = cached_result.json
+    # Speedy bypassing of locks: we don't care if we get out-of-date data
+    # because we assume the client will re-request when it gets a new
+    # cached_render_result_delta_id.
+    try:
+        result_json = json.parse(wf_module.cached_render_result_json)
+    except ValueError:
+        result_json = None
 
     init_data = {
         'embeddata': result_json,
@@ -280,8 +288,13 @@ def wfmodule_output(request, pk, format=None):
 def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
-    result_json = cached_result.json
+    # Speedy bypassing of locks: we don't care if we get out-of-date data
+    # because we assume the client will re-request when it gets a new
+    # cached_render_result_delta_id.
+    try:
+        result_json = json.parse(wf_module.cached_render_result_json)
+    except ValueError:
+        result_json = None
 
     return JsonResponse(result_json)
 
@@ -303,14 +316,18 @@ def wfmodule_value_counts(request, pk):
         # User has not yet chosen a column. Empty response.
         return JsonResponse({'values': {}})
 
-    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
-    table = cached_result.result.dataframe
+    with wf_module.workflow.cooperative_lock():
+        cached_result = wf_module.get_cached_render_result()
+        if not cached_result:
+            # assume we'll get another request after execute finishes
+            return JsonResponse({'values': {}})
 
-    try:
-        series = table[column]
-    except KeyError:
-        return JsonResponse({'error': f'column "{column}" not found'},
-                            status=404)
+        if column not in cached_result.column_names:
+            return JsonResponse({'error': f'column "{column}" not found'},
+                                status=404)
+
+        # Only load the one column
+        series = cached_result.parquet_file.to_pandas([column])[column]
 
     # We only handle string. If it's not string, convert to string.
     if not (series.dtype == object or hasattr(series, 'cat')):
@@ -380,8 +397,12 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    cached_result = execute.execute_and_wait(wf_module.workflow, wf_module)
-    result = cached_result.result
+    with wf_module.workflow.cooperative_lock():
+        cached_result = wf_module.get_cached_render_result()
+        if not cached_result:
+            # assume we'll get another request after execute finishes
+            return JsonResponse({})
+        result = cached_result.result  # slow
 
     if type == 'json':
         d = result.dataframe.to_json(orient='records')

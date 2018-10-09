@@ -51,7 +51,7 @@ export default class WfParameter extends React.Component {
     wfModuleError:  PropTypes.string, // module-level error message
     wfModuleId: PropTypes.number.isRequired,
     inputWfModuleId: PropTypes.number, // or null
-    inputLastRelevantDeltaId: PropTypes.number, // or null
+    inputDeltaId: PropTypes.number, // or null
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
@@ -250,7 +250,7 @@ export default class WfParameter extends React.Component {
         return (
           <Refine
             fetchData={this.getInputValueCounts}
-            fetchDataCacheId={`${this.props.inputLastRelevantDeltaId}-${this.props.getParamText('column')}`}
+            fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
             value={this.props.p.value}
             onChange={this.paramChanged}
           />

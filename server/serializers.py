@@ -138,7 +138,8 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'auto_update_data', 'update_interval', 'update_units',
                   'last_update_check', 'notifications',
                   'has_unseen_notification', 'html_output', 'versions',
-                  'last_relevant_delta_id', 'output_columns', 'quick_fixes')
+                  'last_relevant_delta_id', 'cached_render_result_delta_id',
+                  'output_columns', 'quick_fixes')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID.

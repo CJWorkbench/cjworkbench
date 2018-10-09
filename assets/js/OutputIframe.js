@@ -10,7 +10,7 @@ import { escapeHtml } from './utils'
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired, // false means, "zero height"
-    lastRelevantDeltaId: PropTypes.number, // null if added to empty workflow
+    deltaId: PropTypes.number, // null if added to empty workflow
     wfModuleId: PropTypes.number, // null if no wfmodule
     isPublic: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired,
@@ -144,9 +144,9 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, lastRelevantDeltaId, visible } = this.props
+    const { wfModuleId, deltaId, visible } = this.props
     const { heightFromIframe } = this.state
-    const src = `/api/wfmodules/${wfModuleId}/output#revision=${lastRelevantDeltaId}`
+    const src = `/api/wfmodules/${wfModuleId}/output#revision=${deltaId}`
 
     const defaultHeight = visible ? '100%' : '0'
     const height = heightFromIframe === null ? defaultHeight : `${Math.ceil(heightFromIframe)}px`

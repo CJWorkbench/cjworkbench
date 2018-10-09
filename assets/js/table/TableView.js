@@ -17,7 +17,7 @@ export const FetchTimeout = 50 // ms after scroll before fetch
 export default class TableView extends React.PureComponent {
   static propTypes = {
     wfModuleId: PropTypes.number, // null means no selected module
-    lastRelevantDeltaId: PropTypes.number.isRequired,
+    deltaId: PropTypes.number.isRequired,
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     showColumnLetter: PropTypes.bool.isRequired,
@@ -82,7 +82,7 @@ export default class TableView extends React.PureComponent {
   load (wasJustReset=false) {
     const min = this.minMissingRowIndex
     const max = min + NRowsPerPage // don't care about maxMissingRowIndex...
-    const { lastRelevantDeltaId, wfModuleId } = this.props
+    const { deltaId, wfModuleId } = this.props
     const { loadedRows } = this.state
 
     this.minMissingRowIndex = null
@@ -109,7 +109,7 @@ export default class TableView extends React.PureComponent {
       .then(json => {
         // Avoid races: return if we've changed what we want to fetch
         if (wfModuleId !== this.props.wfModuleId) return
-        if (lastRelevantDeltaId !== this.props.lastRelevantDeltaId) return
+        if (deltaId !== this.props.deltaId) return
         if (json.start_row !== min) return
         if (this.unmounted) return
 
@@ -187,9 +187,9 @@ export default class TableView extends React.PureComponent {
     this.refreshTable()  // refresh, not load, so we get the spinner
   }
 
-  // If the lastRelevantDeltaId changes from under us, or we are displaying a different output, reload the table
+  // If the deltaId changes from under us, or we are displaying a different output, reload the table
   componentDidUpdate (prevProps) {
-    if (this.props.lastRelevantDeltaId !== prevProps.lastRelevantDeltaId || this.props.wfModuleId !== prevProps.wfModuleId) {
+    if (this.props.deltaId !== prevProps.deltaId || this.props.wfModuleId !== prevProps.wfModuleId) {
       this.refreshTable()
     }
   }
@@ -246,7 +246,7 @@ export default class TableView extends React.PureComponent {
   render() {
     // Make a table component if we have the data
     const { spinning, selectedRowIndexes, totalNRows, columns, columnTypes } = this.state
-    const { wfModuleId, lastRelevantDeltaId, isReadOnly } = this.props
+    const { wfModuleId, deltaId, isReadOnly } = this.props
     let tooWide = (columns && columns.length > NMaxColumns)
     let gridView
     if (wfModuleId && totalNRows !== null && totalNRows !== 0 && !tooWide) {
@@ -258,7 +258,7 @@ export default class TableView extends React.PureComponent {
           columns={columns}
           columnTypes={columnTypes}
           wfModuleId={wfModuleId}
-          lastRelevantDeltaId={lastRelevantDeltaId}
+          deltaId={deltaId}
           getRow={this.getRow}
           onEditCell={this.onEditCell}
           sortColumn={sortColumn}

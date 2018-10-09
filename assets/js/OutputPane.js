@@ -15,11 +15,11 @@ export class OutputPane extends React.Component {
     workflowId: PropTypes.number.isRequired,
     wfModuleBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      lastRelevantDeltaId: PropTypes.number.isRequired
+      deltaId: PropTypes.number.isRequired
     }), // or null if no error
     wfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      lastRelevantDeltaId: PropTypes.number.isRequired,
+      deltaId: PropTypes.number.isRequired,
       htmlOutput: PropTypes.bool.isRequired,
       status: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
     }), // or null if no selection
@@ -34,13 +34,13 @@ export class OutputPane extends React.Component {
     const { wfModuleBeforeError, wfModule } = this.props
 
     let wfModuleId = null
-    let lastRelevantDeltaId = -1 // TableView requires it
+    let deltaId = -1 // TableView requires it
     if (wfModuleBeforeError) {
       wfModuleId = wfModuleBeforeError.id
-      lastRelevantDeltaId = wfModuleBeforeError.lastRelevantDeltaId
+      deltaId = wfModuleBeforeError.deltaId
     } else if (wfModule) {
       wfModuleId = wfModule.id
-      lastRelevantDeltaId = wfModule.lastRelevantDeltaId
+      deltaId = wfModule.deltaId
     }
 
     const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter } = this.props
@@ -50,7 +50,7 @@ export class OutputPane extends React.Component {
       <TableView
         key='table'
         wfModuleId={wfModuleId}
-        lastRelevantDeltaId={lastRelevantDeltaId}
+        deltaId={deltaId}
         api={api}
         isReadOnly={isReadOnly}
         sortColumn={sortColumn}
@@ -69,7 +69,7 @@ export class OutputPane extends React.Component {
     const { wfModule, workflowId, isPublic } = this.props
 
     const wfModuleId = wfModule ? wfModule.id : null
-    const lastRelevantDeltaId = wfModule ? wfModule.lastRelevantDeltaId : null
+    const deltaId = wfModule ? wfModule.deltaId : null
     const htmlOutput = wfModule ? wfModule.htmlOutput : false
 
     // This iframe holds the module HTML output, e.g. a visualization.
@@ -84,7 +84,7 @@ export class OutputPane extends React.Component {
         workflowId={workflowId}
         isPublic={isPublic}
         wfModuleId={wfModuleId}
-        lastRelevantDeltaId={lastRelevantDeltaId}
+        deltaId={deltaId}
       />
     )
   }
@@ -134,7 +134,7 @@ function mapStateToProps(state, ownProps) {
       const lastGood = wfModules[String(workflow.wf_modules[errorIndex - 1])]
       wfModuleBeforeError = {
         id: lastGood.id,
-        lastRelevantDeltaId: lastGood.last_relevant_delta_id
+        deltaId: lastGood.cached_render_result_delta_id,
       }
     }
   }
@@ -160,7 +160,7 @@ function mapStateToProps(state, ownProps) {
     wfModule: wfModule ? {
       id: wfModule.id,
       status: wfModule.status,
-      lastRelevantDeltaId: wfModule.last_relevant_delta_id,
+      deltaId: wfModule.cached_render_result_delta_id,
       htmlOutput: wfModule.html_output
     } : null,
     wfModuleBeforeError: wfModuleBeforeError,

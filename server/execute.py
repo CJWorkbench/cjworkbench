@@ -2,8 +2,6 @@ import contextlib
 from typing import Any, Dict, Optional
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
-from django.db import transaction
-from pandas import DataFrame
 from server import dispatch
 from server.models import CachedRenderResult, WfModule, Workflow
 from server.modules.types import ProcessResult
@@ -128,7 +126,7 @@ def execute_wfmodule(wf_module: WfModule,
 
     with locked_wf_module(safe_wf_module) as safe_wf_module_2:
         if (safe_wf_module_2.last_relevant_delta_id
-            != safe_wf_module.last_relevant_delta_id):
+                != safe_wf_module.last_relevant_delta_id):
             raise UnneededExecution
 
         cached_render_result = safe_wf_module_2.cache_render_result(
@@ -158,8 +156,8 @@ def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
         'quick_fixes': quick_fixes,
         'output_columns': output_columns,
         'last_relevant_delta_id': cached_result.delta_id,
+        'cached_render_result_delta_id': cached_result.delta_id,
     }
-
 
 
 @database_sync_to_async
@@ -228,7 +226,7 @@ def _load_wf_modules_and_input(workflow: Workflow,
 
 async def execute_workflow(workflow: Workflow,
                            until_wf_module: Optional[WfModule]=None
-                          ) -> Optional[CachedRenderResult]:
+                           ) -> Optional[CachedRenderResult]:
     """
     Ensures all `workflow.wf_modules` have valid cached render results.
 
@@ -282,7 +280,7 @@ async def execute_workflow(workflow: Workflow,
 
 def execute_and_wait(workflow: Workflow,
                      until_wf_module: Optional[WfModule]=None
-                    ) -> Optional[CachedRenderResult]:
+                     ) -> Optional[CachedRenderResult]:
     try:
         return async_to_sync(execute_workflow)(workflow, until_wf_module)
     except UnneededExecution:
@@ -296,12 +294,12 @@ def execute_and_wait(workflow: Workflow,
 
 
 async def execute_ignoring_error(workflow: Workflow
-                                ) -> Optional[CachedRenderResult]:
+                                 ) -> Optional[CachedRenderResult]:
     """
     `execute_workflow(workflow)` and stop on `UnneededExecution`.
 
     Stops when it catches UnneededExecution or when workflow is up-to-date.
-    
+
     Does not return anything, and should never raise any exception. To fire
     and forget call `asyncio.ensure_future(execute_ignoring_error(workflow))`.
 
