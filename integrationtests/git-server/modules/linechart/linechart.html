@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Line Chart output</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vega-embed@3/vega-embed.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,400,700" rel="stylesheet">
     <style>
       html, body {
         box-sizing: border-box;
@@ -18,11 +18,89 @@
       main {
         position: absolute;
         top: 1rem;
-        left: 1rem;
+        left: 2rem;
         bottom: 1rem;
-        right: 1rem;
+        right: 2rem;
         overflow-x: auto;
         overflow-y: hidden;
+      }
+
+      .vega-embed {
+        position: relative;
+        display: inline-block;
+        padding-right: 38px;
+      }
+
+      .vega-embed .vega-actions-wrapper {
+        display: inline-flex;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1000;
+        width: 31px;
+        height: 31px;
+        border-radius: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid #EDEDED;
+        font-size: 1.6rem;
+      }
+
+      .vega-embed .vega-actions-wrapper:hover{
+        border: 2px solid #b4b4b4;
+      }
+
+      .vega-embed:hover .vega-actions-wrapper {
+        transition: opacity 0.2s ease;
+        opacity: 1;
+      }
+
+      .vega-embed .vega-actions {
+        position: absolute;
+        top: 32px;
+        right: 0;
+        display: none;
+        flex-direction: column;
+
+        padding-bottom: 8px;
+        padding-top: 8px;
+        border-radius: 4px;
+        box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
+        border: 2px solid #87DBE5;
+        background: white;
+      }
+
+      .vega-actions-wrapper::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 22%;
+        left: 22%;
+        width: 55%;
+        height: 55%;
+        background:
+        url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTVweCIgaGVpZ2h0PSIxNXB4IiB2aWV3Qm94PSIwIDAgMTUgMTUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDUwLjIgKDU1MDQ3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5JY29uIC8gdXBsb2FkIC8gZ3JheTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJJY29uLS8tdXBsb2FkLS8tZ3JheSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9Ikdyb3VwLTIiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQuNTAwMDAwLCAwLjUwMDAwMCkiIGZpbGw9IiM2ODY3NjgiPgogICAgICAgICAgICA8ZyBpZD0iR3JvdXAtMyI+CiAgICAgICAgICAgICAgICA8cG9seWdvbiBpZD0iU2hhcGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMuMTI3Njg5LCA1LjM5MzAyMSkgcm90YXRlKC0xODAuMDAwMDAwKSB0cmFuc2xhdGUoLTMuMTI3Njg5LCAtNS4zOTMwMjEpICIgcG9pbnRzPSIyLjczOTQ3Njg5IDEwLjc4NjA0MjQgMy40OTUyNTUxIDEwLjc4NjA0MjQgMy40OTUyNTUwMSA4LjQ4NjAyOTYzIDMuNDk1MjU1MDEgNS4yNDcyNzg2OCAzLjQ5NTI1NTAxIDEuNTgxNzE1NTggNS41OTY0NzE4NSAzLjg2NzQ1NTI2IDYuMTE5MDE0NTYgMy4zMTUxMzk4OSAzLjEzMDcxMDM5IDAgMC4xMzYzNjM2MzYgMy4zMTUxMzk4OSAwLjY2OTk0OTYzIDMuODY3NDU1MjYgMi43Mzk0NzY5OSAxLjU4MTcxNTU4IDIuNzM5NDc2OTkgNS4yNDcyNzg2OCAyLjczOTQ3Njg5IDguNDg2MDI5NzUiPjwvcG9seWdvbj4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgICAgICA8cG9seWdvbiBpZD0iUGF0aC0yIiBmaWxsPSIjNjg2NzY4IiBwb2ludHM9IjAuNSA4LjUgMS41IDguNSAxLjUgMTMuNSAxMy41IDEzLjUgMTMuNSA4LjUgMTQuNSA4LjUgMTQuNSAxNC41IDAuNSAxNC41Ij48L3BvbHlnb24+CiAgICA8L2c+Cjwvc3ZnPg==');
+        background-size: contain;
+      }
+
+      .vega-embed .vega-actions-wrapper:hover .vega-actions {
+        display: flex;
+      }
+
+      .vega-embed .vega-actions a {
+        padding: 8px 16px;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        white-space: nowrap;
+        color: #686768;
+        text-decoration: none;
+      }
+
+      .vega-embed .vega-actions a:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: #16181b;
       }
 
       #vega {
@@ -95,15 +173,16 @@
       function areXAxisLabelsOverlapping () {
         // Assumptions:
         //
-        // x-axis ticks have no height
+        // x-axis ticks have height 3
         // texts are arranged from left to right
 
         let xAxis = null
         const axisTicks = document.querySelectorAll('g.role-axis-tick')
         if (!axisTicks.length) return // we're displaying a message, not a chart
         for (let i = 0; i < axisTicks.length; i++) {
-          if (axisTicks[i].getBoundingClientRect().height === 0) {
+          if (axisTicks[i].getBoundingClientRect().height === 3) {
             xAxis = axisTicks[i].parentNode
+            break
           }
         }
 
@@ -114,14 +193,20 @@
 
         const labels = xAxis.querySelectorAll('.role-axis-label text')
         const margin = 3
-        let maxX = 0
+        let maxX = -Infinity
         for (let i = 0; i < labels.length; i++) {
           const label = labels[i]
+          if (label.style.opacity == 0) { // may be str "0"
+            // Hidden label? That means Vega hid it, so we can assume Vega will
+            // prevent any overlaps. Skip the algorithm.
+            return false
+          }
           const rect = label.getBoundingClientRect()
-          const left = rect.x
-          const right = rect.x + rect.width
-          if (maxX + margin > left) return true
-          maxX = right
+          const left = rect.left
+          if (maxX + margin > left) {
+            return true
+          }
+          maxX = rect.right
         }
         return false
       }
@@ -129,7 +214,7 @@
       function slantXAxisLabelsIfNeeded ({ spec, view }) {
         if (areXAxisLabelsOverlapping()) {
           const newSpec = JSON.parse(JSON.stringify(spec))
-          const xAxis = newSpec.axes[0]
+          const xAxis = newSpec.encoding.x.axis
           Object.assign(xAxis, {
             labelAlign: 'right',
             labelBaseline: 'middle',
@@ -184,7 +269,7 @@
       window.addEventListener('hashchange', startLoading)
       window.addEventListener('resize', onResize)
 
-      renderData(window.workbench.embeddata)
+      startLoading()
     </script>
   </body>
 </html>

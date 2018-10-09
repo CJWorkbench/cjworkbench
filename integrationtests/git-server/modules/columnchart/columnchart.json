@@ -5,7 +5,7 @@
   "icon" : "chart",
   "description" : "Create a column chart.",
   "html_output": true,
-  "help_url":"modules/visualization/column-and-line-charts",
+  "help_url":"modules/visualize/column-chart",
   "parameters": [
     {
       "name": "",

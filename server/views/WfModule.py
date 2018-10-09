@@ -256,32 +256,7 @@ def wfmodule_output(request, pk, format=None):
 
     html = module_get_html_bytes(wf_module.module_version)
 
-    # Speedy bypassing of locks: we don't care if we get out-of-date data
-    # because we assume the client will re-request when it gets a new
-    # cached_render_result_delta_id.
-    try:
-        result_json = json.loads(bytes(wf_module.cached_render_result_json),
-                                 encoding='utf-8')
-    except ValueError:
-        result_json = None
-
-    init_data = {
-        'embeddata': result_json,
-    }
-    init_data_bytes = escape_potential_hack_chars(json.dumps(init_data)) \
-        .encode('utf-8')
-
-    script_bytes = b''.join([
-        b'<script>window.workbench=', init_data_bytes, b'</script>'
-    ])
-
-    html_with_js = _html_head_start_re.sub(
-        lambda m: m.group(0) + script_bytes,
-        html,
-        count=1  # so a '<head>' in comments and code won't be replaced
-    )
-
-    return HttpResponse(content=html_with_js)
+    return HttpResponse(content=html)
 
 
 @api_view(['GET'])

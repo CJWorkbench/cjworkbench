@@ -50,14 +50,22 @@ class SeriesParams:
         Return value is a list of dict records. Each has
         {x_series.name: 'X Name', 'bar': 'Bar Name', 'y': 1.0}
         """
+        x_series = self.x_series.series
         data = {
-            self.x_series.name: self.x_series.series,
+            # Only column name guaranteed to be unique: x_series.name
+            self.x_series.name: list(zip(x_series.index, x_series.values)),
         }
         for y_column in self.y_columns:
             data[y_column.name] = y_column.series
         dataframe = pandas.DataFrame(data)
-        return dataframe.melt(self.x_series.name, var_name='bar',
-                              value_name='y').to_dict(orient='records')
+        melted = dataframe.melt(self.x_series.name, var_name='bar',
+                                value_name='y')
+        tuples = melted[self.x_series.name]
+        del melted[self.x_series.name]
+        melted['group'] = tuples.map(lambda x: x[0])
+        melted['name'] = tuples.map(lambda x: x[1])
+
+        return melted.to_dict(orient='records')
 
     def to_vega(self) -> Dict[str, Any]:
         """
@@ -86,9 +94,23 @@ class SeriesParams:
                 {
                     "name": "xscale",
                     "type": "band",
-                    "domain": {"data": "table", "field": self.x_series.name},
+                    "domain": {"data": "table", "field": "group"},
                     "range": "width",
                     "padding": 0.15,
+                },
+                {
+                    # This is a big hack. The idea is: the x-axis "labels.text"
+                    # will be a function that converts a group's _value_ (that
+                    # is, `table.group`) to its _name_ (table.name).
+                    #
+                    # Vega axes are a bit unintuitive here: our main x-axis is
+                    # of _groups_, which have both name and position. The
+                    # position needs "band" and the name needs "ordinal". Our
+                    # only hope is to create two axes.
+                    "name": "xname",
+                    "type": "ordinal",
+                    "domain": {"data": "table", "field": "group"},
+                    "range": self.x_series.series.values.tolist(),
                 },
                 {
                     "name": "yscale",
@@ -103,7 +125,7 @@ class SeriesParams:
                     "type": "ordinal",
                     "domain": {"data": "table", "field": "bar"},
                     "range": [ys.color for ys in self.y_columns],
-                }
+                },
             ],
 
             "axes": [
@@ -118,11 +140,22 @@ class SeriesParams:
                     "titleFontWeight": 100,
                     "titleFont": "Nunito Sans, Helvetica, sans-serif",
                     "labelFont": "Nunito Sans, Helvetica, sans-serif",
-                    "labelFontWeight":400,
+                    "labelFontWeight": "normal",
                     "labelPadding": 10,
                     "labelFontSize": 12,
-                    "labelColor":"#383838",
-
+                    "labelColor": "#383838",
+                    "encode": {
+                        "labels": {
+                            "update": {
+                                "text": {
+                                    # [adamhooper, 2018-09-21] I never found
+                                    # docs for this. What a crazy Chrome
+                                    # Inspector session this took....
+                                    "signal": "scale('xname', datum.value)"
+                                }
+                            }
+                        }
+                    }
                 },
                 {
                     "title": self.y_axis_label,
@@ -136,7 +169,7 @@ class SeriesParams:
                     "titleFont": "Nunito Sans, Helvetica, sans-serif",
                     "labelFont": "Nunito Sans, Helvetica, sans-serif",
                     "labelColor": "#383838",
-                    "labelFontWeight":400,
+                    "labelFontWeight": "normal",
                     "titlePadding": 20,
                     "labelPadding": 10,
                     "labelFontSize": 11,
@@ -151,14 +184,13 @@ class SeriesParams:
                         "facet": {
                             "data": "table",
                             "name": "facet",
-                            "groupby": self.x_series.name,
+                            "groupby": "group",
                         }
                     },
 
                     "encode": {
                         "enter": {
-                            "x": {"scale": "xscale",
-                                  "field": self.x_series.name},
+                            "x": {"scale": "xscale", "field": "group"},
                         }
                     },
 
@@ -207,7 +239,7 @@ class SeriesParams:
                     "rowPadding": 10,
                     "labelFont": "Nunito Sans, Helvetica, sans-serif",
                     "labelColor": "#383838",
-                    "labelFontWeight":400,
+                    "labelFontWeight": "normal",
                 },
             ]
 
@@ -220,7 +252,7 @@ class YColumn:
         self.color = color
 
 
-class UserParams:
+class Form:
     """
     Parameter dict specified by the user: valid types, unchecked values.
     """
@@ -233,15 +265,15 @@ class UserParams:
         self.y_columns = y_columns
 
     @staticmethod
-    def from_params(params: Dict[str, Any]) -> 'UserParams':
+    def from_params(params: Dict[str, Any]) -> 'Form':
         title = str(params.get('title', ''))
         x_axis_label = str(params.get('x_axis_label', ''))
         y_axis_label = str(params.get('y_axis_label', ''))
         x_column = str(params.get('x_column', ''))
-        y_columns = UserParams.parse_y_columns(
+        y_columns = Form.parse_y_columns(
             params.get('y_columns', 'null')
         )
-        return UserParams(title=title, x_axis_label=x_axis_label,
+        return Form(title=title, x_axis_label=x_axis_label,
                           y_axis_label=y_axis_label, x_column=x_column,
                           y_columns=y_columns)
 
@@ -257,6 +289,7 @@ class UserParams:
         [ ] Error if a Y column is missing
         [ ] Error if a Y column is the X column
         [ ] Default title, X and Y axis labels
+        [ ] DOES NOT WORK - nix NA X values
         """
         if len(table.index) >= MaxNBars:
             raise ValueError(
@@ -319,9 +352,9 @@ class UserParams:
 
 
 def render(table, params):
-    user_params = UserParams.from_params(params)
+    form = Form.from_params(params)
     try:
-        valid_params = user_params.validate_with_table(table)
+        valid_params = form.validate_with_table(table)
     except GentleValueError as err:
         return (table, '', {'error': str(err)})
     except ValueError as err:
