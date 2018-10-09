@@ -1,8 +1,9 @@
 import contextlib
+import datetime
 from typing import Any, Dict, Optional
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
-from server import dispatch
+from server import dispatch, notifications
 from server.models import CachedRenderResult, WfModule, Workflow
 from server.modules.types import ProcessResult
 from server import websockets
@@ -124,6 +125,8 @@ def execute_wfmodule(wf_module: WfModule,
     result = dispatch.module_dispatch_render(module_version, params,
                                              table, fetch_result)
 
+    output_delta = None
+
     with locked_wf_module(safe_wf_module) as safe_wf_module_2:
         if (safe_wf_module_2.last_relevant_delta_id
                 != safe_wf_module.last_relevant_delta_id):
@@ -134,13 +137,24 @@ def execute_wfmodule(wf_module: WfModule,
             result
         )
 
+        if result != last_result and safe_wf_module_2.notifications:
+            output_delta = notifications.OutputDelta(safe_wf_module_2,
+                                                     last_result, result)
+            safe_wf_module_2.has_unseen_notification = True
+
         # Save safe_wf_module_2, not wf_module, because we know we've only
         # changed the cached_render_result columns. (We know because we
         # locked the row before fetching it.) `wf_module.save()` might
         # overwrite some newer values.
         safe_wf_module_2.save()
 
-        return cached_render_result
+    # Email notification if data has changed. Do this outside of the database
+    # lock, because SMTP can be slow, and Django's email backend is
+    # synchronous.
+    if output_delta:
+        notifications.email_output_delta(output_delta, datetime.datetime.now())
+
+    return cached_render_result
 
 
 def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:

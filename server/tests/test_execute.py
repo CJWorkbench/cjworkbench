@@ -1,13 +1,12 @@
 import asyncio
-import contextlib
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import pandas as pd
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
-from server.models.Commands import ChangeParameterCommand
 from server.execute import execute_workflow
 from server.modules.types import ProcessResult
+from server.notifications import OutputDelta
 
 
 table_csv = 'A,B\n1,2\n3,4'
@@ -100,17 +99,18 @@ class ExecuteTests(DbTestCase):
         wf_module3.refresh_from_db()
         self.assertEqual(wf_module3.status, 'unreachable')
 
-        #send_delta_async.assert_called_with(workflow.id, {
-        #    'updateWfModules': {
-        #        str(wf_module2.id): {
-        #            'error_msg': 'ERROR',
-        #            'status': 'error',
-        #            'quick_fixes': [],
-        #            'output_columns': [],
-        #            'last_relevant_delta_id': wf_module2.last_relevant_delta_id
-        #        }
-        #    }
-        #})
+        # send_delta_async.assert_called_with(workflow.id, {
+        #     'updateWfModules': {
+        #         str(wf_module2.id): {
+        #             'error_msg': 'ERROR',
+        #             'status': 'error',
+        #             'quick_fixes': [],
+        #             'output_columns': [],
+        #             'last_relevant_delta_id':
+        #                 wf_module2.last_relevant_delta_id
+        #         }
+        #     }
+        # })
 
         send_delta_async.assert_called_with(workflow.id, {
             'updateWfModules': {
@@ -119,11 +119,13 @@ class ExecuteTests(DbTestCase):
                     'status': 'unreachable',
                     'quick_fixes': [],
                     'output_columns': [],
-                    'last_relevant_delta_id': wf_module3.last_relevant_delta_id
+                    'last_relevant_delta_id':
+                    wf_module3.last_relevant_delta_id,
+                    'cached_render_result_delta_id':
+                    wf_module2.last_relevant_delta_id,
                 }
             }
         })
-
 
     def test_execute_cache_hit(self):
         workflow = create_testdata_workflow(table_csv)
@@ -162,3 +164,24 @@ class ExecuteTests(DbTestCase):
             wf_module2.refresh_from_db()
             result = wf_module2.get_cached_render_result().result
             self.assertEqual(result, expected)
+
+    @patch('server.notifications.email_output_delta')
+    def test_email_delta(self, email):
+        workflow = create_testdata_workflow(table_csv)
+        wf_module1 = workflow.wf_modules.first()
+        wf_module1.notifications = True
+        wf_module1.save()
+        async_to_sync(execute_workflow)(workflow)
+
+        email.assert_called()
+
+    @patch('server.notifications.email_output_delta')
+    def test_email_no_delta_when_not_changed(self, email):
+        workflow = create_testdata_workflow(table_csv)
+        wf_module1 = workflow.wf_modules.first()
+        wf_module1.notifications = True
+        wf_module1.save()
+        async_to_sync(execute_workflow)(workflow)  # sends one email
+        async_to_sync(execute_workflow)(workflow)  # should not email
+
+        email.assert_called_once()

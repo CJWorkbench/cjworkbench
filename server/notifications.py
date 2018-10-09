@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional
+from typing import Optional
 from allauth.account.utils import user_display
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -32,62 +32,6 @@ class OutputDelta:
                 and self.wf_module_id == other.wf_module_id \
                 and self.old_result == other.old_result \
                 and self.new_result == other.new_result
-
-
-def find_output_deltas_to_notify_from_fetched_tables(
-        wf_module: 'WfModule', old_result: Optional[ProcessResult],
-        new_result: ProcessResult) -> List[OutputDelta]:
-    """Compute a list of OutputDeltas to email to the owner.
-
-    `wf_module` is the fetch module whose data just changed from `old_table` to
-    `new_table`. (Either may be `None` or empty.)
-
-    Assumes `old_result` and `new_result` are different.
-
-    Must be called within a workflow.cooperative_lock().
-
-    TODO make this easier to unit-test, and then unit-test it.
-    """
-    # Import here, to prevent recursive import
-    from server.dispatch import module_dispatch_render
-
-    output_deltas = []
-
-    all_modules = list(wf_module.workflow.wf_modules.all())
-
-    # Truncate all_modules: nix all after the last `.notifications` module
-    while all_modules and not all_modules[-1].notifications:
-        all_modules.pop()
-
-    # Advance in the list up until one _after_ `wf_module`
-    while all_modules and all_modules[0].id != wf_module.id:
-        all_modules.pop(0)
-    if all_modules:
-        # remove wf_module itself
-        all_modules.pop(0)
-
-    if wf_module.notifications:
-        # Notify on wf_module itself
-        output_deltas.append(OutputDelta(wf_module, old_result, new_result))
-
-    if old_result is None:
-        old_result = ProcessResult()
-
-    # Now iterate through dependent modules: calculate tables and compare
-    for wf_module in all_modules:
-        old_result = module_dispatch_render(wf_module, old_result.dataframe)
-        new_result = module_dispatch_render(wf_module, new_result.dataframe)
-
-        if old_result == new_result:
-            # From this point forward, tables will never diverge so we should
-            # never notify the user.
-            return output_deltas
-
-        if wf_module.notifications:
-            output_deltas.append(OutputDelta(wf_module, old_result,
-                                             new_result))
-
-    return output_deltas
 
 
 def email_output_delta(output_delta: OutputDelta,
