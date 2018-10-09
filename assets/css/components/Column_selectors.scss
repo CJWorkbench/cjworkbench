@@ -33,6 +33,12 @@
 .css-1aya2g8.react-select__control {
   @extend .module-parameter;
   height: auto;
+  color:red;
+}
+
+//value selected
+.css-va7pk8.react-select__single-value {
+  color: $brand-text--darker;
 }
 
 .css-2o5izw.react-select__control--is-focused {
@@ -89,7 +95,7 @@
   display: none;
 }
 
-// Add-delete additional column 
+// Add-delete additional column
 
 .chart-series-multi-select {
   .buttons {
