@@ -1,59 +1,44 @@
-//dropdown select with aut-complete
-.react-select__control {
+
+
+.chart-series-multi-select {
+
+  //group of col select + color picker
+
+  .input-group {
+
+    .css-10nd86i.react-select {
+      width: 24rem;
+
+      .css-1rtrksz.react-select__value-container {
+        padding-left: 2.2rem; // padding left for distance from color picker
+      }
+    }
+
+    .input-group-prepend {
+
+      button {
+        z-index: 2;
+        position: absolute;
+        border-radius: 3px 0 0 3px!important;
+        width: 2rem;
+      }
+    }
+  }
+}
+
+.css-1aya2g8.react-select__control {
   @extend .module-parameter;
   height: auto;
+}
 
-  .css-1rtrksz.react-select__value-container {
-    cursor: text;
-  }
+.css-2o5izw.react-select__control--is-focused {
+  box-shadow: none;
+  border: $data-action--border!important;
+  @extend .content-3;
+}
 
-  .react-select__placeholder.css-1492t68 {
-    color:$brand-text--dark;
-    margin-left: .3rem;
-  }
-
-  .css-d8oujb.react-select__indicator-separator {
-    opacity: .5;
-  }
-
-  &.css-2o5izw.react-select__control--is-focused {
-    box-shadow: none;
-    border: $data-action--border!important;
-  }
-
-  // button to open dropdown
-  .css-1ep9fjw.react-select__indicator {
-    cursor: pointer;
-    opacity: .6;
-    padding:.6rem;
-
-    svg {
-      color:$brand-text--dark;
-    }
-
-    &:hover{opacity: 1;}
-  }
-
-  .react-select__multi-value {
-    border-radius: 3px;
-    border: 1px solid $brand-orange;
-    background-color: $brand-orange--light;
-
-    .react-select__multi-value__label {
-      @extend .content-3;
-      color:$brand-orange;
-    }
-  }
-  .react-select__multi-value__remove {
-    cursor: pointer;
-    border-radius: 0 3px 3px 0;
-    color:$brand-orange;
-
-    &:hover {
-    color: $white;
-    background-color: $brand-orange;
-    }
-  }
+.css-1492t68.react-select__placeholder {
+  color: $placeholder;
 }
 
 .css-15k3avv.react-select__menu {
@@ -78,3 +63,62 @@
     color:$brand-text--darker;
   }
 }
+
+.css-1ep9fjw.react-select__indicator {
+  cursor: pointer;
+  opacity: .6;
+
+  svg {
+    color:$brand-text--dark;
+  }
+
+  &:hover{opacity: 1;}
+}
+
+.css-1rtrksz.react-select__value-container {
+  cursor: text;
+}
+
+
+// //dropdown select with aut-complete
+//
+//
+//
+//
+//   .react-select__placeholder.css-1492t68 {
+//     color:$brand-text--dark;
+//     margin-left: .3rem;
+//   }
+//
+//   .css-d8oujb.react-select__indicator-separator {
+//     opacity: .5;
+//   }
+//
+//   &.
+//
+//   // button to open dropdown
+//
+//
+//   .react-select__multi-value {
+//     border-radius: 3px;
+//     border: 1px solid $brand-orange;
+//     background-color: $brand-orange--light;
+//
+//     .react-select__multi-value__label {
+//       @extend .content-3;
+//       color:$brand-orange;
+//     }
+//   }
+//   .react-select__multi-value__remove {
+//     cursor: pointer;
+//     border-radius: 0 3px 3px 0;
+//     color:$brand-orange;
+//
+//     &:hover {
+//     color: $white;
+//     background-color: $brand-orange;
+//     }
+//   }
+// }
+//
+//
