@@ -21,7 +21,6 @@ from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
 import server.utils
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes
-from server.templatetags.json_filters import escape_potential_hack_chars
 
 
 _MaxNRowsPerRequest = 300
@@ -273,7 +272,7 @@ def wfmodule_embeddata(request, pk):
     except ValueError:
         result_json = None
 
-    return JsonResponse(result_json)
+    return JsonResponse(result_json, safe=False)
 
 
 @api_view(['GET'])
