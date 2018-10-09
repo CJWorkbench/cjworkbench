@@ -6,7 +6,6 @@ from server.tests.utils import DbTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
 from server.execute import execute_workflow
 from server.modules.types import ProcessResult
-from server.notifications import OutputDelta
 
 
 table_csv = 'A,B\n1,2\n3,4'
@@ -174,6 +173,9 @@ class ExecuteTests(DbTestCase):
         async_to_sync(execute_workflow)(workflow)
 
         email.assert_called()
+
+        wf_module1.refresh_from_db()
+        self.assertTrue(wf_module1.has_unseen_notification)
 
     @patch('server.notifications.email_output_delta')
     def test_email_no_delta_when_not_changed(self, email):

@@ -105,16 +105,20 @@ def execute_wfmodule(wf_module: WfModule,
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
+    old_result = None
+    output_delta = None
+
     with locked_wf_module(wf_module) as safe_wf_module:
         cached_render_result = wf_module.get_cached_render_result()
 
-        # If the cache is good, just return it -- skipping the render() call
-        if (
-            cached_render_result
-            and (cached_render_result.delta_id
-                 == wf_module.last_relevant_delta_id)
-        ):
-            return cached_render_result
+        if cached_render_result:
+            # If the cache is good, skip everything.
+            if (cached_render_result.delta_id
+                    == wf_module.last_relevant_delta_id):
+                return cached_render_result
+
+            if safe_wf_module.notifications:
+                old_result = cached_render_result.result
 
         module_version = wf_module.module_version
         params = safe_wf_module.get_params()
@@ -124,8 +128,6 @@ def execute_wfmodule(wf_module: WfModule,
     table = last_result.dataframe
     result = dispatch.module_dispatch_render(module_version, params,
                                              table, fetch_result)
-
-    output_delta = None
 
     with locked_wf_module(safe_wf_module) as safe_wf_module_2:
         if (safe_wf_module_2.last_relevant_delta_id
@@ -137,9 +139,9 @@ def execute_wfmodule(wf_module: WfModule,
             result
         )
 
-        if result != last_result and safe_wf_module_2.notifications:
+        if result != old_result and safe_wf_module_2.notifications:
             output_delta = notifications.OutputDelta(safe_wf_module_2,
-                                                     last_result, result)
+                                                     old_result, result)
             safe_wf_module_2.has_unseen_notification = True
 
         # Save safe_wf_module_2, not wf_module, because we know we've only
@@ -153,6 +155,10 @@ def execute_wfmodule(wf_module: WfModule,
     # synchronous.
     if output_delta:
         notifications.email_output_delta(output_delta, datetime.datetime.now())
+
+    # TODO if there's no notification, is it possible for us to skip the render
+    # and simply set cached_render_result_delta_id=last_relevant_delta_id?
+    # Investigate whether this is a worthwhile optimization.
 
     return cached_render_result
 
