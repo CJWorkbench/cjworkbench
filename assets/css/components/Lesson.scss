@@ -44,8 +44,8 @@ article.lesson {
 
     .backToLessons {
       @extend .info-1;
+      font-size: 1.3rem;
       color:$white;
-      opacity: .8;
       text-transform: uppercase;
       text-decoration: none;
       margin-bottom: 1rem;
@@ -66,7 +66,7 @@ article.lesson {
     }
 
     .description, ol.steps {
-      @extend %font-nunito-extra-light;
+      @extend .content-3;
       font-size: 1.6rem;
       line-height: 2.8rem;
     }
