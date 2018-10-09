@@ -1,6 +1,6 @@
 import contextlib
 import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from server import dispatch, notifications
@@ -75,8 +75,91 @@ def mark_wfmodule_unreachable(wf_module: WfModule):
 
 
 @database_sync_to_async
-def execute_wfmodule(wf_module: WfModule,
-                     last_result: ProcessResult) -> CachedRenderResult:
+def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
+    """
+    First step of execute_wfmodule().
+
+    Returns a Tuple in this order:
+        * cached_render_result: if non-None, the quick return value of
+          execute_wfmodule().
+        * wf_module: an up-to-date version of the input.
+        * module_version: a ModuleVersion for dispatching render
+        * params: Params for dispatching render
+        * fetch_result: optional ProcessResult for dispatching render
+        * old_result: if wf_module.notifications is set, the previous
+          result we'll compare against after render.
+
+    All this runs synchronously within a database lock. (It's a separate
+    function so that when we're done awaiting it, we can continue executing in
+    a context that doesn't use a database thread.)
+    """
+    with locked_wf_module(wf_module) as safe_wf_module:
+        cached_render_result = wf_module.get_cached_render_result()
+
+        old_result = None
+        if cached_render_result:
+            # If the cache is good, skip everything.
+            if (cached_render_result.delta_id
+                    == wf_module.last_relevant_delta_id):
+                return (cached_render_result, None, None, None, None)
+
+            if safe_wf_module.notifications:
+                old_result = cached_render_result.result
+
+        module_version = wf_module.module_version
+        params = safe_wf_module.get_params()
+        fetch_result = safe_wf_module.get_fetch_result()
+
+        return (None, safe_wf_module, module_version, params, fetch_result,
+                old_result)
+
+
+@database_sync_to_async
+def _execute_wfmodule_save(wf_module: WfModule, result: ProcessResult,
+                           old_result: ProcessResult, ) -> Tuple:
+    """
+    Second database step of execute_wfmodule().
+
+    Writes result (and maybe has_unseen_notification) to the WfModule in the
+    database and returns a Tuple in this order:
+        * cached_render_result: the return value of execute_wfmodule().
+        * output_delta: if non-None, an OutputDelta to email to the Workflow
+          owner.
+
+    All this runs synchronously within a database lock. (It's a separate
+    function so that when we're done awaiting it, we can continue executing in
+    a context that doesn't use a database thread.)
+
+    Raises UnneededExecution if the WfModule has changed in the interim.
+    """
+    with locked_wf_module(wf_module) as safe_wf_module:
+        if (safe_wf_module.last_relevant_delta_id
+                != wf_module.last_relevant_delta_id):
+            raise UnneededExecution
+
+        cached_render_result = safe_wf_module.cache_render_result(
+            safe_wf_module.last_relevant_delta_id,
+            result
+        )
+
+        if result != old_result and safe_wf_module.notifications:
+            safe_wf_module.has_unseen_notification = True
+            output_delta = notifications.OutputDelta(safe_wf_module,
+                                                     old_result, result)
+        else:
+            output_delta = None
+
+        # Save safe_wf_module, not wf_module, because we know we've only
+        # changed the cached_render_result columns. (We know because we
+        # locked the row before fetching it.) `wf_module.save()` might
+        # overwrite some newer values.
+        safe_wf_module.save()
+
+        return (cached_render_result, output_delta)
+
+
+async def execute_wfmodule(wf_module: WfModule,
+                           last_result: ProcessResult) -> CachedRenderResult:
     """
     Render a single WfModule; cache and return output.
 
@@ -105,50 +188,19 @@ def execute_wfmodule(wf_module: WfModule,
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    old_result = None
-    output_delta = None
+    (cached_render_result, wf_module, module_version, params, fetch_result,
+     old_result) = await _execute_wfmodule_pre(wf_module)
 
-    with locked_wf_module(wf_module) as safe_wf_module:
-        cached_render_result = wf_module.get_cached_render_result()
+    # If the cached render result is valid, we're done!
+    if cached_render_result is not None:
+        return cached_render_result
 
-        if cached_render_result:
-            # If the cache is good, skip everything.
-            if (cached_render_result.delta_id
-                    == wf_module.last_relevant_delta_id):
-                return cached_render_result
-
-            if safe_wf_module.notifications:
-                old_result = cached_render_result.result
-
-        module_version = wf_module.module_version
-        params = safe_wf_module.get_params()
-        fetch_result = safe_wf_module.get_fetch_result()
-
-    # Release lock, so user gets a responsive experience from other threads
     table = last_result.dataframe
     result = dispatch.module_dispatch_render(module_version, params,
                                              table, fetch_result)
 
-    with locked_wf_module(safe_wf_module) as safe_wf_module_2:
-        if (safe_wf_module_2.last_relevant_delta_id
-                != safe_wf_module.last_relevant_delta_id):
-            raise UnneededExecution
-
-        cached_render_result = safe_wf_module_2.cache_render_result(
-            safe_wf_module_2.last_relevant_delta_id,
-            result
-        )
-
-        if result != old_result and safe_wf_module_2.notifications:
-            output_delta = notifications.OutputDelta(safe_wf_module_2,
-                                                     old_result, result)
-            safe_wf_module_2.has_unseen_notification = True
-
-        # Save safe_wf_module_2, not wf_module, because we know we've only
-        # changed the cached_render_result columns. (We know because we
-        # locked the row before fetching it.) `wf_module.save()` might
-        # overwrite some newer values.
-        safe_wf_module_2.save()
+    cached_render_result, output_delta = \
+        await _execute_wfmodule_save(wf_module, result, old_result)
 
     # Email notification if data has changed. Do this outside of the database
     # lock, because SMTP can be slow, and Django's email backend is
@@ -156,7 +208,7 @@ def execute_wfmodule(wf_module: WfModule,
     if output_delta:
         notifications.email_output_delta(output_delta, datetime.datetime.now())
 
-    # TODO if there's no notification, is it possible for us to skip the render
+    # TODO if there's no change, is it possible for us to skip the render
     # and simply set cached_render_result_delta_id=last_relevant_delta_id?
     # Investigate whether this is a worthwhile optimization.
 
