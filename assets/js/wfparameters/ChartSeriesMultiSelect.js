@@ -14,6 +14,7 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
     })), // or null if not loaded
     onChange: PropTypes.func.isRequired, // func([{column, color}, ...]) => undefined
     isReadOnly: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired
   }
 
   state = {
@@ -78,7 +79,7 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
   }
 
   render () {
-    const { allColumns, series, prompt, isReadOnly } = this.props
+    const { allColumns, series, prompt, isReadOnly, name } = this.props
 
     if (allColumns === null) {
       return <p className="loading">Loading…</p>
@@ -125,7 +126,7 @@ export default class ChartSeriesMultiSelect extends React.PureComponent {
     const buttons = this.renderButtons()
 
     return (
-      <div className="wf-parameter chart-series-multi-select">
+      <div className="wf-parameter chart-series-multi-select" data-name={name}>
         {pickers}
         {buttons}
       </div>

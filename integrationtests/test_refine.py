@@ -27,7 +27,7 @@ yxyx,1
 ''')
 
         self.add_wf_module('Refine')
-        self.select_column('column', 'A')
+        self.select_column('Refine', 'column', 'A')
         b.wait_for_element('input[value="xxxy"]')
 
     def _fill_in_and_blur(self, *args, **kwargs):

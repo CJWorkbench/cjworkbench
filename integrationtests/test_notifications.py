@@ -23,7 +23,7 @@ class TestNotifications(LoggedInIntegrationTest):
         b.click_button('Update')
 
         self.add_wf_module('Filter')
-        self.select_column('column', 'data', wait=True)  # wait for module load
+        self.select_column('Filter', 'column', 'data', wait=True)  # wait for module load
         b.select('condition', 'Greater than')
         b.fill_in('value', '-0.5', wait=True)  # wait for field to appear
 

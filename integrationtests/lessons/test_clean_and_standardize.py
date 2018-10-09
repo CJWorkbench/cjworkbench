@@ -93,7 +93,7 @@ class TestLesson(LessonTest):
         )
 
         # Wait for column to appear
-        self.select_column('column', 'MetroArea')
+        self.select_column('Refine', 'column', 'MetroArea')
 
         # Wait for module to update
         self.expect_highlight(
@@ -138,8 +138,7 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Reshape"]',
             wait=True
         )
-        with b.scope('.wf-module[data-module-name="Reshape"]'):
-            self.select_column('colnames', 'Date')
+        self.select_column('Reshape', 'colnames', 'Date')
 
         # Wait for param change to register
         self.expect_highlight(
@@ -147,7 +146,7 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Reshape"]',
             wait=True
         )
-        self.select_column('varcol', 'MetroArea')
+        self.select_column('Reshape', 'varcol', 'MetroArea')
 
         # Navigate to footer
         self.expect_highlight_next(wait=True)

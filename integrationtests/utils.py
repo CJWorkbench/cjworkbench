@@ -125,7 +125,7 @@ class WorkbenchBase(unittest.TestCase):
         self.browser.click_whatever('textarea[name="csv"]')
 
     # TODO move to a helper .py file
-    def select_column(self, name: str, text: str, **kwargs) -> None:
+    def select_column(self, module_name: str, name: str, text: str, **kwargs) -> None:
         """Selects 'text' in the ColumnSelect box with name 'name'.
 
         Waits for '.loading' to disappear before filling in the text.
@@ -136,12 +136,14 @@ class WorkbenchBase(unittest.TestCase):
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
         """
-        self.browser.assert_element(
-            f'select[name="{name}"]:not(.loading)',
-            wait=True
-        )
-        self.browser.select(name, text, **kwargs)
+        with self.browser.scope(f'.wf-module[data-module-name="{module_name}"] .wf-parameter[data-name="{name}"]', **kwargs):
+            self.browser.assert_element(
+                f'.react-select:not(.loading)',
+                wait=True
+            )
+            self.browser.click_whatever('.react-select__dropdown-indicator')
 
+        self.browser.click_whatever('.react-select__option', text=text)
 
 # Derive from this to perform all tests logged in
 class LoggedInIntegrationTest(WorkbenchBase):

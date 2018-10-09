@@ -279,6 +279,7 @@ export default class WfParameter extends React.Component {
             allColumns={this.props.inputColumns}
             series={JSON.parse(this.props.p.value || '[]')}
             onChange={this.onChangeYColumns}
+            name={id_name}
           />
         )
 //      case 'map-geojson':

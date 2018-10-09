@@ -71,16 +71,14 @@ class TestLesson(LessonTest):
         with b.iframe('.outputpane-iframe iframe', wait=True):
             b.assert_element('g.role-title text',
                              text='Please choose an X-axis column', wait=True)
-        b.assert_element('select[name="x_column"]:not(.loading)', wait=True)
-        b.select('x_column', 'city_neighborhood')
+        self.select_column('Column Chart', 'x_column', 'city_neighborhood')
 
         # Second wait: for the Y-axis column selector to load
         time.sleep(1)  # TODO prevent reloads, then nix
         with b.iframe('.outputpane-iframe iframe'):
             b.assert_element('g.role-title text',
                              text='Please choose a Y-axis column', wait=True)
-        b.assert_element('select[name="column"]:not(.loading)', wait=True)
-        b.select('column', 'affordable_units')
+        self.select_column('Column Chart', 'y_columns', 'affordable_units')
 
         self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
         b.fill_in('title', 'a title')
@@ -98,8 +96,7 @@ class TestLesson(LessonTest):
 
         self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
         # wait for module load
-        with b.scope('.wf-module[data-module-name="Filter"]'):
-            self.select_column('column', 'affordable_units', wait=True)
+        self.select_column('Filter', 'column', 'affordable_units', wait=True)
         b.select('condition', 'Greater than')
         b.fill_in('value', 200, wait=True)  # wait for field to appear
         with b.scope('.wf-parameter[data-name="value"]'):

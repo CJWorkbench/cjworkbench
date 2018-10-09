@@ -32,7 +32,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         self.import_module('converttodate')
 
         self.add_wf_module('Group by date')
-        self.select_column('column', 'A')
+        self.select_column('Group by date', 'column', 'A')
 
         # Wait for error to occur
         b.assert_element('.wf-module-error-msg',

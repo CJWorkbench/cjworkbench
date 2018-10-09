@@ -15,6 +15,7 @@ describe('ChartSeriesMultiSelect', () => {
         prompt={'prompt'}
         allColumns={[ { name: 'A' }, { name: 'B' }, { name: 'C' } ]}
         onChange={jest.fn()}
+        name={'y_columns'}
         {...props}
       />
     )

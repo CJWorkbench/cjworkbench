@@ -16,6 +16,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
     ]
   }
   isReadOnly={false}
+  name="y_columns"
   onChange={[MockFunction]}
   prompt="prompt"
   series={
@@ -33,6 +34,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
 >
   <div
     className="wf-parameter chart-series-multi-select"
+    data-name="y_columns"
   >
     <ChartSeriesSelect
       availableColumns={
