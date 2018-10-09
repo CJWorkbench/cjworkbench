@@ -138,7 +138,6 @@ export default class DataGrid extends React.Component {
     // gridWith and gridHeight start non-0, so rows get rendered in tests
     gridWidth: 100,
     gridHeight : 100,
-    componentKey: 0, // upon change, force delete-and-recreate of ReactDataGrid
     draggingColumnIndex: null
   }
 
@@ -208,12 +207,6 @@ export default class DataGrid extends React.Component {
       return true
     }
     return false
-  }
-
-  componentDidUpdate (prevProps) {
-    if (this.shouldKeyUpdate(prevProps)) {
-      this.setState({ componentKey: this.state.componentKey + 1 })
-    }
   }
 
   onGridRowsUpdated = (data, ...args) => {
@@ -317,7 +310,6 @@ export default class DataGrid extends React.Component {
         enableRowSelect={true}
         rowRenderer={Row}
         rowSelection={rowSelection}
-        key={this.state.componentKey}
       />
     )
   }

@@ -146,7 +146,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
     enableRowSelect={true}
     headerFiltersHeight={45}
     headerRowHeight={50}
-    key="0"
     minColumnWidth={80}
     minHeight={98}
     minWidth={98}

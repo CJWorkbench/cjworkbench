@@ -265,6 +265,7 @@ export default class TableView extends React.PureComponent {
           setDropdownAction={this.setDropdownAction}
           selectedRowIndexes={selectedRowIndexes}
           onSetSelectedRowIndexes={this.setSelectedRowIndexes}
+          key={wfModuleId + '-' + deltaId}
         />
       )
     } else {
@@ -283,6 +284,7 @@ export default class TableView extends React.PureComponent {
           onSetSelectedRowIndexes={() => null}
           onRenameColumn={() => null}
           onReorderColumns={() => null}
+          key={wfModuleId + '-' + deltaId}
         />
       )
     }
