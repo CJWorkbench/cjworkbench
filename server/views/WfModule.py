@@ -254,13 +254,14 @@ _html_head_start_re = re.compile(rb'<\s*head[^>]*>', re.IGNORECASE)
 def wfmodule_output(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
-    html = module_get_html_bytes(wf_module)
+    html = module_get_html_bytes(wf_module.module_version)
 
     # Speedy bypassing of locks: we don't care if we get out-of-date data
     # because we assume the client will re-request when it gets a new
     # cached_render_result_delta_id.
     try:
-        result_json = json.parse(wf_module.cached_render_result_json)
+        result_json = json.loads(bytes(wf_module.cached_render_result_json),
+                                 encoding='utf-8')
     except ValueError:
         result_json = None
 
@@ -292,7 +293,8 @@ def wfmodule_embeddata(request, pk):
     # because we assume the client will re-request when it gets a new
     # cached_render_result_delta_id.
     try:
-        result_json = json.parse(wf_module.cached_render_result_json)
+        result_json = json.loads(bytes(wf_module.cached_render_result_json),
+                                 encoding='utf-8')
     except ValueError:
         result_json = None
 

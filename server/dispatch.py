@@ -136,8 +136,8 @@ async def module_dispatch_event(wf_module, **kwargs):
         await dynamic_module.fetch(wf_module)
 
 
-def module_get_html_bytes(wf_module) -> Optional[bytes]:
-    dispatch = wf_module.module_version.module.dispatch
+def module_get_html_bytes(module_version) -> Optional[bytes]:
+    dispatch = module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
         try:
             # Store _path_, not _bytes_, in the module. Django's autoreload
@@ -149,6 +149,6 @@ def module_get_html_bytes(wf_module) -> Optional[bytes]:
         except AttributeError:
             return None
 
-    html_file_path = get_module_html_path(wf_module)
+    html_file_path = get_module_html_path(module_version)
     with open(html_file_path, 'rb') as f:
         return f.read()
