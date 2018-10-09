@@ -1,10 +1,9 @@
 import io
-import logging
-import mock
 import os
 from pathlib import Path
 import shutil
 import tempfile
+from unittest.mock import patch
 from django.test import override_settings
 import pandas as pd
 from server.importmodulefromgithub import sanitise_url, \
@@ -196,7 +195,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
              'but the function returned {}.'.format('427847c', version))
         )
 
-    @mock.patch(
+    @patch(
         'server.importmodulefromgithub.get_already_imported_module_urls',
         side_effect=overriden_get_already_imported
     )
