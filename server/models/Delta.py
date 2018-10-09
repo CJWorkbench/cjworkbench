@@ -118,6 +118,7 @@ class Delta(PolymorphicModel):
                     'status': 'waiting',
                     'quick_fixes': [],
                     'output_columns': None,
+                    'output_n_rows': None,
                     'cached_render_result_id': None,
                 }
 

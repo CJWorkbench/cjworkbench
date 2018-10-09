@@ -7,8 +7,6 @@ import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
 import * as UpdateTableAction from './UpdateTableAction'
-import { addModuleAction, setParamValueActionByIdName } from '../workflow-reducer'
-import { connect } from 'react-redux'
 
 export const NRowsPerPage = 200 // exported to help tests
 export const NMaxColumns = 100
@@ -17,7 +15,12 @@ export const FetchTimeout = 50 // ms after scroll before fetch
 export default class TableView extends React.PureComponent {
   static propTypes = {
     wfModuleId: PropTypes.number, // null means no selected module
-    deltaId: PropTypes.number.isRequired,
+    deltaId: PropTypes.number, // or null
+    columns: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+    }).isRequired), // or null
+    nRows: PropTypes.number, // or null
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     showColumnLetter: PropTypes.bool.isRequired,
@@ -29,9 +32,6 @@ export default class TableView extends React.PureComponent {
   state = {
     selectedRowIndexes: [],
     loadedRows: [],
-    columns: null,
-    columnTypes: null,
-    totalNRows: null,
     spinning: false // not "loading": we often load in bg, without an indicator
   }
 
@@ -114,9 +114,6 @@ export default class TableView extends React.PureComponent {
         if (this.unmounted) return
 
         const loadedRows = wasJustReset ? [] : this.state.loadedRows.slice()
-        const totalNRows = json.total_rows
-        const columns = (!wasJustReset && this.state.columns) || json.columns
-        const columnTypes = (!wasJustReset && this.state.columnTypes) || json.column_types
 
         // expand the Array (filling undefined for missing values in between)
         loadedRows[json.start_row] = null
@@ -125,10 +122,7 @@ export default class TableView extends React.PureComponent {
 
         this.loading = false
         this.setState({
-          totalNRows,
           loadedRows,
-          columns,
-          columnTypes,
           spinning: false
         })
       })
@@ -168,7 +162,7 @@ export default class TableView extends React.PureComponent {
             json.start_row = 0;  // no one looks at this currently, but they might
           }
 
-          this.emptyRow = json.columns.reduce((obj, col) => { obj[col] = null; return obj }, {})
+          this.emptyRow = this.props.columns.reduce((obj, col) => { obj[col] = null; return obj }, {})
 
           this.loading = false
           this.setState({
@@ -245,20 +239,21 @@ export default class TableView extends React.PureComponent {
 
   render() {
     // Make a table component if we have the data
-    const { spinning, selectedRowIndexes, totalNRows, columns, columnTypes } = this.state
-    const { wfModuleId, deltaId, isReadOnly } = this.props
-    let tooWide = (columns && columns.length > NMaxColumns)
+    const { spinning, selectedRowIndexes } = this.state
+    const { wfModuleId, deltaId, isReadOnly, columns, nRows } = this.props
+    const tooWide = (columns && columns.length > NMaxColumns)
+
     let gridView
-    if (wfModuleId && totalNRows !== null && totalNRows !== 0 && !tooWide) {
+    if (wfModuleId && nRows !== null && nRows !== 0 && !tooWide) {
       const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       gridView = (
         <DataGrid
-          totalRows={totalNRows}
-          columns={columns}
-          columnTypes={columnTypes}
           wfModuleId={wfModuleId}
           deltaId={deltaId}
+          columns={columns ? columns.map(c => c.name) : null}
+          columnTypes={columns ? columns.map(c => c.type) : null}
+          totalRows={nRows}
           getRow={this.getRow}
           onEditCell={this.onEditCell}
           sortColumn={sortColumn}
@@ -278,8 +273,9 @@ export default class TableView extends React.PureComponent {
       gridView = (
         <DataGrid
           id={undefined}
-          totalRows={10}
           columns={['',' ','   ','    ']}
+          columnTypes={['text', 'text', 'text', 'text']}
+          totalRows={10}
           getRow={() => {return {}}}
           isReadOnly={isReadOnly}
           setDropdownAction={this.setDropdownAction}
@@ -316,7 +312,7 @@ export default class TableView extends React.PureComponent {
         <TableInfo
           isReadOnly={isReadOnly}
           wfModuleId={wfModuleId}
-          nRows={totalNRows}
+          nRows={nRows}
           nColumns={columns ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />

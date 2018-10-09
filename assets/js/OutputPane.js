@@ -15,13 +15,23 @@ export class OutputPane extends React.Component {
     workflowId: PropTypes.number.isRequired,
     wfModuleBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      deltaId: PropTypes.number.isRequired
+      deltaId: PropTypes.number.isRequired,
+      columns: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      }).isRequired), // or null
+      nRows: PropTypes.number // or null
     }), // or null if no error
     wfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      deltaId: PropTypes.number.isRequired,
       htmlOutput: PropTypes.bool.isRequired,
       status: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
+      deltaId: PropTypes.number, // or null if not yet rendered
+      columns: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      }).isRequired), // or null
+      nRows: PropTypes.number // or null
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -31,26 +41,18 @@ export class OutputPane extends React.Component {
   }
 
   renderTableView () {
-    const { wfModuleBeforeError, wfModule } = this.props
+    const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
 
-    let wfModuleId = null
-    let deltaId = -1 // TableView requires it
-    if (wfModuleBeforeError) {
-      wfModuleId = wfModuleBeforeError.id
-      deltaId = wfModuleBeforeError.deltaId
-    } else if (wfModule) {
-      wfModuleId = wfModule.id
-      deltaId = wfModule.deltaId
-    }
-
-    const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter } = this.props
+    const wfm = wfModule ? wfModule : wfModuleBeforeError // may be null
 
     // Make a table component even if no module ID (should still show an empty table)
     return (
       <TableView
         key='table'
-        wfModuleId={wfModuleId}
-        deltaId={deltaId}
+        wfModuleId={wfm ? wfm.id : null}
+        deltaId={wfm ? wfm.deltaId : null}
+        columns={wfm ? wfm.columns : null}
+        nRows={wfm ? wfm.nRows : null}
         api={api}
         isReadOnly={isReadOnly}
         sortColumn={sortColumn}
@@ -135,6 +137,8 @@ function mapStateToProps(state, ownProps) {
       wfModuleBeforeError = {
         id: lastGood.id,
         deltaId: lastGood.cached_render_result_delta_id,
+        columns: lastGood.output_columns,
+        nRows: lastGood.output_n_rows
       }
     }
   }
@@ -159,9 +163,11 @@ function mapStateToProps(state, ownProps) {
     workflowId: workflow.id,
     wfModule: wfModule ? {
       id: wfModule.id,
+      htmlOutput: wfModule.html_output,
       status: wfModule.status,
       deltaId: wfModule.cached_render_result_delta_id,
-      htmlOutput: wfModule.html_output
+      columns: wfModule.output_columns,
+      nRows: wfModule.output_n_rows
     } : null,
     wfModuleBeforeError: wfModuleBeforeError,
     isPublic: workflow.public,

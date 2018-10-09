@@ -91,7 +91,6 @@ class WfModuleSerializer(serializers.ModelSerializer):
     update_units = serializers.SerializerMethodField()
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
-    output_columns = serializers.SerializerMethodField()
     quick_fixes = serializers.SerializerMethodField()
 
     def get_module_version(self, wfm):
@@ -121,15 +120,41 @@ class WfModuleSerializer(serializers.ModelSerializer):
         current_version = wfm.get_fetched_data_version()
         return {'versions': versions, 'selected': current_version}
 
-    def get_output_columns(self, wfm):
-        output_columns = wfm.get_cached_output_columns()
-        if output_columns is None:
-            return None
+    def get_cached_render_result_data(self, wfm):
+        cached_result = wfm.get_cached_render_result()
+        data = {
+            'cached_render_result_delta_id': None,
+            'output_columns': None,
+            'output_n_rows': None,
+        }
 
-        return [{'name': c.name, 'type': c.type} for c in output_columns]
+        if (
+            not cached_result
+            or cached_result.delta_id != wfm.last_relevant_delta_id
+        ):
+            return data
+
+        try:
+            columns = [{'name': c.name, 'type': c.type}
+                       for c in cached_result.columns]
+            data['cached_render_result_delta_id']: cached_result.delta_id
+            data['output_columns'] = columns
+            data['output_n_rows'] = len(cached_result)
+        except FileNotFoundError:
+            # We're serializing without locking the workflow, and we're in a
+            # race. No biggie: the caller is probably going to request more
+            # up-to-date data soon anyway.
+            pass
+
+        return data
 
     def get_quick_fixes(self, wfm):
         return wfm.cached_render_result_quick_fixes
+
+    def to_representation(self, wfm):
+        ret = super().to_representation(wfm)
+        ret.update(self.get_cached_render_result_data(wfm))
+        return ret
 
     class Meta:
         model = WfModule
@@ -138,8 +163,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
                   'auto_update_data', 'update_interval', 'update_units',
                   'last_update_check', 'notifications',
                   'has_unseen_notification', 'html_output', 'versions',
-                  'last_relevant_delta_id', 'cached_render_result_delta_id',
-                  'output_columns', 'quick_fixes')
+                  'last_relevant_delta_id', 'quick_fixes')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID.

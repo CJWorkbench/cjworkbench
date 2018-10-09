@@ -178,7 +178,8 @@ N_COLUMNS_PER_TABLE = 101
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
 # Now reading a maximum of 101 columns directly from cache parquet
-def _make_render_dict(cached_result, startrow=None, endrow=None):
+def _make_render_tuple(cached_result, startrow=None, endrow=None):
+    """Build (startrow, endrow, json_rows) data."""
     if not cached_result:
         dataframe = pd.DataFrame()
     else:
@@ -196,24 +197,10 @@ def _make_render_dict(cached_result, startrow=None, endrow=None):
 
     table = dataframe[startrow:endrow]
 
-    # In a sane and just world, we could now just do something like
-    #  rows = table.to_dict(orient='records')
-    # Alas, this is not the world we live in. Several problems. First,
-    #  json.dumps(table.to_dict)
-    # does not convert NaN to null. It also fails on int64 columns.
-
-    # The workaround is to usr table.to_json to get a string, then parse it.
-    # Keeping the column names and types at original lengths so that correct
-    # column total is displayed above table
-    rows = json.loads(table.to_json(orient="records", date_format='iso'))
-    return {
-        'total_rows': nrows,
-        'start_row': startrow,
-        'end_row': endrow,
-        'columns': cached_result.column_names,
-        'rows': rows,
-        'column_types': cached_result.column_types,
-    }
+    # table.to_json() renders a JSON string. It can't render a dict that we
+    # encode later, so let's not even try. Just return the string.
+    rows = table.to_json(orient="records", date_format='iso')
+    return (startrow, endrow, rows)
 
 
 def int_or_none(x):
@@ -240,9 +227,14 @@ def wfmodule_render(request, pk, format=None):
         if not cached_result:
             # assume we'll get another request after execute finishes
             return JsonResponse({})
-        j = _make_render_dict(cached_result, startrow, endrow)
 
-    return JsonResponse(j)
+        startrow, endrow, rows_string = _make_render_tuple(cached_result,
+                                                           startrow, endrow)
+        return HttpResponse(
+            ''.join(['{"start_row":', str(startrow), ',"end_row":',
+                     str(endrow), ',"rows":', rows_string, '}']),
+            content_type='application/json'
+        )
 
 
 _html_head_start_re = re.compile(rb'<\s*head[^>]*>', re.IGNORECASE)

@@ -16,9 +16,11 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(self.wf_module.get_cached_render_result())
 
     def test_assign_and_save(self):
-        result = ProcessResult(pandas.DataFrame({'a': [1]}), 'err',
-                               json={'foo': 'bar'},
-                               quick_fixes=[QuickFix('X', 'prependModule', 'x')])
+        result = ProcessResult(
+            pandas.DataFrame({'a': [1]}), 'err',
+            json={'foo': 'bar'},
+            quick_fixes=[QuickFix('X', 'prependModule', 'x')]
+        )
         self.wf_module.cache_render_result(2, result)
 
         cached = self.wf_module.get_cached_render_result()
@@ -52,7 +54,36 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(db_wf_module.get_cached_render_result())
         self.assertFalse(os.path.isfile(parquet_path))
 
-    def test_column_names_and_types_do_not_read_file(self):
+    def test_metadata_comes_from_memory_when_available(self):
+        result = ProcessResult(pandas.DataFrame({
+            'A': [1],  # int64
+            'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
+            'C': ['foo'],  # str
+        }))
+        result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
+        cached_result = self.wf_module.cache_render_result(2, result)
+        # cache_render_result() keeps its `result` parameter in memory, so we
+        # can avoid disk entirely.
+        #
+        # This is great for the render pipeline: it never reads from the file
+        # it writes, as it renders all modules sequentially.
+        os.unlink(cached_result.parquet_path)
+        self.assertFalse(cached_result._result is None)
+
+        self.assertEqual(cached_result.result, result)
+
+        self.assertEqual(len(cached_result), 1)
+        self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
+        self.assertEqual(cached_result.column_types,
+                         ['number', 'datetime', 'text', 'text'])
+        self.assertEqual(cached_result.columns, [
+            Column('A', 'number'),
+            Column('B', 'datetime'),
+            Column('C', 'text'),
+            Column('D', 'text'),
+        ])
+
+    def test_metadata_does_not_read_whole_file_from_disk(self):
         result = ProcessResult(pandas.DataFrame({
             'A': [1],  # int64
             'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
@@ -65,6 +96,7 @@ class CachedRenderResultTests(DbTestCase):
         cached_result = self.wf_module.get_cached_render_result()
         cached_result.parquet_file  # read header
         os.unlink(cached_result.parquet_path)
+        self.assertEqual(len(cached_result), 1)
         self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
         self.assertEqual(cached_result.column_types,
                          ['number', 'datetime', 'text', 'text'])
