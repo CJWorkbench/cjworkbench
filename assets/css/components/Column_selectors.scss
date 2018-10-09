@@ -26,8 +26,35 @@
   }
 }
 
+// separator with carret
+.css-d8oujb.react-select__indicator-separator {
+  margin: 1rem 0;
+  display: none;
+}
+
+.css-1ep9fjw.react-select__indicator.react-select__dropdown-indicator,
+.css-1sjym57.react-select__indicator.react-select__dropdown-indicator {
+  padding: 0 .6rem;
+}
+
+//carret container
 .css-1rtrksz.react-select__value-container {
   cursor: text;
+  height: 3rem;
+
+  // Carret to open menu
+  .css-1ep9fjw.react-select__indicator,
+  .css-1sjym57.react-select__indicator {
+    cursor: pointer;
+    opacity: .6;
+    padding: 0 .8rem;
+
+    svg {
+      color:$brand-text--dark;
+    }
+
+    &:hover{opacity: 1;}
+  }
 }
 
 .css-1aya2g8.react-select__control {
@@ -77,17 +104,6 @@
   }
 }
 
-// Carret to open menu
-.css-1ep9fjw.react-select__indicator {
-  cursor: pointer;
-  opacity: .6;
-
-  svg {
-    color:$brand-text--dark;
-  }
-
-  &:hover{opacity: 1;}
-}
 
 // Hide the reset (which did not work?)
 .css-1sjym57.react-select__indicator.react-select__clear-indicator,

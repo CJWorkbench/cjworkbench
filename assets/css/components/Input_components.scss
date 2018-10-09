@@ -221,7 +221,8 @@ textarea:focus, input:focus{
   background-size: 0px;
   border: 2px solid transparent;
   box-shadow: none;
-  height: 3.4rem;
+  height: 3.5rem;
+  border-radius: 3px;
 
   &:focus{
     box-shadow: none;
