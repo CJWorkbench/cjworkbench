@@ -43,7 +43,7 @@ export class OutputPane extends React.Component {
   renderTableView () {
     const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
 
-    const wfm = wfModule ? wfModule : wfModuleBeforeError // may be null
+    const wfm = wfModuleBeforeError ? wfModuleBeforeError : wfModule // may be null
 
     // Make a table component even if no module ID (should still show an empty table)
     return (
