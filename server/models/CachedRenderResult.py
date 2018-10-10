@@ -116,6 +116,19 @@ class CachedRenderResult:
         else:
             return []
 
+    def __len__(self):
+        """
+        Scan on-disk header for number of rows.
+
+        This does not read the entire DataFrame.
+        """
+        if hasattr(self, '_result'):
+            return len(self._result.dataframe)
+        elif self.parquet_file:
+            return self.parquet_file.count
+        else:
+            return []
+
     @property
     def column_types(self) -> List[str]:
         """

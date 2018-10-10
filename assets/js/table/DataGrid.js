@@ -14,12 +14,33 @@ import Row from './Row'
 import RowActionsCell from './RowActionsCell'
 import { typeToCellFormatter } from './CellFormatters'
 
+export const NRowsPerPage = 200 // exported to help tests
+export const FetchTimeout = 0 // ms after scroll before fetch
+
 const getRowSelection = memoize((indexes, onRowsSelected, onRowsDeselected) => ({
   enableShiftSelect: true,
   onRowsSelected,
   onRowsDeselected,
   selectBy: { indexes }
 }))
+
+function buildEmptyRow (columns) {
+  const row = {}
+
+  for (const column of columns) {
+    let value
+    switch (column.type) {
+      case 'text': value = ''; break
+      case 'number': value = null; break
+      case 'datetime': value = null; break
+      default: value = null; break
+    }
+
+    row[column.name] = value
+  }
+
+  return row
+}
 
 function renderNull () {
   return null
@@ -70,32 +91,30 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
 
 // Add row number col and make all cols resizeable
 function makeFormattedCols(props) {
-  const editable = (props.onEditCell !== undefined) && props.wfModuleId !== undefined; // no wfModuleId means blank table
+  const editable = !props.isReadOnly
 
   // We can have an empty table, but we need to give these props to ColumnHeader anyway
-  const safeColumns = props.columns || []
-  const columnTypes = props.columnTypes || safeColumns.map(_ => '')
   const showLetter = props.showLetter || false
 
-  const columns = safeColumns.map((columnKey, index) => ({
-    key: columnKey,
-    name: columnKey,
+  return props.columns.map(({ name, type }, index) => ({
+    key: name,
+    name: name,
     resizable: true,
     editable: editable,
-    formatter: typeToCellFormatter(columnTypes[index]),
+    formatter: typeToCellFormatter(type),
     width: 160,
     // react-data-grid normally won't re-render if we change headerRenderer.
     // So we need to change _other_ props, forcing it to re-render.
     maybeTriggerRenderIfChangeDraggingColumnIndex: props.draggingColumnIndex,
-    maybeTriggerRenderIfChangeIsSorted: (props.sortColumn === columnKey),
+    maybeTriggerRenderIfChangeIsSorted: (props.sortColumn === name),
     maybeTriggerRenderIfChangeSortDirection: props.sortDirection,
     maybeTriggerRenderIfChangeShowLetter: props.showLetter,
     headerRenderer: (
       <ColumnHeader
-        columnKey={columnKey}
-        columnType={columnTypes[index]}
+        columnKey={name}
+        columnType={type}
         index={index}
-        isSorted={props.sortColumn === columnKey}
+        isSorted={props.sortColumn === name}
         sortDirection={props.sortDirection}
         showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
@@ -108,8 +127,6 @@ function makeFormattedCols(props) {
       />
     )
   }))
-
-  return columns
 }
 
 
@@ -117,18 +134,22 @@ function makeFormattedCols(props) {
 
 export default class DataGrid extends React.Component {
   static propTypes = {
-    totalRows: PropTypes.number.isRequired,
-    getRow: PropTypes.func.isRequired,
-    columns: PropTypes.array.isRequired,
+    api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    columnTypes: PropTypes.array,     // not required if blank table
-    wfModuleId: PropTypes.number,    // not required if blank table
-    onEditCell: PropTypes.func,
+    wfModuleId: PropTypes.number, // immutable; null for placeholder table
+    deltaId: PropTypes.number, // immutable; null for placeholder table
+    columns: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+    }).isRequired), // immutable; null for placeholder table
+    nRows: PropTypes.number, // immutable; null for placeholder table
     sortColumn: PropTypes.string,
     sortDirection: PropTypes.number,
     showLetter: PropTypes.bool,
-    onReorderColumns: PropTypes.func.isRequired,
-    onRenameColumn: PropTypes.func.isRequired,
+    onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
+    onEditCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
+    onReorderColumns: PropTypes.func.isRequired, // func(wfModuleId, 'reorder-columns', false, { column, from, to }) => undefined
+    onRenameColumn: PropTypes.func.isRequired, // func(wfModuleId, 'rename-columns', false, renameInfo) => undefined
     setDropdownAction: PropTypes.func.isRequired,
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired, // may be empty
     onSetSelectedRowIndexes: PropTypes.func.isRequired // func([idx, ...]) => undefined
@@ -138,82 +159,99 @@ export default class DataGrid extends React.Component {
     // gridWith and gridHeight start non-0, so rows get rendered in tests
     gridWidth: 100,
     gridHeight : 100,
-    componentKey: 0, // upon change, force delete-and-recreate of ReactDataGrid
-    draggingColumnIndex: null
+    spinning: false,
+    draggingColumnIndex: null,
+    loadedRows: []
   }
+
+  emptyRow = buildEmptyRow(this.props.columns)
+  sizerRef = React.createRef()
+
+  // Cache some data that isn't props or state.
+  //
+  // Quick refresher: `this.loading` is synchronous; `this.state.loading` is
+  // async. In the example
+  // `this.setState({ loading: true }); console.log(this.state.loading)`,
+  // `console.log` will be called with the _previous_ value of
+  // `this.state.loading`, which is not necessarily `true`. That's useless to
+  // us. Only fill this.state with stuff we want to render.
+  //
+  // These values are all set before the initial render(). We want the initial
+  // render() to _not_ schedule a load, because we already load in
+  // componentDidMount().
+  firstMissingRowIndex = 0 // initial value, for initial load()
+  scheduleLoadTimeout = 'init' // initial load() doesn't take a timeout
 
   // After the component mounts, and on any change, set the height to parent div height
   updateSize = () => {
-    const domNode = ReactDOM.findDOMNode(this)
+    const domNode = this.sizerRef.current
     if (domNode && domNode.parentElement) {
-      const container = domNode.parentElement
-      const gridHeight = Math.max(100, container.offsetHeight)
-      const gridWidth = Math.max(100, container.offsetWidth)
+      const gridHeight = Math.max(100, domNode.offsetHeight)
+      const gridWidth = Math.max(100, domNode.offsetWidth)
       this.setState({ gridWidth, gridHeight })
     }
   }
 
-  componentDidMount() {
-    this._resizeListener = debounce(this.updateSize, 50)
-    window.addEventListener("resize", this._resizeListener)
-    this.updateSize()
+  load () {
+    const min = this.firstMissingRowIndex
+    const max = min + NRowsPerPage
+    const { api, deltaId, wfModuleId, onLoadPage } = this.props
+    const { loadedRows } = this.state
+
+    let areAllValuesMissing = true
+    for (let i = min; i < max; i++) {
+      if (loadedRows[i]) {
+        areAllValuesMissing = false
+        break
+      }
+    }
+    if (areAllValuesMissing) {
+      this.setState({ spinning: true })
+    }
+
+    api.render(wfModuleId, min, max) // +1: of-by-one oddness in API
+      .then(json => {
+        if (this.unmounted) return
+
+        const loadedRows = this.state.loadedRows.slice()
+
+        // expand the Array (filling undefined for missing values in between)
+        loadedRows[json.start_row] = null
+        // add the new rows
+        loadedRows.splice(json.start_row, json.rows.length, ...json.rows)
+
+        this.setState(() => {
+          this.firstMissingRowIndex = null
+          this.scheduleLoadTimeout = null
+
+          return {
+            loadedRows,
+            spinning: false
+          }
+        })
+
+        onLoadPage(wfModuleId, deltaId)
+      })
   }
 
-  componentWillUnmount() {
-    window.removeEventListener("resize", this._resizeListener)
-  }
-
-  // Check if column names are changed between props, used for shouldKeyUpdate
-  columnsChanged (prevProps, nextProps) {
-    const prevColumns = prevProps.columns || null
-    const nextColumns = nextProps.columns || null
-    const prevTypes = prevProps.columnTypes || null
-    const nextTypes = nextProps.columnTypes || null
-
-    if (prevColumns === nextColumns && prevTypes === nextTypes) {
-      return false
-    }
-
-    if (prevColumns === null || nextColumns === null || prevTypes === null || nextTypes === null) {
-      return true
-    }
-
-    if (prevColumns.length !== nextColumns.length) {
-      return true
-    }
-
-    for (let i = 0; i < prevColumns.length; i++) {
-      if (prevColumns[i] !== nextColumns[i] || prevTypes[i] !== nextTypes[i]) {
-        return true
+  componentDidMount () {
+    if (this.props.wfModuleId) {
+      if (this.props.nRows) {
+        this.load()
+      } else {
+        // Indicate to caller that we're loaded
+        this.props.onLoadPage(this.props.wfModuleId, this.props.deltaId)
       }
     }
 
-    return false
+    this._resizeListener = debounce(this.updateSize, 50)
+    window.addEventListener('resize', this._resizeListener)
+    this.updateSize()
   }
 
-  shouldKeyUpdate (prevProps) {
-    if (this.props.sortColumn !== prevProps.sortColumn) {
-      return true
-    }
-    if (this.props.sortDirection !== prevProps.sortDirection) {
-      return true
-    }
-    if (this.props.showLetter !== prevProps.showLetter) {
-      return true
-    }
-    // For some reason, react-data-grid does not change column order
-    // in its output when the column order changes when custom header renderer
-    // is involved, so we bump the key if columns are changed
-    if (this.columnsChanged(prevProps, this.props)) {
-      return true
-    }
-    return false
-  }
-
-  componentDidUpdate (prevProps) {
-    if (this.shouldKeyUpdate(prevProps)) {
-      this.setState({ componentKey: this.state.componentKey + 1 })
-    }
+  componentWillUnmount () {
+    window.removeEventListener('resize', this._resizeListener)
+    this.unmounted = true
   }
 
   onGridRowsUpdated = (data, ...args) => {
@@ -231,19 +269,24 @@ export default class DataGrid extends React.Component {
       const oldValue = String(fromRowData[cellKey])
       const newValue = updated[cellKey]
 
-      if (newValue !== oldValue) {
+      if (newValue !== (oldValue || '')) {
+        // Edit value in-place in loadedRows. This should jive with getRow()
+        // and prevent us from re-rendering the table.
+        this.state.loadedRows[fromRow][cellKey] = newValue
+
+        // Edit on the server and in state.
         this.props.onEditCell(fromRow, cellKey, newValue)
       }
     }
   }
 
   onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
-    const sourceKey = this.props.columns[fromIndex]
-    let reorderInfo = {
-        column: sourceKey,
-        from: fromIndex,
-        to: toIndex,
-      }
+    const sourceKey = this.props.columns[fromIndex].name
+    const reorderInfo = {
+      column: sourceKey,
+      from: fromIndex,
+      to: toIndex,
+    }
 
     this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', false, reorderInfo)
   }
@@ -284,12 +327,36 @@ export default class DataGrid extends React.Component {
     this.props.onSetSelectedRowIndexes(selectedRowIndexes)
   }
 
-  render () {
-    if (!this.props.totalRows) {
-      return null
-    }
+  getRow = (i) => {
+    // Be careful. This gets called during render(), so make sure there's
+    // nothing in its innards that can ever call setState().
+    //
+    // react-data-grid should have the motto: Not For Dynamic Data.
+    const { loadedRows } = this.state
 
-    const { selectedRowIndexes } = this.props
+    if (loadedRows[i]) {
+      return loadedRows[i]
+    } else {
+      // We'll return an empty row for now. But what _else_ will we do?
+      if (!this.props.wfModuleId) {
+        // This is a placeholder table, not a real data table. Don't load.
+      } else if (!this.scheduleLoadTimeout) {
+        this.firstMissingRowIndex = i
+        this.scheduleLoadTimeout = window.setTimeout(() => this.load(), FetchTimeout)
+      } else {
+        // We've already scheduled a load. No-op: when the load returns,
+        // we'll render(), and that will call getRow() again, and that can
+        // schedule the next fetch().
+      }
+
+      // Return something right now, in the meantime
+      return this.emptyRow
+    }
+  }
+
+  render () {
+    const { spinning, gridWidth, gridHeight } = this.state
+    const { selectedRowIndexes, columns, nRows } = this.props
 
     const draggingProps = {
       ...this.props,
@@ -299,26 +366,38 @@ export default class DataGrid extends React.Component {
       onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
       onRenameColumn: this.onRename,
     }
-    const columns = makeFormattedCols(draggingProps)
+    const formattedColumns = makeFormattedCols(draggingProps)
     const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
 
-    return(
-      <ReactDataGridWithThinnerActionsColumn
-        columns={columns}
-        rowActionsCell={RowActionsCell}
-        rowGetter={this.props.getRow}
-        rowsCount={this.props.totalRows}
-        minWidth={this.state.gridWidth - 2}
-        minHeight={this.state.gridHeight - 2}   // -2 because grid has borders, don't want to expand our parent DOM node
-        headerRowHeight={this.props.showLetter ? 68 : 50}
-        enableCellSelect={true}
-        selectAllRenderer={renderNull}
-        onGridRowsUpdated={this.onGridRowsUpdated}
-        enableRowSelect={true}
-        rowRenderer={Row}
-        rowSelection={rowSelection}
-        key={this.state.componentKey}
-      />
+    const maybeSpinner = !spinning ? null : (
+      <div className="spinner-container-transparent">
+        <div className="spinner-l1">
+          <div className="spinner-l2">
+            <div className="spinner-l3"></div>
+          </div>
+        </div>
+      </div>
+    )
+
+    return (
+      <div className='data-grid-sizer' ref={this.sizerRef}>
+        <ReactDataGridWithThinnerActionsColumn
+          columns={formattedColumns}
+          rowActionsCell={RowActionsCell}
+          rowGetter={this.getRow}
+          rowsCount={nRows}
+          minWidth={gridWidth}
+          minHeight={gridHeight}
+          headerRowHeight={this.props.showLetter ? 68 : 50}
+          enableCellSelect={true}
+          selectAllRenderer={renderNull}
+          onGridRowsUpdated={this.onGridRowsUpdated}
+          enableRowSelect={true}
+          rowRenderer={Row}
+          rowSelection={rowSelection}
+        />
+        {maybeSpinner}
+      </div>
     )
   }
 }

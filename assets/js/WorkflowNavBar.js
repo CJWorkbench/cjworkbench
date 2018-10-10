@@ -77,10 +77,10 @@ export default class WorkflowNavBar extends React.Component {
     )
 
     const spinner = this.state.spinnerVisible ? (
-      <div id="spinner-container">
-        <div id="spinner-l1">
-          <div id="spinner-l2">
-            <div id="spinner-l3"></div>
+      <div className="spinner-container">
+        <div className="spinner-l1">
+          <div className="spinner-l2">
+            <div className="spinner-l3"></div>
           </div>
         </div>
       </div>

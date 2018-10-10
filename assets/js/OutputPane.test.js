@@ -24,15 +24,15 @@ describe('OutputPane', () => {
     expect(w).toMatchSnapshot()
   })
 
-  it('renders a TableView', () => {
+  it('renders a TableSwitcher', () => {
     const w = wrapper()
-    expect(w.find('TableView')).toHaveLength(1)
+    expect(w.find('TableSwitcher')).toHaveLength(1)
   })
 
   it('renders when no module id', () => {
     const w = wrapper({ wfModule: null })
     expect(w).toMatchSnapshot()
-    expect(w.find('TableView')).toHaveLength(1)
+    expect(w.find('TableSwitcher')).toHaveLength(1)
   })
 
   it('renders an iframe when htmlOutput', () => {
@@ -51,8 +51,8 @@ describe('OutputPane', () => {
       wfModuleBeforeError: { id: 1, deltaId: 2, status: 'ok', htmlOutput: true },
       wfModule: { id: 3, deltaId: 4, status: 'error', htmlOutput: true }
     })
-    expect(w.find('TableView').prop('wfModuleId')).toEqual(1)
-    expect(w.find('TableView').prop('deltaId')).toEqual(2)
+    expect(w.find('TableSwitcher').prop('wfModuleId')).toEqual(1)
+    expect(w.find('TableSwitcher').prop('deltaId')).toEqual(2)
     expect(w.text()).toMatch(/This was the data that led to an error./)
     expect(w.find(OutputIframe).prop('wfModuleId')).toEqual(3)
     expect(w.find(OutputIframe).prop('deltaId')).toEqual(4)

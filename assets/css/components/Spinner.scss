@@ -1,6 +1,6 @@
 /* --------Preloader/spinner------*/
 
-#spinner-container {
+.spinner-container {
   position: absolute;
   top:0;
   left:0;
@@ -14,7 +14,7 @@
 }
 
 /* don't dim contents underneath */
-#spinner-container-transparent {
+.spinner-container-transparent {
   position: absolute;
   top:0;
   left:0;
@@ -26,7 +26,7 @@
   z-index: 1000;
 }
 
-#spinner-l1 {
+.spinner-l1 {
     width: 50px;
     height: 50px;
     display: flex;
@@ -39,7 +39,7 @@
     animation: spin 1s linear infinite;
 }
 
-#spinner-l2 {
+.spinner-l2 {
     width: 40px;
     height: 40px;
     display: flex;
@@ -52,7 +52,7 @@
 
 }
 
-#spinner-l3 {
+.spinner-l3 {
     width: 30px;
     height: 30px;
     display: flex;

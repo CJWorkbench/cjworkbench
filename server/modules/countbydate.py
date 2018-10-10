@@ -319,7 +319,7 @@ class CountByDate(ModuleImpl):
     @staticmethod
     def render(params, table, **kwargs):
         if table is None or table.empty:
-            return ProcessResult()
+            return table
 
         try:
             form = Form.parse(params.to_painful_dict(table))

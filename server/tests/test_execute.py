@@ -118,6 +118,7 @@ class ExecuteTests(DbTestCase):
                     'status': 'unreachable',
                     'quick_fixes': [],
                     'output_columns': [],
+                    'output_n_rows': 0,
                     'last_relevant_delta_id':
                     wf_module3.last_relevant_delta_id,
                     'cached_render_result_delta_id':

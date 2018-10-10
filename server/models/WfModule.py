@@ -389,21 +389,6 @@ class WfModule(models.Model):
         """Save the given ProcessResult (or None) for later viewing."""
         return CachedRenderResult.assign_wf_module(self, delta_id, result)
 
-    def get_cached_output_columns(self) -> List[Column]:
-        """
-        If the cached result is valid, return a list of columns.
-
-        This doesn't instantiate any DataFrames, so it's cheap. (It does read
-        a file header from disk, though.)
-        """
-        cached_result = self.get_cached_render_result()
-        if not cached_result:
-            return None
-        if cached_result.delta_id != self.last_relevant_delta_id:
-            return None
-
-        return cached_result.columns
-
     def delete(self, *args, **kwargs):
         self.cache_render_result(None, None)
         super().delete(*args, **kwargs)

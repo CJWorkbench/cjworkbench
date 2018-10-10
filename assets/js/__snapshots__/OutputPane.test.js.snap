@@ -12,7 +12,7 @@ exports[`OutputPane matches snapshot 1`] = `
     wfModuleId={987}
     workflowId={123}
   />
-  <TableView
+  <TableSwitcher
     api={Object {}}
     deltaId={1}
     isReadOnly={false}
@@ -35,11 +35,13 @@ exports[`OutputPane renders when no module id 1`] = `
     wfModuleId={null}
     workflowId={123}
   />
-  <TableView
+  <TableSwitcher
     api={Object {}}
-    deltaId={-1}
+    columns={null}
+    deltaId={null}
     isReadOnly={false}
     key="table"
+    nRows={null}
     showColumnLetter={false}
     wfModuleId={null}
   />

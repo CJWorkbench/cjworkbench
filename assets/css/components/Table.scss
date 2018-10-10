@@ -62,7 +62,40 @@
     }
   }
 
+  .table-switcher {
+    height: 100%;
+    position: relative;
+
+    &>* {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    &.has-loaded .loading-table {
+      // Hide the DataGrid of the loading table: we'll show the current table
+      // instead.
+      .react-grid-Container {
+        pointer-events: none;
+        opacity: 0;
+      }
+    }
+
+    &.has-loading .loaded-table {
+      // Subtly fade out old data. The user doesn't want it.
+      opacity: .9;
+    }
+
+    .loading-table .spinner-container-transparent {
+      // .loading-table gets its own spinner; we don't need a second.
+      display: none;
+    }
+  }
+
   .outputpane-table {
+    height: 100%;
     position: relative;
     flex: 1 1 auto;
     display: flex;
@@ -71,6 +104,14 @@
     .outputpane-data {
       flex: 1 1 auto; // consume maximum height (unlike header, which is fixed-height)
       position: relative; // for .react-grid-Container
+
+      .data-grid-sizer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
 
       // DataGrid is the heaviest DOM tree we have, and it effects the
       // performance of the custom drag layer (and probably everything else). By
