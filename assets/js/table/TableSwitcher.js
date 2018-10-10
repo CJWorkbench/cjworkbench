@@ -75,10 +75,10 @@ export default class TableSwitcher extends React.PureComponent {
       wfModuleId: null,
       deltaId: null,
       columns: [
-        { name: ' ', type: '' },
-        { name: '  ', type: '' },
-        { name: '   ', type: '' },
-        { name: '    ', type: '' }
+        { name: ' ', type: 'text' },
+        { name: '  ', type: 'text' },
+        { name: '   ', type: 'text' },
+        { name: '    ', type: 'text' }
       ],
       nRows: 10,
       showColumnLetter: false
