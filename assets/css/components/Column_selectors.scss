@@ -40,7 +40,6 @@
 //carret container
 .css-1rtrksz.react-select__value-container {
   cursor: text;
-  height: 3rem;
 
   // Carret to open menu
   .css-1ep9fjw.react-select__indicator,
@@ -143,6 +142,7 @@
   border-radius: 3px;
   border: 1px solid $brand-orange;
   background-color: $brand-orange--light;
+  margin: 0;
 
   .react-select__multi-value__label {
     @extend .content-3;
