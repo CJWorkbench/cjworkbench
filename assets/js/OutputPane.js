@@ -2,7 +2,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import TableView from './table/TableView'
+import TableSwitcher from './table/TableSwitcher'
 import OutputIframe from './OutputIframe'
 import debounce from 'debounce'
 import { connect } from 'react-redux'
@@ -40,14 +40,14 @@ export class OutputPane extends React.Component {
     sortDirection: PropTypes.number
   }
 
-  renderTableView () {
+  renderTable() {
     const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
 
     const wfm = wfModuleBeforeError ? wfModuleBeforeError : wfModule // may be null
 
     // Make a table component even if no module ID (should still show an empty table)
     return (
-      <TableView
+      <TableSwitcher
         key='table'
         wfModuleId={wfm ? wfm.id : null}
         deltaId={wfm ? wfm.deltaId : null}
@@ -116,7 +116,7 @@ export class OutputPane extends React.Component {
       <div className={className}>
         {this.renderOutputIFrame()}
         {this.renderShowingInput()}
-        {this.renderTableView()}
+        {this.renderTable()}
       </div>
     )
   }

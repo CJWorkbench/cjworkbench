@@ -3,7 +3,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
-import { jsonResponseMock, sleep, tick } from '../test-utils'
+import { sleep, tick } from '../test-utils'
 import TableView, { NRowsPerPage, FetchTimeout, NMaxColumns } from './TableView'
 import DataGrid from './DataGrid'
 
@@ -54,7 +54,8 @@ describe('TableView', () => {
         showColumnLetter={false}
         isReadOnly={false}
         wfModuleId={100}
-        lastRelevantDeltaId={1}
+        deltaId={1}
+        onLoadPage={jest.fn()}
         columns={[
           { name: 'a', type: 'number' },
           { name: 'b', type: 'number' },
@@ -72,24 +73,23 @@ describe('TableView', () => {
 
   // Mocks json response (promise) returning part of a larger table
   function makeRenderResponse (start, end, totalRows) {
-    let nRows = end - start - 1
-    let data = {
+    const nRows = end - start - 1
+    const data = {
       start_row: start,
       end_row: end,
       rows: Array(nRows).fill({ a: 1, b: 2, c: 3 })
     }
-    return jsonResponseMock(data)
+    return jest.fn(() => Promise.resolve(data))
   }
-
 
   it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', async () => {
     const api = { render: makeRenderResponse(0, 3, 1000) }
     const tree = wrapper({ api, nRows: 1000 })
 
-    await tick() // let rows load
+    await tick(); tree.update() // let rows load
 
     // should have called API for its data, and loaded it
-    expect(api.render).toHaveBeenCalledWith(100, 0, NRowsPerPage + 1)
+    expect(api.render).toHaveBeenCalledWith(100, 0, 200)
 
     // Header etc should be here
     expect(tree.find('.outputpane-header')).toHaveLength(1)
@@ -136,128 +136,7 @@ describe('TableView', () => {
     // And we can see it did not call api.render, because that does not exist
   })
 
-  it('lazily loads rows as needed', async () => {
-    const totalRows = 100000
-    const api = {
-      render: makeRenderResponse(0, 201, totalRows) // response to expected first call
-    }
-
-    const tree = wrapper({ api })
-
-    // Should load 0..initialRows at first
-    expect(api.render).toHaveBeenCalledWith(100, 0, 201)
-
-    await tick() // let rows load
-
-    // force load by reading past initialRows
-    api.render = makeRenderResponse(412, 613, totalRows)
-    const row = tree.find(TableView).instance().getRow(412)
-
-    // a row we haven't loaded yet should be blank
-    expect(row).toEqual({ '': '', ' ': '', '  ': '', '   ': '' })
-
-    // Be careful about a race in this test. We've _started_ a timeout of
-    // FetchTimeout ms, but if we simply schedule another timeout for
-    // (FetchTimeout+1)ms, we risk the second timeout happening before the
-    // first. We can make the race _far_ less likely to stimy us by sleeping
-    // _after_ the initial FetchTimeout ms are done.
-    await sleep(FetchTimeout) // executes the next line around the same time as api.render()
-    await sleep(4) // makes sure the next line comes _after_ api.render()
-
-    expect(api.render).toHaveBeenCalledWith(100, 412, 613)
-  })
-
-  //it('keeps previous rows when loading new rows', async () => {
-  //  const data1 = {
-  //    start_row: 0,
-  //    end_row: 2,
-  //    rows: [
-  //      { A: 1, B: 2 },
-  //      { A: 3, B: 4 }
-  //    ]
-  //  }
-
-  //  const data2 = {
-  //    start_row: 0,
-  //    end_row: 2,
-  //    rows: [
-  //      { C: 5, D: 6 },
-  //      { C: 7, D: 8 }
-  //    ]
-  //  }
-
-  //  const render = jest.fn()
-  //    .mockReturnValueOnce(Promise.resolve(data1))
-  //    .mockReturnValueOnce(Promise.resolve(data2))
-
-  //  const api = { render }
-
-  //  const tree = wrapper({
-  //    api,
-  //    columns: [ { name: 'A', type: 'number' }, { name: 'B', type: 'number' } ],
-  //    nRows: 4
-  //  })
-  //  await tick()
-
-  //  expect(tree.text()).toMatch(/JSON FEED.*A.*B/)
-  //  expect(tree.text()).toMatch(/3.*4/)
-
-  //  // Select the last row
-  //  tree.find('input[name="row-selected-1"]').simulate('change', { target: { checked: true } })
-  //  tree.update()
-  //  expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(1)
-
-  //  tree.setProps({
-  //    wfModuleId: 101,
-  //    lastRelevantDeltaId: 2,
-  //  })
-  //  tree.update()
-  //  // Previous data remains
-  //  expect(tree.text()).toMatch(/A.*B/)
-  //  expect(tree.text()).toMatch(/3.*4/)
-  //  expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
-  //  // ... except the selection, which is gone
-  //  expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(0)
-
-  //  await tick()
-  //  tree.update()
-
-  //  // Now it's new data
-  //  expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
-  //  expect(tree.text()).not.toMatch(/A.*B/)
-  //  expect(api.render).toHaveBeenCalledWith(101, 0, 201)
-  //  expect(tree.text()).toMatch(/JSON FEED.*C.*D/)
-  //  expect(tree.text()).toMatch(/5.*7/)
-  //  // ... and the selection is still gone
-  //  expect(tree.find('.react-grid-Row.row-selected')).toHaveLength(0)
-  //})
-
-  //it('passes the the right sortColumn, sortDirection to DataGrid', async () => {
-  //  const testData = {
-  //    start_row: 0,
-  //    end_row: 2,
-  //    rows: [
-  //      { a: 1, b: 2, c: 3 },
-  //      { a: 4, b: 5, c: 6 }
-  //    ]
-  //  }
-
-  //  const api = { render: jsonResponseMock(testData) }
-
-  //  // Try a mount with the sort module selected, should have sortColumn and sortDirection
-  //  const tree = wrapper({
-  //    api,
-  //    sortColumn: 'b',
-  //    sortDirection: sortDirectionDesc
-  //  })
-
-  //  await tick() // wait for rows to load
-  //  tree.update()
-  //  const dataGrid = tree.find(DataGrid)
-  //  expect(dataGrid.prop('sortColumn')).toBe('b')
-  //  expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc)
-  //})
-
+  // TODO move this to DataGrid.js:
   //it('shows a spinner on initial load', async () => {
   //  const testData = {
   //    start_row: 0,
@@ -268,7 +147,7 @@ describe('TableView', () => {
   //    ]
   //  }
 
-  //  const api = { render: jsonResponseMock(testData) }
+  //  const api = { render: jest.fn(() => Promise.resolve(testData)) }
   //  const tree = wrapper({ api })
 
   //  expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
@@ -287,7 +166,7 @@ describe('TableView', () => {
       ]
     }
 
-    const api = { render: jsonResponseMock(testData) }
+    const api = { render: jest.fn(() => Promise.resolve(testData)) }
     const tree = wrapper({ api, showColumnLetter: true })
 
     await tick() // wait for rows to load
@@ -297,13 +176,14 @@ describe('TableView', () => {
     expect(dataGrid.prop('showLetter')).toBe(true)
   })
 
-  it('should not allow more than 100 columns to display', async () => {
+  it('renders a message (and no table) when >100 columns', async () => {
+    // This is because react-data-grid is so darned slow to render columns
     const columns = []
     for (let i = 0; i < 101; i++) {
       columns[i] = { name: String(i), type: 'number' }
     }
 
-    const api = { render: jsonResponseMock({}) }
+    const api = { render: jest.fn() }
     const tree = wrapper({ api, columns })
 
     const overlay = tree.find('.overlay')

@@ -226,7 +226,7 @@ def wfmodule_render(request, pk, format=None):
         cached_result = wf_module.get_cached_render_result()
         if not cached_result:
             # assume we'll get another request after execute finishes
-            return JsonResponse({})
+            return JsonResponse({'start_row': 0, 'end_row': 0, 'rows': []})
 
         startrow, endrow, rows_string = _make_render_tuple(cached_result,
                                                            startrow, endrow)
