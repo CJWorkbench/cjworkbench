@@ -2,9 +2,9 @@
 
 .workflows-page {
 
-  .container {height: 100vh;}
+  .container { height: 100vh; }
 
-  a {text-decoration: none;}
+  a { text-decoration: none; }
 
   .lesson-banner {
     width:32rem;
@@ -16,6 +16,7 @@
     display: block;
     margin:4rem;
     padding:1.5rem;
+
     &:hover {
       background-color: $brand-learn--light;
     }
@@ -103,6 +104,7 @@
 
       .workflow-title {
         @extend .title-4;
+        font-size: 1.4rem;
         margin-bottom: .5rem;
         color:$brand-text--dark;
       }

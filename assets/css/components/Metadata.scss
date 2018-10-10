@@ -1,13 +1,13 @@
 // Metadata line for workflow list and workflow pages
 
 //  WF list
-.metadata-container{
+.metadata-container {
   margin-bottom: 0;
   display: flex;
   padding-left: 0;
   list-style: none;
   cursor: pointer;
-  color:$labels;
+  color: $dark-gray;
   @extend .content-3;
 
   .separator {
@@ -26,6 +26,7 @@ button.public-private {
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  color: $brand-workspace;
 
   nav .metadata-container & {
     color: white;
