@@ -27,8 +27,9 @@ exports[`ColumnParam matches snapshot 1`] = `
     defaultInputValue=""
     defaultMenuIsOpen={false}
     defaultValue={null}
-    isClearable={true}
+    isClearable={false}
     isDisabled={false}
+    isLoading={false}
     menuPortalTarget={<body />}
     name="col"
     onChange={[Function]}
@@ -69,7 +70,7 @@ exports[`ColumnParam matches snapshot 1`] = `
       getOptionLabel={[Function]}
       getOptionValue={[Function]}
       inputValue=""
-      isClearable={true}
+      isClearable={false}
       isDisabled={false}
       isLoading={false}
       isMulti={false}
@@ -171,7 +172,7 @@ exports[`ColumnParam matches snapshot 1`] = `
             "getOptionLabel": [Function],
             "getOptionValue": [Function],
             "inputValue": "",
-            "isClearable": true,
+            "isClearable": false,
             "isDisabled": false,
             "isLoading": false,
             "isMulti": false,
@@ -278,7 +279,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                 "getOptionLabel": [Function],
                 "getOptionValue": [Function],
                 "inputValue": "",
-                "isClearable": true,
+                "isClearable": false,
                 "isDisabled": false,
                 "isLoading": false,
                 "isMulti": false,
@@ -378,7 +379,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
                     "inputValue": "",
-                    "isClearable": true,
+                    "isClearable": false,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -477,7 +478,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                         "getOptionLabel": [Function],
                         "getOptionValue": [Function],
                         "inputValue": "",
-                        "isClearable": true,
+                        "isClearable": false,
                         "isDisabled": false,
                         "isLoading": false,
                         "isMulti": false,
@@ -685,7 +686,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
                     "inputValue": "",
-                    "isClearable": true,
+                    "isClearable": false,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -784,7 +785,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                         "getOptionLabel": [Function],
                         "getOptionValue": [Function],
                         "inputValue": "",
-                        "isClearable": true,
+                        "isClearable": false,
                         "isDisabled": false,
                         "isLoading": false,
                         "isMulti": false,
@@ -891,7 +892,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                         "getOptionLabel": [Function],
                         "getOptionValue": [Function],
                         "inputValue": "",
-                        "isClearable": true,
+                        "isClearable": false,
                         "isDisabled": false,
                         "isLoading": false,
                         "isMulti": false,

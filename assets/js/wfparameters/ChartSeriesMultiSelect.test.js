@@ -35,10 +35,10 @@ describe('ChartSeriesMultiSelect', () => {
     ])
   })
 
-  it('should add a column', () => {
+  it('should add a column', async () => {
     const w = wrapper()
     w.find('button[title="add another column"]').simulate('click')
-    w.find('ChartSeriesSelect').at(2).find('Select[name="column"]').at(0).props().onChange({ value: 'C' })
+    w.find('ChartSeriesSelect').at(2).find('ColumnParam').at(0).props().onChange({ value: 'C' })
     expect(w.prop('onChange')).toHaveBeenCalledWith([
       { column: 'A', color: '#aaaaaa' },
       { column: 'B', color: '#bbbbbb' },

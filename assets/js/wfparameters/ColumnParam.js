@@ -20,37 +20,33 @@ export default class ColumnParam extends React.PureComponent {
   }
 
   render() {
-    const {allColumns, prompt, value} = this.props
-    let className = "react-select"
-    let columnOptions
+    const { allColumns, isReadOnly, prompt, name, value } = this.props
+    const isLoading = (allColumns === null)
+
+    let className = 'react-select'
+    if (isLoading) className += ' loading'
 
     // Set dropdown list to 1 option of 'loading' as we wait. When clicked, onChange passes null to callback
-    if (allColumns === null) {
-      className += ' loading'
-      columnOptions = [
-        {
-          label: 'loading',
-          value: ''
-        }
-      ]}
-    else {
-      columnOptions = allColumns.map(column => (
-        {
-          label: column.name,
-          value: column.name
-        }
-      ))
-    }
+    const columnOptions = (allColumns || []).map(column => (
+      {
+        label: column.name,
+        value: column.name
+      }
+    ))
+    const selectedOption = columnOptions.find(c => c.value === value)
+
     // Keeping classNamePrefix since CSS definitions already exist
     return (
       <Select
-        name={this.props.name}
+        name={name}
         options={columnOptions}
+        value={selectedOption}
+        isLoading={isLoading}
         className={className}
-        classNamePrefix="react-select"
+        classNamePrefix='react-select'
         menuPortalTarget={document.body}
         onChange={this.onChange}
-        isClearable={true}
+        isClearable={false}
         isDisabled={this.props.isReadOnly}
         placeholder={prompt || 'Select'}
       />

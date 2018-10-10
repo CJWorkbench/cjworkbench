@@ -87,8 +87,9 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
           defaultInputValue=""
           defaultMenuIsOpen={false}
           defaultValue={null}
-          isClearable={true}
+          isClearable={false}
           isDisabled={false}
+          isLoading={false}
           menuPortalTarget={<body />}
           name="column"
           onChange={[Function]}
@@ -105,6 +106,12 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
             ]
           }
           placeholder="prompt"
+          value={
+            Object {
+              "label": "foo",
+              "value": "foo",
+            }
+          }
         >
           <Select
             backspaceRemovesValue={true}
@@ -125,7 +132,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
             getOptionLabel={[Function]}
             getOptionValue={[Function]}
             inputValue=""
-            isClearable={true}
+            isClearable={false}
             isDisabled={false}
             isLoading={false}
             isMulti={false}
@@ -167,7 +174,12 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
             styles={Object {}}
             tabIndex="0"
             tabSelectsValue={true}
-            value={null}
+            value={
+              Object {
+                "label": "foo",
+                "value": "foo",
+              }
+            }
           >
             <SelectContainer
               className="react-select"
@@ -175,7 +187,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
               cx={[Function]}
               getStyles={[Function]}
               getValue={[Function]}
-              hasValue={false}
+              hasValue={true}
               innerProps={
                 Object {
                   "id": undefined,
@@ -219,7 +231,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                   "getOptionLabel": [Function],
                   "getOptionValue": [Function],
                   "inputValue": "",
-                  "isClearable": true,
+                  "isClearable": false,
                   "isDisabled": false,
                   "isLoading": false,
                   "isMulti": false,
@@ -259,7 +271,10 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                   "styles": Object {},
                   "tabIndex": "0",
                   "tabSelectsValue": true,
-                  "value": null,
+                  "value": Object {
+                    "label": "foo",
+                    "value": "foo",
+                  },
                 }
               }
               setValue={[Function]}
@@ -273,7 +288,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                   cx={[Function]}
                   getStyles={[Function]}
                   getValue={[Function]}
-                  hasValue={false}
+                  hasValue={true}
                   innerProps={
                     Object {
                       "onMouseDown": [Function],
@@ -318,7 +333,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                       "getOptionLabel": [Function],
                       "getOptionValue": [Function],
                       "inputValue": "",
-                      "isClearable": true,
+                      "isClearable": false,
                       "isDisabled": false,
                       "isLoading": false,
                       "isMulti": false,
@@ -358,7 +373,10 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                       "styles": Object {},
                       "tabIndex": "0",
                       "tabSelectsValue": true,
-                      "value": null,
+                      "value": Object {
+                        "label": "foo",
+                        "value": "foo",
+                      },
                     }
                   }
                   setValue={[Function]}
@@ -373,7 +391,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                       cx={[Function]}
                       getStyles={[Function]}
                       getValue={[Function]}
-                      hasValue={false}
+                      hasValue={true}
                       isDisabled={false}
                       isMulti={false}
                       isRtl={false}
@@ -410,7 +428,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
                           "inputValue": "",
-                          "isClearable": true,
+                          "isClearable": false,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -450,24 +468,32 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           "styles": Object {},
                           "tabIndex": "0",
                           "tabSelectsValue": true,
-                          "value": null,
+                          "value": Object {
+                            "label": "foo",
+                            "value": "foo",
+                          },
                         }
                       }
                       setValue={[Function]}
                     >
                       <div
-                        className="css-1rtrksz react-select__value-container"
+                        className="css-1rtrksz react-select__value-container react-select__value-container--has-value"
                       >
-                        <Placeholder
+                        <SingleValue
                           clearValue={[Function]}
                           cx={[Function]}
+                          data={
+                            Object {
+                              "label": "foo",
+                              "value": "foo",
+                            }
+                          }
                           getStyles={[Function]}
                           getValue={[Function]}
-                          hasValue={false}
+                          hasValue={true}
                           isDisabled={false}
                           isMulti={false}
                           isRtl={false}
-                          key="placeholder"
                           options={
                             Array [
                               Object {
@@ -501,7 +527,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                               "getOptionLabel": [Function],
                               "getOptionValue": [Function],
                               "inputValue": "",
-                              "isClearable": true,
+                              "isClearable": false,
                               "isDisabled": false,
                               "isLoading": false,
                               "isMulti": false,
@@ -541,17 +567,20 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                               "styles": Object {},
                               "tabIndex": "0",
                               "tabSelectsValue": true,
-                              "value": null,
+                              "value": Object {
+                                "label": "foo",
+                                "value": "foo",
+                              },
                             }
                           }
                           setValue={[Function]}
                         >
                           <div
-                            className="css-1492t68 react-select__placeholder"
+                            className="css-va7pk8 react-select__single-value"
                           >
-                            prompt
+                            foo
                           </div>
-                        </Placeholder>
+                        </SingleValue>
                         <Input
                           aria-autocomplete="list"
                           autoCapitalize="none"
@@ -664,7 +693,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                       cx={[Function]}
                       getStyles={[Function]}
                       getValue={[Function]}
-                      hasValue={false}
+                      hasValue={true}
                       isDisabled={false}
                       isMulti={false}
                       isRtl={false}
@@ -701,7 +730,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
                           "inputValue": "",
-                          "isClearable": true,
+                          "isClearable": false,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -741,7 +770,10 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           "styles": Object {},
                           "tabIndex": "0",
                           "tabSelectsValue": true,
-                          "value": null,
+                          "value": Object {
+                            "label": "foo",
+                            "value": "foo",
+                          },
                         }
                       }
                       setValue={[Function]}
@@ -754,7 +786,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           cx={[Function]}
                           getStyles={[Function]}
                           getValue={[Function]}
-                          hasValue={false}
+                          hasValue={true}
                           isDisabled={false}
                           isFocused={false}
                           isMulti={false}
@@ -792,7 +824,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                               "getOptionLabel": [Function],
                               "getOptionValue": [Function],
                               "inputValue": "",
-                              "isClearable": true,
+                              "isClearable": false,
                               "isDisabled": false,
                               "isLoading": false,
                               "isMulti": false,
@@ -832,7 +864,10 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                               "styles": Object {},
                               "tabIndex": "0",
                               "tabSelectsValue": true,
-                              "value": null,
+                              "value": Object {
+                                "label": "foo",
+                                "value": "foo",
+                              },
                             }
                           }
                           setValue={[Function]}
@@ -846,7 +881,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           cx={[Function]}
                           getStyles={[Function]}
                           getValue={[Function]}
-                          hasValue={false}
+                          hasValue={true}
                           innerProps={
                             Object {
                               "aria-hidden": "true",
@@ -891,7 +926,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                               "getOptionLabel": [Function],
                               "getOptionValue": [Function],
                               "inputValue": "",
-                              "isClearable": true,
+                              "isClearable": false,
                               "isDisabled": false,
                               "isLoading": false,
                               "isMulti": false,
@@ -931,7 +966,10 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                               "styles": Object {},
                               "tabIndex": "0",
                               "tabSelectsValue": true,
-                              "value": null,
+                              "value": Object {
+                                "label": "foo",
+                                "value": "foo",
+                              },
                             }
                           }
                           setValue={[Function]}
@@ -969,7 +1007,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                 <input
                   name="column"
                   type="hidden"
-                  value=""
+                  value="foo"
                 />
               </div>
             </SelectContainer>

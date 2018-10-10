@@ -28,9 +28,8 @@ describe('ColumnParam', () => {
     const w = wrapper({value: 'A', prompt: 'Prompt!', allColumns: null})
 
     // dropdown has 1 option, prompt as placeholder
-    let select = w.find('Select')
-    expect(select.prop('options')).toHaveLength(1)
-    expect(select.prop('options')[0].label).toBe('loading')
+    const select = w.find('Select')
+    expect(select.prop('isLoading')).toBe(true)
     expect(select.prop('placeholder')).toBe('Prompt!')
   })
 
