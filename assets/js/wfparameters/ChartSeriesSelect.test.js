@@ -41,7 +41,7 @@ describe('ChartSeriesSelect', () => {
 
   it('should change column', () => {
     const w = wrapper()
-    w.find('Select[name="column"]').at(0).props().onChange({ value: 'bar' })
+    w.find('ColumnParam').at(0).prop('onChange')('bar')
     expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'bar', color: '#abcdef' })
   })
 
@@ -64,7 +64,7 @@ describe('ChartSeriesSelect', () => {
     w.find('div[title="#fbaa6d"]').simulate('click')
     await sleepThroughDebounce()
     expect(w.prop('onChange')).not.toHaveBeenCalled()
-    w.find('Select[name="column"]').at(0).props().onChange({ value: 'bar' })
+    w.find('ColumnParam[name="column"]').at(0).prop('onChange')('bar')
     expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'bar', color: '#fbaa6d' })
   })
 })

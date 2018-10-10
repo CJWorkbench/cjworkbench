@@ -18,7 +18,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
     availableColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     })), // or null if not loaded
-    onChange: PropTypes.func.isRequired, // func(index, column) => undefined
+    onChange: PropTypes.func.isRequired, // func({ index, column, color }) => undefined
   }
 
   state = {
