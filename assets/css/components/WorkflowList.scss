@@ -37,14 +37,15 @@
 
   }
 
-  .action-button {height: 4rem;}
-
   .button-blue:hover {
     background-color: $light-accent--strong;
   }
 
   .new-workflow-button {
-    margin-top: 2rem;
+    height: 4rem;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+
     &:active {
       background-color: $light-accent--Vstrong;
       color:$brand-workspace;
