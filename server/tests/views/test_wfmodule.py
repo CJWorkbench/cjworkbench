@@ -32,30 +32,20 @@ test_data = pd.DataFrame({
 
 
 test_data_json = {
-    'total_rows': 4,
     'start_row': 0,
     'end_row': 4,
-    'columns': ['Class', 'M', 'F'],
     'rows': [
         {'Class': 'math', 'F': 12, 'M': 10.0},
         {'Class': 'english', 'F': 7, 'M': None},
         {'Class': 'history', 'F': 13, 'M': 11.0},
         {'Class': 'economics', 'F': 20, 'M': 20.0}
     ],
-    'column_types': [
-        'text',
-        'number',
-        'number'
-    ]
 }
 
 empty_data_json = {
-    'total_rows': 0,
     'start_row': 0,
     'end_row': 0,
-    'columns': [],
     'rows': [],
-    'column_types': [],
 }
 
 
@@ -178,8 +168,6 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/%d/render' %
                                    self.wf_module2.id)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['column_types'],
-                         ['number'])
 
     def test_max_columns_returned(self):
         # Only at most 101 columns should be returned to the client
@@ -197,8 +185,6 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         # Max 101 columns of data
         self.assertEqual(len(json.loads(response.content)['rows'][0]), 101)
-        # Retain column header length for correct sum of columns
-        self.assertEqual(len(json.loads(response.content)['columns']), 102)
 
     def test_wf_module_render(self):
         self.wf_module2.cache_render_result(2, ProcessResult(test_data))
