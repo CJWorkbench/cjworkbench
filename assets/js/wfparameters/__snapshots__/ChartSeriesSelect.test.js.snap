@@ -34,34 +34,56 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
         <div
           className="input-group-prepend"
         >
-          <Button
-            className="color-picker button color"
-            color="secondary"
-            onClick={[Function]}
-            style={
-              Object {
-                "background": "#abcdef",
-              }
+          <ColorPicker
+            choices={
+              Array [
+                "#e24f4a",
+                "#ffaad3",
+                "#fbaa6d",
+                "#48c8d7",
+                "#2daaa8",
+                "#769bb0",
+                "#a2a2a2",
+              ]
             }
-            tag="button"
-            title="Pick color"
+            name="color"
+            onChange={[Function]}
+            value="#abcdef"
           >
-            <button
-              className="color-picker button color btn btn-secondary"
-              onClick={[Function]}
-              style={
-                Object {
-                  "background": "#abcdef",
-                }
-              }
-              title="Pick color"
-              type="button"
+            <div
+              className="color-picker"
             >
-              <i
-                className="color-picker"
-              />
-            </button>
-          </Button>
+              <Button
+                className="color-picker button color"
+                color="secondary"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "background": "#abcdef",
+                  }
+                }
+                tag="button"
+                title="Pick color"
+              >
+                <button
+                  aria-label={null}
+                  className="color-picker button color btn btn-secondary"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "background": "#abcdef",
+                    }
+                  }
+                  title="Pick color"
+                  type="button"
+                >
+                  <i
+                    className="color-picker"
+                  />
+                </button>
+              </Button>
+            </div>
+          </ColorPicker>
         </div>
       </InputGroupAddon>
       <ColumnParam

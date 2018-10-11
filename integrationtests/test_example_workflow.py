@@ -35,6 +35,8 @@ class TestExampleWorkflow(WorkbenchBase):
         # Wait for the _final_ output to load -- which means the "baz" column
         # will not be there.
         b.assert_no_element('.column-key', text='baz', wait=True)
+        # Wait for the _data_ to load -- not just the headers
+        b.assert_element('.react-grid-Cell', text='2', wait=True)
 
         url = b.get_url()
 

@@ -3,6 +3,7 @@ import datetime
 import pandas
 from server.tests.utils import DbTestCase
 from server.models import Workflow, WfModule
+from server.models.Commands import InitWorkflowCommand
 from server.modules.types import Column, ProcessResult, QuickFix
 
 
@@ -148,13 +149,33 @@ class CachedRenderResultTests(DbTestCase):
 
         self.assertIsNone(self.wf_module.get_cached_render_result())
 
-    def test_duplicate_does_not_copy_cache(self):
+    def test_duplicate_copies_fresh_cache(self):
         # The cache's filename depends on workflow_id and wf_module_id.
         # Duplicating it would need more complex code :).
         result = ProcessResult(pandas.DataFrame({'a': [1]}))
+        self.wf_module.last_relevant_delta_id = 2
         self.wf_module.cache_render_result(2, result)
         self.wf_module.save()
 
         workflow2 = Workflow.objects.create()
+        InitWorkflowCommand.create(workflow2)
         dup = self.wf_module.duplicate(workflow2)
-        self.assertIsNone(dup.get_cached_render_result())
+
+        dup_cached_result = dup.get_cached_render_result()
+        self.assertIsNotNone(dup_cached_result)
+        self.assertEqual(dup_cached_result.result, result)
+
+    def test_duplicate_ignores_stale_cache(self):
+        # The cache's filename depends on workflow_id and wf_module_id.
+        # Duplicating it would need more complex code :).
+        result = ProcessResult(pandas.DataFrame({'a': [1]}))
+        self.wf_module.last_relevant_delta_id = 1
+        self.wf_module.cache_render_result(2, result)
+        self.wf_module.save()
+
+        workflow2 = Workflow.objects.create()
+        InitWorkflowCommand.create(workflow2)
+        dup = self.wf_module.duplicate(workflow2)
+
+        dup_cached_result = dup.get_cached_render_result()
+        self.assertIsNone(dup_cached_result)

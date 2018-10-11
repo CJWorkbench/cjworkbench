@@ -1,4 +1,6 @@
 import json
+import os
+import shutil
 from typing import List, Optional
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -351,7 +353,8 @@ class WfModule(models.Model):
     # --- Duplicate ---
     # used when duplicating a whole workflow
     def duplicate(self, to_workflow):
-        new_wfm = WfModule.objects.create(
+        # Initialize but don't save
+        new_wfm = WfModule(
             workflow=to_workflow,
             module_version=self.module_version,
             fetch_error=self.fetch_error,
@@ -363,14 +366,51 @@ class WfModule(models.Model):
             next_update=self.next_update,
             update_interval=self.update_interval,
             last_update_check=self.last_update_check,
-            cached_render_result_workflow_id=None,
-            cached_render_result_delta_id=None,
-            cached_render_result_error='',
-            cached_render_result_json=b'null'
+            # to_workflow has exactly one delta, and that's the version of all
+            # its modules. This is so we can cache render results. (Cached
+            # render results require a delta ID.)
+            last_relevant_delta_id=to_workflow.last_delta_id
         )
 
+        # Copy cached render result, if there is one.
+        #
+        # If we duplicate a Workflow mid-render, the cached render result might
+        # not have any useful data. But that's okay: just kick off a new
+        # render. The common case (all-rendered Workflow) will produce a
+        # fully-rendered duplicate Workflow.
+        #
+        # get_cached_render_result() does not check for the existence of
+        # Parquet files. But it does let us access `.parquet_path`.
+        cached_result = self.get_cached_render_result(only_fresh=True)
+        if cached_result:
+            # assuming file-copy succeeds, copy cached results.
+            # Not using `new_wfm.cache_render_result(cached_result.result)`
+            # because that would involve reading the whole thing.
+            new_wfm.cached_render_result_workflow_id = to_workflow.id
+            new_wfm.cached_render_result_delta_id = \
+                to_workflow.last_delta_id
+            for attr in [ 'status', 'error', 'json', 'quick_fixes' ]:
+                full_attr = f'cached_render_result_{attr}'
+                setattr(new_wfm, full_attr, getattr(self, full_attr))
+
+            new_wfm.save()  # so there is a new_wfm.id for parquet_path
+
+            parquet_path = new_wfm.get_cached_render_result().parquet_path
+
+            try:
+                os.makedirs(os.path.dirname(parquet_path), exist_ok=True)
+                shutil.copy(cached_result.parquet_path, parquet_path)
+            except FileNotFoundError:
+                # DB and filesystem are out of sync. CachedRenderResult handles
+                # such cases gracefully. So `new_result` will behave exactly
+                # like `cached_result`.
+                pass
+
+        new_wfm.save()
+
         # copy all parameter values
-        for pv in ParameterVal.objects.filter(wf_module=self):
+        pvs = list(self.parameter_vals.all())
+        for pv in pvs:
             pv.duplicate(new_wfm)
 
         # Duplicate the current stored data only, not the history
@@ -380,9 +420,17 @@ class WfModule(models.Model):
 
         return new_wfm
 
-    def get_cached_render_result(self) -> CachedRenderResult:
+    def get_cached_render_result(self, only_fresh=False) -> CachedRenderResult:
         """Load this WfModule's CachedRenderResult from disk."""
-        return CachedRenderResult.from_wf_module(self)
+        result = CachedRenderResult.from_wf_module(self)
+
+        if not result:
+            return None
+
+        if only_fresh and result.delta_id != self.last_relevant_delta_id:
+            return None
+
+        return result
 
     def cache_render_result(self, delta_id: Optional[int],
                             result: ProcessResult) -> CachedRenderResult:

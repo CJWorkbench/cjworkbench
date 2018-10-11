@@ -117,6 +117,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           <button
                             aria-expanded={false}
                             aria-haspopup={true}
+                            aria-label={null}
                             className="context-button btn btn-secondary"
                             onClick={[Function]}
                             title="menu"
@@ -339,6 +340,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 aria-expanded={false}
                                 aria-haspopup={true}
+                                aria-label={null}
                                 className="context-button btn btn-secondary"
                                 onClick={[Function]}
                                 type="button"
@@ -530,6 +532,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 aria-expanded={false}
                                 aria-haspopup={true}
+                                aria-label={null}
                                 className="context-button btn btn-secondary"
                                 onClick={[Function]}
                                 type="button"
@@ -721,6 +724,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 aria-expanded={false}
                                 aria-haspopup={true}
+                                aria-label={null}
                                 className="context-button btn btn-secondary"
                                 onClick={[Function]}
                                 type="button"
@@ -912,6 +916,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 aria-expanded={false}
                                 aria-haspopup={true}
+                                aria-label={null}
                                 className="context-button btn btn-secondary"
                                 onClick={[Function]}
                                 type="button"

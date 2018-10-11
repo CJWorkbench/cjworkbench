@@ -23,7 +23,7 @@ class TestEmbed(LoggedInIntegrationTest):
         self.add_wf_module('Line Chart')
 
         b.assert_element('iframe', wait=True) # chart should load
-        b.assert_no_element('#spinner-container-transparent', wait=True) # embed button not clickable until spinner goes away
+        b.assert_no_element('.spinner-container-transparent', wait=True) # embed button not clickable until spinner goes away
 
         # Open embed dialog, set public and get code
         b.click_button('embed')

@@ -17,8 +17,9 @@
   }
 
   .secret-name {
-    @extend %info-1;
+    @extend .info-1;
     margin:0;
+    font-weight: regular;
   }
 
   .disconnect {

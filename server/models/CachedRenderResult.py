@@ -116,6 +116,9 @@ class CachedRenderResult:
         else:
             return []
 
+    def __bool__(self):
+        return True
+
     def __len__(self):
         """
         Scan on-disk header for number of rows.
@@ -127,7 +130,7 @@ class CachedRenderResult:
         elif self.parquet_file:
             return self.parquet_file.count
         else:
-            return []
+            return 0
 
     @property
     def column_types(self) -> List[str]:

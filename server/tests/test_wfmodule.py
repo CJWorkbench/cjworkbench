@@ -3,6 +3,7 @@ import pandas as pd
 from server.models import StoredObject
 from django.core.exceptions import ValidationError
 from server.models import ParameterSpec, WfModule, ParameterVal
+from server.models.Commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_module_version, add_new_parameter_spec, add_new_wf_module, \
         mock_csv_table, mock_csv_table2, add_new_workflow
@@ -160,6 +161,7 @@ class WfModuleTests(WfModuleTestsBase):
 
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = add_new_workflow("Test Workflow 2")
+        InitWorkflowCommand.create(workflow2)
         wfm1d = wfm1.duplicate(workflow2)
         wfm1d.refresh_from_db() # test what we actually have in the db
 

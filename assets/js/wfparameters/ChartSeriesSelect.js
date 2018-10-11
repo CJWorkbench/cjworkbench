@@ -1,11 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnParam from './ColumnParam'
+import ColorPicker from '../ColorPicker'
 import InputGroup from 'reactstrap/lib/InputGroup'
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
 import Input from 'reactstrap/lib/Input'
-import Button from 'reactstrap/lib/Button'
-import TwitterPicker from 'react-color/lib/Twitter'
 import { defaultColors, getColor } from './charts/ChartColors'
 
 export default class ChartSeriesSelect extends React.PureComponent {
@@ -22,28 +21,18 @@ export default class ChartSeriesSelect extends React.PureComponent {
   }
 
   state = {
-    colorPickerOpen: false,
     color: null, // when this.props.column is null, we can't call props.onChange()
   }
 
-  openColorPicker = () => {
-    this.setState({ colorPickerOpen: true })
-  }
-
-  closeColorPicker = () => {
-    this.setState({ colorPickerOpen: false })
-  }
-
   onPickColor = (color) => {
-    this.setState({ colorPickerOpen: false })
     if (this.props.column) {
       this.props.onChange({
         index: this.props.index,
         column: this.props.column,
-        color: color.hex
+        color: color
       })
     } else {
-      this.setState({ color: color.hex })
+      this.setState({ color })
     }
   }
 
@@ -62,36 +51,27 @@ export default class ChartSeriesSelect extends React.PureComponent {
 
   render() {
     const { availableColumns, column, color, index, prompt, isReadOnly } = this.props
-    const safeColor = color || getColor(index)
+    const safeColor = color || this.state.color || getColor(index)
 
     return (
-      <React.Fragment>
-        <InputGroup size='lg' className='chart-series-select wf-parameter'>
-          <InputGroupAddon addonType='prepend'>
-            <Button title='Pick color' onClick={this.openColorPicker} className='color-picker button color' style={{background: safeColor}}>
-              <i className="color-picker"/>
-            </Button>
-          </InputGroupAddon>
-          <ColumnParam
-            name='column'
-            value={column}
-            prompt={prompt}
-            isReadOnly={isReadOnly}
-            allColumns={availableColumns}
-            onChange={this.onSelectColumn}
+      <InputGroup size='lg' className='chart-series-select wf-parameter'>
+        <InputGroupAddon addonType='prepend'>
+          <ColorPicker
+            name='color'
+            value={safeColor}
+            choices={defaultColors}
+            onChange={this.onPickColor}
           />
-        </InputGroup>
-        { this.state.colorPickerOpen ? <div className="color-picker pop-over">
-          <div className="color-picker cover" onClick={this.closeColorPicker} />
-            <TwitterPicker
-              color={safeColor}
-              colors={defaultColors}
-              onChangeComplete={this.onPickColor}
-              triangle="hide"
-            />
-          </div>
-        : null }
-      </React.Fragment>
+        </InputGroupAddon>
+        <ColumnParam
+          name='column'
+          value={column}
+          prompt={prompt}
+          isReadOnly={isReadOnly}
+          allColumns={availableColumns}
+          onChange={this.onSelectColumn}
+        />
+      </InputGroup>
     )
   }
 }

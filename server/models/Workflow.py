@@ -184,15 +184,23 @@ class Workflow(models.Model):
     def _duplicate(self, name: str, owner: Optional[User],
                    session_key: Optional[str]) -> 'Workflow':
         with self.cooperative_lock():
-            new_wf = Workflow.objects.create(name=name, owner=owner,
-                                             original_workflow_id=self.pk,
-                                             anonymous_owner_session_key=session_key,
-                                             selected_wf_module=self.selected_wf_module,
-                                             public=False, last_delta=None)
-            for wfm in self.wf_modules.all():
-                wfm.duplicate(new_wf)
+            wf = Workflow.objects.create(name=name, owner=owner,
+                                         original_workflow_id=self.pk,
+                                         anonymous_owner_session_key=session_key,
+                                         selected_wf_module=self.selected_wf_module,
+                                         public=False, last_delta=None)
 
-        return new_wf
+            # Set wf.last_delta and wf.last_delta_id, so we can render.
+            # Import here to avoid circular deps
+            from server.models.Commands import InitWorkflowCommand
+            InitWorkflowCommand.create(wf)
+
+            wfms = list(self.wf_modules.all())
+
+            for wfm in wfms:
+                wfm.duplicate(wf)
+
+        return wf
 
     def duplicate(self, owner: User) -> 'Workflow':
         """
