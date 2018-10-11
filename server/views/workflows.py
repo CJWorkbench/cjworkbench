@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from server import execute
 from server.minio import UserFilesBucket
 from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, \
@@ -143,7 +144,11 @@ def _get_anonymous_workflow_for(workflow: Workflow,
         if workflow.example:
             server.utils.log_user_event(request, 'Opened Demo Workflow',
                                         {'name': workflow.name})
-        return workflow.duplicate_anonymous(session_key)
+        new_workflow = workflow.duplicate_anonymous(session_key)
+
+        async_to_sync(new_workflow.last_delta.schedule_execute)()
+
+        return new_workflow
 
 
 # Restrict the modules that are available, based on the user
@@ -287,6 +292,8 @@ class Duplicate(View):
 
         server.utils.log_user_event(request, 'Duplicate Workflow',
                                     {'name': workflow.name})
+
+        async_to_sync(workflow2.last_delta.schedule_execute)()
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 

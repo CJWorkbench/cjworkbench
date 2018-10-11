@@ -55,6 +55,7 @@ _Tables = [
     'server_changewfmoduleupdatesettingscommand',
     'server_changeworkflowtitlecommand',
     'server_deletemodulecommand',
+    'server_initworkflowcommand',
     'server_delta',
     'server_module',
     'server_moduleversion',

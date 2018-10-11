@@ -69,8 +69,9 @@ class TestTable(LoggedInIntegrationTest):
         b.assert_element('.rename-entry[data-column-name="string"] input[value="Column A"]', wait=True)
 
         # Wait for table to reload. This is crazy-hard, so we hack with sleep()
+        # TODO [2018-10-11] it should be easier now, using .table-loaded
         import time; time.sleep(1)
-        b.assert_no_element('#spinner-container-transparent', wait=True)
+        b.assert_no_element('.spinner-container-transparent', wait=True)
 
         # Edit another column
         # Wait for spinner to disappear first

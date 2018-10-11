@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from server.tests.utils import LoggedInTestCase, add_new_wf_module, add_new_module_version, create_testdata_workflow
 from server.models import Workflow
+from server.models.Commands import InitWorkflowCommand
 
 
 class MockSession:
@@ -49,7 +50,8 @@ class WorkflowTests(LoggedInTestCase):
         self.assertNotEqual(wf1.id, wf2.id)
         self.assertEqual(wf2.owner, self.otheruser)
         self.assertEqual(wf2.name, "Copy of " + wf1.name)
-        self.assertIsNone(wf2.last_delta)  # no undo history
+        self.assertEqual(wf2.deltas.all().count(), 1)
+        self.assertIsInstance(wf2.last_delta, InitWorkflowCommand)
         self.assertFalse(wf2.public)
         self.assertEqual(wf1.wf_modules.count(), wf2.wf_modules.count())
 
