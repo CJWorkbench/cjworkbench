@@ -313,33 +313,3 @@ textarea[name="notes"], .editable-notes-read-only {
   display: table;
   margin:auto;
 }
-
-.color-picker-popover {
-  button.color-choice {
-    height: 3rem;
-    width: 3rem;
-    cursor: pointer;
-    border-radius: .4rem;
-    margin: 0 .6rem .6rem 0;
-    border: none;
-  }
-
-  button.choose-custom-color {
-    // These override Bootstrap's styles
-    transition: none; // animating color changes is so annoying
-    border: none;
-    width: 3rem;
-  }
-
-  input {
-    width: 6em;
-    font-size: 1.4rem;
-    height: 3rem;
-    border: 1px solid $light-gray;
-    border-radius: .4rem;
-
-    &:invalid {
-      border-color: $error-prompt;
-    }
-  }
-}
