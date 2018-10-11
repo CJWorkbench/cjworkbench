@@ -42,10 +42,10 @@
     flex-direction: row;
     justify-content: flex-start;
 
-    label {@extend %info-1;}
+    label {@extend .info-1;}
 
     .form-check-label {
-      @extend %info-1;
+      @extend .info-1;
       display: flex;
       align-items: center;
       .form-check-input {

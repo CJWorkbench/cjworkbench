@@ -102,17 +102,17 @@
   font-family: "PT Mono";
 	font-size: 1.4rem;
 	line-height: 2.4rem;
-	font-weigth: 400;
+	font-weight: 400;
 }
 .code-1 {@extend %code-1;}
 
 
-%info-1 {
+.info-1 {
 	font-size: 1.2rem;
 	line-height: 1.2rem;
   @extend %font-nunito-extra-light;
 }
-.info-1 {@extend %info-1;}
+
 
 
 .info-2 {
