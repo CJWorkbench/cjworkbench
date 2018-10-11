@@ -59,6 +59,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 <button
                   aria-expanded={false}
                   aria-haspopup={true}
+                  aria-label={null}
                   className="context-button btn btn-secondary"
                   onClick={[Function]}
                   title="more"
