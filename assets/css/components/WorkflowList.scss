@@ -79,7 +79,7 @@
     // background list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
-      background-color: $Vlight-gray;
+      background-color: darken($page-background,5%);
     }
 
     .workflow-item {
