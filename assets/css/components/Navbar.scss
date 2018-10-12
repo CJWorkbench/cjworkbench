@@ -41,7 +41,7 @@
     display: flex;
     align-items: center;
     font-weight: bold;
-    letter-spacing: 0.05rem;
+    letter-spacing: 0.04rem;
     font-size: 1.5rem;
     position: relative;
     left: -7.7rem;
@@ -67,10 +67,10 @@
       -webkit-transition: $buttons-anim;
 
       .WF-link--under, .LS-link--under {
-        height:.5rem;
+        height:.4rem;
         background-color: $white;
         position: relative ;
-        top:1.2rem;
+        top:1.3rem;
         -webkit-transition: $buttons-anim;
       }
 

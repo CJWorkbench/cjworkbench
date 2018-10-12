@@ -385,7 +385,7 @@ button:focus { outline:0 !important; }
 // All - none selectors
 
 .mc-select-all, .mc-select-none {
-  font-weight: regular;
+  font-weight: normal;
   @extend .content-4;
   color: $brand-text--dark;
   background-color: transparent;

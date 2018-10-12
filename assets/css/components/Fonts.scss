@@ -5,34 +5,26 @@
 .font404{
 	font-size: 14rem;
 	line-height: 14rem;
-  @extend %font-lato-regular;
+  @extend %font-lato-bold;
   letter-spacing: -0.3px;
 	margin-bottom: 0.1rem;
 }
 
 .logo-1 {
-	font-size: 2.5rem;
-	line-height: 2.5rem;
-	font-weight: 400;
-  @extend %font-lato-regular;
-  letter-spacing: -0.3px;
+	font-size: 2.6rem;
+	line-height: 2.6rem;
+	font-weight: 700;
+  @extend %font-lato-bold;
+  letter-spacing: -.8px;
 	margin-bottom: 0.1rem;
 	cursor: default;
 }
 
-.logo-2 {
-	font-size: 2rem;
-	line-height: 2rem;
-  @extend %font-lato-regular;
-  letter-spacing: -0.3px;
-	text-decoration: none;
-	margin-bottom: 0.1rem;
-	color:$white;
-}
+
 
 .title-1 {
 	font-size: 2.5rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 2.5rem;
 	@extend %font-nunito-regular;
 }
@@ -53,24 +45,24 @@
 
 .title-4 {
 	font-size: 1.3rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.4rem;
 }
 .title-5 {
 	font-size: 1.1rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 2rem;
 }
 
 .content-1 {
 	font-size: 1.4rem;
-	font-weight: regular;
+	font-weight: normal;
   line-height: 1.4rem;
   opacity: 0.6;
 }
 .content-2 {
 	font-size: 1.4rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.4rem;
 }
 
@@ -86,7 +78,7 @@
 
 .content-4 {
 	font-size: 1.1rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.1rem;
 }
 .content-4 {
@@ -95,7 +87,7 @@
 .content-5 {
 	font-size: 1.2rem;
 	line-height: 1.4rem;
-  font-weight: regular;
+  font-weight: normal;
 }
 
 %code-1 {
@@ -136,6 +128,6 @@
 }
 .table-2 {
 	font-size: 1rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.1rem;
 }

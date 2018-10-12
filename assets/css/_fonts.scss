@@ -1,20 +1,34 @@
 @font-face {
   font-family: 'Nunito Sans';
-  font-weight: normal;
-  font-style: normal;
-  src: url('../fonts/NunitoSans-Regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Nunito Sans';
   font-weight: 200;
   font-style: normal;
   src: url('../fonts/NunitoSans-ExtraLight.woff2') format('woff2');
 }
 
 @font-face {
+  font-family: 'Nunito Sans';
+  font-weight: 400;
+  font-style: normal;
+  src: url('../fonts/NunitoSans-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  font-weight: 600;
+  font-style: bold;
+  src: url('../fonts/NunitoSans-Bold.woff2') format('woff2');
+}
+
+@font-face {
   font-family: 'Lato';
-  font-weight: regular;
+  font-weight: normal;
   font-style: normal;
   src: url('../fonts/Lato-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lato';
+  font-weight: 700;
+  font-style: bold;
+  src: url('../fonts/Lato-Bold.woff2') format('woff2');
 }

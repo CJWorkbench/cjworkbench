@@ -46,9 +46,11 @@
     height: 4rem;
     font-size: 1.5rem;
     margin-top: 1rem;
-
+    &:hover {
+      background-color: $brand-workspace--background;
+    }
     &:active {
-      background-color: $light-accent--Vstrong;
+      background-color: darken($brand-workspace--background,20%);
       color:$brand-workspace;
     }
   }
@@ -61,12 +63,6 @@
     margin-bottom: 1rem;
   }
 
-  // context buttons
-  .workflow-item {
-
-
-
-  }
 
   .workflows-list {
     border: 0;
@@ -79,7 +75,7 @@
     // background list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
-      background-color: $Vlight-gray;
+      background-color: darken($page-background,3%);
     }
 
     .workflow-item {
@@ -88,7 +84,7 @@
       border: 0;
       border-radius:0;
       padding: 0 2.5rem;
-      background:#fff;
+      background:$white;
       display:flex;
       align-items:center;
       justify-content: space-between;
