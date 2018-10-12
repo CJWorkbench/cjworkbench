@@ -89,41 +89,6 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
   }
 }
 
-// Add row number col and make all cols resizeable
-function makeFormattedCols(props) {
-  const editable = !props.isReadOnly
-
-  // We can have an empty table, but we need to give these props to ColumnHeader anyway
-  const showLetter = props.showLetter || false
-
-  return props.columns.map(({ name, type }, index) => ({
-    key: name,
-    name: name,
-    resizable: true,
-    editable: editable,
-    formatter: typeToCellFormatter(type),
-    width: 160,
-    // react-data-grid normally won't re-render if we change headerRenderer.
-    // So we need to change _other_ props, forcing it to re-render.
-    maybeTriggerRenderIfChangeDraggingColumnIndex: props.draggingColumnIndex,
-    headerRenderer: (
-      <ColumnHeader
-        columnKey={name}
-        columnType={type}
-        index={index}
-        showLetter={showLetter}
-        onDragStartColumnIndex={props.onDragStartColumnIndex}
-        onDragEnd={props.onDragEnd}
-        draggingColumnIndex={props.draggingColumnIndex}
-        onDropColumnIndexAtIndex={props.onDropColumnIndexAtIndex}
-        onRenameColumn={props.onRenameColumn}
-        isReadOnly={props.isReadOnly}
-        setDropdownAction={props.setDropdownAction}
-      />
-    )
-  }))
-}
-
 
 // --- Main component  ---
 
@@ -347,20 +312,67 @@ export default class DataGrid extends React.Component {
     }
   }
 
+  // Add row number col and make all cols resizeable
+  makeFormattedCols = memoize(draggingColumnIndex => {
+    // immutable props
+    const { isReadOnly, columns, setDropdownAction, showLetter } = this.props
+
+    return columns.map(({ name, type }, index) => ({
+      key: name,
+      name: name,
+      resizable: true,
+      editable: !isReadOnly,
+      formatter: typeToCellFormatter(type),
+      width: 160,
+      // react-data-grid normally won't re-render if we change headerRenderer.
+      // So we need to change _other_ props, forcing it to re-render.
+      maybeTriggerRenderIfChangeDraggingColumnIndex: draggingColumnIndex,
+      headerRenderer: (
+        <ColumnHeader
+          columnKey={name}
+          columnType={type}
+          index={index}
+          showLetter={showLetter || false}
+          onDragStartColumnIndex={this.onDragStartColumnIndex}
+          onDragEnd={this.onDragEnd}
+          draggingColumnIndex={draggingColumnIndex}
+          onDropColumnIndexAtIndex={this.onDropColumnIndexAtIndex}
+          onRenameColumn={this.onRename}
+          isReadOnly={isReadOnly}
+          setDropdownAction={setDropdownAction}
+        />
+      )
+    }))
+  })
+
+  renderGrid () {
+    const { gridWidth, gridHeight } = this.state
+    const { selectedRowIndexes, columns, nRows, showLetter } = this.props
+
+    const formattedColumns = this.makeFormattedCols(this.state.draggingColumnIndex)
+    const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
+
+    return (
+      <ReactDataGridWithThinnerActionsColumn
+        columns={formattedColumns}
+        rowActionsCell={RowActionsCell}
+        rowGetter={this.getRow}
+        rowsCount={nRows}
+        minWidth={gridWidth}
+        minHeight={gridHeight}
+        headerRowHeight={showLetter ? 68 : 50}
+        enableCellSelect={true}
+        selectAllRenderer={renderNull}
+        onGridRowsUpdated={this.onGridRowsUpdated}
+        enableRowSelect={true}
+        rowRenderer={Row}
+        rowSelection={rowSelection}
+      />
+    )
+  }
+
   render () {
     const { spinning, gridWidth, gridHeight } = this.state
-    const { selectedRowIndexes, columns, nRows } = this.props
-
-    const draggingProps = {
-      ...this.props,
-      onDragStartColumnIndex: this.onDragStartColumnIndex,
-      onDragEnd: this.onDragEnd,
-      draggingColumnIndex: this.state.draggingColumnIndex,
-      onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
-      onRenameColumn: this.onRename,
-    }
-    const formattedColumns = makeFormattedCols(draggingProps)
-    const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
 
     const maybeSpinner = !spinning ? null : (
       <div className="spinner-container-transparent">
@@ -374,21 +386,7 @@ export default class DataGrid extends React.Component {
 
     return (
       <div className='data-grid-sizer' ref={this.sizerRef}>
-        <ReactDataGridWithThinnerActionsColumn
-          columns={formattedColumns}
-          rowActionsCell={RowActionsCell}
-          rowGetter={this.getRow}
-          rowsCount={nRows}
-          minWidth={gridWidth}
-          minHeight={gridHeight}
-          headerRowHeight={this.props.showLetter ? 68 : 50}
-          enableCellSelect={true}
-          selectAllRenderer={renderNull}
-          onGridRowsUpdated={this.onGridRowsUpdated}
-          enableRowSelect={true}
-          rowRenderer={Row}
-          rowSelection={rowSelection}
-        />
+        {this.renderGrid()}
         {maybeSpinner}
       </div>
     )
