@@ -227,7 +227,7 @@ export default class GoogleFileSelect extends React.PureComponent {
     const { pickerFactory, loadingAccessToken, unauthenticated } = this.state
     const { fileMetadataJson, googleCredentialsSecretName, isReadOnly } = this.props
 
-    const defaultFileName = '(no file chosen)'
+    const defaultFileName = ''
     const fileMetadata = fileMetadataJson ? JSON.parse(fileMetadataJson) : null
     const fileId = fileMetadata ? (fileMetadata.id || null) : null
     const fileName = fileMetadata ? (fileMetadata.name || defaultFileName) : defaultFileName

@@ -19,14 +19,14 @@
   .secret-name {
     @extend .info-1;
     margin:0;
-    font-weight: regular;
+    font-weight: normal;
   }
 
   .disconnect {
     @extend .content-3;
     padding: 0!important;
     margin-top:.3rem;
-    font-weight: regular;
+    font-weight: normal;
   }
 
 }
