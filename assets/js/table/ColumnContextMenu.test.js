@@ -29,21 +29,27 @@ describe('ColumnContextMenu', () => {
 
     const wrapper = mountMenu(setDropdownAction, 'columnKey', 'text', sortDirectionNone, renameColumn)
 
+    wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.drop-column').simulate('click')
     expect(setDropdownAction).toHaveBeenCalledWith('selectcolumns', false, {})
 
+    wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.rename-column-header').simulate('click')
     expect(renameColumn).toHaveBeenCalled()
 
+    wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.duplicate-column').simulate('click')
     expect(setDropdownAction).toHaveBeenCalledWith('duplicate-column', false, {})
 
+    wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.filter-column').simulate('click')
     expect(setDropdownAction).toHaveBeenCalledWith('filter', true, {})
 
+    wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-ascending').simulate('click')
     expect(setDropdownAction).toHaveBeenCalledWith('sort-from-table', false, {sortType: 'text', sortDirection: sortDirectionAsc})
 
+    wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-descending').simulate('click')
     expect(setDropdownAction).toHaveBeenCalledWith('sort-from-table', false, {sortType: 'text', sortDirection: sortDirectionDesc})
   })

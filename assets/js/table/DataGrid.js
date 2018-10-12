@@ -106,16 +106,11 @@ function makeFormattedCols(props) {
     // react-data-grid normally won't re-render if we change headerRenderer.
     // So we need to change _other_ props, forcing it to re-render.
     maybeTriggerRenderIfChangeDraggingColumnIndex: props.draggingColumnIndex,
-    maybeTriggerRenderIfChangeIsSorted: (props.sortColumn === name),
-    maybeTriggerRenderIfChangeSortDirection: props.sortDirection,
-    maybeTriggerRenderIfChangeShowLetter: props.showLetter,
     headerRenderer: (
       <ColumnHeader
         columnKey={name}
         columnType={type}
         index={index}
-        isSorted={props.sortColumn === name}
-        sortDirection={props.sortDirection}
         showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
         onDragEnd={props.onDragEnd}
@@ -143,8 +138,6 @@ export default class DataGrid extends React.Component {
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     }).isRequired), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
-    sortColumn: PropTypes.string,
-    sortDirection: PropTypes.number,
     showLetter: PropTypes.bool,
     onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
     onEditCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined

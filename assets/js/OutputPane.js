@@ -35,13 +35,11 @@ export class OutputPane extends React.Component {
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    showColumnLetter: PropTypes.bool.isRequired,
-    sortColumn: PropTypes.string,
-    sortDirection: PropTypes.number
+    showColumnLetter: PropTypes.bool.isRequired
   }
 
   renderTable() {
-    const { api, isReadOnly, sortColumn, sortDirection, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
+    const { api, isReadOnly, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
 
     const wfm = wfModuleBeforeError ? wfModuleBeforeError : wfModule // may be null
 
@@ -55,8 +53,6 @@ export class OutputPane extends React.Component {
         nRows={wfm ? wfm.nRows : null}
         api={api}
         isReadOnly={isReadOnly}
-        sortColumn={sortColumn}
-        sortDirection={sortDirection}
         showColumnLetter={showColumnLetter}
       />
     )
@@ -148,17 +144,6 @@ function mapStateToProps(state, ownProps) {
 
   const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns'
 
-  let sortColumn = null
-  let sortDirection = sortDirectionNone
-
-  if (id_name === 'sort-from-table') {
-    const columnParam = findParamValByIdName(wfModule, 'column');
-    const directionParam = findParamValByIdName(wfModule, 'direction').value;
-
-    sortColumn = columnParam && columnParam.value || null
-    sortDirection = directionParam || sortDirectionNone
-  }
-
   return {
     workflowId: workflow.id,
     wfModule: wfModule ? {
@@ -172,9 +157,7 @@ function mapStateToProps(state, ownProps) {
     wfModuleBeforeError: wfModuleBeforeError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
-    showColumnLetter,
-    sortColumn,
-    sortDirection,
+    showColumnLetter
   }
 }
 

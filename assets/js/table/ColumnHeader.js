@@ -180,8 +180,6 @@ export default class ColumnHeader extends React.PureComponent {
     columnType: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
-    isSorted: PropTypes.bool.isRequired,
-    sortDirection: PropTypes.number, // not required, which is weird
     showLetter: PropTypes.bool.isRequired,
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
@@ -191,15 +189,11 @@ export default class ColumnHeader extends React.PureComponent {
     setDropdownAction: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
+  inputRef = React.createRef()
 
-    this.inputRef = React.createRef();
-
-    this.state = {
-      isHovered: false,
-      newName: props.columnKey
-    };
+  state = {
+    isHovered: false,
+    newName: this.props.columnKey
   }
 
   setDropdownAction = (idName, forceNewModule, params) => {
@@ -251,10 +245,8 @@ export default class ColumnHeader extends React.PureComponent {
 
     return (
       <ColumnContextMenu
-        columnKey={this.props.columnKey}
         columnType={this.props.columnType}
         renameColumn={this.onRenameColumn}
-        sortDirection={this.props.isSorted == true ? this.props.sortDirection : sortDirectionNone}
         setDropdownAction={this.setDropdownAction}
       />
     )
