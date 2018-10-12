@@ -390,7 +390,7 @@
           &::before {
             // Add 'null' text in CSS, not React, so copy/paste won't copy it
             content: 'null';
-            color: lighten($brand-text--dark,30%);
+            color: lighten($brand-text--dark,15%);
             font-style: italic;
             font-weight: 200;
           }
