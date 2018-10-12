@@ -137,9 +137,8 @@ div>.react-select__menu {
   border-radius: 3px;
   border: 1px solid $brand-orange;
   background-color: $brand-orange--light;
-  &:first-child {
-    margin-left: -2px;
-  }
+  margin-left: 0;
+  margin-right: .4rem;
 
   .react-select__multi-value__label {
     @extend .content-3;
