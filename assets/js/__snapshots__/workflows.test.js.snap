@@ -30,17 +30,16 @@ exports[`Workflow list page renders correctly 1`] = `
           className="navbar"
         >
           <div
-            className="d-flex align-items-center"
+            className="logo"
           >
             <img
               className="logo"
               src="undefinedimages/logo.svg"
             />
-            <div
-              className="logo-1"
-            >
-              Workbench
-            </div>
+            <img
+              className="logo-text"
+              src="undefinedimages/logo-text.svg"
+            />
           </div>
           <div
             className="links"

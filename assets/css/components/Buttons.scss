@@ -164,10 +164,6 @@ button:focus { outline:0 !important; }
   }
 }
 
-.action-button + .action-button {
-  margin-left: 1rem;
-}
-
 .action-button .busy {
   color:red;
 }

@@ -44,7 +44,7 @@ export default class UndoRedoButtons extends React.PureComponent {
     const { undo, redo } = this.props
 
     return (
-      <div className='button-group'>
+      <div className='group--undo-redo'>
         <button name='undo' title='Undo' onClick={undo}><i className='icon-undo' /></button>
         <button name='redo' title='Redo' onClick={redo}><i className='icon-redo' /></button>
       </div>
