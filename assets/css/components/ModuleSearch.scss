@@ -156,8 +156,8 @@
   box-shadow: $menu-shadow;
   padding: 1rem;
 
-  transition-delay: .3s;
-  transition-property: opacity;
+  //transition-delay: .2s;
+  transition: opacity .5s;
 
 
 
