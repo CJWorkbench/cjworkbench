@@ -18,9 +18,9 @@
   }
 
   .nav-buttons {
-    &>button, .button-group>button { // '>' because dropdown may contain other buttons
+    &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
       @extend .action-button;
-      @extend .button-white;
+      @extend .button-white--fill;
 
       white-space: nowrap;
 
@@ -29,35 +29,42 @@
       }
     }
 
-    &>button, &>.button-group {
+    &>button, &>.group--undo-redo {
       margin-right: 3rem;
     }
 
-    .button-group {
+    // undo redo buttons
+    .group--undo-redo {
       display: inline-block;
 
+      button {
+        min-width: 0;
+        width: 3.5rem;
+        padding: 0;
+      }
       button:first-child {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+        margin-right: 1rem;
+        // border-top-right-radius: 0;
+        // border-bottom-right-radius: 0;
       }
 
-      button:last-child {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
+      // button:last-child {
+      //   border-top-left-radius: 0;
+      //   border-bottom-left-radius: 0;
+      // }
 
-      button:not(:last-child) {
-        margin-right: 0;
-      }
-
-      button:not(:first-child) {
-        border-left: none;
-        margin-left: 0;
-      }
-
-      button:not(:first-child):not(:last-child) {
-        border-radius: 0;
-      }
+      // button:not(:last-child) {
+      //   margin-right: 0;
+      // }
+      //
+      // button:not(:first-child) {
+      //   border-left: none;
+      //   margin-left: 0;
+      // }
+      //
+      // button:not(:first-child):not(:last-child) {
+      //   border-radius: 0;
+      // }
     }
 
     &>.dropdown {
