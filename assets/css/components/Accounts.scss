@@ -11,22 +11,17 @@
 
 
   .login-bigbrand {
-    @extend .title-2;
-    margin-bottom: 1rem;
-     display: flex;
-     align-items: center;
+    display: flex;
+    align-items: center;
 
     .logo {
       width: 4.5rem;
     }
-
-    h1, h1 a {
-      font-size: 5rem!important;
-      color:#fff;
-      margin: 1rem;
-      @extend %font-lato-regular;
-      letter-spacing: -0.2rem;
-      &:hover {text-decoration: none;}
+    .logo-text {
+      margin-left: .8rem;
+      margin-bottom: 2rem;
+      width: 25rem;
+      height: 7rem;
     }
   }
 
