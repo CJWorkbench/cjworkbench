@@ -364,7 +364,7 @@
       // Your average cell in the table
       .react-grid-Cell {
         position: absolute;
-        contain: 'layout';
+        contain: layout;
         height: 3.5rem;
         padding-right: 0;
         padding-left: 0;
@@ -462,7 +462,7 @@
           }
         }
 
-        //Click and edit a cell
+        // Click and edit a cell
         &:focus {
           outline: 2px solid $brand-orange;
         }

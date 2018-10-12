@@ -29,9 +29,9 @@ export default class CellWithoutGarbage extends Cell {
     // Mostly a copy/paste job to nix drag-handle. See 
     // https://github.com/adazzle/react-data-grid/issues/822
     const style = {
-			width: column.width,
-			left: column.left
-		}
+      width: column.width,
+      left: column.left
+    }
 
     const className = column.locked ? LockedClassName : NormalClassName
 
@@ -40,17 +40,18 @@ export default class CellWithoutGarbage extends Cell {
       column: column,
       rowIdx: rowIdx
     })
-    const events = this.getEvents()
+
     return (
       <div
-				className={className}
-				style={style}
+        className={className}
+        tabIndex='0'
+        style={style}
         onClick={this.onCellClick}
         onFocus={this.onCellFocus}
         onDoubleClick={this.onCellDoubleClick}
         onContextMenu={this.onCellContextMenu}
-				ref={this.storeRef}
-			>
+        ref={this.storeRef}
+      >
         {cellContent}
       </div>
     )
