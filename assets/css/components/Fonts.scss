@@ -32,7 +32,7 @@
 
 .title-1 {
 	font-size: 2.5rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 2.5rem;
 	@extend %font-nunito-regular;
 }
@@ -53,24 +53,24 @@
 
 .title-4 {
 	font-size: 1.3rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.4rem;
 }
 .title-5 {
 	font-size: 1.1rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 2rem;
 }
 
 .content-1 {
 	font-size: 1.4rem;
-	font-weight: regular;
+	font-weight: normal;
   line-height: 1.4rem;
   opacity: 0.6;
 }
 .content-2 {
 	font-size: 1.4rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.4rem;
 }
 
@@ -86,7 +86,7 @@
 
 .content-4 {
 	font-size: 1.1rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.1rem;
 }
 .content-4 {
@@ -95,7 +95,7 @@
 .content-5 {
 	font-size: 1.2rem;
 	line-height: 1.4rem;
-  font-weight: regular;
+  font-weight: normal;
 }
 
 %code-1 {
@@ -136,6 +136,6 @@
 }
 .table-2 {
 	font-size: 1rem;
-	font-weight: regular;
+	font-weight: normal;
 	line-height: 1.1rem;
 }

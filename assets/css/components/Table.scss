@@ -390,7 +390,7 @@
           &::before {
             // Add 'null' text in CSS, not React, so copy/paste won't copy it
             content: 'null';
-            color: lighten($brand-text--dark,15%);
+            color: lighten($brand-text--dark,30%);
             font-style: italic;
             font-weight: 200;
           }
@@ -428,12 +428,11 @@
           // selected
           &.row-selected {
             //background-color: lighten($brand-orange, 10%)!important;
-            border-left: 1px solid $brand-orange;
-            border-right: 1px solid lighten($brand-orange, 11%);
+            border-right: 1px solid $brand-orange;
 
             span {
               color:darken($brand-orange, 18%)!important;
-              font-weight: regular;
+              font-weight: normal;
             }
           }
 
@@ -522,7 +521,7 @@
       // Selected row and hover
 
       .row-selected:hover .rdg-row-actions-cell {
-        border-color: lighten($brand-orange,5%);
+        border-right: 1px solid $brand-orange;
 
         .row-number {
           color:darken($brand-orange, 22%)!important;
