@@ -142,7 +142,7 @@
     display: block;
     margin-left: 2rem;
     font-size: 1.5rem;
-    @extend .info-2;
+    @extend .content-1;
     @extend .url-link;
     color: $brand-orange;
     position: relative; // to position copied-flash
@@ -162,7 +162,7 @@
       padding: 0;
       display: block;
       color: $brand-workspace;
-      font-size: 1.3rem;
+      @extend .content-3;
       background-color: white;
       &:hover {
         color: $link-hover-success;

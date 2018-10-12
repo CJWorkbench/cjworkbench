@@ -33,7 +33,10 @@
       margin-right: .5rem;
     }
 
-    p {margin-top: 1rem;}
+    p {
+      @extend .content-3;
+      margin-top: 1rem;
+    }
 
 
   }
