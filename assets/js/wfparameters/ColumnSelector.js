@@ -88,14 +88,15 @@ export default class ColumnSelector extends React.PureComponent {
         </div>
         <Select
           isMulti
-          name="columns"
+          name='columns'
           options={columnOptions}
           menuPortalTarget={document.body}
-          classNamePrefix="react-select"
+          className='react-select'
+          classNamePrefix='react-select'
           onChange={this.onSelectColumn}
           value={selectedColumns}
           isClearable={false}
-          placeholder="Select columns"
+          placeholder='Select columns'
         />
       </div>
     )
