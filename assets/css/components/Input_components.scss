@@ -2,6 +2,7 @@
 
 .dropdown-menu {
   position: absolute;
+  min-width: 12rem;
   margin-top: 0.5rem;
   border:2px solid $brand-workspace--medium;
   border-radius: 5px;
