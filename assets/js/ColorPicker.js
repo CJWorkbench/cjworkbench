@@ -138,10 +138,10 @@ export default class ColorPicker extends React.PureComponent {
     const safeValue = value || '#000000'
 
     return (
-      <div className='color-picker'>
-        <Button ref={this.buttonRef} title='Pick color' onClick={this.toggleOpen} className='color-picker button color' style={{ background: safeValue }}>
+      <React.Fragment>
+        <button ref={this.buttonRef} title='Pick color' onClick={this.toggleOpen} className='btn color-picker' style={{ background: safeValue }}>
           <i className='color-picker' />
-        </Button>
+        </button>
         { isOpen ? (
           <Popover placement='bottom' innerClassName='color-picker-popover' isOpen={isOpen} target={this.buttonRef} toggle={this.close}>
             <PopoverBody>
@@ -157,7 +157,7 @@ export default class ColorPicker extends React.PureComponent {
             </PopoverBody>
           </Popover>
         ) : null }
-      </div>
+      </React.Fragment>
     )
   }
 }

@@ -1,45 +1,34 @@
-.popover.bs-popover-bottom {
-  border: 0;
-  box-shadow: $menu-shadow;
+.color-picker-popover {
+  .popover-body {
+    padding: 1rem;
+  }
 
-  .color-picker-popover {
+  button.color-choice {
+    height: 3rem;
+    width: 3rem;
+    cursor: pointer;
+    border-radius: .4rem;
+    margin: 0 .6rem .6rem 0;
+    border: none;
 
-    .popover-body {
-      padding: 1rem;
-    }
-
-    button.color-choice {
-      height: 3rem;
-      width: 3rem;
-      cursor: pointer;
-      border-radius: .4rem;
-      margin: 0 .6rem .6rem 0;
-      border: none;
-
-      &:last-of-type {
-        margin-right: 0;
-      }
-    }
-
-    button.choose-custom-color {
-      // These override Bootstrap's styles
-      transition: none; // animating color changes is so annoying
-      border: none;
-      width: 3rem;
-    }
-
-    input {
-      @extend .module-parameter;
-      width: 6em;
-
-      &:invalid {
-        border-color: $error-prompt;
-      }
+    &:last-of-type {
+      margin-right: 0;
     }
   }
 
-  // arrow at the top
-  .arrow::before {
-    border: 0;
+  button.choose-custom-color {
+    // These override Bootstrap's styles
+    transition: none; // animating color changes is so annoying
+    border: none;
+    width: 3rem;
+  }
+
+  input {
+    @extend .module-parameter;
+    width: 6em;
+
+    &:invalid {
+      border-color: $error-prompt;
+    }
   }
 }

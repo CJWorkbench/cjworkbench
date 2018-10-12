@@ -22,7 +22,7 @@ exports[`ColumnParam matches snapshot 1`] = `
   value={null}
 >
   <StateManager
-    className="react-select"
+    className="react-select "
     classNamePrefix="react-select"
     defaultInputValue=""
     defaultMenuIsOpen={false}
@@ -55,7 +55,7 @@ exports[`ColumnParam matches snapshot 1`] = `
       backspaceRemovesValue={true}
       blurInputOnSelect={true}
       captureMenuScroll={false}
-      className="react-select"
+      className="react-select "
       classNamePrefix="react-select"
       closeMenuOnScroll={false}
       closeMenuOnSelect={true}
@@ -119,7 +119,7 @@ exports[`ColumnParam matches snapshot 1`] = `
       value={null}
     >
       <SelectContainer
-        className="react-select"
+        className="react-select "
         clearValue={[Function]}
         cx={[Function]}
         getStyles={[Function]}
@@ -157,7 +157,7 @@ exports[`ColumnParam matches snapshot 1`] = `
             "backspaceRemovesValue": true,
             "blurInputOnSelect": true,
             "captureMenuScroll": false,
-            "className": "react-select",
+            "className": "react-select ",
             "classNamePrefix": "react-select",
             "closeMenuOnScroll": false,
             "closeMenuOnSelect": true,
@@ -264,7 +264,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                 "backspaceRemovesValue": true,
                 "blurInputOnSelect": true,
                 "captureMenuScroll": false,
-                "className": "react-select",
+                "className": "react-select ",
                 "classNamePrefix": "react-select",
                 "closeMenuOnScroll": false,
                 "closeMenuOnSelect": true,
@@ -364,7 +364,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "captureMenuScroll": false,
-                    "className": "react-select",
+                    "className": "react-select ",
                     "classNamePrefix": "react-select",
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
@@ -463,7 +463,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                         "backspaceRemovesValue": true,
                         "blurInputOnSelect": true,
                         "captureMenuScroll": false,
-                        "className": "react-select",
+                        "className": "react-select ",
                         "classNamePrefix": "react-select",
                         "closeMenuOnScroll": false,
                         "closeMenuOnSelect": true,
@@ -671,7 +671,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "captureMenuScroll": false,
-                    "className": "react-select",
+                    "className": "react-select ",
                     "classNamePrefix": "react-select",
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
@@ -770,7 +770,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                         "backspaceRemovesValue": true,
                         "blurInputOnSelect": true,
                         "captureMenuScroll": false,
-                        "className": "react-select",
+                        "className": "react-select ",
                         "classNamePrefix": "react-select",
                         "closeMenuOnScroll": false,
                         "closeMenuOnSelect": true,
@@ -877,7 +877,7 @@ exports[`ColumnParam matches snapshot 1`] = `
                         "backspaceRemovesValue": true,
                         "blurInputOnSelect": true,
                         "captureMenuScroll": false,
-                        "className": "react-select",
+                        "className": "react-select ",
                         "classNamePrefix": "react-select",
                         "closeMenuOnScroll": false,
                         "closeMenuOnSelect": true,

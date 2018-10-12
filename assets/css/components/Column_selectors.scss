@@ -1,86 +1,75 @@
+.input-group-lg {
+  .input-group-prepend button.color-picker {
+    height: auto; // because we override font-size on body.
+  }
 
-
-.chart-series-multi-select {
-
-  //group of col select + color picker
-
-  .input-group {
-
-    .css-10nd86i.react-select {
-      width: 26rem;
-
-      .css-1rtrksz.react-select__value-container {
-        padding-left: 2.5rem; // padding left for distance from color picker
-      }
-    }
-
-    .input-group-prepend {
-
-      button {
-        z-index: 2;
-        position: absolute;
-        border-radius: 3px 0 0 3px!important;
-        width: 2rem;
-      }
-    }
+  &>.react-select {
+    padding: 0;
   }
 }
 
-// separator with carret
-.css-d8oujb.react-select__indicator-separator {
-  margin: 1rem 0;
-  display: none;
-}
+.react-select {
+  .react-select__control {
+    min-height: 0;
+    @extend .module-parameter;
+    color: red;
+    cursor: text;
+  }
 
-.css-1ep9fjw.react-select__indicator.react-select__dropdown-indicator,
-.css-1sjym57.react-select__indicator.react-select__dropdown-indicator {
-  padding: 0 .5rem;
-}
+  // separator with carret
+  .react-select__indicator-separator {
+    margin: 1rem 0;
+    display: none;
+  }
 
-//carret container
-.css-1rtrksz.react-select__value-container {
+  .react-select__indicator.react-select__dropdown-indicator,
+  .react-select__indicator.react-select__dropdown-indicator {
+    padding: 0 .5rem;
+  }
 
-  // Carret to open menu
-  .css-1ep9fjw.react-select__indicator,
-  .css-1sjym57.react-select__indicator {
-    cursor: pointer;
-    opacity: .6;
+  //carret container
+  .react-select__value-container {
     padding: 0 .8rem;
 
-    svg {
-      color:$brand-text--dark;
+    // Carret to open menu
+    .react-select__indicator,
+    .react-select__indicator {
+      cursor: pointer;
+      opacity: .6;
+      padding: 0 .8rem;
+
+      svg {
+        color: $brand-text--dark;
+      }
+
+      &:hover{opacity: 1;}
     }
-
-    &:hover{opacity: 1;}
   }
-}
 
-.css-1aya2g8.react-select__control {
-  @extend .module-parameter;
-  height: auto;
-  color:red;
-  cursor: text;
-}
+  //value selected
+  .react-select__single-value {
+    color: $brand-text--darker;
+  }
 
-//value selected
-.css-va7pk8.react-select__single-value {
-  color: $brand-text--darker;
-}
+  .react-select__control--is-focused {
+    box-shadow: none;
+    border: $data-action--border!important;
+    background-color: $Vlight-gray;
+    @extend .content-3;
+  }
 
-.css-2o5izw.react-select__control--is-focused {
-  box-shadow: none;
-  border: $data-action--border!important;
-  background-color: $Vlight-gray;
-  @extend .content-3;
-}
+  // placeholder when empty
+  .react-select__placeholder {
+    color: $placeholder;
 
-// placeholder when empty
-.css-1492t68.react-select__placeholder {
-  color: $placeholder;
+    & + div {
+      margin: 0;
+    }
+  }
 }
 
 // Menu when open
-.css-15k3avv.react-select__menu {
+div>.react-select__menu {
   z-index: 2;
   border-radius: 0 0 5px 5px;
   margin-top: -.3rem;
@@ -95,6 +84,7 @@
     background-color: $white;
     color: $brand-text--dark;
     @extend .content-3;
+    cursor: pointer;
 
   }
   .react-select__option--is-focused {
@@ -102,7 +92,7 @@
     color:$brand-text--darker;
   }
   // notice when no selection found
-  .css-1gl4k7y.react-select__menu-notice {
+  .react-select__menu-notice {
     @extend .info-1;
     color: $brand-text--dark;
   }
@@ -110,8 +100,8 @@
 
 
 // Hide the reset (which did not work?)
-.css-1sjym57.react-select__indicator.react-select__clear-indicator,
-.css-1ep9fjw.react-select__indicator.react-select__clear-indicator {
+.react-select__indicator.react-select__clear-indicator,
+.react-select__indicator.react-select__clear-indicator {
   display: none;
 }
 
@@ -143,7 +133,7 @@
 
 // Style for selected values within multi select
 
-.css-xwjg1b.react-select__multi-value {
+.react-select__multi-value {
   border-radius: 3px;
   border: 1px solid $brand-orange;
   background-color: $brand-orange--light;
@@ -156,7 +146,8 @@
     color:$brand-orange;
   }
 }
-.css-1alnv5e.react-select__multi-value__remove {
+
+.react-select__multi-value__remove {
   cursor: pointer;
   border-radius: 0 3px 3px 0;
   color:$brand-orange;
@@ -165,7 +156,7 @@
   justify-content: center;
 
   &:hover {
-  color: $white;
-  background-color: $brand-orange--medium-dark;
+    color: $white;
+    background-color: $brand-orange--medium-dark;
   }
 }

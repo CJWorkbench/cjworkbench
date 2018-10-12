@@ -64,6 +64,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
           />
         </InputGroupAddon>
         <ColumnParam
+          className='form-control'
           name='column'
           value={column}
           prompt={prompt}

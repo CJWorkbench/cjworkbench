@@ -5,6 +5,7 @@ import Select from 'react-select'
 
 export default class ColumnParam extends React.PureComponent {
   static propTypes = {
+    className: PropTypes.string, // or null
     name: PropTypes.string.isRequired,
     value: PropTypes.string, // or null
     prompt: PropTypes.string, // default 'Select'
@@ -20,11 +21,8 @@ export default class ColumnParam extends React.PureComponent {
   }
 
   render() {
-    const { allColumns, isReadOnly, prompt, name, value } = this.props
+    const { allColumns, isReadOnly, prompt, name, value, className } = this.props
     const isLoading = (allColumns === null)
-
-    let className = 'react-select'
-    if (isLoading) className += ' loading'
 
     // Set dropdown list to 1 option of 'loading' as we wait. When clicked, onChange passes null to callback
     const columnOptions = (allColumns || []).map(column => (
@@ -38,11 +36,12 @@ export default class ColumnParam extends React.PureComponent {
     // Keeping classNamePrefix since CSS definitions already exist
     return (
       <Select
+        className={className}
         name={name}
         options={columnOptions}
         value={selectedOption}
         isLoading={isLoading}
-        className={className}
+        className={`react-select ${className || ''}`}
         classNamePrefix='react-select'
         menuPortalTarget={document.body}
         onChange={this.onChange}

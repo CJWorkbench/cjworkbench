@@ -86,39 +86,20 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 onChange={[Function]}
                 value="#aaaaaa"
               >
-                <div
-                  className="color-picker"
-                >
-                  <Button
-                    className="color-picker button color"
-                    color="secondary"
-                    onClick={[Function]}
-                    style={
-                      Object {
-                        "background": "#aaaaaa",
-                      }
+                <button
+                  className="btn color-picker"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "background": "#aaaaaa",
                     }
-                    tag="button"
-                    title="Pick color"
-                  >
-                    <button
-                      aria-label={null}
-                      className="color-picker button color btn btn-secondary"
-                      onClick={[Function]}
-                      style={
-                        Object {
-                          "background": "#aaaaaa",
-                        }
-                      }
-                      title="Pick color"
-                      type="button"
-                    >
-                      <i
-                        className="color-picker"
-                      />
-                    </button>
-                  </Button>
-                </div>
+                  }
+                  title="Pick color"
+                >
+                  <i
+                    className="color-picker"
+                  />
+                </button>
               </ColorPicker>
             </div>
           </InputGroupAddon>
@@ -133,6 +114,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 },
               ]
             }
+            className="form-control"
             isReadOnly={false}
             name="column"
             onChange={[Function]}
@@ -140,7 +122,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
             value="A"
           >
             <StateManager
-              className="react-select"
+              className="react-select form-control"
               classNamePrefix="react-select"
               defaultInputValue=""
               defaultMenuIsOpen={false}
@@ -175,7 +157,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 backspaceRemovesValue={true}
                 blurInputOnSelect={true}
                 captureMenuScroll={false}
-                className="react-select"
+                className="react-select form-control"
                 classNamePrefix="react-select"
                 closeMenuOnScroll={false}
                 closeMenuOnSelect={true}
@@ -240,7 +222,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 }
               >
                 <SelectContainer
-                  className="react-select"
+                  className="react-select form-control"
                   clearValue={[Function]}
                   cx={[Function]}
                   getStyles={[Function]}
@@ -274,7 +256,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                       "backspaceRemovesValue": true,
                       "blurInputOnSelect": true,
                       "captureMenuScroll": false,
-                      "className": "react-select",
+                      "className": "react-select form-control",
                       "classNamePrefix": "react-select",
                       "closeMenuOnScroll": false,
                       "closeMenuOnSelect": true,
@@ -338,7 +320,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                   setValue={[Function]}
                 >
                   <div
-                    className="css-10nd86i react-select"
+                    className="css-10nd86i react-select form-control"
                     onKeyDown={[Function]}
                   >
                     <Control
@@ -376,7 +358,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
-                          "className": "react-select",
+                          "className": "react-select form-control",
                           "classNamePrefix": "react-select",
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
@@ -471,7 +453,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
-                              "className": "react-select",
+                              "className": "react-select form-control",
                               "classNamePrefix": "react-select",
                               "closeMenuOnScroll": false,
                               "closeMenuOnSelect": true,
@@ -570,7 +552,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "captureMenuScroll": false,
-                                  "className": "react-select",
+                                  "className": "react-select form-control",
                                   "classNamePrefix": "react-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
@@ -773,7 +755,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
-                              "className": "react-select",
+                              "className": "react-select form-control",
                               "classNamePrefix": "react-select",
                               "closeMenuOnScroll": false,
                               "closeMenuOnSelect": true,
@@ -867,7 +849,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "captureMenuScroll": false,
-                                  "className": "react-select",
+                                  "className": "react-select form-control",
                                   "classNamePrefix": "react-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
@@ -969,7 +951,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "captureMenuScroll": false,
-                                  "className": "react-select",
+                                  "className": "react-select form-control",
                                   "classNamePrefix": "react-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
@@ -1125,39 +1107,20 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 onChange={[Function]}
                 value="#bbbbbb"
               >
-                <div
-                  className="color-picker"
-                >
-                  <Button
-                    className="color-picker button color"
-                    color="secondary"
-                    onClick={[Function]}
-                    style={
-                      Object {
-                        "background": "#bbbbbb",
-                      }
+                <button
+                  className="btn color-picker"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "background": "#bbbbbb",
                     }
-                    tag="button"
-                    title="Pick color"
-                  >
-                    <button
-                      aria-label={null}
-                      className="color-picker button color btn btn-secondary"
-                      onClick={[Function]}
-                      style={
-                        Object {
-                          "background": "#bbbbbb",
-                        }
-                      }
-                      title="Pick color"
-                      type="button"
-                    >
-                      <i
-                        className="color-picker"
-                      />
-                    </button>
-                  </Button>
-                </div>
+                  }
+                  title="Pick color"
+                >
+                  <i
+                    className="color-picker"
+                  />
+                </button>
               </ColorPicker>
             </div>
           </InputGroupAddon>
@@ -1172,6 +1135,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 },
               ]
             }
+            className="form-control"
             isReadOnly={false}
             name="column"
             onChange={[Function]}
@@ -1179,7 +1143,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
             value="B"
           >
             <StateManager
-              className="react-select"
+              className="react-select form-control"
               classNamePrefix="react-select"
               defaultInputValue=""
               defaultMenuIsOpen={false}
@@ -1214,7 +1178,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 backspaceRemovesValue={true}
                 blurInputOnSelect={true}
                 captureMenuScroll={false}
-                className="react-select"
+                className="react-select form-control"
                 classNamePrefix="react-select"
                 closeMenuOnScroll={false}
                 closeMenuOnSelect={true}
@@ -1279,7 +1243,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                 }
               >
                 <SelectContainer
-                  className="react-select"
+                  className="react-select form-control"
                   clearValue={[Function]}
                   cx={[Function]}
                   getStyles={[Function]}
@@ -1313,7 +1277,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                       "backspaceRemovesValue": true,
                       "blurInputOnSelect": true,
                       "captureMenuScroll": false,
-                      "className": "react-select",
+                      "className": "react-select form-control",
                       "classNamePrefix": "react-select",
                       "closeMenuOnScroll": false,
                       "closeMenuOnSelect": true,
@@ -1377,7 +1341,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                   setValue={[Function]}
                 >
                   <div
-                    className="css-10nd86i react-select"
+                    className="css-10nd86i react-select form-control"
                     onKeyDown={[Function]}
                   >
                     <Control
@@ -1415,7 +1379,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
-                          "className": "react-select",
+                          "className": "react-select form-control",
                           "classNamePrefix": "react-select",
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
@@ -1510,7 +1474,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
-                              "className": "react-select",
+                              "className": "react-select form-control",
                               "classNamePrefix": "react-select",
                               "closeMenuOnScroll": false,
                               "closeMenuOnSelect": true,
@@ -1609,7 +1573,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "captureMenuScroll": false,
-                                  "className": "react-select",
+                                  "className": "react-select form-control",
                                   "classNamePrefix": "react-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
@@ -1812,7 +1776,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
-                              "className": "react-select",
+                              "className": "react-select form-control",
                               "classNamePrefix": "react-select",
                               "closeMenuOnScroll": false,
                               "closeMenuOnSelect": true,
@@ -1906,7 +1870,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "captureMenuScroll": false,
-                                  "className": "react-select",
+                                  "className": "react-select form-control",
                                   "classNamePrefix": "react-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
@@ -2008,7 +1972,7 @@ exports[`ChartSeriesMultiSelect should match snapshot 1`] = `
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "captureMenuScroll": false,
-                                  "className": "react-select",
+                                  "className": "react-select form-control",
                                   "classNamePrefix": "react-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
