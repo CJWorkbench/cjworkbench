@@ -10,8 +10,9 @@
 
 .react-select {
   .react-select__control {
-    min-height: 0;
     @extend .module-parameter;
+    min-height: 3.5rem;
+    height: auto;
     color: red;
     cursor: text;
   }
@@ -42,7 +43,9 @@
         color: $brand-text--dark;
       }
 
-      &:hover{opacity: 1;}
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
