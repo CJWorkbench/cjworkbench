@@ -13,6 +13,7 @@
   .login-bigbrand {
     display: flex;
     align-items: center;
+    margin-bottom: -1rem;
 
     .logo {
       width: 4.5rem;
@@ -32,6 +33,8 @@
     padding: 3rem 5rem;
     border: none;
     border-radius: 0px;
+    display: flex;
+    align-items: center;
 
     .action-link {
       color:$white!important;
@@ -54,6 +57,58 @@
 
     .content-4 {
       cursor: default;
+    }
+
+    /* Registration form */
+
+    .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
+      width: 100%;
+      height:4rem;
+      padding-left:1rem;
+      margin-bottom:1rem;
+      font-size: 1.5rem;
+      background-color: #fff;
+      border:0px;
+      border-radius:3px;
+    }
+
+    .account_form label{
+      font-size: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .account_form input:active {
+      box-shadow: 0 0 0px 1px $brand-workspace;
+    }
+
+    .account_form input[type="checkbox"] {
+      display:inline-block;
+      width: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      width: 100%;
+
+      .newsletter {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+      }
+
+      .consent {
+        width: 100%;
+        @extend .content-3;
+        color:$brand-text--dark;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .account_form .action-button {
+        margin-top: 3rem;
+      }
     }
   }
 
@@ -152,24 +207,6 @@ body.accounts {
   align-items: center;
 }
 
-.signup-card{
-  background: rgba(250,250,250,0.3);
-  height: auto;
-  padding: 3rem 5rem;
-  border: none;
-  border-radius: 0px;
-  margin:auto;
-  width:40rem;
-
-  .consent {
-    @extend .content-3;
-    color:$brand-text--dark;
-    font-size: 1.3rem;
-    margin-top: 1rem;
-
-  }
-
-}
 
 .demoSignup{
   width: 100%;
@@ -191,38 +228,4 @@ body.accounts {
 
 .login-fullscreen-container .title-2 {
   line-height: normal;
-}
-
-
-
-
-/* Registration form */
-
-.account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
-  width: 100%;
-  height:4rem;
-  padding-left:1rem;
-  margin-bottom:1rem;
-  font-size: 1.5rem;
-  background-color: #fff;
-  border:0px;
-  border-radius:3px;
-}
-
-.account_form label{
-  font-size: 1.2rem;
-  margin-bottom: 0;
-}
-
-.account_form input:active {
-  box-shadow: 0 0 0px 1px $brand-workspace;
-}
-
-.account_form input[type="checkbox"] {
-  display:inline-block;
-  width: 1.5rem;
-}
-
-.account_form .action-button {
-  margin-top: 1rem;
 }
