@@ -1,8 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import WfHamburgerMenu from './WfHamburgerMenu'
+import UndoRedoButtons from './UndoRedoButtons'
 import EditableWorkflowName from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
-import PropTypes from 'prop-types'
 import { goToUrl, logUserEvent } from './utils'
 import ShareModal from './ShareModal'
 
@@ -19,13 +20,40 @@ export default class WorkflowNavBar extends React.Component {
     isShareModalOpen: false
   }
 
+  componentWillUnmount = () => {
+    this.unmounted = true
+  }
+
+  undoRedo (verb) {
+    // TODO use reducer for this, with a global "can't tell what's going to
+    // change" flag instead of this.state.spinnerVisible.
+
+    // Prevent keyboard shortcuts or mouse double-undoing.
+    if (this.state.spinnerVisible) return
+
+    this.setState({ spinnerVisible: true })
+    this.props.api[verb](this.props.workflow.id)
+      .then(() => {
+        if (this.unmounted) return
+        this.setState({ spinnerVisible: false })
+      })
+  }
+
+  undo = () => {
+    this.undoRedo('undo')
+  }
+
+  redo = () => {
+    this.undoRedo('redo')
+  }
+
   handleDuplicate = () => {
     if (!this.props.loggedInUser) {
       // user is NOT logged in, so navigate to sign in
       goToUrl('/account/login')
     } else {
       // user IS logged in: start spinner, make duplicate & navigate there
-      this.setState({spinnerVisible: true})
+      this.setState({ spinnerVisible: true })
 
       this.props.api.duplicateWorkflow(this.props.workflow.id)
         .then(json => {
@@ -47,15 +75,17 @@ export default class WorkflowNavBar extends React.Component {
   }
 
   render() {
+    const { api, isReadOnly, loggedInUser, workflow } = this.props
+
     // menu only if there is a logged-in user
     let contextMenu
-    if (this.props.loggedInUser) {
+    if (loggedInUser) {
       contextMenu = (
         <WfHamburgerMenu
-          workflowId={this.props.workflow.id}
-          api={this.props.api}
-          isReadOnly={this.props.isReadOnly}
-          user={this.props.loggedInUser}
+          workflowId={workflow.id}
+          api={api}
+          isReadOnly={isReadOnly}
+          user={loggedInUser}
         />
       )
     } else {
@@ -63,18 +93,6 @@ export default class WorkflowNavBar extends React.Component {
         <a href="/account/login" className='nav--link'>Sign in</a>
       )
     }
-
-    const duplicate = (
-      <button name='duplicate' onClick={this.handleDuplicate} className='button-white--fill action-button'>
-        Duplicate
-      </button>
-    )
-
-    const share = (
-      <button name='share' onClick={this.openShareModal} className='button-white action-button'>
-        Share
-      </button>
-    )
 
     const spinner = this.state.spinnerVisible ? (
       <div className="spinner-container">
@@ -96,22 +114,25 @@ export default class WorkflowNavBar extends React.Component {
     return (
       <React.Fragment>
         {spinner}
-        <nav className="navbar">
-          <a href="/workflows/" className="logo-navbar">
-            <img className="image" src={`${window.STATIC_URL}images/logo.svg`}/>
+        <nav className='navbar'>
+          <a href='/workflows/' className='logo-navbar'>
+            <img className='image' src={`${window.STATIC_URL}images/logo.svg`}/>
           </a>
           <div className='title-metadata-stack'>
             <EditableWorkflowName
-              value={this.props.workflow.name}
-              workflowId={this.props.workflow.id}
-              isReadOnly={this.props.workflow.read_only}
-              api={this.props.api}
+              value={workflow.name}
+              workflowId={workflow.id}
+              isReadOnly={isReadOnly}
+              api={api}
             />
             <WorkflowMetadata workflow={this.props.workflow} openShareModal={this.openShareModal} />
           </div>
-          <div className='d-flex flex-row align-items-center'>
-            {duplicate}
-            {share}
+          <div className='nav-buttons'>
+            {isReadOnly ? null : (
+              <UndoRedoButtons undo={this.undo} redo={this.redo} />
+            )}
+            <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
+            <button name='share' onClick={this.openShareModal}>Share</button>
             {contextMenu}
           </div>
         </nav>

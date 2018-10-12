@@ -134,9 +134,6 @@ button:focus { outline:0 !important; }
 .action-button {
   cursor: pointer;
   border: 1px solid $brand-workspace;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-width: 7rem;
 	height: 3.5rem;
   border-radius: 2.5rem;

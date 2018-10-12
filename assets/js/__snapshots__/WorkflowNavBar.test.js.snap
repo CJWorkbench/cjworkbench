@@ -39,6 +39,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
             "duplicateWorkflow": [MockFunction],
           }
         }
+        isReadOnly={false}
         value="Original Version"
         workflowId={303}
       >
@@ -108,17 +109,42 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
       </WorkflowMetadata>
     </div>
     <div
-      className="d-flex flex-row align-items-center"
+      className="nav-buttons"
     >
+      <UndoRedoButtons
+        redo={[Function]}
+        undo={[Function]}
+      >
+        <div
+          className="button-group"
+        >
+          <button
+            name="undo"
+            onClick={[Function]}
+            title="Undo"
+          >
+            <i
+              className="icon-undo"
+            />
+          </button>
+          <button
+            name="redo"
+            onClick={[Function]}
+            title="Redo"
+          >
+            <i
+              className="icon-redo"
+            />
+          </button>
+        </div>
+      </UndoRedoButtons>
       <button
-        className="button-white--fill action-button"
         name="duplicate"
         onClick={[Function]}
       >
         Duplicate
       </button>
       <button
-        className="button-white action-button"
         name="share"
         onClick={[Function]}
       >
@@ -179,6 +205,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
             "duplicateWorkflow": [MockFunction],
           }
         }
+        isReadOnly={false}
         value="Original Version"
         workflowId={12}
       >
@@ -248,17 +275,42 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
       </WorkflowMetadata>
     </div>
     <div
-      className="d-flex flex-row align-items-center"
+      className="nav-buttons"
     >
+      <UndoRedoButtons
+        redo={[Function]}
+        undo={[Function]}
+      >
+        <div
+          className="button-group"
+        >
+          <button
+            name="undo"
+            onClick={[Function]}
+            title="Undo"
+          >
+            <i
+              className="icon-undo"
+            />
+          </button>
+          <button
+            name="redo"
+            onClick={[Function]}
+            title="Redo"
+          >
+            <i
+              className="icon-redo"
+            />
+          </button>
+        </div>
+      </UndoRedoButtons>
       <button
-        className="button-white--fill action-button"
         name="duplicate"
         onClick={[Function]}
       >
         Duplicate
       </button>
       <button
-        className="button-white action-button"
         name="share"
         onClick={[Function]}
       >
@@ -365,60 +417,6 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                           My Workflows
                         </span>
                       </a>
-                    </DropdownItem>
-                    <DropdownItem
-                      divider={true}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <div
-                        className="dropdown-divider"
-                        onClick={[Function]}
-                        tabIndex="-1"
-                      />
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <span>
-                          Undo
-                        </span>
-                      </button>
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <span>
-                          Redo
-                        </span>
-                      </button>
-                    </DropdownItem>
-                    <DropdownItem
-                      divider={true}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <div
-                        className="dropdown-divider"
-                        onClick={[Function]}
-                        tabIndex="-1"
-                      />
                     </DropdownItem>
                     <DropdownItem
                       className="test-export-button"

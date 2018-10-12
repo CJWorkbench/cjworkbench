@@ -18,8 +18,6 @@ describe('WfHamburgerMenu', () => {
     expect(wrapper).toMatchSnapshot(); // one snapshot only, in most common case
 
     expect(wrapper.find('a[href="/workflows"]')).toHaveLength(1);
-    expect(wrapper.find('span[children="Undo"]')).toHaveLength(1);
-    expect(wrapper.find('span[children="Redo"]')).toHaveLength(1);
     expect(wrapper.find('span[children="Import Module"]')).toHaveLength(1);
     expect(wrapper.find('span[children="Log Out"]')).toHaveLength(1);
   });
@@ -33,8 +31,6 @@ describe('WfHamburgerMenu', () => {
     />);
 
     expect(wrapper.find('a[href="/workflows"]')).toHaveLength(1);
-    expect(wrapper.find('span[children="Undo"]')).toHaveLength(0);
-    expect(wrapper.find('span[children="Redo"]')).toHaveLength(0);
     expect(wrapper.find('span[children="Import Module"]')).toHaveLength(1);
     expect(wrapper.find('span[children="Log Out"]')).toHaveLength(1);
   });
@@ -48,8 +44,6 @@ describe('WfHamburgerMenu', () => {
     />);
 
     expect(wrapper.find('a[href="https://workbenchdata.com"]')).toHaveLength(1);
-    expect(wrapper.find('span[children="Undo"]')).toHaveLength(0);
-    expect(wrapper.find('span[children="Redo"]')).toHaveLength(0);
     expect(wrapper.find('span[children="Import Module"]')).toHaveLength(0);
     expect(wrapper.find('span[children="Log out"]')).toHaveLength(1);
   });
@@ -64,8 +58,6 @@ describe('WfHamburgerMenu', () => {
     />);
 
     expect(wrapper.find('a[href="https://workbenchdata.com"]')).toHaveLength(0);
-    expect(wrapper.find('span[children="Undo"]')).toHaveLength(0);
-    expect(wrapper.find('span[children="Redo"]')).toHaveLength(0);
     expect(wrapper.find('span[children="Import Module"]')).toHaveLength(1);
     expect(wrapper.find('span[children="Log Out"]')).toHaveLength(1);
   })

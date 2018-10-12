@@ -17,8 +17,52 @@
     align-items: center;
   }
 
-  .action-button {
-    height:4rem;
+  .nav-buttons {
+    &>button, .button-group>button { // '>' because dropdown may contain other buttons
+      @extend .action-button;
+      @extend .button-white;
+
+      white-space: nowrap;
+
+      &[name=duplicate] {
+        @extend .button-white--fill;
+      }
+    }
+
+    &>button, &>.button-group {
+      margin-right: 3rem;
+    }
+
+    .button-group {
+      display: inline-block;
+
+      button:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      button:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      button:not(:last-child) {
+        margin-right: 0;
+      }
+
+      button:not(:first-child) {
+        border-left: none;
+        margin-left: 0;
+      }
+
+      button:not(:first-child):not(:last-child) {
+        border-radius: 0;
+      }
+    }
+
+    &>.dropdown {
+      display: inline-block;
+    }
   }
 
   // Brand logo
@@ -173,9 +217,6 @@
     .editable-title--field:hover{
       background-color: rgba(250,250,250,0.2);
     }
-  }
-  .action-button {
-    margin-right: 4rem;
   }
 }
 

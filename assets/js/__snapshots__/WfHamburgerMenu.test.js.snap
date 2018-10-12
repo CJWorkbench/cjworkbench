@@ -100,60 +100,6 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                 </a>
               </DropdownItem>
               <DropdownItem
-                divider={true}
-                tag="button"
-                toggle={true}
-              >
-                <div
-                  className="dropdown-divider"
-                  onClick={[Function]}
-                  tabIndex="-1"
-                />
-              </DropdownItem>
-              <DropdownItem
-                onClick={[Function]}
-                tag="button"
-                toggle={true}
-              >
-                <button
-                  className="dropdown-item"
-                  onClick={[Function]}
-                  tabIndex="0"
-                  type="button"
-                >
-                  <span>
-                    Undo
-                  </span>
-                </button>
-              </DropdownItem>
-              <DropdownItem
-                onClick={[Function]}
-                tag="button"
-                toggle={true}
-              >
-                <button
-                  className="dropdown-item"
-                  onClick={[Function]}
-                  tabIndex="0"
-                  type="button"
-                >
-                  <span>
-                    Redo
-                  </span>
-                </button>
-              </DropdownItem>
-              <DropdownItem
-                divider={true}
-                tag="button"
-                toggle={true}
-              >
-                <div
-                  className="dropdown-divider"
-                  onClick={[Function]}
-                  tabIndex="-1"
-                />
-              </DropdownItem>
-              <DropdownItem
                 className="test-export-button"
                 onClick={[Function]}
                 tag="button"

@@ -55,22 +55,6 @@ export default class WfHamburgerMenu extends React.Component {
       }
     }
 
-    // If we can edit the workflow we have undo and redo items
-    if (this.props.workflowId && !this.props.isReadOnly) {
-      undoRedo = (
-        <React.Fragment>
-          <DropdownItem divider />
-          <DropdownItem onClick={() => { this.props.api.undo(this.props.workflowId) }}>
-            <span>Undo</span>
-          </DropdownItem>
-          <DropdownItem onClick={() => { this.props.api.redo(this.props.workflowId) }}>
-            <span>Redo</span>
-          </DropdownItem>
-          <DropdownItem divider />
-        </React.Fragment>
-      )
-    }
-
     // can import if logged in
     if (loggedIn) {
       let importModal = this.state.importModalOpen ? this.renderImportModal() : null
@@ -105,7 +89,6 @@ export default class WfHamburgerMenu extends React.Component {
         </DropdownToggle>
         <DropdownMenu right>
           {homeLink}
-          {undoRedo}
           {importModule}
           {logInorOut}
         </DropdownMenu>
