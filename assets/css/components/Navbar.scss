@@ -47,27 +47,7 @@
       }
       button:first-child {
         margin-right: 1rem;
-        // border-top-right-radius: 0; KEEPING THIS CODE HERE FOR NOW, MAY REVERT BACK TO IT -- PIERRE
-        // border-bottom-right-radius: 0;
       }
-
-      // button:last-child {
-      //   border-top-left-radius: 0;
-      //   border-bottom-left-radius: 0;
-      // }
-
-      // button:not(:last-child) {
-      //   margin-right: 0;
-      // }
-      //
-      // button:not(:first-child) {
-      //   border-left: none;
-      //   margin-left: 0;
-      // }
-      //
-      // button:not(:first-child):not(:last-child) {
-      //   border-radius: 0;
-      // }
     }
 
     &>.dropdown {

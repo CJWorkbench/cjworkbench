@@ -263,7 +263,7 @@ button:focus { outline:0 !important; }
   }
   &:active, &:active .spinner::after {
     background-color: $light-accent--Vstrong;
-    border: 2px solid white;
+    border: 1px solid white;
   }
 }
 
