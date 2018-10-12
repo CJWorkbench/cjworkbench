@@ -116,7 +116,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         undo={[Function]}
       >
         <div
-          className="button-group"
+          className="group--undo-redo"
         >
           <button
             name="undo"
@@ -282,7 +282,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
         undo={[Function]}
       >
         <div
-          className="button-group"
+          className="group--undo-redo"
         >
           <button
             name="undo"
