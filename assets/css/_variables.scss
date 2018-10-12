@@ -68,7 +68,9 @@ $table-element--light: lighten($table-element,18%);
 $brand-workspace--Vlight:lighten($brand-workspace,41%);
 $brand-workspace--light:lighten($brand-workspace,39%);
 $brand-workspace--medium:lighten($brand-workspace,15%);
-$brand-workspace--background:rgba($brand-workspace--medium, .25); // used for blending in backgrounds
+
+$brand-background:rgba($brand-workspace--medium, .25); // used for blending in backgrounds
+$brand-background--action:rgba($brand-workspace--medium, .50); 
 
 $brand-orange--light:lighten($brand-orange,26%);
 $brand-orange--medium:lighten($brand-orange,12%);

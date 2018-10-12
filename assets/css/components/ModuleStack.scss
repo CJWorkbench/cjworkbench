@@ -48,7 +48,7 @@
       height: 3.5rem;
       opacity: .85;
       &:hover{
-        background-color: $brand-workspace--background;
+        background-color: $brand-background;
         opacity: 1;
       }
       i {
@@ -86,7 +86,7 @@
       width: $module-width;
       height: 100%;
       cursor: pointer;
-      border: .1rem solid transparent;
+      border: 0;
       font-size: 1rem;
       color: transparent;
       background: transparent;
@@ -97,7 +97,7 @@
         position: absolute;
         left: 50%;
         margin-left: -.4rem;
-        top: 2px;
+        top: 3px;
         font-size: 1rem;
       }
     }
@@ -110,7 +110,7 @@
       cursor: default;
 
       &:hover button.search {
-        background: $brand-workspace--background;
+        background: $brand-background;
         transition-delay: .1s;
         cursor: pointer;
 
@@ -147,16 +147,7 @@
 
     &.is-drag-hovering {
       opacity: 1;
-      background: $brand-orange;
-    }
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: -2.5rem;
-      bottom: -2.5rem;
-      left: 0;
-      right: 0;
+      background-color: $brand-background--action;
     }
   }
 
