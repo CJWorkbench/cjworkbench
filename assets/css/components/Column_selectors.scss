@@ -101,6 +101,11 @@
     background-color: $dark-accent--soft;
     color:$brand-text--darker;
   }
+  // notice when no selection found
+  .css-1gl4k7y.react-select__menu-notice {
+    @extend .info-1;
+    color: $brand-text--dark;
+  }
 }
 
 
