@@ -18,10 +18,12 @@
   }
 
   .nav-buttons {
+    display: flex;
+    align-items: center;
+
     &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
       @extend .action-button;
-      @extend .button-white--fill;
-
+      @extend .button-white;
       white-space: nowrap;
 
       &[name=duplicate] {
@@ -40,6 +42,7 @@
       button {
         min-width: 0;
         width: 3.5rem;
+        height: 3.5rem;
         padding: 0;
       }
       button:first-child {
