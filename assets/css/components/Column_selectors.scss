@@ -10,7 +10,7 @@
       width: 26rem;
 
       .css-1rtrksz.react-select__value-container {
-        padding-left: 2.2rem; // padding left for distance from color picker
+        padding-left: 2.5rem; // padding left for distance from color picker
       }
     }
 
@@ -40,7 +40,7 @@
 //carret container
 .css-1rtrksz.react-select__value-container {
   cursor: text;
-  padding: 0 .2rem;
+
 
   // Carret to open menu
   .css-1ep9fjw.react-select__indicator,
@@ -143,6 +143,9 @@
   border-radius: 3px;
   border: 1px solid $brand-orange;
   background-color: $brand-orange--light;
+  &:first-child {
+    margin-left: -2px;
+  }
 
   .react-select__multi-value__label {
     @extend .content-3;
