@@ -47,6 +47,36 @@
         opacity: 1;
       }
     }
+
+    // Style for selected values within multi select
+
+    .react-select__multi-value {
+      border-radius: 3px;
+      border: 1px solid $brand-orange;
+      background-color: $brand-orange--light;
+      margin-left: 0;
+      margin-right: .4rem;
+      height: 2.7rem;
+
+      .react-select__multi-value__label {
+        @extend .content-3;
+        color:$brand-orange;
+      }
+    }
+
+    .react-select__multi-value__remove {
+      cursor: pointer;
+      border-radius: 0 3px 3px 0;
+      color:$brand-orange;
+      padding: 0;
+      width: 2rem;
+      justify-content: center;
+
+      &:hover {
+        color: $white;
+        background-color: $brand-orange--medium-dark;
+      }
+    }
   }
 
   //value selected
@@ -132,33 +162,4 @@ div>.react-select__menu {
     }
   }
 
-}
-
-// Style for selected values within multi select
-
-.react-select__multi-value {
-  border-radius: 3px;
-  border: 1px solid $brand-orange;
-  background-color: $brand-orange--light;
-  margin-left: 0;
-  margin-right: .4rem;
-
-  .react-select__multi-value__label {
-    @extend .content-3;
-    color:$brand-orange;
-  }
-}
-
-.react-select__multi-value__remove {
-  cursor: pointer;
-  border-radius: 0 3px 3px 0;
-  color:$brand-orange;
-  padding: 0;
-  width: 2rem;
-  justify-content: center;
-
-  &:hover {
-    color: $white;
-    background-color: $brand-orange--medium-dark;
-  }
 }

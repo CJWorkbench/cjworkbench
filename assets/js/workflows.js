@@ -121,7 +121,7 @@ export default class Workflows extends React.Component {
                 <div className=" title-2 ">TUTORIALS</div>
               </div>
             </div>
-            <p className="content-2">Learn how to work with data without coding</p>
+            <p>Learn how to work with data without coding</p>
           </a>
           <div className="d-flex justify-content-center">
             <button className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</button>

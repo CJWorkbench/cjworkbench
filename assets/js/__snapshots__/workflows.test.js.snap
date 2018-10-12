@@ -193,9 +193,7 @@ exports[`Workflow list page renders correctly 1`] = `
             </div>
           </div>
         </div>
-        <p
-          className="content-2"
-        >
+        <p>
           Learn how to work with data without coding
         </p>
       </a>

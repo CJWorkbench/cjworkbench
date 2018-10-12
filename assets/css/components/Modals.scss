@@ -54,7 +54,7 @@
       /* from Export Data modal, in WfModuleContextMenu  */
       .url-link {
         color: $brand-text--dark;
-        @extend .content-2;
+        @extend .content-3;
         width: 100%;
         padding: 1.3rem 1.5rem;
         margin-bottom: 1rem;
@@ -167,13 +167,13 @@
   // Share workflow modal
 
   .dl-file {
-    @extend .info-1;
-    color: $medium-gray;
+    @extend .content-3;
+    color: $labels;
   }
 
   .clipboard {
-    @extend .info-1;
-    margin-bottom:.5rem;
+    @extend .content-3;
+    margin-bottom:.3rem;
     text-transform: uppercase;
     cursor: pointer;
     color: $brand-workspace;

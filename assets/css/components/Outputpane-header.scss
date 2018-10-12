@@ -67,13 +67,19 @@
 
   }
 
+  // button to export data in table header
+
   .export-table {
+
     @extend .action-button;
+    display: flex;
+    align-items: center;
     margin-right: 2.25rem;
     border-color: transparent;
     color: $table-element;
     background-color: white;
     cursor: pointer;
+
     &:hover{
       background-color: $dark-accent--soft;
     }
