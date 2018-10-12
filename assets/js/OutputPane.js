@@ -130,7 +130,7 @@ function mapStateToProps(state, ownProps) {
 
   if (wfModule && (wfModule.status === 'error' || wfModule.status === 'unreachable')) {
     const errorIndex = workflow.wf_modules
-      .findIndex(id => wfModules[String(id)].status === 'error')
+      .findIndex(id => wfModules[String(id)] && wfModules[String(id)].status === 'error')
 
     if (errorIndex > 0) {
       const lastGood = wfModules[String(workflow.wf_modules[errorIndex - 1])]
