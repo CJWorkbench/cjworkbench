@@ -29,9 +29,9 @@ export default class WorkflowListNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <div className="d-flex align-items-center">
+          <div className="logo">
             <img src={`${window.STATIC_URL}images/logo.svg`} className="logo"/>
-            <div className="logo-1">Workbench</div>
+            <img src={`${window.STATIC_URL}images/logo-text.svg`} className="logo-text"/>
           </div>
           {links}
           <WfHamburgerMenu />

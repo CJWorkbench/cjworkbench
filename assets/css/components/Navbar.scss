@@ -66,11 +66,27 @@
   }
 
   // Brand logo
-  img.logo {
-    vertical-align: middle;
-    margin-right: 0.7rem;
-    width: 2.5rem;
+
+  .logo {
+
+    display: flex;
+    align-items: center;
+
+    img.logo {
+      vertical-align: middle;
+      margin-right: 0.7rem;
+      width: 2.5rem;
+    }
+
+    img.logo-text {
+      position: relative;
+      top:0;
+      width: 12rem;
+      height: 3rem;
+      margin-bottom: 1rem;
+    }
   }
+
 
   .workflow-container .navbar .action-link {
     color:white;

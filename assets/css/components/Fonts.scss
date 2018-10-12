@@ -5,22 +5,10 @@
 .font404{
 	font-size: 14rem;
 	line-height: 14rem;
-  @extend %font-lato-bold;
+  @extend %font-nunito-bold;
   letter-spacing: -0.3px;
 	margin-bottom: 0.1rem;
 }
-
-.logo-1 {
-	font-size: 2.6rem;
-	line-height: 2.6rem;
-	font-weight: 700;
-  @extend %font-lato-bold;
-  letter-spacing: -.8px;
-	margin-bottom: 0.1rem;
-	cursor: default;
-}
-
-
 
 .title-1 {
 	font-size: 2.5rem;
