@@ -34,12 +34,13 @@
 
 .css-1ep9fjw.react-select__indicator.react-select__dropdown-indicator,
 .css-1sjym57.react-select__indicator.react-select__dropdown-indicator {
-  padding: 0 .6rem;
+  padding: 0 .5rem;
 }
 
 //carret container
 .css-1rtrksz.react-select__value-container {
   cursor: text;
+  padding: 0 .2rem;
 
   // Carret to open menu
   .css-1ep9fjw.react-select__indicator,
@@ -142,20 +143,22 @@
   border-radius: 3px;
   border: 1px solid $brand-orange;
   background-color: $brand-orange--light;
-  margin: 0;
 
   .react-select__multi-value__label {
     @extend .content-3;
     color:$brand-orange;
   }
 }
-.react-select__multi-value__remove {
+.css-1alnv5e.react-select__multi-value__remove {
   cursor: pointer;
   border-radius: 0 3px 3px 0;
   color:$brand-orange;
+  padding: 0;
+  width: 2rem;
+  justify-content: center;
 
   &:hover {
   color: $white;
-  background-color: $brand-orange;
+  background-color: $brand-orange--medium-dark;
   }
 }
