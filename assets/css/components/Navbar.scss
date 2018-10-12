@@ -44,7 +44,7 @@
       }
       button:first-child {
         margin-right: 1rem;
-        // border-top-right-radius: 0;
+        // border-top-right-radius: 0; KEEPING THIS CODE HERE FOR NOW, MAY REVERT BACK TO IT -- PIERRE
         // border-bottom-right-radius: 0;
       }
 
@@ -222,6 +222,7 @@
     }
 
     .editable-title--field {
+      @extend .title-5;
       position: relative;
       top:.1rem;
       min-width: 100%;
@@ -230,8 +231,6 @@
       padding: 0;
       resize: none;
       background: none;
-      @extend %font-nunito-regular;
-      font-size: 1.8rem;
     	line-height: 1.8rem;
       color: #FFFFFF;
       padding-right:1.5rem;
