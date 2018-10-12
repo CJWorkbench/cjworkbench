@@ -107,14 +107,17 @@
       width: 100%;
       height: 100%;
       z-index: 2;
+      cursor: default;
 
       &:hover button.search {
         background: $brand-workspace--background;
-
+        transition-delay: .1s;
+        cursor: pointer;
 
         i {
           background: transparent;
           color:$brand-workspace;
+          transition-delay: .1s;
         }
       }
     }
