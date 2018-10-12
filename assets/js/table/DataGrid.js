@@ -114,9 +114,17 @@ export default class DataGrid extends React.Component {
   }
 
   state = {
-    // gridWith and gridHeight start non-0, so rows get rendered in tests
-    gridWidth: 100,
-    gridHeight : 100,
+    // gridWith and gridHeight start null, which means DO NOT RENDER. We use
+    // this in two ways:
+    //
+    // 1. We don't render a ReactDataGrid until initial sizing.
+    // 2. We defer sizing until after the first render. By waiting a tick, we
+    //    let the _rest_ of React's DOM render and be visible to the user. In
+    //    other words: we show the spinner -- and wait until that's visible --
+    //    before rendering the ReactDataGrid. (ReactDataGrid render can take
+    //    >1s when there are many columns.)
+    gridWidth: null,
+    gridHeight : null,
     spinning: false,
     draggingColumnIndex: null,
     loadedRows: []
@@ -146,7 +154,7 @@ export default class DataGrid extends React.Component {
     if (domNode && domNode.parentElement) {
       const gridHeight = Math.max(100, domNode.offsetHeight)
       const gridWidth = Math.max(100, domNode.offsetWidth)
-      this.setState({ gridWidth, gridHeight })
+      window.setTimeout((() => this.setState({ gridWidth, gridHeight })), 0)
     }
   }
 
@@ -384,9 +392,18 @@ export default class DataGrid extends React.Component {
       </div>
     )
 
+    // Don't render when gridWidth===null. We only render after a setTimeout
+    // in updateSize(). That way, React can handle the rest of the DOM updates
+    // that a click event entails without spending entire seconds on
+    // react-data-grid.
+    //
+    // The net effect: we render after the spinner appears. This is much more
+    // usable.
+    //
+    // Beware: gridWidth = gridHeight = 0 in Enzyme tests with a fake DOM.
     return (
       <div className='data-grid-sizer' ref={this.sizerRef}>
-        {this.renderGrid()}
+        {(gridWidth !== null && gridHeight !== null) ? this.renderGrid() : null}
         {maybeSpinner}
       </div>
     )

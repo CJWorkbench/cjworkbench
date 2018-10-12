@@ -36,7 +36,7 @@ describe('DataGrid', () => {
   }
 
   // mount() so we get componentDidMount, componentWillUnmount()
-  const wrapper = (extraProps={}, httpResponses=[ testRows ]) => {
+  const wrapper = async (extraProps={}, httpResponses=[ testRows ]) => {
     const apiRender = jest.fn()
     for (const httpResponse of httpResponses) {
       apiRender.mockReturnValueOnce(Promise.resolve(httpResponse))
@@ -46,7 +46,7 @@ describe('DataGrid', () => {
 
     const nRows = httpResponses.reduce(((s, j) => s + j.rows.length), 0)
 
-    return mount(
+    const ret = mount(
       <DataGrid
         api={api}
         isReadOnly={false}
@@ -65,10 +65,21 @@ describe('DataGrid', () => {
         {...extraProps}
       />
     )
+
+    await tick() // wait for updateSize(), which actually renders the grid
+    ret.update()
+
+    return ret
   }
 
   it('Renders the grid', async () => {
-    const tree = wrapper()
+    const apiRender = jest.fn()
+
+    let resolveHttpRequest
+    apiRender.mockReturnValueOnce(new Promise(resolve => resolveHttpRequest = resolve))
+
+    const api = { render: apiRender }
+    const tree = await wrapper({ api, nRows: 2 })
 
     // Check that we ended up with five columns (first is row number), with the right names
     // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
@@ -88,7 +99,7 @@ describe('DataGrid', () => {
 
     expect(tree.prop('api').render).toHaveBeenCalledWith(1, 0, 200)
 
-    await tick(); tree.update() // load data
+    resolveHttpRequest(testRows); await tick(); tree.update()
 
     // hide spinner
     expect(tree.find('.spinner-container-transparent')).toHaveLength(0)
@@ -98,7 +109,7 @@ describe('DataGrid', () => {
   })
 
   it('should edit a cell', async () => {
-    const tree = wrapper()
+    const tree = await wrapper()
     await tick(); tree.update() // load data
     // weird incantation to simulate double-click
     tree.find('.react-grid-Cell').first().simulate('click')
@@ -110,7 +121,7 @@ describe('DataGrid', () => {
   })
 
   it('should not edit a cell when its value does not change', async () => {
-    const tree = wrapper()
+    const tree = await wrapper()
     await tick(); tree.update() // load data
     // weird incantation to simulate double-click
     tree.find('.react-grid-Cell').first().simulate('click')
@@ -121,7 +132,7 @@ describe('DataGrid', () => {
   })
 
   it('should render as a placeholder that loads no data', async () => {
-    const tree = wrapper({}, [])
+    const tree = await wrapper({}, [])
 
     expect(tree.find('.spinner-container-transparent')).toHaveLength(0)
     expect(tree.text()).not.toMatch(/null/) // show blank cells, not "null" placeholders
@@ -131,8 +142,8 @@ describe('DataGrid', () => {
     expect(tree.prop('onLoadPage')).toHaveBeenCalledWith(1, 2)
   })
 
-  it('should show letters in the header according to props', () => {
-    const tree = wrapper({ showLetter: true })
+  it('should show letters in the header according to props', async () => {
+    const tree = await wrapper({ showLetter: true })
     expect(tree.find('.column-letter')).toHaveLength(4)
     expect(tree.find('.column-letter').at(0).text()).toEqual('A')
     expect(tree.find('.column-letter').at(1).text()).toEqual('B')
@@ -140,13 +151,13 @@ describe('DataGrid', () => {
     expect(tree.find('.column-letter').at(3).text()).toEqual('D')
 	})
 
-  it('should hide letters in the header according to props', () => {
-    const tree = wrapper({ showLetter: false })
+  it('should hide letters in the header according to props', async () => {
+    const tree = await wrapper({ showLetter: false })
     expect(tree.find('.column-letter')).toHaveLength(0)
   })
 
-  it('should call column rename upon editing a column header', () => {
-    const tree = wrapper()
+  it('should call column rename upon editing a column header', async () => {
+    const tree = await wrapper()
 
     expect(tree.find('EditableColumnName')).toHaveLength(4)
     // Tests rename on aaaColumn
@@ -160,21 +171,21 @@ describe('DataGrid', () => {
   })
 
   it('should respect isReadOnly for rename columns', async () => {
-    const tree = wrapper({ isReadOnly: true })
+    const tree = await wrapper({ isReadOnly: true })
     tree.find('EditableColumnName').first().simulate('click')
     tree.update()
     expect(tree.find('EditableColumnName input')).toHaveLength(0)
   })
 
   it('should set className to include type', async () => {
-    const tree = wrapper()
+    const tree = await wrapper()
     await tick(); tree.update() // load data
     expect(tree.find('.cell-text')).toHaveLength(6)
     expect(tree.find('.cell-number')).toHaveLength(2)
   })
 
   it('should display "null" for none types', async () => {
-    const tree = wrapper({}, [{
+    const tree = await wrapper({}, [{
       start_row: 0,
       end_row: 1,
       rows: [
@@ -191,7 +202,7 @@ describe('DataGrid', () => {
   })
 
   it('should select a row', async () => {
-    const tree = wrapper()
+    const tree = await wrapper()
     await tick(); tree.update() // load data
     expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(false)
     tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: true } })
@@ -199,7 +210,7 @@ describe('DataGrid', () => {
   })
 
   it('should deselect a row', async () => {
-    const tree = wrapper({ selectedRowIndexes: [ 1 ] })
+    const tree = await wrapper({ selectedRowIndexes: [ 1 ] })
     await tick(); tree.update() // load data
     expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(true)
     tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: false } })
@@ -224,7 +235,7 @@ describe('DataGrid', () => {
       }
     }
 
-    const tree = wrapper({ nRows: 801 }, [ result(0), result(200), result(600) ])
+    const tree = await wrapper({ nRows: 801 }, [ result(0), result(200), result(600) ])
     const api = tree.prop('api')
 
     // Should load 0..initialRows at first
