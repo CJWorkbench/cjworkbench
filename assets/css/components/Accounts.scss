@@ -112,6 +112,15 @@
     }
   }
 
+  .action-button {
+    height: 4rem;
+  }
+
+  fieldset {
+    display: flex;
+    align-items: center;
+  }
+
   .sign-in {
     @extend .title-1;
     text-align: center;
@@ -121,8 +130,6 @@
   a {
     @extend .content-3;
     color:$white;
-    &:hover {
-    }
   }
 
   input {cursor: pointer;}
@@ -179,7 +186,7 @@ body.accounts {
 
   .message-body {
     color: $brand-text--dark;
-    @extend .info-2;
+    @extend .content-3;
     text-align: center;
     margin-bottom: 3rem;
     width: 100%;
