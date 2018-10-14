@@ -12,6 +12,7 @@
   button.disconnect {
     @extend .info-1;
     border:0;
+    font-weight: normal;
     @extend .btn-link;
     @extend .system-link;
   }
