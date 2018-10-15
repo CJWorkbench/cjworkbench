@@ -108,7 +108,9 @@ export default class TableSwitcher extends React.PureComponent {
     }
 
     let loading = false
-    if (this.props.nRows !== null && !areSameTable(this.props, loaded)) {
+    // Do not render zero-row tables: render a placeholder instead
+    // Helps #161166382, hinders #160865813
+    if (this.props.nRows !== null && this.props.nRows > 0 && !areSameTable(this.props, loaded)) {
       loading = true
       className += ' has-loading'
       tables.push(this._renderTable({
