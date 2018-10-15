@@ -92,7 +92,7 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
 
 // --- Main component  ---
 
-export default class DataGrid extends React.Component {
+export default class DataGrid extends React.PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -369,6 +369,7 @@ export default class DataGrid extends React.Component {
         minWidth={gridWidth}
         minHeight={gridHeight}
         headerRowHeight={showLetter ? 68 : 50}
+        enableCellAutoFocus={false}
         enableCellSelect={true}
         selectAllRenderer={renderNull}
         onGridRowsUpdated={this.onGridRowsUpdated}
