@@ -84,11 +84,14 @@ class ExecuteTests(DbTestCase):
         wf_module2.save(update_fields=['last_relevant_delta_id'])
         wf_module3.save(update_fields=['last_relevant_delta_id'])
 
-        # (more integration-test-y) now their statuses are 'waiting'
+        # (more integration-test-y) now their statuses are 'busy' because they
+        # await render (and not because they're fetching)
         wf_module2.refresh_from_db()
-        self.assertEqual(wf_module3.status, 'waiting')
+        self.assertEqual(wf_module2.status, 'busy')
+        self.assertEqual(wf_module2.is_busy, False)  # is_busy is for fetch
         wf_module3.refresh_from_db()
-        self.assertEqual(wf_module3.status, 'waiting')
+        self.assertEqual(wf_module3.status, 'busy')
+        self.assertEqual(wf_module2.is_busy, False)  # is_busy is for fetch
 
         async_to_sync(execute_workflow)(workflow)
 

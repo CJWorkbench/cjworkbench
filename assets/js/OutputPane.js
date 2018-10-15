@@ -25,7 +25,7 @@ export class OutputPane extends React.Component {
     wfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
       htmlOutput: PropTypes.bool.isRequired,
-      status: PropTypes.oneOf(['ok', 'busy', 'waiting', 'error', 'unreachable']).isRequired,
+      status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
       deltaId: PropTypes.number, // or null if not yet rendered
       columns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,

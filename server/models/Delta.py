@@ -115,7 +115,7 @@ class Delta(PolymorphicModel):
                 data['updateWfModules'][str(id)] = {
                     'last_relevant_delta_id': delta_id,
                     'error_msg': '',
-                    'status': 'waiting',
+                    'status': 'busy',
                     'quick_fixes': [],
                     'output_columns': None,
                     'output_n_rows': None,

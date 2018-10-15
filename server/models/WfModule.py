@@ -141,18 +141,17 @@ class WfModule(models.Model):
     @property
     def status(self):
         """
-        Return 'ok', 'waiting', 'busy', 'error' or 'unreachable'.
+        Return 'ok', 'busy', 'error' or 'unreachable'.
 
-        'busy': is_busy us True
+        'busy': `is_busy` is True and/or render is pending
         'error': render produced an error and no table
         'unreachable': a previous module had 'error' so we will not run this
-        'waiting': in time, the status will change
         'ok': render produced a table
         """
         if self.is_busy:
             return 'busy'
         elif self.cached_render_result_delta_id != self.last_relevant_delta_id:
-            return 'waiting'
+            return 'busy'
         else:
             return self.cached_render_result_status
 

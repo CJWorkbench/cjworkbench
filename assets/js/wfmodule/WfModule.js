@@ -467,7 +467,7 @@ export class WfModule extends React.PureComponent {
           <div className={`module-card-details ${wfModule.is_collapsed ? 'collapsed' : 'expanded'}`}>
             {/* --- Error message --- */}
             <StatusLine
-              status={wfModule.status || 'waiting'}
+              status={wfModule.status || 'busy'}
               error={wfModule.error_msg || ''}
               quickFixes={wfModule.quick_fixes || []}
               applyQuickFix={this.applyQuickFix}
