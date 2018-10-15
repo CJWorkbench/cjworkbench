@@ -1,12 +1,11 @@
 from itertools import groupby
+import logging
 from typing import Any, Dict, List, Union
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 import numpy as np
 from .moduleimpl import ModuleImpl
-from server.models import WfModule
-import json
-import logging
+from .types import ProcessResult
 
 logger = logging.getLogger(__name__)
 

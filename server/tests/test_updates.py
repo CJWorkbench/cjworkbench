@@ -8,7 +8,6 @@ from server import updates
 from server.updates import update_wfm_data_scan
 from server.tests.utils import LoggedInTestCase, add_new_workflow, \
         load_module_version, add_new_wf_module
-from server.utils import get_console_logger
 
 
 # Mock fetch by making it return None, asynchronously
@@ -30,7 +29,7 @@ class UpdatesTests(LoggedInTestCase):
         # fake out the current time so we can run the test just-so
         self.nowtime = parser.parse('Aug 28 1999 2:35PM UTC')
 
-    @patch('server.updates.module_dispatch_event')
+    @patch('server.updates.module_dispatch_fetch')
     @patch('django.utils.timezone.now')
     def test_update_scan(self, mock_now, mock_dispatch):
         mock_now.return_value = self.nowtime
@@ -62,7 +61,7 @@ class UpdatesTests(LoggedInTestCase):
 
         # only wfm2 should have been updated, to update ten minutes from now
         self.assertEqual(mock_dispatch.call_count, 1)
-        # module_dispatch_event(wfm) call
+        # module_dispatch_fetch(wfm) call
         self.assertTrue(mock_dispatch.call_args == ((self.wfm2,), {}))
         self.wfm2.refresh_from_db()
         self.assertEqual(self.wfm2.last_update_check, self.nowtime)
@@ -72,7 +71,7 @@ class UpdatesTests(LoggedInTestCase):
         # wfm1, wfm3 should not have updates
         self.assertEqual(self.wfm3.next_update, not_due_for_update)
 
-    @patch('server.updates.module_dispatch_event')
+    @patch('server.updates.module_dispatch_fetch')
     @patch('server.updates.timezone.now')
     def test_crashing_module(self, mock_now, mock_dispatch):
         mock_now.return_value = self.nowtime

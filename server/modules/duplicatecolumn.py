@@ -1,6 +1,6 @@
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
-import pandas as pd
+
 
 def _do_render(table, dup_columns):
     colnames = set(table.columns)

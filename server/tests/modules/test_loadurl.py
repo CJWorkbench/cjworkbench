@@ -1,12 +1,9 @@
-import asyncio
 from collections import OrderedDict
 import io
 import json
 import os
-import tempfile
 import unittest
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
 from django.conf import settings
 import requests
 import pandas as pd
@@ -72,7 +69,7 @@ def mock_404_response(text):
 
 
 P = MockParams.factory(url='', has_header=True)
-fetch = fetch_factory(LoadURL.event, P)
+fetch = fetch_factory(LoadURL.fetch, P)
 
 
 class LoadFromURLTests(unittest.TestCase):

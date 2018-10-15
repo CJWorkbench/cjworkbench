@@ -11,13 +11,16 @@ from django.utils.translation import gettext as _
 
 
 def python_formula(table, formula):
-    colnames = [x.replace(" ", "_") for x in table.columns]  # spaces to underscores in column names
+    # spaces to underscores in column names
+    colnames = [x.replace(' ', '_') for x in table.columns]
 
     code = compile(formula, '<string>', 'eval')
     custom_code_globals = build_globals_for_eval()
 
-    # Much experimentation went into the form of this loop for good performance.
-    # Note we don't use iterrows or any pandas indexing, and construct the values dict ourselves
+    # Much experimentation went into the form of this loop for good
+    # performance.
+    # Note we don't use iterrows or any pandas indexing, and construct the
+    # values dict ourselves
     newcol = pd.Series(list(itertools.repeat(None, len(table))))
     for i, row in enumerate(table.values):
         newcol[i] = eval(code, custom_code_globals, dict(zip(colnames, row)))
@@ -28,8 +31,8 @@ def python_formula(table, formula):
 
 
 def flatten_single_element_lists(x):
-    """ If passed a list with only one element, returns that element, else the original list"""
-    if isinstance(x, list) and len(x)==1:
+    """Return `x[0]` if `x` is a list, otherwise `x`."""
+    if isinstance(x, list) and len(x) == 1:
         return x[0]
     else:
         return x
@@ -53,7 +56,10 @@ def eval_excel_one_row(code, table):
             raise ValueError(_('Invalid cell range: %s') % token)
         ranges = obj.ranges
         if len(ranges) != 1:
-            raise ValueError(_('Excel range must be a rectangular block of values'))  # ...not sure what input would get us here
+            # ...not sure what input would get us here
+            raise ValueError(
+                _('Excel range must be a rectangular block of values')
+            )
         range = ranges[0]
 
         # Unpack start/end row/col

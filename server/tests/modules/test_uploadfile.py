@@ -30,7 +30,8 @@ class UploadFileTests(unittest.TestCase):
 
     def test_has_header_false(self):
         result = render(False, None, ProcessResult(pd.DataFrame({'A': [1]})))
-        self.assertEqual(result, ProcessResult(pd.DataFrame({'0': ['A', '1']})))
+        self.assertEqual(result,
+                         ProcessResult(pd.DataFrame({'0': ['A', '1']})))
 
     def test_file_error(self):
         result = render(False, None, ProcessResult(error='x'))

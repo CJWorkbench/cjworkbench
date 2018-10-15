@@ -94,7 +94,7 @@ def module_dispatch_render(module_version: ModuleVersion,
                            params: Params,
                            table: pd.DataFrame,
                            fetch_result: Optional[ProcessResult]
-                          ) -> ProcessResult:
+                           ) -> ProcessResult:
     """
     Calls a module's `render()` and returns a sane ProcessResult.
     """
@@ -120,7 +120,7 @@ def module_dispatch_render(module_version: ModuleVersion,
     return result
 
 
-async def module_dispatch_event(wf_module, **kwargs):
+async def module_dispatch_fetch(wf_module) -> None:
     dispatch = wf_module.module_version.module.dispatch
 
     if dispatch in module_dispatch_tbl:
@@ -128,7 +128,7 @@ async def module_dispatch_event(wf_module, **kwargs):
         if hasattr(module_dispatch, 'event'):
             # Tell client to clear errors before fetch
             await wf_module.set_busy()
-            await module_dispatch.event(wf_module, **kwargs)
+            await module_dispatch.fetch(wf_module)
     else:
         dynamic_module = module_version_to_dynamic_module(
             wf_module.module_version

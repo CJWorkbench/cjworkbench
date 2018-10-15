@@ -237,9 +237,10 @@ async def _commit(wf_module, result, *_, **__):
     wf_module.fetch_error = result.error
     wf_module.fetch_result = result
 
+
 @patch('server.modules.moduleimpl.ModuleImpl.commit_result', _commit)
 def fetch(wf_module):
-    async_to_sync(URLScraper.event)(wf_module)
+    async_to_sync(URLScraper.fetch)(wf_module)
 
 
 class URLScraperTests(SimpleTestCase):
@@ -251,7 +252,7 @@ class URLScraperTests(SimpleTestCase):
         self.expected_url_table_result = ProcessResult(url_table)
         self.expected_url_table_result.sanitize_in_place()
 
-    # Simple test that .event() calls scrape_urls() in the right way
+    # Simple test that .fetch() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are
     # tested above
     def test_scrape_column(self):
@@ -279,7 +280,8 @@ class URLScraperTests(SimpleTestCase):
                     }))
 
                 fetch(wf_module)
-                result = URLScraper.render(wf_module.get_params(), pd.DataFrame(),
+                result = URLScraper.render(wf_module.get_params(),
+                                           pd.DataFrame(),
                                            fetch_result=wf_module.fetch_result)
                 result = ProcessResult.coerce(result)
                 self.assertEqual(result, ProcessResult(scraped_table))
@@ -308,7 +310,8 @@ class URLScraperTests(SimpleTestCase):
                 scrape.side_effect = mock_scrapeurls
 
                 fetch(wf_module)
-                result = URLScraper.render(wf_module.get_params(), pd.DataFrame(),
+                result = URLScraper.render(wf_module.get_params(),
+                                           pd.DataFrame(),
                                            fetch_result=wf_module.fetch_result)
                 result = ProcessResult.coerce(result)
                 self.assertEqual(result, ProcessResult(scraped_table))

@@ -1,12 +1,9 @@
 import os.path
-import io
-import json
 import unittest
 from unittest.mock import patch, Mock
 import pandas as pd
 import requests.exceptions
 from pandas.testing import assert_frame_equal
-from server.sanitizedataframe import sanitize_dataframe
 from server import oauth
 from server.modules.googlesheets import GoogleSheets
 from server.modules.types import ProcessResult
@@ -53,7 +50,7 @@ P = MockParams.factory(google_credentials=default_secret,
                        googlefileselect=default_googlefileselect,
                        has_header=True)
 
-fetch = fetch_factory(GoogleSheets.event, P)
+fetch = fetch_factory(GoogleSheets.fetch, P)
 
 
 class GoogleSheetsTests(unittest.TestCase):
@@ -88,19 +85,20 @@ class GoogleSheetsTests(unittest.TestCase):
 
     def _assert_happy_path(self, wf_module):
         self.requests.get.assert_called_with(
-            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
+            'https://www.googleapis.com/drive/v3/files/'
+            'aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
         )
 
         self.assertEqual(wf_module.fetch_result.error, '')
         assert_frame_equal(wf_module.fetch_result.dataframe, expected_table)
 
-    def test_event_fetch_csv(self):
+    def test_fetch_csv(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
         wf_module = fetch(googlefileselect={**default_googlefileselect,
                                             'mimeType': 'text/csv'})
         self._assert_happy_path(wf_module)
 
-    def test_event_fetch_tsv(self):
+    def test_fetch_tsv(self):
         self.requests.get.return_value = MockResponse(200, example_tsv)
         wf_module = fetch(googlefileselect={
             **default_googlefileselect,
@@ -108,7 +106,7 @@ class GoogleSheetsTests(unittest.TestCase):
         })
         self._assert_happy_path(wf_module)
 
-    def test_event_fetch_xls(self):
+    def test_fetch_xls(self):
         self.requests.get.return_value = MockResponse(200, example_xls)
         wf_module = fetch(googlefileselect={
             **default_googlefileselect,
@@ -116,7 +114,7 @@ class GoogleSheetsTests(unittest.TestCase):
         })
         self._assert_happy_path(wf_module)
 
-    def test_event_fetch_xlsx(self):
+    def test_fetch_xlsx(self):
         self.requests.get.return_value = MockResponse(200, example_xlsx)
         wf_module = fetch(googlefileselect={
             **default_googlefileselect,

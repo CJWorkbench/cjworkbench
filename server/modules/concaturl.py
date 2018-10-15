@@ -50,7 +50,7 @@ class ConcatURL(ModuleImpl):
 
     # Load external workflow and store
     @staticmethod
-    async def event(wf_module, **kwargs):
+    async def fetch(wf_module):
         url = wf_module.get_param_string('url').strip()
         if not url:
             return

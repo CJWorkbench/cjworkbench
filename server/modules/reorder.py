@@ -1,5 +1,4 @@
 from .moduleimpl import ModuleImpl
-import json
 
 
 class ReorderFromTable(ModuleImpl):

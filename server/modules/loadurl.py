@@ -11,7 +11,9 @@ from .utils import parse_bytesio, turn_header_into_first_row
 
 _ExtensionMimeTypes = {
     '.xls': 'application/vnd.ms-excel',
-    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.xlsx': (
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ),
     '.csv': 'text/csv',
     '.tsv': 'text/tab-separated-values',
     '.json': 'application/json',
@@ -48,7 +50,7 @@ class LoadURL(ModuleImpl):
 
     # Load a CSV from file when fetch pressed
     @staticmethod
-    async def event(wf_module, **kwargs):
+    async def fetch(wf_module):
         params = wf_module.get_params()
         url = params.get_param_string('url').strip()
 

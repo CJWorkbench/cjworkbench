@@ -1,6 +1,3 @@
-import io
-import json
-import numpy as np
 import pandas as pd
 import unittest
 from server.modules.rename import RenameFromTable
@@ -81,8 +78,7 @@ class RenameFromTableTests(unittest.TestCase):
         )
 
     def test_list_nix_whitespace_columns(self):
-        params = P(custom_list=True,
-                                 list_string=',D,,A,\t,\n,C,')
+        params = P(custom_list=True, list_string=',D,,A,\t,\n,C,')
         result = render(params, a_table.copy())
         expected = ProcessResult(pd.DataFrame({
             'D': [1, 2],
@@ -97,5 +93,6 @@ class RenameFromTableTests(unittest.TestCase):
         expected = ProcessResult(pd.DataFrame({
             'D': [1, 2],
             'A': [2, 3],
-            'C': [3, 4],
+            'Column 3': [3, 4],  # TODO why not 'C'?
         }))
+        self.assertEqual(result, expected)

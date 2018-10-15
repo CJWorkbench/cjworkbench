@@ -20,7 +20,7 @@ from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 import server.utils
 from server.utils import units_to_seconds
-from server.dispatch import module_get_html_bytes
+from server.dispatch import module_get_html_bytes, module_dispatch_fetch
 
 
 _MaxNRowsPerRequest = 300
@@ -167,6 +167,16 @@ def wfmodule_detail(request, pk, format=None):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_fetch(request, pk, format=None):
+    wf_module = _lookup_wf_module_for_write(pk, request)
+    async_to_sync(module_dispatch_fetch)(wf_module)
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 N_COLUMNS_PER_TABLE = 101

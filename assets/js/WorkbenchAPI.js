@@ -228,8 +228,8 @@ class WorkbenchAPI {
     return this._patch(`/api/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
   }
 
-  postParamEvent(paramId, data) {
-    return this._post(`/api/parameters/${paramId}/event`, data)
+  requestFetch(wfModuleId) {
+    return this._post(`/api/wfmodules/${wfModuleId}/fetch`)
   }
 
   /**

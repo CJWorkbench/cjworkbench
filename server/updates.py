@@ -1,7 +1,7 @@
 # Check for updated data
 import logging
 from server.models import WfModule
-from server.dispatch import module_dispatch_event
+from server.dispatch import module_dispatch_fetch
 from django.utils import timezone
 from datetime import timedelta
 
@@ -30,7 +30,7 @@ async def update_wf_module(wf_module, now):
     logger.debug(f'Updating {wf_module} - interval '
                  f'{wf_module.update_interval}')
     try:
-        await module_dispatch_event(wf_module)
+        await module_dispatch_fetch(wf_module)
         # Only set last_update_check if succeeded. TODO reconsider.
         wf_module.last_update_check = now
     except Exception as e:

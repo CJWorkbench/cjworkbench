@@ -1,6 +1,5 @@
 import unittest
 from unittest import mock
-from asgiref.sync import async_to_sync
 import pandas as pd
 from urllib.error import URLError, HTTPError
 from server.modules.scrapetable import ScrapeTable
@@ -9,7 +8,7 @@ from .util import MockParams, fetch_factory
 
 
 P = MockParams.factory(url='', tablenum=1, first_row_is_header=False)
-fetch = fetch_factory(ScrapeTable.event, P)
+fetch = fetch_factory(ScrapeTable.fetch, P)
 
 
 def render(wf_module):

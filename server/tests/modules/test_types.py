@@ -112,7 +112,8 @@ class ProcessResultTests(unittest.TestCase):
             'error': 'an error',
             'json': {'foo': 'bar'},
             'quick_fixes': [
-                ('Hi', 'prependModule', 'texttodate', { 'column': 'created_at' }),
+                ('Hi', 'prependModule', 'texttodate',
+                 {'column': 'created_at'}),
             ]
         })
         expected = ProcessResult(dataframe, 'an error', json={'foo': 'bar'},

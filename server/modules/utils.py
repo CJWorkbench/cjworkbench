@@ -17,7 +17,6 @@ from django.db import transaction
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from server.models.Workflow import Workflow
-from .moduleimpl import ModuleImpl
 
 
 _TextEncoding = Optional[str]
@@ -378,7 +377,8 @@ def store_external_workflow(wf_module, url) -> ProcessResult:
         if wf_module.workflow_id == right_wf_module.id:
             return ProcessResult(error='Cannot import the current workflow')
 
-        # Make sure _this_ workflow's owner has access permissions to the _other_ workflow
+        # Make sure _this_ workflow's owner has access permissions to the
+        # _other_ workflow
         user = wf_module.workflow.owner
         if not right_wf_module.user_session_authorized_read(user, None):
             return ProcessResult(error='Access denied to the target workflow')

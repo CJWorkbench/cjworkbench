@@ -2,9 +2,9 @@
 
 exports[`WfModule, not read-only mode matches snapshot 1`] = `
 <div
-  className="wf-module selected"
+  className="wf-module status-busy selected"
   data-module-name="Load from URL"
-  onClick={[Function]}
+  onMouseDown={[Function]}
 >
   <div
     className="module-notes"
@@ -131,6 +131,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           }
           value="http://some.URL.me"
           wfModuleId={999}
+          wfModuleStatus="busy"
         />
         <WfParameter
           api={
@@ -171,6 +172,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             }
           }
           wfModuleId={999}
+          wfModuleStatus="busy"
         />
         <WfParameter
           api={
@@ -214,6 +216,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           }
           value={1}
           wfModuleId={999}
+          wfModuleStatus="busy"
         />
       </div>
     </div>
