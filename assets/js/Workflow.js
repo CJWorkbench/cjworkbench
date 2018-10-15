@@ -51,7 +51,7 @@ export function MaybeNotYourWorkflow(props) {
 
 // ---- WorkflowMain ----
 
-export class Workflow extends React.Component {
+export class Workflow extends React.PureComponent {
   static propTypes = {
     api:                PropTypes.object.isRequired,
     isReadOnly:         PropTypes.bool.isRequired,
@@ -59,26 +59,6 @@ export class Workflow extends React.Component {
     workflow:           PropTypes.object.isRequired,
     selected_wf_module: PropTypes.number,             // null means no selected module
     loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isFocusModuleStack: false
-    };
-  }
-
-  setFocusModuleStack = () => {
-    this.setState({
-      isFocusModuleStack: true
-    });
-  }
-
-  setFocusOutputPane = () => {
-    this.setState({
-      isFocusModuleStack: false
-    });
   }
 
   render() {
@@ -89,7 +69,7 @@ export class Workflow extends React.Component {
 
     return (
       <div className={className}>
-        { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEventEvenInLesson} /> : '' }
+        { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEventEvenInLesson} /> : null }
 
         <div className="workflow-container">
           <WorkflowNavBar
@@ -123,10 +103,9 @@ const mapStateToProps = (state) => {
     selected_wf_module: state.selected_wf_module,
     loggedInUser: state.loggedInUser,
     isAnonymous: state.workflow.is_anonymous,
-    isReadOnly: state.workflow.read_only,
+    isReadOnly: state.workflow.read_only
   }
-};
-
+}
 
 export default connect(
   mapStateToProps
