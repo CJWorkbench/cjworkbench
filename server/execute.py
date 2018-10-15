@@ -234,8 +234,7 @@ def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
 
 
 @database_sync_to_async
-def _load_wf_modules_and_input(workflow: Workflow,
-                               until_wf_module: Optional[WfModule]):
+def _load_wf_modules_and_input(workflow: Workflow):
     """
     Finds (stale_wf_modules, previous_cached_result_or_none) from the database.
 
@@ -259,28 +258,11 @@ def _load_wf_modules_and_input(workflow: Workflow,
         while index < len(wf_modules) and not _needs_render(wf_modules[index]):
             index += 1
 
-        # 3. Find index of last module we're requesting
-        if until_wf_module:
-            try:
-                until_index = [m.id for m in wf_modules] \
-                    .index(until_wf_module.id)
-            except ValueError:
-                # Module isn't in workflow any more
-                raise UnneededExecution
-        else:
-            until_index = len(wf_modules) - 1
-
-        wf_modules_needing_render = wf_modules[index:until_index + 1]
+        wf_modules_needing_render = wf_modules[index:]
 
         if not wf_modules_needing_render:
             # We're up to date!
-            if until_wf_module:
-                # _needs_render() returned false, so we know we can fetch the
-                # cached result. Load from `wf_modules`, not `until_wf_module`,
-                # because the latter may be stale.
-                output = wf_modules[until_index].get_cached_render_result()
-            else:
-                output = None
+            output = None
 
             return [], output
 
@@ -297,14 +279,9 @@ def _load_wf_modules_and_input(workflow: Workflow,
         return wf_modules_needing_render, prev_result
 
 
-async def execute_workflow(workflow: Workflow,
-                           until_wf_module: Optional[WfModule]=None
-                           ) -> Optional[CachedRenderResult]:
+async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
     """
     Ensures all `workflow.wf_modules` have valid cached render results.
-
-    If `until_wf_module` is specified, stops execution early and returns the
-    CachedRenderResult.
 
     raises UnneededExecution if the inputs become stale (at which point we
     don't care about the results any more).
@@ -314,8 +291,7 @@ async def execute_workflow(workflow: Workflow,
     """
 
     wf_modules, last_cached_result = await _load_wf_modules_and_input(
-        workflow,
-        until_wf_module
+        workflow
     )
 
     if not wf_modules:
@@ -346,24 +322,6 @@ async def execute_workflow(workflow: Workflow,
                 str(wf_module.id): build_status_dict(last_cached_result)
             }
         })
-
-    if until_wf_module:
-        return last_cached_result
-
-
-def execute_and_wait(workflow: Workflow,
-                     until_wf_module: Optional[WfModule]=None
-                     ) -> Optional[CachedRenderResult]:
-    try:
-        return async_to_sync(execute_workflow)(workflow, until_wf_module)
-    except UnneededExecution:
-        # This error means, "whatever we're returning is invalid.
-        #
-        # But let's return something anyway, for now.
-        #
-        # TODO make clients handle the exception. It's relevant to them.
-        if until_wf_module:
-            return until_wf_module.get_cached_render_result()
 
 
 async def execute_ignoring_error(workflow: Workflow
