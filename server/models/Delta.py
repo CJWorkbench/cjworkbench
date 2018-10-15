@@ -4,7 +4,7 @@
 # actually happened.
 import asyncio
 import json
-from typing import Any, Dict
+from typing import Any
 from channels.db import database_sync_to_async
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
