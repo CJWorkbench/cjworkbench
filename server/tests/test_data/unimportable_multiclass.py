@@ -3,8 +3,8 @@ import os
 import sys
 
 class Class:
-  def event(self):
-    print("event")
+  def fetch(self):
+    print("fetch")
 
   def render(self):
     print("render")
@@ -13,8 +13,8 @@ class Class:
     self.name = name
 
 class AnotherClass:
-  def event(self):
-    print("another event")
+  def fetch(self):
+    print("another fetch")
 
   def render(self):
     print("another render")

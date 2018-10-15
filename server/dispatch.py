@@ -125,7 +125,7 @@ async def module_dispatch_fetch(wf_module) -> None:
 
     if dispatch in module_dispatch_tbl:
         module_dispatch = module_dispatch_tbl[dispatch]
-        if hasattr(module_dispatch, 'event'):
+        if hasattr(module_dispatch, 'fetch'):
             # Tell client to clear errors before fetch
             await wf_module.set_busy()
             await module_dispatch.fetch(wf_module)
