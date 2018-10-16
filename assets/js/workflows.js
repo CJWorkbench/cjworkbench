@@ -6,9 +6,13 @@ import WfContextMenu from './WfContextMenu'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
 import ShareModal from './ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
-import { goToUrl, logUserEvent } from "./utils"
-import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap'
+import { goToUrl, logUserEvent } from './utils'
 import WfSortMenu from './WfSortMenu'
+import TabContent from 'reactstrap/lib/TabContent'
+import TabPane from 'reactstrap/lib/TabPane'
+import Nav from 'reactstrap/lib/Nav'
+import NavItem from 'reactstrap/lib/NavItem'
+import NavLink from 'reactstrap/lib/NavLink'
 
 // Tab names define here for easy change if necessary
 const tabHeaders = ['My workflows', 'Workflows shared with me']
@@ -96,8 +100,8 @@ export default class Workflows extends React.Component {
     this.props.api.listWorkflows().then(json => {
       this.setState({workflows: json})
       // Set the activeTab to shared if user has no workflows but has at least 1 shared
-      if (this.getWorkflowsByType(tabHeaders[0]).length === 0 &&
-        this.getWorkflowsByType(tabHeaders[1]).length > 0) {
+      if (this.getOwnedWorkflows().length === 0 &&
+        this.getSharedWorkflows().length > 0) {
         this.setState({activeTab: tabHeaders[1]})
       }
     })
@@ -127,11 +131,17 @@ export default class Workflows extends React.Component {
     }
   }
 
-  // returns owned and shared workflows based on input context
-  getWorkflowsByType = (workFlowType) => {
-    const wantOwn = workFlowType === tabHeaders[0]
+  // returns my workflows
+  getOwnedWorkflows = () => {
     return this.state.workflows.filter(workflow => {
-      return workflow.is_owner === wantOwn
+      return workflow.is_owner === true
+    })
+  }
+
+  // returns shared workflows
+  getSharedWorkflows = () => {
+    return this.state.workflows.filter(workflow => {
+      return workflow.is_owner === false
     })
   }
 
@@ -173,34 +183,55 @@ export default class Workflows extends React.Component {
     }
   }
 
-  renderWorkflowPane = (workflows) => {
-    workflows.sort(this.propComparator())
-    return (
-      <div className="workflows-item--wrap">
-        {workflows.map(workflow => (
-          <a href={"/workflows/" + workflow.id} className="workflow-item" key={workflow.id}>
-            <div className='mt-1'>
-              <div className='workflow-title'>{workflow.name}</div>
-              <div className='wf-meta--id'>
-                <WorkflowMetadata
-                  workflow={workflow}
-                  openShareModal={this.openShareModal}
-                />
-              </div>
-            </div>
-            <div onClick={this.preventDefault} className='menu-test-class'>
-              <WfContextMenu
-                duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
-                deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
-              />
-            </div>
-          </a>
-        ))}
-      </div>
-    )
+  renderWorkflowPane = (workflows, tab) => {
+    if (workflows.length > 0) {
+      // Sort based on state
+      workflows.slice().sort(this.propComparator())
+      return (
+        <TabPane tabId={tab}>
+          <div className='workflows-item--wrap'>
+            {workflows.map(workflow => (
+              <a href={'/workflows/' + workflow.id} className='workflow-item' key={workflow.id}>
+                <div className='mt-1'>
+                  <div className='workflow-title'>{workflow.name}</div>
+                  <div className='wf-meta--id'>
+                    <WorkflowMetadata
+                      workflow={workflow}
+                      openShareModal={this.openShareModal}
+                    />
+                  </div>
+                </div>
+                <div onClick={this.preventDefault} className='menu-test-class'>
+                  <WfContextMenu
+                    duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
+                    deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
+                  />
+                </div>
+              </a>
+            ))}
+          </div>
+        </TabPane>
+      )
+    } else if (tab === tabHeaders[0]){
+      // Create workflow link if no owned workflows
+      return (
+        <TabPane tabId={tabHeaders[0]}>
+          <div>
+            <a className={'new-workflow-link'} onClick={this.click}>Create Workflow</a>
+          </div>
+        </TabPane>
+      )
+    } else if (tab === tabHeaders[1]){
+      // No shared workflows message
+      return (
+        <TabPane tabId={tabHeaders[1]}>
+          <div>No shared workflows</div>
+        </TabPane>
+      )
+    }
   }
 
-  render() {
+  render () {
     // Sets active tab based on state
     let navTabs = (
       <Nav tabs>
@@ -218,58 +249,29 @@ export default class Workflows extends React.Component {
         <WfSortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
       </Nav>
     )
-    // Separate workflows by type
-    let myWorkflows = this.getWorkflowsByType(tabHeaders[0])
-    let sharedWorkflows = this.getWorkflowsByType(tabHeaders[1])
+    // Separate workflows by type and render
     let tabPanes = []
+    tabPanes.push(this.renderWorkflowPane(this.getOwnedWorkflows(), tabHeaders[0]))
+    tabPanes.push(this.renderWorkflowPane(this.getSharedWorkflows(), tabHeaders[1]))
 
-    // explicitly render tabs because they have different behaviors without workflows
-    if (myWorkflows.length < 1) {
-      tabPanes.push(
-        <TabPane tabId={tabHeaders[0]}>
-          <div>
-            <a className={'new-workflow-link'} onClick={this.click}>Create Workflow</a>
-          </div>
-        </TabPane>
-      )
-    } else {
-      tabPanes.push(
-        <TabPane tabId={tabHeaders[0]}>
-          {this.renderWorkflowPane(myWorkflows)}
-        </TabPane>
-      )
-    }
-    if (sharedWorkflows.length < 1) {
-      tabPanes.push(
-        <TabPane tabId={tabHeaders[1]}>
-          <div>No shared workflows</div>
-        </TabPane>
-      )
-    } else {
-      tabPanes.push(
-        <TabPane tabId={tabHeaders[1]}>
-          {this.renderWorkflowPane(sharedWorkflows)}
-        </TabPane>
-      )
-    }
     return (
-      <div className="workflows-page">
-        <WorkflowListNavBar/>
-        <div className="container">
-          <a href="/lessons/" className="lesson-banner mx-auto">
+      <div className='workflows-page'>
+        <WorkflowListNavBar />
+        <div className='container'>
+          <a href='/lessons/' className='lesson-banner mx-auto'>
             <div>
-              <div className="content-3">NEW</div>
-              <div className="d-flex">
-                <span className="icon-star"></span>
-                <div className=" title-2 ">TUTORIALS</div>
+              <div className='content-3'>NEW</div>
+              <div className='d-flex'>
+                <span className='icon-star'></span>
+                <div className=' title-2 '>TUTORIALS</div>
               </div>
             </div>
             <p>Learn how to work with data without coding</p>
           </a>
-          <div className="d-flex justify-content-center">
+          <div className='d-flex justify-content-center'>
             <button className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</button>
           </div>
-          <div className="mx-auto workflows-list">
+          <div className='mx-auto workflows-list'>
             {navTabs}
             <TabContent activeTab={this.state.activeTab}>
               {tabPanes}
