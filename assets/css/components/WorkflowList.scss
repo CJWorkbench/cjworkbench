@@ -78,12 +78,13 @@
     // background list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
-      background-color: darken($page-background,3%);
+      background-color: $white;
     }
 
     .nav-tabs {
       display: flex;
       justify-content: space-between;
+      border-bottom: 0;
 
       // group of tabs
       .tab-group {
@@ -92,9 +93,12 @@
         cursor: pointer;
 
         .nav-item {
-
-          a {
+          .nav-link {
             padding: 1rem 2rem;
+            &.active {
+              border-color: darken($page-background,3%) darken($page-background,3%) transparent;
+              background-color: #F5F7F8;
+            }
           }
         }
       }
@@ -102,7 +106,7 @@
       .sort-group {
         display: flex;
         align-items: center;
-        @extend .info-2;
+        @extend .content-3;
 
         span {
           cursor: default;
@@ -148,6 +152,18 @@
         }
       }
     }
+
+    // when shared WF tab is empty
+    .placeholder {
+      @extend .content-3;
+      background-color: $dark-accent--soft;
+      height: 7rem;
+      border: 1px solid darken($page-background,3%);
+      display: flex;
+      padding-left: 2.5rem;
+      align-items: center;
+    }
+
 
     .workflow-item {
       height: 7rem;
