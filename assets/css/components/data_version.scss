@@ -37,24 +37,24 @@
 }
 
 .modal-body.update-frequency-form {
+
   .big-radio {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
 
-    label {@extend .info-1;}
-
     .form-check-label {
-      @extend .info-1;
+      @extend .content-3;
       display: flex;
       align-items: center;
+      line-height: 1rem!important;
       .form-check-input {
         margin-bottom: .4rem;
       }
     }
 
     p {
-      font-size: 1.3rem; // because body font-size is 10px
+      @extend .content-3; // because body font-size is 10px
     }
 
     &>label {
@@ -70,19 +70,28 @@
       line-height: 1;
       text-align: center;
 
-      span {
-        width: 100%;
+      .radio {
+        @extend .button-blue;
+        width: 8rem;
         border: 1px solid $brand-workspace;
-        padding: .75rem;
+        padding: .9rem;
+      }
+    }
+
+    .big-radio-details {
+      margin-left: 1rem;
+      label {
+        @extend .content-3;
+        color: $brand-text--medium;
       }
     }
   }
 
-  .big-radio-checked>label span {
+  .big-radio-checked>label .radio {
     @extend .action-button;
     @extend .button-blue--fill;
   }
-  .big-radio-unchecked>label span {
+  .big-radio-unchecked>label .radio {
     @extend .action-button;
     @extend .button-blue;
   }
@@ -98,6 +107,7 @@
   .big-radio-auto-update-false {
     margin-top: 2rem;
   }
+
 
   .big-radio-auto-update-false .big-radio-details {
     // Line up with label, which is ~2 lines high
@@ -236,6 +246,10 @@
           @extend .action-button;
           @extend %button-gray;
           margin-bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 8.5rem;
 
           input[type="checkbox"] { display: none; }
         }

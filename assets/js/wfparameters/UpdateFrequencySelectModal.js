@@ -91,7 +91,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                   checked={isAutoUpdate}
                   onChange={this.onChangeAutoUpdate}
                   />
-                  <span>Auto</span>
+                  <div className="radio">Auto</div>
                 </label>
                 <div className="big-radio-details">
                   <p>Automatically update this workflow with the newest data (old versions will be saved).</p>
@@ -146,7 +146,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                   checked={!isAutoUpdate}
                   onChange={this.onChangeAutoUpdate}
                   />
-                  <span>Manual</span>
+                  <div className="radio">Manual</div>
                 </label>
                 <div className="big-radio-details">
                   <p>Check for new data manually.</p>
@@ -156,7 +156,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
           </ModalBody>
           <ModalFooter>
             <button type="cancel" className="action-button button-gray" form="updateFrequencySelectModalForm">Cancel</button>
-            <button type="submit" className="action-button button-blue button-ok" form="updateFrequencySelectModalForm">Apply</button>
+            <button type="submit" className="action-button button-blue" form="updateFrequencySelectModalForm">Apply</button>
           </ModalFooter>
         </Modal>
 
