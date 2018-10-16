@@ -235,18 +235,23 @@ export default class Workflows extends React.Component {
     // Sets active tab based on state
     let navTabs = (
       <Nav tabs>
-        { tabHeaders.map(tabHeader => (
-          <NavItem>
-            <NavLink
-              className={this.state.activeTab === tabHeader ? 'active' : ''}
-              onClick={() => { this.toggle(tabHeader) }}
-            >
-              {tabHeader}
-            </NavLink>
-          </NavItem>
-        ))
-        }
-        <WfSortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
+        <div className="tab-group">
+          { tabHeaders.map(tabHeader => (
+            <NavItem>
+              <NavLink
+                className={this.state.activeTab === tabHeader ? 'active' : ''}
+                onClick={() => { this.toggle(tabHeader) }}
+              >
+                {tabHeader}
+              </NavLink>
+            </NavItem>
+          ))
+          }
+        </div>
+        <div className="sort-group">
+          <span>Sort</span>
+          <WfSortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
+        </div>
       </Nav>
     )
     // Separate workflows by type and render

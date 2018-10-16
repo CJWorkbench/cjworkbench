@@ -24,7 +24,6 @@ export default class WfSortMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='btn btn-secondary context-button'>
-          <span>Sort</span>
           <i className={this.setSortIcon()}></i>
         </DropdownToggle>
         <DropdownMenu right>

@@ -81,6 +81,74 @@
       background-color: darken($page-background,3%);
     }
 
+    .nav-tabs {
+      display: flex;
+      justify-content: space-between;
+
+      // group of tabs
+      .tab-group {
+        display: flex;
+        @extend .content-3;
+        cursor: pointer;
+
+        .nav-item {
+
+          a {
+            padding: 1rem 2rem;
+          }
+        }
+      }
+      // Sort menu
+      .sort-group {
+        display: flex;
+        align-items: center;
+        @extend .info-2;
+
+        span {
+          cursor: default;
+        }
+
+        .dropdown {
+          margin-right: 2.8rem;
+          cursor: pointer;
+
+          .context-button {
+            padding: 0;
+            height: 3rem;
+            width: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: .5rem;
+
+            &:hover {
+              background-color: $dark-accent--soft;
+            }
+
+            &:after {
+              background-color: $dark-accent--medium;
+            }
+
+            i {
+              font-size: .8rem;
+              margin-left: .15rem;
+            }
+          }
+          .dropdown-menu {
+            margin-top: .5rem;
+            border-radius: .5rem;
+
+            button {
+              margin: 0;
+              padding: 0 1rem;
+              display: flex;
+              justify-content: flex-start;
+            }
+          }
+        }
+      }
+    }
+
     .workflow-item {
       height: 7rem;
       margin-bottom: 1px;
