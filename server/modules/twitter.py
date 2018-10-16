@@ -1,3 +1,4 @@
+import datetime
 import tweepy
 from tweepy import TweepError
 import numpy as np
@@ -18,6 +19,7 @@ def _recover_from_160258591(table):
     # https://www.pivotaltracker.com/story/show/160258591
     for column in ['id', 'retweet_count', 'favorite_count']:
         table[column] = table[column].astype(np.int64)
+    table['created_at'] = table['created_at'].astype(np.datetime64)
 
 
 # Get dataframe of last tweets fron our storage,

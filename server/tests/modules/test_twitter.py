@@ -274,7 +274,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
 
-        self.wf_module.fetched_table = mock_tweet_table
+        self.wf_module.fetched_table = mock_tweet_table.copy()
 
         instance = cursor.return_value
         instance.pages.return_value = []
@@ -298,9 +298,11 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
 
+        # Simulate the bug: convert everything to str
         bad_table = mock_tweet_table.copy()
-        for column in ['id', 'retweet_count', 'favorite_count']:
-            bad_table[column] = bad_table[column].astype(str)
+        nulls = bad_table.isna()
+        bad_table = bad_table.astype(str)
+        bad_table[nulls] = None
         self.wf_module.fetched_table = bad_table
 
         # Fix it _no matter what_ -- even if we aren't adding any data.
@@ -310,6 +312,7 @@ class TwitterTests(unittest.TestCase):
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
+
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
