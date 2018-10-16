@@ -186,11 +186,10 @@ export default class Workflows extends React.Component {
   renderWorkflowPane = (workflows, tab) => {
     if (workflows.length > 0) {
       // Sort based on state
-      workflows.slice().sort(this.propComparator())
       return (
         <TabPane tabId={tab}>
           <div className='workflows-item--wrap'>
-            {workflows.map(workflow => (
+            {workflows.slice().sort(this.propComparator()).map(workflow => (
               <a href={'/workflows/' + workflow.id} className='workflow-item' key={workflow.id}>
                 <div className='mt-1'>
                   <div className='workflow-title'>{workflow.name}</div>
