@@ -224,7 +224,7 @@ export default class Workflows extends React.Component {
       // No shared workflows message
       return (
         <TabPane tabId={tabHeaders[1]}>
-          <div className="placeholder">No shared workflows</div>
+          <div className="placeholder">No shared workflows ¯\_(ツ)_/¯</div>
         </TabPane>
       )
     }
