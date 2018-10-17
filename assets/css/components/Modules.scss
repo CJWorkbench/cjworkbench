@@ -114,7 +114,7 @@
   }
 
   &.status-ok {
-    @include module-colors($module-color-ok, $module-color-ok, $module-color-ok);
+    @include module-colors($module-color-ok, $brand-workspace, $module-color-ok);
   }
 
   &.status-unreachable {
