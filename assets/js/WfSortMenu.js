@@ -9,7 +9,7 @@ import DropdownItem from 'reactstrap/lib/DropdownItem'
 
 export default class WfSortMenu extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
   sortNameAsc = () => this.props.setSortType({type: 'name', direction: 'ascending'})
   sortNameDesc = () => this.props.setSortType({type: 'name', direction: 'descending'})
@@ -42,11 +42,11 @@ export default class WfSortMenu extends React.Component {
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
-    );
+    )
   }
 }
 
 WfSortMenu.propTypes = {
   setSortType: PropTypes.func.isRequired,
   sortDirection: PropTypes.string.isRequired
-};
+}

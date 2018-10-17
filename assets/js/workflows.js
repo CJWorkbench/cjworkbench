@@ -17,12 +17,12 @@ import NavLink from 'reactstrap/lib/NavLink'
 export default class Workflows extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
-    workflows: PropTypes.array.isRequired
+    workflows: PropTypes.object.isRequired
   }
 
   state = {
     workflows: this.props.workflows,
-    activeTab: 'owned',
+    activeTab: this.props.workflows.owned.length === 0 ? 'templates' : 'owned',
     shareModalWorkflowId: null,
     sortMethod: {type: 'last_update', direction: 'descending'}
   }
@@ -73,13 +73,14 @@ export default class Workflows extends React.Component {
   }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server
-  deleteWorkflow = (id) => {
+  deleteWorkflow = (id, tab) => {
     if (!confirm("Permanently delete this workflow?"))
       return
 
     this.props.api.deleteWorkflow(id)
     .then(response => {
-      var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id)
+      var workflowsMinusID = Object.assign({}, this.state.workflows)
+      workflowsMinusID[tab] = workflowsMinusID[tab].filter(wf => wf.id !== id)
       this.setState({workflows: workflowsMinusID})
     })
   }
@@ -87,10 +88,10 @@ export default class Workflows extends React.Component {
   duplicateWorkflow = (id) => {
     this.props.api.duplicateWorkflow(id)
       .then(json => {
-        // Add to beginning of list because wf list is reverse chron
-        var workflowsPlusDup = this.state.workflows.slice()
-        workflowsPlusDup.unshift(json)
-        this.setState({workflows: workflowsPlusDup})
+        // Add to beginning of owned list then set activeTab to owned
+        var workflowsPlusDup = Object.assign({}, this.state.workflows)
+        workflowsPlusDup['owned'].unshift(json)
+        this.setState({workflows: workflowsPlusDup, activeTab: 'owned'})
       })
   }
 
@@ -116,20 +117,6 @@ export default class Workflows extends React.Component {
         activeTab: tab
       })
     }
-  }
-
-  // returns my workflows
-  getOwnedWorkflows = () => {
-    return this.state.workflows.filter(workflow => {
-      return workflow.is_owner === true
-    })
-  }
-
-  // returns shared workflows
-  getSharedWorkflows = () => {
-    return this.state.workflows.filter(workflow => {
-      return workflow.is_owner === false
-    })
   }
 
   setSortType = (sortType) => {
@@ -190,7 +177,7 @@ export default class Workflows extends React.Component {
                 <div onClick={this.preventDefault} className='menu-test-class'>
                   <WfContextMenu
                     duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
-                    deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
+                    deleteWorkflow={() => this.deleteWorkflow(workflow.id, tab)}
                   />
                 </div>
               </a>
@@ -214,33 +201,20 @@ export default class Workflows extends React.Component {
           <div className="placeholder">No shared workflows  ¯\_(ツ)_/¯</div>
         </TabPane>
       )
+    } else if (tab === 'templates'){
+      // No shared workflows message
+      return (
+        <TabPane tabId={'templates'}>
+          <div className="placeholder">No template workflows  ¯\_(ツ)_/¯</div>
+        </TabPane>
+      )
     }
   }
   setTabOwned = () => this.setState({ activeTab: 'owned' })
   setTabShared = () => this.setState({ activeTab: 'shared' })
+  setTabTemplates = () => this.setState({ activeTab: 'templates' })
 
   render () {
-    // Sets active tab based on state
-    let navTabs = (
-      <Nav tabs>
-        <div className="tab-group">
-          <NavItem>
-            <NavLink active={this.state.activeTab === 'owned'} onClick={this.setTabOwned}>
-              My workflows
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink active={this.state.activeTab === 'shared'} onClick={this.setTabShared}>
-              Shared with me
-            </NavLink>
-          </NavItem>
-        </div>
-        <div className="sort-group">
-          <span>Sort</span>
-          <WfSortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
-        </div>
-      </Nav>
-    )
     return (
       <div className='workflows-page'>
         <WorkflowListNavBar />
@@ -259,10 +233,33 @@ export default class Workflows extends React.Component {
             <button className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</button>
           </div>
           <div className='mx-auto workflows-list'>
-            {navTabs}
+            <Nav tabs>
+              <div className="tab-group">
+                <NavItem>
+                  <NavLink active={this.state.activeTab === 'owned'} onClick={this.setTabOwned}>
+                    My workflows
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={this.state.activeTab === 'shared'} onClick={this.setTabShared}>
+                    Shared with me
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={this.state.activeTab === 'templates'} onClick={this.setTabTemplates}>
+                    Templates
+                  </NavLink>
+                </NavItem>
+              </div>
+              <div className="sort-group">
+                <span>Sort</span>
+                <WfSortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
+              </div>
+            </Nav>
             <TabContent activeTab={this.state.activeTab}>
-              { this.renderWorkflowPane(this.getOwnedWorkflows(), 'owned') }
-              { this.renderWorkflowPane(this.getSharedWorkflows(), 'shared') }
+              { this.renderWorkflowPane(this.state.workflows.owned, 'owned') }
+              { this.renderWorkflowPane(this.state.workflows.shared, 'shared') }
+              { this.renderWorkflowPane(this.state.workflows.templates, 'templates') }
             </TabContent>
           </div>
         </div>
