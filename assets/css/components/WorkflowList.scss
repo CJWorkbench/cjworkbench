@@ -177,6 +177,29 @@
       }
     }
 
+    .tab-content {
+
+      // when shared WF tab is empty
+      .placeholder, .new-workflow-link {
+        @extend .content-3;
+        background-color: $white;
+        height: 7rem;
+        border: 1px solid darken($page-background,5%);
+        display: flex;
+        padding-left: 2.5rem;
+        align-items: center;
+        cursor: default;
+      }
+      .new-workflow-link {
+        @extend .content-3;
+        text-decoration: underline;
+        @extend .button-blue;
+        cursor: pointer;
+        &:hover {
+          color: $link-hover-success
+        }
+      }
+    }
     // background of list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
@@ -221,18 +244,6 @@
           }
         }
       }
-    }
-
-    // when shared WF tab is empty
-    .placeholder {
-      @extend .content-3;
-      background-color: $white;
-      height: 7rem;
-      border: 1px solid darken($page-background,3%);
-      display: flex;
-      padding-left: 2.5rem;
-      align-items: center;
-      cursor: default;
     }
   }
 }

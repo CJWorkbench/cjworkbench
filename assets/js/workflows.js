@@ -216,7 +216,7 @@ export default class Workflows extends React.Component {
       return (
         <TabPane tabId={tabHeaders[0]}>
           <div>
-            <a className={'new-workflow-link'} onClick={this.click}>Create Workflow</a>
+            <a className={'new-workflow-link'} onClick={this.click}>Create you first workflow</a>
           </div>
         </TabPane>
       )
@@ -224,7 +224,7 @@ export default class Workflows extends React.Component {
       // No shared workflows message
       return (
         <TabPane tabId={tabHeaders[1]}>
-          <div className="placeholder">No shared workflows ¯\_(ツ)_/¯</div>
+          <div className="placeholder">No shared workflows  ¯\_(ツ)_/¯</div>
         </TabPane>
       )
     }
