@@ -48,7 +48,7 @@
     "jquery": "^3.3.1",
     "memoize-one": "^4.0.0",
     "mini-css-extract-plugin": "^0.4.2",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.9.4",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
@@ -58,7 +58,7 @@
     "standard": "^11.0.1",
     "style-loader": "^0.22.1",
     "svg-react-loader": "^0.4.5",
-    "url-loader": "^1.1.1",
+    "url-loader": "^1.1.2",
     "webpack": "^4.17.1",
     "webpack-bundle-tracker": "^0.3.0",
     "webpack-cli": "^3.1.0"
