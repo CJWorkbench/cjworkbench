@@ -255,7 +255,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       className="nav-link"
                       onClick={[Function]}
                     >
-                      Workflows shared with me
+                      Shared with me
                     </a>
                   </NavLink>
                 </li>
@@ -453,13 +453,15 @@ exports[`Workflow list page renders correctly 1`] = `
               </div>
             </TabPane>
             <TabPane
-              tabId="Workflows shared with me"
+              tabId="Shared with me"
               tag="div"
             >
               <div
                 className="tab-pane"
               >
-                <div>
+                <div
+                  className="placeholder"
+                >
                   No shared workflows
                 </div>
               </div>
