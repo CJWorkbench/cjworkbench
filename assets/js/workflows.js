@@ -14,9 +14,6 @@ import Nav from 'reactstrap/lib/Nav'
 import NavItem from 'reactstrap/lib/NavItem'
 import NavLink from 'reactstrap/lib/NavLink'
 
-// Tab names define here for easy change if necessary
-const tabHeaders = ['My workflows', 'Shared with me']
-
 export default class Workflows extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
@@ -25,7 +22,7 @@ export default class Workflows extends React.Component {
 
   state = {
     workflows: this.props.workflows,
-    activeTab: tabHeaders[0],
+    activeTab: 'owned',
     shareModalWorkflowId: null,
     sortMethod: {type: 'last_update', direction: 'descending'}
   }
@@ -201,41 +198,42 @@ export default class Workflows extends React.Component {
           </div>
         </TabPane>
       )
-    } else if (tab === tabHeaders[0]){
+    } else if (tab === 'owned'){
       // Create workflow link if no owned workflows
       return (
-        <TabPane tabId={tabHeaders[0]}>
+        <TabPane tabId={'owned'}>
           <div>
             <a className={'new-workflow-link'} onClick={this.click}>Create you first workflow</a>
           </div>
         </TabPane>
       )
-    } else if (tab === tabHeaders[1]){
+    } else if (tab === 'shared'){
       // No shared workflows message
       return (
-        <TabPane tabId={tabHeaders[1]}>
+        <TabPane tabId={'shared'}>
           <div className="placeholder">No shared workflows  ¯\_(ツ)_/¯</div>
         </TabPane>
       )
     }
   }
+  setTabOwned = () => this.setState({ activeTab: 'owned' })
+  setTabShared = () => this.setState({ activeTab: 'shared' })
 
   render () {
     // Sets active tab based on state
     let navTabs = (
       <Nav tabs>
         <div className="tab-group">
-          { tabHeaders.map(tabHeader => (
-            <NavItem>
-              <NavLink
-                className={this.state.activeTab === tabHeader ? 'active' : ''}
-                onClick={() => { this.toggle(tabHeader) }}
-              >
-                {tabHeader}
-              </NavLink>
-            </NavItem>
-          ))
-          }
+          <NavItem>
+            <NavLink active={this.state.activeTab === 'owned'} onClick={this.setTabOwned}>
+              My workflows
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink active={this.state.activeTab === 'shared'} onClick={this.setTabShared}>
+              Shared with me
+            </NavLink>
+          </NavItem>
         </div>
         <div className="sort-group">
           <span>Sort</span>
@@ -243,11 +241,6 @@ export default class Workflows extends React.Component {
         </div>
       </Nav>
     )
-    // Separate workflows by type and render
-    let tabPanes = []
-    tabPanes.push(this.renderWorkflowPane(this.getOwnedWorkflows(), tabHeaders[0]))
-    tabPanes.push(this.renderWorkflowPane(this.getSharedWorkflows(), tabHeaders[1]))
-
     return (
       <div className='workflows-page'>
         <WorkflowListNavBar />
@@ -268,7 +261,8 @@ export default class Workflows extends React.Component {
           <div className='mx-auto workflows-list'>
             {navTabs}
             <TabContent activeTab={this.state.activeTab}>
-              {tabPanes}
+              { this.renderWorkflowPane(this.getOwnedWorkflows(), 'owned') }
+              { this.renderWorkflowPane(this.getSharedWorkflows(), 'shared') }
             </TabContent>
           </div>
         </div>
