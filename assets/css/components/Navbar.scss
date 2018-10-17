@@ -40,10 +40,17 @@
       display: inline-block;
 
       button {
+        font-size: 1.9rem;
         min-width: 0;
         width: 3.5rem;
         height: 3.5rem;
         padding: 0;
+        border:1px solid $white;
+        opacity: .8;
+        &:hover {
+          border-color: $white;
+          opacity: 1; 
+        }
       }
       button:first-child {
         margin-right: 1rem;

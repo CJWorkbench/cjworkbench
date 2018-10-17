@@ -69,12 +69,12 @@
 
       .info {
         @extend .info-2;
-        color:$medium-gray;
+        color: $brand-text--dark;
       }
 
       .code-snippet {
         margin-top: .5rem;
-        background-color: $dark-accent--medium;
+        background-color: $dark-accent--soft;
         border-radius: 3px;
         padding: 1.5rem;
 
@@ -109,6 +109,12 @@
 
     button {
       margin-left: 1.5rem;
+    }
+
+    .action-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
