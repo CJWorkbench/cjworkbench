@@ -15,7 +15,7 @@ import NavItem from 'reactstrap/lib/NavItem'
 import NavLink from 'reactstrap/lib/NavLink'
 
 // Tab names define here for easy change if necessary
-const tabHeaders = ['My workflows', 'Workflows shared with me']
+const tabHeaders = ['My workflows', 'Shared with me']
 
 export default class Workflows extends React.Component {
   static propTypes = {

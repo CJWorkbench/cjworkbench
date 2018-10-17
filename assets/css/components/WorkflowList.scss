@@ -78,7 +78,7 @@
     // background list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
-      background-color: $white;
+      background-color: darken($page-background,5%);
     }
 
     .nav-tabs {
@@ -91,14 +91,49 @@
         display: flex;
         @extend .content-3;
         cursor: pointer;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: $light-gray;
 
         .nav-item {
+
           .nav-link {
-            padding: 1rem 2rem;
-            &.active {
-              border-color: darken($page-background,3%) darken($page-background,3%) transparent;
-              background-color: #F5F7F8;
+            padding: 1.4rem 2.2rem;
+            border-radius: 5px 5px 0 0;
+
+            &:hover {
+              color: $medium-gray;
             }
+
+            // when tab is selected
+            &.active {
+              border-color: darken($page-background,5%) darken($page-background,5%) transparent;
+              background-color: #F5F7F8;
+              color: $brand-text--dark;
+              background-color: lighten(#F5F7F8,1%);
+
+              // when tab is selected and hover -- first child to take prescedence
+              &:hover:first-child {
+                border-color: darken($page-background,5%) darken($page-background,5%) transparent;
+                border-radius: 5px 5px 0 0;
+                color: $brand-text--dark;
+                background-color: lighten(#F5F7F8,1%);
+              }
+            }
+          }
+
+          // When tab on the left edge is not selected, hover
+          &:hover:first-child .nav-link {
+            border-color: darken($page-background,3%) transparent darken($page-background,3%) darken($page-background,3%);
+            border-radius: 5px 0 0 0;
+            background-color: #F5F7F8;
+          }
+
+          // when tab on the right edge is not selected, hover
+          &:hover:last-child .nav-link {
+            border-color: darken($page-background,3%) darken($page-background,3%) darken($page-background,3%) transparent;
+            border-radius: 0 5px 0 0;
+            background-color: #F5F7F8;
           }
         }
       }
@@ -156,7 +191,7 @@
     // when shared WF tab is empty
     .placeholder {
       @extend .content-3;
-      background-color: $dark-accent--soft;
+      background-color: $white;
       height: 7rem;
       border: 1px solid darken($page-background,3%);
       display: flex;
