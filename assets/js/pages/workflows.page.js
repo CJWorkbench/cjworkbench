@@ -5,7 +5,7 @@ import Workflows from '../workflows'
 import api from '../WorkbenchAPI'
 
 ReactDOM.render(
-    <Workflows api={api}/>,
+    <Workflows api={api} workflows={window.initState.workflows}/>,
     document.getElementById('root')
 )
 

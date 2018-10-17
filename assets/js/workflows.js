@@ -19,11 +19,12 @@ const tabHeaders = ['My workflows', 'Shared with me']
 
 export default class Workflows extends React.Component {
   static propTypes = {
-    api: PropTypes.object.isRequired
+    api: PropTypes.object.isRequired,
+    workflows: PropTypes.array.isRequired
   }
 
   state = {
-    workflows: [],
+    workflows: this.props.workflows,
     activeTab: tabHeaders[0],
     shareModalWorkflowId: null,
     sortMethod: {type: 'last_update', direction: 'descending'}
@@ -94,17 +95,6 @@ export default class Workflows extends React.Component {
         workflowsPlusDup.unshift(json)
         this.setState({workflows: workflowsPlusDup})
       })
-  }
-
-  componentDidMount() {
-    this.props.api.listWorkflows().then(json => {
-      this.setState({workflows: json})
-      // Set the activeTab to shared if user has no workflows but has at least 1 shared
-      if (this.getOwnedWorkflows().length === 0 &&
-        this.getSharedWorkflows().length > 0) {
-        this.setState({activeTab: tabHeaders[1]})
-      }
-    })
   }
 
   setIsPublicFromShareModal = (isPublic) => {
