@@ -25,6 +25,7 @@ const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE = 'SET_WF_MODULE'
+const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
 
 // Parameter
 const SET_PARAM_VALUE = 'SET_PARAM_VALUE'
@@ -410,6 +411,9 @@ export function setSelectedWfModuleAction (index) {
   return (dispatch, getState) => {
     const workflow = getState().workflow
 
+    // avoid spurious HTTP requests and state changes
+    if (workflow.selected_wf_module === index) return
+
     // Fire-and-forget: tell the server about this new selected_wf_module,
     // so next time we load the page it will pass it in initState.
     api.setSelectedWfModule(workflow.id, index)
@@ -614,6 +618,42 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
         is_collapsed: isCollapsed
+      }
+    }
+  }
+})
+
+export function setWfModuleParamsAction (wfModuleId, params) {
+  return {
+    type: SET_WF_MODULE_PARAMS,
+    payload: {
+      promise: api.setWfModuleParams(wfModuleId, params),
+      data: {
+        wfModuleId,
+        params
+      }
+    }
+  }
+}
+
+registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
+  const { wfModuleId, params } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+
+  // Copy parameter_vals, setting new values based on params.
+  const paramVals = wfModule.parameter_vals.map(pv => {
+    const id_name = pv.parameter_spec.id_name
+    if (id_name in params) {
+      return { ...pv, value: params[id_name] }
+    } else {
+      return pv
+    }
+  })
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        parameter_vals: paramVals
       }
     }
   }

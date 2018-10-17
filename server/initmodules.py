@@ -81,6 +81,7 @@ def load_module_from_dict(d):
             'row_action_menu_entry_title',
             ''
         )
+        module.js_module = d.get('js_module', '')
 
         module.save()
 

@@ -13,6 +13,7 @@ from .Delta import Delta
 from .Commands import AddModuleCommand, DeleteModuleCommand, \
         ReorderModulesCommand, ChangeDataVersionCommand, \
         ChangeParameterCommand, ChangeWorkflowTitleCommand, \
-        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
+        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand, \
+        ChangeParametersCommand
 from .UploadedFile import UploadedFile
 from .StoredObject import StoredObject

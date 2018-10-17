@@ -62,7 +62,7 @@ class ModuleSerializer(serializers.ModelSerializer):
 
         fields = ('id', 'id_name', 'name', 'category', 'description', 'link',
                   'author', 'icon', 'loads_data', 'help_url', 'has_zen_mode',
-                  'row_action_menu_entry_title')
+                  'row_action_menu_entry_title', 'js_module')
 
 
 class ModuleVersionSerializer(serializers.ModelSerializer):

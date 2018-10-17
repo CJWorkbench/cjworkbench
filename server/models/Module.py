@@ -49,5 +49,8 @@ class Module(models.Model):
         max_length=200, default=''
     )
 
+    # JavaScript to embed. It can set `module.exports`.
+    js_module = models.TextField('js_module', default='')
+
     def __str__(self):
         return self.name

@@ -77,6 +77,7 @@ describe('Reducer actions', () => {
     WorkbenchAPI.setSelectedWfModule.mockReset()
     WorkbenchAPI.updateWfModule.mockReset()
     WorkbenchAPI.onParamChanged.mockReset()
+    WorkbenchAPI.setWfModuleParams.mockReset()
     WorkbenchAPI.markDataVersionsRead.mockReset()
     WorkbenchAPI.reorderWfModules.mockReset()
     WorkbenchAPI.requestFetch.mockReset()
@@ -377,6 +378,20 @@ describe('Reducer actions', () => {
 
     // should send HTTP request
     expect(WorkbenchAPI.onParamChanged).toHaveBeenCalledWith(1, { value: 'foo' })
+  })
+
+  it('should setWfModuleParams', async () => {
+    WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve({}))
+
+    const store = mockStore(testState)
+    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { data: 'newdata' }))
+
+    // should set value immediately
+    expect(store.getState().wfModules['10'].parameter_vals[0].value).toEqual('newdata')
+    await done
+
+    // should send HTTP request
+    expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(10, { data: 'newdata' })
   })
 
   it('requests fetch in maybeRequestWfModuleFetchAction', async () => {

@@ -125,6 +125,10 @@ class WorkbenchAPI {
     return this._patch(`/api/parameters/${paramID}`, newVal)
   }
 
+  setWfModuleParams(wfModuleId, params) {
+    return this._patch(`/api/wfmodules/${wfModuleId}/params`, { 'values': params })
+  }
+
   render(wfModuleId, startrow, endrow) {
     let url = '/api/wfmodules/' + wfModuleId + '/render';
 
