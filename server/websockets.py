@@ -1,11 +1,15 @@
 # Receive and send websockets messages.
 # Clients open a socket on a specific workflow, and all clients viewing that
 # workflow are a "group"
+import logging
 from typing import Dict, Any
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
+
+
+logger = logging.getLogger(__name__)
 
 
 def _workflow_channel_name(workflow_id: int) -> str:
@@ -52,13 +56,17 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         await self.channel_layer.group_add(self.workflow_channel_name,
                                            self.channel_name)
+        logging.debug('Added to channel %s', self.workflow_channel_name)
         await self.accept()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.workflow_channel_name,
                                                self.channel_name)
+        logging.debug('Discarded from channel %s', self.workflow_channel_name)
 
     async def send_data_to_workflow_client(self, message):
+        logging.debug('Send %s to Workflow %d', message['data']['type'],
+                      self.workflow_id)
         await self.send_json(message['data'])
 
 
@@ -67,6 +75,8 @@ async def _workflow_group_send(workflow_id: int,
     """Send message_dict as JSON to all clients connected to the workflow."""
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
+    logging.debug('Queue %s to Workflow %d', message_dict['type'],
+                  workflow_id)
     await channel_layer.group_send(channel_name, {
         'type': 'send_data_to_workflow_client',
         'data': message_dict,
