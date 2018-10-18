@@ -263,33 +263,26 @@ WEBPACK_LOADER = {
     }
 }
 
-# Redirect logs to console on prod, so we can view them with docker logs
+# Always log to console
 LOGGING = {
     'version': 1,
+    'disable_existing_loggers': True,
     'formatters': {
-        'verbose': {
+        'normal': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
         },
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'normal'
         },
-        #'debug_console': {
-        #    'level': 'DEBUG',
-        #    'class': 'logging.StreamHandler',
-        #    'formatter': 'simple'
-        #},
     },
     'loggers': {
         '': {
             'handlers': ['console'],
-            'level': 'INFO',
+            # 'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'django.request': {
