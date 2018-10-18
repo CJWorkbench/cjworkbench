@@ -37,7 +37,7 @@
 
     // undo redo buttons
     .group--undo-redo {
-      display: inline-block;
+      display: flex;
 
       button {
         font-size: 1.9rem;
@@ -49,7 +49,7 @@
         opacity: .8;
         &:hover {
           border-color: $white;
-          opacity: 1; 
+          opacity: 1;
         }
       }
       button:first-child {
