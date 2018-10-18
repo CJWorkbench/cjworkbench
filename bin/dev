@@ -47,6 +47,7 @@ print_usage() {
   echo '  pipenv ARGS -- run "pipenv ARGS..." in a Python environment' >&2
   echo '  python ARGS -- run "pipenv run python ARGS..." in a Python environment' >&2
   echo '  run SERVICE ARGS -- run "docker-compose run -rm SERVICE ARGS..."' >&2
+  echo '  quickstart -- start database, Redis, Webpack and Django without updates' >&2
   echo '  sql -- open a psql prompt in the dev database (it must be up)' >&2
   echo '  start -- start database, Redis, Webpack and Django' >&2
   echo '  stop -- stop services created by start' >&2
@@ -120,6 +121,11 @@ case "$COMMAND" in
     # Make sure JavaScript deps are up to date
     docker_compose run --rm webpack npm install
 
+    # Start Django and Webpack
+    docker_compose up -t0 --abort-on-container-exit
+    ;;
+
+  "quickstart")
     # Start Django and Webpack
     docker_compose up -t0 --abort-on-container-exit
     ;;
