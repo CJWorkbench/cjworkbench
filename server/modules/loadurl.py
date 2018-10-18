@@ -1,9 +1,9 @@
 import io
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-import requests
+import aiohttp
+import asyncio
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
+from server.modules import utils
 from .utils import parse_bytesio, turn_header_into_first_row
 
 # ---- LoadURL ----
@@ -54,39 +54,34 @@ class LoadURL(ModuleImpl):
         params = wf_module.get_params()
         url = params.get_param_string('url').strip()
 
-        validate = URLValidator()
-        try:
-            validate(url)
-        except ValidationError:
-            return await ModuleImpl.commit_result(
-                wf_module,
-                ProcessResult(error='Invalid URL')
-            )
-
         mimetypes = ','.join(_ExtensionMimeTypes.values())
+        headers = {'Accept': mimetypes}
+        timeout = aiohttp.ClientTimeout(total=5*60, connect=30)
 
         try:
-            response = requests.get(url, headers={'Accept': mimetypes})
-            if response.status_code == requests.codes.ok:
-                # get content type
-                content_type = response.headers.get('content-type', '') \
+            async with utils.spooled_data_from_url(
+                url, headers, timeout
+            ) as (bytes_io, headers, charset):
+                content_type = headers.get('content-type', '') \
                         .split(';')[0] \
                         .strip()
                 mime_type = guess_mime_type_or_none(content_type, url)
 
                 if mime_type:
-                    result = parse_bytesio(io.BytesIO(response.content),
-                                           mime_type, response.encoding)
+                    result = parse_bytesio(bytes_io, mime_type, charset)
                 else:
                     result = ProcessResult(error=(
                         f'Error fetching {url}: '
                         f'unknown content type {content_type}'
                     ))
-            else:
-                result = ProcessResult(
-                    error=f'Error {response.status_code} fetching url'
-                )
-        except requests.exceptions.RequestException as err:
+        except asyncio.TimeoutError:
+            result = ProcessResult(error=f'Timeout fetching {url}')
+        except aiohttp.InvalidURL:
+            result = ProcessResult(error=f'Invalid URL')
+        except aiohttp.ClientResponseError as err:
+            result = ProcessResult(error=('Error from server: %d %s' % (
+                                          err.status, err.message)))
+        except aiohttp.ClientError as err:
             result = ProcessResult(error=str(err))
 
         result.truncate_in_place_if_too_big()

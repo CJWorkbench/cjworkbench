@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "==3.2.1"
+aiohttp = "==3.4.4"
 "beautifulsoup4" = "==4.6.0"
 channels = "==2.1.3"
 Django = "==1.11"
@@ -34,6 +34,8 @@ cchardet = "*"
 python-snappy = "*"
 workbenchdata-fastparquet = "==0.1.6a2"
 minio = "*"
+async-generator = "*"
+aiodns = "*"
 
 [dev-packages]
 "requests-mock" = "==1.5.0"

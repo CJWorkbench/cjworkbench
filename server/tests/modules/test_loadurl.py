@@ -4,8 +4,10 @@ import json
 import os
 import unittest
 from unittest.mock import patch
+import aiohttp
+from async_generator import asynccontextmanager  # TODO python 3.7 native
+import asyncio
 from django.conf import settings
-import requests
 import pandas as pd
 from server.modules.loadurl import LoadURL
 from server.modules.types import ProcessResult
@@ -15,13 +17,32 @@ from .util import MockParams, fetch_factory
 XLSX_MIME_TYPE = \
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-mock_csv_text = 'Month,Amount\nJan,10\nFeb,20'
-mock_csv_raw = io.BytesIO(mock_csv_text.encode('utf-8'))
-mock_csv_table = pd.read_csv(mock_csv_raw)
-mock_csv_text2 = \
-        'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
-mock_csv_raw2 = io.BytesIO(mock_csv_text2.encode('utf-8'))
-mock_csv_table2 = pd.read_csv(mock_csv_raw2)
+mock_csv_raw = b'Month,Amount\nJan,10\nFeb,20'
+mock_csv_table = pd.DataFrame({
+    'Month': ['Jan', 'Feb'],
+    'Amount': [10, 20]
+})
+
+
+class fake_spooled_data_from_url:
+    def __init__(self, data=b'', content_type='', charset='utf-8', error=None):
+        self.data = io.BytesIO(data)
+        self.headers = {'Content-Type': content_type}
+        self.charset = charset
+        self.error = error
+
+    def __call__(self, *args, **kwargs):
+        return self
+
+    async def __aenter__(self):
+        if self.error:
+            raise self.error
+        else:
+            return (self.data, self.headers, self.charset)
+        return future
+
+    async def __aexit__(self, *args):
+        return
 
 
 def mock_text_response(text, content_type):
@@ -73,32 +94,32 @@ fetch = fetch_factory(LoadURL.fetch, P)
 
 
 class LoadFromURLTests(unittest.TestCase):
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(mock_csv_raw, 'text/csv'))
     def test_load_csv(self):
-        with patch('requests.get', respond(mock_csv_text, 'text/csv')):
-            wf_module = fetch(url='http://test.com/the.csv')
-
+        wf_module = fetch(url='http://test.com/the.csv')
         self.assertEqual(wf_module.fetch_result, ProcessResult(mock_csv_table))
 
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(b'a,b\n"1', 'text/csv'))
     def test_load_invalid_csv(self):
-        with patch('requests.get', respond('a,b\n"1', 'text/csv')):
-            wf_module = fetch(url='http://test.com/the.csv')
-
+        wf_module = fetch(url='http://test.com/the.csv')
         self.assertEqual(wf_module.fetch_result, ProcessResult(error=(
             'Error tokenizing data. C error: EOF inside string '
             'starting at line 1'
         )))
 
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(mock_csv_raw, 'text/plain'))
     def test_load_csv_use_ext_given_bad_content_type(self):
         # return text/plain type and rely on filename detection, as
         # https://raw.githubusercontent.com/ does
-        with patch('requests.get', respond(mock_csv_text, 'text/plain')):
-            wf_module = fetch(url='http://test.com/the.csv')
-
+        wf_module = fetch(url='http://test.com/the.csv')
         self.assertEqual(wf_module.fetch_result, ProcessResult(mock_csv_table))
 
     def test_load_json(self):
         with open(os.path.join(settings.BASE_DIR,
-                               'server/tests/test_data/sfpd.json')) as f:
+                               'server/tests/test_data/sfpd.json'), 'rb') as f:
             # TODO nix this big file and use a sensible unit test. This extra
             # computation merely tests that the code uses the same JSON-parsing
             # logic as the test.
@@ -110,15 +131,18 @@ class LoadFromURLTests(unittest.TestCase):
             expected = ProcessResult(sfpd_table)
             expected.sanitize_in_place()
 
-        with patch('requests.get', respond(sfpd_json, 'application/json')):
+        with patch('server.modules.utils.spooled_data_from_url',
+                   fake_spooled_data_from_url(sfpd_json, 'application/json',
+                                              'utf-8')):
             wf_module = fetch(url='http://test.com/the.json')
 
         self.assertEqual(wf_module.fetch_result, expected)
 
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(b'not json', 'application/json'))
     def test_load_json_invalid_json(self):
         # malformed json should put module in error state
-        with patch('requests.get', respond('not json', 'application/json')):
-            wf_module = fetch(url='http://test.com/the.json')
+        wf_module = fetch(url='http://test.com/the.json')
 
         self.assertEqual(wf_module.fetch_result, ProcessResult(
             error='Expecting value: line 1 column 1 (char 0)'
@@ -129,11 +153,15 @@ class LoadFromURLTests(unittest.TestCase):
             xlsx_bytes = f.read()
             xlsx_table = pd.read_excel(mock_xlsx_path)
 
-        with patch('requests.get', respond(xlsx_bytes, XLSX_MIME_TYPE)):
+        with patch('server.modules.utils.spooled_data_from_url',
+                   fake_spooled_data_from_url(xlsx_bytes, XLSX_MIME_TYPE,
+                                              None)):
             wf_module = fetch(url='http://test.com/x.xlsx')
 
         self.assertEqual(wf_module.fetch_result, ProcessResult(xlsx_table))
 
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(b'hi', XLSX_MIME_TYPE, None))
     def test_load_xlsx_bad_content(self):
         # malformed file  should put module in error state
         with patch('requests.get', respond(b'hi', XLSX_MIME_TYPE)):
@@ -144,16 +172,18 @@ class LoadFromURLTests(unittest.TestCase):
             "file: Expected BOF record; found b'hi'"
         )))
 
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               error=aiohttp.ClientResponseError(None, None, status=404,
+                                                 message='Not Found')
+           ))
     def test_load_404(self):
         # 404 error should put module in error state
-        with patch('requests.get', mock_404_response('Foobar')):
-            wf_module = fetch(url='http://example.org/x.csv')
-
+        wf_module = fetch(url='http://example.org/x.csv')
         self.assertEqual(wf_module.fetch_result,
-                         ProcessResult(error='Error 404 fetching url'))
+                         ProcessResult(error='Error from server: 404 Not Found'))
 
     def test_bad_url(self):
         wf_module = fetch(url='not a url')
-
         self.assertEqual(wf_module.fetch_result,
                          ProcessResult(error='Invalid URL'))

@@ -3,13 +3,16 @@ from collections import OrderedDict
 from contextlib import contextmanager
 import io
 import json
+import tempfile
 from typing import Any, Dict, Callable, Optional
-import xlrd
+import aiohttp
+from async_generator import asynccontextmanager  # TODO python 3.7 native
+import cchardet as chardet
 import pandas
 from pandas import DataFrame
 import pandas.errors
+import xlrd
 from .types import ProcessResult
-import cchardet as chardet
 from server.sanitizedataframe import autocast_dtypes_in_place
 from django.conf import settings
 from django.db.models.fields.files import FieldFile
@@ -20,6 +23,7 @@ from server.models.Workflow import Workflow
 
 
 _TextEncoding = Optional[str]
+_ChunkSize = 1024 * 1024
 
 
 class PythonFeatureDisabledError(Exception):
@@ -389,3 +393,31 @@ def store_external_workflow(wf_module, url) -> ProcessResult:
         right_result = right_wf_module.get_cached_render_result().result
 
     return ProcessResult(dataframe=right_result.dataframe)
+
+
+@asynccontextmanager
+async def spooled_data_from_url(url: str, headers: Dict[str, str]={},
+                                timeout: aiohttp.ClientTimeout=None):
+    """
+    Download `url` to a tempfile and yield `(bytesio, headers, charset)`.
+
+    Raise aiohttp.ClientError on generic error. Subclasses of note:
+    * aiohttp.InvalidURL on invalid URL
+    * aiohttp.ClientResponseError when HTTP status is not 200
+
+    Raise asyncio.TimeoutError when `timeout` seconds have expired.
+    """
+    with tempfile.TemporaryFile(prefix='loadurl') as spool:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers,
+                                   timeout=timeout,
+                                   raise_for_status=True) as response:
+                async for blob in \
+                        response.content.iter_chunked(_ChunkSize):
+                    spool.write(blob)
+
+                headers = response.headers
+                charset = response.charset
+
+        spool.seek(0)
+        yield spool, headers, charset
