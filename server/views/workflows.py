@@ -86,41 +86,51 @@ def make_init_state(request, workflow=None, modules=None):
 
 @login_required
 def render_workflows(request):
-    init_state = make_init_state(request)
+    # Separate out workflows by type
+    workflows = {}
+    workflows['owned'] = Workflow.objects \
+        .filter(owner=request.user) \
+        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
+
+    workflows['shared'] = Workflow.objects \
+        .filter(acl__email=request.user.email) \
+        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
+
+    workflows['templates'] = Workflow.objects \
+        .filter(in_all_users_workflow_lists=True) \
+        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
+
+    init_state = {
+        'loggedInUser': UserSerializer(request.user).data,
+        'workflows': {}
+    }
+    # turn queryset into list so we can sort it ourselves by reverse chron
+    # (this is because 'last update' is a property of the delta, not the
+    # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
+    # column.
+    for key, value in workflows.items():
+        value = list(value)
+        value.sort(key=lambda wf: wf.last_update(), reverse=True)
+        serializer = WorkflowSerializerLite(value, many=True,
+                                            context={'request': request})
+        init_state['workflows'][key] = serializer.data
+
     return TemplateResponse(request, 'workflows.html',
                             {'initState': init_state})
 
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 @login_required
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     """List all workflows or create a new workflow."""
-    if request.method == 'GET':
-        workflows = Workflow.objects \
-                .filter(Q(owner=request.user)
-                        | Q(in_all_users_workflow_lists=True)) \
-                .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
-
-        # turn queryset into list so we can sort it ourselves by reverse chron
-        # (this is because 'last update' is a property of the delta, not the
-        # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
-        # column.
-        workflows = list(workflows)
-        workflows.sort(key=lambda wf: wf.last_update(), reverse=True)
-
-        serializer = WorkflowSerializerLite(workflows, many=True,
-                                            context={'request': request})
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        workflow = Workflow.objects.create(
-            name='New Workflow',
-            owner=request.user
-        )
-        serializer = WorkflowSerializerLite(workflow,
-                                            context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    workflow = Workflow.objects.create(
+        name='New Workflow',
+        owner=request.user
+    )
+    serializer = WorkflowSerializerLite(workflow,
+                                        context={'request': request})
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # ---- Workflow ----
