@@ -2,6 +2,7 @@
 import json
 import logging
 import threading  # FIXME nix this -- it can't work for our multi-process env
+from django.contrib.postgres.fields import JSONField
 from django.core.validators import int_list_validator
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -146,15 +147,15 @@ class InitWorkflowCommand(Delta):
         # Don't do _anything_.
         pass
 
-    @staticmethod
-    def create(workflow):
+    @classmethod
+    def create(cls, workflow):
         """
         Save a new Delta on `workflow`, and return the Delta.
         
         Unlike with other Commands, this `create` method is synchronous and
         assumes you're in a `workflow.cooperative_lock()`.
         """
-        delta = InitWorkflowCommand.objects.create(workflow=workflow)
+        delta = cls.objects.create(workflow=workflow)
 
         workflow.last_delta = delta
         workflow.save()
@@ -205,18 +206,17 @@ class AddModuleCommand(Delta, _ChangesWfModuleOutputs):
         self.applied = False
         self.save()
 
-    @staticmethod
-    async def create(workflow, module_version, insert_before, param_values):
+    @classmethod
+    async def create(cls, workflow, module_version, insert_before,
+                     param_values):
         newwfm = WfModule.objects.create(workflow=None,
                                          module_version=module_version,
                                          order=insert_before,
                                          is_collapsed=False)
         newwfm.create_parametervals(param_values or {})
 
-        delta = await Delta.create_impl(AddModuleCommand,
-                                        workflow=workflow,
-                                        wf_module=newwfm,
-                                        order=insert_before)
+        delta = await cls.create_impl(workflow=workflow, wf_module=newwfm,
+                                      order=insert_before)
 
         return delta
 
@@ -277,16 +277,15 @@ class DeleteModuleCommand(Delta, _ChangesWfModuleOutputs):
         self.applied = False
         self.save()
 
-    @staticmethod
-    async def create(wf_module):
+    @classmethod
+    async def create(cls, wf_module):
         # critical section to make double delete check work correctly
         with delete_lock:
             workflow = wf_module.workflow
             if workflow is None:
                 return None     # this wfm was already deleted, do nothing
 
-            delta = await Delta.create_impl(
-                DeleteModuleCommand,
+            delta = await cls.create_impl(
                 workflow=workflow,
                 wf_module=wf_module,
                 selected_wf_module=workflow.selected_wf_module
@@ -346,8 +345,8 @@ class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
 
         self.apply_order(json.loads(self.old_order))
 
-    @staticmethod
-    async def create(workflow, new_order):
+    @classmethod
+    async def create(cls, workflow, new_order):
         # Validation: all id's and orders exist and orders are in range 0..n-1
         wfms = WfModule.objects.filter(workflow=workflow)
 
@@ -368,8 +367,7 @@ class ReorderModulesCommand(Delta, _ChangesWfModuleOutputs):
             raise ValueError('WfModule orders must be in range 0..n-1')
 
         # Looks good, let's reorder
-        delta = await Delta.create_impl(
-            ReorderModulesCommand,
+        delta = await cls.create_impl(
             workflow=workflow,
             old_order=json.dumps([{'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
             new_order=json.dumps(new_order)
@@ -399,10 +397,9 @@ class ChangeDataVersionCommand(Delta, _ChangesWfModuleOutputs):
         self.wf_module.save()
         self.wf_module.set_fetched_data_version(self.old_version)
 
-    @staticmethod
-    async def create(wf_module, version):
-        delta = await Delta.create_impl(
-            ChangeDataVersionCommand,
+    @classmethod
+    async def create(cls, wf_module, version):
+        delta = await cls.create_impl(
             wf_module=wf_module,
             new_version=version,
             old_version=wf_module.get_fetched_data_version(),
@@ -445,12 +442,11 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
 
         self.parameter_val.set_value(self.old_value)
 
-    @staticmethod
-    async def create(parameter_val, value):
+    @classmethod
+    async def create(cls, parameter_val, value):
         workflow = parameter_val.wf_module.workflow
 
-        delta = await Delta.create_impl(
-            ChangeParameterCommand,
+        delta = await cls.create_impl(
             parameter_val=parameter_val,
             new_value=value,
             old_value=parameter_val.get_value(),
@@ -462,6 +458,53 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
     @property
     def command_description(self):
         return f'Change param {self.parameter_val} to {self.new_value}'
+
+
+class ChangeParametersCommand(Delta, _ChangesWfModuleOutputs):
+    wf_module = models.ForeignKey(WfModule, null=False)
+    old_values = JSONField('old_values')
+    new_values = JSONField('new_values')
+
+    dependent_wf_module_last_delta_ids = \
+        _ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
+
+    def _apply_values(self, values):
+        pvs = list(self.wf_module.parameter_vals
+                   .prefetch_related('parameter_spec').all())
+        for pv in pvs:
+            id_name = pv.parameter_spec.id_name
+            if id_name in values:
+                pv.value = values[id_name]
+                pv.save(update_fields=['value'])
+
+    def forward_impl(self):
+        self._apply_values(self.new_values)
+        self.forward_dependent_wf_module_versions(self.wf_module)
+        self.wf_module.save()
+
+    def backward_impl(self):
+        self._apply_values(self.old_values)
+        self.backward_dependent_wf_module_versions(self.wf_module)
+        self.wf_module.save()
+
+    @classmethod
+    def amend_create_kwargs(cls, *, wf_module, new_values, **kwargs):
+        old_values = dict(
+            wf_module.parameter_vals
+            .filter(parameter_spec__id_name__in=new_values.keys())
+            .values_list('parameter_spec__id_name', 'value')
+        )
+
+        return {
+            **kwargs,
+            'wf_module': wf_module,
+            'new_values': new_values,
+            'old_values': old_values,
+        }
+
+    @property
+    def command_description(self):
+        return f"Change params {', '.join(self.old_values.keys())}"
 
 
 class ChangeWorkflowTitleCommand(Delta):
@@ -476,12 +519,11 @@ class ChangeWorkflowTitleCommand(Delta):
         self.workflow.name = self.old_value
         self.workflow.save(update_fields=['name'])
 
-    @staticmethod
-    async def create(workflow, name):
+    @classmethod
+    async def create(cls, workflow, name):
         old_name = workflow.name
 
-        delta = await Delta.create_impl(
-            ChangeWorkflowTitleCommand,
+        delta = await cls.create_impl(
             workflow=workflow,
             new_value=name,
             old_value=old_name
@@ -508,12 +550,11 @@ class ChangeWfModuleNotesCommand(Delta):
         self.wf_module.notes = self.old_value
         self.wf_module.save()
 
-    @staticmethod
-    async def create(wf_module, notes):
+    @classmethod
+    async def create(cls, wf_module, notes):
         old_value = wf_module.notes if wf_module.notes else ''
 
-        delta = await Delta.create_impl(
-            ChangeWfModuleNotesCommand,
+        delta = await cls.create_impl(
             workflow=wf_module.workflow,
             wf_module=wf_module,
             new_value=notes,
@@ -549,11 +590,10 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
         self.wf_module.update_interval = self.old_update_interval
         self.wf_module.save()
 
-    @staticmethod
-    async def create(wf_module, auto_update_data,
+    @classmethod
+    async def create(cls, wf_module, auto_update_data,
                      next_update, update_interval):
-        delta = await Delta.create_impl(
-            ChangeWfModuleUpdateSettingsCommand,
+        delta = await cls.create_impl(
             workflow=wf_module.workflow,
             wf_module=wf_module,
             old_auto=wf_module.auto_update_data,

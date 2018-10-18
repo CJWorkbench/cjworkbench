@@ -67,10 +67,10 @@ yxyx,1
         self._wait_for_table_value(9, 0, 'yyyy')
 
         # Now the UI lets you see the group
-        b.assert_element('dt:nth-child(1) input[value="yyyy"]')
-        b.assert_element('dt:nth-child(1) .count', text=3)
-        b.click_whatever('dt:nth-child(1) label.expand')
-        b.assert_element('dd', text='xxxy')
+        b.assert_element('li.visible:nth-child(1) input[value="yyyy"]')
+        b.assert_element('li.visible:nth-child(1) .count', text=3)
+        b.click_whatever('li.visible:nth-child(1) label.expand')
+        b.assert_element('.values', text='xxxy')
 
         # That's enough. Unit tests cover all the edge cases.
 
@@ -88,9 +88,9 @@ yxyx,1
         b.click_button('Merge selected')
 
         # Now the UI lets you see the change
-        b.assert_element('dt:nth-child(1) input[value="yxyx"]')
+        b.assert_element('li.visible:nth-child(1) input[value="yxyx"]')
         # here count=4, because there was an existing yxyx row
-        b.assert_element('dt:nth-child(1) .count', text=4)
+        b.assert_element('li.visible:nth-child(1) .count', text=4)
         self._wait_for_table_value(2, 0, 'yxyx')
         self._wait_for_table_value(3, 0, 'yxyx')
         self._wait_for_table_value(4, 0, 'yxyx')

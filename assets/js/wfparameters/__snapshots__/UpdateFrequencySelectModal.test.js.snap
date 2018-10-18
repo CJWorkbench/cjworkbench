@@ -59,9 +59,11 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
             type="radio"
             value="true"
           />
-          <span>
+          <div
+            className="radio"
+          >
             Auto
-          </span>
+          </div>
         </label>
         <div
           className="big-radio-details"
@@ -170,9 +172,11 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
             type="radio"
             value="false"
           />
-          <span>
+          <div
+            className="radio"
+          >
             Manual
-          </span>
+          </div>
         </label>
         <div
           className="big-radio-details"
@@ -195,7 +199,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
       Cancel
     </button>
     <button
-      className="action-button button-blue button-ok"
+      className="action-button button-blue"
       form="updateFrequencySelectModalForm"
       type="submit"
     >

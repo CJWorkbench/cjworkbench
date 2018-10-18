@@ -1,12 +1,12 @@
 from .moduleimpl import ModuleImpl
 from server.modules.types import ProcessResult
-import pandas as pd
 from pandas import IntervalIndex
-from typing import Any, Dict, Tuple
+from typing import Tuple
 import re
 
 commas = re.compile('\\s*,\\s*')
 numbers = re.compile('(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
+
 
 class SelectColumns(ModuleImpl):
     def render(params, table, **kwargs):
@@ -42,6 +42,7 @@ def select_columns_by_name(table, cols, drop_or_keep):
         newtab = table.drop(newcols, axis=1)
     return ProcessResult(newtab)
 
+
 def select_columns_by_number(table, str_col_nums, drop_or_keep):
     try:
         form = Form.parse(str_col_nums)
@@ -55,7 +56,10 @@ def select_columns_by_number(table, str_col_nums, drop_or_keep):
     try:
         mask = form.index.get_indexer(table_col_nums) != -1
     except KeyError:
-        return ProcessResult(table, error='There are overlapping numbers in input range')
+        return ProcessResult(
+            table,
+            error='There are overlapping numbers in input range'
+        )
     except Exception as err:
         return ProcessResult(table, error=str(err.args[0]))
 
@@ -65,6 +69,7 @@ def select_columns_by_number(table, str_col_nums, drop_or_keep):
         new_col_nums = [x[0] for x in enumerate(mask) if x[1]]
     ret = table.iloc[:, new_col_nums]
     return ProcessResult(ret)
+
 
 def parse_interval(s: str) -> Tuple[int, int]:
     """
@@ -89,6 +94,7 @@ def parse_interval(s: str) -> Tuple[int, int]:
     first = int(match.group('first'))
     last = int(match.group('last') or first)
     return (first - 1, last - 1)
+
 
 # Copied from droprowsbypoition.py and modified for columns
 class Form:

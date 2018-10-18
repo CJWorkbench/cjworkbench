@@ -24,10 +24,18 @@ describe('Reducer actions', () => {
       parameter_vals: [
         {
           id: 1,
-          parameter_spec : {
+          parameter_spec: {
             id_name: 'data',
           },
           value: 'Some Data'
+        },
+        {
+          // maybeRequestWfModuleFetchAction() requires version_select.
+          id: 2,
+          parameter_spec: {
+            id_name: 'version_select'
+          },
+          value: null
         }
       ],
       versions: {
@@ -69,8 +77,10 @@ describe('Reducer actions', () => {
     WorkbenchAPI.setSelectedWfModule.mockReset()
     WorkbenchAPI.updateWfModule.mockReset()
     WorkbenchAPI.onParamChanged.mockReset()
+    WorkbenchAPI.setWfModuleParams.mockReset()
     WorkbenchAPI.markDataVersionsRead.mockReset()
     WorkbenchAPI.reorderWfModules.mockReset()
+    WorkbenchAPI.requestFetch.mockReset()
   })
 
   it('Returns the state if we feed garbage to the reducer', () => {
@@ -368,6 +378,32 @@ describe('Reducer actions', () => {
 
     // should send HTTP request
     expect(WorkbenchAPI.onParamChanged).toHaveBeenCalledWith(1, { value: 'foo' })
+  })
+
+  it('should setWfModuleParams', async () => {
+    WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve({}))
+
+    const store = mockStore(testState)
+    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { data: 'newdata' }))
+
+    // should set value immediately
+    expect(store.getState().wfModules['10'].parameter_vals[0].value).toEqual('newdata')
+    await done
+
+    // should send HTTP request
+    expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(10, { data: 'newdata' })
+  })
+
+  it('requests fetch in maybeRequestWfModuleFetchAction', async () => {
+    WorkbenchAPI.requestFetch.mockImplementation(_ => Promise.resolve(null))
+    const store = mockStore(testState)
+    const done = store.dispatch(wfr.maybeRequestWfModuleFetchAction(10))
+
+    // should set nClientRequests immediately.
+    expect(store.getState().wfModules['10'].nClientRequests).toEqual(1)
+
+    await done
+    expect(store.getState().wfModules['10'].nClientRequests).toEqual(0)
   })
 
   it('should no-op when setting param value to itself', async () => {

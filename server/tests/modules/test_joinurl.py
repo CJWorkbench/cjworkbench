@@ -1,19 +1,15 @@
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import numpy as np
 from server.modules.joinurl import JoinURL, _join_type_map
 from server.modules.types import ProcessResult
-from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        add_new_workflow, set_string, set_checkbox, \
-        set_integer, get_param_by_id_name
-from .util import MockParams  #, fetch_factory
+from .util import MockParams  # , fetch_factory
 
 
 P = MockParams.factory(url='https://app.workbenchdata.com/workflows/2/',
                        colnames=([], []), importcols=([], []), type=0,
                        select_columns=False)
-#fetch = fetch_factory(JoinURL.event, P)
+# fetch = fetch_factory(JoinURL.fetch, P)
 
 
 def PR(error, *args, **kwargs):
@@ -28,13 +24,17 @@ def render(params, table, fetch_result):
 table = pd.DataFrame([['a', 'b'], ['a', 'c']], columns=['col1', 'key'])
 
 ref_left_join = pd.DataFrame([['a', 'b', 'c', 'd']],
-                                columns=['col1', 'key', 'col2', 'col3'])
+                             columns=['col1', 'key', 'col2', 'col3'])
 
 table_with_types = pd.DataFrame([[1, 2], [1, 3]], columns=['col1', 'key'])
-ext_workflow_with_types = pd.DataFrame([[2.0, 3.0, 4.0], [4.0, 1.0, 2.0]], columns=['key', 'col2', 'col3'])
+ext_workflow_with_types = pd.DataFrame([[2.0, 3.0, 4.0], [4.0, 1.0, 2.0]],
+                                       columns=['key', 'col2', 'col3'])
 
-ref_left_join_with_types = pd.DataFrame([[1, 2.0, 3.0, 4.0]],
-                                             columns=['col1', 'key', 'col2', 'col3'])
+ref_left_join_with_types = pd.DataFrame(
+    [[1, 2.0, 3.0, 4.0]],
+    columns=['col1', 'key', 'col2', 'col3']
+)
+
 
 class JoinURLTests(unittest.TestCase):
     def test_no_left(self):

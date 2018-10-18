@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from ..models import ParameterSpec, ParameterVal, ChangeParameterCommand
 from ..serializers import ParameterValSerializer
-from ..dispatch import module_dispatch_event
+from ..dispatch import module_dispatch_fetch
 from .. import triggerrender
 from .. import oauth
 
@@ -62,28 +62,6 @@ def parameterval_detail(request, pk, format=None):
         async_to_sync(ChangeParameterCommand.create)(param,
                                                      request.data['value'])
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# Handle a parameter event (like someone clicking the fetch button)
-# Get or set parameter value
-@api_view(['POST'])
-@renderer_classes((JSONRenderer,))
-def parameterval_event(request, pk, format=None):
-    param = parameter_val_or_response_for_write(pk, request)
-    if isinstance(param, HttpResponse):
-        return param
-    data = request.data
-
-    dispatch_response = async_to_sync(module_dispatch_event)(
-        param.wf_module,
-        parameter=param,
-        event=data,
-        request=request
-    )
-    if dispatch_response:
-        return dispatch_response
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 def _oauth_start_authorize(request, param: ParameterVal,

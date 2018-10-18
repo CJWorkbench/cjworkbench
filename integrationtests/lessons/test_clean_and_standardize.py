@@ -25,7 +25,6 @@ class TestLesson(LessonTest):
                          wait=True)
 
         self.import_module('dropna')
-        self.import_module('linechart')
         self.import_module('nulldropper')
         self.import_module('reshape')
 

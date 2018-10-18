@@ -1,9 +1,11 @@
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.utils import timezone
+import pandas as pd
 from server.models import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
-        ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule
+        ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule, \
+        ChangeParametersCommand, Workflow, Module
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         mock_csv_table, mock_csv_table2
 
@@ -317,37 +319,114 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
 
 @patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
-class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
-    def setUp(self):
-        super().setUp()
-        self.wfm = WfModule.objects.first()
+class ChangeParametersCommandTest(DbTestCase):
+    def test_change_parameters(self):
+        # Setup: workflow with loadurl module
+        #
+        # loadurl is a good choice because it has three parameters, two of
+        # which are useful.
+        workflow = Workflow.objects.create(name='hi')
+        module = Module.objects.create(name='loadurl', id_name='loadurl',
+                                       dispatch='loadurl')
+        module_version = ModuleVersion.objects.create(
+            source_version_hash='1.0',
+            module=module
+        )
+        module_version.parameter_specs.create(id_name='url', type='string',
+                                              order=0, def_value='')
+        module_version.parameter_specs.create(id_name='has_header',
+                                              type='checkbox', order=1,
+                                              def_value='')
+        module_version.parameter_specs.create(id_name='version_select',
+                                              type='custom', order=2,
+                                              def_value='')
+        wf_module = workflow.wf_modules.create(
+            order=0,
+            module_version=module_version
+        )
+        # Set original parameters
+        wf_module.create_parametervals({
+            'url': 'http://example.org',
+            'has_header': True,
+        })
 
-    # Change notes, then undo/redo
+        params1 = wf_module.get_params().to_painful_dict(pd.DataFrame())
+
+        # Create and apply delta. It should change params.
+        cmd = async_to_sync(ChangeParametersCommand.create)(
+            workflow=workflow,
+            wf_module=wf_module,
+            new_values={
+                'url': 'http://example.com/foo',
+                'has_header': False,
+            }
+        )
+        params2 = wf_module.get_params().to_painful_dict(pd.DataFrame())
+
+        self.assertEqual(params2['url'], 'http://example.com/foo')
+        self.assertEqual(params2['has_header'], False)
+        self.assertEqual(params2['version_select'], params1['version_select'])
+
+        # undo
+        async_to_sync(cmd.backward)()
+        params3 = wf_module.get_params().to_painful_dict(pd.DataFrame())
+        self.assertEqual(params3, params1)
+
+        # redo
+        async_to_sync(cmd.forward)()
+        params4 = wf_module.get_params().to_painful_dict(pd.DataFrame())
+        self.assertEqual(params4, params2)
+
+
+@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.models.Delta.ws_notify', async_noop)
+class ChangeWfModuleUpdateSettingsCommandTests(DbTestCase):
     def test_change_update_settings(self):
-        self.wfm.auto_update_data = False
-        self.wfm.next_update = None
-        self.wfm.update_interval = 100
+        workflow = Workflow.objects.create(name='hi')
+        module = Module.objects.create(name='pastecsv', id_name='pastecsv',
+                                       dispatch='pastecsv')
+        module_version = ModuleVersion.objects.create(
+            source_version_hash='1.0',
+            module=module
+        )
+        wf_module = WfModule.objects.create(workflow=workflow, order=0,
+                                            module_version=module_version,
+                                            auto_update_data=False,
+                                            next_update=None,
+                                            update_interval=100)
 
         # do
         mydate = timezone.now()
         cmd = async_to_sync(ChangeWfModuleUpdateSettingsCommand.create)(
-            self.wfm,
+            wf_module,
             True,
             mydate,
             1000
         )
-        self.assertTrue(self.wfm.auto_update_data)
-        self.assertEqual(self.wfm.next_update, mydate)
-        self.assertEqual(self.wfm.update_interval, 1000)
+        self.assertTrue(wf_module.auto_update_data)
+        self.assertEqual(wf_module.next_update, mydate)
+        self.assertEqual(wf_module.update_interval, 1000)
+        wf_module.refresh_from_db()
+        self.assertTrue(wf_module.auto_update_data)
+        self.assertEqual(wf_module.next_update, mydate)
+        self.assertEqual(wf_module.update_interval, 1000)
 
         # undo
         async_to_sync(cmd.backward)()
-        self.assertFalse(self.wfm.auto_update_data)
-        self.assertEqual(self.wfm.next_update, None)
-        self.assertEqual(self.wfm.update_interval, 100)
+        self.assertFalse(wf_module.auto_update_data)
+        self.assertEqual(wf_module.next_update, None)
+        self.assertEqual(wf_module.update_interval, 100)
+        wf_module.refresh_from_db()
+        self.assertFalse(wf_module.auto_update_data)
+        self.assertEqual(wf_module.next_update, None)
+        self.assertEqual(wf_module.update_interval, 100)
 
         # redo
         async_to_sync(cmd.forward)()
-        self.assertTrue(self.wfm.auto_update_data)
-        self.assertEqual(self.wfm.next_update, mydate)
-        self.assertEqual(self.wfm.update_interval, 1000)
+        self.assertTrue(wf_module.auto_update_data)
+        self.assertEqual(wf_module.next_update, mydate)
+        self.assertEqual(wf_module.update_interval, 1000)
+        wf_module.refresh_from_db()
+        self.assertTrue(wf_module.auto_update_data)
+        self.assertEqual(wf_module.next_update, mydate)
+        self.assertEqual(wf_module.update_interval, 1000)

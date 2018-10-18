@@ -174,7 +174,8 @@ if settings.CACHE_MODULES:
     load_module = lru_cache(maxsize=None)(load_module)
 
 
-def module_version_to_dynamic_module(module_version: ModuleVersion) -> DynamicModule:
+def module_version_to_dynamic_module(module_version: ModuleVersion
+                                     ) -> DynamicModule:
     """Return module referenced by `module_version`.
 
     We assume:

@@ -1,7 +1,7 @@
 from .moduleimpl import ModuleImpl
-import json
 
 s_map = [',', ';', '\t', '\n']
+
 
 def parse_list(params, table):
     list_string = params.get_param_string('list_string')
@@ -16,7 +16,8 @@ def parse_list(params, table):
 
     separator = s_map[separator_counts.index(max(separator_counts))]
     # Strip values and remove null values
-    new_columns = [x.strip() for x in list_string.split(separator) if x.strip()]
+    new_columns = [x.strip()
+                   for x in list_string.split(separator) if x.strip()]
 
     if table_width < len(new_columns):
         return (
@@ -35,6 +36,7 @@ def parse_list(params, table):
     except Exception as e:
         return(table, str(e.args[0]))
 
+
 def fill_column_names(column_names, expected_length):
     start = len(column_names) + 1
     for x in range(start, expected_length + 1):
@@ -46,6 +48,7 @@ def fill_column_names(column_names, expected_length):
             num_attempt += 1
         column_names.append(proposed_name)
     return column_names
+
 
 class RenameFromTable(ModuleImpl):
     # Rename entry structure: Dictionary of {old_name: new_name}

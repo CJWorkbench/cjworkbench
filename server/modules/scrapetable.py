@@ -9,21 +9,25 @@ from .types import ProcessResult
 
 def merge_colspan_headers_in_place(table) -> None:
     """
-    Pandas read_html() returns tuples for column names when scraping tables with colspan.
-    This collapses duplicate entries and reformats to be human readable.
-    E.g. ('year', 'year') -> 'year' and ('year', 'month') -> 'year - month'
+    Turn tuple colnames into strings.
 
-    Alters the table in place, no return value.
+    Pandas `read_html()` returns tuples for column names when scraping tables
+    with colspan. Collapse duplicate entries and reformats to be human
+    readable. E.g. ('year', 'year') -> 'year' and
+    ('year', 'month') -> 'year - month'
+
+    Alter the table in place, no return value.
     """
 
     newcols = []
     for c in table.columns:
         if isinstance(c, tuple):
-            # collapse all runs of duplicate values: 'a','a','b','c','c','c' -> 'a','b','c'
+            # collapse all runs of duplicate values:
+            # 'a','a','b','c','c','c' -> 'a','b','c'
             vals = list(c)
             idx = 0
-            while idx < len(vals)-1:
-                if vals[idx]==vals[idx+1]:
+            while idx < len(vals) - 1:
+                if vals[idx] == vals[idx + 1]:
                     vals.pop(idx)
                 else:
                     idx += 1
@@ -53,7 +57,7 @@ class ScrapeTable(ModuleImpl):
         return (table, fetch_result.error)
 
     @staticmethod
-    async def event(wfm, **kwargs):
+    async def fetch(wfm):
         async def fail(error: str) -> None:
             result = ProcessResult(error=error)
             await ModuleImpl.commit_result(wfm, result)
@@ -97,7 +101,8 @@ class ScrapeTable(ModuleImpl):
                 )
             elif tablenum >= len(tables):
                 result = ProcessResult(error=(
-                    _('The maximum table number on this page is %d') % len(tables)
+                    _('The maximum table number on this page is %d')
+                    % len(tables)
                 ))
             else:
                 table = tables[tablenum]

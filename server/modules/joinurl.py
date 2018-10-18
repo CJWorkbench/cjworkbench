@@ -100,7 +100,7 @@ class JoinURL(ModuleImpl):
 
     # Load external workflow and store
     @staticmethod
-    async def event(wf_module, **kwargs):
+    async def fetch(wf_module):
         params = wf_module.get_params()
         url = params.get_param_string('url').strip()
 

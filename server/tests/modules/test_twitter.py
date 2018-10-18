@@ -187,8 +187,8 @@ mock_statuses2 = make_mock_statuses(user_timeline2_json)
 mock_tweet_table = make_mock_tweet_table(mock_statuses)
 
 
-def run_event(wf_module):
-    async_to_sync(Twitter.event)(wf_module)
+def run_fetch(wf_module):
+    async_to_sync(Twitter.fetch)(wf_module)
 
 
 class TwitterTests(unittest.TestCase):
@@ -214,7 +214,7 @@ class TwitterTests(unittest.TestCase):
     def test_empty_query(self):
         self.wf_module.querytype = 1
         self.wf_module.query = ''
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
         self.commit_result.assert_called_with(
             self.wf_module,
             ProcessResult(error='Please enter a query')
@@ -222,7 +222,7 @@ class TwitterTests(unittest.TestCase):
 
     def test_empty_secret(self):
         self.wf_module.twitter_credentials = None
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
         self.commit_result.assert_called_with(
             self.wf_module,
             ProcessResult(error='Please sign in to Twitter')
@@ -242,7 +242,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Actually fetch!
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -254,7 +254,7 @@ class TwitterTests(unittest.TestCase):
         self.wf_module.fetched_table = result.dataframe
         # add only one tweet, mocking since_id
         instance.pages.return_value = [[mock_statuses2[0]]]
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
         self.assertEqual(cursor.call_args[1]['since_id'], mock_statuses[0].id)
         result2 = self.commit_result.call_args[0][1]
         # output should be only new tweets (in this case, one new tweet)
@@ -274,12 +274,12 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
 
-        self.wf_module.fetched_table = mock_tweet_table
+        self.wf_module.fetched_table = mock_tweet_table.copy()
 
         instance = cursor.return_value
         instance.pages.return_value = []
 
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -298,18 +298,21 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
 
+        # Simulate the bug: convert everything to str
         bad_table = mock_tweet_table.copy()
-        for column in ['id', 'retweet_count', 'favorite_count']:
-            bad_table[column] = bad_table[column].astype(str)
+        nulls = bad_table.isna()
+        bad_table = bad_table.astype(str)
+        bad_table[nulls] = None
         self.wf_module.fetched_table = bad_table
 
         # Fix it _no matter what_ -- even if we aren't adding any data.
         instance = cursor.return_value
         instance.pages.return_value = []
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
+
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
@@ -326,7 +329,7 @@ class TwitterTests(unittest.TestCase):
         instance.items.return_value = mock_statuses
 
         # Actually fetch!
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
         self.assertEqual(result.error, '')
@@ -349,7 +352,7 @@ class TwitterTests(unittest.TestCase):
         instance.pages.return_value = [mock_statuses]
 
         # Actually fetch!
-        run_event(self.wf_module)
+        run_fetch(self.wf_module)
         self.commit_result.assert_called()
         self.assertEqual(cursor.mock_calls[0][2]['owner_screen_name'],
                          'thatuser')

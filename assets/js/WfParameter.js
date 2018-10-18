@@ -36,7 +36,7 @@ class TextOrNothing extends React.Component {
   }
 }
 
-export default class WfParameter extends React.Component {
+export default class WfParameter extends React.PureComponent {
   static propTypes = {
     p: PropTypes.shape({
       id: PropTypes.number.isRequired,

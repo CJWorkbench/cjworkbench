@@ -19,13 +19,10 @@ Tweak `demo/demo.yml` to set the number of users and frequency. Learn from
 Running "Demo" on Dev
 ---------------------
 
-Let's make a fake Docker environment!
-
-1. `npm install` in this directory
-1. `./start-dev.sh` to start an environment. While that's running:
+1. `bin/dev start` one directory up from here. While that's running:
 1. Try to register a user, until asked for email confirmation
 1. Hack the database to make the user admin:
-   `docker exec -it workbench-db psql -U postgres cjworkbench` -> 
+   `bin/dev exec database psql -Ucjworkbench` -> 
    `UPDATE auth_user SET is_superuser = TRUE, is_active = TRUE, is_staff = TRUE`;
    `UPDATE account_emailaddress SET verified = TRUE` (and Ctrl+D to exit)
 1. Create a "Public" and "Example" workflow on staging: "Add from URL" ->

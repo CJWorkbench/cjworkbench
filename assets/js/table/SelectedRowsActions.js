@@ -6,7 +6,7 @@ import DropdownMenu from 'reactstrap/lib/DropdownMenu'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import { addModuleAction } from '../workflow-reducer'
+import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -135,17 +135,115 @@ function mapStateToProps (state) {
   return { rowActionModules }
 }
 
-function addWfModuleForRowsAction(currentWfModuleId, moduleId, rowsString) {
-  return addModuleAction(
-    moduleId,
-    { afterWfModuleId: currentWfModuleId },
-    { rows: rowsString }
-  )
+/**
+ * Parse `module.js_module` and return its export named `exportName`.
+ *
+ * On error, warn. If the export can't be loaded, return `null`.
+ *
+ * This is a _trivial_ module loader: it calls the JavaScript as a function
+ * with a `module` parameter, expecting the module to set
+ * `module.exports = {...}`. It's like CommonJS, without `define` or `require`.
+ * It should be compatible with bundlers. But there's no dynamic loading: we
+ * send all modules' JavaScript to the client every page load.
+ */
+function loadModuleExport (module, exportName) {
+  if (!module.js_module) return null
+  const jsModule = {}
+  try {
+    // Load the module
+    const jsWrapper = new Function('module', module.js_module)
+    // Execute it (so it sets module.exports)
+    jsWrapper(jsModule)
+
+    if (!jsModule.exports) {
+      throw new Error('Module did not write `module.exports`')
+    }
+  } catch (e) {
+    console.warn('Error loading module.js_module', e)
+    return null
+  }
+
+  return jsModule.exports[exportName] || null
+}
+
+/**
+ * Execute `module`'s `addSelectedRows()` and return its result.
+ *
+ * If `addSelectedRows()` is not defined for the module, return `null`.
+ *
+ * If `addSelectedRows()` throws an error, warn and return `null`.
+ */
+function maybeAddSelectedRowsToParams (module, wfModule, rowsString, fromInput) {
+  const addSelectedRows = loadModuleExport(module, 'addSelectedRows')
+  if (!addSelectedRows) return null
+
+  const oldParams = {}
+  for (const pv of wfModule.parameter_vals) {
+    oldParams[pv.parameter_spec.id_name] = pv.value
+  }
+
+  try {
+    return addSelectedRows(oldParams, rowsString, fromInput)
+  } catch (e) {
+    console.warn('Error in module.js_module addSelectedRows()', e)
+    return null
+  }
+}
+
+function ensureWfModuleForRowsAction(currentWfModuleId, moduleId, rowsString) {
+  return (dispatch, getState) => {
+    const { workflow, wfModules, modules } = getState()
+
+    // Fallback behavior: add new module with the given rows.
+    function simplyAdd () {
+      return dispatch(addModuleAction(
+        moduleId,
+        { afterWfModuleId: currentWfModuleId },
+        { rows: rowsString }
+      ))
+    }
+
+    // Does currentWfModuleId point to the very module we're asking to add?
+    // e.g., are we clicking "Delete rows" from the "Delete rows" output?
+    //
+    // If so -- and if the module has support.js defining addSelectedRows() --
+    // modify the current WfModule.
+    const currentWfModule = wfModules[String(currentWfModuleId)]
+    const currentModule = modules[String(currentWfModule.module_version.module)]
+    if (currentModule && currentModule.id === moduleId) {
+      const newParams = maybeAddSelectedRowsToParams(currentModule, currentWfModule, rowsString, false)
+      if (newParams !== null) {
+        return dispatch(setWfModuleParamsAction(currentWfModuleId, newParams))
+      }
+    }
+
+    // Does nextWfModuleId point to the very module we're asking to add?
+    // e.g., did we delete rows, select the input, and delete more rows?
+    //
+    // If so -- and if the module has support.js defining addSelectedRows() --
+    // modify the current module.
+    const index = workflow.wf_modules.indexOf(currentWfModuleId)
+    if (index === -1) return simplyAdd()
+    const nextWfModuleId = workflow.wf_modules[index + 1]
+    if (!nextWfModuleId) return simplyAdd()
+    const nextWfModule = wfModules[String(nextWfModuleId)]
+    if (!nextWfModule) return simplyAdd()
+    const nextModule = modules[String(nextWfModule.module_version.module)]
+    if (nextModule && nextModule.id === moduleId) {
+      const newParams = maybeAddSelectedRowsToParams(nextModule, nextWfModule, rowsString, true)
+      if (newParams !== null) {
+        dispatch(setSelectedWfModuleAction(index + 1))
+        return dispatch(setWfModuleParamsAction(nextWfModuleId, newParams))
+      }
+    }
+
+    return simplyAdd()
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onClickRowsAction: (...args) => dispatch(addWfModuleForRowsAction(...args))
+    onClickRowsAction: (...args) => dispatch(ensureWfModuleForRowsAction(...args))
   }
 }
 

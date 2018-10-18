@@ -1,7 +1,9 @@
 # Module dispatch table and implementations
-import pandas as pd
+import logging
+import time
 import traceback
 from typing import Optional
+import pandas as pd
 from server.models import ModuleVersion, Params
 from server.modules.types import ProcessResult
 from .dynamicdispatch import get_module_render_fn, \
@@ -27,9 +29,8 @@ from .modules.duplicatecolumn import DuplicateColumn
 from .modules.joinurl import JoinURL
 from .modules.concaturl import ConcatURL
 
+
 # ---- Test Support ----
-
-
 class NOP(ModuleImpl):
     @staticmethod
     def render(params, table, **kwargs):
@@ -43,8 +44,10 @@ class DoubleMColumn(ModuleImpl):
         return table
 
 
-# ---- Interal modules Dispatch Table ----
+logger = logging.getLogger(__name__)
 
+
+# ---- Interal modules Dispatch Table ----
 module_dispatch_tbl = {
     'loadurl':          LoadURL,
     'pastecsv':         PasteCSV,
@@ -94,7 +97,7 @@ def module_dispatch_render(module_version: ModuleVersion,
                            params: Params,
                            table: pd.DataFrame,
                            fetch_result: Optional[ProcessResult]
-                          ) -> ProcessResult:
+                           ) -> ProcessResult:
     """
     Calls a module's `render()` and returns a sane ProcessResult.
     """
@@ -104,6 +107,8 @@ def module_dispatch_render(module_version: ModuleVersion,
         )
 
     render_fn = None
+
+    time1 = time.time()
 
     dispatch = module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
@@ -117,18 +122,24 @@ def module_dispatch_render(module_version: ModuleVersion,
         render_fn = get_module_render_fn(module_version)
         result = render_fn(params, table, fetch_result)
 
+    time2 = time.time()
+    logger.info('%s rendered (%drows,%dcols)=>(%drows,%dcols) in %dms',
+                str(module_version), table.shape[0], table.shape[1],
+                result.dataframe.shape[0], result.dataframe.shape[1],
+                int((time2 - time1) * 1000))
+
     return result
 
 
-async def module_dispatch_event(wf_module, **kwargs):
+async def module_dispatch_fetch(wf_module) -> None:
     dispatch = wf_module.module_version.module.dispatch
 
     if dispatch in module_dispatch_tbl:
         module_dispatch = module_dispatch_tbl[dispatch]
-        if hasattr(module_dispatch, 'event'):
+        if hasattr(module_dispatch, 'fetch'):
             # Tell client to clear errors before fetch
             await wf_module.set_busy()
-            await module_dispatch.event(wf_module, **kwargs)
+            await module_dispatch.fetch(wf_module)
     else:
         dynamic_module = module_version_to_dynamic_module(
             wf_module.module_version

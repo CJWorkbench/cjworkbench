@@ -141,6 +141,9 @@ button:focus { outline:0 !important; }
   line-height: 1.4rem;
   padding: 0 1.6rem;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-button:disabled {

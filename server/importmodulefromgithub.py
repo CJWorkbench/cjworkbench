@@ -77,7 +77,8 @@ def validate_module_structure(directory):
 
         # Skip directories (__pycache__ etc.) and test_*
         if not os.path.isdir(item) and not item.startswith('test'):
-            if item in ['__init__.py', 'setup.py']:
+            if item in ['__init__.py', 'setup.py', 'package.json',
+                        'package-lock.json']:
                 continue
 
             extension = item.rsplit('.', 1)
@@ -85,7 +86,7 @@ def validate_module_structure(directory):
                 extension = extension[1]
             else:
                 continue
-            if extension in ["py", "json", "html"]:
+            if extension in ["py", "json", "html", "js"]:
                 if extension not in extension_file_mapping:
                     extension_file_mapping[extension] = item
                 else:
@@ -283,6 +284,7 @@ def import_module_from_directory(url, reponame, version, importdir,
         python_file = extension_file_mapping['py']
         json_file = extension_file_mapping['json']
         html_file = extension_file_mapping.get('html', None)
+        js_file = extension_file_mapping.get('js', None)
 
         # load json file
         module_config = get_module_config_from_json(url,
@@ -316,6 +318,10 @@ def import_module_from_directory(url, reponame, version, importdir,
         module_config['link'] = url
         if 'author' not in module_config:
             module_config['author'] = retrieve_author(url)
+
+        if js_file:
+            with open(os.path.join(importdir, js_file)) as f:
+                module_config['js_module'] = f.read()
 
         # Ensure that modules are categorised properly – if a module category
         # isn't one of our pre-defined categories, then we just set it to

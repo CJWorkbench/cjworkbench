@@ -52,12 +52,26 @@ describe('SelectedRowsActions', () => {
   describe('connected', () => {
     beforeEach(() => {
       WorkbenchAPI.addModule.mockReset()
-      WorkbenchAPI.onParamChanged.mockReset()
+      WorkbenchAPI.setWfModuleParams.mockReset()
+      WorkbenchAPI.setSelectedWfModule.mockReset()
     })
 
-    const wrapper = (modules=null, wf_modules=null) => {
+    const wrapper = (modules=null, wf_modules=null, wfModules=null, extraProps={}) => {
       if (wf_modules === null) {
         wf_modules = [99, 100, 101]
+      }
+
+      if (wfModules === null) {
+        wfModules = {
+          '99': {
+            module_version: { module: 10 },
+            parameter_vals: [ { parameter_spec: { id_name: 'foo10' }, value: 'bar10' } ]
+          },
+          '100': {
+            module_version: { module: 20 },
+            parameter_vals: [ { parameter_spec: { id_name: 'foo20' }, value: 'bar20' } ]
+          }
+        }
       }
 
       if (modules === null) {
@@ -67,13 +81,18 @@ describe('SelectedRowsActions', () => {
         }
       }
 
-      const store = mockStore({ modules, workflow: { id: 321, wf_modules } })
+      const store = mockStore({
+        modules,
+        wfModules,
+        workflow: { id: 321, wf_modules },
+      })
       return mount(
         <Provider store={store}>
           <ConnectedSelectedRowsActions
             selectedRowIndexes={[3, 1, 4]}
             wfModuleId={99}
             onClickRowsAction={jest.fn()}
+            {...extraProps}
           />
         </Provider>
       )
@@ -96,7 +115,7 @@ describe('SelectedRowsActions', () => {
       expect(w.find('button')).toHaveLength(1)
     })
 
-    it('should dispatch the correct actions', async () => {
+    it('should use addModuleAction', async () => {
       WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve({
         index: 1,
         wfModule: {
@@ -107,8 +126,6 @@ describe('SelectedRowsActions', () => {
           ]
         }
       }))
-
-      WorkbenchAPI.onParamChanged.mockImplementation(_ => Promise.resolve(null))
 
       const w = wrapper({
         '15': {
@@ -126,6 +143,73 @@ describe('SelectedRowsActions', () => {
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
       expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(321, 15, 1, { rows: '2, 4-5' })
+    })
+
+    it('should use setWfModuleParams action, fromInput', async () => {
+      WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
+      WorkbenchAPI.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
+
+      const w = wrapper(
+        {
+          '10': {},
+          '20': {
+            id: 20,
+            row_action_menu_entry_title: 'Baz these rows',
+            js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
+          }
+        },
+        [ 99, 100 ],
+        null, // wrapper() defaults to wfModule 99 has module 10, wfModule 100 has module 20
+        { wfModuleId: 99 } // we'll edit 100 from wfModule 99
+      )
+      w.find('button').at(0).simulate('click')
+      w.update()
+      expect(w.text()).toMatch(/Baz these rows/)
+      w.find('button').at(1).simulate('click')
+
+      await tick() // wait for all promises to settle
+
+      // Check that the reducer did its stuff. We don't test that store.state
+      // is changed because the fact these methods were called implies the
+      // reducer was invoked correctly.
+      expect(WorkbenchAPI.setSelectedWfModule).toHaveBeenCalledWith(321, 1)
+      expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(
+        100,
+        { oldParams: { foo20: 'bar20' }, rows: '2, 4-5', fromInput: true }
+      )
+    })
+
+    it('should use setWfModuleParams action, fromInput=false (from output)', async () => {
+      WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
+
+      const w = wrapper(
+        {
+          '10': {
+            id: 10,
+            row_action_menu_entry_title: 'Baz these rows',
+            js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
+          },
+          '20': {
+          }
+        },
+        [ 99, 100 ],
+        null, // wrapper() defaults to wfModule 99 has module 10, wfModule 100 has module 20
+        { wfModuleId: 99 } // we'll edit 99 from wfModule 99
+      )
+      w.find('button').at(0).simulate('click')
+      w.update()
+      expect(w.text()).toMatch(/Baz these rows/)
+      w.find('button').at(1).simulate('click')
+
+      await tick() // wait for all promises to settle
+
+      // Check that the reducer did its stuff. We don't test that store.state
+      // is changed because the fact these methods were called implies the
+      // reducer was invoked correctly.
+      expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(
+        99,
+        { oldParams: { foo10: 'bar10' }, rows: '2, 4-5', fromInput: false }
+      )
     })
   })
 })

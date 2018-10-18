@@ -17,10 +17,11 @@ from rest_framework.response import Response
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
-        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
+        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand, \
+        ChangeParametersCommand
 import server.utils
 from server.utils import units_to_seconds
-from server.dispatch import module_get_html_bytes
+from server.dispatch import module_get_html_bytes, module_dispatch_fetch
 
 
 _MaxNRowsPerRequest = 300
@@ -167,6 +168,36 @@ def wfmodule_detail(request, pk, format=None):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['PATCH'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_params(request, pk, format=None):
+    wf_module = _lookup_wf_module_for_write(pk, request)
+    try:
+        params = request.data['values']
+    except KeyError:
+        return Response({'error': 'Request missing "values" Object'},
+                        status=400)
+    if not isinstance(params, dict):
+        return Response({'error': 'Request "values" must be an Object'},
+                        status=400)
+
+    async_to_sync(ChangeParametersCommand.create)(
+        workflow=wf_module.workflow,
+        wf_module=wf_module,
+        new_values=params
+    )
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_fetch(request, pk, format=None):
+    wf_module = _lookup_wf_module_for_write(pk, request)
+    async_to_sync(module_dispatch_fetch)(wf_module)
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 N_COLUMNS_PER_TABLE = 101

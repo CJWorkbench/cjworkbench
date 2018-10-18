@@ -51,6 +51,7 @@ describe('WfModule, not read-only mode', () => {
     clearNotifications: jest.fn(),
     setSelectedWfModule: jest.fn(),
     setWfModuleCollapsed: jest.fn(),
+    maybeRequestFetch: jest.fn(),
     setZenMode: jest.fn(),
     applyQuickFix: jest.fn()
   })
@@ -107,10 +108,18 @@ describe('WfModule, not read-only mode', () => {
   it('is has .status-busy', () => {
     const w = shallow(<WfModule {...props} wfModule={{...wfModule, status: 'busy'}} />)
     expect(w.hasClass('status-busy')).toBe(true)
+    expect(w.find('WfParameter').at(0).prop('wfModuleStatus')).toEqual('busy')
+    expect(w.find('StatusLine').prop('status')).toEqual('busy')
+
     w.setProps({ wfModule: { ...wfModule, status: 'ok' } })
     w.update()
     expect(w.hasClass('status-busy')).toBe(false)
     expect(w.hasClass('status-ok')).toBe(true)
+
+    expect(w.find('WfParameter').at(0).prop('wfModuleStatus')).toEqual('ok')
+    expect(w.find('StatusLine').prop('status')).toEqual('ok')
+    expect(w.hasClass('status-ok')).toBe(true)
+    expect(w.hasClass('status-busy')).toBe(false)
   })
 
   it('supplies getParamText and setParamText', () => {
@@ -278,7 +287,7 @@ describe('WfModule, not read-only mode', () => {
     expect(wrapper.find('WfParameter[name="b"]').prop('value')).toEqual('B')
   })
 
-  it('submits a fake version_select click event in WfParameter onSubmit', () => {
+  it('submits a fetch event in WfParameter onSubmit', () => {
     // Use case:
     // 1. User edits url field
     // 2. User clicks "submit" button within the URL field
@@ -304,10 +313,10 @@ describe('WfModule, not read-only mode', () => {
     wrapper.find('WfParameter[name="url"]').prop('onSubmit')()
 
     expect(props.changeParam).toHaveBeenCalledWith(1, 'http://example.org')
-    expect(mockApi.postParamEvent).toHaveBeenCalledWith(2)
+    expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 
-  it('submits a version_select click event in WfParameter[name=version_select] onSubmit', () => {
+  it('submits a fetch in WfParameter[name=version_select] onSubmit', () => {
     // Use case: user wants to re-fetch
     const wfModule = {
       id: 999,
@@ -327,7 +336,24 @@ describe('WfModule, not read-only mode', () => {
 
     wrapper.find('WfParameter[name="version_select"]').prop('onSubmit')()
 
-    expect(mockApi.postParamEvent).toHaveBeenCalledWith(2)
+    expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
+  })
+
+  it('overrides status to busy when a fetch is pending', () => {
+    const wfModule = {
+      id: 999,
+      notes: '',
+      is_collapsed: false,
+      status: 'ok',
+      parameter_vals: [
+        { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: 'http://example.org' }
+      ],
+      nClientRequests: 1
+    }
+    const wrapper = shallow(<WfModule {...props} wfModule={wfModule} />)
+    expect(wrapper.find('WfParameter').prop('wfModuleStatus')).toEqual('busy')
+    expect(wrapper.find('StatusLine').prop('status')).toEqual('busy')
+    expect(wrapper.prop('className')).toMatch(/\bstatus-busy\b/)
   })
 
   it('applies a quick fix', () => {

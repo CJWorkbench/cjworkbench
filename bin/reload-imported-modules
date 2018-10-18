@@ -1,3 +1,0 @@
-set -e
-DIR="$(dirname "$0")"/..
-pipenv run "$DIR"/manage.py reload-imported-modules

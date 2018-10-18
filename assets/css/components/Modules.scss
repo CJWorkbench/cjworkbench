@@ -7,33 +7,36 @@
     font-size: 2.25rem;
     width: 4rem;
     text-align: center;
-    padding-top: .65rem; // center with collapsed .wf-card
-    padding-bottom: .65rem; // so vertical line's distance is same above as below
-    color: $brand-workspace;
+    padding-top: .7rem; // center with collapsed .wf-card
+    padding-bottom: .6rem; // so vertical line's distance is same above as below
+    color: $module-color-unreachable;
     background-color: $WF-background; // appear atop vertical line
   }
 
   // Show a vertical line to the left of the module stack
-  &::before, & + .in-between-modules::before {
-    content: '';
-    display: block;
-    width: 2px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    background-color: $brand-workspace;
-    left: 2rem;
-    margin-left: -1px;
+  &.status-ok:not(.selected):not(.after-selected) {
+    &::before, & + .in-between-modules::before {
+      content: '';
+      display: block;
+      width: 2px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: $brand-workspace;
+      left: 2rem;
+      margin-left: -1px;
+    }
   }
+
+  // ... but don't show the vertical line to the left of the first note,
+  // which is above the number 1
   &:nth-child(2) .module-notes::before {
-    // ... but don't show the vertical line to the left of the first note,
-    // which is above the number 1.
     content: '';
     display: block;
     width: 3rem;
     position: absolute;
     top: 0;
-    bottom: 0;
+    bottom: -1rem;
     left: 0;
     background: $WF-background;
   }
@@ -95,12 +98,12 @@
 
   @mixin module-colors($card-border-color, $number-color, $line-color) {
     // Color card border
-    .module-card {
+    &.selected .module-card {
       border-color: $card-border-color;
     }
 
     // Color number
-    h3 {
+    &:not(.after-selected) h3 {
       color: $number-color;
     }
 
@@ -108,11 +111,25 @@
     &::before, & + .in-between-modules::before {
       background-color: $line-color;
     }
+  }
 
-    // Color line to the right of the module card, which only appears if the
-    // module is .selected
-    .module-card::after {
-      background-color: $brand-workspace--medium;
+  &.status-ok {
+    @include module-colors($module-color-ok, $brand-workspace, $module-color-ok);
+  }
+
+  &.status-unreachable {
+    @include module-colors($module-color-unreachable, $module-color-unreachable, transparent);
+  }
+
+  &.status-busy {
+    @include module-colors($module-color-busy, $module-color-busy, transparent);
+  }
+
+  &.status-error {
+    @include module-colors($module-color-error, $module-color-error, transparent);
+    &.after-selected h3 {
+      // even when .after-selected, we want the error to stand out.
+      color: $module-color-error;
     }
   }
 
@@ -120,13 +137,12 @@
   // selectors, the most-precise selector (greatest number of classes)
   // wins; in case of a tie the last one wins.
   &.selected {
-    @include module-colors($brand-workspace--medium, $brand-workspace, $brand-workspace);
     .module-card {
-      background-color: $white;
+      background-color: white;
     }
 
     // Show line to the right of module card
-    .module-card::after {
+    &.status-ok .module-card::after {
       content: '';
       display: block;
       position: absolute;
@@ -136,51 +152,7 @@
       margin-left: 2px;
       height: 3px;
       width: $module-margin-right;
-      background-color: transparent;
-    }
-
-    &.status-ok {
-      .module-card::after {
-        background-color: $brand-workspace--medium;
-      }
-    }
-
-    // Hide all lines after the selected module
-    &, & ~ * { // this .wf-module and all subsequent elements
-      &::before {
-        // `!important` will outrank all the other rules (e.g.,
-        // `&.status-busy`) so the line background-color won't be overwritten
-        // by other rules.
-        background-color: transparent !important;
-      }
-    }
-  }
-
-  &.status-busy {
-    @include module-colors($module-color-busy, $brand-workspace, $module-color-busy);
-    .module-card::after {
-      background-color: transparent;
-    }
-  }
-
-  &.status-error {
-    @include module-colors($module-color-error, $module-color-error, $module-color-error);
-
-    .module-card::after {
-      opacity: 0;
-    }
-
-    &.selected {
-      @include module-colors($module-color-error, $module-color-error, $module-color-error);
-
-      .module-card::after {
-        opacity: 1;
-        margin-top: -1px;
-        margin-left: 1rem;
-        height: 3rem;
-        width: 3px;
-        background-color: $module-color-error;
-      }
+      background-color: $module-color-ok;
     }
   }
 

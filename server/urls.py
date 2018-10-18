@@ -32,9 +32,9 @@ urlpatterns = [
         workflows.Duplicate.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/(?P<action>(undo|redo))/?$', views.workflow_undo_redo),
 
-    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl$', views.acl.List.as_view()),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl$', acl.List.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$',
-        views.acl.Entry.as_view()),
+        acl.Entry.as_view()),
 
     # modules
     url(r'^api/modules/?$', views.module_list),
@@ -44,10 +44,13 @@ urlpatterns = [
 
     # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/params$', views.wfmodule_params),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/fetch$', views.wfmodule_fetch),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/tiles/v(?P<delta_id>[0-9]+)/r(?P<tile_row>[0-9]+)/c(?P<tile_column>[0-9]+).json$',
         views.wfmodule_tile),
+    # TODO: "render" and "output" are bad names. Differentiate them.
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', views.wfmodule_render),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/output$', views.wfmodule_output), #TODO: These names are bad and basically backwards
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/output$', views.wfmodule_output),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/embeddata$', views.wfmodule_embeddata),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/value-counts$', views.wfmodule_value_counts),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion/read', views.wfmodule_dataversion_read),
@@ -58,8 +61,8 @@ urlpatterns = [
 
     # Parameters
     url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail),
-    url(r'^api/parameters/(?P<pk>[0-9]+)/event/?$', views.parameterval_event),
-    url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_authorize$', views.parameterval_oauth_start_authorize),
+    url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_authorize$',
+        views.parameterval_oauth_start_authorize),
     url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_generate_access_token$',
         views.parameterval_oauth_generate_access_token),
     url(r'^oauth/?$', views.parameterval_oauth_finish_authorize),

@@ -4,7 +4,7 @@
 # actually happened.
 import asyncio
 import json
-from typing import Any, Dict
+from typing import Any
 from channels.db import database_sync_to_async
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -25,7 +25,7 @@ def _prepare_json(data: Any) -> Any:
 # To derive a command from Delta:
 #   - implement forward_impl() and backward_impl()
 #   - implement a static create() that takes parameters and calls
-#     `Delta.create_impl(MyCommandClass, **kwargs)`. `Delta.create_impl()`
+#     `MyCommandClass.create_impl(**kwargs)`. `Delta.create_impl()`
 #     will call `delta.forward()` within a Workflow.cooperative_lock().
 class Delta(PolymorphicModel):
     class Meta:
@@ -125,6 +125,11 @@ class Delta(PolymorphicModel):
         if hasattr(self, 'wf_module'):
             self.wf_module.refresh_from_db()
             if self.wf_module.workflow_id:
+                # Serialize _everything_, including params
+                #
+                # TODO consider serializing only what's changed, so when Alice
+                # changes 'has_header' it doesn't overwrite Bob's 'url' while
+                # he's editing it.
                 wf_module_data = WfModuleSerializer(self.wf_module).data
 
                 data['updateWfModules'][str(self.wf_module_id)] = \
@@ -141,11 +146,23 @@ class Delta(PolymorphicModel):
         coro = server.execute.execute_ignoring_error(self.workflow)
         asyncio.ensure_future(coro)
 
-    @staticmethod
-    async def create_impl(klass, *args, **kwargs) -> None:
+    @classmethod
+    async def create(cls, *, workflow, **kwargs):
+        """
+        Wrap create_impl().
+
+        A bit of history: previously, we used @staticmethod instead of
+        @classmethod to define `create()` methods, meaning we needed one on
+        each command. They tend to look alike. Now we've switched to
+        @classmethod. TODO delete the subclasses' `create()` methods.
+        """
+        return await cls.create_impl(workflow=workflow, **kwargs)
+
+    @classmethod
+    async def create_impl(cls, *args, **kwargs) -> None:
         """Create the given Delta and run .forward().
 
-        Keyword arguments vary by klass, but `workflow` is always required.
+        Keyword arguments vary by cls, but `workflow` is always required.
 
         Example:
 
@@ -157,8 +174,7 @@ class Delta(PolymorphicModel):
             # websockets users have been notified.
         """
 
-        delta, ws_data = await Delta._first_forward_and_save_returning_ws_data(
-            klass,
+        delta, ws_data = await cls._first_forward_and_save_returning_ws_data(
             *args,
             **kwargs
         )
@@ -167,9 +183,25 @@ class Delta(PolymorphicModel):
 
         return delta
 
-    @staticmethod
+    @classmethod
+    def amend_create_kwargs(cls, **kwargs):
+        """
+        Look up additional objects.create() kwargs from the database.
+
+        Delta creation can depend upon values already in the database. The
+        delta may calculate those values itself.
+
+        Example:
+
+            @classmethod
+            def amend_create_kwargs(cls, *, workflow, **kwargs):
+                return {**kwargs, 'workflow': workflow, 'old_value': ... }
+        """
+        return kwargs
+
+    @classmethod
     @database_sync_to_async
-    def _first_forward_and_save_returning_ws_data(klass, *args, **kwargs):
+    def _first_forward_and_save_returning_ws_data(cls, *args, **kwargs):
         """
         Create and execute command, returning WebSockets data.
 
@@ -177,7 +209,10 @@ class Delta(PolymorphicModel):
         """
         workflow = kwargs['workflow']
         with workflow.cooperative_lock():
-            delta = klass.objects.create(*args, **kwargs)
+            delta = cls.objects.create(
+                *args,
+                **cls.amend_create_kwargs(**kwargs)
+            )
             delta.forward_impl()
 
             # Point workflow to us

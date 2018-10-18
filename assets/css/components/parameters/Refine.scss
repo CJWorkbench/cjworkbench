@@ -85,7 +85,7 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
   margin-bottom: 1rem;
 
   //launches the clustering modal
-  .cluster {
+  button[name=cluster] {
     @extend .action-button;
     @extend .button-orange;
     margin-top: .5rem;
@@ -101,10 +101,14 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
   }
 }
 
-.refine-groups {
+ul.refine-groups {
+  display: block;
   max-height: 30rem;
   overflow-y: auto;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   // Throughout Refine, any <button> should appear as inline text
   button {
@@ -121,50 +125,60 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
     }
   }
 
-  dt { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
+  &>li { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
+    display: block;
     width: 100%;
     max-width: 100%;
     padding: .5rem 0 0;
-    display: flex;
-    align-items: center;
 
-    &>* {
-      flex: 0 0 auto;
+    & + li {
+      border-top: 1px solid $Vlight-gray;
+    }
+
+    &.not-visible {
+      display: none; // omitted by search
+    }
+  }
+
+  div.summary {
+    // Use float instead of flexbox for speedier rendering.
+    // see https://www.pivotaltracker.com/story/show/160173068
+    &>input {
+      // "filter" checkbox
+      float: left;
+      position: relative;
+      top: .5rem;
+    }
+
+    label.expand {
+      // "expand" checkbox -- renders as an icon
+      float: left;
+
+      margin: 0;
+      width: 1rem;
+
+      // Line up with the rest
+      position: relative;
+      top: .2rem;
+
+      input {
+        display: none;
+      }
     }
 
     &>.growing {
       // The name and "expand" icon appear together. They take all available
       // space, so the count is right-aligned.
-      flex: 1 1 auto;
+      display: block;
       white-space: nowrap;
       overflow: hidden;
 
-      // We may need to cut off the stuff _inside_. Use display:flex so the
-      // "expand" checkbox is always visible even if we cut off the input
-      display: flex;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    label.checkbox {
-      margin: 0;
-      width: 2rem;
-
-      // Line up with the rest
-      position: relative;
-      top: .2rem;
-    }
-
-    .autosized-input {
-      // The name has varying width. Give the <input> the same width as its
-      // contents by _rendering_ its contents and then rendering the <input>
-      // on top.
-      display: inline-block;
-      overflow: hidden;
-      min-width: 3rem; // so user can edit even empty text
-      position: relative;
-
-      span, input {
+      input {
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         border: 0;
         margin: 0;
         padding: .5rem;
@@ -174,26 +188,7 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
         &:hover {
           background-color: $dark-accent--soft;
         }
-      }
 
-      span {
-        visibility: hidden;
-      }
-
-      input {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    &.edited .autosized-input {
-      // Show edited values as bold
-      span, input {
-        font-weight: bold;
-        color: $brand-text--darker;
       }
     }
 
@@ -216,9 +211,11 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
     }
 
     .count-and-reset {
+      float: right;
       min-width: 1.5rem;
       margin-left: .8rem;
       text-align: right;
+      line-height: 2.9rem; // center vertically
 
       // Display the count normally. If there are edits, display a reset
       // button instead, only when the user hovers.
@@ -251,17 +248,19 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
     }
   }
 
-  dd { // details: list of values, each with a count and remove button
+  li.edited .summary .growing input {
+    // Show edited values as bold
+    font-weight: bold;
+    color: $brand-text--darker;
+  }
+
+  ul.values { // details: list of values, each with a count and remove button
+    display: block;
+    list-style: none;
     margin: 0;
     padding: 0 0 .5rem;
 
-    ul {
-      display: block;
-      margin: 0;
-      padding: 0;
-    }
-
-    li {
+    &>li {
       display: flex;
       width: 100%;
       overflow: hidden;
@@ -310,10 +309,6 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
       button { display: block; }
       button + span { display: none; }
     }
-  }
-
-  dd + dt {
-    border-top: 1px solid $Vlight-gray;
   }
 }
 

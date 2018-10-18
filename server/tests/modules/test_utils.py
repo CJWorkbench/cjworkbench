@@ -2,7 +2,6 @@ import io
 import unittest
 import numpy
 import pandas
-from asgiref.sync import async_to_sync
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
 from server.models import Workflow
@@ -122,9 +121,11 @@ class ParseBytesIoTest(SimpleTestCase):
         expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
+
 class OtherUtilsTests(SimpleTestCase):
     def test_turn_header_into_first_row(self):
-        result = turn_header_into_first_row(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+        result = turn_header_into_first_row(pandas.DataFrame({'A': ['B'],
+                                                              'C': ['D']}))
         expected = pandas.DataFrame({'0': ['A', 'B'], '1': ['C', 'D']})
         assert_frame_equal(result, expected)
 
@@ -154,19 +155,23 @@ class WorkflowImport(LoggedInTestCase):
         self.wfm = load_and_add_module('concaturl')
         # Second workflow loaded with data
         self.ext_wfm = load_and_add_module('uploadfile')
-        self.ext_wfm.cache_render_result(delta_id=1,
-                                         result=ProcessResult(self.ext_wfm.retrieve_fetched_table()))
+        self.ext_wfm.cache_render_result(
+            delta_id=1,
+            result=ProcessResult(self.ext_wfm.retrieve_fetched_table())
+        )
         self.ext_wfm.save()
 
     def test_auth(self):
         # Create otheruser and try to access workflow owned by default user
-        other_user = create_test_user(username='otheruser', email='otheruser@email.com')
+        other_user = create_test_user(username='otheruser',
+                                      email='otheruser@email.com')
         wf = Workflow.objects.create(name='New Workflow', owner=other_user)
         wfm = load_and_add_module('concaturl', workflow=wf)
 
         result = store_external_workflow(
             wfm,
-            f'https://app.workbenchdata.com/workflows/{self.ext_wfm.workflow_id}/'
+            (f'https://app.workbenchdata.com/workflows/'
+             f'{self.ext_wfm.workflow_id}/')
         )
         self.assertEqual(result, ProcessResult(
             error='Access denied to the target workflow'

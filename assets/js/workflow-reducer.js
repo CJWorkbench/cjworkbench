@@ -22,8 +22,10 @@ const APPLY_DELTA = 'APPLY_DELTA'
 // WfModule
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS'
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
+const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE = 'SET_WF_MODULE'
+const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
 
 // Parameter
 const SET_PARAM_VALUE = 'SET_PARAM_VALUE'
@@ -409,6 +411,9 @@ export function setSelectedWfModuleAction (index) {
   return (dispatch, getState) => {
     const workflow = getState().workflow
 
+    // avoid spurious HTTP requests and state changes
+    if (workflow.selected_wf_module === index) return
+
     // Fire-and-forget: tell the server about this new selected_wf_module,
     // so next time we load the page it will pass it in initState.
     api.setSelectedWfModule(workflow.id, index)
@@ -428,6 +433,67 @@ registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
 })
 
 // --- Workflow Module actions ---
+
+/*
+ * Tell the server to reload data from upstream.
+ *
+ * Only works if there is a 'version_select' custom parameter.
+ */
+export function maybeRequestWfModuleFetchAction (id) {
+  return (dispatch, getState) => {
+    const wfModule = getState().wfModules[String(id)]
+    const hasVersionSelect = !!wfModule.parameter_vals.find(pv => pv.parameter_spec.id_name === 'version_select')
+
+    if (!hasVersionSelect) return
+
+    return dispatch({
+      type: REQUEST_WF_MODULE_FETCH,
+      payload: {
+        promise: api.requestFetch(id)
+          .then(() => ({ id }), (err) => { console.warn(err); return { id } }),
+        data: { id }
+      }
+    })
+  }
+}
+
+registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_PENDING', (state, action) => {
+  const { id } = action.payload
+  const wfModule = state.wfModules[String(id)]
+
+  // Set the WfModule to 'busy' on the client side.
+  //
+  // Don't conflict with the server side: use a client-specific variable.
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(id)]: { ...wfModule,
+        nClientRequests: (wfModule.nClientRequests || 0) + 1
+      }
+    }
+  }
+})
+
+registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_FULFILLED', (state, action) => {
+  const { id } = action.payload
+  const wfModule = state.wfModules[String(id)]
+
+  if (!wfModule) return
+
+  // Set the WfModule to 'busy' on the client side.
+  //
+  // A fetch might cause _all_ WfModules to become busy on the server, if it
+  // kicks off a ChangeDataVersionCommand. If it doesn't, the other WfModules
+  // will stay as they are. Let's not pre-emptively update those _other_
+  // WfModule statuses, lest the server never tell us they won't change.
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(id)]: { ...wfModule,
+        nClientRequests: (wfModule.nClientRequests || 1) - 1
+      }
+    }
+  }
+})
+
 
 // UPDATE_WF_MODULE
 // Patch a workflow module with new data
@@ -552,6 +618,42 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
         is_collapsed: isCollapsed
+      }
+    }
+  }
+})
+
+export function setWfModuleParamsAction (wfModuleId, params) {
+  return {
+    type: SET_WF_MODULE_PARAMS,
+    payload: {
+      promise: api.setWfModuleParams(wfModuleId, params),
+      data: {
+        wfModuleId,
+        params
+      }
+    }
+  }
+}
+
+registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
+  const { wfModuleId, params } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+
+  // Copy parameter_vals, setting new values based on params.
+  const paramVals = wfModule.parameter_vals.map(pv => {
+    const id_name = pv.parameter_spec.id_name
+    if (id_name in params) {
+      return { ...pv, value: params[id_name] }
+    } else {
+      return pv
+    }
+  })
+
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        parameter_vals: paramVals
       }
     }
   }

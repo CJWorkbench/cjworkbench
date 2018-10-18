@@ -134,6 +134,50 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/10000/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_wf_module_params_patch(self):
+        module = Module.objects.create(name='Hi', id_name='hi', dispatch='hi')
+        module_version = module.module_versions.create(
+            source_version_hash='1.0'
+        )
+        module_version.parameter_specs.create(id_name='arg', order=0,
+                                              type='string', def_value='')
+        wf_module = self.workflow.wf_modules.create(
+            order=2,
+            module_version=module_version
+        )
+        wf_module.create_parametervals({})
+
+        response = self.client.patch(
+            f'/api/wfmodules/{wf_module.id}/params',
+            json.dumps({ 'values': { 'arg': 'newval' }}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        self.assertEqual(wf_module.get_params().get_param_string('arg'),
+                         'newval')
+
+    def test_wf_module_params_patch_missing_values(self):
+        response = self.client.patch(
+            f'/api/wfmodules/{self.wf_module1.id}/params',
+            json.dumps({ 'value': { 'arg': 'newval' }}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        parsed = json.loads(response.content)
+        self.assertEqual(parsed, {'error': 'Request missing "values" Object'})
+
+    def test_wf_module_params_patch_invalid_values(self):
+        response = self.client.patch(
+            f'/api/wfmodules/{self.wf_module1.id}/params',
+            json.dumps({ 'values': ['arg', 'newval']}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        parsed = json.loads(response.content)
+        self.assertEqual(parsed,
+                         {'error': 'Request "values" must be an Object'})
+
     def test_missing_module(self):
         # If the WfModule references a Module that does not exist, we should
         # get a placeholder

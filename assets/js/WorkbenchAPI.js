@@ -125,6 +125,10 @@ class WorkbenchAPI {
     return this._patch(`/api/parameters/${paramID}`, newVal)
   }
 
+  setWfModuleParams(wfModuleId, params) {
+    return this._patch(`/api/wfmodules/${wfModuleId}/params`, { 'values': params })
+  }
+
   render(wfModuleId, startrow, endrow) {
     let url = '/api/wfmodules/' + wfModuleId + '/render';
 
@@ -228,8 +232,8 @@ class WorkbenchAPI {
     return this._patch(`/api/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
   }
 
-  postParamEvent(paramId, data) {
-    return this._post(`/api/parameters/${paramId}/event`, data)
+  requestFetch(wfModuleId) {
+    return this._post(`/api/wfmodules/${wfModuleId}/fetch`)
   }
 
   /**

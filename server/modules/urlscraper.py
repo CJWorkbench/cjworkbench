@@ -86,7 +86,7 @@ class URLScraper(ModuleImpl):
 
     # Scrapy scrapy scrapy
     @staticmethod
-    async def event(wfm, **kwargs):
+    async def fetch(wfm):
         urls = []
         params = wfm.get_params()
         urlsource = params.get_param_menu_string('urlsource')

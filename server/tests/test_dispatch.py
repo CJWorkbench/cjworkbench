@@ -1,8 +1,6 @@
-import io
 from django.test import TestCase, override_settings
 import numpy as np
 import pandas as pd
-from server.tests.utils import mock_csv_table
 from server.dispatch import module_dispatch_render
 from server.modules.types import ProcessResult
 from server.tests.modules.util import MockParams
@@ -20,7 +18,7 @@ class Module:
 class ModuleVersion:
     def __init__(self, id_name, version):
         self.module = Module(id_name)
-        self.source_version_hash=version
+        self.source_version_hash = version
 
 
 select_columns = (
@@ -78,10 +76,11 @@ class DispatchTests(TestCase):
         # We'll render loadurl, because its render() function just returns the
         # fetch result.
         table = pd.DataFrame({'A': [1, 2]})
+        params = MockParams(url='http://example.org/foo.csv',
+                            has_header=True)
         result = module_dispatch_render(ModuleVersion('loadurl', '1.0'),
-                                        MockParams(url='http://example.org/foo.csv',
-                                                   has_header=True),
-                                        pd.DataFrame(), ProcessResult(table))
+                                        params, pd.DataFrame(),
+                                        ProcessResult(table))
         self.assertEqual(result, ProcessResult(table))
 
     @override_settings(MAX_ROWS_PER_TABLE=2)

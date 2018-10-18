@@ -7,11 +7,12 @@ import WfModuleContextMenu from './WfModuleContextMenu'
 import EditableNotes from '../EditableNotes'
 import StatusLine from './StatusLine'
 import {
-  setWfModuleCollapsedAction,
   clearNotificationsAction,
-  setSelectedWfModuleAction,
-  setParamValueAction,
+  maybeRequestWfModuleFetchAction,
   quickFixAction,
+  setParamValueAction,
+  setSelectedWfModuleAction,
+  setWfModuleCollapsedAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -54,6 +55,7 @@ export class WfModule extends React.PureComponent {
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
+    maybeRequestFetch: PropTypes.func.isRequired, // func(wfModuleId) => undefined
     setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
@@ -66,10 +68,6 @@ export class WfModule extends React.PureComponent {
     this.changeParam = this.changeParam.bind(this)
     this.setParamText = this.setParamText.bind(this)
     this.getParamText = this.getParamText.bind(this)
-    this.getParamMenuItems = this.getParamMenuItems.bind(this)
-    this.removeModule = this.removeModule.bind(this)
-    this.setModuleRef = this.setModuleRef.bind(this)
-    this.moduleRef = null
     this.notesInputRef = React.createRef()
 
     this.state = {
@@ -90,8 +88,10 @@ export class WfModule extends React.PureComponent {
   }
 
   // We become the selected module on any click
-  click = (e) => {
-    this.props.setSelectedWfModule(this.props.index)
+  onMouseDown = () => {
+    if (!this.props.isSelected) {
+      this.props.setSelectedWfModule(this.props.index)
+    }
   }
 
   changeParam (id, payload) {
@@ -158,7 +158,7 @@ export class WfModule extends React.PureComponent {
     return p ? p.id : null
   }
 
-  getParamMenuItems (paramIdName) {
+  getParamMenuItems = (paramIdName) => {
     const p = this.getParameterValue(paramIdName)
 
     if (p) {
@@ -169,7 +169,7 @@ export class WfModule extends React.PureComponent {
     return []
   }
 
-  removeModule (e) {
+  removeModule = () => {
     this.props.removeModule(this.props.wfModule.id)
   }
 
@@ -223,10 +223,6 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  setModuleRef (ref) {
-    this.moduleRef = ref
-  }
-
   applyQuickFix = (...args) => {
     this.props.applyQuickFix(this.props.wfModule.id, ...args)
   }
@@ -257,20 +253,6 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  /*
-   * Tell the server to reload data from upstream.
-   *
-   * Only works if there is a 'version_select' custom parameter.
-   *
-   * TODO put this in reducer. (That implies it must affect state. It doesn't now.)
-   */
-  maybeRequestFetch = () => {
-    const value = this.getParameterValue('version_select')
-    if (value) {
-      this.props.api.postParamEvent(value.id)
-    }
-  }
-
   onSubmit = () => {
     const { edits } = this.state
 
@@ -282,7 +264,7 @@ export class WfModule extends React.PureComponent {
       this.props.changeParam(id, value)
     }
 
-    this.maybeRequestFetch()
+    this.props.maybeRequestFetch(this.props.wfModule.id)
   }
 
   onReset = (idName) => {
@@ -292,6 +274,26 @@ export class WfModule extends React.PureComponent {
     const edits = Object.assign({}, oldEdits)
     delete edits[idName]
     this.setState({ edits })
+  }
+
+  get wfModuleStatus () {
+    const { wfModule } = this.props
+    if (wfModule.nClientRequests > 0) {
+      // When we've just sent an HTTP request and not received a response,
+      // mark ourselves "busy". This is great for when the user clicks "fetch"
+      // and then is waiting for the server to set the status.
+      //
+      // The state stores server data separately than client data, so there's
+      // no race when setting status and so if the "fetch" does nothing and the
+      // server doesn't change wfModule.status, the client still resets its
+      // perceived status.
+      return 'busy'
+    } else if (!wfModule.status) {
+      // placeholder? TODO verify this can actually happen
+      return 'busy'
+    } else {
+      return wfModule.status
+    }
   }
 
   renderParam = (p, index) => {
@@ -319,7 +321,7 @@ export class WfModule extends React.PureComponent {
         moduleName={moduleName}
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
-        wfModuleStatus={wfModule.status}
+        wfModuleStatus={this.wfModuleStatus}
         wfModuleError={wfModule.error_msg}
         key={index}
         p={p}
@@ -435,8 +437,7 @@ export class WfModule extends React.PureComponent {
       )
     }
 
-    let className = 'wf-module'
-    className += wfModule.status ? ` status-${wfModule.status}` : ''
+    let className = 'wf-module status-' + this.wfModuleStatus
     className += this.state.isDragging ? ' dragging' : ''
     className += this.props.isSelected ? ' selected' : ''
     className += this.props.isAfterSelected ? ' after-selected' : ''
@@ -448,11 +449,11 @@ export class WfModule extends React.PureComponent {
       <div
         className={className}
         data-module-name={moduleName}
-        onClick={this.click}
+        onMouseDown={this.onMouseDown}
       >
         {notes}
         <h3>{numberFormat.format(index + 1)}</h3>
-        <div className='module-card' ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+        <div className='module-card' draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
           <div className='module-card-header'>
             <WfModuleCollapseButton
               isCollapsed={wfModule.is_collapsed}
@@ -467,7 +468,7 @@ export class WfModule extends React.PureComponent {
           <div className={`module-card-details ${wfModule.is_collapsed ? 'collapsed' : 'expanded'}`}>
             {/* --- Error message --- */}
             <StatusLine
-              status={wfModule.status || 'busy'}
+              status={this.wfModuleStatus}
               error={wfModule.error_msg || ''}
               quickFixes={wfModule.quick_fixes || []}
               applyQuickFix={this.applyQuickFix}
@@ -551,7 +552,7 @@ function mapStateToProps (state, ownProps) {
   }
 }
 
-function mapDispatchToProps (dispatch, ownProps) {
+function mapDispatchToProps (dispatch) {
   return {
     clearNotifications (wfModuleId) {
       dispatch(clearNotificationsAction(wfModuleId))
@@ -568,6 +569,10 @@ function mapDispatchToProps (dispatch, ownProps) {
     changeParam (paramId, newVal) {
       const action = setParamValueAction(paramId, newVal)
       dispatch(action)
+    },
+
+    maybeRequestFetch (wfModuleId) {
+      dispatch(maybeRequestWfModuleFetchAction(wfModuleId))
     },
 
     applyQuickFix (wfModuleId, action, args) {

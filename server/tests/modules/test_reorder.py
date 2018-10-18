@@ -1,4 +1,3 @@
-import json
 import unittest
 import pandas as pd
 from server.modules.reorder import ReorderFromTable

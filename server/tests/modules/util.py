@@ -54,9 +54,9 @@ def fetch_factory(func, params_klass):
     Usage:
 
         P = MockParams.factory(x=1, y=2)
-        fetch = fetch_factory(MyModule.event, P)
+        fetch = fetch_factory(MyModule.fetch, P)
 
-        # Build MockWfModule, run MyModule.event(wf_module), and commit the
+        # Build MockWfModule, run MyModule.fetch(wf_module), and commit the
         # result in as `wf_module.fetch_result` (may have status='error')
         wf_module = fetch(z=1)
     """

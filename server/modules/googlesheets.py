@@ -1,5 +1,4 @@
 import io
-import json
 from typing import Any, Dict, Optional, Union
 import requests
 from .moduleimpl import ModuleImpl
@@ -55,7 +54,10 @@ def _download_google_sheet(session: requests.Session,
     # charset (implying ISO-8859-1), but the text it serves is utf-8.
     #
     # So we ignore the content-type.
-    url = f'https://www.googleapis.com/drive/v3/files/{sheet_id}/export?mimeType=text%2Fcsv'
+    url = (
+        f'https://www.googleapis.com/drive/v3/files/'
+        f'{sheet_id}/export?mimeType=text%2Fcsv'
+    )
     return _download_bytes(session, url)
 
 
@@ -104,7 +106,8 @@ def download_data_frame(sheet_id: str, sheet_mime_type: str,
 class GoogleSheets(ModuleImpl):
     @staticmethod
     def render(params, _unused_table, *, fetch_result, **kwargs):
-        # Must perform header operation here in the event the header checkbox state changes
+        # Must perform header operation here in the event the header checkbox
+        # state changes
         if not fetch_result:
             return ProcessResult()  # user hasn't fetched yet
 
@@ -116,7 +119,7 @@ class GoogleSheets(ModuleImpl):
         return ProcessResult(table, fetch_result.error)
 
     @staticmethod
-    async def event(wf_module, **kwargs):
+    async def fetch(wf_module):
         params = wf_module.get_params()
 
         file_meta = params.get_param_json('googlefileselect')

@@ -37,13 +37,20 @@
 
     // undo redo buttons
     .group--undo-redo {
-      display: inline-block;
+      display: flex;
 
       button {
+        font-size: 1.9rem;
         min-width: 0;
         width: 3.5rem;
         height: 3.5rem;
         padding: 0;
+        border:1px solid $white;
+        opacity: .8;
+        &:hover {
+          border-color: $white;
+          opacity: 1;
+        }
       }
       button:first-child {
         margin-right: 1rem;
@@ -64,16 +71,14 @@
 
     img.logo {
       vertical-align: middle;
-      margin-right: 0.7rem;
+      margin-right: 0.4rem;
       width: 2.5rem;
     }
 
     img.logo-text {
       position: relative;
       top:0;
-      width: 12rem;
-      height: 3rem;
-      margin-bottom: 1rem;
+      width: 13.5rem;
     }
   }
 
