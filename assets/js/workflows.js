@@ -73,14 +73,14 @@ export default class Workflows extends React.Component {
   }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server
-  deleteWorkflow = (id, tab) => {
+  deleteWorkflow = (id) => {
     if (!confirm("Permanently delete this workflow?"))
       return
 
     this.props.api.deleteWorkflow(id)
     .then(response => {
       var workflowsMinusID = Object.assign({}, this.state.workflows)
-      workflowsMinusID[tab] = workflowsMinusID[tab].filter(wf => wf.id !== id)
+      workflowsMinusID[this.state.activeTab] = workflowsMinusID[this.state.activeTab].filter(wf => wf.id !== id)
       this.setState({workflows: workflowsMinusID})
     })
   }
@@ -177,7 +177,7 @@ export default class Workflows extends React.Component {
                 <div onClick={this.preventDefault} className='menu-test-class'>
                   <WfContextMenu
                     duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
-                    deleteWorkflow={() => this.deleteWorkflow(workflow.id, tab)}
+                    deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
                   />
                 </div>
               </a>
