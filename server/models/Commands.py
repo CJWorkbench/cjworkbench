@@ -431,16 +431,18 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
         return self.parameter_val.wf_module_id
 
     def forward_impl(self):
-        self.parameter_val.set_value(self.new_value)
+        self.parameter_val.value = self.new_value
+        self.parameter_val.save(update_fields=['value'])
 
         self.forward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.save()
 
     def backward_impl(self):
+        self.parameter_val.value = self.old_value
+        self.parameter_val.save(update_fields=['value'])
+
         self.backward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.save()
-
-        self.parameter_val.set_value(self.old_value)
 
     @classmethod
     async def create(cls, parameter_val, value):
@@ -448,8 +450,8 @@ class ChangeParameterCommand(Delta, _ChangesWfModuleOutputs):
 
         delta = await cls.create_impl(
             parameter_val=parameter_val,
-            new_value=value,
-            old_value=parameter_val.get_value(),
+            new_value=value or '',
+            old_value=parameter_val.value,
             workflow=workflow
         )
 
