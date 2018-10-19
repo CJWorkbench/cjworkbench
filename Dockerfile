@@ -25,16 +25,29 @@ WORKDIR /app
 FROM pybase AS pydev
 
 # Need build-essential for:
+# * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
 # * python-snappy
+#
+# Need curl+unzip for NLTK downloads
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
       libsnappy-dev \
+      unzip \
+      curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Download NLTK stuff
+RUN mkdir -p /usr/share/nltk_data \
+    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > /stopwords.zip \
+    && unzip -d/usr/share/nltk_data/corpora /stopwords.zip \
+    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > /vader.zip \
+    && unzip -d/usr/share/nltk_data/sentiment /vader.zip \
+    && rm -f /stopwords.zip /vader.zip
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
 # See https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/ for
@@ -90,8 +103,9 @@ RUN true \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
-# nltk models (for sentiment)
-RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
+# vader_lexicon: for sentiment analysis
+# stopwords: for wordcloud
+RUN python -m nltk.downloader -d /usr/share/nltk_data vader_lexicon stopwords
 
 
 # 2. Node deps -- completely independent
