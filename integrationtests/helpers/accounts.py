@@ -18,7 +18,7 @@ def login(browser: Browser, email: str, password: str) -> None:
     browser.fill_in('login', email)
     browser.fill_in('password', password)
     browser.click_button('Sign In')
-    browser.wait_for_element('h3', text='WORKFLOWS', wait=True)
+    browser.wait_for_element('a', text='MY WORKFLOWS', wait=True)
 
 
 def _close_connection(conn):
