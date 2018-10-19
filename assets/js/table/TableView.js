@@ -97,8 +97,8 @@ export default class TableView extends React.PureComponent {
         <TableInfo
           isReadOnly={isReadOnly}
           wfModuleId={wfModuleId}
-          nRows={nRows}
-          nColumns={columns ? columns.length : null}
+          nRows={wfModuleId ? nRows : null}
+          nColumns={(wfModuleId && columns) ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />
         <div className="outputpane-data">
