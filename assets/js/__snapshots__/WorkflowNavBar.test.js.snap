@@ -378,6 +378,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                       <button
                         aria-expanded={false}
                         aria-haspopup={true}
+                        aria-label={null}
                         className="context-button btn btn-secondary"
                         onClick={[Function]}
                         title="menu"

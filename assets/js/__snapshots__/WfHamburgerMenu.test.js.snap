@@ -59,6 +59,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                 <button
                   aria-expanded={false}
                   aria-haspopup={true}
+                  aria-label={null}
                   className="context-button btn btn-secondary"
                   onClick={[Function]}
                   title="menu"
