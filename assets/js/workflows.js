@@ -159,7 +159,7 @@ export default class Workflows extends React.Component {
 
   renderWorkflowPane = (workflows, tab) => {
     if (workflows.length > 0) {
-      // Sort based on state
+      // Sort based on state, can only delete your own WFs
       return (
         <TabPane tabId={tab}>
           <div className='workflows-item--wrap'>
@@ -178,6 +178,7 @@ export default class Workflows extends React.Component {
                   <WfContextMenu
                     duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
                     deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
+                    canDelete={tab === 'owned'}
                   />
                 </div>
               </a>

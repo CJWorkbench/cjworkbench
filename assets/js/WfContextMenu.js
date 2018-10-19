@@ -13,6 +13,17 @@ export default class WfContextMenu extends React.Component {
     super(props);
   }
 
+  renderDelete = () => {
+    if (this.props.canDelete) {
+      return (
+        <DropdownItem onClick={this.props.deleteWorkflow} className='test-delete-button'>
+          <i className="icon-bin"></i>
+          <span>Delete</span>
+        </DropdownItem>
+      )
+    }
+  }
+
   render() {
     return (
       <UncontrolledDropdown>
@@ -24,10 +35,7 @@ export default class WfContextMenu extends React.Component {
             <i className="icon-duplicate"></i>
             <span>Duplicate</span>
           </DropdownItem>
-          <DropdownItem onClick={this.props.deleteWorkflow} className='test-delete-button'>
-            <i className="icon-bin"></i>
-            <span>Delete</span>
-          </DropdownItem>
+          {this.renderDelete()}
         </DropdownMenu>
       </UncontrolledDropdown>
     );
@@ -36,5 +44,6 @@ export default class WfContextMenu extends React.Component {
 
 WfContextMenu.propTypes = {
   deleteWorkflow:     PropTypes.func.isRequired,
-  duplicateWorkflow:  PropTypes.func.isRequired
+  duplicateWorkflow:  PropTypes.func.isRequired,
+  canDelete:          PropTypes.bool.isRequired
 };

@@ -59,7 +59,6 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 <button
                   aria-expanded={false}
                   aria-haspopup={true}
-                  aria-label={null}
                   className="context-button btn btn-secondary"
                   onClick={[Function]}
                   title="more"
@@ -73,131 +72,90 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
             </Target>
           </DropdownToggle>
           <Portal>
-            <Portal
-              containerInfo={
-                <div>
-                  <div
-                    aria-hidden="true"
-                    class="dropdown-menu"
-                    position="left"
-                    role="menu"
-                    style="position: absolute; pointer-events: none; opacity: 0;"
-                    tabindex="-1"
-                    x-placement="bottom-start"
+            <DropdownMenu
+              flip={true}
+              persist={true}
+              position="left"
+              tag="div"
+            >
+              <Popper
+                aria-hidden={true}
+                className="dropdown-menu"
+                component="div"
+                eventsEnabled={true}
+                modifiers={Object {}}
+                placement="bottom-start"
+                position="left"
+                positionFixed={false}
+                role="menu"
+                tabIndex="-1"
+                x-placement="bottom-start"
+              >
+                <div
+                  aria-hidden={true}
+                  className="dropdown-menu"
+                  position="left"
+                  role="menu"
+                  style={
+                    Object {
+                      "opacity": 0,
+                      "pointerEvents": "none",
+                      "position": "absolute",
+                    }
+                  }
+                  tabIndex="-1"
+                  x-placement="bottom-start"
+                >
+                  <DropdownItem
+                    className="test-export-button"
+                    key="1"
+                    onClick={[Function]}
+                    tag="button"
+                    toggle={true}
                   >
                     <button
-                      class="test-export-button dropdown-item"
-                      tabindex="0"
+                      className="test-export-button dropdown-item"
+                      onClick={[Function]}
+                      tabIndex="0"
                       type="button"
                     >
                       <i
-                        class="icon-download"
+                        className="icon-download"
                       />
                       <span>
                         Export data
                       </span>
+                      <ExportModal
+                        onClose={[Function]}
+                        open={false}
+                        wfModuleId={415}
+                      />
                     </button>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="test-delete-button"
+                    key="2"
+                    onClick={[Function]}
+                    tag="button"
+                    toggle={true}
+                  >
                     <button
-                      class="test-delete-button dropdown-item"
-                      tabindex="0"
+                      className="test-delete-button dropdown-item"
+                      onClick={[Function]}
+                      tabIndex="0"
                       type="button"
                     >
                       <i
-                        class="icon-bin"
+                        className="icon-bin"
                       />
                       <span>
                         Delete
                       </span>
                     </button>
-                  </div>
+                  </DropdownItem>
                 </div>
-              }
-            >
-              <DropdownMenu
-                flip={true}
-                persist={true}
-                position="left"
-                tag="div"
-              >
-                <Popper
-                  aria-hidden={true}
-                  className="dropdown-menu"
-                  component="div"
-                  eventsEnabled={true}
-                  modifiers={Object {}}
-                  placement="bottom-start"
-                  position="left"
-                  positionFixed={false}
-                  role="menu"
-                  tabIndex="-1"
-                  x-placement="bottom-start"
-                >
-                  <div
-                    aria-hidden={true}
-                    className="dropdown-menu"
-                    position="left"
-                    role="menu"
-                    style={
-                      Object {
-                        "opacity": 0,
-                        "pointerEvents": "none",
-                        "position": "absolute",
-                      }
-                    }
-                    tabIndex="-1"
-                    x-placement="bottom-start"
-                  >
-                    <DropdownItem
-                      className="test-export-button"
-                      key="1"
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="test-export-button dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <i
-                          className="icon-download"
-                        />
-                        <span>
-                          Export data
-                        </span>
-                        <ExportModal
-                          onClose={[Function]}
-                          open={false}
-                          wfModuleId={415}
-                        />
-                      </button>
-                    </DropdownItem>
-                    <DropdownItem
-                      className="test-delete-button"
-                      key="2"
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="test-delete-button dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <i
-                          className="icon-bin"
-                        />
-                        <span>
-                          Delete
-                        </span>
-                      </button>
-                    </DropdownItem>
-                  </div>
-                </Popper>
-              </DropdownMenu>
-            </Portal>
+              </Popper>
+            </DropdownMenu>
           </Portal>
         </div>
       </Manager>

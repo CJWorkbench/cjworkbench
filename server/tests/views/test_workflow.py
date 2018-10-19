@@ -9,7 +9,7 @@ from server.models import Module, ModuleVersion, User, WfModule, Workflow
 from server.tests.utils import LoggedInTestCase, add_new_module_version, \
         add_new_wf_module, load_module_version
 from server.views import workflow_list, workflow_addmodule, workflow_detail, \
-        render_workflow, load_update_table_module_ids
+        render_workflow, render_workflows, load_update_table_module_ids
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
@@ -98,20 +98,23 @@ class WorkflowViewTests(LoggedInTestCase):
         self.workflow2.save()
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+        response = render_workflows(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2) # should not pick up other user's workflows, even public ones
 
-        self.assertEqual(response.data[0]['name'], 'Workflow 2')
-        self.assertEqual(response.data[0]['id'], self.workflow2.id)
-        self.assertEqual(response.data[0]['public'], self.workflow1.public)
-        self.assertEqual(response.data[0]['read_only'], False)  # user is owner
-        self.assertEqual(response.data[0]['is_owner'], True)  # user is owner
-        self.assertIsNotNone(response.data[0]['last_update'])
-        self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
+        workflows = response.context_data['initState']['workflows']
+        # should not pick up other user's workflows, even public ones
+        self.assertEqual(len(workflows['owned']) + len(workflows['shared']) + len(workflows['templates']), 2)
 
-        self.assertEqual(response.data[1]['name'], 'Workflow 1')
-        self.assertEqual(response.data[1]['id'], self.workflow1.id)
+        self.assertEqual(workflows['owned'][0]['name'], 'Workflow 2')
+        self.assertEqual(workflows['owned'][0]['id'], self.workflow2.id)
+        self.assertEqual(workflows['owned'][0]['public'], self.workflow1.public)
+        self.assertEqual(workflows['owned'][0]['read_only'], False)  # user is owner
+        self.assertEqual(workflows['owned'][0]['is_owner'], True)  # user is owner
+        self.assertIsNotNone(workflows['owned'][0]['last_update'])
+        self.assertEqual(workflows['owned'][0]['owner_name'], user_display(self.workflow2.owner))
+
+        self.assertEqual(workflows['owned'][1]['name'], 'Workflow 1')
+        self.assertEqual(workflows['owned'][1]['id'], self.workflow1.id)
 
     def test_workflow_list_include_example_in_all_users_workflow_lists(self):
         self.other_workflow_public.example = True
@@ -119,9 +122,12 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public.save()
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+        response = render_workflows(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 3)
+
+        workflows = response.context_data['initState']['workflows']
+        self.assertEqual(len(workflows['owned']), 2)
+        self.assertEqual(len(workflows['templates']), 1)
 
     def test_workflow_list_exclude_example_not_in_all_users_lists(self):
         self.other_workflow_public.example = True
@@ -129,18 +135,22 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public.save()
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+        response = render_workflows(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+
+        workflows = response.context_data['initState']['workflows']
+        self.assertEqual(len(workflows['owned']), 2)
+        self.assertEqual(len(workflows['templates']), 0)
 
     def test_workflow_list_exclude_lesson(self):
         self.workflow1.lesson_slug = 'some-lesson'
         self.workflow1.save()
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+        response = render_workflows(request)
+        workflows = response.context_data['initState']['workflows']
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(workflows['owned']), 1)
 
     def test_workflow_list_post(self):
         start_count = Workflow.objects.count()

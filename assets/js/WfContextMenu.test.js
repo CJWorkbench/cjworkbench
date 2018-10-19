@@ -9,15 +9,14 @@ describe('WfContextMenu', () => {
   beforeEach( () => {
     api = {
       deleteWorkflow: jest.fn(),
-      duplicateWorkflow: jest.fn(),
-      shareWorkflow: jest.fn()
+      duplicateWorkflow: jest.fn()
     };
 
     wrapper = shallow(
       <WfContextMenu
         deleteWorkflow={api.deleteWorkflow}
         duplicateWorkflow={api.duplicateWorkflow}
-        shareWorkflow={api.shareWorkflow}
+        canDelete={true}
       />
     );
   });
@@ -39,5 +38,17 @@ describe('WfContextMenu', () => {
 
     expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
   });
+
+  it('should not render a delete button', () => {
+    const w = shallow(
+      <WfContextMenu
+        deleteWorkflow={api.deleteWorkflow}
+        duplicateWorkflow={api.duplicateWorkflow}
+        canDelete={false}
+      />
+    )
+
+    expect(w.find('.test-delete-button')).toHaveLength(0)
+  })
 
 });

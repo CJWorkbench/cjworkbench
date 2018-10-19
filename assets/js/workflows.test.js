@@ -260,4 +260,21 @@ describe('Workflow list page', () => {
       done()
     })
   })
+
+  it('should only render the delete option for owned workflows', (done) => {
+    const w = wrapper({workflows: testWorkflows})
+    setImmediate( () => {
+      // my workflows tab
+      w.update()
+      expect(w.find('.tab-pane.active').find('button.test-delete-button')).toHaveLength(3)
+      // shared workflows tab
+      w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+      expect(w.find('.tab-pane.active').find('.test-delete-button')).toHaveLength(0)
+      // templates tab
+      w.find('.nav-link').findWhere(node => node.props().children === 'Templates').simulate('click')
+      expect(w.find('.tab-pane.active').find('.test-delete-button')).toHaveLength(0)
+      done()
+    })
+  })
+
 })

@@ -584,6 +584,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       onClick={[Function]}
                     >
                       <WfContextMenu
+                        canDelete={true}
                         deleteWorkflow={[Function]}
                         duplicateWorkflow={[Function]}
                       >
@@ -777,6 +778,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       onClick={[Function]}
                     >
                       <WfContextMenu
+                        canDelete={true}
                         deleteWorkflow={[Function]}
                         duplicateWorkflow={[Function]}
                       >
@@ -970,6 +972,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       onClick={[Function]}
                     >
                       <WfContextMenu
+                        canDelete={true}
                         deleteWorkflow={[Function]}
                         duplicateWorkflow={[Function]}
                       >
@@ -1176,6 +1179,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       onClick={[Function]}
                     >
                       <WfContextMenu
+                        canDelete={false}
                         deleteWorkflow={[Function]}
                         duplicateWorkflow={[Function]}
                       >
@@ -1263,26 +1267,6 @@ exports[`Workflow list page renders correctly 1`] = `
                                         />
                                         <span>
                                           Duplicate
-                                        </span>
-                                      </button>
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      className="test-delete-button"
-                                      onClick={[Function]}
-                                      tag="button"
-                                      toggle={true}
-                                    >
-                                      <button
-                                        className="test-delete-button dropdown-item"
-                                        onClick={[Function]}
-                                        tabIndex="0"
-                                        type="button"
-                                      >
-                                        <i
-                                          className="icon-bin"
-                                        />
-                                        <span>
-                                          Delete
                                         </span>
                                       </button>
                                     </DropdownItem>
@@ -1369,6 +1353,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       onClick={[Function]}
                     >
                       <WfContextMenu
+                        canDelete={false}
                         deleteWorkflow={[Function]}
                         duplicateWorkflow={[Function]}
                       >
@@ -1456,26 +1441,6 @@ exports[`Workflow list page renders correctly 1`] = `
                                         />
                                         <span>
                                           Duplicate
-                                        </span>
-                                      </button>
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      className="test-delete-button"
-                                      onClick={[Function]}
-                                      tag="button"
-                                      toggle={true}
-                                    >
-                                      <button
-                                        className="test-delete-button dropdown-item"
-                                        onClick={[Function]}
-                                        tabIndex="0"
-                                        type="button"
-                                      >
-                                        <i
-                                          className="icon-bin"
-                                        />
-                                        <span>
-                                          Delete
                                         </span>
                                       </button>
                                     </DropdownItem>
@@ -1575,6 +1540,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       onClick={[Function]}
                     >
                       <WfContextMenu
+                        canDelete={false}
                         deleteWorkflow={[Function]}
                         duplicateWorkflow={[Function]}
                       >
@@ -1662,26 +1628,6 @@ exports[`Workflow list page renders correctly 1`] = `
                                         />
                                         <span>
                                           Duplicate
-                                        </span>
-                                      </button>
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      className="test-delete-button"
-                                      onClick={[Function]}
-                                      tag="button"
-                                      toggle={true}
-                                    >
-                                      <button
-                                        className="test-delete-button dropdown-item"
-                                        onClick={[Function]}
-                                        tabIndex="0"
-                                        type="button"
-                                      >
-                                        <i
-                                          className="icon-bin"
-                                        />
-                                        <span>
-                                          Delete
                                         </span>
                                       </button>
                                     </DropdownItem>
