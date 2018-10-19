@@ -108,14 +108,14 @@
 
           // When tab on the left edge is not selected, hover
           &:hover:first-child .nav-link {
-            border-color: darken($page-background,3%) transparent darken($page-background,3%) darken($page-background,3%);
+            border-color: darken($page-background,3%) darken($page-background,3%) darken($page-background,3%) darken($page-background,3%);
             border-radius: 5px 0 0 0;
             background-color: #F5F7F8;
           }
 
           // when tab on the right edge is not selected, hover
           &:hover:last-child .nav-link {
-            border-color: darken($page-background,3%) darken($page-background,3%) darken($page-background,3%) transparent;
+            border-color: darken($page-background,3%) darken($page-background,3%) darken($page-background,3%) darken($page-background,3%);
             border-radius: 0 5px 0 0;
             background-color: #F5F7F8;
           }
