@@ -16,7 +16,12 @@ def get_uploadedfile(request, wf_module_id):
     ).first()
     if so and so.metadata:
         metadata = json.loads(so.metadata)[0]
-        uploaded_file = UploadedFile.objects.get(uuid=metadata['uuid'])
+        try:
+            uploaded_file = UploadedFile.objects.get(uuid=metadata['uuid'])
+        except UploadedFile.DoesNotExist:
+            # Seen on production 2018-10-19T00:49:12Z
+            return JsonResponse([], safe=False)
+
         return JsonResponse([{
             'name': uploaded_file.name,
             'uuid': uploaded_file.uuid,
