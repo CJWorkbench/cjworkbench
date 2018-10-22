@@ -41,7 +41,14 @@ export class OutputPane extends React.Component {
   renderTable() {
     const { api, isReadOnly, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
 
-    const wfm = wfModuleBeforeError ? wfModuleBeforeError : wfModule // may be null
+    let wfm
+    if (wfModuleBeforeError) {
+      wfm = wfModuleBeforeError
+    } else if (wfModule && wfModule.status !== 'unreachable') {
+      wfm = wfModule
+    } else {
+      wfm = null // below error
+    }
 
     // Make a table component even if no module ID (should still show an empty table)
     return (
@@ -124,18 +131,15 @@ function mapStateToProps(state, ownProps) {
   let wfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
   let wfModuleBeforeError
 
-  if (wfModule && (wfModule.status === 'error' || wfModule.status === 'unreachable')) {
-    const errorIndex = workflow.wf_modules
-      .findIndex(id => wfModules[String(id)] && wfModules[String(id)].status === 'error')
-
-    if (errorIndex > 0) {
-      const lastGood = wfModules[String(workflow.wf_modules[errorIndex - 1])]
-      wfModuleBeforeError = {
-        id: lastGood.id,
-        deltaId: lastGood.cached_render_result_delta_id,
-        columns: lastGood.output_columns,
-        nRows: lastGood.output_n_rows
-      }
+  // If we're pointing at a module that output an error, we'll want to display
+  // its _input_ (the previous module's output) to help the user fix things.
+  if (wfModule && wfModule.status === 'error' && state.selected_wf_module > 0) {
+    const lastGood = wfModules[String(workflow.wf_modules[state.selected_wf_module - 1])]
+    wfModuleBeforeError = {
+      id: lastGood.id,
+      deltaId: lastGood.cached_render_result_delta_id,
+      columns: lastGood.output_columns,
+      nRows: lastGood.output_n_rows
     }
   }
 

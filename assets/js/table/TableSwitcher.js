@@ -52,6 +52,12 @@ export default class TableSwitcher extends React.PureComponent {
     loaded: null // { wfModuleId, deltaId, nRows, columns } of a table that has rendered something, sometime
   }
 
+  static getDerivedStateFromProps (props) {
+    if (props.wfModuleId === null) {
+      return { loaded: null }
+    }
+  }
+
   /**
    * Render a <TableView>, with a `key` tied to wfModuleId+deltaId so tables
    * are guaranteed to never share data.
@@ -102,6 +108,10 @@ export default class TableSwitcher extends React.PureComponent {
     let className = 'table-switcher'
     const tables = []
 
+    // Always show the placeholder. It's for when there's no data on top.
+    tables.push(this._renderPlaceholderTable())
+
+    // Show the last table that has data visible
     if (loaded) {
       className += ' has-loaded'
       tables.push(this._renderTable(loaded, 'loaded-table'))
@@ -117,11 +127,6 @@ export default class TableSwitcher extends React.PureComponent {
         ...this.props,
         onLoadPage: this.onLoadPage
       }, 'loading-table'))
-    }
-
-    if (tables.length === 0) {
-      className += ' has-placeholder'
-      tables.push(this._renderPlaceholderTable())
     }
 
     return (
