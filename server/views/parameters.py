@@ -11,7 +11,6 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from ..models import ParameterSpec, ParameterVal, ChangeParameterCommand
 from ..serializers import ParameterValSerializer
-from ..dispatch import module_dispatch_fetch
 from .. import triggerrender
 from .. import oauth
 
