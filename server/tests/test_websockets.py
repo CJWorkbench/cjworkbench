@@ -62,6 +62,7 @@ def async_test(f):
             try:
                 return await f(self, communicate, *args, **kwargs)
             finally:
+                await disconnect_all()
                 layer = get_channel_layer()
                 connection = layer._get_connection_for_loop(loop)
                 await connection.close()  # clean up on the RabbitMQ side

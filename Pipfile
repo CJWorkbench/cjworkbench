@@ -35,7 +35,7 @@ workbenchdata-fastparquet = "==0.1.6a2"
 minio = "*"
 async-generator = "*"
 aiodns = "*"
-channels-rabbitmq = "*"
+channels-rabbitmq = "==0.0.2"
 
 [dev-packages]
 "requests-mock" = "==1.5.0"
