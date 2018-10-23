@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbitmq-service
+spec:
+  selector:
+    app: rabbitmq-app
+  ports:
+    - protocol: TCP
+      port: 5672

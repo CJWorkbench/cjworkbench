@@ -25,7 +25,6 @@ WORKDIR /app
 FROM pybase AS pydev
 
 # Need build-essential for:
-# * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
@@ -84,7 +83,6 @@ FROM pybase AS pybuild
 COPY Pipfile Pipfile.lock /app/
 
 # Need build-essential for:
-# * hiredis - https://github.com/redis/hiredis-py/issues/38
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet

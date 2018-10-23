@@ -19,8 +19,8 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
 
-  redis:
-    image: redis:4.0.10
+  rabbitmq:
+    image: rabbitmq:3.7.8
     networks: [ 'dev' ]
 
   minio:
@@ -56,7 +56,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -67,7 +67,7 @@ services:
       CACHE_MODULES: "${CACHE_MODULES:-}"
     ports: [ '8000:8080' ]
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'redis', 'minio' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
 
   backend:
@@ -82,7 +82,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -90,7 +90,7 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
       CACHE_MODULES: "${CACHE_MODULES:-}"
-    depends_on: [ 'database', 'redis', 'minio' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'run-background-loop' ]
 
@@ -104,8 +104,8 @@ services:
     networks: [ 'test' ]
     # no volumes: we wipe this DB a lot
 
-  testredis:
-    image: redis:4.0.10
+  testrabbitmq:
+    image: rabbitmq:3.7.8
     networks: [ 'test' ]
 
   testminio:

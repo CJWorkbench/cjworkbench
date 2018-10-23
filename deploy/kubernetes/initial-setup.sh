@@ -78,12 +78,12 @@ kubectl -n production create secret generic minio-access-key \
   --from-literal=external_url="https://production-user-files.workbenchdata.com" \
   --from-literal=bucket_prefix=""
 
-# 2. Start database+redis+minio
+# 2. Start database+rabbitmq+minio
 kubectl -n production apply -f dbdata-pvc.yaml
 kubectl -n production apply -f database-service.yaml
 kubectl -n production apply -f database-deployment.yaml
-kubectl -n production apply -f redis-service.yaml
-kubectl -n production apply -f redis-deployment.yaml
+kubectl -n production apply -f rabbitmq-service.yaml
+kubectl -n production apply -f rabbitmq-deployment.yaml
 kubectl -n production apply -f minio-service.yaml
 kubectl -n production apply -f minio-deployment.yaml
 

@@ -15,20 +15,22 @@ services:
       POSTGRES_PASSWORD: 'cjworkbench'
       POSTGRES_DB: 'cjworkbench'
 
-  redis:
-    image: redis:4.0.10
+  rabbitmq:
+    image: rabbitmq:3.7.8
 
   migrate:
     #image:
     #build:
     # Depends on minio because `import server.minio` pings it to ensure bucket
-    depends_on: [ 'db', 'minio' ]
+    # Dpeends on rabbitmq so that rabbitmq is already warm when we launch
+    # integration-test
+    depends_on: [ 'db', 'minio', 'rabbitmq' ]
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
       MINIO_ACCESS_KEY: minio_access
@@ -50,10 +52,10 @@ services:
   backend:
     #image:
     #build:
-    depends_on: [ 'db', 'redis', 'minio' ]
+    depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
       PYTHONUNBUFFERED: '1'
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench
@@ -71,10 +73,10 @@ services:
     #image:
     #build:
     #no ports: on cloudbuild
-    depends_on: [ 'db', 'redis', 'minio' ]
+    depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
       PYTHONUNBUFFERED: '1'
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench

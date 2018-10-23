@@ -1,6 +1,8 @@
 import asyncio
 import functools
 import json
+import logging
+from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from cjworkbench.asgi import create_url_router
 from django.contrib.auth.models import AnonymousUser
@@ -49,12 +51,6 @@ def async_test(f):
             for communicator in communicators:
                 await communicator.disconnect()
 
-        async def inner():
-            try:
-                return await f(self, communicate, *args, **kwargs)
-            finally:
-                await disconnect_all()
-
         # Reset the thread-local event loop
         old_loop = asyncio.get_event_loop()
         if not old_loop.is_closed():
@@ -62,12 +58,29 @@ def async_test(f):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
+        async def inner():
+            try:
+                return await f(self, communicate, *args, **kwargs)
+            finally:
+                layer = get_channel_layer()
+                connection = layer._get_connection_for_loop(loop)
+                await connection.close()  # clean up on the RabbitMQ side
+
         try:
             # Run the async function by running the loop to completion
             return loop.run_until_complete(inner())
         finally:
-            loop.close()
+            with self.assertLogs():
+                # log something, so self.assertLogs() doesn't fail
+                logger = logging.getLogger('this-test')
+                logger.info('Warnings from closing event loop:')
+
+                # Now call loop.close(). It will emit tons of log messages
+                # about dead tasks but we don't care.
+                loop.run_until_complete(loop.shutdown_asyncgens())
+                loop.close()
             # Reset the thread-local event loop
+
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 

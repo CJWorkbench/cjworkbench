@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-deployment
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq-app
+  strategy:
+    type: Recreate
+  replicas: 1
+  revisionHistoryLimit: 20
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-app
+    spec:
+      containers:
+        - name: rabbitmq
+          image: "rabbitmq:3.7.8-alpine"
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 400Mi
+            limits:
+              cpu: 0.5
+              memory: 400Mi
+          ports:
+            - name: amqp
+              containerPort: 5672
+          env:
+            - name: RABBITMQ_VM_MEMORY_HIGH_WATERMARK
+              value: 300MiB

@@ -13,7 +13,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -21,7 +21,7 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'redis', 'minio' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   develop-module:
@@ -36,7 +36,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
-      CJW_REDIS_HOST: redis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -44,7 +44,7 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'redis', 'minio' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   unittest:
@@ -59,7 +59,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: testdatabase
-      CJW_REDIS_HOST: testredis
+      CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -67,5 +67,5 @@ services:
       MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: test
     networks: [ 'test' ]
-    depends_on: [ 'testdatabase', 'testredis', 'testminio' ]
+    depends_on: [ 'testdatabase', 'testrabbitmq', 'testminio' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'test' ]

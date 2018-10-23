@@ -33,8 +33,8 @@ spec:
               value: '70406982'
             - name: CJW_PRODUCTION
               value: 'True'
-            - name: CJW_REDIS_HOST
-              value: redis-service
+            - name: CJW_RABBITMQ_HOST
+              value: amqp://guest:guest@rabbitmq-service/
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD

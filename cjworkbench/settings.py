@@ -90,18 +90,18 @@ try:
 except KeyError:
     sys.exit('Must set CJW_DB_HOST and CJW_DB_PASSWORD')
 
-# REDIS
+# RabbitMQ
 try:
     CHANNEL_LAYERS = {
         'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'BACKEND': 'channels_rabbitmq.core.RabbitmqChannelLayer',
             'CONFIG': {
-                'hosts': [(os.environ['CJW_REDIS_HOST'], 6379)],
+                'host': os.environ['CJW_RABBITMQ_HOST'],
             },
         },
     }
 except KeyError:
-    sys.exit('Must set CJW_REDIS_HOST')
+    sys.exit('Must set CJW_RABBITMQ_HOST')
 
 # EMAIL_BACKEND
 #

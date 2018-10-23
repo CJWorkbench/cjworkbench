@@ -68,7 +68,7 @@ docker_compose build --pull
 echo 'Tearing down old environment (if it exists)…' >&2
 docker_compose down -v
 
-echo 'Migrating (and starting database)…' >&2
+echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run migrate
 
 echo 'Testing (and starting test environment)…' >&2
