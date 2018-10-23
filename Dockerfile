@@ -15,7 +15,7 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install pipenv==2018.10.9
+RUN pip install pipenv==2018.10.13
 
 # Set up /app
 RUN mkdir /app
