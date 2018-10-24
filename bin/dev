@@ -56,7 +56,7 @@ print_usage() {
 }
 
 COMMAND="$1"
-shift
+shift || true
 
 case "$COMMAND" in
   "clean")
@@ -139,9 +139,8 @@ case "$COMMAND" in
     docker_compose_with_commands run --rm "$@"
     ;;
 
-  "")
+  *)
     print_usage
     exit 1
     ;;
-  *)
 esac
