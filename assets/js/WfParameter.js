@@ -11,7 +11,7 @@ import DropZone from './wfparameters/DropZone'
 import VersionSelect from './wfparameters/VersionSelect'
 import OAuthConnect from './wfparameters/OAuthConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
-import WorkbenchAceEditor from './wfparameters/AceEditor'
+import LazyAceEditor from './wfparameters/LazyAceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import NumberField from './wfparameters/NumberField'
 import Refine from './wfparameters/Refine'
@@ -231,7 +231,7 @@ export default class WfParameter extends React.PureComponent {
         )
       case 'code':
         return (
-          <WorkbenchAceEditor
+          <LazyAceEditor
             name={this.props.p.parameter_spec.name}
             isZenMode={this.props.isZenMode}
             wfModuleError={this.props.wfModuleError}

@@ -1,4 +1,6 @@
-// workflow.page.js - the master JavaScript for /workflows/N
+// workflow.page.js - the master JavaScript for /workflows/:id
+__webpack_public_path__ = window.STATIC_URL + 'bundles/'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
