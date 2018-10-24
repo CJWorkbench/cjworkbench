@@ -55,6 +55,8 @@ export default class TableSwitcher extends React.PureComponent {
   static getDerivedStateFromProps (props) {
     if (props.wfModuleId === null) {
       return { loaded: null }
+    } else {
+      return null
     }
   }
 
