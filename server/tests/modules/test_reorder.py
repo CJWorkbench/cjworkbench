@@ -13,14 +13,6 @@ a_table = pd.DataFrame({
 })
 
 
-class MockWfModule:
-    def __init__(self, reorder_history_json: str):
-        self.reorder_history = reorder_history_json
-
-    def get_param_raw(self, key, _unused):
-        return getattr(self, key.replace('-', '_'))
-
-
 def fake_result(colnames):
     return ProcessResult(a_table[colnames])
 

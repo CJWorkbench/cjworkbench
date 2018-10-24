@@ -261,13 +261,6 @@ class WfModule(models.Model):
         pval = self.parameter_vals.get(parameter_spec=pspec)
         return pval
 
-    # Retrieve current parameter values.
-    # Should never throw ValueError on type conversions because
-    # ParameterVal.set_value coerces
-    def get_param_raw(self, name, expected_type):
-        pval = self.get_parameter_val(name, expected_type)
-        return pval.value
-
     def get_param(self, name, expected_type):
         pval = self.get_parameter_val(name, expected_type)
         return pval.get_value()
