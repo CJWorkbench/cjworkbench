@@ -15,7 +15,7 @@ export function TextCellFormatter ({value}) {
     return <div className='cell-null cell-text' />
   }
 
-  return <div className='cell-text'>{value}</div>
+  return <div className='cell-text' title={value}>{value}</div>
 }
 
 const numberFormat = new Intl.NumberFormat()
