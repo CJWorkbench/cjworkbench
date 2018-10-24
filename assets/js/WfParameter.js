@@ -7,7 +7,7 @@ import ChartSeriesMultiSelect from './wfparameters/ChartSeriesMultiSelect'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
-import DropZone from './wfparameters/DropZone'
+import LazyDropZone from './wfparameters/LazyDropZone'
 import VersionSelect from './wfparameters/VersionSelect'
 import OAuthConnect from './wfparameters/OAuthConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
@@ -210,7 +210,7 @@ export default class WfParameter extends React.PureComponent {
         );
       case 'file':
         return (
-          <DropZone
+          <LazyDropZone
             wfModuleId={this.props.wfModuleId}
             lastRelevantDeltaId={this.props.lastRelevantDeltaId}
             api={this.props.api}
