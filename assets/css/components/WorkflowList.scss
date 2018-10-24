@@ -91,14 +91,14 @@
 
             // when tab is selected
             &.active {
-              border-color: darken($page-background,5%) darken($page-background,5%) transparent;
+              border-color: darken($page-background,7%) darken($page-background,7%) transparent;
               background-color: #F5F7F8;
               color: $dark-blue;
               background-color: lighten(#F5F7F8,1%);
 
               // when tab is selected and hover -- first child to take prescedence
               &:hover:first-child {
-                border-color: darken($page-background,5%) darken($page-background,5%) transparent;
+                border-color: darken($page-background,7%) darken($page-background,7%) transparent;
                 border-radius: 5px 5px 0 0;
                 color: $dark-blue;
                 background-color: lighten(#F5F7F8,1%);
@@ -183,7 +183,7 @@
         @extend .content-3;
         background-color: $white;
         height: 7rem;
-        border: 1px solid darken($page-background,5%);
+        border: 1px solid darken($page-background,7%);
         display: flex;
         padding-left: 2.5rem;
         align-items: center;
@@ -202,7 +202,7 @@
     // background of list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
-      background-color: darken($page-background,5%);
+      background-color: darken($page-background,7%);
 
       // WF list
       .workflow-item {
