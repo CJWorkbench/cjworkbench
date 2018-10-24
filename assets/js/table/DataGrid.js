@@ -154,7 +154,10 @@ export default class DataGrid extends React.PureComponent {
     if (domNode && domNode.parentElement) {
       const gridHeight = Math.max(100, domNode.offsetHeight)
       const gridWidth = Math.max(100, domNode.offsetWidth)
-      window.setTimeout((() => this.setState({ gridWidth, gridHeight })), 0)
+      window.setTimeout(() => {
+        if (this.unmounted) return
+        this.setState({ gridWidth, gridHeight })
+      }, 0)
     }
   }
 
@@ -163,6 +166,8 @@ export default class DataGrid extends React.PureComponent {
     const max = min + NRowsPerPage
     const { api, deltaId, wfModuleId, onLoadPage } = this.props
     const { loadedRows } = this.state
+
+    if (this.unmounted) return
 
     let areAllValuesMissing = true
     for (let i = min; i < max; i++) {
@@ -304,7 +309,9 @@ export default class DataGrid extends React.PureComponent {
       return loadedRows[i]
     } else {
       // We'll return an empty row for now. But what _else_ will we do?
-      if (!this.props.wfModuleId) {
+      if (this.unmounted) {
+        // Don't load
+      } else if (!this.props.wfModuleId) {
         // This is a placeholder table, not a real data table. Don't load.
       } else if (!this.scheduleLoadTimeout) {
         this.firstMissingRowIndex = i
