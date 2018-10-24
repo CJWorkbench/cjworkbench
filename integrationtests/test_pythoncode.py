@@ -11,6 +11,9 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         b.wait_for_element('.module-stack', wait=True)
         self.add_wf_module('Python')
 
+        # Wait for dynamically-loaded editor component
+        b.wait_for_element('.ace-wrapper', wait=True)
+
     def _execute_code(self, code):
         """Sets code in the in-browser ACE editor."""
         b = self.browser
