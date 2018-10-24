@@ -5,7 +5,7 @@ from typing import List, Optional
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from server import websockets
-from server.modules.types import Column, ProcessResult
+from server.modules.types import ProcessResult
 from .Params import Params
 from .CachedRenderResult import CachedRenderResult
 from .ModuleVersion import ModuleVersion
@@ -27,20 +27,6 @@ class WfModule(models.Model):
         else:
             wfstr = ' - deleted from workflow'
         return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
-
-    def create_parameter_dict(self, table):
-        """
-        Present parameters as a dict, with some inconsistent munging.
-
-        A `column` parameter that refers to an invalid column will be renamed
-        to the empty string.
-
-        A `multicolumn` parameter will have its values `strip()`ed and have
-        invalid columns removed.
-
-        TODO use params throughout? Or some-such.
-        """
-        return self.get_params().to_painful_dict(table)
 
     # --- Fields ----
     workflow = models.ForeignKey(
