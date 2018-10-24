@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from 'react'
+import ErrorBoundary from '../ErrorBoundary'
 const DropZone = lazy(() => import('./DropZone'))
 
 /**
@@ -9,8 +10,10 @@ const DropZone = lazy(() => import('./DropZone'))
  */
 export default function LazyDropZone(props) {
   return (
-    <Suspense fallback={<div className='loading-drop-zone'>Loading uploader...</div>}>
-      <DropZone {...props} />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<div className='loading-drop-zone'>Loading uploader...</div>}>
+        <DropZone {...props} />
+      </Suspense>
+    </ErrorBoundary>
   )
 }

@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from 'react'
+import ErrorBoundary from '../ErrorBoundary'
 const WorkbenchAceEditor = lazy(() => import('./AceEditor'))
 
 /**
@@ -9,8 +10,10 @@ const WorkbenchAceEditor = lazy(() => import('./AceEditor'))
  */
 export default function LazyAceEditor(props) {
   return (
-    <Suspense fallback={<div className='loading-ace-editor'>Loading editor...</div>}>
-      <WorkbenchAceEditor {...props} />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<div className='loading-ace-editor'>Loading editor...</div>}>
+        <WorkbenchAceEditor {...props} />
+      </Suspense>
+    </ErrorBoundary>
   )
 }
