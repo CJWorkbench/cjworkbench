@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TableView from './TableView'
+import TableView, {NMaxColumns} from './TableView'
 
 function areSameTable(props1, props2) {
   if (props1 === null && props2 === null) return true // both null => true
@@ -9,6 +9,17 @@ function areSameTable(props1, props2) {
   return props1.wfModuleId === props2.wfModuleId
     && props1.deltaId === props2.deltaId
     && props1.nRows === props2.nRows
+}
+
+/**
+ * Given props, return the props we'll pass to <TableView>.
+ */
+function tableProps (props) {
+  const ret = {}
+  for (const key of [ 'wfModuleId', 'deltaId', 'columns', 'nRows', 'showColumnLetter', 'sortColumn', 'sortDirection' ]) {
+    ret[key] = props[key]
+  }
+  return ret
 }
 
 function noop () {}
@@ -55,6 +66,8 @@ export default class TableSwitcher extends React.PureComponent {
   static getDerivedStateFromProps (props) {
     if (props.wfModuleId === null) {
       return { loaded: null }
+    } else if (props.nRows !== null && (props.nRows === 0 || props.columns.length > NMaxColumns)) {
+      return { loaded: tableProps(props) }
     } else {
       return null
     }
@@ -96,11 +109,7 @@ export default class TableSwitcher extends React.PureComponent {
   onLoadPage = (wfModuleId, deltaId) => {
     if (wfModuleId === this.props.wfModuleId && deltaId === this.props.deltaId && !areSameTable(this.props, this.state.loaded)) {
       // We have data for our currently-loading table. Mark it "loaded."
-      const loaded = {}
-      for (const key of [ 'wfModuleId', 'deltaId', 'columns', 'nRows', 'showColumnLetter', 'sortColumn', 'sortDirection' ]) {
-        loaded[key] = this.props[key]
-      }
-      this.setState({ loaded })
+      this.setState({ loaded: tableProps(this.props) })
     }
   }
 
