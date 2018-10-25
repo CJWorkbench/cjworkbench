@@ -78,7 +78,8 @@ class ExecuteTests(DbTestCase):
         self.assertEqual(wf_module3.status, 'ok')
 
         # Update parameter. Now module 2 will return an error.
-        wf_module2.get_parameter_val('code', 'custom').set_value('=ERROR')
+        wf_module2.parameter_vals.get(parameter_spec__id_name='code') \
+            .set_value('=ERROR')
         wf_module2.last_relevant_delta_id = 2
         wf_module3.last_relevant_delta_id = 2
         wf_module2.save(update_fields=['last_relevant_delta_id'])

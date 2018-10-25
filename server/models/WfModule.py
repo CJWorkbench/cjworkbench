@@ -241,26 +241,6 @@ class WfModule(models.Model):
         vals = self.parameter_vals.prefetch_related('parameter_spec').all()
         return Params(vals)
 
-    def get_parameter_val(self, name, expected_type):
-        try:
-            pspec = ParameterSpec.objects.get(
-                id_name=name,
-                module_version__id=self.module_version_id
-            )
-        except ParameterSpec.DoesNotExist:
-            raise ValueError(
-                f'Request for non-existent {expected_type} parameter {name}'
-            )
-
-        if pspec.type != expected_type:
-            raise ValueError(
-                f'Request for {expected_type} parameter {name} '
-                f'but actual type is {pspec.type}'
-            )
-
-        pval = self.parameter_vals.get(parameter_spec=pspec)
-        return pval
-
     # busy just changes the light on a single module, no need to reload entire
     # workflow
     async def set_busy(self):
