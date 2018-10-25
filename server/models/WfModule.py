@@ -265,9 +265,6 @@ class WfModule(models.Model):
         pval = self.get_parameter_val(name, expected_type)
         return pval.get_value()
 
-    def get_param_integer(self, name):
-        return self.get_param(name, ParameterSpec.INTEGER)
-
     def get_param_float(self, name):
         return self.get_param(name, ParameterSpec.FLOAT)
 
