@@ -7,7 +7,7 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import django.db.models.manager
-import server.models.Commands
+import server.models.commands
 
 
 class Migration(migrations.Migration):
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('server.delta', server.models.Commands._ChangesWfModuleOutputs),
+            bases=('server.delta', server.models.commands.util.ChangesWfModuleOutputs),
             managers=[
                 ('objects', django.db.models.manager.Manager()),
                 ('base_objects', django.db.models.manager.Manager()),

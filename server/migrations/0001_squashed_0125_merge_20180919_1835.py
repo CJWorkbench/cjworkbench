@@ -8,7 +8,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.db.models.manager
 import django.utils.timezone
-import server.models.Commands
+import server.models.commands
 
 # To generate this file:
 # 1. AVOID django's squashmigrations. Its migration errors because each step
@@ -224,7 +224,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('server.delta', server.models.Commands._ChangesWfModuleOutputs),
+            bases=('server.delta', server.models.commands.util.ChangesWfModuleOutputs),
             managers=[
                 ('objects', django.db.models.manager.Manager()),
                 ('base_objects', django.db.models.manager.Manager()),
@@ -241,7 +241,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('server.delta', server.models.Commands._ChangesWfModuleOutputs),
+            bases=('server.delta', server.models.commands.util.ChangesWfModuleOutputs),
             managers=[
                 ('objects', django.db.models.manager.Manager()),
                 ('base_objects', django.db.models.manager.Manager()),
@@ -258,7 +258,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('server.delta', server.models.Commands._ChangesWfModuleOutputs),
+            bases=('server.delta', server.models.commands.util.ChangesWfModuleOutputs),
             managers=[
                 ('objects', django.db.models.manager.Manager()),
                 ('base_objects', django.db.models.manager.Manager()),
@@ -327,7 +327,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('server.delta', server.models.Commands._ChangesWfModuleOutputs),
+            bases=('server.delta', server.models.commands.util.ChangesWfModuleOutputs),
             managers=[
                 ('objects', django.db.models.manager.Manager()),
                 ('base_objects', django.db.models.manager.Manager()),
@@ -344,7 +344,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('server.delta', server.models.Commands._ChangesWfModuleOutputs),
+            bases=('server.delta', server.models.commands.util.ChangesWfModuleOutputs),
             managers=[
                 ('objects', django.db.models.manager.Manager()),
                 ('base_objects', django.db.models.manager.Manager()),

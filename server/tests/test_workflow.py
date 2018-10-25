@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from server.tests.utils import LoggedInTestCase, add_new_wf_module, add_new_module_version, create_testdata_workflow
 from server.models import Workflow
-from server.models.Commands import InitWorkflowCommand
+from server.models.commands import InitWorkflowCommand
 
 
 class MockSession:

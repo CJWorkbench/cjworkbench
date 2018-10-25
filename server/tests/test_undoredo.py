@@ -1,7 +1,8 @@
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
-from server.models import AddModuleCommand, ChangeParameterCommand, \
-        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand, Delta
+from server.models import Delta
+from server.models.commands import AddModuleCommand, ChangeParameterCommand, \
+        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand
 from server.tests.utils import DbTestCase, load_module_version, \
         add_new_workflow, get_param_by_id_name
 from server.versions import WorkflowUndo, WorkflowRedo

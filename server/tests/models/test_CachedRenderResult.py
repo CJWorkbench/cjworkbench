@@ -3,7 +3,7 @@ import datetime
 import pandas
 from server.tests.utils import DbTestCase
 from server.models import Workflow, WfModule
-from server.models.Commands import InitWorkflowCommand
+from server.models.commands import InitWorkflowCommand
 from server.modules.types import Column, ProcessResult, QuickFix
 
 

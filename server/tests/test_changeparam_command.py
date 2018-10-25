@@ -2,7 +2,7 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from server.tests.utils import load_and_add_module_from_dict, \
         get_param_by_id_name, DbTestCase
-from server.models import ChangeParameterCommand
+from server.models.commands import ChangeParameterCommand
 
 
 async def async_noop(*args, **kwargs):

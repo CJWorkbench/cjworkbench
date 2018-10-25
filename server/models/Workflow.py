@@ -192,7 +192,7 @@ class Workflow(models.Model):
 
             # Set wf.last_delta and wf.last_delta_id, so we can render.
             # Import here to avoid circular deps
-            from server.models.Commands import InitWorkflowCommand
+            from server.models.commands import InitWorkflowCommand
             InitWorkflowCommand.create(wf)
 
             wfms = list(self.wf_modules.all())

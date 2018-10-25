@@ -2,10 +2,10 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.utils import timezone
 import pandas as pd
-from server.models import AddModuleCommand, DeleteModuleCommand, \
+from server.models import Module, ModuleVersion, Workflow, WfModule
+from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
-        ChangeWfModuleUpdateSettingsCommand, ModuleVersion, WfModule, \
-        ChangeParametersCommand, Workflow, Module
+        ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         mock_csv_table, mock_csv_table2
 

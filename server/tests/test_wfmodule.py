@@ -1,9 +1,8 @@
 import io
-import pandas as pd
-from server.models import StoredObject
 from django.core.exceptions import ValidationError
-from server.models import ParameterSpec, WfModule, ParameterVal
-from server.models.Commands import InitWorkflowCommand
+import pandas as pd
+from server.models import ParameterSpec, WfModule, ParameterVal, StoredObject
+from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_module_version, add_new_parameter_spec, add_new_wf_module, \
         mock_csv_table, mock_csv_table2, add_new_workflow

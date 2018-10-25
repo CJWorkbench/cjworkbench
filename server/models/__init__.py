@@ -10,10 +10,5 @@ from .ParameterVal import ParameterVal
 from .Params import Params
 from .ModuleVersion import ModuleVersion
 from .Delta import Delta
-from .Commands import AddModuleCommand, DeleteModuleCommand, \
-        ReorderModulesCommand, ChangeDataVersionCommand, \
-        ChangeParameterCommand, ChangeWorkflowTitleCommand, \
-        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand, \
-        ChangeParametersCommand
 from .UploadedFile import UploadedFile
 from .StoredObject import StoredObject

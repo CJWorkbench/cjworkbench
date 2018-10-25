@@ -3,8 +3,8 @@ import json
 from typing import Optional, Dict, Any
 from django.utils import timezone
 from django.conf import settings
-from server.models import WfModule
-from server.models import ChangeDataVersionCommand, StoredObject
+from server.models import StoredObject, WfModule
+from server.models.commands import ChangeDataVersionCommand
 from server.modules.types import ProcessResult
 from server import websockets
 

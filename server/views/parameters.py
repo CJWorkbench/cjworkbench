@@ -9,7 +9,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from ..models import ParameterSpec, ParameterVal, ChangeParameterCommand
+from ..models import ParameterSpec, ParameterVal
+from ..models.commands import ChangeParameterCommand
 from ..serializers import ParameterValSerializer
 from .. import triggerrender
 from .. import oauth

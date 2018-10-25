@@ -16,7 +16,7 @@ from rest_framework.renderers import JSONRenderer
 from server import execute
 from server.minio import UserFilesBucket
 from server.models import Module, ModuleVersion, Workflow
-from server.models import AddModuleCommand, ReorderModulesCommand, \
+from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         WorkflowSerializerLite, WfModuleSerializer, UserSerializer

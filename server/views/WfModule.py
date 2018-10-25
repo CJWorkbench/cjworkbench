@@ -15,10 +15,10 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from server.models import WfModule, StoredObject
+from server.models.commands import DeleteModuleCommand, \
+        ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
+        ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand
 from server.serializers import WfModuleSerializer
-from server.models import DeleteModuleCommand, ChangeDataVersionCommand, \
-        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand, \
-        ChangeParametersCommand
 import server.utils
 from server.utils import units_to_seconds
 from server.dispatch import module_get_html_bytes, module_dispatch_fetch

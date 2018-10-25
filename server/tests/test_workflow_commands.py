@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
-from server.models import WfModule, ModuleVersion, ReorderModulesCommand, \
+from server.models import ModuleVersion, WfModule
+from server.models.commands import ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_wf_module
