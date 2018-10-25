@@ -261,10 +261,6 @@ class WfModule(models.Model):
         pval = self.parameter_vals.get(parameter_spec=pspec)
         return pval
 
-    def get_param(self, name, expected_type):
-        pval = self.get_parameter_val(name, expected_type)
-        return pval.get_value()
-
     # busy just changes the light on a single module, no need to reload entire
     # workflow
     async def set_busy(self):
