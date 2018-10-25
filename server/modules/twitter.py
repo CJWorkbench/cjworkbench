@@ -133,15 +133,17 @@ class Twitter(ModuleImpl):
             result = ProcessResult(error=error)
             await ModuleImpl.commit_result(wfm, result)
 
+        params = wfm.get_params()
+
         param_names = {
             QUERY_TYPE_USER: 'username',
             QUERY_TYPE_SEARCH: 'query',
             QUERY_TYPE_LIST: 'listurl'
         }
 
-        querytype = wfm.get_param_menu_idx("querytype")
-        query = wfm.get_param_string(param_names[querytype])
-        access_token = wfm.get_param_secret_secret('twitter_credentials')
+        querytype = params.get_param_menu_idx("querytype")
+        query = params.get_param_string(param_names[querytype])
+        access_token = params.get_param_secret_secret('twitter_credentials')
 
         if query.strip() == '':
             return await fail('Please enter a query')
@@ -150,7 +152,7 @@ class Twitter(ModuleImpl):
             return await fail('Please sign in to Twitter')
 
         try:
-            if wfm.get_param_checkbox('accumulate'):
+            if params.get_param_checkbox('accumulate'):
                 old_tweets = get_stored_tweets(wfm)
                 tweets = get_new_tweets(access_token, querytype, query,
                                         old_tweets)

@@ -8,6 +8,7 @@ from unittest.mock import patch
 from tweepy.models import Status
 from server.modules.twitter import Twitter
 from server.modules.types import ProcessResult
+from .util import MockParams
 
 
 def table_to_result(table):
@@ -150,33 +151,23 @@ def make_mock_tweet_table(statuses):
     return table
 
 
+P = MockParams.factory(querytype=0, username='username', query='query',
+                       listurl='listurl', twitter_credentials={
+                           'oauth_token': 'a-token',
+                           'oauth_token_secret': 'a-token-secret',
+                       }, accumulate=True)
+
+
 class MockWfModule:
     def __init__(self, **kwargs):
-        self.querytype = 0
-        self.username = 'username'
-        self.query = 'query'
-        self.listurl = 'listurl'
-        self.twitter_credentials = {
-            'oauth_token': 'a-token',
-            'oauth_token_secret': 'a-token-secret',
-        }
-        self.accumulate = True
+        self.params = P(**kwargs)
         self.fetched_table = None
 
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def get_param_menu_idx(self, param):
-        return getattr(self, param)
-
-    def get_param_string(self, param):
-        return getattr(self, param)
-
-    def get_param_secret_secret(self, param):
-        return getattr(self, param)
-
-    def get_param_checkbox(self, param):
-        return getattr(self, param)
+    def get_params(self):
+        return self.params
 
     def retrieve_fetched_table(self):
         return self.fetched_table
@@ -195,8 +186,6 @@ class TwitterTests(unittest.TestCase):
     def setUp(self):
         super().setUp()
 
-        self.wf_module = MockWfModule()
-
         self.commit_result_patch = \
             patch('server.modules.moduleimpl.ModuleImpl.commit_result')
         self.commit_result = self.commit_result_patch.start()
@@ -212,28 +201,26 @@ class TwitterTests(unittest.TestCase):
         super().tearDown()
 
     def test_empty_query(self):
-        self.wf_module.querytype = 1
-        self.wf_module.query = ''
-        run_fetch(self.wf_module)
+        wf_module = MockWfModule(querytype=1, query='')
+        run_fetch(wf_module)
         self.commit_result.assert_called_with(
-            self.wf_module,
+            wf_module,
             ProcessResult(error='Please enter a query')
         )
 
     def test_empty_secret(self):
-        self.wf_module.twitter_credentials = None
-        run_fetch(self.wf_module)
+        wf_module = MockWfModule(twitter_credentials=None)
+        run_fetch(wf_module)
         self.commit_result.assert_called_with(
-            self.wf_module,
+            wf_module,
             ProcessResult(error='Please sign in to Twitter')
         )
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')
     def test_user_timeline_accumulate(self, cursor, auth_service):
-        self.wf_module.querytype = 0  # user timeline, as opposed to search
-        self.wf_module.username = 'foouser'
-        self.wf_module.accumulate = True
+        wf_module = MockWfModule(querytype=0, username='foouser',
+                                 accumulate=True)
 
         instance = cursor.return_value
         instance.pages.return_value = [mock_statuses]
@@ -242,7 +229,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Actually fetch!
-        run_fetch(self.wf_module)
+        run_fetch(wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -251,10 +238,10 @@ class TwitterTests(unittest.TestCase):
 
         # now accumulate new tweets
         cursor.reset_mock()
-        self.wf_module.fetched_table = result.dataframe
+        wf_module.fetched_table = result.dataframe
         # add only one tweet, mocking since_id
         instance.pages.return_value = [[mock_statuses2[0]]]
-        run_fetch(self.wf_module)
+        run_fetch(wf_module)
         self.assertEqual(cursor.call_args[1]['since_id'], mock_statuses[0].id)
         result2 = self.commit_result.call_args[0][1]
         # output should be only new tweets (in this case, one new tweet)
@@ -269,17 +256,17 @@ class TwitterTests(unittest.TestCase):
     def test_accumulate_empty(self, cursor, auth_service):
         # https://www.pivotaltracker.com/story/show/160258591
         # Empty dataframe shouldn't change types
-        self.wf_module.accumulate = True
+        wf_module = MockWfModule(accumulate=True)
 
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
 
-        self.wf_module.fetched_table = mock_tweet_table.copy()
+        wf_module.fetched_table = mock_tweet_table.copy()
 
         instance = cursor.return_value
         instance.pages.return_value = []
 
-        run_fetch(self.wf_module)
+        run_fetch(wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -293,7 +280,7 @@ class TwitterTests(unittest.TestCase):
         # 'id', 'retweet_count' and 'favorite_count' had wrong type after
         # accumulating an empty table. Now the bad data is in our database;
         # let's convert back to the type we want.
-        self.wf_module.accumulate = True
+        wf_module = MockWfModule(accumulate=True)
 
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
@@ -303,12 +290,12 @@ class TwitterTests(unittest.TestCase):
         nulls = bad_table.isna()
         bad_table = bad_table.astype(str)
         bad_table[nulls] = None
-        self.wf_module.fetched_table = bad_table
+        wf_module.fetched_table = bad_table
 
         # Fix it _no matter what_ -- even if we aren't adding any data.
         instance = cursor.return_value
         instance.pages.return_value = []
-        run_fetch(self.wf_module)
+        run_fetch(wf_module)
 
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
@@ -319,8 +306,7 @@ class TwitterTests(unittest.TestCase):
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')
     def test_twitter_search(self, cursor, auth_service):
-        self.wf_module.querytype = 1
-        self.wf_module.query = 'cat'
+        wf_module = MockWfModule(querytype=1, query='cat')
 
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
@@ -329,7 +315,7 @@ class TwitterTests(unittest.TestCase):
         instance.items.return_value = mock_statuses
 
         # Actually fetch!
-        run_fetch(self.wf_module)
+        run_fetch(wf_module)
         self.commit_result.assert_called()
         result = self.commit_result.call_args[0][1]
         self.assertEqual(result.error, '')
@@ -342,8 +328,7 @@ class TwitterTests(unittest.TestCase):
     @patch('tweepy.Cursor')
     def test_twitter_list(self, cursor, auth_service):
         listurl = 'https://twitter.com/thatuser/lists/theirlist'
-        self.wf_module.querytype = 2
-        self.wf_module.listurl = listurl
+        wf_module = MockWfModule(querytype=2, listurl=listurl)
 
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
@@ -352,7 +337,7 @@ class TwitterTests(unittest.TestCase):
         instance.pages.return_value = [mock_statuses]
 
         # Actually fetch!
-        run_fetch(self.wf_module)
+        run_fetch(wf_module)
         self.commit_result.assert_called()
         self.assertEqual(cursor.mock_calls[0][2]['owner_screen_name'],
                          'thatuser')

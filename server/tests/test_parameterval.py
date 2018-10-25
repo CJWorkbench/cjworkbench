@@ -106,54 +106,55 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
 
     # Value retrieval methods must return correct values and enforce type
     def test_parameter_get_values(self):
+        params = self.wfmodule.get_params()
 
         # current values are as set when created
-        s = self.wfmodule.get_param_string('stringparam')
+        s = params.get_param_string('stringparam')
         self.assertEqual(s, 'fooval')
 
-        se = self.wfmodule.get_param_string('stringparamempty')
+        se = params.get_param_string('stringparamempty')
         self.assertEqual(se, '')
 
-        i = self.wfmodule.get_param_integer('integerparam')
+        i = params.get_param_integer('integerparam')
         self.assertEqual(i, 10)
 
-        f = self.wfmodule.get_param_float('floatparam')
+        f = params.get_param_float('floatparam')
         self.assertEqual(f, 3.14159)
 
-        t = self.wfmodule.get_param_checkbox('checkboxparam')
+        t = params.get_param_checkbox('checkboxparam')
         self.assertEqual(t, True)
 
-        m = self.wfmodule.get_param_menu_idx('menuparam')
+        m = params.get_param_menu_idx('menuparam')
         self.assertEqual(m, 2)
 
-        m = self.wfmodule.get_param_menu_string('menuparam')
+        m = params.get_param_menu_string('menuparam')
         self.assertEqual(m, 'Item C')
 
-        m = self.wfmodule.get_param_radio_idx('radioparam')
+        m = params.get_param_radio_idx('radioparam')
         self.assertEqual(m, 0)
 
-        m = self.wfmodule.get_param_radio_string('radioparam')
+        m = params.get_param_radio_string('radioparam')
         self.assertEqual(m, 'Item A')
 
         # Retrieving value of wrong type should raise exception
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('integerparam')
+            params.get_param_string('integerparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('floatparam')
+            params.get_param_string('floatparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('checkboxparam')
+            params.get_param_string('checkboxparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_integer('stringparam')
+            params.get_param_integer('stringparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_checkbox('stringparam')
+            params.get_param_checkbox('stringparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_checkbox('menuparam')
+            params.get_param_checkbox('menuparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_radio_string('menuparam')
+            params.get_param_radio_string('menuparam')
 
         # error if no param by that name
-        with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('FooParam')
+        with self.assertRaises(KeyError):
+            params.get_param_string('FooParam')
 
     def test_duplicate(self):
         # Create a new WfModule of the same type, that has no parametervals yet
