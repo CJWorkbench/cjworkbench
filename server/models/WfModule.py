@@ -265,9 +265,6 @@ class WfModule(models.Model):
         pval = self.get_parameter_val(name, expected_type)
         return pval.get_value()
 
-    def get_param_float(self, name):
-        return self.get_param(name, ParameterSpec.FLOAT)
-
     def get_param_checkbox(self, name):
         return self.get_param(name, ParameterSpec.CHECKBOX)
 
