@@ -265,13 +265,6 @@ class WfModule(models.Model):
         pval = self.get_parameter_val(name, expected_type)
         return pval.get_value()
 
-    def get_param_menu_idx(self, name):
-        return self.get_param(name, ParameterSpec.MENU)
-
-    def get_param_menu_string(self, name):
-        pval = self.get_parameter_val(name, ParameterSpec.MENU)
-        return pval.selected_menu_item_string()
-
     def get_param_secret_secret(self, id_name: str):
         """Get a secret's "secret" data, or None."""
         pval = self.get_parameter_val(id_name, ParameterSpec.SECRET)
