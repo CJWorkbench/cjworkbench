@@ -265,23 +265,6 @@ class WfModule(models.Model):
         pval = self.get_parameter_val(name, expected_type)
         return pval.get_value()
 
-    def get_param_secret_secret(self, id_name: str):
-        """Get a secret's "secret" data, or None."""
-        pval = self.get_parameter_val(id_name, ParameterSpec.SECRET)
-
-        # Don't use get_value(), since it hides the secret. (We're paranoid
-        # about leaking users' secrets.)
-        json_val = pval.value
-        if json_val:
-            try:
-                val = json.loads(json_val)
-            except json.decoder.JSONDecodeError:
-                return None
-
-            return val['secret']
-        else:
-            return None
-
     def get_param_column(self, name):
         return self.get_param(name, ParameterSpec.COLUMN)
 
