@@ -265,12 +265,6 @@ class WfModule(models.Model):
         pval = self.get_parameter_val(name, expected_type)
         return pval.get_value()
 
-    def get_param_column(self, name):
-        return self.get_param(name, ParameterSpec.COLUMN)
-
-    def get_param_multicolumn(self, name):
-        return self.get_param(name, ParameterSpec.MULTICOLUMN)
-
     # busy just changes the light on a single module, no need to reload entire
     # workflow
     async def set_busy(self):
