@@ -1,7 +1,6 @@
 # A Command changes the state of a Workflow, by producing and executing a Delta
 import json
 import logging
-import threading  # FIXME nix this -- it can't work for our multi-process env
 from django.contrib.postgres.fields import JSONField
 from django.core.validators import int_list_validator
 from django.db import models
@@ -232,9 +231,6 @@ def addmodulecommand_delete_callback(sender, instance, **kwargs):
         instance.wf_module.delete()
 
 
-delete_lock = threading.Lock()
-
-
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
 class DeleteModuleCommand(Delta, _ChangesWfModuleOutputs):
     # must not have cascade on WfModule because we may delete it first when we are deleted
@@ -278,20 +274,29 @@ class DeleteModuleCommand(Delta, _ChangesWfModuleOutputs):
         self.save()
 
     @classmethod
+    def amend_create_kwargs(cls, *, workflow, wf_module):
+        # If wf_module is already deleted, ignore this Delta.
+        #
+        # This works around a race: what if two users delete the same WfModule
+        # at the same time? We want only one Delta to be created.
+        # amend_create_kwargs() is called within workflow.cooperative_lock(),
+        # so we can check without racint whether wf_module is already deleted.
+        wf_module.refresh_from_db()
+        if not wf_module.workflow_id:
+            return None
+
+        return {
+            'workflow': workflow,
+            'wf_module': wf_module,
+            'selected_wf_module': workflow.selected_wf_module,
+        }
+
+    @classmethod
     async def create(cls, wf_module):
-        # critical section to make double delete check work correctly
-        with delete_lock:
-            workflow = wf_module.workflow
-            if workflow is None:
-                return None     # this wfm was already deleted, do nothing
-
-            delta = await cls.create_impl(
-                workflow=workflow,
-                wf_module=wf_module,
-                selected_wf_module=workflow.selected_wf_module
-            )
-
-            return delta
+        return await cls.create_impl(
+            workflow=wf_module.workflow,
+            wf_module=wf_module,
+        )
 
     @property
     def command_description(self):

@@ -164,6 +164,8 @@ class Delta(PolymorphicModel):
 
         Keyword arguments vary by cls, but `workflow` is always required.
 
+        If `amend_create_kwargs()` returns `None`, no-op.
+
         Example:
 
             delta = await Delta.create_impl(ChangeWfModuleNotesCommand,
@@ -178,8 +180,10 @@ class Delta(PolymorphicModel):
             *args,
             **kwargs
         )
-        await delta.ws_notify(ws_data)
-        await delta.schedule_execute()
+
+        if delta:
+            await delta.ws_notify(ws_data)
+            await delta.schedule_execute()
 
         return delta
 
@@ -190,6 +194,8 @@ class Delta(PolymorphicModel):
 
         Delta creation can depend upon values already in the database. The
         delta may calculate those values itself.
+
+        Return `None` to abort creating the Delta altogether.
 
         Example:
 
@@ -203,16 +209,19 @@ class Delta(PolymorphicModel):
     @database_sync_to_async
     def _first_forward_and_save_returning_ws_data(cls, *args, **kwargs):
         """
-        Create and execute command, returning WebSockets data.
+        Create and execute command, returning `(Delta, WebSockets data)`.
+
+        If `amend_create_kwargs()` returns `None`, return `(None, None)` here.
 
         All this, in a cooperative lock.
         """
         workflow = kwargs['workflow']
         with workflow.cooperative_lock():
-            delta = cls.objects.create(
-                *args,
-                **cls.amend_create_kwargs(**kwargs)
-            )
+            create_kwargs = cls.amend_create_kwargs(**kwargs)
+            if not create_kwargs:
+                return (None, None)
+
+            delta = cls.objects.create(*args, **create_kwargs)
             delta.forward_impl()
 
             # Point workflow to us
