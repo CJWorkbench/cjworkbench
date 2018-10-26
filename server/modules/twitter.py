@@ -93,6 +93,8 @@ def get_new_tweets(access_token, querytype, query, old_tweets):
     tweets = [[getattr(t, x) for x in cols] for t in statuses]
     table = pd.DataFrame(tweets, columns=cols)
     table.insert(0, 'screen_name', [t.user.screen_name for t in statuses])
+    retweeted_names = [ t.retweeted_status.user.screen_name if hasattr(t,'retweeted_status') else None for t in statuses ]
+    table.insert(6, 'retweeted_status_screen_name', retweeted_names)
     # 280 chars should still be called 'text', meh
     table.rename(columns={'full_text': 'text'}, inplace=True)
     return table
