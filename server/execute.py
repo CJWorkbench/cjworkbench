@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 import datetime
 from typing import Any, Dict, Optional, Tuple
@@ -116,7 +117,7 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
 
 @database_sync_to_async
 def _execute_wfmodule_save(wf_module: WfModule, result: ProcessResult,
-                           old_result: ProcessResult, ) -> Tuple:
+                           old_result: ProcessResult) -> Tuple:
     """
     Second database step of execute_wfmodule().
 
@@ -142,7 +143,7 @@ def _execute_wfmodule_save(wf_module: WfModule, result: ProcessResult,
             result
         )
 
-        if result != old_result and safe_wf_module.notifications:
+        if safe_wf_module.notifications and result != old_result:
             safe_wf_module.has_unseen_notification = True
             output_delta = notifications.OutputDelta(safe_wf_module,
                                                      old_result, result)
@@ -196,8 +197,12 @@ async def execute_wfmodule(wf_module: WfModule,
         return cached_render_result
 
     table = last_result.dataframe
-    result = dispatch.module_dispatch_render(module_version, params,
-                                             table, fetch_result)
+    loop = asyncio.get_event_loop()
+    # Render may take a while. run_in_executor to push that slowdown to a
+    # thread and keep our event loop responsive.
+    result = await loop.run_in_executor(None, dispatch.module_dispatch_render,
+                                        module_version, params, table,
+                                        fetch_result)
 
     cached_render_result, output_delta = \
         await _execute_wfmodule_save(wf_module, result, old_result)

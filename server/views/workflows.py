@@ -2,7 +2,7 @@ from functools import lru_cache
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -13,8 +13,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server import execute
-from server.minio import UserFilesBucket
+from server import minio, rabbitmq
 from server.models import Module, ModuleVersion, Workflow
 from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand
@@ -25,6 +24,7 @@ from server.versions import WorkflowUndo, WorkflowRedo
 from .auth import lookup_workflow_for_read, lookup_workflow_for_write, \
         loads_workflow_for_read, loads_workflow_for_write, \
         lookup_workflow_for_owner
+
 
 # This id_name->ids mapping is used by the client to execute the ADD STEP from table actions
 # We cannot nix these, because modules without a UI in the stack (e.g. reorder) do not appear
@@ -64,11 +64,11 @@ def make_init_state(request, workflow=None, modules=None):
                                  for wfm in wf_module_data_list])
         ret['selected_wf_module'] = workflow.selected_wf_module
         ret['uploadConfig'] = {
-            'bucket': UserFilesBucket,
+            'bucket': minio.UserFilesBucket,
             'accessKey': settings.MINIO_ACCESS_KEY,  # never _SECRET_KEY
             'server': settings.MINIO_EXTERNAL_URL
         }
-        ret['user_files_bucket'] = UserFilesBucket
+        ret['user_files_bucket'] = minio.UserFilesBucket
         del ret['workflow']['selected_wf_module']
 
     if modules:
@@ -183,6 +183,18 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
         modules = visible_modules(request)
         init_state = make_init_state(request, workflow=workflow,
                                      modules=modules)
+
+        if workflow.wf_modules.exclude(
+            last_relevant_delta_id=F('cached_render_result_delta_id')
+        ).exists():
+            # We're returning a Workflow that may have stale WfModules. That's
+            # fine, but are we _sure_ the worker is about to render them? Let's
+            # double-check. This will handle edge cases such as "we wiped our
+            # caches" or maybe some bugs we haven't thought of.
+            #
+            # Normally this is a race and this render is spurious. TODO prevent
+            # two workers from rendering the same workflow at the same time.
+            rabbitmq.queue_render(workflow)
 
         return TemplateResponse(request, 'workflow.html',
                                 {'initState': init_state})

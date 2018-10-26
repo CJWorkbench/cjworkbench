@@ -49,7 +49,28 @@ services:
     #image:
     #build:
 
-  backend:
+  worker:
+    #image:
+    #build:
+    depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    environment:
+      PYTHONUNBUFFERED: '1'
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: workbench-db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio:9000
+      MINIO_BUCKET_PREFIX: integrationtest
+    volumes:
+      - importedmodules:/app/importedmodules
+      - local_mail:/app/local_mail
+      - saveddata:/app/media
+
+  cron:
     #image:
     #build:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
@@ -89,22 +110,25 @@ services:
       STATIC_URL: http://minio:9000/integrationtest-static/
     volumes:
       - importedmodules:/app/importedmodules
+      - local_mail:/app/local_mail
       - saveddata:/app/media
 
   integration-test:
     #image:
     #build:
-    depends_on: [ 'db', 'backend', 'frontend', 'git-server' ]
+    depends_on: [ 'db', 'worker', 'cron', 'frontend', 'git-server' ]
     command: [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     volumes:
       - importedmodules:/app/importedmodules
+      - local_mail:/app/local_mail
       - saveddata:/app/saveddata
     environment:
       PYTHONUNBUFFERED: '1'
 
 volumes:
   importedmodules: {}
+  local_mail: {}  # worker/frontend write emails; integration-test reads them
   saveddata: {}
 
 networks:

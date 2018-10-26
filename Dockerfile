@@ -145,9 +145,13 @@ COPY manage.py /app/
 FROM base AS migrate
 CMD [ "bin/migrate-prod" ]
 
-# 3.2. backend: runs background tasks
-FROM base AS backend
-CMD [ "./manage.py", "run-background-loop" ]
+# 3.2. worker: runs render+fetch
+FROM base AS worker
+CMD [ "./manage.py", "worker" ]
+
+# 3.2. cron: schedules fetches and runs cleanup SQL
+FROM base AS cron
+CMD [ "./manage.py", "cron" ]
 
 # 3.3. frontend: serves website
 FROM base AS frontend

@@ -499,8 +499,8 @@ registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_FULFILLED', (state, action) => {
 // Patch a workflow module with new data
 
 // TODO: We don't validate which fields or types are on
-// a WfModule here. The backend will reject nonexistent
-// fields, but should we do something on the frontend?
+// a WfModule here. The server will reject nonexistent
+// fields, but should we show the user an error?
 export function updateWfModuleAction (id, data) {
   return (dispatch, getState) => {
     const { wfModules } = getState()

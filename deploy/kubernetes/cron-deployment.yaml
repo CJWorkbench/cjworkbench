@@ -1,36 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: cron-deployment
 spec:
   selector:
     matchLabels:
-      app: frontend-app
+      app: cron-app
+  strategy:
+    type: Recreate
+  replicas: 1
+  revisionHistoryLimit: 20
   template:
     metadata:
       labels:
-        app: frontend-app
+        app: cron-app
     spec:
       containers:
-        - name: frontend
-          image: "gcr.io/cj-workbench/frontend:latest"
+        - name: cron
+          image: "gcr.io/cj-workbench/cron:latest"
           resources:
             requests:
-              cpu: 0.5
-              memory: 2Gi
+              cpu: 0.1
+              memory: 200MiB
             limits:
-              cpu: 0.9
-              memory: 2Gi
-          ports:
-            - name: http
-              containerPort: 8080
+              cpu: 0.1
+              memory: 200MiB
           env:
-            - name: PYTHONUNBUFFERED
-              value: '1'
-            - name: CJW_GOOGLE_ANALYTICS
-              value: UA-104106561-1
-            - name: CJW_HEAP_ANALYTICS_ID
-              value: '70406982'
             - name: CJW_PRODUCTION
               value: 'True'
             - name: CJW_RABBITMQ_HOST
@@ -40,20 +35,7 @@ spec:
             - name: CJW_DB_PASSWORD
               value: cjworkbench
             - name: CJW_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: cjw-secret-key
-                  key: value
-            - name: CJW_INTERCOM_APP_ID
-              valueFrom:
-                secretKeyRef:
-                  name: cjw-intercom-secret
-                  key: APP_ID
-            - name: CJW_INTERCOM_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: cjw-intercom-secret
-                  key: ACCESS_TOKEN
+              value: cron-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -67,8 +49,6 @@ spec:
               value: 049f32e5-06ef-42e5-847d-ca30f52bf816
             - name: CJW_SENDGRID_PASSWORD_RESET_ID
               value: 0946d35d-5763-4a22-b17d-ed9cb42bf096
-            - name: HTTPS
-              value: 'on'
             - name: CJW_GOOGLE_CLIENT_SECRETS
               value: secrets/google-oauth-secret/google-oauth-secret.json
             - name: CJW_SOCIALACCOUNT_SECRETS
@@ -85,21 +65,19 @@ spec:
                 secretKeyRef:
                   name: minio-access-key
                   key: secret_key
+            - name: MINIO_BUCKET_PREFIX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: MINIO_EXTERNAL_URL
               valueFrom:
                 secretKeyRef:
                   name: minio-access-key
                   key: external_url
             - name: MINIO_URL
-              value: 'http://minio-service'
-            - name: MINIO_BUCKET_PREFIX
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: http://minio-service
             - name: MINIO_BUCKET_SUFFIX
               value: '.workbenchdata.com'
-            - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/{MINIO_BUCKET_PREFIX}-static.workbenchdata.com/'
           volumeMounts:
             - mountPath: /app/importedmodules
               name: importedmodules-pv

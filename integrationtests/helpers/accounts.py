@@ -12,6 +12,9 @@ import psycopg2
 from integrationtests.browser import Browser
 
 
+EmailPath = '/app/local_mail'
+
+
 def login(browser: Browser, email: str, password: str) -> None:
     """Log in through `/account/login` as the given user."""
     browser.visit('/account/login')
@@ -194,16 +197,12 @@ class AccountAdmin:
 
     @property
     def latest_sent_email(self) -> Optional[email.message.Message]:
-        """The last sent email, or None.
+        """The last sent email, or None."""
+        filenames = os.listdir(EmailPath)
 
-        FIXME make None work, if we need it. (Right now it'll give an error.)
-        """
-        url = self.live_server_url + '/last-sent-email'
-        try:
-            with urlopen(url) as f:
-                return email.message_from_bytes(f.read())
-        except HTTPError as err:
-            if err.code == 404:
-                return None
-            else:
-                raise
+        if not filenames:
+            return None
+
+        filenames.sort()
+        with open(os.path.join(EmailPath, filenames[-1]), 'rb') as f:
+            return email.message_from_bytes(f.read())

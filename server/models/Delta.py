@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 import django.utils
 from polymorphic.models import PolymorphicModel
-from server import websockets
+from server import rabbitmq, websockets
 from server.serializers import WfModuleSerializer
 
 
@@ -142,9 +142,7 @@ class Delta(PolymorphicModel):
         return data
 
     async def schedule_execute(self) -> None:
-        import server.execute
-        coro = server.execute.execute_ignoring_error(self.workflow)
-        asyncio.ensure_future(coro)
+        await rabbitmq.queue_render(self.workflow)
 
     @classmethod
     async def create(cls, *, workflow, **kwargs):

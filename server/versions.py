@@ -81,7 +81,7 @@ async def save_result_if_changed(
 
     # un-indent: COMMIT so we notify the client _after_ COMMIT
     if version_added:
-        # notifies client
+        # notifies client of status+error_msg+last_update_check
         await ChangeDataVersionCommand.create(wfm, version_added)
     else:
         await websockets.ws_client_send_delta_async(wfm.workflow_id, {

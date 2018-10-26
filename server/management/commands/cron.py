@@ -33,7 +33,7 @@ async def main():
 
 
 class Command(BaseCommand):
-    help = 'Continually delete expired anonymous workflows and fetch wfmodules'
+    help = 'Loop: delete expired anonymous workflows and schedule fetches'
 
     def handle(self, *args, **options):
         loop = asyncio.new_event_loop()

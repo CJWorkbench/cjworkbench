@@ -92,25 +92,25 @@ except KeyError:
 
 # RabbitMQ
 try:
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_rabbitmq.core.RabbitmqChannelLayer',
-            'CONFIG': {
-                'host': os.environ['CJW_RABBITMQ_HOST'],
-            },
-        },
-    }
+    RABBITMQ_HOST = os.environ['CJW_RABBITMQ_HOST']
 except KeyError:
     sys.exit('Must set CJW_RABBITMQ_HOST')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_rabbitmq.core.RabbitmqChannelLayer',
+        'CONFIG': {
+            'host': RABBITMQ_HOST
+        },
+    },
+}
 
 # EMAIL_BACKEND
 #
 # In Production, sets ACCOUNT_ADAPTER, SENDGRID_TEMPLATE_IDS
-if DEBUG:
+if DEBUG or os.environ.get('CJW_MOCK_EMAIL'):
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
-elif os.environ.get('CJW_MOCK_EMAIL'):  # e.g., integration tests
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 else:
     EMAIL_BACKEND = 'sgbackend.SendGridBackend'
     # ACCOUNT_ADAPTER is specifically for sendgrid and nothing else

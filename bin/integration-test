@@ -23,15 +23,7 @@ DEBUGGING IDEAS
     a. Edit code in integrationtests/
     b. Run \`$0 resume\` to run tests without changing the system under test
 
-2. Find a bug in your web browser
-
-    a. Browse to http://localhost:8080
-    b. If you need a login, register and then browse to
-       http://localhost:8080/last-sent-email for the confirmation link
-    c1. If the bug is in a test, edit and run \`$0 resume\`
-    c2. If the bug is in Workbench, write a unit-test and restart from scratch
-
-3. Watch tests using VNC
+2. Watch tests using VNC
 
     a. Run \`$0 shell\` to start a new test runner
     b. Connect a VNC client to localhost:5901

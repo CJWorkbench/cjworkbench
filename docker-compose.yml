@@ -18,10 +18,21 @@ services:
     networks: [ 'dev' ]
     volumes:
       - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "psql -h localhost -U cjworkbench -c '\\q' "]
+      interval: 1s
+      retries: 3
+      start_period: 120s
 
   rabbitmq:
-    image: rabbitmq:3.7.8
+    image: rabbitmq:3.7.8-management
+    ports: [ '15672' ] # open management port, for debugging
     networks: [ 'dev' ]
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics status | grep -q listeners.*clustering.*amqp" ]
+      interval: 1s
+      retries: 3
+      start_period: 120s
 
   minio:
     image: minio/minio:RELEASE.2018-09-11T01-39-21Z
@@ -56,7 +67,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -70,7 +81,7 @@ services:
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
 
-  backend:
+  worker:
     # It'd be nice to use YAML anchors to copy these parameters ... but
     # PyCharm's YAML parser seems to die when we use YAML anchors.
     build:
@@ -82,7 +93,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       MINIO_ACCESS_KEY: minio_access
@@ -92,7 +103,31 @@ services:
       CACHE_MODULES: "${CACHE_MODULES:-}"
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
-    command: [ 'pipenv', 'run', 'python', './manage.py', 'run-background-loop' ]
+    command: [ 'pipenv', 'run', 'python', './manage.py', 'worker' ]
+
+  cron:
+    # It'd be nice to use YAML anchors to copy these parameters ... but
+    # PyCharm's YAML parser seems to die when we use YAML anchors.
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - ./:/app/:rw
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
+    environment:
+      PYTHONUNBUFFERED: '1'
+      CJW_DB_HOST: database
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio:9000
+      MINIO_BUCKET_PREFIX: dev
+      CACHE_MODULES: "${CACHE_MODULES:-}"
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
+    networks: [ 'dev' ]
+    command: [ 'pipenv', 'run', 'python', './manage.py', 'cron' ]
 
   testdatabase:
     image: postgres:10.4

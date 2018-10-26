@@ -8,6 +8,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from minio.error import ResponseError
 from rest_framework.decorators import api_view
+from server import rabbitmq
 from server.forms import UploadedFileForm
 from server.minio import minio_client, UserFilesBucket, sign
 from server.models import WfModule
@@ -59,7 +60,7 @@ def handle_completed_upload(request: HttpRequest):
         uploaded_file.key
     ).size
     uploaded_file.save()
-    async_to_sync(upload_to_table)(wf_module, uploaded_file)
+    async_to_sync(rabbitmq.queue_handle_upload_DELETEME)(uploaded_file)
     return JsonResponse({'success': True}, status=201)
 
 

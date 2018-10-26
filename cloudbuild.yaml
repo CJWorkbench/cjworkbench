@@ -4,7 +4,7 @@ timeout: 1800s
 steps:
 # cache-from doesn't work well with multi-stage builds yet: see
 # https://github.com/moby/moby/issues/32612. We don't win if we pull down
-# migrate/backend/frontend and try to build using their caches.
+# migrate/worker/cron/frontend and try to build using their caches.
 #
 # One alternative win for build speed: author pull requests for each Python
 # library that uses C, so they push bdist with manylinux. That way our
@@ -32,9 +32,16 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--target', 'backend',
-          '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/backend:latest',
+          '--target', 'worker',
+          '-t', 'gcr.io/$PROJECT_ID/worker:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/worker:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--target', 'cron',
+          '-t', 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/cron:latest',
           '.'
         ]
 - name: 'gcr.io/cloud-builders/docker'
@@ -82,8 +89,10 @@ steps:
 images:
 - 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/migrate:latest'
-- 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/backend:latest'
+- 'gcr.io/$PROJECT_ID/worker:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/worker:latest'
+- 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/cron:latest'
 - 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/frontend:latest'
 - 'gcr.io/$PROJECT_ID/integration-test:latest'

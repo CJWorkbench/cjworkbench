@@ -71,7 +71,7 @@ case "$COMMAND" in
     # non-Windows.
     #
     # docker-compose is much slower, but it takes fewer lines of code.
-    docker_compose run --rm backend rm -rf local_mail/* importedmodules/* media/* node_modules/
+    docker_compose run --rm worker rm -rf local_mail/* importedmodules/* media/* node_modules/
 
     # Wipe volumes
     docker_compose_with_commands down -t0 -v # -v removes named volumes
@@ -87,11 +87,11 @@ case "$COMMAND" in
     ;;
 
   "python")
-    docker_compose run --rm backend pipenv run python "$@"
+    docker_compose run --rm worker pipenv run python "$@"
     ;;
 
   "pipenv")
-    docker_compose run --rm backend pipenv "$@"
+    docker_compose run --rm worker pipenv "$@"
     ;;
 
   "unittest")

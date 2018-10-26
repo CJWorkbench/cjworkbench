@@ -10,10 +10,15 @@ services:
   git-server:
     build: ./git-server
 
-  backend:
+  worker:
     build:
       context: ..
-      target: backend
+      target: worker
+
+  cron:
+    build:
+      context: ..
+      target: cron
 
   frontend:
     # Allow debugging at http://localhost:8080

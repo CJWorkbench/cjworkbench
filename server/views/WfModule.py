@@ -20,8 +20,9 @@ from server.models.commands import DeleteModuleCommand, \
         ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand
 from server.serializers import WfModuleSerializer
 import server.utils
+from server import rabbitmq
 from server.utils import units_to_seconds
-from server.dispatch import module_get_html_bytes, module_dispatch_fetch
+from server.dispatch import module_get_html_bytes
 
 
 _MaxNRowsPerRequest = 300
@@ -194,7 +195,12 @@ def wfmodule_params(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_fetch(request, pk, format=None):
     wf_module = _lookup_wf_module_for_write(pk, request)
-    async_to_sync(module_dispatch_fetch)(wf_module)
+
+    async def process():
+        await wf_module.set_busy()
+        await rabbitmq.queue_fetch(wf_module)
+
+    async_to_sync(process)()
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 

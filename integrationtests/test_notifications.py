@@ -23,13 +23,17 @@ class TestNotifications(LoggedInIntegrationTest):
         b.click_button('Update')
 
         self.add_wf_module('Filter')
-        self.select_column('Filter', 'column', 'data', wait=True)  # wait for module load
+        # wait for module load
+        self.select_column('Filter', 'column', 'data', wait=True)
         b.select('condition', 'Greater than')
-        b.fill_in('value', '-0.5', wait=True)  # wait for field to appear
+        b.fill_in('value', '-0.1', wait=True)  # wait for field to appear
+        b.click_button('submit')
 
         # Enable notifications
         with b.scope('.wf-module[data-module-name="Filter"]'):
-            b.click_button('Email alerts disabled')
+            # [adamhooper, 2018-10-26] wait because one time I got
+            # ElementNotFound on my dev machine
+            b.click_button('Email alerts disabled', wait=True)
         # 'Turn on' is a checkbox, but it has display:none so Webdriver can't
         # see it.
         b.click_whatever('label', text='Turn on', wait=True)  # wait for modal
@@ -49,4 +53,4 @@ class TestNotifications(LoggedInIntegrationTest):
             return path in body and 'has been updated with new data' in body
 
         timeout = b.default_wait_timeout
-        WebDriverWait(None, timeout).until(got_notification_email)
+        WebDriverWait(None, 10000*timeout).until(got_notification_email)

@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: worker-deployment
 spec:
   selector:
     matchLabels:
-      app: backend-app
+      app: worker-app
   strategy:
     type: Recreate
   replicas: 1
@@ -13,18 +13,18 @@ spec:
   template:
     metadata:
       labels:
-        app: backend-app
+        app: worker-app
     spec:
       containers:
-        - name: backend
-          image: "gcr.io/cj-workbench/backend:latest"
+        - name: worker
+          image: "gcr.io/cj-workbench/worker:latest"
           resources:
             requests:
-              cpu: 0.2
-              memory: 3.5Gi
+              cpu: 0.51 # don't put two workers on the same core
+              memory: 5200Mi
             limits:
-              cpu: 0.5
-              memory: 3.5Gi
+              cpu: 0.9
+              memory: 5200Mi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -35,7 +35,7 @@ spec:
             - name: CJW_DB_PASSWORD
               value: cjworkbench
             - name: CJW_SECRET_KEY
-              value: backend-needs-no-secret-key
+              value: worker-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:

@@ -37,8 +37,8 @@ spec:
         env:
         # Minio access key and secret key determine which clients have access
         # to minio (and thus all uploaded files). For us, the correct answer is
-        # "frontend and backend". So we'll set the secret here _and_ in
-        # frontend/backend.
+        # "frontend and worker". So we'll set the secret here _and_ in
+        # frontend/worker.
         #
         # The secret is called "minio-access-key" and its paths are "access_key"
         # and "secret_key".
