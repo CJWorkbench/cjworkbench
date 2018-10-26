@@ -106,7 +106,7 @@ user_timeline2_json = """[
   "created_at": "Sat Nov 05 18:20:40 +0000 2016",
   "id": 794967685113188400,
   "id_str": "794967685113188352",
-  "text": "RT @ritanyaaskar: Hi...tweepy darlings...my first tweets to my sweety tweeps.",
+  "full_text": "RT @ritanyaaskar: Hi...tweepy darlings...my first tweets to my sweety tweeps.",
   "truncated": false,
   "entities": {
     "hashtags": [],
@@ -125,6 +125,7 @@ user_timeline2_json = """[
     ],
     "urls": []
   },
+  "source":"\\u003ca href=\\"http://twitter.com\\" rel=\\"nofollow\\"\\u003eTwitter Web Client\\u003c/a\\u003e",
   "metadata": {
     "iso_language_code": "en",
     "result_type": "recent"
@@ -348,7 +349,7 @@ class MockWfModule:
 mock_statuses = make_mock_statuses(user_timeline_json)
 mock_statuses2 = make_mock_statuses(user_timeline2_json)
 mock_tweet_table = make_mock_tweet_table(mock_statuses)
-
+mock_tweet_table2 = make_mock_tweet_table(mock_statuses2)
 
 def run_fetch(wf_module):
     async_to_sync(Twitter.fetch)(wf_module)
@@ -422,6 +423,7 @@ class TwitterTests(unittest.TestCase):
             list(result2.dataframe['id']),
             [795018956507582465, 795017539831103489, 795017147651162112]
         )
+        self.assertEqual(list(result2.dataframe.columns), list(mock_tweet_table.columns))
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('tweepy.Cursor')
@@ -519,3 +521,43 @@ class TwitterTests(unittest.TestCase):
         result = self.commit_result.call_args[0][1]
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
+
+
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('tweepy.Cursor')
+    def test_add_retweet_status_screen_name(self, cursor, auth_service):
+        # Migration: what happens when we accumulate tweets
+        # where the old stored table does not have retweet_status_screen_name?
+        # We should consider those to have just None in that column
+        wf_module = MockWfModule(accumulate=True)
+
+        auth_service.return_value.consumer_key = 'a-key'
+        auth_service.return_value.consumer_secret = 'a-secret'
+
+        # Simulate old format by deleting retweet screen name column
+        old_format_table = mock_tweet_table.copy(deep=True).drop('retweeted_status_screen_name', axis=1)
+        wf_module.fetched_table = old_format_table
+
+        # add tweets which are not duplicated (mocking since_id)
+        instance = cursor.return_value
+        instance.pages.return_value = [[mock_statuses2[0], mock_statuses2[1]]]
+        run_fetch(wf_module)
+
+        self.commit_result.assert_called()
+        result = self.commit_result.call_args[0][1]
+        self.assertEqual(result.error, '')
+
+        # The final table should contain all columns from our current format
+        self.assertEqual(
+            list(result.dataframe.columns),
+            list(mock_tweet_table.columns)
+        )
+
+        # The final table should contain merged, sorted tweet ids
+        ref_ids = sorted(list(mock_tweet_table['id']) + list(mock_tweet_table2['id']), reverse=True)
+        ref_ids = list(dict.fromkeys(ref_ids)) # removes duplicates
+        self.assertEqual(
+            list(result.dataframe['id']),
+            ref_ids
+        )
+

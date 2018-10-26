@@ -109,6 +109,10 @@ def merge_tweets(wf_module, new_table):
     elif new_table is None or new_table.empty:
         return old_table
     else:
+        # Add in retweeted screen_name if old version doesn't have it (data migration)
+        if 'retweeted_status_screen_name' not in old_table.columns:
+            old_table.insert(6, 'retweeted_status_screen_name', None)
+
         return pd.concat([new_table, old_table]) \
                 .sort_values('id', ascending=False) \
                 .reset_index(drop=True)
