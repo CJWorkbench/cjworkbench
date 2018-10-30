@@ -194,7 +194,7 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
             #
             # Normally this is a race and this render is spurious. TODO prevent
             # two workers from rendering the same workflow at the same time.
-            rabbitmq.queue_render(workflow)
+            async_to_sync(rabbitmq.queue_render)(workflow)
 
         return TemplateResponse(request, 'workflow.html',
                                 {'initState': init_state})
