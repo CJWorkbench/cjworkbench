@@ -286,10 +286,10 @@ def _load_wf_modules_and_input(workflow: Workflow):
 
 async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
     """
-    Ensures all `workflow.wf_modules` have valid cached render results.
+    Ensure all `workflow.wf_modules` have valid cached render results.
 
-    raises UnneededExecution if the inputs become stale (at which point we
-    don't care about the results any more).
+    Raise UnneededExecution if the inputs become stale (at which point we don't
+    care about results any more).
 
     WEBSOCKET NOTES: each wf_module is executed in turn. After each execution,
     we notify clients of its new columns and status.

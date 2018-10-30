@@ -35,6 +35,7 @@ minio = "*"
 async-generator = "*"
 aiodns = "*"
 channels-rabbitmq = "==0.0.3"
+asyncpg = "*"
 
 [dev-packages]
 watchdog = "*"
