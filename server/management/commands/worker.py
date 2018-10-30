@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from django.core.management.base import BaseCommand
 from django.utils import autoreload
 from server.worker import main_loop
@@ -9,10 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
-    import sys
     logger.error('Exiting because of unhandled exception: %s',
                  context['exception'])
-    sys.exit(1)
+    os._exit(1)
 
 
 def main():
