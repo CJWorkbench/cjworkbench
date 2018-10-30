@@ -99,10 +99,12 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
 
         old_result = None
         if cached_render_result:
-            # If the cache is good, skip everything.
+            # If the cache is good, skip everything. No need for old_result,
+            # because we know the output won't change (since we won't even run
+            # render()).
             if (cached_render_result.delta_id
                     == wf_module.last_relevant_delta_id):
-                return (cached_render_result, None, None, None, None)
+                return (cached_render_result, None, None, None, None, None)
 
             if safe_wf_module.notifications:
                 old_result = cached_render_result.result
