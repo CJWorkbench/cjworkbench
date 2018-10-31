@@ -124,7 +124,7 @@ export default class DropZone extends Component {
     )
 
     return (
-      <div>
+      <div className="uploader">
         {files.length == 0 ? (
           <FineUploaderDropZone
             className='dropzone d-flex justify-content-center align-items-center'
