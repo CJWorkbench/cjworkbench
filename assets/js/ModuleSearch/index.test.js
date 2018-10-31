@@ -83,6 +83,12 @@ describe('ModuleSearch', () => {
       wrapper.update()
       expect(wrapper.text()).toMatch(/Load from Enigma/)
       expect(wrapper.text()).not.toMatch(/Filter by Text/)
+
+      // Search in description
+      searchField.simulate('change', {target: {value: 'description'}})
+      wrapper.update()
+      expect(wrapper.text()).toMatch(/Load from Enigma/)
+      expect(wrapper.text()).toMatch(/Filter by Text/)
     })
 
     it('calls onCancel on form reset (e.g., clicking button.close)', () => { 
