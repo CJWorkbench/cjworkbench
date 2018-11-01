@@ -2,6 +2,7 @@ import asyncio
 from functools import partial
 import logging
 import msgpack
+import os
 import time
 from typing import Awaitable, Callable
 import aio_pika
@@ -9,7 +10,7 @@ import asyncpg
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 from django.conf import settings
 from django.utils import timezone
-from server import execute
+from server import execute, rabbitmq
 from server.models import UploadedFile, WfModule, Workflow
 from server.updates import update_wf_module
 from server.modules import uploadfile
@@ -26,18 +27,26 @@ logger = logging.getLogger(__name__)
 
 # NRenderers: number of renders to perform simultaneously. This should be 1 per
 # CPU, because rendering is CPU-bound. (It uses a fair amount of RAM, too.)
-NRenderers = 1
+#
+# Default is 1: we expect to run on a 2-CPU machine, so 1 CPU for render and 1
+# for cron-render.
+NRenderers = int(os.getenv('CJW_WORKER_N_RENDERERS', 1))
 
 # NFetchers: number of fetches to perform simultaneously. Fetching is
 # often I/O-heavy, and some of our dependencies use blocking calls, so we
 # allocate a thread per fetcher. Larger files may use lots of RAM.
-NFetchers = 3
+#
+# Default is 3: these mostly involve waiting for remote servers, though there's
+# also some RAM required for bigger tables.
+NFetchers = int(os.getenv('CJW_WORKER_N_FETCHERS', 3))
 
 # NUploaders: number of uploaded files to process at a time. TODO turn these
 # into fetches - https://www.pivotaltracker.com/story/show/161509317. We handle
 # the occasional 1GB+ file, which will consume ~3GB of RAM, so let's keep this
 # number at 1
-NUploaders = 1
+#
+# Default is 1: we don't expect many uploads.
+NUploaders = int(os.getenv('CJW_WORKER_N_UPLOADERS', 1))
 
 # DupRenderWait: number of seconds to wait before queueing a re-render request.
 # When a service requests a render of an already-rendering workflow, the
@@ -341,18 +350,17 @@ async def DELETEME_listen_for_uploads(connection: aio_pika.Connection,
 
 async def main_loop():
     """
-    Run one fetcher and one renderer, forever.
+    Run fetchers and renderers, forever.
     """
-    host = settings.RABBITMQ_HOST
-
-    logger.info('Connecting to %s', host)
-    connection = await aio_pika.connect_robust(url=host,
-                                               connection_attempts=100)
+    connection = (await rabbitmq.get_connection()).connection
     async with PgLocker() as pg_locker:
-        await listen_for_renders(pg_locker, connection, NRenderers)
-        await listen_for_fetches(connection, NFetchers)
-        await DELETEME_listen_for_uploads(connection, NUploaders)
+        if NRenderers:
+            await listen_for_renders(pg_locker, connection, NRenderers)
+        if NFetchers:
+            await listen_for_fetches(connection, NFetchers)
+        if NUploaders:
+            await DELETEME_listen_for_uploads(connection, NUploaders)
 
         # Run forever
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(99999)
