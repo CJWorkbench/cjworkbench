@@ -84,7 +84,7 @@ export class ModuleSearch extends React.Component {
   findResultGroups(input) {
     const escapedValue = escapeRegexCharacters(input.trim())
     const regex = new RegExp(escapedValue, 'i')
-    const foundModules = this.props.modules.filter(m => regex.test(m.name))
+    const foundModules = this.props.modules.filter(m => (regex.test(m.name) | regex.test(m.description)))
     const groups = groupModules(foundModules)
     return groups
   }
