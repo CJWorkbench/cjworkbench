@@ -185,7 +185,7 @@
   }
 
   span.arrow {
-    left: calc((#{$module-popover-arrow-size} + #{$module-popover-border-width}) * -1);
+    left: -8px;
     margin-top: -4px; // Bootstrap's calculations assume a much smaller arrow
 
     &::before {
