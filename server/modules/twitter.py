@@ -232,6 +232,9 @@ class Twitter(ModuleImpl):
     # Render just returns previously retrieved tweets
     @staticmethod
     def render(params, table, *, fetch_result, **kwargs):
+        if fetch_result is None:
+            return create_empty_table()
+
         if fetch_result.status == 'error':
             return fetch_result
 
