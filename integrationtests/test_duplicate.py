@@ -30,8 +30,9 @@ class DuplicateTest(LoggedInIntegrationTest):
         # Duplicate it!
         b.click_button('Duplicate')
 
-        # Wait for spinner to go away -- which only happens after page reload
-        b.assert_no_element('.spinner-container-transparent', wait=True)
+        # Wait for the new workflow to load -- by name
+        b.assert_element('input[name="name"][value="Copy of Example"]',
+                         wait=True)
 
         url2 = b.get_url()
         self.assertNotEqual(url2, url1)
