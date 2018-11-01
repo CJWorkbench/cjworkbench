@@ -415,6 +415,8 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str]={},
             async with session.get(url, headers=headers,
                                    timeout=timeout,
                                    raise_for_status=True) as response:
+                response.raise_for_status()
+
                 async for blob in \
                         response.content.iter_chunked(_ChunkSize):
                     spool.write(blob)

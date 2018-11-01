@@ -1,10 +1,10 @@
-from .moduleimpl import ModuleImpl
+import asyncio
+import aiohttp
 import pandas as pd
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
-from urllib.error import URLError, HTTPError
 from .types import ProcessResult
+from .moduleimpl import ModuleImpl
+from server.modules import utils
 
 
 def merge_colspan_headers_in_place(table) -> None:
@@ -71,28 +71,27 @@ class ScrapeTable(ModuleImpl):
         if tablenum < 0:
             return await fail(_('Table number must be at least 1'))
 
-        validate = URLValidator()
-        try:
-            validate(url)
-        except ValidationError:
-            return await fail(_('Invalid URL'))
-
         result = None
 
         try:
-            # TODO async HTML fetch
-            tables = pd.read_html(url, flavor='html5lib')
+            async with utils.spooled_data_from_url(url) as (spool, headers,
+                                                            charset):
+                # TODO use charset for encoding detection
+                tables = pd.read_html(spool, encoding=charset,
+                                      flavor='html5lib')
+        except asyncio.TimeoutError:
+            result = ProcessResult(error=f'Timeout fetching {url}')
+        except aiohttp.InvalidURL:
+            result = ProcessResult(error=f'Invalid URL')
+        except aiohttp.ClientResponseError as err:
+            result = ProcessResult(error=('Error from server: %d %s' % (
+                                          err.status, err.message)))
+        except aiohttp.ClientError as err:
+            result = ProcessResult(error=str(err))
         except ValueError as e:
             result = ProcessResult(
                 error=_('Did not find any <table> tags on that page')
             )
-        except HTTPError as err:  # subclass of URLError
-            if err.code == 404:
-                result = ProcessResult(error=_('Page not found (404)'))
-            else:
-                result = ProcessResult(error=str(err))
-        except URLError as err:
-            result = ProcessResult(error=str(err))
 
         if not result:
             if not tables:

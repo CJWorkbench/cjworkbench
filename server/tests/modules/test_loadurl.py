@@ -1,3 +1,4 @@
+import asyncio
 from collections import OrderedDict
 import io
 import json
@@ -5,8 +6,6 @@ import os
 import unittest
 from unittest.mock import patch
 import aiohttp
-from async_generator import asynccontextmanager  # TODO python 3.7 native
-import asyncio
 from django.conf import settings
 import pandas as pd
 from server.modules.loadurl import LoadURL
