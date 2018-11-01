@@ -28,6 +28,7 @@ def cached_render_result_revision_list(workflow):
 
 
 class ExecuteTests(DbTestCase):
+    @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_execute_revision_0(self):
         # Don't crash on a new workflow (rev=0, no caches)
         workflow = create_testdata_workflow(table_csv)
@@ -131,6 +132,7 @@ class ExecuteTests(DbTestCase):
             }
         })
 
+    @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_execute_cache_hit(self):
         workflow = create_testdata_workflow(table_csv)
         wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
@@ -146,6 +148,7 @@ class ExecuteTests(DbTestCase):
             self.assertFalse(mdr.called)
             self.assertEqual(result2, result1)
 
+    @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_resume_without_rerunning_unneeded_renders(self):
         workflow = create_testdata_workflow(table_csv)
         wf_module1 = workflow.wf_modules.first()
@@ -169,6 +172,7 @@ class ExecuteTests(DbTestCase):
             result = wf_module2.get_cached_render_result().result
             self.assertEqual(result, expected)
 
+    @patch('server.websockets.ws_client_send_delta_async', fake_send)
     @patch('server.notifications.email_output_delta')
     def test_email_delta(self, email):
         workflow = create_testdata_workflow(table_csv)
@@ -182,6 +186,7 @@ class ExecuteTests(DbTestCase):
         wf_module1.refresh_from_db()
         self.assertTrue(wf_module1.has_unseen_notification)
 
+    @patch('server.websockets.ws_client_send_delta_async', fake_send)
     @patch('server.notifications.email_output_delta')
     def test_email_no_delta_when_not_changed(self, email):
         workflow = create_testdata_workflow(table_csv)
