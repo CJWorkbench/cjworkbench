@@ -1,4 +1,5 @@
 import asyncio
+from datetime import timedelta
 from functools import partial
 import logging
 import msgpack
@@ -10,9 +11,8 @@ import asyncpg
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 from django.conf import settings
 from django.utils import timezone
-from server import execute, rabbitmq
+from server import dispatch, execute, rabbitmq
 from server.models import UploadedFile, WfModule, Workflow
-from server.updates import update_wf_module
 from server.modules import uploadfile
 
 
@@ -61,6 +61,9 @@ NUploaders = int(os.getenv('CJW_WORKER_N_UPLOADERS', 1))
 # on average). Either way, the duplicate-render Workflow will be queued _last_
 # so that other pending renders will occur before it.
 DupRenderWait = 0.05  # s
+
+
+MinFetchInterval = 5 * 60  # 5min
 
 
 class WorkflowAlreadyLocked(Exception):
@@ -188,6 +191,31 @@ async def benchmark(task, message, *args):
     finally:
         t2 = time.time()
         logger.info(f'End {message} (%dms)', *args, 1000 * (t2 - t1))
+
+
+async def update_wf_module(wf_module, now):
+    """Fetch `wf_module` and notify user of changes via email/websockets."""
+    logger.debug('update_wf_module(%d, %d) at interval %d',
+                 wf_module.workflow_id, wf_module.id,
+                 wf_module.update_interval)
+    try:
+        await dispatch.module_dispatch_fetch(wf_module)
+    except Exception as e:
+        # Log exceptions but keep going
+        logger.exception(f'Error fetching {wf_module}')
+
+    update_next_update_time(wf_module, now)
+
+
+def update_next_update_time(wf_module, now):
+    """Schedule next update, skipping missed updates if any."""
+    tick = timedelta(seconds=max(wf_module.update_interval, MinFetchInterval))
+    wf_module.last_update_check = now
+
+    if wf_module.next_update:
+        while wf_module.next_update <= now:
+            wf_module.next_update += tick
+    wf_module.save(update_fields=['last_update_check', 'next_update'])
 
 
 async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],

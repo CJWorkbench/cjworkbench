@@ -1,8 +1,12 @@
 import asyncio
+from datetime import timedelta
+import logging
 from unittest.mock import patch
+from asgiref.sync import async_to_sync
+from dateutil import parser
 from server import execute, worker
 from server.models import Workflow
-from server.tests.utils import DbTestCase
+from server.tests.utils import DbTestCase, load_module_version
 
 
 future_none = asyncio.Future()
@@ -53,9 +57,7 @@ class WorkerTest(DbTestCase):
                     async with locker2.render_lock(1):
                         pass
 
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(inner())
-        loop.close()
+        async_to_sync(inner)()
 
     @patch('server.execute.execute_workflow')
     def test_render_or_reschedule_render(self, execute):
@@ -69,9 +71,7 @@ class WorkerTest(DbTestCase):
                                                   rescheduler.reschedule,
                                                   workflow.id)
 
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(inner())
-        loop.close()
+        async_to_sync(inner)()
 
         execute.assert_called_with(workflow)
         self.assertEqual(rescheduler.calls, [])
@@ -92,9 +92,7 @@ class WorkerTest(DbTestCase):
                      'rendered elsewhere; rescheduling'),
                 ])
 
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(inner())
-        loop.close()
+        async_to_sync(inner)()
 
         execute.assert_not_called()
         self.assertEqual(rescheduler.calls, [(workflow.id,)])
@@ -111,10 +109,7 @@ class WorkerTest(DbTestCase):
                     'INFO:server.worker:Skipping render of deleted Workflow 12345',
                 ])
 
-
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(inner())
-        loop.close()
+        async_to_sync(inner)()
 
     @patch('server.execute.execute_workflow')
     def test_render_or_reschedule_aborted(self, mock_execute):
@@ -138,3 +133,76 @@ class WorkerTest(DbTestCase):
 
         # Don't reschedule: it is _unneeded_ execution.
         self.assertEqual(rescheduler.calls, [])
+
+
+# Test the scan loop that updates all auto-updating modules
+class UpdatesTests(DbTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.workflow = Workflow.objects.create()
+        self.loadurl = load_module_version('loadurl')
+        self.wfm1 = self.workflow.wf_modules.create(
+            module_version=self.loadurl,
+            order=0
+        )
+
+    @patch('server.dispatch.module_dispatch_fetch')
+    def test_update_wf_module(self, mock_dispatch):
+        mock_dispatch.return_value = future_none
+
+        self.wfm1.next_update = parser.parse('Aug 28 1999 2:24PM UTC')
+        self.wfm1.update_interval = 600
+        self.wfm1.save()
+
+        now = parser.parse('Aug 28 1999 2:24:02PM UTC')
+        due_for_update = parser.parse('Aug 28 1999 2:34PM UTC')
+
+        with self.assertLogs(worker.__name__, logging.DEBUG):
+            async_to_sync(worker.update_wf_module)(self.wfm1, now)
+
+        mock_dispatch.assert_called_with(self.wfm1)
+
+        self.wfm1.refresh_from_db()
+        self.assertEqual(self.wfm1.last_update_check, now)
+        self.assertEqual(self.wfm1.next_update, due_for_update)
+
+    @patch('server.dispatch.module_dispatch_fetch')
+    def test_update_wf_module_skip_missed_update(self, mock_dispatch):
+        mock_dispatch.return_value = future_none
+
+        self.wfm1.next_update = parser.parse('Aug 28 1999 2:24PM UTC')
+        self.wfm1.update_interval = 600
+        self.wfm1.save()
+
+        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
+        due_for_update = parser.parse('Aug 28 1999 2:44PM UTC')
+
+        with self.assertLogs(worker.__name__, logging.DEBUG):
+            async_to_sync(worker.update_wf_module)(self.wfm1, now)
+
+        self.wfm1.refresh_from_db()
+        self.assertEqual(self.wfm1.next_update, due_for_update)
+
+    @patch('server.dispatch.module_dispatch_fetch')
+    def test_crashing_module(self, mock_dispatch):
+        # Mocked return values. First call raises exception.
+        mock_dispatch.side_effect = [Exception('Totes crashed'), future_none]
+
+        self.wfm1.next_update = parser.parse('Aug 28 1999 2:24PM UTC')
+        self.wfm1.update_interval = 600
+        self.wfm1.save()
+
+        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
+        due_for_update = parser.parse('Aug 28 1999 2:44PM UTC')
+
+        with self.assertLogs(worker.__name__, logging.DEBUG):
+            async_to_sync(worker.update_wf_module)(self.wfm1, now)
+
+        self.wfm1.refresh_from_db()
+        # [adamhooper, 2018-10-26] while fiddling with tests, I changed the
+        # behavior to record the update check even when module fetch fails.
+        # Previously, an exception would prevent updating last_update_check,
+        # and I think that must be wrong.
+        self.assertEqual(self.wfm1.last_update_check, now)
+        self.assertEqual(self.wfm1.next_update, due_for_update)
