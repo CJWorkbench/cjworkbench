@@ -20,11 +20,11 @@ spec:
           image: "gcr.io/cj-workbench/worker:latest"
           resources:
             requests:
-              cpu: 0.51 # don't put two workers on the same core
-              memory: 5200Mi
+              cpu: 1.01 # don't put two workers on a 2-CPU machine
+              memory: 5250Mi # basically the max on an n1-standard-2 running fluentd
             limits:
-              cpu: 0.9
-              memory: 5200Mi
+              cpu: 1.9
+              memory: 5250Mi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
