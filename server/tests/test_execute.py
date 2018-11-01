@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import pandas as pd
@@ -6,6 +7,9 @@ from server.tests.utils import DbTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
 from server.execute import execute_workflow
 from server.modules.types import ProcessResult
+
+
+logger = logging.getLogger(__name__)
 
 
 table_csv = 'A,B\n1,2\n3,4'
@@ -28,12 +32,17 @@ def cached_render_result_revision_list(workflow):
 
 
 class ExecuteTests(DbTestCase):
+    def _execute(self, workflow):
+        with self.assertLogs():  # hide all logs
+            logger.info('message so assertLogs() passes when no log messages')
+            async_to_sync(execute_workflow)(workflow)
+
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_execute_revision_0(self):
         # Don't crash on a new workflow (rev=0, no caches)
         workflow = create_testdata_workflow(table_csv)
         wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
         wf_module2.refresh_from_db()
         result = wf_module2.get_cached_render_result().result
 
@@ -45,7 +54,7 @@ class ExecuteTests(DbTestCase):
         workflow = create_testdata_workflow(table_csv)
         wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
 
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
 
         pval = get_param_by_id_name('colnames', wf_module=wf_module2)
         pval.set_value('A')
@@ -53,7 +62,7 @@ class ExecuteTests(DbTestCase):
         wf_module2.last_relevant_delta_id = 2
         wf_module2.save(update_fields=['last_relevant_delta_id'])
 
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
 
         wf_module2.refresh_from_db()
         result = wf_module2.get_cached_render_result().result
@@ -72,7 +81,7 @@ class ExecuteTests(DbTestCase):
                                          param_values={'drop_or_keep': 1,
                                                        'colnames': 'A,B'})
 
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
 
         # Should set status of all modules to 'ok'
         wf_module3.refresh_from_db()
@@ -95,7 +104,7 @@ class ExecuteTests(DbTestCase):
         self.assertEqual(wf_module3.status, 'busy')
         self.assertEqual(wf_module2.is_busy, False)  # is_busy is for fetch
 
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
 
         # Now we expect module 2 to have 'error', 3 to have 'unreachable'
         wf_module2.refresh_from_db()
@@ -137,12 +146,12 @@ class ExecuteTests(DbTestCase):
         workflow = create_testdata_workflow(table_csv)
         wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
 
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
         wf_module2.refresh_from_db()
         result1 = wf_module2.get_cached_render_result().result
 
         with patch('server.dispatch.module_dispatch_render') as mdr:
-            async_to_sync(execute_workflow)(workflow)
+            self._execute(workflow)
             wf_module2.refresh_from_db()
             result2 = wf_module2.get_cached_render_result().result
             self.assertFalse(mdr.called)
@@ -157,7 +166,7 @@ class ExecuteTests(DbTestCase):
         wf_module1.last_relevant_delta_id = 1
         wf_module1.save()
 
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
 
         wf_module2.refresh_from_db()
         expected = wf_module2.get_cached_render_result().result
@@ -166,7 +175,7 @@ class ExecuteTests(DbTestCase):
 
         with patch('server.dispatch.module_dispatch_render') as mdr:
             mdr.return_value = expected
-            async_to_sync(execute_workflow)(workflow)
+            self._execute(workflow)
             mdr.assert_called_once()
             wf_module2.refresh_from_db()
             result = wf_module2.get_cached_render_result().result
@@ -179,7 +188,7 @@ class ExecuteTests(DbTestCase):
         wf_module1 = workflow.wf_modules.first()
         wf_module1.notifications = True
         wf_module1.save()
-        async_to_sync(execute_workflow)(workflow)
+        self._execute(workflow)
 
         email.assert_called()
 
@@ -193,7 +202,7 @@ class ExecuteTests(DbTestCase):
         wf_module1 = workflow.wf_modules.first()
         wf_module1.notifications = True
         wf_module1.save()
-        async_to_sync(execute_workflow)(workflow)  # sends one email
-        async_to_sync(execute_workflow)(workflow)  # should not email
+        self._execute(workflow)  # sends one email
+        self._execute(workflow)  # should not email
 
         email.assert_called_once()
