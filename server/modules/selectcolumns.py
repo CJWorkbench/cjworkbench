@@ -24,17 +24,13 @@ class SelectColumns(ModuleImpl):
 
 def select_columns_by_name(table, cols, drop_or_keep):
     # if no column has been selected, keep the columns
-    if cols == [] or cols == ['']:
+    if not cols:
         return ProcessResult(table)
 
     # ensure we do not change the order of the columns, even if they are
     # listed in another order this also silently removes any nonexistent
     # columns (can happen when re-ordering module, etc.)
-    existing = list(table.columns)
-    newcols = []
-    for c in existing:
-        if c in cols:
-            newcols.append(c)
+    newcols = table.columns.intersection(set(cols))
 
     if drop_or_keep == 1:
         newtab = table[newcols]
