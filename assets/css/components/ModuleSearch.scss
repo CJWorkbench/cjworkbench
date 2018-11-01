@@ -185,18 +185,19 @@
   }
 
   span.arrow {
-    left: calc((#{$module-popover-arrow-size} + #{$module-popover-border-width}) * -1);
-    margin-top: -2px; // Bootstrap's calculations assume a much smaller arrow
+    left: -8px;
+    margin-top: -4px; // Bootstrap's calculations assume a much smaller arrow
 
     &::before {
       border-right-color: $brand-workspace;
+      border-bottom-color: transparent;
+      top: -1px;
+      left: -1px;
+      border-width: 9px 9px 9px 0;
     }
     &::after {
       left: $module-popover-border-width;
-    }
-
-    &::before, &::after {
-      border-width: $module-popover-arrow-size $module-popover-arrow-size $module-popover-arrow-size 0;
+      border-width: 8px 8px 8px 0;
     }
   }
 }
