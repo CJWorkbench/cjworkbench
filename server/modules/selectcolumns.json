@@ -2,7 +2,7 @@
   "name": "Select columns",
   "id_name": "selectcolumns",
   "category" : "Clean",
-  "icon" : "transform",
+  "icon" : "columns",
   "description" : "Select or delete columns from the table.",
   "help_url":"modules/clean/column-selector",
   "parameters": [

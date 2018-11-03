@@ -82,25 +82,25 @@
         .nav-item {
 
           .nav-link {
-            padding: 1.4rem 1.5rem 1rem;
+            padding: 1.4rem 2.5rem 1rem;
             border-radius: 5px 5px 0 0;
 
             &:hover {
-              color: $table-element;
+              color: $brand-text--dark;
             }
 
             // when tab is selected
             &.active {
-              border-color: darken($page-background,7%) darken($page-background,7%) transparent;
+              border-color: darken($page-background,10%) darken($page-background,10%) transparent;
               background-color: #F5F7F8;
-              color: $dark-blue;
+              color: $brand-text--dark;
               background-color: lighten(#F5F7F8,1%);
 
               // when tab is selected and hover -- first child to take prescedence
               &:hover:first-child {
-                border-color: darken($page-background,7%) darken($page-background,7%) transparent;
+                border-color: darken($page-background,10%) darken($page-background,10%) transparent;
                 border-radius: 5px 5px 0 0;
-                color: $dark-blue;
+                color: $brand-text--dark;
                 background-color: lighten(#F5F7F8,1%);
               }
             }
@@ -108,14 +108,14 @@
 
           // When tab on the left edge is not selected, hover
           &:hover:first-child .nav-link {
-            border-color: darken($page-background,3%) darken($page-background,3%) darken($page-background,3%) darken($page-background,3%);
+            border-color: darken($page-background,7%) darken($page-background,7%) darken($page-background,7%) darken($page-background,7%);
             border-radius: 5px 0 0 0;
             background-color: #F5F7F8;
           }
 
           // when tab on the right edge is not selected, hover
           &:hover:last-child .nav-link {
-            border-color: darken($page-background,3%) darken($page-background,3%) darken($page-background,3%) darken($page-background,3%);
+            border-color: darken($page-background,7%) darken($page-background,7%) darken($page-background,7%) darken($page-background,7%);
             border-radius: 0 5px 0 0;
             background-color: #F5F7F8;
           }
@@ -183,7 +183,7 @@
         @extend .content-3;
         background-color: $white;
         height: 7rem;
-        border: 1px solid darken($page-background,7%);
+        border: 1px solid darken($page-background,10%);
         display: flex;
         padding-left: 2.5rem;
         align-items: center;
