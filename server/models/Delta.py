@@ -2,7 +2,6 @@
 # A single change to state of a workflow
 # You can also think of this as a "command." Contains a specification of what
 # actually happened.
-import asyncio
 import json
 from typing import Any
 from channels.db import database_sync_to_async
