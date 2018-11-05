@@ -62,21 +62,7 @@ steps:
 - name: 'docker/compose:1.21.2'
   args: [ '-f', 'server/tests/docker-compose.yml',
           'run',
-          'unittest',
-          # DELETEME [2018-10-30-ish] we started getting crashes when
-          # unittest exited:
-          #
-          # Step #7: Destroying test database for alias 'default' ('test_cjworkbench')...
-          # Step #7: Traceback (most recent call last):
-          # Step #7: File "/usr/local/lib/python3.6/site-packages/django/db/backends/utils.py", line 63, in execute
-          # Step #7: return self.cursor.execute(sql)
-          # Step #7: psycopg2.OperationalError: database "test_cjworkbench" is being accessed by other users
-          # Step #7: DETAIL: There are 6 other sessions using the database.
-          # For now, don't delete the database.
-          #
-          # In the future, _do_ delete the database: these still-being-accessed
-          # sessions are a bug.
-          '-k'
+          'unittest'
         ]
   env:
     - 'PROJECT_ID=$PROJECT_ID'
