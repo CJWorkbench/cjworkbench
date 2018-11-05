@@ -31,20 +31,7 @@ services:
 
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    # DELETEME "-k" [2018-10-30-ish] we started getting crashes on unittest
-    # exit:
-    #
-    # Step #7: Destroying test database for alias 'default' ('test_cjworkbench')...
-    # Step #7: Traceback (most recent call last):
-    # Step #7: File "/usr/local/lib/python3.6/site-packages/django/db/backends/utils.py", line 63, in execute
-    # Step #7: return self.cursor.execute(sql)
-    # Step #7: psycopg2.OperationalError: database "test_cjworkbench" is being accessed by other users
-    # Step #7: DETAIL: There are 6 other sessions using the database.
-    # For now, don't delete the database: add "-k" flag.
-    #
-    # In the future, _do_ delete the database (remove the "-k" flag): these
-    # still-being-accessed sessions are a bug.
-    command: [ './manage.py', 'test', '-v2', '-k' ]
+    command: [ './manage.py', 'test', '-v2' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio' ]
     environment:
       PYTHONUNBUFFERED: '1'
