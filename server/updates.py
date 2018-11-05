@@ -28,19 +28,14 @@ async def update_wfm_data_scan(pg_locker: worker.PgLocker):
     )
 
     for wf_module in wf_modules:
-        # Don't schedule a fetch if we know we're currently rendering.
+        # Don't schedule a fetch if we're currently rendering.
         #
         # This still lets us schedule a fetch if a render is _queued_, so it
-        # doesn't solve any races. It addresses a specific problem we've seen
-        # on prod: fast-to-fetch, slow-to-render workflows create a render
-        # request per fetch, and no render request is ever marked as spurious:
-        # by the time render A finishes, B and C are queued and the workflow
-        # is at revision C. When we consider request B, it isn't spurious; but
-        # while we're rendering it, requests D, E and F get queued. B finishes
-        # and C isn't spurious ... and so on: the queue grows forever.
+        # doesn't solve any races. But it should lower the number of fetches of
+        # resource-intensive workflows.
         #
         # Using pg_locker means we can only queue a fetch _between_ renders.
-        # The render queue may not be empty (we aren't testing that); but we're
+        # The render queue may be non-empty (we aren't testing that); but we're
         # giving the workers a chance to tackle some of the backlog.
         try:
             async with pg_locker.render_lock(wf_module.workflow_id):

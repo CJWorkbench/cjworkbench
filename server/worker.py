@@ -92,7 +92,7 @@ class PgLocker:
 
     async def __aenter__(self) -> 'PgLocker':
         # pg_connection: asyncpg, not Django database, because we use its
-        # transaction asynchronously. (Async is so much easier than threading....)
+        # transaction asynchronously. (Async is so much easier than threading.)
         pg_config = settings.DATABASES['default']
         pg_connection = await asyncpg.connect(
             host=pg_config['HOST'],
@@ -150,12 +150,12 @@ class PgLocker:
         transaction and hold it for the duration of the render. Raise
         WorkflowAlreadyLocked if we cannot acquire the lock immediately.
 
-        pg_advisory_lock() takes two int parameters (to make a 64-bit int). We'll
-        give 0 as the first int (let's call 0 "category of lock") and the workflow
+        pg_advisory_lock() takes two int parameters (to make a 64-bit int).
+        Give 0 as the first int (let's call 0 "category of lock") and workflow
         ID as the second int. (Workflow IDs are 32-bit.) We use
-        pg_try_advisory_xact_lock(0, workflow_id): `try` is non-blocking and `xact`
-        means the lock will be released as soon as the transaction completes -- for
-        instance, if a worker exits unexpectedly.
+        pg_try_advisory_xact_lock(0, workflow_id): `try` is non-blocking and
+        `xact` means the lock will be released as soon as the transaction ends
+        -- for instance, if a worker exits unexpectedly.
         """
         async with self.lock:
             async with self.pg_connection.transaction():
@@ -169,7 +169,8 @@ class PgLocker:
                     raise WorkflowAlreadyLocked
 
 
-async def send_render(send_channel, send_lock, workflow_id: int) -> None:
+async def send_render(send_channel, send_lock, workflow_id: int,
+                      delta_id: int) -> None:
     # We use asyncio.sleep() to avoid spinning. It would be nice to use a
     # RabbitMQ delayed exchange instead; that would involve a custom RabbitMQ
     # image, and as of 2018-10-30 the cost (new Docker image) seems to outweigh
@@ -178,7 +179,10 @@ async def send_render(send_channel, send_lock, workflow_id: int) -> None:
 
     async with send_lock:
         await send_channel.default_exchange.publish(
-            aio_pika.Message(msgpack.packb({'workflow_id': workflow_id})),
+            aio_pika.Message(msgpack.packb({
+                'workflow_id': workflow_id,
+                'delta_id': delta_id,
+            })),
             routing_key='render'
         )
 
@@ -220,7 +224,7 @@ def update_next_update_time(wf_module, now):
 
 async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],
                                reschedule: Callable[[int], Awaitable[None]],
-                               workflow_id: int) -> None:
+                               workflow_id: int, delta_id: int) -> None:
     """
     Acquire an advisory lock and render, or re-queue task if the lock is held.
 
@@ -229,14 +233,30 @@ async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],
     first render to exit (which will happen at the next stale database-write)
     before trying again.
     """
+    # Query for workflow before locking. We don't need a lock for this, and no
+    # lock means we can dismiss spurious renders sooner, so they don't fill the
+    # render queue.
+    try:
+        workflow = Workflow.objects.get(id=workflow_id)
+    except Workflow.DoesNotExist:
+        logger.info('Skipping render of deleted Workflow %d', workflow_id)
+        return
+    if workflow.last_delta_id != delta_id:
+        logger.info('Ignoring stale render request %d for Workflow %d',
+                    delta_id, workflow_id)
+        return
+
     try:
         async with lock_render(workflow_id):
-            workflow = Workflow.objects.get(id=workflow_id)
-
             # Most exceptions caught elsewhere.
             #
             # execute_workflow() will raise UnneededExecution if the workflow
             # changes while it's being rendered.
+            #
+            # We don't use `workflow.cooperative_lock()` because `execute` may
+            # take ages (and it locks internally when it needs to).
+            # `execute_workflow()` _anticipates_ that `workflow` data may be
+            # stale.
             task = execute.execute_workflow(workflow)
             await benchmark(task, 'execute_workflow(%d)', workflow_id)
 
@@ -244,10 +264,6 @@ async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],
         logger.info('Workflow %d is being rendered elsewhere; rescheduling',
                     workflow_id)
         await reschedule(workflow_id)
-
-    except Workflow.DoesNotExist:
-        logger.info('Skipping render of deleted Workflow %d', workflow_id)
-        return
 
     except execute.UnneededExecution:
         logger.info('UnneededExecution in execute_workflow(%d)',
@@ -299,9 +315,23 @@ async def handle_render(lock_render: Callable[[int], Awaitable[None]],
                         reschedule: Callable[[int], Awaitable[None]],
                         message: aio_pika.IncomingMessage) -> None:
     with message.process():
-        kwargs = msgpack.unpackb(message.body, raw=False)
+        body = msgpack.unpackb(message.body, raw=False)
         try:
-            await render_or_reschedule(lock_render, reschedule, **kwargs)
+            workflow_id = int(body['workflow_id'])
+            delta_id = int(body['delta_id'])
+        except:
+            logger.info(
+                ('Ignoring invalid render request. '
+                 'Expected {workflow_id:int, delta_id:int}; got %r'),
+                body
+            )
+            return
+
+        try:
+            task = render_or_reschedule(lock_render, reschedule, workflow_id,
+                                        delta_id)
+            await benchmark(task, 'render_or_reschedule(%d, %d)',
+                            workflow_id, delta_id)
         except:
             logger.exception('Error during render')
 

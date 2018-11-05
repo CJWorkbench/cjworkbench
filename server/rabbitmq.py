@@ -25,17 +25,22 @@ class Connection:
         await self.channel.close()
         await self.connection.close()
 
-    async def queue_render(self, workflow_id: int) -> None:
+    async def queue_render(self, workflow_id: int, delta_id: int) -> None:
         async with self.lock:
             await self.channel.default_exchange.publish(
-                aio_pika.Message(msgpack.packb({'workflow_id': workflow_id})),
+                aio_pika.Message(msgpack.packb({
+                    'workflow_id': workflow_id,
+                    'delta_id': delta_id,
+                })),
                 routing_key='render'
             )
 
     async def queue_fetch(self, wf_module_id: int) -> None:
         async with self.lock:
             await self.channel.default_exchange.publish(
-                aio_pika.Message(msgpack.packb({'wf_module_id': wf_module_id})),
+                aio_pika.Message(msgpack.packb({
+                    'wf_module_id': wf_module_id,
+                })),
                 routing_key='fetch'
             )
 
@@ -104,7 +109,7 @@ async def queue_render(workflow):
     Spurious renders are fine: these messages are tiny.
     """
     connection = await get_connection()
-    await connection.queue_render(workflow.id)
+    await connection.queue_render(workflow.id, workflow.last_delta_id)
 
 
 async def queue_fetch(wf_module):
