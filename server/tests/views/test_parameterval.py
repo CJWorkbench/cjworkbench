@@ -1,13 +1,12 @@
 from collections import namedtuple
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from server.tests.test_parameterval import ParameterValTestHelpers
+from server.tests.models.test_parameterval import ParameterValTestHelpers
 from server.models import ParameterSpec
 from server.views import parameterval_detail, workflow_detail
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
-from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        get_param_by_id_name
+from server.tests.utils import LoggedInTestCase
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
