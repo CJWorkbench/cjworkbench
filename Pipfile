@@ -36,6 +36,7 @@ aiodns = "*"
 channels-rabbitmq = "==0.0.3"
 asyncpg = "*"
 oauthlib = "*"
+"fb-re2" = "*"
 
 [dev-packages]
 watchdog = "*"

@@ -29,6 +29,7 @@ FROM pybase AS pydev
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
 # * python-snappy
+# * fb-re2
 #
 # Need curl+unzip for NLTK downloads
 RUN mkdir -p /root/.local/share/virtualenvs \
@@ -36,6 +37,7 @@ RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get install --no-install-recommends -y \
       build-essential \
       libsnappy-dev \
+      libre2-dev \
       unzip \
       curl \
     && rm -rf /var/lib/apt/lists/*
@@ -94,10 +96,13 @@ RUN true \
       build-essential \
       libsnappy1v5 \
       libsnappy-dev \
+      libre2-3 \
+      libre2-dev \
     && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
       build-essential \
       libsnappy-dev \
+      libre2-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
