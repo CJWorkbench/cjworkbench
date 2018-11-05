@@ -1,5 +1,4 @@
 from collections import namedtuple
-import datetime
 import re
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
@@ -19,20 +18,29 @@ QUERY_TYPE_SEARCH = 1
 QUERY_TYPE_LIST = 2
 
 
-Column = namedtuple('Column', ['name', 'path', 'dtype'])
+Column = namedtuple('Column', ['name', 'path', 'dtype', 'parse'])
+
+
+HTML_TAG_RE = re.compile('<[^>]*>')
+
+
+def parse_source(source: str) -> str:
+    """Parse a Twitter Status 'source', to remove HTML tag."""
+    return HTML_TAG_RE.sub('', source)
 
 
 Columns = [
-    Column('screen_name', ['user', 'screen_name'], np.object),
-    Column('created_at', ['created_at'], 'datetime64[ns]'),
-    Column('text', ['full_text'], np.object),
-    Column('retweet_count', ['retweet_count'], np.int64),
-    Column('favorite_count', ['favorite_count'], np.int64),
-    Column('in_reply_to_screen_name', ['in_reply_to_screen_name'], np.object),
+    Column('screen_name', ['user', 'screen_name'], np.object, None),
+    Column('created_at', ['created_at'], 'datetime64[ns]', None),
+    Column('text', ['full_text'], np.object, None),
+    Column('retweet_count', ['retweet_count'], np.int64, None),
+    Column('favorite_count', ['favorite_count'], np.int64, None),
+    Column('in_reply_to_screen_name', ['in_reply_to_screen_name'], np.object,
+           None),
     Column('retweeted_status_screen_name',
-           ['retweeted_status', 'user', 'screen_name'], np.object),
-    Column('source', ['source'], np.object),
-    Column('id', ['id'], np.int64),
+           ['retweeted_status', 'user', 'screen_name'], np.object, None),
+    Column('source', ['source'], np.object, parse_source),
+    Column('id', ['id'], np.int64, None),
 ]
 
 
@@ -58,7 +66,13 @@ def read_raw_value(status: Dict[str, Any], column: Column) -> Any:
 
 def read_column(statuses: List[Dict[str, Any]], column: Column) -> pd.Series:
     values = [read_raw_value(status, column) for status in statuses]
-    return pd.Series(values, name=column.name, dtype=column.dtype)
+    series = pd.Series(values, name=column.name)
+
+    if column.parse:
+        series = series.map(column.parse)
+
+    series = series.astype(column.dtype)
+    return series
 
 
 def urlencode(component: str):

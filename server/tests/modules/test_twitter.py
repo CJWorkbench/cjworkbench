@@ -2,6 +2,7 @@ import asyncio
 import json
 import unittest
 from asgiref.sync import async_to_sync
+import dateutil
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -54,7 +55,8 @@ class MockAiohttpSession:
         return ret
 
 # test data, excerpted from tweepy repo.
-# One overlapping tweet between the two sets of two tweets, and include a retweet
+# One overlapping tweet between the two sets of two tweets, and include a
+# retweet.
 # Added whitespace makes nvim syntax-highlight much more quickly.
 user_timeline_json = """[
 {
@@ -337,32 +339,6 @@ user_timeline2_json = """[
 ]"""
 
 
-# make some fake tweet objects for our module to process, in tweepy Status
-# object compatible format
-def make_mock_statuses(json_text):
-    tweet_array = json.loads(json_text)
-    statuses = Status.parse_list(None, tweet_array)
-    return statuses
-
-
-# Turn those status objects into a Pandas table
-def make_mock_tweet_table(statuses):
-    cols = ['created_at', 'full_text', 'retweet_count', 'favorite_count',
-            'in_reply_to_screen_name', 'source', 'id']
-
-    tweets = [[t[x] for x in cols] for t in statuses]
-    table = pd.DataFrame(tweets, columns=cols)
-    table['created_at'] = table['created_at'].astype(np.datetime64)
-    table.insert(0, 'screen_name', [t['user']['screen_name'] for t in statuses])
-    retweeted_names = [t['retweeted_status']['user']['screen_name']
-                       if 'retweeted_status' in t else None
-                       for t in statuses]
-    table.insert(6, 'retweeted_status_screen_name', retweeted_names)
-    # 280 chars should still be called 'text', meh
-    table.rename(columns={'full_text': 'text'}, inplace=True)
-    return table
-
-
 P = MockParams.factory(querytype=0, username='username', query='query',
                        listurl='listurl', twitter_credentials={
                            'oauth_token': 'a-token',
@@ -385,10 +361,41 @@ class MockWfModule:
         return self.fetched_table
 
 
+def dt(s):
+    return dateutil.parser.parse(s, ignoretz=True)
+
+
 mock_statuses = json.loads(user_timeline_json)
 mock_statuses2 = json.loads(user_timeline2_json)
-mock_tweet_table = make_mock_tweet_table(mock_statuses)
-mock_tweet_table2 = make_mock_tweet_table(mock_statuses2)
+
+mock_tweet_table = pd.DataFrame({
+    'screen_name': ['TheTweepyTester', 'TheTweepyTester'],
+    'created_at': [dt('2016-11-05T21:38:46Z'), dt('2016-11-05T21:37:13Z')],
+    'text': ['Hello', 'testing 1000 https://t.co/3vt8ITRQ3w'],
+    'retweet_count': [0, 0],
+    'favorite_count': [0, 0],
+    'in_reply_to_screen_name': [None, None],
+    'retweeted_status_screen_name': [None, None],
+    'source': ['Twitter Web Client', 'Tweepy dev'],
+    'id': [795017539831103489, 795017147651162112],
+})
+
+mock_tweet_table2 = pd.DataFrame({
+    'screen_name': ['TheTweepyTester', 'TheTweepyTester'],
+    'created_at': [dt('2016-11-05T21:44:24Z'), dt('2016-11-05T18:20:40Z')],
+    'text': [
+        'testing 1000 https://t.co/HFZNy7Fz9o',
+        ('RT @ritanyaaskar: Hi...tweepy darlings...my first tweets to my '
+         'sweety tweeps.'),
+    ],
+    'retweet_count': [0, 2],
+    'favorite_count': [0, 0],
+    'in_reply_to_screen_name': [None, None],
+    'retweeted_status_screen_name': [None, 'ritanyaaskar'],
+    'source': ['Twitter Web Client', 'Tweepy dev'],
+    'id': [795018956507582465, 794967685113188400],
+})
+
 
 def run_fetch(wf_module):
     async_to_sync(Twitter.fetch)(wf_module)
