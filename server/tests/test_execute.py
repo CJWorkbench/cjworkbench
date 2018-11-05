@@ -1,7 +1,8 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import logging
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
+import django.db
 import pandas as pd
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         load_and_add_module, get_param_by_id_name
@@ -32,10 +33,43 @@ def cached_render_result_revision_list(workflow):
 
 
 class ExecuteTests(DbTestCase):
+    def setUp(self):
+        super().setUp()
+
+        # We'll execute with a 1-worker thread pool. That's because Django
+        # database methods will spin up new connections and never close them.
+        # (@database_sync_to_async -- which execute uses --only closes _old_
+        # connections, not valid ones.)
+        #
+        # This hack is just for unit tests: we need to close all connections
+        # before the test ends, so we can delete the entire database when tests
+        # finish. We'll schedule the "close-connection" operation on the same
+        # thread as @database_sync_to_async's blocking code ran on. That way,
+        # it'll close the connection @database_sync_to_async was using.
+        self._old_loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
+        self.loop.set_default_executor(ThreadPoolExecutor(1))
+        asyncio.set_event_loop(self.loop)
+
+    # Be careful, in these tests, not to run database queries in async blocks.
+    def tearDown(self):
+        def close_thread_connection():
+            # Close the connection that was created by @database_sync_to_async.
+            # Assumes we're running in the same thread that ran the database
+            # stuff.
+            django.db.connections.close_all()
+
+        self.loop.run_in_executor(None, close_thread_connection)
+
+        asyncio.set_event_loop(self._old_loop)
+
+        super().tearDown()
+
     def _execute(self, workflow):
         with self.assertLogs():  # hide all logs
             logger.info('message so assertLogs() passes when no log messages')
-            async_to_sync(execute_workflow)(workflow)
+
+            self.loop.run_until_complete(execute_workflow(workflow))
 
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_execute_revision_0(self):

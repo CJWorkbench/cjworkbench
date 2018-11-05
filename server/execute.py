@@ -296,7 +296,6 @@ async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
     WEBSOCKET NOTES: each wf_module is executed in turn. After each execution,
     we notify clients of its new columns and status.
     """
-
     wf_modules, last_cached_result = await _load_wf_modules_and_input(
         workflow
     )
