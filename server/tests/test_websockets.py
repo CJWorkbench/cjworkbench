@@ -1,4 +1,5 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import functools
 import json
 import logging
@@ -6,6 +7,7 @@ from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from cjworkbench.asgi import create_url_router
 from django.contrib.auth.models import AnonymousUser
+import django.db
 from server.models import Workflow
 from server.websockets import ws_client_rerender_workflow_async, \
         ws_client_wf_module_status_async
@@ -47,16 +49,24 @@ def async_test(f):
             communicators.append(ret)
             return ret
 
-        async def disconnect_all():
-            for communicator in communicators:
-                await communicator.disconnect()
-
         # Reset the thread-local event loop
         old_loop = asyncio.get_event_loop()
         if not old_loop.is_closed():
             old_loop.close()
+        # Set a 1-thread ThreadPoolExecutor. That thread will open a DB
+        # connection, and we'll be able to close it in disconnect_all().
         loop = asyncio.new_event_loop()
+        loop.set_default_executor(ThreadPoolExecutor(1))
         asyncio.set_event_loop(loop)
+
+        async def disconnect_all():
+            for communicator in communicators:
+                await communicator.disconnect()
+
+            def disconnect_db():
+                # Runs in the same thread that actually connected to the DB
+                django.db.connections.close_all()
+            await loop.run_in_executor(None, disconnect_db)
 
         async def inner():
             try:
