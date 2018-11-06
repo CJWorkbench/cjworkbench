@@ -120,7 +120,7 @@ class WorkerTest(DbTestCase):
         async_to_sync(inner)()
 
         execute.assert_not_called()
-        self.assertEqual(rescheduler.calls, [(workflow.id,)])
+        self.assertEqual(rescheduler.calls, [(workflow.id, delta.id)])
 
     def test_render_or_reschedule_wrong_delta_id(self):
         rescheduler = Rescheduler()
