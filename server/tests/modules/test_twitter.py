@@ -3,7 +3,6 @@ import json
 import unittest
 from asgiref.sync import async_to_sync
 import dateutil
-import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from unittest.mock import patch
@@ -459,7 +458,7 @@ class TwitterTests(unittest.TestCase):
 
         # now accumulate new tweets
         session.return_value = mock_session2 = MockAiohttpSession([
-            # add only one tweet, mocking since_id
+            # add only one tweet, mocking max_id
             mock_statuses2[0:1],
             []
         ])
@@ -556,7 +555,7 @@ class TwitterTests(unittest.TestCase):
         self.assertEqual(result.error, '')
         self.assertEqual([req.url for req in mock_session.requests], [
             'https://api.twitter.com/1.1/search/tweets.json?q=cat&tweet_mode=extended&count=100',
-            'https://api.twitter.com/1.1/search/tweets.json?q=cat&tweet_mode=extended&count=100&since_id=795017147651162112',
+            'https://api.twitter.com/1.1/search/tweets.json?q=cat&tweet_mode=extended&count=100&max_id=795017147651162111',
         ])
 
         # Check that render output is right
@@ -581,7 +580,7 @@ class TwitterTests(unittest.TestCase):
         self.commit_result.assert_called()
         self.assertEqual([req.url for req in mock_session.requests], [
             'https://api.twitter.com/1.1/lists/statuses.json?owner_screen_name=thatuser&slug=theirlist&tweet_mode=extended&count=200',
-            'https://api.twitter.com/1.1/lists/statuses.json?owner_screen_name=thatuser&slug=theirlist&tweet_mode=extended&count=200&since_id=795017147651162112',
+            'https://api.twitter.com/1.1/lists/statuses.json?owner_screen_name=thatuser&slug=theirlist&tweet_mode=extended&count=200&max_id=795017147651162111',
         ])
 
         # Check that render output is right
@@ -608,7 +607,7 @@ class TwitterTests(unittest.TestCase):
         wf_module = MockWfModule(accumulate=True)
 
         session.return_value = MockAiohttpSession([
-            # add tweets which are not duplicated (mocking since_id)
+            # add tweets which are not duplicated (mocking max_id)
             mock_statuses[0:1],
             mock_statuses[1:2],
             []

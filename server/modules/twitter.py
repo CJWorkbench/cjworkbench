@@ -114,12 +114,18 @@ async def fetch_from_twitter(access_token, path, since_id: Optional[int],
 
     statuses = []
 
+    max_id = None
     async with aiohttp.ClientSession() as session:  # aiohttp timeout of 5min
         for page in range(n_pages):
             # Assume {path} contains '?' already
-            page_url = f'https://api.twitter.com/1.1/{path}&tweet_mode=extended&count={per_page}'
+            page_url = (
+                f'https://api.twitter.com/1.1/{path}'
+                f'&tweet_mode=extended&count={per_page}'
+            )
             if since_id:
                 page_url += f'&since_id={since_id}'
+            if max_id:
+                page_url += f'&max_id={max_id}'
 
             page_url, headers, _ = oauth_client.sign(
                 page_url,
@@ -138,7 +144,7 @@ async def fetch_from_twitter(access_token, path, since_id: Optional[int],
                 break
 
             statuses.extend(page_statuses)
-            since_id = page_statuses[-1]['id']
+            max_id = page_statuses[-1]['id'] - 1
 
     return statuses
 
