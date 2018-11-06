@@ -365,7 +365,8 @@ export default class WfParameter extends React.PureComponent {
   render() {
     const { id_name, name, type, visible_if, visible_if_not } = this.props.p.parameter_spec
 
-    if (!this.props.p.visible) {
+    // TODO: force display of 'colnames' for now since it will completely replace 'colselect' eventually
+    if (!this.props.p.visible && id_name !== 'colnames') {
       return null // nothing to see here
     }
 
@@ -398,6 +399,25 @@ export default class WfParameter extends React.PureComponent {
                 rows={4}
                 defaultValue={this.props.p.value}
                 placeholder={this.props.p.parameter_spec.placeholder || ''}
+              />
+            </div>
+          )
+        }
+        // For now, let's render the 'colnames' parameter instead of 'colselect' so that we
+        // can keep the parameter's state in `WfModule`.
+        // TODO: convert the `colnames` type to 'multicolumn' and nix all other `multicolumn` parameters in every module
+        else if (id_name === 'colnames') {
+          return (
+            <div {...this.outerDivProps}>
+              <div className='t-d-gray content-3 label-margin'>{''}</div>
+              <ColumnSelector
+                name={id_name}
+                isReadOnly={this.props.isReadOnly}
+                initialValue={this.props.p.value}
+                value={this.props.value}
+                allColumns={this.props.inputColumns}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
               />
             </div>
           )
@@ -500,7 +520,8 @@ export default class WfParameter extends React.PureComponent {
           </div>
         )
 
-      case 'multicolumn':
+      //TODO: Set all multi-column select modules to have type 'multicolumn' for 'colnames'
+      case 'multicolumn' && id_name === 'colnames':
         // There's no good reason why we read/write `colnames` instead of our own
         // id_name. But it'll be a chore to change it: we'll need to change all modules'
         // id_name to `colnames` so that pre-chore data will migrate over.
@@ -512,9 +533,11 @@ export default class WfParameter extends React.PureComponent {
             <ColumnSelector
               name={id_name}
               isReadOnly={this.props.isReadOnly}
-              value={this.props.getParamText('colnames')}
+              initialValue={this.props.p.value}
+              value={this.props.value}
               allColumns={this.props.inputColumns}
-              onChange={this.onColumnSelectorChange}
+              onSubmit={this.onSubmit}
+              onChange={this.onChange}
             />
           </div>
         )

@@ -96,6 +96,29 @@ textarea:focus, input:focus{
   }
 }
 
+.column-multi-select {
+  @extend .module-parameter;
+  position: relative; // so we can position button absolute
+  height: auto;
+
+  button {
+    cursor: pointer;
+    position: absolute;
+    right: 3.3rem;
+    bottom: 1.2rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    text-align: center;
+    border: 0;
+    background: transparent;
+    color: lighten($brand-orange, 6%);
+    &:hover {
+      color: $brand-orange
+    }
+  }
+
+}
+
 .single-line-text-field {
   @extend .module-parameter;
   position: relative; // so we can position button absolute

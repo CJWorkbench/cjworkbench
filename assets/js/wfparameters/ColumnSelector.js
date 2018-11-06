@@ -7,12 +7,16 @@ export default class ColumnSelector extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
+    initialValue: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
     allColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
-    })),
-    onChange: PropTypes.func.isRequired // onChange('A,B') => undefined
+    }))
   }
+
+  buttonRef = React.createRef()
 
   get selectedColumns() {
     const { value } = this.props
@@ -41,7 +45,7 @@ export default class ColumnSelector extends React.PureComponent {
   }
 
   render() {
-    const { allColumns, isReadOnly, name } = this.props
+    const { allColumns, isReadOnly, name, initialValue, value } = this.props
 
     if (allColumns === null) {
       return (
@@ -62,7 +66,11 @@ export default class ColumnSelector extends React.PureComponent {
         value: column
       }
     ))
-
+    const maybeButton = initialValue === value ? null : (
+      <button title="submit" ref={this.buttonRef} onClick={this.props.onSubmit}>
+        <i className="icon-play" />
+      </button>
+    )
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
       <div>
@@ -73,7 +81,7 @@ export default class ColumnSelector extends React.PureComponent {
             title='Select All'
             onClick={this.onClickSelectAll}
             className='mc-select-all content-4 t-d-gray'
-            >
+          >
             All
           </button>
           <button
@@ -82,22 +90,25 @@ export default class ColumnSelector extends React.PureComponent {
             title='Select None'
             onClick={this.onClickSelectNone}
             className='mc-select-none content-4 t-d-gray'
-            >
+          >
             None
           </button>
         </div>
-        <Select
-          isMulti
-          name='columns'
-          options={columnOptions}
-          menuPortalTarget={document.body}
-          className='react-select'
-          classNamePrefix='react-select'
-          onChange={this.onSelectColumn}
-          value={selectedColumns}
-          isClearable={false}
-          placeholder='Select columns'
-        />
+        <div className="column-multi-select">
+          <Select
+            isMulti
+            name='columns'
+            options={columnOptions}
+            menuPortalTarget={document.body}
+            className='react-select'
+            classNamePrefix='react-select'
+            onChange={this.onSelectColumn}
+            value={selectedColumns}
+            isClearable={false}
+            placeholder='Select columns'
+          />
+          {maybeButton}
+        </div>
       </div>
     )
   }
