@@ -263,7 +263,7 @@ async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],
     except WorkflowAlreadyLocked:
         logger.info('Workflow %d is being rendered elsewhere; rescheduling',
                     workflow_id)
-        await reschedule(workflow_id)
+        await reschedule(workflow_id, delta_id)
 
     except execute.UnneededExecution:
         logger.info('UnneededExecution in execute_workflow(%d)',
