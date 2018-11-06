@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import datetime
 from typing import Any, Dict, Optional, Tuple
-from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from server import dispatch, notifications
 from server.models import CachedRenderResult, WfModule, Workflow
@@ -83,7 +82,6 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
     Returns a Tuple in this order:
         * cached_render_result: if non-None, the quick return value of
           execute_wfmodule().
-        * wf_module: an up-to-date version of the input.
         * module_version: a ModuleVersion for dispatching render
         * params: Params for dispatching render
         * fetch_result: optional ProcessResult for dispatching render
@@ -104,7 +102,7 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
             # render()).
             if (cached_render_result.delta_id
                     == wf_module.last_relevant_delta_id):
-                return (cached_render_result, None, None, None, None, None)
+                return (cached_render_result, None, None, None, None)
 
             if safe_wf_module.notifications:
                 old_result = cached_render_result.result
@@ -113,8 +111,7 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
         params = safe_wf_module.get_params()
         fetch_result = safe_wf_module.get_fetch_result()
 
-        return (None, safe_wf_module, module_version, params, fetch_result,
-                old_result)
+        return (None, module_version, params, fetch_result, old_result)
 
 
 @database_sync_to_async
@@ -191,8 +188,8 @@ async def execute_wfmodule(wf_module: WfModule,
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    (cached_render_result, wf_module, module_version, params, fetch_result,
-     old_result) = await _execute_wfmodule_pre(wf_module)
+    (cached_render_result, module_version, params, fetch_result, old_result
+     ) = await _execute_wfmodule_pre(wf_module)
 
     # If the cached render result is valid, we're done!
     if cached_render_result is not None:
