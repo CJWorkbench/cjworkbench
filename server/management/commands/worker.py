@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
-    logger.error('Exiting because of unhandled exception: %s',
-                 context['exception'])
+    logger.error('Exiting because of unhandled error: %s',
+                 context['message'])
     os._exit(1)
 
 
