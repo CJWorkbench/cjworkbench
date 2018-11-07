@@ -10,6 +10,23 @@ logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
+    if 'client_session' in context or 'connector' in context:
+        # [2018-11-07] aiohttp raises spurious exceptions.
+        # https://github.com/aio-libs/aiohttp/issues/2039
+        #
+        # For now, let's ignore any error from aiohttp. In the future, aiohttp
+        # should fix its bug #2039, and then we can nix this comment and
+        # handler.
+        #
+        # Exceptions we see:
+        #
+        # * context: {'connector': <...>, 'connections': ['[(...)]'],
+        #             'message': 'Unclosed connector'}
+        # * context: {'client_session': <...>,
+        #             'message': 'Unclosed client session'}
+        logger.warn('Ignoring warning from aiohttp: %s', context['message'])
+        return
+
     logger.error('Exiting because of unhandled error: %s',
                  context['message'])
     os._exit(1)
