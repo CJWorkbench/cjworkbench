@@ -69,6 +69,23 @@ class WfModuleTests(WfModuleTestsBase):
         pval = ParameterVal.objects.get(parameter_spec=self.pspec31, wf_module=self.wfmodule3)
         self.assertEqual(pval.visible, True)
 
+    def test_retrieve_table_error_missing_version(self):
+        '''
+        If user selects a version and then the version disappers, no version is
+        selected; return `None`.
+
+        Returning `None` is kinda arbitrary. Another option is to return the
+        latest version; but then, what if the caller also looks at
+        wf_module.stored_data_version? The two values would be inconsistent.
+        '''
+        table1 = pd.DataFrame({'A': [1]})
+        table2 = pd.DataFrame({'B': [2]})
+        stored_object1 = self.wfmodule1.store_fetched_table(table1)
+        self.wfmodule1.store_fetched_table(table2)
+        self.wfmodule1.set_fetched_data_version(stored_object1)
+        self.wfmodule1.stored_objects.get(stored_at=stored_object1).delete()
+        self.wfmodule1.refresh_from_db()
+        self.assertIsNone(self.wfmodule1.retrieve_fetched_table())
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):

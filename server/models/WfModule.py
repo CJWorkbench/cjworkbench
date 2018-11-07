@@ -178,12 +178,12 @@ class WfModule(models.Model):
         return new_version.stored_at if new_version else None
 
     def retrieve_fetched_table(self):
-        if self.stored_data_version:
-            return StoredObject.objects.get(
-                wf_module=self,
+        try:
+            return self.stored_objects.get(
                 stored_at=self.stored_data_version
             ).get_table()
-        else:
+        except StoredObject.DoesNotExist:
+            # Either self.stored_data_version is None or it has been deleted.
             return None
 
     def get_fetch_result(self) -> Optional[ProcessResult]:
