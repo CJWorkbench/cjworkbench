@@ -45,6 +45,11 @@ describe('OutputPane', () => {
     expect(w2.find(OutputIframe).prop('visible')).toBe(false)
   })
 
+  it('renders a spinner when busy', () => {
+    const w = wrapper({ wfModule: { id: 1, deltaId: 2, htmlOutput: true, status: 'busy' }})
+    expect(w.find('.spinner-container-transparent')).toHaveLength(1)
+  })
+
   it('renders different table than iframe when desired', () => {
     const w = wrapper({
       // even if before-error has htmlOutput, we won't display that one
