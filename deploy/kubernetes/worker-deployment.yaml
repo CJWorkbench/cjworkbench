@@ -6,8 +6,6 @@ spec:
   selector:
     matchLabels:
       app: worker-app
-  strategy:
-    type: Recreate
   replicas: 2
   revisionHistoryLimit: 20
   template:
