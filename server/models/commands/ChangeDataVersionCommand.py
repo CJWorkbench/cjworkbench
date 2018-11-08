@@ -47,20 +47,20 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
         Of course, it's impossible for us to know whether anybody is viewing
         self.workflow. So we _broadcast_ to them and ask _them_ to request a
         render if they're listening. This gives N render requests (one per
-        Websockets communicator) instead of 1, but we don't mind because
+        Websockets cconsumer) instead of 1, but we don't mind because
         spurious render requests are no-ops.
 
         From the user's point of view:
 
             * If I'm viewing self.workflow, changing data versions causes a
-              render. (There isn't even any HTTP traffic: the communicator
-              does the work.)
+              render. (There isn't even any HTTP traffic: the consumer does
+              the work.)
             * Otherwise, the next time I browse to the page, the page-load
               will request a render.
 
         Assumptions:
 
-            * Websockets communicators queue a render when we ask them.
+            * Websockets cconsumers queue a render when we ask them.
             * The Django page-load view queues a render when needed.
         """
         if await _workflow_has_notifications(self.workflow):
