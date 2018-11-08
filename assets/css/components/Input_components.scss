@@ -96,7 +96,7 @@ textarea:focus, input:focus{
   }
 }
 
-.column-multi-select {
+.multi-select-input-group {
   @extend .module-parameter;
   position: relative; // so we can position button absolute
   height: auto;

@@ -365,7 +365,7 @@ export default class WfParameter extends React.PureComponent {
   render() {
     const { id_name, name, type, visible_if, visible_if_not } = this.props.p.parameter_spec
 
-    // TODO: force display of 'colnames' for now since it will completely replace 'colselect' eventually
+    // TODO: delete the 'colnames' check. Force display of 'colnames' for now since it will completely replace 'colselect' eventually
     if (!this.props.p.visible && id_name !== 'colnames') {
       return null // nothing to see here
     }
@@ -520,27 +520,31 @@ export default class WfParameter extends React.PureComponent {
           </div>
         )
 
-      //TODO: Set all multi-column select modules to have type 'multicolumn' for 'colnames'
-      case 'multicolumn' && id_name === 'colnames':
+      // TODO: Set all multi-column select modules to have type 'multicolumn' for 'colnames', remove 'colselect' condition
+      // [2018-11-06] right now this code is never reached, but it will be when we
+      // finish cleaning up the multicolumn` parameter type.
+      case 'multicolumn':
         // There's no good reason why we read/write `colnames` instead of our own
         // id_name. But it'll be a chore to change it: we'll need to change all modules'
         // id_name to `colnames` so that pre-chore data will migrate over.
         //
         // (Then we'll have one more chore: select JSON instead of comma-separated strings)
-        return (
-          <div {...this.outerDivProps}>
-            <div className='t-d-gray content-3 label-margin'>{name}</div>
-            <ColumnSelector
-              name={id_name}
-              isReadOnly={this.props.isReadOnly}
-              initialValue={this.props.p.value}
-              value={this.props.value}
-              allColumns={this.props.inputColumns}
-              onSubmit={this.onSubmit}
-              onChange={this.onChange}
-            />
-          </div>
-        )
+        if (id_name !== 'colselect') {
+          return (
+            <div {...this.outerDivProps}>
+              <div className='t-d-gray content-3 label-margin'>{name}</div>
+              <ColumnSelector
+                name={id_name}
+                isReadOnly={this.props.isReadOnly}
+                initialValue={this.props.p.value}
+                value={this.props.value}
+                allColumns={this.props.inputColumns}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
+              />
+            </div>
+          )
+        }
 
       case 'secret':
         return this.render_secret_parameter();

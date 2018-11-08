@@ -8,15 +8,13 @@ export default class ColumnSelector extends React.PureComponent {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     initialValue: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired, // onChange('A,B') => undefined
+    onSubmit: PropTypes.func.isRequired, // onSubmit() => undefined
     value: PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
     allColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     }))
   }
-
-  buttonRef = React.createRef()
 
   get selectedColumns() {
     const { value } = this.props
@@ -67,7 +65,7 @@ export default class ColumnSelector extends React.PureComponent {
       }
     ))
     const maybeButton = initialValue === value ? null : (
-      <button title="submit" ref={this.buttonRef} onClick={this.props.onSubmit}>
+      <button title="submit" onClick={this.props.onSubmit}>
         <i className="icon-play" />
       </button>
     )
@@ -94,7 +92,7 @@ export default class ColumnSelector extends React.PureComponent {
             None
           </button>
         </div>
-        <div className="column-multi-select">
+        <div className="multi-select-input-group">
           <Select
             isMulti
             name='columns'
