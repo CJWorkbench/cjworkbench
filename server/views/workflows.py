@@ -187,13 +187,13 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
         if workflow.wf_modules.exclude(
             last_relevant_delta_id=F('cached_render_result_delta_id')
         ).exists():
-            # We're returning a Workflow that may have stale WfModules. That's
-            # fine, but are we _sure_ the worker is about to render them? Let's
-            # double-check. This will handle edge cases such as "we wiped our
-            # caches" or maybe some bugs we haven't thought of.
+            # We're returning a Workflow that may have stale WfModules. Either
+            # there's already a render underway (in which case this spurious
+            # render will become a no-op) or there isn't (in which case we
+            # _want_ a render).
             #
-            # Normally this is a race and this render is spurious. TODO prevent
-            # two workers from rendering the same workflow at the same time.
+            # This isn't just for bug recovery. ChangeDataVersionCommand won't
+            # queue_render until a client requests it.
             async_to_sync(rabbitmq.queue_render)(workflow.id,
                                                  workflow.last_delta_id)
 
