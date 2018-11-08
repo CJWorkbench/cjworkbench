@@ -102,14 +102,14 @@ async def get_connection(loop=None):
             return _loop_to_connection[loop]
 
 
-async def queue_render(workflow):
+async def queue_render(workflow_id: int, delta_id: int):
     """
     Queue render in RabbitMQ.
 
     Spurious renders are fine: these messages are tiny.
     """
     connection = await get_connection()
-    await connection.queue_render(workflow.id, workflow.last_delta_id)
+    await connection.queue_render(workflow_id, delta_id)
 
 
 async def queue_fetch(wf_module):

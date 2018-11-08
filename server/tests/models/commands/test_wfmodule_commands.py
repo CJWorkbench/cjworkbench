@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.utils import timezone
@@ -12,6 +13,9 @@ from server.tests.utils import DbTestCase, create_testdata_workflow, \
 
 async def async_noop(*args, **kwargs):
     pass
+
+future_none = asyncio.Future()
+future_none.set_result(None)
 
 
 class CommandTestCase(DbTestCase):
@@ -250,7 +254,6 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
 
-@patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class ChangeDataVersionCommandTests(CommandTestCase):
     def setUp(self):
@@ -258,6 +261,8 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         self.wfm = WfModule.objects.first()
 
     # Change version, then undo/redo
+    @patch('server.models.commands.ChangeDataVersionCommand.schedule_execute',
+           async_noop)
     def test_change_data_version(self):
         # Create two data versions, use the second
         firstver = self.wfm.store_fetched_table(mock_csv_table)
@@ -288,6 +293,47 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         async_to_sync(cmd.forward)()
         self.assertWfModuleVersions([v2])
         self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
+
+    @patch('server.rabbitmq.queue_render')
+    def test_queue_render_if_notifying(self, queue_render):
+        queue_render.return_value = future_none
+
+        df1 = pd.DataFrame({'A': [1]})
+        df2 = pd.DataFrame({'B': [2]})
+        date1 = self.wfm.store_fetched_table(df1)
+        date2 = self.wfm.store_fetched_table(df2)
+
+        self.wfm.notifications = True
+        self.wfm.set_fetched_data_version(date1)
+        self.wfm.save()
+
+        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
+
+        queue_render.assert_called_with(self.wfm.workflow_id, delta.id)
+
+    @patch('server.websockets.queue_render_if_listening')
+    @patch('server.rabbitmq.queue_render')
+    def test_queue_render_if_listening_and_no_notification(
+        self,
+        queue_render,
+        queue_render_if_listening
+    ):
+        queue_render_if_listening.return_value = future_none
+
+        df1 = pd.DataFrame({'A': [1]})
+        df2 = pd.DataFrame({'B': [2]})
+        date1 = self.wfm.store_fetched_table(df1)
+        date2 = self.wfm.store_fetched_table(df2)
+
+        self.wfm.notifications = False
+        self.wfm.set_fetched_data_version(date1)
+        self.wfm.save()
+
+        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
+
+        queue_render.assert_not_called()
+        queue_render_if_listening.assert_called_with(self.wfm.workflow_id,
+                                                     delta.id)
 
 
 @patch('server.models.Delta.schedule_execute', async_noop)

@@ -10,6 +10,7 @@ import aio_pika
 import asyncpg
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 from django.conf import settings
+from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
 from server import dispatch, execute, rabbitmq
 from server.models import UploadedFile, WfModule, Workflow
@@ -273,6 +274,34 @@ async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],
         # request may already have hit WorkflowAlreadyLocked.
         return
 
+    except DatabaseError:
+        # Two possibilities:
+        #
+        # 1. There's a bug in server.execute. This may leave the event
+        # loop's executor thread's database connection in an inconsistent
+        # state. [2018-11-06 saw this on production.] The best way to clear
+        # up the leaked, broken connection is to die. (Our parent process
+        # should restart us, and RabbitMQ will give the job to someone
+        # else.)
+        #
+        # 2. The database connection died (e.g., Postgres went away.) The
+        # best way to clear up the leaked, broken connection is to die.
+        # (Our parent process should restart us, and RabbitMQ will give the
+        # job to someone else.)
+        #
+        # 3. There's some design flaw we haven't thought of, and we
+        # shouldn't ever render this workflow. If this is the case, we're
+        # doomed.
+        #
+        # If you're seeing this error that means there's a bug somewhere
+        # _else_. If you're staring at a case-3 situation, please remember
+        # that cases 1 and 2 are important, too.
+        logger.exception('Fatal database error; exiting')
+        os._exit(1)
+    except InterfaceError:
+        logger.exception('Fatal database error; exiting')
+        os._exit(1)
+
 
 async def fetch(*, wf_module_id: int) -> None:
     try:
@@ -282,9 +311,37 @@ async def fetch(*, wf_module_id: int) -> None:
         return
 
     now = timezone.now()
-    # exceptions caught elsewhere
-    task = update_wf_module(wf_module, now)
-    await benchmark(task, 'update_wf_module(%d)', wf_module_id)
+    # most exceptions caught elsewhere
+    try:
+        task = update_wf_module(wf_module, now)
+        await benchmark(task, 'update_wf_module(%d)', wf_module_id)
+    except DatabaseError:
+        # Two possibilities:
+        #
+        # 1. There's a bug in module_dispatch_fetch. This may leave the event
+        # loop's executor thread's database connection in an inconsistent
+        # state. [2018-11-06 saw this on production.] The best way to clear
+        # up the leaked, broken connection is to die. (Our parent process
+        # should restart us, and RabbitMQ will give the job to someone
+        # else.)
+        #
+        # 2. The database connection died (e.g., Postgres went away.) The
+        # best way to clear up the leaked, broken connection is to die.
+        # (Our parent process should restart us, and RabbitMQ will give the
+        # job to someone else.)
+        #
+        # 3. There's some design flaw we haven't thought of, and we
+        # shouldn't ever render this workflow. If this is the case, we're
+        # doomed.
+        #
+        # If you're seeing this error that means there's a bug somewhere
+        # _else_. If you're staring at a case-3 situation, please remember
+        # that cases 1 and 2 are important, too.
+        logger.exception('Fatal database error; exiting')
+        os._exit(1)
+    except InterfaceError:
+        logger.exception('Fatal database error; exiting')
+        os._exit(1)
 
 
 async def upload_DELETEME(*, wf_module_id: int, uploaded_file_id: int) -> None:

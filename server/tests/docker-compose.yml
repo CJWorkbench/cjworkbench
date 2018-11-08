@@ -31,7 +31,7 @@ services:
 
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    command: [ './manage.py', 'test', '-v2' ]
+    command: [ './manage.py', 'test', '-v2', '-k' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio' ]
     environment:
       PYTHONUNBUFFERED: '1'

@@ -120,6 +120,15 @@ export class OutputPane extends React.Component {
         {this.renderOutputIFrame()}
         {this.renderShowingInput()}
         {this.renderTable()}
+        {status === 'busy' ? (
+          <div key='spinner' className="spinner-container-transparent">
+            <div className="spinner-l1">
+              <div className="spinner-l2">
+                <div className="spinner-l3"></div>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     )
   }

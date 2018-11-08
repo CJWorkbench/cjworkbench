@@ -59,7 +59,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 - [Creating your own modules](https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module)
 - [Join us on gitter](https://gitter.im/workbenchdata/Lobby)!
 
-Workbence is licensed under the AGPL 3.0 license. You are free to use the code or parts of it in your own applications, [even your own own closed source applications](https://softwareengineering.stackexchange.com/questions/107883/agpl-what-you-can-do-and-wh), but if you modify Workbench code or merge it into your own software you must open-source the modifications.
+Workbench is licensed under the AGPL 3.0 license. You are free to use the code or parts of it in your own applications, [even your own own closed source applications](https://softwareengineering.stackexchange.com/questions/107883/agpl-what-you-can-do-and-wh), but if you modify Workbench code or merge it into your own software you must open-source the modifications.
 
 # Contact us
 Always happy to hear from you:

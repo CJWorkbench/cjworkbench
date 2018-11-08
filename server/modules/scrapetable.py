@@ -92,6 +92,11 @@ class ScrapeTable(ModuleImpl):
             result = ProcessResult(
                 error=_('Did not find any <table> tags on that page')
             )
+        except IndexError:
+            # pandas.read_html() gives this unhelpful error message....
+            result = ProcessResult(
+                error='Table has no columns'
+            )
 
         if not result:
             if not tables:
