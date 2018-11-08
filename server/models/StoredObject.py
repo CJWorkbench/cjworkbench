@@ -95,7 +95,7 @@ class StoredObject(models.Model):
 
         try:
             return parquet.read(self.file.name)
-        except FileNotFoundError:
+        except (FileNotFoundError, parquet.FastparquetCouldNotHandleFile):
             # Spotted on production for a duplicated workflow dated
             # 2018-08-01. [adamhooper, 2018-09-20] I can think of no harm in
             # returning an empty dataframe here.

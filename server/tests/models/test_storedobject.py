@@ -5,7 +5,7 @@ from django.conf import settings
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.models import StoredObject, WfModule, Workflow
+from server.models import StoredObject, Workflow
 from server.sanitizedataframe import sanitize_dataframe
 from server.tests.utils import DbTestCase
 from django.test import override_settings
@@ -31,7 +31,8 @@ class StoredObjectTests(DbTestCase):
     def test_store_some_random_table(self):
         # Use a more realistic test table with lots of data of different types
         # mock data wasn't finding bugs related to dict-type columns
-        fname = os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.json')
+        fname = os.path.join(settings.BASE_DIR,
+                             'server/tests/test_data/sfpd.json')
         with open(fname) as f:
             sfpd = json.load(f)
         self.test_table = pd.DataFrame(sfpd)
@@ -77,7 +78,6 @@ class StoredObjectTests(DbTestCase):
         table3 = so3.get_table()
         assert_frame_equal(table3, df2)
 
-    # Duplicate from one wfm to another, tests the typical WfModule duplication case
     def test_duplicate_table(self):
         table = pd.DataFrame({'A': [1]})
 
@@ -85,9 +85,23 @@ class StoredObjectTests(DbTestCase):
         so1 = StoredObject.create_table(self.wfm1, table)
         so2 = so1.duplicate(self.wfm2)
 
-        # new StoredObject should have same time, same metadata, different file with same contents
+        # new StoredObject should have same time, same metadata,
+        # different file with same contents
         self.assertEqual(so1.stored_at, so2.stored_at)
         self.assertEqual(so1.metadata, so2.metadata)
         self.assertNotEqual(so1.file, so2.file)
 
-        self.assertEqual(self.file_contents(so1.file), self.file_contents(so2.file))
+        self.assertEqual(self.file_contents(so1.file),
+                         self.file_contents(so2.file))
+
+    def test_read_file_missing(self):
+        so = StoredObject(file='hello', size=10)
+        assert_frame_equal(so.get_table(), pd.DataFrame())
+
+    def test_read_file_fastparquet_issue_375(self):
+        so = StoredObject(
+            file=os.path.join(os.path.dirname(__file__), '..', 'test_data',
+                              'fastparquet-issue-375-snappy.par'),
+            size=10
+        )
+        assert_frame_equal(so.get_table(), pd.DataFrame())

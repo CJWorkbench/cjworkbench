@@ -68,15 +68,8 @@ class CachedRenderResult:
                 # Either way, our cached DataFrame is "empty", and we represent
                 # that as None.
                 self._parquet_file = None
-            except IndexError:
-                # TODO nix this when fastparquet resolves
-                # https://github.com/dask/fastparquet/issues/361
-                #
-                # The file has a zero-length column list, and fastparquet can't
-                # handle that.
-                #
-                # Our cached DataFrame should be "empty". No columns means no
-                # rows.
+            except parquet.FastparquetCouldNotHandleFile:
+                # Treat bugs as "empty file"
                 self._parquet_file = None
 
         return self._parquet_file
