@@ -141,7 +141,9 @@ class Delta(PolymorphicModel):
         return data
 
     async def schedule_execute(self) -> None:
-        await rabbitmq.queue_render(self.workflow)
+        """Tell renderers to render the new workflow."""
+        await rabbitmq.queue_render(self.workflow.id,
+                                    self.workflow.last_delta_id)
 
     @classmethod
     async def create(cls, *, workflow, **kwargs):
@@ -165,7 +167,7 @@ class Delta(PolymorphicModel):
 
         Example:
 
-            delta = await Delta.create_impl(ChangeWfModuleNotesCommand,
+            delta = await ChangeWfModuleNotesCommand.create_impl(
                 workflow=wf_module.workflow,
                 # ... other kwargs
             )

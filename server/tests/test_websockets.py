@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 import functools
 import json
 import logging
+from unittest.mock import patch
 from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from cjworkbench.asgi import create_url_router
@@ -10,7 +11,7 @@ from django.contrib.auth.models import AnonymousUser
 import django.db
 from server.models import Workflow
 from server.websockets import ws_client_rerender_workflow_async, \
-        ws_client_wf_module_status_async
+        ws_client_wf_module_status_async, queue_render_if_listening
 from server.tests.utils import DbTestCase, clear_db, add_new_module_version, \
         add_new_wf_module, create_test_user
 
@@ -212,3 +213,37 @@ class ChannelTests(DbTestCase):
             'type': 'wfmodule-status',
             'status': 'busy',
         })
+
+    @patch('server.rabbitmq.queue_render')
+    @async_test
+    async def test_queue_render_if_listening(self, communicate, queue_render):
+        future_args = asyncio.get_event_loop().create_future()
+
+        async def do_queue(*args):
+            future_args.set_result(args)
+        queue_render.side_effect = do_queue
+
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect()
+        self.assertTrue(connected)
+        await queue_render_if_listening(self.workflow.id, 123)
+        args = await asyncio.wait_for(future_args, 0.005)
+        self.assertEqual(args, (self.workflow.id, 123))
+
+    @patch('server.rabbitmq.queue_render')
+    @async_test
+    async def test_queue_render_if_not_listening(self, communicate,
+                                                 queue_render):
+        future_args = asyncio.get_event_loop().create_future()
+
+        async def do_queue(*args):
+            future_args.set_result(args)
+        queue_render.side_effect = do_queue
+
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect()
+        self.assertTrue(connected)
+
+        with self.assertRaises(asyncio.TimeoutError):
+            await asyncio.wait_for(future_args, 0.005)
+        queue_render.assert_not_called()

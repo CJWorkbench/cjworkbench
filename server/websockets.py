@@ -7,6 +7,7 @@ from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
+from server import rabbitmq
 
 
 logger = logging.getLogger(__name__)
@@ -32,9 +33,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def get_workflow(self):
-        """The current user's Workflow, if exists and authorized; else None
-        """
-        # [adamhooper, 2018-05-24] This should probably be async.
+        """The current user's Workflow, if exists and authorized; else None"""
         from server.models import Workflow
 
         try:
@@ -68,6 +67,20 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         logging.debug('Send %s to Workflow %d', message['data']['type'],
                       self.workflow_id)
         await self.send_json(message['data'])
+
+    async def queue_render(self, message):
+        """
+        Request a render of `workflow_id` at delta `delta_id`
+
+        A producer somewhere has requested, "please render, but only if
+        somebody wants to see the render." Well, `self` is here representing a
+        user who has the workflow open and wants to see the render.
+        """
+        data = message['data']
+        workflow_id = data['workflow_id']
+        delta_id = data['delta_id']
+        logging.debug('Queue render of Workflow %d v%d', workflow_id, delta_id)
+        await rabbitmq.queue_render(workflow_id, delta_id)
 
 
 async def _workflow_group_send(workflow_id: int,
@@ -110,3 +123,23 @@ async def ws_client_wf_module_status_async(wf_module, status):
         'status': status
     }
     await _workflow_group_send(workflow.id, message)
+
+
+async def queue_render_if_listening(workflow_id: int, delta_id: int):
+    """
+    Tell workflow communicators to queue a render of `workflow`.
+
+    In other words: "queue a render, but only if somebody has this workflow
+    open in a web browser."
+    """
+    channel_name = _workflow_channel_name(workflow_id)
+    channel_layer = get_channel_layer()
+    logging.debug('Suggest render of Workflow %d v%d', workflow_id,
+                  delta_id)
+    await channel_layer.group_send(channel_name, {
+        'type': 'queue_render',
+        'data': {
+            'workflow_id': workflow_id,
+            'delta_id': delta_id,
+        }
+    })
