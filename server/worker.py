@@ -10,9 +10,8 @@ import aio_pika
 import asyncpg
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 from django.conf import settings
-from django.db import DatabaseError
+from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-import psycopg2
 from server import dispatch, execute, rabbitmq
 from server.models import UploadedFile, WfModule, Workflow
 from server.modules import uploadfile
@@ -299,10 +298,8 @@ async def render_or_reschedule(lock_render: Callable[[int], Awaitable[None]],
         # that cases 1 and 2 are important, too.
         logger.exception('Fatal database error; exiting')
         os._exit(1)
-    except psycopg2.InterfaceError:
-        logger.exception(
-            'Fatal database error (and Django did not wrap it); exiting'
-        )
+    except InterfaceError:
+        logger.exception('Fatal database error; exiting')
         os._exit(1)
 
 
@@ -342,10 +339,8 @@ async def fetch(*, wf_module_id: int) -> None:
         # that cases 1 and 2 are important, too.
         logger.exception('Fatal database error; exiting')
         os._exit(1)
-    except psycopg2.InterfaceError:
-        logger.exception(
-            'Fatal database error (and Django did not wrap it); exiting'
-        )
+    except InterfaceError:
+        logger.exception('Fatal database error; exiting')
         os._exit(1)
 
 
