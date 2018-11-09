@@ -14,10 +14,7 @@ class ConcatURL(ModuleImpl):
             return ProcessResult(table)
 
         if fetch_result.status == 'error':
-            return ProcessResult(
-                table,
-                error=f'The workflow you chose has an error: {fetch_result.error}'
-            )
+            return ProcessResult(table, error=fetch_result.error)
 
         if fetch_result.dataframe.empty:
             return ProcessResult(table,

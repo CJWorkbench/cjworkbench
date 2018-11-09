@@ -33,7 +33,7 @@ ext_workflow = pd.DataFrame({
 })
 
 
-class ConcatURLTests(unittest.TestCase):
+class ConcatURLTest(unittest.TestCase):
     def test_empty(self):
         result = render(P(url=''), pd.DataFrame({'A': [1]}), None)
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
@@ -50,7 +50,7 @@ class ConcatURLTests(unittest.TestCase):
                         ProcessResult(error='Not a URL'))
         self.assertEqual(result, ProcessResult(
             dataframe=pd.DataFrame({'A': [1]}),
-            error='The workflow you chose has an error: Not a URL'
+            error='Not a URL'
         ))
 
     def test_concat_only_left_columns(self):
