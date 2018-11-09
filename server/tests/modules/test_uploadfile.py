@@ -147,6 +147,17 @@ class UploadFileTests(unittest.TestCase):
             'eb785452-f0f2-4ebe-97ce-e225e346148e.xlsx'
         )
 
+    def test_invalid_mime_type(self):
+        self._test_upload(
+            uuid='eb785452-f0f2-4ebe-97ce-e225e346148e',
+            filename='test.bin',
+            ext='bin',
+            size=3,
+            expected_result=ProcessResult(error=(
+                'Error parsing test.bin: unknown content type'
+            ))
+        )
+
     @patch('minio.api.Minio.get_object')
     @patch('minio.api.Minio.stat_object')
     @patch('minio.api.Minio.remove_object')

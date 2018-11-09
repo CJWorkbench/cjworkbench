@@ -36,8 +36,7 @@ async def upload_to_table(wf_module, uploaded_file):
             result = ProcessResult(error=str(err))
     else:
         result = ProcessResult(error=(
-            f'Error parsing {uploaded_file.file.name}: '
-            'unknown content type'
+            f'Error parsing {uploaded_file.name}: unknown content type'
         ))
 
     if result.error:
