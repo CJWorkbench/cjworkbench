@@ -93,8 +93,8 @@ class URLScraper(ModuleImpl):
 
     # Scrapy scrapy scrapy
     @staticmethod
-    async def fetch(wfm):
-        params = wfm.get_params()
+    async def fetch(wf_module):
+        params = wf_module.get_params()
 
         urls = []
         urlsource = params.get_param_menu_string('urlsource')
@@ -116,7 +116,7 @@ class URLScraper(ModuleImpl):
         elif urlsource == 'Input column':
             # We won't execute here -- there's no need: the user clicked a
             # button so should be pretty clear on what the input is.
-            input_cache = wfm.previous_in_stack().get_cached_render_result()
+            input_cache = wf_module.previous_in_stack().get_cached_render_result()
             if input_cache:
                 prev_table = input_cache.result.dataframe
             else:

@@ -10,5 +10,5 @@ class ModuleImpl:
         return ProcessResult(table)
 
     @staticmethod
-    async def fetch(wfm: WfModule) -> None:
+    async def fetch(wf_module: WfModule) -> None:
         pass

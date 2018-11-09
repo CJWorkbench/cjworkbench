@@ -288,8 +288,8 @@ class Twitter(ModuleImpl):
 
     # Load specified user's timeline
     @staticmethod
-    async def fetch(wfm):
-        params = wfm.get_params()
+    async def fetch(wf_module):
+        params = wf_module.get_params()
 
         param_names = {
             QUERY_TYPE_USER: 'username',
@@ -312,10 +312,10 @@ class Twitter(ModuleImpl):
 
         try:
             if params.get_param_checkbox('accumulate'):
-                old_tweets = get_stored_tweets(wfm)
+                old_tweets = get_stored_tweets(wf_module)
                 tweets = await get_new_tweets(access_token, querytype, query,
                                               old_tweets)
-                tweets = merge_tweets(wfm, tweets)
+                tweets = merge_tweets(wf_module, tweets)
             else:
                 tweets = await get_new_tweets(access_token, querytype,
                                               query, None)
