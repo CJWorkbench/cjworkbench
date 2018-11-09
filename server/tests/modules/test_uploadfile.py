@@ -69,9 +69,9 @@ class UploadFileTests(unittest.TestCase):
         self.assertEqual(result, ProcessResult(error='x'))
 
     @patch('server.versions.save_result_if_changed')
-    def _test_upload(self, commit_result, *, uuid, filename, ext, size,
+    def _test_upload(self, save_result, *, uuid, filename, ext, size,
                      expected_result):
-        commit_result.return_value = future_none
+        save_result.return_value = future_none
 
         wf_module = 'stub'
         uploaded_file = UploadedFile(
@@ -85,9 +85,9 @@ class UploadFileTests(unittest.TestCase):
 
         async_to_sync(upload_to_table)(wf_module, uploaded_file)
 
-        # Check commit_result was called
-        commit_result.assert_called()
-        result = commit_result.call_args[0][1]
+        # Check save_result was called
+        save_result.assert_called()
+        result = save_result.call_args[0][1]
         self.assertEqual(result.error, expected_result.error)
         # Assert frames are equal. Empty frames might differ in shape; ignore
         # that.
