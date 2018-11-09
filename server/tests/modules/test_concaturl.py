@@ -4,7 +4,6 @@ from pandas.testing import assert_frame_equal
 import numpy as np
 from server.modules.concaturl import ConcatURL
 from server.modules.types import ProcessResult
-from server.modules.concaturl import _type_map
 from .util import MockParams
 
 

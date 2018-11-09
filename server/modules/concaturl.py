@@ -3,9 +3,9 @@ from .moduleimpl import ModuleImpl
 from .utils import store_external_workflow, get_id_from_url
 from .types import ProcessResult
 
-_type_map = "Only include this workflow's columns|Only include matching columns|Include columns from both workflows".lower().split('|')
 _join_type_map = 'outer|inner|outer'.split('|')
 _source_column_name = 'Source Workflow'
+
 
 class ConcatURL(ModuleImpl):
     @staticmethod
