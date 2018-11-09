@@ -529,7 +529,7 @@ export default class WfParameter extends React.PureComponent {
         // id_name to `colnames` so that pre-chore data will migrate over.
         //
         // (Then we'll have one more chore: select JSON instead of comma-separated strings)
-        if (id_name !== 'colselect') {
+        if (id_name === 'colnames') {
           return (
             <div {...this.outerDivProps}>
               <div className='t-d-gray content-3 label-margin'>{name}</div>
@@ -544,6 +544,8 @@ export default class WfParameter extends React.PureComponent {
               />
             </div>
           )
+        } else {
+          return null
         }
 
       case 'secret':
