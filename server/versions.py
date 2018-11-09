@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any
 from channels.db import database_sync_to_async
 from django.utils import timezone
 from django.conf import settings
-from server.models import StoredObject, WfModule, Workflow
+from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand
 from server.modules.types import ProcessResult
 from server import websockets
