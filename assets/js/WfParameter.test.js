@@ -214,5 +214,28 @@ describe('WfParameter', () => {
     }, 'There is text');
     expect(wrapper.find('SingleLineTextField')).toHaveLength(0);
   });
+  it('Should render a "colnames" parameter that has type string', () => {
+    var wrapper = shallowParameter({
+      visible: true,
+      id: 123,
+      value: '',
+      parameter_spec: {
+        id_name: 'colnames',
+        type: 'string',
+      }
+    }, '');
+    expect(wrapper.find('ColumnSelector')).toHaveLength(1);
+  });
+  it('Should not render a "colselect" parameter that has type multicolumn', () => {
+    var wrapper = shallowParameter({
+      visible: true,
+      id: 123,
+      value: '',
+      parameter_spec: {
+        id_name: 'colselect',
+        type: 'multicolumn',
+      }
+    }, '');
+    expect(wrapper.find('ColumnSelector')).toHaveLength(0);
+  });
 });
-
