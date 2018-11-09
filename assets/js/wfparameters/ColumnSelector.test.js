@@ -52,11 +52,13 @@ describe('ColumnSelector', () => {
     it('should sort the selected columns in order', () => {
       const w = mount(
         <ColumnSelector
+          onChange={jest.fn()}
+          onSubmit={jest.fn()}
           name='column'
           isReadOnly={false}
           value='C,A,D'
+          initialValue={'C,A,D'}
           allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
-          onChange={jest.fn()}
         />
       )
       const expected = [
@@ -75,6 +77,10 @@ describe('ColumnSelector', () => {
     it('should show submit button when new column added', () => {
       const w = mount(
         <ColumnSelector
+          onChange={jest.fn()}
+          onSubmit={jest.fn()}
+          name='column'
+          isReadOnly={false}
           initialValue={'A,B,C'}
           value='A,C'
           allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
@@ -98,6 +104,8 @@ describe('ColumnSelector', () => {
           allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
           onChange={jest.fn()}
           onSubmit={jest.fn()}
+          name='column'
+          isReadOnly={false}
         />
       )
       w.find('button[title="submit"]').simulate('click')

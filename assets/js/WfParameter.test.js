@@ -218,12 +218,12 @@ describe('WfParameter', () => {
     var wrapper = shallowParameter({
       visible: true,
       id: 123,
-      value: '',
+      value: 'A,B,C',
       parameter_spec: {
         id_name: 'colnames',
-        type: 'string',
+        type: 'string'
       }
-    }, '');
+    }, 'A,B,C');
     expect(wrapper.find('ColumnSelector')).toHaveLength(1);
   });
   it('Should not render a "colselect" parameter that has type multicolumn', () => {
