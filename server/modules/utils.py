@@ -3,6 +3,7 @@ from collections import OrderedDict
 from contextlib import contextmanager
 import io
 import json
+import re
 import tempfile
 from typing import Any, Dict, Callable, Optional
 import aiohttp
@@ -17,8 +18,6 @@ from server.sanitizedataframe import autocast_dtypes_in_place
 from django.conf import settings
 from django.db.models.fields.files import FieldFile
 from django.db import transaction
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from server.models.Workflow import Workflow
 
 
@@ -341,52 +340,47 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
 
 
-def _validate_url(url):
-    try:
-        validate = URLValidator()
-        validate(url)
-    except ValidationError:
-        raise ValidationError('Invalid URL')
+_WORKFLOW_REGEX = re.compile(
+    r'^\s*(?:https?://)?[-_a-z0-9A-Z.]+/workflows/(\d+)/?\s*$'
+)
 
 
-def get_id_from_url(url):
-    # TODO: Environment check
-    path = url.strip().split('/')
-    try:
-        _validate_url(url)
-        _id = int(path[path.index('workflows') + 1])
-        return _id
-    except ValueError:
-        raise ValueError(f'Error fetching {url}: Invalid workflow URL')
-
-
-def store_external_workflow(wf_module, url) -> ProcessResult:
+def workflow_url_to_id(url):
     """
-    Return a ProcessResult based on a URL.
+    Turn a URL into a Workflow ID.
 
-    Misnomers abound:
-
-        * This does not store anything anywhere
-        * 'url' is not a URL: it's just something that ends in an integer. (We
-          only use the integer.)
+    Raise ValueError if it is not a valid Workflow ID.
     """
-    right_wf_id = get_id_from_url(url)
+    match = _WORKFLOW_REGEX.match(url)
+    if not match:
+        raise ValueError('Not a valid Workbench workflow URL')
 
+    return int(match.group(1))
+
+
+def fetch_external_workflow(calling_wf_module,
+                            right_workflow_id: int) -> ProcessResult:
+    """
+    Lookup up a workflow's final ProcessResult.
+
+    `calling_wf_module` is for authentication and to make sure we don't import
+    ourselves.
+    """
     with transaction.atomic():
         try:
             right_wf_module = Workflow.objects \
                 .select_for_update() \
-                .get(id=right_wf_id)
+                .get(id=right_workflow_id)
         except Workflow.DoesNotExist:
             return ProcessResult(error='Target workflow does not exist')
 
         # Check to see if workflow_id the same
-        if wf_module.workflow_id == right_wf_module.id:
+        if calling_wf_module.workflow_id == right_wf_module.id:
             return ProcessResult(error='Cannot import the current workflow')
 
         # Make sure _this_ workflow's owner has access permissions to the
         # _other_ workflow
-        user = wf_module.workflow.owner
+        user = calling_wf_module.workflow.owner
         if not right_wf_module.user_session_authorized_read(user, None):
             return ProcessResult(error='Access denied to the target workflow')
 

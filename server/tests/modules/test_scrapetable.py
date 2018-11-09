@@ -28,7 +28,7 @@ class fake_spooled_data_from_url:
             raise self.error
         else:
             return (self.data, self.headers, self.charset)
-        return future
+        return self
 
     async def __aexit__(self, *args):
         return
@@ -72,12 +72,10 @@ class ScrapeTableTest(unittest.TestCase):
     def test_scrape_table(self, mock_data):
         url = 'http://test.com/tablepage.html'
         mock_data.return_value = fake_spooled_data_from_url(a_table_html)
-        wf_module = fetch(url=url)
+        fetch_result = fetch(url=url)
 
         self.assertEqual(mock_data.call_args, mock.call(url))
-
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(a_table))
+        self.assertEqual(fetch_result, ProcessResult(a_table))
 
     def test_first_row_is_header(self):
         # TODO make fetch_result _not_ a pd.DataFrame, so we don't lose info
@@ -92,25 +90,22 @@ class ScrapeTableTest(unittest.TestCase):
 
     def test_table_index_under(self):
         url = 'http:INVALID:URL'  # we should never even validate the URL
-        wf_module = fetch(url=url, tablenum=0)
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(
+        fetch_result = fetch(url=url, tablenum=0)
+        self.assertEqual(fetch_result, ProcessResult(
             error='Table number must be at least 1'
         ))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(a_table_html))
     def test_table_index_over(self):
-        wf_module = fetch(url='http://example.org', tablenum=2)
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(
+        fetch_result = fetch(url='http://example.org', tablenum=2)
+        self.assertEqual(fetch_result, ProcessResult(
             error='The maximum table number on this page is 1'
         ))
 
     def test_invalid_url(self):
-        wf_module = fetch(url='http:NOT:A:URL')
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(error='Invalid URL'))
+        fetch_result = fetch(url='http:NOT:A:URL')
+        self.assertEqual(fetch_result, ProcessResult(error='Invalid URL'))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(
@@ -118,20 +113,18 @@ class ScrapeTableTest(unittest.TestCase):
                                                  message='Server Error')
            ))
     def test_bad_server(self):
-        wf_module = fetch(url='http://example.org')
+        fetch_result = fetch(url='http://example.org')
 
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(
+        self.assertEqual(fetch_result, ProcessResult(
             error='Error from server: 500 Server Error'
         ))
 
     def test_no_tables(self):
         with mock.patch('pandas.read_html') as readmock:
             readmock.return_value = []
-            wf_module = fetch(url='http://example.org')
+            fetch_result = fetch(url='http://example.org')
 
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(
+        self.assertEqual(fetch_result, ProcessResult(
             error='Did not find any <table> tags on that page'
         ))
 
@@ -141,8 +134,7 @@ class ScrapeTableTest(unittest.TestCase):
                                                  message='Not Found')
            ))
     def test_404(self):
-        wf_module = fetch(url='http://example.org')
-        result = render(wf_module)
-        self.assertEqual(result, ProcessResult(
+        fetch_result = fetch(url='http://example.org')
+        self.assertEqual(fetch_result, ProcessResult(
             error='Error from server: 404 Not Found'
         ))

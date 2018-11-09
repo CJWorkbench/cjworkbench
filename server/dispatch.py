@@ -1,9 +1,11 @@
-# Module dispatch table and implementations
+import asyncio
+from inspect import iscoroutinefunction
 import logging
 import time
 import traceback
 from typing import Optional
 import pandas as pd
+from server import versions
 from server.models import ModuleVersion, Params
 from server.modules.types import ProcessResult
 from .dynamicdispatch import get_module_render_fn, \
@@ -131,20 +133,52 @@ def module_dispatch_render(module_version: ModuleVersion,
     return result
 
 
+async def _module_dispatch_fetch_static(module_version, wf_module):
+    """
+    Run module `fetch()` method.
+
+    `fetch()` returns `None` if it wants a no-op (e.g., input values are not
+    set); otherwise it returns a ProcessResult.
+    """
+    dispatch = module_version.module.dispatch
+    module_dispatch = module_dispatch_tbl[dispatch]
+    if not hasattr(module_dispatch, 'fetch'):
+        return None
+
+    time1 = time.time()
+
+    fetch = module_dispatch.fetch
+    if iscoroutinefunction(fetch):
+        result = await fetch(wf_module)
+    else:
+        # TODO nix all synchronous fetches and nix this code
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            result = loop.run_in_executor(None, fetch, wf_module)
+        else:
+            # No event loop
+            result = fetch(wf_module)
+    time2 = time.time()
+
+    shape = result.dataframe.shape if result is not None else (-1, -1)
+    logger.info('%s fetched =>(%drows,%dcols) in %dms',
+                str(module_version), shape[0], shape[1],
+                int((time2 - time1) * 1000))
+
+    return result
+
+
 async def module_dispatch_fetch(wf_module) -> None:
-    dispatch = wf_module.module_version.module.dispatch
+    module_version = wf_module.module_version
+    dispatch = module_version.module.dispatch
 
     if dispatch in module_dispatch_tbl:
-        module_dispatch = module_dispatch_tbl[dispatch]
-        if hasattr(module_dispatch, 'fetch'):
-            # Tell client to clear errors before fetch
-            await wf_module.set_busy()
-            await module_dispatch.fetch(wf_module)
+        result = await _module_dispatch_fetch_static(module_version, wf_module)
     else:
-        dynamic_module = module_version_to_dynamic_module(
-            wf_module.module_version
-        )
-        await dynamic_module.fetch(wf_module)
+        dynamic_module = module_version_to_dynamic_module(module_version)
+        result = await dynamic_module.fetch(wf_module)
+
+    await versions.save_result_if_changed(wf_module, result)
 
 
 def module_get_html_bytes(module_version) -> Optional[bytes]:

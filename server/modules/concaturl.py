@@ -1,6 +1,6 @@
 import pandas as pd
 from .moduleimpl import ModuleImpl
-from .utils import store_external_workflow, get_id_from_url
+from server.modules import utils
 from .types import ProcessResult
 
 _join_type_map = 'outer|inner|outer'.split('|')
@@ -25,7 +25,7 @@ class ConcatURL(ModuleImpl):
         source_columns = params.get_param_checkbox('source_columns')
 
         try:
-            right_id = str(get_id_from_url(url))
+            right_id = str(utils.workflow_url_to_id(url))
             concat_table = pd.concat([table, fetch_result.dataframe],
                                      keys=['Current', right_id],
                                      join=_join_type_map[type], sort=False)
@@ -45,17 +45,18 @@ class ConcatURL(ModuleImpl):
 
         return ProcessResult(concat_table)
 
-    # Load external workflow and store
+    # Load external workflow data
     @staticmethod
     async def fetch(wf_module):
         params = wf_module.get_params()
-        url = params.get_param_string('url').strip()
-        if not url:
-            return
+        url = params.get_param_string('url')
+
+        if not url.strip():
+            return None
 
         try:
-            result = store_external_workflow(wf_module, url)
-        except Exception as err:
-            result = ProcessResult(error=str(err))
+            workflow_id = utils.workflow_url_to_id(url)
+        except ValueError as err:
+            return ProcessResult(error=str(err))
 
-        await ModuleImpl.commit_result(wf_module, result)
+        return await utils.fetch_external_workflow(wf_module, workflow_id)

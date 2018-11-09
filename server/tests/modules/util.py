@@ -1,3 +1,4 @@
+from inspect import iscoroutinefunction
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 
@@ -41,7 +42,6 @@ class MockParams:
 class MockWfModule:
     def __init__(self, params):
         self.params = params
-        self.fetch_result = None
 
     def get_params(self):
         return self.params
@@ -56,21 +56,15 @@ def fetch_factory(func, params_klass):
         P = MockParams.factory(x=1, y=2)
         fetch = fetch_factory(MyModule.fetch, P)
 
-        # Build MockWfModule, run MyModule.fetch(wf_module), and commit the
-        # result in as `wf_module.fetch_result` (may have status='error')
-        wf_module = fetch(z=1)
+        # Build MockWfModule, run MyModule.fetch(wf_module)
+        fetch_result = fetch(z=1)
     """
-    async def _commit(wf_module, result, *args, **kwargs):
-        wf_module.fetch_result = result
-
     def fetch(**kwargs):
         params = params_klass(**kwargs)
         wf_module = MockWfModule(params)
-
-        with patch('server.modules.moduleimpl.ModuleImpl.commit_result',
-                   _commit):
-            async_to_sync(func)(wf_module)
-
-        return wf_module
+        if iscoroutinefunction(func):
+            return async_to_sync(func)(wf_module)
+        else:
+            return func(wf_module)
 
     return fetch

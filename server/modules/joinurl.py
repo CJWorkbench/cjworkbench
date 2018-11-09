@@ -1,6 +1,6 @@
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
-from .utils import store_external_workflow
+from server.modules import utils
 from .types import _dtype_to_column_type
 import numpy as np
 
@@ -98,18 +98,18 @@ class JoinURL(ModuleImpl):
 
         return ProcessResult(new_table)
 
-    # Load external workflow and store
+    # Load external workflow data
     @staticmethod
     async def fetch(wf_module):
         params = wf_module.get_params()
-        url = params.get_param_string('url').strip()
+        url = params.get_param_string('url')
 
-        if not url:
-            return
+        if not url.strip():
+            return None
 
         try:
-            result = store_external_workflow(wf_module, url)
-        except Exception as err:
-            result = ProcessResult(error=str(err))
+            workflow_id = utils.workflow_url_to_id(url)
+        except ValueError as err:
+            return ProcessResult(error=str(err))
 
-        await ModuleImpl.commit_result(wf_module, result)
+        return await utils.fetch_external_workflow(wf_module, workflow_id)

@@ -1,7 +1,10 @@
+import asyncio
 import unittest
+from unittest.mock import patch
+from asgiref.sync import async_to_sync
+import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import numpy as np
 from server.modules.concaturl import ConcatURL
 from server.modules.types import ProcessResult
 from .util import MockParams
@@ -9,6 +12,14 @@ from .util import MockParams
 
 P = MockParams.factory(url='https://app.workbenchdata.com/workflows/2/',
                        source_columns=([], []), type=0)
+
+
+class MockWfModule:
+    def __init__(self, **kwargs):
+        self.params = P(**kwargs)
+
+    def get_params(self):
+        return self.params
 
 
 def PR(error, *args, **kwargs):
@@ -20,6 +31,10 @@ def render(params, table, fetch_result):
     result = ConcatURL.render(params, table, fetch_result=fetch_result)
     result.sanitize_in_place()
     return result
+
+
+async def fetch(wf_module):
+    return await ConcatURL.fetch(wf_module)
 
 
 table = pd.DataFrame({
@@ -104,3 +119,28 @@ class ConcatURLTest(unittest.TestCase):
             'Source Workflow': ['Current', 'Current', '2', '2'],
             'key': ['b', 'c', 'b', 'd'],
         }))
+
+    @patch('server.modules.utils.fetch_external_workflow')
+    def test_fetch(self, inner_fetch):
+        pr = ProcessResult(pd.DataFrame({'A': [1]}))
+        future_pr = asyncio.Future()
+        future_pr.set_result(pr)
+        inner_fetch.return_value = future_pr
+
+        wf_module = MockWfModule(
+            url='https://app.workbenchdata.com/workflows/2/'
+        )
+        result = async_to_sync(fetch)(wf_module)
+
+        self.assertEqual(result, pr)
+        inner_fetch.assert_called_with(wf_module, 2)
+
+    def test_fetch_invalid_url(self):
+        wf_module = MockWfModule(
+            url='hts:app.workbenchdata.com/workflows/2/'
+        )
+        result = async_to_sync(fetch)(wf_module)
+
+        self.assertEqual(result, ProcessResult(
+            error='Not a valid Workbench workflow URL'
+        ))

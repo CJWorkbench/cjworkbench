@@ -157,7 +157,7 @@ class ProcessResult:
         'error': there is no DataFrame, and error is set.
         'unreachable': there is no DataFrame or error.
         """
-        if self.dataframe.empty:
+        if self.dataframe.columns.empty:
             if self.error:
                 return 'error'
             else:

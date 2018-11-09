@@ -1,4 +1,3 @@
-import asyncio
 from collections import OrderedDict
 import io
 import json
@@ -8,6 +7,7 @@ from unittest.mock import patch
 import aiohttp
 from django.conf import settings
 import pandas as pd
+import requests
 from server.modules.loadurl import LoadURL
 from server.modules.types import ProcessResult
 from server.tests.utils import mock_xlsx_path
@@ -38,7 +38,7 @@ class fake_spooled_data_from_url:
             raise self.error
         else:
             return (self.data, self.headers, self.charset)
-        return future
+        return self
 
     async def __aexit__(self, *args):
         return
@@ -96,14 +96,14 @@ class LoadFromURLTests(unittest.TestCase):
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(mock_csv_raw, 'text/csv'))
     def test_load_csv(self):
-        wf_module = fetch(url='http://test.com/the.csv')
-        self.assertEqual(wf_module.fetch_result, ProcessResult(mock_csv_table))
+        fetch_result = fetch(url='http://test.com/the.csv')
+        self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(b'a,b\n"1', 'text/csv'))
     def test_load_invalid_csv(self):
-        wf_module = fetch(url='http://test.com/the.csv')
-        self.assertEqual(wf_module.fetch_result, ProcessResult(error=(
+        fetch_result = fetch(url='http://test.com/the.csv')
+        self.assertEqual(fetch_result, ProcessResult(error=(
             'Error tokenizing data. C error: EOF inside string '
             'starting at line 1'
         )))
@@ -113,8 +113,8 @@ class LoadFromURLTests(unittest.TestCase):
     def test_load_csv_use_ext_given_bad_content_type(self):
         # return text/plain type and rely on filename detection, as
         # https://raw.githubusercontent.com/ does
-        wf_module = fetch(url='http://test.com/the.csv')
-        self.assertEqual(wf_module.fetch_result, ProcessResult(mock_csv_table))
+        fetch_result = fetch(url='http://test.com/the.csv')
+        self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
 
     def test_load_json(self):
         with open(os.path.join(settings.BASE_DIR,
@@ -133,17 +133,17 @@ class LoadFromURLTests(unittest.TestCase):
         with patch('server.modules.utils.spooled_data_from_url',
                    fake_spooled_data_from_url(sfpd_json, 'application/json',
                                               'utf-8')):
-            wf_module = fetch(url='http://test.com/the.json')
+            fetch_result = fetch(url='http://test.com/the.json')
 
-        self.assertEqual(wf_module.fetch_result, expected)
+        self.assertEqual(fetch_result, expected)
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(b'not json', 'application/json'))
     def test_load_json_invalid_json(self):
         # malformed json should put module in error state
-        wf_module = fetch(url='http://test.com/the.json')
+        fetch_result = fetch(url='http://test.com/the.json')
 
-        self.assertEqual(wf_module.fetch_result, ProcessResult(
+        self.assertEqual(fetch_result, ProcessResult(
             error='Expecting value: line 1 column 1 (char 0)'
         ))
 
@@ -155,18 +155,18 @@ class LoadFromURLTests(unittest.TestCase):
         with patch('server.modules.utils.spooled_data_from_url',
                    fake_spooled_data_from_url(xlsx_bytes, XLSX_MIME_TYPE,
                                               None)):
-            wf_module = fetch(url='http://test.com/x.xlsx')
+            fetch_result = fetch(url='http://test.com/x.xlsx')
 
-        self.assertEqual(wf_module.fetch_result, ProcessResult(xlsx_table))
+        self.assertEqual(fetch_result, ProcessResult(xlsx_table))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(b'hi', XLSX_MIME_TYPE, None))
     def test_load_xlsx_bad_content(self):
         # malformed file  should put module in error state
         with patch('requests.get', respond(b'hi', XLSX_MIME_TYPE)):
-            wf_module = fetch(url='http://test.com/x.xlsx')
+            fetch_result = fetch(url='http://test.com/x.xlsx')
 
-        self.assertEqual(wf_module.fetch_result, ProcessResult(error=(
+        self.assertEqual(fetch_result, ProcessResult(error=(
             "Error reading Excel file: Unsupported format, or corrupt "
             "file: Expected BOF record; found b'hi'"
         )))
@@ -178,11 +178,12 @@ class LoadFromURLTests(unittest.TestCase):
            ))
     def test_load_404(self):
         # 404 error should put module in error state
-        wf_module = fetch(url='http://example.org/x.csv')
-        self.assertEqual(wf_module.fetch_result,
-                         ProcessResult(error='Error from server: 404 Not Found'))
+        fetch_result = fetch(url='http://example.org/x.csv')
+        self.assertEqual(fetch_result, ProcessResult(
+            error='Error from server: 404 Not Found'
+        ))
 
     def test_bad_url(self):
-        wf_module = fetch(url='not a url')
-        self.assertEqual(wf_module.fetch_result,
+        fetch_result = fetch(url='not a url')
+        self.assertEqual(fetch_result,
                          ProcessResult(error='Invalid URL'))

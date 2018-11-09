@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 from server.models import Workflow
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
-        turn_header_into_first_row, get_id_from_url, store_external_workflow
+        turn_header_into_first_row, workflow_url_to_id, fetch_external_workflow
 from server.tests.utils import LoggedInTestCase, load_and_add_module, \
         create_test_user
 
@@ -138,7 +138,7 @@ class OtherUtilsTests(SimpleTestCase):
         # Function should return None when a table has not been uploaded yet
         self.assertIsNone(turn_header_into_first_row(None))
 
-    def test_get_id_from_url(self):
+    def test_workflow_url_to_id(self):
         result_map = {
             'www.google.com': False,
             'https://app.workbenchdata.com/workflows/4370/': 4370,
@@ -150,9 +150,9 @@ class OtherUtilsTests(SimpleTestCase):
         for url, expected_result in result_map.items():
             if not expected_result:
                 with self.assertRaises(Exception):
-                    get_id_from_url(url)
+                    workflow_url_to_id(url)
             else:
-                self.assertEqual(get_id_from_url(url), expected_result)
+                self.assertEqual(workflow_url_to_id(url), expected_result)
 
 
 class WorkflowImport(LoggedInTestCase):
@@ -174,29 +174,19 @@ class WorkflowImport(LoggedInTestCase):
         wf = Workflow.objects.create(name='New Workflow', owner=other_user)
         wfm = load_and_add_module('concaturl', workflow=wf)
 
-        result = store_external_workflow(
-            wfm,
-            (f'https://app.workbenchdata.com/workflows/'
-             f'{self.ext_wfm.workflow_id}/')
-        )
+        result = fetch_external_workflow(wfm, self.ext_wfm.workflow_id)
         self.assertEqual(result, ProcessResult(
             error='Access denied to the target workflow'
         ))
 
     def test_same_workflow(self):
-        result = store_external_workflow(
-            self.wfm,
-            f'https://app.workbenchdata.com/workflows/{self.wfm.workflow_id}/'
-        )
+        result = fetch_external_workflow(self.wfm, self.wfm.workflow_id)
         self.assertEqual(result, ProcessResult(
             error='Cannot import the current workflow'
         ))
 
     def test_workflow_does_not_exist(self):
-        result = store_external_workflow(
-            self.wfm,
-            f'https://app.workbenchdata.com/workflows/99999999999/'
-        )
+        result = fetch_external_workflow(self.wfm, 99999999)
         self.assertEqual(result, ProcessResult(
             error='Target workflow does not exist'
         ))

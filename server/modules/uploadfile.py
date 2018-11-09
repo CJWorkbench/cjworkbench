@@ -4,6 +4,7 @@ from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 from .utils import parse_bytesio, turn_header_into_first_row
 from server.utils import TempfileBackedReader
+from server import versions
 
 
 _ExtensionMimeTypes = {
@@ -46,9 +47,11 @@ async def upload_to_table(wf_module, uploaded_file):
     result.truncate_in_place_if_too_big()
     result.sanitize_in_place()
 
-    await ModuleImpl.commit_result(wf_module, result, stored_object_json=[
-        {'uuid': uploaded_file.uuid, 'name': uploaded_file.name}
-    ])
+    await versions.save_result_if_changed(wf_module, result,
+                                          stored_object_json=[{
+                                              'uuid': uploaded_file.uuid,
+                                              'name': uploaded_file.name,
+                                          }])
 
     # don't delete UploadedFile, so that we can reparse later or allow higher
     # row limit or download original, etc.

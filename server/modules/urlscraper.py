@@ -69,29 +69,39 @@ async def scrape_urls(urls, result_table):
         fetching = pending  # delete done tasks
 
 
+def are_params_empty(params, input_table):
+    urlsource = params.get_param_menu_string('urlsource')
+    if urlsource == 'Input column':
+        urlcol = params.get_param_column('urlcol', input_table)
+        return urlcol is None
+    else:
+        urllist = params.get_param_string('urllist')
+        return not urllist
+
+
 class URLScraper(ModuleImpl):
     @staticmethod
     def render(params, table, *, fetch_result, **kwargs):
-        urlsource = params.get_param_menu_string('urlsource')
-        if urlsource == 'Input column':
-            urlcol = params.get_param_column('urlcol', table)
-            if not urlcol:
-                return table  # input not specified
-        else:
-            urllist = params.get_param_string('urllist')
-            if not urllist:
-                return table  # input not specified
+        if are_params_empty(params, table):
+            return table
 
-        return fetch_result
+        if fetch_result is None:
+            return table
+
+        else:
+            return fetch_result
 
     # Scrapy scrapy scrapy
     @staticmethod
     async def fetch(wfm):
-        urls = []
         params = wfm.get_params()
+
+        urls = []
         urlsource = params.get_param_menu_string('urlsource')
 
         if urlsource == 'List':
+            if are_params_empty(params, None):
+                return None
             urllist_text = params.get_param_string('urllist')
             urllist_raw = urllist_text.split('\n')
             for url in urllist_raw:
@@ -111,6 +121,8 @@ class URLScraper(ModuleImpl):
                 prev_table = input_cache.result.dataframe
             else:
                 prev_table = pd.DataFrame()
+            if are_params_empty(params, prev_table):
+                return None
 
             # get our list of URLs from a column in the input table
             urlcol = params.get_param_column('urlcol', prev_table)
@@ -130,11 +142,11 @@ class URLScraper(ModuleImpl):
         else:
             table = pd.DataFrame()
 
+        # TODO make `date` datetime
         table['date'] = timezone.now().isoformat(timespec='seconds') \
             .replace('+00:00', 'Z')
 
         result = ProcessResult(dataframe=table)
         # No need to truncate: input is already truncated
         # No need to sanitize: we only added text+date+status
-
-        await ModuleImpl.commit_result(wfm, result)
+        return result

@@ -1,4 +1,3 @@
-import io
 import aiohttp
 import asyncio
 from .moduleimpl import ModuleImpl
@@ -69,22 +68,20 @@ class LoadURL(ModuleImpl):
 
                 if mime_type:
                     result = parse_bytesio(bytes_io, mime_type, charset)
+                    result.truncate_in_place_if_too_big()
+                    result.sanitize_in_place()
+                    return result
                 else:
-                    result = ProcessResult(error=(
+                    return ProcessResult(error=(
                         f'Error fetching {url}: '
                         f'unknown content type {content_type}'
                     ))
         except asyncio.TimeoutError:
-            result = ProcessResult(error=f'Timeout fetching {url}')
+            return ProcessResult(error=f'Timeout fetching {url}')
         except aiohttp.InvalidURL:
-            result = ProcessResult(error=f'Invalid URL')
+            return ProcessResult(error=f'Invalid URL')
         except aiohttp.ClientResponseError as err:
-            result = ProcessResult(error=('Error from server: %d %s' % (
-                                          err.status, err.message)))
+            return ProcessResult(error=('Error from server: %d %s'
+                                        % (err.status, err.message)))
         except aiohttp.ClientError as err:
-            result = ProcessResult(error=str(err))
-
-        result.truncate_in_place_if_too_big()
-        result.sanitize_in_place()
-
-        await ModuleImpl.commit_result(wf_module, result)
+            return ProcessResult(error=str(err))

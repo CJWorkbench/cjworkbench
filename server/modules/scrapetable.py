@@ -58,10 +58,6 @@ class ScrapeTable(ModuleImpl):
 
     @staticmethod
     async def fetch(wfm):
-        async def fail(error: str) -> None:
-            result = ProcessResult(error=error)
-            await ModuleImpl.commit_result(wfm, result)
-
         params = wfm.get_params()
 
         table = None
@@ -69,7 +65,7 @@ class ScrapeTable(ModuleImpl):
         tablenum = params.get_param_integer('tablenum') - 1  # 1 based for user
 
         if tablenum < 0:
-            return await fail(_('Table number must be at least 1'))
+            return ProcessResult(error='Table number must be at least 1')
 
         result = None
 
@@ -80,40 +76,35 @@ class ScrapeTable(ModuleImpl):
                 tables = pd.read_html(spool, encoding=charset,
                                       flavor='html5lib')
         except asyncio.TimeoutError:
-            result = ProcessResult(error=f'Timeout fetching {url}')
+            return ProcessResult(error=f'Timeout fetching {url}')
         except aiohttp.InvalidURL:
-            result = ProcessResult(error=f'Invalid URL')
+            return ProcessResult(error=f'Invalid URL')
         except aiohttp.ClientResponseError as err:
-            result = ProcessResult(error=('Error from server: %d %s' % (
+            return ProcessResult(error=('Error from server: %d %s' % (
                                           err.status, err.message)))
         except aiohttp.ClientError as err:
-            result = ProcessResult(error=str(err))
+            return ProcessResult(error=str(err))
         except ValueError as e:
-            result = ProcessResult(
+            return ProcessResult(
                 error=_('Did not find any <table> tags on that page')
             )
         except IndexError:
             # pandas.read_html() gives this unhelpful error message....
-            result = ProcessResult(
-                error='Table has no columns'
+            return ProcessResult(error='Table has no columns')
+
+        if not tables:
+            return ProcessResult(
+                error=_('Did not find any <table> tags on that page')
             )
 
-        if not result:
-            if not tables:
-                result = ProcessResult(
-                    error=_('Did not find any <table> tags on that page')
-                )
-            elif tablenum >= len(tables):
-                result = ProcessResult(error=(
-                    _('The maximum table number on this page is %d')
-                    % len(tables)
-                ))
-            else:
-                table = tables[tablenum]
-                merge_colspan_headers_in_place(table)
-                result = ProcessResult(dataframe=table)
+        if tablenum >= len(tables):
+            return ProcessResult(error=(
+                f'The maximum table number on this page is {len(tables)}'
+            ))
 
+        table = tables[tablenum]
+        merge_colspan_headers_in_place(table)
+        result = ProcessResult(dataframe=table)
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
-
-        await ModuleImpl.commit_result(wfm, result)
+        return result

@@ -222,9 +222,6 @@ class MockWfModule:
     def get_params(self):
         return self.params
 
-    def retrieve_fetched_table(self):
-        return self.fetched_table
-
     def get_cached_render_result(self):
         return self.cached_render_result
 
@@ -232,15 +229,8 @@ class MockWfModule:
         return self.previous
 
 
-async def _commit(wf_module, result, *_, **__):
-    wf_module.fetched_table = result.dataframe
-    wf_module.fetch_error = result.error
-    wf_module.fetch_result = result
-
-
-@patch('server.modules.moduleimpl.ModuleImpl.commit_result', _commit)
 def fetch(wf_module):
-    async_to_sync(URLScraper.fetch)(wf_module)
+    return async_to_sync(URLScraper.fetch)(wf_module)
 
 
 class URLScraperTests(SimpleTestCase):
@@ -266,9 +256,7 @@ class URLScraperTests(SimpleTestCase):
             table['html'] = scraped_table['html']
             return
 
-        with patch('django.utils.timezone.now') as now:
-            now.return_value = testnow
-
+        with patch('django.utils.timezone.now', lambda: testnow):
             with patch('server.modules.urlscraper.scrape_urls') as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
@@ -279,11 +267,7 @@ class URLScraperTests(SimpleTestCase):
                         'url': self.urls,
                     }))
 
-                fetch(wf_module)
-                result = URLScraper.render(wf_module.get_params(),
-                                           pd.DataFrame(),
-                                           fetch_result=wf_module.fetch_result)
-                result = ProcessResult.coerce(result)
+                result = fetch(wf_module)
                 self.assertEqual(result, ProcessResult(scraped_table))
 
     # Tests scraping from a list of URLs
@@ -302,16 +286,10 @@ class URLScraperTests(SimpleTestCase):
             table['html'] = scraped_table['html']
             return
 
-        with patch('django.utils.timezone.now') as now:
-            now.return_value = testnow
-
+        with patch('django.utils.timezone.now', lambda: testnow):
             with patch('server.modules.urlscraper.scrape_urls') as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                fetch(wf_module)
-                result = URLScraper.render(wf_module.get_params(),
-                                           pd.DataFrame(),
-                                           fetch_result=wf_module.fetch_result)
-                result = ProcessResult.coerce(result)
+                result = fetch(wf_module)
                 self.assertEqual(result, ProcessResult(scraped_table))

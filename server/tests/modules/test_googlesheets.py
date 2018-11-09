@@ -79,57 +79,62 @@ class GoogleSheetsTests(unittest.TestCase):
         super().tearDown()
 
     def test_render_no_file(self):
-        wf_module = fetch(googlefileselect='')
-        self.assertEqual(wf_module.fetch_result.error, '')
-        self.assertTrue(wf_module.fetch_result.dataframe.empty)
+        fetch_result = fetch(googlefileselect='')
+        self.assertEqual(fetch_result.error, '')
+        self.assertTrue(fetch_result.dataframe.empty)
 
-    def _assert_happy_path(self, wf_module):
+    def _assert_happy_path(self, fetch_result):
         self.requests.get.assert_called_with(
             'https://www.googleapis.com/drive/v3/files/'
             'aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
         )
 
-        self.assertEqual(wf_module.fetch_result.error, '')
-        assert_frame_equal(wf_module.fetch_result.dataframe, expected_table)
+        self.assertEqual(fetch_result.error, '')
+        assert_frame_equal(fetch_result.dataframe, expected_table)
 
     def test_fetch_csv(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
-        wf_module = fetch(googlefileselect={**default_googlefileselect,
+        fetch_result = fetch(googlefileselect={**default_googlefileselect,
                                             'mimeType': 'text/csv'})
-        self._assert_happy_path(wf_module)
+        self._assert_happy_path(fetch_result)
 
     def test_fetch_tsv(self):
         self.requests.get.return_value = MockResponse(200, example_tsv)
-        wf_module = fetch(googlefileselect={
+        fetch_result = fetch(googlefileselect={
             **default_googlefileselect,
             'mimeType': 'text/tab-separated-values',
         })
-        self._assert_happy_path(wf_module)
+        self._assert_happy_path(fetch_result)
 
     def test_fetch_xls(self):
         self.requests.get.return_value = MockResponse(200, example_xls)
-        wf_module = fetch(googlefileselect={
+        fetch_result = fetch(googlefileselect={
             **default_googlefileselect,
             'mimeType': 'application/vnd.ms-excel',
         })
-        self._assert_happy_path(wf_module)
+        self._assert_happy_path(fetch_result)
 
     def test_fetch_xlsx(self):
         self.requests.get.return_value = MockResponse(200, example_xlsx)
-        wf_module = fetch(googlefileselect={
+        fetch_result = fetch(googlefileselect={
             **default_googlefileselect,
             'mimeType':
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         })
-        self._assert_happy_path(wf_module)
+        self._assert_happy_path(fetch_result)
 
     def test_no_first_row_header(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
-        wf_module = fetch(googlefileselect={**default_googlefileselect,
-                                            'mimeType': 'text/csv'},
-                          has_header=False)
-        result = GoogleSheets.render(wf_module.params, pd.DataFrame(),
-                                     fetch_result=wf_module.fetch_result)
+        kwargs = {
+            'googlefileselect': {
+                **default_googlefileselect,
+                'mimeType': 'text/csv',
+            },
+            'has_header': False,
+        }
+        fetch_result = fetch(**kwargs)
+        result = GoogleSheets.render(P(**kwargs), pd.DataFrame(),
+                                     fetch_result=fetch_result)
         result.sanitize_in_place()  # TODO fix header-shift code; nix this
         assert_frame_equal(result.dataframe, pd.DataFrame({
             '0': ['foo', '1', '2'],
@@ -137,29 +142,34 @@ class GoogleSheetsTests(unittest.TestCase):
         }))
 
     def test_no_table_on_missing_auth(self):
-        wf_module = fetch(google_credentials=None)
-        self.assertTrue(wf_module.fetch_result.dataframe.empty)
-        self.assertEqual(wf_module.fetch_result.error,
+        fetch_result = fetch(google_credentials=None)
+        self.assertTrue(fetch_result.dataframe.empty)
+        self.assertEqual(fetch_result.error,
                          'Not authorized. Please connect to Google Drive.')
 
     def test_no_table_on_http_error(self):
         self.requests.get.side_effect = \
             requests.exceptions.ReadTimeout('read timeout')
-        wf_module = fetch()
-        self.assertTrue(wf_module.fetch_result.dataframe.empty)
-        self.assertEqual(wf_module.fetch_result.error, 'read timeout')
+        fetch_result = fetch()
+        self.assertTrue(fetch_result.dataframe.empty)
+        self.assertEqual(fetch_result.error, 'read timeout')
 
     def test_no_table_on_missing_table(self):
         self.requests.get.return_value = MockResponse(404, 'not found')
-        wf_module = fetch()
-        self.assertTrue(wf_module.fetch_result.dataframe.empty)
-        self.assertEqual(wf_module.fetch_result.error,
+        fetch_result = fetch()
+        self.assertTrue(fetch_result.dataframe.empty)
+        self.assertEqual(fetch_result.error,
                          'HTTP 404 from Google: not found')
 
     def test_render(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
-        wf_module = fetch(googlefileselect={**default_googlefileselect,
-                                            'mimeType': 'text/csv'})
-        result = GoogleSheets.render(wf_module.params, pd.DataFrame(),
-                                     fetch_result=wf_module.fetch_result)
+        kwargs = {
+            'googlefileselect': {
+                **default_googlefileselect,
+                'mimeType': 'text/csv',
+            }
+        }
+        fetch_result = fetch(**kwargs)
+        result = GoogleSheets.render(P(**kwargs), pd.DataFrame(),
+                                     fetch_result=fetch_result)
         self.assertEqual(result, ProcessResult(expected_table))

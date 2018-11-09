@@ -1,4 +1,3 @@
-import asyncio
 import os
 import re
 import shutil
@@ -8,7 +7,6 @@ from asgiref.sync import async_to_sync
 from pandas import DataFrame
 from server import dynamicdispatch
 from server.dynamicdispatch import DynamicModule, load_module
-from server.models import WfModule
 from server.modules.types import ProcessResult
 
 
@@ -25,22 +23,9 @@ class MockWfModule:
         self.params = MockParams(params)
         self.stored_table = stored_table
         self.last_table = None
-        self.fetch_error = stored_error
-        self.status = 'busy'
-
-        self.set_busy_calls = []
 
     def get_params(self):
         return self.params
-
-    def retrieve_fetched_table(self):
-        return self.stored_table
-
-    def get_fetch_result(self):
-        return ProcessResult(self.stored_table)
-
-    async def set_busy(self, **kwargs):
-        self.set_busy_calls.append(kwargs)
 
 
 class DynamicDispatchTest(unittest.TestCase):
@@ -179,15 +164,7 @@ class DynamicDispatchTest(unittest.TestCase):
         self.assertEqual(result, ProcessResult(table, 'Error'))
 
     def fetch(self, wf_module):
-        out_func = 'server.modules.moduleimpl.ModuleImpl.commit_result'
-        with mock.patch(out_func) as m:
-            # Mock commit_result by making it return None, asynchronously
-            future = asyncio.Future()
-            future.set_result(None)
-            m.return_value = future
-
-            async_to_sync(self.module.fetch)(wf_module)
-            return m
+        return async_to_sync(self.module.fetch)(wf_module)
 
     def mock_fetch(self, func):
         self.module.module.fetch = func
@@ -195,18 +172,13 @@ class DynamicDispatchTest(unittest.TestCase):
     def test_fetch_default_nothing(self):
         # Really, we're testing that we don't get any errors
         wf_module = MockWfModule()
-        m = self.fetch(wf_module)
-        self.assertEqual(len(wf_module.set_busy_calls), 0)
-        self.assertFalse(m.called)
+        result = self.fetch(wf_module)
+        self.assertIsNone(result)
 
     def test_fetch_wrap_exception(self):
         wf_module = MockWfModule()
         self.mock_fetch(lambda p: 1 / 0)
-        m = self.fetch(wf_module)
-        self.assertTrue(m.called)
-        args = m.call_args[0]
-        self.assertIs(wf_module, args[0])
-        result = args[1]
+        result = self.fetch(wf_module)
         result.error = re.sub('at line \d+', 'at line N', result.error)
         self.assertEqual(result, ProcessResult(error=(
             'ZeroDivisionError: division by zero at line N '
@@ -216,18 +188,12 @@ class DynamicDispatchTest(unittest.TestCase):
     def test_fetch_passes_params(self):
         wf_module = MockWfModule({'a': 'b'})
         self.mock_fetch(lambda p: ProcessResult(error=repr(p)))
-        m = self.fetch(wf_module)
-        self.assertTrue(m.called)
-        args = m.call_args[0]
-        self.assertIs(args[0], wf_module)
-        self.assertEqual(args[1], ProcessResult(error=repr({'a': 'b'})))
+        result = self.fetch(wf_module)
+        self.assertEqual(result, ProcessResult(error=repr({'a': 'b'})))
 
     def test_fetch_sends_data_frame(self):
         wf_module = MockWfModule()
         table = DataFrame()
         self.mock_fetch(lambda p: ProcessResult(table))
-        m = self.fetch(wf_module)
-        self.assertTrue(m.called)
-        args = m.call_args[0]
-        self.assertIs(args[0], wf_module)
-        self.assertEqual(args[1], ProcessResult(table))
+        result = self.fetch(wf_module)
+        self.assertEqual(result, ProcessResult(table))

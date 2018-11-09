@@ -397,61 +397,34 @@ mock_tweet_table2 = pd.DataFrame({
 
 
 def run_fetch(wf_module):
-    async_to_sync(Twitter.fetch)(wf_module)
+    return async_to_sync(Twitter.fetch)(wf_module)
+
+
+def Err(error):
+    return ProcessResult(error=error)
 
 
 class TwitterTests(unittest.TestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.commit_result_patch = \
-            patch('server.modules.moduleimpl.ModuleImpl.commit_result')
-        self.commit_result = self.commit_result_patch.start()
-
-        # Mock commit_result by making it return None, asynchronously
-        future = asyncio.Future()
-        future.set_result(None)
-        self.commit_result.return_value = future
-
-    def tearDown(self):
-        self.commit_result_patch.stop()
-
-        super().tearDown()
-
     def test_empty_query(self):
         wf_module = MockWfModule(querytype=1, query='')
-        run_fetch(wf_module)
-        self.commit_result.assert_called_with(
-            wf_module,
-            ProcessResult(error='Please enter a query')
-        )
+        fetch_result = run_fetch(wf_module)
+        self.assertEqual(fetch_result, Err('Please enter a query'))
 
     def test_empty_secret(self):
         wf_module = MockWfModule(twitter_credentials=None)
-        run_fetch(wf_module)
-        self.commit_result.assert_called_with(
-            wf_module,
-            ProcessResult(error='Please sign in to Twitter')
-        )
+        fetch_result = run_fetch(wf_module)
+        self.assertEqual(fetch_result, Err('Please sign in to Twitter'))
 
-    def test_invalid_username(self):
+    def test_fetch_invalid_username(self):
         wf_module = MockWfModule(querytype=0, username='@@batman')
-        run_fetch(wf_module)
-
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
-        self.assertEqual(result,
-                         ProcessResult(error='Not a valid Twitter username'))
+        fetch_result = run_fetch(wf_module)
+        self.assertEqual(fetch_result, Err('Not a valid Twitter username'))
 
     def test_invalid_list(self):
         wf_module = MockWfModule(querytype=2,
                                  listurl='https://twitter.com/a/lists/@b')
-        run_fetch(wf_module)
-
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
-        self.assertEqual(result,
-                         ProcessResult(error='Not a valid Twitter list URL'))
+        fetch_result = run_fetch(wf_module)
+        self.assertEqual(fetch_result, Err('Not a valid Twitter list URL'))
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('aiohttp.ClientSession')
@@ -467,10 +440,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Actually fetch!
-        run_fetch(wf_module)
-
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
+        result = run_fetch(wf_module)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
         wf_module.fetched_table = result.dataframe
@@ -482,7 +452,7 @@ class TwitterTests(unittest.TestCase):
             []
         ])
 
-        run_fetch(wf_module)
+        result2 = run_fetch(wf_module)
 
         self.assertEqual(
             mock_session2.requests[0].url,
@@ -493,9 +463,7 @@ class TwitterTests(unittest.TestCase):
             )
         )
 
-        result2 = self.commit_result.call_args[0][1]
-        # output should be only new tweets (in this case, one new tweet)
-        # appended to old tweets
+        # output should prepend new tweet
         self.assertEqual(
             list(result2.dataframe['id']),
             [795018956507582465, 795017539831103489, 795017147651162112]
@@ -509,6 +477,7 @@ class TwitterTests(unittest.TestCase):
         # https://www.pivotaltracker.com/story/show/160258591
         # Empty dataframe shouldn't change types
         wf_module = MockWfModule(accumulate=True)
+        wf_module.fetched_table = mock_tweet_table.copy()
 
         session.return_value = MockAiohttpSession([
             []
@@ -517,12 +486,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_key = 'a-key'
         auth_service.return_value.consumer_secret = 'a-secret'
 
-        wf_module.fetched_table = mock_tweet_table.copy()
-
-        run_fetch(wf_module)
-
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
+        result = run_fetch(wf_module)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
@@ -551,11 +515,7 @@ class TwitterTests(unittest.TestCase):
         bad_table[nulls] = None
         wf_module.fetched_table = bad_table
 
-        run_fetch(wf_module)
-
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
-
+        result = run_fetch(wf_module)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
@@ -573,9 +533,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Actually fetch!
-        run_fetch(wf_module)
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
+        result = run_fetch(wf_module)
         self.assertEqual(result.error, '')
         self.assertEqual([req.url for req in mock_session.requests], [
             (
@@ -607,8 +565,7 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Actually fetch!
-        run_fetch(wf_module)
-        self.commit_result.assert_called()
+        result = run_fetch(wf_module)
         self.assertEqual([req.url for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/lists/statuses.json'
@@ -623,18 +580,22 @@ class TwitterTests(unittest.TestCase):
         ])
 
         # Check that render output is right
-        result = self.commit_result.call_args[0][1]
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
-    def test_render_empty_without_columns(self):
+    def test_render_empty_no_query(self):
+        # When we haven't fetched, we shouldn't show any columns (for
+        # consistency with other modules)
+        result = Twitter.render(P(querytype=1, query=''), pd.DataFrame(),
+                                fetch_result=None)
+        assert_frame_equal(result.dataframe, pd.DataFrame())
+
+    def test_render_empty_search_result(self):
         # An empty table might be stored as zero-column. This is a bug, but we
         # must handle it because we have actual data like this. We want to
         # output all the same columns as a tweet table.
         result = Twitter.render(P(querytype=1, query='cat'), pd.DataFrame(),
                                 fetch_result=ProcessResult(pd.DataFrame()))
-        result = ProcessResult.coerce(result)
-
         assert_frame_equal(result.dataframe, mock_tweet_table[0:0])
 
     @patch('server.oauth.OAuthService.lookup_or_none')
@@ -660,10 +621,7 @@ class TwitterTests(unittest.TestCase):
             .drop('retweeted_status_screen_name', axis=1)
         wf_module.fetched_table = old_format_table
 
-        run_fetch(wf_module)
-
-        self.commit_result.assert_called()
-        result = self.commit_result.call_args[0][1]
+        result = run_fetch(wf_module)
         self.assertEqual(result.error, '')
 
         # The final table should contain all columns from our current format

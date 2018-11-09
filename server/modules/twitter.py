@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
-from django.utils.translation import gettext as _
 import numpy as np
 from oauthlib import oauth1
 import pandas as pd
@@ -27,6 +26,10 @@ HTML_TAG_RE = re.compile('<[^>]*>')
 def parse_source(source: str) -> str:
     """Parse a Twitter Status 'source', to remove HTML tag."""
     return HTML_TAG_RE.sub('', source)
+
+
+def Err(error):
+    return ProcessResult(error=error)
 
 
 Columns = [
@@ -270,13 +273,14 @@ class Twitter(ModuleImpl):
     @staticmethod
     def render(params, table, *, fetch_result, **kwargs):
         if fetch_result is None:
-            return create_empty_table()
+            return ProcessResult()
 
         if fetch_result.status == 'error':
             return fetch_result
 
         if fetch_result.dataframe.empty:
-            return create_empty_table()
+            # Previously, we saved empty tables improperly
+            return ProcessResult(create_empty_table())
 
         _recover_from_160258591(fetch_result.dataframe)
 
@@ -285,10 +289,6 @@ class Twitter(ModuleImpl):
     # Load specified user's timeline
     @staticmethod
     async def fetch(wfm):
-        async def fail(error: str) -> None:
-            result = ProcessResult(error=error)
-            await ModuleImpl.commit_result(wfm, result)
-
         params = wfm.get_params()
 
         param_names = {
@@ -301,11 +301,14 @@ class Twitter(ModuleImpl):
         query = params.get_param_string(param_names[querytype])
         access_token = params.get_param_secret_secret('twitter_credentials')
 
-        if query.strip() == '':
-            return await fail('Please enter a query')
+        if not query.strip() and not access_token:
+            return None  # Don't create a version
+
+        if not query.strip():
+            return Err('Please enter a query')
 
         if not access_token:
-            return await fail('Please sign in to Twitter')
+            return Err('Please sign in to Twitter')
 
         try:
             if params.get_param_checkbox('accumulate'):
@@ -318,29 +321,27 @@ class Twitter(ModuleImpl):
                                               query, None)
 
         except ValueError as err:
-            return await fail(str(err))
+            return Err(str(err))
 
         except ClientResponseError as err:
             if err.status:
                 if querytype == QUERY_TYPE_USER and err.status == 401:
-                    return await fail(_('User %s\'s tweets are protected')
-                                      % query)
+                    return Err("User %s's tweets are private" % query)
                 elif querytype == QUERY_TYPE_USER and err.status == 404:
-                    return await fail(_('User %s does not exist') % query)
+                    return Err('User %s does not exist' % query)
                 elif err.status == 429:
-                    return await fail(
-                        _('Twitter API rate limit exceeded. '
-                          'Please wait a few minutes and try again.')
+                    return Err(
+                        'Twitter API rate limit exceeded. '
+                        'Please wait a few minutes and try again.'
                     )
                 else:
-                    return await fail(_('HTTP error %s fetching tweets'
-                                        % str(err.status)))
+                    return Err('Error from Twitter: %d %s'
+                               % (err.status, err.message))
             else:
-                return await fail(_('Error fetching tweets: %s' % str(err)))
+                return Err('Error fetching tweets: %s' % str(err))
 
         result = ProcessResult(dataframe=tweets)
-
         result.truncate_in_place_if_too_big()
         result.sanitize_in_place()
 
-        await ModuleImpl.commit_result(wfm, result)
+        return result

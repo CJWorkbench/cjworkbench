@@ -40,12 +40,9 @@ class StoredObject(models.Model):
 
     @staticmethod
     def create_table(wf_module, table, metadata=None):
-        if table is None or table.empty:
-            return StoredObject.__create_empty_table(wf_module, metadata)
-        else:
-            hash = hash_table(table)
-            return StoredObject.__create_table_internal(wf_module, table,
-                                                        metadata, hash)
+        hash = hash_table(table)
+        return StoredObject.__create_table_internal(wf_module, table,
+                                                    metadata, hash)
 
     # Create a new StoredObject if it's going to store different data than the
     # previous one. Otherwise null Fast; checks hash without loading file
@@ -58,10 +55,12 @@ class StoredObject(models.Model):
 
         hash = hash_table(table)
         if hash != old_so.hash:
-            return StoredObject.create_table(wf_module, table,
-                                             metadata=metadata)
-        else:
-            return None
+            old_table = old_so.get_table()
+            if not old_table.equals(table):
+                return StoredObject.__create_table_internal(wf_module, table,
+                                                            metadata, hash)
+
+        return None
 
     @staticmethod
     def __create_table_internal(wf_module, table, metadata, hash):
@@ -76,22 +75,13 @@ class StoredObject(models.Model):
             hash=hash
         )
 
-    # why store an empty table? so we don't have to re-render to know that the
-    # output was empty
-    @staticmethod
-    def __create_empty_table(wf_module, metadata):
-        return StoredObject.objects.create(
-            wf_module=wf_module,
-            metadata=metadata,
-            file=None,
-            size=0,
-            stored_at=timezone.now(),
-            hash=0
-        )
-
     def get_table(self):
-        if not self.size:
-            return pd.DataFrame()  # empty table
+        if not self.file:
+            # Before 2018-11-09, we did not write empty data frames.
+            #
+            # We changed this because #160865813 shows that zero-row Parquet
+            # files still contain important data: column information.
+            return pd.DataFrame()
 
         try:
             return parquet.read(self.file.name)

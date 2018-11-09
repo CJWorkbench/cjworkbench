@@ -47,12 +47,28 @@ class StoredObjectTests(DbTestCase):
 
     def test_store_empty_table(self):
         so1 = StoredObject.create_table(self.wfm1,
-                                        None,
+                                        pd.DataFrame(),
                                         metadata=self.metadata)
         self.assertEqual(so1.metadata, self.metadata)
-        self.assertEqual(so1.size, 0)
         table2 = so1.get_table()
         self.assertTrue(table2.empty)
+
+    def test_load_obsolete_stored_empty_table(self):
+        """
+        Load a table from before 2018-11-09.
+
+        Previously, we'd special-case "empty" DataFrames. No more.
+        """
+        so1 = StoredObject.objects.create(
+            wf_module=self.wfm1,
+            metadata=self.metadata,
+            file=None,
+            size=0,
+            hash=0
+        )
+
+        table = so1.get_table()
+        assert_frame_equal(table, pd.DataFrame())
 
     def test_nan_storage(self):
         # have previously run into problems serializing/deserializing NaN

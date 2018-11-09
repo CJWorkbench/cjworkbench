@@ -167,6 +167,26 @@ class ProcessResultTests(unittest.TestCase):
         result = ProcessResult.coerce([None, 'foo'])
         self.assertIsNotNone(result.error)
 
+    def test_status_ok(self):
+        result = ProcessResult(DataFrame({'A': [1]}), '')
+        self.assertEqual(result.status, 'ok')
+
+    def test_status_ok_with_warning(self):
+        result = ProcessResult(DataFrame({'A': [1]}), 'warning')
+        self.assertEqual(result.status, 'ok')
+
+    def test_status_ok_with_no_rows(self):
+        result = ProcessResult(DataFrame({'A': []}), '')
+        self.assertEqual(result.status, 'ok')
+
+    def test_status_error(self):
+        result = ProcessResult(DataFrame(), 'error')
+        self.assertEqual(result.status, 'error')
+
+    def test_status_unreachable(self):
+        result = ProcessResult(DataFrame(), '')
+        self.assertEqual(result.status, 'unreachable')
+
     def test_truncate_too_big_no_error(self):
         expected_df = DataFrame({'foo': ['bar', 'baz']})
         expected = ProcessResult(

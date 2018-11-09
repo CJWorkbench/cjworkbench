@@ -119,12 +119,12 @@ class GoogleSheets(ModuleImpl):
         return ProcessResult(table, fetch_result.error)
 
     @staticmethod
-    async def fetch(wf_module):
+    def fetch(wf_module):  # TODO make async
         params = wf_module.get_params()
 
         file_meta = params.get_param_json('googlefileselect')
         if not file_meta:
-            return await ModuleImpl.commit_result(wf_module, ProcessResult())
+            return ProcessResult()
 
         sheet_id = file_meta['id']
         # backwards-compat for old entries without 'mimeType', 2018-06-13
@@ -141,7 +141,6 @@ class GoogleSheets(ModuleImpl):
             result = download_data_frame(sheet_id, sheet_mime_type, secret)
             result.truncate_in_place_if_too_big()
             result.sanitize_in_place()
+            return result
         else:
-            result = ProcessResult()
-
-        await ModuleImpl.commit_result(wf_module, result)
+            return ProcessResult()
