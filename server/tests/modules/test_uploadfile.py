@@ -68,7 +68,7 @@ class UploadFileTests(unittest.TestCase):
         result = render(False, None, ProcessResult(error='x'))
         self.assertEqual(result, ProcessResult(error='x'))
 
-    @patch('server.modules.moduleimpl.ModuleImpl.commit_result')
+    @patch('server.versions.save_result_if_changed')
     def _test_upload(self, commit_result, *, uuid, filename, ext, size,
                      expected_result):
         commit_result.return_value = future_none
@@ -172,7 +172,7 @@ class UploadFileTests(unittest.TestCase):
             ext='xlsx',
             size=len(b'not an xlsx'),
             expected_result=ProcessResult(error=(
-                'Error reading Excel file: Unsupported format, or corrupt file: '
-                "Expected BOF record; found b'not an x'"
+                'Error reading Excel file: Unsupported format, '
+                "or corrupt file: Expected BOF record; found b'not an x'"
             ))
         )
