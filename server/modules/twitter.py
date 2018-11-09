@@ -98,6 +98,12 @@ def get_stored_tweets(wf_module):
     return table
 
 
+def statuses_to_dataframe(statuses: List[Dict[str, Any]]) -> pd.DataFrame:
+    return pd.DataFrame(dict(
+        [(column.name, read_column(statuses, column)) for column in Columns]
+    ))
+
+
 async def fetch_from_twitter(access_token, path, since_id: Optional[int],
                              per_page: int,
                              n_pages: int) -> List[Dict[str, Any]]:
@@ -112,7 +118,7 @@ async def fetch_from_twitter(access_token, path, since_id: Optional[int],
         resource_owner_secret=access_token['oauth_token_secret']
     )
 
-    statuses = []
+    page_dataframes = [create_empty_table()]
 
     max_id = None
     async with aiohttp.ClientSession() as session:  # aiohttp timeout of 5min
@@ -143,10 +149,13 @@ async def fetch_from_twitter(access_token, path, since_id: Optional[int],
             if not page_statuses:
                 break
 
-            statuses.extend(page_statuses)
+            # Parse one page at a time, instead of parsing all at the end.
+            # Should save a bit of memory and make a smaller CPU-blip in our
+            # event loop.
+            page_dataframes.append(statuses_to_dataframe(page_statuses))
             max_id = page_statuses[-1]['id'] - 1
 
-    return statuses
+    return pd.concat(page_dataframes, ignore_index=True)
 
 
 async def twitter_user_timeline(access_token, screen_name,
@@ -193,6 +202,18 @@ async def twitter_list_timeline(access_token, owner_screen_name, slug,
     )
 
 
+# Inspired by https://github.com/twitter/twitter-text
+USERNAME_REGEX_PART = r'@?([a-zA-Z0-9_]{1,15})'
+LIST_REGEX_PART = r'([a-z][-_a-z0-9]{0,24})'
+
+USERNAME_REGEX = re.compile(f'^{USERNAME_REGEX_PART}$')
+LIST_URL_REGEX = re.compile(
+    f'^(?:https?://)twitter.com/{USERNAME_REGEX_PART}'
+    f'/lists/{LIST_REGEX_PART}$'
+)
+LIST_REGEX = re.compile(f'^{USERNAME_REGEX_PART}/{LIST_REGEX_PART}$')
+
+
 # Get from Twitter, return as dataframe
 async def get_new_tweets(access_token, querytype, query, old_tweets):
     if old_tweets is not None and not old_tweets.empty:
@@ -201,33 +222,26 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
         last_id = None
 
     if querytype == QUERY_TYPE_USER:
-        if query[0] == '@':  # allow user to type @username or username
-            query = query[1:]
+        match = USERNAME_REGEX.match(query)
+        if not match:
+            raise ValueError('Not a valid Twitter username')
+        username = match.group(1)
 
         # 16 pages of 200 each is Twitter's current maximum archived
-        statuses = await twitter_user_timeline(access_token, query, last_id)
+        return await twitter_user_timeline(access_token, username, last_id)
 
     elif querytype == QUERY_TYPE_SEARCH:
-        statuses = await twitter_search(access_token, query, last_id)
+        return await twitter_search(access_token, query, last_id)
 
     else:  # querytype == QUERY_TYPE_LIST
-        queryparts = re.search(
-            '(?:https?://)twitter.com/([A-Z0-9]*)/lists/([A-Z0-9-_]*)',
-            query, re.IGNORECASE
-        )
-        if not queryparts:
-            raise Exception('not a Twitter list URL')
+        match = LIST_URL_REGEX.match(query)
+        if not match:
+            match = LIST_REGEX.match(query)
+        if not match:
+            raise ValueError('Not a valid Twitter list URL')
 
-        statuses = await twitter_list_timeline(access_token,
-                                               queryparts.group(1),
-                                               queryparts.group(2), last_id)
-
-    # Columns to retrieve and store from Twitter
-    # Also, we use this to figure out the index the id field when merging old
-    # and new tweets
-    return pd.DataFrame(dict(
-        [(column.name, read_column(statuses, column)) for column in Columns]
-    ))
+        return await twitter_list_timeline(access_token, match.group(1),
+                                           match.group(2), last_id)
 
 
 # Combine this set of tweets with previous set of tweets
@@ -239,13 +253,16 @@ def merge_tweets(wf_module, new_table):
     elif new_table is None or new_table.empty:
         return old_table
     else:
-        # Add in retweeted screen_name if old version doesn't have it (data migration)
-        if 'retweeted_status_screen_name' not in old_table.columns:
-            old_table.insert(6, 'retweeted_status_screen_name', None)
-
-        return pd.concat([new_table, old_table]) \
-                .sort_values('id', ascending=False) \
-                .reset_index(drop=True)
+        # The new tweets all go before the old tweets.
+        #
+        # We tend to add columns to our output in successive versions of the
+        # Twitter module. `new_table` has the correct list of columns;
+        # `old_table` may be incomplete. `new_table` has the correct list of
+        # columns; `old_table` may be incomplete.
+        #
+        # sort=False: use the ordering in new_table. (pandas 0.23 corrects the
+        # previous unintuitive behavior in DataFrame.append().)
+        return new_table.append(old_table, ignore_index=True, sort=False)
 
 
 class Twitter(ModuleImpl):
@@ -299,6 +316,9 @@ class Twitter(ModuleImpl):
             else:
                 tweets = await get_new_tweets(access_token, querytype,
                                               query, None)
+
+        except ValueError as err:
+            return await fail(str(err))
 
         except ClientResponseError as err:
             if err.status:

@@ -434,6 +434,25 @@ class TwitterTests(unittest.TestCase):
             ProcessResult(error='Please sign in to Twitter')
         )
 
+    def test_invalid_username(self):
+        wf_module = MockWfModule(querytype=0, username='@@batman')
+        run_fetch(wf_module)
+
+        self.commit_result.assert_called()
+        result = self.commit_result.call_args[0][1]
+        self.assertEqual(result,
+                         ProcessResult(error='Not a valid Twitter username'))
+
+    def test_invalid_list(self):
+        wf_module = MockWfModule(querytype=2,
+                                 listurl='https://twitter.com/a/lists/@b')
+        run_fetch(wf_module)
+
+        self.commit_result.assert_called()
+        result = self.commit_result.call_args[0][1]
+        self.assertEqual(result,
+                         ProcessResult(error='Not a valid Twitter list URL'))
+
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('aiohttp.ClientSession')
     def test_user_timeline_accumulate(self, session, auth_service):
@@ -467,7 +486,11 @@ class TwitterTests(unittest.TestCase):
 
         self.assertEqual(
             mock_session2.requests[0].url,
-            'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=foouser&tweet_mode=extended&count=200&since_id=795017539831103489'
+            (
+                'https://api.twitter.com/1.1/statuses/user_timeline.json'
+                '?screen_name=foouser&tweet_mode=extended&count=200'
+                '&since_id=795017539831103489'
+            )
         )
 
         result2 = self.commit_result.call_args[0][1]
@@ -477,7 +500,8 @@ class TwitterTests(unittest.TestCase):
             list(result2.dataframe['id']),
             [795018956507582465, 795017539831103489, 795017147651162112]
         )
-        self.assertEqual(list(result2.dataframe.columns), list(mock_tweet_table.columns))
+        self.assertEqual(list(result2.dataframe.columns),
+                         list(mock_tweet_table.columns))
 
     @patch('server.oauth.OAuthService.lookup_or_none')
     @patch('aiohttp.ClientSession')
@@ -554,8 +578,15 @@ class TwitterTests(unittest.TestCase):
         result = self.commit_result.call_args[0][1]
         self.assertEqual(result.error, '')
         self.assertEqual([req.url for req in mock_session.requests], [
-            'https://api.twitter.com/1.1/search/tweets.json?q=cat&tweet_mode=extended&count=100',
-            'https://api.twitter.com/1.1/search/tweets.json?q=cat&tweet_mode=extended&count=100&max_id=795017147651162111',
+            (
+                'https://api.twitter.com/1.1/search/tweets.json'
+                '?q=cat&tweet_mode=extended&count=100'
+            ),
+            (
+                'https://api.twitter.com/1.1/search/tweets.json'
+                '?q=cat&tweet_mode=extended&count=100'
+                '&max_id=795017147651162111'
+            )
         ])
 
         # Check that render output is right
@@ -579,8 +610,16 @@ class TwitterTests(unittest.TestCase):
         run_fetch(wf_module)
         self.commit_result.assert_called()
         self.assertEqual([req.url for req in mock_session.requests], [
-            'https://api.twitter.com/1.1/lists/statuses.json?owner_screen_name=thatuser&slug=theirlist&tweet_mode=extended&count=200',
-            'https://api.twitter.com/1.1/lists/statuses.json?owner_screen_name=thatuser&slug=theirlist&tweet_mode=extended&count=200&max_id=795017147651162111',
+            (
+                'https://api.twitter.com/1.1/lists/statuses.json'
+                '?owner_screen_name=thatuser&slug=theirlist'
+                '&tweet_mode=extended&count=200'
+            ),
+            (
+                'https://api.twitter.com/1.1/lists/statuses.json'
+                '?owner_screen_name=thatuser&slug=theirlist'
+                '&tweet_mode=extended&count=200&max_id=795017147651162111'
+            )
         ])
 
         # Check that render output is right
@@ -617,7 +656,8 @@ class TwitterTests(unittest.TestCase):
         auth_service.return_value.consumer_secret = 'a-secret'
 
         # Simulate old format by deleting retweet screen name column
-        old_format_table = mock_tweet_table.copy(deep=True).drop('retweeted_status_screen_name', axis=1)
+        old_format_table = mock_tweet_table.copy(deep=True) \
+            .drop('retweeted_status_screen_name', axis=1)
         wf_module.fetched_table = old_format_table
 
         run_fetch(wf_module)
@@ -632,9 +672,10 @@ class TwitterTests(unittest.TestCase):
             list(mock_tweet_table.columns)
         )
 
-        # The final table should contain merged, sorted tweet ids
+        # The final table should contain merged tweets.
+        # No need for sorting. Twitter sorts for us.
         self.assertEqual(
             list(result.dataframe['id']),
-            [795017539831103489, 795017539831103489, 795017147651162112,
+            [795017539831103489, 795017147651162112, 795017539831103489,
              795017147651162112]
         )
