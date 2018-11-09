@@ -73,6 +73,7 @@ class TestLesson(LessonTest):
         b.click_whatever('.react-select__option', text='MetroArea', wait=True)
         b.click_whatever('.react-select__indicator', wait=True)
         b.click_whatever('.react-select__option', text='Population', wait=True)
+        b.click_button('submit')
 
         self.expect_highlight_next()
         self.click_next()

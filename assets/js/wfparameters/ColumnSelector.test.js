@@ -5,11 +5,13 @@ import { mount } from 'enzyme'
 describe('ColumnSelector', () => {
   const wrapper = (extraProps={}) => mount(
     <ColumnSelector
+      onChange={jest.fn()}
+      onSubmit={jest.fn()}
       name='column'
       isReadOnly={false}
+      initialValue={'A,C'}
       value='A,C'
       allColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}, {name: 'D'}]}
-      onChange={jest.fn()}
       {...extraProps}
     />
   )
@@ -50,11 +52,13 @@ describe('ColumnSelector', () => {
     it('should sort the selected columns in order', () => {
       const w = mount(
         <ColumnSelector
+          onChange={jest.fn()}
+          onSubmit={jest.fn()}
           name='column'
           isReadOnly={false}
           value='C,A,D'
+          initialValue={'C,A,D'}
           allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
-          onChange={jest.fn()}
         />
       )
       const expected = [
@@ -63,6 +67,50 @@ describe('ColumnSelector', () => {
         {label: 'C', value: 'C'}
       ]
       expect(w.find('Select[name="columns"]').prop('value')).toEqual(expected)
+    })
+
+    it('should not show a submit button when value is unchanged', () => {
+      const w = wrapper()
+      expect(w.find('button.submit')).toHaveLength(0)
+    })
+
+    it('should show submit button when new column added', () => {
+      const w = mount(
+        <ColumnSelector
+          onChange={jest.fn()}
+          onSubmit={jest.fn()}
+          name='column'
+          isReadOnly={false}
+          initialValue={'A,B,C'}
+          value='A,C'
+          allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
+        />
+      )
+      expect(w.find('button[title="submit"]')).toHaveLength(1)
+    })
+
+    it('should call onChange but not onSubmit when columns are added', () => {
+      const w = wrapper()
+      w.find('button[title="Select All"]').simulate('click')
+      expect(w.prop('onChange')).toHaveBeenCalledWith('A,B,C,D')
+      expect(w.prop('onSubmit')).not.toHaveBeenCalled()
+    })
+
+    it('should call onSubmit when columns added and button pressed', () => {
+      const w = mount(
+        <ColumnSelector
+          initialValue={'A,B,C'}
+          value='A,C'
+          allColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
+          onChange={jest.fn()}
+          onSubmit={jest.fn()}
+          name='column'
+          isReadOnly={false}
+        />
+      )
+      w.find('button[title="submit"]').simulate('click')
+      expect(w.prop('onChange')).not.toHaveBeenCalled()
+      expect(w.prop('onSubmit')).toHaveBeenCalled()
     })
   })
 })
