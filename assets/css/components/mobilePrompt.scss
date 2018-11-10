@@ -5,7 +5,11 @@
 @media screen and (max-width: 740px) {
 
   .navbar {
-    padding-right: 2rem!important;
+    padding: 1.1rem 2rem 1.1rem 2rem!important;
+
+    .links {
+      margin-left: 3rem;
+    }
 
     .group--undo-redo {
       display: none!important;
@@ -17,6 +21,20 @@
     .dropdown .context-button {
       margin-right: 0!important;
     }
+
+    .logo .logo {
+      width: 2.1rem!important;
+    }
+
+    .logo img.logo-text {
+      width: 12.2rem!important;
+    }
+
+  }
+
+  .nav-tabs .tab-group .nav-item .nav-link {
+      padding: 1.4rem 2rem 1rem!important;
+      font-size: 1.2rem!important;
   }
 }
 @media screen and (max-width: 650px) {
