@@ -206,7 +206,7 @@ export default class Workflows extends React.Component {
       // No shared workflows message
       return (
         <TabPane tabId={'templates'}>
-          <div className="placeholder">No template workflows  ¯\_(ツ)_/¯</div>
+          <div className="placeholder">No template  ¯\_(ツ)_/¯</div>
         </TabPane>
       )
     }

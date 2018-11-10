@@ -1,6 +1,24 @@
 //Prompt for small devices and mobiles
 
 .not-enough-px-warning { display: none; }
+
+@media screen and (max-width: 740px) {
+
+  .navbar {
+    padding-right: 2rem!important;
+
+    .group--undo-redo {
+      display: none!important;
+
+    }
+    .nav-buttons button {
+      margin-right: 1.5rem!important;
+    }
+    .dropdown .context-button {
+      margin-right: 0!important;
+    }
+  }
+}
 @media screen and (max-width: 650px) {
 
   .not-enough-px-warning {
