@@ -31,8 +31,8 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background-image: radial-gradient(#31D9ED 25%, #068CB9); /*fallback*/
-    background-image: url("/static/images/mobile-bgd.png"), radial-gradient(#31D9ED 25%, #068CB9);
+    background-image: radial-gradient($brand-learn 25%, #FC68AD); /*fallback*/
+    background-image: url("/static/images/mobile-bgd.png"), radial-gradient($brand-learn 10%, $brand-learn);
     background-size: 100% auto;.background {background-size: cover;}
     &:hover {text-decoration: none;}
 
@@ -62,25 +62,42 @@
       align-items: center;
       flex-direction: column;
       width: 100%;
-      background-color: $light-accent--medium;
       color:$white;
 
-      .product-vid {
-        width: 100%!important;
+      .video-container {
+        position: relative;
+        width:100%;
+        padding-bottom: 56.25%;
+        overflow: hidden;
+
+        .product-vid {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
       }
 
-      .title {
+      .warning {
         width:80%;
         font-size: 3.5rem;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
       }
       .detail {
         margin-top: .5rem;
-        font-size: 1.6rem;
+        font-size: 2rem;
       }
       .action-button {
-        margin-top: 2rem;
+        margin-top: 3rem;
+        color: $brand-learn;
+        font-weight: bold;
+        &:hover {
+          text-decoration: none;
+          color: $white;
+        }
       }
     }
   }

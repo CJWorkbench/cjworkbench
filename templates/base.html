@@ -63,17 +63,15 @@
     {% block body %}{% endblock %}
 
   </body>
-  <a class="not-enough-px-warning" href="http://workbenchdata.com">
-    <div class="brand-container">
-      <img src="{% static 'images/logo.svg' %}" class="logo"/>
-      <h1 className="brand">Workbench</h1>
-    </div>
+  <div class="not-enough-px-warning">
     <div class="banner">
-      <iframe class="product-vid" src="https://player.vimeo.com/video/295956416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-      <div class="title"> You need a wider screen</div>
-      <div class="detail">Min 400px</div>
+      <div class="video-container">
+        <iframe class="product-vid" src="https://player.vimeo.com/video/295956416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+      </div>
+      <div class="warning">You need a wider screen to use the app</div>
+      <div class="detail">Min 650px wide</div>
       <div class="detail">Experience optimized for web browsers</div>
-      <div class="action-button button-white">Home</div>
+      <a href="/account/signup/" class="button-white--fill action-button mx-auto">Signup</a>
     </div>
-  </a>
+  </div>
 </html>
