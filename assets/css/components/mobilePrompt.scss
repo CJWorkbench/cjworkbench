@@ -49,10 +49,18 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background-image: radial-gradient($brand-learn 25%, #FC68AD); /*fallback*/
-    background-image: url("/static/images/mobile-bgd.png"), radial-gradient($brand-learn 10%, $brand-learn);
+    background-image: radial-gradient($brand-learn 5%, #FC68AD); /*fallback*/
     background-size: 100% auto;.background {background-size: cover;}
     &:hover {text-decoration: none;}
+
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url("../images/account-icons-bgd-mobile.png");
+      background-size: 100% auto;
+      opacity: .4;
+    }
 
     .brand-container {
       display: flex;
@@ -81,6 +89,7 @@
       flex-direction: column;
       width: 100%;
       color:$white;
+      z-index: 3;
 
       .video-container {
         position: relative;
