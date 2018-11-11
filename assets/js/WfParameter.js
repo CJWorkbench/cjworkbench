@@ -19,6 +19,7 @@ import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
 import RadioParam from './wfparameters/RadioParam'
+import MultiLineTextArea from './wfparameters/MultiLineTextArea'
 //import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 //import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 //import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
@@ -127,13 +128,6 @@ export default class WfParameter extends React.PureComponent {
 
   paramChanged = (newVal) => {
     this.props.changeParam(this.props.p.id, { value: newVal })
-  }
-
-  /**
-   * "old-style" form: submit just this param on blur.
-   */
-  blur = (e) => {
-    this.paramChanged(e.target.value)
   }
 
   onClickCheckbox = (ev) => {
@@ -391,14 +385,14 @@ export default class WfParameter extends React.PureComponent {
           return (
             <div {...this.outerDivProps}>
               <div className='label-margin t-d-gray content-3'>{name}</div>
-              <textarea
-                onBlur={this.blur}
+              <MultiLineTextArea
                 readOnly={this.props.isReadOnly}
-                className='module-parameter t-d-gray content-3 text-field-large'
                 name={id_name}
-                rows={4}
-                defaultValue={this.props.p.value}
-                placeholder={this.props.p.parameter_spec.placeholder || ''}
+                value={this.props.value}
+                initialValue={this.props.p.value}
+                onChange={this.onChange}
+                onSubmit={this.onSubmit}
+                placeholder={this.props.p.parameter_spec.placeholder}
               />
             </div>
           )
