@@ -22,7 +22,12 @@
       "name": "Column Names",
       "id_name": "colnames",
       "type": "string",
-      "visible": true
+      "visible": true,
+      "visible_if": {
+        "id_name": "select_range",
+        "value": false,
+        "invert": false
+      }
     },
     {
       "name": "Column numbers",
