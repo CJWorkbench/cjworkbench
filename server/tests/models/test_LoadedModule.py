@@ -383,7 +383,20 @@ class LoadedModuleTest(SimpleTestCase):
     def test_fetch_sync(self):
         table = pd.DataFrame({'A': [1]})
 
-        def fetch(param, **kwargs):
+        def fetch(params, **kwargs):
+            return table
+
+        lm = LoadedModule('int', 1, True, fetch_impl=fetch)
+        with self.assertLogs():
+            result = call_fetch(lm, MockParams())
+
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, table)
+
+    def test_fetch_sync_no_params(self):
+        table = pd.DataFrame({'A': [1]})
+
+        def fetch(params):
             return table
 
         lm = LoadedModule('int', 1, True, fetch_impl=fetch)

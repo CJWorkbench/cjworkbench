@@ -197,7 +197,7 @@ class LoadedModule:
         kwargs = {}
         spec = inspect.getfullargspec(self.fetch_impl)
         varkw = bool(spec.varkw)  # if True, function accepts **kwargs
-        kwonlyargs = inspect.getfullargspec(self.fetch).kwonlyargs
+        kwonlyargs = spec.kwonlyargs
         if varkw or 'workflow_id' in kwonlyargs:
             kwargs['workflow_id'] = workflow_id
         if varkw or 'get_input_dataframe' in kwonlyargs:
