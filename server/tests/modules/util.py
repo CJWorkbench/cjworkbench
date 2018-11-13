@@ -36,7 +36,11 @@ class MockParams:
 
     def get_param_json(self, name): return self.get_param(name)
 
-    def to_painful_dict(self, table): return self.d
+    def to_painful_dict(self, table):
+        if table is None:
+            raise ValueError('You must pass a DataFrame')
+
+        return self.d
 
     @staticmethod
     def factory(**kwargs):

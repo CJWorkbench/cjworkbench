@@ -3,8 +3,8 @@ import contextlib
 import datetime
 from typing import Any, Dict, Optional, Tuple
 from channels.db import database_sync_to_async
-from server import dispatch, notifications
-from server.models import CachedRenderResult, WfModule, Workflow
+from server import notifications
+from server.models import CachedRenderResult, LoadedModule, WfModule, Workflow
 from server.modules.types import ProcessResult
 from server import websockets
 

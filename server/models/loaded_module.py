@@ -42,16 +42,6 @@ from ..modules.concaturl import ConcatURL
 logger = logging.getLogger(__name__)
 
 
-# the base directory where all modules imported should be stored, i.e. the
-# place where we go to lookup modules that aren't pre-loaded when the workbench
-# starts up.
-_DYNAMIC_MODULES_BASE_DIRECTORY = os.path.join(
-    os.path.dirname(__file__),
-    '..',
-    'importedmodules'
-)
-
-
 def _double_M_col(params, table, **kwargs):
     table = table.copy()
     table['M'] *= 2
@@ -159,7 +149,7 @@ class LoadedModule:
         """
         # Internal and external modules have different calling conventions
         if self.is_external:
-            arg1, arg2 = (table, params.to_painful_dict(None))
+            arg1, arg2 = (table, params.to_painful_dict(table))
         else:
             arg1, arg2 = (params, table)
 
@@ -218,7 +208,17 @@ class LoadedModule:
             kwargs['get_workflow_owner'] = get_workflow_owner
 
         if self.is_external:
-            params = params.to_painful_dict(None)
+            # Pass input to params.to_painful_dict().
+            input_dataframe_future = get_input_dataframe()
+
+            input_dataframe = await input_dataframe_future
+            if input_dataframe is None:
+                input_dataframe = pd.DataFrame()
+            params = params.to_painful_dict(input_dataframe)
+            # If we're passing get_input_dataframe via kwargs, short-circuit it
+            # because we already know the result.
+            if 'get_input_dataframe' in kwargs:
+                kwargs['get_input_dataframe'] = lambda: input_dataframe_future
 
         time1 = time.time()
 
@@ -267,7 +267,7 @@ class LoadedModule:
 
         Invalid assumption? Fix the bug elsewhere.
         """
-        return cls.for_module_version_sync(cls, module_version)
+        return cls.for_module_version_sync(module_version)
 
     @classmethod
     def for_module_version_sync(
@@ -325,7 +325,7 @@ def load_external_module(module_id_name: str, version_sha1: str) -> ModuleType:
     ... in short: this function shouldn't raise an error.
     """
     path_to_code = os.path.join(
-        _DYNAMIC_MODULES_BASE_DIRECTORY,
+        settings.IMPORTED_MODULES_ROOT,
         module_id_name,
         version_sha1
     )
@@ -371,7 +371,7 @@ def module_get_html_path(module_version: ModuleVersion) -> Optional[str]:
         except AttributeError:
             return None
     else:
-        path_to_file = os.path.join(_DYNAMIC_MODULES_BASE_DIRECTORY,
+        path_to_file = os.path.join(settings.IMPORTED_MODULES_ROOT,
                                     module_id_name, version_sha1)
 
         for f in os.listdir(path_to_file):

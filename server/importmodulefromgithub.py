@@ -10,7 +10,7 @@ from git.exc import GitCommandError
 from server.initmodules import load_module_from_dict, \
         update_wfm_parameters_to_new_version
 from server.models import Module, ModuleVersion, WfModule
-from server.models import LoadedModule
+import server.models.loaded_module
 from server.utils import log_message
 
 
@@ -342,7 +342,7 @@ def import_module_from_directory(url, reponame, version, importdir,
         shutil.rmtree(importdir)
 
         if force_reload:
-            LoadedModule.load_module.cache_clear()
+            server.models.loaded_module.load_external_module.cache_clear()
 
         # For now, our policy is to update all wfmodules to this just-imported
         # version

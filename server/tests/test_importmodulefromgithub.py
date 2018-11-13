@@ -4,16 +4,14 @@ from pathlib import Path
 import shutil
 import tempfile
 from unittest.mock import patch
-from django.test import override_settings
 import pandas as pd
 from server.importmodulefromgithub import sanitise_url, \
         retrieve_project_name, validate_module_structure, \
         get_module_config_from_json, create_destination_directory, \
         add_boilerplate_and_check_syntax, validate_python_functions, \
         extract_version, import_module_from_directory, ValidationError
-from server import dynamicdispatch
-from server.dispatch import module_dispatch_render
-from server.models import Module, ModuleVersion
+from server.models import LoadedModule, Module, ModuleVersion
+import server.models.loaded_module
 from server.modules.types import ProcessResult
 from server.tests.utils import LoggedInTestCase, add_new_workflow, \
         add_new_wf_module, get_param_by_id_name
@@ -350,62 +348,47 @@ class ImportFromGitHubTest(LoggedInTestCase):
             with self.assertLogs():
                 import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)
 
-
     # THE BIG TEST. Load a module and test that we can render it correctly
     # This is really an integration test, runs both load and dispatch code
-    @override_settings(CACHE_MODULES=False)
     def test_load_and_dispatch(self):
-        test_dir = self.fake_github_clone()
+        try:
+            test_dir = self.fake_github_clone()
 
-        import_module_from_directory('https://github.com/account/reponame', 'reponame', '123456', test_dir)
+            import_module_from_directory('https://github.com/account/reponame',
+                                         'reponame', '123456', test_dir)
 
-        # Module and ModuleVersion should have loaded -- these will raise exception if they don't exist
-        module = Module.objects.get(id_name=self.importable_id_name)
-        module_version = ModuleVersion.objects.get(module=module)
+            # Module and ModuleVersion should have loaded -- these will raise
+            # exception if they don't exist
+            module = Module.objects.get(id_name=self.importable_id_name)
+            module_version = ModuleVersion.objects.get(module=module)
 
-        # Create a test workflow that uses this imported module
-        workflow = add_new_workflow('Dynamic Dispatch Test Workflow')
-        wfm = add_new_wf_module(workflow, module_version, order=1)
+            # Create a test workflow that uses this imported module
+            workflow = add_new_workflow('Dynamic Dispatch Test Workflow')
+            wfm = add_new_wf_module(workflow, module_version, order=1)
 
-        # These will fail if we haven't correctly loaded the json describing
-        # the parameters
-        stringparam = get_param_by_id_name('test', wf_module=wfm)
-        colparam = get_param_by_id_name('test_column', wf_module=wfm)
-        multicolparam = get_param_by_id_name('test_multicolumn', wf_module=wfm)
+            # These will fail if we haven't correctly loaded the json
+            # describing the parameters
+            colparam = get_param_by_id_name('test_column', wf_module=wfm)
+            multicolparam = get_param_by_id_name('test_multicolumn',
+                                                 wf_module=wfm)
 
-        # Does it render right?
-        test_csv = 'Class,M,F,Other\n' \
-                   'math,10,12,100\n' \
-                   'english,,7\,200\n' \
-                   'history,11,13,\n' \
-                   'economics,20,20,20'
-        test_table = pd.read_csv(io.StringIO(test_csv), header=0,
-                                 skipinitialspace=True)
-        test_table_out = test_table.copy()
-        test_table_out['M'] *= 2
-        test_table_out[['F', 'Other']] *= 3
+            # Does it render right?
+            test_csv = 'Class,M,F,Other\n' \
+                       'math,10,12,100\n' \
+                       'english,,7\,200\n' \
+                       'history,11,13,\n' \
+                       'economics,20,20,20'
+            test_table = pd.read_csv(io.StringIO(test_csv), header=0,
+                                     skipinitialspace=True)
+            test_table_out = test_table.copy()
+            test_table_out['M'] *= 2
+            test_table_out[['F', 'Other']] *= 3
 
-        colparam.set_value('M')  # double this
-        multicolparam.set_value('F,Other')  # triple these
-        with self.assertLogs(dynamicdispatch.__name__):
-            result = module_dispatch_render(module_version, wfm.get_params(),
-                                            test_table, None)
-        self.assertEqual(result, ProcessResult(test_table_out))
-
-        # Test that bad column parameter values are removed
-        colparam.set_value('missing_column_name')
-        multicolparam.set_value('Other,junk_column_name')
-        test_table_out = test_table.copy()
-        # multicolumn parameter has only one valid col
-        test_table_out[['Other']] *= 3
-        result = module_dispatch_render(module_version, wfm.get_params(),
-                                        test_table, None)
-        self.assertEqual(result, ProcessResult(test_table_out))
-
-        # if the module crashes, we should get an error with a line number
-        stringparam.set_value('crashme')
-        result = module_dispatch_render(module_version, wfm.get_params(),
-                                        test_table, None)
-        self.assertEqual(result, ProcessResult(
-            error='ValueError: we crashed! at line 7 of importable.py'
-        ))
+            colparam.set_value('M')  # double this
+            multicolparam.set_value('F,Other')  # triple these
+            with self.assertLogs():
+                lm = LoadedModule.for_module_version_sync(module_version)
+                result = lm.render(wfm.get_params(), test_table, None)
+            self.assertEqual(result, ProcessResult(test_table_out))
+        finally:
+            server.models.loaded_module.load_external_module.cache_clear()

@@ -2,9 +2,11 @@ import asyncio
 import inspect
 import os.path
 import shutil
-import unittest
+import tempfile
 from unittest.mock import Mock, patch
 from asgiref.sync import async_to_sync
+from django.conf import settings
+from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from server.models import LoadedModule, ModuleVersion, Module
@@ -26,14 +28,15 @@ def call_fetch(loaded_module, params, workflow_id=1, input_dataframe=None,
     def wrap(retval):
         async def inner():
             return retval
+        return inner
 
-    if not get_input_dataframe:
+    if get_input_dataframe is None:
         get_input_dataframe = wrap(input_dataframe)
 
-    if not get_stored_dataframe:
+    if get_stored_dataframe is None:
         get_stored_dataframe = wrap(stored_dataframe)
 
-    if not get_workflow_owner:
+    if get_workflow_owner is None:
         get_workflow_owner = wrap(workflow_owner)
 
     kwargs = {
@@ -52,7 +55,32 @@ def async_mock(*, return_value):
     return Mock(return_value=retval)
 
 
-class LoadedModuleTest(unittest.TestCase):
+@override_settings(IMPORTED_MODULES_ROOT=tempfile.mkdtemp())
+class LoadedModuleTest(SimpleTestCase):
+    def setUp(self):
+        # Individual tests can't overwrite settings.CACHE_MODULES because we
+        # only read it once. (And we need it to be True, so we can test that
+        # caching works -- it's the default.) These tests care about the cache;
+        # so let's clear the cache between each test.
+        #
+        # This includes _before_ the test (in case other unit tests wrote to
+        # the cache -- they aren't testing the cache so they aren't responsible
+        # for wiping it) and _after_ the unit tests (so we don't leak stuff
+        # that ought to be deleted).
+        server.models.loaded_module.load_external_module.cache_clear()
+
+        # tearDown() nixes our IMPORTED_MODULES_ROOT and that's good because we
+        # want the directory gone when _all_ tests complete. But in _between_
+        # tests, we should recreate it.
+        if not os.path.isdir(settings.IMPORTED_MODULES_ROOT):
+            os.mkdir(settings.IMPORTED_MODULES_ROOT)
+
+    def tearDown(self):
+        server.models.loaded_module.load_external_module.cache_clear()
+        shutil.rmtree(settings.IMPORTED_MODULES_ROOT)
+
+        super().tearDown()
+
     def test_load_static(self):
         # Test with a _real_ static module
         lm = LoadedModule.for_module_version_sync(
@@ -65,106 +93,60 @@ class LoadedModuleTest(unittest.TestCase):
                          server.modules.pastecsv.PasteCSV.render)
 
     def test_load_dynamic(self):
-        try:
-            # set-up structure, i.e. a way for the file to exist in a location
-            # where it can be loaded dynamically
-            # copy files to where they would be if this were a non-test module
-            destdir = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                '..',
-                '..',
-                'importedmodules',
-                'imported'
+        destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
+        os.makedirs(destdir)
+
+        versiondir = os.path.join(destdir, 'abcdef')
+        shutil.copytree(os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            'test_data',
+            'imported'
+        ), versiondir)
+
+        with self.assertLogs('server.models.loaded_module'):
+            lm = LoadedModule.for_module_version_sync(
+                ModuleVersion(module=Module(id_name='imported'),
+                              source_version_hash='abcdef')
             )
-            if not os.path.isdir(destdir):
-                os.makedirs(destdir)
 
-            versiondir = os.path.join(destdir, 'abcdef')
-            if os.path.isdir(versiondir):
-                shutil.rmtree(versiondir)
-            shutil.copytree(os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'test_data',
-                'imported'
-            ), versiondir)
-
-            with self.assertLogs('server.models.loaded_module'):
-                lm = LoadedModule.for_module_version_sync(
-                    ModuleVersion(module=Module(id_name='imported'),
-                                  source_version_hash='abcdef')
-                )
-
-            self.assertEqual(lm.name, 'imported:abcdef')
-            self.assertEqual(lm.is_external, True)
-            # We can't test that render_impl is exactly something, because we
-            # don't have a handle on the loaded Python module outside of
-            # LoadedModule. So we'll test by executing it.
-            #
-            # This ends up being kinda an integration test.
-            with self.assertLogs('server.models.loaded_module'):
-                result = lm.render(MockParams(col='A'),
-                                   pd.DataFrame({'A': [1, 2]}),
-                                   fetch_result=ProcessResult())
-            self.assertEqual(result.error, '')
-            assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
-
-        finally:
-            shutil.rmtree(os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                '..',
-                '..',
-                'importedmodules',
-                'imported'
-            ))
-            server.models.loaded_module.load_external_module.cache_clear()
+        self.assertEqual(lm.name, 'imported:abcdef')
+        self.assertEqual(lm.is_external, True)
+        # We can't test that render_impl is exactly something, because we
+        # don't have a handle on the loaded Python module outside of
+        # LoadedModule. So we'll test by executing it.
+        #
+        # This ends up being kinda an integration test.
+        with self.assertLogs('server.models.loaded_module'):
+            result = lm.render(MockParams(col='A'),
+                               pd.DataFrame({'A': [1, 2]}),
+                               fetch_result=ProcessResult())
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
 
     def test_load_dynamic_is_cached(self):
-        try:
-            # set-up structure, i.e. a way for the file to exist in a location
-            # where it can be loaded dynamically
-            # copy files to where they would be if this were a non-test module
-            destdir = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                '..',
-                '..',
-                'importedmodules',
-                'imported'
+        destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
+        os.makedirs(destdir)
+
+        versiondir = os.path.join(destdir, 'abcdef')
+        shutil.copytree(os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            'test_data',
+            'imported'
+        ), versiondir)
+
+        with self.assertLogs('server.models.loaded_module'):
+            lm = LoadedModule.for_module_version_sync(
+                ModuleVersion(module=Module(id_name='imported'),
+                              source_version_hash='abcdef')
             )
-            if not os.path.isdir(destdir):
-                os.makedirs(destdir)
 
-            versiondir = os.path.join(destdir, 'abcdef')
-            if os.path.isdir(versiondir):
-                shutil.rmtree(versiondir)
-            shutil.copytree(os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'test_data',
-                'imported'
-            ), versiondir)
+        with patch('importlib.util.module_from_spec', None):
+            lm2 = LoadedModule.for_module_version_sync(
+                ModuleVersion(module=Module(id_name='imported'),
+                              source_version_hash='abcdef')
+            )
 
-            with self.assertLogs('server.models.loaded_module'):
-                lm = LoadedModule.for_module_version_sync(
-                    ModuleVersion(module=Module(id_name='imported'),
-                                  source_version_hash='abcdef')
-                )
-
-            with patch('importlib.util.module_from_spec', None):
-                lm2 = LoadedModule.for_module_version_sync(
-                    ModuleVersion(module=Module(id_name='imported'),
-                                  source_version_hash='abcdef')
-                )
-
-            self.assertIs(lm.render_impl, lm2.render_impl)
-
-        finally:
-            shutil.rmtree(os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                '..',
-                '..',
-                'importedmodules',
-                'imported'
-            ))
-            server.models.loaded_module.load_external_module.cache_clear()
+        self.assertIs(lm.render_impl, lm2.render_impl)
 
     def test_render_static_with_fetch_result(self):
         args = None

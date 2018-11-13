@@ -1,20 +1,17 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import django.db
 import pandas as pd
-from server.tests.utils import DbTestCase, create_testdata_workflow, \
-        load_and_add_module, get_param_by_id_name
+from server.tests.utils import DbTestCase
 from server.execute import execute_workflow
+from server.models import LoadedModule, Workflow
+from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
 
 
 logger = logging.getLogger(__name__)
-
-
-table_csv = 'A,B\n1,2\n3,4'
-table_dataframe = pd.DataFrame({'A': [1, 3], 'B': [2, 4]})
 
 
 fake_future = asyncio.Future()
@@ -71,80 +68,78 @@ class ExecuteTests(DbTestCase):
 
             self.loop.run_until_complete(execute_workflow(workflow))
 
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
-    def test_execute_revision_0(self):
-        # Don't crash on a new workflow (rev=0, no caches)
-        workflow = create_testdata_workflow(table_csv)
-        wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
-        self._execute(workflow)
-        wf_module2.refresh_from_db()
-        result = wf_module2.get_cached_render_result().result
+    def test_execute_new_revision(self, fake_load_module):
+        workflow = Workflow.objects.create()
+        delta1 = InitWorkflowCommand.create(workflow)
+        wf_module = workflow.wf_modules.create(
+            order=1,
+            last_relevant_delta_id=delta1.id
+        )
 
-        self.assertEqual(result, ProcessResult(table_dataframe))
-        self.assertEqual(cached_render_result_revision_list(workflow), [0, 0])
+        result1 = ProcessResult(pd.DataFrame({'A': [1]}))
+        wf_module.cache_render_result(delta1.id, result1)
+        wf_module.save()
 
-    @patch('server.websockets.ws_client_send_delta_async', fake_send)
-    def test_execute_new_revision(self):
-        workflow = create_testdata_workflow(table_csv)
-        wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
+        result2 = ProcessResult(pd.DataFrame({'B': [2]}))
+        delta2 = InitWorkflowCommand.create(workflow)
+        wf_module.last_relevant_delta_id = delta2.id
+        wf_module.save(update_fields=['last_relevant_delta_id'])
 
-        self._execute(workflow)
-
-        pval = get_param_by_id_name('colnames', wf_module=wf_module2)
-        pval.set_value('A')
-
-        wf_module2.last_relevant_delta_id = 2
-        wf_module2.save(update_fields=['last_relevant_delta_id'])
+        fake_module = Mock(LoadedModule)
+        fake_load_module.return_value = fake_module
+        fake_module.render.return_value = result2
 
         self._execute(workflow)
 
-        wf_module2.refresh_from_db()
-        result = wf_module2.get_cached_render_result().result
+        wf_module.refresh_from_db()
+        self.assertEqual(
+            wf_module.get_cached_render_result(only_fresh=True).result,
+            result2
+        )
 
-        self.assertEqual(result, ProcessResult(table_dataframe[['A']]))
-        self.assertEqual(cached_render_result_revision_list(workflow), [0, 2])
-
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async')
-    def test_execute_mark_unreachable(self, send_delta_async):
+    def test_execute_mark_unreachable(self, send_delta_async,
+                                      fake_load_module):
         send_delta_async.return_value = fake_future
 
-        workflow = create_testdata_workflow(table_csv)
-        # Default pythoncode value is passthru
-        wf_module2 = load_and_add_module('pythoncode', workflow=workflow)
-        wf_module3 = load_and_add_module('selectcolumns', workflow=workflow,
-                                         param_values={'drop_or_keep': 1,
-                                                       'colnames': 'A,B'})
+        workflow = Workflow.objects.create()
+        delta = InitWorkflowCommand.create(workflow)
+        wf_module1 = workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id
+        )
+        wf_module2 = workflow.wf_modules.create(
+            order=1,
+            last_relevant_delta_id=delta.id
+        )
+        wf_module3 = workflow.wf_modules.create(
+            order=2,
+            last_relevant_delta_id=delta.id
+        )
+
+        fake_module = Mock(LoadedModule)
+        fake_load_module.return_value = fake_module
+        fake_module.render.return_value = ProcessResult(error='foo')
 
         self._execute(workflow)
 
-        # Should set status of all modules to 'ok'
-        wf_module3.refresh_from_db()
-        self.assertEqual(wf_module3.status, 'ok')
+        wf_module1.refresh_from_db()
+        self.assertEqual(wf_module1.status, 'error')
+        self.assertEqual(wf_module1.get_cached_render_result().result,
+                         ProcessResult(error='foo'))
 
-        # Update parameter. Now module 2 will return an error.
-        wf_module2.parameter_vals.get(parameter_spec__id_name='code') \
-            .set_value('=ERROR')
-        wf_module2.last_relevant_delta_id = 2
-        wf_module3.last_relevant_delta_id = 2
-        wf_module2.save(update_fields=['last_relevant_delta_id'])
-        wf_module3.save(update_fields=['last_relevant_delta_id'])
-
-        # (more integration-test-y) now their statuses are 'busy' because they
-        # await render (and not because they're fetching)
         wf_module2.refresh_from_db()
-        self.assertEqual(wf_module2.status, 'busy')
-        self.assertEqual(wf_module2.is_busy, False)  # is_busy is for fetch
-        wf_module3.refresh_from_db()
-        self.assertEqual(wf_module3.status, 'busy')
-        self.assertEqual(wf_module2.is_busy, False)  # is_busy is for fetch
+        self.assertEqual(wf_module2.status, 'unreachable')
+        self.assertEqual(wf_module2.get_cached_render_result().result,
+                         ProcessResult())
 
-        self._execute(workflow)
-
-        # Now we expect module 2 to have 'error', 3 to have 'unreachable'
-        wf_module2.refresh_from_db()
-        self.assertEqual(wf_module2.status, 'error')
         wf_module3.refresh_from_db()
         self.assertEqual(wf_module3.status, 'unreachable')
+        self.assertEqual(wf_module3.get_cached_render_result().result,
+                         ProcessResult())
 
         # send_delta_async.assert_called_with(workflow.id, {
         #     'updateWfModules': {
@@ -167,76 +162,113 @@ class ExecuteTests(DbTestCase):
                     'quick_fixes': [],
                     'output_columns': [],
                     'output_n_rows': 0,
-                    'last_relevant_delta_id':
-                    wf_module3.last_relevant_delta_id,
-                    'cached_render_result_delta_id':
-                    wf_module2.last_relevant_delta_id,
+                    'last_relevant_delta_id': delta.id,
+                    'cached_render_result_delta_id': delta.id,
                 }
             }
         })
 
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
-    def test_execute_cache_hit(self):
-        workflow = create_testdata_workflow(table_csv)
-        wf_module2 = load_and_add_module('selectcolumns', workflow=workflow)
-
-        self._execute(workflow)
-        wf_module2.refresh_from_db()
-        result1 = wf_module2.get_cached_render_result().result
-
-        with patch('server.dispatch.module_dispatch_render') as mdr:
-            self._execute(workflow)
-            wf_module2.refresh_from_db()
-            result2 = wf_module2.get_cached_render_result().result
-            self.assertFalse(mdr.called)
-            self.assertEqual(result2, result1)
-
-    @patch('server.websockets.ws_client_send_delta_async', fake_send)
-    def test_resume_without_rerunning_unneeded_renders(self):
-        workflow = create_testdata_workflow(table_csv)
-        wf_module1 = workflow.wf_modules.first()
-        wf_module2 = load_and_add_module('selectcolumns', workflow=workflow,
-                                         last_relevant_delta_id=1)
-        wf_module1.last_relevant_delta_id = 1
+    def test_execute_cache_hit(self, fake_module):
+        workflow = Workflow.objects.create()
+        delta = InitWorkflowCommand.create(workflow)
+        wf_module1 = workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id
+        )
+        result1 = ProcessResult(pd.DataFrame({'A': [1]}))
+        wf_module1.cache_render_result(delta.id, result1)
         wf_module1.save()
-
-        self._execute(workflow)
-
-        wf_module2.refresh_from_db()
-        expected = wf_module2.get_cached_render_result().result
-        wf_module2.last_relevant_delta_id = 2
+        wf_module2 = workflow.wf_modules.create(
+            order=1,
+            last_relevant_delta_id=delta.id
+        )
+        result2 = ProcessResult(pd.DataFrame({'B': [2]}))
+        wf_module2.cache_render_result(delta.id, result2)
         wf_module2.save()
 
-        with patch('server.dispatch.module_dispatch_render') as mdr:
-            mdr.return_value = expected
-            self._execute(workflow)
-            mdr.assert_called_once()
-            wf_module2.refresh_from_db()
-            result = wf_module2.get_cached_render_result().result
-            self.assertEqual(result, expected)
+        fake_module.assert_not_called()
 
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch('server.websockets.ws_client_send_delta_async', fake_send)
+    def test_resume_without_rerunning_unneeded_renders(self, fake_load_module):
+        workflow = Workflow.objects.create()
+        delta = InitWorkflowCommand.create(workflow)
+        wf_module1 = workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id
+        )
+        result1 = ProcessResult(pd.DataFrame({'A': [1]}))
+        wf_module1.cache_render_result(delta.id, result1)
+        wf_module1.save()
+        wf_module2 = workflow.wf_modules.create(
+            order=1,
+            last_relevant_delta_id=delta.id
+        )
+
+        fake_loaded_module = Mock(LoadedModule)
+        fake_load_module.return_value = fake_loaded_module
+        result2 = ProcessResult(pd.DataFrame({'A': [2]}))
+        fake_loaded_module.render.return_value = result2
+
+        self._execute(workflow)
+
+        wf_module2.refresh_from_db()
+        actual = wf_module2.get_cached_render_result().result
+        self.assertEqual(actual, result2)
+        fake_loaded_module.render.assert_called_once()  # only with module2
+
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
     @patch('server.notifications.email_output_delta')
-    def test_email_delta(self, email):
-        workflow = create_testdata_workflow(table_csv)
-        wf_module1 = workflow.wf_modules.first()
-        wf_module1.notifications = True
-        wf_module1.save()
+    def test_email_delta(self, email, fake_load_module):
+        workflow = Workflow.objects.create()
+        delta1 = InitWorkflowCommand.create(workflow)
+        delta2 = InitWorkflowCommand.create(workflow)
+        wf_module = workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta2.id
+        )
+        wf_module.cache_render_result(
+            delta1.id,
+            ProcessResult(pd.DataFrame({'A': [1]}))
+        )
+        wf_module.notifications = True
+        wf_module.save()
+
+        fake_loaded_module = Mock(LoadedModule)
+        fake_load_module.return_value = fake_loaded_module
+        result2 = ProcessResult(pd.DataFrame({'A': [2]}))
+        fake_loaded_module.render.return_value = result2
+
         self._execute(workflow)
 
         email.assert_called()
 
-        wf_module1.refresh_from_db()
-        self.assertTrue(wf_module1.has_unseen_notification)
-
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
     @patch('server.notifications.email_output_delta')
-    def test_email_no_delta_when_not_changed(self, email):
-        workflow = create_testdata_workflow(table_csv)
-        wf_module1 = workflow.wf_modules.first()
-        wf_module1.notifications = True
-        wf_module1.save()
-        self._execute(workflow)  # sends one email
-        self._execute(workflow)  # should not email
+    def test_email_no_delta_when_not_changed(self, email, fake_load_module):
+        workflow = Workflow.objects.create()
+        delta1 = InitWorkflowCommand.create(workflow)
+        delta2 = InitWorkflowCommand.create(workflow)
+        wf_module = workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta2.id
+        )
+        wf_module.cache_render_result(
+            delta1.id,
+            ProcessResult(pd.DataFrame({'A': [1]}))
+        )
+        wf_module.notifications = True
+        wf_module.save()
 
-        email.assert_called_once()
+        fake_loaded_module = Mock(LoadedModule)
+        fake_load_module.return_value = fake_loaded_module
+        result2 = ProcessResult(pd.DataFrame({'A': [1]}))
+        fake_loaded_module.render.return_value = result2
+
+        self._execute(workflow)
+
+        email.assert_not_called()
