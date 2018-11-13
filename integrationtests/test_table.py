@@ -18,6 +18,7 @@ class TestTable(LoggedInIntegrationTest):
 
         self.add_wf_module('Paste data')
         b.fill_in('csv', 'string,int\nfoo,1\nbar,3\nbaz,2', wait=True)
+        b.click_button('submit')
 
         self._blur()  # to load table
 

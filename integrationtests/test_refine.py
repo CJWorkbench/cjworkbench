@@ -25,6 +25,7 @@ xxxy,2
 yxxx,1
 yxyx,1
 ''')
+        b.click_button('submit')
 
         self.add_wf_module('Refine')
         self.select_column('Refine', 'column', 'A')

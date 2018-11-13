@@ -19,6 +19,7 @@ import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
 import RadioParam from './wfparameters/RadioParam'
+import MultiLineTextArea from './wfparameters/MultiLineTextArea'
 //import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 //import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 //import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
@@ -127,13 +128,6 @@ export default class WfParameter extends React.PureComponent {
 
   paramChanged = (newVal) => {
     this.props.changeParam(this.props.p.id, { value: newVal })
-  }
-
-  /**
-   * "old-style" form: submit just this param on blur.
-   */
-  blur = (e) => {
-    this.paramChanged(e.target.value)
   }
 
   onClickCheckbox = (ev) => {
@@ -282,6 +276,16 @@ export default class WfParameter extends React.PureComponent {
             name={id_name}
           />
         )
+      case 'valueselect':
+        return (
+          <Refine
+            fetchData={this.getInputValueCounts}
+            fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
+            value={this.props.p.value}
+            onChange={this.paramChanged}
+            isSelectOnly
+          />
+        )
 //      case 'map-geojson':
 //        return (
 //          <MapLocationDropZone
@@ -365,7 +369,8 @@ export default class WfParameter extends React.PureComponent {
   render() {
     const { id_name, name, type, visible_if, visible_if_not } = this.props.p.parameter_spec
 
-    if (!this.props.p.visible) {
+    // TODO: delete the 'colnames' check. Force display of 'colnames' for now since it will completely replace 'colselect' eventually
+    if (!this.props.p.visible && id_name !== 'colnames') {
       return null // nothing to see here
     }
 
@@ -390,14 +395,33 @@ export default class WfParameter extends React.PureComponent {
           return (
             <div {...this.outerDivProps}>
               <div className='label-margin t-d-gray content-3'>{name}</div>
-              <textarea
-                onBlur={this.blur}
+              <MultiLineTextArea
                 readOnly={this.props.isReadOnly}
-                className='module-parameter t-d-gray content-3 text-field-large'
                 name={id_name}
-                rows={4}
-                defaultValue={this.props.p.value}
-                placeholder={this.props.p.parameter_spec.placeholder || ''}
+                value={this.props.value}
+                initialValue={this.props.p.value}
+                onChange={this.onChange}
+                onSubmit={this.onSubmit}
+                placeholder={this.props.p.parameter_spec.placeholder}
+              />
+            </div>
+          )
+        }
+        // For now, let's render the 'colnames' parameter instead of 'colselect' so that we
+        // can keep the parameter's state in `WfModule`.
+        // TODO: convert the `colnames` type to 'multicolumn' and nix all other `multicolumn` parameters in every module
+        else if (id_name === 'colnames') {
+          return (
+            <div {...this.outerDivProps}>
+              <div className='t-d-gray content-3 label-margin'>{''}</div>
+              <ColumnSelector
+                name={id_name}
+                isReadOnly={this.props.isReadOnly}
+                initialValue={this.props.p.value}
+                value={this.props.value}
+                allColumns={this.props.inputColumns}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
               />
             </div>
           )
@@ -500,24 +524,33 @@ export default class WfParameter extends React.PureComponent {
           </div>
         )
 
+      // TODO: Set all multi-column select modules to have type 'multicolumn' for 'colnames', remove 'colselect' condition
+      // [2018-11-06] right now this code is never reached, but it will be when we
+      // finish cleaning up the multicolumn` parameter type.
       case 'multicolumn':
         // There's no good reason why we read/write `colnames` instead of our own
         // id_name. But it'll be a chore to change it: we'll need to change all modules'
         // id_name to `colnames` so that pre-chore data will migrate over.
         //
         // (Then we'll have one more chore: select JSON instead of comma-separated strings)
-        return (
-          <div {...this.outerDivProps}>
-            <div className='t-d-gray content-3 label-margin'>{name}</div>
-            <ColumnSelector
-              name={id_name}
-              isReadOnly={this.props.isReadOnly}
-              value={this.props.getParamText('colnames')}
-              allColumns={this.props.inputColumns}
-              onChange={this.onColumnSelectorChange}
-            />
-          </div>
-        )
+        if (id_name === 'colnames') {
+          return (
+            <div {...this.outerDivProps}>
+              <div className='t-d-gray content-3 label-margin'>{name}</div>
+              <ColumnSelector
+                name={id_name}
+                isReadOnly={this.props.isReadOnly}
+                initialValue={this.props.p.value}
+                value={this.props.value}
+                allColumns={this.props.inputColumns}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
+              />
+            </div>
+          )
+        } else {
+          return null
+        }
 
       case 'secret':
         return this.render_secret_parameter();
