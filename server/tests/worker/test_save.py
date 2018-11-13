@@ -2,6 +2,7 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.test import override_settings
+import pandas as pd
 from server.models import StoredObject, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
@@ -16,12 +17,10 @@ async def async_noop(*args, **kwargs):
 @patch('server.websockets._workflow_group_send', async_noop)
 @patch('server.websockets.queue_render_if_listening', async_noop)
 class SaveTests(DbTestCase):
-    def setUp(self):
+    def test_store_if_changed(self):
         workflow = Workflow.objects.create()
-        InitWorkflowCommand.create(workflow)
         self.wfm = workflow.wf_modules.create(order=0)
 
-    def test_store_if_changed(self):
         table = mock_csv_table.copy()
         async_to_sync(save_result_if_changed)(self.wfm, ProcessResult(table))
         self.assertEqual(StoredObject.objects.count(), 1)
@@ -37,6 +36,9 @@ class SaveTests(DbTestCase):
 
     @override_settings(MAX_STORAGE_PER_MODULE=1000)
     def test_storage_limits(self):
+        workflow = Workflow.objects.create()
+        self.wfm = workflow.wf_modules.create(order=0)
+
         table = mock_csv_table
         stored_objects = self.wfm.stored_objects  # not queried yet
 
@@ -55,3 +57,30 @@ class SaveTests(DbTestCase):
         # one version, eventually.
         # if not, increase table size/loop iterations, or decrease limit
         self.assertEqual(n_objects, 1)
+
+    def test_race_deleted_workflow(self):
+        result = ProcessResult(pd.DataFrame({'A': [1]}))
+
+        workflow = Workflow.objects.create()
+        wf_module = workflow.wf_modules.create(order=0)
+
+        workflow.delete()
+
+        # Don't crash
+        async_to_sync(save_result_if_changed)(wf_module, result)
+        assert True
+
+    def test_race_deleted_wf_module(self):
+        result = ProcessResult(pd.DataFrame({'A': [1]}))
+
+        workflow = Workflow.objects.create()
+        wf_module = workflow.wf_modules.create(order=0)
+
+        # WfModule deletion means setting workflow=None.
+        wf_module.workflow = None
+        wf_module.workflow_id = None
+        wf_module.save(update_fields=['workflow_id'])
+
+        # Don't crash
+        async_to_sync(save_result_if_changed)(wf_module, result)
+        assert True
