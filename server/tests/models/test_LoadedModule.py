@@ -380,6 +380,19 @@ class LoadedModuleTest(SimpleTestCase):
             'bar': ['baz'],
         })))
 
+    def test_fetch_sync(self):
+        table = pd.DataFrame({'A': [1]})
+
+        def fetch(param, **kwargs):
+            return table
+
+        lm = LoadedModule('int', 1, True, fetch_impl=fetch)
+        with self.assertLogs():
+            result = call_fetch(lm, MockParams())
+
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, table)
+
     def test_fetch_dynamic_params(self):
         async def fetch(params, *, workflow_id, **kwargs):
             # Params are a dict

@@ -1,6 +1,6 @@
 import asyncio
 from collections import namedtuple
-from functools import lru_cache
+from functools import lru_cache, partial
 import importlib
 import importlib.util
 import inspect
@@ -222,12 +222,12 @@ class LoadedModule:
 
         time1 = time.time()
 
-        if inspect.iscoroutinefunction(self.fetch):
+        if inspect.iscoroutinefunction(self.fetch_impl):
             future_result = self.fetch_impl(params, **kwargs)
         else:
             loop = asyncio.get_event_loop()
-            future_result = loop.run_in_executor(None, self.fetch,
-                                                 params, **kwargs)
+            func = partial(self.fetch_impl, params, **kwargs)
+            future_result = loop.run_in_executor(None, func)
 
         try:
             out = await future_result
@@ -236,15 +236,17 @@ class LoadedModule:
 
         time2 = time.time()
 
-        shape = out.dataframe.shape if out is not None else (-1, -1)
-        logger.info('%s fetched =>(%drows,%dcols) in %dms',
-                    self.name, shape[0], shape[1],
-                    int((time2 - time1) * 1000))
-
-        if out is not None:
+        if out is None:
+            shape = (-1, -1)
+        else:
             out = ProcessResult.coerce(out)
             out.truncate_in_place_if_too_big()
             out.sanitize_in_place()
+            shape = out.dataframe.shape
+
+        logger.info('%s fetched =>(%drows,%dcols) in %dms',
+                    self.name, shape[0], shape[1],
+                    int((time2 - time1) * 1000))
 
         return out
 
