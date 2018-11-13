@@ -40,7 +40,7 @@ class SuccessfulRenderLock:
 
 class UpdatesTests(DbTestCase):
     @patch('server.rabbitmq.queue_fetch')
-    @patch('server.websockets.ws_client_wf_module_status_async',
+    @patch('server.websockets.ws_client_send_delta_async',
            lambda _1, _2: future_none)
     @patch('django.utils.timezone.now',
            lambda: parser.parse('Aug 28 1999 2:35PM UTC'))

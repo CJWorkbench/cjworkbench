@@ -114,8 +114,8 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.data['workflow'], self.workflow.id)
         self.assertEqual(response.data['notes'], wf_module.notes)
         self.assertEqual(response.data['module_version']['module'], module.id)
-        self.assertEqual(response.data['status'], wf_module.status)
-        self.assertEqual(response.data['error_msg'], wf_module.error_msg)
+        self.assertEqual(response.data['output_status'], wf_module.output_status)
+        self.assertEqual(response.data['fetch_error'], wf_module.fetch_error)
         self.assertEqual(response.data['is_collapsed'], wf_module.is_collapsed)
         self.assertEqual(response.data['auto_update_data'],
                          wf_module.auto_update_data)
@@ -282,6 +282,8 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(wf_modules[0].pk, self.wf_module1.id)
 
     # test stored versions of data: create, retrieve, set, list, and views
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.websockets.queue_render_if_listening', async_noop)
     def test_wf_module_data_versions(self):
         firstver = self.wf_module1.store_fetched_table(mock_csv_table)
         self.wf_module1.set_fetched_data_version(firstver)
@@ -312,7 +314,6 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.wf_module1.refresh_from_db()
         self.assertEqual(self.wf_module1.get_fetched_data_version(), secondver)
-
 
     # test Wf Module Notes change API
     def test_wf_module_notes_post(self):

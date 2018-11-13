@@ -124,27 +124,26 @@ class WfModule(models.Model):
             return 'Missing module'  # deleted from server
 
     @property
-    def status(self):
+    def output_status(self):
         """
         Return 'ok', 'busy', 'error' or 'unreachable'.
 
-        'busy': `is_busy` is True and/or render is pending
+        'busy': render is pending
         'error': render produced an error and no table
         'unreachable': a previous module had 'error' so we will not run this
         'ok': render produced a table
         """
-        if self.is_busy:
-            return 'busy'
-        elif self.cached_render_result_delta_id != self.last_relevant_delta_id:
+        if self.cached_render_result_delta_id != self.last_relevant_delta_id:
             return 'busy'
         else:
             return self.cached_render_result_status
 
     @property
-    def error_msg(self):
-        if self.is_busy:
+    def output_error(self):
+        if self.cached_render_result_delta_id != self.last_relevant_delta_id:
             return ''
-        return self.fetch_error or self.cached_render_result_error or ''
+        else:
+            return self.cached_render_result_error
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
@@ -245,7 +244,14 @@ class WfModule(models.Model):
     async def set_busy(self):
         self.is_busy = True
         self.save(update_fields=['is_busy'])
-        await websockets.ws_client_wf_module_status_async(self, self.status)
+        await websockets.ws_client_send_delta_async(self.workflow_id, {
+            'updateWfModules': {
+                str(self.id): {
+                    'is_busy': True,
+                    'fetch_error': '',
+                }
+            }
+        })
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available

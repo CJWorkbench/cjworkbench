@@ -61,6 +61,8 @@ describe('WfModule, not read-only mode', () => {
     'id': 999,
     'notes': '',
     'is_collapsed': false, // false because we render more, so better test
+    'is_busy': false,
+    'output_status': 'ok',
     'parameter_vals': [
       {
         'id': 100,
@@ -106,12 +108,12 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('is has .status-busy', () => {
-    const w = shallow(<WfModule {...props} wfModule={{...wfModule, status: 'busy'}} />)
+    const w = shallow(<WfModule {...props} wfModule={{...wfModule, output_status: 'busy'}} />)
     expect(w.hasClass('status-busy')).toBe(true)
     expect(w.find('WfParameter').at(0).prop('wfModuleStatus')).toEqual('busy')
     expect(w.find('StatusLine').prop('status')).toEqual('busy')
 
-    w.setProps({ wfModule: { ...wfModule, status: 'ok' } })
+    w.setProps({ wfModule: { ...wfModule, output_status: 'ok' } })
     w.update()
     expect(w.hasClass('status-busy')).toBe(false)
     expect(w.hasClass('status-ok')).toBe(true)
@@ -120,6 +122,11 @@ describe('WfModule, not read-only mode', () => {
     expect(w.find('StatusLine').prop('status')).toEqual('ok')
     expect(w.hasClass('status-ok')).toBe(true)
     expect(w.hasClass('status-busy')).toBe(false)
+  })
+
+  it('has .status-busy overridden when wfModule.is_busy', () => {
+    const w = shallow(<WfModule {...props} wfModule={{...wfModule, is_busy: true, output_status: 'ok'}} />)
+    expect(w.hasClass('status-busy')).toBe(true)
   })
 
   it('supplies getParamText and setParamText', () => {

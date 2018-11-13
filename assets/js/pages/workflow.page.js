@@ -30,14 +30,6 @@ function launchWebsocket () {
         case 'apply-delta':
           Actions.store.dispatch(Actions.applyDeltaAction(data.data))
           return
-        case 'wfmodule-status':
-          Actions.store.dispatch(
-            Actions.setWfModuleStatusAction(
-              data.id,
-              data.status,
-              data.error_msg ? data.error_msg : ''
-            ))
-          return
         case 'set-wf-module':
           Actions.store.dispatch(Actions.setWfModuleAction(data.data))
           return

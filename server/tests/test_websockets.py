@@ -11,7 +11,7 @@ from django.contrib.auth.models import AnonymousUser
 import django.db
 from server.models import Workflow
 from server.websockets import ws_client_rerender_workflow_async, \
-        ws_client_wf_module_status_async, queue_render_if_listening
+        queue_render_if_listening
 from server.tests.utils import DbTestCase, clear_db, add_new_module_version, \
         add_new_wf_module, create_test_user
 
@@ -200,19 +200,6 @@ class ChannelTests(DbTestCase):
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         self.assertTrue(await comm.receive_nothing())
-
-    @async_test
-    async def test_wf_module_message(self, communicate):
-        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
-        connected, _ = await comm.connect()
-        self.assertTrue(connected)
-        await ws_client_wf_module_status_async(self.wf_module, 'busy')
-        response = await comm.receive_from()
-        self.assertEqual(json.loads(response), {
-            'id': self.wf_module.id,
-            'type': 'wfmodule-status',
-            'status': 'busy',
-        })
 
     @patch('server.rabbitmq.queue_render')
     @async_test

@@ -100,7 +100,7 @@ class Delta(PolymorphicModel):
         data = {
             'updateWorkflow': {
                 'name': workflow.name,
-                'revision': workflow.revision(),
+                'revision': workflow.last_delta_id,
                 'wf_modules': list(workflow.wf_modules.values_list('id',
                                                                    flat=True)),
                 'public': workflow.public,
@@ -113,12 +113,11 @@ class Delta(PolymorphicModel):
             for id, delta_id in self._changed_wf_module_versions.items():
                 data['updateWfModules'][str(id)] = {
                     'last_relevant_delta_id': delta_id,
-                    'error_msg': '',
-                    'status': 'busy',
                     'quick_fixes': [],
-                    'output_columns': None,
-                    'output_n_rows': None,
-                    'cached_render_result_id': None,
+                    'output_columns': [],
+                    'output_error': '',
+                    'output_status': 'busy',
+                    'output_n_rows': 0,
                 }
 
         if hasattr(self, 'wf_module'):

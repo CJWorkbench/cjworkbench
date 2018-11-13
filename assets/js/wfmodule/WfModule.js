@@ -288,11 +288,13 @@ export class WfModule extends React.PureComponent {
       // server doesn't change wfModule.status, the client still resets its
       // perceived status.
       return 'busy'
-    } else if (!wfModule.status) {
+    } else if (wfModule.is_busy) {
+      return 'busy'
+    } else if (!wfModule.output_status) {
       // placeholder? TODO verify this can actually happen
       return 'busy'
     } else {
-      return wfModule.status
+      return wfModule.output_status
     }
   }
 
@@ -322,7 +324,7 @@ export class WfModule extends React.PureComponent {
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
         wfModuleStatus={this.wfModuleStatus}
-        wfModuleError={wfModule.error_msg}
+        wfModuleOutputError={wfModule.output_error}
         key={index}
         p={p}
         onChange={this.onChange}
@@ -469,7 +471,7 @@ export class WfModule extends React.PureComponent {
             {/* --- Error message --- */}
             <StatusLine
               status={this.wfModuleStatus}
-              error={wfModule.error_msg || ''}
+              error={wfModule.output_error || ''}
               quickFixes={wfModule.quick_fixes || []}
               applyQuickFix={this.applyQuickFix}
             />

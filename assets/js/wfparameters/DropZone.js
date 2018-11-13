@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {store, setWfModuleStatusAction} from '../workflow-reducer'
 import {csrfToken} from '../utils'
 import FineUploaderS3 from 'fine-uploader-wrappers/s3'
 import FineUploaderDropZone from 'react-fine-uploader/dropzone'
@@ -82,7 +81,6 @@ export default class DropZone extends Component {
   componentDidMount() {
     this.uploader.on('statusChange', (id, oldStatus, newStatus) => {
       if (newStatus === 'submitted') {
-        store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'busy'))
         this.setState({ submittedFileId: id })
       }
       else if (newStatus === 'upload successful') {

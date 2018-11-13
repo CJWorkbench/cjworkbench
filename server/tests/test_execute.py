@@ -127,39 +127,28 @@ class ExecuteTests(DbTestCase):
         self._execute(workflow)
 
         wf_module1.refresh_from_db()
-        self.assertEqual(wf_module1.status, 'error')
+        self.assertEqual(wf_module1.get_cached_render_result().status, 'error')
         self.assertEqual(wf_module1.get_cached_render_result().result,
                          ProcessResult(error='foo'))
 
         wf_module2.refresh_from_db()
-        self.assertEqual(wf_module2.status, 'unreachable')
+        self.assertEqual(wf_module2.get_cached_render_result().status,
+                         'unreachable')
         self.assertEqual(wf_module2.get_cached_render_result().result,
                          ProcessResult())
 
         wf_module3.refresh_from_db()
-        self.assertEqual(wf_module3.status, 'unreachable')
+        self.assertEqual(wf_module3.get_cached_render_result().status,
+                         'unreachable')
         self.assertEqual(wf_module3.get_cached_render_result().result,
                          ProcessResult())
-
-        # send_delta_async.assert_called_with(workflow.id, {
-        #     'updateWfModules': {
-        #         str(wf_module2.id): {
-        #             'error_msg': 'ERROR',
-        #             'status': 'error',
-        #             'quick_fixes': [],
-        #             'output_columns': [],
-        #             'last_relevant_delta_id':
-        #                 wf_module2.last_relevant_delta_id
-        #         }
-        #     }
-        # })
 
         send_delta_async.assert_called_with(workflow.id, {
             'updateWfModules': {
                 str(wf_module3.id): {
-                    'error_msg': '',
-                    'status': 'unreachable',
+                    'output_status': 'unreachable',
                     'quick_fixes': [],
+                    'output_error': '',
                     'output_columns': [],
                     'output_n_rows': 0,
                     'last_relevant_delta_id': delta.id,

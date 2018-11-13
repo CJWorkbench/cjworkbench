@@ -329,32 +329,6 @@ describe('Reducer actions', () => {
     expect(state.wfModules['20']).not.toBeDefined()
   })
 
-  it('sets the wfModule status', () => {
-    const state = wfr.workflowReducer(testState, {
-      type: 'SET_WF_MODULE_STATUS',
-      payload: {
-        wfModuleId: 20,
-        status: 'error',
-        error_msg: 'There was an error'
-      }
-    })
-
-    expect(state.wfModules['20'].status).toEqual('error')
-    expect(state.wfModules['20'].error_msg).toEqual('There was an error')
-
-    const state2 = wfr.workflowReducer(state, {
-      type: 'SET_WF_MODULE_STATUS',
-      payload: {
-        wfModuleId: 20,
-        status: 'error',
-        error_msg: 'There was another error'
-      }
-    })
-
-    expect(state2.wfModules['20'].status).toEqual('error')
-    expect(state2.wfModules['20'].error_msg).toEqual('There was another error')
-  })
-
   it('sets the module collapse state', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'SET_WF_MODULE_COLLAPSED_PENDING',

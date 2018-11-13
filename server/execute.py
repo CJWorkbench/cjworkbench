@@ -228,10 +228,10 @@ def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
                       for c in cached_result.columns]
 
     return {
-        'error_msg': cached_result.error,
-        'status': cached_result.status,
         'quick_fixes': quick_fixes,
         'output_columns': output_columns,
+        'output_error': cached_result.error,
+        'output_status': cached_result.status,
         'output_n_rows': len(cached_result),
         'last_relevant_delta_id': cached_result.delta_id,
         'cached_render_result_delta_id': cached_result.delta_id,

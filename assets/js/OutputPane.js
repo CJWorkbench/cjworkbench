@@ -140,9 +140,18 @@ function mapStateToProps(state, ownProps) {
   let wfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
   let wfModuleBeforeError
 
+  let status
+  if (wfModule) {
+    if (wfModule.is_busy) {
+      status = 'busy'
+    } else {
+      status = wfModule.output_status
+    }
+  }
+
   // If we're pointing at a module that output an error, we'll want to display
   // its _input_ (the previous module's output) to help the user fix things.
-  if (wfModule && wfModule.status === 'error' && state.selected_wf_module > 0) {
+  if (status === 'error' && state.selected_wf_module > 0) {
     const lastGood = wfModules[String(workflow.wf_modules[state.selected_wf_module - 1])]
     wfModuleBeforeError = {
       id: lastGood.id,
@@ -162,7 +171,7 @@ function mapStateToProps(state, ownProps) {
     wfModule: wfModule ? {
       id: wfModule.id,
       htmlOutput: wfModule.html_output,
-      status: wfModule.status,
+      status,
       deltaId: wfModule.cached_render_result_delta_id,
       columns: wfModule.output_columns,
       nRows: wfModule.output_n_rows

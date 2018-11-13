@@ -49,7 +49,7 @@ export default class WfParameter extends React.PureComponent {
     }).isRequired,
     moduleName:     PropTypes.string.isRequired,
     wfModuleStatus: PropTypes.string, // module status, or null for placeholder
-    wfModuleError:  PropTypes.string, // module-level error message
+    wfModuleOutputError:  PropTypes.string, // module-level error message
     wfModuleId: PropTypes.number.isRequired,
     inputWfModuleId: PropTypes.number, // or null
     inputDeltaId: PropTypes.number, // or null
@@ -228,7 +228,7 @@ export default class WfParameter extends React.PureComponent {
           <LazyAceEditor
             name={this.props.p.parameter_spec.name}
             isZenMode={this.props.isZenMode}
-            wfModuleError={this.props.wfModuleError}
+            wfModuleError={this.props.wfModuleOutputError}
             save={this.paramChanged}
             defaultValue={this.props.p.value}
           />

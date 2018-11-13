@@ -534,30 +534,30 @@ registerReducerFunc(UPDATE_WF_MODULE + '_PENDING', (state, action) => {
 
 // SET_WF_MODULE_STATUS
 // Change the workflow status (OK, pending, error)
-export function setWfModuleStatusAction (wfModuleId, status, errorMsg) {
+//
+// TODO nix this. It's always wrong. The _server_ decides when a module is busy.
+export function setWfModuleBusyAction (wfModuleId) {
   return {
     type: SET_WF_MODULE_STATUS,
     payload: {
       wfModuleId,
-      status: status,
-      error_msg: errorMsg || ''
     }
   }
 }
 registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
-  const { wfModuleId, status, error_msg } = action.payload
+  const { wfModuleId } = action.payload
   const wfModule = state.wfModules[String(wfModuleId)]
   if (!wfModule) return state
 
-  if (wfModule.status === status && wfModule.error_msg === error_msg) {
+  if (wfModule.is_busy) {
     return state
   }
 
   return { ...state,
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
-        status,
-        error_msg
+        is_busy: True,
+        fetch_error: ''
       }
     }
   }
