@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from server.maintenance import delete_expired_anonymous_workflows
 from server.updates import update_wfm_data_scan
 from server.utils import get_console_logger
-from server.worker import PgLocker
+from server.worker.pg_locker import PgLocker
 
 
 _logger = get_console_logger()

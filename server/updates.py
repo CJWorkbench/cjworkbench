@@ -1,15 +1,15 @@
 # Check for updated data
 import logging
-from datetime import timedelta
 from django.utils import timezone
-from server import rabbitmq, worker
+from server import rabbitmq
 from server.models import WfModule
+from server.worker.pg_locker import PgLocker, WorkflowAlreadyLocked
 
 
 logger = logging.getLogger(__name__)
 
 
-async def update_wfm_data_scan(pg_locker: worker.PgLocker):
+async def update_wfm_data_scan(pg_locker: PgLocker):
     """
     Queue all pending fetches in RabbitMQ.
 
@@ -45,7 +45,7 @@ async def update_wfm_data_scan(pg_locker: worker.PgLocker):
 
             await wf_module.set_busy()
             await rabbitmq.queue_fetch(wf_module)
-        except worker.WorkflowAlreadyLocked:
+        except WorkflowAlreadyLocked:
             # Don't queue a fetch. We'll revisit this WfModule next time we
             # query for pending fetches.
             pass

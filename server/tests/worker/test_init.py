@@ -48,21 +48,6 @@ class Rescheduler:
 
 
 class WorkerTest(DbTestCase):
-    def test_pg_locker(self):
-        async def inner():
-            async with worker.PgLocker() as locker1:
-                async with worker.PgLocker() as locker2:
-                    async with locker1.render_lock(1):
-                        with self.assertRaises(worker.WorkflowAlreadyLocked):
-                            async with locker2.render_lock(1):
-                                pass
-
-                    # do not raise WorkflowAlreadyLocked here
-                    async with locker2.render_lock(1):
-                        pass
-
-        async_to_sync(inner)()
-
     def test_handle_render_invalid_message(self):
         class FakeRender:
             @contextmanager
