@@ -35,7 +35,7 @@ async def send_render(workflow_id: int, delta_id: int) -> None:
     # that would involve a custom RabbitMQ image, and as of 2018-10-30 the cost
     # (new Docker image) seems to outweigh the benefit (simpler client code).
     await asyncio.sleep(DupRenderWait)
-    rabbitmq.queue_render(workflow_id, delta_id)
+    await rabbitmq.queue_render(workflow_id, delta_id)
 
 
 async def render_or_reschedule(
