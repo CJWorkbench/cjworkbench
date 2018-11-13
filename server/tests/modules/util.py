@@ -1,5 +1,4 @@
 from inspect import iscoroutinefunction
-from unittest.mock import patch
 from asgiref.sync import async_to_sync
 
 
@@ -12,17 +11,29 @@ class MockParams:
         return self.d[name.replace('-', '_')]
 
     def get_param_raw(self, name, _expected_type): return self.get_param(name)
+
     def get_param_string(self, name): return self.get_param(name)
+
     def get_param_integer(self, name): return self.get_param(name)
+
     def get_param_float(self, name): return self.get_param(name)
+
     def get_param_checkbox(self, name): return self.get_param(name)
+
     def get_param_radio_idx(self, name): return self.get_param(name)
+
     def get_param_radio_string(self, name): return self.get_param(name)
+
     def get_param_menu_idx(self, name): return self.get_param(name)
+
     def get_param_menu_string(self, name): return self.get_param(name)
+
     def get_param_secret_secret(self, name): return self.get_param(name)
+
     def get_param_column(self, name, _table): return self.get_param(name)
+
     def get_param_multicolumn(self, name, _table): return self.get_param(name)
+
     def get_param_json(self, name): return self.get_param(name)
 
     def to_painful_dict(self, table): return self.d

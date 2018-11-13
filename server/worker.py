@@ -7,13 +7,16 @@ import os
 import time
 from typing import Awaitable, Callable
 import aio_pika
-import asyncpg
 from async_generator import asynccontextmanager  # TODO python 3.7 native
+import asyncpg
+from channels.db import database_sync_to_async
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-from server import dispatch, execute, rabbitmq
-from server.models import UploadedFile, WfModule, Workflow
+from server import execute, rabbitmq, versions
+from server.models import Params, LoadedModule, UploadedFile, WfModule, \
+        Workflow
 from server.modules import uploadfile
 
 
@@ -198,13 +201,72 @@ async def benchmark(task, message, *args):
         logger.info(f'End {message} (%dms)', *args, 1000 * (t2 - t1))
 
 
-async def update_wf_module(wf_module, now):
+@database_sync_to_async
+def _get_params(wf_module: WfModule) -> Params:
+    return wf_module.get_params()
+
+
+@database_sync_to_async
+def _get_input_dataframe(wf_module_id: int):
+    try:
+        # Let's not worry about locks and races too much. All failures should
+        # throw DoesNotExist, which is fine.
+        wf_module = WfModule.objects.get(pk=wf_module_id)
+        input_wf_module = wf_module.previous_in_stack()
+    except WfModule.DoesNotExist:
+        return None
+
+    if not input_wf_module:
+        return None
+
+    crr = input_wf_module.get_cached_render_result(only_fresh=True)
+    if not crr:
+        return None
+    else:
+        return crr.result.dataframe
+
+
+@database_sync_to_async
+def _get_stored_dataframe(wf_module_id: int):
+    try:
+        wf_module = WfModule.objects.get(pk=wf_module_id)
+    except WfModule.DoesNotExist:
+        return None
+
+    crr = wf_module.get_cached_render_result(only_fresh=True)
+    if not crr:
+        return None
+    else:
+        return crr.result.dataframe
+
+
+@database_sync_to_async
+def _get_workflow_owner(workflow_id: int):
+    try:
+        return User.objects.get(workflows__id=workflow_id)
+    except User.DoesNotExist:
+        return None
+
+
+async def fetch_wf_module(wf_module, now):
     """Fetch `wf_module` and notify user of changes via email/websockets."""
-    logger.debug('update_wf_module(%d, %d) at interval %d',
+    logger.debug('fetch_wf_module(%d, %d) at interval %d',
                  wf_module.workflow_id, wf_module.id,
                  wf_module.update_interval)
     try:
-        await dispatch.module_dispatch_fetch(wf_module)
+        params = await _get_params(wf_module)
+
+        lm = await LoadedModule.for_module_version(wf_module.module_version)
+        result = await lm.fetch(
+            params,
+            workflow_id=wf_module.workflow_id,
+            get_input_dataframe=partial(_get_input_dataframe, wf_module.id),
+            get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
+            get_workflow_owner=partial(_get_workflow_owner,
+                                       wf_module.workflow_id),
+        )
+
+        await versions.save_result_if_changed(wf_module, result)
     except Exception as e:
         # Log exceptions but keep going
         logger.exception(f'Error fetching {wf_module}')
@@ -313,8 +375,8 @@ async def fetch(*, wf_module_id: int) -> None:
     now = timezone.now()
     # most exceptions caught elsewhere
     try:
-        task = update_wf_module(wf_module, now)
-        await benchmark(task, 'update_wf_module(%d)', wf_module_id)
+        task = fetch_wf_module(wf_module, now)
+        await benchmark(task, 'fetch_wf_module(%d)', wf_module_id)
     except DatabaseError:
         # Two possibilities:
         #

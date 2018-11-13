@@ -5,13 +5,14 @@ import os
 import unittest
 from unittest.mock import patch
 import aiohttp
+from asgiref.sync import async_to_sync
 from django.conf import settings
 import pandas as pd
 import requests
 from server.modules.loadurl import LoadURL
 from server.modules.types import ProcessResult
 from server.tests.utils import mock_xlsx_path
-from .util import MockParams, fetch_factory
+from .util import MockParams
 
 XLSX_MIME_TYPE = \
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -89,7 +90,11 @@ def mock_404_response(text):
 
 
 P = MockParams.factory(url='', has_header=True)
-fetch = fetch_factory(LoadURL.fetch, P)
+
+
+def fetch(**kwargs):
+    params = P(**kwargs)
+    return async_to_sync(LoadURL.fetch)(params)
 
 
 class LoadFromURLTests(unittest.TestCase):

@@ -1,5 +1,8 @@
+from typing import Awaitable, Callable
+from django.contrib.auth.models import User
 import pandas as pd
 from .moduleimpl import ModuleImpl
+from server.models import Params
 from server.modules import utils
 from .types import ProcessResult
 
@@ -47,16 +50,21 @@ class ConcatURL(ModuleImpl):
 
     # Load external workflow data
     @staticmethod
-    async def fetch(wf_module):
-        params = wf_module.get_params()
+    async def fetch(params: Params, *, workflow_id: int,
+                    get_workflow_owner: Callable[[], Awaitable[User]],
+                    **kwargs) -> ProcessResult:
         url = params.get_param_string('url')
 
         if not url.strip():
             return None
 
         try:
-            workflow_id = utils.workflow_url_to_id(url)
+            other_workflow_id = utils.workflow_url_to_id(url)
         except ValueError as err:
             return ProcessResult(error=str(err))
 
-        return await utils.fetch_external_workflow(wf_module, workflow_id)
+        return await utils.fetch_external_workflow(
+            workflow_id,
+            await get_workflow_owner(),
+            other_workflow_id
+        )

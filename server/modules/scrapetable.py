@@ -57,9 +57,7 @@ class ScrapeTable(ModuleImpl):
         return (table, fetch_result.error)
 
     @staticmethod
-    async def fetch(wf_module):
-        params = wf_module.get_params()
-
+    async def fetch(params, **kwargs):
         table = None
         url = params.get_param_string('url').strip()
         tablenum = params.get_param_integer('tablenum') - 1  # 1 based for user

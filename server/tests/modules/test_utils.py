@@ -1,15 +1,19 @@
+import asyncio
 import io
 import unittest
+from unittest.mock import patch
+from asgiref.sync import async_to_sync
 import numpy
-import pandas
+import pandas as pd
+from django.contrib.auth.models import User
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
 from server.models import Workflow
+from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, workflow_url_to_id, fetch_external_workflow
-from server.tests.utils import LoggedInTestCase, load_and_add_module, \
-        create_test_user
+from server.tests.utils import DbTestCase
 
 
 class SafeExecTest(unittest.TestCase):
@@ -31,7 +35,7 @@ class ParseBytesIoTest(SimpleTestCase):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xc3\xa9'),
                                'text/csv', 'utf-8')
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['café']}).astype('category')
+            pd.DataFrame({'A': ['café']}).astype('category')
         )
         self.assertEqual(result, expected)
 
@@ -40,7 +44,7 @@ class ParseBytesIoTest(SimpleTestCase):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', 'utf-8')
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['caf�']}).astype('category')
+            pd.DataFrame({'A': ['caf�']}).astype('category')
         )
         self.assertEqual(result, expected)
 
@@ -49,7 +53,7 @@ class ParseBytesIoTest(SimpleTestCase):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['café']}).astype('category')
+            pd.DataFrame({'A': ['café']}).astype('category')
         )
         self.assertEqual(result, expected)
 
@@ -58,7 +62,7 @@ class ParseBytesIoTest(SimpleTestCase):
         result = parse_bytesio(io.BytesIO(b'A\n2000\x962018'),
                                'text/csv', None)
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['2000–2018']}).astype('category')
+            pd.DataFrame({'A': ['2000–2018']}).astype('category')
         )
         self.assertEqual(result, expected)
 
@@ -69,7 +73,7 @@ class ParseBytesIoTest(SimpleTestCase):
             None
         )
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['谢谢你']}).astype('category')
+            pd.DataFrame({'A': ['谢谢你']}).astype('category')
         )
         self.assertEqual(result, expected)
 
@@ -78,7 +82,7 @@ class ParseBytesIoTest(SimpleTestCase):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['café']}).astype('category')
+            pd.DataFrame({'A': ['café']}).astype('category')
         )
         self.assertEqual(result, expected)
 
@@ -88,7 +92,7 @@ class ParseBytesIoTest(SimpleTestCase):
             {"A": null}
         ]""".encode('utf-8')), 'application/json')
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['a', None]}, dtype=str)
+            pd.DataFrame({'A': ['a', None]}, dtype=str)
         )
         self.assertEqual(result, expected)
 
@@ -98,41 +102,39 @@ class ParseBytesIoTest(SimpleTestCase):
             {"A": "aa", "B": "b"}
         ]""".encode('utf-8')), 'application/json')
         expected = ProcessResult(
-            pandas.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']},
-                             dtype=str)
+            pd.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']}, dtype=str)
         )
         self.assertEqual(result, expected)
 
     def test_txt_detect_separator_semicolon(self):
         result = parse_bytesio(io.BytesIO(b'A;C\nB;D'),
                                'text/plain', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+        expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
     def test_txt_detect_separator_tab(self):
         result = parse_bytesio(io.BytesIO(b'A\tC\nB\tD'),
                                'text/plain', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+        expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
     def test_txt_detect_separator_comma(self):
         result = parse_bytesio(io.BytesIO(b'A,C\nB,D'),
                                'text/plain', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+        expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
     def test_csv_detect_separator_semicolon(self):
-        result = parse_bytesio(io.BytesIO(b'A;C\nB;D'),
-                               'text/csv', 'utf-8')
-        expected = ProcessResult(pandas.DataFrame({'A': ['B'], 'C': ['D']}))
+        result = parse_bytesio(io.BytesIO(b'A;C\nB;D'), 'text/csv', 'utf-8')
+        expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
 
 class OtherUtilsTests(SimpleTestCase):
     def test_turn_header_into_first_row(self):
-        result = turn_header_into_first_row(pandas.DataFrame({'A': ['B'],
-                                                              'C': ['D']}))
-        expected = pandas.DataFrame({'0': ['A', 'B'], '1': ['C', 'D']})
+        result = turn_header_into_first_row(pd.DataFrame({'A': ['B'],
+                                                          'C': ['D']}))
+        expected = pd.DataFrame({'0': ['A', 'B'], '1': ['C', 'D']})
         assert_frame_equal(result, expected)
 
         # Function should return None when a table has not been uploaded yet
@@ -155,38 +157,80 @@ class OtherUtilsTests(SimpleTestCase):
                 self.assertEqual(workflow_url_to_id(url), expected_result)
 
 
-class WorkflowImport(LoggedInTestCase):
+class FetchExternalWorkflowtest(DbTestCase):
     def setUp(self):
-        super(WorkflowImport, self).setUp()  # log in
-        self.wfm = load_and_add_module('concaturl')
-        # Second workflow loaded with data
-        self.ext_wfm = load_and_add_module('uploadfile')
-        self.ext_wfm.cache_render_result(
-            delta_id=1,
-            result=ProcessResult(self.ext_wfm.retrieve_fetched_table())
+        super().setUp()
+
+        self.user = User.objects.create(username='a', email='a@example.org')
+        self.workflow = Workflow.objects.create(owner=self.user)
+        self.delta = InitWorkflowCommand.create(self.workflow)
+        self.wf_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
         )
-        self.ext_wfm.save()
 
-    def test_auth(self):
-        # Create otheruser and try to access workflow owned by default user
-        other_user = create_test_user(username='otheruser',
-                                      email='otheruser@email.com')
-        wf = Workflow.objects.create(name='New Workflow', owner=other_user)
-        wfm = load_and_add_module('concaturl', workflow=wf)
+    def _fetch(self, *args):
+        return async_to_sync(fetch_external_workflow)(*args)
 
-        result = fetch_external_workflow(wfm, self.ext_wfm.workflow_id)
+    def test_workflow_access_denied(self):
+        wrong_user = User(username='b', email='b@example.org')
+        result = self._fetch(self.workflow.id + 1, wrong_user,
+                             self.workflow.id)
         self.assertEqual(result, ProcessResult(
             error='Access denied to the target workflow'
         ))
 
     def test_same_workflow(self):
-        result = fetch_external_workflow(self.wfm, self.wfm.workflow_id)
+        result = self._fetch(self.workflow.id, self.user, self.workflow.id)
         self.assertEqual(result, ProcessResult(
             error='Cannot import the current workflow'
         ))
 
     def test_workflow_does_not_exist(self):
-        result = fetch_external_workflow(self.wfm, 99999999)
+        result = self._fetch(self.workflow.id + 1, self.user,
+                             self.workflow.id + 2)
         self.assertEqual(result, ProcessResult(
             error='Target workflow does not exist'
         ))
+
+    @patch('server.rabbitmq.queue_render')
+    def test_workflow_has_no_cached_result(self, queue_render):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        queue_render.return_value = future_none
+
+        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
+        self.assertEqual(result, ProcessResult(
+            error='Target workflow is rendering. Please try again.'
+        ))
+        queue_render.assert_called_with(self.workflow.id, self.delta.id)
+
+    @patch('server.rabbitmq.queue_render')
+    def test_workflow_has_wrong_cached_result(self, queue_render):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        queue_render.return_value = future_none
+
+        self.wf_module.cache_render_result(
+            self.delta.id - 1,
+            ProcessResult(pd.DataFrame({'A': [1]}))
+        )
+        self.wf_module.save()
+
+        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
+        self.assertEqual(result, ProcessResult(
+            error='Target workflow is rendering. Please try again.'
+        ))
+        queue_render.assert_called_with(self.workflow.id, self.delta.id)
+
+    @patch('server.rabbitmq.queue_render')
+    def test_happy_path(self, queue_render):
+        self.wf_module.cache_render_result(
+            self.delta.id,
+            ProcessResult(pd.DataFrame({'A': [1]}))
+        )
+        self.wf_module.save()
+
+        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
+        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
+        queue_render.assert_not_called()

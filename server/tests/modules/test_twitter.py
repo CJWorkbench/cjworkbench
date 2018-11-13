@@ -1,4 +1,4 @@
-import asyncio
+from collections import namedtuple
 import json
 import unittest
 from asgiref.sync import async_to_sync
@@ -52,6 +52,14 @@ class MockAiohttpSession:
         ret = MockAiohttpResponse(self.responses[self.i])
         self.i += 1
         return ret
+
+
+MockAuth = namedtuple('MockAuth', ['consumer_key', 'consumer_secret'])
+
+
+def mock_auth(name):
+    return MockAuth('a-key', 'a-secret')
+
 
 # test data, excerpted from tweepy repo.
 # One overlapping tweet between the two sets of two tweets, and include a
@@ -309,31 +317,6 @@ user_timeline2_json = """[
   "favorited": false,
   "retweeted": false,
   "lang": "en"
-},
-{
-    "created_at":"Sat Nov 05 21:38:46 +0000 2016",
-    "id":795017539831103489,
-    "id_str":"795017539831103489",
-    "full_text":"Hello",
-    "truncated":false,
-    "entities":{"hashtags":[],"symbols":[],"user_mentions":[],"urls":[]},
-    "source":"\\u003ca href=\\"http://twitter.com\\" rel=\\"nofollow\\"\\u003eTwitter Web Client\\u003c/a\\u003e",
-    "in_reply_to_status_id":null,
-    "in_reply_to_status_id_str":null,
-    "in_reply_to_user_id":null,
-    "in_reply_to_user_id_str":null,
-    "in_reply_to_screen_name":null,
-    "user":{"id":794682839556038656,"id_str":"794682839556038656","name":"Tweepy Test","screen_name":"TheTweepyTester","location":"","description":"","url":null,"entities":{"description":{"urls":[]}},"protected":false,"followers_count":1,"friends_count":18,"listed_count":0,"created_at":"Fri Nov 04 23:28:48 +0000 2016","favourites_count":0,"utc_offset":-25200,"time_zone":"Pacific Time (US & Canada)","geo_enabled":false,"verified":false,"statuses_count":112,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"000000","profile_background_image_url":"http://abs.twimg.com/images/themes/theme1/bg.png","profile_background_image_url_https":"https://abs.twimg.com/images/themes/theme1/bg.png","profile_background_tile":false,"profile_image_url":"http://abs.twimg.com/sticky/default_profile_images/default_profile_6_normal.png","profile_image_url_https":"https://abs.twimg.com/sticky/default_profile_images/default_profile_6_normal.png","profile_banner_url":"https://pbs.twimg.com/profile_banners/794682839556038656/1478382257","profile_link_color":"1B95E0","profile_sidebar_border_color":"000000","profile_sidebar_fill_color":"000000","profile_text_color":"000000","profile_use_background_image":false,"has_extended_profile":false,"default_profile":false,"default_profile_image":true,"following":false,"follow_request_sent":false,"notifications":false,"translator_type":"none"},
-    "geo":null,
-    "coordinates":null,
-    "place":null,
-    "contributors":null,
-    "is_quote_status":false,
-    "retweet_count":0,
-    "favorite_count":0,
-    "favorited":false,
-    "retweeted":false,
-    "lang":"en"
 }
 ]"""
 
@@ -343,6 +326,16 @@ P = MockParams.factory(querytype=0, username='username', query='query',
                            'oauth_token': 'a-token',
                            'oauth_token_secret': 'a-token-secret',
                        }, accumulate=True)
+
+
+def fetch(params, stored_dataframe=None):
+    async def get_stored_dataframe():
+        return stored_dataframe
+
+    return async_to_sync(Twitter.fetch)(
+        params,
+        get_stored_dataframe=get_stored_dataframe
+    )
 
 
 class MockWfModule:
@@ -380,7 +373,7 @@ mock_tweet_table = pd.DataFrame({
 })
 
 mock_tweet_table2 = pd.DataFrame({
-    'screen_name': ['TheTweepyTester', 'TheTweepyTester'],
+    'screen_name': ['TheTweepyTester', 'LoySujan'],
     'created_at': [dt('2016-11-05T21:44:24Z'), dt('2016-11-05T18:20:40Z')],
     'text': [
         'testing 1000 https://t.co/HFZNy7Fz9o',
@@ -391,13 +384,9 @@ mock_tweet_table2 = pd.DataFrame({
     'favorite_count': [0, 0],
     'in_reply_to_screen_name': [None, None],
     'retweeted_status_screen_name': [None, 'ritanyaaskar'],
-    'source': ['Twitter Web Client', 'Tweepy dev'],
+    'source': ['Tweepy dev', 'Twitter Web Client'],
     'id': [795018956507582465, 794967685113188400],
 })
-
-
-def run_fetch(wf_module):
-    return async_to_sync(Twitter.fetch)(wf_module)
 
 
 def Err(error):
@@ -405,135 +394,148 @@ def Err(error):
 
 
 class TwitterTests(unittest.TestCase):
-    def test_empty_query(self):
-        wf_module = MockWfModule(querytype=1, query='')
-        fetch_result = run_fetch(wf_module)
-        self.assertEqual(fetch_result, Err('Please enter a query'))
+    def test_fetch_empty_query_and_secret(self):
+        result = fetch(P(querytype=1, query='', twitter_credentials=None))
+        self.assertIsNone(result)
 
-    def test_empty_secret(self):
-        wf_module = MockWfModule(twitter_credentials=None)
-        fetch_result = run_fetch(wf_module)
-        self.assertEqual(fetch_result, Err('Please sign in to Twitter'))
+    def test_fetch_empty_query(self):
+        result = fetch(P(querytype=1, query=''))
+        self.assertEqual(result, Err('Please enter a query'))
+
+    def test_fetch_empty_secret(self):
+        result = fetch(P(twitter_credentials=None))
+        self.assertEqual(result, Err('Please sign in to Twitter'))
 
     def test_fetch_invalid_username(self):
-        wf_module = MockWfModule(querytype=0, username='@@batman')
-        fetch_result = run_fetch(wf_module)
-        self.assertEqual(fetch_result, Err('Not a valid Twitter username'))
+        result = fetch(P(querytype=0, username='@@batman'))
+        self.assertEqual(result, Err('Not a valid Twitter username'))
 
     def test_invalid_list(self):
-        wf_module = MockWfModule(querytype=2,
-                                 listurl='https://twitter.com/a/lists/@b')
-        fetch_result = run_fetch(wf_module)
-        self.assertEqual(fetch_result, Err('Not a valid Twitter list URL'))
+        result = fetch(P(querytype=2,
+                         listurl='https://twitter.com/a/lists/@b'))
+        self.assertEqual(result, Err('Not a valid Twitter list URL'))
 
-    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_user_timeline_accumulate(self, session, auth_service):
-        wf_module = MockWfModule(querytype=0, username='foouser',
-                                 accumulate=True)
-        session.return_value = MockAiohttpSession([
-            mock_statuses,
+    def test_fetch_user_timeline_accumulate(self, session):
+        session.return_value = mock_session = MockAiohttpSession([
+            mock_statuses2,
             []
         ])
 
-        auth_service.return_value.consumer_key = 'a-key'
-        auth_service.return_value.consumer_secret = 'a-secret'
+        params = P(querytype=0, username='foouser', accumulate=True)
 
-        # Actually fetch!
-        result = run_fetch(wf_module)
+        result = fetch(params, mock_tweet_table)
+        expected = pd.concat([mock_tweet_table2, mock_tweet_table],
+                             ignore_index=True, sort=False)
         self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, mock_tweet_table)
-        wf_module.fetched_table = result.dataframe
+        assert_frame_equal(result.dataframe, expected)
 
-        # now accumulate new tweets
-        session.return_value = mock_session2 = MockAiohttpSession([
-            # add only one tweet, mocking max_id
-            mock_statuses2[0:1],
-            []
-        ])
-
-        result2 = run_fetch(wf_module)
-
+        # query should start where we left off
         self.assertEqual(
-            mock_session2.requests[0].url,
+            mock_session.requests[0].url,
             (
                 'https://api.twitter.com/1.1/statuses/user_timeline.json'
                 '?screen_name=foouser&tweet_mode=extended&count=200'
                 '&since_id=795017539831103489'
             )
         )
-
-        # output should prepend new tweet
         self.assertEqual(
-            list(result2.dataframe['id']),
-            [795018956507582465, 795017539831103489, 795017147651162112]
+            mock_session.requests[1].url,
+            (
+                'https://api.twitter.com/1.1/statuses/user_timeline.json'
+                '?screen_name=foouser&tweet_mode=extended&count=200'
+                '&since_id=795017539831103489&max_id=794967685113188399'
+            )
         )
-        self.assertEqual(list(result2.dataframe.columns),
-                         list(mock_tweet_table.columns))
 
-    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_accumulate_empty(self, session, auth_service):
+    def test_fetch_accumulate_from_None(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
         # Empty dataframe shouldn't change types
-        wf_module = MockWfModule(accumulate=True)
-        wf_module.fetched_table = mock_tweet_table.copy()
+        session.return_value = MockAiohttpSession([
+            mock_statuses,
+            []
+        ])
 
+        result = fetch(P(accumulate=True), None)
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, mock_tweet_table)
+
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
+    @patch('aiohttp.ClientSession')
+    def test_fetch_accumulate_from_empty(self, session):
+        # https://www.pivotaltracker.com/story/show/160258591
+        # Empty dataframe shouldn't change types
+        session.return_value = MockAiohttpSession([
+            mock_statuses,
+            []
+        ])
+
+        result = fetch(P(accumulate=True), pd.DataFrame())  # missing columns
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, mock_tweet_table)
+
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
+    @patch('aiohttp.ClientSession')
+    def test_fetch_accumulate_all_empty(self, session):
+        # https://www.pivotaltracker.com/story/show/160258591
+        # Empty dataframe shouldn't change types
         session.return_value = MockAiohttpSession([
             []
         ])
 
-        auth_service.return_value.consumer_key = 'a-key'
-        auth_service.return_value.consumer_secret = 'a-secret'
+        result = fetch(P(accumulate=True), pd.DataFrame())  # missing columns
+        self.assertEqual(result.error, '')
+        expected = mock_tweet_table[0:0].reset_index(drop=True)  # empty table
+        assert_frame_equal(result.dataframe, expected)
 
-        result = run_fetch(wf_module)
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
+    @patch('aiohttp.ClientSession')
+    def test_fetch_accumulate_empty_upon_data(self, session):
+        # https://www.pivotaltracker.com/story/show/160258591
+        # Empty dataframe shouldn't change types
+        session.return_value = MockAiohttpSession([
+            []
+        ])
+
+        result = fetch(P(accumulate=True), mock_tweet_table)  # missing columns
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
-    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_accumulate_recover_after_bug_160258591(self, session,
-                                                    auth_service):
+    def test_accumulate_recover_after_bug_160258591(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
         # 'id', 'retweet_count' and 'favorite_count' had wrong type after
         # accumulating an empty table. Now the bad data is in our database;
         # let's convert back to the type we want.
-        wf_module = MockWfModule(accumulate=True)
-
         session.return_value = MockAiohttpSession([
             # Fix it _no matter what_ -- even if we aren't adding any data
             []
         ])
-
-        auth_service.return_value.consumer_key = 'a-key'
-        auth_service.return_value.consumer_secret = 'a-secret'
 
         # Simulate the bug: convert everything to str
         bad_table = mock_tweet_table.copy()
         nulls = bad_table.isna()
         bad_table = bad_table.astype(str)
         bad_table[nulls] = None
-        wf_module.fetched_table = bad_table
 
-        result = run_fetch(wf_module)
+        result = fetch(P(accumulate=True), bad_table)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
-    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_twitter_search(self, session, auth_service):
-        wf_module = MockWfModule(querytype=1, query='cat')
-
+    def test_twitter_search(self, session):
         session.return_value = mock_session = MockAiohttpSession([
             mock_statuses,
             []
         ])
 
-        auth_service.return_value.consumer_key = 'a-key'
-        auth_service.return_value.consumer_secret = 'a-secret'
-
         # Actually fetch!
-        result = run_fetch(wf_module)
+        result = fetch(P(querytype=1, query='cat'))
         self.assertEqual(result.error, '')
         self.assertEqual([req.url for req in mock_session.requests], [
             (
@@ -550,22 +552,19 @@ class TwitterTests(unittest.TestCase):
         # Check that render output is right
         assert_frame_equal(result.dataframe, mock_tweet_table)
 
-    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_twitter_list(self, session, auth_service):
-        listurl = 'https://twitter.com/thatuser/lists/theirlist'
-        wf_module = MockWfModule(querytype=2, listurl=listurl)
-
+    def test_twitter_list(self, session):
         session.return_value = mock_session = MockAiohttpSession([
             mock_statuses,
             []
         ])
 
-        auth_service.return_value.consumer_key = 'a-key'
-        auth_service.return_value.consumer_secret = 'a-secret'
-
         # Actually fetch!
-        result = run_fetch(wf_module)
+        result = fetch(
+            P(querytype=2,
+              listurl='https://twitter.com/thatuser/lists/theirlist')
+        )
         self.assertEqual([req.url for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/lists/statuses.json'
@@ -598,42 +597,26 @@ class TwitterTests(unittest.TestCase):
                                 fetch_result=ProcessResult(pd.DataFrame()))
         assert_frame_equal(result.dataframe, mock_tweet_table[0:0])
 
-    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_add_retweet_status_screen_name(self, session, auth_service):
+    def test_add_retweet_status_screen_name(self, session):
         # Migration: what happens when we accumulate tweets
         # where the old stored table does not have retweet_status_screen_name?
         # We should consider those to have just None in that column
-        wf_module = MockWfModule(accumulate=True)
-
         session.return_value = MockAiohttpSession([
             # add tweets which are not duplicated (mocking max_id)
-            mock_statuses[0:1],
-            mock_statuses[1:2],
+            mock_statuses2,
             []
         ])
-
-        auth_service.return_value.consumer_key = 'a-key'
-        auth_service.return_value.consumer_secret = 'a-secret'
 
         # Simulate old format by deleting retweet screen name column
         old_format_table = mock_tweet_table.copy(deep=True) \
             .drop('retweeted_status_screen_name', axis=1)
-        wf_module.fetched_table = old_format_table
 
-        result = run_fetch(wf_module)
+        result = fetch(P(accumulate=True), old_format_table)
+
+        expected = pd.concat([mock_tweet_table2, mock_tweet_table],
+                             ignore_index=True, sort=False)
+        expected.loc[3:5, 'retweeted_status_screen_name'] = None
         self.assertEqual(result.error, '')
-
-        # The final table should contain all columns from our current format
-        self.assertEqual(
-            list(result.dataframe.columns),
-            list(mock_tweet_table.columns)
-        )
-
-        # The final table should contain merged tweets.
-        # No need for sorting. Twitter sorts for us.
-        self.assertEqual(
-            list(result.dataframe['id']),
-            [795017539831103489, 795017147651162112, 795017539831103489,
-             795017147651162112]
-        )
+        assert_frame_equal(result.dataframe, expected)

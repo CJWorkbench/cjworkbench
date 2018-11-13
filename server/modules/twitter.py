@@ -90,13 +90,16 @@ def _recover_from_160258591(table):
         try:
             table[column.name] = table[column.name].astype(column.dtype)
         except KeyError:
-            pass
+            table[column.name] = None
+            table[column.name] = table[column.name].astype(column.dtype)
 
 
 # Get dataframe of last tweets fron our storage,
-def get_stored_tweets(wf_module):
-    table = wf_module.retrieve_fetched_table()
-    if table is not None:
+async def get_stored_tweets(get_stored_dataframe):
+    table = await get_stored_dataframe()
+    if table is None or table.empty:
+        table = create_empty_table()
+    else:
         _recover_from_160258591(table)
     return table
 
@@ -158,7 +161,7 @@ async def fetch_from_twitter(access_token, path, since_id: Optional[int],
             page_dataframes.append(statuses_to_dataframe(page_statuses))
             max_id = page_statuses[-1]['id'] - 1
 
-    return pd.concat(page_dataframes, ignore_index=True)
+    return pd.concat(page_dataframes, ignore_index=True, sort=False)
 
 
 async def twitter_user_timeline(access_token, screen_name,
@@ -248,9 +251,7 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
 
 
 # Combine this set of tweets with previous set of tweets
-def merge_tweets(wf_module, new_table):
-    old_table = get_stored_tweets(wf_module)
-
+def merge_tweets(old_table, new_table):
     if old_table is None or old_table.empty:
         return new_table
     elif new_table is None or new_table.empty:
@@ -288,9 +289,7 @@ class Twitter(ModuleImpl):
 
     # Load specified user's timeline
     @staticmethod
-    async def fetch(wf_module):
-        params = wf_module.get_params()
-
+    async def fetch(params, *, get_stored_dataframe, **kwargs):
         param_names = {
             QUERY_TYPE_USER: 'username',
             QUERY_TYPE_SEARCH: 'query',
@@ -312,10 +311,10 @@ class Twitter(ModuleImpl):
 
         try:
             if params.get_param_checkbox('accumulate'):
-                old_tweets = get_stored_tweets(wf_module)
+                old_tweets = await get_stored_tweets(get_stored_dataframe)
                 tweets = await get_new_tweets(access_token, querytype, query,
                                               old_tweets)
-                tweets = merge_tweets(wf_module, tweets)
+                tweets = merge_tweets(old_tweets, tweets)
             else:
                 tweets = await get_new_tweets(access_token, querytype,
                                               query, None)

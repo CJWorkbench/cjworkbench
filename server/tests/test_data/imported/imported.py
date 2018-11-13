@@ -1,6 +1,4 @@
-import numpy as np
-import pandas as pd
-
-def render(wf_module, table):
-  return table
-
+def render(table, params):
+    col = params['col']
+    table[col] *= 2
+    return table

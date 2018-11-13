@@ -14,14 +14,6 @@ P = MockParams.factory(url='https://app.workbenchdata.com/workflows/2/',
                        source_columns=([], []), type=0)
 
 
-class MockWfModule:
-    def __init__(self, **kwargs):
-        self.params = P(**kwargs)
-
-    def get_params(self):
-        return self.params
-
-
 def PR(error, *args, **kwargs):
     """Shortcut ProcessResult builder."""
     return ProcessResult(pd.DataFrame(*args, **kwargs), error)
@@ -33,8 +25,11 @@ def render(params, table, fetch_result):
     return result
 
 
-async def fetch(wf_module):
-    return await ConcatURL.fetch(wf_module)
+async def get_workflow_owner():
+    return 'owner'  # no need for a User: we mock fetch_external_workflow()
+
+
+fetch = ConcatURL.fetch
 
 
 table = pd.DataFrame({
@@ -127,19 +122,17 @@ class ConcatURLTest(unittest.TestCase):
         future_pr.set_result(pr)
         inner_fetch.return_value = future_pr
 
-        wf_module = MockWfModule(
-            url='https://app.workbenchdata.com/workflows/2/'
-        )
-        result = async_to_sync(fetch)(wf_module)
+        params = P(url='https://app.workbenchdata.com/workflows/2/')
+        result = async_to_sync(fetch)(params, workflow_id=1,
+                                      get_workflow_owner=get_workflow_owner)
 
         self.assertEqual(result, pr)
-        inner_fetch.assert_called_with(wf_module, 2)
+        inner_fetch.assert_called_with(1, 'owner',  2)
 
     def test_fetch_invalid_url(self):
-        wf_module = MockWfModule(
-            url='hts:app.workbenchdata.com/workflows/2/'
-        )
-        result = async_to_sync(fetch)(wf_module)
+        params = P(url='hts:app.workbenchdata.com/workflows/2/')
+        result = async_to_sync(fetch)(params, workflow_id=1,
+                                      get_workflow_owner=get_workflow_owner)
 
         self.assertEqual(result, ProcessResult(
             error='Not a valid Workbench workflow URL'

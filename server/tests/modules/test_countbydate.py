@@ -1,5 +1,4 @@
 import dateutil
-import io
 import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
@@ -270,7 +269,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 0 = count
-            P(column='Date', include_missing_dates=True, groupby=3, operation=0),
+            P(column='Date', include_missing_dates=True, groupby=3,
+              operation=0),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),

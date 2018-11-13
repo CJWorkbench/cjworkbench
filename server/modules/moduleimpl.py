@@ -1,5 +1,7 @@
+from typing import Awaitable, Callable
+from django.contrib.auth.models import User
 import pandas as pd
-from server.models import Params, WfModule
+from server.models import Params
 from .types import ProcessResult
 
 
@@ -10,5 +12,12 @@ class ModuleImpl:
         return ProcessResult(table)
 
     @staticmethod
-    async def fetch(wf_module: WfModule) -> None:
+    async def fetch(
+        params: Params,
+        *,
+        workflow_id: int,
+        get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
+        get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
+        get_workflow_owner: Callable[[], Awaitable[User]]
+    ) -> ProcessResult:
         pass

@@ -1,5 +1,6 @@
 import asyncio
 import random
+import unittest
 from unittest.mock import patch
 import aiohttp
 from asgiref.sync import async_to_sync
@@ -74,21 +75,17 @@ async def mock_async_get(status, text, lag):
     return MockResponse(status, text)
 
 
-# Table of urls and correct responses to a set of tasks
-def make_test_tasks(results, response_times):
-    # don't create tasks for invalid urls, because scrape_urls checks before
-    # making tasks
-    results_tasks = []
-    for i in range(len(results)):
-        results_tasks.append(
-            mock_async_get(
-                results['status'][i],
-                results['html'][i],
-                response_times[i]
-            )
-        )
+P = MockParams.factory(urlsource=0, urllist='', urlcol='')
 
-    return results_tasks
+
+def fetch(params, input_dataframe):
+    async def get_input_dataframe():
+        return input_dataframe
+
+    return async_to_sync(URLScraper.fetch)(
+        params,
+        get_input_dataframe=get_input_dataframe
+    )
 
 
 class ScrapeUrlsTest(SimpleTestCase):
@@ -197,57 +194,25 @@ class ScrapeUrlsTest(SimpleTestCase):
         self.scraper_result_test(results_table, response_times)
 
     def test_module_initial_nop(self):
-        wf_module = MockWfModule('List', '')
-        result = URLScraper.render(wf_module.get_params(), url_table.copy(),
+        table = pd.DataFrame({'A': [1]})
+        result = URLScraper.render(P(urlsource=0, urllist=''), table.copy(),
                                    fetch_result=None)
-        assert_frame_equal(result, url_table)
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, table)
 
     def test_module_nop_with_initial_col_selection(self):
-        wf_module = MockWfModule('Input column', '', None, '')
-        result = URLScraper.render(wf_module.get_params(), url_table.copy(),
+        table = pd.DataFrame({'A': [1]})
+        result = URLScraper.render(P(urlsource=1, urlcol=''), table.copy(),
                                    fetch_result=None)
-        assert_frame_equal(result, url_table)
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, table)
 
 
-class MockWfModule:
-    def __init__(self, urlsource, urlcol, urllist='',
-                 fetched_table=None, fetch_error=''):
-        self.params = MockParams(urlsource=urlsource, urlcol=urlcol,
-                                 urllist=urllist)
-        self.fetched_table = fetched_table
-        self.fetch_error = fetch_error
-        self.previous = None
-        self.cached_render_result = None
-
-    def get_params(self):
-        return self.params
-
-    def get_cached_render_result(self):
-        return self.cached_render_result
-
-    def previous_in_stack(self):
-        return self.previous
-
-
-def fetch(wf_module):
-    return async_to_sync(URLScraper.fetch)(wf_module)
-
-
-class URLScraperTests(SimpleTestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.urls = list(simple_result_table['url'])
-
-        self.expected_url_table_result = ProcessResult(url_table)
-        self.expected_url_table_result.sanitize_in_place()
-
+class URLScraperTests(unittest.TestCase):
     # Simple test that .fetch() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are
     # tested above
     def test_scrape_column(self):
-        wf_module = MockWfModule('Input column', 'url')
-
         scraped_table = simple_result_table.copy()
 
         # modifies the table in place to add results, just like the real thing
@@ -256,28 +221,19 @@ class URLScraperTests(SimpleTestCase):
             table['html'] = scraped_table['html']
             return
 
+        urls = list(simple_result_table['url'])
+
         with patch('django.utils.timezone.now', lambda: testnow):
             with patch('server.modules.urlscraper.scrape_urls') as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                wf_module.previous = MockWfModule('', '')
-                wf_module.previous.cached_render_result = \
-                    MockCachedRenderResult(pd.DataFrame({
-                        'url': self.urls,
-                    }))
-
-                result = fetch(wf_module)
+                result = fetch(P(urlsource=1, urlcol='x'),
+                               pd.DataFrame({'x': urls}))
                 self.assertEqual(result, ProcessResult(scraped_table))
 
     # Tests scraping from a list of URLs
     def test_scrape_list(self):
-        wf_module = MockWfModule('List', '', '\n'.join([
-            'http://a.com/file',
-            'https://b.com/file2',
-            'c.com/file/dir'  # Removed 'http://' to test the URL-fixing part
-        ]))
-
         scraped_table = simple_result_table.copy()
 
         # Code below mostly lifted from the column test
@@ -291,5 +247,9 @@ class URLScraperTests(SimpleTestCase):
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                result = fetch(wf_module)
+                result = fetch(P(urlsource=0, urllist='\n'.join([
+                    'http://a.com/file',
+                    'https://b.com/file2',
+                    'c.com/file/dir'  # Removed 'http://' to test URL-fixing
+                ])), None)
                 self.assertEqual(result, ProcessResult(scraped_table))

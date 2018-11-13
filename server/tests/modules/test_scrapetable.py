@@ -3,14 +3,19 @@ import unittest
 from unittest import mock
 from unittest.mock import patch
 import aiohttp
+from asgiref.sync import async_to_sync
 import pandas as pd
 from server.modules.scrapetable import ScrapeTable
 from server.modules.types import ProcessResult
-from .util import MockParams, fetch_factory
+from .util import MockParams
 
 
 P = MockParams.factory(url='', tablenum=1, first_row_is_header=False)
-fetch = fetch_factory(ScrapeTable.fetch, P)
+
+
+def fetch(**kwargs):
+    params = P(**kwargs)
+    return async_to_sync(ScrapeTable.fetch)(params)
 
 
 class fake_spooled_data_from_url:

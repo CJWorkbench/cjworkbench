@@ -49,8 +49,7 @@ class LoadURL(ModuleImpl):
 
     # Load a CSV from file when fetch pressed
     @staticmethod
-    async def fetch(wf_module):
-        params = wf_module.get_params()
+    async def fetch(params, **kwargs):
         url = params.get_param_string('url').strip()
 
         mimetypes = ','.join(_ExtensionMimeTypes.values())

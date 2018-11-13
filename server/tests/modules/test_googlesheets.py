@@ -1,13 +1,14 @@
 import os.path
 import unittest
 from unittest.mock import patch, Mock
+from asgiref.sync import async_to_sync
 import pandas as pd
-import requests.exceptions
 from pandas.testing import assert_frame_equal
+import requests.exceptions
 from server import oauth
 from server.modules.googlesheets import GoogleSheets
 from server.modules.types import ProcessResult
-from .util import MockParams, fetch_factory
+from .util import MockParams
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
 # binary representations
@@ -50,7 +51,10 @@ P = MockParams.factory(google_credentials=default_secret,
                        googlefileselect=default_googlefileselect,
                        has_header=True)
 
-fetch = fetch_factory(GoogleSheets.fetch, P)
+
+def fetch(**kwargs):
+    params = P(**kwargs)
+    return GoogleSheets.fetch(params)
 
 
 class GoogleSheetsTests(unittest.TestCase):
@@ -95,7 +99,7 @@ class GoogleSheetsTests(unittest.TestCase):
     def test_fetch_csv(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
         fetch_result = fetch(googlefileselect={**default_googlefileselect,
-                                            'mimeType': 'text/csv'})
+                                               'mimeType': 'text/csv'})
         self._assert_happy_path(fetch_result)
 
     def test_fetch_tsv(self):

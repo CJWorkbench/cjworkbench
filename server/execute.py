@@ -82,7 +82,7 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
     Returns a Tuple in this order:
         * cached_render_result: if non-None, the quick return value of
           execute_wfmodule().
-        * module_version: a ModuleVersion for dispatching render
+        * loaded_module: a ModuleVersion for dispatching render
         * params: Params for dispatching render
         * fetch_result: optional ProcessResult for dispatching render
         * old_result: if wf_module.notifications is set, the previous
@@ -111,7 +111,9 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
         params = safe_wf_module.get_params()
         fetch_result = safe_wf_module.get_fetch_result()
 
-        return (None, module_version, params, fetch_result, old_result)
+        loaded_module = LoadedModule.for_module_version_sync(module_version)
+
+        return (None, loaded_module, params, fetch_result, old_result)
 
 
 @database_sync_to_async
@@ -188,7 +190,7 @@ async def execute_wfmodule(wf_module: WfModule,
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    (cached_render_result, module_version, params, fetch_result, old_result
+    (cached_render_result, loaded_module, params, fetch_result, old_result
      ) = await _execute_wfmodule_pre(wf_module)
 
     # If the cached render result is valid, we're done!
@@ -199,9 +201,8 @@ async def execute_wfmodule(wf_module: WfModule,
     loop = asyncio.get_event_loop()
     # Render may take a while. run_in_executor to push that slowdown to a
     # thread and keep our event loop responsive.
-    result = await loop.run_in_executor(None, dispatch.module_dispatch_render,
-                                        module_version, params, table,
-                                        fetch_result)
+    result = await loop.run_in_executor(None, loaded_module.render, params,
+                                        table, fetch_result)
 
     cached_render_result, output_delta = \
         await _execute_wfmodule_save(wf_module, result, old_result)

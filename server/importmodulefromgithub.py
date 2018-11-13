@@ -7,10 +7,10 @@ from django.forms import URLField
 from django.core.exceptions import ValidationError
 import git
 from git.exc import GitCommandError
-from server import dynamicdispatch
 from server.initmodules import load_module_from_dict, \
         update_wfm_parameters_to_new_version
 from server.models import Module, ModuleVersion, WfModule
+from server.models import LoadedModule
 from server.utils import log_message
 
 
@@ -232,8 +232,7 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
 
 # Now check if the module is importable and defines the render function
 def validate_python_functions(destination_directory, python_file):
-    # execute the module, as  test -- dynamicdispatch will execute again
-    # when needed
+    # execute the module, as a test
     path = os.path.join(destination_directory, python_file)
     try:
         spec = importlib.util.spec_from_file_location('test', path)
@@ -343,7 +342,7 @@ def import_module_from_directory(url, reponame, version, importdir,
         shutil.rmtree(importdir)
 
         if force_reload:
-            dynamicdispatch.load_module.cache_clear()
+            LoadedModule.load_module.cache_clear()
 
         # For now, our policy is to update all wfmodules to this just-imported
         # version

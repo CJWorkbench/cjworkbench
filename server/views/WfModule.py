@@ -22,7 +22,7 @@ from server.serializers import WfModuleSerializer
 import server.utils
 from server import rabbitmq
 from server.utils import units_to_seconds
-from server.dispatch import module_get_html_bytes
+from server.models.loaded_module import module_get_html_bytes
 
 
 _MaxNRowsPerRequest = 300

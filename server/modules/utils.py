@@ -9,16 +9,19 @@ from typing import Any, Dict, Callable, Optional
 import aiohttp
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 import cchardet as chardet
+from channels.db import database_sync_to_async
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.db.models.fields.files import FieldFile
+from django.db import transaction
 import pandas
 from pandas import DataFrame
 import pandas.errors
 import xlrd
-from .types import ProcessResult
+from server import rabbitmq
+from server.models import Workflow
 from server.sanitizedataframe import autocast_dtypes_in_place
-from django.conf import settings
-from django.db.models.fields.files import FieldFile
-from django.db import transaction
-from server.models.Workflow import Workflow
+from .types import ProcessResult
 
 
 _TextEncoding = Optional[str]
@@ -358,38 +361,55 @@ def workflow_url_to_id(url):
     return int(match.group(1))
 
 
-def fetch_external_workflow(calling_wf_module,
-                            right_workflow_id: int) -> ProcessResult:
+@database_sync_to_async
+def fetch_external_workflow(calling_workflow_id: int,
+                            workflow_owner: User,
+                            other_workflow_id: int) -> ProcessResult:
     """
     Lookup up a workflow's final ProcessResult.
 
-    `calling_wf_module` is for authentication and to make sure we don't import
-    ourselves.
+    `calling_workflow_id` is to raise an error if we try to import ourselves.
+
+    `calling_workflow_owner` is to give access to non-public workflows if we
+    have permission.
     """
+    if calling_workflow_id == other_workflow_id:
+        return ProcessResult(error='Cannot import the current workflow')
+
     with transaction.atomic():
         try:
-            right_wf_module = Workflow.objects \
+            other_workflow = Workflow.objects \
                 .select_for_update() \
-                .get(id=right_workflow_id)
+                .get(id=other_workflow_id)
         except Workflow.DoesNotExist:
             return ProcessResult(error='Target workflow does not exist')
 
-        # Check to see if workflow_id the same
-        if calling_wf_module.workflow_id == right_wf_module.id:
-            return ProcessResult(error='Cannot import the current workflow')
-
         # Make sure _this_ workflow's owner has access permissions to the
         # _other_ workflow
-        user = calling_wf_module.workflow.owner
-        if not right_wf_module.user_session_authorized_read(user, None):
+        if not other_workflow.user_session_authorized_read(workflow_owner,
+                                                           None):
             return ProcessResult(error='Access denied to the target workflow')
 
-        right_wf_module = right_wf_module.wf_modules.last()
+        other_wf_module = other_workflow.wf_modules.last()
 
         # Always pull the cached result, so we can't execute() an infinite loop
-        right_result = right_wf_module.get_cached_render_result().result
+        crr = other_wf_module.get_cached_render_result(only_fresh=True)
 
-    return ProcessResult(dataframe=right_result.dataframe)
+        if not crr:
+            # Workflow has not been rendered completely. This is either because
+            # a render is queued/running, or because a render was never queued.
+            # (e.g., when cron fetches a new version, no render is queued.)
+            # Queue a render and tell the user to try again. If the render is
+            # spurious, that isn't a big deal.
+            rabbitmq.queue_render(other_workflow.id,
+                                  other_workflow.last_delta_id)
+            return ProcessResult(
+                error='Target workflow is rendering. Please try again.'
+            )
+
+        result = crr.result
+
+    return ProcessResult(dataframe=result.dataframe)
 
 
 @asynccontextmanager

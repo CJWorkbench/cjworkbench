@@ -27,14 +27,14 @@ class InitWorkflowCommand(Delta):
     def create(cls, workflow):
         """
         Save a new Delta on `workflow`, and return the Delta.
-        
+
         Unlike with other Commands, this `create` method is synchronous and
         assumes you're in a `workflow.cooperative_lock()`.
         """
         delta = cls.objects.create(workflow=workflow)
 
         workflow.last_delta = delta
-        workflow.save()
+        workflow.save(update_fields=['last_delta_id'])
 
         return delta
 

@@ -70,36 +70,34 @@ async def scrape_urls(urls, result_table):
 
 
 def are_params_empty(params, input_table):
-    urlsource = params.get_param_menu_string('urlsource')
-    if urlsource == 'Input column':
-        urlcol = params.get_param_column('urlcol', input_table)
-        return urlcol is None
-    else:
+    urlsource = params.get_param_menu_idx('urlsource')
+    if urlsource == 0:
         urllist = params.get_param_string('urllist')
         return not urllist
+    else:
+        urlcol = params.get_param_column('urlcol', input_table)
+        return urlcol is None
 
 
 class URLScraper(ModuleImpl):
     @staticmethod
     def render(params, table, *, fetch_result, **kwargs):
         if are_params_empty(params, table):
-            return table
+            return ProcessResult(table)
 
         if fetch_result is None:
-            return table
+            return ProcessResult(table)
 
         else:
             return fetch_result
 
     # Scrapy scrapy scrapy
     @staticmethod
-    async def fetch(wf_module):
-        params = wf_module.get_params()
-
+    async def fetch(params, *, get_input_dataframe, **kwargs):
         urls = []
-        urlsource = params.get_param_menu_string('urlsource')
+        urlsource = params.get_param_menu_idx('urlsource')
 
-        if urlsource == 'List':
+        if urlsource == 0:
             if are_params_empty(params, None):
                 return None
             urllist_text = params.get_param_string('urllist')
@@ -113,14 +111,13 @@ class URLScraper(ModuleImpl):
                     urls.append('http://{}'.format(s_url))
                 else:
                     urls.append(s_url)
-        elif urlsource == 'Input column':
+        elif urlsource == 1:
             # We won't execute here -- there's no need: the user clicked a
             # button so should be pretty clear on what the input is.
-            input_cache = wf_module.previous_in_stack().get_cached_render_result()
-            if input_cache:
-                prev_table = input_cache.result.dataframe
-            else:
+            prev_table = await get_input_dataframe()
+            if prev_table is None:
                 prev_table = pd.DataFrame()
+
             if are_params_empty(params, prev_table):
                 return None
 

@@ -119,9 +119,7 @@ class GoogleSheets(ModuleImpl):
         return ProcessResult(table, fetch_result.error)
 
     @staticmethod
-    def fetch(wf_module):  # TODO make async
-        params = wf_module.get_params()
-
+    def fetch(params, **kwargs):  # TODO make async
         file_meta = params.get_param_json('googlefileselect')
         if not file_meta:
             return ProcessResult()

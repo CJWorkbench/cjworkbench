@@ -12,3 +12,4 @@ from .ModuleVersion import ModuleVersion
 from .Delta import Delta
 from .UploadedFile import UploadedFile
 from .StoredObject import StoredObject
+from .loaded_module import LoadedModule

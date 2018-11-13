@@ -1,15 +1,24 @@
+import asyncio
 import unittest
+from unittest.mock import patch
 import pandas as pd
+from asgiref.sync import async_to_sync
 from pandas.testing import assert_frame_equal
 from server.modules.joinurl import JoinURL, _join_type_map
 from server.modules.types import ProcessResult
-from .util import MockParams  # , fetch_factory
+from .util import MockParams
 
 
 P = MockParams.factory(url='https://app.workbenchdata.com/workflows/2/',
                        colnames=([], []), importcols=([], []), type=0,
                        select_columns=False)
-# fetch = fetch_factory(JoinURL.fetch, P)
+
+
+async def get_workflow_owner():
+    return 'owner'  # no need for a User: we mock fetch_external_workflow()
+
+
+fetch = JoinURL.fetch
 
 
 def PR(error, *args, **kwargs):
@@ -106,3 +115,26 @@ class JoinURLTests(unittest.TestCase):
             'Please use a type conversion module '
             'to make these column types consistent.'
         )))
+
+    @patch('server.modules.utils.fetch_external_workflow')
+    def test_fetch(self, inner_fetch):
+        pr = ProcessResult(pd.DataFrame({'A': [1]}))
+        future_pr = asyncio.Future()
+        future_pr.set_result(pr)
+        inner_fetch.return_value = future_pr
+
+        params = P(url='https://app.workbenchdata.com/workflows/2/')
+        result = async_to_sync(fetch)(params, workflow_id=1,
+                                      get_workflow_owner=get_workflow_owner)
+
+        self.assertEqual(result, pr)
+        inner_fetch.assert_called_with(1, 'owner',  2)
+
+    def test_fetch_invalid_url(self):
+        params = P(url='hts:app.workbenchdata.com/workflows/2/')
+        result = async_to_sync(fetch)(params, workflow_id=1,
+                                      get_workflow_owner=get_workflow_owner)
+
+        self.assertEqual(result, ProcessResult(
+            error='Not a valid Workbench workflow URL'
+        ))
