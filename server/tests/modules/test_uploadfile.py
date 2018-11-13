@@ -8,7 +8,7 @@ from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from server.models import UploadedFile
-from server.modules.uploadfile import UploadFile, upload_to_table
+from server.modules.uploadfile import UploadFile, parse_uploaded_file
 from server.modules.types import ProcessResult
 from server.tests.utils import mock_xlsx_path
 from .util import MockParams
@@ -68,12 +68,8 @@ class UploadFileTests(unittest.TestCase):
         result = render(False, None, ProcessResult(error='x'))
         self.assertEqual(result, ProcessResult(error='x'))
 
-    @patch('server.versions.save_result_if_changed')
-    def _test_upload(self, save_result, *, uuid, filename, ext, size,
+    def _test_upload(self, *, uuid, filename, ext, size,
                      expected_result):
-        save_result.return_value = future_none
-
-        wf_module = 'stub'
         uploaded_file = UploadedFile(
             uuid=uuid,
             name=filename,
@@ -81,24 +77,14 @@ class UploadFileTests(unittest.TestCase):
             bucket='our-bucket',
             size=size,
         )
-        uploaded_file.delete = unittest.mock.Mock()
 
-        async_to_sync(upload_to_table)(wf_module, uploaded_file)
-
-        # Check save_result was called
-        save_result.assert_called()
-        result = save_result.call_args[0][1]
-        self.assertEqual(result.error, expected_result.error)
+        result = async_to_sync(parse_uploaded_file)(uploaded_file)
         # Assert frames are equal. Empty frames might differ in shape; ignore
         # that.
         self.assertEqual(result.dataframe.empty,
                          expected_result.dataframe.empty)
         if not result.dataframe.empty:
             assert_frame_equal(result.dataframe, expected_result.dataframe)
-
-        # Assert we delete the file if we can't parse it.
-        if expected_result.error:
-            uploaded_file.delete.assert_called()
 
     @patch('minio.api.Minio.get_object')
     @patch('minio.api.Minio.stat_object')

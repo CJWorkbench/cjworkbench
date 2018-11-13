@@ -140,7 +140,7 @@ async def handle_render(pg_locker: PgLocker,
         try:
             task = render_or_reschedule(pg_locker, reschedule, workflow_id,
                                         delta_id)
-            await benchmark(task, 'render_or_reschedule(%d, %d)',
+            await benchmark(logger, task, 'render_or_reschedule(%d, %d)',
                             workflow_id, delta_id)
         except:
             logger.exception('Error during render')

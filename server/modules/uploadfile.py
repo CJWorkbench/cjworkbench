@@ -24,7 +24,7 @@ _ExtensionMimeTypes = {
 
 # Read an UploadedFile, parse it, store it as the WfModule's "fetched table"
 # Public entrypoint, called by the view
-async def upload_to_table(wf_module, uploaded_file):
+async def parse_uploaded_file(uploaded_file) -> ProcessResult:
     ext = '.' + uploaded_file.name.split('.')[-1]
     mime_type = _ExtensionMimeTypes.get(ext, None)
     if mime_type:
@@ -34,28 +34,18 @@ async def upload_to_table(wf_module, uploaded_file):
                     with BufferedReader(tempio) as bufio:
                         result = parse_bytesio(bufio, mime_type, None)
         except ResponseError as err:
-            result = ProcessResult(error=str(err))
+            return ProcessResult(error=str(err))
     else:
-        result = ProcessResult(error=(
+        return ProcessResult(error=(
             f'Error parsing {uploaded_file.name}: unknown content type'
         ))
-
-    if result.error:
-        # delete uploaded file, we probably can't ever use it
-        uploaded_file.delete()
 
     result.truncate_in_place_if_too_big()
     result.sanitize_in_place()
 
-    await versions.save_result_if_changed(wf_module, result,
-                                          stored_object_json=[{
-                                              'uuid': uploaded_file.uuid,
-                                              'name': uploaded_file.name,
-                                          }])
-
     # don't delete UploadedFile, so that we can reparse later or allow higher
     # row limit or download original, etc.
-    return
+    return result
 
 
 class UploadFile(ModuleImpl):

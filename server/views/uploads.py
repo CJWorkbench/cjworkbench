@@ -12,7 +12,6 @@ from server import rabbitmq
 from server.forms import UploadedFileForm
 from server.minio import minio_client, UserFilesBucket, sign
 from server.models import WfModule
-from server.modules.uploadfile import upload_to_table
 
 
 def _delete_uploaded_file(uploaded_file):
