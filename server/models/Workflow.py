@@ -7,11 +7,17 @@ from server.models.Lesson import Lesson
 from typing import Optional
 import warnings
 
+
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
-    name = models.CharField('name',max_length=200)
+    name = models.CharField('name', max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='owned_workflows'
+    )
 
     anonymous_owner_session_key = models.CharField(
         'anonymous_owner_session_key',

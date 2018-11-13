@@ -52,17 +52,13 @@ def _get_stored_dataframe(wf_module_id: int):
     except WfModule.DoesNotExist:
         return None
 
-    crr = wf_module.get_cached_render_result(only_fresh=True)
-    if not crr:
-        return None
-    else:
-        return crr.result.dataframe
+    return wf_module.retrieve_fetched_table()
 
 
 @database_sync_to_async
 def _get_workflow_owner(workflow_id: int):
     try:
-        return User.objects.get(workflows__id=workflow_id)
+        return User.objects.get(owned_workflows__id=workflow_id)
     except User.DoesNotExist:
         return None
 

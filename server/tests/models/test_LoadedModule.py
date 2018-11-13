@@ -322,10 +322,6 @@ class LoadedModuleTest(SimpleTestCase):
         self.assertEqual(result,
                          ProcessResult(pd.DataFrame({'X': ['Mock User']})))
 
-        # TODO Tests for real get_workflow_owner()
-        # * get workflow owner
-        # * get anonymous-workflow owner returns None
-
     def test_fetch_get_input_dataframe(self):
         get_input_dataframe = async_mock(return_value=pd.DataFrame({'A': [1]}))
 
@@ -338,13 +334,6 @@ class LoadedModuleTest(SimpleTestCase):
                                 get_input_dataframe=get_input_dataframe)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
-
-        # TODO Tests for real get_input_dataframe()
-        # * get actual dataframe
-        # * get dataframe when no cache => None
-        # * get dataframe when stale cache => None
-        # * get dataframe when no _this_ WfModule => None
-        # * get dataframe when no _input_ WfModule => None
 
     def test_fetch_get_stored_dataframe(self):
         get_stored_dataframe = async_mock(
@@ -360,12 +349,6 @@ class LoadedModuleTest(SimpleTestCase):
                                 get_stored_dataframe=get_stored_dataframe)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
-
-        # TODO Tests for real get_stored_dataframe()
-        # * get actual dataframe
-        # * get dataframe when no cache => None
-        # * get dataframe when stale cache => None
-        # * get dataframe when no _this_ WfModule => None
 
     def test_fetch_workflow_id(self):
         async def fetch(params, *, workflow_id, **kwargs):
