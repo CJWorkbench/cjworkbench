@@ -1,6 +1,42 @@
 //Prompt for small devices and mobiles
 
 .not-enough-px-warning { display: none; }
+
+@media screen and (max-width: 770px) {
+
+  .navbar {
+    padding: 1.1rem 2rem 1.1rem 2rem!important;
+
+    .links {
+      margin-left: 3rem;
+    }
+
+    .group--undo-redo {
+      display: none!important;
+
+    }
+    .nav-buttons button {
+      margin-right: 1.5rem!important;
+    }
+    .dropdown .context-button {
+      margin-right: 0!important;
+    }
+
+    .logo .logo {
+      width: 2.1rem!important;
+    }
+
+    .logo img.logo-text {
+      width: 12.2rem!important;
+    }
+
+  }
+
+  .nav-tabs .tab-group .nav-item .nav-link {
+      padding: 1.4rem 2rem 1rem!important;
+      font-size: 1.2rem!important;
+  }
+}
 @media screen and (max-width: 650px) {
 
   .not-enough-px-warning {
@@ -13,10 +49,18 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background-image: radial-gradient(#31D9ED 25%, #068CB9); /*fallback*/
-    background-image: url("/static/images/mobile-bgd.png"), radial-gradient(#31D9ED 25%, #068CB9);
+    background-image: radial-gradient($brand-learn 5%, #FC68AD); /*fallback*/
     background-size: 100% auto;.background {background-size: cover;}
     &:hover {text-decoration: none;}
+
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url("../images/account-icons-bgd-mobile.png");
+      background-size: 100% auto;
+      opacity: .4;
+    }
 
     .brand-container {
       display: flex;
@@ -44,25 +88,43 @@
       align-items: center;
       flex-direction: column;
       width: 100%;
-      background-color: $light-accent--medium;
       color:$white;
+      z-index: 3;
 
-      .product-vid {
-        width: 100%!important;
+      .video-container {
+        position: relative;
+        width:100%;
+        padding-bottom: 56.25%;
+        overflow: hidden;
+
+        .product-vid {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
       }
 
-      .title {
+      .warning {
         width:80%;
         font-size: 3.5rem;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
       }
       .detail {
         margin-top: .5rem;
-        font-size: 1.6rem;
+        font-size: 2rem;
       }
       .action-button {
-        margin-top: 2rem;
+        margin-top: 3rem;
+        color: $brand-learn;
+        font-weight: bold;
+        &:hover {
+          text-decoration: none;
+          color: $white;
+        }
       }
     }
   }

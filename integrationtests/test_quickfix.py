@@ -17,6 +17,7 @@ class TestQuickFix(LoggedInIntegrationTest):
 
         self.add_wf_module('Paste data')
         b.fill_in('csv', 'A,B\n2012-01-01,1\n2012-02-03,3\n2012-01-01,2', wait=True)
+        b.click_button('submit')
 
         self._blur()  # to load table
 

@@ -11,6 +11,18 @@
       "id_name": "colselect",
       "type": "multicolumn",
       "ui-only": true,
+      "visible": false,
+      "visible_if": {
+        "id_name": "select_range",
+        "value": false,
+        "invert": false
+      }
+    },
+    {
+      "name": "Column Names",
+      "id_name": "colnames",
+      "type": "string",
+      "visible": true,
       "visible_if": {
         "id_name": "select_range",
         "value": false,
@@ -41,12 +53,6 @@
       "type" : "radio",
       "radio_items" : "Delete|Keep",
       "default": "1"
-    },
-    {
-      "name": "Column Names",
-      "id_name": "colnames",
-      "type": "string",
-      "visible": false
     }
   ]
 }

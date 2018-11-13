@@ -14,7 +14,7 @@
     height: 100%;
     background-image: url("../images/account-icons-bgd.png");
     background-size: 100% auto;
-    opacity: .5;
+    opacity: .6;
   }
 
   .account-bigbrand {
@@ -118,14 +118,18 @@
 
     //404 , 403
     .error-number {
+      z-index: 5;
       @extend .font404;
       text-align:center;
       margin-top: .5rem;
       margin-bottom: 1rem;
       color:$white;
 
-      .action-button {
+      a {
         height: 4rem;
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
 
