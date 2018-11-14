@@ -36,13 +36,11 @@ class Delta(PolymorphicModel):
     workflow = models.ForeignKey('Workflow', related_name='deltas',
                                  on_delete=models.CASCADE)
 
-    # Next and previous Deltas on this workflow, a doubly linked list
-    # Use related_name = '+' to indicate we don't want back links (we already
-    # have them!)
-    next_delta = models.ForeignKey('self', related_name='+', null=True,
-                                   default=None, on_delete=models.SET_DEFAULT)
-    prev_delta = models.ForeignKey('self', related_name='+', null=True,
-                                   default=None, on_delete=models.SET_DEFAULT)
+    # Next and previous Deltas on this workflow, a linked list.
+    prev_delta = models.OneToOneField('self', related_name='next_delta',
+                                      null=True, default=None,
+                                      on_delete=models.CASCADE)
+
     datetime = models.DateTimeField('datetime',
                                     default=django.utils.timezone.now)
 
@@ -219,7 +217,12 @@ class Delta(PolymorphicModel):
             if not create_kwargs:
                 return (None, None)
 
-            delta = cls.objects.create(*args, **create_kwargs)
+            # wipe redo stack: blow away all deltas starting after last applied
+            delete_unapplied_deltas(workflow)
+
+            delta = cls.objects.create(*args,
+                                       prev_delta_id=workflow.last_delta_id,
+                                       **create_kwargs)
             delta.forward_impl()
 
             # Point workflow to us
@@ -227,31 +230,6 @@ class Delta(PolymorphicModel):
             workflow.save(update_fields=['last_delta_id'])
 
             return (delta, delta.load_ws_data())
-
-    def save(self, *args, **kwargs):
-        # We only get here from create_impl(), forward_impl() and
-        # backward_impl(). Each guarantees a cooperative_lock().
-        if not self.pk:
-            # On very first save, add this Delta to the linked list
-            # The workflow lock is important here: we need to update three
-            # pointers to maintain list integrity
-
-            # wipe redo stack: blow away all deltas starting after last applied
-            delete_unapplied_deltas(self.workflow)
-
-            # Point us backward to last delta in chain
-            last_delta = self.workflow.last_delta
-            if last_delta:
-                self.prev_delta = last_delta
-
-            # Save ourselves to DB, then point last delta to us
-            super(Delta, self).save(*args, **kwargs)
-            if last_delta:
-                last_delta.next_delta = self  # after save: we need our new pk
-                last_delta.save(update_fields=['next_delta_id'])
-        else:
-            # we're already in the linked list, just save
-            super(Delta, self).save(*args, **kwargs)
 
     @property
     def command_description(self):
@@ -261,24 +239,29 @@ class Delta(PolymorphicModel):
         return str(self.datetime) + ' ' + self.command_description
 
 
-# Deletes every delta on the workflow that is not currently applied
-# This is what implements undo + make a change -> can't redo
 def delete_unapplied_deltas(workflow):
-    # ensure last_delta is up to date after whatever else has been done to this
-    # poor workflow
-    workflow.refresh_from_db()
+    """
+    Delete every Delta after `workflow.last_delta`.
 
-    # Starting pos is one after last_delta. Have to look in db if at start of
-    # delta stack
-    if workflow.last_delta:
-        delta = workflow.last_delta.next_delta
-    else:
-        delta = Delta.objects \
-                .filter(workflow=workflow) \
-                .order_by('datetime') \
-                .first()
+    Deltas are deleted in reverse order so the database stays consistent even
+    between queries. (You should certainly be calling this within a
+    transaction, though.)
+    """
+    prev_delta = workflow.last_delta
+    if prev_delta:
+        try:
+            delta = prev_delta.next_delta
+        except Delta.DoesNotExist:
+            return
 
-    while delta:
-        next = delta.next_delta
-        delta.delete()
-        delta = next
+    if not prev_delta:
+        # TODO force every workflow to have at least one Delta.
+        #
+        # [2018-11-14] for now we don't have that guarantee. So look for a
+        # Delta on the workflow that has no prev_delta: that's the "next" one.
+        delta = Delta.objects.filter(workflow=workflow,
+                                     prev_delta_id=None).first()
+        if not delta:
+            return
+
+    delta.delete()  # CASCADE -- delete in reverse order

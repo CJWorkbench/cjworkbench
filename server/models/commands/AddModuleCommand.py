@@ -12,7 +12,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     wf_module = models.ForeignKey(WfModule, null=True, default=None,
                                   blank=True, on_delete=models.SET_DEFAULT)
     order = models.IntegerField()
-    applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
     selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
@@ -25,7 +24,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         self.wf_module.save()
         self.workflow.selected_wf_module = self.wf_module.order
         self.workflow.save()
-        self.applied = True
         self.save()
 
     def backward_impl(self):
@@ -41,7 +39,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         self.workflow.selected_wf_module = self.selected_wf_module      # go back to old selection when deleted
         self.workflow.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
-        self.applied = False
         self.save()
 
     @classmethod
@@ -63,8 +60,8 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         return f'Add WfModule {self.wf_module}'
 
 
-# When we are deleted, delete the module if it's not in use by the Workflow (if we are *not* currently applied)
+# Delete the module when we are deleted. This assumes we're only deleted if we
+# haven't been applied.
 @receiver(pre_delete, sender=AddModuleCommand, dispatch_uid='addmodulecommand')
 def addmodulecommand_delete_callback(sender, instance, **kwargs):
-    if instance.applied == False:
-        instance.wf_module.delete()
+    instance.wf_module.delete()

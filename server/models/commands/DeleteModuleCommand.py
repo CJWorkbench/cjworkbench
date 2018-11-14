@@ -1,12 +1,6 @@
-import logging
 from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
 from server.models import Delta, WfModule
-from .util import ChangesWfModuleOutputs, insert_wf_module, \
-        renumber_wf_modules
-
-logger = logging.getLogger(__name__)
+from .util import ChangesWfModuleOutputs, insert_wf_module, renumber_wf_modules
 
 
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
@@ -14,7 +8,6 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
     # must not have cascade on WfModule because we may delete it first when we are deleted
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     selected_wf_module = models.IntegerField(null=True, blank=True)
-    applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
@@ -34,7 +27,6 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
-        self.applied = True
         self.save()
 
     def backward_impl(self):
@@ -48,7 +40,6 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
         # is something a user could expect.
         self.workflow.selected_wf_module = self.selected_wf_module
         self.workflow.save()
-        self.applied = False
         self.save()
 
     @classmethod
@@ -80,15 +71,10 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
     def command_description(self):
         return f'Delete WfModule {self.wf_module}'
 
-# When we are deleted, delete the module if it's not in use by the Workflow (i.e. if we are currently applied)
-@receiver(pre_delete, sender=DeleteModuleCommand, dispatch_uid='deletemodulecommand')
-def deletemodulecommand_delete_callback(sender, instance, **kwargs):
-    if instance.applied == True:
-        try:
-            # We've had cases where two DeleteModuleCommands pointed to the same wf, due to race conditions
-            # (now fixed via delete_lock). To prevent future similar fails, wrap the delete in a try
-            instance.wf_module.delete()
-        except Exception as e:
-            logger.exception("Error deleting wf_module for DeleteModuleCommand " + str(instance))
-
-
+# You may be wondering why there's no @receiver(pre_delete, ...) here. That's
+# because if we're deleting a DeleteModuleCommand, then that means _previous_
+# Deltas assume the WfModule exists. We must always delete Deltas in reverse
+# order, from most-recent to least-recent. Only AddModuleCommand should delete
+# a WfModule.
+#
+# Don't delete the WfModule here. That would break every other Delta.
