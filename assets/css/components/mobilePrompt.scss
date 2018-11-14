@@ -131,6 +131,11 @@
   .workflow-root,.workflows-page {
     display: none;
   }
+
+  // letting users access signup because why not
+  .accounts {
+    .not-enough-px-warning { display: none; }
+  }
   // hide intercom
   #intercom-container {
     display: none;
