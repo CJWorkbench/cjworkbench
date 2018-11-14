@@ -196,7 +196,7 @@ def wfmodule_params(request, pk, format=None):
 def wfmodule_fetch(request, pk, format=None):
     wf_module = _lookup_wf_module_for_write(pk, request)
 
-    async def process():
+    async def notify():
         await rabbitmq.queue_fetch(wf_module)
         await websockets.ws_client_send_delta_async(wf_module.workflow_id, {
             'updateWfModules': {
@@ -206,7 +206,11 @@ def wfmodule_fetch(request, pk, format=None):
 
     wf_module.is_busy = True
     wf_module.save(update_fields=['is_busy'])
-    async_to_sync(rabbitmq.queue_fetch)(wf_module)
+    async_to_sync(notify)()
+
+    # TODO fix a race: the client might not receive the Websockets message
+    # until after the HTTP response -- which would make its is_busy status
+    # race. Solution: send the request over Websockets, not over HTTP.
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
