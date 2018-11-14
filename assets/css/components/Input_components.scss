@@ -91,7 +91,7 @@ textarea:focus, input:focus{
     border: 2px solid $dark-accent--soft;
   }
   &:focus {
-    border-color: $data-action--border;
+    border: $data-action--border;
     outline: none;
   }
 }
