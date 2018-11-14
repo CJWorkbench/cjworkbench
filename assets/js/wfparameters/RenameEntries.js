@@ -5,82 +5,60 @@ import {store, deleteModuleAction} from "../workflow-reducer"
 export class RenameEntry extends React.PureComponent {
   static propTypes = {
     colname: PropTypes.string.isRequired,
-    newColname: PropTypes.string.isRequired,
-    onColRename: PropTypes.func.isRequired,
+    defaultValue: PropTypes.string.isRequired,
+    onEntryRename: PropTypes.func.isRequired,
     onEntryDelete: PropTypes.func.isRequired,
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      inputValue: this.props.newColname
-    }
-
-    this.handleChange = this.handleChange.bind(this)
-    this.handleKeyPress = this.handleKeyPress.bind(this)
-    this.handleBlur = this.handleBlur.bind(this)
-    this.handleFocus = this.handleFocus.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
+  state = {
+    value: this.props.defaultValue
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.newColname !== prevState.inputValue) {
-      // Since we commit on blur, the only way for us to receive a newColname
-      // that's different from inputValue is if we aren't focused -- maybe
-      // through "undo" or some other kind of external action. It should always
-      // be safe to reset to the externally-suggested colname.
-      this.setState({ inputValue: this.props.newColname })
+  handleChange = (ev) => {
+    //this.props.onEntryRename(this.props.colname, event.target.value)
+    this.setState({ value: ev.target.value })
+  }
+
+  handleBlur = () => {
+    if (this.state.value != this.props.defaultValue) {
+      this.props.onEntryRename(this.props.colname, this.state.value)
     }
   }
 
-  handleChange(event) {
-    //this.props.onColRename(this.props.colname, event.target.value)
-    this.setState({inputValue: event.target.value})
-  }
-
-  handleBlur() {
-    if(this.state.inputValue != this.props.newColname) {
-      this.props.onColRename(this.props.colname, this.state.inputValue)
+  handleKeyPress = (ev) => {
+    if (ev.key == 'Enter' && this.state.value != this.props.defaultValue) {
+      this.props.onEntryRename(this.props.colname, this.state.value)
     }
   }
 
-  handleKeyPress(event) {
-    if((event.key == 'Enter') && (this.state.inputValue != this.props.newColname)) {
-      this.props.onColRename(this.props.colname, this.state.inputValue)
-    }
-  }
-
-  handleFocus(event) {
-    event.target.select()
-  }
-
-  handleDelete() {
+  handleDelete = () => {
     this.props.onEntryDelete(this.props.colname)
   }
 
-  render() {
+  render () {
+    const { colname, isReadOnly } = this.props
+    const { value } = this.state
+
     // The class names below are used in testing.
     // Changing them would require updating the tests accordingly.
     return (
-      <div className="wf-parameter rename-entry" data-column-name={this.props.colname}>
-        <div className={'rename-column'}>{this.props.colname}</div>
-        <div className="rename-container">
+      <div className='wf-parameter rename-entry' data-column-name={colname}>
+        <div className='rename-column'>{colname}</div>
+        <div className='rename-container'>
           <input
-            className={'rename-input'}
-            type={'text'}
-            value={this.state.inputValue}
+            className='rename-input'
+            type='text'
+            value={value}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onKeyPress={this.handleKeyPress}
-            onFocus={this.handleFocus}
             readOnly={this.props.isReadOnly}
           />
           <button
-            className={'rename-delete icon-close'}
+            className='rename-delete icon-close'
             onClick={this.handleDelete}
-            disabled={this.props.isReadOnly}
+            disabled={isReadOnly}
           ></button>
         </div>
       </div>
@@ -99,7 +77,9 @@ export default class RenameEntries extends React.Component {
   }
 
   get parsedEntries() {
-    if (!this.props.entriesJsonString || this.props.entriesJsonString === '{}') {
+    if (!this.props.allColumns) {
+      return {}
+    } else if (!this.props.entriesJsonString || this.props.entriesJsonString === '{}') {
       // No JSON? Then we probably just created the module manually. Its default
       // value should be _everything_.
       const ret = {}
@@ -112,7 +92,7 @@ export default class RenameEntries extends React.Component {
     }
   }
 
-  onColRename = (prevName, nextName) => {
+  onEntryRename = (prevName, nextName) => {
     const oldEntries = this.parsedEntries
     if (oldEntries[prevName] === nextName) return // no-op
 
@@ -145,10 +125,10 @@ export default class RenameEntries extends React.Component {
       .filter(({ name }) => name in entries)
       .map(({ name }) => (
         <RenameEntry
-          key={name}
+          key={`${name}_${entries[name]}`}
           colname={name}
-          newColname={entries[name]}
-          onColRename={this.onColRename}
+          defaultValue={entries[name]}
+          onEntryRename={this.onEntryRename}
           onEntryDelete={this.onEntryDelete}
           isReadOnly={this.props.isReadOnly}
         />
@@ -158,7 +138,7 @@ export default class RenameEntries extends React.Component {
   render() {
     const entries = this.renderEntries()
     return (
-      <div className="RenameEntries--container">{entries}</div>
+      <div className='RenameEntries--container'>{entries}</div>
     )
   }
 }

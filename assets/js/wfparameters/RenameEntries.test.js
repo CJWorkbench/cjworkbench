@@ -75,6 +75,23 @@ describe('RenameEntries rendering and interactions', () => {
     })
   })
 
+  it('updates when receiving data from elsewhere', () => {
+    // related: https://www.pivotaltracker.com/story/show/160661659
+    const tree = wrapper({
+      allColumns: [{name: 'A'}, {name: 'B'}],
+      entriesJsonString: '{}'
+    })
+
+    tree.setProps({ entriesJsonString: '{"A":"C"}' })
+    expect(tree.find('.rename-input').get(0).props.value).toEqual('C')
+  })
+
+  it('does not crash when there are no columns', () => {
+    // https://www.pivotaltracker.com/story/show/161945886
+    const tree = wrapper({ allColumns: null, entriesJsonString: '' })
+    expect(tree.find('.rename-entry')).toHaveLength(0)
+  })
+
   it('updates parameter upon deleting an entry', () => {
     const tree = wrapper()
     tree.find('RenameEntry').first().find('.rename-delete').simulate('click')
