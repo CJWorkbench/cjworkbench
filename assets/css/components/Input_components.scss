@@ -147,8 +147,14 @@ textarea:focus, input:focus{
 }
 
 .single-line-text-field {
+  @extend .module-parameter;
   position: relative; // so we can position button absolute
   height: auto;
+  padding: .5rem 1rem;
+
+  &:focus-within {
+    border: $data-action--border;
+  }
 
   .resize-calculator, textarea {
     word-break: break-all;
@@ -161,16 +167,17 @@ textarea:focus, input:focus{
   }
 
   textarea {
-    @extend .module-parameter;
-    @extend .content-3;
     display: block;
+    font: inherit;
+    padding: 0;
     margin: 0;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    height: 100%;
     resize: none;
     overflow: hidden;
-    padding: .6rem 1rem;
-    &:focus {
-      border: $data-action--border;
-    }
+    color: $brand-text--dark;
   }
 
   button {
