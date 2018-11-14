@@ -239,20 +239,6 @@ class WfModule(models.Model):
         vals = self.parameter_vals.prefetch_related('parameter_spec').all()
         return Params(vals)
 
-    # busy just changes the light on a single module, no need to reload entire
-    # workflow
-    async def set_busy(self):
-        self.is_busy = True
-        self.save(update_fields=['is_busy'])
-        await websockets.ws_client_send_delta_async(self.workflow_id, {
-            'updateWfModules': {
-                str(self.id): {
-                    'is_busy': True,
-                    'fetch_error': '',
-                }
-            }
-        })
-
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available
     def set_ready(self):

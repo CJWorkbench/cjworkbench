@@ -20,7 +20,7 @@ from server.models.commands import DeleteModuleCommand, \
         ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand
 from server.serializers import WfModuleSerializer
 import server.utils
-from server import rabbitmq
+from server import rabbitmq, websockets
 from server.utils import units_to_seconds
 from server.models.loaded_module import module_get_html_bytes
 
@@ -197,13 +197,18 @@ def wfmodule_fetch(request, pk, format=None):
     wf_module = _lookup_wf_module_for_write(pk, request)
 
     async def process():
-        await wf_module.set_busy()
         await rabbitmq.queue_fetch(wf_module)
+        await websockets.ws_client_send_delta_async(wf_module.workflow_id, {
+            'updateWfModules': {
+                str(wf_module.id): {'is_busy': True, 'fetch_error': ''}
+            }
+        })
 
-    async_to_sync(process)()
+    wf_module.is_busy = True
+    wf_module.save(update_fields=['is_busy'])
+    async_to_sync(rabbitmq.queue_fetch)(wf_module)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 N_COLUMNS_PER_TABLE = 101

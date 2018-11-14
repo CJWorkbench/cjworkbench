@@ -1,15 +1,21 @@
 import logging
-import warnings
-from django.conf import settings
+from channels.db import database_sync_to_async
+from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 from server.models import Workflow
 
 
-_logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-def delete_expired_anonymous_workflows() -> None:
-    """Delete Workflows that have an expired session and no owner.
+@database_sync_to_async
+def delete_expired_sessions_and_workflows():
+    delete_expired_sessions_and_workflows_sync()
+
+
+def delete_expired_sessions_and_workflows_sync() -> None:
+    """
+    Delete expired browser sessions and their anonymous Workflows.
 
     Rationale: nobody can access these Workflows.
 
@@ -22,15 +28,7 @@ def delete_expired_anonymous_workflows() -> None:
     be able to tell which sessions are expired. In that case we should switch
     this function's logic to simply delete old workflows.
     """
-    if settings.SESSION_ENGINE != 'django.contrib.sessions.backends.db':
-        warnings.warn(
-            'WARNING: not deleting anonymous workflows because we do not know '
-            'which sessions are expired. Rewrite '
-            'delete_expired_anonymous_workflows() to fix this problem.'
-        )
-        return
-
-    _logger.info('Scanning for anonymous workflows with expired sessions')
+    SessionStore.clear_expired()
 
     active_session_keys = Session.objects.all().values_list('session_key',
                                                             flat=True)
@@ -44,5 +42,6 @@ def delete_expired_anonymous_workflows() -> None:
 
     for workflow in workflows:
         with workflow.cooperative_lock():
-            _logger.info(f'Deleting workflow {workflow}')
+            logger.info('Deleting workflow %d ("%s")', workflow.id,
+                        workflow.name)
             workflow.delete()

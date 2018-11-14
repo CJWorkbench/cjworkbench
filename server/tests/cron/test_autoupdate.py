@@ -3,9 +3,9 @@ import logging
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from dateutil import parser
-from server import updates
+from server.cron import autoupdate
 from server.models import Workflow
-from server.tests.utils import DbTestCase, load_module_version
+from server.tests.utils import DbTestCase
 
 
 future_none = asyncio.Future()
@@ -27,36 +27,21 @@ class SuccessfulRenderLock:
         pass
 
 
-#class FailedRenderLock:
-#    def __init__(self, workflow_id):
-#        self.workflow_id = workflow_id
-#
-#    async def __aenter__(self):
-#        raise worker.WorkflowAlreadyLocked
-#
-#    async def __aexit__(self, exc_type, exc, tb):
-#        pass
-
-
 class UpdatesTests(DbTestCase):
     @patch('server.rabbitmq.queue_fetch')
     @patch('server.websockets.ws_client_send_delta_async',
            lambda _1, _2: future_none)
     @patch('django.utils.timezone.now',
            lambda: parser.parse('Aug 28 1999 2:35PM UTC'))
-    def test_update_scan(self, mock_queue_fetch):
+    def test_queue_fetches(self, mock_queue_fetch):
         self.workflow = Workflow.objects.create()
-        self.loadurl = load_module_version('loadurl')
         self.wfm1 = self.workflow.wf_modules.create(
-            module_version=self.loadurl,
             order=0
         )
         self.wfm2 = self.workflow.wf_modules.create(
-            module_version=self.loadurl,
             order=1
         )
         self.wfm3 = self.workflow.wf_modules.create(
-            module_version=self.loadurl,
             order=2
         )
 
@@ -83,8 +68,8 @@ class UpdatesTests(DbTestCase):
         self.wfm3.save()
 
         # eat log messages
-        with self.assertLogs(updates.__name__, logging.DEBUG):
-            async_to_sync(updates.update_wfm_data_scan)(SuccessfulRenderLock)
+        with self.assertLogs(autoupdate.__name__, logging.INFO):
+            async_to_sync(autoupdate.queue_fetches)(SuccessfulRenderLock)
 
         self.assertEqual(mock_queue_fetch.call_count, 1)
         mock_queue_fetch.assert_called_with(self.wfm2)
@@ -93,7 +78,6 @@ class UpdatesTests(DbTestCase):
         self.assertTrue(self.wfm2.is_busy)
 
         # Second call shouldn't fetch again, because it's busy
-        with self.assertLogs(updates.__name__, logging.DEBUG):
-            async_to_sync(updates.update_wfm_data_scan)(SuccessfulRenderLock)
+        async_to_sync(autoupdate.queue_fetches)(SuccessfulRenderLock)
 
         self.assertEqual(mock_queue_fetch.call_count, 1)

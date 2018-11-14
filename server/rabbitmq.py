@@ -127,12 +127,11 @@ async def queue_fetch(wf_module):
 
 async def queue_handle_upload_DELETEME(uploaded_file):
     """
-    Write is_busy=True and queue handle-upload in RabbitMQ.
+    Queue handle-upload in RabbitMQ.
 
     DELETEME delete this entire queue. See
     https://www.pivotaltracker.com/story/show/161509317 for the path forward.
     """
     connection = await get_connection()
-    await uploaded_file.wf_module.set_busy()  # TODO make this more obvious
     await connection.queue_handle_upload_DELETEME(uploaded_file.wf_module_id,
                                                   uploaded_file.id)
