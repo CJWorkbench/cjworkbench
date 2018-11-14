@@ -3,6 +3,7 @@
   "id_name": "joinurl" ,
   "category" : "Add data",
   "icon" : "join",
+  "help_url":"modules/add-data/join",
   "description" : "Join a secondary workflow on a specific columns using its URL.",
   "loads_data": true,
   "parameters": [

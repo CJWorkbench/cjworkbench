@@ -3,6 +3,7 @@
  "id_name": "duplicate-column",
  "category" : "Clean",
  "description" : "Duplicate a column with all its values",
+ "help_url":"modules/clean/Duplicate-columns",
  "icon" : "duplicate",
  "parameters": [
         {

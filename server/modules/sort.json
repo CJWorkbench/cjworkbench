@@ -4,7 +4,7 @@
   "category" : "Analyze",
   "icon" : "transform-v",
   "description": "Sort rows using a specific column.",
-  "help_url":"modules/analyze/sort-from-table",
+  "help_url":"modules/analyze/sort",
   "parameters": [
     {
       "name": "By column",

@@ -81,33 +81,38 @@ textarea:focus, input:focus{
 .module-parameter {
   cursor: pointer;
   width:100%;
-  color: $brand-text--dark;
+  color: $brand-text--darker;
   @extend .content-3;
   height:3.5rem;
   border-radius: 3px;
-  border: 2px solid $Vlight-gray!important;
-  background-color: $Vlight-gray !important;
+  border: 2px solid $Vlight-gray;
+  background-color: $Vlight-gray;
   &:hover {
-    border: 2px solid $dark-accent--soft!important;
+    border: 2px solid $dark-accent--soft;
   }
   &:focus {
-    border: $data-action--border!important;
+    border: $data-action--border;
     outline: none;
   }
 }
 
-.text-field-input-group {
-  @extend .module-parameter;
+.text-field-large {
   position: relative; // so we can position button absolute
   height: auto;
+
+  textarea {
+    @extend .module-parameter;
+    padding: 1rem;
+    cursor: text;
+    height: auto;
+  }
 
   button {
     cursor: pointer;
     position: absolute;
-    right: 3.3rem;
-    bottom: 3.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
+    right: .5rem;
+    bottom: .6rem;
+    font-size: 1.5rem;
     text-align: center;
     border: 0;
     background: transparent;
@@ -116,29 +121,6 @@ textarea:focus, input:focus{
       color: $brand-orange
     }
   }
-}
-
-.multi-select-input-group {
-  @extend .module-parameter;
-  position: relative; // so we can position button absolute
-  height: auto;
-
-  button {
-    cursor: pointer;
-    position: absolute;
-    right: 3.3rem;
-    bottom: 1.2rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    text-align: center;
-    border: 0;
-    background: transparent;
-    color: lighten($brand-orange, 6%);
-    &:hover {
-      color: $brand-orange
-    }
-  }
-
 }
 
 .single-line-text-field {
@@ -146,6 +128,10 @@ textarea:focus, input:focus{
   position: relative; // so we can position button absolute
   height: auto;
   padding: .5rem 1rem;
+
+  &:focus-within {
+    border: $data-action--border;
+  }
 
   .resize-calculator, textarea {
     word-break: break-all;
@@ -174,10 +160,9 @@ textarea:focus, input:focus{
   button {
     cursor: pointer;
     position: absolute;
-    right: 1.2rem;
-    bottom: .9rem;
-    width: 1.5rem;
-    height: 1.5rem;
+    right: .2rem;
+    bottom: .2rem;
+    font-size: 1.5rem;
     text-align: center;
     border: 0;
     background: transparent;
@@ -242,15 +227,6 @@ textarea:focus, input:focus{
   margin-top: -0.1rem;
 }
 
-.text-field-large {
-  cursor: text;
-  height: 12rem;
-  width: 100%;
-  padding: 1rem;
-  resize: vertical;
-  overflow:scroll;
-}
-
 .text-field-readonly {
   white-space: nowrap;
   width:23rem;
@@ -285,21 +261,22 @@ textarea:focus, input:focus{
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color:$placeholder;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 
 }
 ::-moz-placeholder { /* Firefox 19+ */
   color: $placeholder;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 }
 
 :-ms-input-placeholder { /* IE 10+ */
   color:$placeholder;
+  font-size: 1.4rem;
 }
 
 :-moz-placeholder { /* Firefox 18- */
   color:$placeholder;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 }
 
 
