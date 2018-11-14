@@ -1,7 +1,7 @@
 import io
 from django.core.exceptions import ValidationError
 import pandas as pd
-from server.models import ParameterSpec, WfModule, ParameterVal, StoredObject
+from server.models import ParameterSpec, WfModule, ParameterVal, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_module_version, add_new_parameter_spec, add_new_wf_module, \
@@ -43,12 +43,9 @@ class WfModuleTestsBase(DbTestCase):
 
 
 class WfModuleTests(WfModuleTestsBase):
-
-    def setUp(self):
-        self.createTestWorkflow()
-
     # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
     def test_default_parameters(self):
+        self.createTestWorkflow()
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec21, wf_module=self.wfmodule2)
         self.assertEqual(pval.get_value(), 'foo')
@@ -78,6 +75,7 @@ class WfModuleTests(WfModuleTestsBase):
         latest version; but then, what if the caller also looks at
         wf_module.stored_data_version? The two values would be inconsistent.
         '''
+        self.createTestWorkflow()
         table1 = pd.DataFrame({'A': [1]})
         table2 = pd.DataFrame({'B': [2]})
         stored_object1 = self.wfmodule1.store_fetched_table(table1)
@@ -89,6 +87,7 @@ class WfModuleTests(WfModuleTestsBase):
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):
+        self.createTestWorkflow()
         table1 = mock_csv_table
         table2 = mock_csv_table2
 
@@ -132,9 +131,8 @@ class WfModuleTests(WfModuleTestsBase):
         # but like, none of this should have created versions on any other wfmodule
         self.assertEqual(self.wfmodule2.list_fetched_data_versions(), [])
 
-
-
     def test_wf_module_store_table_if_different(self):
+        self.createTestWorkflow()
         table1 = mock_csv_table
         table2 = mock_csv_table2
 
@@ -165,8 +163,8 @@ class WfModuleTests(WfModuleTestsBase):
         tableout2 = self.wfmodule1.retrieve_fetched_table()
         self.assertTrue(tableout2.equals(table2))
 
-
     def test_wf_module_duplicate(self):
+        self.createTestWorkflow()
         wfm1 = self.wfmodule1
 
         # store data to test that it is duplicated
@@ -185,9 +183,7 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(wfm1d.module_version, wfm1.module_version)
         self.assertEqual(wfm1d.order, wfm1.order)
         self.assertEqual(wfm1d.notes, wfm1.notes)
-        self.assertEqual(wfm1d.auto_update_data, wfm1.auto_update_data)
         self.assertEqual(wfm1d.last_update_check, wfm1.last_update_check)
-        self.assertEqual(wfm1d.update_interval, wfm1.update_interval)
         self.assertEqual(wfm1d.is_collapsed, wfm1.is_collapsed)
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
 
@@ -199,3 +195,19 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
         self.assertTrue(wfm1d.retrieve_fetched_table().equals(wfm1.retrieve_fetched_table()))
         self.assertEqual(len(wfm1d.list_fetched_data_versions()), 1)
+
+    def test_wf_module_duplicate_disable_auto_update(self):
+        """
+        Duplicates should be lightweight by default: no auto-updating.
+        """
+        workflow = Workflow.objects.create()
+        InitWorkflowCommand.create(workflow)
+        wf_module = workflow.wf_modules.create(order=0, auto_update_data=True,
+                                               update_interval=600)
+
+        workflow2 = Workflow.objects.create()
+        InitWorkflowCommand.create(workflow2)
+        wf_module2 = wf_module.duplicate(workflow2)
+
+        self.assertEqual(wf_module2.auto_update_data, False)
+        self.assertEqual(wf_module2.update_interval, 600)

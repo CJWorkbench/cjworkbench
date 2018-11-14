@@ -272,7 +272,7 @@ class WfModule(models.Model):
             order=self.order,
             notes=self.notes,
             is_collapsed=self.is_collapsed,
-            auto_update_data=self.auto_update_data,
+            auto_update_data=False,
             next_update=self.next_update,
             update_interval=self.update_interval,
             last_update_check=self.last_update_check,
