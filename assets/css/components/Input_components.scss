@@ -96,18 +96,23 @@ textarea:focus, input:focus{
   }
 }
 
-.text-field-input-group {
-  @extend .module-parameter;
+.text-field-large {
   position: relative; // so we can position button absolute
   height: auto;
+
+  textarea {
+    @extend .module-parameter;
+    padding: 1rem;
+    cursor: text;
+    height: auto;
+  }
 
   button {
     cursor: pointer;
     position: absolute;
-    right: 3.3rem;
-    bottom: 3.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
+    right: .5rem;
+    bottom: .5rem;
+    font-size: 1.5rem;
     text-align: center;
     border: 0;
     background: transparent;
@@ -240,15 +245,6 @@ textarea:focus, input:focus{
 
 .wf-card .text-field {
   margin-top: -0.1rem;
-}
-
-.text-field-large {
-  cursor: text;
-  height: 12rem;
-  width: 100%;
-  padding: 1rem;
-  resize: vertical;
-  overflow:scroll;
 }
 
 .text-field-readonly {

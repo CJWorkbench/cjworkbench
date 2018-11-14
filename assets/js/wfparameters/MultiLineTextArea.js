@@ -35,12 +35,11 @@ export default class MultiLineTextArea extends React.PureComponent {
       </button>
     )
     return (
-      <div className="text-field-input-group">
+      <div className="text-field-large">
         <textarea
           onBlur={this.onChange}
           onChange={this.onChange}
           readOnly={isReadOnly}
-          className='module-parameter t-d-gray content-3 text-field-large'
           name={name}
           rows={4}
           defaultValue={value}
