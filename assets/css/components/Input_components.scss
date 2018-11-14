@@ -111,7 +111,7 @@ textarea:focus, input:focus{
     cursor: pointer;
     position: absolute;
     right: .5rem;
-    bottom: .5rem;
+    bottom: .6rem;
     font-size: 1.5rem;
     text-align: center;
     border: 0;
@@ -124,7 +124,6 @@ textarea:focus, input:focus{
 }
 
 .multi-select-input-group {
-  @extend .module-parameter;
   position: relative; // so we can position button absolute
   height: auto;
 
@@ -184,7 +183,7 @@ textarea:focus, input:focus{
     cursor: pointer;
     position: absolute;
     right: .2rem;
-    bottom: .3rem;
+    bottom: .2rem;
     font-size: 1.5rem;
     text-align: center;
     border: 0;
