@@ -85,13 +85,13 @@ textarea:focus, input:focus{
   @extend .content-3;
   height:3.5rem;
   border-radius: 3px;
-  border: 2px solid $Vlight-gray!important;
-  background-color: $Vlight-gray !important;
+  border: 2px solid $Vlight-gray;
+  background-color: $Vlight-gray;
   &:hover {
-    border: 2px solid $dark-accent--soft!important;
+    border: 2px solid $dark-accent--soft;
   }
   &:focus {
-    border: $data-action--border!important;
+    border: $data-action--border;
     outline: none;
   }
 }

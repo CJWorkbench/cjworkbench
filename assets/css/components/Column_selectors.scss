@@ -8,98 +8,102 @@
   }
 }
 
-.react-select {
-  .react-select__control {
-    @extend .module-parameter;
-    min-height: 3.5rem;
-    height: auto;
-    color: red;
-    cursor: text;
-  }
+.wf-parameter {
 
-  // separator with carret
-  .react-select__indicator-separator {
-    margin: 1rem 0;
-    display: none;
-  }
+  .react-select {
 
-  .react-select__indicator.react-select__dropdown-indicator,
-  .react-select__indicator.react-select__dropdown-indicator {
-    padding: 0 .5rem;
-  }
+    .react-select__control {
+      @extend .module-parameter;
+      min-height: 3.5rem;
+      height: auto;
+      cursor: text;
+    }
 
-  //carret container
-  .react-select__value-container {
-    padding: 0 .8rem;
+    // separator with carret
+    .react-select__indicator-separator {
+      margin: 1rem 0;
+      display: none;
+    }
 
-    // Carret to open menu
-    .react-select__indicator,
-    .react-select__indicator {
-      cursor: pointer;
-      opacity: .6;
+    .react-select__indicator.react-select__dropdown-indicator,
+    .react-select__indicator.react-select__dropdown-indicator {
+      padding: 0 .5rem;
+    }
+
+    //carret container
+    .react-select__value-container {
       padding: 0 .8rem;
 
-      svg {
-        color: $brand-text--dark;
+      // Carret to open menu
+      .react-select__indicator,
+      .react-select__indicator {
+        cursor: pointer;
+        opacity: .6;
+        padding: 0 .8rem;
+
+        svg {
+          color: $brand-text--dark;
+        }
+
+        &:hover {
+          opacity: 1;
+        }
       }
 
-      &:hover {
-        opacity: 1;
+      // Style for selected values within multi select
+
+      .react-select__multi-value {
+        border-radius: 3px;
+        border: 1px solid $brand-orange;
+        background-color: $brand-orange--light;
+        margin-left: 0;
+        margin-right: .4rem;
+        height: 2.7rem;
+
+        .react-select__multi-value__label {
+          @extend .content-3;
+          color:$brand-orange;
+        }
       }
-    }
 
-    // Style for selected values within multi select
-
-    .react-select__multi-value {
-      border-radius: 3px;
-      border: 1px solid $brand-orange;
-      background-color: $brand-orange--light;
-      margin-left: 0;
-      margin-right: .4rem;
-      height: 2.7rem;
-
-      .react-select__multi-value__label {
-        @extend .content-3;
+      .react-select__multi-value__remove {
+        cursor: pointer;
+        border-radius: 0 3px 3px 0;
         color:$brand-orange;
+        padding: 0;
+        width: 2rem;
+        justify-content: center;
+
+        &:hover {
+          color: $white;
+          background-color: $brand-orange--medium-dark;
+        }
       }
     }
 
-    .react-select__multi-value__remove {
-      cursor: pointer;
-      border-radius: 0 3px 3px 0;
-      color:$brand-orange;
-      padding: 0;
-      width: 2rem;
-      justify-content: center;
-
-      &:hover {
-        color: $white;
-        background-color: $brand-orange--medium-dark;
-      }
+    //value selected
+    .react-select__single-value {
+      color: $brand-text--darker;
     }
-  }
 
-  //value selected
-  .react-select__single-value {
-    color: $brand-text--darker;
-  }
+    .react-select__control--is-focused {
+      box-shadow: none;
+      border: $data-action--border!important;
+      background-color: $Vlight-gray;
+      @extend .content-3;
+    }
 
-  .react-select__control--is-focused {
-    box-shadow: none;
-    border: $data-action--border!important;
-    background-color: $Vlight-gray;
-    @extend .content-3;
-  }
+    // placeholder when empty
+    .react-select__placeholder {
+      color: $placeholder;
 
-  // placeholder when empty
-  .react-select__placeholder {
-    color: $placeholder;
-
-    & + div {
-      margin: 0;
+      & + div {
+        margin: 0;
+      }
     }
   }
 }
+
 
 // Menu when open
 div>.react-select__menu {
