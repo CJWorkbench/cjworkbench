@@ -24,7 +24,7 @@
       margin-bottom: 1rem;
       display: flex;
       justify-content: center;
-    
+
 
       .logo-container {
 
@@ -141,8 +141,38 @@
         display: flex;
         align-items: center;
       }
-    }
 
+      .message-body {
+        color: $brand-text--dark;
+        @extend .content-3;
+        text-align: center;
+        margin-bottom: 3rem;
+        width: 100%;
+        display: inline-block;
+      }
+      .account_form {
+
+        body.accounts {
+
+          ul.messages {
+            display:none;
+            margin: 2rem;
+            padding: 0;
+            list-style: none;
+            text-align: center;
+            @extend %font-nunito-regular;
+            font-size: 1.4rem;
+
+            li {
+              display: none;
+              margin: 1rem;
+            }
+          }
+
+
+        }
+      }
+    }
 
     .sign-in {
       @extend .title-1;
@@ -188,32 +218,6 @@
       color:$white;
       text-align:center;
       margin:3rem 0;
-    }
-  }
-
-
-  body.accounts {
-    ul.messages {
-      display:none;
-      margin: 2rem;
-      padding: 0;
-      list-style: none;
-      text-align: center;
-      @extend %font-nunito-regular;
-      font-size: 1.4rem;
-
-      li {
-        margin: 1rem;
-      }
-    }
-
-    .message-body {
-      color: $brand-text--dark;
-      @extend .content-3;
-      text-align: center;
-      margin-bottom: 3rem;
-      width: 100%;
-      display: inline-block;
     }
   }
 
