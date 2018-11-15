@@ -72,6 +72,9 @@ class CachedRenderResult:
                 # Treat bugs as "empty file"
                 self._parquet_file = None
 
+        # TODO keep a handle on the file, to guarantee it doesn't disappear
+        # from disk until after this CachedRenderResult is destroyed. Until
+        # then, every read from self._parquet_file is a race.
         return self._parquet_file
 
     @property

@@ -230,7 +230,14 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
         dataframe = pd.DataFrame()
     else:
         column_names = cached_result.column_names[:N_COLUMNS_PER_TABLE]
-        dataframe = cached_result.parquet_file.to_pandas(column_names)
+        parquet_file = cached_result.parquet_file
+        if parquet_file:
+            dataframe = parquet_file.to_pandas(column_names)
+        else:
+            # There was a race: the cached data is gone.
+            #
+            # This probably means the user doesn't need it any more.
+            dataframe = pd.DataFrame()
 
     nrows = len(dataframe)
     if startrow is None:

@@ -1,5 +1,6 @@
 from collections import namedtuple
 import json
+import os
 from unittest.mock import patch
 from django.contrib.auth.models import User
 import numpy as np
@@ -239,6 +240,21 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), test_data_json)
 
+    def test_wf_module_render_missing_parquet_file(self):
+        # https://www.pivotaltracker.com/story/show/161988744
+        crr = self.wf_module2.cache_render_result(2, ProcessResult(test_data))
+        self.wf_module2.save()
+
+        # Simulate a race: we're overwriting the cache or deleting the WfModule
+        # or some-such.
+        os.unlink(crr.parquet_path)
+
+        response = self.client.get('/api/wfmodules/%d/render'
+                                   % self.wf_module2.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),
+                         {'end_row': 0, 'rows': [], 'start_row': 0})
+
     def test_wf_module_render_only_rows(self):
         self.wf_module2.cache_render_result(2, ProcessResult(test_data))
         self.wf_module2.save()
@@ -377,7 +393,8 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_wf_module_update_settings_bad_units(self):
-        settings = {'auto_update_data': True, 'update_interval': 66, 'update_units': 'pajama'}
+        settings = {'auto_update_data': True, 'update_interval': 66,
+                    'update_units': 'pajama'}
         request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
                                     settings, user=self.user)
         response = wfmodule_detail(request, pk=self.wf_module1.id)
@@ -401,6 +418,32 @@ class WfModuleTests(LoggedInTestCase):
             json.loads(response.content),
             {'values': {'a': 2, 'b': 2, 'c': 1}}
         )
+
+    def test_value_counts_missing_parquet_file(self):
+        # https://www.pivotaltracker.com/story/show/161988744
+        crr = self.wf_module2.cache_render_result(2, ProcessResult(
+            pd.DataFrame({
+                'A': ['a', 'b', 'b', 'a', 'c', np.nan],
+                'B': ['x', 'x', 'x', 'x', 'x', 'x'],
+            })
+        ))
+        self.wf_module2.save()
+
+        # Simulate a race: we're overwriting the cache or deleting the WfModule
+        # or some-such.
+        os.unlink(crr.parquet_path)
+
+        response = self.client.get(
+            f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=A'
+        )
+
+        # We _could_ return an empty result set; but our only goal here is
+        # "don't crash" and this 404 seems to be the simplest implementation.
+        # (We assume that if the data is deleted, the user has moved elsewhere
+        # and this response is going to be ignored.)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(json.loads(response.content),
+                         {'error': 'column "A" not found'})
 
     def test_value_counts_cast_to_str(self):
         self.wf_module2.cache_render_result(2, ProcessResult(
