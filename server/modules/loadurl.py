@@ -5,10 +5,8 @@ from .types import ProcessResult
 from server.modules import utils
 from .utils import parse_bytesio, turn_header_into_first_row
 
-# ---- LoadURL ----
 
-
-_ExtensionMimeTypes = {
+ExtensionMimeTypes = {
     '.xls': 'application/vnd.ms-excel',
     '.xlsx': (
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -19,13 +17,31 @@ _ExtensionMimeTypes = {
 }
 
 
+AllowedMimeTypes = list(ExtensionMimeTypes.values())
+
+
+NonstandardMimeTypes = {
+    'application/csv': 'text/csv',
+}
+
+
 def guess_mime_type_or_none(content_type: str, url: str) -> str:
     """Infer MIME type from Content-Type header or URL, or return None."""
-    for mime_type in _ExtensionMimeTypes.values():
+    # First, accept "Content-Type" but clean it: "text/csv; charset=utf-8"
+    # becomes "text/csv"
+    for mime_type in AllowedMimeTypes:
         if content_type.startswith(mime_type):
             return mime_type
 
-    for extension, mime_type in _ExtensionMimeTypes.items():
+    # No match? Then try to "correct" the MIME type.
+    # "application/csv; charset=utf-8" becomes "text/csv".
+    for nonstandard_mime_type, mime_type in NonstandardMimeTypes.items():
+        if content_type.startswith(nonstandard_mime_type):
+            return mime_type
+
+    # No match? Check for a known extension in the URL.
+    # ".csv" becomes "text/csv".
+    for extension, mime_type in ExtensionMimeTypes.items():
         if extension in url:
             return mime_type
 
@@ -52,7 +68,7 @@ class LoadURL(ModuleImpl):
     async def fetch(params, **kwargs):
         url = params.get_param_string('url').strip()
 
-        mimetypes = ','.join(_ExtensionMimeTypes.values())
+        mimetypes = ','.join(AllowedMimeTypes)
         headers = {'Accept': mimetypes}
         timeout = aiohttp.ClientTimeout(total=5*60, connect=30)
 
@@ -60,7 +76,7 @@ class LoadURL(ModuleImpl):
             async with utils.spooled_data_from_url(
                 url, headers, timeout
             ) as (bytes_io, headers, charset):
-                content_type = headers.get('content-type', '') \
+                content_type = headers.get('Content-Type', '') \
                         .split(';')[0] \
                         .strip()
                 mime_type = guess_mime_type_or_none(content_type, url)

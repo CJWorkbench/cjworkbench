@@ -97,7 +97,7 @@ def fetch(**kwargs):
     return async_to_sync(LoadURL.fetch)(params)
 
 
-class LoadFromURLTests(unittest.TestCase):
+class LoadUrlTests(unittest.TestCase):
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(mock_csv_raw, 'text/csv'))
     def test_load_csv(self):
@@ -119,6 +119,18 @@ class LoadFromURLTests(unittest.TestCase):
         # return text/plain type and rely on filename detection, as
         # https://raw.githubusercontent.com/ does
         fetch_result = fetch(url='http://test.com/the.csv')
+        self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(mock_csv_raw, 'application/csv'))
+    def test_load_csv_handle_nonstandard_mime_type(self):
+        """
+        Transform 'application/csv' into 'text/csv', etc.
+
+        Sysadmins sometimes invent MIME types and we can infer exactly what
+        they _mean_, even if they didn't say it.
+        """
+        fetch_result = fetch(url='http://test.com/the.data?format=csv&foo=bar')
         self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
 
     def test_load_json(self):
