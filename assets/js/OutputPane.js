@@ -44,10 +44,17 @@ export class OutputPane extends React.Component {
     let wfm
     if (wfModuleBeforeError) {
       wfm = wfModuleBeforeError
-    } else if (wfModule && wfModule.status !== 'unreachable') {
+    } else if (wfModule && wfModule.status === 'ok') {
       wfm = wfModule
     } else {
-      wfm = null // below error
+      // We're focused on a module that is not ok. It is one of:
+      // * 'busy': no results to show (we want to see the previous table, whatever it is)
+      // * 'unreachable': no results to show (we want to see the previous table, whatever it is)
+      // * 'error': no results to show (assuming wfModuleBeforeError is set, we want to see the previous table)
+      //
+      // "see the previous table" is TableSwitcher's domain. Our job is to tell
+      // TableSwitcher we don't want to render this wfModule's data.
+      wfm = null
     }
 
     // Make a table component even if no module ID (should still show an empty table)
@@ -112,7 +119,6 @@ export class OutputPane extends React.Component {
   render () {
     const { wfModule } = this.props
     const status = wfModule ? wfModule.status : 'unreachable'
-
     const className = 'outputpane module-' + status
 
     return (
@@ -134,20 +140,35 @@ export class OutputPane extends React.Component {
   }
 }
 
+function wfModuleStatus(wfModule) {
+  // TODO don't copy/paste from OutputPane.js
+  if (wfModule.nClientRequests > 0) {
+    // When we've just sent an HTTP request and not received a response,
+    // mark ourselves "busy". This is great for when the user clicks "fetch"
+    // and then is waiting for the server to set the status.
+    //
+    // The state stores server data separately than client data, so there's
+    // no race when setting status and so if the "fetch" does nothing and the
+    // server doesn't change wfModule.status, the client still resets its
+    // perceived status.
+    return 'busy'
+  } else if (wfModule.is_busy) {
+    return 'busy'
+  } else if (!wfModule.output_status) {
+    // placeholder? TODO verify this can actually happen
+    return 'busy'
+  } else {
+    return wfModule.output_status
+  }
+}
+
 function mapStateToProps(state, ownProps) {
   const { workflow, wfModules, modules } = state
 
   let wfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
   let wfModuleBeforeError
 
-  let status
-  if (wfModule) {
-    if (wfModule.is_busy) {
-      status = 'busy'
-    } else {
-      status = wfModule.output_status
-    }
-  }
+  const status = wfModule ? wfModuleStatus(wfModule) : 'busy'
 
   // If we're pointing at a module that output an error, we'll want to display
   // its _input_ (the previous module's output) to help the user fix things.

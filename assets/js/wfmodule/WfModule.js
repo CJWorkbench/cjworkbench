@@ -277,6 +277,7 @@ export class WfModule extends React.PureComponent {
   }
 
   get wfModuleStatus () {
+    // TODO don't copy/paste from OutputPane.js
     const { wfModule } = this.props
     if (wfModule.nClientRequests > 0) {
       // When we've just sent an HTTP request and not received a response,
