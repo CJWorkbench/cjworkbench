@@ -17,241 +17,213 @@
     opacity: .6;
   }
 
-  .account-bigbrand {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
+  .container {
+    z-index: 5;
 
-    .logo {
-      width: 4.5rem;
-    }
-    .logo-text {
-      margin-left: .8rem;
-      width: 26rem;
-    }
-  }
-
-  .account-card {
-    background: rgba(250,250,250,0.3);
-    height: auto;
-    width: 40rem;
-    padding: 3rem 5rem;
-    border: none;
-    border-radius: 0px;
-    display: flex;
-    align-items: center;
-
-    .action-link {
-      color:$white!important;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .remove-account {
-      @extend .content-3;
-      @extend .action-button;
-      @extend .button-white;
-      margin:auto;
-      margin-bottom: 2rem;
-      margin-top: 1rem;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .content-4 {
-      cursor: default;
-    }
-
-    /* Registration form */
-
-    .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
-      width: 100%;
-      height:4rem;
-      padding-left:1rem;
-      margin-bottom:1rem;
-      font-size: 1.5rem;
-      background-color: #fff;
-      border:0px;
-      border-radius:3px;
-    }
-
-    .account_form label{
-      font-size: 1.2rem;
-      margin-bottom: 0;
-    }
-
-    .account_form input:active {
-      box-shadow: 0 0 0px 1px $brand-workspace;
-    }
-
-    .account_form input[type="checkbox"] {
-      display:inline-block;
-      width: 1.5rem;
-    }
-
-    form {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      width: 100%;
-
-      .newsletter {
-        align-self: flex-start;
-        display: flex;
-        align-items: center;
-      }
-
-      .consent {
-        width: 100%;
-        @extend .content-3;
-        color:$brand-text--dark;
-        margin-top: 1rem;
-        margin-bottom: 2rem;
-      }
-
-      .account_form .action-button {
-        margin-top: 3rem;
-      }
-    }
-
-    //404 , 403
-    .error-number {
-      z-index: 5;
-      @extend .font404;
-      text-align:center;
-      margin-top: .5rem;
+    .account-bigbrand {
       margin-bottom: 1rem;
-      color:$white;
+      display: flex;
+      justify-content: center;
+    
 
-      a {
-        height: 4rem;
-        &:hover {
-          text-decoration: none;
+      .logo-container {
+
+
+        .logo {
+          max-width: 32rem;
         }
       }
     }
 
-    fieldset {
+    .account-card {
+      background: rgba(250,250,250,0.3);
+      height: auto;
+      max-width: 40rem;
+      padding: 3rem 5rem;
+      border: none;
+      border-radius: 0px;
       display: flex;
       align-items: center;
-    }
-  }
 
+      .action-link {
+        color:$white!important;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
 
-  .sign-in {
-    @extend .title-1;
-    text-align: center;
-    color: $brand-text--dark
-  }
+      .remove-account {
+        @extend .content-3;
+        @extend .action-button;
+        @extend .button-white;
+        margin:auto;
+        margin-bottom: 2rem;
+        margin-top: 1rem;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
 
-  a {
-    @extend .content-3;
-    color:$white;
-  }
+      .content-4 {
+        cursor: default;
+      }
 
-  input {cursor: pointer;}
+      /* Registration form */
 
-  // Social logins //
-  .socialLoginWrap{
-    width:100%;
-    display: flex;
-    justify-content: center;
+      .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
+        width: 100%;
+        height:4rem;
+        padding-left:1rem;
+        margin-bottom:1rem;
+        font-size: 1.5rem;
+        background-color: #fff;
+        border:0px;
+        border-radius:3px;
+      }
 
-    a {
-      color:$brand-text--dark;
-      text-decoration:none;
-    }
+      .account_form label{
+        font-size: 1.2rem;
+        margin-bottom: 0;
+      }
 
-    .socialLoginButton {
-      background-color: #fff;
-      border:2px solid transparent;
-      border-radius: 10rem;
-      margin-bottom: 1rem;
-      padding:0 1.5rem;
-      height: 4rem;
-      width:22rem;
-      font-size: 1.4rem;
-      &:hover {
-        background-color:$SuperLightGray;
+      .account_form input:active {
+        box-shadow: 0 0 0px 1px $brand-workspace;
+      }
+
+      .account_form input[type="checkbox"] {
+        display:inline-block;
+        width: 1.5rem;
+      }
+
+      form {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+
+        .newsletter {
+          align-self: flex-start;
+          display: flex;
+          align-items: center;
+        }
+
+        .consent {
+          width: 100%;
+          @extend .content-3;
+          color:$brand-text--dark;
+          margin-top: 1rem;
+          margin-bottom: 2rem;
+        }
+
+        .account_form .action-button {
+          margin-top: 3rem;
+        }
+      }
+
+      //404 , 403
+      .error-number {
+        z-index: 5;
+        @extend .font404;
+        text-align:center;
+        margin-top: .5rem;
+        margin-bottom: 1rem;
+        color:$white;
+
+        a {
+          height: 4rem;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      fieldset {
+        display: flex;
+        align-items: center;
       }
     }
-  }
-
-  .byline{
-    @extend .title-1;
-    color:$white;
-    text-align:center;
-    margin:3rem 0;
-  }
-}
 
 
-body.accounts {
-  ul.messages {
-    display:none;
-    margin: 2rem;
-    padding: 0;
-    list-style: none;
-    text-align: center;
-    @extend %font-nunito-regular;
-    font-size: 1.4rem;
+    .sign-in {
+      @extend .title-1;
+      text-align: center;
+      color: $brand-text--dark
+    }
 
-    li {
-      margin: 1rem;
+    a {
+      @extend .content-3;
+      color:$white;
+    }
+
+    input {cursor: pointer;}
+
+    // Social logins //
+    .socialLoginWrap{
+      width:100%;
+      display: flex;
+      justify-content: center;
+
+      a {
+        color:$brand-text--dark;
+        text-decoration:none;
+      }
+
+      .socialLoginButton {
+        background-color: #fff;
+        border:2px solid transparent;
+        border-radius: 10rem;
+        margin-bottom: 1rem;
+        padding:0 1.5rem;
+        height: 4rem;
+        width:22rem;
+        font-size: 1.4rem;
+        &:hover {
+          background-color:$SuperLightGray;
+        }
+      }
+    }
+
+    .byline{
+      @extend .title-1;
+      color:$white;
+      text-align:center;
+      margin:3rem 0;
     }
   }
 
-  .message-body {
-    color: $brand-text--dark;
-    @extend .content-3;
-    text-align: center;
-    margin-bottom: 3rem;
-    width: 100%;
-    display: inline-block;
+
+  body.accounts {
+    ul.messages {
+      display:none;
+      margin: 2rem;
+      padding: 0;
+      list-style: none;
+      text-align: center;
+      @extend %font-nunito-regular;
+      font-size: 1.4rem;
+
+      li {
+        margin: 1rem;
+      }
+    }
+
+    .message-body {
+      color: $brand-text--dark;
+      @extend .content-3;
+      text-align: center;
+      margin-bottom: 3rem;
+      width: 100%;
+      display: inline-block;
+    }
   }
-}
 
 
 
-.account-card :-webkit-input-placeholder {
-  color: #ccc
-}
+  .account-card :-webkit-input-placeholder {
+    color: #ccc
+  }
 
-.account_form .title-1 {
-  margin-bottom:0;
-}
-
-
-
-// Signup page
-
-.signup-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-
-.demoSignup{
-  width: 100%;
-  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
-}
-
-.signupByline{
-  background-color: pink;
-}
-
-.account-fullscreen-container .t-white{
-  white-space: normal;
-}
-
-.account-fullscreen-container .title-1 {
-  line-height: 3.5rem;
-}
-
-
-.account-fullscreen-container .title-2 {
-  line-height: normal;
+  .account_form .title-1 {
+    margin-bottom:0;
+  }
 }

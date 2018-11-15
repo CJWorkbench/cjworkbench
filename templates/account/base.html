@@ -45,18 +45,11 @@
     <div class="account-fullscreen-container">
       <div class="background"></div>
       <div class="container">
-        <div class="row">
-
-          <div class="col"></div>
-          <div class="account-bigbrand">
-            <img src="{% static 'images/logo.svg' %}" class="logo"/>
-            <a href="http://workbenchdata.com">
-              <img src="{% static 'images/logo-text.svg' %}" class="logo-text"/>
-            </a>
-          </div>
-          <div class="col"></div>
+        <div class="account-bigbrand">
+          <a class="logo-container" href="http://workbenchdata.com">
+            <img src="{% static 'images/workbench-logo-white.svg' %}" class="logo"/>
+          </a>
         </div>
-
         {% if messages %}
         <ul class="messages">
           {% for message in messages %}
@@ -64,7 +57,6 @@
           {% endfor %}
         </ul>
         {% endif %}
-
         <div class="card card-block account-card mx-auto drop-shadow">
            <!-- <h1 class="text-center title-1 t-d-gray">CJ Workbench</h1> -->
            {% block content %}{% endblock %}
