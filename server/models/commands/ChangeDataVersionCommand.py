@@ -21,14 +21,18 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     def forward_impl(self):
-        self.wf_module.set_fetched_data_version(self.new_version)
+        self.wf_module.stored_data_version = self.new_version
+        self.wf_module.save(update_fields=['stored_data_version'])
+
         self.forward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.save()
 
     def backward_impl(self):
         self.backward_dependent_wf_module_versions(self.wf_module)
         self.wf_module.save()
-        self.wf_module.set_fetched_data_version(self.old_version)
+
+        self.wf_module.stored_data_version = self.old_version
+        self.wf_module.save(update_fields=['stored_data_version'])
 
     async def schedule_execute(self) -> None:
         """
@@ -76,7 +80,7 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
         return {
             **kwargs,
             'wf_module': wf_module,
-            'old_version': wf_module.get_fetched_data_version(),
+            'old_version': wf_module.stored_data_version,
         }
 
     @classmethod

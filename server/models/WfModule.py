@@ -192,21 +192,6 @@ class WfModule(models.Model):
 
         return ProcessResult(table, self.fetch_error)
 
-    # versions are ISO datetimes
-    def get_fetched_data_version(self):
-        return self.stored_data_version
-
-    # Like all mutators, this should usually be wrapped in a Command so it is
-    # undoable. In this case, a ChangeDataVersionCommand
-    def set_fetched_data_version(self, version):
-        if version is None or not \
-            StoredObject.objects.filter(wf_module=self,
-                                        stored_at=version).exists():
-            raise ValueError('No such stored data version')
-
-        self.stored_data_version = version
-        self.save()
-
     def list_fetched_data_versions(self):
         return list(StoredObject.objects.filter(wf_module=self)
                                         .order_by('-stored_at')

@@ -444,7 +444,7 @@ def wfmodule_dataversion(request, pk, format=None):
 
         with wf_module.workflow.cooperative_lock():
             versions = wf_module.list_fetched_data_versions()
-            current_version = wf_module.get_fetched_data_version()
+            current_version = wf_module.stored_data_version
             response = {'versions': versions, 'selected': current_version}
 
         return Response(response)

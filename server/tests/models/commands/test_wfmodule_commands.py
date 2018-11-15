@@ -53,8 +53,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         # went there and old one is after
         cmd = async_to_sync(AddModuleCommand.create)(self.workflow,
                                                      self.module_version, 0,
-                                                     {'csv': 'A,B\n1,2'}
-        )
+                                                     {'csv': 'A,B\n1,2'})
         self.assertEqual(all_modules.count(), 2)
         added_module = WfModule.objects.get(workflow=self.workflow, order=0)
         self.assertNotEqual(added_module, existing_module)
@@ -268,7 +267,8 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         firstver = self.wfm.store_fetched_table(mock_csv_table)
         secondver = self.wfm.store_fetched_table(mock_csv_table2)
 
-        self.wfm.set_fetched_data_version(secondver)
+        self.wfm.stored_data_version = secondver
+        self.wfm.save()
 
         self.workflow.refresh_from_db()
         v1 = self.workflow.revision()
@@ -276,7 +276,7 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         # Change back to first version
         cmd = async_to_sync(ChangeDataVersionCommand.create)(self.wfm,
                                                              firstver)
-        self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
+        self.assertEqual(self.wfm.stored_data_version, firstver)
 
         self.workflow.refresh_from_db()
         v2 = self.workflow.revision()
@@ -287,12 +287,12 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         # undo
         async_to_sync(cmd.backward)()
         self.assertWfModuleVersions([v1])
-        self.assertEqual(self.wfm.get_fetched_data_version(), secondver)
+        self.assertEqual(self.wfm.stored_data_version, secondver)
 
         # redo
         async_to_sync(cmd.forward)()
         self.assertWfModuleVersions([v2])
-        self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
+        self.assertEqual(self.wfm.stored_data_version, firstver)
 
     @patch('server.rabbitmq.queue_render')
     def test_queue_render_if_notifying(self, queue_render):
@@ -304,12 +304,45 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         date2 = self.wfm.store_fetched_table(df2)
 
         self.wfm.notifications = True
-        self.wfm.set_fetched_data_version(date1)
+        self.wfm.stored_data_version = date1
         self.wfm.save()
 
         delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
 
         queue_render.assert_called_with(self.wfm.workflow_id, delta.id)
+
+    @patch('server.websockets.queue_render_if_listening', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_no_op_if_version_is_deleted(self):
+        """
+        Undo/redo should skip a ChangeDataVersion if we're changing to a
+        version that doesn't exist any more.
+
+        This happens if the user exceeded a version quota. (Too much disk
+        space? We delete old versions.) There's no recovering.
+
+        TODO consider other options? Prevent undo past this point?
+        """
+        df1 = pd.DataFrame({'A': [1]})
+        df2 = pd.DataFrame({'B': [2]})
+        date1 = self.wfm.store_fetched_table(df1)
+        date2 = self.wfm.store_fetched_table(df2)
+
+        self.wfm.notifications = False
+        self.wfm.stored_data_version = date1
+        self.wfm.save()
+
+        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
+
+        self.wfm.stored_objects.get(stored_at=date1).delete()
+
+        async_to_sync(delta.backward)()
+        self.wfm.refresh_from_db()
+        self.assertEqual(self.wfm.stored_data_version, date2)
+
+        async_to_sync(delta.forward)()
+        self.wfm.refresh_from_db()
+        self.assertEqual(self.wfm.stored_data_version, date2)
 
     @patch('server.websockets.queue_render_if_listening')
     @patch('server.rabbitmq.queue_render')
@@ -326,7 +359,7 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         date2 = self.wfm.store_fetched_table(df2)
 
         self.wfm.notifications = False
-        self.wfm.set_fetched_data_version(date1)
+        self.wfm.stored_data_version = date1
         self.wfm.save()
 
         delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)

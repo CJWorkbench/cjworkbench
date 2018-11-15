@@ -302,7 +302,8 @@ class WfModuleTests(LoggedInTestCase):
     @patch('server.websockets.queue_render_if_listening', async_noop)
     def test_wf_module_data_versions(self):
         firstver = self.wf_module1.store_fetched_table(mock_csv_table)
-        self.wf_module1.set_fetched_data_version(firstver)
+        self.wf_module1.stored_data_version = firstver
+        self.wf_module1.save()
         secondver = self.wf_module1.store_fetched_table(mock_csv_table2)
 
         # retrieve version list through the API
@@ -329,7 +330,7 @@ class WfModuleTests(LoggedInTestCase):
         response = wfmodule_dataversion(request, pk=self.wf_module1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.wf_module1.refresh_from_db()
-        self.assertEqual(self.wf_module1.get_fetched_data_version(), secondver)
+        self.assertEqual(self.wf_module1.stored_data_version, secondver)
 
     # test Wf Module Notes change API
     def test_wf_module_notes_post(self):

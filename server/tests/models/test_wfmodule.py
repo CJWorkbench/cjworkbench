@@ -80,7 +80,8 @@ class WfModuleTests(WfModuleTestsBase):
         table2 = pd.DataFrame({'B': [2]})
         stored_object1 = self.wfmodule1.store_fetched_table(table1)
         self.wfmodule1.store_fetched_table(table2)
-        self.wfmodule1.set_fetched_data_version(stored_object1)
+        self.wfmodule1.stored_data_version = stored_object1
+        self.wfmodule1.save()
         self.wfmodule1.stored_objects.get(stored_at=stored_object1).delete()
         self.wfmodule1.refresh_from_db()
         self.assertIsNone(self.wfmodule1.retrieve_fetched_table())
@@ -99,29 +100,27 @@ class WfModuleTests(WfModuleTestsBase):
         firstver = self.wfmodule1.store_fetched_table(table1)
         self.wfmodule1.save()
         self.wfmodule1.refresh_from_db()
-        self.assertNotEqual(self.wfmodule1.get_fetched_data_version(), firstver) # should not switch versions by itself
+        self.assertNotEqual(self.wfmodule1.stored_data_version, firstver) # should not switch versions by itself
         self.assertIsNone(self.wfmodule1.retrieve_fetched_table()) # no stored version, no table
-        self.wfmodule1.set_fetched_data_version(firstver)
-        self.assertEqual(self.wfmodule1.get_fetched_data_version(), firstver)
+        self.wfmodule1.stored_data_version = firstver
+        self.wfmodule1.save()
         tableout1 = self.wfmodule1.retrieve_fetched_table()
         self.assertTrue(tableout1.equals(table1))
 
         # create another version
         secondver = self.wfmodule1.store_fetched_table(table2)
-        self.assertNotEqual(self.wfmodule1.get_fetched_data_version(), secondver) # should not switch versions by itself
-        self.wfmodule1.set_fetched_data_version(secondver)
+        self.assertNotEqual(self.wfmodule1.stored_data_version, secondver) # should not switch versions by itself
         self.assertNotEqual(firstver, secondver)
+        self.wfmodule1.stored_data_version = secondver
+        self.wfmodule1.save()
         tableout2 = self.wfmodule1.retrieve_fetched_table()
         self.assertTrue(tableout2.equals(table2))
 
         # change the version back
-        self.wfmodule1.set_fetched_data_version(firstver)
+        self.wfmodule1.stored_data_version = firstver
+        self.wfmodule1.save()
         tableout1 = self.wfmodule1.retrieve_fetched_table()
         self.assertTrue(tableout1.equals(table1))
-
-        # invalid version string should error
-        with self.assertRaises(ValidationError):
-            self.wfmodule1.set_fetched_data_version('foo')
 
         # list versions
         verlist = self.wfmodule1.list_fetched_data_versions()
@@ -144,7 +143,7 @@ class WfModuleTests(WfModuleTestsBase):
         ver1 = self.wfmodule1.store_fetched_table(table1)
         self.wfmodule1.save()
         self.wfmodule1.refresh_from_db()
-        self.assertNotEqual(self.wfmodule1.get_fetched_data_version(), ver1) # should not switch versions by itself
+        self.assertNotEqual(self.wfmodule1.stored_data_version, ver1) # should not switch versions by itself
         self.assertEqual(len(self.wfmodule1.list_fetched_data_versions()), 1)
 
         # try saving it again, should be NOP
@@ -157,9 +156,10 @@ class WfModuleTests(WfModuleTestsBase):
         self.wfmodule1.save()
         self.wfmodule1.refresh_from_db()
         self.assertNotEqual(ver2, ver1)
-        self.assertNotEqual(self.wfmodule1.get_fetched_data_version(), ver2) # should not switch versions by itself
+        self.assertNotEqual(self.wfmodule1.stored_data_version, ver2) # should not switch versions by itself
         self.assertEqual(len(self.wfmodule1.list_fetched_data_versions()), 2)
-        self.wfmodule1.set_fetched_data_version(ver2)
+        self.wfmodule1.stored_data_version = ver2
+        self.wfmodule1.save()
         tableout2 = self.wfmodule1.retrieve_fetched_table()
         self.assertTrue(tableout2.equals(table2))
 
@@ -170,7 +170,8 @@ class WfModuleTests(WfModuleTestsBase):
         # store data to test that it is duplicated
         s1 = wfm1.store_fetched_table(mock_csv_table)
         s2 = wfm1.store_fetched_table(mock_csv_table2)
-        wfm1.set_fetched_data_version(s2)
+        wfm1.stored_data_version = s2
+        wfm1.save()
         self.assertEqual(len(wfm1.list_fetched_data_versions()), 2)
 
         # duplicate into another workflow, as we would do when duplicating a workflow

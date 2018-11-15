@@ -117,7 +117,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     def get_versions(self, wfm):
         versions = wfm.list_fetched_data_versions()
-        current_version = wfm.get_fetched_data_version()
+        current_version = wfm.stored_data_version
         return {'versions': versions, 'selected': current_version}
 
     def get_cached_render_result_data(self, wfm):
