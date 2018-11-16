@@ -106,6 +106,7 @@ export class SelectedRowsActions extends React.PureComponent {
       <Action key={id} id={id} title={title} onClick={this.onClickAction} />
     ))
 
+
     return (
       <UncontrolledDropdown>
         <DropdownToggle title='menu' className="table-action">
