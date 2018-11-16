@@ -30,14 +30,14 @@ describe('SelectedRowsActions', () => {
       expect(w.text()).toMatch(/3 rows selected/)
     })
 
-    it('should not appear when there are no rows', () => {
+    it('should state no selection when there are no rows ', () => {
       const w = wrapper({ selectedRowIndexes: [] })
-      expect(w.text()).toBe(null)
+      expect(w.text()).toBe('No selection')
     })
 
-    it('should not appear when there is no wfModuleId', () => {
+    it('should state no selection when there is no wfModuleId', () => {
       const w = wrapper({ wfModuleId: null })
-      expect(w.text()).toBe(null)
+      expect(w.text()).toBe('No selection')
     })
 
     it('should invoke an action with rows as a string, 1-based', () => {
