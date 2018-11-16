@@ -42,10 +42,13 @@ export class OutputPane extends React.Component {
     const { api, isReadOnly, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
 
     let wfm
+    let wfModuleId
     if (wfModuleBeforeError) {
       wfm = wfModuleBeforeError
+      wfModuleId = wfModuleBeforeError.id
     } else if (wfModule && wfModule.status === 'ok') {
       wfm = wfModule
+      wfModuleId = wfm.id
     } else {
       // We're focused on a module that is not ok. It is one of:
       // * 'busy': no results to show (we want to see the previous table, whatever it is)
@@ -55,13 +58,17 @@ export class OutputPane extends React.Component {
       // "see the previous table" is TableSwitcher's domain. Our job is to tell
       // TableSwitcher we don't want to render this wfModule's data.
       wfm = null
+      // TableSwitcher clears the table when you switch WfModules. (Otherwise
+      // it shows the last-good table.) We want the last-good table here, so
+      // we should pass wfModuleId even though we don't want to render the table
+      wfModuleId = wfModule ? wfModule.id : null
     }
 
     // Make a table component even if no module ID (should still show an empty table)
     return (
       <TableSwitcher
         key='table'
-        wfModuleId={wfm ? wfm.id : null}
+        wfModuleId={wfModuleId}
         deltaId={wfm ? wfm.deltaId : null}
         columns={wfm ? wfm.columns : null}
         nRows={wfm ? wfm.nRows : null}
