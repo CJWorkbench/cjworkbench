@@ -409,23 +409,6 @@
         font-size: 1.35rem;
         top: .1rem;
       }
-
-
-      // Alert icons in modules when notifications are set
-      // .notification-badge{
-      //   display: inline-block;
-      //   cursor: pointer;
-      //   line-height:2.3;
-      //   &:hover{background-color: transparent;}
-      //
-      //   i.icon-notification {
-      //     font-size: 1.35rem;
-      //   }
-      //
-      //   span.count {
-      //     font-size: 1rem;
-      //   }
-      // }
     }
   }
 
@@ -451,7 +434,14 @@
       }
     }
   }
+
+  // prompt that isn't an error (module working as expected)
+  &.status-ok .wf-module-error-msg {
+    background-color: $brand-workspace--light;
+    color: $brand-workspace;
+  }
 }
+
 
 // Module placeholder: either DND or placeholder while module is being rendered.
 .wf-module {
