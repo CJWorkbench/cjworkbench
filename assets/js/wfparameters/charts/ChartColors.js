@@ -1,9 +1,9 @@
 export const defaultColors = [
-  '#e24f4a', // brand-red
   '#ffaad3', // brand-learn
-  '#fbaa6d', // brand-orange
   '#48c8d7', // brand-workspace
+  '#fbaa6d', // brand-orange
   '#2daaa8',
+  '#e24f4a', // brand-red
   '#769bb0',
   '#a2a2a2' // medium-gray
 ]
