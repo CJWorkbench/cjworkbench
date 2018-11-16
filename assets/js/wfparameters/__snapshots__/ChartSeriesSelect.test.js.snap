@@ -37,11 +37,11 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
           <ColorPicker
             choices={
               Array [
-                "#e24f4a",
                 "#ffaad3",
-                "#fbaa6d",
                 "#48c8d7",
+                "#fbaa6d",
                 "#2daaa8",
+                "#e24f4a",
                 "#769bb0",
                 "#a2a2a2",
               ]
