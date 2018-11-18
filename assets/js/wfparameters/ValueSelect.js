@@ -1,10 +1,44 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withFetchedData } from './Refine'
+import { List } from 'react-virtualized'
 
 const NumberFormatter = new Intl.NumberFormat()
 
+// TODO: fix CSS for checkmark icon change when selected
 
+class ValueList extends React.PureComponent {
+  static propTypes = {
+    list: PropTypes.array.isRequired
+  }
+
+  // https://github.com/bvaughn/react-virtualized/blob/master/docs/List.md
+  renderRow = ({ key, index, isScrolling, isVisible, style }) => {
+    const item = (
+      <div
+        key={key}
+        style={style}
+      >
+        {this.props.list[index]}
+        </div>
+    )
+    return item
+  }
+  render() {
+    // TODO: set dynamic height
+    // https://bvaughn.github.io/react-virtualized/#/components/List
+    return (
+      <List
+        className={'react-list'}
+        height={300}
+        width={246}
+        rowCount={this.props.list.length}
+        rowHeight={27.78}
+        rowRenderer={this.renderRow}
+      />
+    )
+  }
+}
 
 class ValueItem extends React.PureComponent {
   static propTypes = {
@@ -36,12 +70,7 @@ class ValueItem extends React.PureComponent {
             <span className='count'>{NumberFormatter.format(count)}</span>
           </span>
           <div className='growing'>
-            <input
-              type='text'
-              name={`rename[${name}]`}
-              value={name}
-              disabled
-            />
+            <span>{name}</span>
           </div>
         </div>
       </li>
@@ -179,7 +208,7 @@ export class ValueSelect extends React.PureComponent {
    * Find { name: null } Object enumerating matching group names
    */
   valueMatching = (searchInput) => {
-    let valueCounts = this.props.valueCounts || {}
+    let valueCounts = Object.assign({}, this.props.valueCounts)
 
     const searchKey = searchInput.toLowerCase()
     for (const value in valueCounts) {
@@ -216,11 +245,10 @@ export class ValueSelect extends React.PureComponent {
   render () {
     const { searchInput, selectedValues } = this.state
     const valueCounts = this.props.valueCounts ? this.props.valueCounts : {}
-    const canSearch = this.canSearch
+    const canSearch = Object.keys(valueCounts).length > 1
     const isSearching = (searchInput !== '')
     const matchingValues = isSearching ? this.valueMatching(searchInput) : valueCounts
 
-    // TODO: Segment renders by window size
     // render only matching values
     const valueComponents = Object.keys(matchingValues).map(value => (
       <ValueItem
@@ -231,6 +259,10 @@ export class ValueSelect extends React.PureComponent {
         isSelected={(value in selectedValues)}
       />
     ))
+
+    const valueList = valueComponents.length > 0 ? (
+      <ValueList list={valueComponents} />
+    ) : []
 
     return (
       <div className='refine-parameter'>
@@ -255,17 +287,15 @@ export class ValueSelect extends React.PureComponent {
           </React.Fragment>
         )}
         <ul className='refine-groups'>
-          {valueComponents}
+          {valueList}
         </ul>
-        { (isSearching && matchingValues !== null && matchingValues.length === 0) ? (
+        { (isSearching && canSearch && valueComponents.length === 0) ? (
           <div className='wf-module-error-msg'>No values</div>
         ) : null}
       </div>
     )
   }
 }
-
-
 
 //TODO: Change
 export default withFetchedData(ValueSelect, 'valueCounts')
