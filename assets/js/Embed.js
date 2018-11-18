@@ -50,7 +50,7 @@ export default class Embed extends React.Component {
         <div className="embed-footer">
           <div className="metadata-stack">
             <div className="embed-footer-logo">
-              <a href="/">
+              <a href="/" target="_blank">
                 <img src={`${window.STATIC_URL}images/logo.png`} width="35" />
               </a>
             </div>
