@@ -19,6 +19,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       >
         <a
           href="/"
+          target="_blank"
         >
           <img
             src="undefinedimages/logo.png"
@@ -34,6 +35,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         >
           <a
             href="/workflows/1"
+            target="_blank"
           >
             Workflow Title
           </a>
@@ -49,6 +51,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
             >
               <a
                 href="/workflows/1"
+                target="_blank"
               >
                 by 
                 Workflow Owner Name
@@ -64,6 +67,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
             >
               <a
                 href="/workflows/1"
+                target="_blank"
               >
                 Updated 
                 now
