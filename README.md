@@ -22,7 +22,7 @@
 </table>
 
 
-#  The data journalism platform with built-in training
+#  Data workspaces, made simple.
 
 Welcome to Workbench! (CJ for computational journalism)
 
