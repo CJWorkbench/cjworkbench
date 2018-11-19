@@ -43,7 +43,6 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 
 <div align="center">
   <iframe src="https://player.vimeo.com/video/295956416?color=ffaad2&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p><a href="https://vimeo.com/295956416">Workbench - product - 45 sec</a> from <a href="https://vimeo.com/oneantred">Wireframe Pictures</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
 </div>
 
 # User Documentation
