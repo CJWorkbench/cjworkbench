@@ -42,7 +42,7 @@ Workbench is a platform that combines data tools and training for journalists. I
 To see what Workbench does, try our [public server](http://workbenchdata.org), now in beta. Or run your [own server](https://github.com/CJWorkbench/cjworkbench/wiki/Deployment).
 
 <div align="center">
-  <iframe src="https://player.vimeo.com/video/295956416?color=ffaad2&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen/>
+  <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/demoSignup.gif"><br>
 </div>
 
 # User Documentation
