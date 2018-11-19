@@ -14,8 +14,9 @@
 <tr>
   <td>Gitter</td>
     <td>
-      <iframe src="https://player.vimeo.com/video/295956416?color=ffaad2&title=0&byline=0&portrait=0" width="640" height="360"        frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-       <p><a href="https://vimeo.com/295956416">Workbench - product - 45 sec</a> from <a                href="https://vimeo.com/oneantred">Wireframe Pictures</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+       <a href="https://gitter.im/workbenchdata/Lobby">
+        <img src="https://badges.gitter.im/Join%20Chat.svg" />
+      </a>
   </td>
 </tr>
 </table>
