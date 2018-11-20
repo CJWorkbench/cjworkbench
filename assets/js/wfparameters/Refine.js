@@ -631,7 +631,7 @@ export class Refine extends React.PureComponent {
 // https://reactjs.org/docs/higher-order-components.html
 //
 // Let's keep this generic and maybe make it into a reusable util later.
-function withFetchedData(WrappedComponent, dataName) {
+export default function withFetchedData(WrappedComponent, dataName) {
   return class extends React.PureComponent {
     static propTypes = {
       fetchData: PropTypes.func.isRequired, // fn() => Promise[data]
@@ -690,4 +690,4 @@ function withFetchedData(WrappedComponent, dataName) {
   }
 }
 
-export default withFetchedData(Refine, 'valueCounts')
+//export default withFetchedData(Refine, 'valueCounts')

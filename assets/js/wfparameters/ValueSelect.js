@@ -1,44 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withFetchedData } from './Refine'
+import withFetchedData  from './Refine'
 import { List } from 'react-virtualized'
 
 const NumberFormatter = new Intl.NumberFormat()
-
-// TODO: fix CSS for checkmark icon change when selected
-
-class ValueList extends React.PureComponent {
-  static propTypes = {
-    list: PropTypes.array.isRequired
-  }
-
-  // https://github.com/bvaughn/react-virtualized/blob/master/docs/List.md
-  renderRow = ({ key, index, isScrolling, isVisible, style }) => {
-    const item = (
-      <div
-        key={key}
-        style={style}
-      >
-        {this.props.list[index]}
-        </div>
-    )
-    return item
-  }
-  render() {
-    // TODO: set dynamic height
-    // https://bvaughn.github.io/react-virtualized/#/components/List
-    return (
-      <List
-        className={'react-list'}
-        height={300}
-        width={246}
-        rowCount={this.props.list.length}
-        rowHeight={27.78}
-        rowRenderer={this.renderRow}
-      />
-    )
-  }
-}
 
 class ValueItem extends React.PureComponent {
   static propTypes = {
@@ -145,6 +110,9 @@ export class ValueSelect extends React.PureComponent {
     selectedValues: this.mapPropValues()
   }
 
+  valueComponentsRef = React.createRef()
+  valueListRef = React.createRef()
+
   /**
    * Return "groups": outputs, and their input
    *
@@ -154,17 +122,6 @@ export class ValueSelect extends React.PureComponent {
    * * `values`: strings describing the desired input; empty if no edits
    * * `isBlacklisted`: true if we are omitting this group from output
    */
-
-  // faster way of determining if there are more than 1 values
-  // without copying entire list into memory
-  get canSearch () {
-    let count = 0
-    for (const value in this.props.valueCounts) {
-      count++
-      if (count > 1) return true
-    }
-    return false
-  }
 
   // takes JSON encoded array and maps to {value1: null, value2: null}
   mapPropValues () {
@@ -196,6 +153,7 @@ export class ValueSelect extends React.PureComponent {
   onChange = () => {
     const selectedList = this.toJsonString()
     this.props.onChange(selectedList)
+    this.valueListRef.forceUpdateGrid()
   }
 
   toJsonString = () => {
@@ -242,6 +200,16 @@ export class ValueSelect extends React.PureComponent {
     this.setState({ selectedValues: selectedValues }, () => { this.onChange() })
   }
 
+  // https://github.com/bvaughn/react-virtualized/blob/master/docs/List.md
+  renderRow = ({ key, index, isScrolling, isVisible, style }) => {
+    const item = (
+      <div key={key} style={style}>
+        {this.valueComponentsRef[index]}
+      </div>
+    )
+    return item
+  }
+
   render () {
     const { searchInput, selectedValues } = this.state
     const valueCounts = this.props.valueCounts ? this.props.valueCounts : {}
@@ -259,11 +227,20 @@ export class ValueSelect extends React.PureComponent {
         isSelected={(value in selectedValues)}
       />
     ))
-
+    this.valueComponentsRef = valueComponents
+    const rowHeight = 27.78
     const valueList = valueComponents.length > 0 ? (
-      <ValueList list={valueComponents} />
-    ) : []
-
+      <List
+        className={'react-list'}
+        height={
+          rowHeight * valueComponents.length > 300 ? 300 : rowHeight * valueComponents.length
+        }
+        width={246}
+        rowCount={valueComponents.length}
+        rowHeight={rowHeight}
+        rowRenderer={this.renderRow}
+        ref={(ref) => { this.valueListRef = ref }}
+      />) : null
     return (
       <div className='refine-parameter'>
         { !canSearch ? null : (

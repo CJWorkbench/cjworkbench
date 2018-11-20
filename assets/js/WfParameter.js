@@ -284,7 +284,6 @@ export default class WfParameter extends React.PureComponent {
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
             value={this.props.p.value}
             onChange={this.paramChanged}
-            isSelectOnly
           />
         )
 //      case 'map-geojson':
