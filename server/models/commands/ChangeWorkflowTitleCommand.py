@@ -18,13 +18,11 @@ class ChangeWorkflowTitleCommand(Delta):
     async def create(cls, workflow, name):
         old_name = workflow.name
 
-        delta = await cls.create_impl(
+        return await cls.create_impl(
             workflow=workflow,
             new_value=name,
             old_value=old_name
         )
-
-        return delta
 
     @property
     def command_description(self):

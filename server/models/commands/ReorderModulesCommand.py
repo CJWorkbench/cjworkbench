@@ -6,8 +6,9 @@ from .util import ChangesWfModuleOutputs
 
 
 class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
-    # For simplicity and compactness, we store the order of modules as json strings
-    # in the same format as the patch request: [ { id: x, order: y}, ... ]
+    # For simplicity and compactness, we store the order of modules as json
+    # strings in the same format as the patch request:
+    # [ { id: x, order: y}, ... ]
     old_order = models.TextField()
     new_order = models.TextField()
     dependent_wf_module_last_delta_ids = \
@@ -42,14 +43,16 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
         self.apply_order(json.loads(self.old_order))
 
     @classmethod
-    async def create(cls, workflow, new_order):
+    def amend_create_kwargs(cls, *, workflow, new_order, **kwargs):
         # Validation: all id's and orders exist and orders are in range 0..n-1
         wfms = list(workflow.wf_modules.all())
 
         ids = [wfm.id for wfm in wfms]
         for record in new_order:
             if not isinstance(record, dict):
-                raise ValueError('JSON data must be an array of {id:x, order:y} objects')
+                raise ValueError(
+                    'JSON data must be an array of {id:x, order:y} objects'
+                )
             if 'id' not in record:
                 raise ValueError('Missing WfModule id')
             if record['id'] not in ids:
@@ -62,14 +65,17 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
         if orders != list(range(0, len(orders))):
             raise ValueError('WfModule orders must be in range 0..n-1')
 
-        # Looks good, let's reorder
-        delta = await cls.create_impl(
-            workflow=workflow,
-            old_order=json.dumps([{'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
-            new_order=json.dumps(new_order)
-        )
+        return {
+            **kwargs,
+            'workflow': workflow,
+            'old_order': json.dumps([{'id': wfm.id, 'order': wfm.order}
+                                     for wfm in wfms]),
+            'new_order': json.dumps(new_order),
+        }
 
-        return delta
+    @classmethod
+    async def create(cls, workflow, new_order):
+        return await cls.create_impl(workflow=workflow, new_order=new_order)
 
     @property
     def command_description(self):

@@ -38,14 +38,12 @@ class ChangeParameterCommand(Delta, ChangesWfModuleOutputs):
     async def create(cls, parameter_val, value):
         workflow = parameter_val.wf_module.workflow
 
-        delta = await cls.create_impl(
+        return await cls.create_impl(
             parameter_val=parameter_val,
             new_value=value or '',
             old_value=parameter_val.value,
             workflow=workflow
         )
-
-        return delta
 
     @property
     def command_description(self):

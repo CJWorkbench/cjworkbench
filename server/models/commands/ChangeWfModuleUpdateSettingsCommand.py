@@ -27,7 +27,7 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
     @classmethod
     async def create(cls, wf_module, auto_update_data,
                      next_update, update_interval):
-        delta = await cls.create_impl(
+        return await cls.create_impl(
             workflow=wf_module.workflow,
             wf_module=wf_module,
             old_auto=wf_module.auto_update_data,
@@ -37,8 +37,6 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
             old_update_interval=wf_module.update_interval,
             new_update_interval=update_interval
         )
-
-        return delta
 
     @property
     def command_description(self):
