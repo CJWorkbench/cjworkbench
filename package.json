@@ -17,6 +17,7 @@
     "react-redux": "^5.0.7",
     "react-select": "^2.0.0",
     "react-textarea-autosize": "^7.0.4",
+    "react-virtualized": "^9.21.0",
     "reactstrap": "^6.5.0",
     "redux": "^4.0.1",
     "redux-promise-middleware": "^5.1.1",

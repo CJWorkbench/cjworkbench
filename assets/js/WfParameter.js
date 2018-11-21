@@ -20,6 +20,7 @@ import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
 import RadioParam from './wfparameters/RadioParam'
 import MultiLineTextArea from './wfparameters/MultiLineTextArea'
+import ValueSelect from './wfparameters/ValueSelect'
 //import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 //import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 //import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
@@ -278,12 +279,11 @@ export default class WfParameter extends React.PureComponent {
         )
       case 'valueselect':
         return (
-          <Refine
+          <ValueSelect
             fetchData={this.getInputValueCounts}
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
             value={this.props.p.value}
             onChange={this.paramChanged}
-            isSelectOnly
           />
         )
 //      case 'map-geojson':
