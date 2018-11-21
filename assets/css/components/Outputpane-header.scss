@@ -37,6 +37,7 @@
     .dropdown .table-action {
       @extend .action-button;
       @extend .button-orange;
+      min-width: 15rem;
 
       &:Active {
         background-color: lighten($brand-orange,18%);
