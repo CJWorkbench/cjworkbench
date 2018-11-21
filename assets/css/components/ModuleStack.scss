@@ -73,37 +73,38 @@
       z-index: 3; // appear above other modules/in-betweens
     }
 
-    button.search {
-      // The whole element is one big button. Most of the button appears to
-      // be invisible; but the big borders are part of the button, so they're
-      // clickable/hoverable.
-      display: block;
-      position: absolute;
-      width: $module-width;
-      height: 100%;
-      cursor: pointer;
-      border: 0;
-      font-size: 1rem;
-      color: transparent;
-      background: transparent;
-      margin: 0;
-      padding: 0;
-
-      i {
-        position: absolute;
-        left: 50%;
-        margin-left: -.4rem;
-        top: 3px;
-        font-size: 1rem;
-      }
-    }
-
     .add-hover {
       position: absolute;
       width: 100%;
       height: 100%;
       z-index: 2;
       cursor: default;
+
+      button.search {
+        // The whole element is one big button. Most of the button appears to
+        // be invisible; but the big borders are part of the button, so they're
+        // clickable/hoverable.
+        display: block;
+        position: absolute;
+        width: $module-width;
+        height: 100%;
+        cursor: pointer;
+        border: 0;
+        font-size: 1rem;
+        color: transparent;
+        background: transparent;
+        margin: 0;
+        padding: 0;
+        border-radius: 1rem;
+
+        i {
+          position: absolute;
+          left: 50%;
+          margin-left: -.4rem;
+          top: 3px;
+          font-size: 1rem;
+        }
+      }
 
       &:hover button.search {
         background: $brand-background;
