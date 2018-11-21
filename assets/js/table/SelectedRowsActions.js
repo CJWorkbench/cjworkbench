@@ -97,7 +97,7 @@ export class SelectedRowsActions extends React.PureComponent {
     return (
       <UncontrolledDropdown>
         <DropdownToggle title='menu' className="table-action">
-          Select rows
+          No row selected
         </DropdownToggle>
       </UncontrolledDropdown>
     )
