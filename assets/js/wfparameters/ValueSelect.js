@@ -37,11 +37,9 @@ class ValueItem extends React.PureComponent {
             checked={this.props.isSelected}
             onChange={this.onChangeIsSelected}
           />
-          <span className='count-and-reset'>
+          <div className="container">
+            <span className='value'>{name}</span>
             <span className='count'>{NumberFormatter.format(count)}</span>
-          </span>
-          <div className='growing'>
-            <span>{name}</span>
           </div>
         </div>
       </li>
@@ -255,7 +253,7 @@ export class ValueSelect extends React.PureComponent {
       />) : null
 
     return (
-      <div className='refine-parameter'>
+      <div className='value-parameter'>
         { !canSearch ? null : (
           <React.Fragment>
             <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
@@ -276,7 +274,7 @@ export class ValueSelect extends React.PureComponent {
             />
           </React.Fragment>
         )}
-        <ul className='refine-groups'>
+        <ul className='value-groups'>
           {valueList}
         </ul>
         { (isSearching && canSearch && valueComponents.length === 0) ? (

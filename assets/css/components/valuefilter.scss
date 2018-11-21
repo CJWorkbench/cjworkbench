@@ -1,0 +1,26 @@
+.module-card-params {
+
+    .value-parameter .value-groups {
+      margin-top: 1rem;
+      padding: 0;
+
+    .ReactVirtualized__Grid:focus {
+      outline: none;
+    }
+    .ReactVirtualized__Grid__innerScrollContainer .summary {
+      @extend .content-3;
+      font-size: 1.3rem;
+      display: flex;
+
+      .container {
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+
+        .count {
+          font-weight: 200;
+        }
+      }
+    }
+  }
+}
