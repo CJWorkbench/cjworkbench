@@ -37,6 +37,7 @@
     .dropdown .table-action {
       @extend .action-button;
       @extend .button-orange;
+      background-color: lighten($brand-orange,27%);
       min-width: 15rem;
 
       &:Active {
@@ -48,6 +49,17 @@
         background-color: lighten($brand-orange,23%);
         color: darken($brand-orange,10%);
       }
+    }
+
+    .dropdown .table-action--inactive {
+      @extend .action-button;
+      @extend .button-gray;
+      opacity: .9;
+      min-width: 15rem;
+      cursor: default;
+
+      &:hover {background-color: transparent}
+      &:focus {background-color: transparent}
     }
 
     .dropdown-menu {

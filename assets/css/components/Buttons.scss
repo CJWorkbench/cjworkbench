@@ -329,7 +329,10 @@ button:focus { outline:0 !important; }
   color: $brand-orange;
   border-color: $brand-orange ;
   background-color: transparent;
-  &:hover {background-color: $brand-orange--light}
+  &:hover {
+    background-color: $brand-orange--light;
+    color: darken($brand-orange,10%);
+  }
   &:active {
     background: $brand-orange;
     color: $white;

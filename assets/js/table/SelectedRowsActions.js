@@ -96,7 +96,7 @@ export class SelectedRowsActions extends React.PureComponent {
     if (!wfModuleId || selectedRowIndexes.length === 0)
     return (
       <UncontrolledDropdown>
-        <DropdownToggle title='menu' className="table-action">
+        <DropdownToggle title='menu' className="table-action--inactive">
           No row selected
         </DropdownToggle>
       </UncontrolledDropdown>
