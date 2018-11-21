@@ -1,10 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import withFetchedData  from './Refine'
+import { withFetchedData } from './FetchedData'
 import { List } from 'react-virtualized'
+import memoize from 'memoize-one'
 
 const NumberFormatter = new Intl.NumberFormat()
 
+// TODO: Change class names to move away from Refine and update CSS
+
+/**
+ * Displays a list item of check box, name (of value), and count
+ */
 class ValueItem extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string, // new value -- may be empty string
@@ -79,62 +85,47 @@ export class AllNoneButtons extends React.PureComponent {
 }
 
 /**
- * Edit a column's values to become "groups", then blacklist unwanted groups.
- *
- * The "value" here is a JSON-encoded String. Its format:
- *
- *     {
- *         "renames": {
- *             "foo": "bar", // "edit every 'foo' value to become 'bar'"
- *             //      ^^^ from the user's point of view, "bar" is the "group"
- *             ...
- *         },
- *         "blacklist": [
- *             "bar", // "Filter out every row where the post-rename value is "bar"
- *         ]
- *     }
+ * The "value" here is a JSON-encoded String: `["value1", "value2"]`
  *
  * `valueCounts` describes the input: `{ "foo": 1, "bar": 3, ... }`
+ *
+ * A JSON encoded string of _checked_ items is returned through onChange(): `["value1", "value2", value5"]`
  */
 export class ValueSelect extends React.PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
     loading: PropTypes.bool.isRequired, // true iff loading from server
-    value: PropTypes.string.isRequired, // JSON-encoded ['value1', 'value2']}
-    onChange: PropTypes.func.isRequired // fn(['newvalue1', 'newvalue2']}) => undefined
+    value: PropTypes.string.isRequired, // JSON-encoded `["value1", "value2"]}`
+    onChange: PropTypes.func.isRequired // fn(JSON.stringify(['value1', 'value2', 'value5']))
   }
-
-  // selectedValues = { value1: null } for fast lookup when removing or adding values
+  /** searchInput is the textbox string input from the user **/
   state = {
-    searchInput: '',
-    selectedValues: this.mapPropValues()
+    searchInput: ''
   }
-
+  /** references valueComponents, list of ValueItem to be consumed by 'renderRow()' **/
   valueComponentsRef = React.createRef()
+  /** references virtualized valueList to force re-render in 'onChange()' when an item is checked/unchecked **/
   valueListRef = React.createRef()
 
   /**
-   * Return "groups": outputs, and their input
+   * Return "selectedValues" in object form for fast lookup:
    *
-   * Each "group" has the following properties:
-   *
-   * * `name`: a string describing the desired output
-   * * `values`: strings describing the desired input; empty if no edits
-   * * `isBlacklisted`: true if we are omitting this group from output
+   * {value1: null, value2: null, value5: null}
    */
-
-  // takes JSON encoded array and maps to {value1: null, value2: null}
-  mapPropValues () {
-    if (this.props.value) {
-      const selectedList = JSON.parse(this.props.value)
-      let selectedValues = {}
-      for (const value in selectedList) {
-        selectedValues[selectedList[value]] = null
-      }
-      return selectedValues
-    }
+  get selectedValues () {
+    if (this.props.value) return this.selectedValuesObject(this.props.value)
     return {}
   }
+
+  /** takes JSON encoded `[value1, value2]` and maps to {value1: null, value2: null} **/
+  selectedValuesObject = memoize(values => {
+    const selectedList = JSON.parse(values)
+    let selectedValues = {}
+    for (const index in selectedList) {
+      selectedValues[selectedList[index]] = null
+    }
+    return selectedValues
+  })
 
   onReset = () => {
     this.setState({ searchInput: '' })
@@ -149,25 +140,21 @@ export class ValueSelect extends React.PureComponent {
     this.setState({ searchInput })
   }
 
-  // convert blacklist = {value1: null, value2: null} to ['value1', 'value2']
-  onChange = () => {
-    const selectedList = this.toJsonString()
-    this.props.onChange(selectedList)
+  /** convert {value1: null, value2: null} to JSON encoded ['value1', 'value2'] to return **/
+  onChange = (selectedValues) => {
+    const json = this.toJsonString(selectedValues)
+    this.props.onChange(json)
     this.valueListRef.forceUpdateGrid()
   }
 
-  toJsonString = () => {
-    let selectedValues = Object.assign({}, this.state.selectedValues)
+  toJsonString = (selectedValues) => {
     const json = JSON.stringify(Object.keys(selectedValues))
     return json
   }
 
-  /**
-   * Find { name: null } Object enumerating matching group names
-   */
+  /** Reduce list from valueCounts to only match search input for faster rendering of ValueItem list**/
   valueMatching = (searchInput) => {
     let valueCounts = Object.assign({}, this.props.valueCounts)
-
     const searchKey = searchInput.toLowerCase()
     for (const value in valueCounts) {
       if (!value.toLowerCase().includes(searchKey)) {
@@ -177,18 +164,36 @@ export class ValueSelect extends React.PureComponent {
     return valueCounts
   }
 
+  sortValueCount = () => {
+    const valueCounts = this.props.valueCounts
+    const items = Object.keys(valueCounts).map(key => {
+      return [key, valueCounts[key]]
+    })
+    items.sort(function (a, b) {
+      return b[1] - a[1]
+    })
+    const sortedValueCounts = {}
+    for (const index in items) {
+      const value = items[index][0]
+      const count = items[index][1]
+      sortedValueCounts[value] = count
+    }
+    return sortedValueCounts
+  }
+
+  /** Add/Remove from selectedValues and return when checked/unchecked **/
   onChangeIsSelected = (value, isSelected) => {
-    let selectedValues = Object.assign({}, this.state.selectedValues)
+    let selectedValues = this.selectedValues
     if (isSelected) {
       selectedValues[value] = null
     } else {
       delete selectedValues[value]
     }
-    this.setState({ selectedValues: selectedValues }, () => { this.onChange() })
+    this.onChange(selectedValues)
   }
 
   clearSelectedValues = () => {
-    this.setState({ selectedValues: {} }, () => { this.onChange() })
+    this.onChange({})
   }
 
   fillSelectedValues = () => {
@@ -197,10 +202,10 @@ export class ValueSelect extends React.PureComponent {
     for (const value in valueCounts) {
       selectedValues[value] = null
     }
-    this.setState({ selectedValues: selectedValues }, () => { this.onChange() })
+    this.onChange(selectedValues)
   }
 
-  // https://github.com/bvaughn/react-virtualized/blob/master/docs/List.md
+  /** Used by react-virtualized to only render rows in module viewport **/
   renderRow = ({ key, index, isScrolling, isVisible, style }) => {
     const item = (
       <div key={key} style={style}>
@@ -211,8 +216,9 @@ export class ValueSelect extends React.PureComponent {
   }
 
   render () {
-    const { searchInput, selectedValues } = this.state
-    const valueCounts = this.props.valueCounts ? this.props.valueCounts : {}
+    const { searchInput } = this.state
+    const selectedValues = this.selectedValues
+    const valueCounts = this.props.valueCounts ? this.sortValueCount() : {}
     const canSearch = Object.keys(valueCounts).length > 1
     const isSearching = (searchInput !== '')
     const matchingValues = isSearching ? this.valueMatching(searchInput) : valueCounts
@@ -228,6 +234,12 @@ export class ValueSelect extends React.PureComponent {
       />
     ))
     this.valueComponentsRef = valueComponents
+
+    /** TODO: Hardcoded row heights and width for now for simplicity, in the future we'll need to implement:
+     *  https://github.com/bvaughn/react-virtualized/blob/master/docs/CellMeasurer.md
+     *
+     *  Viewport capped at 10 items, if less than 10 height is adjusted accordingly
+     */
     const rowHeight = 27.78
     const valueList = valueComponents.length > 0 ? (
       <List
@@ -241,6 +253,7 @@ export class ValueSelect extends React.PureComponent {
         rowRenderer={this.renderRow}
         ref={(ref) => { this.valueListRef = ref }}
       />) : null
+
     return (
       <div className='refine-parameter'>
         { !canSearch ? null : (
@@ -274,5 +287,4 @@ export class ValueSelect extends React.PureComponent {
   }
 }
 
-//TODO: Change
 export default withFetchedData(ValueSelect, 'valueCounts')
