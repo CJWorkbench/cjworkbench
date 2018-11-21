@@ -53,12 +53,15 @@
 
     .dropdown .table-action--inactive {
       @extend .action-button;
-      @extend .button-gray;
+      @extend .button-dark-blue;
       opacity: .9;
       min-width: 15rem;
       cursor: default;
 
-      &:hover {background-color: transparent}
+      &:hover {
+        background-color: transparent;
+        color: $table-header;
+      }
       &:focus {background-color: transparent}
     }
 
@@ -89,7 +92,7 @@
     align-items: center;
     margin-right: 2.25rem;
     border-color: transparent;
-    color: $table-element;
+    color: $table-header;
     background-color: white;
     cursor: pointer;
 
@@ -105,7 +108,7 @@
     .feed {
       margin-left: 1rem;
       padding-left: 1rem;
-      border-left: 1px solid $table-element--light;
+      border-left: 1px solid $table-header--light;
     }
   }
 }
