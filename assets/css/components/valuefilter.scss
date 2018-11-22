@@ -1,25 +1,45 @@
 .module-card-params {
 
-    .value-parameter .value-groups {
+    .value-parameter .value-list {
       margin-top: 1rem;
       padding: 0;
+      list-style: none;
+      max-height: 30rem;
 
     .ReactVirtualized__Grid:focus {
       outline: none;
     }
-    .ReactVirtualized__Grid__innerScrollContainer .summary {
+    .ReactVirtualized__Grid__innerScrollContainer .value {
       @extend .content-3;
       font-size: 1.3rem;
-      display: flex;
+      display: inline;
 
-      .container {
-        display: flex;
-        justify-content: space-between;
-        padding: 0;
+      .checkbox {
+        display: inline-block;
+        vertical-align: middle;
 
-        .count {
-          font-weight: 200;
+        &::after {
+          top: -2px;
         }
+      }
+
+      .name {
+        vertical-align: middle;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 19rem;
+        margin-top: .1rem;
+
+      }
+
+      .count {
+        margin-top: .1rem;
+        vertical-align: middle;
+        display: inline-block;
+        font-weight: 200;
+        float: right;
       }
     }
   }

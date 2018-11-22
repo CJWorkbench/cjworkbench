@@ -94,13 +94,13 @@ export class SelectedRowsActions extends React.PureComponent {
     const { selectedRowIndexes, wfModuleId, rowActionModules } = this.props
 
     if (!wfModuleId || selectedRowIndexes.length === 0)
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle title='menu' className="table-action--inactive">
-          No row selected
-        </DropdownToggle>
-      </UncontrolledDropdown>
-    )
+      return (
+        <UncontrolledDropdown>
+          <DropdownToggle title='menu' className="table-action--inactive">
+            No row selected
+          </DropdownToggle>
+        </UncontrolledDropdown>
+      )
 
     const actions = rowActionModules.map(({ id, title }) => (
       <Action key={id} id={id} title={title} onClick={this.onClickAction} />

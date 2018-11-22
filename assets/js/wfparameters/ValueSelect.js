@@ -28,21 +28,18 @@ class ValueItem extends React.PureComponent {
     const className = 'visible original'
 
     return (
-      <li className={className}>
-        <div className='summary'>
-          <input
-            name={`include[${name}]`}
-            type='checkbox'
-            title='Include these rows'
-            checked={this.props.isSelected}
-            onChange={this.onChangeIsSelected}
-          />
-          <div className="container">
-            <span className='value'>{name}</span>
-            <span className='count'>{NumberFormatter.format(count)}</span>
-          </div>
-        </div>
-      </li>
+      <div className="value">
+        <input
+          className="checkbox"
+          name={`include[${name}]`}
+          type='checkbox'
+          title='Include these rows'
+          checked={this.props.isSelected}
+          onChange={this.onChangeIsSelected}
+        />
+        <div className='name'>{name}</div>
+        <div className='count'>{NumberFormatter.format(count)}</div>
+      </div>
     )
   }
 }
@@ -274,9 +271,9 @@ export class ValueSelect extends React.PureComponent {
             />
           </React.Fragment>
         )}
-        <ul className='value-groups'>
+        <div className='value-list'>
           {valueList}
-        </ul>
+        </div>
         { (isSearching && canSearch && valueComponents.length === 0) ? (
           <div className='wf-module-error-msg'>No values</div>
         ) : null}
