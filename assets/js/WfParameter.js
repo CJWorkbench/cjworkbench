@@ -396,7 +396,7 @@ export default class WfParameter extends React.PureComponent {
             <div {...this.outerDivProps}>
               <div className='label-margin t-d-gray content-3'>{name}</div>
               <MultiLineTextArea
-                readOnly={this.props.isReadOnly}
+                isReadOnly={this.props.isReadOnly}
                 name={id_name}
                 value={this.props.value}
                 initialValue={this.props.p.value}
