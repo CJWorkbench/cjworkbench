@@ -201,6 +201,7 @@ export class ValueSelect extends React.PureComponent {
     const isSearching = (searchInput !== '')
     const matchingValues = isSearching ? this.valueMatching(searchInput) : this.sortedValues
 
+    // FIXME [adamhooper, 2018-11-22] render lazily -- in renderRow()
     const valueComponents = matchingValues.map(value => (
       <ValueItem
         key={value}
