@@ -15,19 +15,19 @@ describe('ValueSelect', () => {
     />
   )
 
-  it('should render value counts in order', () => {
+  it('should render value texts in order', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 2 },
       value: ''
     })
 
-    const dt1 = w.find('.summary').at(0)
-    expect(dt1.find('.growing').text()).toEqual('b')
-    expect(dt1.find('.count').text()).toEqual('2')
+    const value1 = w.find('.value').at(0)
+    expect(value1.find('.text').text()).toEqual('a')
+    expect(value1.find('.count').text()).toEqual('1')
 
-    const dt2 = w.find('.summary').at(1)
-    expect(dt2.find('.growing').text()).toEqual('a')
-    expect(dt2.find('.count').text()).toEqual('1')
+    const value2 = w.find('.value').at(1)
+    expect(value2.find('.text').text()).toEqual('b')
+    expect(value2.find('.count').text()).toEqual('2')
   })
 
   it('should render commas in value counts', () => {
@@ -45,7 +45,7 @@ describe('ValueSelect', () => {
       value: JSON.stringify({ 'a': 'b' })
     })
 
-    expect(w.find('span')).toHaveLength(0)
+    expect(w.find('.text')).toHaveLength(0)
   })
 
   it('should show appropriate state', () => {
@@ -55,14 +55,14 @@ describe('ValueSelect', () => {
     })
 
     // 'a': selected value ("shown" checkbox is checked)
-    expect(w.find('.summary').at(0).find('input[type="checkbox"]').prop('checked')).toBe(true)
+    expect(w.find('.value').at(0).find('input[type="checkbox"]').prop('checked')).toBe(true)
     // 'b': not selected value ("shown" checkbox is unchecked)
-    expect(w.find('.summary').at(1).find('input[type="checkbox"]').prop('checked')).toBe(false)
+    expect(w.find('.value').at(1).find('input[type="checkbox"]').prop('checked')).toBe(false)
 
     const changeCalls = w.prop('onChange').mock.calls
 
     // Add 'b' to selected values
-    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
+    w.find('.value').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
     expect(changeCalls).toHaveLength(1)
     expect(JSON.parse(changeCalls[0][0])).toEqual([ 'a', 'b' ])
 
@@ -74,20 +74,20 @@ describe('ValueSelect', () => {
       valueCounts: { 'a': 2, 'b': 1 },
       value: changeCalls[0][0]
     })
-    expect(w2.find('.summary').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
+    expect(w2.find('.value').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
   })
 
-  it('should find search results within both group names and members', () => {
+  it('should find search results', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
       value: JSON.stringify([])
     })
-    // Ensure all values initially rendered
-    expect(w.find('.visible').children()).toHaveLength(5)
 
-    w.find('input[type="search"]').simulate('change', {target: {value: 'b'}})
+    expect(w.find('.value')).toHaveLength(5)
+
+    w.find('input[type="search"]').simulate('change', { target: { value: 'b' }})
     w.update()
-    expect(w.find('.summary')).toHaveLength(2)
+    expect(w.find('.value')).toHaveLength(2)
   })
 
   it('should set the value to [] when "None" pressed', () => {

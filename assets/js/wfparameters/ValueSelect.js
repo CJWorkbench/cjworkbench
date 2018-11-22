@@ -25,19 +25,17 @@ class ValueItem extends React.PureComponent {
 
   render () {
     const { count, name } = this.props
-    const className = 'visible original'
 
     return (
       <div className="value">
         <input
-          className="checkbox"
           name={`include[${name}]`}
           type='checkbox'
           title='Include these rows'
           checked={this.props.isSelected}
           onChange={this.onChangeIsSelected}
         />
-        <div className='name'>{name}</div>
+        <div className='text'>{name}</div>
         <div className='count'>{NumberFormatter.format(count)}</div>
       </div>
     )
@@ -112,6 +110,11 @@ export class ValueSelect extends React.PureComponent {
     return {}
   }
 
+  get sortedValues () {
+    if (this.props.valueCounts) return this.getSortedValues(this.props.valueCounts)
+    return []
+  }
+
   /** takes JSON encoded `[value1, value2]` and maps to {value1: null, value2: null} **/
   selectedValuesObject = memoize(values => {
     const selectedList = JSON.parse(values)
@@ -120,6 +123,10 @@ export class ValueSelect extends React.PureComponent {
       selectedValues[selectedList[index]] = null
     }
     return selectedValues
+  })
+
+  getSortedValues = memoize(valueCounts => {
+    return Object.keys(valueCounts).sort((a, b) => a.localeCompare(b))
   })
 
   onReset = () => {
@@ -139,7 +146,7 @@ export class ValueSelect extends React.PureComponent {
   onChange = (selectedValues) => {
     const json = this.toJsonString(selectedValues)
     this.props.onChange(json)
-    this.valueListRef.forceUpdateGrid()
+    this.valueListRef.forceUpdateGrid() // FIXME [adamhooper, 2018-11-22] delete this line and fix the underlying issue
   }
 
   toJsonString = (selectedValues) => {
@@ -147,33 +154,9 @@ export class ValueSelect extends React.PureComponent {
     return json
   }
 
-  /** Reduce list from valueCounts to only match search input for faster rendering of ValueItem list**/
   valueMatching = (searchInput) => {
-    let valueCounts = Object.assign({}, this.props.valueCounts)
     const searchKey = searchInput.toLowerCase()
-    for (const value in valueCounts) {
-      if (!value.toLowerCase().includes(searchKey)) {
-        delete valueCounts[value]
-      }
-    }
-    return valueCounts
-  }
-
-  sortValueCount = () => {
-    const valueCounts = this.props.valueCounts
-    const items = Object.keys(valueCounts).map(key => {
-      return [key, valueCounts[key]]
-    })
-    items.sort(function (a, b) {
-      return b[1] - a[1]
-    })
-    const sortedValueCounts = {}
-    for (const index in items) {
-      const value = items[index][0]
-      const count = items[index][1]
-      sortedValueCounts[value] = count
-    }
-    return sortedValueCounts
+    return this.sortedValues.filter(v => v.toLowerCase().includes(searchKey))
   }
 
   /** Add/Remove from selectedValues and return when checked/unchecked **/
@@ -212,18 +195,17 @@ export class ValueSelect extends React.PureComponent {
 
   render () {
     const { searchInput } = this.state
+    const { valueCounts } = this.props
     const selectedValues = this.selectedValues
-    const valueCounts = this.props.valueCounts ? this.sortValueCount() : {}
-    const canSearch = Object.keys(valueCounts).length > 1
+    const canSearch = this.sortedValues.length > 1
     const isSearching = (searchInput !== '')
-    const matchingValues = isSearching ? this.valueMatching(searchInput) : valueCounts
+    const matchingValues = isSearching ? this.valueMatching(searchInput) : this.sortedValues
 
-    // render only matching values
-    const valueComponents = Object.keys(matchingValues).map(value => (
+    const valueComponents = matchingValues.map(value => (
       <ValueItem
         key={value}
         name={value}
-        count={matchingValues[value]}
+        count={valueCounts[value]}
         onChangeIsSelected={this.onChangeIsSelected}
         isSelected={(value in selectedValues)}
       />
