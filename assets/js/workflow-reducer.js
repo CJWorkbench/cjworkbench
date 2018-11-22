@@ -27,9 +27,6 @@ const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE = 'SET_WF_MODULE'
 const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
 
-// Parameter
-const SET_PARAM_VALUE = 'SET_PARAM_VALUE'
-
 // Data versions/notifications
 const SET_DATA_VERSION = 'SET_DATA_VERSION'
 const MARK_DATA_VERSIONS_READ = 'MARK_DATA_VERSIONS_READ'
@@ -649,91 +646,6 @@ registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
       return pv
     }
   })
-
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
-        parameter_vals: paramVals
-      }
-    }
-  }
-})
-
-// --- Parameter actions ---
-
-// SET_PARAM_VALUE
-
-// Internal API, requires all indices
-function setParamValueActionBase (state, dispatch, wfModuleId, paramId, newValue) {
-  const wfModule = state.wfModules[String(wfModuleId)]
-  if (!wfModule) return Promise.resolve() // no module? Ignore
-
-  const paramVal = wfModule.parameter_vals.find(v => v.id === paramId)
-  if (!paramVal) return Promise.resolve() // no param? Ignore
-
-  if (!newValue.hasOwnProperty('value')) {
-    newValue = { value: newValue } // Cruft, hard to decipher why we do this
-  }
-
-  if (paramVal.value === newValue.value) return Promise.resolve(null) // no change? Ignore
-
-  return dispatch({
-    type: SET_PARAM_VALUE,
-    payload: {
-      promise: api.onParamChanged(paramId, newValue),
-      data: {
-        wfModuleId,
-        paramId,
-        paramValue: newValue.value
-      }
-    }
-  })
-}
-
-// Most common form
-export function setParamValueAction (paramId, paramValue) {
-  return (dispatch, getState) => { // thunk
-    const state = getState()
-    for (const wfModuleIdString in state.wfModules) {
-      const wfModule = state.wfModules[wfModuleIdString]
-      for (const param of wfModule.parameter_vals) {
-        if (param.id === paramId) {
-          return setParamValueActionBase(state, dispatch, wfModule.id, paramId, paramValue)
-        }
-      }
-    }
-
-    return Promise.resolve() // no param? Do nothing
-  }
-}
-
-// This action creator is used when we don't have a parameter id
-export function setParamValueActionByIdName (wfModuleId, paramIdName, paramValue) {
-  return (dispatch, getState) => { // thunk
-    const state = getState()
-    const wfModule = state.wfModules[String(wfModuleId)]
-    if (!wfModule) return Promise.resolve() // no module? Do nothing
-
-    for (const param of wfModule.parameter_vals) {
-      if (param.parameter_spec && param.parameter_spec.id_name === paramIdName) {
-        return setParamValueActionBase(state, dispatch, wfModule.id, param.id, paramValue)
-      }
-    }
-  }
-}
-
-registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
-  const { wfModuleId, paramId, paramValue } = action.payload
-  const wfModule = state.wfModules[String(wfModuleId)]
-  if (!wfModule) return state
-
-  const paramVals = wfModule.parameter_vals.slice()
-  const oldIndex = paramVals.findIndex(pv => pv.id === paramId)
-  if (oldIndex === -1) return state
-
-  paramVals[oldIndex] = { ...paramVals[oldIndex],
-    value: paramValue
-  }
 
   return { ...state,
     wfModules: { ...state.wfModules,

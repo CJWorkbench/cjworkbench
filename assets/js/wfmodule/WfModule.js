@@ -10,7 +10,6 @@ import {
   clearNotificationsAction,
   maybeRequestWfModuleFetchAction,
   quickFixAction,
-  setParamValueAction,
   setSelectedWfModuleAction,
   setWfModuleParamsAction,
   setWfModuleCollapsedAction
