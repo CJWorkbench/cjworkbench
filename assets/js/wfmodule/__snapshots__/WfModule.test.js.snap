@@ -97,7 +97,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "setWfModuleNotes": [MockFunction],
             }
           }
-          changeParam={[Function]}
           getParamId={[Function]}
           getParamMenuItems={[Function]}
           getParamText={[Function]}
@@ -120,7 +119,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "value": "http://some.URL.me",
             }
           }
-          setParamText={[Function]}
+          setWfModuleParams={[MockFunction]}
           updateSettings={
             Object {
               "autoUpdateData": undefined,
@@ -140,7 +139,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "setWfModuleNotes": [MockFunction],
             }
           }
-          changeParam={[Function]}
           getParamId={[Function]}
           getParamMenuItems={[Function]}
           getParamText={[Function]}
@@ -162,7 +160,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               },
             }
           }
-          setParamText={[Function]}
+          setWfModuleParams={[MockFunction]}
           updateSettings={
             Object {
               "autoUpdateData": undefined,
@@ -181,7 +179,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "setWfModuleNotes": [MockFunction],
             }
           }
-          changeParam={[Function]}
           getParamId={[Function]}
           getParamMenuItems={[Function]}
           getParamText={[Function]}
@@ -205,7 +202,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "value": 1,
             }
           }
-          setParamText={[Function]}
+          setWfModuleParams={[MockFunction]}
           updateSettings={
             Object {
               "autoUpdateData": undefined,

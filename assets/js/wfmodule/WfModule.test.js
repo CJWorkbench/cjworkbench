@@ -35,7 +35,6 @@ describe('WfModule, not read-only mode', () => {
     name: 'TestModule',
     wfModule: wfModule,
     module: module,
-    changeParam: jest.fn(),
     removeModule: jest.fn(),
     inputWfModule: { id: 123, last_relevant_delta_id: 707 },
     isSelected: true,
@@ -51,6 +50,7 @@ describe('WfModule, not read-only mode', () => {
     clearNotifications: jest.fn(),
     setSelectedWfModule: jest.fn(),
     setWfModuleCollapsed: jest.fn(),
+    setWfModuleParams: jest.fn(),
     maybeRequestFetch: jest.fn(),
     setZenMode: jest.fn(),
     applyQuickFix: jest.fn()
@@ -129,16 +129,11 @@ describe('WfModule, not read-only mode', () => {
     expect(w.hasClass('status-busy')).toBe(true)
   })
 
-  it('supplies getParamText and setParamText', () => {
+  it('supplies getParamText', () => {
     const wrapper = shallow(<WfModule {...props} />)
     const instance = wrapper.instance()
 
     expect(instance.getParamText('url')).toEqual('http://some.URL.me')
-    wrapper.instance().setParamText('url', 'http://foocastle.ai')
-
-    expect(props.changeParam).toHaveBeenCalledWith(100, { value: 'http://foocastle.ai' })
-    // and the input prop should not be mutated
-    expect(wfModule.parameter_vals[0].value).toEqual('http://some.URL.me')
   })
 
   it('supplies getParamMenuItems', () => {
@@ -258,11 +253,10 @@ describe('WfModule, not read-only mode', () => {
     expect(wrapper.find('WfParameter[name="b"]').prop('value')).toEqual('D')
 
     // ... and neither should be submitted to the server
-    expect(props.changeParam).not.toHaveBeenCalled()
+    expect(props.setWfModuleParams).not.toHaveBeenCalled()
 
     wrapper.find('WfParameter[name="b"]').prop('onSubmit')()
-    expect(props.changeParam).toHaveBeenCalledWith(1, 'C')
-    expect(props.changeParam).toHaveBeenCalledWith(2, 'D')
+    expect(props.setWfModuleParams).toHaveBeenCalledWith(999, { a: 'C', b: 'D' })
 
     // a bit of a white-box test: state should be cleared
     expect(wrapper.state('edits')).toEqual({})
@@ -319,7 +313,7 @@ describe('WfModule, not read-only mode', () => {
     wrapper.find('WfParameter[name="url"]').prop('onChange')('url', 'http://example.org')
     wrapper.find('WfParameter[name="url"]').prop('onSubmit')()
 
-    expect(props.changeParam).toHaveBeenCalledWith(1, 'http://example.org')
+    expect(props.setWfModuleParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
     expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 

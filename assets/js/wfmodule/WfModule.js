@@ -12,6 +12,7 @@ import {
   quickFixAction,
   setParamValueAction,
   setSelectedWfModuleAction,
+  setWfModuleParamsAction,
   setWfModuleCollapsedAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
@@ -45,7 +46,7 @@ export class WfModule extends React.PureComponent {
     module: PropTypes.object,
     isSelected: PropTypes.bool.isRequired,
     isAfterSelected: PropTypes.bool.isRequired,
-    changeParam: PropTypes.func, // func(paramId, { value: newVal }) => undefined -- icky, prefer onChange
+    setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined -- icky, prefer onChange
     removeModule: PropTypes.func,
     api: PropTypes.object.isRequired,
     onDragStart: PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
@@ -65,8 +66,6 @@ export class WfModule extends React.PureComponent {
   constructor (props) {
     super(props)
 
-    this.changeParam = this.changeParam.bind(this)
-    this.setParamText = this.setParamText.bind(this)
     this.getParamText = this.getParamText.bind(this)
     this.notesInputRef = React.createRef()
 
@@ -77,6 +76,18 @@ export class WfModule extends React.PureComponent {
       isDragging: false,
       edits: {} // id_name => newValue
     }
+  }
+
+  /**
+   * Overwrite some params on this WfModule.
+   *
+   * TODO nix this entirely? onChange and onSubmit are more appropriate.
+   * [2018-11-22, adamhooper] I can't see any place this function belongs,
+   * because we don't have any params that should write to _other_ params.
+   * (Especially not our multi-column selector.)
+   */
+  setWfModuleParams = (params) => {
+    this.props.setWfModuleParams(this.props.wfModule.id, params)
   }
 
   onClickNotification = () => {
@@ -92,10 +103,6 @@ export class WfModule extends React.PureComponent {
     if (!this.props.isSelected) {
       this.props.setSelectedWfModule(this.props.index)
     }
-  }
-
-  changeParam (id, payload) {
-    this.props.changeParam(id, payload)
   }
 
   onDragStart = (ev) => {
@@ -138,16 +145,8 @@ export class WfModule extends React.PureComponent {
     return this.props.wfModule.parameter_vals.find(p => p.parameter_spec.id_name === idName)
   }
 
-  // These functions allow parameters to access each others value (text params only)
+  // Allow parameters to access each others value (text params only)
   // Used e.g. for custom UI elements to save/restore their state from hidden parameters
-  // Suppresses reassignment of the same text, which can be important to avoid endless notification loops
-  setParamText (paramIdName, text) {
-    const p = this.getParameterValue(paramIdName)
-    if (p && text !== p.string) {
-      this.props.changeParam(p.id, { value: text })
-    }
-  }
-
   getParamText (paramIdName) {
     const p = this.getParameterValue(paramIdName)
     return p ? p.value : null
@@ -249,20 +248,15 @@ export class WfModule extends React.PureComponent {
 
   onChange = (idName, newValue) => {
     this.setState({
-      edits: Object.assign({}, this.state.edits, { [idName]: newValue })
+      edits: { ...this.state.edits, [idName]: newValue }
     })
   }
 
   onSubmit = () => {
     const { edits } = this.state
 
+    this.props.setWfModuleParams(this.props.wfModule.id, edits)
     this.setState({ edits: {} })
-
-    for (const name of Object.keys(edits)) {
-      const value = edits[name]
-      const id = this.getParamId(name)
-      this.props.changeParam(id, value)
-    }
 
     this.props.maybeRequestFetch(this.props.wfModule.id)
   }
@@ -332,7 +326,7 @@ export class WfModule extends React.PureComponent {
         onSubmit={this.onSubmit}
         onReset={this.onReset}
         value={value}
-        changeParam={this.changeParam}
+        setWfModuleParams={this.setWfModuleParams}
         wfModuleId={wfModule.id}
         inputWfModuleId={inputWfModule ? inputWfModule.id : null}
         inputDeltaId={inputWfModule ? inputWfModule.cached_render_result_delta_id : null}
@@ -341,7 +335,6 @@ export class WfModule extends React.PureComponent {
         getParamId={this.getParamId}
         getParamText={this.getParamText}
         getParamMenuItems={this.getParamMenuItems}
-        setParamText={this.setParamText}
       />
     )
   }
@@ -569,9 +562,8 @@ function mapDispatchToProps (dispatch) {
       dispatch(setWfModuleCollapsedAction(wfModuleId, isCollapsed, isReadOnly))
     },
 
-    changeParam (paramId, newVal) {
-      const action = setParamValueAction(paramId, newVal)
-      dispatch(action)
+    setWfModuleParams (wfModuleId, params) {
+      dispatch(setWfModuleParamsAction(wfModuleId, params))
     },
 
     maybeRequestFetch (wfModuleId) {

@@ -36,10 +36,9 @@ describe('WfParameter', () => {
         inputLastRelevantDeltaId={null}
         loggedInUser={{}}
         api={{}}
-        changeParam={jest.fn()}
+        setWfModuleParams={jest.fn()}
         getParamId={jest.fn(_ => null)}
         getParamText={jest.fn(_ => paramtextReturnValue)}
-        setParamText={jest.fn()}
         getParamMenuItems={jest.fn(_ => ['Sugar', 'Butter', '', 'Flour'])}
         startDrag={jest.fn()}
         stopDrag={jest.fn()}
