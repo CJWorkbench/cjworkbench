@@ -60,7 +60,6 @@ urlpatterns = [
     url(r'^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', views.wfmodule_public_output),
 
     # Parameters
-    url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail),
     url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_authorize$',
         views.parameterval_oauth_start_authorize),
     url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_generate_access_token$',

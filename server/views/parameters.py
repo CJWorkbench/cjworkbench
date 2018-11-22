@@ -44,26 +44,6 @@ def parameter_val_or_response_for_write(
         return HttpResponseForbidden('Not allowed to write param')
 
 
-# Get or set parameter value
-@api_view(['GET', 'PATCH'])
-@renderer_classes((JSONRenderer,))
-def parameterval_detail(request, pk, format=None):
-    if request.method == 'GET':
-        param = parameter_val_or_response_for_read(pk, request)
-        if isinstance(param, HttpResponse):
-            return param
-        serializer = ParameterValSerializer(param)
-        return Response(serializer.data)
-
-    elif request.method == 'PATCH':
-        param = parameter_val_or_response_for_write(pk, request)
-        if isinstance(param, HttpResponse):
-            return param
-        async_to_sync(ChangeParameterCommand.create)(param,
-                                                     request.data['value'])
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 def _oauth_start_authorize(request, param: ParameterVal,
                            id_name: str) -> HttpResponse:
     """Redirects to the specified OAuth service provider.
