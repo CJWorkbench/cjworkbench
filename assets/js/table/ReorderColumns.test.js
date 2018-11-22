@@ -1,45 +1,26 @@
 import { updateTableActionModule } from './UpdateTableAction'
 import { tick } from '../test-utils'
-import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from '../workflow-reducer'
+import { store, addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 jest.mock('../workflow-reducer')
 
 describe('ReorderColumns actions', () => {
-  // A few parameter id constants for better readability
-  const idName = 'reorder-columns'
-  const LOADURL_WFM_ID = 35
-
-  const FILTER_WFM_ID = 50
-
-  const REORDER_WFM_ID = 85
-  const REORDER_HISTORY_PAR_ID = 90
-
-  const NEW_REORDER_WFM_ID = 135
-  const NEW_REORDER_HISTORY_PAR_ID = 105
-
-  const REORDER_MODULE_ID = 24
-  const WF_ID = 10
-
-  var initialState = {
-    updateTableModuleIds: { 'reorder-columns': REORDER_MODULE_ID },
-    workflow: { id: WF_ID, wf_modules: [ LOADURL_WFM_ID, FILTER_WFM_ID, REORDER_WFM_ID ] },
+  const initialState = {
+    workflow: { wf_modules: [ 35, 50, 85 ] },
     modules: {
-      [REORDER_MODULE_ID]: { id_name: 'reorder-columns' },
+      24: { id_name: 'reorder-columns' },
       1: { id_name: 'loadurl' },
       2: { id_name: 'filter' }
     },
     wfModules: {
-      [LOADURL_WFM_ID]: { id: LOADURL_WFM_ID, module_version: { module: 1 } },
-      [FILTER_WFM_ID]: { id: FILTER_WFM_ID, module_version: { module: 2 } },
-      [REORDER_WFM_ID]: {
-        id: REORDER_WFM_ID,
-        module_version: { module: REORDER_MODULE_ID },
+      35: { id: 35, module_version: { module: 1 } },
+      50: { id: 50, module_version: { module: 2 } },
+      85: {
+        id: 85,
+        module_version: { module: 24 },
         parameter_vals: [
           {
-            id: REORDER_HISTORY_PAR_ID,
-            parameter_spec: {
-              id_name: 'reorder-history'
-            },
+            parameter_spec: { id_name: 'reorder-history' },
             value: JSON.stringify([{
               column: 'existing_test_col',
               from: 2,
@@ -54,18 +35,15 @@ describe('ReorderColumns actions', () => {
   const addModuleResponse = {
     data: {
       wfModule: {
-        id: NEW_REORDER_WFM_ID,
+        id: 99,
         module_version: {
           module: {
-            id_name: idName
+            id_name: 'reorder-columns',
           }
         },
         parameter_vals: [
           {
-            id: NEW_REORDER_HISTORY_PAR_ID,
-            parameter_spec: {
-              id_name: 'reorder-history'
-            },
+            parameter_spec: { id_name: 'reorder-history' },
             value: ''
           }
         ]
@@ -74,42 +52,45 @@ describe('ReorderColumns actions', () => {
   }
 
   beforeEach(() => {
-
+    store.getState.mockReset()
     store.getState.mockImplementation(() => initialState)
     // Our shim Redux API:
     // 1) actions are functions; dispatch returns their retvals in a Promise.
     //    This is useful when we care about retvals.
     // 2) actions are _not_ functions; dispatch does nothing. This is useful when
     //    we care about arguments.
+    store.dispatch.mockReset()
     store.dispatch.mockImplementation(action => {
       if (typeof action === 'function') {
         return Promise.resolve({ value: action() })
       }
     })
 
-    setParamValueAction.mockImplementation((...args) => [ 'setParamValueAction', ...args ])
-    setParamValueActionByIdName.mockImplementation((...args) => [ 'setParamValueActionByIdName', ...args ])
-    setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
+    addModuleAction.mockReset()
     addModuleAction.mockImplementation(() => () => addModuleResponse)
-  });
+    setWfModuleParamsAction.mockReset()
+    setWfModuleParamsAction.mockImplementation((...args) => [ 'setWfModuleParamsAction', ...args ])
+    setSelectedWfModuleAction.mockReset()
+    setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
+  })
 
 
   it('Adds a new reorder module', async () => {
-    updateTableActionModule(LOADURL_WFM_ID, idName, false, { column: 'test_col', from: 3, to: 0 })
+    updateTableActionModule(35, 'reorder-columns', false, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1)
+    expect(addModuleAction).toHaveBeenCalledWith('reorder-columns', 1)
     let newParamVal = JSON.stringify([{
       column: 'test_col',
       from: 3,
       to: 0
     }])
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', NEW_REORDER_HISTORY_PAR_ID, newParamVal ])
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 99, { 'reorder-history': newParamVal }])
   })
 
 
   it('Updates the parameter values of an adjacent reorder module correctly', async () => {
-    updateTableActionModule(FILTER_WFM_ID, idName, false, { column: 'test_col', from: 3, to: 0 })
+    updateTableActionModule(50, 'reorder-columns', false, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
 
@@ -124,11 +105,11 @@ describe('ReorderColumns actions', () => {
         from: 3,
         to: 0
       }])
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', REORDER_HISTORY_PAR_ID, newParamVal ])
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 85, { 'reorder-history': newParamVal }])
   })
 
   it('Updates the parameter values of the currently selected reorder module correctly', async () => {
-    updateTableActionModule(REORDER_WFM_ID, idName, false, { column: 'test_col', from: 3, to: 0 })
+    updateTableActionModule(85, 'reorder-columns', false, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
 
@@ -143,7 +124,7 @@ describe('ReorderColumns actions', () => {
         from: 3,
         to: 0
       }])
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', REORDER_HISTORY_PAR_ID, newParamVal ])
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 85, { 'reorder-history': newParamVal }])
   })
 
 })

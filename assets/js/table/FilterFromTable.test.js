@@ -1,18 +1,12 @@
 import { updateTableActionModule, selectColumnDrop, selectColumnKeep } from './UpdateTableAction'
 import { tick } from '../test-utils'
-import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from '../workflow-reducer'
+import { store, addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
-jest.mock('../workflow-reducer');
+jest.mock('../workflow-reducer')
 
 describe("FilterFromTable actions", () => {
   // A few parameter id constants for better readability
-  const idName = 'filter'
-  const COLUMN_PAR_ID_1 = 35;
-  const COLUMN_PAR_ID_2 = 70;
-  const COLUMN_PAR_ID_3 = 140;
-
-  var initialState = {
-    updateTableModuleIds: { 'filter': 77 },
+  const initialState = {
     workflow: {
       id: 127,
       wf_modules: [ 17, 19, 7, 19, 31 ]
@@ -31,7 +25,6 @@ describe("FilterFromTable actions", () => {
         module_version: { module: 77 },
         parameter_vals: [
           {
-            id: COLUMN_PAR_ID_2,
             parameter_spec: {id_name: 'column'},
             value: 'col_1'
           }
@@ -48,12 +41,11 @@ describe("FilterFromTable actions", () => {
         id: 23,
         module_version: {
           module: {
-            id_name: idName
+            id_name: 'filter'
           }
         },
         parameter_vals: [
           {
-            id: COLUMN_PAR_ID_1,
             parameter_spec: {id_name: 'column'},
             value: ''
           }
@@ -63,38 +55,41 @@ describe("FilterFromTable actions", () => {
   }
 
   beforeEach(() => {
-    store.getState.mockImplementation(() => initialState);
+    store.getState.mockReset()
+    store.getState.mockImplementation(() => initialState)
     // Our shim Redux API:
     // 1) actions are functions; dispatch returns their retvals in a Promise.
     //    This is useful when we care about retvals.
     // 2) actions are _not_ functions; dispatch does nothing. This is useful when
     //    we care about arguments.
+    store.dispatch.mockReset()
     store.dispatch.mockImplementation(action => {
       if (typeof action === 'function') {
         return Promise.resolve({ value: action() })
       }
-    });
+    })
 
-    setParamValueAction.mockImplementation((...args) => [ 'setParamValueAction', ...args ])
-    setParamValueActionByIdName.mockImplementation((...args) => [ 'setParamValueActionByIdName', ...args ])
+    setWfModuleParamsAction.mockReset()
+    setWfModuleParamsAction.mockImplementation((...args) => [ 'setWfModuleParamsAction', ...args ])
+    setSelectedWfModuleAction.mockReset()
     setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
   })
 
   it('adds new filter module after the given module and sets column parameter', async () => {
-    addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(17, idName, true, {columnKey: 'col_1'});
+    addModuleAction.mockImplementation(() => () => addModuleResponse)
+    updateTableActionModule(17, 'filter', true, { columnKey: 'col_1' })
 
-    await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 1);
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'column', 'col_1' ]);
-  });
+    await tick()
+    expect(addModuleAction).toHaveBeenCalledWith('filter', 1)
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { column: 'col_1'} ])
+  })
 
   it('selects the existing filter module but forces add new', async () => {
-    addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateTableActionModule(7, idName, true, {columnKey: 'col_2'});
+    addModuleAction.mockImplementation(() => () => addModuleResponse)
+    updateTableActionModule(7, 'filter', true, { columnKey: 'col_2' })
 
-    await tick();
-    expect(addModuleAction).toHaveBeenCalledWith(initialState.updateTableModuleIds[idName], 3);
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'column', 'col_2' ]);
+    await tick()
+    expect(addModuleAction).toHaveBeenCalledWith('filter', 3)
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { column: 'col_2' }])
   })
-});
+})

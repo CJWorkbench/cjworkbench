@@ -1,17 +1,15 @@
 import { updateTableActionModule, selectColumnDrop, selectColumnKeep, updateModuleMapping } from './UpdateTableAction'
 import { tick } from '../test-utils'
 // TODO do not import store
-import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from '../workflow-reducer'
+import { store, addModuleAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 jest.mock('../workflow-reducer')
 
 describe("UpdateTableAction actions", () => {
   // A few parameter id constants for better readability
   const idName = 'filter'
-  const COLUMN_PAR_ID_1 = 35
 
   const initialState = {
-    updateTableModuleIds: { 'filter': 77 },
     workflow: {
       id: 127,
       wf_modules: [ 17 ]
@@ -20,7 +18,8 @@ describe("UpdateTableAction actions", () => {
       17: { module_version: { module: 1 } }
     },
     modules: {
-      1: { id_name: 'loadurl' }
+      1: { id_name: 'loadurl' },
+      77: { id_name: 'filter' }
     }
   }
 
@@ -28,7 +27,6 @@ describe("UpdateTableAction actions", () => {
 
   // Change the module in the initial state
   function setInitialState (module) {
-    initialState.updateTableModuleIds = { module: 666 }
     initialState.workflow.wf_modules[0].module_version.module.id_name = module
   }
 
@@ -36,14 +34,9 @@ describe("UpdateTableAction actions", () => {
     data: {
       wfModule: {
         id: 23,
-        module_version: {
-          module: {
-            id_name: idName
-          }
-        },
+        module_version: { module: { id: 127 } },
         parameter_vals: [
           {
-            id: COLUMN_PAR_ID_1,
             parameter_spec: { id_name: 'column' },
             value: ''
           }
@@ -121,7 +114,6 @@ describe("UpdateTableAction actions", () => {
 
   it('should alert user if module is not imported', async () => {
     const initialStateNone = {
-      updateTableModuleIds: {},  // no modules installed, error condition if unchanged
       workflow: {
         id: 127,
         wf_modules: [ 17 ]
@@ -131,6 +123,7 @@ describe("UpdateTableAction actions", () => {
       },
       modules: {
         1: { id_name: 'loadurl' }
+        // 'filter' is not present -- so we'll get an error
       }
     }
     store.getState.mockImplementation(() => initialStateNone)
