@@ -40,7 +40,7 @@
       background-color: lighten($brand-orange,27%);
       min-width: 15rem;
 
-      &:Active {
+      &:active {
         background-color: lighten($brand-orange,18%);
         color: $brand-orange;
       }
@@ -49,20 +49,22 @@
         background-color: lighten($brand-orange,23%);
         color: darken($brand-orange,10%);
       }
-    }
 
-    .dropdown .table-action--inactive {
-      @extend .action-button;
-      @extend .button-dark-blue;
-      opacity: .9;
-      min-width: 15rem;
-      cursor: default;
+      &.disabled {
+        pointer-events: none; // REACT not taking care of it
+        @extend .button-dark-blue;
+        opacity: .9;
+        min-width: 15rem;
+        cursor: default;
 
-      &:hover {
-        background-color: transparent;
-        color: $table-header;
+        &:hover {
+          background-color: transparent;
+          color: $table-header;
+        }
+        &:focus {
+          background-color: transparent
+        }
       }
-      &:focus {background-color: transparent}
     }
 
     .dropdown-menu {
