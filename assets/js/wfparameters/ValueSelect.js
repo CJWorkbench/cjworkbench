@@ -165,7 +165,7 @@ export class ValueSelect extends React.PureComponent {
     if (isSelected) {
       selectedValues[value] = null
     } else {
-      delete selectedValues[value]
+      delete selectedValues[value] // FIXME [adamhooper, 2018-11-22] this modifies an immutable variable
     }
     this.onChange(selectedValues)
   }
