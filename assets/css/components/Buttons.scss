@@ -329,9 +329,26 @@ button:focus { outline:0 !important; }
   color: $brand-orange;
   border-color: $brand-orange ;
   background-color: transparent;
-  &:hover {background-color: $brand-orange--light}
+  &:hover {
+    background-color: $brand-orange--light;
+    color: darken($brand-orange,10%);
+  }
   &:active {
     background: $brand-orange;
+    color: $white;
+  }
+}
+
+.button-dark-blue {
+  color: $table-header;
+  border-color: $table-header ;
+  background-color: transparent;
+  &:hover {
+    background-color: $table-header--light;
+    color: darken($table-header,10%);
+  }
+  &:active {
+    background: $table-header;
     color: $white;
   }
 }

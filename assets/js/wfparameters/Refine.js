@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import RefineModal from '../refine/RefineModal'
+import { withFetchedData } from './FetchedData'
 
 const NumberFormatter = new Intl.NumberFormat()
 
@@ -271,7 +272,6 @@ class RefineModalPrompt extends React.PureComponent {
 class RefineGroup extends React.PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
-    isSelectOnly: PropTypes.object, // disables grouping and edit
     isVisible: PropTypes.bool.isRequired,
     name: PropTypes.string, // new value -- may be empty string
     values: PropTypes.arrayOf(PropTypes.string).isRequired, // sorted by count, descending -- may be empty
@@ -326,7 +326,7 @@ class RefineGroup extends React.PureComponent {
 
   render () {
     const { name, isExpanded } = this.state
-    const { count, values, valueCounts, isVisible, isSelectOnly } = this.props
+    const { count, values, valueCounts, isVisible } = this.props
 
     // isOriginal uses this._props_.name, not this._state_. The group the
     // buttons would modify is this.props.name.
@@ -401,7 +401,6 @@ class RefineGroup extends React.PureComponent {
               onChange={this.onChangeName}
               onBlur={this.onBlurName}
               onKeyDown={this.onKeyDown}
-              disabled={isSelectOnly}
             />
           </div>
         </div>
@@ -480,7 +479,6 @@ export class Refine extends React.PureComponent {
     loading: PropTypes.bool.isRequired, // true iff loading from server
     value: PropTypes.string.isRequired, // JSON-encoded {renames: {value1: 'newvalue1', ...}, blacklist: ['newvalue1']}
     onChange: PropTypes.func.isRequired, // fn(newValue) => undefined
-    isSelectOnly: PropTypes.bool.isRequired // false for value selection only, no grouping or edit
   }
 
   state = {
@@ -576,7 +574,7 @@ export class Refine extends React.PureComponent {
   }
 
   render () {
-    const { valueCounts, isSelectOnly } = this.props
+    const { valueCounts } = this.props
     const { searchInput } = this.state
     const groups = this.groups
     const isSearching = (searchInput !== '')
@@ -585,7 +583,6 @@ export class Refine extends React.PureComponent {
     const groupComponents = groups.map(group => (
       <RefineGroup
         key={group.name}
-        isSelectOnly={isSelectOnly}
         isVisible={(matchingGroups === null) || (group.name in matchingGroups)}
         valueCounts={valueCounts}
         onChangeName={this.rename}
@@ -598,13 +595,9 @@ export class Refine extends React.PureComponent {
 
     const canSearch = this.groups.length > 1
 
-    const maybeRefineModal = isSelectOnly ? null : (
-      <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
-    )
-
     return (
       <div className='refine-parameter'>
-        {maybeRefineModal}
+        <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
         { !canSearch ? null : (
           <React.Fragment>
             <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
@@ -633,68 +626,6 @@ export class Refine extends React.PureComponent {
         ) : null}
       </div>
     )
-  }
-}
-
-// https://reactjs.org/docs/higher-order-components.html
-//
-// Let's keep this generic and maybe make it into a reusable util later.
-function withFetchedData(WrappedComponent, dataName) {
-  return class extends React.PureComponent {
-    static propTypes = {
-      fetchData: PropTypes.func.isRequired, // fn() => Promise[data]
-      fetchDataCacheId: PropTypes.string.isRequired, // unique string: when it changes, call fetchData()
-    }
-
-    state = {
-      data: null,
-      loading: false
-    }
-
-    _reload () {
-      const fetchDataCacheId = this.props.fetchDataCacheId
-
-      // Keep state.data unchanged, until we solve
-      // https://www.pivotaltracker.com/story/show/158034731. After that, we
-      // should probably change this to setState({data: null})
-      this.setState({ loading: true })
-
-      this.props.fetchData()
-        .then(data => {
-          if (this.unmounted) return
-          if (this.props.fetchDataCacheId !== fetchDataCacheId) return // ignore wrong response in race
-
-          this.setState({
-            loading: false,
-            data
-          })
-        })
-    }
-
-    componentDidMount () {
-      this._reload()
-    }
-
-    componentWillUnmount () {
-      this.unmounted = true
-    }
-
-    componentDidUpdate (prevProps) {
-      if (prevProps.fetchDataCacheId !== this.props.fetchDataCacheId) {
-        this._reload()
-      }
-    }
-
-    render () {
-      const props = Object.assign({
-        [dataName]: this.state.data,
-        loading: this.state.loading
-      }, this.props)
-      delete props.fetchData
-      delete props.fetchDataCacheId
-
-      return <WrappedComponent {...props} />
-    }
   }
 }
 
