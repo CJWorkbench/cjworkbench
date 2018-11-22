@@ -15,7 +15,7 @@ export class OutputPane extends React.Component {
     workflowId: PropTypes.number.isRequired,
     wfModuleBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      deltaId: PropTypes.number.isRequired,
+      deltaId: PropTypes.number, // or null -- it may not be rendered
       columns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
         type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
