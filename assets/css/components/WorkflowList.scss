@@ -275,14 +275,16 @@
         }
         &:last-child {
           border-radius: 0 0 .5rem .5rem;
+          margin-bottom: 0px;
+          // when there is only one WF in the list
+          &:first-child {
+            border-radius: .5rem;
+          }
         }
 
         &:hover {
         background-color: $SuperLightGray;
         text-decoration: none;
-        }
-        &:last-child {
-          margin-bottom: 0px;
         }
 
         .workflow-title {
