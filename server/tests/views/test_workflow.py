@@ -3,12 +3,13 @@ import json
 from unittest.mock import patch
 from allauth.account.utils import user_display
 from django.contrib.auth.models import AnonymousUser
+from django.http.response import Http404
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.models import Module, ModuleVersion, User, WfModule, Workflow
 from server.tests.utils import LoggedInTestCase, add_new_module_version, \
         add_new_wf_module, load_module_version
-from server.views import workflow_list, workflow_addmodule, workflow_detail, \
+from server.views import workflow_list, AddModule, workflow_detail, \
         render_workflow, render_workflows, load_update_table_module_ids
 
 
@@ -322,66 +323,43 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
 
     # --- Writing to workflows ---
-    def test_workflow_addmodule_put(self):
+    def test_workflow_addmodule_post(self):
         pk_workflow = Workflow.objects.get(name='Workflow 1').id
         self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 0)
 
         module1 = Module.objects.get(name='Module 1')
-        module2 = Module.objects.get(name='Module 2')
-        module3 = Module.objects.get(name='Module 3')
 
         # add to empty stack
-        request = self._build_put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                  {'moduleId': module1.id, 'index': 0},
-                                  user=self.user)
-        response = workflow_addmodule(request, workflow_id=pk_workflow)
+        request = self._build_post('/api/workflows/%d/addmodule/' % pk_workflow,
+                                   {'moduleId': module1.id, 'index': 0},
+                                   format='json', user=self.user)
+        response = AddModule().post(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 1)
         wfm1 = WfModule.objects.filter(module_version__module=module1.id).first()
-        self.assertEqual(response.data['wfModule']['id'], wfm1.id)
-        self.assertEqual(response.data['wfModule']['module_version']['module'],
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['wfModule']['id'], wfm1.id)
+        self.assertEqual(response_data['wfModule']['module_version']['module'],
                          module1.id)
-        self.assertEqual(response.data['index'], 0)
+        self.assertEqual(response_data['index'], 0)
 
-        # insert before first module
-        request = self._build_put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                  {'moduleId': module2.id, 'index': 0},
-                                  user=self.user)
-        response = workflow_addmodule(request, workflow_id=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 2)
-        wfm2 = WfModule.objects.filter(module_version__module=module2.id).first()
-        self.assertEqual(response.data['wfModule']['id'], wfm2.id)
+    def test_workflow_addmodule_post_bad_workflow_id(self):
+        module1 = Module.objects.get(name='Module 1')
+        request = self._build_post('/api/workflows/%d/addmodule/' % 10000,
+                                   {'moduleId': module1.id, 'index': 0},
+                                   user=self.user)
+        with self.assertRaises(Http404):
+            response = AddModule().post(request, workflow_id=10000)
+        self.assertEqual(WfModule.objects.count(), 0)
 
-        # insert before second module
-        request = self._build_put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                  {'moduleId': module3.id, 'index': 1},
-                                  user=self.user)
-        response = workflow_addmodule(request, workflow_id=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 3)
-        wfm3 = WfModule.objects.filter(module_version__module=module3.id).first()
-        self.assertEqual(response.data['wfModule']['id'], wfm3.id)
-
-        # check for correct insertion order
-        self.assertEqual(list(WfModule.objects.values_list('module_version', flat=True)),
-                         [ModuleVersion.objects.get(module=module2).id,
-                          ModuleVersion.objects.get(module=module3).id,
-                          ModuleVersion.objects.get(module=module1).id])
-
-        # bad workflow id
-        request = self._build_put('/api/workflows/%d/addmodule/' % 10000,
-                                  {'moduleId': module1.id, 'index': 0},
-                                  user=self.user)
-        response = workflow_addmodule(request, workflow_id=10000)
-        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # bad module id
-        request = self._build_put('/api/workflows/%d/addmodule/' % Workflow.objects.get(name='Workflow 1').id,
-                                  {'moduleId': 10000, 'index': 0},
-                                  user=self.user)
-        response = workflow_addmodule(request, workflow_id=Workflow.objects.get(name='Workflow 1').id)
+    def test_workflow_addmodule_post_bad_module_id(self):
+        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+        request = self._build_post('/api/workflows/%d/addmodule/' % pk_workflow,
+                                   {'moduleId': 10000, 'index': 0},
+                                   user=self.user)
+        response = AddModule().post(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(WfModule.objects.count(), 0)
 
     def test_workflow_reorder_modules(self):
         wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)

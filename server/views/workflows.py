@@ -1,8 +1,10 @@
 from functools import lru_cache
+import json
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Q
+from django import forms
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -263,46 +265,57 @@ def workflow_detail(request, workflow_id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class AddModuleForm(forms.Form):
+    index = forms.IntegerField()
+    moduleId = forms.ModelChoiceField(queryset=Module.objects)
+    values = forms.Field(required=False)  # allow empty params
+
+
 # Invoked when user adds a module
-@api_view(['PUT'])
-@loads_workflow_for_write
-def workflow_addmodule(request: HttpRequest, workflow: Workflow):
-    module_id = int(request.data['moduleId'])
-    index = int(request.data['index'])
-    try:
-        module = Module.objects.get(pk=module_id)
-    except Module.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+class AddModule(View):
+    @method_decorator(loads_workflow_for_write)
+    def post(self, request: HttpRequest, workflow: Workflow):
+        try:
+            request_data = json.loads(request.body)
+        except ValueError:
+            return JsonResponse({'error': 'request body must be JSON'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        values = dict(request.data['values'])
-    except KeyError:
-        values = {}
-    except TypeError:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        form = AddModuleForm(request_data)
+        if not form.is_valid():
+            return JsonResponse({'errors': form.errors},
+                                status=status.HTTP_400_BAD_REQUEST)
+        data = form.cleaned_data
 
-    # don't allow python code module in anonymous workflow
-    if module.id_name == 'pythoncode' and workflow.is_anonymous:
-        return HttpResponseForbidden()
+        try:
+            values = dict(data['values'] or {})
+        except TypeError:
+            return JsonResponse({'error': 'values must be an Object'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
-    # always add the latest version of a module (do we need ordering on the
-    # objects to ensure last is always latest?)
-    module_version = ModuleVersion.objects.filter(module=module).last()
+        module = data['moduleId']
+        # don't allow python code module in anonymous workflow
+        if module.id_name == 'pythoncode' and workflow.is_anonymous:
+            return HttpResponseForbidden()
 
-    server.utils.log_user_event(request, 'ADD STEP ' + module.name, {
-        'name': module.name,
-        'id_name': module.id_name
-    })
+        # always add the latest version of a module (do we need ordering on the
+        # objects to ensure last is always latest?)
+        module_version = module.module_versions.last()
 
-    delta = async_to_sync(AddModuleCommand.create)(workflow, module_version,
-                                                   index, values)
-    serializer = WfModuleSerializer(delta.wf_module)
-    wfmodule_data = serializer.data
+        server.utils.log_user_event(request, 'ADD STEP ' + module.name, {
+            'name': module.name,
+            'id_name': module.id_name
+        })
 
-    return Response({
-        'wfModule': wfmodule_data,
-        'index': index,
-    }, status.HTTP_201_CREATED)
+        delta = async_to_sync(AddModuleCommand.create)(workflow,
+                                                       module_version,
+                                                       data['index'], values)
+        serializer = WfModuleSerializer(delta.wf_module)
+
+        return JsonResponse({
+            'wfModule': serializer.data,
+            'index': data['index'],
+        }, status=status.HTTP_201_CREATED)
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list

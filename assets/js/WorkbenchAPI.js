@@ -106,7 +106,7 @@ class WorkbenchAPI {
   }
 
   addModule(workflowId, moduleId, index, values={}) {
-    return this._put(`/api/workflows/${workflowId}/addmodule`, {
+    return this._post(`/api/workflows/${workflowId}/addmodule`, {
       index: index,
       moduleId: moduleId,
       values: values
