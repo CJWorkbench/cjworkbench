@@ -32,7 +32,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        width: 20rem;
+        width: calc(100% - 4.5rem);
       }
 
       .count {
