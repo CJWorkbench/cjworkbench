@@ -10,6 +10,7 @@
     }
 
     .value {
+      display: flex;
       font-size: 1.3rem;
       vertical-align: middle;
 
@@ -17,6 +18,8 @@
         flex: 0 0 auto;
         display: inline-block;
         vertical-align: middle;
+        height: 1.6rem;
+        height: 1.6rem;
 
         &::after {
           top: 2px;
@@ -25,20 +28,17 @@
 
       .text {
         position: relative;
-        top: .1rem;
-        flex: 1 1 auto;
         display: inline;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        width: 20rem;
       }
 
       .count {
-        position: relative;
-        top: .1rem;
-        display: inline;
-        float:right;
-        flex: 0 0 auto;
+        position: absolute;
+        text-align: right;
+        right: 0;
         font-weight: 200;
       }
     }
