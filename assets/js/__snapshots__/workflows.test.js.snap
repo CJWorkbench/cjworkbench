@@ -268,18 +268,19 @@ exports[`Workflow list page renders correctly 1`] = `
               className="tab-group"
             >
               <NavItem
+                active={true}
+                onClick={[Function]}
                 tag="li"
               >
                 <li
-                  className="nav-item"
+                  className="nav-item active"
+                  onClick={[Function]}
                 >
                   <NavLink
-                    active={true}
-                    onClick={[Function]}
                     tag="a"
                   >
                     <a
-                      className="nav-link active"
+                      className="nav-link"
                       onClick={[Function]}
                     >
                       My workflows
@@ -288,14 +289,15 @@ exports[`Workflow list page renders correctly 1`] = `
                 </li>
               </NavItem>
               <NavItem
+                active={false}
+                onClick={[Function]}
                 tag="li"
               >
                 <li
                   className="nav-item"
+                  onClick={[Function]}
                 >
                   <NavLink
-                    active={false}
-                    onClick={[Function]}
                     tag="a"
                   >
                     <a
@@ -308,14 +310,15 @@ exports[`Workflow list page renders correctly 1`] = `
                 </li>
               </NavItem>
               <NavItem
+                active={false}
+                onClick={[Function]}
                 tag="li"
               >
                 <li
                   className="nav-item"
+                  onClick={[Function]}
                 >
                   <NavLink
-                    active={false}
-                    onClick={[Function]}
                     tag="a"
                   >
                     <a
