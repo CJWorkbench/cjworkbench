@@ -291,6 +291,20 @@ class CountByDateTests(SimpleTestCase):
                          dt('2018-01-04'), dt('2018-01-05')],
                 'Amount': [8, 0, 9, 0, 2],
             })
+
+    def test_include_missing_dates_with_1_date(self):
+        self._assertRendersTable(
+            pandas.DataFrame({'Date': [dt('2018-01-01'), dt('2018-01-01')]}),
+            P(column='Date', include_missing_dates=True, groupby=3),
+            pandas.DataFrame({'Date': [dt('2018-01-01')], 'count': [2]})
+        )
+
+    def test_include_missing_dates_with_0_date(self):
+        self._assertRendersTable(
+            pandas.DataFrame({'Date': [pandas.NaT, pandas.NaT]}),
+            P(column='Date', include_missing_dates=True, groupby=3),
+            pandas.DataFrame({'Date': pandas.DatetimeIndex([]),
+                              'count': pandas.Int64Index([])})
         )
 
     def test_include_missing_dates_with_float_sum(self):

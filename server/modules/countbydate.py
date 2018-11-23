@@ -135,20 +135,22 @@ class ValidatedForm:
         # Impute missing values
         if self.include_missing_dates:
             start = period_index.min()
-            end = period_index.max()
-            n_rows = (end - start).n + 1
+            if start is not pd.NaT:
+                end = period_index.max()
+                n_rows = (end - start).n + 1
 
-            if n_rows > settings.MAX_ROWS_PER_TABLE:
-                raise ValueError(
-                    f'Including missing dates would create {n_rows} rows, '
-                    f'but the maximum allowed is {settings.MAX_ROWS_PER_TABLE}'
+                if n_rows > settings.MAX_ROWS_PER_TABLE:
+                    raise ValueError(
+                        f'Including missing dates would create {n_rows} rows, '
+                        f'but the maximum allowed is '
+                        f'{settings.MAX_ROWS_PER_TABLE}'
+                    )
+                new_index = pd.PeriodIndex(start=start, end=end,
+                                           freq=period_index.freq)
+                grouped_series = grouped_series.reindex(
+                    new_index,
+                    fill_value=self.operation.zero_value
                 )
-            new_index = pd.PeriodIndex(start=start, end=end,
-                                       freq=period_index.freq)
-            grouped_series = grouped_series.reindex(
-                new_index,
-                fill_value=self.operation.zero_value
-            )
 
         # Prepare output dataframe
         output_periods = grouped_series.index
