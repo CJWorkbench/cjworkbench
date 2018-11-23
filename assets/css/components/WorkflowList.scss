@@ -2,6 +2,8 @@
 
 .workflows-page {
 
+  background-color: $page-background;
+
   .container { height: 100vh; }
 
   a { text-decoration: none; }
@@ -77,47 +79,98 @@
         cursor: pointer;
         font-weight: bold;
         text-transform: uppercase;
-        color: $light-gray;
+        margin-left: 2rem;
 
         .nav-item {
+          position: relative;
+          color: $medium-gray;
+          float: left;
+          border-radius: 1rem 1rem 0 0;
+          background-color: darken($page-background,3%);
+          &:hover {
+            color: darken($medium-gray,13%);
+          }
 
           .nav-link {
-            padding: 1.4rem 2.5rem 1rem;
-            border-radius: 5px 5px 0 0;
-
-            &:hover {
-              color: $brand-text--dark;
-            }
-
-            // when tab is selected
-            &.active {
-              border-color: darken($page-background,10%) darken($page-background,10%) transparent;
-              background-color: #F5F7F8;
-              color: $brand-text--dark;
-              background-color: lighten(#F5F7F8,1%);
-
-              // when tab is selected and hover -- first child to take prescedence
-              &:hover:first-child {
-                border-color: darken($page-background,10%) darken($page-background,10%) transparent;
-                border-radius: 5px 5px 0 0;
-                color: $brand-text--dark;
-                background-color: lighten(#F5F7F8,1%);
-              }
-            }
+            float: left;
+            padding: 1rem 4rem;
+            text-decoration: none;
+            border: none;
           }
 
-          // When tab on the left edge is not selected, hover
-          &:hover:first-child .nav-link {
-            border-color: darken($page-background,7%) darken($page-background,7%) darken($page-background,7%) darken($page-background,7%);
-            border-radius: 5px 0 0 0;
-            background-color: #F5F7F8;
+          &.active {
+            background-color: $white;
+            z-index: 3;
+            color: $brand-text--dark;
           }
 
-          // when tab on the right edge is not selected, hover
-          &:hover:last-child .nav-link {
-            border-color: darken($page-background,7%) darken($page-background,7%) darken($page-background,7%) darken($page-background,7%);
-            border-radius: 0 5px 0 0;
-            background-color: #F5F7F8;
+          // Need pseudo to create round corner, for both nav-item and nav-link in order to get 4 of them per tab.
+
+          // first and last tab need content (round corners)
+          &:last-child::after, &:last-child .nav-link::after,
+          &:first-child::before, &:first-child .nav-link::before {
+            content: "";
+          }
+
+          // active tab always need content (round corners)
+          &.active::before, &.active::after,
+          &.active .nav-link::before, &.active .nav-link::after {
+          content: "";
+          }
+
+          // position all pseudos at bottom
+          &::before, &::after,
+          & .nav-link::before, & .nav-link::after {
+            position: absolute;
+            bottom: 0;
+            z-index: 1;
+          }
+
+          // Squares (on top of circled)
+          &::before, &::after {
+            background-color: pink;
+            width: 1rem;
+            height: 1rem;
+          }
+          // position those squares
+          &::before { left: -1rem; }
+          &::after { right: -1rem; }
+
+          // Circles (below square)
+          & .nav-link::after, & .nav-link::before {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 1rem;
+            background: blue;
+            z-index: 2;
+          }
+          //position circles
+          & .nav-link::before { left: -2rem; }
+          & .nav-link::after { right: -2rem; }
+
+          // Color squares when tab is active
+          &.active::before, &.active::after {
+            background-color: $white;
+          }
+          // Color circles when tab is active
+          &.active .nav-link::before, &.active .nav-link::after {
+            background-color: darken($page-background,3%);
+          }
+
+          // Color circles first and last tab
+          &:first-child .nav-link::before,
+          &:last-child .nav-link::after {
+            background: $page-background;
+          }
+          // Color square first and last tab
+          &:last-child::after,
+          &:first-child::before {
+            background: darken($page-background,3%);
+          }
+
+          // Color squares first and last tab when active
+          &:first-child.active::before, &:last-child.active::after, {
+            background-color: $white;
           }
         }
       }
@@ -183,7 +236,6 @@
         @extend .content-3;
         background-color: $white;
         height: 7rem;
-        border: 1px solid darken($page-background,10%);
         display: flex;
         padding-left: 2.5rem;
         align-items: center;
@@ -202,7 +254,7 @@
     // background of list
     .workflows-item--wrap {
       padding:1px 1px 1px 1px;
-      background-color: darken($page-background,7%);
+      background-color: $page-background;
 
       // WF list
       .workflow-item {

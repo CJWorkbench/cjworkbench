@@ -7,7 +7,7 @@ $brand-orange: #FBAA6D;
 $brand-red: #E24F4A;
 $WF-background: #E9EBEE;
 $module-background:#f8f8f8;
-$page-background: #F5F5F5;
+$page-background: #f2f2f2;
 $table-background: #f4f4f4;
 $modal-color: $brand-workspace;
 $table-header: #719BB0;
@@ -70,7 +70,7 @@ $brand-workspace--light: lighten($brand-workspace,39%);
 $brand-workspace--medium: lighten($brand-workspace,15%);
 
 $brand-background: rgba($brand-workspace--medium, .25); // used for blending in backgrounds
-$brand-background--action:r gba($brand-workspace--medium, .50);
+$brand-background--action:rgba($brand-workspace--medium, .50);
 
 $brand-orange--light: lighten($brand-orange,26%);
 $brand-orange--medium: lighten($brand-orange,12%);
