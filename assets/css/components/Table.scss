@@ -267,6 +267,12 @@
             cursor: text;
             height:5rem;
 
+            .value {
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+            }
+
             .column-type {
               @extend .info-1;
               font-size: 1.3rem;

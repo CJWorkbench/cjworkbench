@@ -161,7 +161,7 @@ export class EditableColumnName extends React.Component {
           className={'column-key'}
           onClick={this.enterEditMode}
         >
-          <div>
+          <div className='value'>
             {this.state.newName}
           </div>
           <div className={'column-type'}>

@@ -149,6 +149,7 @@ div>.react-select__menu {
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 
   }
   .react-select__option--is-focused {
