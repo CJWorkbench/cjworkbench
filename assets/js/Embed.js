@@ -50,26 +50,26 @@ export default class Embed extends React.Component {
         <div className="embed-footer">
           <div className="metadata-stack">
             <div className="embed-footer-logo">
-              <a href="/">
+              <a href="/" target="_blank">
                 <img src={`${window.STATIC_URL}images/logo.png`} width="35" />
               </a>
             </div>
             <div className="embed-footer-meta">
               <div className="title">
-                <a href={"/workflows/" + this.props.workflow.id }>
+                <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                   {this.props.workflow.name}
                 </a>
               </div>
               <div className="wf-meta--id">
                 <ul className="WF-meta">
                   <div className="WF-meta--item content-3 t-m-gray">
-                    <a href={"/workflows/" + this.props.workflow.id }>
+                    <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     by {this.props.workflow.owner_name}
                     </a>
                   </div>
                   <li className="separator">-</li>
                   <li className="WF-meta--item content-3 t-m-gray">
-                    <a href={"/workflows/" + this.props.workflow.id }>
+                    <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     Updated {timeDifference(this.props.workflow.last_update, new Date())}
                     </a>
                   </li>

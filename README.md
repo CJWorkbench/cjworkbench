@@ -14,7 +14,7 @@
 <tr>
   <td>Gitter</td>
     <td>
-      <a href="https://gitter.im/workbenchdata/Lobby">
+       <a href="https://gitter.im/workbenchdata/Lobby">
         <img src="https://badges.gitter.im/Join%20Chat.svg" />
       </a>
   </td>
@@ -22,7 +22,7 @@
 </table>
 
 
-#  The data journalism platform with built-in training
+#  Data workspaces, made simple.
 
 Welcome to Workbench! (CJ for computational journalism)
 

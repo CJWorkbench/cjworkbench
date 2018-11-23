@@ -76,7 +76,6 @@ describe('Reducer actions', () => {
     WorkbenchAPI.deleteModule.mockReset()
     WorkbenchAPI.setSelectedWfModule.mockReset()
     WorkbenchAPI.updateWfModule.mockReset()
-    WorkbenchAPI.onParamChanged.mockReset()
     WorkbenchAPI.setWfModuleParams.mockReset()
     WorkbenchAPI.markDataVersionsRead.mockReset()
     WorkbenchAPI.reorderWfModules.mockReset()
@@ -340,20 +339,6 @@ describe('Reducer actions', () => {
     expect(state.wfModules['20'].is_collapsed).toBe(true)
   })
 
-  it('should setParamValueAction', async () => {
-    WorkbenchAPI.onParamChanged.mockImplementation(_ => Promise.resolve({}))
-
-    const store = mockStore(testState)
-    const done = store.dispatch(wfr.setParamValueAction(1, { value: 'foo' }))
-
-    // should set value immediately
-    expect(store.getState().wfModules['10'].parameter_vals[0].value).toEqual('foo')
-    await done
-
-    // should send HTTP request
-    expect(WorkbenchAPI.onParamChanged).toHaveBeenCalledWith(1, { value: 'foo' })
-  })
-
   it('should setWfModuleParams', async () => {
     WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve({}))
 
@@ -378,28 +363,6 @@ describe('Reducer actions', () => {
 
     await done
     expect(store.getState().wfModules['10'].nClientRequests).toEqual(0)
-  })
-
-  it('should no-op when setting param value to itself', async () => {
-    const store = mockStore(testState)
-    await store.dispatch(wfr.setParamValueAction(1, { value: 'Some Data' }))
-
-    // should send HTTP request
-    expect(WorkbenchAPI.onParamChanged).not.toHaveBeenCalled()
-  })
-
-  it('should setParamValueActionByIdName', async () => {
-    WorkbenchAPI.onParamChanged.mockImplementation(_ => Promise.resolve({}))
-
-    const store = mockStore(testState)
-    const done = store.dispatch(wfr.setParamValueActionByIdName(10, 'data', { value: 'foo' }))
-
-    // should set value immediately
-    expect(store.getState().wfModules['10'].parameter_vals[0].value).toEqual('foo')
-
-    // should send HTTP request
-    expect(WorkbenchAPI.onParamChanged).toHaveBeenCalledWith(1, { value: 'foo' })
-    await done
   })
 
   it('Sets the data version', () => {

@@ -1,0 +1,42 @@
+.value-parameter {
+  .value-list {
+    margin-top: 1rem;
+    padding: 0;
+    list-style: none;
+    max-height: 30rem;
+
+    .ReactVirtualized__Grid:focus {
+      outline: none;
+    }
+
+    .value {
+      display: flex;
+      font-size: 1.3rem;
+      vertical-align: middle;
+
+      input[type="checkbox"] {
+        flex: 0 0 auto;
+        display: inline-block;
+        vertical-align: middle;
+
+        &::after {
+          top: -2px;
+        }
+      }
+
+      .text {
+        flex: 1 1 auto;
+        margin-top: .1rem;
+        display: inline;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .count {
+        flex: 0 0 auto;
+        font-weight: 200;
+      }
+    }
+  }
+}

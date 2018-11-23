@@ -55,8 +55,7 @@ export default class TableInfo extends React.PureComponent {
         {!wfModuleId ? null : (
           <div className="export-table" onClick={this.openExportModal}>
             <i className="icon-download" />
-            <span>CSV</span>
-            <span className="feed">JSON</span>
+            <span>EXPORT</span>
             <ExportModal
               open={isExportModalOpen}
               wfModuleId={wfModuleId}

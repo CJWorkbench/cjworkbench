@@ -146,6 +146,8 @@ div>.react-select__menu {
     color: $brand-text--dark;
     @extend .content-3;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
 
   }
   .react-select__option--is-focused {

@@ -20,6 +20,7 @@ import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
 import RadioParam from './wfparameters/RadioParam'
 import MultiLineTextArea from './wfparameters/MultiLineTextArea'
+import ValueSelect from './wfparameters/ValueSelect'
 //import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 //import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 //import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
@@ -62,10 +63,9 @@ export default class WfParameter extends React.PureComponent {
     updateSettings: PropTypes.object,             // only for modules that load data
     isReadOnly:     PropTypes.bool.isRequired,
     isZenMode:      PropTypes.bool.isRequired,
-    changeParam:    PropTypes.func.isRequired,
+    setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined -- icky, prefer onChange
     getParamId:     PropTypes.func.isRequired,
     getParamText:   PropTypes.func.isRequired,
-    setParamText:   PropTypes.func.isRequired,
     // "new-style" API: what it should have been all along. Normal React state stuff.
     onChange: PropTypes.func.isRequired, // func(idName, newValue) => undefined
     onSubmit: PropTypes.func.isRequired, // func() => undefined
@@ -126,8 +126,8 @@ export default class WfParameter extends React.PureComponent {
     this.props.onReset(this.idName)
   }
 
-  paramChanged = (newVal) => {
-    this.props.changeParam(this.props.p.id, { value: newVal })
+  paramChanged = (value) => {
+    this.props.setWfModuleParams({ [this.idName]: value })
   }
 
   onClickCheckbox = (ev) => {
@@ -142,20 +142,12 @@ export default class WfParameter extends React.PureComponent {
   }
 
   onChangeGoogleFileSelectJson = (json) => {
-    this.props.onChange(this.props.name, json)
+    this.props.onChange(this.idName, json)
     this.props.onSubmit()
   }
 
   onChangeYColumns = (arr) => {
-    this.props.setParamText('y_columns', JSON.stringify(arr))
-  }
-
-  colRenameSaveState = (state) => {
-    this.props.setParamText('newcolnames', state)
-  }
-
-  onColumnSelectorChange = (value) => {
-    this.props.setParamText('colnames', value)
+    this.props.setWfModuleParams({ [this.idName]: JSON.stringify(arr) })
   }
 
   render_secret_parameter() {
@@ -278,12 +270,11 @@ export default class WfParameter extends React.PureComponent {
         )
       case 'valueselect':
         return (
-          <Refine
+          <ValueSelect
             fetchData={this.getInputValueCounts}
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
             value={this.props.p.value}
             onChange={this.paramChanged}
-            isSelectOnly
           />
         )
 //      case 'map-geojson':
@@ -396,7 +387,7 @@ export default class WfParameter extends React.PureComponent {
             <div {...this.outerDivProps}>
               <div className='label-margin t-d-gray content-3'>{name}</div>
               <MultiLineTextArea
-                readOnly={this.props.isReadOnly}
+                isReadOnly={this.props.isReadOnly}
                 name={id_name}
                 value={this.props.value}
                 initialValue={this.props.p.value}

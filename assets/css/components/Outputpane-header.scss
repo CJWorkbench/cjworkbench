@@ -37,8 +37,10 @@
     .dropdown .table-action {
       @extend .action-button;
       @extend .button-orange;
+      background-color: lighten($brand-orange,27%);
+      min-width: 15rem;
 
-      &:Active {
+      &:active {
         background-color: lighten($brand-orange,18%);
         color: $brand-orange;
       }
@@ -46,6 +48,22 @@
       &:focus {
         background-color: lighten($brand-orange,23%);
         color: darken($brand-orange,10%);
+      }
+
+      &.disabled {
+        pointer-events: none; // REACT not taking care of it
+        @extend .button-dark-blue;
+        opacity: .9;
+        min-width: 15rem;
+        cursor: default;
+
+        &:hover {
+          background-color: transparent;
+          color: $table-header;
+        }
+        &:focus {
+          background-color: transparent
+        }
       }
     }
 
@@ -76,7 +94,7 @@
     align-items: center;
     margin-right: 2.25rem;
     border-color: transparent;
-    color: $table-element;
+    color: $table-header;
     background-color: white;
     cursor: pointer;
 
@@ -92,7 +110,7 @@
     .feed {
       margin-left: 1rem;
       padding-left: 1rem;
-      border-left: 1px solid $table-element--light;
+      border-left: 1px solid $table-header--light;
     }
   }
 }

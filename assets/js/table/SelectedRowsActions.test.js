@@ -30,16 +30,6 @@ describe('SelectedRowsActions', () => {
       expect(w.text()).toMatch(/3 rows selected/)
     })
 
-    it('should not appear when there are no rows', () => {
-      const w = wrapper({ selectedRowIndexes: [] })
-      expect(w.text()).toBe(null)
-    })
-
-    it('should not appear when there is no wfModuleId', () => {
-      const w = wrapper({ wfModuleId: null })
-      expect(w.text()).toBe(null)
-    })
-
     it('should invoke an action with rows as a string, 1-based', () => {
       const w = wrapper({ selectedRowIndexes: [ 2, 3, 4, 5, 8000, 8001, 8002, 9 ] })
       w.find('button').at(0).simulate('click') // open the menu

@@ -199,14 +199,14 @@ export default class Workflows extends React.Component {
       // No shared workflows message
       return (
         <TabPane tabId={'shared'}>
-          <div className="placeholder">No shared workflows  ¯\_(ツ)_/¯</div>
+          <div className="placeholder">No shared workflows ~ ༼ つ ◕_◕ ༽つ</div>
         </TabPane>
       )
     } else if (tab === 'templates'){
       // No shared workflows message
       return (
         <TabPane tabId={'templates'}>
-          <div className="placeholder">No template  ¯\_(ツ)_/¯</div>
+          <div className="placeholder">No template  \_(ツ)_/¯</div>
         </TabPane>
       )
     }
@@ -236,18 +236,18 @@ export default class Workflows extends React.Component {
           <div className='mx-auto workflows-list'>
             <Nav tabs>
               <div className="tab-group">
-                <NavItem>
-                  <NavLink active={this.state.activeTab === 'owned'} onClick={this.setTabOwned}>
+                <NavItem active={this.state.activeTab === 'owned'} onClick={this.setTabOwned}>
+                  <NavLink>
                     My workflows
                   </NavLink>
                 </NavItem>
-                <NavItem>
-                  <NavLink active={this.state.activeTab === 'shared'} onClick={this.setTabShared}>
+                <NavItem active={this.state.activeTab === 'shared'} onClick={this.setTabShared}>
+                  <NavLink>
                     Shared with me
                   </NavLink>
                 </NavItem>
-                <NavItem>
-                  <NavLink active={this.state.activeTab === 'templates'} onClick={this.setTabTemplates}>
+                <NavItem active={this.state.activeTab === 'templates'} onClick={this.setTabTemplates}>
+                  <NavLink>
                     Templates
                   </NavLink>
                 </NavItem>

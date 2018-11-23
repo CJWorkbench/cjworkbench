@@ -20,14 +20,12 @@ class ChangeWfModuleNotesCommand(Delta):
     async def create(cls, wf_module, notes):
         old_value = wf_module.notes if wf_module.notes else ''
 
-        delta = await cls.create_impl(
+        return await cls.create_impl(
             workflow=wf_module.workflow,
             wf_module=wf_module,
             new_value=notes,
             old_value=old_value
         )
-
-        return delta
 
     @property
     def command_description(self):

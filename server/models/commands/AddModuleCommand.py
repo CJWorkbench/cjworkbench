@@ -17,7 +17,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
 
     def forward_impl(self):
-        self.selected_wf_module = self.workflow.selected_wf_module
         insert_wf_module(self.wf_module, self.workflow, self.order)     # may alter wf_module.order without saving
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.forward_dependent_wf_module_versions(self.wf_module)
@@ -42,18 +41,29 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         self.save()
 
     @classmethod
+    def amend_create_kwargs(cls, *, workflow, module_version, insert_before,
+                            param_values, **kwargs):
+        wf_module = WfModule.objects.create(workflow=None,
+                                            module_version=module_version,
+                                            order=insert_before,
+                                            is_collapsed=False)
+        wf_module.create_parametervals(param_values or {})
+
+        return {
+            **kwargs,
+            'workflow': workflow,
+            'wf_module': wf_module,
+            'order': insert_before,
+            'selected_wf_module': workflow.selected_wf_module,
+        }
+
+    @classmethod
     async def create(cls, workflow, module_version, insert_before,
                      param_values):
-        newwfm = WfModule.objects.create(workflow=None,
-                                         module_version=module_version,
-                                         order=insert_before,
-                                         is_collapsed=False)
-        newwfm.create_parametervals(param_values or {})
-
-        delta = await cls.create_impl(workflow=workflow, wf_module=newwfm,
-                                      order=insert_before)
-
-        return delta
+        return await cls.create_impl(workflow=workflow,
+                                     module_version=module_version,
+                                     insert_before=insert_before,
+                                     param_values=param_values)
 
     @property
     def command_description(self):
