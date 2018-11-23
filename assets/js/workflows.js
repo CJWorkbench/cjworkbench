@@ -199,7 +199,7 @@ export default class Workflows extends React.Component {
       // No shared workflows message
       return (
         <TabPane tabId={'shared'}>
-          <div className="placeholder">No shared workflows yet ~~ ༼ つ ◕_◕ ༽つ</div>
+          <div className="placeholder">No shared workflows ~ ༼ つ ◕_◕ ༽つ</div>
         </TabPane>
       )
     } else if (tab === 'templates'){
