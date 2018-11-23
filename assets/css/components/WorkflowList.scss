@@ -269,6 +269,12 @@
         align-items:center;
         justify-content: space-between;
         z-index: 3;
+        &:first-child {
+          border-radius: .5rem .5rem 0 0;
+        }
+        &:last-child {
+          border-radius: 0 0 .5rem .5rem;
+        }
 
         &:hover {
         background-color: $SuperLightGray;
