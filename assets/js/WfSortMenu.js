@@ -28,17 +28,17 @@ export default class WfSortMenu extends React.Component {
         </DropdownToggle>
         <DropdownMenu right>
           <DropdownItem onClick={this.sortDateAsc} className='test-sort-date-ascending'>
-            <span>Modified Ascending</span>
+            <span>Last modified</span>
           </DropdownItem>
           <DropdownItem onClick={this.sortDateDesc} className='test-sort-date-descending'>
-            <span>Modified Descending</span>
+            <span>Oldest modified</span>
           </DropdownItem>
           <DropdownItem divider />
           <DropdownItem onClick={this.sortNameAsc} className='test-sort-name-ascending'>
-            <span>Name Ascending</span>
+            <span>Alphabetical</span>
           </DropdownItem>
           <DropdownItem onClick={this.sortNameDesc} className='test-sort-name-descending'>
-            <span>Name Descending</span>
+            <span>Reverse alphabetical</span>
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>

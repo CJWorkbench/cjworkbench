@@ -422,7 +422,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <span>
-                                  Modified Ascending
+                                  Last modified
                                 </span>
                               </button>
                             </DropdownItem>
@@ -439,7 +439,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <span>
-                                  Modified Descending
+                                  Oldest modified
                                 </span>
                               </button>
                             </DropdownItem>
@@ -467,7 +467,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <span>
-                                  Name Ascending
+                                  Alphabetical
                                 </span>
                               </button>
                             </DropdownItem>
@@ -484,7 +484,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <span>
-                                  Name Descending
+                                  Reverse alphabetical
                                 </span>
                               </button>
                             </DropdownItem>
