@@ -124,6 +124,8 @@ class ScrapeTableTest(unittest.TestCase):
             error='Error from server: 500 Server Error'
         ))
 
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(b'<html><body>No table</body></html>'))
     def test_no_tables(self):
         with mock.patch('pandas.read_html') as readmock:
             readmock.return_value = []
