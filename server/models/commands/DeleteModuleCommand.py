@@ -10,6 +10,12 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
     selected_wf_module = models.IntegerField(null=True, blank=True)
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
+    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+
+    @classmethod
+    def affected_wf_modules(cls, wf_module) -> models.QuerySet:
+        # We don't need to change self.wf_module's delta_id: just the others.
+        return wf_module.workflow.wf_modules.filter(order__gt=wf_module.order)
 
     def forward_impl(self):
         # If we are deleting the selected module, then set the previous module
@@ -23,24 +29,28 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
                 self.workflow.selected_wf_module = None
             self.workflow.save()
 
-        self.forward_dependent_wf_module_versions(self.wf_module)
-        self.wf_module.workflow = None                                  # detach from workflow
-        self.wf_module.save()
-        renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
-        self.save()
+        # forward before delete -- for dependent_wf_module_last_delta_ids
+        self.forward_affected_delta_ids(self.wf_module)
+
+        self.wf_module.workflow = None  # detach from workflow
+        self.wf_module.save(update_fields=['workflow_id'])
+
+        renumber_wf_modules(self.workflow)  # fix up ordering on the rest
 
     def backward_impl(self):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
-        self.wf_module.workflow = self.workflow                         # attach to workflow
-        self.backward_dependent_wf_module_versions(self.wf_module)
-        self.wf_module.save()
+
+        self.wf_module.workflow = self.workflow  # attach to workflow
+        self.wf_module.save(update_fields=['workflow_id'])
+
+        self.backward_affected_delta_ids(self.wf_module)
+
         # [adamhooper, 2018-06-19] I don't think there's any hope we can
         # actually restore selected_wf_module correctly, because sometimes we
         # update it without a command. But I think focusing the restored module
         # is something a user could expect.
         self.workflow.selected_wf_module = self.selected_wf_module
-        self.workflow.save()
-        self.save()
+        self.workflow.save(update_fields=['selected_wf_module'])
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, wf_module):
@@ -58,6 +68,7 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
             'workflow': workflow,
             'wf_module': wf_module,
             'selected_wf_module': workflow.selected_wf_module,
+            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @classmethod

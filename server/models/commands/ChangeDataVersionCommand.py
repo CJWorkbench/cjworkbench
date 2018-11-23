@@ -19,20 +19,17 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
     new_version = models.DateTimeField('new_version')
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
+    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def forward_impl(self):
         self.wf_module.stored_data_version = self.new_version
         self.wf_module.save(update_fields=['stored_data_version'])
-
-        self.forward_dependent_wf_module_versions(self.wf_module)
-        self.wf_module.save()
+        self.forward_affected_delta_ids(self.wf_module)
 
     def backward_impl(self):
-        self.backward_dependent_wf_module_versions(self.wf_module)
-        self.wf_module.save()
-
         self.wf_module.stored_data_version = self.old_version
         self.wf_module.save(update_fields=['stored_data_version'])
+        self.backward_affected_delta_ids(self.wf_module)
 
     async def schedule_execute(self) -> None:
         """
@@ -81,6 +78,7 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
             **kwargs,
             'wf_module': wf_module,
             'old_version': wf_module.stored_data_version,
+            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @classmethod

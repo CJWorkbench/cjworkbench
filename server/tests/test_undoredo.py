@@ -3,8 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 import django.db
 from unittest.mock import patch
 from server.models import Delta
-from server.models.commands import AddModuleCommand, ChangeParameterCommand, \
-        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand
+from server.models.commands import AddModuleCommand, ChangeParametersCommand, \
+        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand, \
+        InitWorkflowCommand
 from server.tests.utils import DbTestCase, load_module_version, \
         add_new_workflow, get_param_by_id_name
 from server.versions import WorkflowUndo, WorkflowRedo
@@ -23,6 +24,7 @@ class UndoRedoTests(DbTestCase):
         # Define two types of modules we are going to use
         self.csv = load_module_version('pastecsv')
         self.workflow = add_new_workflow('My Undoable Workflow')
+        InitWorkflowCommand.create(self.workflow)
 
         # We'll execute with a 1-worker thread pool. That's because Django
         # database methods will spin up new connections and never close them.
@@ -72,75 +74,90 @@ class UndoRedoTests(DbTestCase):
     # polymorphism
     def test_undo_redo(self):
         all_modules = self.workflow.wf_modules  # beginning state: nothing
-        self.assertEqual(all_modules.count(), 0)
-        self.assertEqual(self.workflow.last_delta_id, None)
 
-        v0 = self.workflow.revision()
+        v0 = self.workflow.last_delta_id
+
+        self.assertEqual(all_modules.count(), 0)
+        self.assertEqual(self.workflow.last_delta_id, v0)
 
         # Test undoing nothing at all. Should NOP
         self._run_async(WorkflowUndo(self.workflow))
-        self.assertEqual(self.workflow.revision(), v0)
+        self.assertEqual(self.workflow.last_delta_id, v0)
         self.assertEqual(all_modules.count(), 0)
-        self.assertEqual(self.workflow.last_delta_id, None)
+        self.assertEqual(self.workflow.last_delta_id, v0)
 
         # Add a module
         cmd1 = self._run_async(AddModuleCommand.create(self.workflow,
                                                        self.csv, 0, {}))
         self.assertEqual(all_modules.count(), 1)
-        self.assertNotEqual(self.workflow.last_delta_id, None)
-        v1 = self.workflow.revision()
+        v1 = cmd1.id
         self.assertGreater(v1, v0)
+        self.assertEqual(self.workflow.last_delta_id, v1)
         self.assertWfModuleVersions([v1])
 
         # Undo, ensure we are back at start
         self._run_async(WorkflowUndo(self.workflow))
-        self.assertEqual(self.workflow.revision(), v0)
         self.assertEqual(all_modules.count(), 0)
-        self.assertEqual(self.workflow.last_delta_id, None)
+        self.assertEqual(self.workflow.last_delta_id, v0)
         self.assertWfModuleVersions([])
 
         # Redo, ensure we are back at v1
         self._run_async(WorkflowRedo(self.workflow))
         self.assertEqual(all_modules.count(), 1)
-        self.assertNotEqual(self.workflow.last_delta_id, None)
-        self.assertEqual(self.workflow.revision(), v1)
+        self.assertEqual(self.workflow.last_delta_id, v1)
         self.assertWfModuleVersions([v1])
 
         # Change a parameter
-        pval = get_param_by_id_name('csv')
-        cmd2 = self._run_async(ChangeParameterCommand.create(pval,
-                                                             'some value'))
-        self.assertEqual(pval.value, 'some value')
+        cmd2 = self._run_async(ChangeParametersCommand.create(
+            workflow=self.workflow,
+            wf_module=self.workflow.wf_modules.first(),
+            new_values={'csv': 'some value'}
+        ))
         self.workflow.refresh_from_db()
-        v2 = self.workflow.revision()
+        self.assertEqual(
+            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            'some value'
+        )
+        self.workflow.refresh_from_db()
+        v2 = cmd2.id
         self.assertGreater(v2, v1)
         self.assertWfModuleVersions([v2])
 
         # Undo parameter change
         self._run_async(WorkflowUndo(self.workflow))
-        self.assertEqual(self.workflow.revision(), v1)
-        pval.refresh_from_db()
-        self.assertEqual(pval.value, '')
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.last_delta_id, v1)
+        self.assertEqual(
+            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            ''
+        )
         self.assertWfModuleVersions([v1])
 
         # Redo
         self._run_async(WorkflowRedo(self.workflow))
-        self.assertEqual(self.workflow.revision(), v2)
-        pval.refresh_from_db()
-        self.assertEqual(pval.value, 'some value')
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.last_delta_id, v2)
+        self.assertEqual(
+            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            'some value'
+        )
         self.assertWfModuleVersions([v2])
 
         # Redo again should do nothing
         self._run_async(WorkflowRedo(self.workflow))
-        self.assertEqual(self.workflow.revision(), v2)
-        self.assertEqual(pval.value, 'some value')
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.last_delta_id, v2)
+        self.assertEqual(
+            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            'some value'
+        )
         self.assertWfModuleVersions([v2])
 
         # Add one more command so the stack is 3 deep
         cmd3 = self._run_async(ChangeWorkflowTitleCommand.create(self.workflow,
                                                                  'New Title'))
         # self.workflow.refresh_from_db()
-        v3 = self.workflow.revision()
+        v3 = cmd3.id
         self.assertGreater(v3, v2)
         self.assertWfModuleVersions([v2])
 
@@ -179,10 +196,10 @@ class UndoRedoTests(DbTestCase):
 
         # Undo back to start, then add a command, ensure it deletes dangling
         # commands (tests an edge case in Delta.save)
-        self.assertEqual(Delta.objects.count(), 2)
+        self.assertEqual(Delta.objects.count(), 3)
         self._run_async(WorkflowUndo(self.workflow))
         self._run_async(WorkflowUndo(self.workflow))
-        self.assertIsNone(self.workflow.last_delta)
+        self.assertEqual(self.workflow.last_delta_id, v0)
         cmd5 = self._run_async(ChangeWfModuleNotesCommand.create(
             wfm,
             "Note of some note"

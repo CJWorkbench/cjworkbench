@@ -10,6 +10,7 @@ class ChangeParameterCommand(Delta, ChangesWfModuleOutputs):
     old_value = models.TextField('old_value')
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
+    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     # Implement wf_module for self.ws_notify()
     @property
@@ -24,26 +25,17 @@ class ChangeParameterCommand(Delta, ChangesWfModuleOutputs):
         self.parameter_val.value = self.new_value
         self.parameter_val.save(update_fields=['value'])
 
-        self.forward_dependent_wf_module_versions(self.wf_module)
-        self.wf_module.save()
+        self.forward_affected_delta_ids(self.wf_module)
 
     def backward_impl(self):
         self.parameter_val.value = self.old_value
         self.parameter_val.save(update_fields=['value'])
 
-        self.backward_dependent_wf_module_versions(self.wf_module)
-        self.wf_module.save()
+        self.backward_affected_delta_ids(self.wf_module)
 
     @classmethod
     async def create(cls, parameter_val, value):
-        workflow = parameter_val.wf_module.workflow
-
-        return await cls.create_impl(
-            parameter_val=parameter_val,
-            new_value=value or '',
-            old_value=parameter_val.value,
-            workflow=workflow
-        )
+        raise RuntimeError('ChangeParameterCommand is deprecated and disabled')
 
     @property
     def command_description(self):
