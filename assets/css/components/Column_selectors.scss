@@ -29,6 +29,7 @@
     .react-select__indicator.react-select__dropdown-indicator,
     .react-select__indicator.react-select__dropdown-indicator {
       padding: 0 .5rem;
+      cursor: pointer;
     }
 
     //carret container
@@ -148,6 +149,7 @@ div>.react-select__menu {
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 
   }
   .react-select__option--is-focused {

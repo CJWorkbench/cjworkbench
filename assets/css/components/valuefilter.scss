@@ -18,23 +18,27 @@
         flex: 0 0 auto;
         display: inline-block;
         vertical-align: middle;
+        height: 1.6rem;
+        height: 1.6rem;
 
         &::after {
-          top: -2px;
+          top: 2px;
         }
       }
 
       .text {
-        flex: 1 1 auto;
-        margin-top: .1rem;
+        position: relative;
         display: inline;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        width: 20rem;
       }
 
       .count {
-        flex: 0 0 auto;
+        position: absolute;
+        text-align: right;
+        right: 0;
         font-weight: 200;
       }
     }
