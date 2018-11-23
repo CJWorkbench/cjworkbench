@@ -291,6 +291,7 @@ class CountByDateTests(SimpleTestCase):
                          dt('2018-01-04'), dt('2018-01-05')],
                 'Amount': [8, 0, 9, 0, 2],
             })
+        )
 
     def test_include_missing_dates_with_1_date(self):
         self._assertRendersTable(
