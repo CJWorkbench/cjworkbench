@@ -3,6 +3,7 @@ import logging
 import os
 from typing import Awaitable, Callable
 import aio_pika
+from channels.db import database_sync_to_async
 from django.db import DatabaseError, InterfaceError
 import msgpack
 from server import execute, rabbitmq
@@ -38,6 +39,12 @@ async def send_render(workflow_id: int, delta_id: int) -> None:
     await rabbitmq.queue_render(workflow_id, delta_id)
 
 
+@database_sync_to_async
+def _lookup_workflow_last_delta_id(workflow_id: int) -> int:
+    """Lookup workflow, or raise Workflow.DoesNotExist."""
+    return Workflow.objects.get(id=workflow_id)
+
+
 async def render_or_reschedule(
     pg_locker: PgLocker,
     reschedule: Callable[[int, int], Awaitable[None]],
@@ -56,7 +63,7 @@ async def render_or_reschedule(
     # lock means we can dismiss spurious renders sooner, so they don't fill the
     # render queue.
     try:
-        workflow = Workflow.objects.get(id=workflow_id)
+        workflow = await _lookup_workflow_last_delta_id(workflow_id)
     except Workflow.DoesNotExist:
         logger.info('Skipping render of deleted Workflow %d', workflow_id)
         return
