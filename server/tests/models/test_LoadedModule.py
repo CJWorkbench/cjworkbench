@@ -148,6 +148,22 @@ class LoadedModuleTest(SimpleTestCase):
 
         self.assertIs(lm.render_impl, lm2.render_impl)
 
+    def test_load_dynamic_from_none(self):
+        lm = LoadedModule.for_module_version_sync(None)
+
+        with self.assertLogs('server.models.loaded_module'):
+            result = lm.render(MockParams(), pd.DataFrame({'A': [1]}),
+                               fetch_result=ProcessResult())
+        self.assertEqual(result, ProcessResult(
+            error='Cannot render: module was deleted'
+        ))
+
+        with self.assertLogs('server.models.loaded_module'):
+            result = call_fetch(lm, MockParams())
+        self.assertEqual(result, ProcessResult(
+            error='Cannot fetch: module was deleted'
+        ))
+
     def test_render_static_with_fetch_result(self):
         args = None
 

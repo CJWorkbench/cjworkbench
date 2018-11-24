@@ -100,6 +100,25 @@ async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
     return None
 
 
+class DeletedModule:
+    def render(self, params: Params, table: Optional[pd.DataFrame],
+               fetch_result: Optional[ProcessResult]) -> ProcessResult:
+        logger.info('render() deleted module')
+        return ProcessResult(error='Cannot render: module was deleted')
+
+    async def fetch(
+        self,
+        params: Params,
+        *,
+        workflow_id: int,
+        get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
+        get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
+        get_workflow_owner: Callable[[], Awaitable[User]]
+    ) -> ProcessResult:
+        logger.info('fetch() deleted module')
+        return ProcessResult(error='Cannot fetch: module was deleted')
+
+
 class LoadedModule:
     """A module with `fetch` and `render` methods.
     """
@@ -274,15 +293,14 @@ class LoadedModule:
     @classmethod
     def for_module_version_sync(
         cls,
-        module_version: ModuleVersion
+        module_version: Optional[ModuleVersion]
     ) -> 'LoadedModule':
         """
         Return module referenced by `module_version`.
 
         We assume:
 
-        * the ModuleVersion and Module are in the database (foreign keys prove
-          this)
+        * if `module_version is not None`, then its `module` is in the database
         * external-module files exist on disk
         * external-module files were validated before being written to database
         * external-module files haven't changed
@@ -294,6 +312,9 @@ class LoadedModule:
         Do not call this from an async method, because you may leak a database
         connection. Use `for_module_version` instead.
         """
+        if module_version is None:
+            return DeletedModule()
+
         module_id_name = module_version.module.id_name  # TODO DoesNotExist
         version_sha1 = module_version.source_version_hash
 
