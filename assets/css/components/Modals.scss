@@ -1,15 +1,21 @@
 /* ---- Dialog Boxes ---- */
 
+.modal-open .modal-backdrop.fade.show {
+  opacity: .2;
+  background-color: $dark-gray;
+}
 .modal-dialog {
   border: 0;
   top:calc(100vh/10);
   max-height: 50rem;
+  box-shadow: $menu-shadow;
+
   .modal-content{
     border:0;
-    border-radius: 0;
+    border-radius: .5rem;
 
     .modal-header {
-      border-radius: 0;
+      border-radius: .5rem .5rem 0 0;
       height: 6rem;
       padding: 2rem;
       background-color: $modal-color;
@@ -99,7 +105,8 @@
   }
 
   /* imported modal settings */
-  .modal-footer{
+  .modal-footer {
+    border-radius: 0 0 .5rem .5rem;
     border-top:0;
     padding: 1.5rem 2rem;
     display: flex;

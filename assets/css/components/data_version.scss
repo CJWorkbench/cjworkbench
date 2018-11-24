@@ -61,7 +61,6 @@
       width: 8rem;
       margin-right: 1rem;
       flex: 0 0 auto;
-      cursor: pointer;
 
       input { display: none; }
       color: $brand-workspace;
@@ -69,20 +68,14 @@
       font-size: 1.5rem;
       line-height: 1;
       text-align: center;
-
-      .radio {
-        @extend .button-blue;
-        width: 8rem;
-        border: 1px solid $brand-workspace;
-        padding: .9rem;
-      }
     }
 
     .big-radio-details {
       margin-left: 1rem;
+      cursor: default;
       label {
         @extend .content-3;
-        color: $brand-text--medium;
+        color: $brand-text--dark;
       }
     }
   }
@@ -90,14 +83,19 @@
   .big-radio-checked>label .radio {
     @extend .action-button;
     @extend .button-blue--fill;
+    &:hover {
+      background-color: $brand-workspace;
+      color: $white;
+    }
   }
   .big-radio-unchecked>label .radio {
+    cursor: pointer;
     @extend .action-button;
-    @extend .button-blue;
+    @extend .button-gray;
   }
 
   .big-radio-unchecked {
-    opacity: .5;
+    opacity: .6;
   }
 
   .big-radio-checked {
@@ -244,7 +242,7 @@
 
         label {
           @extend .action-button;
-          @extend %button-gray;
+          @extend .button-gray;
           margin-bottom: 0;
           display: flex;
           align-items: center;
