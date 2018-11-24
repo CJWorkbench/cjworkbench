@@ -31,22 +31,25 @@ def locked_wf_module(wf_module):
     with locked_wf_module(wf_module) as safe_wf_module:
         ...
 
-    Raises UnneededExecution.
+    Raises UnneededExecution if the wf_module or workflow have changed.
     """
-    with wf_module.workflow.cooperative_lock():
-        # safe_wf_module: locked at the database level.
-        delta_id = wf_module.last_relevant_delta_id
-        try:
-            safe_wf_module = WfModule.objects \
-                .filter(workflow_id=wf_module.workflow_id) \
-                .filter(last_relevant_delta_id=delta_id) \
-                .get(pk=wf_module.pk)
-        except WfModule.DoesNotExist:
-            # Module was deleted or changed input/params _after_ we requested
-            # render but _before_ we start rendering
-            raise UnneededExecution
+    try:
+        with wf_module.workflow.cooperative_lock():
+            # safe_wf_module: locked at the database level.
+            delta_id = wf_module.last_relevant_delta_id
+            try:
+                safe_wf_module = WfModule.objects \
+                    .filter(workflow_id=wf_module.workflow_id) \
+                    .filter(last_relevant_delta_id=delta_id) \
+                    .get(pk=wf_module.pk)
+            except WfModule.DoesNotExist:
+                # Module was deleted or changed after execute began
+                raise UnneededExecution
 
-        retval = yield safe_wf_module
+            retval = yield safe_wf_module
+    except Workflow.DoesNotExist:
+        # Workflow was deleted after execute began
+        raise UnneededExecution
 
     return retval
 
@@ -326,22 +329,3 @@ async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
                 str(wf_module.id): build_status_dict(last_cached_result)
             }
         })
-
-
-async def execute_ignoring_error(workflow: Workflow
-                                 ) -> Optional[CachedRenderResult]:
-    """
-    `execute_workflow(workflow)` and stop on `UnneededExecution`.
-
-    Stops when it catches UnneededExecution or when workflow is up-to-date.
-
-    Does not return anything, and should never raise any exception. To fire
-    and forget call `asyncio.ensure_future(execute_ignoring_error(workflow))`.
-
-    TODO render in a worker process; nix this terrible, terrible design. This
-    design keeps tons of DataFrames in memory simultaneously.
-    """
-    try:
-        return await execute_workflow(workflow)
-    except UnneededExecution:
-        pass

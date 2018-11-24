@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 import django.db
 import pandas as pd
 from server.tests.utils import DbTestCase
-from server.execute import execute_workflow
+from server.execute import execute_workflow, UnneededExecution
 from server.models import LoadedModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
@@ -98,6 +98,30 @@ class ExecuteTests(DbTestCase):
             wf_module.get_cached_render_result(only_fresh=True).result,
             result2
         )
+
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    def test_execute_race_delete_workflow(self, fake_load_module):
+        workflow = Workflow.objects.create()
+        delta = InitWorkflowCommand.create(workflow)
+        wf_module1 = workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id
+        )
+        wf_module2 = workflow.wf_modules.create(
+            order=1,
+            last_relevant_delta_id=delta.id
+        )
+
+        def load_module_and_delete(module_version):
+            workflow.delete()
+            fake_module = Mock(LoadedModule)
+            result = ProcessResult(pd.DataFrame({'A': [1]}))
+            fake_module.render.return_value = result
+            return fake_module
+        fake_load_module.side_effect = load_module_and_delete
+
+        with self.assertRaises(UnneededExecution):
+            self._execute(workflow)
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async')
