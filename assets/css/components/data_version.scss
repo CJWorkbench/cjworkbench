@@ -81,6 +81,7 @@
   }
 
   .big-radio-checked>label .radio {
+    cursor: default;
     @extend .action-button;
     @extend .button-blue--fill;
     &:hover {
