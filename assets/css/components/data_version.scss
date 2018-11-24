@@ -8,7 +8,9 @@
   display: flex;
   align-items: center;
 
-  .no-versions {margin-left: .5rem;}
+  .no-versions {
+    margin-left: .5rem;
+  }
 
   button {
     // button looks like a link
