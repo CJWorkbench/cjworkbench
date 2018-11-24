@@ -13,32 +13,36 @@
       display: flex;
       font-size: 1.3rem;
       vertical-align: middle;
+      position: relative;
+      justify-content: space-between;
 
-      input[type="checkbox"] {
-        flex: 0 0 auto;
-        display: inline-block;
-        vertical-align: middle;
-        height: 1.6rem;
-        height: 1.6rem;
+      label {
+        flex: 0 1 auto;
+        display: flex;
+        cursor: pointer;
+        overflow: hidden;
 
-        &::after {
-          top: 2px;
+        input[type="checkbox"] {
+          flex: 0 0 auto;
+          vertical-align: middle;
+          height: 1.6rem;
+          height: 1.6rem;
+          &::after {
+            top: 2px;
+          }
+        }
+        .text {
+
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
         }
       }
 
-      .text {
-        position: relative;
-        display: inline;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        width: calc(100% - 4.5rem);
-      }
-
       .count {
-        position: absolute;
+        margin-left: 1rem;
         text-align: right;
-        right: 0;
+        float: right;
         font-weight: 200;
       }
     }

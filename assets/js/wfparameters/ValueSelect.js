@@ -28,14 +28,16 @@ class ValueItem extends React.PureComponent {
 
     return (
       <div className="value">
-        <input
-          name={`include[${name}]`}
-          type='checkbox'
-          title='Include these rows'
-          checked={this.props.isSelected}
-          onChange={this.onChangeIsSelected}
-        />
-        <div className='text'>{name}</div>
+        <label>
+          <input
+            name={`include[${name}]`}
+            type='checkbox'
+            title='Include these rows'
+            checked={this.props.isSelected}
+            onChange={this.onChangeIsSelected}
+          />
+          <div className='text'>{name}</div>
+        </label>
         <div className='count'>{NumberFormatter.format(count)}</div>
       </div>
     )

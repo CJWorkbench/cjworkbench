@@ -172,21 +172,17 @@ textarea:focus, input:focus{
 }
 
 .number-field {
-  @extend .module-parameter;
   display: flex; // so button can align to the right
   height: auto;
   padding: 0;
 
   input {
+    @extend .module-parameter;
+    @extend .content-3;
+    cursor: text;
     flex: 1 1 auto; // almost all horizontal space
     display: block;
-    font: inherit;
-    padding: .7rem 1rem;
-    margin: 0;
-    border: 0;
-    line-height: 1;
-    background: transparent;
-    color:$brand-text--dark;
+    padding: 0 1rem;
 
     // Hide "spin" arrows
     -moz-appearance: textfield;
@@ -209,6 +205,9 @@ textarea:focus, input:focus{
     background: transparent;
     color: lighten($brand-orange,6%);
     &:hover {color: $brand-orange}
+  }
+  &:focus {
+    border-color: $module-action;
   }
 }
 
