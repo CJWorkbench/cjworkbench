@@ -97,10 +97,9 @@ export class ValueSelect extends React.PureComponent {
   state = {
     searchInput: ''
   }
-  /** references valueComponents, list of ValueItem to be consumed by 'renderRow()' **/
-  valueComponentsRef = React.createRef()
   /** references virtualized valueList to force re-render in 'onChange()' when an item is checked/unchecked **/
   valueListRef = React.createRef()
+  matchingValuesRef = React.createRef()
 
   /**
    * Return "selectedValues" in object form for fast lookup:
@@ -148,7 +147,6 @@ export class ValueSelect extends React.PureComponent {
   onChange = (selectedValues) => {
     const json = this.toJsonString(selectedValues)
     this.props.onChange(json)
-    this.valueListRef.forceUpdateGrid() // FIXME [adamhooper, 2018-11-22] delete this line and fix the underlying issue
   }
 
   toJsonString = (selectedValues) => {
@@ -187,33 +185,35 @@ export class ValueSelect extends React.PureComponent {
 
   /** Used by react-virtualized to only render rows in module viewport **/
   renderRow = ({ key, index, isScrolling, isVisible, style }) => {
+    const value = this.matchingValuesRef[index]
     const item = (
       <div key={key} style={style}>
-        {this.valueComponentsRef[index]}
+        <ValueItem
+          key={value}
+          name={value}
+          count={this.props.valueCounts[value]}
+          onChangeIsSelected={this.onChangeIsSelected}
+          isSelected={(value in this.selectedValues)}
+        />
       </div>
     )
     return item
   }
-
+  /** Force react-virtualized render when props change **/
+  componentDidUpdate (prevProps) {
+    if ((this.props.valueCounts !== prevProps.valueCounts || this.props.value !== prevProps.value) &&
+      (Object.keys(this.props.valueCounts).length > 0)) {
+      this.valueListRef.forceUpdateGrid()
+    }
+  }
   render () {
     const { searchInput } = this.state
     const { valueCounts } = this.props
-    const selectedValues = this.selectedValues
     const canSearch = this.sortedValues.length > 1
     const isSearching = (searchInput !== '')
     const matchingValues = isSearching ? this.valueMatching(searchInput) : this.sortedValues
 
-    // FIXME [adamhooper, 2018-11-22] render lazily -- in renderRow()
-    const valueComponents = matchingValues.map(value => (
-      <ValueItem
-        key={value}
-        name={value}
-        count={valueCounts[value]}
-        onChangeIsSelected={this.onChangeIsSelected}
-        isSelected={(value in selectedValues)}
-      />
-    ))
-    this.valueComponentsRef = valueComponents
+    this.matchingValuesRef = matchingValues
 
     /** TODO: Hardcoded row heights and width for now for simplicity, in the future we'll need to implement:
      *  https://github.com/bvaughn/react-virtualized/blob/master/docs/CellMeasurer.md
@@ -221,14 +221,14 @@ export class ValueSelect extends React.PureComponent {
      *  Viewport capped at 10 items, if less than 10 height is adjusted accordingly
      */
     const rowHeight = 27.78
-    const valueList = valueComponents.length > 0 ? (
+    const valueList = matchingValues.length > 0 ? (
       <List
         className={'react-list'}
         height={
-          rowHeight * valueComponents.length > 300 ? 300 : rowHeight * valueComponents.length
+          rowHeight * matchingValues.length > 300 ? 300 : rowHeight * matchingValues.length
         }
         width={246}
-        rowCount={valueComponents.length}
+        rowCount={matchingValues.length}
         rowHeight={rowHeight}
         rowRenderer={this.renderRow}
         ref={(ref) => { this.valueListRef = ref }}
@@ -259,7 +259,7 @@ export class ValueSelect extends React.PureComponent {
         <div className='value-list'>
           {valueList}
         </div>
-        { (isSearching && canSearch && valueComponents.length === 0) ? (
+        { (isSearching && canSearch && matchingValues.length === 0) ? (
           <div className='wf-module-error-msg'>No values</div>
         ) : null}
       </div>
