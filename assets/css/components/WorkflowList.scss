@@ -249,7 +249,8 @@
         @extend .button-blue;
         cursor: pointer;
         &:hover {
-          color: $link-hover-success
+          color: $link-hover-success;
+          background-color: $SuperLightGray;
         }
       }
     }
