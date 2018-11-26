@@ -10,7 +10,7 @@ from server.sanitizedataframe import sanitize_dataframe, \
         autocast_dtypes_in_place
 
 
-class SantizeDataframeTest(TestCase):
+class SanitizeDataFrameTest(TestCase):
     def test_sanitize_dataframe(self):
         # Load a test table which has a dict column
         fname = os.path.join(settings.BASE_DIR,
@@ -42,6 +42,26 @@ class SantizeDataframeTest(TestCase):
             result,
             pd.DataFrame({'A': ['1.0', 'str', np.nan, '']})
         )
+
+    def test_mixed_to_string_allows_custom_types(self):
+        class Obj:
+            def __str__(self):
+                return 'x'
+
+        table = pd.DataFrame({'A': [Obj(), Obj()]})
+        sanitize_dataframe(table)
+        expected = pd.DataFrame({'A': ['x', 'x']})
+        assert_frame_equal(table, expected)
+
+    def test_mixed_to_string_allows_custom_category_types(self):
+        class Obj:
+            def __str__(self):
+                return 'x'
+
+        table = pd.DataFrame({'A': [Obj(), Obj(), 'x', 'y']}, dtype='category')
+        sanitize_dataframe(table)
+        expected = pd.DataFrame({'A': ['x', 'x', 'x', 'y']}, dtype='category')
+        assert_frame_equal(table, expected)
 
     def test_lists_and_dicts(self):
         result = pd.DataFrame({'A': [[5, 6, 7], {'a': 'b'}]})
@@ -160,4 +180,16 @@ class AutocastDtypesTest(TestCase):
         table = pd.DataFrame({'A': ['1', '2.1', 'Yay']}).astype('category')
         autocast_dtypes_in_place(table)  # should be no-op
         expected = pd.DataFrame({'A': ['1', '2.1', 'Yay']}).astype('category')
+        assert_frame_equal(table, expected)
+
+    def test_autocast_allow_crazy_types(self):
+        class Obj:
+            pass
+
+        obj1 = Obj()
+        obj2 = Obj()
+
+        table = pd.DataFrame({'A': [obj1, obj2]})
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [obj1, obj2]})
         assert_frame_equal(table, expected)

@@ -82,8 +82,13 @@ def sanitize_values(values):
             return pd.to_numeric(values)
         elif categories.dtype != object \
                 or pd.api.types.infer_dtype(categories.values) != 'string':
-            # Cast non-Strings to String
-            values.rename_categories(categories.astype(str), inplace=True)
+            # Map from non-Strings to Strings
+            #
+            # 1. map the _codes_ to unique _codes_
+            mapping = pd.Categorical(categories.astype(str))
+            values = pd.Categorical(values.codes[mapping.codes])
+            # 2. give them names
+            values.rename_categories(mapping.categories, inplace=True)
 
         values.remove_unused_categories(inplace=True)
         return values
@@ -151,7 +156,7 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
         # is already sane.
         try:
             return pd.to_numeric(series)
-        except ValueError:
+        except (ValueError, TypeError):
             return series
     elif hasattr(series, 'cat'):
         # Categorical series. Try to infer type of series.
