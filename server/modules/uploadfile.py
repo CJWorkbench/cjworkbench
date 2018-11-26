@@ -33,6 +33,7 @@ async def parse_uploaded_file(uploaded_file) -> ProcessResult:
                 with TempfileBackedReader(s3) as tempio:
                     with BufferedReader(tempio) as bufio:
                         result = parse_bytesio(bufio, mime_type, None)
+
         except ResponseError as err:
             return ProcessResult(error=str(err))
     else:

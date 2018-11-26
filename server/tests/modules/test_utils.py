@@ -1,5 +1,6 @@
 import asyncio
 import io
+import os.path
 import unittest
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
@@ -127,6 +128,15 @@ class ParseBytesIoTest(SimpleTestCase):
     def test_csv_detect_separator_semicolon(self):
         result = parse_bytesio(io.BytesIO(b'A;C\nB;D'), 'text/csv', 'utf-8')
         expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['D']}))
+        self.assertEqual(result, expected)
+
+    def test_excel(self):
+        with open(os.path.join(os.path.dirname(__file__), '..', 'test_data',
+                               'example.xls'), 'rb') as file:
+            result = parse_bytesio(file, 'application/vnd.ms-excel', None)
+        expected = ProcessResult(
+            pd.DataFrame({'foo': [1, 2], 'bar': [2, 3]})
+        )
         self.assertEqual(result, expected)
 
 

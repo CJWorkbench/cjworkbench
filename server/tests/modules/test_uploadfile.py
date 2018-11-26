@@ -2,6 +2,7 @@ import asyncio
 from collections import namedtuple
 from contextlib import contextmanager
 import io
+import os.path
 import unittest
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
@@ -36,9 +37,6 @@ future_none.set_result(None)
 Csv = """A,B
 1,fôo
 2,bar""".encode('utf-8')
-
-
-XlsxType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 
 def render(has_header, table, fetch_result):
@@ -132,6 +130,33 @@ class UploadFileTests(unittest.TestCase):
             'our-bucket',
             'eb785452-f0f2-4ebe-97ce-e225e346148e.xlsx'
         )
+
+    @patch('minio.api.Minio.get_object')
+    @patch('minio.api.Minio.stat_object')
+    def test_upload_xls(self, stat, s3_open):
+        filename = os.path.join(os.path.dirname(__file__), '..', 'test_data',
+                                'example.xls')
+        with open(filename, 'rb') as file:
+            file.release_conn = lambda: None
+            s3_open.return_value = file
+            stat.return_value = os.stat(filename)
+
+            expected_table = pd.DataFrame({
+                'foo': [1, 2],
+                'bar': [2, 3],
+            })
+
+            self._test_upload(
+                uuid='eb785452-f0f2-4ebe-97ce-e225e346148e',
+                filename='test.xls',
+                ext='xls',
+                size=os.stat(filename).st_size,
+                expected_result=ProcessResult(expected_table)
+            )
+            s3_open.assert_called_with(
+                'our-bucket',
+                'eb785452-f0f2-4ebe-97ce-e225e346148e.xls'
+            )
 
     def test_invalid_mime_type(self):
         self._test_upload(

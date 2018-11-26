@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import io
 import json
 import re
+import shutil
 import tempfile
 from typing import Any, Dict, Callable, Optional
 import aiohttp
@@ -94,11 +95,9 @@ def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], DataFrame],
     Empty dataset is not an error: it is just an empty dataset.
     """
     try:
-        return ProcessResult(dataframe=parser(bytesio, text_encoding))
+        return ProcessResult.coerce(parser(bytesio, text_encoding))
     except json.decoder.JSONDecodeError as err:
         return ProcessResult(error=str(err))
-    except xlrd.XLRDError as err:
-        return ProcessResult(error=f'Error reading Excel file: {str(err)}')
     except pandas.errors.EmptyDataError:
         return DataFrame()
     except pandas.errors.ParserError as err:
@@ -213,7 +212,18 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     * We read the entire file contents into memory before parsing
     """
     # dtype='category' crashes as of 2018-09-11
-    data = pandas.read_excel(bytesio, dtype=object)
+    try:
+        # Use xlrd.open_workbook(): if we call pandas.read_excel(bytesio) it
+        # will read the entire file into RAM.
+        with tempfile.NamedTemporaryFile() as temp:
+            shutil.copyfileobj(bytesio, temp)
+            temp.flush()
+            temp.seek(0)
+            workbook = xlrd.open_workbook(temp.name)
+            data = pandas.read_excel(workbook, engine='xlrd', dtype=object)
+    except xlrd.XLRDError as err:
+        return ProcessResult(error=f'Error reading Excel file: {str(err)}')
+
     autocast_dtypes_in_place(data)
     return data
 
@@ -313,7 +323,7 @@ _parse_xls = _parse_xlsx
 _Parsers = {
     'text/csv': (_parse_csv, True),
     'text/tab-separated-values': (_parse_tsv, True),
-    'application/vnd.ms-excel': (_parse_xls, True),
+    'application/vnd.ms-excel': (_parse_xls, False),
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
         (_parse_xlsx, False),
     'application/json': (_parse_json, True),
