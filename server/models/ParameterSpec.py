@@ -143,16 +143,16 @@ class ParameterSpec(models.Model):
             or self.type == ParameterSpec.MENU
             or self.type == ParameterSpec.RADIO
         ):
-            if s == '':
-                return 0
-            else:
+            try:
                 return int(s)
+            except ValueError:
+                return 0
 
         elif self.type == ParameterSpec.FLOAT:
-            if s == '':
-                return 0.0
-            else:
+            try:
                 return float(s)
+            except ValueError:
+                return 0.0
 
         elif self.type == ParameterSpec.CHECKBOX:
             return s == 'True'

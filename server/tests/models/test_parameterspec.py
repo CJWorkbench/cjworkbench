@@ -152,6 +152,19 @@ class ParameterSpecTests(unittest.TestCase):
         self.assertEqual(pspec.str_to_value('True'), True)
         self.assertEqual(pspec.str_to_value('False'), False)
 
+    def test_str_to_value_menu(self):
+        pspec = ParameterSpec(type=ParameterSpec.MENU)
+        self.assertEqual(pspec.str_to_value('1'), 1)
+
+    def test_str_to_value_menu_empty(self):
+        pspec = ParameterSpec(type=ParameterSpec.MENU)
+        self.assertEqual(pspec.str_to_value(''), 0)
+
+    def test_str_to_value_menu_invalid(self):
+        # e.g., invalid JSON with default_value='min'
+        pspec = ParameterSpec(type=ParameterSpec.MENU)
+        self.assertEqual(pspec.str_to_value('min'), 0)
+
     def test_str_to_value_secret_hides_secret(self):
         pspec = ParameterSpec(type=ParameterSpec.SECRET)
         self.assertEqual(
