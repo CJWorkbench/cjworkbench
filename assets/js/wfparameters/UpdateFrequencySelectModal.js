@@ -95,7 +95,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                 </label>
                 <div className="big-radio-details">
                   <p>Automatically update this workflow with the newest data (old versions will be saved).</p>
-                  <Label for="updateFrequencySelectTimeNumber">Check for update every</Label>
+                  <Label className="details" for="updateFrequencySelectTimeNumber">Check for update every</Label>
                   <FormGroup className='update-freq-settings'>
                     <Input
                       type="number"

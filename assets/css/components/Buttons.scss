@@ -270,17 +270,18 @@ button:focus { outline:0 !important; }
   }
 }
 
-%button-gray {
+.button-gray {
   color: $medium-gray;
   border-color: $medium-gray;
   background-color: transparent;
-  &:hover {background-color:$light-accent--Vstrong;}
+  &:hover {
+    background-color: $dark-accent--soft;
+  }
   &:active {
-    background-color:$dark-accent--soft;
+    background-color: $dark-accent--soft-M;
   }
 }
 
-.button-gray { @extend %button-gray; }
 
 .button-blue {
   color: $brand-workspace;

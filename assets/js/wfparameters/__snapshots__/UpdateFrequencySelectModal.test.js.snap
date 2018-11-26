@@ -72,6 +72,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
             Automatically update this workflow with the newest data (old versions will be saved).
           </p>
           <Label
+            className="details"
             for="updateFrequencySelectTimeNumber"
             tag="label"
             widths={
