@@ -1,3 +1,4 @@
+import asyncio
 from io import BufferedReader
 from server.minio import open_for_read, ResponseError
 from .moduleimpl import ModuleImpl
@@ -25,14 +26,27 @@ _ExtensionMimeTypes = {
 # Read an UploadedFile, parse it, store it as the WfModule's "fetched table"
 # Public entrypoint, called by the view
 async def parse_uploaded_file(uploaded_file) -> ProcessResult:
+    """
+    Convert an UploadedFile to a ProcessResult.
+
+    TODO make this synchronous, and move it somewhere sensible. See comments
+    surrounding "upload_DELETEME".
+
+    This is async because it can take a long time: the processing happens in a
+    background thread.
+    """
     ext = '.' + uploaded_file.name.split('.')[-1]
     mime_type = _ExtensionMimeTypes.get(ext, None)
+    loop = asyncio.get_event_loop()
     if mime_type:
         try:
             with open_for_read(uploaded_file.bucket, uploaded_file.key) as s3:
                 with TempfileBackedReader(s3) as tempio:
                     with BufferedReader(tempio) as bufio:
-                        result = parse_bytesio(bufio, mime_type, None)
+                        result = await loop.run_in_executor(None,
+                                                            parse_bytesio,
+                                                            bufio, mime_type,
+                                                            None)
 
         except ResponseError as err:
             return ProcessResult(error=str(err))
