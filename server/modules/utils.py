@@ -7,6 +7,7 @@ import re
 import tempfile
 from typing import Any, Dict, Callable, Optional
 import aiohttp
+from asgiref.sync import async_to_sync
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 import cchardet as chardet
 from channels.db import database_sync_to_async
@@ -401,8 +402,8 @@ def fetch_external_workflow(calling_workflow_id: int,
             # (e.g., when cron fetches a new version, no render is queued.)
             # Queue a render and tell the user to try again. If the render is
             # spurious, that isn't a big deal.
-            rabbitmq.queue_render(other_workflow.id,
-                                  other_workflow.last_delta_id)
+            async_to_sync(rabbitmq.queue_render)(other_workflow.id,
+                                                 other_workflow.last_delta_id)
             return ProcessResult(
                 error='Target workflow is rendering. Please try again.'
             )
