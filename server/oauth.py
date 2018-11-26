@@ -28,8 +28,11 @@ from oauthlib.oauth1.rfc5849.errors import OAuth1Error
 import jwt
 import requests
 import requests_oauthlib
+from requests_oauthlib.oauth1_session import TokenRequestDenied
 import json
 from urllib.parse import urlencode
+
+__all__ = [ 'TokenRequestDenied', 'OAuthService', 'OAuth1a', 'Oauth2' ]
 
 
 OfflineToken = Dict[str, str]
@@ -97,6 +100,9 @@ class OAuthService:
         It protects the service (which won't run the same request twice), and
         it protects _us_ (since we won't have the same `state` across two
         requests).
+
+        Raises requests_oauthlib.oauth1_session.TokenRequestDenied if we're
+        OAuth 1 and the server rejected us.
         """
         raise NotImplementedError
 
@@ -168,11 +174,8 @@ class OAuth1a(OAuthService):
     def generate_redirect_url_and_state(self) -> Tuple[str, str]:
         session = self._session()
 
-        # TODO handle errors in this HTTP request
-        try:
-            request_token = session.fetch_request_token(self.request_token_url)
-        except OAuth1Error as err:
-            return str(err)
+        # raises TokenRequestDenied
+        request_token = session.fetch_request_token(self.request_token_url)
 
         url = session.authorization_url(self.auth_url)
 

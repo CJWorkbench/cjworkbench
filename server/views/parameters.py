@@ -5,6 +5,7 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
         HttpResponseNotFound
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
@@ -62,7 +63,11 @@ def _oauth_start_authorize(request, param: ParameterVal,
             f'Oauth service for {id_name} not configured'
         )
 
-    url, state = service.generate_redirect_url_and_state()
+    try:
+        url, state = service.generate_redirect_url_and_state()
+    except oauth.TokenRequestDenied:
+        return TemplateResponse(request, 'oauth_token_request_denied.html',
+                                status=403)
 
     request.session['oauth-flow'] = {
         'state': state,
