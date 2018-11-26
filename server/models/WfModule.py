@@ -200,19 +200,25 @@ class WfModule(models.Model):
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
     def create_parametervals(self, values={}):
-        for pspec in ParameterSpec.objects \
-                     .filter(module_version__id=self.module_version_id) \
-                     .all():
-            pv = ParameterVal(wf_module=self, parameter_spec=pspec)
-            pv.order = pspec.order
-            pv.items = pspec.def_items
-            pv.visible = pspec.def_visible
+        pspecs = list(
+            ParameterSpec.objects
+                .filter(module_version__id=self.module_version_id)
+                .all()
+        )
+
+        for pspec in pspecs:
             try:
-                value = values[pspec.id_name]
+                value = pspec.value_to_str(values[pspec.id_name])
             except KeyError:
                 value = pspec.def_value
-            pv.set_value(value)
-            pv.save()
+
+            self.parameter_vals.create(
+                parameter_spec=pspec,
+                order=pspec.order,
+                items=pspec.def_items,
+                visible=pspec.def_visible,
+                value=value
+            )
 
     def get_params(self) -> Params:
         """

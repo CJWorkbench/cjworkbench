@@ -348,20 +348,18 @@ class InitmoduleTests(LoggedInTestCase):
         update_wfm_parameters_to_new_version(wfm, module_version2)
         self.assertEqual(wfm.module_version, module_version2)
 
-        # still exists
-        ParameterVal.objects.get(parameter_spec=unchanged_spec2)
-
         # changed type, reset to default
-        changed_pval = ParameterVal.objects.get(parameter_spec=changed_spec2)
+        changed_pval.refresh_from_db()
         self.assertEqual(changed_pval.value, '42')
 
         # deleted
         with self.assertRaises(ParameterVal.DoesNotExist):
-            ParameterVal.objects.get(parameter_spec=deleted_spec)
+            deleted_pval.refresh_from_db()
 
         # added
         ParameterVal.objects.get(parameter_spec=added_spec2)
 
+    def test_update_module_keep_compatible_types(self):
         # Test specs that change type but are still compatible (ie. Menu to Radio)
         module = Module.objects.create()
         module_version3 = ModuleVersion.objects.create(module=module)
@@ -383,7 +381,7 @@ class InitmoduleTests(LoggedInTestCase):
         unchanged_spec4 = ParameterSpec.objects.create(id_name='unchanged', type='radio', module_version=module_version4,
                                                        def_items='Option 1|Option 2|Option 3')
         changed_spec4 = ParameterSpec.objects.create(id_name='changed', type='radio', module_version=module_version4,
-                                                     def_items='Option 1|Option 2')
+                                                     def_items='Option 1|Option 2', def_value='0')
 
         update_wfm_parameters_to_new_version(wfm2, module_version4)
         self.assertEqual(wfm2.module_version, module_version4)
@@ -393,5 +391,5 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(unchanged_pval.value, '2')
 
         # changed type, but def_items different. Value should reset to default.
-        changed_pval = ParameterVal.objects.get(pk=changed_pval_id)
+        changed_pval.refresh_from_db()
         self.assertEqual(changed_pval.value, '0')

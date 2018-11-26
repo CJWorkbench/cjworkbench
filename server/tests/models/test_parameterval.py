@@ -172,7 +172,6 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         self.assertEqual(sp.visible, spd.visible)
         self.assertEqual(sp.order, spd.order)
 
-
     def test_secret_default_none(self):
         self.assertIs(self.secret_val().get_value(), None)
 

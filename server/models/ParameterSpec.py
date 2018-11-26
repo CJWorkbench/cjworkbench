@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from server.models.ModuleVersion import *
 
@@ -65,3 +66,105 @@ class ParameterSpec(models.Model):
 
     def __str__(self):
         return self.module_version.module.name + ' - ' + self.name
+
+    def value_to_str(self, value):
+        if (
+            self.type == ParameterSpec.STRING
+            or self.type == ParameterSpec.COLUMN
+            or self.type == ParameterSpec.MULTICOLUMN
+            or self.type == ParameterSpec.CUSTOM
+            or self.type == ParameterSpec.BUTTON
+            or self.type == ParameterSpec.STATICTEXT
+        ):
+            return value
+
+        elif (
+            self.type == ParameterSpec.INTEGER
+            or self.type == ParameterSpec.MENU
+            or self.type == ParameterSpec.RADIO
+        ):
+            try:
+                return str(int(value))
+            except (ValueError, TypeError):
+                return '0'
+
+        elif self.type == ParameterSpec.FLOAT:
+            try:
+                return str(float(value))
+            except (ValueError, TypeError):
+                return '0.0'
+
+        elif self.type == ParameterSpec.CHECKBOX:
+            try:
+                # Be permissive, allow both actual booleans and "true"/"false" strings
+                if type(value) is bool:
+                    return str(value)
+                elif type(value) is str:
+                    return str(value.lower().strip() == 'true')
+                else:
+                    return str(bool(value))  # we catch number types here
+            except ValueError:
+                return 'False'
+
+        elif self.type == ParameterSpec.SECRET:
+            if not value:
+                return ''
+            else:
+                if (
+                    type(value) is not dict
+                    or type(value.get('name')) is not str
+                    or not value.get('name')
+                    or not value.get('secret')
+                ):
+                    raise ValueError(
+                        f'SECRET parameter {self.id_name} must be a dict with '
+                        f'str "name": "..." and non-empty "secret"'
+                    )
+                return json.dumps(value)
+
+        else:
+            raise ValueError(
+                f'Unknown type {self.type} for parameter {self.id_name}'
+            )
+
+    def str_to_value(self, s):
+        if (
+            self.type == ParameterSpec.STRING
+            or self.type == ParameterSpec.COLUMN
+            or self.type == ParameterSpec.MULTICOLUMN
+            or self.type == ParameterSpec.CUSTOM
+            or self.type == ParameterSpec.BUTTON
+            or self.type == ParameterSpec.STATICTEXT
+        ):
+            return s
+
+        elif (
+            self.type == ParameterSpec.INTEGER
+            or self.type == ParameterSpec.MENU
+            or self.type == ParameterSpec.RADIO
+        ):
+            if s == '':
+                return 0
+            else:
+                return int(s)
+
+        elif self.type == ParameterSpec.FLOAT:
+            if s == '':
+                return 0.0
+            else:
+                return float(s)
+
+        elif self.type == ParameterSpec.CHECKBOX:
+            return s == 'True'
+
+        elif self.type == ParameterSpec.SECRET:
+            if s:
+                parsed = json.loads(s)
+                return { 'name': parsed['name'] }
+            else:
+                return None
+
+        else:
+            raise ValueError(
+                f'Unknown type {self.type} for parameter {self.id_name}'
+            )

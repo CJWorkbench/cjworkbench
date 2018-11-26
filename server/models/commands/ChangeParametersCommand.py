@@ -17,9 +17,10 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
         pvs = list(self.wf_module.parameter_vals
                    .prefetch_related('parameter_spec').all())
         for pv in pvs:
-            id_name = pv.parameter_spec.id_name
-            if id_name in values:
-                pv.value = values[id_name]
+            pspec = pv.parameter_spec
+            id_name = pspec.id_name
+            if pspec.id_name in values:
+                pv.value = pspec.value_to_str(values[id_name])
                 pv.save(update_fields=['value'])
 
     def forward_impl(self):

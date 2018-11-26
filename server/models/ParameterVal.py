@@ -21,7 +21,7 @@ class ParameterVal(models.Model):
     visible = models.BooleanField(default=True)
 
     def init_from_spec(self):
-        self.set_value(self.parameter_spec.def_value)
+        self.value = self.parameter_spec.def_value
         self.order = self.parameter_spec.order
         self.items = self.parameter_spec.def_items
         self.visible = self.parameter_spec.def_visible
@@ -92,101 +92,12 @@ class ParameterVal(models.Model):
 
     # This is where type checking / coercion happens.
     def set_value(self, new_value):
-        ptype = self.parameter_spec.type
-
-        if ptype == ParameterSpec.STRING:
-            self.value = new_value
-
-        elif ptype == ParameterSpec.INTEGER:
-            try:
-                self.value = int(float(new_value))
-            except ValueError:
-                self.value = '0'
-
-        elif ptype == ParameterSpec.FLOAT:
-            try:
-                self.value = str(float(new_value))
-            except ValueError:
-                self.value = '0.0'
-
-        elif ptype == ParameterSpec.CHECKBOX:
-            try:
-                # Be permissive, allow both actual booleans and "true"/"false" strings
-                if type(new_value) is bool:
-                    self.value = str(new_value)
-                elif type(new_value) is str:
-                    self.value = str(new_value.lower().strip() == 'true')
-                else:
-                    self.value = str(bool(new_value))  # we catch number types here
-            except ValueError:
-                self.value = 'False'
-
-        elif ptype == ParameterSpec.MENU:
-            try:
-                self.value = str(int(new_value))
-            except ValueError:
-                self.value = '0'
-
-        elif ptype == ParameterSpec.RADIO:
-            try:
-                self.value = str(int(new_value))
-            except ValueError:
-                self.value = '0'
-
-        elif ptype == ParameterSpec.COLUMN or \
-             ptype == ParameterSpec.MULTICOLUMN or \
-             ptype == ParameterSpec.CUSTOM or \
-             ptype == ParameterSpec.BUTTON or \
-             ptype == ParameterSpec.STATICTEXT:
-            self.value = new_value
-
-        elif ptype == ParameterSpec.SECRET:
-            if not new_value:
-                self.value = ''
-            else:
-                if (type(new_value) is not dict
-                        or type(new_value.get('name')) is not str
-                        or not new_value.get('name')
-                        or not new_value.get('secret')
-                        ):
-                    raise ValueError(f'SECRET parameter {self.parameter_spec.id_name} must be a dict with str "name": "..." and non-empty "secret"')
-                self.value = json.dumps(new_value)
-
-        else:
-            raise ValueError('Unknown parameter type ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.set_value')
-
-        self.save()
+        self.value = self.parameter_spec.value_to_str(new_value)
+        self.save(update_fields=['value'])
 
     # Coerce back to appropriate ptype
     def get_value(self):
-        ptype = self.parameter_spec.type
-        if ptype == ParameterSpec.STRING:
-            return self.value
-        elif ptype == ParameterSpec.INTEGER:
-            return int(self.value) if self.value != '' else 0
-        elif ptype == ParameterSpec.FLOAT:
-            return float(self.value)
-        elif ptype == ParameterSpec.CHECKBOX:
-            return self.value == 'True'
-        elif ptype == ParameterSpec.MENU:
-            return int(self.value) if self.value != '' else 0
-        elif ptype == ParameterSpec.RADIO:
-            return int(self.value) if self.value != '' else 0
-        elif ptype == ParameterSpec.COLUMN or \
-             ptype == ParameterSpec.MULTICOLUMN or \
-             ptype == ParameterSpec.CUSTOM or \
-             ptype == ParameterSpec.BUTTON or \
-             ptype == ParameterSpec.STATICTEXT:
-            return self.value
-        elif ptype == ParameterSpec.SECRET:
-            if self.value:
-                parsed = json.loads(self.value)
-                return { 'name': parsed['name'] }
-            else:
-                return None
-        else:
-            raise ValueError('Unknown parameter ptype ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.get_value')
-
+        return self.parameter_spec.str_to_value(self.value)
 
     def get_secret(self):
         ptype = self.parameter_spec.type
@@ -195,7 +106,6 @@ class ParameterVal(models.Model):
                 return json.loads(self.value)['secret']
             else:
                 return None
-
 
     def __str__(self):
         return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.get_value())

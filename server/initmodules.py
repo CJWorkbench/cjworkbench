@@ -189,28 +189,31 @@ def create_parameter_val(wfm, new_spec):
     pval.init_from_spec()
     pval.save()
 
-# (old, new) pairs of parameter specs that _could_ be safe to maintain _if_
-# dependent attributes have the same value
-_safe_param_types_to_migrate = {
-    (ParameterSpec.MENU, ParameterSpec.RADIO): ['def_items'],
-    (ParameterSpec.RADIO, ParameterSpec.MENU): ['def_items']
-}
-
 # Checks if old parameter value can safely be maintained according to mapping in _safe_param_types_to_migrate
 def _is_pval_safe_to_keep(old_spec, new_spec):
-    rel = (old_spec.type, new_spec.type)
-    if rel in _safe_param_types_to_migrate:
-        result = [(getattr(old_spec, x) == getattr(new_spec, x)) for x in _safe_param_types_to_migrate[rel]]
-        return all(result)
+    if (
+        (old_spec.type == ParameterSpec.MENU
+         or old_spec.type == ParameterSpec.RADIO)
+        and (new_spec.type == ParameterSpec.MENU
+             or new_spec.type == ParameterSpec.RADIO)
+    ):
+        # Switching between menu/radio and/or changing options. We're "safe"
+        # iff the choices don't change.
+        return old_spec.def_items == new_spec.def_items
+
+    if old_spec.type == new_spec.type:
+        # Keeping same type is always safe.
+        return True
+
     return False
 
 # Update a parameter value from one ParameterSpec to another. Resets to default if type changes.
 def migrate_parameter_val(pval, old_spec, new_spec):
-    type_changed = old_spec.type != new_spec.type
     pval.order = new_spec.order
     pval.parameter_spec = new_spec
-    if type_changed and not _is_pval_safe_to_keep(old_spec, new_spec):
-        pval.init_from_spec()
+    pval.items = new_spec.def_items
+    if not _is_pval_safe_to_keep(old_spec, new_spec):
+        pval.value = new_spec.def_value
     pval.save()
 
 
