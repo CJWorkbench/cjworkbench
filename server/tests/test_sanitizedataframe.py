@@ -76,11 +76,23 @@ class SanitizeDataFrameTest(TestCase):
             def __str__(self):
                 return self.value
 
-        table = pd.DataFrame({'A': [Obj('a'), Obj('b'), 'a', 'y']},
+        # Slicing a DataFrame slices its Series: the category list remains
+        # complete, even though some categories aren't used. In this example,
+        # `table['A']` has an Obj('a') category, even though the value doesn't
+        # appear anywhere in the dataframe. (This is because slicing creates a
+        # numpy "view", not a copy of the original array of codes.)
+        #
+        # Sanitize's output shouldn't include any categories that aren't
+        # visible. (The data in memory should not be a "view".)
+        table = pd.DataFrame({'A': [Obj('a'), Obj('b'), 'c', 'b']},
                              dtype='category')[1:]
         sanitize_dataframe(table)
-        expected = pd.DataFrame({'A': ['b', 'a', 'y']}, dtype='category')
+        expected = pd.DataFrame({'A': ['b', 'c', 'b']}, dtype='category')
         assert_frame_equal(table, expected)
+        self.assertEqual(
+            sorted(expected['A'].cat.categories.tolist()),
+            ['b', 'c']
+        )
 
     def test_lists_and_dicts(self):
         result = pd.DataFrame({'A': [[5, 6, 7], {'a': 'b'}]})
