@@ -18,7 +18,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         className="embed-footer-logo"
       >
         <a
-          href="/"
+          href="http://workbenchdata.com"
           target="_blank"
         >
           <img
