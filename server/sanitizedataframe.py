@@ -62,7 +62,7 @@ _AllowedDtypes = {
 }
 
 
-def sanitize_values(values):
+def sanitize_series(series: pd.Series) -> pd.Series:
     """
     Enforce type rules on input pandas `Series.values`.
 
@@ -75,31 +75,33 @@ def sanitize_values(values):
     * Convert numeric categories to 
     * Convert unsupported dtypes to string.
     """
-    if hasattr(values, 'categories'):
-        categories = values.categories
+    if hasattr(series, 'cat'):
+        series.cat.remove_unused_categories(inplace=True)
+
+        categories = series.cat.categories
         if pd.api.types.is_numeric_dtype(categories.values):
             # Un-categorize: make array of int/float
-            return pd.to_numeric(values)
+            return pd.to_numeric(series)
         elif categories.dtype != object \
                 or pd.api.types.infer_dtype(categories.values) != 'string':
             # Map from non-Strings to Strings
             #
             # 1. map the _codes_ to unique _codes_
             mapping = pd.Categorical(categories.astype(str))
-            values = pd.Categorical(values.codes[mapping.codes])
+            values = pd.Categorical(series.cat.codes[mapping.codes])
             # 2. give them names
             values.rename_categories(mapping.categories, inplace=True)
+            series = pd.Series(values)
 
-        values.remove_unused_categories(inplace=True)
-        return values
-    elif is_numeric_dtype(values.dtype):
-        return values
-    elif is_datetime64_dtype(values.dtype):
-        return values
+        return series
+    elif is_numeric_dtype(series.dtype):
+        return series
+    elif is_datetime64_dtype(series.dtype):
+        return series
     else:
         # Force it to be a str column: every object is either str or np.nan
-        ret = pd.Series(values).astype(str).values
-        ret[pd.isna(values)] = np.nan
+        ret = series.astype(str)
+        ret[pd.isna(series)] = np.nan
         return ret
 
 
@@ -123,7 +125,7 @@ def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:
     table.reset_index(drop=True, inplace=True)
 
     colnames = _normalize_colnames(table.columns)
-    table.columns = _normalize_colnames(colnames)
+    table.columns = colnames
 
     # Ignore spurious SettingWithCopyWarning
     #
@@ -133,7 +135,7 @@ def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:
     with pd.option_context('mode.chained_assignment', None):
         # Sanitize one column at a time: that's more memory-friendly
         for colname in colnames:
-            table[colname] = sanitize_values(table[colname].values)
+            table[colname] = sanitize_series(table[colname])
 
     return table
 

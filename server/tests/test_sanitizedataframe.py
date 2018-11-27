@@ -53,14 +53,33 @@ class SanitizeDataFrameTest(TestCase):
         expected = pd.DataFrame({'A': ['x', 'x']})
         assert_frame_equal(table, expected)
 
-    def test_mixed_to_string_allows_custom_category_types(self):
+    def test_categories_to_string_allows_custom_category_types(self):
         class Obj:
-            def __str__(self):
-                return 'x'
+            def __init__(self, value):
+                self.value = value
 
-        table = pd.DataFrame({'A': [Obj(), Obj(), 'x', 'y']}, dtype='category')
+            def __str__(self):
+                return self.value
+
+        table = pd.DataFrame({'A': [Obj('a'), Obj('b'), Obj('a'), 'a', 'y']},
+                             dtype='category')
         sanitize_dataframe(table)
-        expected = pd.DataFrame({'A': ['x', 'x', 'x', 'y']}, dtype='category')
+        expected = pd.DataFrame({'A': ['a', 'b', 'a', 'a', 'y']},
+                                dtype='category')
+        assert_frame_equal(table, expected)
+
+    def test_categories_to_string_allows_abnormal_index(self):
+        class Obj:
+            def __init__(self, value):
+                self.value = value
+
+            def __str__(self):
+                return self.value
+
+        table = pd.DataFrame({'A': [Obj('a'), Obj('b'), 'a', 'y']},
+                             dtype='category')[1:]
+        sanitize_dataframe(table)
+        expected = pd.DataFrame({'A': ['b', 'a', 'y']}, dtype='category')
         assert_frame_equal(table, expected)
 
     def test_lists_and_dicts(self):
