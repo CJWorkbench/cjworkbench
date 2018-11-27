@@ -187,7 +187,7 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
                                      modules=modules)
 
         if workflow.wf_modules.exclude(
-            last_relevant_delta_id=F('cached_render_result_delta_id')
+            cached_render_result_delta_id=F('last_relevant_delta_id')
         ).exists():
             # We're returning a Workflow that may have stale WfModules. Either
             # there's already a render underway (in which case this spurious

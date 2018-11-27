@@ -1,3 +1,4 @@
+import asyncio
 from collections import namedtuple
 import json
 from unittest.mock import patch
@@ -7,6 +8,7 @@ from django.http.response import Http404
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.models import Module, ModuleVersion, User, WfModule, Workflow
+from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase, add_new_module_version, \
         add_new_wf_module, load_module_version
 from server.views import workflow_list, AddModule, workflow_detail, \
@@ -20,6 +22,10 @@ async def async_noop(*args, **kwargs):
     pass
 
 
+future_none = asyncio.Future()
+future_none.set_result(None)
+
+
 @patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class WorkflowViewTests(LoggedInTestCase):
@@ -31,10 +37,7 @@ class WorkflowViewTests(LoggedInTestCase):
 
         self.factory = APIRequestFactory()
         self.workflow1 = Workflow.objects.create(name='Workflow 1', owner=self.user)
-        self.workflow2 = Workflow.objects.create(name='Workflow 2', owner=self.user)
         self.module_version1 = add_new_module_version('Module 1')
-        add_new_module_version('Module 2')
-        add_new_module_version('Module 3')
 
         # Add another user, with one public and one private workflow
         self.otheruser = User.objects.create(username='user2',
@@ -95,8 +98,11 @@ class WorkflowViewTests(LoggedInTestCase):
         # set dates to test reverse chron ordering
         self.workflow1.creation_date = "2010-10-20 1:23Z"
         self.workflow1.save()
-        self.workflow2.creation_date = "2015-09-18 2:34Z"
-        self.workflow2.save()
+        self.workflow2 = Workflow.objects.create(
+            name='Workflow 2',
+            owner=self.user,
+            creation_date='2015-09-18 2:34Z'
+        )
 
         request = self._build_get('/api/workflows/', user=self.user)
         response = render_workflows(request)
@@ -121,6 +127,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public.example = True
         self.other_workflow_public.in_all_users_workflow_lists = True
         self.other_workflow_public.save()
+        self.workflow2 = Workflow.objects.create(owner=self.user)
 
         request = self._build_get('/api/workflows/', user=self.user)
         response = render_workflows(request)
@@ -134,6 +141,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public.example = True
         self.other_workflow_public.in_all_users_workflow_lists = False
         self.other_workflow_public.save()
+        self.workflow2 = Workflow.objects.create(owner=self.user)
 
         request = self._build_get('/api/workflows/', user=self.user)
         response = render_workflows(request)
@@ -146,6 +154,7 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_list_exclude_lesson(self):
         self.workflow1.lesson_slug = 'some-lesson'
         self.workflow1.save()
+        self.workflow2 = Workflow.objects.create(owner=self.user)
 
         request = self._build_get('/api/workflows/', user=self.user)
         response = render_workflows(request)
@@ -169,19 +178,60 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @patch('server.rabbitmq.queue_render')
+    def test_workflow_view_triggers_render(self, queue_render):
+        queue_render.return_value = future_none
+        delta = InitWorkflowCommand.create(self.workflow1)
+        self.workflow1.last_delta_id = delta.id
+        self.workflow1.save(update_fields=['last_delta_id'])
+        wf_module = self.workflow1.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id,
+            cached_render_result_delta_id=-1
+        )
+        self.client.force_login(self.user)
+        self.client.get('/workflows/%d/' % self.workflow1.id)
+        queue_render.assert_called_with(self.workflow1.id, delta.id)
+
+    @patch('server.rabbitmq.queue_render')
+    def test_workflow_view_triggers_render_if_no_cache(self, queue_render):
+        queue_render.return_value = future_none
+        delta = InitWorkflowCommand.create(self.workflow1)
+        self.workflow1.last_delta_id = delta.id
+        self.workflow1.save(update_fields=['last_delta_id'])
+        wf_module = self.workflow1.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id,
+            cached_render_result_delta_id=None
+        )
+        self.client.force_login(self.user)
+        self.client.get('/workflows/%d/' % self.workflow1.id)
+        queue_render.assert_called_with(self.workflow1.id, delta.id)
+
+    def test_workflow_view_missing_404(self):
         # 404 with bad id
+        self.client.force_login(self.user)
         response = self.client.get('/workflows/%d/' % 999999)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_workflow_view_shared(self):
         # View someone else's public workflow
+        self.client.force_login(self.user)
         self.assertTrue(self.other_workflow_public.public)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
+    def test_workflow_view_shared(self):
+        # View someone else's public workflow
+        self.client.force_login(self.user)
+        self.assertTrue(self.other_workflow_public.public)
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+
+    def test_workflow_view_unauthorized_403(self):
         # 403 viewing someone else' private workflow (don't 404 as sometimes
         # users try to share workflows by sharing the URL without first making
         # them public, and we need to help them debug that case)
-        self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
