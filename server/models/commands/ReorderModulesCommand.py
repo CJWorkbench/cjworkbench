@@ -25,14 +25,14 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
         self.apply_order(new_order)
 
         min_order = min(record['order'] for record in new_order)
-        wf_module = self.workflow.wf_modules.get(order=min_order)
+        wf_module = self.workflow.live_wf_modules.get(order=min_order)
         self.forward_affected_delta_ids(wf_module)
 
     def backward_impl(self):
         new_order = json.loads(self.new_order)
 
         min_order = min(record['order'] for record in new_order)
-        wf_module = self.workflow.wf_modules.get(order=min_order)
+        wf_module = self.workflow.live_wf_modules.get(order=min_order)
         self.backward_affected_delta_ids(wf_module)
 
         self.apply_order(json.loads(self.old_order))
@@ -40,7 +40,7 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_order, **kwargs):
         # Validation: all id's and orders exist and orders are in range 0..n-1
-        ids_orders = dict(workflow.wf_modules.values_list('id', 'order'))
+        ids_orders = dict(workflow.live_wf_modules.values_list('id', 'order'))
 
         ids = [io[0] for io in ids_orders.items()]
 
@@ -79,7 +79,7 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
         #
         # This list of WfModule IDs will be the same (in a different order --
         # order doesn't matter) _after_ update.
-        wf_module = workflow.wf_modules.get(order=min_diff_order)
+        wf_module = workflow.live_wf_modules.get(order=min_diff_order)
         wf_module_delta_ids = cls.affected_wf_module_delta_ids(wf_module)
 
         return {

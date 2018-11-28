@@ -11,7 +11,11 @@ class CachedRenderResultTests(DbTestCase):
     def setUp(self):
         super().setUp()
         self.workflow = Workflow.objects.create()
-        self.wf_module = self.workflow.wf_modules.create(order=0)
+        delta = InitWorkflowCommand.create(self.workflow)
+        self.wf_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=delta.id
+        )
 
     def test_none(self):
         self.assertIsNone(self.wf_module.get_cached_render_result())
@@ -121,11 +125,7 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.delete()
         self.assertFalse(os.path.isfile(parquet_path))
 
-    def test_delete_after_moved_from_workflow_to_delta(self):
-        # When we move the WfModule out of a workflow (so it's only part of
-        # a Delta), we should clear the cache. Otherwise there isn't a clear
-        # time for cache-clearing: a WfModule without a Workflow doesn't have
-        # the path information it needs to save the cached_render_result.
+    def test_delete_after_wf_module_hard_delete(self):
         result = ProcessResult(pandas.DataFrame({'a': [1]}))
         self.wf_module.cache_render_result(2, result)
         self.wf_module.save()
@@ -133,18 +133,19 @@ class CachedRenderResultTests(DbTestCase):
         parquet_path = self.wf_module.get_cached_render_result().parquet_path
 
         db_wf_module = WfModule.objects.get(id=self.wf_module.id)
-        db_wf_module.workflow = None
-        db_wf_module.save()
-
-        db_wf_module = WfModule.objects.get(id=self.wf_module.id)
         db_wf_module.delete()
 
         self.assertIsNone(db_wf_module.get_cached_render_result())
         self.assertFalse(os.path.isfile(parquet_path))
 
+        # Note: we _don't_ test soft-delete. Soft-deleted modules aren't
+        # extremely common, so it's not like we'll be preserving terabytes of
+        # unused cached render results.
+        #
+        # If this assumption is wrong, by all means wipe the cache on
+        # soft-delete.
+
     def test_assign_none_over_none(self):
-        self.wf_module.workflow = None
-        self.wf_module.save()
         self.wf_module.cache_render_result(None, None)
 
         self.assertIsNone(self.wf_module.get_cached_render_result())

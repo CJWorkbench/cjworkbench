@@ -123,7 +123,8 @@ def load_module_from_dict(d):
 
                 except ParameterSpec.DoesNotExist:
                     # Added parameters
-                    for wfm in WfModule.objects.filter(module_version=module_version):
+                    for wfm in WfModule.objects.filter(module_version=module_version,
+                                                       is_deleted=False):
                         create_parameter_val(wfm, new_spec)
 
     return module_version

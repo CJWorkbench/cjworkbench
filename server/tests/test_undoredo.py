@@ -60,8 +60,8 @@ class UndoRedoTests(DbTestCase):
 
     def assertWfModuleVersions(self, expected_versions):
         result = list(
-            self.workflow.wf_modules.values_list('last_relevant_delta_id',
-                                                 flat=True)
+            self.workflow.live_wf_modules.values_list('last_relevant_delta_id',
+                                                      flat=True)
         )
         self.assertEqual(result, expected_versions)
 
@@ -73,7 +73,7 @@ class UndoRedoTests(DbTestCase):
     # Command types used here are arbitrary, but different so that we test
     # polymorphism
     def test_undo_redo(self):
-        all_modules = self.workflow.wf_modules  # beginning state: nothing
+        all_modules = self.workflow.live_wf_modules  # beginning state: nothing
 
         v0 = self.workflow.last_delta_id
 
@@ -110,12 +110,13 @@ class UndoRedoTests(DbTestCase):
         # Change a parameter
         cmd2 = self._run_async(ChangeParametersCommand.create(
             workflow=self.workflow,
-            wf_module=self.workflow.wf_modules.first(),
+            wf_module=self.workflow.live_wf_modules.first(),
             new_values={'csv': 'some value'}
         ))
         self.workflow.refresh_from_db()
         self.assertEqual(
-            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            self.workflow.live_wf_modules.first()
+                .get_params().get_param_string('csv'),
             'some value'
         )
         self.workflow.refresh_from_db()
@@ -128,7 +129,8 @@ class UndoRedoTests(DbTestCase):
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.last_delta_id, v1)
         self.assertEqual(
-            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            self.workflow.live_wf_modules.first()
+                .get_params().get_param_string('csv'),
             ''
         )
         self.assertWfModuleVersions([v1])
@@ -138,7 +140,8 @@ class UndoRedoTests(DbTestCase):
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.last_delta_id, v2)
         self.assertEqual(
-            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            self.workflow.live_wf_modules.first()
+                .get_params().get_param_string('csv'),
             'some value'
         )
         self.assertWfModuleVersions([v2])
@@ -148,7 +151,8 @@ class UndoRedoTests(DbTestCase):
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.last_delta_id, v2)
         self.assertEqual(
-            self.workflow.wf_modules.first().get_params().get_param_string('csv'),
+            self.workflow.live_wf_modules.first()
+                .get_params().get_param_string('csv'),
             'some value'
         )
         self.assertWfModuleVersions([v2])

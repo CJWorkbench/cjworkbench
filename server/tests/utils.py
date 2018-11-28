@@ -114,8 +114,7 @@ def add_new_workflow(name, *, owner=None, **kwargs):
 
 def add_new_wf_module(workflow, module_version, order=0,
                       param_values={}, last_relevant_delta_id=0):
-    wfm = WfModule.objects.create(
-        workflow=workflow,
+    wfm = workflow.wf_modules.create(
         module_version=module_version,
         order=order,
         last_relevant_delta_id=last_relevant_delta_id
@@ -187,7 +186,7 @@ def load_and_add_module_from_dict(module_dict, workflow=None, param_values={},
         workflow = add_new_workflow('Workflow 1')
 
     module_version = load_module_from_dict(module_dict)
-    num_modules = WfModule.objects.filter(workflow=workflow).count()
+    num_modules = workflow.live_wf_modules.count()
     wf_module = add_new_wf_module(workflow, module_version,
                                   param_values=param_values,
                                   last_relevant_delta_id=last_relevant_delta_id,

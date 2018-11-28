@@ -23,7 +23,7 @@ async def fake_send(*args, **kwargs):
 
 
 def cached_render_result_revision_list(workflow):
-    return list(workflow.wf_modules.values_list(
+    return list(workflow.live_wf_modules.values_list(
         'cached_render_result_delta_id',
         flat=True
     ))

@@ -347,7 +347,8 @@ def import_module_from_directory(url, reponame, version, importdir,
         # For now, our policy is to update all wfmodules to this just-imported
         # version
         module = module_version.module
-        for wfm in WfModule.objects.filter(module_version__module=module):
+        for wfm in WfModule.objects.filter(is_deleted=False,
+                                           module_version__module=module):
             update_wfm_parameters_to_new_version(wfm, module_version)
 
     except Exception:

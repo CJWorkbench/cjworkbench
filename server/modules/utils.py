@@ -401,7 +401,7 @@ def fetch_external_workflow(calling_workflow_id: int,
                                                            None):
             return ProcessResult(error='Access denied to the target workflow')
 
-        other_wf_module = other_workflow.wf_modules.last()
+        other_wf_module = other_workflow.live_wf_modules.last()
 
         # Always pull the cached result, so we can't execute() an infinite loop
         crr = other_wf_module.get_cached_render_result(only_fresh=True)

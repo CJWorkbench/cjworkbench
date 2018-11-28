@@ -187,6 +187,10 @@ class Workflow(models.Model):
         else:
             return self.last_delta_id
 
+    @property
+    def live_wf_modules(self):
+        return self.wf_modules.filter(is_deleted=False)
+
     def _duplicate(self, name: str, owner: Optional[User],
                    session_key: Optional[str]) -> 'Workflow':
         with self.cooperative_lock():
@@ -201,7 +205,7 @@ class Workflow(models.Model):
             from server.models.commands import InitWorkflowCommand
             InitWorkflowCommand.create(wf)
 
-            wfms = list(self.wf_modules.all())
+            wfms = list(self.live_wf_modules.all())
 
             for wfm in wfms:
                 wfm.duplicate(wf)

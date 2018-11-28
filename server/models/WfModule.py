@@ -31,8 +31,8 @@ class WfModule(models.Model):
     workflow = models.ForeignKey(
         'Workflow',
         related_name='wf_modules',
-        null=True,                     # null means this is a deleted WfModule
-        on_delete=models.CASCADE)      # delete WfModule if Workflow deleted
+        on_delete=models.CASCADE
+    )  # delete WfModule if Workflow deleted
 
     module_version = models.ForeignKey(
         ModuleVersion,
@@ -58,6 +58,8 @@ class WfModule(models.Model):
         null=False
     )
 
+    is_deleted = models.BooleanField(default=False, null=False)
+
     # For modules that fetch data: how often do we check for updates, and do we
     # switch to latest version automatically
     auto_update_data = models.BooleanField(default=False)
@@ -74,10 +76,6 @@ class WfModule(models.Model):
     # true means user has not acknowledged email
     has_unseen_notification = models.BooleanField(default=False)
 
-    # Our undo mechanism assigns None to self.workflow_id sometimes. We need to
-    # also store the ID, so we can reference it while deleting.
-    cached_render_result_workflow_id = models.IntegerField(null=True,
-                                                           blank=True)
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
     cached_render_result_status = models.CharField(
         null=True,
@@ -111,11 +109,14 @@ class WfModule(models.Model):
             return None
         else:
             return WfModule.objects.get(workflow=self.workflow,
-                                        order=self.order-1)
+                                        order=self.order-1,
+                                        is_deleted=False)
 
     def dependent_wf_modules(self) -> List['WfModule']:
         """QuerySet of all WfModules that come after this one, in order."""
-        return self.workflow.wf_modules.filter(order__gt=self.order)
+        return WfModule.objects.filter(workflow_id=self.workflow_id,
+                                       order__gt=self.order,
+                                       is_deleted=False)
 
     def get_module_name(self):
         if self.module_version is not None:
@@ -273,7 +274,6 @@ class WfModule(models.Model):
             # assuming file-copy succeeds, copy cached results.
             # Not using `new_wfm.cache_render_result(cached_result.result)`
             # because that would involve reading the whole thing.
-            new_wfm.cached_render_result_workflow_id = to_workflow.id
             new_wfm.cached_render_result_delta_id = \
                 to_workflow.last_delta_id
             for attr in [ 'status', 'error', 'json', 'quick_fixes' ]:

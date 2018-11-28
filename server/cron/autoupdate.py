@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 def load_pending_wf_modules():
     now = timezone.now()
     return list(WfModule.objects.filter(
+        is_deleted=False,
         is_busy=False,  # not already scheduled
         workflow__isnull=False,  # not deleted
         auto_update_data=True,  # user wants auto-update

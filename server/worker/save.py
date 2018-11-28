@@ -45,6 +45,11 @@ def _maybe_add_version(
 
     try:
         with wf_module.workflow.cooperative_lock():
+            try:
+                wf_module.refresh_from_db()
+            except WfModule.DoesNotExist:
+                return None
+
             if maybe_result is not None:
                 version_added = wf_module.store_fetched_table_if_different(
                     maybe_result.dataframe,  # TODO store entire result

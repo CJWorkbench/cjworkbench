@@ -70,16 +70,26 @@ class SaveTests(DbTestCase):
         async_to_sync(save_result_if_changed)(wf_module, result)
         assert True
 
-    def test_race_deleted_wf_module(self):
+    def test_race_soft_deleted_wf_module(self):
         result = ProcessResult(pd.DataFrame({'A': [1]}))
 
         workflow = Workflow.objects.create()
         wf_module = workflow.wf_modules.create(order=0)
 
-        # WfModule deletion means setting workflow=None.
-        wf_module.workflow = None
-        wf_module.workflow_id = None
-        wf_module.save(update_fields=['workflow_id'])
+        wf_module.is_deleted = True
+        wf_module.save(update_fields=['is_deleted'])
+
+        # Don't crash
+        async_to_sync(save_result_if_changed)(wf_module, result)
+        assert True
+
+    def test_race_hard_deleted_wf_module(self):
+        result = ProcessResult(pd.DataFrame({'A': [1]}))
+
+        workflow = Workflow.objects.create()
+        wf_module = workflow.wf_modules.create(order=0)
+
+        wf_module.delete()
 
         # Don't crash
         async_to_sync(save_result_if_changed)(wf_module, result)

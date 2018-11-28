@@ -66,8 +66,7 @@ class StoredObject(models.Model):
     def __create_table_internal(wf_module, table, metadata, hash):
         path = StoredObject._storage_filename(wf_module.id)
         parquet.write(path, table)
-        return StoredObject.objects.create(
-            wf_module=wf_module,
+        return wf_module.stored_objects.create(
             metadata=metadata,
             file=path,
             size=os.stat(path).st_size,

@@ -43,7 +43,7 @@ class WorkflowTests(LoggedInTestCase):
         self.assertNotEqual(wf1.owner, self.otheruser) # should owned by user created by LoggedInTestCase
         module_version1 = add_new_module_version('Module 1')
         add_new_wf_module(wf1, module_version1, 1) # order=1
-        self.assertEqual(wf1.wf_modules.count(), 2)
+        self.assertEqual(wf1.live_wf_modules.count(), 2)
 
         wf2 = wf1.duplicate(self.otheruser)
 
@@ -53,7 +53,8 @@ class WorkflowTests(LoggedInTestCase):
         self.assertEqual(wf2.deltas.all().count(), 1)
         self.assertIsInstance(wf2.last_delta, InitWorkflowCommand)
         self.assertFalse(wf2.public)
-        self.assertEqual(wf1.wf_modules.count(), wf2.wf_modules.count())
+        self.assertEqual(wf1.live_wf_modules.count(),
+                         wf2.live_wf_modules.count())
 
     def test_auth_shared_workflow(self):
         wf = Workflow.objects.create(owner=self.user, public=True)

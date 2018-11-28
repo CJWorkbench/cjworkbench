@@ -1,6 +1,7 @@
 from django.db import models
+from django.db.models import F
 from server.models import Delta, WfModule
-from .util import ChangesWfModuleOutputs, insert_wf_module, renumber_wf_modules
+from .util import ChangesWfModuleOutputs
 
 
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
@@ -16,7 +17,9 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
     @classmethod
     def affected_wf_modules(cls, wf_module) -> models.QuerySet:
         # We don't need to change self.wf_module's delta_id: just the others.
-        return wf_module.workflow.wf_modules.filter(order__gt=wf_module.order)
+        return WfModule.objects.filter(workflow_id=wf_module.workflow_id,
+                                       order__gt=wf_module.order,
+                                       is_deleted=False)
 
     def forward_impl(self):
         # If we are deleting the selected module, then set the previous module
@@ -33,17 +36,20 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
         # forward before delete -- for dependent_wf_module_last_delta_ids
         self.forward_affected_delta_ids(self.wf_module)
 
-        self.wf_module.workflow = None  # detach from workflow
-        self.wf_module.save(update_fields=['workflow_id'])
+        self.wf_module.is_deleted = True
+        self.wf_module.save(update_fields=['is_deleted'])
 
-        renumber_wf_modules(self.workflow)  # fix up ordering on the rest
+        self.workflow.live_wf_modules.filter(order__gt=self.wf_module.order) \
+            .update(order=F('order') - 1)
 
     def backward_impl(self):
-        insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
+        self.workflow.live_wf_modules.filter(order__gte=self.wf_module.order) \
+            .update(order=F('order') + 1)
 
-        self.wf_module.workflow = self.workflow  # attach to workflow
-        self.wf_module.save(update_fields=['workflow_id'])
+        self.wf_module.is_deleted = False
+        self.wf_module.save(update_fields=['is_deleted'])
 
+        # forward after undelete -- for dependent_wf_module_last_delta_ids
         self.backward_affected_delta_ids(self.wf_module)
 
         # [adamhooper, 2018-06-19] I don't think there's any hope we can

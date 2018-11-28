@@ -99,8 +99,9 @@ class Delta(PolymorphicModel):
             'updateWorkflow': {
                 'name': workflow.name,
                 'revision': workflow.last_delta_id,
-                'wf_modules': list(workflow.wf_modules.values_list('id',
-                                                                   flat=True)),
+                'wf_modules': list(
+                    workflow.live_wf_modules.values_list('id', flat=True)
+                ),
                 'public': workflow.public,
                 'last_update': workflow.last_update().isoformat(),
             },

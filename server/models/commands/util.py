@@ -5,42 +5,6 @@ from django.db import models
 from server.models import WfModule, Workflow
 
 
-# Give the new WfModule an 'order' of insert_before, and add 1 to all following WfModules
-def insert_wf_module(wf_module: WfModule, workflow: Workflow,
-                     insert_before: int) -> None:
-    if insert_before < 0:
-        insert_before = 0
-
-    # This algorithm is deliberately robust to non-standard ordering (not 0..n-1)
-    pos = 0
-    for wfm in WfModule.objects.filter(workflow=workflow):
-        if pos == insert_before:
-            pos += 1
-        if wfm.order != pos:
-            wfm.order = pos
-            wfm.save()
-        pos += 1
-
-    # normalize insert_before so it's always the index where the new WfModule ends up
-    if insert_before > pos:
-        insert_before = pos
-
-    # save new position if needed
-    if wf_module.order != insert_before:
-        wf_module.order = insert_before
-
-
-# Forces canonical values of 'order' field: 0..n-1
-# Used after deleting a WfModule
-def renumber_wf_modules(workflow: Workflow):
-    pos = 0
-    for wfm in WfModule.objects.filter(workflow=workflow):
-        if wfm.order != pos:
-            wfm.order = pos
-            wfm.save()
-        pos += 1
-
-
 class ChangesWfModuleOutputs:
     # DEPRECATED List of wf_module.last_relevant_delta_id from _before_
     # .forward() was called, for *this* wf_module and the ones *after* it.
@@ -72,7 +36,9 @@ class ChangesWfModuleOutputs:
 
         The default implementation _includes_ the passed `wf_module`.
         """
-        return wf_module.workflow.wf_modules.filter(order__gte=wf_module.order)
+        return WfModule.objects.filter(workflow_id=wf_module.workflow_id,
+                                       order__gte=wf_module.order,
+                                       is_deleted=False)
 
     @classmethod
     def affected_wf_module_delta_ids(cls, wf_module) -> List[Tuple[int, int]]:

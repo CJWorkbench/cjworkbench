@@ -293,7 +293,7 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.delete('/api/wfmodules/%d' % self.wf_module2.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        wf_modules = list(self.workflow.wf_modules.all())
+        wf_modules = list(self.workflow.live_wf_modules.all())
         self.assertEqual(len(wf_modules), 1)
         self.assertEqual(wf_modules[0].pk, self.wf_module1.id)
 

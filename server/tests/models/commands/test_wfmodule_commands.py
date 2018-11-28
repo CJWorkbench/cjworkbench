@@ -22,8 +22,8 @@ future_none.set_result(None)
 class CommandTestCase(DbTestCase):
     def assertWfModuleVersions(self, expected_versions):
         result = list(
-            self.workflow.wf_modules.values_list('last_relevant_delta_id',
-                                                 flat=True)
+            self.workflow.live_wf_modules.values_list('last_relevant_delta_id',
+                                                      flat=True)
         )
         self.assertEqual(result, expected_versions)
 
@@ -54,7 +54,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         )
         existing_module.create_parametervals()
 
-        all_modules = WfModule.objects.filter(workflow=self.workflow)
+        all_modules = self.workflow.live_wf_modules
 
         self.workflow.refresh_from_db()
         v1 = self.workflow.last_delta_id
@@ -65,14 +65,14 @@ class AddDeleteModuleCommandTests(CommandTestCase):
                                                      self.module_version, 0,
                                                      {'url': 'https://x.com'})
         self.assertEqual(all_modules.count(), 2)
-        added_module = WfModule.objects.get(workflow=self.workflow, order=0)
+        added_module = all_modules.get(order=0)
         self.assertNotEqual(added_module, existing_module)
         # Test that supplied param is written
         self.assertEqual(
             added_module.get_params().get_param_string('url'),
             'https://x.com'
         )
-        bumped_module = WfModule.objects.get(workflow=self.workflow, order=1)
+        bumped_module = all_modules.get(order=1)
         self.assertEqual(bumped_module, existing_module)
 
         # workflow revision should have been incremented
@@ -89,24 +89,26 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         # undo! undo! ahhhhh everything is on fire! undo!
         async_to_sync(cmd.backward)()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(self.workflow.wf_modules.first(), existing_module)
+        self.assertEqual(self.workflow.live_wf_modules.first(),
+                         existing_module)
 
         # wait no, we wanted that module
         async_to_sync(cmd.forward)()
         self.assertEqual(all_modules.count(), 2)
-        added_module = WfModule.objects.get(workflow=self.workflow, order=0)
+        added_module = all_modules.get(order=0)
         self.assertNotEqual(added_module, existing_module)
-        bumped_module = WfModule.objects.get(workflow=self.workflow, order=1)
+        bumped_module = all_modules.get(order=1)
         self.assertEqual(bumped_module, existing_module)
 
         # Undo and test deleting the un-applied command. Should delete dangling
         # WfModule too
         async_to_sync(cmd.backward)()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(self.workflow.wf_modules.first(), existing_module)
+        self.assertEqual(self.workflow.live_wf_modules.first(),
+                         existing_module)
         cmd.delete()
         with self.assertRaises(WfModule.DoesNotExist):
-            WfModule.objects.get(pk=added_module.id)  # should be gone
+            all_modules.get(pk=added_module.id)  # should be gone
 
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
@@ -121,8 +123,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         v1 = self.workflow.last_delta_id
 
         # beginning state: one WfModule
-        all_modules = self.workflow.wf_modules
-        existing_module = WfModule.objects.first()
+        all_modules = self.workflow.live_wf_modules
 
         # Insert at beginning
         cmd1 = async_to_sync(AddModuleCommand.create)(self.workflow,
@@ -181,7 +182,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         )
         existing_module.create_parametervals()
 
-        all_modules = self.workflow.wf_modules
+        all_modules = self.workflow.live_wf_modules
 
         self.workflow.refresh_from_db()
         v1 = self.workflow.last_delta_id
@@ -208,7 +209,8 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         async_to_sync(cmd.backward)()
         self.assertEqual(all_modules.count(), 1)
         self.assertWfModuleVersions([v1])
-        self.assertEqual(self.workflow.wf_modules.first(), existing_module)
+        self.assertEqual(self.workflow.live_wf_modules.first(),
+                         existing_module)
 
         # nevermind, redo
         async_to_sync(cmd.forward)()
@@ -251,7 +253,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         existing_module.create_parametervals()
 
         # beginning state: one WfModule
-        all_modules = WfModule.objects.filter(workflow=self.workflow)
+        all_modules = self.workflow.live_wf_modules
         self.assertEqual(all_modules.count(), 1)
 
         cmd = async_to_sync(AddModuleCommand.create)(self.workflow,
@@ -509,11 +511,10 @@ class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
             source_version_hash='1.0',
             module=module
         )
-        wf_module = WfModule.objects.create(workflow=workflow, order=0,
-                                            module_version=module_version,
-                                            auto_update_data=False,
-                                            next_update=None,
-                                            update_interval=100)
+        wf_module = workflow.wf_modules.create(module_version=module_version,
+                                               order=0, auto_update_data=False,
+                                               next_update=None,
+                                               update_interval=100)
 
         # do
         mydate = timezone.now()

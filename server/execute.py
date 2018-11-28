@@ -256,7 +256,7 @@ def _load_wf_modules_and_input(workflow: Workflow):
     """
     with workflow.cooperative_lock():
         # 1. Load list of wf_modules
-        wf_modules = list(workflow.wf_modules.all())
+        wf_modules = list(workflow.live_wf_modules.all())
 
         if not wf_modules:
             return [], None
@@ -289,7 +289,7 @@ def _load_wf_modules_and_input(workflow: Workflow):
 
 async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
     """
-    Ensure all `workflow.wf_modules` have valid cached render results.
+    Ensure all `workflow.live_wf_modules` have valid cached render results.
 
     Raise UnneededExecution if the inputs become stale (at which point we don't
     care about results any more).

@@ -58,7 +58,7 @@ def make_init_state(request, workflow=None, modules=None):
         ret['workflowId'] = workflow.id
         ret['workflow'] = WorkflowSerializer(workflow,
                                              context={'request': request}).data
-        wf_modules = workflow.wf_modules \
+        wf_modules = workflow.live_wf_modules \
             .prefetch_related('parameter_vals__parameter_spec',
                               'module_version')
         wf_module_data_list = WfModuleSerializer(wf_modules, many=True).data
@@ -186,7 +186,7 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
         init_state = make_init_state(request, workflow=workflow,
                                      modules=modules)
 
-        if workflow.wf_modules.exclude(
+        if workflow.live_wf_modules.exclude(
             cached_render_result_delta_id=F('last_relevant_delta_id')
         ).exists():
             # We're returning a Workflow that may have stale WfModules. Either

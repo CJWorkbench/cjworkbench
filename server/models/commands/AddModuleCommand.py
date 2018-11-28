@@ -1,6 +1,7 @@
 from django.db import models
+from django.db.models import F
 from server.models import Delta, WfModule
-from .util import ChangesWfModuleOutputs, insert_wf_module, renumber_wf_modules
+from .util import ChangesWfModuleOutputs
 
 
 # The only tricky part AddModule is what we do with the module in backward()
@@ -26,7 +27,8 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
                                   blank=True, on_delete=models.PROTECT)
 
     order = models.IntegerField()
-    selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
+    # what was selected before we were added?
+    selected_wf_module = models.IntegerField(null=True, blank=True)
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
@@ -37,7 +39,9 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         #
         # At the time this method is called, `wf_module` is "deleted" (well,
         # not yet created).
-        return wf_module.workflow.wf_modules.filter(order__gte=wf_module.order)
+        return WfModule.objects.filter(workflow_id=wf_module.workflow_id,
+                                       order__gte=wf_module.order,
+                                       is_deleted=False)
 
     def forward_impl(self):
         if not self.wf_module.last_relevant_delta_id:
@@ -48,9 +52,11 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             self.wf_module.last_relevant_delta_id = self.id
             self.wf_module.save(update_fields=['last_relevant_delta_id'])
 
-        insert_wf_module(self.wf_module, self.workflow, self.order)
-        self.wf_module.workflow = self.workflow  # attach to workflow
-        self.wf_module.save(update_fields=['workflow_id'])
+        self.workflow.live_wf_modules.filter(order__gte=self.wf_module.order) \
+            .update(order=F('order') + 1)
+
+        self.wf_module.is_deleted = False
+        self.wf_module.save(update_fields=['is_deleted'])
 
         self.workflow.selected_wf_module = self.wf_module.order
         self.workflow.save(update_fields=['selected_wf_module'])
@@ -62,8 +68,11 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         # Backward before removing module from self.workflow
         self.backward_affected_delta_ids(self.wf_module)
 
-        self.wf_module.workflow = None  # detach from workflow
-        self.wf_module.save(update_fields=['workflow_id'])
+        self.wf_module.is_deleted = True
+        self.wf_module.save(update_fields=['is_deleted'])
+
+        self.workflow.live_wf_modules.filter(order__gt=self.wf_module.order) \
+            .update(order=F('order') - 1)
 
         # [adamhooper, 2018-06-19] I don't think there's any hope we can
         # actually restore selected_wf_module correctly, because sometimes we
@@ -73,8 +82,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         # the final wf_module in the list.
         self.workflow.selected_wf_module = self.selected_wf_module
         self.workflow.save(update_fields=['selected_wf_module'])
-
-        renumber_wf_modules(self.workflow) # fix up ordering on the rest
 
     def delete(self):
         # Don't let Django batch deletes. We really need to delete in order,
@@ -99,15 +106,14 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     @classmethod
     def amend_create_kwargs(cls, *, workflow, module_version, insert_before,
                             param_values, **kwargs):
-        wf_module = WfModule.objects.create(workflow=None,
-                                            module_version=module_version,
-                                            order=insert_before,
-                                            is_collapsed=False)
+        # wf_module starts off "deleted" and gets un-deleted in forward().
+        wf_module = workflow.wf_modules.create(module_version=module_version,
+                                               order=insert_before,
+                                               is_deleted=True)
         wf_module.create_parametervals(param_values or {})
 
-        # wf_module.workflow is None, so gather wf_module_delta_ids manually
         wf_module_delta_ids = list(
-            workflow.wf_modules
+            workflow.live_wf_modules
                 .filter(order__gte=insert_before)
                 .values_list('id', 'last_relevant_delta_id')
         )

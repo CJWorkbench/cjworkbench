@@ -25,8 +25,8 @@ class ReorderModulesCommandTests(DbTestCase):
 
     def assertWfModuleVersions(self, expected_versions):
         result = list(
-            self.workflow.wf_modules.values_list('last_relevant_delta_id',
-                                                 flat=True)
+            self.workflow.live_wf_modules.values_list('last_relevant_delta_id',
+                                                      flat=True)
         )
         self.assertEqual(result, expected_versions)
 
