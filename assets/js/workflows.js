@@ -27,6 +27,11 @@ export default class Workflows extends React.Component {
     sortMethod: {type: 'last_update', direction: 'descending'}
   }
 
+  get allWorkflows () {
+    const workflows = this.state.workflows || {}
+    return [].concat(...Object.keys(this.state.workflows || {}).map(k => workflows[k]))
+  }
+
   openShareModal = (workflowId) => {
     this.setState({ shareModalWorkflowId: workflowId })
   }
@@ -44,7 +49,7 @@ export default class Workflows extends React.Component {
 
     if (shareModalWorkflowId === null) return null
 
-    const workflow = this.state.workflows.find(w => w.id === shareModalWorkflowId)
+    const workflow = this.allWorkflows.find(w => w.id === shareModalWorkflowId)
     if (!workflow) return null
 
     const url = `${window.origin}/workflows/${workflow.id}`
@@ -54,7 +59,7 @@ export default class Workflows extends React.Component {
         url={url}
         ownerEmail={workflow.owner_email}
         workflowId={workflow.id}
-        isReadOnly={workflow.is_owner}
+        isReadOnly={!workflow.is_owner}
         isPublic={workflow.public}
         onChangeIsPublic={this.setIsPublicFromShareModal}
         logShare={this.logShare}
@@ -98,9 +103,15 @@ export default class Workflows extends React.Component {
   setIsPublicFromShareModal = (isPublic) => {
     const workflowId = this.state.shareModalWorkflowId
 
-    // Change the given workflow to be public
-    const newWorkflows = this.state.workflows
-        .map(w => w.id === workflowId ? { ...w, public: isPublic } : w)
+    const { workflows } = this.state
+
+    const category = Object.keys(workflows)
+      .find(k => workflows[k].findIndex(w => w.id === workflowId) !== -1)
+
+    const newWorkflows = {
+      ...workflows,
+      [category]: workflows[category].map(w => w.id === workflowId ? { ...w, public: isPublic } : w)
+    }
 
     this.setState({ workflows: newWorkflows })
 
