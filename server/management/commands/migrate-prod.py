@@ -41,15 +41,6 @@ class Command(BaseCommand):
     help = 'Run DB migrations, reload modules and upload static files to minio'
 
     def handle(self, *args, **options):
-        # Migrate sites first, to create the site table that we then edit with
-        # a migration.
-        management.call_command('migrate', 'sites')
-        management.call_command('migrate')
-
-        management.call_command('load_socialaccounts')
-
-        management.call_command('reload-internal-modules')
-
         # We only collectstatic on non-debug. On debug, we don't upload to
         # minio because we'd need to run collectstatic every reboot, which
         # would be too slow/complex-to-set-up.
@@ -61,3 +52,14 @@ class Command(BaseCommand):
         # for integration tests....
         if settings.MINIO_BUCKET_PREFIX == 'integrationtest':
             minio_client.set_bucket_policy(StaticFilesBucket, BUCKET_POLICY)
+
+        # Migrate comes last: during deploy, in some cases, migration can make
+        # the site unusable until it's completed. So don't add any instructions
+        # _after_ this, because that will increase our downtime if we're
+        # unfortunate enough to cause downtime.
+        management.call_command('migrate')
+
+        # FIXME revamp modules so we use their actual sources of truth, instead
+        # of preprocessing and storing derived data in the database. Will
+        # relate to #156939415 among others
+        management.call_command('reload-internal-modules')
