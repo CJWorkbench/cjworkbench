@@ -3,11 +3,12 @@ from server.models import Delta
 
 class InitWorkflowCommand(Delta):
     """
-    Special "marker" delta for a duplicated workflow.
+    Special "marker" delta at the start of a workflow.
 
-    A duplicated workflow doesn't keep the original's undo history; but we
-    still need to render it because there are modules with output. Render
-    results need a delta ID: thus, they need an initial delta to render.
+    Every Workflow needs a sentinel at the beginning of its undo history, so we
+    have an ID to cache renders against. Some workflows, such as duplicated
+    workflows and test workflows, are fully-functional even with just this one
+    Delta.
 
     Undo and redo are no-ops.
     """
@@ -40,4 +41,4 @@ class InitWorkflowCommand(Delta):
 
     @property
     def command_description(self):
-        return f'Duplicate Workflow'
+        return f'Create Workflow'

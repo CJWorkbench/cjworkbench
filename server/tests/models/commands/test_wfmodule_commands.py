@@ -288,6 +288,18 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
+    def test_delete_if_workflow_missing_init(self):
+        self.workflow.last_delta_id = None
+        self.workflow.save(update_fields=['last_delta_id'])
+
+        self.delta.delete()
+        cmd = async_to_sync(AddModuleCommand.create)(self.workflow,
+                                                     self.module_version, 0,
+                                                     {})
+        
+        self.workflow.delete()
+        self.assertTrue(True)  # we didn't crash! Yay, we pass
+
 
 @patch('server.models.Delta.ws_notify', async_noop)
 class ChangeDataVersionCommandTests(CommandTestCase):

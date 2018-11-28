@@ -247,16 +247,24 @@ class Workflow(models.Model):
 
     def clear_deltas(self):
         """Become a single-Delta Workflow."""
+        from server.models.commands import InitWorkflowCommand
+
         try:
             from server.models import Delta
             first_delta = self.deltas.get(prev_delta_id=None)
         except Delta.DoesNotExist:
             # Invariant failed. Defensive programming: recover.
-            from server.models.commands import InitWorkflowCommand
             first_delta = InitWorkflowCommand.create(self)
 
-        self.last_delta_id = first_delta.id
-        self.save(update_fields=['last_delta_id'])
+        if not isinstance(first_delta, InitWorkflowCommand):
+            # Invariant failed: first delta should be InitWorkflowCommand.
+            # Defensive programming: recover. Delete _every_ Delta, and then
+            # add the one that belongs.
+            first_delta.delete()
+            InitWorkflowCommand.create(self)
+        else:
+            self.last_delta_id = first_delta.id
+            self.save(update_fields=['last_delta_id'])
 
         try:
             # Select the _second_ delta.

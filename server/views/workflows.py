@@ -18,7 +18,7 @@ from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import Module, ModuleVersion, Workflow
 from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
-        ChangeWorkflowTitleCommand
+        ChangeWorkflowTitleCommand, InitWorkflowCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 import server.utils
@@ -125,11 +125,12 @@ def render_workflows(request):
 @login_required
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
-    """List all workflows or create a new workflow."""
+    """Create a new workflow."""
     workflow = Workflow.objects.create(
         name='New Workflow',
         owner=request.user
     )
+    InitWorkflowCommand.create(workflow)
     serializer = WorkflowSerializerLite(workflow,
                                         context={'request': request})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
