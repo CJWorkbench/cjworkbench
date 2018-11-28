@@ -5,8 +5,9 @@ from .util import ChangesWfModuleOutputs, insert_wf_module, renumber_wf_modules
 
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
 class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
-    # must not have cascade on WfModule because we may delete it first when we are deleted
-    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    # TODO set null=False. null=True makes no sense.
+    wf_module = models.ForeignKey(WfModule, null=True, default=None,
+                                  blank=True, on_delete=models.PROTECT)
     selected_wf_module = models.IntegerField(null=True, blank=True)
     dependent_wf_module_last_delta_ids = \
         ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids

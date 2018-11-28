@@ -3,8 +3,9 @@ from server.models import Delta, WfModule
 
 
 class ChangeWfModuleUpdateSettingsCommand(Delta):
+    # TODO set null=False. null=True makes no sense.
     wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.SET_DEFAULT)
+                                  blank=True, on_delete=models.PROTECT)
     new_auto = models.BooleanField()
     old_auto = models.BooleanField()
     new_next_update = models.DateField(null=True)

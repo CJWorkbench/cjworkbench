@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
 from server.models import Delta, WfModule
 from .util import ChangesWfModuleOutputs, insert_wf_module, renumber_wf_modules
 
@@ -8,9 +6,25 @@ from .util import ChangesWfModuleOutputs, insert_wf_module, renumber_wf_modules
 # The only tricky part AddModule is what we do with the module in backward()
 # We detach the WfModule from the workflow, but keep it around for possible later forward()
 class AddModuleCommand(Delta, ChangesWfModuleOutputs):
-    # must not have cascade on WfModule because we may delete it first when we are deleted
+    # Foreign keys can get a bit confusing. Here we go:
+    #
+    # * AddModuleCommand can only exist if its WfModule exists.
+    # * WfModule depends on Workflow.
+    # * AddModuleCommand depends on Workflow.
+    #
+    # So it's safe to delete Commands from a Workflow (as long as the workflow
+    # has at least one delta). But it's not safe to delete WfModules from a
+    # workflow -- unless one clears the Deltas first.
+    #
+    # We set on_delete=PROTECT because if we set on_delete=CASCADE we'd be
+    # ambiguous: should one delete the WfModule first, or the Delta? The answer
+    # is: you _must_ delete the Delta first; after deleting the Delta, you
+    # _may_ delete the WfModule.
+    #
+    # TODO set null=False. null=True makes no sense.
     wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.SET_DEFAULT)
+                                  blank=True, on_delete=models.PROTECT)
+
     order = models.IntegerField()
     selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
     dependent_wf_module_last_delta_ids = \
@@ -62,6 +76,26 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
 
         renumber_wf_modules(self.workflow) # fix up ordering on the rest
 
+    def delete(self):
+        # Don't let Django batch deletes. We really need to delete in order,
+        # because we need to delete AddModuleCommand last so we can
+        # garbage-collect its WfModule.
+        #
+        # TODO let's avoid putting database IDs in deltas! Then we could
+        # hard-delete WfModules instead of soft-deleting them.
+        try:
+            self.next_delta.delete()
+        except Delta.DoesNotExist:
+            pass
+
+        super().delete()
+
+        if self.wf_module.workflow_id is None:
+            # The WfModule was soft-deleted, and this is the last Delta that
+            # references it. After deleting this Delta there are no more pointers
+            # to this WfModule. Delete it.
+            self.wf_module.delete()
+
     @classmethod
     def amend_create_kwargs(cls, *, workflow, module_version, insert_before,
                             param_values, **kwargs):
@@ -98,13 +132,3 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     @property
     def command_description(self):
         return f'Add WfModule {self.wf_module}'
-
-
-# Delete the module when we are deleted. This assumes we're only deleted if we
-# haven't been applied.
-#
-# Use post_delete: if we use pre_delete then we'll clear command.wf_module (the
-# foreign key).
-@receiver(post_delete, sender=AddModuleCommand, dispatch_uid='addmodulecommand')
-def addmodulecommand_delete_callback(sender, instance, **kwargs):
-    instance.wf_module.delete()

@@ -5,7 +5,8 @@ from .util import ChangesWfModuleOutputs
 
 
 class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
-    wf_module = models.ForeignKey(WfModule, null=False)
+    wf_module = models.ForeignKey(WfModule, null=False,
+                                  on_delete=models.PROTECT)
     old_values = JSONField('old_values')
     new_values = JSONField('new_values')
 

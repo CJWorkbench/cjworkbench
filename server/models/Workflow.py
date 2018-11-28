@@ -240,3 +240,33 @@ class Workflow(models.Model):
                 return Lesson.objects.get(self.lesson_slug)
             except Lesson.DoesNotExist:
                 return None
+
+    def clear_deltas(self):
+        """Become a single-Delta Workflow."""
+        try:
+            from server.models import Delta
+            first_delta = self.deltas.get(prev_delta_id=None)
+        except Delta.DoesNotExist:
+            # Invariant failed. Defensive programming: recover.
+            from server.models.commands import InitWorkflowCommand
+            first_delta = InitWorkflowCommand.create(self)
+
+        self.last_delta_id = first_delta.id
+        self.save(update_fields=['last_delta_id'])
+
+        try:
+            # Select the _second_ delta.
+            second_delta = first_delta.next_delta
+        except Delta.DoesNotExist:
+            # We're already a 1-delta Workflow
+            return
+
+        second_delta.delete()  # will CASCADE to delete all subsequent deltas
+
+    def delete(self):
+        # Clear delta history. Deltas can reference WfModules: if we don't
+        # clear the deltas, Django may decide to CASCADE to WfModule first and
+        # we'll raise a ProtectedError.
+        self.clear_deltas()
+
+        super().delete()

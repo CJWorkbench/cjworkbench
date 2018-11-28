@@ -3,10 +3,11 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.utils import timezone
 import pandas as pd
-from server.models import Module, ModuleVersion, Workflow, WfModule
+from server.models import Delta, Module, ModuleVersion, Workflow, WfModule
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
-        ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand
+        ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand, \
+        InitWorkflowCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         mock_csv_table, mock_csv_table2
 
@@ -19,10 +20,6 @@ future_none.set_result(None)
 
 
 class CommandTestCase(DbTestCase):
-    def setUp(self):
-        super().setUp()
-        self.workflow = create_testdata_workflow()
-
     def assertWfModuleVersions(self, expected_versions):
         result = list(
             self.workflow.wf_modules.values_list('last_relevant_delta_id',
@@ -36,44 +33,58 @@ class CommandTestCase(DbTestCase):
 class AddDeleteModuleCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()
-        # defined by create_testdata_workflow
-        self.module_version = ModuleVersion.objects.first()
+
+        self.workflow = Workflow.objects.create()
+        module = Module.objects.create(name='a', id_name='a', dispatch='a')
+        self.module_version = ModuleVersion.objects.create(
+            source_version_hash='1.0',
+            module=module
+        )
+        self.module_version.parameter_specs.create(id_name='url',
+                                                   type='string',
+                                                   order=0, def_value='')
+
+        self.delta = InitWorkflowCommand.create(self.workflow)
 
     # Add another module, then undo, redo
     def test_add_module(self):
-        # beginning state: one WfModule
+        existing_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
+        )
+        existing_module.create_parametervals()
+
         all_modules = WfModule.objects.filter(workflow=self.workflow)
-        self.assertEqual(all_modules.count(), 1)
-        existing_module = WfModule.objects.first()
 
         self.workflow.refresh_from_db()
-        v1 = self.workflow.revision()
+        v1 = self.workflow.last_delta_id
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
         cmd = async_to_sync(AddModuleCommand.create)(self.workflow,
                                                      self.module_version, 0,
-                                                     {'csv': 'A,B\n1,2'})
+                                                     {'url': 'https://x.com'})
         self.assertEqual(all_modules.count(), 2)
         added_module = WfModule.objects.get(workflow=self.workflow, order=0)
         self.assertNotEqual(added_module, existing_module)
         # Test that supplied param is written
         self.assertEqual(
-            len(added_module.parameter_vals.filter(value='A,B\n1,2')),
-            1
+            added_module.get_params().get_param_string('url'),
+            'https://x.com'
         )
         bumped_module = WfModule.objects.get(workflow=self.workflow, order=1)
         self.assertEqual(bumped_module, existing_module)
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.revision(), v1)
+        self.assertGreater(self.workflow.last_delta_id, v1)
 
         # Check the delta chain (short, but should be sweet)
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.last_delta, cmd)
-        self.assertIsNone(cmd.prev_delta)
-        self.assertIsNone(cmd.next_delta)
+        self.assertEqual(cmd.prev_delta_id, self.delta.id)
+        with self.assertRaises(Delta.DoesNotExist):
+            cmd.next_delta
 
         # undo! undo! ahhhhh everything is on fire! undo!
         async_to_sync(cmd.backward)()
@@ -100,15 +111,18 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
     def test_add_many_modules(self):
+        existing_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
+        )
+        existing_module.create_parametervals()
+
         self.workflow.refresh_from_db()
-        v1 = self.workflow.revision()
+        v1 = self.workflow.last_delta_id
 
         # beginning state: one WfModule
         all_modules = self.workflow.wf_modules
-        self.assertEqual(all_modules.count(), 1)
         existing_module = WfModule.objects.first()
-        self.assertEqual(existing_module.order, 0)
-        self.assertWfModuleVersions([v1])
 
         # Insert at beginning
         cmd1 = async_to_sync(AddModuleCommand.create)(self.workflow,
@@ -117,7 +131,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertEqual(all_modules.count(), 2)
         self.assertEqual(cmd1.wf_module.order, 0)
         self.assertNotEqual(cmd1.wf_module, existing_module)
-        v2 = self.workflow.revision()
+        v2 = cmd1.id
         self.assertWfModuleVersions([v2, v2])
 
         # Insert at end
@@ -126,7 +140,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
                                                       2, {})
         self.assertEqual(all_modules.count(), 3)
         self.assertEqual(cmd2.wf_module.order, 2)
-        v3 = self.workflow.revision()
+        v3 = cmd2.id
         self.assertWfModuleVersions([v2, v2, v3])
 
         # Insert in between two modules
@@ -135,7 +149,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
                                                       2, {})
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
-        v4 = self.workflow.revision()
+        v4 = cmd3.id
         self.assertWfModuleVersions([v2, v2, v4, v4])
 
         # Check the delta chain, should be 1 <-> 2 <-> 3
@@ -144,12 +158,11 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd2.refresh_from_db()
         cmd3.refresh_from_db()
         self.assertEqual(self.workflow.last_delta, cmd3)
-        self.assertIsNone(cmd3.next_delta)
+        with self.assertRaises(Delta.DoesNotExist):
+            cmd3.next_delta
         self.assertEqual(cmd3.prev_delta, cmd2)
-        self.assertEqual(cmd2.next_delta, cmd3)
         self.assertEqual(cmd2.prev_delta, cmd1)
-        self.assertEqual(cmd1.next_delta, cmd2)
-        self.assertIsNone(cmd1.prev_delta)
+        self.assertEqual(cmd1.prev_delta_id, self.delta.id)
 
         # We should be able to go all the way back
         async_to_sync(cmd3.backward)()
@@ -162,13 +175,16 @@ class AddDeleteModuleCommandTests(CommandTestCase):
 
     # Delete module, then undo, redo
     def test_delete_module(self):
-        # beginning state: one WfModule
+        existing_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
+        )
+        existing_module.create_parametervals()
+
         all_modules = self.workflow.wf_modules
-        self.assertEqual(all_modules.count(), 1)
-        existing_module = WfModule.objects.first()
 
         self.workflow.refresh_from_db()
-        v1 = self.workflow.revision()
+        v1 = self.workflow.last_delta_id
         self.assertWfModuleVersions([v1])
 
         # Delete it. Yeah, you better run.
@@ -178,14 +194,15 @@ class AddDeleteModuleCommandTests(CommandTestCase):
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        v2 = self.workflow.revision()
+        v2 = cmd.id
         self.assertGreater(v2, v1)
 
         # Check the delta chain (short, but should be sweet)
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.last_delta, cmd)
-        self.assertIsNone(cmd.prev_delta)
-        self.assertIsNone(cmd.next_delta)
+        self.assertEqual(cmd.prev_delta_id, self.delta.id)
+        with self.assertRaises(Delta.DoesNotExist):
+            cmd.next_delta
 
         # undo
         async_to_sync(cmd.backward)()
@@ -197,23 +214,24 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         async_to_sync(cmd.forward)()
         self.assertEqual(all_modules.count(), 0)
 
-        # Deleting the appplied command should delete dangling WfModule too
+        # Deleting the command should leave the WfModule behind (because
+        # presumably there's an AddModuleCommand that's still around.)
         cmd.delete()
-        with self.assertRaises(WfModule.DoesNotExist):
-            WfModule.objects.get(pk=existing_module.id)  # should be gone
+        WfModule.objects.get(pk=existing_module.id)  # don't raise DoesNotExist
 
     # ensure that deleting the selected module sets the selected module to
     # null, and is undoable
     def test_delete_selected(self):
-        # beginning state: one WfModule
-        all_modules = WfModule.objects.filter(workflow=self.workflow)
-        self.assertEqual(all_modules.count(), 1)
-        existing_module = WfModule.objects.first()
+        wf_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
+        )
+        wf_module.create_parametervals()
 
         self.workflow.selected_wf_module = 0
         self.workflow.save()
 
-        cmd = async_to_sync(DeleteModuleCommand.create)(existing_module)
+        cmd = async_to_sync(DeleteModuleCommand.create)(wf_module)
 
         self.workflow.refresh_from_db()
         self.assertIsNone(self.workflow.selected_wf_module)
@@ -226,6 +244,12 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     # dangling selected_wf_module (basically the AddModule equivalent of
     # test_delete_selected)
     def test_add_undo_selected(self):
+        existing_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
+        )
+        existing_module.create_parametervals()
+
         # beginning state: one WfModule
         all_modules = WfModule.objects.filter(workflow=self.workflow)
         self.assertEqual(all_modules.count(), 1)
@@ -252,34 +276,50 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
+    def test_delete_if_workflow_delete_cascaded_to_wf_module_first(self):
+        async_to_sync(AddModuleCommand.create)(self.workflow,
+                                               self.module_version, 0, {})
+        # Add a second command -- so we test what happens when deleting
+        # multiple deltas while deleting the workflow.
+        async_to_sync(AddModuleCommand.create)(self.workflow,
+                                               self.module_version, 0, {})
+        self.workflow.delete()
+        self.assertTrue(True)  # we didn't crash! Yay, we pass
+
 
 @patch('server.models.Delta.ws_notify', async_noop)
 class ChangeDataVersionCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()
-        self.wfm = WfModule.objects.first()
+
+        self.workflow = Workflow.objects.create()
+        self.delta = InitWorkflowCommand.create(self.workflow)
+        self.wf_module = self.workflow.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=self.delta.id
+        )
 
     # Change version, then undo/redo
     @patch('server.models.commands.ChangeDataVersionCommand.schedule_execute',
            async_noop)
     def test_change_data_version(self):
         # Create two data versions, use the second
-        firstver = self.wfm.store_fetched_table(mock_csv_table)
-        secondver = self.wfm.store_fetched_table(mock_csv_table2)
+        date1 = self.wf_module.store_fetched_table(pd.DataFrame({'A': [1]}))
+        date2 = self.wf_module.store_fetched_table(pd.DataFrame({'A': [2]}))
 
-        self.wfm.stored_data_version = secondver
-        self.wfm.save()
+        self.wf_module.stored_data_version = date2
+        self.wf_module.save()
 
         self.workflow.refresh_from_db()
-        v1 = self.workflow.revision()
+        v1 = self.workflow.last_delta_id
 
         # Change back to first version
-        cmd = async_to_sync(ChangeDataVersionCommand.create)(self.wfm,
-                                                             firstver)
-        self.assertEqual(self.wfm.stored_data_version, firstver)
+        cmd = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
+                                                             date1)
+        self.assertEqual(self.wf_module.stored_data_version, date1)
 
         self.workflow.refresh_from_db()
-        v2 = self.workflow.revision()
+        v2 = cmd.id
         # workflow revision should have been incremented
         self.assertGreater(v2, v1)
         self.assertWfModuleVersions([v2])
@@ -287,12 +327,12 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         # undo
         async_to_sync(cmd.backward)()
         self.assertWfModuleVersions([v1])
-        self.assertEqual(self.wfm.stored_data_version, secondver)
+        self.assertEqual(self.wf_module.stored_data_version, date2)
 
         # redo
         async_to_sync(cmd.forward)()
         self.assertWfModuleVersions([v2])
-        self.assertEqual(self.wfm.stored_data_version, firstver)
+        self.assertEqual(self.wf_module.stored_data_version, date1)
 
     @patch('server.rabbitmq.queue_render')
     def test_queue_render_if_notifying(self, queue_render):
@@ -300,49 +340,48 @@ class ChangeDataVersionCommandTests(CommandTestCase):
 
         df1 = pd.DataFrame({'A': [1]})
         df2 = pd.DataFrame({'B': [2]})
-        date1 = self.wfm.store_fetched_table(df1)
-        date2 = self.wfm.store_fetched_table(df2)
+        date1 = self.wf_module.store_fetched_table(df1)
+        date2 = self.wf_module.store_fetched_table(df2)
 
-        self.wfm.notifications = True
-        self.wfm.stored_data_version = date1
-        self.wfm.save()
+        self.wf_module.notifications = True
+        self.wf_module.stored_data_version = date1
+        self.wf_module.save()
 
-        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
+        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
+                                                               date2)
 
-        queue_render.assert_called_with(self.wfm.workflow_id, delta.id)
+        queue_render.assert_called_with(self.wf_module.workflow_id, delta.id)
 
     @patch('server.websockets.queue_render_if_listening', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
-    def test_no_op_if_version_is_deleted(self):
+    def test_accept_deleted_version(self):
         """
-        Undo/redo should skip a ChangeDataVersion if we're changing to a
-        version that doesn't exist any more.
+        Let the user choose whichever version is desired, even if it does not
+        exist.
 
-        This happens if the user exceeded a version quota. (Too much disk
-        space? We delete old versions.) There's no recovering.
-
-        TODO consider other options? Prevent undo past this point?
+        The errors will be user-visible ... _later_.
         """
         df1 = pd.DataFrame({'A': [1]})
         df2 = pd.DataFrame({'B': [2]})
-        date1 = self.wfm.store_fetched_table(df1)
-        date2 = self.wfm.store_fetched_table(df2)
+        date1 = self.wf_module.store_fetched_table(df1)
+        date2 = self.wf_module.store_fetched_table(df2)
 
-        self.wfm.notifications = False
-        self.wfm.stored_data_version = date1
-        self.wfm.save()
+        self.wf_module.notifications = False
+        self.wf_module.stored_data_version = date1
+        self.wf_module.save()
 
-        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
+        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
+                                                               date2)
 
-        self.wfm.stored_objects.get(stored_at=date1).delete()
+        self.wf_module.stored_objects.get(stored_at=date1).delete()
 
         async_to_sync(delta.backward)()
-        self.wfm.refresh_from_db()
-        self.assertEqual(self.wfm.stored_data_version, date2)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.stored_data_version, date1)
 
         async_to_sync(delta.forward)()
-        self.wfm.refresh_from_db()
-        self.assertEqual(self.wfm.stored_data_version, date2)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.stored_data_version, date2)
 
     @patch('server.websockets.queue_render_if_listening')
     @patch('server.rabbitmq.queue_render')
@@ -355,17 +394,18 @@ class ChangeDataVersionCommandTests(CommandTestCase):
 
         df1 = pd.DataFrame({'A': [1]})
         df2 = pd.DataFrame({'B': [2]})
-        date1 = self.wfm.store_fetched_table(df1)
-        date2 = self.wfm.store_fetched_table(df2)
+        date1 = self.wf_module.store_fetched_table(df1)
+        date2 = self.wf_module.store_fetched_table(df2)
 
-        self.wfm.notifications = False
-        self.wfm.stored_data_version = date1
-        self.wfm.save()
+        self.wf_module.notifications = False
+        self.wf_module.stored_data_version = date1
+        self.wf_module.save()
 
-        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wfm, date2)
+        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
+                                                               date2)
 
         queue_render.assert_not_called()
-        queue_render_if_listening.assert_called_with(self.wfm.workflow_id,
+        queue_render_if_listening.assert_called_with(self.wf_module.workflow_id,
                                                      delta.id)
 
 
@@ -374,6 +414,7 @@ class ChangeDataVersionCommandTests(CommandTestCase):
 class ChangeWfModuleNotesCommandTests(CommandTestCase):
     def setUp(self):
         super().setUp()
+        self.workflow = create_testdata_workflow()
         self.wfm = WfModule.objects.first()
 
     # Change notes, then undo/redo
@@ -398,7 +439,7 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
 
 @patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
-class ChangeParametersCommandTest(DbTestCase):
+class ChangeParametersCommandTest(CommandTestCase):
     def test_change_parameters(self):
         # Setup: workflow with loadurl module
         #
@@ -459,7 +500,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
 @patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
-class ChangeWfModuleUpdateSettingsCommandTests(DbTestCase):
+class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
     def test_change_update_settings(self):
         workflow = Workflow.objects.create(name='hi')
         module = Module.objects.create(name='pastecsv', id_name='pastecsv',

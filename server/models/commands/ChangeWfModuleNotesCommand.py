@@ -3,8 +3,9 @@ from server.models import Delta, WfModule
 
 
 class ChangeWfModuleNotesCommand(Delta):
+    # TODO set null=False. null=True makes no sense.
     wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.SET_DEFAULT)
+                                  blank=True, on_delete=models.PROTECT)
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
