@@ -206,14 +206,16 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
 
 
 class WorkflowSerializer(WorkflowSerializerLite):
-    wf_modules = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    revision = serializers.ReadOnlyField()
+    wf_modules = serializers.SerializerMethodField()
+
+    def get_wf_modules(self, obj):
+        return list(obj.live_wf_modules.values_list('id', flat=True))
 
     class Meta:
         model = Workflow
-        fields = ('id', 'url_id', 'name', 'revision', 'wf_modules', 'public',
-                  'read_only', 'last_update', 'is_owner', 'owner_email',
-                  'owner_name', 'selected_wf_module', 'is_anonymous')
+        fields = ('id', 'url_id', 'name', 'wf_modules', 'public', 'read_only',
+                  'last_update', 'is_owner', 'owner_email', 'owner_name',
+                  'selected_wf_module', 'is_anonymous')
 
 
 class LessonSerializer(serializers.BaseSerializer):
