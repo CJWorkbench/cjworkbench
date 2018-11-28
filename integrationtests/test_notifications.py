@@ -21,6 +21,8 @@ class TestNotifications(LoggedInIntegrationTest):
 
         self.add_wf_module('Random 20 Floats')
         b.click_button('Update')
+        # Wait for the update to finish
+        b.assert_element('button', text='Update', wait=True)
 
         self.add_wf_module('Filter')
         # wait for module load
