@@ -75,9 +75,10 @@ class Migration(migrations.Migration):
             SET
                 is_deleted = TRUE,
                 workflow_id = (
-                    SELECT workflow_id FROM wf_module_workflows
-                    WHERE wf_module_id = wfm.id
-                    AND workflow_id IN (SELECT id FROM server_workflow)
+                    SELECT ww.workflow_id
+                    FROM wf_module_workflows ww
+                    WHERE ww.wf_module_id = wfm.id
+                    AND ww.workflow_id IN (SELECT id FROM server_workflow)
                 )
             WHERE wfm.workflow_id IS NULL
             """,
@@ -91,9 +92,7 @@ class Migration(migrations.Migration):
             """
             DELETE FROM server_parameterval
             WHERE wf_module_id IN (
-                SELECT wf_module_id
-                FROM server_wfmodule
-                WHERE workflow_id IS NULL
+                SELECT id FROM server_wfmodule WHERE workflow_id IS NULL
             )
             """,
             # Leave written StoredObjects stranded. [adamhooper, 2018-11-27] I
@@ -102,9 +101,7 @@ class Migration(migrations.Migration):
             """
             DELETE FROM server_storedobject
             WHERE wf_module_id IN (
-                SELECT wf_module_id
-                FROM server_wfmodule
-                WHERE workflow_id IS NULL
+                SELECT id FROM server_wfmodule WHERE workflow_id IS NULL
             )
             """,
             # [adamhooper, 2018-11-27] there aren't any orphan UploadedFiles on
@@ -112,9 +109,7 @@ class Migration(migrations.Migration):
             """
             DELETE FROM server_uploadedfile
             WHERE wf_module_id IN (
-                SELECT wf_module_id
-                FROM server_wfmodule
-                WHERE workflow_id IS NULL
+                SELECT id FROM server_wfmodule WHERE workflow_id IS NULL
             )
             """,
             """
