@@ -10,32 +10,26 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
     # [ { id: x, order: y}, ... ]
     old_order = models.TextField()
     new_order = models.TextField()
-    dependent_wf_module_last_delta_ids = \
-        ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def apply_order(self, order):
         # We validated Workflow IDs back in `.amend_create_args()`
         for record in order:
-            WfModule.objects.filter(pk=record['id']).update(order=record['order'])
+            self.workflow.wf_modules \
+                .filter(pk=record['id']) \
+                .update(order=record['order'])
 
     def forward_impl(self):
         new_order = json.loads(self.new_order)
-
         self.apply_order(new_order)
 
-        min_order = min(record['order'] for record in new_order)
-        wf_module = self.workflow.live_wf_modules.get(order=min_order)
-        self.forward_affected_delta_ids(wf_module)
+        self.forward_affected_delta_ids()
 
     def backward_impl(self):
-        new_order = json.loads(self.new_order)
+        old_order = json.loads(self.old_order)
+        self.apply_order(old_order)
 
-        min_order = min(record['order'] for record in new_order)
-        wf_module = self.workflow.live_wf_modules.get(order=min_order)
-        self.backward_affected_delta_ids(wf_module)
-
-        self.apply_order(json.loads(self.old_order))
+        self.backward_affected_delta_ids()
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_order, **kwargs):

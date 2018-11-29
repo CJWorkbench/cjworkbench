@@ -89,7 +89,6 @@ class AccountAdmin:
             'server_aclentry',
             'server_addmodulecommand',
             'server_changedataversioncommand',
-            'server_changeparametercommand',
             'server_changeparameterscommand',
             'server_changewfmodulenotescommand',
             'server_changewfmoduleupdatesettingscommand',

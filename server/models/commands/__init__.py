@@ -4,7 +4,6 @@ from .AddModuleCommand import AddModuleCommand
 from .DeleteModuleCommand import DeleteModuleCommand
 from .ReorderModulesCommand import ReorderModulesCommand
 from .ChangeDataVersionCommand import ChangeDataVersionCommand
-from .ChangeParameterCommand import ChangeParameterCommand
 from .ChangeParametersCommand import ChangeParametersCommand
 from .ChangeWorkflowTitleCommand import ChangeWorkflowTitleCommand
 from .ChangeWfModuleNotesCommand import ChangeWfModuleNotesCommand

@@ -426,29 +426,33 @@ class ChangeDataVersionCommandTests(CommandTestCase):
 @patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class ChangeWfModuleNotesCommandTests(CommandTestCase):
-    def setUp(self):
-        super().setUp()
-        self.workflow = create_testdata_workflow()
-        self.wfm = WfModule.objects.first()
-
-    # Change notes, then undo/redo
     def test_change_notes(self):
-        firstNote = 'text1'
-        secondNote = 'text2'
-        self.wfm.notes = firstNote
+        workflow = Workflow.objects.create()
+        delta = InitWorkflowCommand.create(workflow)
+        wf_module = workflow.wf_modules.create(
+            order=0,
+            notes='text1',
+            last_relevant_delta_id=delta.id
+        )
 
         # do
-        cmd = async_to_sync(ChangeWfModuleNotesCommand.create)(self.wfm,
-                                                               secondNote)
-        self.assertEqual(self.wfm.notes, secondNote)
+        cmd = async_to_sync(ChangeWfModuleNotesCommand.create)(wf_module,
+                                                               'text2')
+        self.assertEqual(wf_module.notes, 'text2')
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notes, 'text2')
 
         # undo
         async_to_sync(cmd.backward)()
-        self.assertEqual(self.wfm.notes, firstNote)
+        self.assertEqual(wf_module.notes, 'text1')
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notes, 'text1')
 
         # redo
         async_to_sync(cmd.forward)()
-        self.assertEqual(self.wfm.notes, secondNote)
+        self.assertEqual(wf_module.notes, 'text2')
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notes, 'text2')
 
 
 @patch('server.models.Delta.schedule_execute', async_noop)

@@ -11,7 +11,6 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from ..models import ParameterSpec, ParameterVal
-from ..models.commands import ChangeParameterCommand
 from ..serializers import ParameterValSerializer
 from .. import triggerrender
 from .. import oauth
@@ -130,10 +129,10 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
     username = service.extract_username_from_token(offline_token)
 
     with param.wf_module.workflow.cooperative_lock():
-        # TODO consider ChangeParameterCommand. It might not play nice with
+        # TODO consider ChangeParametersCommand. It might not play nice with
         # 'secret'
         param.set_value({'name': username, 'secret': offline_token})
-        # Copied from ChangeParameterCommand. Clear errors in case the connect
+        # Copied from ChangeParametersCommand. Clear errors in case the connect
         # fixed things
         param.wf_module.set_ready()
 

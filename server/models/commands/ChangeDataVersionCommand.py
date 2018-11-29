@@ -12,25 +12,21 @@ def _workflow_has_notifications(workflow):
 
 
 class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
-    # TODO set null=False. null=True makes no sense.
-    wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.PROTECT)
+    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     # may not have had a previous version
     old_version = models.DateTimeField('old_version', null=True)
     new_version = models.DateTimeField('new_version')
-    dependent_wf_module_last_delta_ids = \
-        ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def forward_impl(self):
         self.wf_module.stored_data_version = self.new_version
         self.wf_module.save(update_fields=['stored_data_version'])
-        self.forward_affected_delta_ids(self.wf_module)
+        self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.wf_module.stored_data_version = self.old_version
         self.wf_module.save(update_fields=['stored_data_version'])
-        self.backward_affected_delta_ids(self.wf_module)
+        self.backward_affected_delta_ids()
 
     async def schedule_execute(self) -> None:
         """

@@ -6,12 +6,8 @@ from .util import ChangesWfModuleOutputs
 
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
 class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
-    # TODO set null=False. null=True makes no sense.
-    wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.PROTECT)
+    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     selected_wf_module = models.IntegerField(null=True, blank=True)
-    dependent_wf_module_last_delta_ids = \
-        ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     @classmethod
@@ -33,14 +29,13 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
                 self.workflow.selected_wf_module = None
             self.workflow.save()
 
-        # forward before delete -- for dependent_wf_module_last_delta_ids
-        self.forward_affected_delta_ids(self.wf_module)
-
         self.wf_module.is_deleted = True
         self.wf_module.save(update_fields=['is_deleted'])
 
         self.workflow.live_wf_modules.filter(order__gt=self.wf_module.order) \
             .update(order=F('order') - 1)
+
+        self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.workflow.live_wf_modules.filter(order__gte=self.wf_module.order) \
@@ -49,15 +44,14 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
         self.wf_module.is_deleted = False
         self.wf_module.save(update_fields=['is_deleted'])
 
-        # forward after undelete -- for dependent_wf_module_last_delta_ids
-        self.backward_affected_delta_ids(self.wf_module)
-
         # [adamhooper, 2018-06-19] I don't think there's any hope we can
         # actually restore selected_wf_module correctly, because sometimes we
         # update it without a command. But I think focusing the restored module
         # is something a user could expect.
         self.workflow.selected_wf_module = self.selected_wf_module
         self.workflow.save(update_fields=['selected_wf_module'])
+
+        self.backward_affected_delta_ids()
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, wf_module):

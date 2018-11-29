@@ -3,9 +3,7 @@ from server.models import Delta, WfModule
 
 
 class ChangeWfModuleUpdateSettingsCommand(Delta):
-    # TODO set null=False. null=True makes no sense.
-    wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.PROTECT)
+    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     new_auto = models.BooleanField()
     old_auto = models.BooleanField()
     new_next_update = models.DateField(null=True)
@@ -14,16 +12,26 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
     old_update_interval = models.IntegerField()
 
     def forward_impl(self):
-        self.wf_module.auto_update_data = self.new_auto
-        self.wf_module.next_update = self.new_next_update
-        self.wf_module.update_interval = self.new_update_interval
-        self.wf_module.save()
+        fields = {
+            'auto_update_data': self.new_auto,
+            'next_update': self.new_next_update,
+            'update_interval': self.new_update_interval
+        }
+
+        for field, value in fields.items():
+            setattr(self.wf_module, field, value)
+        self.wf_module.save(update_fields=fields.keys())
 
     def backward_impl(self):
-        self.wf_module.auto_update_data = self.old_auto
-        self.wf_module.next_update = self.old_next_update
-        self.wf_module.update_interval = self.old_update_interval
-        self.wf_module.save()
+        fields = {
+            'auto_update_data': self.old_auto,
+            'next_update': self.old_next_update,
+            'update_interval': self.old_update_interval
+        }
+
+        for field, value in fields.items():
+            setattr(self.wf_module, field, value)
+        self.wf_module.save(update_fields=fields.keys())
 
     @classmethod
     async def create(cls, wf_module, auto_update_data,

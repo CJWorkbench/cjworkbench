@@ -202,14 +202,13 @@ class UndoRedoTests(DbTestCase):
         # commands (tests an edge case in Delta.save)
         self.assertEqual(Delta.objects.count(), 3)
         self._run_async(WorkflowUndo(self.workflow))
-        self._run_async(WorkflowUndo(self.workflow))
-        self.assertEqual(self.workflow.last_delta_id, v0)
+        self.assertEqual(self.workflow.last_delta_id, v1)
         cmd5 = self._run_async(ChangeWfModuleNotesCommand.create(
             wfm,
             "Note of some note"
         ))
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.last_delta, cmd5)
-        self.assertFalse(Delta.objects.filter(pk=cmd1.id).exists())
+        self.assertFalse(Delta.objects.filter(pk=cmd2.id).exists())
         self.assertFalse(Delta.objects.filter(pk=cmd4.id).exists())
         self.assertWfModuleVersions([v1])

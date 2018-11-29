@@ -5,13 +5,9 @@ from .util import ChangesWfModuleOutputs
 
 
 class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
-    wf_module = models.ForeignKey(WfModule, null=False,
-                                  on_delete=models.PROTECT)
+    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     old_values = JSONField('old_values')
     new_values = JSONField('new_values')
-
-    dependent_wf_module_last_delta_ids = \
-        ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def _apply_values(self, values):
@@ -26,11 +22,11 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
 
     def forward_impl(self):
         self._apply_values(self.new_values)
-        self.forward_affected_delta_ids(self.wf_module)
+        self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self._apply_values(self.old_values)
-        self.backward_affected_delta_ids(self.wf_module)
+        self.backward_affected_delta_ids()
 
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, new_values, **kwargs):

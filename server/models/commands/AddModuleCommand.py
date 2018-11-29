@@ -21,16 +21,11 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     # ambiguous: should one delete the WfModule first, or the Delta? The answer
     # is: you _must_ delete the Delta first; after deleting the Delta, you
     # _may_ delete the WfModule.
-    #
-    # TODO set null=False. null=True makes no sense.
-    wf_module = models.ForeignKey(WfModule, null=True, default=None,
-                                  blank=True, on_delete=models.PROTECT)
+    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
 
     order = models.IntegerField()
     # what was selected before we were added?
     selected_wf_module = models.IntegerField(null=True, blank=True)
-    dependent_wf_module_last_delta_ids = \
-        ChangesWfModuleOutputs.dependent_wf_module_last_delta_ids
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     @classmethod
@@ -61,13 +56,9 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         self.workflow.selected_wf_module = self.wf_module.order
         self.workflow.save(update_fields=['selected_wf_module'])
 
-        # forward after insert -- for dependent_wf_module_last_delta_ids
-        self.forward_affected_delta_ids(self.wf_module)
+        self.forward_affected_delta_ids()
 
     def backward_impl(self):
-        # Backward before removing module from self.workflow
-        self.backward_affected_delta_ids(self.wf_module)
-
         self.wf_module.is_deleted = True
         self.wf_module.save(update_fields=['is_deleted'])
 
@@ -83,6 +74,8 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         self.workflow.selected_wf_module = self.selected_wf_module
         self.workflow.save(update_fields=['selected_wf_module'])
 
+        self.backward_affected_delta_ids()
+
     def delete(self):
         # Don't let Django batch deletes. We really need to delete in order,
         # because we need to delete AddModuleCommand last so we can
@@ -97,7 +90,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
 
         super().delete()
 
-        if self.wf_module.workflow_id is None:
+        if self.wf_module.is_deleted:
             # The WfModule was soft-deleted, and this is the last Delta that
             # references it. After deleting this Delta there are no more pointers
             # to this WfModule. Delete it.
