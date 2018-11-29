@@ -40,7 +40,7 @@ export default class VersionSelect extends React.PureComponent {
 
     return (
       <button
-        name='fetch'
+        name='data-fetch'
         onClick={onSubmit}
         disabled={isBusy}
       >
