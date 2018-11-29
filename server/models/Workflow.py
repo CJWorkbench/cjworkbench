@@ -261,7 +261,7 @@ class Workflow(models.Model):
             # Defensive programming: recover. Delete _every_ Delta, and then
             # add the one that belongs.
             first_delta.delete()
-            InitWorkflowCommand.create(self)
+            first_delta = InitWorkflowCommand.create(self)
         else:
             self.last_delta_id = first_delta.id
             self.save(update_fields=['last_delta_id'])

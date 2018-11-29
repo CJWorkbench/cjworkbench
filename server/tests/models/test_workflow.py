@@ -1,8 +1,15 @@
+from unittest.mock import patch
+from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from django.test import TestCase
 from server.tests.utils import LoggedInTestCase, add_new_wf_module, add_new_module_version, create_testdata_workflow
 from server.models import Workflow
-from server.models.commands import InitWorkflowCommand
+from server.models.commands import InitWorkflowCommand, AddModuleCommand, \
+        ChangeWorkflowTitleCommand
+
+
+async def async_noop(*args, **kwargs):
+    pass
 
 
 class MockSession:
@@ -104,3 +111,13 @@ class WorkflowTests(LoggedInTestCase):
         self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.user)))
         self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session2')))
         self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
+
+    @patch('server.rabbitmq.queue_render', async_noop)
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_delete_deltas_without_init_delta(self):
+        workflow = Workflow.objects.create(name='A')
+        async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'B')
+        async_to_sync(AddModuleCommand.create)(workflow, None, 0, {})
+        async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'C')
+        workflow.delete()
+        self.assertTrue(True)  # no crash
