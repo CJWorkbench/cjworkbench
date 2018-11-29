@@ -8,69 +8,9 @@ import * as Actions from '../workflow-reducer'
 import Workflow from '../Workflow'
 import api from '../WorkbenchAPI'
 
-function launchWebsocket () {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const workflowId = window.initState.workflowId
-  const url = `${protocol}//${window.location.host}/workflows/${workflowId}`
-  let nSuccessfulOpens = 0
-
-  function onOpen (ev) {
-    nSuccessfulOpens += 1
-    if (nSuccessfulOpens === 1) {
-      Actions.store.dispatch(Actions.reloadWorkflowAction())
-    } else {
-      console.log('Websocket reconnected')
-    }
-  }
-
-  function onMessage (ev) {
-    const data = JSON.parse(ev.data)
-    if ('type' in data) {
-      switch (data.type) {
-        case 'apply-delta':
-          Actions.store.dispatch(Actions.applyDeltaAction(data.data))
-          return
-        case 'wfmodule-status':
-          Actions.store.dispatch(
-            Actions.setWfModuleStatusAction(
-              data.id,
-              data.status,
-              data.error_msg ? data.error_msg : ''
-            ))
-          return
-        case 'reload-workflow':
-          Actions.store.dispatch(Actions.reloadWorkflowAction())
-          return
-        default:
-          console.error('Unhandled websocket message', data)
-      }
-    }
-  }
-
-  function onError (ev) {
-    // ignore: errors during connection are usually logged by browsers anyway;
-    // other errors will cause onClose, leading to reconnect.
-  }
-
-  function onClose (_ev) {
-    console.log('Websocket closed. Reconnecting in 1s')
-    setTimeout(connect, 1000)
-  }
-
-  function connect () {
-    const socket = new window.WebSocket(url)
-    socket.onopen = onOpen
-    socket.onmessage = onMessage
-    socket.onclose = onClose
-    socket.onerror = onError
-  }
-
-  connect()
-}
-
-launchWebsocket()
-
 // --- Main ----
+const websocket = WorkflowWebsocket(window.initState.workflow.id, Actions.store)
+websocket.connect()
 
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(

@@ -7,7 +7,7 @@ from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
-from server import rabbitmq
+from server import rabbitmq, handlers
 
 
 logger = logging.getLogger(__name__)
@@ -81,6 +81,34 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         delta_id = data['delta_id']
         logging.debug('Queue render of Workflow %d v%d', workflow_id, delta_id)
         await rabbitmq.queue_render(workflow_id, delta_id)
+
+    async def receive_json(self, content):
+        """
+        Handle a query from the client.
+        """
+        workflow = await self.get_workflow()
+        user = self.scope['user']
+        session = self.scope['session']
+
+        try:
+            path = content['path']
+            arguments = content['arguments']
+        except KeyError:
+            return await self.send_json({
+                'error': 'Request JSON missing path and/or arguments'
+            })
+
+        if not isinstance(path, str):
+            return await self.send_json({
+                'error': 'Request JSON "path" must be a String'
+            })
+
+        if not isinstance(arguments, dict):
+            return await self.send_json({
+                'error': 'Request JSON "arguments" must be an Object'
+            })
+
+        handlers.handle(user, session, workflow, path, arguments)
 
 
 async def _workflow_group_send(workflow_id: int,
