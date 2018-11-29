@@ -209,27 +209,6 @@ class FetchTests(DbTestCase):
 
         self._test_fetch(fetch, wfm2)
 
-    def test_fetch_get_input_dataframe_race_delete_this_wf_module(self):
-        table = pd.DataFrame({'A': [1]})
-
-        workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
-        wfm1 = workflow.wf_modules.create(order=0,
-                                          last_relevant_delta_id=delta.id)
-        wfm1.cache_render_result(delta.id, ProcessResult(table))
-        wfm1.save()
-        wfm2 = workflow.wf_modules.create(order=1)
-
-        # Delete from the database. They're still in memory. This deletion can
-        # happen on production: we aren't locking the workflow during fetch
-        # (because it's far too slow).
-        wfm2.delete()
-
-        async def fetch(params, *, get_input_dataframe, **kwargs):
-            self.assertIsNone(await get_input_dataframe())
-
-        self._test_fetch(fetch, wfm2)
-
     def test_fetch_get_input_dataframe_race_delete_prior_wf_module(self):
         table = pd.DataFrame({'A': [1]})
 

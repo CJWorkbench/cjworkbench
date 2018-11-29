@@ -26,19 +26,17 @@ def _get_params(wf_module: WfModule) -> Params:
 
 
 @database_sync_to_async
-def _get_input_dataframe(wf_module_id: int):
+def _get_input_dataframe(workflow_id: int, wf_module_position: int):
     try:
         # Let's not worry about locks and races too much. All failures should
         # throw DoesNotExist, which is fine.
-        wf_module = WfModule.objects.get(pk=wf_module_id)
-        input_wf_module = wf_module.previous_in_stack()
+        wf_module = WfModule.objects.get(workflow_id=workflow_id,
+                                         order=wf_module_position - 1,
+                                         is_deleted=False)
     except WfModule.DoesNotExist:
         return None
 
-    if not input_wf_module:
-        return None
-
-    crr = input_wf_module.get_cached_render_result(only_fresh=True)
+    crr = wf_module.get_cached_render_result(only_fresh=True)
     if not crr:
         return None
     else:
@@ -75,7 +73,9 @@ async def fetch_wf_module(wf_module, now):
         result = await lm.fetch(
             params,
             workflow_id=wf_module.workflow_id,
-            get_input_dataframe=partial(_get_input_dataframe, wf_module.id),
+            get_input_dataframe=partial(_get_input_dataframe,
+                                        wf_module.workflow_id,
+                                        wf_module.order),
             get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
             get_workflow_owner=partial(_get_workflow_owner,
                                        wf_module.workflow_id),

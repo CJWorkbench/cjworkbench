@@ -101,17 +101,6 @@ class WfModule(models.Model):
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
-    # ---- Utilities ----
-
-    # navigate through a stack
-    def previous_in_stack(self):
-        if self.order == 0:
-            return None
-        else:
-            return WfModule.objects.get(workflow=self.workflow,
-                                        order=self.order-1,
-                                        is_deleted=False)
-
     def dependent_wf_modules(self) -> List['WfModule']:
         """QuerySet of all WfModules that come after this one, in order."""
         return WfModule.objects.filter(workflow_id=self.workflow_id,
