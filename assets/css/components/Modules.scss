@@ -56,13 +56,14 @@
     }
   }
 
+// Data fetch button
   .wf-parameter {
-    button[name=fetch] {
+    button[name=data-fetch] {
       @extend .action-button;
       @extend .button-blue;
       &[disabled] {
         @extend .button-orange;
-        color:transparent;
+        color: transparent!important;
         background-color: $brand-orange--light;
       }
     &:hover .spinner::after {
