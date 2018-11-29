@@ -69,9 +69,6 @@ urlpatterns = [
     # Embeds
     url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),
 
-    # Preloader testing
-    url(r'^preloader/$', TemplateView.as_view(template_name='preloader.html')),
-
     # User
     url(r'^api/user/$', current_user),
 
