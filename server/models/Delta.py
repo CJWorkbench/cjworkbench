@@ -61,7 +61,7 @@ class Delta(PolymorphicModel):
             self.backward_impl()
 
             # Point workflow to previous delta
-            # Only update last_delta_id: other columns may have been edited in
+            # Only update prev_delta_id: other columns may have been edited in
             # backward_impl().
             self.workflow.last_delta = self.prev_delta
             self.workflow.save(update_fields=['last_delta_id'])
@@ -81,9 +81,6 @@ class Delta(PolymorphicModel):
         await self.schedule_execute()
 
     async def ws_notify(self, ws_data):
-        await websockets.ws_client_send_delta_async(self.workflow_id, ws_data)
-
-    def load_ws_data(self):
         """
         Notify WebSocket clients that we just undid or redid.
 
@@ -94,14 +91,13 @@ class Delta(PolymorphicModel):
         This must be called within the same Workflow.cooperative_lock() that
         triggered the change in the first place.
         """
+        await websockets.ws_client_send_delta_async(self.workflow_id, ws_data)
+
+    def load_ws_data(self):
         workflow = self.workflow
         data = {
             'updateWorkflow': {
                 'name': workflow.name,
-                'revision': workflow.last_delta_id,
-                'wf_modules': list(
-                    workflow.live_wf_modules.values_list('id', flat=True)
-                ),
                 'public': workflow.public,
                 'last_update': workflow.last_update().isoformat(),
             },
@@ -120,8 +116,11 @@ class Delta(PolymorphicModel):
                 }
 
         if hasattr(self, 'wf_module'):
-            self.wf_module.refresh_from_db()
-            if self.wf_module.workflow_id:
+            if self.wf_module.is_deleted or self.wf_module.tab.is_deleted:
+                # When we did or undid this command, we removed the
+                # WfModule from the Workflow.
+                data['clearWfModuleIds'] = [self.wf_module_id]
+            else:
                 # Serialize _everything_, including params
                 #
                 # TODO consider serializing only what's changed, so when Alice
@@ -131,10 +130,13 @@ class Delta(PolymorphicModel):
 
                 data['updateWfModules'][str(self.wf_module_id)] = \
                     _prepare_json(wf_module_data)
-            else:
-                # When we did or undid this command, we removed the
-                # WfModule from the Workflow.
-                data['clearWfModuleIds'] = [self.wf_module_id]
+
+            data['updateTabs'] = {
+                str(self.wf_module_id): {
+                    'wf_module_ids': list(self.wf_module.tab.live_wf_modules
+                                          .values_list('id', flat=True)),
+                },
+            }
 
         return data
 
@@ -218,8 +220,13 @@ class Delta(PolymorphicModel):
             if not create_kwargs:
                 return (None, None)
 
-            # wipe redo stack: blow away all deltas starting after last applied
-            delete_unapplied_deltas(workflow)
+            # Delete unapplied deltas. We identify these by looking for the
+            # head of the linked list that comes _after_ workflow.last_delta.
+            orphan_delta = Delta.objects \
+                .filter(prev_delta_id=workflow.last_delta_id) \
+                .first()
+            if orphan_delta:
+                orphan_delta.delete()  # recurses through CASCADE
 
             delta = cls.objects.create(*args,
                                        prev_delta_id=workflow.last_delta_id,
@@ -238,31 +245,3 @@ class Delta(PolymorphicModel):
 
     def __str__(self):
         return str(self.datetime) + ' ' + self.command_description
-
-
-def delete_unapplied_deltas(workflow):
-    """
-    Delete every Delta after `workflow.last_delta`.
-
-    Deltas are deleted in reverse order so the database stays consistent even
-    between queries. (You should certainly be calling this within a
-    transaction, though.)
-    """
-    prev_delta = workflow.last_delta
-    if prev_delta:
-        try:
-            delta = prev_delta.next_delta
-        except Delta.DoesNotExist:
-            return
-
-    if not prev_delta:
-        # TODO force every workflow to have at least one Delta.
-        #
-        # [2018-11-14] for now we don't have that guarantee. So look for a
-        # Delta on the workflow that has no prev_delta: that's the "next" one.
-        delta = Delta.objects.filter(workflow=workflow,
-                                     prev_delta_id=None).first()
-        if not delta:
-            return
-
-    delta.delete()  # CASCADE -- delete in reverse order

@@ -1,12 +1,12 @@
-from rest_framework import serializers
-from server.models import AclEntry, Workflow, WfModule, ParameterVal, \
-        ParameterSpec, Module, ModuleVersion, StoredObject
-from server.utils import seconds_to_count_and_units
+import re
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from server.settingsutils import workbench_user_display
+from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
-import re
+from server.models import AclEntry, Workflow, WfModule, ParameterVal, \
+        ParameterSpec, Module, ModuleVersion, StoredObject, Tab
+from server.utils import seconds_to_count_and_units
+from server.settingsutils import workbench_user_display
 
 User = get_user_model()
 
@@ -71,6 +71,17 @@ class ModuleVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ModuleVersion
         fields = ('module', 'source_version_hash', 'last_update_time')
+
+
+class TabSerializer(serializers.ModelSerializer):
+    wf_module_ids = serializers.SerializerMethodField()
+
+    def get_wf_module_ids(self, obj):
+        return list(obj.live_wf_modules.values_list('id', flat=True))
+
+    class Meta:
+        model = Tab
+        fields = ('id', 'name', 'wf_module_ids')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -158,7 +169,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WfModule
-        fields = ('id', 'module_version', 'workflow', 'is_busy',
+        fields = ('id', 'module_version', 'tab_id', 'is_busy',
                   'output_error', 'output_status', 'fetch_error',
                   'parameter_vals', 'is_collapsed', 'notes',
                   'auto_update_data', 'update_interval', 'update_units',
@@ -206,16 +217,16 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
 
 
 class WorkflowSerializer(WorkflowSerializerLite):
-    wf_modules = serializers.SerializerMethodField()
+    tab_ids = serializers.SerializerMethodField()
 
-    def get_wf_modules(self, obj):
-        return list(obj.live_wf_modules.values_list('id', flat=True))
+    def get_tab_ids(self, obj):
+        return list(obj.live_tabs.values_list('id', flat=True))
 
     class Meta:
         model = Workflow
-        fields = ('id', 'url_id', 'name', 'wf_modules', 'public', 'read_only',
+        fields = ('id', 'url_id', 'name', 'tab_ids', 'public', 'read_only',
                   'last_update', 'is_owner', 'owner_email', 'owner_name',
-                  'selected_wf_module', 'is_anonymous')
+                  'selected_tab_position', 'is_anonymous')
 
 
 class LessonSerializer(serializers.BaseSerializer):

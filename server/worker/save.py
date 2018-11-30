@@ -67,6 +67,7 @@ def _maybe_add_version(
 
 
 async def save_result_if_changed(
+    workflow_id: int,
     wf_module: WfModule,
     new_result: Optional[ProcessResult],
     stored_object_json: Optional[Dict[str, Any]]=None

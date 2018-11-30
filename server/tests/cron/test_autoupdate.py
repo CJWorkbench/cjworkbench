@@ -34,38 +34,31 @@ class UpdatesTests(DbTestCase):
     @patch('django.utils.timezone.now',
            lambda: parser.parse('Aug 28 1999 2:35PM UTC'))
     def test_queue_fetches(self, mock_queue_fetch):
-        self.workflow = Workflow.objects.create()
-        self.wfm1 = self.workflow.wf_modules.create(
-            order=0
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+
+        # wfm1 does not auto-update
+        self.wfm1 = tab.wf_modules.create(order=0, auto_update_data=False)
+
+        # wfm2 is ready to update
+        self.wfm2 = tab.wf_modules.create(
+            order=1,
+            auto_update_data=True,
+            last_update_check=parser.parse('Aug 28 1999 2:24PM UTC'),
+            next_update=parser.parse('Aug 28 1999 2:34PM UTC'),
+            update_interval=600
         )
-        self.wfm2 = self.workflow.wf_modules.create(
-            order=1
-        )
-        self.wfm3 = self.workflow.wf_modules.create(
-            order=2
+
+        # wfm3 has a few more minutes before it should update
+        self.wfm3 = tab.wf_modules.create(
+            order=2,
+            auto_update_data=True,
+            last_update_check=parser.parse('Aug 28 1999 2:20PM UTC'),
+            next_update=parser.parse('Aug 28 1999 2:40PM UTC'),
+            update_interval=1200
         )
 
         mock_queue_fetch.return_value = future_none
-
-        # This module does not auto update
-        self.wfm1.auto_update_data = False
-        self.wfm1.save()
-
-        # This module ready to update
-        self.wfm2.auto_update_data = True
-        self.wfm2.last_update_check = parser.parse('Aug 28 1999 2:24PM UTC')
-        due_for_update = parser.parse('Aug 28 1999 2:34PM UTC')
-        self.wfm2.next_update = due_for_update
-        self.wfm2.update_interval = 600
-        self.wfm2.save()
-
-        # This module still has a few more minutes before it should update
-        self.wfm3.auto_update_data = True
-        self.wfm3.last_update_check = parser.parse('Aug 28 1999 2:20PM UTC')
-        not_due_for_update = parser.parse('Aug 28 1999 2:40PM UTC')
-        self.wfm3.next_update = not_due_for_update
-        self.wfm3.update_interval = 1200
-        self.wfm3.save()
 
         # eat log messages
         with self.assertLogs(autoupdate.__name__, logging.INFO):

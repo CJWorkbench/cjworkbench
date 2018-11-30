@@ -101,8 +101,8 @@ class WorkbenchAPI {
     return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
   }
 
-  reorderWfModules(workflowId, newOrder) {
-    return this._patch(`/api/workflows/${workflowId}`, newOrder)
+  reorderWfModules(workflowId, tabId, wfModuleIds) {
+    return this._patch(`/api/workflows/${workflowId}/tabs/${tabId}`, { wf_module_ids: wfModuleIds })
   }
 
   addModule(workflowId, moduleId, index, values={}) {
@@ -113,12 +113,12 @@ class WorkbenchAPI {
     })
   }
 
-  deleteModule(wfModuleId) {
-    return this._delete(`/api/wfmodules/${wfModuleId}`)
+  deleteModule(workflowId, wfModuleId) {
+    return this._delete(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}`)
   }
 
   setWorkflowPublic(workflowId, isPublic) {
-    return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
+    return this._patch(`/api/workflows/${workflowId}`, { 'public': isPublic })
   }
 
   setWfModuleParams(wfModuleId, params) {
@@ -128,23 +128,15 @@ class WorkbenchAPI {
   render(wfModuleId, startrow, endrow) {
     let url = '/api/wfmodules/' + wfModuleId + '/render';
 
-    if (startrow || endrow) {
-      url += "?";
-      if (startrow) {
-        url += "startrow=" + startrow;
-      }
-      if (endrow) {
-        if (startrow)
-          url += "&";
-        url += "endrow=" + endrow;
-      }
+    if (endRow) {
+      url += "endrow=" + endRow;
     }
 
     return this._fetch(url)
   }
 
-  valueCounts(wfModuleId, column) {
-    return this._fetch(`/api/wfmodules/${wfModuleId}/value-counts?column=${encodeURIComponent(column)}`)
+  valueCounts(workflowId, wfModuleId, column) {
+    return this._fetch(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}/value-counts?column=${encodeURIComponent(column)}`)
       .catch(err => {
         if (err instanceof RangeError) {
           return { values: {} }
@@ -159,8 +151,8 @@ class WorkbenchAPI {
     return this._fetch(`/api/wfmodules/${wfModuleId}/output`)
   }
 
-  getTile(wfModuleId, deltaId, tileRow, tileColumn) {
-    return this._fetch(`/api/wfmodules/${wfModuleId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
+  getTile(workflowId, wfModuleId, deltaId, tileRow, tileColumn) {
+    return this._fetch(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
   }
 
   // All available modules in the system
@@ -168,32 +160,31 @@ class WorkbenchAPI {
     return this._fetch(`/api/modules/`)
   }
 
-  setWfModuleVersion(wfModuleId, version) {
+  setWfModuleVersion(workflowId, wfModuleId, version) {
     return this._patch(
-      `/api/wfmodules/${wfModuleId}/dataversions`,
+      `/api/workflows/${workflowId}/wfmodules/${wfModuleId}/dataversions`,
       { selected: version }
     )
   }
 
-  setWfModuleNotes(wfModuleId, text) {
-    return this._patch(`/api/wfmodules/${wfModuleId}`, { notes: text })
+  setWfModuleNotes(workflowId, wfModuleId, text) {
+    return this._patch(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}`, { notes: text })
   }
 
-
-  setWfModuleCollapsed(wfModuleId, isCollapsed) {
-    return this._patch(`/api/wfmodules/${wfModuleId}`, { collapsed: isCollapsed })
+  setWfModuleCollapsed(workflowId, wfModuleId, isCollapsed) {
+    return this._patch(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}`, { collapsed: isCollapsed })
   }
 
-  setWfName(workflowId, newName) {
-    return this._post(`/api/workflows/${workflowId}`, { newName: newName })
+  setWfName(workflowId, name) {
+    return this._patch(`/api/workflows/${workflowId}`, { name })
   }
 
-  setSelectedWfModule(workflowId, index) {
-    return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: index })
+  setSelectedWfModule(workflowId, tabId, index) {
+    return this._put(`/api/workflows/${workflowId}/selection`, { tabId, wfModulePosition: index })
   }
 
-  updateWfModule(wfModuleId, params) {
-    return this._patch(`/api/wfmodules/${wfModuleId}`, params)
+  updateWfModule(workflowId, wfModuleId, params) {
+    return this._patch(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}/params`, params)
   }
 
   undo(workflowId) {
@@ -208,12 +199,8 @@ class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
-  currentUser() {
-    return this._fetch('/api/user/')
-  }
-
-  deleteWfModuleNotifications(wfModuleId) {
-    return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
+  deleteWfModuleNotifications(workflowId, wfModuleId) {
+    return this._delete(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}/notifications`)
   }
 
   importFromGithub(eventData) {
@@ -224,12 +211,12 @@ class WorkbenchAPI {
   // workflow module instead of a 2-tuple, and there should be a generic
   // data version create/read/update/delete method. As there should be for
   // every object in the database.
-  markDataVersionsRead(wfModuleId, data_versions) {
-    return this._patch(`/api/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
+  markDataVersionsRead(workflowId, wfModuleId, data_versions) {
+    return this._patch(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
   }
 
-  requestFetch(wfModuleId) {
-    return this._post(`/api/wfmodules/${wfModuleId}/fetch`)
+  requestFetch(workflowId, wfModuleId) {
+    return this._post(`/api/workflows/${workflowId}/wfmodules/${wfModuleId}/fetch`)
   }
 
   /**

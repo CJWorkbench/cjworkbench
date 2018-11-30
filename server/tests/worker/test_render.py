@@ -1,7 +1,6 @@
 import asyncio
 from contextlib import contextmanager
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
 import msgpack
 from server import execute
 from server.models import Workflow
@@ -53,7 +52,7 @@ class FailedRenderLocker:
         pass
 
 
-class WorkerTest(DbTestCase):
+class RenderTest(DbTestCase):
     def test_handle_render_invalid_message(self):
         class FakeRender:
             @contextmanager
@@ -73,7 +72,7 @@ class WorkerTest(DbTestCase):
                      "{'workflow_id': 123}"),
                 ])
 
-        async_to_sync(inner)()
+        self.run_with_async_db(inner())
 
     @patch('server.execute.execute_workflow')
     def test_render_or_reschedule_render(self, execute):
@@ -82,13 +81,13 @@ class WorkerTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         rescheduler = Rescheduler()
 
-        async def inner():
-            with self.assertLogs():
-                await render_or_reschedule(SuccessfulRenderLocker,
-                                           rescheduler.reschedule,
-                                           workflow.id, delta.id)
-
-        async_to_sync(inner)()
+        with self.assertLogs():
+            self.run_with_async_db(render_or_reschedule(
+                SuccessfulRenderLocker,
+                rescheduler.reschedule,
+                workflow.id,
+                delta.id
+            ))
 
         execute.assert_called_with(workflow)
         self.assertEqual(rescheduler.calls, [])
@@ -110,7 +109,7 @@ class WorkerTest(DbTestCase):
                      'being rendered elsewhere; rescheduling'),
                 ])
 
-        async_to_sync(inner)()
+        self.run_with_async_db(inner())
 
         execute.assert_not_called()
         self.assertEqual(rescheduler.calls, [(workflow.id, delta.id)])
@@ -130,7 +129,7 @@ class WorkerTest(DbTestCase):
                      f' {delta.id - 1} for Workflow {workflow.id}'),
                 ])
 
-        async_to_sync(inner)()
+        self.run_with_async_db(inner())
 
     def test_render_or_reschedule_workflow_not_found(self):
         rescheduler = Rescheduler()
@@ -144,7 +143,7 @@ class WorkerTest(DbTestCase):
                      'Workflow 12345'),
                 ])
 
-        async_to_sync(inner)()
+        self.run_with_async_db(inner())
 
     @patch('server.execute.execute_workflow')
     def test_render_or_reschedule_aborted(self, mock_execute):

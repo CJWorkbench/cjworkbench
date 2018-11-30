@@ -58,11 +58,12 @@ class WfModuleTests(LoggedInTestCase):
         super().setUp()  # log in
 
         self.workflow = Workflow.objects.create(name='test', owner=self.user)
-        self.wf_module1 = self.workflow.wf_modules.create(
+        self.tab = self.workflow.tabs.create(position=0)
+        self.wf_module1 = self.tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=1
         )
-        self.wf_module2 = self.workflow.wf_modules.create(
+        self.wf_module2 = self.tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=2
         )
@@ -100,7 +101,7 @@ class WfModuleTests(LoggedInTestCase):
         module_version = module.module_versions.create(
             source_version_hash='1.0'
         )
-        wf_module = self.workflow.wf_modules.create(
+        wf_module = self.tab.wf_modules.create(
             order=2,
             last_relevant_delta_id=3,
             module_version_id=module_version.id
@@ -112,7 +113,6 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/%d/' % wf_module.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], wf_module.id)
-        self.assertEqual(response.data['workflow'], self.workflow.id)
         self.assertEqual(response.data['notes'], wf_module.notes)
         self.assertEqual(response.data['module_version']['module'], module.id)
         self.assertEqual(response.data['output_status'], wf_module.output_status)
@@ -142,7 +142,7 @@ class WfModuleTests(LoggedInTestCase):
         )
         module_version.parameter_specs.create(id_name='arg', order=0,
                                               type='string', def_value='')
-        wf_module = self.workflow.wf_modules.create(
+        wf_module = self.tab.wf_modules.create(
             order=2,
             module_version=module_version
         )
@@ -182,7 +182,7 @@ class WfModuleTests(LoggedInTestCase):
     def test_missing_module(self):
         # If the WfModule references a Module that does not exist, we should
         # get a placeholder
-        wf_module = self.workflow.wf_modules.create(
+        wf_module = self.tab.wf_modules.create(
             order=2,
             last_relevant_delta_id=3
         )
@@ -293,7 +293,7 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.delete('/api/wfmodules/%d' % self.wf_module2.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        wf_modules = list(self.workflow.live_wf_modules.all())
+        wf_modules = list(self.tab.live_wf_modules)
         self.assertEqual(len(wf_modules), 1)
         self.assertEqual(wf_modules[0].pk, self.wf_module1.id)
 

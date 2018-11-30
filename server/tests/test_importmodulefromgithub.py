@@ -10,11 +10,10 @@ from server.importmodulefromgithub import sanitise_url, \
         get_module_config_from_json, create_destination_directory, \
         add_boilerplate_and_check_syntax, validate_python_functions, \
         extract_version, import_module_from_directory, ValidationError
-from server.models import LoadedModule, Module, ModuleVersion
+from server.models import LoadedModule, Module, ModuleVersion, Workflow
 import server.models.loaded_module
 from server.modules.types import ProcessResult
-from server.tests.utils import LoggedInTestCase, add_new_workflow, \
-        add_new_wf_module, get_param_by_id_name
+from server.tests.utils import DbTestCase, get_param_by_id_name
 
 
 # Patch get_already_imported from importmodulefromgithub
@@ -25,10 +24,8 @@ def overriden_get_already_imported():
     }
 
 
-class ImportFromGitHubTest(LoggedInTestCase):
+class ImportFromGitHubTest(DbTestCase):
     def setUp(self):
-        super().setUp()  # log in
-
         # must match importable.json test data file
         self.importable_id_name = 'importable_not_repo_name'
 
@@ -39,15 +36,13 @@ class ImportFromGitHubTest(LoggedInTestCase):
         )
 
     def tearDown(self):
-        self.cleanup()
-        super().tearDown()
-
         try:
+            self.cleanup()
             self.clone_temp_dir.cleanup()
         except FileNotFoundError:
             pass
-
-        super().tearDown()
+        finally:
+            super().tearDown()
 
     def cleanup(self):
         # remove any directories we may have created during the last test
@@ -325,8 +320,10 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         # Create a test workflow that uses this imported module
         module_version = module_version_q.first()
-        workflow = add_new_workflow('updates_module_version workflow')
-        wfm = add_new_wf_module(workflow, module_version, order=1)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wfm = tab.wf_modules.create(module_version=module_version, order=1)
+        wfm.create_parametervals()
 
         # import "new" version (different version hash)
         test_dir = self.fake_github_clone()
@@ -363,8 +360,10 @@ class ImportFromGitHubTest(LoggedInTestCase):
             module_version = ModuleVersion.objects.get(module=module)
 
             # Create a test workflow that uses this imported module
-            workflow = add_new_workflow('Dynamic Dispatch Test Workflow')
-            wfm = add_new_wf_module(workflow, module_version, order=1)
+            workflow = Workflow.objects.create()
+            tab = workflow.tabs.create(position=0)
+            wfm = tab.wf_modules.create(order=0, module_version=module_version)
+            wfm.create_parametervals()
 
             # These will fail if we haven't correctly loaded the json
             # describing the parameters

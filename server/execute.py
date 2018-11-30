@@ -38,12 +38,14 @@ def locked_wf_module(wf_module):
             # safe_wf_module: locked at the database level.
             delta_id = wf_module.last_relevant_delta_id
             try:
-                safe_wf_module = WfModule.objects \
-                    .filter(workflow_id=wf_module.workflow_id) \
-                    .filter(last_relevant_delta_id=delta_id) \
-                    .get(pk=wf_module.pk)
+                safe_wf_module = WfModule.objects.get(
+                    pk=wf_module.pk,
+                    is_deleted=False,
+                    last_relevant_delta_id=delta_id
+                )
             except WfModule.DoesNotExist:
-                # Module was deleted or changed after execute began
+                # Module was deleted or changed input/params _after_ we requested
+                # render but _before_ we start rendering
                 raise UnneededExecution
 
             retval = yield safe_wf_module
@@ -242,54 +244,55 @@ def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
 
 
 @database_sync_to_async
-def _load_wf_modules_and_input(workflow: Workflow):
+def _load_tabs_wf_modules_and_input(workflow: Workflow):
     """
-    Finds (stale_wf_modules, previous_cached_result_or_none) from the database.
+    Queries for each tab's (stale_steps, previous_cached_result_or_none).
 
-    If all modules are up-to-date, returns ([], output_cached_result). Yes,
-    beware: if we aren't rendering, we return *output*, and if we are rendering
-    we return *input*. This is convenient for the caller.
+    If all steps are up-to-date, returns ([], output_cached_result) for that
+    tab. Yes, beware: if we aren't rendering, we return *output*, and if we are
+    rendering we return *input*. This is convenient for the caller.
 
     If there's a race, the returned `stale_wf_modules` may be too short, and
     `input_table` may be wrong. That should be fine because `execute_wfmodule`
     will raise an exception before starting work.
     """
     with workflow.cooperative_lock():
-        # 1. Load list of wf_modules
-        wf_modules = list(workflow.live_wf_modules.all())
+        ret = []
 
-        if not wf_modules:
-            return [], None
+        tabs = list(workflow.live_tabs)
+        for tab in tabs:
+            # 1. Load list of wf_modules
+            wf_modules = list(tab.live_wf_modules)
 
-        # 2. Find index of first one that needs render
-        index = 0
-        while index < len(wf_modules) and not _needs_render(wf_modules[index]):
-            index += 1
+            # 2. Find index of first one that needs render
+            index = 0
+            while index < len(wf_modules) and not _needs_render(wf_modules[index]):
+                index += 1
 
-        wf_modules_needing_render = wf_modules[index:]
+            wf_modules_needing_render = wf_modules[index:]
 
-        if not wf_modules_needing_render:
-            # We're up to date!
-            output = None
+            if not wf_modules_needing_render:
+                # We're up to date! Skip the entire tab.
+                continue
 
-            return [], output
+            # 4. Load input
+            if index == 0:
+                prev_result = None
+            else:
+                # if the CachedRenderResult is obsolete because of a race (it's on
+                # the filesystem as well as in the DB), we'll get _something_ back:
+                # this method doesn't raise exceptions. There's no harm done if the
+                # value is wrong: we'll check that later anyway.
+                prev_result = wf_modules[index - 1].get_cached_render_result()
 
-        # 4. Load input
-        if index == 0:
-            prev_result = None
-        else:
-            # if the CachedRenderResult is obsolete because of a race (it's on
-            # the filesystem as well as in the DB), we'll get _something_ back:
-            # this method doesn't raise exceptions. There's no harm done if the
-            # value is wrong: we'll check that later anyway.
-            prev_result = wf_modules[index - 1].get_cached_render_result()
+            ret.append((wf_modules_needing_render, prev_result))
 
-        return wf_modules_needing_render, prev_result
+        return ret
 
 
-async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
+async def execute_workflow(workflow: Workflow) -> None:
     """
-    Ensure all `workflow.live_wf_modules` have valid cached render results.
+    Ensure all `workflow.tabs[*].live_wf_modules` cache fresh render results.
 
     Raise UnneededExecution if the inputs become stale (at which point we don't
     care about results any more).
@@ -297,35 +300,32 @@ async def execute_workflow(workflow: Workflow) -> Optional[CachedRenderResult]:
     WEBSOCKET NOTES: each wf_module is executed in turn. After each execution,
     we notify clients of its new columns and status.
     """
-    wf_modules, last_cached_result = await _load_wf_modules_and_input(
-        workflow
-    )
+    tabs_work = await _load_tabs_wf_modules_and_input(workflow)
 
-    if not wf_modules:
-        return last_cached_result
-
-    # Execute one module at a time.
-    #
-    # We don't hold any lock throughout the loop: the loop can take a long
-    # time; it might be run multiple times simultaneously (even on different
-    # computers); and `await` doesn't work with locks.
-    for wf_module in wf_modules:
-        # The first module in the Workflow has last_cached_result=None.
-        # Other than that, there's no recovering from any non='ok' result:
-        # all subsequent results should be 'unreachable'
-        if last_cached_result and last_cached_result.status != 'ok':
-            last_cached_result = await mark_wfmodule_unreachable(wf_module)
-        else:
-            if last_cached_result:
-                last_result = last_cached_result.result
+    for wf_modules, last_cached_result in tabs_work:
+        # Execute one module at a time.
+        #
+        # We don't hold any lock throughout the loop: the loop can take a long
+        # time; it might be run multiple times simultaneously (even on
+        # different computers); and `await` doesn't work with locks.
+        for wf_module in wf_modules:
+            # The first module in the Workflow has last_cached_result=None.
+            # Other than that, there's no recovering from any non='ok' result:
+            # all subsequent results should be 'unreachable'
+            if last_cached_result and last_cached_result.status != 'ok':
+                last_cached_result = await mark_wfmodule_unreachable(wf_module)
             else:
-                # First module has empty-DataFrame input.
-                last_result = ProcessResult()
+                if last_cached_result:
+                    last_result = last_cached_result.result
+                else:
+                    # First module has empty-DataFrame input.
+                    last_result = ProcessResult()
 
-            last_cached_result = await execute_wfmodule(wf_module, last_result)
+                last_cached_result = await execute_wfmodule(wf_module,
+                                                            last_result)
 
-        await websockets.ws_client_send_delta_async(workflow.id, {
-            'updateWfModules': {
-                str(wf_module.id): build_status_dict(last_cached_result)
-            }
-        })
+            await websockets.ws_client_send_delta_async(workflow.id, {
+                'updateWfModules': {
+                    str(wf_module.id): build_status_dict(last_cached_result)
+                }
+            })

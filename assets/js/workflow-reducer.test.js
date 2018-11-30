@@ -21,6 +21,7 @@ describe('Reducer actions', () => {
   const testWfModules = {
     '10': {
       id: 10,
+      tab_id: 91,
       parameter_vals: [
         {
           id: 1,
@@ -49,25 +50,34 @@ describe('Reducer actions', () => {
       has_unseen_notification: true
     },
     '20': {
-      id: 20
+      id: 20,
+      tab_id: 91
     },
     '30': {
-      id: 30
+      id: 30,
+      tab_id: 91
+    }
+  }
+
+  const testTabs = {
+    '91': {
+      id: 91,
+      wf_module_ids: [ 10, 20, 30 ]
     }
   }
 
   // Stripped down workflow object, only what we need for testing actions
   const testWorkflow = {
     id: 999,
-    wf_modules: [ 10, 20, 30 ]
+    tab_ids: [ 91 ]
   }
 
   // test state has second module selected
   const testState = {
     workflow: testWorkflow,
+    tabs: testTabs,
     wfModules: testWfModules,
     modules: testModules,
-    selected_wf_module: 1
   }
 
   beforeEach(() => {
@@ -96,7 +106,7 @@ describe('Reducer actions', () => {
    it('Reloads the workflow', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'RELOAD_WORKFLOW_FULFILLED',
-      payload: { workflow: testWorkflow, wfModules: testWfModules }
+      payload: { workflow: testWorkflow, tabs: testTabs, wfModules: testWfModules }
     });
     expect(state.workflow).toEqual(testWorkflow)
   });
@@ -115,9 +125,9 @@ describe('Reducer actions', () => {
       30: { ...wfModules1['30'], is_collapsed: false }
     }
 
-    const state = wfr.workflowReducer({ workflow: testWorkflow, wfModules: wfModules1 }, {
+    const state = wfr.workflowReducer({ workflow: testWorkflow, tabs: testTabs, wfModules: wfModules1 }, {
       type: 'RELOAD_WORKFLOW_FULFILLED',
-      payload: { workflow: testWorkflow, wfModules: wfModules2 }
+      payload: { workflow: testWorkflow, tabs: testTabs, wfModules: wfModules2 }
     })
 
     expect(state.wfModules['20'].is_collapsed).toBe(false)
@@ -175,12 +185,11 @@ describe('Reducer actions', () => {
     }))
 
     const store = mockStore(testState)
-    await store.dispatch(wfr.addModuleAction(1, 2, { x: 'y' }))
+    await store.dispatch(wfr.addModuleAction(1, { tabId: 91, index: 2 }, { x: 'y' }))
 
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 1, 2, { x: 'y' })
     const state = store.getState()
-    expect(state.workflow.wf_modules).toEqual([ 10, 20, 40, 30 ])
-    expect(state.selected_wf_module).toEqual(2)
+    expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 20, '1_1', 30 ])
   })
 
   it('adds a module by idName', async () => {
@@ -190,9 +199,9 @@ describe('Reducer actions', () => {
     }))
 
     const store = mockStore(testState)
-    await store.dispatch(wfr.addModuleAction('module2', 2, { x: 'y' }))
+    await store.dispatch(wfr.addModuleAction('module2', { tabId: 91, index: 2 }, { x: 'y' }))
 
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 2, 2, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 2, 2, { x: 'y' })
   })
 
   it('adds a module before another', async () => {
@@ -203,7 +212,7 @@ describe('Reducer actions', () => {
 
     const store = mockStore(testState)
     await store.dispatch(wfr.addModuleAction(1, { beforeWfModuleId: 20 }, { x: 'y' }))
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 1, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 1, 1, { x: 'y' })
   })
 
   it('adds a module after another', async () => {
@@ -214,68 +223,42 @@ describe('Reducer actions', () => {
 
     const store = mockStore(testState)
     await store.dispatch(wfr.addModuleAction(1, { afterWfModuleId: 20 }, { x: 'y' }))
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 1, 2, { x: 'y' })
   })
 
-  it('Deletes a module', async () => {
+  it('deletes a module', async () => {
     WorkbenchAPI.deleteModule.mockImplementation(_ => Promise.resolve(null))
     const store = mockStore(testState)
     await store.dispatch(wfr.deleteModuleAction(20))
 
-    expect(WorkbenchAPI.deleteModule).toHaveBeenCalledWith(20)
+    expect(WorkbenchAPI.deleteModule).toHaveBeenCalledWith(999, 20)
     const state = store.getState()
-    expect(state.workflow.wf_modules).toEqual([ 10, 30 ])
+    expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 30 ])
     expect(state.wfModules['20']).not.toBeDefined()
   })
 
   it('sets the selected module to a module in state', async () => {
     WorkbenchAPI.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
     const store = mockStore(testState)
-    await store.dispatch(wfr.setSelectedWfModuleAction(1))
+    await store.dispatch(wfr.setSelectedWfModuleAction(91, 1))
 
-    expect(WorkbenchAPI.setSelectedWfModule).toHaveBeenCalledWith(999, 1)
-    expect(store.getState().selected_wf_module).toEqual(1)
+    expect(WorkbenchAPI.setSelectedWfModule).toHaveBeenCalledWith(999, 91, 1)
+    const { workflow, tabs } = store.getState()
+    expect(workflow.selected_tab_position).toEqual(0)
+    expect(tabs['91'].selected_wf_module_position).toEqual(1)
   })
 
   it('updates the workflow module with the specified data', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'UPDATE_WF_MODULE_PENDING',
       payload: {
-        id: 20,
+        wfModuleId: 20,
         data: {
           notifications: true
         }
       }
     })
     expect(state.wfModules['20'].notifications).toBe(true)
-  })
-
-  it('overwrites a workflow and its wfModules', () => {
-    const state = wfr.workflowReducer(testState, wfr.setWorkflowAction({
-      workflow: {
-        id: 999,
-        wf_modules: [ 1 ]
-      },
-      wfModules: {
-        1: { id: 1 }
-      }
-    }))
-
-    expect(state.workflow).toEqual({ id: 999, wf_modules: [ 1 ] })
-    expect(state.wfModules).toEqual({ 1: { id: 1 } })
-  })
-
-  it('overwrites some wfModule properties', () => {
-    const state = wfr.workflowReducer(testState, wfr.setWfModuleAction({
-      id: 10,
-      has_unseen_notification: false
-    }))
-    // Does not overwrite other wfModules
-    expect(state.wfModules['20']).toBe(testState.wfModules['20'])
-    // Does not overwrite unspecified properties
-    expect(state.wfModules['10'].versions).toBe(state.wfModules['10'].versions)
-    // Overwrites specified properties
-    expect(state.wfModules['10'].has_unseen_notification).toBe(false)
   })
 
   it('does nothing if we update a nonexistent wfmodule', async () => {
@@ -289,15 +272,11 @@ describe('Reducer actions', () => {
   it('reorders modules', async () => {
     const store = mockStore(testState)
     WorkbenchAPI.reorderWfModules.mockImplementation(() => Promise.resolve(null))
-    await store.dispatch(wfr.moveModuleAction(2, 0))
+    await store.dispatch(wfr.moveModuleAction(91, 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(WorkbenchAPI.reorderWfModules).toHaveBeenCalledWith(999, [
-      { id: 30, order: 0 },
-      { id: 10, order: 1 },
-      { id: 20, order: 2 }
-    ])
-    expect(store.getState().workflow.wf_modules).toEqual([ 30, 10, 20 ])
+    expect(WorkbenchAPI.reorderWfModules).toHaveBeenCalledWith(999, 91, [ 30, 10, 20 ])
+    expect(store.getState().tabs['91'].wf_module_ids).toEqual([ 30, 10, 20 ])
   })
 
   it('applies delta to a Workflow', () => {
@@ -350,7 +329,7 @@ describe('Reducer actions', () => {
     await done
 
     // should send HTTP request
-    expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(10, { data: 'newdata' })
+    expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(999, 10, { data: 'newdata' })
   })
 
   it('requests fetch in maybeRequestWfModuleFetchAction', async () => {
@@ -376,7 +355,7 @@ describe('Reducer actions', () => {
     expect(state.wfModules['10'].versions.selected).toBe("2018-02-21T03:09:10.214054Z");
   });
 
-  it('Marks the data versions read', async () => {
+  it('marks the data versions read', async () => {
     WorkbenchAPI.markDataVersionsRead.mockImplementation(_ => Promise.resolve({}))
 
     const store = mockStore(testState)
@@ -390,7 +369,7 @@ describe('Reducer actions', () => {
     await done
 
     // API request sent and received
-    expect(WorkbenchAPI.markDataVersionsRead).toHaveBeenCalledWith(10, ["2018-02-21T03:09:15.214054Z", "2018-02-21T03:09:10.214054Z"])
+    expect(WorkbenchAPI.markDataVersionsRead).toHaveBeenCalledWith(999, 10, ["2018-02-21T03:09:15.214054Z", "2018-02-21T03:09:10.214054Z"])
   })
 
   it('Clears the notification count', () => {

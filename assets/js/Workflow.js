@@ -57,7 +57,6 @@ export class Workflow extends React.PureComponent {
     isReadOnly:         PropTypes.bool.isRequired,
     isAnonymous:        PropTypes.bool.isRequired,
     workflow:           PropTypes.object.isRequired,
-    selected_wf_module: PropTypes.number,             // null means no selected module
     loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
   }
 
@@ -100,7 +99,6 @@ export class Workflow extends React.PureComponent {
 const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,
-    selected_wf_module: state.selected_wf_module,
     loggedInUser: state.loggedInUser,
     isAnonymous: state.workflow.is_anonymous,
     isReadOnly: state.workflow.read_only

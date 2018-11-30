@@ -33,7 +33,7 @@ def _lookup_wf_module(pk: int) -> WfModule:
 
     Raises Http404 if pk is not found in the database.
     """
-    wf_module = get_object_or_404(WfModule, pk=pk)
+    wf_module = get_object_or_404(WfModule, pk=pk, is_deleted=False)
 
     # Look up workflow now, so we don't look it up later
     if not wf_module.workflow:

@@ -201,7 +201,7 @@ class CachedRenderResult:
     @staticmethod
     def _clear_wf_module(wf_module: 'WfModule') -> None:
         if wf_module.cached_render_result_delta_id is None:
-            pass
+            return  # it's already cleared
 
         wf_module.cached_render_result_delta_id = None
         wf_module.cached_render_result_error = ''

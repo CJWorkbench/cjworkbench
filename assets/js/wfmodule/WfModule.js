@@ -31,6 +31,7 @@ export class WfModule extends React.PureComponent {
     moduleHelpUrl: PropTypes.string, // or null
     moduleName: PropTypes.string, // or null
     moduleIcon: PropTypes.string, // or null
+    tabId: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.object,
     inputWfModule: PropTypes.shape({
@@ -56,7 +57,7 @@ export class WfModule extends React.PureComponent {
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
     maybeRequestFetch: PropTypes.func.isRequired, // func(wfModuleId) => undefined
-    setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
+    setSelectedWfModule: PropTypes.func.isRequired, // func(tabId, index) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
     applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
@@ -100,7 +101,7 @@ export class WfModule extends React.PureComponent {
   // We become the selected module on any click
   onMouseDown = () => {
     if (!this.props.isSelected) {
-      this.props.setSelectedWfModule(this.props.index)
+      this.props.setSelectedWfModule(this.props.tabId, this.props.index)
     }
   }
 
@@ -553,8 +554,8 @@ function mapDispatchToProps (dispatch) {
       dispatch(clearNotificationsAction(wfModuleId))
     },
 
-    setSelectedWfModule (index) {
-      dispatch(setSelectedWfModuleAction(index))
+    setSelectedWfModule (tabId, index) {
+      dispatch(setSelectedWfModuleAction(tabId, index))
     },
 
     setWfModuleCollapsed (wfModuleId, isCollapsed, isReadOnly) {

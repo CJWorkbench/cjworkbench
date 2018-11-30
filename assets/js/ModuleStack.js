@@ -214,7 +214,7 @@ class ModuleStack extends React.Component {
   static propTypes = {
     api:                PropTypes.object.isRequired,
     workflow:           PropTypes.object,
-    selected_wf_module: PropTypes.number,
+    selected_wf_module_position: PropTypes.number,
     wfModules:          PropTypes.arrayOf(PropTypes.object).isRequired,
     addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
     moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -234,7 +234,7 @@ class ModuleStack extends React.Component {
   }
 
   componentDidUpdate () {
-    const index = this.props.selected_wf_module
+    const index = this.props.selected_wf_module_position
     if (index !== this.lastScrolledWfModuleIndex) {
       this.lastScrolledWfModuleIndex = index
 
@@ -310,6 +310,7 @@ class ModuleStack extends React.Component {
           <React.Fragment key={`placeholder-${i}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModuleHeader
+              tabId={this.props.tabId}
               moduleName={''/*item.name*/}
               moduleIcon={''/*item.icon*/}
               isSelected={false}
@@ -321,13 +322,14 @@ class ModuleStack extends React.Component {
           <React.Fragment key={`module-${item.id}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModule
+              tabId={this.props.tabId}
               isReadOnly={this.props.workflow.read_only}
               isZenMode={this.state.zenModeWfModuleId === item.id}
               wfModule={item}
               removeModule={this.props.removeModule}
               inputWfModule={i === 0 ? null : wfModules[i - 1]}
-              isSelected={i === this.props.selected_wf_module}
-              isAfterSelected={i > this.props.selected_wf_module}
+              isSelected={i === this.props.selected_wf_module_position}
+              isAfterSelected={i > this.props.selected_wf_module_position}
               api={this.props.api}
               index={i}
               setZenMode={this.setZenMode}
@@ -361,10 +363,14 @@ class ModuleStack extends React.Component {
 
 const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
+  const tabId = state.workflow.tab_ids[0]
+  const tab = state.tabs[String(tabId)]
+  const wfModules = tab.wf_module_ids.map(id => state.wfModules[String(id)])
   return {
     workflow: state.workflow,
-    selected_wf_module: state.selected_wf_module,
-    wfModules: state.workflow.wf_modules.map(id => state.wfModules[String(id)]),
+    selected_wf_module_position: tab.selected_wf_module_position,
+    tabId,
+    wfModules,
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index }),
   }
@@ -373,12 +379,12 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     addModule(moduleId, index) {
-      const action = addModuleAction(moduleId, index)
+      const action = addModuleAction(moduleId, { tabId: ownProps.tabId, index }, {})
       dispatch(action)
     },
 
     moveModuleByIndex(oldIndex, newIndex) {
-      const action = moveModuleAction(oldIndex, newIndex)
+      const action = moveModuleAction(ownProps.tabId, oldIndex, newIndex)
       dispatch(action)
     },
 

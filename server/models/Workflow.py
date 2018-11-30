@@ -1,11 +1,12 @@
 from contextlib import contextmanager
+from typing import Optional
+import warnings
 from django.db import models, transaction
+from django.db.models import F
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
-from server.models.Lesson import Lesson
-from typing import Optional
-import warnings
+from .Lesson import Lesson
 
 
 # A Workflow is the user's "document," a series of Modules
@@ -41,7 +42,7 @@ class Workflow(models.Model):
     """
     If this is a duplicate, the Workflow it is based on.
 
-    TODO add revision? Currently, we only use this field for `url_id`.
+    TODO add last_delta_id? Currently, we only use this field for `url_id`.
     """
 
     public = models.BooleanField(default=False)
@@ -50,7 +51,8 @@ class Workflow(models.Model):
     lesson_slug = models.CharField('lesson_slug', max_length=100,
                                    null=True, blank=True)
 
-    selected_wf_module = models.IntegerField(default=None, null=True, blank=True)
+    # there is always a tab
+    selected_tab_position = models.IntegerField(default=0)
 
     last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import
                                    related_name='+',              # + means no backward link
@@ -95,6 +97,10 @@ class Workflow(models.Model):
             self.refresh_from_db()
 
             yield
+
+    @property
+    def live_tabs(self):
+        return self.tabs.filter(is_deleted=False)
 
     @property
     def url_id(self) -> int:
@@ -179,14 +185,6 @@ class Workflow(models.Model):
             return self.creation_date
         return self.last_delta.datetime
 
-    # use last delta ID as (non sequential) revision number, as later deltas
-    # will always have later ids
-    def revision(self):
-        if not self.last_delta_id:
-            return 0
-        else:
-            return self.last_delta_id
-
     @property
     def live_wf_modules(self):
         return self.wf_modules.filter(is_deleted=False)
@@ -194,21 +192,24 @@ class Workflow(models.Model):
     def _duplicate(self, name: str, owner: Optional[User],
                    session_key: Optional[str]) -> 'Workflow':
         with self.cooperative_lock():
-            wf = Workflow.objects.create(name=name, owner=owner,
-                                         original_workflow_id=self.pk,
-                                         anonymous_owner_session_key=session_key,
-                                         selected_wf_module=self.selected_wf_module,
-                                         public=False, last_delta=None)
+            wf = Workflow.objects.create(
+                name=name,
+                owner=owner,
+                original_workflow_id=self.pk,
+                anonymous_owner_session_key=session_key,
+                selected_tab_position=self.selected_tab_position,
+                public=False,
+                last_delta=None
+            )
 
             # Set wf.last_delta and wf.last_delta_id, so we can render.
             # Import here to avoid circular deps
             from server.models.commands import InitWorkflowCommand
             InitWorkflowCommand.create(wf)
 
-            wfms = list(self.live_wf_modules.all())
-
-            for wfm in wfms:
-                wfm.duplicate(wf)
+            tabs = list(self.live_tabs)
+            for tab in tabs:
+                tab.duplicate(wf)
 
         return wf
 
@@ -232,8 +233,29 @@ class Workflow(models.Model):
     def get_absolute_url(self):
         return reverse('workflow', args=[str(self.pk)])
 
+    def delete(self, *args, **kwargs):
+        # Delete deltas before deleting everything else. This avoids trying to
+        # delete a WfModule before its Delta.
+        deltas = list(self.deltas.order_by('-id'))
+        for delta in deltas:
+            delta.delete()
+
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.name + ' - id: ' + str(self.id)
+
+    def are_all_render_results_fresh(self):
+        """Query whether all live WfModules are rendered."""
+        from .WfModule import WfModule
+        return not WfModule.objects \
+            .filter(
+                tab__workflow_id=self.id,
+                tab__is_deleted=False,
+                is_deleted=False
+            ).exclude(
+                cached_render_result_delta_id=F('last_relevant_delta_id')
+            ).exists()
 
     @property
     def lesson(self):

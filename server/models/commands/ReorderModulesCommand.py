@@ -1,13 +1,17 @@
 import json
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from server.models import Delta, WfModule
 from .util import ChangesWfModuleOutputs
 
 
 class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
+    """Overwrite wf_module.order for all wf_modules in a tab."""
+
     # For simplicity and compactness, we store the order of modules as json
     # strings in the same format as the patch request:
     # [ { id: x, order: y}, ... ]
+    tab = models.ForeignKey('Tab', on_delete=models.PROTECT)
     old_order = models.TextField()
     new_order = models.TextField()
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
@@ -15,7 +19,7 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
     def apply_order(self, order):
         # We validated Workflow IDs back in `.amend_create_args()`
         for record in order:
-            self.workflow.wf_modules \
+            self.tab.wf_modules \
                 .filter(pk=record['id']) \
                 .update(order=record['order'])
 
@@ -33,8 +37,10 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_order, **kwargs):
+        tab = workflow.live_tabs.get(position=0)  # TODO let caller specify tab
+
         # Validation: all id's and orders exist and orders are in range 0..n-1
-        ids_orders = dict(workflow.live_wf_modules.values_list('id', 'order'))
+        ids_orders = dict(tab.live_wf_modules.values_list('id', 'order'))
 
         ids = [io[0] for io in ids_orders.items()]
 
@@ -73,21 +79,18 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
         #
         # This list of WfModule IDs will be the same (in a different order --
         # order doesn't matter) _after_ update.
-        wf_module = workflow.live_wf_modules.get(order=min_diff_order)
+        wf_module = tab.live_wf_modules.get(order=min_diff_order)
         wf_module_delta_ids = cls.affected_wf_module_delta_ids(wf_module)
 
         return {
             **kwargs,
             'workflow': workflow,
+            'tab': tab,
             'old_order': json.dumps([{'id': io[0], 'order': io[1]}
                                      for io in ids_orders.items()]),
             'new_order': json.dumps(new_order),
             'wf_module_delta_ids': wf_module_delta_ids,
         }
-
-    @classmethod
-    async def create(cls, workflow, new_order):
-        return await cls.create_impl(workflow=workflow, new_order=new_order)
 
     @property
     def command_description(self):

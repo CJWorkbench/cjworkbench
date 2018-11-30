@@ -1,4 +1,4 @@
-from server.models import ParameterVal, ParameterSpec, WfModule
+from server.models import ParameterSpec, WfModule, Workflow
 from server.tests.utils import DbTestCase, add_new_module_version, \
         add_new_workflow
 
@@ -57,36 +57,24 @@ class ParameterValTestHelpers:
             def_items='Item A|Item B|Item C',
             def_value='0')  # should refer to Item A
 
-        self.workflow = add_new_workflow(name="Test Workflow")
-        self.workflowID = self.workflow.id
-
-        self.wfmodule = WfModule.objects.create(module_version=self.module_version, workflow=self.workflow, order=0)
-        self.wfmoduleID = self.wfmodule.id
-
+        self.workflow = Workflow.objects.create()
+        self.tab = self.workflow.tabs.create(position=0)
+        self.wfmodule = self.tab.wf_modules.create(
+            module_version=self.module_version,
+            order=0
+        )
         # set non-default values for vals in order to reveal certain types of bugs
-        stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=self.wfmodule, value='fooval')
-        self.stringID = stringVal.id
-
-        emptyStringVal = ParameterVal.objects.create(parameter_spec=stringSpecEmpty, wf_module=self.wfmodule)
-        self.stringemptyID = emptyStringVal.id
-
-        integerVal = ParameterVal.objects.create(parameter_spec=integerSpec, wf_module=self.wfmodule, value='10')
-        self.integerID = integerVal.id
-
-        floatVal = ParameterVal.objects.create(parameter_spec=floatSpec, wf_module=self.wfmodule, value='3.14159')
-        self.floatID = floatVal.id
-
-        checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, value='True')
-        self.checkboxID = checkboxVal.id
-
-        menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, value='2', items=menuSpec.def_items)
-        self.menuID = menuVal.id
-
-        radioVal = ParameterVal.objects.create(parameter_spec=radioSpec, wf_module=self.wfmodule, value='0', items=radioSpec.def_items)
-        self.radioID = radioVal.id
+        self.wfmodule.create_parametervals({
+            'stringparam': 'fooval',
+            # 'stringparamempty': '',
+            'integerparam': 10,
+            'floatparam': 3.14159,
+            'checkboxparam': True,
+            'menuparam': 2,
+            'radioparam': 0,
+        })
 
 
-# Unit tests on ParameterVal
 class ParameterValTests(DbTestCase, ParameterValTestHelpers):
     def setUp(self):
         super().setUp()
@@ -100,8 +88,8 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
             module_version=self.module_version,
             type=ParameterSpec.SECRET
         )
-        val = ParameterVal.objects.create(parameter_spec=spec,
-                                          wf_module=self.wfmodule, value='')
+        val = self.wfmodule.parameter_vals.create(parameter_spec=spec,
+                                                  value='')
         return val
 
     # Value retrieval methods must return correct values and enforce type
@@ -160,10 +148,16 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         # Create a new WfModule of the same type, that has no parametervals yet
         # This is the context where duplicate is normally called, when
         # duplicating a WfModule
-        workflow2 = add_new_workflow("Test Workflow 2")
-        wfmodule2 = WfModule.objects.create(module_version=self.module_version, workflow=workflow2, order=0)
+        workflow2 = Workflow.objects.create()
+        tab2 = workflow2.tabs.create(position=0)
+        wfmodule2 = tab2.wf_modules.create(
+            module_version=self.module_version,
+            order=0
+        )
 
-        sp = ParameterVal.objects.get(pk=self.stringID)
+        sp = self.wfmodule.parameter_vals.get(
+            parameter_spec__id_name='stringparam'
+        )
         spd = sp.duplicate(wfmodule2)
         self.assertEqual(spd.wf_module, wfmodule2)
         self.assertEqual(sp.parameter_spec, spd.parameter_spec)
@@ -202,7 +196,9 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         val1.set_value({ 'name': 'foo', 'secret': 'foo' })
 
         workflow2 = add_new_workflow("Test Workflow 2")
-        wfmodule2 = WfModule.objects.create(module_version=self.module_version, workflow=workflow2, order=0)
+        tab2 = workflow2.tabs.create(position=0)
+        wfmodule2 = tab2.wf_modules.create(module_version=self.module_version,
+                                           order=0)
 
         val2 = val1.duplicate(wfmodule2)
         self.assertEqual(val2.get_value(), None)

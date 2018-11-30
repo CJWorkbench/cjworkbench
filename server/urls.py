@@ -1,9 +1,8 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.user import current_user
-from .views import acl, uploads, workflows
+from .views import acl, uploads, workflows, tabs
 from .views.UploadedFileView import get_uploadedfile
 
 urlpatterns = [
@@ -30,7 +29,8 @@ urlpatterns = [
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/addmodule/?$', views.AddModule.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$',
         workflows.Duplicate.as_view()),
-    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/(?P<action>(undo|redo))/?$', views.workflow_undo_redo),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/undo/?$', views.workflow_undo),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/redo/?$', views.workflow_redo),
 
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl$', acl.List.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$',
@@ -68,9 +68,6 @@ urlpatterns = [
 
     # Embeds
     url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),
-
-    # User
-    url(r'^api/user/$', current_user),
 
     # 404
     url(r'^404/$', TemplateView.as_view(template_name='404.html')),

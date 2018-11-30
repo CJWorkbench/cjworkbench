@@ -16,11 +16,12 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
-from server.models import Module, ModuleVersion, Workflow
+from server.models import Module, ModuleVersion, Workflow, WfModule
 from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
         ChangeWorkflowTitleCommand, InitWorkflowCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
-        WorkflowSerializerLite, WfModuleSerializer, UserSerializer
+        TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
+        UserSerializer
 import server.utils
 from server.versions import WorkflowUndo, WorkflowRedo
 from .auth import lookup_workflow_for_read, lookup_workflow_for_write, \
@@ -55,23 +56,30 @@ def make_init_state(request, workflow=None, modules=None):
     ret = {}
 
     if workflow:
-        ret['workflowId'] = workflow.id
-        ret['workflow'] = WorkflowSerializer(workflow,
-                                             context={'request': request}).data
-        wf_modules = workflow.live_wf_modules \
-            .prefetch_related('parameter_vals__parameter_spec',
-                              'module_version')
-        wf_module_data_list = WfModuleSerializer(wf_modules, many=True).data
-        ret['wfModules'] = dict([(str(wfm['id']), wfm)
-                                 for wfm in wf_module_data_list])
-        ret['selected_wf_module'] = workflow.selected_wf_module
+        with workflow.cooperative_lock():
+            ret['workflowId'] = workflow.id
+            ret['workflow'] = WorkflowSerializer(
+                workflow,
+                context={'request': request}
+            ).data
+
+            tabs = list(workflow.live_tabs)
+            ret['tabs'] = dict((str(tab.id), TabSerializer(tab).data)
+                               for tab in tabs)
+
+            tab_ids = [tab.id for tab in tabs]
+            wf_modules = list(WfModule.objects.filter(is_deleted=False,
+                                                      tab_id__in=tab_ids))
+
+            ret['wfModules'] = dict((str(wfm.id), WfModuleSerializer(wfm).data)
+                                    for wfm in wf_modules)
+
         ret['uploadConfig'] = {
             'bucket': minio.UserFilesBucket,
             'accessKey': settings.MINIO_ACCESS_KEY,  # never _SECRET_KEY
             'server': settings.MINIO_EXTERNAL_URL
         }
         ret['user_files_bucket'] = minio.UserFilesBucket
-        del ret['workflow']['selected_wf_module']
 
     if modules:
         modules_data_list = ModuleSerializer(modules, many=True).data
@@ -79,9 +87,6 @@ def make_init_state(request, workflow=None, modules=None):
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
-
-    if workflow and not workflow.request_read_only(request):
-        ret['updateTableModuleIds'] = load_update_table_module_ids()
 
     return ret
 
@@ -187,13 +192,11 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
         init_state = make_init_state(request, workflow=workflow,
                                      modules=modules)
 
-        if workflow.live_wf_modules.exclude(
-            cached_render_result_delta_id=F('last_relevant_delta_id')
-        ).exists():
-            # We're returning a Workflow that may have stale WfModules. Either
-            # there's already a render underway (in which case this spurious
-            # render will become a no-op) or there isn't (in which case we
-            # _want_ a render).
+        if not workflow.are_all_render_results_fresh():
+            # We're returning a Workflow that may have stale WfModules. That's
+            # fine, but are we _sure_ the worker is about to render them? Let's
+            # double-check. This will handle edge cases such as "we wiped our
+            # caches" or maybe some bugs we haven't thought of.
             #
             # This isn't just for bug recovery. ChangeDataVersionCommand won't
             # queue_render until a client requests it.
@@ -223,7 +226,10 @@ def workflow_detail(request, workflow_id, format=None):
         workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:
-            async_to_sync(ReorderModulesCommand.create)(workflow, request.data)
+            async_to_sync(ReorderModulesCommand.create)(
+                workflow=workflow,
+                new_order=request.data
+            )
         except ValueError as e:
             # Caused by bad id or order keys not in range 0..n-1
             # (though they don't need to be sorted)
@@ -251,9 +257,15 @@ def workflow_detail(request, workflow_id, format=None):
                 workflow.save(update_fields=['public'])
 
             if 'selected_wf_module' in request.data:
-                workflow.selected_wf_module = \
-                        request.data['selected_wf_module']
-                workflow.save(update_fields=['selected_wf_module'])
+                with workflow.cooperative_lock():
+                    tab = workflow.live_tabs.get(position=0)
+                    try:
+                        position = int(request.data['selected_wf_module'])
+                    except:
+                        # Malformed request; code defensively
+                        position = None
+                    tab.selected_wf_module_position = position
+                    tab.save(update_fields=['selected_wf_module_position'])
 
         except Exception as e:
             return JsonResponse({'message': str(e), 'status_code': 400},
@@ -335,16 +347,15 @@ class Duplicate(View):
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
 
-# Undo or redo
 @api_view(['POST'])
 @loads_workflow_for_write
-def workflow_undo_redo(request: HttpRequest, workflow: Workflow, action):
-    if action == 'undo':
-        async_to_sync(WorkflowUndo)(workflow)
-    elif action == 'redo':
-        async_to_sync(WorkflowRedo)(workflow)
-    else:
-        return JsonResponse({'message': '"action" must be "undo" or "redo"'},
-                            status=status.HTTP_400_BAD_REQUEST)
+def workflow_undo(request: HttpRequest, workflow: Workflow):
+    async_to_sync(WorkflowUndo)(workflow)
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view(['POST'])
+@loads_workflow_for_write
+def workflow_redo(request: HttpRequest, workflow: Workflow):
+    async_to_sync(WorkflowRedo)(workflow)
     return Response(status=status.HTTP_204_NO_CONTENT)

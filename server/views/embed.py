@@ -8,7 +8,7 @@ from server.serializers import WorkflowSerializerLite, WfModuleSerializer
 @xframe_options_exempt
 def embed(request, wfmodule_id):
     try:
-        wf_module = WfModule.objects.get(pk=wfmodule_id)
+        wf_module = WfModule.objects.get(pk=wfmodule_id, is_deleted=False)
     except WfModule.DoesNotExist:
         wf_module = None
 

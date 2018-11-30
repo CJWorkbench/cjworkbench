@@ -40,7 +40,7 @@ async def send_render(workflow_id: int, delta_id: int) -> None:
 
 
 @database_sync_to_async
-def _lookup_workflow_last_delta_id(workflow_id: int) -> int:
+def _lookup_workflow(workflow_id: int) -> Workflow:
     """Lookup workflow, or raise Workflow.DoesNotExist."""
     return Workflow.objects.get(id=workflow_id)
 
@@ -63,7 +63,7 @@ async def render_or_reschedule(
     # lock means we can dismiss spurious renders sooner, so they don't fill the
     # render queue.
     try:
-        workflow = await _lookup_workflow_last_delta_id(workflow_id)
+        workflow = await _lookup_workflow(workflow_id)
     except Workflow.DoesNotExist:
         logger.info('Skipping render of deleted Workflow %d', workflow_id)
         return

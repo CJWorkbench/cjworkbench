@@ -177,7 +177,8 @@ class WfModuleTests(WfModuleTestsBase):
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = add_new_workflow("Test Workflow 2")
         InitWorkflowCommand.create(workflow2)
-        wfm1d = wfm1.duplicate(workflow2)
+        tab2 = workflow2.tabs.create(position=0)
+        wfm1d = wfm1.duplicate(tab2)
         wfm1d.refresh_from_db() # test what we actually have in the db
 
         self.assertEqual(wfm1d.workflow, workflow2)
@@ -189,7 +190,8 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
 
         # parameters should be duplicated
-        self.assertEqual(ParameterVal.objects.filter(wf_module=wfm1d).count(), ParameterVal.objects.filter(wf_module=wfm1).count())
+        self.assertEqual(ParameterVal.objects.filter(wf_module=wfm1d).count(),
+                         ParameterVal.objects.filter(wf_module=wfm1).count())
 
         # Stored data should contain a clone of content only, not complete version history
         self.assertIsNotNone(wfm1d.stored_data_version)
@@ -203,12 +205,14 @@ class WfModuleTests(WfModuleTestsBase):
         """
         workflow = Workflow.objects.create()
         InitWorkflowCommand.create(workflow)
-        wf_module = workflow.wf_modules.create(order=0, auto_update_data=True,
-                                               update_interval=600)
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0, auto_update_data=True,
+                                          update_interval=600)
 
         workflow2 = Workflow.objects.create()
         InitWorkflowCommand.create(workflow2)
-        wf_module2 = wf_module.duplicate(workflow2)
+        tab2 = workflow2.tabs.create(position=0)
+        wf_module2 = wf_module.duplicate(tab2)
 
         self.assertEqual(wf_module2.auto_update_data, False)
         self.assertEqual(wf_module2.update_interval, 600)

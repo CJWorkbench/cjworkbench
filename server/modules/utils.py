@@ -388,6 +388,8 @@ def fetch_external_workflow(calling_workflow_id: int,
         return ProcessResult(error='Cannot import the current workflow')
 
     with transaction.atomic():
+        # Mimic cooperative_lock() on right_workflow, with less overhead. It's
+        # transaction.atomic() and select_for_update().
         try:
             other_workflow = Workflow.objects \
                 .select_for_update() \
@@ -401,7 +403,11 @@ def fetch_external_workflow(calling_workflow_id: int,
                                                            None):
             return ProcessResult(error='Access denied to the target workflow')
 
-        other_wf_module = other_workflow.live_wf_modules.last()
+        other_wf_module = other_workflow \
+            .live_tabs.first() \
+            .live_wf_modules.last()
+        if other_wf_module is None:
+            return ProcessResult(error='Target workflow is empty')
 
         # Always pull the cached result, so we can't execute() an infinite loop
         crr = other_wf_module.get_cached_render_result(only_fresh=True)

@@ -8,7 +8,8 @@ from .util import ChangesWfModuleOutputs
 @database_sync_to_async
 def _workflow_has_notifications(workflow):
     """Detect whether a workflow sends email on changes."""
-    return workflow.live_wf_modules.filter(notifications=True).exists()
+    return WfModule.live_in_workflow(workflow) \
+            .filter(notifications=True).exists()
 
 
 class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):

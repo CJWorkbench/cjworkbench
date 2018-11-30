@@ -7,7 +7,7 @@ from server.models import WfModule
 @renderer_classes((JSONRenderer,))
 def notifications_delete_by_wfmodule(request, pk, format=None):
     try:
-        wf_module = WfModule.objects.get(pk=pk)
+        wf_module = WfModule.objects.get(pk=pk, is_deleted=False)
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 

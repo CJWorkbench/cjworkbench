@@ -6,6 +6,38 @@ from server.models import WfModule, Workflow
 
 
 class ChangesWfModuleOutputs:
+    """
+    Mixin that tracks wf_module.last_relevant_delta_id on affected WfModules.
+
+    Usage:
+
+        class MyCommand(Delta, ChangesWfModuleOutputs):
+            wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+
+            # override
+            @classmethod
+            def amend_create_kwargs(cls, *, wf_module, **kwargs):
+                # You must store affected_wf_module_delta_ids.
+                return {
+                    **kwargs,
+                    'wf_module': wf_module,
+                    'wf_module_delta_ids':
+                        cls.affected_wf_module_delta_ids(wf_module),
+                }
+
+            def forward_impl(self):
+                ...
+                # update wf_modules in database and store
+                # self._changed_wf_module_delta_ids, for websockets message.
+                self.forward_affected_delta_ids()
+
+            def backward_impl(self):
+                ...
+                # update wf_modules in database and store
+                # self._changed_wf_module_delta_ids, for websockets message.
+                self.backward_affected_delta_ids()
+    """
+
     # List of (id, last_relevant_delta_id) for WfModules, pre-`forward()`.
     wf_module_delta_ids = ArrayField(
         ArrayField(
@@ -21,7 +53,7 @@ class ChangesWfModuleOutputs:
 
         The default implementation _includes_ the passed `wf_module`.
         """
-        return WfModule.objects.filter(workflow_id=wf_module.workflow_id,
+        return WfModule.objects.filter(tab_id=wf_module.tab_id,
                                        order__gte=wf_module.order,
                                        is_deleted=False)
 

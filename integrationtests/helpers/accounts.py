@@ -101,6 +101,7 @@ class AccountAdmin:
             'server_storedobject',
             'server_uploadedfile',
             'server_wfmodule',
+            'server_tab',
             'server_workflow',
             'django_session',
             'account_emailconfirmation',
