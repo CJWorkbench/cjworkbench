@@ -14,8 +14,12 @@ from server.modules.types import ProcessResult
 logger = logging.getLogger(__name__)
 
 
-fake_future = asyncio.Future()
-fake_future.set_result(None)
+table_csv = 'A,B\n1,2\n3,4'
+table_dataframe = pd.DataFrame({'A': [1, 3], 'B': [2, 4]})
+
+
+future_none = asyncio.Future()
+future_none.set_result(None)
 
 
 async def fake_send(*args, **kwargs):
@@ -23,7 +27,7 @@ async def fake_send(*args, **kwargs):
 
 
 def cached_render_result_revision_list(workflow):
-    return list(workflow.live_wf_modules.values_list(
+    return list(workflow.tabs.first().live_wf_modules.values_list(
         'cached_render_result_delta_id',
         flat=True
     ))
@@ -66,6 +70,11 @@ class ExecuteTests(DbTestCase):
         with self.assertLogs():  # hide all logs
             logger.info('message so assertLogs() passes when no log messages')
 
+    def _execute(self, workflow, *, expect_logs=True):
+        if expect_logs:
+            with self.assertLogs():
+                self.loop.run_until_complete(execute_workflow(workflow))
+        else:
             self.loop.run_until_complete(execute_workflow(workflow))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
@@ -207,15 +216,16 @@ class ExecuteTests(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_resume_without_rerunning_unneeded_renders(self, fake_load_module):
         workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wf_module1 = workflow.wf_modules.create(
+        wf_module1 = tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=delta.id
         )
         result1 = ProcessResult(pd.DataFrame({'A': [1]}))
         wf_module1.cache_render_result(delta.id, result1)
         wf_module1.save()
-        wf_module2 = workflow.wf_modules.create(
+        wf_module2 = tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=delta.id
         )
@@ -237,9 +247,10 @@ class ExecuteTests(DbTestCase):
     @patch('server.notifications.email_output_delta')
     def test_email_delta(self, email, fake_load_module):
         workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         delta2 = InitWorkflowCommand.create(workflow)
-        wf_module = workflow.wf_modules.create(
+        wf_module = tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=delta2.id
         )
@@ -264,9 +275,10 @@ class ExecuteTests(DbTestCase):
     @patch('server.notifications.email_output_delta')
     def test_email_no_delta_when_not_changed(self, email, fake_load_module):
         workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         delta2 = InitWorkflowCommand.create(workflow)
-        wf_module = workflow.wf_modules.create(
+        wf_module = tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=delta2.id
         )
