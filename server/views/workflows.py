@@ -218,6 +218,7 @@ def workflow_detail(request, workflow_id, format=None):
             data = make_init_state(request, workflow)
             return Response({
                 'workflow': data['workflow'],
+                'tabs': data['tabs'],
                 'wfModules': data['wfModules'],
             })
 
@@ -228,8 +229,11 @@ def workflow_detail(request, workflow_id, format=None):
         try:
             async_to_sync(ReorderModulesCommand.create)(
                 workflow=workflow,
-                new_order=request.data
+                new_order=request.data['newOrder']
             )
+        except KeyError:
+            return Response({'message': 'Must pass newOrder parameter'},
+                            status=status.HTTP_400_BAD_REQUEST)
         except ValueError as e:
             # Caused by bad id or order keys not in range 0..n-1
             # (though they don't need to be sorted)
