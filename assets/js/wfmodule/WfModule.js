@@ -18,6 +18,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
 import { createSelector } from 'reselect'
+import { findParamValByIdName } from '../utils'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -292,7 +293,68 @@ export class WfModule extends React.PureComponent {
     }
   }
 
+  // checks visible_if fields, recursively (we are not visible if parent referenced in visbile_if is not visible)
+  isParameterVisible(p) {
+    // No visibility condition, we are visible
+    const visibleIf = p.parameter_spec.visible_if
+    if (!visibleIf) {
+      return true
+    }
+
+    const condition = JSON.parse(visibleIf)
+    const invert = condition['invert'] === true
+
+    // missing id_name, default to visible
+    if (!('id_name' in condition)) {
+      return true
+    }
+
+    // We are invisible if our parent is invisible
+    const parent = findParamValByIdName(this.props.wfModule, condition['id_name'])
+    if (!parent || !this.isParameterVisible(parent)) {
+      return false
+    }
+
+    if ('value' in condition) {
+      const value = this.getParamText(condition['id_name'])
+
+      // If the condition value is a boolean:
+      if (typeof condition['value'] === typeof true || typeof condition['value'] === typeof 0) {
+        let match
+        if (value === condition['value']) {
+          // Just return if it matches
+          match = true
+        } else if (typeof condition['value'] === typeof true && typeof value !== typeof true) {
+          // If value: true or value: false, return whether string is set
+          match = condition['value'] === (value !== '')
+        } else {
+          match = false
+        }
+        return invert !== match
+      }
+
+      // Otherwise, if it's a menu item:
+      const condValues = condition['value'].split('|').map(cond => cond.trim())
+      const selectionIdx = parseInt(value)
+      if (!isNaN(selectionIdx)) {
+        const menuItems = this.getParamMenuItems(condition['id_name'])
+        if (menuItems.length > selectionIdx) {
+          const selection = menuItems[selectionIdx]
+          const selectionInCondition = (condValues.indexOf(selection) >= 0)
+          return invert !== selectionInCondition
+        }
+      }
+    }
+
+    // If the visibility condition is empty or invalid, default to showing the parameter
+    return true
+  }
+
   renderParam = (p, index) => {
+    if (!this.isParameterVisible(p)) {
+      return null
+    }
+
     const { api, wfModule, moduleName, isReadOnly, isZenMode, inputWfModule } = this.props
     const updateSettings = {
       lastUpdateCheck: wfModule.last_update_check,
