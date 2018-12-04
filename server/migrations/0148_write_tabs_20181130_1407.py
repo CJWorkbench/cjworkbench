@@ -14,8 +14,9 @@ class Migration(migrations.Migration):
             BEGIN
 
             INSERT INTO server_tab
-               (workflow_id, position, name, selected_wf_module_position)
-            SELECT id, 0, '', selected_wf_module
+               (workflow_id, position, name, selected_wf_module_position,
+                           is_deleted)
+            SELECT id, 0, '', selected_wf_module, FALSE
             FROM server_workflow;
 
             UPDATE server_wfmodule
