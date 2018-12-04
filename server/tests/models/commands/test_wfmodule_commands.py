@@ -6,8 +6,8 @@ import pandas as pd
 from server.models import Delta, Module, ModuleVersion, Workflow, WfModule
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
-        ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand, \
-        InitWorkflowCommand, ReorderModulesCommand
+        ChangeWfModuleUpdateSettingsCommand, InitWorkflowCommand, \
+        ReorderModulesCommand
 from server.tests.utils import DbTestCase
 
 
@@ -460,71 +460,6 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
         self.assertEqual(wf_module.notes, 'text2')
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notes, 'text2')
-
-
-@patch('server.models.Delta.schedule_execute', async_noop)
-@patch('server.models.Delta.ws_notify', async_noop)
-class ChangeParametersCommandTest(DbTestCase):
-    def test_change_parameters(self):
-        # Setup: workflow with loadurl module
-        #
-        # loadurl is a good choice because it has three parameters, two of
-        # which are useful.
-        workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
-        tab = workflow.tabs.create(position=0)
-
-        module = Module.objects.create(name='loadurl', id_name='loadurl',
-                                       dispatch='loadurl')
-        module_version = ModuleVersion.objects.create(
-            source_version_hash='1.0',
-            module=module
-        )
-        module_version.parameter_specs.create(id_name='url', type='string',
-                                              order=0, def_value='')
-        module_version.parameter_specs.create(id_name='has_header',
-                                              type='checkbox', order=1,
-                                              def_value='')
-        module_version.parameter_specs.create(id_name='version_select',
-                                              type='custom', order=2,
-                                              def_value='')
-        wf_module = tab.wf_modules.create(
-            module_version=module_version,
-            order=0,
-            last_relevant_delta_id=delta.id,
-        )
-        # Set original parameters
-        wf_module.create_parametervals({
-            'url': 'http://example.org',
-            'has_header': True,
-        })
-
-        params1 = wf_module.get_params().to_painful_dict(pd.DataFrame())
-
-        # Create and apply delta. It should change params.
-        cmd = async_to_sync(ChangeParametersCommand.create)(
-            workflow=workflow,
-            wf_module=wf_module,
-            new_values={
-                'url': 'http://example.com/foo',
-                'has_header': False,
-            }
-        )
-        params2 = wf_module.get_params().to_painful_dict(pd.DataFrame())
-
-        self.assertEqual(params2['url'], 'http://example.com/foo')
-        self.assertEqual(params2['has_header'], False)
-        self.assertEqual(params2['version_select'], params1['version_select'])
-
-        # undo
-        async_to_sync(cmd.backward)()
-        params3 = wf_module.get_params().to_painful_dict(pd.DataFrame())
-        self.assertEqual(params3, params1)
-
-        # redo
-        async_to_sync(cmd.forward)()
-        params4 = wf_module.get_params().to_painful_dict(pd.DataFrame())
-        self.assertEqual(params4, params2)
 
 
 @patch('server.models.Delta.schedule_execute', async_noop)
