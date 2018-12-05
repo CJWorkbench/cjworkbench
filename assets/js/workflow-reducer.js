@@ -490,7 +490,7 @@ export function maybeRequestWfModuleFetchAction (wfModuleId) {
     return dispatch({
       type: REQUEST_WF_MODULE_FETCH,
       payload: {
-        promise: api.requestFetch(workflow.id, wfModuleId)
+        promise: api.requestFetch(wfModuleId)
           .then(() => ({ wfModuleId }), (err) => { console.warn(err); return { wfModuleId } }),
         data: { wfModuleId }
       }
@@ -611,7 +611,7 @@ export function setWfModuleCollapsedAction (wfModuleId, isCollapsed, isReadOnly)
       promise = Promise.resolve(null)
     } else {
       const { workflow } = getState()
-      promise = api.setWfModuleCollapsed(workflow.id, wfModuleId, isCollapsed)
+      promise = api.setWfModuleCollapsed(wfModuleId, isCollapsed)
     }
 
     return dispatch({
@@ -690,7 +690,7 @@ export function setDataVersionAction (wfModuleId, selectedVersion) {
     return dispatch({
       type: SET_DATA_VERSION,
       payload: {
-        promise: api.setWfModuleVersion(workflow.id, wfModuleId, selectedVersion),
+        promise: api.setWfModuleVersion(wfModuleId, selectedVersion),
         data: {
           wfModuleId,
           selectedVersion
@@ -725,7 +725,7 @@ export function markDataVersionsReadAction (wfModuleId, versions) {
     return dispatch({
       type: MARK_DATA_VERSIONS_READ,
       payload: {
-        promise: api.markDataVersionsRead(workflow.id, wfModuleId, versionsToUpdate),
+        promise: api.markDataVersionsRead(wfModuleId, versionsToUpdate),
         data: {
           wfModuleId,
           versionsToUpdate
@@ -767,7 +767,7 @@ export function clearNotificationsAction (wfModuleId) {
     return dispatch({
       type: CLEAR_NOTIFICATIONS,
       payload: {
-        promise: api.deleteWfModuleNotifications(workflow.id, wfModuleId),
+        promise: api.deleteWfModuleNotifications(wfModuleId),
         data: {
           wfModuleId
         }

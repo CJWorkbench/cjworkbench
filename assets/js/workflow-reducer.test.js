@@ -390,7 +390,7 @@ describe('Reducer actions', () => {
     await done
 
     // API request sent and received
-    expect(WorkbenchAPI.markDataVersionsRead).toHaveBeenCalledWith(999, 10, ["2018-02-21T03:09:15.214054Z", "2018-02-21T03:09:10.214054Z"])
+    expect(WorkbenchAPI.markDataVersionsRead).toHaveBeenCalledWith(10, ["2018-02-21T03:09:15.214054Z", "2018-02-21T03:09:10.214054Z"])
   })
 
   it('Clears the notification count', () => {
