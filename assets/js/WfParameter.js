@@ -316,13 +316,67 @@ export default class WfParameter extends React.PureComponent {
     }
   }
 
+  displayConditionalUI(condition) {
+    // Checks if a menu item in the visibility condition is selected
+    // If yes, display or hide the item depending on whether we have inverted the visibility condition
+    // type is either 'visible_if' or 'visible_if_not'
+    const invert = condition['invert'] === true
+
+    if ('id_name' in condition && 'value' in condition) {
+      const value = this.props.getParamText(condition['id_name']);
+
+      // If the condition value is a boolean:
+      if (typeof condition['value'] === typeof true || typeof condition['value'] === typeof 0) {
+        let match
+        if (value === condition['value']) {
+          // Just return if it matches
+          match = true
+        } else if (typeof condition['value'] === typeof true && typeof value !== typeof true) {
+          // If value: true or value: false, return whether string is set
+          match = condition['value'] === (value !== '')
+        } else {
+          match = false
+        }
+        return invert !== match
+      }
+
+      // Otherwise, if it's a menu item:
+      const condValues = condition['value'].split('|').map(cond => cond.trim())
+      const selectionIdx = parseInt(value)
+      if (!isNaN(selectionIdx)) {
+        const menuItems = this.props.getParamMenuItems(condition['id_name'])
+        if (menuItems.length > selectionIdx) {
+          const selection = menuItems[selectionIdx]
+          const selectionInCondition = (condValues.indexOf(selection) >= 0)
+          return invert !== selectionInCondition
+        }
+      }
+    }
+
+    // If the visibility condition is empty or invalid, default to showing the parameter
+    return true
+  }
 
   render() {
-    const { id_name, name, type } = this.props.p.parameter_spec
+    const { id_name, name, type, visible_if, visible_if_not } = this.props.p.parameter_spec
 
     // TODO: delete the 'colnames' check. Force display of 'colnames' for now since it will completely replace 'colselect' eventually
     if (!this.props.p.visible && id_name !== 'colnames') {
       return null // nothing to see here
+    }
+
+    if (visible_if) {
+      const condition = JSON.parse(visible_if)
+      if (!this.displayConditionalUI(condition, 'visible_if')) {
+        return null
+      }
+    }
+
+    if (visible_if_not) {
+      const condition = JSON.parse(visible_if_not)
+      if (!this.displayConditionalUI(condition, 'visible_if_not')) {
+        return null
+      }
     }
 
     switch (type) {
