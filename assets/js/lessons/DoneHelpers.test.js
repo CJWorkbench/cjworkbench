@@ -46,6 +46,24 @@ describe('DoneHelpers', () => {
 
       expect(workflow.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
     })
+
+    it('should give wfModuleName=null when there is no module_version', () => {
+      const workflow = new WorkflowWithHelpers({
+        tab_ids: [ 21, 22 ],
+        selected_tab_position: 0
+      }, {
+        tabs: {
+          21: { wf_module_ids: [ 1, "3_nonce" ] },
+          22: { wf_module_ids: [] }
+        },
+        wfModules: {
+          1: { module_version: null },
+        },
+        modules: {}
+      })
+
+      expect(workflow.selectedTab.wfModuleNames).toEqual([ null, null ])
+    })
   })
 
   describe('WorkflowModuleWithHelpers', () => {
@@ -82,21 +100,16 @@ describe('DoneHelpers', () => {
     })
 
     it('should have null parameters.get() on placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
-        placeholder: true
-      })
+      const wfModule = new WorkflowModuleWithHelpers(null, {})
       const parameters = wfModule.parameters
       expect(parameters.get('url')).toBe(null)
       expect(parameters.get('bar')).toBe(null)
       expect(parameters.get('moo')).toBe(null)
     })
 
-    it('should have moduleName even when placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
-        placeholder: true,
-        name: 'Add from URL'
-      })
-      expect(wfModule.moduleName).toEqual('Add from URL')
+    it('should have moduleName=null when placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers(null, { modules: {} })
+      expect(wfModule.moduleName).toBe(null)
     })
 
     it('should have selectedVersion', () => {

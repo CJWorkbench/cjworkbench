@@ -62,7 +62,8 @@ export class TabWithHelpers {
 
   get wfModules () {
     return this.tab.wf_module_ids.map(wfmId => {
-      return new WorkflowModuleWithHelpers(this.state.wfModules[String(wfmId)], this.state)
+      const wfModule = this.state.wfModules[String(wfmId)] || null
+      return new WorkflowModuleWithHelpers(wfModule, this.state)
     })
   }
 
@@ -75,52 +76,61 @@ export class TabWithHelpers {
     const position = this.tab.selected_wf_module_position
     if (position === null || position === undefined) return null
 
-    const wfModule = wfModules[String(this.tab.wf_module_ids[position])]
+    const wfModule = wfModules[String(this.tab.wf_module_ids[position])] || null
     return new WorkflowModuleWithHelpers(wfModule, this.state)
   }
 }
 
 export class WorkflowModuleWithHelpers {
   constructor (wfModule, state) {
-    this.wfModule = wfModule
+    this.wfModule = wfModule // may be null, if WfModule is being created
     this.state = state
   }
 
   get id () {
+    if (!this.wfModule) return null
     return this.wfModule.id
   }
 
   get isCollapsed () {
+    if (!this.wfModule) return false
     return this.wfModule.is_collapsed
   }
 
   get module () {
-    const moduleId = this.moduleVersion ? this.moduleVersion.module : null
-    return moduleId ? this.state.modules[String(moduleId)] : null
+    if (!this.moduleVersion) return null
+    const moduleId = this.moduleVersion.module
+    return this.state.modules[String(moduleId)] || null
   }
 
   get moduleName () {
-    return this.module ? this.module.name : this.wfModule.name
+    if (!this.module) return null
+    return this.module.name
   }
 
   get moduleVersion () {
-    return this.wfModule.module_version
+    if (!this.wfModule) return null
+    return this.wfModule.module_version || null
   }
 
   get note () {
+    if (!this.wfModule) return null
     return this.wfModule.notes
   }
 
   get parameters () {
+    if (!this.wfModule) return new ParametersWithHelpers([])
     return new ParametersWithHelpers(this.wfModule.parameter_vals || [])
   }
 
   get selectedVersion () {
+    if (!this.wfModule) return null
     const versions = this.wfModule.versions
     return (versions && versions.selected) || null
   }
 
   get isEmailUpdates () {
+    if (!this.wfModule) return false
     return !!this.wfModule.notifications
   }
 
@@ -129,6 +139,7 @@ export class WorkflowModuleWithHelpers {
    */
   get updateInterval () {
     const wfModule = this.wfModule
+    if (!wfModule) return null
     if (!wfModule.auto_update_data) return null
 
     const n = String(wfModule.update_interval)
@@ -146,6 +157,7 @@ export class WorkflowModuleWithHelpers {
    * Date the server says is the last time it checked an upstream website.
    */
   get lastFetchCheckAt () {
+    if (!this.wfModule) return null
     const s = this.wfModule.last_update_check
     return s ? new Date(s) : null
   }
