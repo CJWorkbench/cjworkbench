@@ -215,6 +215,48 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           wfModuleId={999}
           wfModuleStatus="ok"
         />
+        <WfParameter
+          api={
+            Object {
+              "postParamEvent": [MockFunction],
+              "setWfModuleNotes": [MockFunction],
+            }
+          }
+          getParamId={[Function]}
+          getParamMenuItems={[Function]}
+          getParamText={[Function]}
+          inputWfModuleId={123}
+          isReadOnly={false}
+          isZenMode={false}
+          key="3"
+          moduleName="Load from URL"
+          name="some_boolean"
+          onChange={[Function]}
+          onReset={[Function]}
+          onSubmit={[Function]}
+          p={
+            Object {
+              "id": 103,
+              "parameter_spec": Object {
+                "id_name": "some_boolean",
+                "type": "checkbox",
+              },
+              "value": true,
+            }
+          }
+          setWfModuleParams={[Function]}
+          updateSettings={
+            Object {
+              "autoUpdateData": undefined,
+              "lastUpdateCheck": undefined,
+              "updateInterval": undefined,
+              "updateUnits": undefined,
+            }
+          }
+          value={true}
+          wfModuleId={999}
+          wfModuleStatus="ok"
+        />
       </div>
     </div>
   </div>
