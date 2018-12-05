@@ -85,7 +85,7 @@ class ModuleDropSpot extends React.PureComponent {
 
 class BaseModuleStackInsertSpot extends React.PureComponent {
   static propTypes = {
-    addModule: PropTypes.func.isRequired,
+    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -157,7 +157,7 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
 
 class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
   static propTypes = {
-    addModule: PropTypes.func.isRequired,
+    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -185,7 +185,7 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
 
 class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
   static propTypes = {
-    addModule: PropTypes.func.isRequired,
+    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -217,7 +217,7 @@ class ModuleStack extends React.Component {
     tabId: PropTypes.number,
     selected_wf_module_position: PropTypes.number,
     wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
-    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
+    addModule: PropTypes.func.isRequired, // func(tabId, moduleId, index) => undefined
     moveModuleByIndex: PropTypes.func.isRequired, // func(tabId, oldIndex, newIndex) => undefined
     removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
@@ -288,6 +288,10 @@ class ModuleStack extends React.Component {
     })
   }
 
+  addModule = (moduleId, index) => {
+    this.props.addModule(this.props.tabId, moduleId, index)
+  }
+
   moveModuleByIndex = (oldIndex, newIndex) => {
     this.props.moveModuleByIndex(this.props.tabId, oldIndex, newIndex)
   }
@@ -298,7 +302,7 @@ class ModuleStack extends React.Component {
         index={index}
         isReadOnly={this.props.isReadOnly}
         isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-        addModule={this.props.addModule}
+        addModule={this.addModule}
         moveModuleByIndex={this.moveModuleByIndex}
         isLessonHighlightSearch={this.props.testLessonHighlightIndex(index)}
         />
@@ -356,8 +360,8 @@ class ModuleStack extends React.Component {
           key="last"
           index={wfModules.length}
           isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-          addModule={this.props.addModule}
-          moveModuleByIndex={this.props.moveModuleByIndex}
+          addModule={this.addModule}
+          moveModuleByIndex={this.moveModuleByIndex}
           isLessonHighlightSearch={this.props.testLessonHighlightIndex(wfModules.length)}
           isReadOnly={this.props.isReadOnly}
           />
@@ -382,10 +386,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    addModule(moduleId, index) {
-      const action = addModuleAction(moduleId, { tabId: ownProps.tabId, index }, {})
+    addModule(tabId, moduleId, index) {
+      const action = addModuleAction(moduleId, { tabId, index }, {})
       dispatch(action)
     },
 
