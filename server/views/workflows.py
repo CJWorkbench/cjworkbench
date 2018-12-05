@@ -3,6 +3,7 @@ import json
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import F, Q
 from django import forms
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
@@ -131,13 +132,16 @@ def render_workflows(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     """Create a new workflow."""
-    workflow = Workflow.objects.create(
-        name='New Workflow',
-        owner=request.user
-    )
-    InitWorkflowCommand.create(workflow)
-    serializer = WorkflowSerializerLite(workflow,
-                                        context={'request': request})
+    with transaction.atomic():
+        workflow = Workflow.objects.create(
+            name='New Workflow',
+            owner=request.user,
+            selected_tab_position=0
+        )
+        workflow.tabs.create(position=0)
+        InitWorkflowCommand.create(workflow)
+        serializer = WorkflowSerializerLite(workflow,
+                                            context={'request': request})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
