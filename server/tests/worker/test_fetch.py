@@ -43,9 +43,10 @@ class FetchTests(DbTestCase):
         due_for_update = parser.parse('Aug 28 1999 2:34PM UTC')
 
         with self.assertLogs(fetch.__name__, logging.DEBUG):
-            self.run_with_async_db(fetch.fetch_wf_module(wf_module, now))
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
+                                                         wf_module, now))
 
-        save_result.assert_called_with(wf_module, result)
+        save_result.assert_called_with(workflow.id, wf_module, result)
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.last_update_check, now)
@@ -67,7 +68,8 @@ class FetchTests(DbTestCase):
         due_for_update = parser.parse('Aug 28 1999 2:44PM UTC')
 
         with self.assertLogs(fetch.__name__):
-            self.run_with_async_db(fetch.fetch_wf_module(wf_module, now))
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
+                                                         wf_module, now))
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.next_update, due_for_update)
@@ -94,7 +96,8 @@ class FetchTests(DbTestCase):
 
         with self.assertLogs(fetch.__name__, level='ERROR') as cm:
             # We should log the actual error
-            self.run_with_async_db(fetch.fetch_wf_module(wf_module, now))
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
+                                                         wf_module, now))
             self.assertEqual(cm.records[0].exc_info[0], ValueError)
 
         wf_module.refresh_from_db()
@@ -118,6 +121,11 @@ class FetchTests(DbTestCase):
             # isn't what we're testing here.
             wf_module.module_version = ModuleVersion(module=Module())
 
+        try:
+            workflow_id = wf_module.workflow_id
+        except:
+            workflow_id = 1
+
         # Mock the module we load, so it calls fn() directly.
         load.return_value = LoadedModule('test', '1', False, fetch_impl=fn)
         load.return_value.fetch = fn
@@ -126,12 +134,14 @@ class FetchTests(DbTestCase):
         # Mock wf_module.save(), which we aren't testing.
         wf_module.save = Mock()
 
-        self.run_with_async_db(fetch.fetch_wf_module(wf_module, timezone.now()))
+        self.run_with_async_db(fetch.fetch_wf_module(workflow_id, wf_module,
+                                                     timezone.now()))
 
         save.assert_called_once()
-        self.assertEqual(save.call_args[0][0], wf_module)
+        self.assertEqual(save.call_args[0][0], workflow_id)
+        self.assertEqual(save.call_args[0][1], wf_module)
 
-        result = save.call_args[0][1]
+        result = save.call_args[0][2]
         return result
 
     def test_fetch_get_params(self):
@@ -141,7 +151,7 @@ class FetchTests(DbTestCase):
         module_version = module.module_versions.create()
         module_version.parameter_specs.create(id_name='foo')
         wf_module = tab.wf_modules.create(order=0,
-                                               module_version=module_version)
+                                          module_version=module_version)
         wf_module.create_parametervals({'foo': 'bar'})
 
         async def fetch(params, **kwargs):
@@ -177,7 +187,7 @@ class FetchTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
         wfm1 = tab.wf_modules.create(order=0,
-                                          last_relevant_delta_id=delta.id)
+                                     last_relevant_delta_id=delta.id)
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
         wfm2 = tab.wf_modules.create(order=1)
@@ -206,8 +216,7 @@ class FetchTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         delta2 = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0,
-                                          last_relevant_delta_id=delta2.id)
+        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta2.id)
         wfm1.cache_render_result(delta1.id, ProcessResult(table))
         wfm1.save()
         wfm2 = tab.wf_modules.create(order=1)
@@ -223,8 +232,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0,
-                                          last_relevant_delta_id=delta.id)
+        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
         wfm2 = tab.wf_modules.create(order=1)
@@ -245,8 +253,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0,
-                                          last_relevant_delta_id=delta.id)
+        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
         wfm2 = tab.wf_modules.create(order=1)

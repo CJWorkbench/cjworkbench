@@ -21,17 +21,12 @@ class WfModule(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        return 'workflow[%d].wf_module[%d] at position (%d,%d): %s' % (
-            self.tab.workflow_id,
-            self.id,
-            self.tab.position,
-            self.order,
-            self.get_module_name()
-        )
+        # Don't use DB queries here.
+        return 'wf_module[%d] at position %d' % (self.id, self.order)
 
     @property
     def workflow(self):
-        return self.tab.workflow
+        return Workflow.objects.get(tabs__wf_modules__id=self.id)
 
     @property
     def workflow_id(self):

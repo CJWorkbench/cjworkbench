@@ -20,9 +20,10 @@ logger = logging.getLogger(__name__)
 def load_wf_module_and_uploaded_file(
     wf_module_id: int,
     uploaded_file_id: int
-) -> Optional[Tuple[WfModule, UploadedFile]]:
+) -> Optional[Tuple[int, WfModule, UploadedFile]]:
     try:
         wf_module = WfModule.objects.get(id=wf_module_id)
+        workflow_id = wf_module.workflow_id  # a database query
     except WfModule.DoesNotExist:
         logger.info('Skipping upload_DELETEME of deleted WfModule %d',
                     wf_module_id)
@@ -35,7 +36,7 @@ def load_wf_module_and_uploaded_file(
                     uploaded_file_id)
         return None
 
-    return (wf_module, uploaded_file)
+    return (workflow_id, wf_module, uploaded_file)
 
 
 async def upload_DELETEME(*, wf_module_id: int, uploaded_file_id: int) -> None:
@@ -47,15 +48,15 @@ async def upload_DELETEME(*, wf_module_id: int, uploaded_file_id: int) -> None:
     if not data:
         return
 
-    wf_module, uploaded_file = data
+    workflow_id, wf_module, uploaded_file = data
 
     # exceptions caught elsewhere
     task = uploadfile.parse_uploaded_file(uploaded_file)
     result = await benchmark(logger, task, 'parse_uploaded_file(%d, %d, %d)',
-                             wf_module.workflow_id, wf_module_id,
+                             workflow_id, wf_module_id,
                              uploaded_file_id)
 
-    await save.save_result_if_changed(wf_module, result,
+    await save.save_result_if_changed(workflow_id, wf_module, result,
                                       stored_object_json=[{
                                           'uuid': uploaded_file.uuid,
                                           'name': uploaded_file.name,

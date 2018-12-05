@@ -23,18 +23,18 @@ class SaveTests(DbTestCase):
         wf_module = tab.wf_modules.create(order=0)
 
         table = mock_csv_table.copy()
-        self.run_with_async_db(save_result_if_changed(wf_module,
+        self.run_with_async_db(save_result_if_changed(workflow.id, wf_module,
                                                       ProcessResult(table)))
         self.assertEqual(StoredObject.objects.count(), 1)
 
         # store same table again, should not create a new one
-        self.run_with_async_db(save_result_if_changed(wf_module,
+        self.run_with_async_db(save_result_if_changed(workflow.id, wf_module,
                                                       ProcessResult(table)))
         self.assertEqual(StoredObject.objects.count(), 1)
 
         # changed table should create new
         table = table.append(table, ignore_index=True)
-        self.run_with_async_db(save_result_if_changed(wf_module,
+        self.run_with_async_db(save_result_if_changed(workflow.id, wf_module,
                                                       ProcessResult(table)))
         self.assertEqual(StoredObject.objects.count(), 2)
 
@@ -52,7 +52,8 @@ class SaveTests(DbTestCase):
             # faster)
             table = table.append(table, ignore_index=True)
             self.run_with_async_db(
-                save_result_if_changed(wf_module, ProcessResult(table))
+                save_result_if_changed(workflow.id, wf_module,
+                                       ProcessResult(table))
             )
 
             total_size = sum(stored_objects.values_list('size', flat=True))
@@ -74,7 +75,8 @@ class SaveTests(DbTestCase):
         workflow.delete()
 
         # Don't crash
-        self.run_with_async_db(save_result_if_changed(wf_module, result))
+        self.run_with_async_db(save_result_if_changed(workflow.id, wf_module,
+                                                      result))
         assert True
 
     def test_race_soft_deleted_wf_module(self):
@@ -85,7 +87,8 @@ class SaveTests(DbTestCase):
         wf_module = tab.wf_modules.create(order=0, is_deleted=True)
 
         # Don't crash
-        self.run_with_async_db(save_result_if_changed(wf_module, result))
+        self.run_with_async_db(save_result_if_changed(workflow.id, wf_module,
+                                                      result))
         assert True
 
     def test_race_hard_deleted_wf_module(self):
@@ -98,5 +101,6 @@ class SaveTests(DbTestCase):
         wf_module.delete()
 
         # Don't crash
-        self.run_with_async_db(save_result_if_changed(wf_module, result))
+        self.run_with_async_db(save_result_if_changed(workflow.id, wf_module,
+                                                      result))
         assert True

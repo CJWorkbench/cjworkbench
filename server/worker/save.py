@@ -27,9 +27,6 @@ def _maybe_add_version(
 
     If the input Workflow or WfModule is deleted, return ``None``.
     """
-    if wf_module.workflow is None:
-        return None
-
     # Use Django `update_fields` to only write the fields we're
     # editing.  That's because every value in `wf_module` might be
     # stale, so we must ignore those stale values.
@@ -45,7 +42,8 @@ def _maybe_add_version(
 
     try:
         with wf_module.workflow.cooperative_lock():
-            if not WfModule.objects.filter(pk=wf_module.id).exists():
+            if not WfModule.objects.filter(pk=wf_module.id, is_deleted=False,
+                                           tab__is_deleted=False).exists():
                 return None
 
             if maybe_result is not None:
@@ -67,6 +65,7 @@ def _maybe_add_version(
 
 
 async def save_result_if_changed(
+    workflow_id: int,
     wf_module: WfModule,
     new_result: Optional[ProcessResult],
     stored_object_json: Optional[Dict[str, Any]]=None
@@ -113,7 +112,7 @@ async def save_result_if_changed(
         if last_update_check:
             last_update_check = last_update_check.isoformat()
 
-        await websockets.ws_client_send_delta_async(wf_module.workflow_id, {
+        await websockets.ws_client_send_delta_async(workflow_id, {
             'updateWfModules': {
                 str(wf_module.id): {
                     'is_busy': wf_module.is_busy,

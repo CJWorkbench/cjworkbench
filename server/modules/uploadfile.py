@@ -5,7 +5,6 @@ from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 from .utils import parse_bytesio, turn_header_into_first_row
 from server.utils import TempfileBackedReader
-from server import versions
 
 
 _ExtensionMimeTypes = {

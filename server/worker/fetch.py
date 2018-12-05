@@ -2,6 +2,7 @@ from datetime import timedelta
 from functools import partial
 import logging
 import os
+from typing import Tuple
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
@@ -62,10 +63,18 @@ def _get_workflow_owner(workflow_id: int):
         return None
 
 
-async def fetch_wf_module(wf_module, now):
+@database_sync_to_async
+def _get_wf_module(wf_module_id: int) -> Tuple[int, WfModule]:
+    """Return workflow_id and WfModule, or raise WfModule.DoesNotExist."""
+    wf_module = WfModule.objects.get(id=wf_module_id)
+    # wf_module.workflow_id does a database access
+    return (wf_module.workflow_id, wf_module)
+
+
+async def fetch_wf_module(workflow_id, wf_module, now):
     """Fetch `wf_module` and notify user of changes via email/websockets."""
     logger.debug('fetch_wf_module(%d, %d) at interval %d',
-                 wf_module.workflow_id, wf_module.id,
+                 workflow_id, wf_module.id,
                  wf_module.update_interval)
     try:
         params = await _get_params(wf_module)
@@ -73,16 +82,14 @@ async def fetch_wf_module(wf_module, now):
         lm = await LoadedModule.for_module_version(wf_module.module_version)
         result = await lm.fetch(
             params,
-            workflow_id=wf_module.workflow_id,
-            get_input_dataframe=partial(_get_input_dataframe,
-                                        wf_module.workflow_id,
+            workflow_id=workflow_id,
+            get_input_dataframe=partial(_get_input_dataframe, workflow_id,
                                         wf_module.order),
             get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
-            get_workflow_owner=partial(_get_workflow_owner,
-                                       wf_module.workflow_id),
+            get_workflow_owner=partial(_get_workflow_owner, workflow_id),
         )
 
-        await save.save_result_if_changed(wf_module, result)
+        await save.save_result_if_changed(workflow_id, wf_module, result)
     except Exception as e:
         # Log exceptions but keep going
         logger.exception(f'Error fetching {wf_module}')
@@ -103,7 +110,7 @@ def update_next_update_time(wf_module, now):
 
 async def fetch(*, wf_module_id: int) -> None:
     try:
-        wf_module = WfModule.objects.get(id=wf_module_id)
+        (workflow_id, wf_module) = await _get_wf_module(wf_module_id)
     except WfModule.DoesNotExist:
         logger.info('Skipping fetch of deleted WfModule %d', wf_module_id)
         return
@@ -111,8 +118,9 @@ async def fetch(*, wf_module_id: int) -> None:
     now = timezone.now()
     # most exceptions caught elsewhere
     try:
-        task = fetch_wf_module(wf_module, now)
-        await benchmark(logger, task, 'fetch_wf_module(%d)', wf_module_id)
+        task = fetch_wf_module(workflow_id, wf_module, now)
+        await benchmark(logger, task, 'fetch_wf_module(%d, %d)', workflow_id,
+                        wf_module_id)
     except DatabaseError:
         # Two possibilities:
         #

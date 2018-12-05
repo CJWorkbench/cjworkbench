@@ -195,10 +195,11 @@ def wfmodule_params(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 def wfmodule_fetch(request, pk, format=None):
     wf_module = _lookup_wf_module_for_write(pk, request)
+    workflow_id = wf_module.workflow_id  # .workflow_id is a DB query
 
     async def notify():
         await rabbitmq.queue_fetch(wf_module)
-        await websockets.ws_client_send_delta_async(wf_module.workflow_id, {
+        await websockets.ws_client_send_delta_async(workflow_id, {
             'updateWfModules': {
                 str(wf_module.id): {'is_busy': True, 'fetch_error': ''}
             }
