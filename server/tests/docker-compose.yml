@@ -25,6 +25,7 @@ services:
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio' ]
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: testdb

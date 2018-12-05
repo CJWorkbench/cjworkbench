@@ -27,6 +27,7 @@ services:
     depends_on: [ 'db', 'minio', 'rabbitmq' ]
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '2'
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench
@@ -55,6 +56,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -76,6 +78,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '2'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -97,6 +100,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
