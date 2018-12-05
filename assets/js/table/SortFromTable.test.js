@@ -9,7 +9,11 @@ describe("SortFromTable actions", () => {
   const initialState = {
     workflow: {
       id: 127,
-      wf_modules: [ 17, 7, 19, 31, 79 ]
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 17, 7, 19, 31, 79 ] }
     },
     modules: {
       1: { id_name: 'loadurl' },
@@ -108,7 +112,7 @@ describe("SortFromTable actions", () => {
     updateTableActionModule(19, 'sort-from-table', false, { columnKey: 'num_col', sortType: 'number', sortDirection: sortDirectionAsc })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('sort-from-table', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('sort-from-table', { tabId: 11, index: 3 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { column: 'num_col', dtype: 1, direction: sortDirectionAsc }])
   })
 

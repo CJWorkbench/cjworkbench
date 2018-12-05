@@ -28,6 +28,10 @@ spec:
           env:
             - name: CJW_PRODUCTION
               value: 'True'
+            - name: PYTHONUNBUFFERED
+              value: '1'
+            - name: ASGI_THREADS
+              value: '2'
             - name: CJW_RABBITMQ_HOST
               value: amqp://guest:guest@rabbitmq-service/
             - name: CJW_DB_HOST

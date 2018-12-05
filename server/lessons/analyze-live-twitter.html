@@ -16,12 +16,12 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
-    data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Twitter'"
+    data-test="return workflow.tabs[0].wfModuleNames[0] === 'Twitter'"
     >Add the data source 'Twitter'.
   </li>
   <li
     data-highlight='[{"type":"WfModule","name":"Twitter"}]'
-    data-test="const json = workflow.wfModules[0].parameters.get('twitter_credentials'); return json && json.name && json.name.indexOf('@') !== -1;"
+    data-test="const json = workflow.tabs[0].wfModules[0].parameters.get('twitter_credentials'); return json && json.name && json.name.indexOf('@') !== -1;"
     >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app</kbd>.
   </li>
 
@@ -34,13 +34,13 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="const param = workflow.wfModules[0].parameters.get('querytype'); return param === 0"
+    data-test="const param = workflow.tabs[0].wfModules[0].parameters.get('querytype'); return param === 0"
     >Select 'User tweets' in the first drop down, and paste in the following user name.
     <div class="copy-txt">neiltyson</div>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="const param = workflow.wfModules[0].parameters.get('username'); return (param || '').toLowerCase() === 'neiltyson'"
+    data-test="const param = workflow.tabs[0].wfModules[0].parameters.get('username'); return (param || '').toLowerCase() === 'neiltyson'"
     >Click 'Update' to load tweets from that account.
   <p class="instruction-detail">Because of the limits of the <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, the number of past Tweets you can collect from a specific user is capped. You should be able to load about 3,000 of them, which is a good way to start.</p>
   </li>
@@ -56,12 +56,12 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
-    data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
+    data-test="return workflow.tabs[0].wfModuleNames[1] === 'Filter'"
     >Add the step 'Filter'.
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Filter"}]',
-    data-test="const params = workflow.wfModules[1].parameters; return params.get('column') === 'text' && params.get('condition') === 2 && (params.get('value') || '').toLowerCase() === 'science'"
+    data-test="const params = workflow.tabs[0].wfModules[1].parameters; return params.get('column') === 'text' && params.get('condition') === 2 && (params.get('value') || '').toLowerCase() === 'science'"
     >Select the column <kbd>text</kbd> to filter by. Choose <kbd>Text contains</kbd> as a condition, and search for 'science'.
     <p class="instruction-detail">
       Now let's group the resulting tweets by date.
@@ -69,12 +69,12 @@
   </li>
   <li
     data-highlight='[{"type":"Module","index":2,"name":"Group by date"}]',
-    data-test="return workflow.wfModules[2] && workflow.wfModules[2].moduleName === 'Group by date'"
+    data-test="return workflow.tabs[0].wfModuleNames[2] === 'Group by date'"
     >Add the step 'Group by date'.
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Group by date"}]',
-    data-test="const params = workflow.wfModules[2].parameters; return params.get('column') === 'created_at' && params.get('groupby') === 5"
+    data-test="const params = workflow.tabs[0].wfModules[2].parameters; return params.get('column') === 'created_at' && params.get('groupby') === 5"
     >Choose <kbd>created_at</kbd> as the date column, and group rows by <kbd>Quarter</kbd>.
   </li>
 </ol>
@@ -86,17 +86,17 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":3,"name":"Column Chart"}]',
-    data-test="return workflow.wfModules[3] && workflow.wfModules[3].moduleName === 'Column Chart'"
+    data-test="return workflow.tabs[0].wfModuleNames[3] === 'Column Chart'"
     >Add the step 'Column Chart'.
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
-    data-test="const p = workflow.wfModules[3].parameters; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return p.get('x_column') === 'created_at' && yColumns[0].column === 'count'"
+    data-test="const p = workflow.tabs[0].wfModules[3].parameters; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return p.get('x_column') === 'created_at' && yColumns[0].column === 'count'"
     >Select <kbd>created_at</kbd> for the X axis and <kbd>count</kbd> for the Y axis.
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
-    data-test="const p = workflow.wfModules[3].parameters; return !!p.get('title')"
+    data-test="const p = workflow.tabs[0].wfModules[3].parameters; return !!p.get('title')"
     >Add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail">
       Next, let's make this chart update every time our user tweets contain the word we chose.
@@ -112,12 +112,12 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.updateInterval === '5h'"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
       >Back in the 'Twitter' module, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to<kbd>Auto</kbd>, set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-      data-test="return workflow.wfModules[0].parameters.get('accumulate') === true"
+      data-test="return workflow.tabs[0].wfModules[0].parameters.get('accumulate') === true"
       >Make sure the option <kbd>Accumulate tweets</kbd> is checked so that new data gets added to the existing table.
     </li>
   </ol>

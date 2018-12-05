@@ -1,6 +1,6 @@
 import os
 import shutil
-from typing import List, Optional
+from typing import List, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from server import websockets
@@ -11,9 +11,9 @@ from .ModuleVersion import ModuleVersion
 from .ParameterSpec import ParameterSpec
 from .ParameterVal import ParameterVal
 from .StoredObject import StoredObject
+from .Tab import Tab
+from .Workflow import Workflow
 
-
-# ---- Parameter Dictionary Sanitization ----
 
 class WfModule(models.Model):
     """An instance of a Module in a Workflow."""
@@ -21,18 +21,48 @@ class WfModule(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        if self.workflow is not None:
-            wfstr = ' - workflow: ' + self.workflow.__str__()
-        else:
-            wfstr = ' - deleted from workflow'
-        return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
+        return 'workflow[%d].wf_module[%d] at position (%d,%d): %s' % (
+            self.tab.workflow_id,
+            self.id,
+            self.tab.position,
+            self.order,
+            self.get_module_name()
+        )
 
-    # --- Fields ----
-    workflow = models.ForeignKey(
-        'Workflow',
+    @property
+    def workflow(self):
+        return self.tab.workflow
+
+    @property
+    def workflow_id(self):
+        return self.tab.workflow_id
+
+    @classmethod
+    def live_in_workflow(cls,
+                         workflow: Union[int, Workflow]) -> models.QuerySet:
+        """
+        QuerySet of not-deleted WfModules in `workflow`.
+
+        You may specify `workflow` by its `pk` or as an object.
+
+        Deleted WfModules and WfModules in deleted Tabs will omitted.
+        """
+        if isinstance(workflow, int):
+            workflow_id = workflow
+        else:
+            workflow_id = workflow.pk
+
+        return cls.objects.filter(
+            tab__workflow_id=workflow_id,
+            tab__is_deleted=False,
+            is_deleted=False
+        )
+
+    tab = models.ForeignKey(
+        Tab,
         related_name='wf_modules',
         on_delete=models.CASCADE
-    )  # delete WfModule if Workflow deleted
+    )
 
     module_version = models.ForeignKey(
         ModuleVersion,
@@ -100,12 +130,6 @@ class WfModule(models.Model):
     # This isn't a ForeignKey because many deltas have a foreign key pointing
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
-
-    def dependent_wf_modules(self) -> List['WfModule']:
-        """QuerySet of all WfModules that come after this one, in order."""
-        return WfModule.objects.filter(workflow_id=self.workflow_id,
-                                       order__gt=self.order,
-                                       is_deleted=False)
 
     def get_module_name(self):
         if self.module_version is not None:
@@ -229,10 +253,12 @@ class WfModule(models.Model):
 
     # --- Duplicate ---
     # used when duplicating a whole workflow
-    def duplicate(self, to_workflow):
+    def duplicate(self, to_tab):
+        to_workflow = to_tab.workflow
+
         # Initialize but don't save
         new_wfm = WfModule(
-            workflow=to_workflow,
+            tab=to_tab,
             module_version=self.module_version,
             fetch_error=self.fetch_error,
             stored_data_version=self.stored_data_version,

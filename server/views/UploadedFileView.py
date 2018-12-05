@@ -6,7 +6,7 @@ from server.models import WfModule, StoredObject, UploadedFile
 
 @api_view(['GET'])
 def get_uploadedfile(request, wf_module_id):
-    wf_module = WfModule.objects.get(pk=wf_module_id)
+    wf_module = WfModule.objects.get(pk=wf_module_id, is_deleted=False)
 
     # the UploadedFile is converted to a StoredObject when the UploadFile
     # module first renders

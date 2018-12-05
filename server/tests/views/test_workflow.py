@@ -30,13 +30,15 @@ future_none.set_result(None)
 @patch('server.models.Delta.ws_notify', async_noop)
 class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
-        super(WorkflowViewTests, self).setUp()  # log in
+        super().setUp()  # log in
 
         self.log_patcher = patch('server.utils.log_user_event')
         self.log_patch = self.log_patcher.start()
 
         self.factory = APIRequestFactory()
         self.workflow1 = Workflow.objects.create(name='Workflow 1', owner=self.user)
+        self.delta = InitWorkflowCommand.create(self.workflow1)
+        self.tab1 = self.workflow1.tabs.create(position=0)
         self.module_version1 = add_new_module_version('Module 1')
 
         # Add another user, with one public and one private workflow
@@ -181,32 +183,26 @@ class WorkflowViewTests(LoggedInTestCase):
     @patch('server.rabbitmq.queue_render')
     def test_workflow_view_triggers_render(self, queue_render):
         queue_render.return_value = future_none
-        delta = InitWorkflowCommand.create(self.workflow1)
-        self.workflow1.last_delta_id = delta.id
-        self.workflow1.save(update_fields=['last_delta_id'])
-        wf_module = self.workflow1.wf_modules.create(
+        wf_module = self.tab1.wf_modules.create(
             order=0,
-            last_relevant_delta_id=delta.id,
+            last_relevant_delta_id=self.delta.id,
             cached_render_result_delta_id=-1
         )
         self.client.force_login(self.user)
         self.client.get('/workflows/%d/' % self.workflow1.id)
-        queue_render.assert_called_with(self.workflow1.id, delta.id)
+        queue_render.assert_called_with(self.workflow1.id, self.delta.id)
 
     @patch('server.rabbitmq.queue_render')
     def test_workflow_view_triggers_render_if_no_cache(self, queue_render):
         queue_render.return_value = future_none
-        delta = InitWorkflowCommand.create(self.workflow1)
-        self.workflow1.last_delta_id = delta.id
-        self.workflow1.save(update_fields=['last_delta_id'])
-        wf_module = self.workflow1.wf_modules.create(
+        wf_module = self.tab1.wf_modules.create(
             order=0,
-            last_relevant_delta_id=delta.id,
+            last_relevant_delta_id=self.delta.id,
             cached_render_result_delta_id=None
         )
         self.client.force_login(self.user)
         self.client.get('/workflows/%d/' % self.workflow1.id)
-        queue_render.assert_called_with(self.workflow1.id, delta.id)
+        queue_render.assert_called_with(self.workflow1.id, self.delta.id)
 
     def test_workflow_view_missing_404(self):
         # 404 with bad id
@@ -251,7 +247,6 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, user_display(self.user))
             self.assertContains(response, self.user.email)
 
-            self.assertContains(response, '"editcells": ' + str(edit_cells_module_id))
             self.assertContains(response, '"workflow"')
             self.assertContains(response, '"modules"')
             self.assertNotContains(response, '"reorder-column"')
@@ -337,10 +332,9 @@ class WorkflowViewTests(LoggedInTestCase):
 
     def test_workflow_detail_get(self):
         # Should be able to get your own workflow
-        pk_workflow = self.workflow1.id
-        request = self._build_get('/api/workflows/%d/' % pk_workflow,
+        request = self._build_get('/api/workflows/%d/' % self.workflow1.id,
                                   user=self.user)
-        response = workflow_detail(request, workflow_id=pk_workflow)
+        response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['workflow']['name'], 'Workflow 1')
         self.assertEqual(response.data['workflow']['public'], False)
@@ -361,9 +355,9 @@ class WorkflowViewTests(LoggedInTestCase):
         # not authenticated should give 403 (not 404, because users try to
         # share their URLs without setting them public first and we need to
         # help them debug that case)
-        request = self._build_get('/api/workflows/%d/' % pk_workflow,
+        request = self._build_get('/api/workflows/%d/' % self.workflow1.id,
                                   user=AnonymousUser())
-        response = workflow_detail(request, workflow_id=pk_workflow)
+        response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertEqual(response.status_code, 403)
 
         # similarly, someone else's private workflow should 403
@@ -374,19 +368,18 @@ class WorkflowViewTests(LoggedInTestCase):
 
     # --- Writing to workflows ---
     def test_workflow_addmodule_post(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
-        self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 0)
-
         module1 = Module.objects.get(name='Module 1')
 
         # add to empty stack
-        request = self._build_post('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleId': module1.id, 'index': 0},
-                                   format='json', user=self.user)
-        response = AddModule().post(request, workflow_id=pk_workflow)
+        request = self._build_post(
+            '/api/workflows/%d/addmodule/' % self.workflow1.id,
+            {'moduleId': module1.id, 'index': 0},
+            format='json',
+            user=self.user
+        )
+        response = AddModule().post(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 1)
-        wfm1 = WfModule.objects.filter(module_version__module=module1.id).first()
+        wfm1 = self.tab1.live_wf_modules.first()
         response_data = json.loads(response.content)
         self.assertEqual(response_data['wfModule']['id'], wfm1.id)
         self.assertEqual(response_data['wfModule']['module_version']['module'],
@@ -403,11 +396,12 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(WfModule.objects.count(), 0)
 
     def test_workflow_addmodule_post_bad_module_id(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
-        request = self._build_post('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleId': 10000, 'index': 0},
-                                   user=self.user)
-        response = AddModule().post(request, workflow_id=pk_workflow)
+        request = self._build_post(
+            '/api/workflows/%d/addmodule/' % self.workflow1.id,
+            {'moduleId': 10000, 'index': 0},
+            user=self.user
+        )
+        response = AddModule().post(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(WfModule.objects.count(), 0)
 
@@ -417,12 +411,12 @@ class WorkflowViewTests(LoggedInTestCase):
         wfm3 = add_new_wf_module(self.workflow1, self.module_version1, 2)
 
         # your basic reordering
-        request = self._build_patch('/api/workflows/%d/' % self.workflow1.id,
-                                    data=[{'id': wfm1.id, 'order': 2},
-                                          {'id': wfm2.id, 'order': 0},
-                                          {'id': wfm3.id, 'order': 1}],
-                                    format='json',
-                                    user=self.user)
+        request = self._build_patch(
+            '/api/workflows/%d/' % self.workflow1.id,
+            data={'newOrder': [wfm2.id, wfm3.id, wfm1.id]},
+            format='json',
+            user=self.user
+        )
         response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(list(WfModule.objects.order_by('order').values_list('id', flat=True)),
@@ -431,14 +425,14 @@ class WorkflowViewTests(LoggedInTestCase):
         # bad data should generate a 400 error
         # (we don't test every possible failure case, ReorderModulesCommand tests does that)
         request = self._build_patch('/api/workflows/%d/' % self.workflow1.id,
-                                    data=[{'problem':'bad data'}],
+                                    data={'newOrder':'bad data'},
                                     format='json',
                                     user=self.user)
         response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_workflow_detail_delete(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+        pk_workflow = self.workflow1.id
         request = self._build_delete('/api/workflows/%d/' % pk_workflow,
                                      user=self.user)
         response = workflow_detail(request, workflow_id=pk_workflow)
@@ -446,36 +440,30 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(Workflow.objects.filter(name='Workflow 1').count(), 0)
 
     def test_workflow_title_post(self):
-        workflow = Workflow.objects.get(name='Workflow 1')
-        self.assertEqual(workflow.name, 'Workflow 1')
-        pk_workflow = workflow.id
+        pk_workflow = self.workflow1.id
         request = self._build_post('/api/workflows/%d' % pk_workflow,
                                    {'newName': 'Billy Bob Thornton'},
                                    user=self.user)
         response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.name, 'Billy Bob Thornton')
+        self.workflow1.refresh_from_db()
+        self.assertEqual(self.workflow1.name, 'Billy Bob Thornton')
 
     def test_workflow_public_post(self):
-        workflow = Workflow.objects.get(name='Workflow 1')
-        self.assertEqual(workflow.public, False)
-        pk_workflow = workflow.id
+        pk_workflow = self.workflow1.id
         request = self._build_post('/api/workflows/%d' % pk_workflow,
                                    {'public': True}, user=self.user)
         response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.public, True)
+        self.workflow1.refresh_from_db()
+        self.assertEqual(self.workflow1.public, True)
 
     def test_workflow_selected_wf_module_post(self):
-        workflow = Workflow.objects.get(name='Workflow 1')
-        self.assertEqual(workflow.selected_wf_module, None)
-        pk_workflow = workflow.id
-        request = self._build_post('/api/workflows/%d' % pk_workflow,
+        self.assertEqual(self.tab1.selected_wf_module_position, None)
+        request = self._build_post('/api/workflows/%d' % self.workflow1.id,
                                    {'selected_wf_module': 808},
                                    user=self.user)
-        response = workflow_detail(request, workflow_id=pk_workflow)
+        response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.selected_wf_module, 808)
+        self.tab1.refresh_from_db()
+        self.assertEqual(self.tab1.selected_wf_module_position, 808)

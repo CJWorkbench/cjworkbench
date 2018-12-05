@@ -196,7 +196,7 @@ function maybeAddSelectedRowsToParams (module, wfModule, rowsString, fromInput) 
 
 function ensureWfModuleForRowsAction(currentWfModuleId, moduleId, rowsString) {
   return (dispatch, getState) => {
-    const { workflow, wfModules, modules } = getState()
+    const { workflow, wfModules, tabs, modules } = getState()
 
     // Fallback behavior: add new module with the given rows.
     function simplyAdd () {
@@ -221,14 +221,16 @@ function ensureWfModuleForRowsAction(currentWfModuleId, moduleId, rowsString) {
       }
     }
 
+    const tab = tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+
     // Does nextWfModuleId point to the very module we're asking to add?
     // e.g., did we delete rows, select the input, and delete more rows?
     //
     // If so -- and if the module has support.js defining addSelectedRows() --
     // modify the current module.
-    const index = workflow.wf_modules.indexOf(currentWfModuleId)
+    const index = tab.wf_module_ids.indexOf(currentWfModuleId)
     if (index === -1) return simplyAdd()
-    const nextWfModuleId = workflow.wf_modules[index + 1]
+    const nextWfModuleId = tab.wf_module_ids[index + 1]
     if (!nextWfModuleId) return simplyAdd()
     const nextWfModule = wfModules[String(nextWfModuleId)]
     if (!nextWfModule) return simplyAdd()

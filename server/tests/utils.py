@@ -1,11 +1,12 @@
-# Utilities for testing, mostly around constructing test Workflows
-
-from django.db import connection
+import asyncio
+from concurrent.futures import ThreadPoolExecutor, wait
+from django.db import connection, connections
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
 from server.models import Module, ModuleVersion, Workflow, WfModule, \
         ParameterSpec, ParameterVal
+from server.models.commands import InitWorkflowCommand
 from server.initmodules import load_module_from_dict
 import os
 import io
@@ -25,10 +26,53 @@ mock_xlsx_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/test.xl
 
 class DbTestCase(SimpleTestCase):
     allow_database_queries = True
+    def setUp(self):
+        clear_db()
 
     def tearDown(self):
         clear_db()
         super().tearDown()
+
+    def run_with_async_db(self, task):
+        """
+        Like async_to_sync() but it closes the database connection.
+
+        This is a rather expensive call: it connects and disconnects from the
+        database.
+
+        See
+        https://github.com/django/channels/issues/1091#issuecomment-436067763.
+        """
+		# We'll execute with a 1-worker thread pool. That's because Django
+        # database methods will spin up new connections and never close them.
+        # (@database_sync_to_async -- which execute uses --only closes _old_
+        # connections, not valid ones.)
+        #
+        # This hack is just for unit tests: we need to close all connections
+        # before the test ends, so we can delete the entire database when tests
+        # finish. We'll schedule the "close-connection" operation on the same
+        # thread as @database_sync_to_async's blocking code ran on. That way,
+        # it'll close the connection @database_sync_to_async was using.
+        old_loop = asyncio.get_event_loop()
+
+        loop = asyncio.new_event_loop()
+        loop.set_default_executor(ThreadPoolExecutor(1))
+        asyncio.set_event_loop(loop)
+
+        try:
+            return loop.run_until_complete(task)
+        finally:
+            def close_thread_connection():
+                # Close the connection that was created by @database_sync_to_async.
+                # Assumes we're running in the same thread that ran the database
+                # stuff.
+                connections.close_all()
+
+            loop.run_until_complete(
+                loop.run_in_executor(None, close_thread_connection)
+            )
+
+            asyncio.set_event_loop(old_loop)
 
 
 # Derive from this to perform all tests logged in
@@ -65,6 +109,7 @@ _Tables = [
     'server_storedobject',
     'server_uploadedfile',
     'server_wfmodule',
+    'server_tab',
     'server_workflow',
     'django_session',
     'auth_group',
@@ -108,12 +153,15 @@ def add_new_workflow(name, *, owner=None, **kwargs):
             kwargs['owner'] = User.objects.create_user(username='username', password='password')
         else:
             kwargs['owner'] = User.objects.first()
-    return Workflow.objects.create(name=name, **kwargs)
+    workflow = Workflow.objects.create(name=name, **kwargs)
+    workflow.tabs.create(position=0)
+    InitWorkflowCommand.create(workflow)
+    return workflow
 
 
 def add_new_wf_module(workflow, module_version, order=0,
                       param_values={}, last_relevant_delta_id=0):
-    wfm = workflow.wf_modules.create(
+    wfm = workflow.tabs.first().wf_modules.create(
         module_version=module_version,
         order=order,
         last_relevant_delta_id=last_relevant_delta_id
@@ -185,7 +233,7 @@ def load_and_add_module_from_dict(module_dict, workflow=None, param_values={},
         workflow = add_new_workflow('Workflow 1')
 
     module_version = load_module_from_dict(module_dict)
-    num_modules = workflow.live_wf_modules.count()
+    num_modules = workflow.tabs.first().live_wf_modules.count()
     wf_module = add_new_wf_module(workflow, module_version,
                                   param_values=param_values,
                                   last_relevant_delta_id=last_relevant_delta_id,

@@ -102,7 +102,7 @@ class WorkbenchAPI {
   }
 
   reorderWfModules(workflowId, newOrder) {
-    return this._patch(`/api/workflows/${workflowId}`, newOrder)
+    return this._patch(`/api/workflows/${workflowId}`, { newOrder })
   }
 
   addModule(workflowId, moduleId, index, values={}) {

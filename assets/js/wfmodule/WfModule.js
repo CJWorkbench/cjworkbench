@@ -32,6 +32,7 @@ export class WfModule extends React.PureComponent {
     moduleHelpUrl: PropTypes.string, // or null
     moduleName: PropTypes.string, // or null
     moduleIcon: PropTypes.string, // or null
+    tabId: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.object,
     inputWfModule: PropTypes.shape({
@@ -57,7 +58,7 @@ export class WfModule extends React.PureComponent {
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
     maybeRequestFetch: PropTypes.func.isRequired, // func(wfModuleId) => undefined
-    setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
+    setSelectedWfModule: PropTypes.func.isRequired, // func(tabId, index) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
     applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
@@ -565,27 +566,25 @@ class WfModuleCollapseButton extends React.PureComponent {
 }
 
 const getWorkflow = ({ workflow }) => workflow
+const getTabs = ({ tabs }) => tabs
 const getWfModules = ({ wfModules }) => wfModules
+const getSelectedTab = createSelector([ getWorkflow, getTabs ], (workflow, tabs) => {
+  return tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+})
 const getModules = ({ modules }) => modules
+
 /**
- * Find first WfModule that has a `.loads_data` ModuleVersion.
+ * Find first WfModule index that has a `.loads_data` ModuleVersion, or `null`
  */
-const hasFetchWfModule = createSelector([ getWorkflow, getWfModules, getModules ], (workflow, wfModules, modules) => {
-  const wfModuleIds = workflow.wf_modules
-  if (!wfModuleIds) return false
-  for (let wfModuleId of wfModuleIds) {
-    const wfModule = wfModules[String(wfModuleId)]
-    if (wfModule) {
-      const moduleId = wfModule.module_version ? wfModule.module_version.module : null
-      if (moduleId) {
-        const module = modules[String(moduleId)]
-        if (module) {
-          if (module.loads_data) return true
-        }
-      }
-    }
-  }
-  return false
+const firstFetchIndex = createSelector([ getSelectedTab, getWfModules, getModules ], (tab, wfModules, modules) => {
+  const index = tab.wf_module_ids.findIndex(id => {
+    const wfModule = wfModules[String(id)]
+    if (!wfModule) return false // add-module not yet loaded
+    const moduleId = wfModule.module_version ? wfModule.module_version.module : null
+    const module = modules[String(moduleId)]
+    return module ? module.loads_data : false
+  })
+  return index === -1 ? null : index
 })
 
 function mapStateToProps (state, ownProps) {
@@ -593,6 +592,7 @@ function mapStateToProps (state, ownProps) {
   const { index } = ownProps
   const module = ownProps.wfModule.module_version ? state.modules[String(ownProps.wfModule.module_version.module)] : null
   const moduleName = module ? module.name : null
+  const fetchIndex = firstFetchIndex(state)
 
   return {
     module,
@@ -605,7 +605,7 @@ function mapStateToProps (state, ownProps) {
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
-    fetchModuleExists: hasFetchWfModule(state)
+    fetchModuleExists: fetchIndex !== null && fetchIndex <= index
   }
 }
 
@@ -615,8 +615,8 @@ function mapDispatchToProps (dispatch) {
       dispatch(clearNotificationsAction(wfModuleId))
     },
 
-    setSelectedWfModule (index) {
-      dispatch(setSelectedWfModuleAction(index))
+    setSelectedWfModule (tabId, index) {
+      dispatch(setSelectedWfModuleAction(tabId, index))
     },
 
     setWfModuleCollapsed (wfModuleId, isCollapsed, isReadOnly) {

@@ -24,7 +24,8 @@ class ParameterValTest(DbTestCase):
                                    email='a@example.org')
         self.client.force_login(user)
         workflow = Workflow.objects.create(owner=user)
-        wf_module = workflow.wf_modules.create(
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(
             module_version=module_version,
             order=0
         )

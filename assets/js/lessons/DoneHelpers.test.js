@@ -5,8 +5,13 @@ describe('DoneHelpers', () => {
   describe('WorkflowWithHelpers', () => {
     it('should give wfModules', () => {
       const workflow = new WorkflowWithHelpers({
-        wf_modules: [ 1, 2 ]
+        tab_ids: [ 21, 22 ],
+        selected_tab_position: 0
       }, {
+        tabs: {
+          21: { wf_module_ids: [ 1, 2 ] },
+          22: { wf_module_ids: [] }
+        },
         wfModules: {
           1: { module_version: { module: 12 } },
           2: { module_version: { module: 22 } }
@@ -17,13 +22,18 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.wfModules.map(wfm => wfm.moduleName)).toEqual([ 'Foo', 'Bar' ])
+      expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleName)).toEqual([ 'Foo', 'Bar' ])
     })
 
     it('should give wfModuleNames', () => {
       const workflow = new WorkflowWithHelpers({
-        wf_modules: [ 1, 2 ]
+        tab_ids: [ 21, 22 ],
+        selected_tab_position: 0
       }, {
+        tabs: {
+          21: { wf_module_ids: [ 1, 2 ] },
+          22: { wf_module_ids: [] }
+        },
         wfModules: {
           1: { module_version: { module: 12 } },
           2: { module_version: { module: 22 } }
@@ -34,7 +44,25 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
+      expect(workflow.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
+    })
+
+    it('should give wfModuleName=null when there is no module_version', () => {
+      const workflow = new WorkflowWithHelpers({
+        tab_ids: [ 21, 22 ],
+        selected_tab_position: 0
+      }, {
+        tabs: {
+          21: { wf_module_ids: [ 1, "3_nonce" ] },
+          22: { wf_module_ids: [] }
+        },
+        wfModules: {
+          1: { module_version: null },
+        },
+        modules: {}
+      })
+
+      expect(workflow.selectedTab.wfModuleNames).toEqual([ null, null ])
     })
   })
 
@@ -72,21 +100,16 @@ describe('DoneHelpers', () => {
     })
 
     it('should have null parameters.get() on placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
-        placeholder: true
-      })
+      const wfModule = new WorkflowModuleWithHelpers(null, {})
       const parameters = wfModule.parameters
       expect(parameters.get('url')).toBe(null)
       expect(parameters.get('bar')).toBe(null)
       expect(parameters.get('moo')).toBe(null)
     })
 
-    it('should have moduleName even when placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
-        placeholder: true,
-        name: 'Add from URL'
-      })
-      expect(wfModule.moduleName).toEqual('Add from URL')
+    it('should have moduleName=null when placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers(null, { modules: {} })
+      expect(wfModule.moduleName).toBe(null)
     })
 
     it('should have selectedVersion', () => {
@@ -159,7 +182,12 @@ describe('DoneHelpers', () => {
       // when we test the same thing in a StateWithHelpers({ workflow: ... }).
       const state = new StateWithHelpers({
         workflow: {
-          wf_modules: [ 1, 2 ],
+          tab_ids: [ 21, 22 ],
+          selected_tab_position: 1
+        },
+        tabs: {
+          21: { wf_module_ids: [] },
+          22: { wf_module_ids: [ 1, 2 ] },
         },
         wfModules: {
           1: { module_version: { module: 3 } },
@@ -171,13 +199,18 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(state.workflow.wfModules.map(wfm => wfm.moduleName)).toEqual([ 'Foo', 'Bar' ])
+      expect(state.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
     })
 
     it('should have a .selectedWfModule', () => {
       const state = new StateWithHelpers({
         workflow: {
-          wf_modules: [ 2, 3 ]
+          tab_ids: [ 11, 12 ],
+          selected_tab_position: 1,
+        },
+        tabs: {
+          11: { wf_module_ids: [] },
+          12: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 1 }
         },
         wfModules: {
           2: { module_version: { module: 4 } },
@@ -187,7 +220,6 @@ describe('DoneHelpers', () => {
           4: { name: 'Foo' },
           5: { name: 'Bar' }
         },
-        selected_wf_module: 1
       })
 
       expect(state.selectedWfModule.moduleName).toEqual('Bar')

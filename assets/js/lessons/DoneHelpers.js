@@ -17,9 +17,12 @@ export class StateWithHelpers {
     return new WorkflowWithHelpers(this.state.workflow, this.state)
   }
 
+  get selectedTab () {
+    return this.workflow.selectedTab
+  }
+
   get selectedWfModule () {
-    const index = this.state.selected_wf_module // may be null
-    return this.workflow.wfModules[index] || null
+    return this.selectedTab.selectedWfModule
   }
 }
 
@@ -29,58 +32,105 @@ export class WorkflowWithHelpers {
     this.state = state
   }
 
+  get tabs () {
+    const { workflow } = this
+    const { tabs } = this.state
+
+    return workflow.tab_ids.map(tabId => {
+      return new TabWithHelpers(tabs[String(tabId)], this.state)
+    })
+  }
+
+  get selectedTab () {
+    const { workflow } = this
+    const { tabs } = this.state
+    const tab = tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+    if (!tab) throw new Error('No selected tab -- this is always an error')
+    return new TabWithHelpers(tab, this.state)
+  }
+
+  get selectedWfModule () {
+    return this.selectedTab.selectedWfModule
+  }
+}
+
+export class TabWithHelpers {
+  constructor (tab, state) {
+    this.tab = tab
+    this.state = state
+  }
+
   get wfModules () {
-    return this.workflow.wf_modules.map(wfmId => {
-      return new WorkflowModuleWithHelpers(this.state.wfModules[String(wfmId)], this.state)
+    return this.tab.wf_module_ids.map(wfmId => {
+      const wfModule = this.state.wfModules[String(wfmId)] || null
+      return new WorkflowModuleWithHelpers(wfModule, this.state)
     })
   }
 
   get wfModuleNames () {
     return this.wfModules.map(wfm => wfm.moduleName)
   }
+
+  get selectedWfModule () {
+    const { wfModules } = this.state
+    const position = this.tab.selected_wf_module_position
+    if (position === null || position === undefined) return null
+
+    const wfModule = wfModules[String(this.tab.wf_module_ids[position])] || null
+    return new WorkflowModuleWithHelpers(wfModule, this.state)
+  }
 }
 
 export class WorkflowModuleWithHelpers {
   constructor (wfModule, state) {
-    this.wfModule = wfModule
+    this.wfModule = wfModule // may be null, if WfModule is being created
     this.state = state
   }
 
   get id () {
+    if (!this.wfModule) return null
     return this.wfModule.id
   }
 
   get isCollapsed () {
+    if (!this.wfModule) return false
     return this.wfModule.is_collapsed
   }
 
   get module () {
-    const moduleId = this.moduleVersion ? this.moduleVersion.module : null
-    return moduleId ? this.state.modules[String(moduleId)] : null
+    if (!this.moduleVersion) return null
+    const moduleId = this.moduleVersion.module
+    return this.state.modules[String(moduleId)] || null
   }
 
   get moduleName () {
-    return this.module ? this.module.name : this.wfModule.name
+    if (!this.module) return null
+    return this.module.name
   }
 
   get moduleVersion () {
-    return this.wfModule.module_version
+    if (!this.wfModule) return null
+    return this.wfModule.module_version || null
   }
 
   get note () {
+    if (!this.wfModule) return null
     return this.wfModule.notes
   }
 
   get parameters () {
+    if (!this.wfModule) return new ParametersWithHelpers([])
     return new ParametersWithHelpers(this.wfModule.parameter_vals || [])
   }
 
   get selectedVersion () {
+    if (!this.wfModule) return null
     const versions = this.wfModule.versions
     return (versions && versions.selected) || null
   }
 
   get isEmailUpdates () {
+    if (!this.wfModule) return false
     return !!this.wfModule.notifications
   }
 
@@ -89,6 +139,7 @@ export class WorkflowModuleWithHelpers {
    */
   get updateInterval () {
     const wfModule = this.wfModule
+    if (!wfModule) return null
     if (!wfModule.auto_update_data) return null
 
     const n = String(wfModule.update_interval)
@@ -106,6 +157,7 @@ export class WorkflowModuleWithHelpers {
    * Date the server says is the last time it checked an upstream website.
    */
   get lastFetchCheckAt () {
+    if (!this.wfModule) return null
     const s = this.wfModule.last_update_check
     return s ? new Date(s) : null
   }

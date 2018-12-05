@@ -9,7 +9,11 @@ describe("FilterFromTable actions", () => {
   const initialState = {
     workflow: {
       id: 127,
-      wf_modules: [ 17, 19, 7, 19, 31 ]
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 17, 19, 7, 19, 31 ] }
     },
     modules: {
       77: { id_name: 'filter' },
@@ -80,7 +84,7 @@ describe("FilterFromTable actions", () => {
     updateTableActionModule(17, 'filter', true, { columnKey: 'col_1' })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('filter', 1)
+    expect(addModuleAction).toHaveBeenCalledWith('filter', { tabId: 11, index: 1 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { column: 'col_1'} ])
   })
 
@@ -89,7 +93,7 @@ describe("FilterFromTable actions", () => {
     updateTableActionModule(7, 'filter', true, { columnKey: 'col_2' })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('filter', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('filter', { tabId: 11, index: 3 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { column: 'col_2' }])
   })
 })

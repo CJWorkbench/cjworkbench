@@ -15,6 +15,10 @@ spec:
           env:
             - name: CJW_PRODUCTION
               value: 'True'
+            - name: PYTHONUNBUFFERED
+              value: '1'
+            - name: ASGI_THREADS
+              value: '5'
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_RABBITMQ_HOST

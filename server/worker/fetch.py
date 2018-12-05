@@ -30,7 +30,8 @@ def _get_input_dataframe(workflow_id: int, wf_module_position: int):
     try:
         # Let's not worry about locks and races too much. All failures should
         # throw DoesNotExist, which is fine.
-        wf_module = WfModule.objects.get(workflow_id=workflow_id,
+        wf_module = WfModule.objects.get(tab__workflow_id=workflow_id,
+                                         tab__is_deleted=False,
                                          order=wf_module_position - 1,
                                          is_deleted=False)
     except WfModule.DoesNotExist:

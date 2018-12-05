@@ -9,7 +9,11 @@ describe('RenameColumns actions', () => {
   // A few parameter id constants for readability
   const initialState = {
     workflow: {
-      wf_modules: [ 35, 50, 85 ],
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 35, 50, 85 ] }
     },
     modules: {
       24: { id_name: 'rename-columns' },
@@ -80,7 +84,7 @@ describe('RenameColumns actions', () => {
     updateTableActionModule(35, 'rename-columns', false, { prevName: 'cornerstone', newName: 'cs' })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('rename-columns', 1)
+    expect(addModuleAction).toHaveBeenCalledWith('rename-columns', { tabId: 11, index: 1 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 99, { 'rename-entries': JSON.stringify({ cornerstone: 'cs' }) }])
   })
 

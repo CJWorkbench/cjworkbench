@@ -1,12 +1,19 @@
+import logging
 from django.db import models
 from django.db.models import F
 from server.models import Delta, WfModule
 from .util import ChangesWfModuleOutputs
 
 
-# The only tricky part AddModule is what we do with the module in backward()
-# We detach the WfModule from the workflow, but keep it around for possible later forward()
 class AddModuleCommand(Delta, ChangesWfModuleOutputs):
+    """
+    Create a `WfModule` and insert it into the Workflow.
+
+    Our "backwards()" logic is to "soft-delete": set
+    `wfmodule.is_deleted=True`. Most facets of Workbench's API should pretend a
+    soft-deleted WfModules does not exist.
+    """
+
     # Foreign keys can get a bit confusing. Here we go:
     #
     # * AddModuleCommand can only exist if its WfModule exists.
@@ -25,8 +32,18 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
 
     order = models.IntegerField()
     # what was selected before we were added?
-    selected_wf_module = models.IntegerField(null=True, blank=True)
+    selected_wf_module_position = models.IntegerField(null=True, blank=True)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+
+    def load_ws_data(self):
+        data = super().load_ws_data()
+        data['updateTabs'] = {
+            str(self.wf_module.tab_id): {
+                'wf_module_ids': list(self.wf_module.tab.live_wf_modules
+                                      .values_list('id', flat=True)),
+            },
+        }
+        return data
 
     @classmethod
     def affected_wf_modules(cls, wf_module) -> models.QuerySet:
@@ -34,7 +51,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         #
         # At the time this method is called, `wf_module` is "deleted" (well,
         # not yet created).
-        return WfModule.objects.filter(workflow_id=wf_module.workflow_id,
+        return WfModule.objects.filter(tab_id=wf_module.tab_id,
                                        order__gte=wf_module.order,
                                        is_deleted=False)
 
@@ -47,14 +64,16 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             self.wf_module.last_relevant_delta_id = self.id
             self.wf_module.save(update_fields=['last_relevant_delta_id'])
 
-        self.workflow.live_wf_modules.filter(order__gte=self.wf_module.order) \
+        # Move subsequent modules over to make way for this one.
+        tab = self.wf_module.tab
+        tab.live_wf_modules.filter(order__gte=self.wf_module.order) \
             .update(order=F('order') + 1)
 
         self.wf_module.is_deleted = False
         self.wf_module.save(update_fields=['is_deleted'])
 
-        self.workflow.selected_wf_module = self.wf_module.order
-        self.workflow.save(update_fields=['selected_wf_module'])
+        tab.selected_wf_module_position = self.wf_module.order
+        tab.save(update_fields=['selected_wf_module_position'])
 
         self.forward_affected_delta_ids()
 
@@ -62,17 +81,25 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         self.wf_module.is_deleted = True
         self.wf_module.save(update_fields=['is_deleted'])
 
-        self.workflow.live_wf_modules.filter(order__gt=self.wf_module.order) \
+        # Move subsequent modules back to fill the gap created by deleting
+        tab = self.wf_module.tab
+        tab.live_wf_modules.filter(order__gt=self.wf_module.order) \
             .update(order=F('order') - 1)
 
-        # [adamhooper, 2018-06-19] I don't think there's any hope we can
-        # actually restore selected_wf_module correctly, because sometimes we
-        # update it without a command. But we still need to set
-        # workflow.selected_wf_module to a _valid_ integer if the
-        # currently-selected module is the one we're deleting now and is also
-        # the final wf_module in the list.
-        self.workflow.selected_wf_module = self.selected_wf_module
-        self.workflow.save(update_fields=['selected_wf_module'])
+        # Prevent tab.selected_wf_module_position from becoming invalid
+        #
+        # We can't make this exactly what the user has selected -- that's hard,
+        # and it isn't worth the effort. But we _can_ make sure it's valid.
+        n_modules = tab.live_wf_modules.count()
+        if (
+            tab.selected_wf_module_position is None
+            or tab.selected_wf_module_position >= n_modules
+        ):
+            if n_modules == 0:
+                tab.selected_wf_module_position = None
+            else:
+                tab.selected_wf_module_position = n_modules - 1
+            tab.save(update_fields=['selected_wf_module_position'])
 
         self.backward_affected_delta_ids()
 
@@ -97,27 +124,22 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             self.wf_module.delete()
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow, module_version, insert_before,
-                            param_values, **kwargs):
-        # wf_module starts off "deleted" and gets un-deleted in forward().
-        wf_module = workflow.wf_modules.create(module_version=module_version,
-                                               order=insert_before,
-                                               is_deleted=True)
-        wf_module.create_parametervals(param_values or {})
+    def amend_create_kwargs(cls, *, workflow, module_version,
+                            insert_before, param_values, **kwargs):
+        tab = workflow.live_tabs.get(position=0)  # TODO let caller specify tab
 
-        wf_module_delta_ids = list(
-            workflow.live_wf_modules
-                .filter(order__gte=insert_before)
-                .values_list('id', 'last_relevant_delta_id')
-        )
+        # wf_module starts off "deleted" and gets un-deleted in forward().
+        wf_module = tab.wf_modules.create(module_version=module_version,
+                                          order=insert_before, is_deleted=True)
+        wf_module.create_parametervals(param_values or {})
 
         return {
             **kwargs,
             'workflow': workflow,
             'wf_module': wf_module,
             'order': insert_before,
-            'selected_wf_module': workflow.selected_wf_module,
-            'wf_module_delta_ids': wf_module_delta_ids,
+            'selected_wf_module_position': tab.selected_wf_module_position,
+            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @classmethod

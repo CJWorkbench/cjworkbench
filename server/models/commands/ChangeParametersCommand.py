@@ -29,7 +29,27 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
         self.backward_affected_delta_ids()
 
     @classmethod
+    def wf_module_is_deleted(self, wf_module):
+        """Return True iff we cannot add commands to `wf_module`."""
+        try:
+            wf_module.refresh_from_db()
+        except WfModule.DoesNotExist:
+            return True
+
+        if wf_module.is_deleted:
+            return True
+
+        wf_module.tab.refresh_from_db()
+        if wf_module.tab.is_deleted:
+            return True
+
+        return False
+
+    @classmethod
     def amend_create_kwargs(cls, *, wf_module, new_values, **kwargs):
+        if cls.wf_module_is_deleted(wf_module):
+            return None
+
         old_values = dict(
             wf_module.parameter_vals
             .filter(parameter_spec__id_name__in=new_values.keys())

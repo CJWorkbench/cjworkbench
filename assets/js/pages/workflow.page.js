@@ -30,11 +30,13 @@ function launchWebsocket () {
         case 'apply-delta':
           Actions.store.dispatch(Actions.applyDeltaAction(data.data))
           return
-        case 'set-wf-module':
-          Actions.store.dispatch(Actions.setWfModuleAction(data.data))
-          return
-        case 'set-workflow':
-          Actions.store.dispatch(Actions.setWorkflowAction(data.data))
+        case 'wfmodule-status':
+          Actions.store.dispatch(
+            Actions.setWfModuleStatusAction(
+              data.id,
+              data.status,
+              data.error_msg ? data.error_msg : ''
+            ))
           return
         case 'reload-workflow':
           Actions.store.dispatch(Actions.reloadWorkflowAction())

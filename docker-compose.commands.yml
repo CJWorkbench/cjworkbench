@@ -12,6 +12,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
@@ -35,6 +36,7 @@ services:
       - ../${MODULE:-x}:/${MODULE:-x}:ro
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
@@ -58,6 +60,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: testdatabase
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
       CJW_DB_PASSWORD: cjworkbench

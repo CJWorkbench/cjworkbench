@@ -12,7 +12,8 @@ class CachedRenderResultTests(DbTestCase):
         super().setUp()
         self.workflow = Workflow.objects.create()
         delta = InitWorkflowCommand.create(self.workflow)
-        self.wf_module = self.workflow.wf_modules.create(
+        self.tab = self.workflow.tabs.create(position=0)
+        self.wf_module = self.tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=delta.id
         )
@@ -29,7 +30,6 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.cache_render_result(2, result)
 
         cached = self.wf_module.get_cached_render_result()
-        self.assertEqual(cached.workflow_id, self.workflow.id)
         self.assertEqual(cached.wf_module_id, self.wf_module.id)
         self.assertEqual(cached.delta_id, 2)
         self.assertEqual(cached.result, result)
@@ -39,7 +39,6 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.save()
         db_wf_module = WfModule.objects.get(id=self.wf_module.id)
         from_db = db_wf_module.get_cached_render_result()
-        self.assertEqual(from_db.workflow_id, self.workflow.id)
         self.assertEqual(from_db.wf_module_id, self.wf_module.id)
         self.assertEqual(cached.delta_id, 2)
         self.assertEqual(from_db.result, result)
@@ -147,7 +146,6 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_assign_none_over_none(self):
         self.wf_module.cache_render_result(None, None)
-
         self.assertIsNone(self.wf_module.get_cached_render_result())
 
     def test_duplicate_copies_fresh_cache(self):
@@ -159,8 +157,9 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.save()
 
         workflow2 = Workflow.objects.create()
+        tab2 = workflow2.tabs.create(position=0)
         InitWorkflowCommand.create(workflow2)
-        dup = self.wf_module.duplicate(workflow2)
+        dup = self.wf_module.duplicate(tab2)
 
         dup_cached_result = dup.get_cached_render_result()
         self.assertIsNotNone(dup_cached_result)
@@ -175,8 +174,9 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.save()
 
         workflow2 = Workflow.objects.create()
+        tab2 = workflow2.tabs.create(position=0)
         InitWorkflowCommand.create(workflow2)
-        dup = self.wf_module.duplicate(workflow2)
+        dup = self.wf_module.duplicate(tab2)
 
         dup_cached_result = dup.get_cached_render_result()
         self.assertIsNone(dup_cached_result)

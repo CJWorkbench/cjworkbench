@@ -9,12 +9,12 @@ import pandas as pd
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
-from server.models import Workflow
+from server.models import Workflow, Module, ModuleVersion
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
+from server.tests.utils import DbTestCase
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, workflow_url_to_id, fetch_external_workflow
-from server.tests.utils import DbTestCase
 
 
 class SafeExecTest(unittest.TestCase):
@@ -167,14 +167,15 @@ class OtherUtilsTests(SimpleTestCase):
                 self.assertEqual(workflow_url_to_id(url), expected_result)
 
 
-class FetchExternalWorkflowtest(DbTestCase):
+class FetchExternalWorkflowTest(DbTestCase):
     def setUp(self):
         super().setUp()
 
         self.user = User.objects.create(username='a', email='a@example.org')
         self.workflow = Workflow.objects.create(owner=self.user)
+        self.tab = self.workflow.tabs.create(position=0)
         self.delta = InitWorkflowCommand.create(self.workflow)
-        self.wf_module = self.workflow.wf_modules.create(
+        self.wf_module = self.tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=self.delta.id
         )
@@ -190,7 +191,7 @@ class FetchExternalWorkflowtest(DbTestCase):
             error='Access denied to the target workflow'
         ))
 
-    def test_same_workflow(self):
+    def test_deny_import_from_same_workflow(self):
         result = self._fetch(self.workflow.id, self.user, self.workflow.id)
         self.assertEqual(result, ProcessResult(
             error='Cannot import the current workflow'
@@ -232,6 +233,13 @@ class FetchExternalWorkflowtest(DbTestCase):
             error='Target workflow is rendering. Please try again.'
         ))
         queue_render.assert_called_with(self.workflow.id, self.delta.id)
+
+    def test_workflow_has_no_modules(self):
+        self.wf_module.delete()
+        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
+        self.assertEqual(result, ProcessResult(
+            error='Target workflow is empty'
+        ))
 
     @patch('server.rabbitmq.queue_render')
     def test_happy_path(self, queue_render):

@@ -1,89 +1,88 @@
 # test module (re)loading
 from django.test import TestCase
-from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
+from server.models import ParameterVal, ParameterSpec, Module, WfModule, \
+        Workflow, ModuleVersion
 from server.initmodules import load_module_from_dict, update_wfm_parameters_to_new_version
-from server.tests.utils import *
+from server.tests.utils import DbTestCase
 import json
 import copy
 from cjworkbench.settings import KB_ROOT_URL
 
-class InitmoduleTests(LoggedInTestCase):
-    def setUp(self):
-        super(InitmoduleTests, self).setUp()  # log in
-        self.loadcsv = {
-            'name': 'Load CSV',
-            'id_name': 'loadcsv',
-            'category': 'Sources',
-            'help_url': 'http://help.com/help',
-            'parameters': [
-                {
-                    'name': 'URL',
-                    'id_name' : 'url',
-                    'type': 'string',
-                    'default': 'http://foo.com'
-                },
-                {
-                    'name': 'Name',
-                    'id_name': 'name',
-                    'type': 'string',
-                    'placeholder': 'Type in a name and hit enter'
-                },
-                {
-                    'name': 'Fetch',
-                    'id_name' : 'fetch',
-                    'type': 'button',
-                    'visible': False,
-                    'ui-only': True
-                },
-                {
-                    'name': 'No default',
-                    'id_name': 'nodefault',
-                    'type': 'string',
-                    'multiline': True,
-                },
-                {
-                    'name': 'Do it checkbox',
-                    'id_name': 'doitcheckbox',
-                    'type': 'checkbox',
-                    'default': True
-                },
-                {
-                    'name': 'Radio Option',
-                    'id_name': 'radio_options',
-                    'type': 'radio',
-                    'radio_items': 'Cheese|Chocolate|Pudding',
-                    'default': 1
-                },
-            ]
+
+LoadCsv = {
+    'name': 'Load CSV',
+    'id_name': 'loadcsv',
+    'category': 'Sources',
+    'help_url': 'http://help.com/help',
+    'parameters': [
+        {
+            'name': 'URL',
+            'id_name' : 'url',
+            'type': 'string',
+            'default': 'http://foo.com'
+        },
+        {
+            'name': 'Name',
+            'id_name': 'name',
+            'type': 'string',
+            'placeholder': 'Type in a name and hit enter'
+        },
+        {
+            'name': 'Fetch',
+            'id_name' : 'fetch',
+            'type': 'button',
+            'visible': False,
+            'ui-only': True
+        },
+        {
+            'name': 'No default',
+            'id_name': 'nodefault',
+            'type': 'string',
+            'multiline': True,
+        },
+        {
+            'name': 'Do it checkbox',
+            'id_name': 'doitcheckbox',
+            'type': 'checkbox',
+            'default': True
+        },
+        {
+            'name': 'Radio Option',
+            'id_name': 'radio_options',
+            'type': 'radio',
+            'radio_items': 'Cheese|Chocolate|Pudding',
+            'default': 1
+        },
+    ]
+}
+
+
+# a new version of LoadCSV that deletes one parameter, changes the type and order of another,
+# and adds a new one, and tests menu param
+LoadCsv2 = {
+    'name': 'Load CSV RELOADED',
+    'id_name': 'loadcsv',
+    'category' : 'Sources',
+    'parameters': [
+        {
+            'name': 'Cake type',
+            'id_name' : 'caketype',
+            'type': 'menu',
+            'menu_items' : 'Cheese|Chocolate',
+            'default' : 1
+        },
+        {
+            'name': 'URL',
+            'id_name': 'url',
+            'type': 'integer',
+            'default': '42'
         }
+    ]
+}
 
-        # a new version of LoadCSV that deletes one parameter, changes the type and order of another,
-        # and adds a new one, and tests menu param
-        self.loadcsv2 = {
-            'name': 'Load CSV RELOADED',
-            'id_name': 'loadcsv',
-            'category' : 'Sources',
-            'parameters': [
-                {
-                  'name': 'Cake type',
-                  'id_name' : 'caketype',
-                  'type': 'menu',
-                  'menu_items' : 'Cheese|Chocolate',
-                  'default' : 1
-                },
-                {
-                  'name': 'URL',
-                  'id_name': 'url',
-                  'type': 'integer',
-                  'default': '42'
-                }
-              ]
-            }
-
-
+class InitmoduleTests(DbTestCase):
     def test_load_valid(self):
-        self.assertEqual(len(Module.objects.all()), 0)   # we should be starting with no modules
-        load_module_from_dict(self.loadcsv)
+        load_module_from_dict(LoadCsv)
 
         # basic properties
         self.assertEqual(len(Module.objects.all()), 1)
@@ -137,14 +136,14 @@ class InitmoduleTests(LoggedInTestCase):
     def test_missing_keys(self):
         module_keys = ['name','id_name','category']
         for k in module_keys:
-            missing = copy.deepcopy(self.loadcsv)
+            missing = copy.deepcopy(LoadCsv)
             del missing[k]
             with self.assertRaises(ValueError):
                 load_module_from_dict(missing)
 
         param_keys = ['name','id_name','type']
         for k in param_keys:
-            missing = copy.deepcopy(self.loadcsv)
+            missing = copy.deepcopy(LoadCsv)
             del missing['parameters'][0][k]
             with self.assertRaises(ValueError):
                 load_module_from_dict(missing)
@@ -172,9 +171,10 @@ class InitmoduleTests(LoggedInTestCase):
         pspec1 = ParameterSpec.objects.get(id_name='url', module_version=m1)
 
         # Create a wf_module that references this module. Should create a new ParameterVal
-        wf = add_new_workflow(name='Worky')
-        wfm = add_new_wf_module(workflow=wf, module_version=m1, order=1)
-        ParameterVal.objects.get(parameter_spec=pspec1)
+        wf = Workflow.objects.create()
+        tab = wf.tabs.create(position=0)
+        wfm = tab.wf_modules.create(order=0, module_version=m1)
+        wfm.create_parametervals()
 
         mini_module2 = {
             'name': 'Test',
@@ -217,7 +217,7 @@ class InitmoduleTests(LoggedInTestCase):
     def test_reload_internal_module(self):
         self.assertEqual(len(Module.objects.all()), 0)   # we should be starting with no modules
 
-        m1 = load_module_from_dict(self.loadcsv)
+        m1 = load_module_from_dict(LoadCsv)
         url_spec1 = ParameterSpec.objects.get(id_name='url')
         ParameterSpec.objects.get(id_name='fetch')
         self.assertEqual(m1.source_version_hash, '1.0')  # internal modules get this version
@@ -228,10 +228,12 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(radio_spec.def_items, 'Cheese|Chocolate|Pudding')
 
         # create wf_modules in two different workflows that reference this module
-        wf1 = add_new_workflow(name='Worky')
-        wfm1 = add_new_wf_module(workflow=wf1, module_version=m1, order=1)
-        wf2 = add_new_workflow(name='Worky 2')
-        wfm2 = add_new_wf_module(workflow=wf2, module_version=m1, order=1)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wfm1 = tab.wf_modules.create(module_version=m1, order=0)
+        wfm1.create_parametervals()
+        wfm2 = tab.wf_modules.create(module_version=m1, order=0)
+        wfm2.create_parametervals()
 
         # precondition: corresponding parameter val exists for each wfm with correct default
         # also tested in test_wfmodule.py but whatevs, won't hurt
@@ -241,7 +243,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_pval2.value, 'http://foo.com')
 
         # load the revised module, check that it ends up with the same primary key
-        m2 = load_module_from_dict(self.loadcsv2)
+        m2 = load_module_from_dict(LoadCsv2)
         self.assertEqual(m1.id, m2.id)
         self.assertEqual(m2.module.help_url, '')
 
@@ -277,7 +279,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(menu_pval1.order, 0)
 
         # load the old one again, just for kicks (and to test updating a previously updated module_version)
-        m2 = load_module_from_dict(self.loadcsv)
+        m2 = load_module_from_dict(LoadCsv)
 
 
     # A brief check of conditional UI, in that the JSON can be stored and retrieved correctly.
@@ -332,8 +334,10 @@ class InitmoduleTests(LoggedInTestCase):
         changed_spec = ParameterSpec.objects.create(id_name='changed', type='string', module_version=module_version1, def_value='foo')
         deleted_spec = ParameterSpec.objects.create(id_name='deleted', type='string', module_version=module_version1)
 
-        wf = add_new_workflow(name='Worky')
-        wfm = add_new_wf_module(workflow=wf, module_version=module_version1)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wfm = tab.wf_modules.create(module_version=module_version1, order=0)
+        wfm.create_parametervals()
 
         unchanged_pval = ParameterVal.objects.get(parameter_spec=unchanged_spec)
         changed_pval = ParameterVal.objects.get(parameter_spec=changed_spec)
@@ -369,13 +373,13 @@ class InitmoduleTests(LoggedInTestCase):
                                                        def_items='Option 1|Option 2|Option 3', def_value='0')
 
 
-        wf2 = add_new_workflow(name='Ancient Workflow')
-        wfm2 = add_new_wf_module(workflow=wf2, module_version=module_version3)
+        wf2 = Workflow.objects.create(name='Ancient Workflow')
+        tab = wf2.tabs.create(position=0)
+        wfm2 = tab.wf_modules.create(order=0, module_version=module_version3)
+        wfm2.create_parametervals({'unchanged': 2, 'changed': 2})
 
-        unchanged_pval = ParameterVal.objects.create(parameter_spec=unchanged_spec3, wf_module=wfm2, value='2')
-        unchanged_pval_id = unchanged_pval.id
-        changed_pval = ParameterVal.objects.create(parameter_spec=changed_spec3, wf_module=wfm2, value='2')
-        changed_pval_id = changed_pval.id
+        unchanged_pval = wfm2.parameter_vals.get(parameter_spec=unchanged_spec3)
+        changed_pval = wfm2.parameter_vals.get(parameter_spec=changed_spec3)
 
         module_version4 = ModuleVersion.objects.create(module=module)
         unchanged_spec4 = ParameterSpec.objects.create(id_name='unchanged', type='radio', module_version=module_version4,
@@ -387,7 +391,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(wfm2.module_version, module_version4)
 
         # changed type, but def_items the same. Value should stay the same.
-        unchanged_pval = ParameterVal.objects.get(pk=unchanged_pval_id)
+        unchanged_pval.refresh_from_db()
         self.assertEqual(unchanged_pval.value, '2')
 
         # changed type, but def_items different. Value should reset to default.

@@ -46,18 +46,20 @@ describe('SelectedRowsActions', () => {
       WorkbenchAPI.setSelectedWfModule.mockReset()
     })
 
-    const wrapper = (modules=null, wf_modules=null, wfModules=null, extraProps={}) => {
-      if (wf_modules === null) {
-        wf_modules = [99, 100, 101]
+    const wrapper = (modules=null, wf_module_ids=null, wfModules=null, extraProps={}) => {
+      if (wf_module_ids === null) {
+        wf_module_ids = [99, 100, 101]
       }
 
       if (wfModules === null) {
         wfModules = {
           '99': {
+            tab_id: 11,
             module_version: { module: 10 },
             parameter_vals: [ { parameter_spec: { id_name: 'foo10' }, value: 'bar10' } ]
           },
           '100': {
+            tab_id: 11,
             module_version: { module: 20 },
             parameter_vals: [ { parameter_spec: { id_name: 'foo20' }, value: 'bar20' } ]
           }
@@ -74,7 +76,8 @@ describe('SelectedRowsActions', () => {
       const store = mockStore({
         modules,
         wfModules,
-        workflow: { id: 321, wf_modules },
+        tabs: { 11: { id: 11, wf_module_ids } },
+        workflow: { id: 321, tab_ids: [ 11, 12 ], selected_tab_position: 0 }
       })
       return mount(
         <Provider store={store}>

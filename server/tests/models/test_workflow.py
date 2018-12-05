@@ -1,11 +1,10 @@
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
-from django.test import TestCase
-from server.tests.utils import LoggedInTestCase, add_new_wf_module, add_new_module_version, create_testdata_workflow
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand, AddModuleCommand, \
         ChangeWorkflowTitleCommand
+from server.tests.utils import DbTestCase
 
 
 async def async_noop(*args, **kwargs):
@@ -35,61 +34,58 @@ class MockRequest:
         return MockRequest(None, None)
 
 
-class WorkflowTests(LoggedInTestCase):
+class WorkflowTests(DbTestCase):
     def setUp(self):
         super().setUp()
 
-        # Add another user, with one public and one private workflow
-        self.otheruser = User.objects.create(username='user2', email='user2@users.com', password='password')
-        self.other_workflow_private = Workflow.objects.create(name="Other workflow private", owner=self.otheruser)
-        self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
+        self.alice = User.objects.create(username='a', email='a@example.org')
+        self.bob = User.objects.create(username='b', email='b@example.org')
 
     def test_workflow_duplicate(self):
         # Create workflow with two WfModules
-        wf1 = create_testdata_workflow()
-        self.assertNotEqual(wf1.owner, self.otheruser) # should owned by user created by LoggedInTestCase
-        module_version1 = add_new_module_version('Module 1')
-        add_new_wf_module(wf1, module_version1, 1) # order=1
-        self.assertEqual(wf1.live_wf_modules.count(), 2)
+        wf1 = Workflow.objects.create(name='Foo', owner=self.alice)
+        InitWorkflowCommand.create(wf1)
+        tab = wf1.tabs.create(position=0)
+        wfm1 = tab.wf_modules.create(order=0)
 
-        wf2 = wf1.duplicate(self.otheruser)
+        wf2 = wf1.duplicate(self.bob)
 
         self.assertNotEqual(wf1.id, wf2.id)
-        self.assertEqual(wf2.owner, self.otheruser)
-        self.assertEqual(wf2.name, "Copy of " + wf1.name)
+        self.assertEqual(wf2.owner, self.bob)
+        self.assertEqual(wf2.name, 'Copy of Foo')
         self.assertEqual(wf2.deltas.all().count(), 1)
         self.assertIsInstance(wf2.last_delta, InitWorkflowCommand)
         self.assertFalse(wf2.public)
-        self.assertEqual(wf1.live_wf_modules.count(),
-                         wf2.live_wf_modules.count())
+        self.assertEqual(wf1.tabs.first().wf_modules.count(),
+                         wf2.tabs.first().wf_modules.count())
 
     def test_auth_shared_workflow(self):
-        wf = Workflow.objects.create(owner=self.user, public=True)
+        wf = Workflow.objects.create(owner=self.alice, public=True)
 
         # Read: anybody
-        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.user)))
-        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.otheruser)))
+        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.alice)))
+        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.bob)))
         self.assertTrue(wf.request_authorized_read(MockRequest.anonymous('session1')))
         self.assertTrue(wf.request_authorized_read(MockRequest.uninitialized()))
 
         # Write: only owner
-        self.assertTrue(wf.request_authorized_write(MockRequest.logged_in(self.user)))
-        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.otheruser)))
+        self.assertTrue(wf.request_authorized_write(MockRequest.logged_in(self.alice)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.bob)))
         self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session1')))
         self.assertFalse(wf.request_authorized_write(MockRequest.uninitialized()))
 
     def test_auth_private_workflow(self):
-        wf = Workflow.objects.create(owner=self.user, public=False)
+        wf = Workflow.objects.create(owner=self.alice, public=False)
 
         # Read: anybody
-        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.user)))
-        self.assertFalse(wf.request_authorized_read(MockRequest.logged_in(self.otheruser)))
+        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.alice)))
+        self.assertFalse(wf.request_authorized_read(MockRequest.logged_in(self.bob)))
         self.assertFalse(wf.request_authorized_read(MockRequest.anonymous('session1')))
         self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
 
         # Write: only owner
-        self.assertTrue(wf.request_authorized_write(MockRequest.logged_in(self.user)))
-        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.otheruser)))
+        self.assertTrue(wf.request_authorized_write(MockRequest.logged_in(self.alice)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.bob)))
         self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session1')))
         self.assertFalse(wf.request_authorized_write(MockRequest.uninitialized()))
 
@@ -100,15 +96,15 @@ class WorkflowTests(LoggedInTestCase):
 
         # Read: just the anonymous user, logged in or not
         self.assertTrue(wf.request_authorized_read(MockRequest.anonymous('session1')))
-        self.assertTrue(wf.request_authorized_read(MockRequest(self.user, 'session1')))
-        self.assertFalse(wf.request_authorized_read(MockRequest.logged_in(self.user)))
+        self.assertTrue(wf.request_authorized_read(MockRequest(self.alice, 'session1')))
+        self.assertFalse(wf.request_authorized_read(MockRequest.logged_in(self.alice)))
         self.assertFalse(wf.request_authorized_read(MockRequest.anonymous('session2')))
         self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
 
         # Write: ditto
         self.assertTrue(wf.request_authorized_write(MockRequest.anonymous('session1')))
-        self.assertTrue(wf.request_authorized_write(MockRequest(self.user, 'session1')))
-        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.user)))
+        self.assertTrue(wf.request_authorized_write(MockRequest(self.alice, 'session1')))
+        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.alice)))
         self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session2')))
         self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
 
@@ -116,6 +112,7 @@ class WorkflowTests(LoggedInTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name='A')
+        tab = workflow.tabs.create(position=0)
         async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'B')
         async_to_sync(AddModuleCommand.create)(workflow, None, 0, {})
         async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'C')

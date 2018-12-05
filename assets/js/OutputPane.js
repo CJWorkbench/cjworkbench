@@ -170,17 +170,21 @@ function wfModuleStatus(wfModule) {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { workflow, wfModules, modules } = state
+  const { workflow, wfModules, tabs, modules } = state
+  const tabId = workflow.tab_ids[workflow.selected_tab_position]
+  const tab = tabs[String(tabId)]
+  const wfModuleArray = tab.wf_module_ids.map(id => wfModules[String(id)])
 
-  let wfModule = wfModules[String(workflow.wf_modules[state.selected_wf_module])] || null
+  let wfModuleIndex = tab.selected_wf_module_position
+  let wfModule = wfModuleArray[wfModuleIndex] || null
   let wfModuleBeforeError
 
   const status = wfModule ? wfModuleStatus(wfModule) : 'busy'
 
   // If we're pointing at a module that output an error, we'll want to display
   // its _input_ (the previous module's output) to help the user fix things.
-  if (status === 'error' && state.selected_wf_module > 0) {
-    const lastGood = wfModules[String(workflow.wf_modules[state.selected_wf_module - 1])]
+  if (status === 'error' && tab.selected_wf_module_position > 0) {
+    const lastGood = wfModuleArray[wfModuleIndex - 1]
     wfModuleBeforeError = {
       id: lastGood.id,
       deltaId: lastGood.cached_render_result_delta_id,

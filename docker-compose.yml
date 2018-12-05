@@ -56,6 +56,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -82,6 +83,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -111,6 +113,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -136,6 +139,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '5'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -157,6 +161,11 @@ services:
       - POSTGRES_DB=cjworkbench
       - PGDATA=/var/lib/postgresql/data/10.4
     networks: [ 'test' ]
+    command: [
+      '-c', 'fsync=off',
+      '-c', 'synchronous_commit=off',
+      '-c', 'full_page_writes=off'
+    ]
     # no volumes: we wipe this DB a lot
 
   testrabbitmq:

@@ -8,7 +8,11 @@ describe("ExtractNumbers actions", () => {
   const initialState = {
     workflow: {
       id: 127,
-      wf_modules: [ 17, 7, 19, 31, 79 ]
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 17, 7, 19, 31, 79 ] }
     },
     modules: {
       1: { id_name: 'loadurl' },
@@ -110,7 +114,7 @@ describe("ExtractNumbers actions", () => {
     updateTableActionModule(19, 'extract-numbers', false, {columnKey: 'num_col'})
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('extract-numbers', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('extract-numbers', { tabId: 11, index: 3 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 99, { colnames: 'num_col', type: extractNumberAny }])
   })
 
@@ -135,7 +139,7 @@ describe("ExtractNumbers actions", () => {
     updateTableActionModule(79, 'extract-numbers', false, {columnKey: 'str_col'})
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('extract-numbers', 5)
+    expect(addModuleAction).toHaveBeenCalledWith('extract-numbers', { tabId: 11, index: 5 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 99, { colnames: 'str_col', type: extractNumberAny }])
   })
 })

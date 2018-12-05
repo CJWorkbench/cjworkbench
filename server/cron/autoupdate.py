@@ -14,8 +14,8 @@ def load_pending_wf_modules():
     now = timezone.now()
     return list(WfModule.objects.filter(
         is_deleted=False,
+        tab__is_deleted=False,
         is_busy=False,  # not already scheduled
-        workflow__isnull=False,  # not deleted
         auto_update_data=True,  # user wants auto-update
         next_update__isnull=False,  # DB isn't inconsistent
         next_update__lte=now  # enough time has passed

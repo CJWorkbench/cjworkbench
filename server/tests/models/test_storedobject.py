@@ -19,7 +19,8 @@ class StoredObjectTests(DbTestCase):
         super().setUp()
 
         self.workflow = Workflow.objects.create()
-        self.wfm1 = self.workflow.wf_modules.create(order=0)
+        tab = self.workflow.tabs.create(position=0)
+        self.wfm1 = tab.wf_modules.create(order=0)
         self.metadata = 'metadataish'
 
     def file_contents(self, file_obj):
@@ -97,7 +98,7 @@ class StoredObjectTests(DbTestCase):
     def test_duplicate_table(self):
         table = pd.DataFrame({'A': [1]})
 
-        self.wfm2 = self.workflow.wf_modules.create(order=1)
+        self.wfm2 = self.wfm1.tab.wf_modules.create(order=1)
         so1 = StoredObject.create_table(self.wfm1, table)
         so2 = so1.duplicate(self.wfm2)
 

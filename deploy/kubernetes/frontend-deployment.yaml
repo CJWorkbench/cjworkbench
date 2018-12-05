@@ -25,14 +25,16 @@ spec:
             - name: http
               containerPort: 8080
           env:
+            - name: CJW_PRODUCTION
+              value: 'True'
             - name: PYTHONUNBUFFERED
               value: '1'
+            - name: ASGI_THREADS
+              value: '5'
             - name: CJW_GOOGLE_ANALYTICS
               value: UA-104106561-1
             - name: CJW_HEAP_ANALYTICS_ID
               value: '70406982'
-            - name: CJW_PRODUCTION
-              value: 'True'
             - name: CJW_RABBITMQ_HOST
               value: amqp://guest:guest@rabbitmq-service/
             - name: CJW_DB_HOST
