@@ -12,7 +12,12 @@ describe("UpdateTableAction actions", () => {
   const initialState = {
     workflow: {
       id: 127,
-      wf_modules: [ 17 ]
+      tab_ids: [ 1, 2 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      1: { wf_module_ids: [] },
+      2: { wf_module_ids: [ 17 ], selected_wf_module_position: 0 }
     },
     wfModules: {
       17: { module_version: { module: 1 } }
@@ -24,11 +29,6 @@ describe("UpdateTableAction actions", () => {
   }
 
   const forceNewModules = ['filter']
-
-  // Change the module in the initial state
-  function setInitialState (module) {
-    initialState.workflow.wf_modules[0].module_version.module.id_name = module
-  }
 
   const addModuleResponse = {
     data: {

@@ -15,6 +15,16 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
+    def load_ws_data(self):
+        data = super().load_ws_data()
+        data['updateTabs'] = {
+            str(self.wf_module.tab_id): {
+                'wf_module_ids': list(self.wf_module.tab.live_wf_modules
+                                      .values_list('id', flat=True)),
+            },
+        }
+        return data
+
     @classmethod
     def affected_wf_modules(cls, wf_module) -> models.QuerySet:
         # We don't need to change self.wf_module's delta_id: just the others.

@@ -9,7 +9,11 @@ describe('DuplicateFromTable actions', () => {
   const initialState = {
     workflow: {
       id: 127,
-      wf_modules: [ 17, 7, 19, 31, 79 ]
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 17, 7, 19, 31, 79 ] }
     },
     modules: {
       1: { id_name: 'loadurl' },
@@ -87,7 +91,7 @@ describe('DuplicateFromTable actions', () => {
     updateTableActionModule(19, 'duplicate-column', false, { columnKey: 'col_1' })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('duplicate-column', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('duplicate-column', { tabId: 11, index: 3 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { colnames: 'col_1' }])
   })
 

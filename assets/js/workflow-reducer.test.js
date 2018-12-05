@@ -62,7 +62,8 @@ describe('Reducer actions', () => {
   const testTabs = {
     '91': {
       id: 91,
-      wf_module_ids: [ 10, 20, 30 ]
+      wf_module_ids: [ 10, 20, 30 ],
+      selected_wf_module_position: 1
     }
   }
 
@@ -187,7 +188,7 @@ describe('Reducer actions', () => {
     const store = mockStore(testState)
     await store.dispatch(wfr.addModuleAction(1, { tabId: 91, index: 2 }, { x: 'y' }))
 
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 1, 2, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
     const state = store.getState()
     expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 20, '1_1', 30 ])
   })
@@ -201,7 +202,7 @@ describe('Reducer actions', () => {
     const store = mockStore(testState)
     await store.dispatch(wfr.addModuleAction('module2', { tabId: 91, index: 2 }, { x: 'y' }))
 
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 2, 2, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 2, 2, { x: 'y' })
   })
 
   it('adds a module before another', async () => {
@@ -212,7 +213,7 @@ describe('Reducer actions', () => {
 
     const store = mockStore(testState)
     await store.dispatch(wfr.addModuleAction(1, { beforeWfModuleId: 20 }, { x: 'y' }))
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 1, 1, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 1, { x: 'y' })
   })
 
   it('adds a module after another', async () => {
@@ -223,7 +224,7 @@ describe('Reducer actions', () => {
 
     const store = mockStore(testState)
     await store.dispatch(wfr.addModuleAction(1, { afterWfModuleId: 20 }, { x: 'y' }))
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 91, 1, 2, { x: 'y' })
+    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(999, 1, 2, { x: 'y' })
   })
 
   it('deletes a module', async () => {
@@ -231,7 +232,7 @@ describe('Reducer actions', () => {
     const store = mockStore(testState)
     await store.dispatch(wfr.deleteModuleAction(20))
 
-    expect(WorkbenchAPI.deleteModule).toHaveBeenCalledWith(999, 20)
+    expect(WorkbenchAPI.deleteModule).toHaveBeenCalledWith(20)
     const state = store.getState()
     expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 30 ])
     expect(state.wfModules['20']).not.toBeDefined()
@@ -240,9 +241,9 @@ describe('Reducer actions', () => {
   it('sets the selected module to a module in state', async () => {
     WorkbenchAPI.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
     const store = mockStore(testState)
-    await store.dispatch(wfr.setSelectedWfModuleAction(91, 1))
+    await store.dispatch(wfr.setSelectedWfModuleAction(1))
 
-    expect(WorkbenchAPI.setSelectedWfModule).toHaveBeenCalledWith(999, 91, 1)
+    expect(WorkbenchAPI.setSelectedWfModule).toHaveBeenCalledWith(999, 1)
     const { workflow, tabs } = store.getState()
     expect(workflow.selected_tab_position).toEqual(0)
     expect(tabs['91'].selected_wf_module_position).toEqual(1)
@@ -275,7 +276,7 @@ describe('Reducer actions', () => {
     await store.dispatch(wfr.moveModuleAction(91, 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(WorkbenchAPI.reorderWfModules).toHaveBeenCalledWith(999, 91, [ 30, 10, 20 ])
+    expect(WorkbenchAPI.reorderWfModules).toHaveBeenCalledWith(999, [ 30, 10, 20 ])
     expect(store.getState().tabs['91'].wf_module_ids).toEqual([ 30, 10, 20 ])
   })
 
@@ -307,6 +308,26 @@ describe('Reducer actions', () => {
     expect(state.wfModules['20']).not.toBeDefined()
   })
 
+  it('applies delta to a Tab', () => {
+    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
+      updateTabs: {
+        '91': { foo: 'bar', selected_wf_module_position: 0 },
+        '92': { foo: 'baz' }
+      }
+    }))
+    expect(state.tabs['91'].foo).toEqual('bar') // new property
+    expect(state.tabs['92'].foo).toEqual('baz')
+    expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 20, 30 ]) // old property
+    expect(state.tabs['91'].selected_wf_module_position).toEqual(1) // immutable
+  })
+
+  it('applies delta to clearing a Tab', () => {
+    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
+      clearTabIds: [ 91 ],
+    }))
+    expect(state.tabs).toEqual({})
+  })
+
   it('sets the module collapse state', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'SET_WF_MODULE_COLLAPSED_PENDING',
@@ -329,7 +350,7 @@ describe('Reducer actions', () => {
     await done
 
     // should send HTTP request
-    expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(999, 10, { data: 'newdata' })
+    expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(10, { data: 'newdata' })
   })
 
   it('requests fetch in maybeRequestWfModuleFetchAction', async () => {

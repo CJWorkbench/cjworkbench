@@ -26,7 +26,11 @@ describe('Edit Cell actions', () => {
 
   const initialState = {
     workflow: {
-      wf_modules: [ 10, 20, 30, 40 ]
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 10, 20, 30, 40 ] }
     },
     modules: {
       77: { id_name: 'editcells' },
@@ -96,7 +100,7 @@ describe('Edit Cell actions', () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse) // id: 99
     updateTableActionModule(30, 'editcells', false, Edit2)
 
-    expect(addModuleAction).toHaveBeenCalledWith('editcells', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('editcells', { tabId: 11, index: 3 })
 
     // let addModule promise resolve
     setImmediate(() => {
@@ -108,6 +112,6 @@ describe('Edit Cell actions', () => {
   it('add new Edit Cells module to end of stack', () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse)
     updateTableActionModule(40, 'editcells', false, { row: 10, col: 'bar', value: 'yippee!' })
-    expect(addModuleAction).toHaveBeenCalledWith('editcells', 4)
+    expect(addModuleAction).toHaveBeenCalledWith('editcells', { tabId: 11, index: 4 })
   })
 })

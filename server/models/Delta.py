@@ -131,13 +131,6 @@ class Delta(PolymorphicModel):
                 data['updateWfModules'][str(self.wf_module_id)] = \
                     _prepare_json(wf_module_data)
 
-            data['updateTabs'] = {
-                str(self.wf_module_id): {
-                    'wf_module_ids': list(self.wf_module.tab.live_wf_modules
-                                          .values_list('id', flat=True)),
-                },
-            }
-
         return data
 
     async def schedule_execute(self) -> None:

@@ -41,7 +41,7 @@ function moduleExists (state, moduleIdName) {
 
 // Find if a module of moduleId exists as or is next to module with focusWfModuleId
 function findModuleWithIds (state, focusWfModuleId, moduleIdName) {
-  const { workflow, wfModules, modules } = state
+  const { workflow, tabs, wfModules, modules } = state
 
   let moduleId = null
   for (const key in modules) {
@@ -52,13 +52,16 @@ function findModuleWithIds (state, focusWfModuleId, moduleIdName) {
   }
   if (moduleId === null) return null
 
+  const tabId = workflow.tab_ids[workflow.selected_tab_position]
+  const tab = tabs[String(tabId)]
+
   // validIdsOrNulls: [ 2, null, null, 65 ] means indices 0 and 3 are for
   // desired module (and have wfModuleIds 2 and 64), 1 and 2 aren't for
   // desired module
-  const validIdsOrNulls = workflow.wf_modules
+  const validIdsOrNulls = tab.wf_module_ids
     .map(id => (wfModules[String(id)].module_version || {}).module === moduleId ? id : null)
 
-  const focusIndex = workflow.wf_modules.indexOf(focusWfModuleId)
+  const focusIndex = tab.wf_module_ids.indexOf(focusWfModuleId)
   if (focusIndex === -1) return null
 
   // Are we already focused on a valid WfModule?
@@ -75,8 +78,10 @@ function findModuleWithIds (state, focusWfModuleId, moduleIdName) {
 }
 
 function ensureSelectedWfModule (state, wfModule) {
-  const current = state.selected_wf_module
-  let wanted = state.workflow ? state.workflow.wf_modules.indexOf(wfModule.id) : null
+  const tabId = state.workflow.tab_ids[state.workflow.selected_tab_position]
+  const tab = state.tabs[String(tabId)]
+  const current = tab.selected_wf_module_position
+  const wanted = tab.wf_module_ids.indexOf(wfModule.id)
   if (wanted === -1) wanted = null
 
   if (wanted !== null && wanted !== current) {
@@ -96,8 +101,10 @@ export function updateTableActionModule (wfModuleId, idName, forceNewModule, par
     ensureSelectedWfModule(state, existingModule) // before state's existingModule changes
     updateModuleMapping[idName](existingModule, params) // ... changing state's existingModule
   } else {
-    const wfModuleIndex = state.workflow.wf_modules.indexOf(wfModuleId)
-    store.dispatch(addModuleAction(idName, wfModuleIndex + 1))
+    const tabId = state.workflow.tab_ids[state.workflow.selected_tab_position]
+    const tab = state.tabs[String(tabId)]
+    const wfModuleIndex = tab.wf_module_ids.indexOf(wfModuleId)
+    store.dispatch(addModuleAction(idName, { tabId, index: wfModuleIndex + 1 }))
       .then(fulfilled => {
         const newWfm = fulfilled.value.data.wfModule
         updateModuleMapping[idName](newWfm, params)

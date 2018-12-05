@@ -41,6 +41,7 @@ describe('WfModule, not read-only mode', () => {
     isAfterSelected: false,
     api: mockApi,
     index: 2,
+    tabId: 11,
     onDragStart: jest.fn(),
     onDragEnd: jest.fn(),
     isLessonHighlight: false,
@@ -360,10 +361,20 @@ describe('WfModule, not read-only mode', () => {
   it('applies a quick fix', () => {
     // Scenario: user is on linechart and chose non-numeric Y axis
     const store = mockStore({
-      workflow: { id: 99, wf_modules: [10, 20], read_only: false, is_anonymous: false },
+      workflow: {
+        id: 99,
+        tab_ids: [ 11, 12 ],
+        read_only: false,
+        is_anonymous: false,
+        selected_tab_position: 0
+      },
+      tabs: {
+        11: { id: 11, wf_module_ids: [ 10, 20 ] },
+        12: { id: 12, wf_module_ids: [] }
+      },
       wfModules: {
-        10: { id: 10 },
-        20: { id: 20 }
+        10: { id: 10, tab_id: 11 },
+        20: { id: 20, tab_id: 11 }
       },
       modules: {
         100: { id: 100, id_name: 'pastecsv' },
@@ -385,7 +396,8 @@ describe('WfModule, not read-only mode', () => {
         isZenMode={false}
         isZenModeAllowed={false}
         index={1}
-        wfModule={{ id: 20, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+        tabId={11}
+        wfModule={{ id: 20, tab_id: 11, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
         isSelected={true}
         isAfterSelected={false}
         onDragStart={jest.fn()}
@@ -423,7 +435,15 @@ describe('WfModule, not read-only mode', () => {
       lessonSelector.mockReset()
 
       store = createStore((_, action) => ({
-        workflow: { read_only: false, is_anonymous: false, wf_modules: [1, 2, 999] },
+        workflow: {
+          read_only: false,
+          is_anonymous: false,
+          tab_ids: [11],
+          selected_tab_position: 0
+        },
+        tabs: {
+          11: { wf_module_ids: [1, 2, 999] }
+        },
         wfModules: {
           999: { module_version: { module: 2 } }
         },

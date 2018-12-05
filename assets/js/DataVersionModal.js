@@ -229,15 +229,20 @@ export class DataVersionModal extends React.PureComponent {
 }
 
 const getWorkflow = ({ workflow }) => workflow
+const getTabs = ({ tabs }) => tabs
+const getSelectedTab = createSelector([ getWorkflow, getTabs ], (workflow, tabs) => {
+  return tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+})
 const getWfModules = ({ wfModules }) => wfModules
+const getSelectedTabWfModules = createSelector([ getSelectedTab, getWfModules ], (tab, wfModules) => {
+  return tab.wf_module_ids.map(id => wfModules[String(id)] || null)
+})
 const getModules = ({ modules }) => modules
 /**
  * Find first (WfModule, Module) that has a `.loads_data` ModuleVersion.
  */
-const getFetchWfModule = createSelector([ getWorkflow, getWfModules, getModules ], (workflow, wfModules, modules) => {
-  const wfModuleIds = workflow.wf_modules || []
-  for (const wfModuleId of wfModuleIds) {
-    const wfModule = wfModules[String(wfModuleId)] || {}
+const getFetchWfModule = createSelector([ getSelectedTabWfModules, getModules ], (wfModules, modules) => {
+  for (const wfModule of wfModules) {
     const moduleId = wfModule.module_version ? wfModule.module_version.module : null
     const module = modules[String(moduleId)] || {}
     if (module.loads_data) {

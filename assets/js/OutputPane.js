@@ -183,7 +183,7 @@ function mapStateToProps(state, ownProps) {
 
   // If we're pointing at a module that output an error, we'll want to display
   // its _input_ (the previous module's output) to help the user fix things.
-  if (status === 'error' && state.selected_wf_module > 0) {
+  if (status === 'error' && tab.selected_wf_module_position > 0) {
     const lastGood = wfModuleArray[wfModuleIndex - 1]
     wfModuleBeforeError = {
       id: lastGood.id,

@@ -81,7 +81,7 @@ class TabSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tab
-        fields = ('id', 'name', 'wf_module_ids')
+        fields = ('id', 'name', 'wf_module_ids', 'selected_wf_module_position')
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -6,7 +6,13 @@ jest.mock('../workflow-reducer')
 
 describe('ReorderColumns actions', () => {
   const initialState = {
-    workflow: { wf_modules: [ 35, 50, 85 ] },
+    workflow: {
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 35, 50, 85 ] }
+    },
     modules: {
       24: { id_name: 'reorder-columns' },
       1: { id_name: 'loadurl' },
@@ -79,7 +85,7 @@ describe('ReorderColumns actions', () => {
     updateTableActionModule(35, 'reorder-columns', false, { column: 'test_col', from: 3, to: 0 })
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('reorder-columns', 1)
+    expect(addModuleAction).toHaveBeenCalledWith('reorder-columns', { tabId: 11, index: 1 })
     let newParamVal = JSON.stringify([{
       column: 'test_col',
       from: 3,

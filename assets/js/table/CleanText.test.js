@@ -8,7 +8,11 @@ describe("CleanText actions", () => {
   const initialState = {
     workflow: {
       id: 127,
-      wf_modules: [ 17, 7, 19, 31, 79 ]
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 17, 7, 19, 31, 79 ] }
     },
     modules: {
       1: { id_name: 'loadurl' },
@@ -86,7 +90,7 @@ describe("CleanText actions", () => {
     updateTableActionModule(19, 'clean-text', false, {columnKey: 'num_col'})
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('clean-text', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('clean-text', { tabId: 11, index: 3 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { colnames: 'num_col' }])
   })
 
@@ -103,7 +107,7 @@ describe("CleanText actions", () => {
     updateTableActionModule(79, 'clean-text', false, {columnKey: 'str_col'})
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('clean-text', 5)
+    expect(addModuleAction).toHaveBeenCalledWith('clean-text', { tabId: 11, index: 5 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { colnames: 'str_col' } ])
   })
 })

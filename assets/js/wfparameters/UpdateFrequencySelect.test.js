@@ -12,6 +12,10 @@ import { Provider } from 'react-redux'
 import WorkbenchAPI from '../WorkbenchAPI'
 
 describe('UpdateFrequencySelect', () => {
+  beforeEach(() => {
+    WorkbenchAPI.updateWfModule.mockReset()
+  })
+
   describe('shallow', () => {
     const defaultProps = {
       wfModuleId: 212,
@@ -105,11 +109,14 @@ describe('UpdateFrequencySelect', () => {
       workflow: {
         read_only: false,
         is_anonymous: false,
-        wf_modules: [ 1, 212 ]
+        tab_ids: [ 11, 12 ]
+      },
+      tabs: {
+        11: { wf_modules: [ 1, 212 ] }
       },
       wfModules: {
-        1: { id: 1, name: 'Ignore this one' },
-        212: { id: 212, auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
+        1: { id: 1, tab_id: 11, name: 'Ignore this one' },
+        212: { id: 212, tab_id: 11, auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
       }
     }
 

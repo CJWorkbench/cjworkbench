@@ -7,7 +7,11 @@ jest.mock('../workflow-reducer')
 describe("DropFromTable actions", () => {
   const initialState = {
     workflow: {
-      wf_modules: [ 17, 7, 19, 31, 79 ],
+      tab_ids: [ 10, 11 ],
+      selected_tab_position: 1
+    },
+    tabs: {
+      11: { wf_module_ids: [ 17, 7, 19, 31, 79 ] }
     },
     wfModules: {
       17: {
@@ -103,7 +107,7 @@ describe("DropFromTable actions", () => {
     updateTableActionModule(19, 'selectcolumns', false, {columnKey: 'col_1'})
 
     await tick()
-    expect(addModuleAction).toHaveBeenCalledWith('selectcolumns', 3)
+    expect(addModuleAction).toHaveBeenCalledWith('selectcolumns', { tabId: 11, index: 3 })
     expect(store.dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 23, { colnames: 'col_1', 'drop_or_keep': selectColumnDrop }])
   })
 

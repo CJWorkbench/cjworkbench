@@ -17,9 +17,12 @@ export class StateWithHelpers {
     return new WorkflowWithHelpers(this.state.workflow, this.state)
   }
 
+  get selectedTab () {
+    return this.workflow.selectedTab
+  }
+
   get selectedWfModule () {
-    const index = this.state.selected_wf_module // may be null
-    return this.workflow.wfModules[index] || null
+    return this.selectedTab.selectedWfModule
   }
 }
 
@@ -29,14 +32,51 @@ export class WorkflowWithHelpers {
     this.state = state
   }
 
+  get tabs () {
+    const { workflow } = this
+    const { tabs } = this.state
+
+    return workflow.tab_ids.map(tabId => {
+      return new TabWithHelpers(tabs[String(tabId)], this.state)
+    })
+  }
+
+  get selectedTab () {
+    const { workflow } = this
+    const { tabs } = this.state
+    const tab = tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+    if (!tab) throw new Error('No selected tab -- this is always an error')
+    return new TabWithHelpers(tab, this.state)
+  }
+
+  get selectedWfModule () {
+    return this.selectedTab.selectedWfModule
+  }
+}
+
+export class TabWithHelpers {
+  constructor (tab, state) {
+    this.tab = tab
+    this.state = state
+  }
+
   get wfModules () {
-    return this.workflow.wf_modules.map(wfmId => {
+    return this.tab.wf_module_ids.map(wfmId => {
       return new WorkflowModuleWithHelpers(this.state.wfModules[String(wfmId)], this.state)
     })
   }
 
   get wfModuleNames () {
     return this.wfModules.map(wfm => wfm.moduleName)
+  }
+
+  get selectedWfModule () {
+    const { wfModules } = this.state
+    const position = this.tab.selected_wf_module_position
+    if (position === null || position === undefined) return null
+
+    const wfModule = wfModules[String(this.tab.wf_module_ids[position])]
+    return new WorkflowModuleWithHelpers(wfModule, this.state)
   }
 }
 

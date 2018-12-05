@@ -212,15 +212,16 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
 
 class ModuleStack extends React.Component {
   static propTypes = {
-    api:                PropTypes.object.isRequired,
-    workflow:           PropTypes.object,
+    api: PropTypes.object.isRequired,
+    workflow: PropTypes.object,
+    tabId: PropTypes.number,
     selected_wf_module_position: PropTypes.number,
-    wfModules:          PropTypes.arrayOf(PropTypes.object).isRequired,
-    addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
-    moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
-    removeModule:       PropTypes.func.isRequired,
+    wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
+    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
+    moveModuleByIndex: PropTypes.func.isRequired, // func(tabId, oldIndex, newIndex) => undefined
+    removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
-    isReadOnly:         PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   // Track state of where we last auto-scrolled.
@@ -268,7 +269,7 @@ class ModuleStack extends React.Component {
   static getDerivedStateFromProps(props, state) {
     // If we delete a zen-mode while in zen mode, exit zen mode
     const zenId = state.zenModeWfModuleId
-    if (zenId && !props.workflow.wf_modules.includes(zenId)) {
+    if (zenId && !props.wfModules.find(wfm => wfm.id === zenId)) {
       return { zenModeWfModuleId: null }
     } else {
       return null
@@ -287,6 +288,10 @@ class ModuleStack extends React.Component {
     })
   }
 
+  moveModuleByIndex = (oldIndex, newIndex) => {
+    this.props.moveModuleByIndex(this.props.tabId, oldIndex, newIndex)
+  }
+
   moduleStackInsertSpot(index) {
     return (
       <ModuleStackInsertSpot
@@ -294,7 +299,7 @@ class ModuleStack extends React.Component {
         isReadOnly={this.props.isReadOnly}
         isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
         addModule={this.props.addModule}
-        moveModuleByIndex={this.props.moveModuleByIndex}
+        moveModuleByIndex={this.moveModuleByIndex}
         isLessonHighlightSearch={this.props.testLessonHighlightIndex(index)}
         />
     )
@@ -363,7 +368,8 @@ class ModuleStack extends React.Component {
 
 const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
-  const tabId = state.workflow.tab_ids[0]
+  const tabPosition = state.workflow.selected_tab_position
+  const tabId = state.workflow.tab_ids[tabPosition]
   const tab = state.tabs[String(tabId)]
   const wfModules = tab.wf_module_ids.map(id => state.wfModules[String(id)])
   return {
@@ -383,8 +389,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       dispatch(action)
     },
 
-    moveModuleByIndex(oldIndex, newIndex) {
-      const action = moveModuleAction(ownProps.tabId, oldIndex, newIndex)
+    moveModuleByIndex(tabId, oldIndex, newIndex) {
+      const action = moveModuleAction(tabId, oldIndex, newIndex)
       dispatch(action)
     },
 
