@@ -115,8 +115,7 @@ class Migration(migrations.Migration):
             """
             DELETE FROM server_wfmodule WHERE workflow_id IS NULL
             """
-        ],
-        reverse_sql=[
+        ], reverse_sql=[
             """
             UPDATE server_wfmodule
             SET
@@ -127,5 +126,5 @@ class Migration(migrations.Migration):
                 workflow_id = NULL
             WHERE is_deleted
             """
-        ]),
+        ], elidable=True),
     ]

@@ -96,5 +96,5 @@ class Migration(migrations.Migration):
 
             END$$;
             """
-        ], reverse_sql=[])
+        ], reverse_sql=[], elidable=True)
     ]

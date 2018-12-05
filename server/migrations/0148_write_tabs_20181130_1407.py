@@ -40,5 +40,5 @@ class Migration(migrations.Migration):
             );
 
             END$$
-        """]),
+        """], elidable=True),
     ]

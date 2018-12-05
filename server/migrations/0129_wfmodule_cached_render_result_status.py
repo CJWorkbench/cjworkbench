@@ -27,5 +27,5 @@ class Migration(migrations.Migration):
             SET cached_render_result_status = 'ok'
             WHERE cached_render_result_delta_id = last_relevant_delta_id
             """
-        ])
+        ], elidable=True)
     ]

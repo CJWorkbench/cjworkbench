@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(move_uploadedfiles_to_s3),
+        migrations.RunPython(move_uploadedfiles_to_s3, elidable=True),
         migrations.RemoveField(
             model_name='uploadedfile',
             name='file',
