@@ -1,8 +1,10 @@
 from django.http import Http404
-from django.utils.translation import gettext as _
+from django.db import transaction
 from django.template.response import TemplateResponse
+from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 import json
+from server.models.commands import InitWorkflowCommand
 from server.models import Lesson, Module, Workflow
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import make_init_state
@@ -26,18 +28,23 @@ def _ensure_workflow(request, lesson):
             request.session.create()
         session_key = request.session.session_key
 
-    return Workflow.objects.get_or_create(
-        defaults={
-            'name': _('Lesson: %(lesson_title)s') % {
-                'lesson_title': lesson.title
+    with transaction.atomic():
+        workflow, created = Workflow.objects.get_or_create(
+            defaults={
+                'name': _('Lesson: %(lesson_title)s') % {
+                    'lesson_title': lesson.title
+                },
+                'public': False,
+                'last_delta': None,
             },
-            'public': False,
-            'last_delta': None,
-        },
-        owner=owner,
-        anonymous_owner_session_key=session_key,
-        lesson_slug=lesson.slug
-    )[0]
+            owner=owner,
+            anonymous_owner_session_key=session_key,
+            lesson_slug=lesson.slug
+        )
+        if created:
+            workflow.tabs.create(position=0)
+            InitWorkflowCommand.create(workflow)
+        return workflow
 
 
 def _render_get_lesson_detail(request, lesson):
