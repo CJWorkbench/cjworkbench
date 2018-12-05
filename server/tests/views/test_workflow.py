@@ -411,12 +411,12 @@ class WorkflowViewTests(LoggedInTestCase):
         wfm3 = add_new_wf_module(self.workflow1, self.module_version1, 2)
 
         # your basic reordering
-        request = self._build_patch('/api/workflows/%d/' % self.workflow1.id,
-                                    data=[{'id': wfm1.id, 'order': 2},
-                                          {'id': wfm2.id, 'order': 0},
-                                          {'id': wfm3.id, 'order': 1}],
-                                    format='json',
-                                    user=self.user)
+        request = self._build_patch(
+            '/api/workflows/%d/' % self.workflow1.id,
+            data={'newOrder': [wfm2.id, wfm3.id, wfm1.id]},
+            format='json',
+            user=self.user
+        )
         response = workflow_detail(request, workflow_id=self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(list(WfModule.objects.order_by('order').values_list('id', flat=True)),
@@ -425,7 +425,7 @@ class WorkflowViewTests(LoggedInTestCase):
         # bad data should generate a 400 error
         # (we don't test every possible failure case, ReorderModulesCommand tests does that)
         request = self._build_patch('/api/workflows/%d/' % self.workflow1.id,
-                                    data=[{'problem':'bad data'}],
+                                    data={'newOrder':'bad data'},
                                     format='json',
                                     user=self.user)
         response = workflow_detail(request, workflow_id=self.workflow1.id)
