@@ -17,12 +17,12 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Scrape with Xpath"}]'
-      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Scrape with Xpath'"
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Scrape with Xpath'"
       >Add the Scraper 'Scrape with XPath'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'http://www.atlaudit.org/audit-reports.html'"
+      data-test="return workflow.tabs[0].wfModules[0].parameters.get('url') === 'http://www.atlaudit.org/audit-reports.html'"
       >Paste in the following URL, where all the public reports are listed:
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
       <p class="instruction-detail">Next, let's find the XPath selector</p>
@@ -38,7 +38,7 @@
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
       >Open the page in a new browser tab, <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
     <p class="instruction-detail">
       In that tab, scroll down to the “list of all publications released by the City Auditor's Office”. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
@@ -57,7 +57,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
       >Back in Workbench, paste the XPath selector you just copied into the scraper, and click <kbd>Scrape</kbd>.
     </li>
   </ol>
@@ -87,7 +87,7 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.parameters.get('selector'))"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.parameters.get('selector'))"
       >In the scraper, edit the XPath selector to select all the items in the list, and click <kbd>Scrape</kbd>.
     </li>
   </ol>
@@ -101,7 +101,7 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
       >In the scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd> and check “Email me when data changes”. Click <kbd>Apply</kbd>.
     </li>
   </ol>

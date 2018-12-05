@@ -18,29 +18,29 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add the data source 'Add from URL'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'http://production-static.workbenchdata.com/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.parameters.get('url') === 'http://production-static.workbenchdata.com/data/population_dirty_data.csv' && wfModule.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt content-3 t-white">http://production-static.workbenchdata.com/data/population_dirty_data.csv</div>
       <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Drop empty columns"}]'
-      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[1].moduleName === 'Drop empty columns'"
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Drop empty columns'"
       >Add the step 'Drop empty columns.'
     </li>
     <li
       data-highlight='[{"type":"Module","index":2,"name":"Drop empty rows"}]'
-      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
+      data-test="return workflow.tabs[0].wfModuleNames[2] === 'Drop empty rows'"
       >Add the step 'Drop empty rows'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
-      data-test="const colnames = workflow.wfModules[2].parameters.get('colnames'); return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
+      data-test="const colnames = workflow.tabs[0].wfModules[2].parameters.get('colnames'); return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
       >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
     </li>
   </ol>
@@ -52,11 +52,11 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":3,"name":"Refine"}]'
-      data-test="return workflow.wfModules.length > 3 && workflow.wfModules[3].moduleName === 'Refine'"
+      data-test="return workflow.tabs[0].wfModuleNames[3] === 'Refine'"
       >Add the step 'Refine' using the search.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const renames = JSON.parse(json).renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
+      data-test="const params = workflow.tabs[0].wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const renames = JSON.parse(json).renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five groups.
       <figure>
         <img alt="Inspect element" src="images/clean_standardize_lesson/1_refine_row.png">
@@ -70,7 +70,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.wfModules[3].parameters; const json = JSON.parse(params.get('refine')); return json.blacklist.join('|') === 'Denver - Aurora'"
+      data-test="const params = workflow.tabs[0].wfModules[3].parameters; const json = JSON.parse(params.get('refine')); return json.blacklist.join('|') === 'Denver - Aurora'"
     >Un-check <kbd>Denver - Aurora</kbd> which does not contain valid population data.
     </li>
   </ol>
@@ -87,21 +87,21 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":4,"name":"Reshape" }]'
-      data-test="return workflow.wfModules.length > 4 && workflow.wfModules[4].moduleName === 'Reshape'"
+      data-test="return workflow.tabs[0].wfModuleNames[4] === 'Reshape'"
       >Add the step ‘Reshape’.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.wfModules[4].parameters.get('direction') === 1"
+      data-test="return workflow.tabs[0].wfModules[4].parameters.get('direction') === 1"
       >Select <kbd>Long to wide</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.wfModules[4].parameters.get('colnames') == 'Date'"
+      data-test="return workflow.tabs[0].wfModules[4].parameters.get('colnames') == 'Date'"
       >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
+      data-test="return workflow.tabs[0].wfModules[4].parameters.get('varcol') == 'MetroArea'"
       >Choose <kbd>MetroArea</kbd> as the Column variable. Those values will be used in the column header in the wide table.
     </li>
   </ol>

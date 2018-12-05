@@ -16,18 +16,18 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add the data source 'Add from URL'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000' && wfModule.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000</div>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]',
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.updateInterval === '5h'"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
       >Click <kbd>manual</kbd> to open the Workflow Update dialog. Set the feature to <kbd>Auto</kbd>, set the frequency to 5 hours, and click <kbd>Apply.</kbd>
     </li>
 
@@ -43,24 +43,24 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
-      data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Filter'"
       >Add the step 'Filter'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
-      data-test="const params = workflow.wfModules[1].parameters; return params.get('column') === 'date' && params.get('condition') === 17 && params.get('value') === '2018-01-01'"
+      data-test="const params = workflow.tabs[0].wfModules[1].parameters; return params.get('column') === 'date' && params.get('condition') === 17 && params.get('value') === '2018-01-01'"
       >Select the column <kbd>date</kbd> to filter by. Choose <kbd>Date is after</kbd> as a condition, and type in <kbd>2018-01-01</kbd>
       <p class="instruction-detail">
         Group the result by police district, and count the number of incidents for each of them.
       </p>
     <li
       data-highlight='[{"type":"Module","index":2,"name":"Group"}]'
-      data-test="return workflow.wfModules[2] && workflow.wfModules[2].moduleName === 'Group'"
+      data-test="return workflow.tabs[0].wfModuleNames[2] === 'Group'"
       >Add the step 'Group'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
-      data-test="const params = workflow.wfModules[2].parameters; return params.get('groupby|groupby|0') === 'pddistrict' && params.get('operation|operation|0') === 0"
+      data-test="const params = workflow.tabs[0].wfModules[2].parameters; return params.get('groupby|groupby|0') === 'pddistrict' && params.get('operation|operation|0') === 0"
       >Choose <kbd>pddistrict</kbd> to group by, and leave the operation set on <kbd>Count</kbd>.
     </li>
   </ol>
@@ -71,12 +71,12 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":3,"name":"Filter"}]'
-      data-test="return workflow.wfModules[3] && workflow.wfModules[3].moduleName === 'Filter'"
+      data-test="return workflow.tabs[0].wfModuleNames[3] === 'Filter'"
       >Add the step 'Filter'.
     </li>
     <li
       data-highlight='[{"type":"WfModule","index":3,"moduleName":"Filter"}]'
-      data-test="const params = workflow.wfModules[3].parameters; return params.get('column') === 'Group Size' && params.get('condition') === 10 && params.get('value') === '8000'"
+      data-test="const params = workflow.tabs[0].wfModules[3].parameters; return params.get('column') === 'Group Size' && params.get('condition') === 10 && params.get('value') === '8000'"
       >Select the column <kbd>Group Size</kbd> to filter by. Choose <kbd>Greater than</kbd> as a condition, and type in <kbd>8000</kbd>
       <p class="instruction-detail">
         Turn this step's alert on to be notified if the list of neighborhoods matching the condition changes
@@ -84,7 +84,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","index":3,"moduleName":"Filter"}]'
-      data-test="return workflow.wfModules[3].isEmailUpdates"
+      data-test="return workflow.tabs[0].wfModules[3].isEmailUpdates"
       >In the filter step, click on the
       <img class="icon-insert" src="images/monitor_lesson/alert_button.svg"> icon. Turn the alert <kbd>ON</kbd>and close the window.
     </li>
