@@ -295,12 +295,7 @@ export class WfModule extends React.PureComponent {
   }
 
   // checks visible_if fields, recursively (we are not visible if parent referenced in visbile_if is not visible)
-  isParameterVisible(p, breadcrumbs=[]) {
-    const id_name = p.parameter_spec.id_name
-    if (breadcrumbs.includes(id_name)) {
-      throw new Error(`visible_if infinite loop: ${[ ...breadcrumbs, id_name ].join(' -> ')}`)
-    }
-
+  isParameterVisible(p) {
     // No visibility condition, we are visible
     const visibleIf = p.parameter_spec.visible_if
     if (!visibleIf) {
@@ -317,7 +312,7 @@ export class WfModule extends React.PureComponent {
 
     // We are invisible if our parent is invisible
     const parent = findParamValByIdName(this.props.wfModule, condition['id_name'])
-    if (!parent || !this.isParameterVisible(parent, [ ...breadcrumbs, id_name ])) {
+    if (!parent || !this.isParameterVisible(parent)) {
       return false
     }
 

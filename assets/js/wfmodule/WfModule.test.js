@@ -590,14 +590,6 @@ describe('WfModule, not read-only mode', () => {
       expect(w.find('WfParameter')).toHaveLength(3)
     })
 
-    it('errors when visible_if makes an infinite loop', () => {
-      // Even though the parent ("invisible_by_default" parameter) is set to the corrent menu item, it's not visible
-      // So we shouldn't be either
-      const visibleIf = '{"id_name":"version_select", "value":"Durian"}'
-      expect(() => shallow(
-        <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />
-      )).toThrow(/visible_if infinite loop/)
-    })
   })
 
 })
