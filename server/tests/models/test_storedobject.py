@@ -5,6 +5,7 @@ from django.conf import settings
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from server.minio import minio_client, StoredObjectsBucket
 from server.models import StoredObject, Workflow
 from server.sanitizedataframe import sanitize_dataframe
 from server.tests.utils import DbTestCase
@@ -106,19 +107,24 @@ class StoredObjectTests(DbTestCase):
         # different file with same contents
         self.assertEqual(so1.stored_at, so2.stored_at)
         self.assertEqual(so1.metadata, so2.metadata)
-        self.assertNotEqual(so1.file, so2.file)
-
-        self.assertEqual(self.file_contents(so1.file),
-                         self.file_contents(so2.file))
+        self.assertEqual(so1.size, so2.size)
+        self.assertEqual(so1.bucket, so2.bucket)
+        self.assertNotEqual(so1.key, so2.key)
+        assert_frame_equal(so2.get_table(), table)
 
     def test_read_file_missing(self):
         so = StoredObject(file='hello', size=10)
         assert_frame_equal(so.get_table(), pd.DataFrame())
 
     def test_read_file_fastparquet_issue_375(self):
+        file = os.path.join(os.path.dirname(__file__), '..', 'test_data',
+                            'fastparquet-issue-375-snappy.par')
+        minio_client.fput_object(StoredObjectsBucket,
+                                 'fastparquet-issue-375-snappy.par', file)
+
         so = StoredObject(
-            file=os.path.join(os.path.dirname(__file__), '..', 'test_data',
-                              'fastparquet-issue-375-snappy.par'),
-            size=10
+            size=10,
+            bucket=StoredObjectsBucket,
+            key='fastparquet-issue-375-snappy.par'
         )
         assert_frame_equal(so.get_table(), pd.DataFrame())

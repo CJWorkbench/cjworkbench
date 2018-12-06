@@ -1,15 +1,13 @@
 import os
 import shutil
-from typing import List, Optional, Union
+from typing import Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from server import websockets
 from server.modules.types import ProcessResult
 from .Params import Params
 from .CachedRenderResult import CachedRenderResult
 from .ModuleVersion import ModuleVersion
 from .ParameterSpec import ParameterSpec
-from .ParameterVal import ParameterVal
 from .StoredObject import StoredObject
 from .Tab import Tab
 from .Workflow import Workflow
@@ -202,9 +200,9 @@ class WfModule(models.Model):
         return ProcessResult(table, self.fetch_error)
 
     def list_fetched_data_versions(self):
-        return list(StoredObject.objects.filter(wf_module=self)
-                                        .order_by('-stored_at')
-                                        .values_list('stored_at', 'read'))
+        return list(self.stored_objects
+                    .order_by('-stored_at')
+                    .values_list('stored_at', 'read'))
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects

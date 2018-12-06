@@ -1,13 +1,16 @@
 import os
+import tempfile
 import uuid
-from shutil import copyfile
 from django.db import models
-from django.core.files.storage import default_storage
-from django.dispatch import receiver
 from django.utils import timezone
 import pandas as pd
 from server.pandas_util import hash_table
-from server import parquet
+from server import minio, parquet
+
+
+def _build_key(workflow_id: int, wf_module_id: int) -> str:
+    """Build a helpful S3 key."""
+    return f'{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat'
 
 
 # StoredObject is our persistence layer.
@@ -18,7 +21,9 @@ class StoredObject(models.Model):
                                   on_delete=models.CASCADE)
 
     # identification for file backing store
-    file = models.FileField()
+    file = models.FileField(null=True)  # DEPRECATED
+    bucket = models.CharField(max_length=255, null=True)
+    key = models.CharField(max_length=255, null=True)
     stored_at = models.DateTimeField(default=timezone.now)
 
     # used only for stored tables
@@ -29,14 +34,6 @@ class StoredObject(models.Model):
     # keeping track of whether this version of the data has ever been loaded
     # and delivered to the frontend
     read = models.BooleanField(default=False)
-
-    # filename combines wf module id and our object id
-    # (self.id is sufficient but putting wfm.id in the filename helps
-    # debugging)
-    @staticmethod
-    def _storage_filename(wfm_id):
-        fname = f'{wfm_id}-{uuid.uuid1()}-fetch.dat'
-        return default_storage.path(fname)
 
     @staticmethod
     def create_table(wf_module, table, metadata=None):
@@ -64,17 +61,32 @@ class StoredObject(models.Model):
 
     @staticmethod
     def __create_table_internal(wf_module, table, metadata, hash):
-        path = StoredObject._storage_filename(wf_module.id)
-        parquet.write(path, table)
+        # Write to minio bucket/key
+        bucket = minio.StoredObjectsBucket
+        key = _build_key(wf_module.workflow_id, wf_module.id)
+        with tempfile.NamedTemporaryFile() as tf:
+            parquet.write(tf.name, table)
+            size = tf.seek(0, os.SEEK_END)
+            tf.seek(0)
+            minio.minio_client.put_object(bucket, key, tf, length=size)
+
+        # Create the object that references the bucket/key
         return wf_module.stored_objects.create(
             metadata=metadata,
-            file=path,
-            size=os.stat(path).st_size,
-            stored_at=timezone.now(),
+            bucket=minio.StoredObjectsBucket,
+            key=key,
+            size=size,
             hash=hash
         )
 
     def get_table(self):
+        if self.bucket and self.key:
+            with minio.temporarily_download(self.bucket, self.key) as tf:
+                try:
+                    return parquet.read(tf.name)
+                except parquet.FastparquetCouldNotHandleFile:
+                    return pd.DataFrame()  # empty table
+
         if not self.file:
             # Before 2018-11-09, we did not write empty data frames.
             #
@@ -83,12 +95,36 @@ class StoredObject(models.Model):
             return pd.DataFrame()
 
         try:
-            return parquet.read(self.file.name)
+            return parquet.read(self.file.path)
         except (FileNotFoundError, parquet.FastparquetCouldNotHandleFile):
             # Spotted on production for a duplicated workflow dated
             # 2018-08-01. [adamhooper, 2018-09-20] I can think of no harm in
             # returning an empty dataframe here.
             return pd.DataFrame()  # empty table
+
+    def ensure_using_s3(self):
+        """
+        Ensure self.file is None.
+
+        self.file is deprecated
+        """
+        if not self.file:
+            return
+
+        path = self.file.path
+
+        self.bucket = minio.StoredObjectsBucket
+        self.key = _build_key(self.wf_module.workflow_id,
+                              self.wf_module.id)
+        try:
+            minio.minio_client.fput_object(self.bucket, self.key, path)
+            self.file = None
+            self.save(update_fields=['bucket', 'key', 'file'])
+
+            os.remove(path)
+        except FileNotFoundError:
+            self.file = None
+            self.save(update_fields=['bucket', 'key', 'file'])
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
@@ -98,21 +134,32 @@ class StoredObject(models.Model):
                 'Cannot duplicate a StoredObject to same WfModule'
             )
 
-        srcname = default_storage.path(self.file.name)
-        new_path = StoredObject._storage_filename(to_wf_module.id)
-        copyfile(srcname, new_path)
-        new_so = StoredObject.objects.create(wf_module=to_wf_module,
-                                             stored_at=self.stored_at,
-                                             hash=self.hash,
-                                             metadata=self.metadata,
-                                             file=new_path,
-                                             size=self.size)
+        self.ensure_using_s3()
+        key = _build_key(to_wf_module.workflow_id, to_wf_module.id)
+        minio.minio_client.copy_object(self.bucket, key,
+                                       f'/{self.bucket}/{self.key}')
+
+        new_so = to_wf_module.stored_objects.create(
+            stored_at=self.stored_at,
+            hash=self.hash,
+            metadata=self.metadata,
+            bucket=self.bucket,
+            key=key,
+            size=self.size
+        )
         return new_so
 
+    def delete(self):
+        """Delete the actual file while deleting this object."""
+        # DEPRECATED: file storage
+        if self.file:
+            try:
+                os.remove(self.file.path)
+            except FileNotFoundError:
+                pass
 
-# Delete file from filesystem when corresponding object is deleted.
-@receiver(models.signals.post_delete, sender=StoredObject)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    if instance.file:
-        if os.path.isfile(instance.file.path):
-            os.remove(instance.file.path)
+        # S3 storage
+        if self.bucket and self.key:
+            minio.minio_client.remove_object(self.bucket, self.key)
+
+        super().delete()

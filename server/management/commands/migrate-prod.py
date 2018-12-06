@@ -2,7 +2,6 @@ import json
 from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand
-from django.contrib.sites.models import Site
 from server.minio import minio_client, StaticFilesBucket
 
 

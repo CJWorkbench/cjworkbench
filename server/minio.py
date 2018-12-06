@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import hmac
 import hashlib
+import tempfile
 from django.conf import settings
 from minio import Minio
 from minio.error import ResponseError  # noqa: F401 -- users may import it
@@ -24,6 +25,14 @@ StaticFilesBucket = ''.join([
     settings.MINIO_BUCKET_PREFIX,
     '-',
     'static',
+    settings.MINIO_BUCKET_SUFFIX
+])
+
+
+StoredObjectsBucket = ''.join([
+    settings.MINIO_BUCKET_PREFIX,
+    '-',
+    'stored-objects',
     settings.MINIO_BUCKET_SUFFIX
 ])
 
@@ -73,4 +82,21 @@ def open_for_read(bucket: str, key: str):
         response.release_conn()
 
 
+@contextmanager
+def temporarily_download(bucket: str, key: str) -> None:
+    """
+    Open a file on S3 as a NamedTemporaryFile.
+
+    Usage:
+
+        with minio.temporarily_download('bucket', 'key') as tf:
+            print(repr(tf.name))  # a path on the filesystem
+            tf.read()
+    """
+    with tempfile.NamedTemporaryFile() as tf:
+        minio_client.fget_object(bucket, key, tf.name)
+        yield tf
+
+
 ensure_bucket_exists(UserFilesBucket)
+ensure_bucket_exists(StoredObjectsBucket)
