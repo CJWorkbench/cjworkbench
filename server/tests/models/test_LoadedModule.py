@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+import logging
 import os.path
 import shutil
 import tempfile
@@ -214,7 +215,7 @@ class LoadedModuleTest(SimpleTestCase):
             raise Ick('Oops')
 
         lm = LoadedModule('int', '1', False, render_impl=render)
-        with self.assertLogs():
+        with self.assertLogs(level=logging.ERROR):
             result = lm.render(MockParams(), pd.DataFrame(), fetch_result=None)
 
         _, lineno = inspect.getsourcelines(render)
@@ -299,7 +300,7 @@ class LoadedModuleTest(SimpleTestCase):
             raise Ick('Oops')
 
         lm = LoadedModule('int', '1', True, render_impl=render)
-        with self.assertLogs():
+        with self.assertLogs(level=logging.ERROR):
             result = lm.render(MockParams(), pd.DataFrame(), fetch_result=None)
 
         _, lineno = inspect.getsourcelines(render)
@@ -450,7 +451,7 @@ class LoadedModuleTest(SimpleTestCase):
             raise Ick('Oops')
 
         lm = LoadedModule('int', '1', False, fetch_impl=fetch)
-        with self.assertLogs():
+        with self.assertLogs(level=logging.ERROR):
             result = call_fetch(lm, MockParams())
 
         _, lineno = inspect.getsourcelines(fetch)
@@ -472,7 +473,7 @@ class LoadedModuleTest(SimpleTestCase):
             raise Ick('Oops')
 
         lm = LoadedModule('int', '1', True, fetch_impl=fetch)
-        with self.assertLogs():
+        with self.assertLogs(level=logging.ERROR):
             result = call_fetch(lm, MockParams())
 
         _, lineno = inspect.getsourcelines(fetch)

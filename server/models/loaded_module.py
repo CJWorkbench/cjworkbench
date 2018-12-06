@@ -184,6 +184,7 @@ class LoadedModule:
         try:
             out = self.render_impl(arg1, arg2, **kwargs)
         except Exception as err:
+            logger.exception('Exception in %s.render', self.module_id_name)
             out = self._wrap_exception(err)
 
         out = ProcessResult.coerce(out)
@@ -251,6 +252,7 @@ class LoadedModule:
         try:
             out = await future_result
         except Exception as err:
+            logger.exception('Exception in %s.fetch', self.module_id_name)
             out = self._wrap_exception(err)
 
         time2 = time.time()
