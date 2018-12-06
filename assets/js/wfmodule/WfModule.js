@@ -311,9 +311,11 @@ export class WfModule extends React.PureComponent {
     }
 
     // We are invisible if our parent is invisible
-    const parent = findParamValByIdName(this.props.wfModule, condition['id_name'])
-    if (!parent || !this.isParameterVisible(parent)) {
-      return false
+    if (condition['id_name'] != p.parameter_spec.id_name) { // prevent infinite recurse; see droprowsbyposition.json
+      const parent = findParamValByIdName(this.props.wfModule, condition['id_name'])
+      if (parent && !this.isParameterVisible(parent)) {
+        return false
+      }
     }
 
     if ('value' in condition) {

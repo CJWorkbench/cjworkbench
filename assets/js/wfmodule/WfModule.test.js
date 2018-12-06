@@ -545,41 +545,45 @@ describe('WfModule, not read-only mode', () => {
       }
     }
 
+    // These depend on the test data
+    const numModulesIfVisible = 4     // five params, one invisible by default
+    const numModulesIfNotVisible = 3
+
     // These tests depend on there being a WfParameter id named menu_select that is set to "Banana"
     it('Conditional parameter visible via menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Banana"}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(4) // five params, one invisible by default
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter not visible via menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Mango"}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(3) // // five params, one invisible, another we set invisible
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter not visible via inverted menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Banana", "invert":true}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(3)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter visible via inverted menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Mango", "invert":true}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(4)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter visible via checkbox', () => {
       const visibleIf = '{"id_name":"some_boolean", "value":true}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(4)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter invisible via inverted checkbox', () => {
       const visibleIf = '{"id_name":"some_boolean", "value":true, "invert":true}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(3)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter invisible via invisible parent', () => {
@@ -587,7 +591,19 @@ describe('WfModule, not read-only mode', () => {
       // So we shouldn't be either
       const visibleIf = '{"id_name":"invisible_by_default", "value":"Durian"}'
       const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(3)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
+    })
+
+    it('Conditional parameter with bad parent name is visible', () => {
+      const visibleIf = '{"id_name":"fooop", "value":"bar"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
+    })
+
+    it('No infinite looop on parent name', () => {
+      const visibleIf = '{"id_name":"' + wfModule.parameter_vals[1].parameter_spec.id_name + '", "value":"bar"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
   })
