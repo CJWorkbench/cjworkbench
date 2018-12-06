@@ -88,6 +88,25 @@ describe('WfModule, not read-only mode', () => {
         },
         'value': 1,
         'items': 'Mango|Banana'
+      },
+      {
+        'id': 103,
+        'parameter_spec': {
+          'id_name': 'some_boolean',
+          'type': 'checkbox'
+        },
+        'value': true
+      },
+      {
+        // used to test nested visibility. Test data set so param 102 makes this invisible'
+        'id': 104,
+        'parameter_spec': {
+          'id_name': 'invisible_by_default',
+          'type': 'menu',
+          'visible_if': '{"id_name":"menu_select", "value": "Mango"}'
+        },
+        'items': 'Strawberry|Durian',
+        'value': 1
       }
     ],
     module_version: { module: 2 }
@@ -151,14 +170,14 @@ describe('WfModule, not read-only mode', () => {
   it('renders in Zen mode', () => {
     const wrapper = shallow(<WfModule {...props} isZenMode />)
     expect(wrapper.prop('className')).toMatch(/\bzen-mode\b/)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true ])
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true, true ])
   })
 
   it('has an "enter zen mode" button', () => {
     const wrapper = shallow(<WfModule {...props} isZenModeAllowed />)
     let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(false)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false, false ])
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false, false, false ])
 
     checkbox.simulate('change', { target: { checked: true } })
     expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, true)
@@ -166,7 +185,7 @@ describe('WfModule, not read-only mode', () => {
 
     checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(true)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true ])
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true, true ])
 
     checkbox.simulate('change', { target: { checked: false } })
     expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, false)
@@ -501,4 +520,92 @@ describe('WfModule, not read-only mode', () => {
       expect(wrapper.find('button.edit-note').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
   })
+
+  // Conditional UI tests
+  describe('conditional parameter visibility', () => {
+
+
+    // merge a visible_if block into the second parameter array of our test module
+    const insertVisibleIf = (visibleIfTest) => {
+      return {
+        ...wfModule,
+        parameter_vals: [
+          wfModule.parameter_vals[0],
+          {
+            ...wfModule.parameter_vals[1],
+            parameter_spec: {
+              ...wfModule.parameter_vals[1].parameter_spec,
+              visible_if: visibleIfTest
+            }
+          },
+          wfModule.parameter_vals[2],
+          wfModule.parameter_vals[3],
+          wfModule.parameter_vals[4]
+        ]
+      }
+    }
+
+    // These depend on the test data
+    const numModulesIfVisible = 4     // five params, one invisible by default
+    const numModulesIfNotVisible = 3
+
+    // These tests depend on there being a WfParameter id named menu_select that is set to "Banana"
+    it('Conditional parameter visible via menu', () => {
+      const visibleIf = '{"id_name":"menu_select", "value":"Banana"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
+    })
+
+    it('Conditional parameter not visible via menu', () => {
+      const visibleIf = '{"id_name":"menu_select", "value":"Mango"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
+    })
+
+    it('Conditional parameter not visible via inverted menu', () => {
+      const visibleIf = '{"id_name":"menu_select", "value":"Banana", "invert":true}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
+    })
+
+    it('Conditional parameter visible via inverted menu', () => {
+      const visibleIf = '{"id_name":"menu_select", "value":"Mango", "invert":true}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
+    })
+
+    it('Conditional parameter visible via checkbox', () => {
+      const visibleIf = '{"id_name":"some_boolean", "value":true}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
+    })
+
+    it('Conditional parameter invisible via inverted checkbox', () => {
+      const visibleIf = '{"id_name":"some_boolean", "value":true, "invert":true}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
+    })
+
+    it('Conditional parameter invisible via invisible parent', () => {
+      // Even though the parent ("invisible_by_default" parameter) is set to the corrent menu item, it's not visible
+      // So we shouldn't be either
+      const visibleIf = '{"id_name":"invisible_by_default", "value":"Durian"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
+    })
+
+    it('Conditional parameter with bad parent name is visible', () => {
+      const visibleIf = '{"id_name":"fooop", "value":"bar"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
+    })
+
+    it('No infinite looop on parent name', () => {
+      const visibleIf = '{"id_name":"' + wfModule.parameter_vals[1].parameter_spec.id_name + '", "value":"bar"}'
+      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
+    })
+
+  })
+
 })
