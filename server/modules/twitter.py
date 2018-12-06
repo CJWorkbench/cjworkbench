@@ -1,11 +1,11 @@
 from collections import namedtuple
 import re
-from typing import Any, Dict, List, Optional
-from urllib.parse import quote
+from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
 import numpy as np
 from oauthlib import oauth1
+from oauthlib.common import urlencode, quote
 import pandas as pd
 from server import oauth
 from .moduleimpl import ModuleImpl
@@ -78,11 +78,6 @@ def read_column(statuses: List[Dict[str, Any]], column: Column) -> pd.Series:
     return series
 
 
-def urlencode(component: str):
-    """Mimic JavaScript window.encodeURIComponent(component)"""
-    return quote(component, safe='')
-
-
 def _recover_from_160258591(table):
     """Reset types of columns, in-place."""
     # https://www.pivotaltracker.com/story/show/160258591
@@ -110,8 +105,8 @@ def statuses_to_dataframe(statuses: List[Dict[str, Any]]) -> pd.DataFrame:
     ))
 
 
-async def fetch_from_twitter(access_token, path, since_id: Optional[int],
-                             per_page: int,
+async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
+                             since_id: Optional[int], per_page: int,
                              n_pages: int) -> List[Dict[str, Any]]:
     service = oauth.OAuthService.lookup_or_none('twitter_credentials')
     if not service:
@@ -130,16 +125,21 @@ async def fetch_from_twitter(access_token, path, since_id: Optional[int],
     async with aiohttp.ClientSession() as session:  # aiohttp timeout of 5min
         for page in range(n_pages):
             # Assume {path} contains '?' already
-            page_url = (
-                f'https://api.twitter.com/1.1/{path}'
-                f'&tweet_mode=extended&count={per_page}'
-            )
+            page_params = [
+                *params,
+                ('tweet_mode', 'extended'),
+                ('count', str(per_page)),
+            ]
             if since_id:
-                page_url += f'&since_id={since_id}'
+                page_params.append(('since_id', str(since_id)))
             if max_id:
-                page_url += f'&max_id={max_id}'
+                page_params.append(('max_id', str(max_id)))
 
-            page_url, headers, _ = oauth_client.sign(
+            page_url = (
+                f'https://api.twitter.com/1.1/{path}?{urlencode(page_params)}'
+            )
+
+            page_url, headers, body = oauth_client.sign(
                 page_url,
                 headers={'Accept': 'application/json'}
             )
@@ -168,26 +168,18 @@ async def twitter_user_timeline(access_token, screen_name,
                                 since_id: Optional[int]
                                 ) -> List[Dict[str, Any]]:
     # 3200 tweets, aribitrarily
-    return await fetch_from_twitter(
-        access_token,
-        f'statuses/user_timeline.json?screen_name={urlencode(screen_name)}',
-        since_id,
-        200,
-        16
-    )
+    return await fetch_from_twitter(access_token,
+                                    'statuses/user_timeline.json',
+                                    [('screen_name', screen_name)], since_id,
+                                    200, 16)
 
 
 async def twitter_search(access_token, q,
                          since_id: Optional[int]) -> List[Dict[str, Any]]:
     # 1000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
-    return await fetch_from_twitter(
-        access_token,
-        f'search/tweets.json?q={urlencode(q)}',
-        since_id,
-        100,
-        10
-    )
+    return await fetch_from_twitter(access_token, 'search/tweets.json',
+                                    [('q', quote(q))], since_id, 100, 10)
 
 
 async def twitter_list_timeline(access_token, owner_screen_name, slug,
@@ -197,11 +189,11 @@ async def twitter_list_timeline(access_token, owner_screen_name, slug,
     # (this is still 10 calls)
     return await fetch_from_twitter(
         access_token,
-        (
-            'lists/statuses.json'
-            f'?owner_screen_name={urlencode(owner_screen_name)}'
-            f'&slug={urlencode(slug)}'
-        ),
+        'lists/statuses.json',
+        [
+            ('owner_screen_name', owner_screen_name),
+            ('slug', slug),
+        ],
         since_id,
         200,
         5
