@@ -190,3 +190,22 @@ class StoredObjectTests(DbTestCase):
                                              bucket=StoredObjectsBucket,
                                              key='missing-key', hash='123')
         so.delete()
+
+    def test_delete_deletes_from_filesystem(self):
+        """
+        First delete fails after S3 remove_object? Recover.
+        """
+        with tempfile.NamedTemporaryFile() as tf:
+            workflow = Workflow.objects.create()
+            tab = workflow.tabs.create(position=0)
+            wf_module = tab.wf_modules.create(order=0)
+            so = wf_module.stored_objects.create(size=4, file=tf.name,
+                                                 hash='123')
+            so.delete()
+
+            with self.assertRaises(FileNotFoundError):
+                open(tf.name, 'rb')
+
+            # Put the file back, so we can get out of our context manager
+            with open(tf.name, 'wb') as x:
+                x.write(b'')

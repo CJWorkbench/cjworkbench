@@ -162,7 +162,14 @@ def _delete_from_s3_pre_delete(sender, instance, **kwargs):
     deletion fails, we need the link to remain in our database -- that's how
     the user will know it isn't deleted.
     """
-    try:
-        minio.minio_client.remove_object(instance.bucket, instance.key)
-    except minio.error.NoSuchKey:
-        pass
+    if instance.bucket and instance.key:
+        try:
+            minio.minio_client.remove_object(instance.bucket, instance.key)
+        except minio.error.NoSuchKey:
+            pass
+
+    if instance.file:
+        try:
+            os.remove(instance.file.path)
+        except FileNotFoundError:
+            pass
