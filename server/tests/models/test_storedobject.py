@@ -1,3 +1,4 @@
+import io
 import os
 import json
 import tempfile
@@ -5,7 +6,7 @@ from django.conf import settings
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.minio import minio_client, StoredObjectsBucket
+from server.minio import minio_client, StoredObjectsBucket, error
 from server.models import StoredObject, Workflow
 from server.sanitizedataframe import sanitize_dataframe
 from server.tests.utils import DbTestCase
@@ -128,3 +129,64 @@ class StoredObjectTests(DbTestCase):
             key='fastparquet-issue-375-snappy.par'
         )
         assert_frame_equal(so.get_table(), pd.DataFrame())
+
+    def test_delete_workflow_deletes_from_s3(self):
+        minio_client.put_object(StoredObjectsBucket, 'test.dat',
+                                io.BytesIO(b'abcd'), length=4)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0)
+        wf_module.stored_objects.create(size=4, bucket=StoredObjectsBucket,
+                                        key='test.dat', hash='123')
+        workflow.delete()
+        with self.assertRaises(error.NoSuchKey):
+            minio_client.get_object(StoredObjectsBucket, 'test.dat')
+
+    def test_delete_tab_deletes_from_s3(self):
+        minio_client.put_object(StoredObjectsBucket, 'test.dat',
+                                io.BytesIO(b'abcd'), length=4)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0)
+        wf_module.stored_objects.create(size=4, bucket=StoredObjectsBucket,
+                                        key='test.dat', hash='123')
+        tab.delete()
+        with self.assertRaises(error.NoSuchKey):
+            minio_client.get_object(StoredObjectsBucket, 'test.dat')
+
+    def test_delete_wf_module_deletes_from_s3(self):
+        minio_client.put_object(StoredObjectsBucket, 'test.dat',
+                                io.BytesIO(b'abcd'), length=4)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0)
+        wf_module.stored_objects.create(size=4, bucket=StoredObjectsBucket,
+                                        key='test.dat', hash='123')
+        wf_module.delete()
+        with self.assertRaises(error.NoSuchKey):
+            minio_client.get_object(StoredObjectsBucket, 'test.dat')
+
+    def test_delete_deletes_from_s3(self):
+        minio_client.put_object(StoredObjectsBucket, 'test.dat',
+                                io.BytesIO(b'abcd'), length=4)
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0)
+        so = wf_module.stored_objects.create(size=4,
+                                             bucket=StoredObjectsBucket,
+                                             key='test.dat', hash='123')
+        so.delete()
+        with self.assertRaises(error.NoSuchKey):
+            minio_client.get_object(StoredObjectsBucket, 'test.dat')
+
+    def test_delete_ignores_file_missing_from_s3(self):
+        """
+        First delete fails after S3 remove_object? Recover.
+        """
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0)
+        so = wf_module.stored_objects.create(size=4,
+                                             bucket=StoredObjectsBucket,
+                                             key='missing-key', hash='123')
+        so.delete()

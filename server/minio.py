@@ -4,6 +4,7 @@ import hashlib
 import tempfile
 from django.conf import settings
 from minio import Minio
+from minio import error  # noqa: F401 -- users may import it
 from minio.error import ResponseError  # noqa: F401 -- users may import it
 
 # https://localhost:9000/ => [ https:, localhost:9000 ]

@@ -2,6 +2,8 @@ import os
 import tempfile
 import uuid
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils import timezone
 import pandas as pd
 from server.pandas_util import hash_table
@@ -149,17 +151,18 @@ class StoredObject(models.Model):
         )
         return new_so
 
-    def delete(self):
-        """Delete the actual file while deleting this object."""
-        # DEPRECATED: file storage
-        if self.file:
-            try:
-                os.remove(self.file.path)
-            except FileNotFoundError:
-                pass
 
-        # S3 storage
-        if self.bucket and self.key:
-            minio.minio_client.remove_object(self.bucket, self.key)
+@receiver(pre_delete, sender=StoredObject)
+def _delete_from_s3_pre_delete(sender, instance, **kwargs):
+    """
+    Delete file from S3, pre-delete.
 
-        super().delete()
+    Why pre-delete and not post-delete? Because our user expects the file to be
+    _gone_, completely, forever -- that's what "delete" means to the user. If
+    deletion fails, we need the link to remain in our database -- that's how
+    the user will know it isn't deleted.
+    """
+    try:
+        minio.minio_client.remove_object(instance.bucket, instance.key)
+    except minio.errors.NoSuchKey:
+        pass
