@@ -164,5 +164,5 @@ def _delete_from_s3_pre_delete(sender, instance, **kwargs):
     """
     try:
         minio.minio_client.remove_object(instance.bucket, instance.key)
-    except minio.errors.NoSuchKey:
+    except minio.error.NoSuchKey:
         pass
