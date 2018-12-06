@@ -1,8 +1,8 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views import acl, uploads, workflows, tabs
+from .views import acl, uploads, workflows
 from .views.UploadedFileView import get_uploadedfile
 
 urlpatterns = [
