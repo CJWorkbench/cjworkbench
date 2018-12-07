@@ -198,14 +198,14 @@ class OAuth1a(OAuthService):
 
         try:
             offline_token = session.fetch_access_token(self.access_token_url)
-        except OAuthkError as err:
+        except (OAuth1Error, OAuth2Error) as err:
             return str(err)
 
         return offline_token
 
 
     def extract_username_from_token(self, token: OfflineToken) -> str:
-        return '@' + token['screen_name'] # Twitter-specific...
+        return '@' + token['screen_name']  # Twitter-specific...
 
 
 class OAuth2(OAuthService):
