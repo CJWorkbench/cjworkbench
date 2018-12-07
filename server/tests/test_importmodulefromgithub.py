@@ -26,6 +26,8 @@ def overriden_get_already_imported():
 
 class ImportFromGitHubTest(DbTestCase):
     def setUp(self):
+        super().setUp()
+
         # must match importable.json test data file
         self.importable_id_name = 'importable_not_repo_name'
 

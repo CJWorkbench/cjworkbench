@@ -2,10 +2,10 @@ import json
 from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand
-from server.minio import minio_client, StaticFilesBucket
+from server import minio
 
 
-BUCKET_POLICY =  json.dumps({
+BUCKET_POLICY = """{
     "Version":"2012-10-17",
     "Statement":[
         {
@@ -13,24 +13,24 @@ BUCKET_POLICY =  json.dumps({
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:GetBucketLocation",
-            "Resource":"arn:aws:s3:::" + StaticFilesBucket
+            "Resource":"arn:aws:s3:::BUCKET"
         },
         {
             "Sid":"",
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:ListBucket",
-            "Resource":"arn:aws:s3:::" + StaticFilesBucket
+            "Resource":"arn:aws:s3:::BUCKET"
         },
         {
             "Sid":"",
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:GetObject",
-            "Resource":"arn:aws:s3:::" + StaticFilesBucket + "/*"
+            "Resource":"arn:aws:s3:::BUCKET/*"
         }
     ]
-})
+}""".replace('BUCKET', minio.StaticFilesBucket)
 
 
 class Command(BaseCommand):
@@ -46,10 +46,15 @@ class Command(BaseCommand):
         if not settings.DEBUG:
             management.call_command('collectstatic', '--no-input')
 
+        minio.ensure_bucket_exists(minio.UserFilesBucket)
+        minio.ensure_bucket_exists(minio.StoredObjectsBucket)
+
         # ICK ugly hack. TODO there must be a better place to make uploaded
         # files readable for integration tests....
         if settings.MINIO_BUCKET_PREFIX == 'integrationtest':
-            minio_client.set_bucket_policy(StaticFilesBucket, BUCKET_POLICY)
+            minio.ensure_bucket_exists(minio.StaticFilesBucket)
+            minio.minio_client.set_bucket_policy(minio.StaticFilesBucket,
+                                                 BUCKET_POLICY)
 
         # Migrate comes last: during deploy, in some cases, migration can make
         # the site unusable until it's completed. So don't add any instructions
