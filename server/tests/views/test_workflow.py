@@ -7,12 +7,12 @@ from django.contrib.auth.models import AnonymousUser
 from django.http.response import Http404
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
-from server.models import Module, ModuleVersion, User, WfModule, Workflow
+from server.models import Module, User, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase, add_new_module_version, \
         add_new_wf_module, load_module_version
 from server.views import workflow_list, AddModule, workflow_detail, \
-        render_workflow, render_workflows, load_update_table_module_ids
+        render_workflow, render_workflows
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
@@ -36,7 +36,8 @@ class WorkflowViewTests(LoggedInTestCase):
         self.log_patch = self.log_patcher.start()
 
         self.factory = APIRequestFactory()
-        self.workflow1 = Workflow.objects.create(name='Workflow 1', owner=self.user)
+        self.workflow1 = Workflow.objects.create(name='Workflow 1',
+                                                 owner=self.user)
         self.delta = InitWorkflowCommand.create(self.workflow1)
         self.tab1 = self.workflow1.tabs.create(position=0)
         self.module_version1 = add_new_module_version('Module 1')
@@ -195,7 +196,7 @@ class WorkflowViewTests(LoggedInTestCase):
     @patch('server.rabbitmq.queue_render')
     def test_workflow_view_triggers_render_if_no_cache(self, queue_render):
         queue_render.return_value = future_none
-        wf_module = self.tab1.wf_modules.create(
+        self.tab1.wf_modules.create(
             order=0,
             last_relevant_delta_id=self.delta.id,
             cached_render_result_delta_id=None
@@ -217,13 +218,6 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
-    def test_workflow_view_shared(self):
-        # View someone else's public workflow
-        self.client.force_login(self.user)
-        self.assertTrue(self.other_workflow_public.public)
-        response = self.client.get('/workflows/%d/' % self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-
     def test_workflow_view_unauthorized_403(self):
         # 403 viewing someone else' private workflow (don't 404 as sometimes
         # users try to share workflows by sharing the URL without first making
@@ -235,11 +229,6 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_init_state(self):
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
         with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myIntercomId', 'CJW_GOOGLE_ANALYTICS':'myGaId'}):
-
-            # create an Edit Cells module so we can check that its ID is returned correctly
-            edit_cells_module_id = add_new_module_version('Edit Cells', id_name='editcells').module_id
-            load_update_table_module_ids.cache_clear()
-
             response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -255,7 +244,6 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, 'myGaId')
 
     def test_workflow_acl_reader_reads_but_does_not_write(self):
-        # Looking at an example workflow as an anonymous user should create a new workflow
         self.workflow1.acl.create(email='user2@users.com', can_edit=False)
         self.client.force_login(self.otheruser)
 
@@ -270,7 +258,6 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_workflow_acl_writer_reads_and_writes(self):
-        # Looking at an example workflow as an anonymous user should create a new workflow
         self.workflow1.acl.create(email='user2@users.com', can_edit=True)
         self.client.force_login(self.otheruser)
 
@@ -285,7 +272,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 204)
 
     def test_workflow_anonymous_user(self):
-        # Looking at an example workflow as an anonymous user should create a new workflow
+        # Looking at example workflow as anonymous should create a new workflow
         num_workflows = Workflow.objects.count()
 
         self.other_workflow_public.example = True

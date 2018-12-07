@@ -212,8 +212,8 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
 
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'public', 'read_only', 'is_owner', 'last_update',
-                  'owner_email', 'owner_name')
+        fields = ('id', 'name', 'public', 'read_only', 'is_owner',
+                  'last_update', 'owner_email', 'owner_name')
 
 
 class WorkflowSerializer(WorkflowSerializerLite):

@@ -96,12 +96,6 @@ async def _workflow_group_send(workflow_id: int,
     })
 
 
-async def ws_client_rerender_workflow_async(workflow) -> None:
-    """Tell clients of the workflow to re-request it and update themselves."""
-    message = {'type': 'reload-workflow'}
-    await _workflow_group_send(workflow.id, message)
-
-
 async def ws_client_send_delta_async(workflow_id: int,
                                      delta: Dict[str, Any]) -> None:
     """Tell clients how to modify their `workflow` and `wfModules` state."""
