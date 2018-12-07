@@ -97,7 +97,3 @@ def temporarily_download(bucket: str, key: str) -> None:
     with tempfile.NamedTemporaryFile() as tf:
         minio_client.fget_object(bucket, key, tf.name)
         yield tf
-
-
-ensure_bucket_exists(UserFilesBucket)
-ensure_bucket_exists(StoredObjectsBucket)

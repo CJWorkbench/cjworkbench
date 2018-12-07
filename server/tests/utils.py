@@ -4,6 +4,7 @@ from django.db import connection, connections
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
+from server import minio
 from server.models import Module, ModuleVersion, Workflow, WfModule, \
         ParameterSpec, ParameterVal
 from server.models.commands import InitWorkflowCommand
@@ -28,10 +29,11 @@ class DbTestCase(SimpleTestCase):
     allow_database_queries = True
     def setUp(self):
         clear_db()
+        clear_minio()
 
-    def tearDown(self):
-        clear_db()
-        super().tearDown()
+    # Don't bother clearing data in tearDown(). The next test that needs the
+    # database will be running setUp() anyway, so extra clearing will only cost
+    # time.
 
     def run_with_async_db(self, task):
         """
@@ -128,6 +130,24 @@ def clear_db():
     sql = f"WITH {', '.join(deletes)} SELECT 1"
     with connection.cursor() as c:
         c.execute(sql)
+
+
+def clear_minio():
+    minio.ensure_bucket_exists(minio.UserFilesBucket)
+    minio.ensure_bucket_exists(minio.StoredObjectsBucket)
+
+    user_files = [o.object_name
+                  for o in
+                  minio.minio_client.list_objects_v2(minio.UserFilesBucket,
+                                                     recursive=True)]
+    minio.minio_client.remove_objects(minio.UserFilesBucket, user_files)
+
+    stored_objects = [o.object_name
+                  for o in
+                  minio.minio_client.list_objects_v2(minio.UserFilesBucket,
+                                                     recursive=True)]
+    minio.minio_client.remove_objects(minio.StoredObjectsBucket,
+                                      stored_objects)
 
 
 # ---- Setting up workflows ----
