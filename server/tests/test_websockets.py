@@ -9,6 +9,7 @@ from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser, User
 import django.db
 from cjworkbench.asgi import create_url_router
+from server import handlers
 from server.models import Workflow
 from server.websockets import ws_client_rerender_workflow_async, \
         queue_render_if_listening
@@ -230,3 +231,94 @@ class ChannelTests(DbTestCase):
         with self.assertRaises(asyncio.TimeoutError):
             await asyncio.wait_for(future_args, 0.005)
         queue_render.assert_not_called()
+
+    @patch('server.handlers.handle')
+    @async_test
+    async def test_invoke_handler(self, communicate, handler):
+        ret = asyncio.Future()
+        ret.set_result(handlers.HandlerResponse(123, data={'bar': 'baz'}))
+        handler.return_value = ret
+
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect()
+
+        await comm.send_to('''
+            {
+                "requestId": 123,
+                "path": "foo.bar",
+                "arguments": { "foo": "bar" }
+            }
+        ''')
+        response = json.loads(await comm.receive_from())
+        self.assertEqual(response, {
+            'response': {
+                'requestId': 123,
+                'data': {'bar': 'baz'},
+            }
+        })
+
+        handler.assert_called()
+        request = handler.call_args[0][0]
+        self.assertEqual(request.request_id, 123)
+        self.assertEqual(request.path, 'foo.bar')
+        self.assertEqual(request.arguments, {'foo': 'bar'})
+
+    @async_test
+    async def test_handler_workflow_deleted(self, communicate):
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect()
+
+        self.workflow.delete()
+
+        await comm.send_to('''
+            {
+                "requestId": 123,
+                "path": "foo.bar",
+                "arguments": { "foo": "bar" }
+            }
+        ''')
+        response = json.loads(await comm.receive_from())
+        self.assertEqual(response, {
+            'response': {
+                'requestId': 123,
+                'error': 'Workflow was deleted'
+            }
+        })
+
+    @async_test
+    async def test_handler_request_invalid_but_request_id_ok(self, communicate):
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect()
+
+        await comm.send_to('''
+            {
+                "requestId": 123,
+                "arguments": { "foo": "bar" }
+            }
+        ''')
+        response = json.loads(await comm.receive_from())
+        self.assertEqual(response, {
+            'response': {
+                'requestId': 123,
+                'error': 'request.path must be a string',
+            }
+        })
+
+    @async_test
+    async def test_handler_request_without_request_id(self, communicate):
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect()
+
+        await comm.send_to('''
+            {
+                "requestId": "ceci n'est pas un requestId",
+                "arguments": { "foo": "bar" }
+            }
+        ''')
+        response = json.loads(await comm.receive_from())
+        self.assertEqual(response, {
+            'response': {
+                'requestId': None,
+                'error': 'request.requestId must be an integer',
+            }
+        })

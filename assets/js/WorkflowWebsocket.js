@@ -1,3 +1,5 @@
+import * as Actions from './workflow-reducer'
+
 const MissingInflightHandler = {
   resolve: (result) => {
     console.warn('Unhandled result from server', result)
@@ -9,62 +11,62 @@ const MissingInflightHandler = {
 }
 
 
+export class ErrorResponse extends Error {
+  constructor(serverError) {
+    super('Server responded with error')
+    this.serverError = serverError
+  }
+}
+
+
 export default class WorkflowWebsocket {
-  constructor(workflowId, store) {
+  constructor(workflowId, dispatch, createSocket=null) {
+    if (!createSocket) {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+      const url = `${protocol}//${window.location.host}/workflows/${this.workflowId}`
+      createSocket = () => {
+        return new window.WebSocket(url)
+      }
+    }
+
     this.workflowId = workflowId
-    this.store = store
-    this.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    this.url = `${protocol}//${window.location.host}/workflows/${this.workflowId}`
-    this.nSuccessfulOpens = 0
+    this.dispatch = dispatch
+    this.createSocket = createSocket
+    this.hasConnectedBefore = false
+    this.reconnectDelay = 1000
     this.lastRequestId = 0
 
     this.inflight = {} // { [requestId]: {resolve, reject} callbacks }
   }
 
-  onOpen (ev) {
-    this.nSuccessfulOpens += 1
-    if (nSuccessfulOpens === 1) {
-      this.store.dispatch(Actions.reloadWorkflowAction())
-    } else {
+  onOpen = (ev) => {
+    if (this.hasConnectedBefore) {
       console.log('Websocket reconnected')
+    } else {
+      this.hasConnectedBefore = true
     }
   }
 
-  onMessage (ev) {
+  onMessage = (ev) => {
     const data = JSON.parse(ev.data)
 
-    if ('result' in data) {
-      const result = data.result
+    if (data.response) {
+      const response = data.response
 
       let inflight
-      if (data.requestId) {
-        const requestId = data.requestId
-        delete data.requestId
+      const requestId = response.requestId
+      inflight = this.inflight[requestId] || MissingInflightHandler
+      delete this.inflight[requestId]
 
-        inflight = this.inflight[requestId] || MissingInflightHandler
-        delete this.inflight[requestId]
+      if (response.error) {
+        inflight.reject(new ErrorResponse(response.error))
       } else {
-        inflight = MissingInflightHandler
+        inflight.resolve(response.data)
       }
-
-      if (result.error) {
-        inflight.reject(result)
-      } else {
-        inflight.resolve(result)
-      }
-    } else if ('type' in data) {
+    } else if (data.type) {
       switch (data.type) {
         case 'apply-delta':
-          this.store.dispatch(Actions.applyDeltaAction(data.data))
-          return
-        case 'set-wf-module':
-          this.store.dispatch(Actions.setWfModuleAction(data.data))
-          return
-        case 'set-workflow':
-          this.store.dispatch(Actions.setWorkflowAction(data.data))
-          return
-        case 'reload-workflow':
-          this.store.dispatch(Actions.reloadWorkflowAction())
+          this.dispatch(Actions.applyDeltaAction(data.data))
           return
         default:
           console.error('Unhandled websocket message', data)
@@ -72,33 +74,22 @@ export default class WorkflowWebsocket {
     }
   }
 
-  onError (ev) {
+  onError = (ev) => {
     // ignore: errors during connection are usually logged by browsers anyway;
     // other errors will cause onClose, leading to reconnect.
   }
 
-  onClose (ev) {
-    console.log('Websocket closed. Reconnecting in 1s')
-    setTimeout(this.connect, 1000)
+  onClose = (ev) => {
+    console.log(`Websocket closed. Reconnecting in ${this.reconnectDelay}ms`)
+    setTimeout(this.connect, this.reconnectDelay)
   }
 
   connect = () => {
-    this.socket = new window.WebSocket(url)
+    this.socket = this.createSocket()
     this.socket.onopen = this.onOpen
     this.socket.onmessage = this.onMessage
     this.socket.onclose = this.onClose
     this.socket.onerror = this.onError
-  }
-
-  /**
-   * Call a method on the server and return right away.
-   *
-   * This is the method we want to be using most of the time: it plays nice
-   * with collaborative edits since we rely on the server to broadcast the
-   * outcomes to all users.
-   */
-  callServerHandler (path, args) {
-    this.socket.send(JSON.stringify({ path, 'arguments': args }))
   }
 
   /**
@@ -107,16 +98,15 @@ export default class WorkflowWebsocket {
    * The Promise will be rejected if the server sends something that looks like
    * { "result": { "error": "Some error message" } }.
    *
-   * Messages are sent in the order they're queued; they're _received_ in the
+   * Messages are sent in the order they're queued; they're _processed_ in the
    * order the _servers_ decide (which may be different). Each message is
    * augmented with a "requestId" property; the server must echo that
    * "requestId" in its response.
    *
    * TODO add a timeout
    */
-  callServerHandlerAndWait (path, args) {
-    this.lastRequestId++
-    const requestId = this.lastRequestId
+  callServerHandler (path, args) {
+    const requestId = ++this.lastRequestId
     this.socket.send(JSON.stringify({ path, requestId, 'arguments': args }))
     return new Promise((resolve, reject) => {
       this.inflight[requestId] = { resolve, reject }

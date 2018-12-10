@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from typing import Optional
 import warnings
 from django.db import models, transaction
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef, Q
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
@@ -188,6 +188,52 @@ class Workflow(models.Model):
     @property
     def live_wf_modules(self):
         return self.wf_modules.filter(is_deleted=False)
+
+    @classmethod
+    @contextmanager
+    def lookup_and_cooperative_lock(cls, **kwargs):
+        """
+        Efficiently lookup and lock a Workflow in one operation.
+
+        Usage:
+
+            with Workflow.lookup_and_cooperative_lock(pk=123) as workflow:
+                # ... do stuff
+
+        This is equivalent to:
+
+            workflow = Workflow.objects.get(pk=123)
+            with workflow.cooperative_lock():
+                # ... do stuff
+
+        But the latter runs three SQL queries, and this method uses just one.
+
+        Raises Workflow.DoesNotExist.
+        """
+        with transaction.atomic():
+            yield cls.objects.select_for_update().get(**kwargs)
+
+    @classmethod
+    @contextmanager
+    def authorized_lookup_and_cooperative_lock(cls, level, user, session, **kwargs):
+        """
+        Efficiently lookup and lock a Workflow in one operation.
+
+        Usage:
+
+            with Workflow.lookup_and_cooperative_lock('read', request.user,
+                                                      request.session,
+                                                      pk=123) as workflow:
+                # ... do stuff
+
+        Raises Workflow.DoesNotExist.
+        """
+        with cls.lookup_and_cooperative_lock(**kwargs) as workflow:
+            access = getattr(workflow, 'user_session_authorized_%s' % level)
+            if not access(user, session):
+                raise cls.DoesNotExist('%s access denied' % level)
+
+            yield workflow
 
     def _duplicate(self, name: str, owner: Optional[User],
                    session_key: Optional[str]) -> 'Workflow':

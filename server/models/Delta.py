@@ -84,10 +84,6 @@ class Delta(PolymorphicModel):
         """
         Notify WebSocket clients that we just undid or redid.
 
-        This default implementation sends a 'delta' command. It will always
-        include a 'set-workflow' property; it may include a 'set-wf-module'
-        command and may include a 'clear-wf-module' command.
-
         This must be called within the same Workflow.cooperative_lock() that
         triggered the change in the first place.
         """

@@ -65,6 +65,81 @@ logger = logging.getLogger(__name__)
 Handlers = {}
 
 
+class HandlerRequest:
+    """
+    A WebSockets request to the server.
+
+    This is akin to an HTTP request: a `request_id` ties a response to the
+    request. The server must respond to every request.
+    """
+    def __init__(self, request_id: int, user: User, session: Session,
+                 workflow: Workflow, path: str, arguments: Dict[str, Any]):
+        self.request_id = request_id
+        self.user = user
+        self.session = session
+        self.workflow = workflow
+        self.path = path
+        self.arguments = arguments
+
+    @classmethod
+    def parse_json_data(cls, user: User, session: Session, workflow: Workflow,
+                        data: Dict[str, Any]) -> 'HandlerRequest':
+        """
+        Parse JSON into a Request, or raise ValueError.
+
+        JSON format:
+
+            {
+                "requestId": 123,
+                "path": "submodule.method",
+                "arguments": {"kwarg1": "foo", "kwarg2": "bar"}
+            }
+        """
+        if not isinstance(data, dict):
+            raise ValueError('request must be a JSON Object')
+
+        try:
+            request_id = int(data['requestId'])
+        except (KeyError, TypeError, ValueError):
+            raise ValueError('request.requestId must be an integer')
+
+        try:
+            path = str(data['path'])
+        except (KeyError, TypeError, ValueError):
+            raise ValueError('request.path must be a string')
+
+        try:
+            arguments = data['arguments']
+        except KeyError:
+            arguments = {}
+        if not isinstance(arguments, dict):
+            raise ValueError('request.arguments must be an Object')
+
+        return cls(request_id, user, session, workflow, path, arguments)
+
+
+class HandlerResponse:
+    """
+    A response destined for the WebSockets client that sent a HandlerRequest.
+    """
+    def __init__(self, request_id: int, data: Dict[str, Any]={}, error: str=''):
+        self.request_id = request_id
+        self.data = data
+        self.error = error
+
+    def to_dict(self):
+        if self.error:
+            return {
+                'requestId': self.request_id,
+                'error': self.error,
+            }
+        else:
+            return {
+                'requestId': self.request_id,
+                'data': self.data,
+            }
+
+
 def register_websockets_handler(func):
     """
     Register a handler, to be used in handle().
@@ -99,24 +174,24 @@ def websockets_handler(role: str='read'):
     Usage:
 
         @websockets_handler(role='read')
-        async def noop(user, workflow):
+        async def noop(user, workflow, **kwargs):
             # Do nothing
             return
 
         @websockets_handler(role='read')
-        async def echo(user, workflow, message):
+        async def echo(user, workflow, message, **kwargs):
             # Return a message for the user
             return {'message': message}
 
         @websockets_handler(role='read')
         @database_sync_to_async
-        def set_title(user, workflow, title):
+        def set_title(user, workflow, title, **kwargs):
             # Database writes must be wrapped in database_sync_to_async()
             workflow.title = title
             workflow.save(update_fields=['title'])
 
         @websocket_handler(role='read')
-        async def set_title_with_command(user, workflow, title):
+        async def set_title_with_command(user, workflow, title, **kwargs):
             # If invoking as async, database writes must _still_ be wrapped in
             # database_sync_to_async().
             @database_sync_to_async
@@ -129,43 +204,49 @@ def websockets_handler(role: str='read'):
     """
     def decorator_websockets_handler(func):
         @functools.wraps(func)
-        async def inner(user: User, session: Session, workflow: Workflow,
-                        arguments):
+        async def inner(request: HandlerRequest) -> HandlerResponse:
             try:
-                await _authorize(user, session, workflow, role)
-                return await func(user=user, session=session,
-                                  workflow=workflow, **arguments)
+                await _authorize(request.user, request.session,
+                                 request.workflow, role)
             except AuthError as err:
-                return {'error': f'AuthError: {str(err)}'}
+                return HandlerResponse(request.request_id,
+                                       error=f'AuthError: {str(err)}')
+
+            try:
+                data = await func(user=request.user, session=request.session,
+                                  workflow=request.workflow,
+                                  **request.arguments)
+                return HandlerResponse(request.request_id, data)
             except TypeError as err:
-                return {'error': f'invalid arguments: {str(err)}'}
+                return HandlerResponse(request.request_id,
+                                       error=f'invalid arguments: {str(err)}')
             except Exception as err:
                 logger.exception(f'Error in handler')
-                return {'error': f'{type(err).__name__}: {str(err)}'}
+                message = f'{type(err).__name__}: {str(err)}'
+                return HandlerResponse(request.request_id, error=message)
 
         return inner
     return decorator_websockets_handler
 
 
-async def handle(user: User, session: Session, workflow: Workflow, path: str,
-                 arguments: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+async def handle(request: HandlerRequest) -> HandlerResponse:
     """
-    Invoke a registered handler with arguments.
+    Invoke a registered handler with arguments; never error.
 
-    If the handler is not registered, returns error JSON for the user.
+    If the handler is not registered, returns error HandlerResponse.
 
-    If the handler accepts different arguments, returns error JSON for the
-    user.
+    If the handler accepts different arguments, returns error HandlerResponse.
 
     If the handler raises any other exception, logs the exception for admins
-    (it's a server-side error) and returns the error JSON for the user to help
-    with debugging.
+    (it's a server-side error) and returns error HandlerResponse for the user
+    to help with debugging.
 
-    If the handler returns JSON, returns it for the user.
+    If the handler returns JSON, returns data HandlerResponse.
     """
     try:
-        handler = Handlers[path]
+        handler = Handlers[request.path]
     except KeyError:
-        return {'error': f'invalid path: {path}'}
+        return HandlerResponse(request.request_id,
+                               error=f'invalid path: {request.path}')
 
-    return await handler(user, session, workflow, arguments)
+    return await handler(request)

@@ -1,0 +1,112 @@
+import WorkflowWebsocket from './WorkflowWebsocket'
+import * as Actions from './workflow-reducer'
+import { tick } from './test-utils'
+
+/**
+ * A fake Websocket.
+ *
+ * Usage:
+ *
+ *     const socket = new MockSocket()
+ *     socket.onopen = (ev) => { ... }
+ *     socket.onmessage = (ev) => { ... }
+ *     socket.onclose = (ev) => { ... }
+ *     socket.onerror = (ev) => { ... }
+ *     setTimeout(() => {
+ *         // At this point, onOpen() will have been called.
+ *     }, 0)
+ */
+class MockSocket {
+  constructor () {
+    this.sends = []
+    setTimeout(() => this.onopen({}), 0)
+  }
+
+  // Caller should overwrite these methods
+  onopen (ev) {}
+  onclose (ev) {}
+  onmessage (ev) {}
+  onerror (ev) {}
+  send (data) { this.sends.push(data) }
+}
+
+class MockStore {
+  constructor () {
+    this.actions = []
+  }
+
+  dispatch (action) {
+    this.actions.push(action)
+  }
+}
+
+describe('WorkflowWebsocket', () => {
+  it('should connect', async () => {
+    const dispatch = jest.fn()
+    const api = new WorkflowWebsocket(1, dispatch, () => new MockSocket())
+    api.connect()
+    await tick()
+    expect(api.socket).toBeDefined()
+  })
+
+  it('should reconnect on close and reload workflow again', async () => {
+    const spy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
+    try {
+      const dispatch = jest.fn()
+      const api = new WorkflowWebsocket(1, dispatch, () => new MockSocket())
+      const socket1 = api.socket
+      api.reconnectDelay = 0
+      api.connect()
+      await tick()
+      api.onClose({})
+      await tick() // create new socket
+      await tick() // have it call onopen
+      expect(spy).toHaveBeenCalledWith('Websocket reconnected')
+      expect(api.socket).not.toBe(socket1)
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it('should callServerHandler() and  await successful response', async () => {
+    const socket = new MockSocket()
+    await tick() // so socket setTimeout finishes
+    const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
+    api.connect() // set api.socket
+    const future = api.callServerHandler('foo/bar', { x: 'y' })
+    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo/bar', 'arguments': { x: 'y' } } ])
+    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
+    const data = await future
+    expect(data).toEqual('ok')
+  })
+
+  it('should callServerHandler() and  await error response', async () => {
+    const socket = new MockSocket()
+    await tick() // so socket setTimeout finishes
+    const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
+    api.connect() // set api.socket
+    const future = api.callServerHandler('foo/bar', { x: 'y' })
+    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo/bar', 'arguments': { x: 'y' } } ])
+    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, error: 'bad' } }) })
+    let err = null
+    try {
+      await future // can't expect(() => await future).toThrow() because await is in a sync function there
+    } catch (e) {
+      err = e
+    }
+    expect(err).toBeDefined()
+    expect(err.message).toEqual('Server responded with error')
+    expect(err.serverError).toEqual('bad')
+  })
+
+  it('should handle async requests from server', async () => {
+    const socket = new MockSocket()
+    await tick() // so socket setTimeout finishes
+    const dispatch = jest.fn()
+    const api = new WorkflowWebsocket(1, dispatch, () => socket)
+    api.connect() // set api.socket
+
+    socket.onmessage({ data: JSON.stringify({ type: 'apply-delta', data: 'data' }) })
+    expect(dispatch).toHaveBeenCalled()
+  })
+})
