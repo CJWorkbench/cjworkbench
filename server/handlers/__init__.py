@@ -140,6 +140,13 @@ class HandlerResponse:
             }
 
 
+class HandlerError(Exception):
+    """
+    An error a handler can raise that is _not_ a bug in the handler.
+    """
+    pass
+
+
 def register_websockets_handler(func):
     """
     Register a handler, to be used in handle().
@@ -174,24 +181,24 @@ def websockets_handler(role: str='read'):
     Usage:
 
         @websockets_handler(role='read')
-        async def noop(user, workflow, **kwargs):
+        async def noop(**kwargs):
             # Do nothing
             return
 
         @websockets_handler(role='read')
-        async def echo(user, workflow, message, **kwargs):
+        async def echo(message, **kwargs):
             # Return a message for the user
             return {'message': message}
 
-        @websockets_handler(role='read')
+        @websockets_handler(role='write')
         @database_sync_to_async
-        def set_title(user, workflow, title, **kwargs):
+        def set_title(workflow, title, **kwargs):
             # Database writes must be wrapped in database_sync_to_async()
             workflow.title = title
             workflow.save(update_fields=['title'])
 
         @websocket_handler(role='read')
-        async def set_title_with_command(user, workflow, title, **kwargs):
+        async def set_title_with_command(workflow, title, **kwargs):
             # If invoking as async, database writes must _still_ be wrapped in
             # database_sync_to_async().
             @database_sync_to_async
@@ -201,6 +208,12 @@ def websockets_handler(role: str='read'):
 
             await asyncio.sleep(0.001)
             await write_title()
+
+        @websocket_handler(role='read')
+        async def return_error_to_user(**kwargs):
+            # Exceptions in handlers are all bugs, _except_ HandlerError which
+            # is a response for the client.
+            raise HandlerError('error message')
     """
     def decorator_websockets_handler(func):
         @functools.wraps(func)
@@ -217,6 +230,8 @@ def websockets_handler(role: str='read'):
                                   workflow=request.workflow,
                                   **request.arguments)
                 return HandlerResponse(request.request_id, data)
+            except HandlerError as err:
+                return HandlerResponse(request.request_id, error=str(err))
             except TypeError as err:
                 return HandlerResponse(request.request_id,
                                        error=f'invalid arguments: {str(err)}')

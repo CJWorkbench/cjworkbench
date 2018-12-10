@@ -86,6 +86,15 @@ class WebsocketsHandlerDecoratorTest(DbTestCase):
         ret = self.call_handler(x, user=user, workflow=Workflow(owner=user))
         self.assertHandlerResponse(ret, {'x': 'y'})
 
+    def test_catch_handlererror(self):
+        @handlers.websockets_handler(role='read')
+        async def x(**kwargs):
+            raise handlers.HandlerError('should not be logged')
+
+        user = User()
+        ret = self.call_handler(x, user=user, workflow=Workflow(owner=user))
+        self.assertHandlerResponse(ret, error='should not be logged')
+
     def test_catch_any_error(self):
         @handlers.websockets_handler(role='read')
         async def x(**kwargs):
