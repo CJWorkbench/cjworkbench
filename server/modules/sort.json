@@ -12,12 +12,6 @@
       "type": "column"
     },
     {
-      "name": "Sort as",
-      "id_name" : "dtype",
-      "type": "menu",
-      "menu_items": "Text|Number|Date & Time"
-    },
-    {
       "name": "Direction",
       "id_name" : "direction",
       "type" : "menu",

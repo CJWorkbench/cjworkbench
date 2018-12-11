@@ -1,29 +1,20 @@
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
-import pandas as pd
 
 
-def _do_render(table, column, column_type, is_ascending):
+def _do_render(table, column, is_ascending):
     if not column or column not in table.columns:
         return ProcessResult(table)
 
     if is_ascending is None:  # Why do we even _have_ that lever?
         return ProcessResult(table)
 
-    untyped_values = table[column]
-    if column_type == 'text':
-        typed_values = untyped_values.astype(str)
-    elif column_type == 'number':
-        typed_values = pd.to_numeric(untyped_values, errors='coerce')
-    elif column_type == 'datetime':
-        typed_values = pd.to_datetime(untyped_values, errors='coerce')
-    else:
-        typed_values = untyped_values
+    values = table[column]
 
     # Add temporary column for sorting. Pick unique name: just take the last
     # name and add a letter.
     tmp_sort_col = max(table.columns) + 'ZZZ'
-    table[tmp_sort_col] = typed_values
+    table[tmp_sort_col] = values
     table.sort_values(
         by=tmp_sort_col,
         ascending=is_ascending,
@@ -36,11 +27,6 @@ def _do_render(table, column, column_type, is_ascending):
     return ProcessResult(table)
 
 
-_SortTypes = {
-    0: 'text',
-    1: 'number',
-    2: 'datetime',
-}
 _SortAscendings = {
     0: None,
     1: True,
@@ -52,10 +38,7 @@ class SortFromTable(ModuleImpl):
     def render(params, table, **kwargs):
         column = params.get_param_column('column', table)
 
-        sort_type_int = int(params.get_param_menu_idx('dtype'))
-        sort_type = _SortTypes.get(sort_type_int, 'text')
-
         is_ascending_int = int(params.get_param_menu_idx('direction'))
         is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
 
-        return _do_render(table, column, sort_type, is_ascending)
+        return _do_render(table, column, is_ascending)
