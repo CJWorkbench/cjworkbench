@@ -305,6 +305,7 @@ class FetchTests(DbTestCase):
         # happen on production: we aren't locking the workflow during fetch
         # (because it's far too slow).
         wf_module.delete()
+        wf_module.id = 3  # simulate race: id is non-empty
 
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             self.assertIsNone(await get_stored_dataframe())
