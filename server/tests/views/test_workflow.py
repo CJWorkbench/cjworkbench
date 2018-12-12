@@ -238,7 +238,6 @@ class WorkflowViewTests(LoggedInTestCase):
 
             self.assertContains(response, '"workflow"')
             self.assertContains(response, '"modules"')
-            self.assertNotContains(response, '"reorder-column"')
 
             self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')
@@ -316,32 +315,6 @@ class WorkflowViewTests(LoggedInTestCase):
         self.workflow1.save()
         response = self.client.post('/api/workflows/%d/duplicate' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_workflow_reorder_modules(self):
-        wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)
-        wfm2 = add_new_wf_module(self.workflow1, self.module_version1, 1)
-        wfm3 = add_new_wf_module(self.workflow1, self.module_version1, 2)
-
-        # your basic reordering
-        request = self._build_patch(
-            '/api/workflows/%d/' % self.workflow1.id,
-            data={'newOrder': [wfm2.id, wfm3.id, wfm1.id]},
-            format='json',
-            user=self.user
-        )
-        response = workflow_detail(request, workflow_id=self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(list(WfModule.objects.order_by('order').values_list('id', flat=True)),
-                         [wfm2.id, wfm3.id, wfm1.id])
-
-        # bad data should generate a 400 error
-        # (we don't test every possible failure case, ReorderModulesCommand tests does that)
-        request = self._build_patch('/api/workflows/%d/' % self.workflow1.id,
-                                    data={'newOrder':'bad data'},
-                                    format='json',
-                                    user=self.user)
-        response = workflow_detail(request, workflow_id=self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_workflow_detail_delete(self):
         pk_workflow = self.workflow1.id

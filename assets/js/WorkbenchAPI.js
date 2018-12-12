@@ -101,8 +101,11 @@ export default class WorkbenchAPI {
     return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
   }
 
-  reorderWfModules(workflowId, newOrder) {
-    return this._patch(`/api/workflows/${workflowId}`, { newOrder })
+  reorderWfModules (tabId, wfModuleIds) {
+    return this.websocket.callServerHandler('tab.reorder_modules', {
+      tabId,
+      wfModuleIds
+    })
   }
 
   addModule (tabId, moduleId, index, values={}) {

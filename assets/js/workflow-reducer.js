@@ -209,7 +209,7 @@ export function moveModuleAction (tabId, oldIndex, newIndex) {
     return dispatch({
       type: MOVE_MODULE,
       payload: {
-        promise: api.reorderWfModules(workflow.id, newIds),
+        promise: api.reorderWfModules(tabId, newIds),
         data: {
           tabId,
           wfModuleIds: newIds

@@ -95,6 +95,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(ReorderModulesCommand.create(
                 workflow=self.workflow,
+                tab=self.tab,
                 new_order=[wfm1.id + 1]
             ))
 
@@ -102,6 +103,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(ReorderModulesCommand.create(
                 workflow=self.workflow,
+                tab=self.tab,
                 new_order={'not': 'an array'}
             ))
 
@@ -118,6 +120,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(ReorderModulesCommand.create(
                 workflow=self.workflow,
+                tab=self.tab,
                 new_order=[wfm1.id]
             ))
 
@@ -134,6 +137,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(ReorderModulesCommand.create(
                 workflow=self.workflow,
+                tab=self.tab,
                 new_order=[wfm1.id, wfm1.id]
             ))
 
@@ -149,6 +153,7 @@ class ReorderModulesCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(ReorderModulesCommand.create(
             workflow=self.workflow,
+            tab=self.tab,
             new_order=[wfm1.id, wfm2.id]
         ))
         self.assertIsNone(cmd)

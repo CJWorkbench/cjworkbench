@@ -1,8 +1,8 @@
 import functools
-from typing import Any, Dict
+from typing import Any, Dict, List
 from channels.db import database_sync_to_async
 from server.models import ModuleVersion, Workflow, Tab
-from server.models.commands import AddModuleCommand
+from server.models.commands import AddModuleCommand, ReorderModulesCommand
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 import server.utils
@@ -73,3 +73,15 @@ async def add_module(scope, workflow: Workflow, tab: Tab,
                                   module_version=module_version, 
                                   position=position,
                                   param_values=paramValues)
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@loading_tab
+async def reorder_modules(workflow: Workflow, tab: Tab,
+                          wfModuleIds: List[int], **kwargs):
+    try:
+        await ReorderModulesCommand.create(workflow=workflow, tab=tab,
+                                           new_order=wfModuleIds)
+    except ValueError as err:
+        raise HandlerError(str(err))

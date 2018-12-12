@@ -47,9 +47,7 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
         self.backward_affected_delta_ids()
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow, new_order, **kwargs):
-        tab = workflow.live_tabs.get(position=0)  # TODO let caller specify tab
-
+    def amend_create_kwargs(cls, *, workflow, tab, new_order, **kwargs):
         old_order = tab.live_wf_modules.values_list('id', flat=True)
 
         try:

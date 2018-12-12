@@ -203,7 +203,7 @@ describe('Reducer actions', () => {
     await store.dispatch(wfr.moveModuleAction(91, 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(api.reorderWfModules).toHaveBeenCalledWith(999, [ 30, 10, 20 ])
+    expect(api.reorderWfModules).toHaveBeenCalledWith(91, [ 30, 10, 20 ])
     expect(store.getState().tabs['91'].wf_module_ids).toEqual([ 30, 10, 20 ])
   })
 

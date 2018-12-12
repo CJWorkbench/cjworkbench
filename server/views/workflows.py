@@ -17,8 +17,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import Module, ModuleVersion, Workflow, WfModule
-from server.models.commands import ReorderModulesCommand, \
-        ChangeWorkflowTitleCommand
+from server.models.commands import ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
@@ -188,29 +187,10 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules
-@api_view(['GET', 'PATCH', 'POST', 'DELETE'])
+@api_view(['POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, workflow_id, format=None):
-    # We use PATCH to set the order of the modules when the user drags.
-    if request.method == 'PATCH':
-        workflow = lookup_workflow_for_write(workflow_id, request)
-
-        try:
-            async_to_sync(ReorderModulesCommand.create)(
-                workflow=workflow,
-                new_order=request.data['newOrder']
-            )
-        except KeyError:
-            return Response({'message': 'Must pass newOrder parameter'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        except ValueError as e:
-            # Caused by bad id or order keys not in range 0..n-1
-            # (though they don't need to be sorted)
-            return Response({'message': str(e), 'status_code': 400},
-                            status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
         workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:
