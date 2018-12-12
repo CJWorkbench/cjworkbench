@@ -11,6 +11,7 @@ from server.modules.types import ProcessResult
 
 @database_sync_to_async
 def _maybe_add_version(
+    workflow: Workflow,
     wf_module: WfModule,
     maybe_result: Optional[ProcessResult],
     stored_object_json: Optional[Dict[str, Any]]=None
@@ -64,6 +65,11 @@ def _maybe_add_version(
         return None
 
 
+@database_sync_to_async
+def get_wf_module_workflow(wf_module: WfModule) -> Workflow:
+    return wf_module.workflow  # does a database query
+
+
 async def save_result_if_changed(
     workflow_id: int,
     wf_module: WfModule,
@@ -90,7 +96,12 @@ async def save_result_if_changed(
     Call with `new_result=None` to indicate that a fetch is finished and
     guarantee not to add a new version.
     """
-    version_added = await _maybe_add_version(wf_module, new_result,
+    try:
+        workflow = await get_wf_module_workflow(wf_module)
+    except Workflow.DoesNotExist:
+        return  # there's nothing more to do
+
+    version_added = await _maybe_add_version(workflow, wf_module, new_result,
                                              stored_object_json)
 
     if version_added:
@@ -106,7 +117,9 @@ async def save_result_if_changed(
         # * After the next line of code, the user _still_sees "busy"
         #   (is_busy=False, cache=stale)
         # * Later, the user will see "ok" (is_busy=False, cache=fresh)
-        await ChangeDataVersionCommand.create(wf_module, version_added)
+        await ChangeDataVersionCommand.create(workflow=workflow,
+                                              wf_module=wf_module,
+                                              new_version=version_added)
     else:
         last_update_check = wf_module.last_update_check
         if last_update_check:

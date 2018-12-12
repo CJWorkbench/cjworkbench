@@ -173,15 +173,15 @@ export default class WorkbenchAPI {
   }
 
   // All available modules in the system
-  getModules() {
+  getModules () {
     return this.websocket.callServerHandler('module.list')
   }
 
-  setWfModuleVersion(wfModuleId, version) {
-    return this._patch(
-      `/api/wfmodules/${wfModuleId}/dataversions`,
-      { selected: version }
-    )
+  setWfModuleVersion (wfModuleId, version) {
+    return this.websocket.callServerHandler('wf_module.set_stored_data_version', {
+      wfModuleId,
+      version
+    })
   }
 
   setWfModuleNotes (wfModuleId, text) {

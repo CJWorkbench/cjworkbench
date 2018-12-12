@@ -1,6 +1,8 @@
 from unittest.mock import patch
+from dateutil.parser import isoparse
 from django.contrib.auth.models import User
-from server.handlers.wf_module import set_params, delete
+from server.handlers.wf_module import set_params, delete, \
+        set_stored_data_version
 from server.models import Workflow
 from server.models.commands import ChangeParametersCommand, DeleteModuleCommand
 from .util import HandlerTestCase
@@ -95,3 +97,79 @@ class WfModuleTest(HandlerTestCase):
         response = self.run_handler(delete, user=user, workflow=workflow,
                                     wfModuleId=wf_module.id)
         self.assertResponse(response, error='DoesNotExist: WfModule not found')
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.websockets.queue_render_if_listening', async_noop)
+    def test_set_stored_data_version(self):
+        version = '2018-12-12T21:30:00.000Z'
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module.stored_objects.create(stored_at=isoparse(version), size=0)
+
+        response = self.run_handler(set_stored_data_version, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    version=version)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.stored_data_version, isoparse(version))
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.websockets.queue_render_if_listening', async_noop)
+    def test_set_stored_data_version_command_set_read(self):
+        version = '2018-12-12T21:30:00.000Z'
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        so = wf_module.stored_objects.create(stored_at=isoparse(version),
+                                             size=0, read=False)
+
+        response = self.run_handler(set_stored_data_version, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    version=version)
+        so.refresh_from_db()
+        self.assertEqual(so.read, True)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.websockets.queue_render_if_listening', async_noop)
+    def test_set_stored_data_version_microsecond_date(self):
+        version_precise = '2018-12-12T21:30:00.000123Z'
+        version_js = '2018-12-12T21:30:00.000Z'
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        # Postgres will store this with microsecond precision
+        wf_module.stored_objects.create(stored_at=isoparse(version_precise),
+                                        size=0)
+
+        # JS may request it with millisecond precision
+        response = self.run_handler(set_stored_data_version, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    version=version_js)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.stored_data_version,
+                         isoparse(version_precise))
+
+    def test_set_stored_data_version_invalid_date(self):
+        version = ['not a date']
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+
+        response = self.run_handler(set_stored_data_version, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    version=['not a date'])
+        self.assertResponse(
+            response,
+            error='BadRequest: version must be an ISO8601 datetime'
+        )
+
+    def test_set_stored_data_version_viewer_access_denied(self):
+        version = '2018-12-12T21:30:00.000Z'
+        workflow = Workflow.create_and_init(public=True)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module.stored_objects.create(stored_at=isoparse(version), size=0)
+
+        response = self.run_handler(set_stored_data_version, workflow=workflow,
+                                    wfModuleId=wf_module.id, version=version)
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')

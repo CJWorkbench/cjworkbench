@@ -79,14 +79,6 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
             'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
 
-    @classmethod
-    async def create(cls, wf_module, version):
-        return await cls.create_impl(
-            workflow=wf_module.workflow,
-            wf_module=wf_module,
-            new_version=version
-        )
-
     @property
     def command_description(self):
         return (

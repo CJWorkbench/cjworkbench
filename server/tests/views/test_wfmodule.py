@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import force_authenticate
 from server.models import Module, Workflow
 from server.modules.types import ProcessResult
-from server.views.WfModule import wfmodule_detail, wfmodule_dataversion
+from server.views.WfModule import wfmodule_detail
 from server.tests.utils import LoggedInTestCase, mock_csv_table, \
         mock_csv_table2
 
@@ -244,41 +244,6 @@ class WfModuleTests(LoggedInTestCase):
             % self.wf_module2.id
         )
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    # test stored versions of data: create, retrieve, set, list, and views
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.websockets.queue_render_if_listening', async_noop)
-    def test_wf_module_data_versions(self):
-        firstver = self.wf_module1.store_fetched_table(mock_csv_table)
-        self.wf_module1.stored_data_version = firstver
-        self.wf_module1.save()
-        secondver = self.wf_module1.store_fetched_table(mock_csv_table2)
-
-        # retrieve version list through the API
-        response = self.client.get('/api/wfmodules/%d/dataversion' %
-                                   self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        versiondata = {
-            "versions": [
-                [secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), False],
-                [firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), False]
-            ],
-            "selected": firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        }
-        responsedata = json.loads(response.content.decode('UTF-8'))
-        self.assertEqual(responsedata, versiondata)
-
-        # set the version back to latest through API.
-        # using factory.patch as trouble getting client.patch to work (400 -- authentication?)
-        # More or less the same thing, but does skip urls.py
-        request = self._build_patch('/api/wfmodules/%d/dataversion' %
-                                    self.wf_module1.id,
-                                    {'selected': secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")},
-                                    user=self.user)
-        response = wfmodule_dataversion(request, pk=self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.wf_module1.refresh_from_db()
-        self.assertEqual(self.wf_module1.stored_data_version, secondver)
 
     # test Wf Module Notes change API
     def test_wf_module_notes_post(self):

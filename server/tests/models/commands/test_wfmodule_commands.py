@@ -380,8 +380,11 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         v1 = self.workflow.last_delta_id
 
         # Change back to first version
-        cmd = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
-                                                             date1)
+        cmd = async_to_sync(ChangeDataVersionCommand.create)(
+            workflow=self.workflow,
+            wf_module=self.wf_module,
+            new_version=date1
+        )
         self.assertEqual(self.wf_module.stored_data_version, date1)
 
         self.workflow.refresh_from_db()
@@ -413,8 +416,11 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         self.wf_module.stored_data_version = date1
         self.wf_module.save()
 
-        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
-                                                               date2)
+        delta = async_to_sync(ChangeDataVersionCommand.create)(
+            workflow=self.workflow,
+            wf_module=self.wf_module,
+            new_version=date2
+        )
 
         queue_render.assert_called_with(self.wf_module.workflow_id, delta.id)
 
@@ -436,8 +442,11 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         self.wf_module.stored_data_version = date1
         self.wf_module.save()
 
-        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
-                                                               date2)
+        delta = async_to_sync(ChangeDataVersionCommand.create)(
+            workflow=self.workflow,
+            wf_module=self.wf_module,
+            new_version=date2
+        )
 
         self.wf_module.stored_objects.get(stored_at=date1).delete()
 
@@ -467,8 +476,11 @@ class ChangeDataVersionCommandTests(CommandTestCase):
         self.wf_module.stored_data_version = date1
         self.wf_module.save()
 
-        delta = async_to_sync(ChangeDataVersionCommand.create)(self.wf_module,
-                                                               date2)
+        delta = async_to_sync(ChangeDataVersionCommand.create)(
+            workflow=self.workflow,
+            wf_module=self.wf_module,
+            new_version=date2
+        )
 
         queue_render.assert_not_called()
         queue_render_if_listening.assert_called_with(self.wf_module.workflow_id,

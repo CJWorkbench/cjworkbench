@@ -407,63 +407,6 @@ def wfmodule_public_output(request, pk, type, format=None):
         raise Http404()
 
 
-# Get list of data versions, or set current data version
-@api_view(['GET', 'PATCH'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_dataversion(request, pk, format=None):
-    if request.method == 'GET':
-        wf_module = _lookup_wf_module_for_read(pk, request)
-
-        with wf_module.workflow.cooperative_lock():
-            versions = wf_module.list_fetched_data_versions()
-            current_version = wf_module.stored_data_version
-            response = {'versions': versions, 'selected': current_version}
-
-        return Response(response)
-
-    elif request.method == 'PATCH':
-        wf_module = _lookup_wf_module_for_write(pk, request)
-
-        date_s = request.data.get('selected', '')
-        date = dateparse.parse_datetime(date_s)
-
-        if not date:
-            return HttpResponseBadRequest(
-                f'"selected" parameter must be an ISO8601 date; got "{date_s}"'
-            )
-
-        try:
-            # TODO maybe let's not use microsecond-precision numbers as
-            # StoredObject IDs and then send the client
-            # millisecond-precision identifiers. We _could_ just pass
-            # clients the IDs, for instance.
-            #
-            # Select a version within 1ms of the (rounded _or_ truncated)
-            # version we sent the client.
-            #
-            # (Let's not change the way we JSON-format dates just to avoid
-            # this hack. That would be even worse.)
-            stored_object = wf_module.stored_objects.get(
-                stored_at__gte=date - timedelta(microseconds=500),
-                stored_at__lt=date + timedelta(milliseconds=1)
-            )
-        except StoredObject.DoesNotExist:
-            return HttpResponseNotFound(
-                f'No StoredObject with stored_at={date_s}'
-            )
-
-        async_to_sync(ChangeDataVersionCommand.create)(
-            wf_module,
-            stored_object.stored_at
-        )
-
-        if not stored_object.read:
-            stored_object.read = True
-            stored_object.save(update_fields=['read'])
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 @api_view(['PATCH'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_dataversion_read(request, pk):
