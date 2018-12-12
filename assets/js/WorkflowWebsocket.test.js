@@ -19,7 +19,11 @@ import { tick } from './test-utils'
 class MockSocket {
   constructor () {
     this.sends = []
-    setTimeout(() => this.onopen({}), 0)
+    this.readyState = WebSocket.CONNECTING
+    setTimeout(() => {
+      this.readyState = WebSocket.OPEN
+      this.onopen({})
+    }, 0)
   }
 
   // Caller should overwrite these methods
@@ -30,20 +34,9 @@ class MockSocket {
   send (data) { this.sends.push(data) }
 }
 
-class MockStore {
-  constructor () {
-    this.actions = []
-  }
-
-  dispatch (action) {
-    this.actions.push(action)
-  }
-}
-
 describe('WorkflowWebsocket', () => {
   it('should connect', async () => {
-    const dispatch = jest.fn()
-    const api = new WorkflowWebsocket(1, dispatch, () => new MockSocket())
+    const api = new WorkflowWebsocket(1, jest.fn(), () => new MockSocket())
     api.connect()
     await tick()
     expect(api.socket).toBeDefined()
@@ -52,8 +45,7 @@ describe('WorkflowWebsocket', () => {
   it('should reconnect on close and reload workflow again', async () => {
     const spy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
     try {
-      const dispatch = jest.fn()
-      const api = new WorkflowWebsocket(1, dispatch, () => new MockSocket())
+      const api = new WorkflowWebsocket(1, jest.fn(), () => new MockSocket())
       const socket1 = api.socket
       api.reconnectDelay = 0
       api.connect()
@@ -73,8 +65,8 @@ describe('WorkflowWebsocket', () => {
     await tick() // so socket setTimeout finishes
     const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
     api.connect() // set api.socket
-    const future = api.callServerHandler('foo/bar', { x: 'y' })
-    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo/bar', 'arguments': { x: 'y' } } ])
+    const future = api.callServerHandler('foo.bar', { x: 'y' })
+    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo.bar', 'arguments': { x: 'y' } } ])
     socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
     const data = await future
     expect(data).toEqual('ok')
@@ -99,14 +91,42 @@ describe('WorkflowWebsocket', () => {
     expect(err.serverError).toEqual('bad')
   })
 
+  it('should queue callServerHandler() when sent before connect starts', async () => {
+    let socket
+    const buildSocket = () => { return socket = new MockSocket() }
+    const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
+    const future = api.callServerHandler('foo.bar', { x: 'y' })
+    api.connect()
+    expect(socket.sends.length).toEqual(0) // not connected yet
+    await tick()
+    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo.bar', 'arguments': { x: 'y' } } ])
+    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
+    const data = await future
+    expect(data).toEqual('ok')
+  })
+
+  it('should queue callServerHandler() when sent before connect completes', async () => {
+    let socket
+    const buildSocket = () => { return socket = new MockSocket() }
+    const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
+    api.connect()
+    const future = api.callServerHandler('foo.bar', { x: 'y' }) // onopen not called yet
+    expect(socket.sends.length).toEqual(0) // not connected yet
+    await tick()
+    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo.bar', 'arguments': { x: 'y' } } ])
+    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
+    const data = await future
+    expect(data).toEqual('ok')
+  })
+
   it('should handle async requests from server', async () => {
     const socket = new MockSocket()
     await tick() // so socket setTimeout finishes
-    const dispatch = jest.fn()
-    const api = new WorkflowWebsocket(1, dispatch, () => socket)
+    const onDelta = jest.fn()
+    const api = new WorkflowWebsocket(1, onDelta, () => socket)
     api.connect() // set api.socket
 
     socket.onmessage({ data: JSON.stringify({ type: 'apply-delta', data: 'data' }) })
-    expect(dispatch).toHaveBeenCalled()
+    expect(onDelta).toHaveBeenCalled()
   })
 })

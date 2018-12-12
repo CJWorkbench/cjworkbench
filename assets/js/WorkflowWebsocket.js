@@ -8,14 +8,12 @@ const MissingInflightHandler = {
   }
 }
 
-
 export class ErrorResponse extends Error {
   constructor(serverError) {
     super('Server responded with error')
     this.serverError = serverError
   }
 }
-
 
 export default class WorkflowWebsocket {
   constructor(workflowId, onDelta, createSocket=null) {
@@ -26,6 +24,8 @@ export default class WorkflowWebsocket {
         return new window.WebSocket(url)
       }
     }
+
+    this.queuedMessages = []
 
     this.workflowId = workflowId
     this.onDelta = onDelta
@@ -43,6 +43,11 @@ export default class WorkflowWebsocket {
     } else {
       this.hasConnectedBefore = true
     }
+
+    for (const message of this.queuedMessages) {
+      this.socket.send(message)
+    }
+    this.queuedMessages.splice(0, this.queuedMessages.length)
   }
 
   onMessage = (ev) => {
@@ -91,6 +96,21 @@ export default class WorkflowWebsocket {
   }
 
   /**
+   * Send data to server (WebSocket.send), _or_ enqueue it if not connected.
+   *
+   * WorkflowWebsocket guarantees at-least-once delivery: it does not retry
+   * failed messages. It does handle page init nicely by waiting for the page
+   * to load before sending the first messages.
+   */
+  _sendOrQueue = (message) => {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(message)
+    } else {
+      this.queuedMessages.push(message)
+    }
+  }
+
+  /**
    * Call a method on the server; return a Promise of its result.
    *
    * The Promise will be rejected if the server sends something that looks like
@@ -105,7 +125,10 @@ export default class WorkflowWebsocket {
    */
   callServerHandler (path, args) {
     const requestId = ++this.lastRequestId
-    this.socket.send(JSON.stringify({ path, requestId, 'arguments': args }))
+    const message = JSON.stringify({ path, requestId, 'arguments': args })
+
+    this._sendOrQueue(message)
+
     return new Promise((resolve, reject) => {
       this.inflight[requestId] = { resolve, reject }
     })
