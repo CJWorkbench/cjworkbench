@@ -125,6 +125,7 @@ class StoredObject(models.Model):
 
             os.remove(path)
         except FileNotFoundError:
+            # Migrate to S3: FileNotFoundError will become KeyNotFound.
             self.file = None
             self.save(update_fields=['bucket', 'key', 'file'])
 

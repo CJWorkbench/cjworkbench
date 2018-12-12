@@ -76,7 +76,10 @@ class ParameterSpec(models.Model):
             or self.type == ParameterSpec.BUTTON
             or self.type == ParameterSpec.STATICTEXT
         ):
-            return value
+            if value is None:
+                return ''
+            else:
+                return str(value)
 
         elif (
             self.type == ParameterSpec.INTEGER

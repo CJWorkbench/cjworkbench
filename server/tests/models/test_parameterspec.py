@@ -7,6 +7,14 @@ class ParameterSpecTests(unittest.TestCase):
         pspec = ParameterSpec(type=ParameterSpec.STRING)
         self.assertEqual(pspec.value_to_str('blah'), 'blah')
 
+    def test_value_to_str_str_none(self):
+        pspec = ParameterSpec(type=ParameterSpec.STRING)
+        self.assertEqual(pspec.value_to_str(None), '')
+
+    def test_value_to_str_str_non_str(self):
+        pspec = ParameterSpec(type=ParameterSpec.STRING)
+        self.assertEqual(pspec.value_to_str({'a': 'b'}), "{'a': 'b'}")
+
     def test_value_to_str_column(self):
         pspec = ParameterSpec(type=ParameterSpec.COLUMN)
         self.assertEqual(pspec.value_to_str('blah'), 'blah')

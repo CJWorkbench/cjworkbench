@@ -7,13 +7,11 @@ from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
+from .. import oauth, websockets
 from ..models import ParameterSpec, ParameterVal
 from ..serializers import ParameterValSerializer
-from .. import triggerrender
-from .. import oauth
 
 
 def parameter_val_or_response_for_read(
@@ -91,11 +89,22 @@ def parameterval_oauth_start_authorize(request, pk):
         return _oauth_start_authorize(request, param, spec.id_name)
 
     elif request.method == 'DELETE':
-        with param.wf_module.workflow.cooperative_lock():
+        wf_module = param.wf_module
+        workflow = wf_module.workflow
+        with workflow.cooperative_lock():
             param.set_value('')
-        async_to_sync(triggerrender.notify_client_workflow_version_changed)(
-            param.wf_module.workflow
-        )
+            vals = wf_module.parameter_vals.prefetch_related('parameter_spec')
+            delta_json = {
+                'updateWfModules': {
+                    str(wf_module.id): {
+                        'parameter_vals': (
+                            ParameterValSerializer(vals, many=True).data
+                        )
+                    }
+                }
+            }
+        async_to_sync(websockets.ws_client_send_delta_async)(workflow.id,
+                                                             delta_json)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -128,7 +137,9 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
 
     username = service.extract_username_from_token(offline_token)
 
-    with param.wf_module.workflow.cooperative_lock():
+    wf_module = param.wf_module
+    workflow = wf_module.workflow
+    with workflow.cooperative_lock():
         # TODO consider ChangeParametersCommand. It might not play nice with
         # 'secret'
         param.set_value({'name': username, 'secret': offline_token})
@@ -136,9 +147,18 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
         # fixed things
         param.wf_module.set_ready()
 
-    async_to_sync(triggerrender.notify_client_workflow_version_changed)(
-        param.wf_module.workflow
-    )
+        vals = wf_module.parameter_vals.prefetch_related('parameter_spec')
+        delta_json = {
+            'updateWfModules': {
+                str(wf_module.id): {
+                    'parameter_vals': ParameterValSerializer(vals,
+                                                             many=True).data
+                }
+            }
+        }
+
+    async_to_sync(websockets.ws_client_send_delta_async)(workflow.id,
+                                                         delta_json)
     return HttpResponse(b"""<!DOCTYPE html>
         <html lang="en-US">
             <head>

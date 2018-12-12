@@ -11,7 +11,7 @@ import django.db
 from cjworkbench.asgi import create_url_router
 from server import handlers
 from server.models import Workflow
-from server.websockets import ws_client_rerender_workflow_async, \
+from server.websockets import ws_client_send_delta_async, \
         queue_render_if_listening
 from server.tests.utils import DbTestCase
 
@@ -170,9 +170,10 @@ class ChannelTests(DbTestCase):
         comm = communicate(self.application, f'/workflows/{self.workflow.id}/')
         connected, _ = await comm.connect()
         self.assertTrue(connected)
-        await ws_client_rerender_workflow_async(self.workflow)
+        await ws_client_send_delta_async(self.workflow.id, {})
         response = await comm.receive_from()
-        self.assertEqual(json.loads(response), {'type': 'reload-workflow'})
+        self.assertEqual(json.loads(response),
+                         {'type': 'apply-delta', 'data': {}})
 
     @async_test
     async def test_two_clients_get_messages_on_same_workflow(self,
@@ -185,11 +186,13 @@ class ChannelTests(DbTestCase):
         self.assertTrue(connected1)
         connected2, _ = await comm2.connect()
         self.assertTrue(connected2)
-        await ws_client_rerender_workflow_async(self.workflow)
+        await ws_client_send_delta_async(self.workflow.id, {})
         response1 = await comm1.receive_from()
-        self.assertEqual(json.loads(response1), {'type': 'reload-workflow'})
+        self.assertEqual(json.loads(response1),
+                         {'type': 'apply-delta', 'data': {}})
         response2 = await comm2.receive_from()
-        self.assertEqual(json.loads(response2), {'type': 'reload-workflow'})
+        self.assertEqual(json.loads(response2),
+                         {'type': 'apply-delta', 'data': {}})
 
     @async_test
     async def test_after_disconnect_client_gets_no_message(self, communicate):

@@ -1,10 +1,9 @@
-from functools import lru_cache
 import json
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import Q
 from django import forms
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect
@@ -28,28 +27,6 @@ from server.versions import WorkflowUndo, WorkflowRedo
 from .auth import lookup_workflow_for_read, lookup_workflow_for_write, \
         loads_workflow_for_read, loads_workflow_for_write, \
         lookup_workflow_for_owner
-
-
-# This id_name->ids mapping is used by the client to execute the ADD STEP from table actions
-# We cannot nix these, because modules without a UI in the stack (e.g. reorder) do not appear
-# in the regular modules list in init_state, because that list is for the module menu
-@lru_cache(maxsize=1)
-def load_update_table_module_ids():
-    modules = Module.objects.filter(id_name__in=[
-        'duplicate-column',
-        'editcells',
-        'filter',
-        'rename-columns',
-        'reorder-columns',
-        'sort-from-table',
-        'duplicate-column',
-        'selectcolumns',
-        'extract-numbers',
-        'clean-text',
-        'convert-date',
-        'convert-text'
-    ])
-    return dict([(m.id_name, m.id) for m in modules])
 
 
 def make_init_state(request, workflow=None, modules=None):
