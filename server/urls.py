@@ -35,10 +35,6 @@ urlpatterns = [
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$',
         acl.Entry.as_view()),
 
-    # modules
-    url(r'^api/modules/?$', views.module_list),
-    url(r'^api/modules/(?P<pk>[0-9]+)/?$', views.module_detail),
-
     url(r'^api/importfromgithub/?$', views.import_from_github),
 
     # WfModules (Modules applied in a workflow)

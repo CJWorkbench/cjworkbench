@@ -1,4 +1,3 @@
-from .modules import *
 from .workflows import *
 from .lessons import *
 from .WfModule import *
