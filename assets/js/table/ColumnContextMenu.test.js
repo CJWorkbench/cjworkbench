@@ -2,36 +2,34 @@
 import React from 'react'
 import ColumnContextMenu from './ColumnContextMenu'
 import { shallow } from 'enzyme'
-import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc } from './UpdateTableAction'
 
 describe('ColumnContextMenu', () => {
-  function mountMenu (setDropdownAction, columnKey, columnType, sortDirection, renameColumn) {
+  function mountMenu (onClickAction, columnKey, columnType, renameColumn) {
     return shallow(
       <ColumnContextMenu
-        setDropdownAction={setDropdownAction}
+        onClickAction={onClickAction}
         columnKey={columnKey}
         columnType={columnType}
-        sortDirection={sortDirection}
         renameColumn={renameColumn}
       />
     )
   }
 
   it('should match snapshot', () => {
-    let wrapper = mountMenu(jest.fn(), 'columnKey', 'text', sortDirectionNone, jest.fn())
+    const wrapper = mountMenu(jest.fn(), 'columnKey', 'text', jest.fn())
     expect(wrapper).toMatchSnapshot() // stores file which represents tree of component
   })
 
   // only checking the call to drop down functions, not actual actions on table
   it('should call functions ', async () => {
-    const setDropdownAction = jest.fn()
+    const onClickAction = jest.fn()
     const renameColumn = jest.fn()
 
-    const wrapper = mountMenu(setDropdownAction, 'columnKey', 'text', sortDirectionNone, renameColumn)
+    const wrapper = mountMenu(onClickAction, 'columnKey', 'text', renameColumn)
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.drop-column').simulate('click')
-    expect(setDropdownAction).toHaveBeenCalledWith('selectcolumns', false, {})
+    expect(onClickAction).toHaveBeenCalledWith('selectcolumns', false, { drop_or_keep: 0 })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.rename-column-header').simulate('click')
@@ -39,18 +37,18 @@ describe('ColumnContextMenu', () => {
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.duplicate-column').simulate('click')
-    expect(setDropdownAction).toHaveBeenCalledWith('duplicate-column', false, {})
+    expect(onClickAction).toHaveBeenCalledWith('duplicate-column', false, {})
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.filter-column').simulate('click')
-    expect(setDropdownAction).toHaveBeenCalledWith('filter', true, {})
+    expect(onClickAction).toHaveBeenCalledWith('filter', true, {})
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-ascending').simulate('click')
-    expect(setDropdownAction).toHaveBeenCalledWith('sort-from-table', false, {sortType: 'text', sortDirection: sortDirectionAsc})
+    expect(onClickAction).toHaveBeenCalledWith('sort-from-table', false, { direction: 1 })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-descending').simulate('click')
-    expect(setDropdownAction).toHaveBeenCalledWith('sort-from-table', false, {sortType: 'text', sortDirection: sortDirectionDesc})
+    expect(onClickAction).toHaveBeenCalledWith('sort-from-table', false, { direction: 2 })
   })
 })

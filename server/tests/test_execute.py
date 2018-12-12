@@ -1,6 +1,5 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import logging
 from unittest.mock import Mock, patch
 import django.db
 import pandas as pd

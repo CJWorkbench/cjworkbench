@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {store, deleteModuleAction} from "../workflow-reducer"
 
 export class RenameEntry extends React.PureComponent {
   static propTypes = {
@@ -110,12 +109,7 @@ export default class RenameEntries extends React.Component {
     const newEntries = { ...oldEntries }
     delete newEntries[prevName]
 
-    if (Object.keys(newEntries).length == 0) {
-      // FIXME do not use store here
-      store.dispatch(deleteModuleAction(this.props.wfModuleId))
-    } else {
-      this.props.onChange(JSON.stringify(newEntries))
-    }
+    this.props.onChange(JSON.stringify(newEntries))
   }
 
   renderEntries() {

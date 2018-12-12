@@ -194,7 +194,7 @@ function maybeAddSelectedRowsToParams (module, wfModule, rowsString, fromInput) 
   }
 }
 
-function ensureWfModuleForRowsAction(currentWfModuleId, moduleId, rowsString) {
+function ensureWfModuleForRowsAction (currentWfModuleId, moduleId, rowsString) {
   return (dispatch, getState) => {
     const { workflow, wfModules, tabs, modules } = getState()
 

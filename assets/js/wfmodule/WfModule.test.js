@@ -1,5 +1,4 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
-jest.mock('../WorkbenchAPI')
 import React from 'react'
 import ConnectedWfModule, { WfModule } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
@@ -8,9 +7,8 @@ import { shallow, mount } from 'enzyme'
 import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { mockStore } from '../workflow-reducer'
+import { mockStore } from '../test-utils'
 import lessonSelector from '../lessons/lessonSelector'
-import WorkbenchAPI from '../WorkbenchAPI'
 
 
 jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
@@ -20,8 +18,13 @@ describe('WfModule, not read-only mode', () => {
   let mockApi
 
   beforeEach(() => {
-    WorkbenchAPI.addModule.mockReset()
-    WorkbenchAPI.setSelectedWfModule.mockReset()
+    mockApi = {
+      addModule: jest.fn(),
+      setSelectedWfModule: jest.fn(),
+      setWfModuleNotes: jest.fn(),
+      postParamEvent: okResponseMock(),
+      setWfModuleNotes: okResponseMock()
+    }
   })
 
   const buildShallowProps = () => ({
@@ -113,12 +116,6 @@ describe('WfModule, not read-only mode', () => {
   }
 
   beforeEach(() => {
-    // Reset mock functions before each test
-    mockApi = {
-      postParamEvent: okResponseMock(),
-      setWfModuleNotes: okResponseMock()
-    }
-
     props = buildShallowProps()
   })
 
@@ -400,7 +397,7 @@ describe('WfModule, not read-only mode', () => {
         200: { id: 200, id_name: 'linechart' },
         300: { id: 300, id_name: 'fixtype' }
       }
-    })
+    }, mockApi)
 
     lessonSelector.mockReset()
     lessonSelector.mockReturnValue({
@@ -422,15 +419,15 @@ describe('WfModule, not read-only mode', () => {
         onDragStart={jest.fn()}
         onDragEnd={jest.fn()}
         setZenMode={jest.fn()}
-        api={WorkbenchAPI}
+        api={mockApi}
       />
     )
 
-    WorkbenchAPI.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
-    WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve(null))
+    mockApi.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
+    mockApi.addModule.mockImplementation(_ => Promise.resolve(null))
 
     w.find('button.quick-fix').simulate('click')
-    expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(99, 300, 1, {foo: 'bar'})
+    expect(mockApi.addModule).toHaveBeenCalledWith(11, 300, 1, {foo: 'bar'})
   })
 
   describe('lesson highlights', () => {

@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Modal from './Modal'
-import WorkbenchAPI from '../WorkbenchAPI'
 
 /**
  * Wraps a Modal with HTTP requests to maintain the collaborator list.
  */
 export default class ModalLoader extends React.PureComponent {
   static propTypes = {
+    api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     workflowId: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
@@ -24,7 +24,7 @@ export default class ModalLoader extends React.PureComponent {
 
   componentDidMount () {
     const { workflowId } = this.props
-    WorkbenchAPI.getAcl(workflowId)
+    this.props.api.getAcl(workflowId)
       .then(acl => {
         if (this.unmounted) return
         this.setState({ acl })
@@ -40,7 +40,7 @@ export default class ModalLoader extends React.PureComponent {
     if (isReadOnly) return // should be redundant
     if (email === ownerEmail) return
 
-    WorkbenchAPI.updateAclEntry(workflowId, email, canEdit)
+    this.props.api.updateAclEntry(workflowId, email, canEdit)
 
     this.setState(state => {
       const acl = state.acl.slice() // shallow copy
@@ -62,7 +62,7 @@ export default class ModalLoader extends React.PureComponent {
     if (isReadOnly) return // should be redundant
     if (email === ownerEmail) return
 
-    WorkbenchAPI.deleteAclEntry(workflowId, email)
+    this.props.api.deleteAclEntry(workflowId, email)
 
     this.setState(state => {
       return { acl: state.acl.filter(entry => entry.email !== email) }

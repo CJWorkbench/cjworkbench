@@ -70,9 +70,8 @@ class UndoRedoTests(DbTestCase):
     def test_undo_redo(self):
         csv = load_module_version('pastecsv')
 
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        InitWorkflowCommand.create(workflow)
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
 
         all_modules = tab.live_wf_modules  # beginning state: nothing
 
@@ -86,7 +85,13 @@ class UndoRedoTests(DbTestCase):
         self.assertEqual(workflow.last_delta_id, v0)
 
         # Add a module
-        cmd1 = self._run_async(AddModuleCommand.create(workflow, csv, 0, {}))
+        cmd1 = self._run_async(AddModuleCommand.create(
+            workflow=workflow,
+            tab=tab,
+            module_version=csv,
+            position=0,
+            param_values={}
+        ))
         v1 = cmd1.id
         workflow.refresh_from_db()
         self.assertEqual(all_modules.count(), 1)

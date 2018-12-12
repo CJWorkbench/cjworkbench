@@ -11,7 +11,7 @@ from server.models import Module, ModuleVersion, User, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase, add_new_module_version, \
         add_new_wf_module, load_module_version
-from server.views import workflow_list, AddModule, workflow_detail, \
+from server.views import workflow_list, workflow_detail, \
         render_workflow, render_workflows, load_update_table_module_ids
 
 
@@ -32,7 +32,7 @@ class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
         super().setUp()  # log in
 
-        self.log_patcher = patch('server.utils.log_user_event')
+        self.log_patcher = patch('server.utils.log_user_event_from_request')
         self.log_patch = self.log_patcher.start()
 
         self.factory = APIRequestFactory()
@@ -365,45 +365,6 @@ class WorkflowViewTests(LoggedInTestCase):
                                   user=self.user)
         response = workflow_detail(request, workflow_id=self.other_workflow_private.id)
         self.assertEqual(response.status_code, 403)
-
-    # --- Writing to workflows ---
-    def test_workflow_addmodule_post(self):
-        module1 = Module.objects.get(name='Module 1')
-
-        # add to empty stack
-        request = self._build_post(
-            '/api/workflows/%d/addmodule/' % self.workflow1.id,
-            {'moduleId': module1.id, 'index': 0},
-            format='json',
-            user=self.user
-        )
-        response = AddModule().post(request, workflow_id=self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        wfm1 = self.tab1.live_wf_modules.first()
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['wfModule']['id'], wfm1.id)
-        self.assertEqual(response_data['wfModule']['module_version']['module'],
-                         module1.id)
-        self.assertEqual(response_data['index'], 0)
-
-    def test_workflow_addmodule_post_bad_workflow_id(self):
-        module1 = Module.objects.get(name='Module 1')
-        request = self._build_post('/api/workflows/%d/addmodule/' % 10000,
-                                   {'moduleId': module1.id, 'index': 0},
-                                   user=self.user)
-        with self.assertRaises(Http404):
-            response = AddModule().post(request, workflow_id=10000)
-        self.assertEqual(WfModule.objects.count(), 0)
-
-    def test_workflow_addmodule_post_bad_module_id(self):
-        request = self._build_post(
-            '/api/workflows/%d/addmodule/' % self.workflow1.id,
-            {'moduleId': 10000, 'index': 0},
-            user=self.user
-        )
-        response = AddModule().post(request, workflow_id=self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(WfModule.objects.count(), 0)
 
     def test_workflow_reorder_modules(self):
         wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)

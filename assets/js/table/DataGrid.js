@@ -105,10 +105,8 @@ export default class DataGrid extends React.PureComponent {
     nRows: PropTypes.number, // immutable; null for placeholder table
     showLetter: PropTypes.bool,
     onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
-    onEditCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
-    onReorderColumns: PropTypes.func.isRequired, // func(wfModuleId, 'reorder-columns', false, { column, from, to }) => undefined
-    onRenameColumn: PropTypes.func.isRequired, // func(wfModuleId, 'rename-columns', false, renameInfo) => undefined
-    setDropdownAction: PropTypes.func.isRequired,
+    editCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
+    reorderColumn: PropTypes.func.isRequired, // func(colname, fromIndex, toIndex) => undefined
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired, // may be empty
     onSetSelectedRowIndexes: PropTypes.func.isRequired // func([idx, ...]) => undefined
   }
@@ -225,7 +223,7 @@ export default class DataGrid extends React.PureComponent {
     this.unmounted = true
   }
 
-  onGridRowsUpdated = (data, ...args) => {
+  onGridRowsUpdated = (data) => {
     const { fromRow, fromRowData, toRow, cellKey, updated } = data
 
     if (fromRow !== toRow) {
@@ -236,46 +234,34 @@ export default class DataGrid extends React.PureComponent {
       throw new Error('Attempting to edit cells in a read-only workflow.')
     }
 
-    if (this.props.onEditCell) {
-      const oldValue = String(fromRowData[cellKey])
-      const newValue = updated[cellKey]
+    const oldValue = String(fromRowData[cellKey])
+    const newValue = updated[cellKey]
 
-      if (newValue !== (oldValue || '')) {
-        // Edit value in-place in loadedRows. This should jive with getRow()
-        // and prevent us from re-rendering the table.
-        this.state.loadedRows[fromRow][cellKey] = newValue
+    if (newValue !== (oldValue || '')) {
+      // Edit value in-place in loadedRows. This should jive with getRow()
+      // and prevent us from re-rendering the table.
+      this.state.loadedRows[fromRow][cellKey] = newValue
 
-        // Edit on the server and in state.
-        this.props.onEditCell(fromRow, cellKey, newValue)
-      }
+      // Edit on the server and in state.
+      this.props.editCell(fromRow, cellKey, newValue)
     }
   }
 
   onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
-    const sourceKey = this.props.columns[fromIndex].name
-    const reorderInfo = {
-      column: sourceKey,
-      from: fromIndex,
-      to: toIndex,
-    }
-
-    this.props.onReorderColumns(this.props.wfModuleId, 'reorder-columns', false, reorderInfo)
+    const colname = this.props.columns[fromIndex].name
+    this.props.reorderColumn(colname, fromIndex, toIndex)
   }
 
   onDragStartColumnIndex = (index) => {
     this.setState({
-      draggingColumnIndex: index,
+      draggingColumnIndex: index
     })
   }
 
   onDragEnd = () => {
     this.setState({
-      draggingColumnIndex: null,
+      draggingColumnIndex: null
     })
-  }
-
-  onRename = (renameInfo) => {
-    this.props.onRenameColumn(this.props.wfModuleId, 'rename-columns', false, renameInfo)
   }
 
   onRowsSelected = (newRows) => {
@@ -330,7 +316,7 @@ export default class DataGrid extends React.PureComponent {
   // Add row number col and make all cols resizeable
   makeFormattedCols = memoize(draggingColumnIndex => {
     // immutable props
-    const { isReadOnly, columns, setDropdownAction, showLetter } = this.props
+    const { isReadOnly, columns, wfModuleId, showLetter } = this.props
 
     return columns.map(({ name, type }, index) => ({
       key: name,
@@ -344,6 +330,7 @@ export default class DataGrid extends React.PureComponent {
       maybeTriggerRenderIfChangeDraggingColumnIndex: draggingColumnIndex,
       headerRenderer: (
         <ColumnHeader
+          wfModuleId={wfModuleId}
           columnKey={name}
           columnType={type}
           index={index}
@@ -352,9 +339,7 @@ export default class DataGrid extends React.PureComponent {
           onDragEnd={this.onDragEnd}
           draggingColumnIndex={draggingColumnIndex}
           onDropColumnIndexAtIndex={this.onDropColumnIndexAtIndex}
-          onRenameColumn={this.onRename}
           isReadOnly={isReadOnly}
-          setDropdownAction={setDropdownAction}
         />
       )
     }))

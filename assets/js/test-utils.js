@@ -1,3 +1,8 @@
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import promiseMiddleware from 'redux-promise-middleware'
+import { workflowReducer } from './workflow-reducer'
+
 // Returns new mock function that returns given json. Used for mocking "get" API calls
 export function jsonResponseMock (json) {
   return jest.fn().mockImplementation(()=>
@@ -24,4 +29,24 @@ export function sleep (ms) {
   return new Promise(resolve => {
     setTimeout(resolve, ms)
   })
+}
+
+/**
+ * Mock Redux store with in-production reducers.
+ *
+ * This is for integration-style tests: they test the reducer _and_ the caller
+ * at the same time.
+ *
+ * Usage:
+ *
+ *     const api = { undo: jest.fn() }
+ *     const store = mockStoreWithReducer({'workflow': ..., ...}, api)
+ *     store.dispatch(Actions.undo())
+ *     expect(api.undo).toHaveBeenCalled()
+ *     expect(store.getState().workflow).toEqual(...)
+ */
+export function mockStore (initialState, api={}) {
+  const middlewares = [ promiseMiddleware(), thunk.withExtraArgument(api) ]
+  const store = createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
+  return store
 }

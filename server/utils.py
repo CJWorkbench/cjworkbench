@@ -5,10 +5,14 @@ import time
 import sys
 import logging
 import tempfile
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterable, Optional, Tuple
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.http.request import HttpRequest
 from intercom.client import Client
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_absolute_url(abs_url):
@@ -48,29 +52,6 @@ def seconds_to_count_and_units(seconds):
 
 # --- Logging ---
 
-def _setup_console_logger():
-    formatter = logging.Formatter(
-        fmt='[%(asctime)s.%(msecs)03d %(process)d-%(thread)X] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    screen_handler = logging.StreamHandler(stream=sys.stdout)
-    screen_handler.setFormatter(formatter)
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(screen_handler)
-
-    return logger
-
-
-_console_logger = _setup_console_logger()
-
-
-def get_console_logger():
-    return _console_logger
-
-
-def log_message(msg):
-    _console_logger.debug(msg)
 
 
 # returns analytics IDs if they are set
@@ -99,7 +80,7 @@ def get_heap_analytics_id():
 class NullIntercomClient:
     class Events:
         def create(self, **kwargs):
-            log_message(
+            logger.info(
                 'Error logging Intercom event: client not initialized '
                 '(bad CJW_INTERCOM_ACCESS_TOKEN?)'
             )
@@ -115,29 +96,75 @@ def _setup_intercom_client():
     except KeyError:
         return NullIntercomClient()
     except Exception as e:
-        log_message('Error creating Intercom client: ' + str(e))
+        logger.info('Error creating Intercom client: ' + str(e))
         return NullIntercomClient()
 
 
 _intercom_client = _setup_intercom_client()
 
 
-def log_user_event(request: HttpRequest, event: str,
-                   metadata=Optional[Dict[str, Any]]) -> None:
-    if request.META.get('HTTP_DNT', '0') == '1':
+class Headers:
+    def __init__(self, data):
+        """
+        Initialize.
+
+        `data` keys must be all-uppercase, all-ASCII, underscores instead of
+        dashes.
+        """
+        self.data = data
+
+    def get(self, key: str, default: Optional[str]) -> Optional[str]:
+        """
+        Get a header. `key` must be all-uppercase.
+
+        >>> headers = Headers({'CONTENT_TYPE': 'application/json'})
+        >>> headers.get('CONTENT_TYPE', 'application/octet-stream')
+        "application/json"
+        """
+        return self.data.get(key, default)
+
+    @classmethod
+    def from_http(cls, http_headers: Iterable[Tuple[bytes, bytes]]):
+        """
+        Parse Headers from the raw HTTP list.
+
+
+        """
+        data = dict((k.decode('latin1').upper().replace('-', '_'),
+                     v.decode('latin1'))
+                    for k, v in http_headers)
+        return cls(data)
+
+    @classmethod
+    def from_META(cls, meta: Dict[str, str]):
+        """Parse Headers from a wsgi environ."""
+        data = dict((k, v[5:]) for k, v in meta if k.startswith('HTTP_'))
+        for wsgi_special_case in ['CONTENT_TYPE', 'CONTENT_LENGTH']:
+            try:
+                data[wsgi_special_case] = meta[wsgi_special_case]
+            except KeyError:
+                pass
+
+        return cls(data)
+
+
+def _log_user_event(user: User, headers: Headers, event: str,
+                    metadata: Optional[Dict[str, Any]]=None) -> None:
+    if headers.get('DNT', '0') == '1':
         # Don't be evil. The user has specifically asked to _not_ be tracked.
         #
         # That should maybe include logs? Let's obfuscate and not show the
         # event or user name.
-        log_message('Not logging an event because of DNT header')
+        logger.debug('Not logging an event because of DNT header')
         return
 
-    if '/lessons/' in request.META.get('HTTP_REFERER', ''):
+    if '/lessons/' in headers.get('REFERER', ''):
         # https://www.pivotaltracker.com/story/show/160041803
-        log_message(f"Not logging event '{event}' because it is from a lesson")
+        logger.debug("Not logging event '%s' because it is from a lesson",
+                     event)
         return
 
-    if not request.user.is_authenticated:
+    if not user.is_authenticated:
         # Intercom has the notion of "leads", but we're basically doomed if we
         # try to associate each request with a potential lead. Our whole point
         # in using Intercom is so we _don't_ need to do that.
@@ -148,13 +175,14 @@ def log_user_event(request: HttpRequest, event: str,
         # And lest we forget: Intercom is about tracking _users_, not _clicks_.
         # It may be nice to see the whole story of an anonymous user creating a
         # workflow, but Intercom isn't made to do that.
-        log_message(f"Not logging event '{event}' for anonymous user")
+        logger.debug("Not logging event '%s' for anonymous user", event)
         return
 
-    log_message(f"Logging Intercom event '{event}' with metadata {metadata}")
+    logger.debug("Logging Intercom event '%s' with metadata %r", event,
+                 metadata)
 
-    email = request.user.email
-    user_id = request.user.id
+    email = user.email
+    user_id = user.id
 
     if not metadata:
         metadata = {}
@@ -168,7 +196,20 @@ def log_user_event(request: HttpRequest, event: str,
             metadata=metadata
         )
     except Exception as err:
-        log_message(f"Error logging Intercom event '{event}': {err}")
+        logger.exception("Error logging Intercom event '%s'", event)
+
+
+def log_user_event_from_request(request: HttpRequest, event: str,
+                                metadata: Optional[Dict[str, Any]]=None
+                                ) -> None:
+    return _log_user_event(request.user, Headers.from_META(request.META),
+                           event, metadata)
+
+
+def log_user_event_from_scope(scope: Dict[str, Any], event: str,
+                              metadata: Optional[Dict[str, Any]]=None) -> None:
+    return _log_user_event(scope['user'], Headers.from_http(scope['headers']),
+                           event, metadata)
 
 
 class TempfileBackedReader(io.RawIOBase):

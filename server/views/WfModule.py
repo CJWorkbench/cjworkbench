@@ -138,7 +138,7 @@ def wfmodule_detail(request, pk, format=None):
                 patch_update_settings(wf_module, request.data, request)
 
                 if bool(request.data['auto_update_data']):
-                    server.utils.log_user_event(
+                    server.utils.log_user_event_from_request(
                         request,
                         'Enabled auto-update',
                         {
@@ -156,7 +156,7 @@ def wfmodule_detail(request, pk, format=None):
                 wf_module.save(update_fields=['notifications'])
 
                 if notifications:
-                    server.utils.log_user_event(
+                    server.utils.log_user_event_from_request(
                         request,
                         'Enabled email notifications',
                         {
@@ -169,26 +169,6 @@ def wfmodule_detail(request, pk, format=None):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-@api_view(['PATCH'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_params(request, pk, format=None):
-    wf_module = _lookup_wf_module_for_write(pk, request)
-    try:
-        params = request.data['values']
-    except KeyError:
-        return Response({'error': 'Request missing "values" Object'},
-                        status=400)
-    if not isinstance(params, dict):
-        return Response({'error': 'Request "values" must be an Object'},
-                        status=400)
-
-    async_to_sync(ChangeParametersCommand.create)(
-        workflow=wf_module.workflow,
-        wf_module=wf_module,
-        new_values=params
-    )
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])

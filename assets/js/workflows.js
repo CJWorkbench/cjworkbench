@@ -45,6 +45,7 @@ export default class Workflows extends React.Component {
   }
 
   renderShareModal = () => {
+    const { api } = this.props
     const { shareModalWorkflowId } = this.state
 
     if (shareModalWorkflowId === null) return null
@@ -56,6 +57,7 @@ export default class Workflows extends React.Component {
 
     return (
       <ShareModal
+        api={api}
         url={url}
         ownerEmail={workflow.owner_email}
         workflowId={workflow.id}

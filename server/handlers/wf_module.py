@@ -1,29 +1,37 @@
+import functools
 from typing import Any, Dict
 from channels.db import database_sync_to_async
 from server.models import Workflow, WfModule
 from server.models.commands import ChangeParametersCommand
-from .. import register_websockets_handler, websockets_handler
+from .types import HandlerError
+from .decorators import register_websockets_handler, websockets_handler
 
 
 @database_sync_to_async
 def _load_wf_module(workflow: Workflow, wf_module_id: int) -> WfModule:
-    """Returns a WfModule or raises WfModule.DoesNotExist."""
-    return workflow.wf_modules.get(id=wf_module_id)
+    """Returns a WfModule or raises HandlerError."""
+    try:
+        return WfModule.live_in_workflow(workflow).get(id=wf_module_id)
+    except WfModule.DoesNotExist:
+        raise HandlerError('DoesNotExist: WfModule not found')
 
 
 def loading_wf_module(func):
     @functools.wraps(func)
-    async def inner(workflow: Workflow, wf_module_id: int, **kwargs):
-        wf_module = await _load_wf_module(workflow, wf_module_id)
+    async def inner(workflow: Workflow, wfModuleId: int, **kwargs):
+        wf_module = await _load_wf_module(workflow, wfModuleId)
         return await func(workflow=workflow, wf_module=wf_module, **kwargs)
     return inner
 
 
 @register_websockets_handler
-@loading_wf_module
 @websockets_handler('write')
+@loading_wf_module
 async def set_params(workflow: Workflow, wf_module: WfModule,
                      values: Dict[str, Any], **kwargs):
+    if not isinstance(values, dict):
+        raise HandlerError('BadRequest: values must be an Object')
+
     await ChangeParametersCommand.create(workflow=workflow,
                                          wf_module=wf_module,
                                          new_values=values)

@@ -107,13 +107,13 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         await self.channel_layer.group_add(self.workflow_channel_name,
                                            self.channel_name)
-        logging.debug('Added to channel %s', self.workflow_channel_name)
+        logger.debug('Added to channel %s', self.workflow_channel_name)
         await self.accept()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.workflow_channel_name,
                                                self.channel_name)
-        logging.debug('Discarded from channel %s', self.workflow_channel_name)
+        logger.debug('Discarded from channel %s', self.workflow_channel_name)
 
     async def send_whole_workflow_to_client(self):
         from server.models import Workflow
@@ -128,8 +128,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             pass
 
     async def send_data_to_workflow_client(self, message):
-        logging.debug('Send %s to Workflow %d', message['data']['type'],
-                      self.workflow_id)
+        logger.debug('Send %s to Workflow %d', message['data']['type'],
+                     self.workflow_id)
         await self.send_json(message['data'])
 
     async def queue_render(self, message):
@@ -143,16 +143,13 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         data = message['data']
         workflow_id = data['workflow_id']
         delta_id = data['delta_id']
-        logging.debug('Queue render of Workflow %d v%d', workflow_id, delta_id)
+        logger.debug('Queue render of Workflow %d v%d', workflow_id, delta_id)
         await rabbitmq.queue_render(workflow_id, delta_id)
 
     async def receive_json(self, content):
         """
         Handle a query from the client.
         """
-        user = self.scope['user']
-        session = self.scope['session']
-
         async def send_early_error(message):
             """
             Respond that the request is invalid.
@@ -177,11 +174,14 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             return await send_early_error('Workflow was deleted')
 
         try:
-            request = handlers.HandlerRequest.parse_json_data(user, session,
+            request = handlers.HandlerRequest.parse_json_data(self.scope,
                                                               workflow,
                                                               content)
         except ValueError as err:
             return await send_early_error(str(err))
+
+        logger.info('handlers.handle(%s, %s)', request.workflow.id,
+                    request.path)
 
         response = await handlers.handle(request)
 
@@ -193,7 +193,7 @@ async def _workflow_group_send(workflow_id: int,
     """Send message_dict as JSON to all clients connected to the workflow."""
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
-    logging.debug('Queue %s to Workflow %d', message_dict['type'],
+    logger.debug('Queue %s to Workflow %d', message_dict['type'],
                   workflow_id)
     await channel_layer.group_send(channel_name, {
         'type': 'send_data_to_workflow_client',
@@ -223,8 +223,7 @@ async def queue_render_if_listening(workflow_id: int, delta_id: int):
     """
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
-    logging.debug('Suggest render of Workflow %d v%d', workflow_id,
-                  delta_id)
+    logger.debug('Suggest render of Workflow %d v%d', workflow_id, delta_id)
     await channel_layer.group_send(channel_name, {
         'type': 'queue_render',
         'data': {

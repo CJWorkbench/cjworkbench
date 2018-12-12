@@ -3,9 +3,6 @@ import RenameEntries, {RenameEntry} from './RenameEntries'
 import {mount} from 'enzyme'
 import {jsonResponseMock} from '../test-utils'
 
-jest.mock('../workflow-reducer')
-import { store, deleteModuleAction } from '../workflow-reducer'
-
 describe('RenameEntries rendering and interactions', () => {
   const testEntries = {
     'name': 'host_name',
@@ -15,12 +12,10 @@ describe('RenameEntries rendering and interactions', () => {
   const columnNames = ['name', 'build_year', 'narrative', 'cornerstone']
   const allColumns = columnNames.map(name => ({ name }))
 
-  const WFM_ID = 1
-
   const wrapper = (extraProps={}) => mount(
     <RenameEntries
       allColumns={allColumns}
-      wfModuleId={WFM_ID}
+      wfModuleId={1}
       onChange={jest.fn()}
       entriesJsonString={JSON.stringify(testEntries)}
       isReadOnly={false}
@@ -96,27 +91,5 @@ describe('RenameEntries rendering and interactions', () => {
     const tree = wrapper()
     tree.find('RenameEntry').first().find('.rename-delete').simulate('click')
     expect(tree.prop('onChange')).toHaveBeenCalledWith(JSON.stringify({ narrative: 'nrtv' }))
-  })
-
-  it('deletes itself if all entries are deleted', () => {
-    // TODO just use a func prop, not Redux
-    const state = {
-      workflow: {
-        wf_modules: [
-          {
-            id: WFM_ID - 1
-          },
-          {
-            id: WFM_ID
-          }
-        ]
-      }
-    }
-    store.getState.mockImplementation(() => state)
-    deleteModuleAction.mockImplementation((...args) => [ 'deleteModuleAction', ...args ])
-
-    const tree = wrapper({ entriesJsonString: JSON.stringify({ 'name': 'n' }) })
-    tree.find('RenameEntry .rename-delete').simulate('click')
-    expect(store.dispatch).toHaveBeenCalledWith([ 'deleteModuleAction', WFM_ID ])
   })
 })

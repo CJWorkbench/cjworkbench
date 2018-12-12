@@ -1,84 +1,13 @@
-import { updateTableActionModule, selectColumnDrop, selectColumnKeep, updateModuleMapping } from './UpdateTableAction'
-import { tick } from '../test-utils'
-// TODO do not import store
-import { store, addModuleAction, setSelectedWfModuleAction } from '../workflow-reducer'
+import { updateTableAction } from './UpdateTableAction'
+import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 jest.mock('../workflow-reducer')
 
 describe("UpdateTableAction actions", () => {
-  // A few parameter id constants for better readability
-  const idName = 'filter'
-
-  const initialState = {
-    workflow: {
-      id: 127,
-      tab_ids: [ 1, 2 ],
-      selected_tab_position: 1
-    },
-    tabs: {
-      1: { wf_module_ids: [] },
-      2: { wf_module_ids: [ 17 ], selected_wf_module_position: 0 }
-    },
-    wfModules: {
-      17: { module_version: { module: 1 } }
-    },
-    modules: {
-      1: { id_name: 'loadurl' },
-      77: { id_name: 'filter' }
-    }
-  }
-
-  const forceNewModules = ['filter']
-
-  const addModuleResponse = {
-    data: {
-      wfModule: {
-        id: 23,
-        module_version: { module: { id: 127 } },
-        parameter_vals: [
-          {
-            parameter_spec: { id_name: 'column' },
-            value: ''
-          }
-        ]
-      }
-    }
-  }
-
-  function initStore (moduleIdName) {
-    store = mockStore({ ...initialState,
-      modules: { 1: { id_name: moduleIdName } }
-    })
-
-    // Our shim Redux API:
-    // 1) actions are functions; dispatch returns their retvals in a Promise.
-    //    This is useful when we care about retvals.
-    // 2) actions are _not_ functions; dispatch does nothing. This is useful when
-    //    we care about arguments.
-    window.alert = jest.fn()
-
-    for (let key in updateModuleMapping) {
-      updateModuleMapping[key] = jest.fn()
-    }
-  }
-
   beforeEach(() => {
-    // Our shim Redux API:
-    // 1) actions are functions; dispatch returns their retvals in a Promise.
-    //    This is useful when we care about retvals.
-    // 2) actions are _not_ functions; dispatch does nothing. This is useful when
-    //    we care about arguments.
-    store.dispatch.mockImplementation(action => {
-      if (typeof action === 'function') {
-        return Promise.resolve({ value: action() })
-      } else {
-        return Promise.resolve(null)
-      }
-    })
-
-    for (let key in updateModuleMapping) {
-      updateModuleMapping[key] = jest.fn()
-    }
+    addModuleAction.mockImplementation((...args) => [ 'addModuleAction', ...args ])
+    setWfModuleParamsAction.mockImplementation((...args) => [ 'setWfModuleParamsAction', ...args ])
+    setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
   })
 
   let _alert
@@ -90,34 +19,9 @@ describe("UpdateTableAction actions", () => {
     window.alert = _alert
   })
 
-  for (let moduleIdName in updateModuleMapping) {
-    it(`should call ${moduleIdName} per mapping`, async () => {
-      const addModuleResponse = {data: {wfModule: {id: 18}}};
-      addModuleAction.mockImplementation(() => () => addModuleResponse);
-      // TODO use mockStore, not store
-      store.getState.mockImplementation(() => ({
-        ...initialState,
-        updateModuleMapping: { [moduleIdName]: 77 },
-        modules: { 77: { id_name: moduleIdName } }
-      }))
-
-      if (forceNewModules.includes(moduleIdName)) {
-        updateTableActionModule(17, moduleIdName, true, {})
-      }
-      else {
-        updateTableActionModule(17, moduleIdName, false, {})
-      }
-      await tick()
-      expect(updateModuleMapping[moduleIdName]).toHaveBeenCalled
-    })
-  }
-
   it('should alert user if module is not imported', async () => {
-    const initialStateNone = {
-      workflow: {
-        id: 127,
-        wf_modules: [ 17 ]
-      },
+    const dispatch = jest.fn()
+    const getState = () => ({
       wfModules: {
         17: { module_version: { module: 1 } },
       },
@@ -125,11 +29,110 @@ describe("UpdateTableAction actions", () => {
         1: { id_name: 'loadurl' }
         // 'filter' is not present -- so we'll get an error
       }
-    }
-    store.getState.mockImplementation(() => initialStateNone)
-    updateTableActionModule(17, 'filter', true, 'col_1')
+    })
 
-    await tick()
+    updateTableAction(17, 'filter', true, { columnKey: 'A' })(dispatch, getState)
     expect(window.alert).toHaveBeenCalledWith("Module 'filter' not imported.")
+    expect(dispatch).not.toHaveBeenCalled()
+  })
+
+  it('should select and update an existing module after the selected one', () => {
+    const getState = () => ({
+      tabs: {
+        2: { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 0 }
+      },
+      wfModules: {
+        10: { tab_id: 2 },
+        11: { tab_id: 2, module_version: { module: 77 }, parameter_vals: [ { value: 'A', parameter_spec: { id_name: 'column' } } ] }
+      },
+      modules: {
+        1: { id_name: 'loadurl' },
+        77: { id_name: 'filter' }
+      }
+    })
+    const dispatch = jest.fn()
+    updateTableAction(10, 'filter', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 1 ])
+    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { column: 'B' } ])
+  })
+
+  it('should update an existing, selected module', () => {
+    const getState = () => ({
+      tabs: {
+        2: { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
+      },
+      wfModules: {
+        10: {},
+        11: { tab_id: 2, module_version: { module: 77 }, parameter_vals: [ { value: 'A', parameter_spec: { id_name: 'column' } } ] }
+      },
+      modules: {
+        1: { id_name: 'loadurl' },
+        77: { id_name: 'filter' }
+      }
+    })
+    const dispatch = jest.fn()
+    updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
+  })
+
+  it('should insert a new module when the current+next have the wrong id_name', () => {
+    const getState = () => ({
+      tabs: {
+        2: { wf_module_ids: [ 10, 11, 12, 13 ] }
+      },
+      wfModules: {
+        10: { module_version: { module: 20 } },
+        11: { tab_id: 2, module_version: { module: 21 } },
+        12: { module_version: { module: 21 } },
+        13: { module_version: { module: 20 } }
+      },
+      modules: {
+        20: { id_name: 'filter' },
+        21: { id_name: 'sort' },
+      }
+    })
+    const dispatch = jest.fn()
+    updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 11 }, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
+  })
+
+  it('should insert a new module when forceNewModule', () => {
+    const getState = () => ({
+      tabs: {
+        2: { wf_module_ids: [ 10, 11 ] }
+      },
+      wfModules: {
+        10: { tab_id: 2, module_version: { module: 20 } },
+        11: { module_version: { module: 20 } }
+      },
+      modules: {
+        20: { id_name: 'filter' },
+      }
+    })
+    const dispatch = jest.fn()
+    updateTableAction(10, 'filter', true, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 10 }, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
+  })
+
+  it('should append a new module to the end of the tab', () => {
+    const getState = () => ({
+      tabs: {
+        2: { wf_module_ids: [ 10, 11 ] }
+      },
+      wfModules: {
+        10: {},
+        11: { tab_id: 2 }
+      },
+      modules: {
+        20: { id_name: 'filter' },
+      }
+    })
+    const dispatch = jest.fn()
+    updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 11 }, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 })

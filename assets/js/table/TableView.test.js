@@ -1,14 +1,10 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { mount } from 'enzyme'
-import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
-import { sleep, tick } from '../test-utils'
+import { mockStore, sleep, tick } from '../test-utils'
 import TableView, { NRowsPerPage, FetchTimeout, NMaxColumns } from './TableView'
 import DataGrid from './DataGrid'
-
-jest.mock('./UpdateTableAction')
-import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateTableActionModule } from './UpdateTableAction'
 
 // Ugly hack - let us setProps() on the mounted component
 // See https://github.com/airbnb/enzyme/issues/947
@@ -36,17 +32,20 @@ function ConnectedTableView (props) {
 }
 
 describe('TableView', () => {
-  const mockStore = configureStore()
-  let store
-
-  const wrapper = (extraProps={}, wfModuleProps={}) => {
+  const wrapper = (store, api, extraProps={}) => {
     // mock store for <SelectedRowsActions>, a descendent
-    store = mockStore({
-      modules: {},
-      workflow: {
-        wf_modules: [ 99, 100, 101 ]
-      }
-    })
+    if (store === null) {
+      store = mockStore({
+        modules: {},
+        workflow: {
+          wf_modules: [ 99, 100, 101 ]
+        }
+      }, api)
+    }
+
+    if (!api.render) {
+      api.render = makeRenderResponse(0, 3, 5)
+    }
 
     return mount(
       <ConnectedTableView
@@ -62,14 +61,11 @@ describe('TableView', () => {
           { name: 'c', type: 'number' }
         ]}
         nRows={2}
+        api={api}
         {...extraProps}
       />
     )
   }
-
-  beforeEach(() => {
-    updateTableActionModule.mockReset()
-  })
 
   // Mocks json response (promise) returning part of a larger table
   function makeRenderResponse (start, end, totalRows) {
@@ -82,55 +78,79 @@ describe('TableView', () => {
     return jest.fn(() => Promise.resolve(data))
   }
 
-  it('Fetches, renders, edits cells, sorts columns, reorders columns, duplicates column', async () => {
-    const api = { render: makeRenderResponse(0, 3, 1000) }
-    const tree = wrapper({ api, nRows: 1000 })
+  it('reorders columns', async () => {
+    // integration-test style -- these moving parts tend to rely on one another
+    // lots: ignoring workflow-reducer means tests miss bugs.
+    const api = { addModule: jest.fn().mockImplementation(() => Promise.resolve(null)) }
+    const store = mockStore({
+      workflow: {
+        tab_ids: [1],
+        selected_tab_position: 0
+      },
+      tabs: {
+        1: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
+      },
+      wfModules: {
+        2: { tab_id: 1 },
+        3: {}
+      },
+      modules: {
+        4: { id_name: 'reorder-columns' },
+      }
+    }, api)
 
-    await tick(); tree.update() // let rows load
+    const tree = wrapper(store, api, { wfModuleId: 2 })
+    tree.find('DataGrid').instance().onDropColumnIndexAtIndex(0, 2)
 
-    // should have called API for its data, and loaded it
-    expect(api.render).toHaveBeenCalledWith(100, 0, 200)
+    await tick()
 
-    // Header etc should be here
-    expect(tree.find('.outputpane-header')).toHaveLength(1)
-    expect(tree.find('.outputpane-data')).toHaveLength(1)
+    expect(api.addModule).toHaveBeenCalledWith(1, 4, 1, {
+      'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
+    })
 
-    // Row count should have a comma
-    let headerText = tree.find('.outputpane-header').text()
-    expect(headerText).toContain('1,000');  
+    await tick() // let things settle
+  })
 
-    // Test calls to UpdateTableAction
-    //// Don't call updateTableActionModule if the cell value has not changed
-    //tree.find(TableView).instance().onEditCell(0, 'c', '3')
-    //expect(updateTableActionModule).not.toHaveBeenCalled()
-    // Do call updateTableActionModule if the cell value has changed
-    tree.find(TableView).instance().onEditCell(1, 'b', '1000')
+  it('edits cells', async () => {
+    // integration-test style -- these moving parts tend to rely on one another
+    // lots: ignoring workflow-reducer means tests miss bugs.
+    const api = { addModule: jest.fn().mockImplementation(() => Promise.resolve(null)) }
+    const store = mockStore({
+      workflow: {
+        tab_ids: [1],
+        selected_tab_position: 0
+      },
+      tabs: {
+        1: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
+      },
+      wfModules: {
+        2: { tab_id: 1 },
+        3: {}
+      },
+      modules: {
+        4: { id_name: 'editcells' },
+      }
+    }, api)
 
-    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'editcells', false, { row: 1, col: 'b', value: '1000' })
+    const tree = wrapper(store, api, { wfModuleId: 2 })
+    await tick() // load data
+    tree.find('DataGrid').instance().onGridRowsUpdated({
+      fromRow: 0,
+      fromRowData: { a: 'a1', b: 'b1', c: 'c1' },
+      toRow: 0,
+      cellKey: 'b',
+      updated: { b: 'b2' }
+    })
 
-    // Calls updateTableActionModule for sorting
-    tree.find(TableView).instance().setDropdownAction('sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
-    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'sort-from-table', false, {columnKey: 'a', sortType: 'Number', sortDirection: sortDirectionAsc})
+    expect(api.addModule).toHaveBeenCalledWith(1, 4, 1, {
+      'celledits': JSON.stringify([{ row: 0, col: 'b', value: 'b2' }])
+    })
 
-    // Calls updateTableActionModule for duplicating column
-    tree.find(TableView).instance().setDropdownAction('duplicate-column', false, {columnKey: 'a'})
-    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'duplicate-column', false, {columnKey: 'a'})
-
-    // Calls updateTableActionModule for filtering column
-    tree.find(TableView).instance().setDropdownAction('filter', true, {columnKey: 'a'})
-    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'filter', true, {columnKey: 'a'})
-
-    // Calls updateTableActionModule for drop column
-    tree.find(TableView).instance().setDropdownAction('selectcolumns', false, {columnKey: 'a'})
-    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'selectcolumns', false, {columnKey: 'a'})
-
-    // Calls updateTableActionModule for column reorder
-    tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
-    expect(updateTableActionModule).toHaveBeenCalledWith(100, 'reorder-columns', false, { column: 'a', from: 0, to: 1 })
+    await tick() // let things settle
   })
 
   it('blanks table when no module id', () => {
-    const tree = wrapper({ wfModuleId: undefined, api: {} })
+    const tree = wrapper(null, {}, { wfModuleId: undefined })
     expect(tree.find('.outputpane-header')).toHaveLength(1)
     expect(tree.find('.outputpane-data')).toHaveLength(1)
     // And we can see it did not call api.render, because that does not exist
@@ -148,7 +168,7 @@ describe('TableView', () => {
   //  }
 
   //  const api = { render: jest.fn(() => Promise.resolve(testData)) }
-  //  const tree = wrapper({ api })
+  //  const tree = wrapper(null, api)
 
   //  expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
   //  await tick()
@@ -167,7 +187,7 @@ describe('TableView', () => {
     }
 
     const api = { render: jest.fn(() => Promise.resolve(testData)) }
-    const tree = wrapper({ api, showColumnLetter: true })
+    const tree = wrapper(null, api, { showColumnLetter: true })
 
     await tick() // wait for rows to load
     tree.update()
@@ -184,7 +204,7 @@ describe('TableView', () => {
     }
 
     const api = { render: jest.fn() }
-    const tree = wrapper({ api, columns })
+    const tree = wrapper(null, api, { columns })
 
     const overlay = tree.find('.overlay')
     expect(overlay).toHaveLength(1)

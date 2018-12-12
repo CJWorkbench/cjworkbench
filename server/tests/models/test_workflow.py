@@ -43,9 +43,8 @@ class WorkflowTests(DbTestCase):
 
     def test_workflow_duplicate(self):
         # Create workflow with two WfModules
-        wf1 = Workflow.objects.create(name='Foo', owner=self.alice)
-        InitWorkflowCommand.create(wf1)
-        tab = wf1.tabs.create(position=0)
+        wf1 = Workflow.create_and_init(name='Foo')
+        tab = wf1.tabs.first()
         wfm1 = tab.wf_modules.create(order=0)
 
         wf2 = wf1.duplicate(self.bob)
@@ -114,7 +113,9 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create(name='A')
         tab = workflow.tabs.create(position=0)
         async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'B')
-        async_to_sync(AddModuleCommand.create)(workflow, None, 0, {})
+        async_to_sync(AddModuleCommand.create)(workflow=workflow, tab=tab,
+                                               module_version=None, position=0,
+                                               param_values={})
         async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'C')
         workflow.delete()
         self.assertTrue(True)  # no crash

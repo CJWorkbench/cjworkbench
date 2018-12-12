@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import logging
 import os
 import re
 import shutil
@@ -11,7 +12,9 @@ from server.initmodules import load_module_from_dict, \
         update_wfm_parameters_to_new_version
 from server.models import Module, ModuleVersion, WfModule
 import server.models.loaded_module
-from server.utils import log_message
+
+
+logger = logging.getLogger(__name__)
 
 
 # Categories allowed for modules. If not in this list, will be assigned "Other"
@@ -412,5 +415,5 @@ def import_module_from_github(url, force_reload=False):
             shutil.rmtree(importdir)
         raise
 
-    log_message('Successfully imported module %s' % url)
+    logger.info('Successfully imported module %s' % url)
     return ui_info

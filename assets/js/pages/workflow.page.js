@@ -1,21 +1,40 @@
 // workflow.page.js - the master JavaScript for /workflows/:id
 __webpack_public_path__ = window.STATIC_URL + 'bundles/'
 
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import promiseMiddleware from 'redux-promise-middleware'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import * as Actions from '../workflow-reducer'
+import { workflowReducer, applyDeltaAction } from '../workflow-reducer'
 import Workflow from '../Workflow'
-import api from '../WorkbenchAPI'
+import WorkflowWebsocket from '../WorkflowWebsocket'
+import WorkbenchAPI from '../WorkbenchAPI'
 
 // --- Main ----
-const websocket = WorkflowWebsocket(window.initState.workflow.id, Actions.store)
+const websocket = new WorkflowWebsocket(
+  window.initState.workflow.id,
+  delta => store.dispatch(applyDeltaAction(delta))
+)
 websocket.connect()
+
+const api = new WorkbenchAPI(websocket)
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+const middlewares = [ promiseMiddleware(), thunk.withExtraArgument(api) ]
+
+const store = createStore(
+  workflowReducer,
+  window.initState,
+  composeEnhancers(applyMiddleware(...middlewares))
+)
 
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(
   (
-    <Provider store={Actions.store}>
+    <Provider store={store}>
       <Workflow api={api} lesson={window.initState.lessonData} />
     </Provider>
   ),

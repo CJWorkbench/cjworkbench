@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnContextMenu from './ColumnContextMenu'
+import { connect } from 'react-redux'
 import { idxToLetter } from '../utils'
-import { sortDirectionNone } from './UpdateTableAction'
+import { updateTableAction } from './UpdateTableAction'
 
 const columnTypeDisplay = {
   'text': 'text',
@@ -71,7 +72,7 @@ export class EditableColumnName extends React.Component {
     columnType: PropTypes.string.isRequired,
     onRename: PropTypes.func.isRequired,
     isReadOnly: PropTypes.bool.isRequired
-  };
+  }
 
   constructor(props) {
     super(props);
@@ -79,7 +80,7 @@ export class EditableColumnName extends React.Component {
     this.state = {
       newName: props.columnKey,
       editMode: false,
-    };
+    }
 
     this.inputRef = React.createRef();
 
@@ -116,12 +117,12 @@ export class EditableColumnName extends React.Component {
   handleInputCommit() {
     this.setState({
         editMode: false
-    });
+    })
     if(this.state.newName != this.props.columnKey) {
       this.props.onRename({
         prevName: this.props.columnKey,
         newName: this.state.newName
-      });
+      })
     }
   }
 
@@ -174,8 +175,9 @@ export class EditableColumnName extends React.Component {
 }
 
 // Sort arrows, A-Z letter identifiers
-export default class ColumnHeader extends React.PureComponent {
+export class ColumnHeader extends React.PureComponent {
   static propTypes = {
+    wfModuleId: PropTypes.number,
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -185,8 +187,7 @@ export default class ColumnHeader extends React.PureComponent {
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
-    onRenameColumn: PropTypes.func,
-    setDropdownAction: PropTypes.func.isRequired
+    dispatchTableAction: PropTypes.func.isRequired, // func(wfModuleId, moduleIdName, forceNewModule, params)
   }
 
   inputRef = React.createRef()
@@ -196,16 +197,21 @@ export default class ColumnHeader extends React.PureComponent {
     newName: this.props.columnKey
   }
 
-  setDropdownAction = (idName, forceNewModule, params) => {
+  onClickAction = (idName, forceNewModule, params) => {
     params = {
       ...params,
       columnKey: this.props.columnKey
     }
-    this.props.setDropdownAction(idName, forceNewModule, params)
+
+    this.props.dispatchTableAction(this.props.wfModuleId, idName, forceNewModule, params)
   }
 
-  onRenameColumn = () => {
+  startRename = () => {
     this.inputRef.current.enterEditMode()
+  }
+
+  completeRename = ({ prevName, newName }) => {
+    this.props.dispatchTableAction(this.props.wfModuleId, 'rename-columns', false, { prevName, newName })
   }
 
   onMouseEnter = () => {
@@ -246,8 +252,8 @@ export default class ColumnHeader extends React.PureComponent {
     return (
       <ColumnContextMenu
         columnType={this.props.columnType}
-        renameColumn={this.onRenameColumn}
-        setDropdownAction={this.setDropdownAction}
+        renameColumn={this.startRename}
+        onClickAction={this.onClickAction}
       />
     )
   }
@@ -278,7 +284,7 @@ export default class ColumnHeader extends React.PureComponent {
     const letterSection = this.renderLetter();
 
     function maybeDropZone(leftOrRight, toIndex) {
-      if (draggingColumnIndex === null) return null
+      if (draggingColumnIndex === null || draggingColumnIndex === undefined) return null
       if (draggingColumnIndex === toIndex) return null
 
       // Also, dragging to fromIndex+1 is a no-op
@@ -296,8 +302,6 @@ export default class ColumnHeader extends React.PureComponent {
 
     const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
 
-
-    //<span className="column-key">{columnKey}</span>
     return (
       <React.Fragment>
         {letterSection}
@@ -310,19 +314,29 @@ export default class ColumnHeader extends React.PureComponent {
           onDragEnd={this.onDragEnd}
           >
           {maybeDropZone('left', index)}
-
-            <EditableColumnName
-              columnKey={columnKey}
-              columnType={columnType}
-              onRename={this.props.onRenameColumn}
-              isReadOnly={this.props.isReadOnly}
-              ref={this.inputRef}
-            />
-            {columnMenuSection}
-          </div>
+          <EditableColumnName
+            columnKey={columnKey}
+            columnType={columnType}
+            onRename={this.completeRename}
+            isReadOnly={this.props.isReadOnly}
+            ref={this.inputRef}
+          />
+          {columnMenuSection}
           {maybeDropZone('right', index + 1)}
-
+        </div>
       </React.Fragment>
-    );
+    )
   }
 }
+
+function mapStateToProps () {
+  return {}
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    dispatchTableAction: (...args) => dispatch(updateTableAction(...args))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ColumnHeader)

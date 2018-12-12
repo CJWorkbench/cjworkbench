@@ -1,10 +1,6 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import { createStore, applyMiddleware, compose } from 'redux'
-import promiseMiddleware from 'redux-promise-middleware'
-import thunk from 'redux-thunk'
-import { newContext } from 'immutability-helper'
-import api from './WorkbenchAPI'
+import { createStore, applyMiddleware } from 'redux'
 
 // Workflow
 const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW'
@@ -32,16 +28,6 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 
 // ---- Our Store ----
 // Master state for the workflow.
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-
-export const middlewares = [ promiseMiddleware(), thunk ]
-
-// TODO do not export store! It makes tests _and_ code hard to write, for zero value gain
-export var store = createStore(
-  workflowReducer,
-  window.initState,
-  composeEnhancers(applyMiddleware(...middlewares))
-)
 
 const reducerFunc = {}
 
@@ -99,24 +85,6 @@ function moduleIdNameToModuleId (modules, idName) {
   }
   return Number(key)
 }
-
-// RELOAD_WORKFLOW
-// Re-load the workflow
-export function reloadWorkflowAction () {
-  return (dispatch, getState) => {
-    return dispatch({
-      type: RELOAD_WORKFLOW,
-      payload: api.loadWorkflow(getState().workflow.id)
-    })
-  }
-}
-registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
-  const { workflow, wfModules } = action.payload
-
-  omitWfModuleClientOnlyStateInPlace(wfModules, state.wfModules)
-
-  return { ...state, workflow, wfModules }
-})
 
 // 'data' is { updateWorkflow, updateWfModules, updateTabs, clearWfModuleIds }, all
 // optional
@@ -185,9 +153,11 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
 // LOAD_MODULES
 // Populate/refresh the module library
 export function loadModulesAction () {
-  return {
-    type: LOAD_MODULES,
-    payload: api.getModules()
+  return (dispatch, getState, api) => {
+    return dispatch({
+      type: LOAD_MODULES,
+      payload: api.getModules()
+    })
   }
 }
 registerReducerFunc(LOAD_MODULES + '_FULFILLED', (state, action) => {
@@ -202,8 +172,8 @@ registerReducerFunc(LOAD_MODULES + '_FULFILLED', (state, action) => {
 
 // SET_WORKFLOW_PUBLIC
 // Set the workflow to public or private
-export function setWorkflowPublicAction (workflowId, isPublic) {
-  return (dispatch) => {
+export function setWorkflowPublicAction (isPublic) {
+  return (dispatch, getState, api) => {
     return dispatch({
       type: SET_WORKFLOW_PUBLIC,
       payload: {
@@ -227,7 +197,7 @@ registerReducerFunc(SET_WORKFLOW_PUBLIC + '_PENDING', (state, action) => {
 // MOVE_MODULE
 // Re-order the modules in the module stack
 export function moveModuleAction (tabId, oldIndex, newIndex) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     if (oldIndex < newIndex) {
       newIndex -= 1
     }
@@ -282,7 +252,7 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
  *                        newly-created WfModule.
  */
 export function addModuleAction (moduleId, position, parameterValues) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { modules, tabs, wfModules, workflow } = getState()
     if (typeof moduleId === 'string' || moduleId instanceof String) {
       moduleId = moduleIdNameToModuleId(modules, moduleId)
@@ -322,7 +292,7 @@ export function addModuleAction (moduleId, position, parameterValues) {
       type: ADD_MODULE,
       payload: {
         promise: (
-          api.addModule(workflow.id, moduleId, index, parameterValues || {})
+          api.addModule(tabId, moduleId, index, parameterValues || {})
             .then(response => {
               return {
                 tabId,
@@ -367,7 +337,7 @@ registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
 // DELETE_MODULE_ACTION
 // Call delete API, then dispatch a reload
 export function deleteModuleAction (wfModuleId) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow } = getState()
 
     return dispatch({
@@ -426,7 +396,7 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 // SET_SELECTED_MODULE
 // Set the selected module in the workflow
 export function setSelectedWfModuleAction (wfModulePosition) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow, tabs } = getState()
     const tabPosition = 0  // TODO support other tabs
     const tabId = workflow.tab_ids[tabPosition]
@@ -480,7 +450,7 @@ registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
  * Only works if there is a 'version_select' custom parameter.
  */
 export function maybeRequestWfModuleFetchAction (wfModuleId) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow, wfModules } = getState()
     const wfModule = wfModules[String(wfModuleId)]
     const hasVersionSelect = !!wfModule.parameter_vals.find(pv => pv.parameter_spec.id_name === 'version_select')
@@ -543,7 +513,7 @@ registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_FULFILLED', (state, action) => {
 // a WfModule here. The server will reject nonexistent
 // fields, but should we show the user an error?
 export function updateWfModuleAction (wfModuleId, data) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow, wfModules } = getState()
 
     if (!wfModules[String(wfModuleId)]) return Promise.resolve(null)
@@ -605,7 +575,7 @@ registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
 })
 
 export function setWfModuleCollapsedAction (wfModuleId, isCollapsed, isReadOnly) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     let promise
     if (isReadOnly) {
       promise = Promise.resolve(null)
@@ -641,7 +611,7 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 })
 
 export function setWfModuleParamsAction (wfModuleId, params) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow } = getState()
 
     return dispatch({
@@ -684,7 +654,7 @@ registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
 
 // SET_DATA_VERSION
 export function setDataVersionAction (wfModuleId, selectedVersion) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow } = getState()
 
     return dispatch({
@@ -718,7 +688,7 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
 // MARK_DATA_VERSIONS_READ
 // Called when the user views a version that has a "new data" alert on it
 export function markDataVersionsReadAction (wfModuleId, versions) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow } = getState()
 
     let versionsToUpdate = [].concat(versions) // will accept one or many
@@ -761,7 +731,7 @@ registerReducerFunc(MARK_DATA_VERSIONS_READ + '_PENDING', (state, action) => {
 })
 
 export function clearNotificationsAction (wfModuleId) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, api) => {
     const { workflow } = getState()
 
     return dispatch({
@@ -812,12 +782,4 @@ export function workflowReducer (state, action) {
   }
 
   return state
-}
-
-export function mockStore (initialState) {
-  // We don't bother with unit tests: we use more integration-test-y stuff. So
-  // we test both the action generators and the state changes together.
-  // (Rationale: it's rare for one to change without requiring a symmetric
-  // change to the other.)
-  return createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
 }

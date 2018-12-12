@@ -235,6 +235,16 @@ class Workflow(models.Model):
 
             yield workflow
 
+    @staticmethod
+    def create_and_init(**kwargs):
+        """Create and return a _valid_ Workflow: one with a Tab and a Delta."""
+        from server.models.commands import InitWorkflowCommand
+        with transaction.atomic():
+            workflow = Workflow.objects.create(**kwargs)
+            InitWorkflowCommand.create(workflow)
+            workflow.tabs.create(position=0)
+            return workflow
+
     def _duplicate(self, name: str, owner: Optional[User],
                    session_key: Optional[str]) -> 'Workflow':
         with self.cooperative_lock():

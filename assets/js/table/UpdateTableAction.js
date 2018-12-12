@@ -1,35 +1,33 @@
-import { store, addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
-import { findParamValByIdName } from '../utils'
+import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
-// Unit tests written in individual test.js files per module ex: SortFromTable.test.js
-
-// Map Module id_name to update function and moduleId in workflows.py
-export const updateModuleMapping = {
-  'selectcolumns':    updateSelectModule,
-  'duplicate-column': updateDuplicateModule,
-  'filter':           updateFilterModule,
-  'editcells':        addEditToEditCellsModule,
-  'rename-columns':   updateRenameModule,
-  'reorder-columns':  updateReorderModule,
-  'sort-from-table':  updateSortModule,
-  'extract-numbers':  updateExtractNumbersModule,
-  'clean-text':       updateCleanTextModule,
-  'convert-date':     updateConvertDateModule,
-  'convert-text':     updateConvertTextModule
+/**
+ * Module param-building functions per id_name.
+ *
+ * Each function has the signature (oldParams, params), and it should
+ * return new params or null.
+ *
+ * `oldParams` will be `null` if this is a new module.
+ *
+ * Watch out: these param builders are NOT all used in the same way! For
+ * example, editcells' "params" is used to add an _edit_, not overwrite an
+ * "edits" param. In effect, this is a bunch of functions with completely
+ * different purposes but with the same calling convention (kinda like Redux
+ * reducers.) Most are used in the column drop-down menu. TODO move the others
+ * elsewhere.
+ */
+export const moduleParamsBuilders = {
+  'selectcolumns': buildSelectColumnsParams,
+  'duplicate-column': genericAddColumn('colnames'),
+  'filter': genericSetColumn('column'),
+  'editcells': buildEditCellsParams,
+  'rename-columns': buildRenameColumnsParams,
+  'reorder-columns': buildReorderColumnsParams,
+  'sort-from-table': genericSetColumn('column'),
+  'extract-numbers': genericAddColumn('colnames'),
+  'clean-text': genericAddColumn('colnames'),
+  'convert-date': genericAddColumn('colnames'),
+  'convert-text': genericAddColumn('colnames')
 }
-
-// Constants for sort module
-const SortTypes = 'text|number|datetime'.split('|')
-export const sortDirectionNone = 0
-export const sortDirectionAsc = 1
-export const sortDirectionDesc = 2
-
-// Constants for select module
-export const selectColumnDrop = 0
-export const selectColumnKeep = 1
-
-// Constant for extract numbers module
-export const extractNumberAny = 0
 
 function moduleExists (state, moduleIdName) {
   const { modules } = state
@@ -39,9 +37,21 @@ function moduleExists (state, moduleIdName) {
   return false
 }
 
-// Find if a module of moduleId exists as or is next to module with focusWfModuleId
-function findModuleWithIds (state, focusWfModuleId, moduleIdName) {
-  const { workflow, tabs, wfModules, modules } = state
+function wfModuleParams (wfModule) {
+  const ret = {}
+  for (const param of wfModule.parameter_vals) {
+    ret[param.parameter_spec.id_name] = param.value
+  }
+  return ret
+}
+
+/**
+ * Return { id, params, isNext } of _this_ WfModule or the one _after_ it, matching moduleIdName.
+ *
+ * Return `null` if this or the next WfModule does not match moduleIdName.
+ */
+function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
+  const { tabs, wfModules, modules } = state
 
   let moduleId = null
   for (const key in modules) {
@@ -50,9 +60,10 @@ function findModuleWithIds (state, focusWfModuleId, moduleIdName) {
       break
     }
   }
-  if (moduleId === null) return null
+  if (moduleId === null) throw new Error(`Cannot find module '${moduleIdName}'`)
 
-  const tabId = workflow.tab_ids[workflow.selected_tab_position]
+  const wfModule = wfModules[String(focusWfModuleId)]
+  const tabId = wfModule.tab_id
   const tab = tabs[String(tabId)]
 
   // validIdsOrNulls: [ 2, null, null, 65 ] means indices 0 and 3 are for
@@ -66,274 +77,223 @@ function findModuleWithIds (state, focusWfModuleId, moduleIdName) {
 
   // Are we already focused on a valid WfModule?
   const atFocusIndex = validIdsOrNulls[focusIndex]
-  if (atFocusIndex !== null) return wfModules[String(atFocusIndex)]
+  if (atFocusIndex !== null) {
+    const wfModule = wfModules[String(atFocusIndex)]
+    return {
+      id: atFocusIndex,
+      params: wfModuleParams(wfModule),
+      isNext: false
+    }
+  }
 
   // Is the _next_ wfModule valid? If so, return that
   const nextIndex = focusIndex + 1
-  const atNextIndex = validIdsOrNulls[nextIndex]
-  if (atNextIndex !== null) return wfModules[String(atNextIndex)]
+  const atNextIndex = nextIndex >= validIdsOrNulls.length ? null : validIdsOrNulls[nextIndex]
+  if (atNextIndex !== null) {
+    const wfModule = wfModules[String(atNextIndex)]
+    return {
+      id: atNextIndex,
+      params: wfModuleParams(wfModule),
+      isNext: true
+    }
+  }
 
   // Nope, no target module with moduleIdName where we need it
   return null
 }
 
-function ensureSelectedWfModule (state, wfModule) {
-  const tabId = state.workflow.tab_ids[state.workflow.selected_tab_position]
-  const tab = state.tabs[String(tabId)]
+function ensureSelectedWfModuleId (dispatch, state, wfModuleId) {
+  const { wfModules, tabs } = state
+
+  const wfModule = wfModules[String(wfModuleId)]
+  const tabId = wfModule.tab_id
+  const tab = tabs[String(tabId)]
   const current = tab.selected_wf_module_position
-  const wanted = tab.wf_module_ids.indexOf(wfModule.id)
-  if (wanted === -1) wanted = null
+  const wanted = tab.wf_module_ids.indexOf(wfModuleId)
 
-  if (wanted !== null && wanted !== current) {
-    store.dispatch(setSelectedWfModuleAction(wanted));
+  if (wanted !== -1 && wanted !== current) {
+    dispatch(setSelectedWfModuleAction(wanted))
   }
 }
 
-export function updateTableActionModule (wfModuleId, idName, forceNewModule, params) {
-  const state = store.getState()
-  // Check if module imported
-  if (!moduleExists(state, idName)) {
-    window.alert("Module '" + idName + "' not imported.")
-    return
-  }
-  const existingModule = findModuleWithIds(state, wfModuleId, idName)
-  if (existingModule && !forceNewModule) {
-    ensureSelectedWfModule(state, existingModule) // before state's existingModule changes
-    updateModuleMapping[idName](existingModule, params) // ... changing state's existingModule
-  } else {
-    const tabId = state.workflow.tab_ids[state.workflow.selected_tab_position]
-    const tab = state.tabs[String(tabId)]
-    const wfModuleIndex = tab.wf_module_ids.indexOf(wfModuleId)
-    store.dispatch(addModuleAction(idName, { tabId, index: wfModuleIndex + 1 }))
-      .then(fulfilled => {
-        const newWfm = fulfilled.value.data.wfModule
-        updateModuleMapping[idName](newWfm, params)
-      })
-  }
-}
+/**
+ * Adds or edits a module, given `wfModuleId` as the selected table.
+ *
+ * This is a reducer action that delegates to `addModuleAction`, `setSelectedWfModuleAction` and `
+ */
+export function updateTableAction (wfModuleId, idName, forceNewModule, params) {
+  return (dispatch, getState) => {
+    const state = getState()
 
-// TODO this can be the model for a default multicolumn handler.
-// Will need to pass module name
-function updateCleanTextModule (wfm, params) {
-  let existingColumns = findParamValByIdName(wfm, 'colnames')
-  let newColumn = params.columnKey
+    if (!moduleExists(state, idName)) {
+      window.alert("Module '" + idName + "' not imported.")
+      return
+    }
 
-  if (existingColumns.value) {
-    if (existingColumns.value.split(',').includes(newColumn)) {
-      // Do nothing if column already exists
+    const existingModule = forceNewModule ? null : findWfModuleWithIds(state, wfModuleId, idName)
+    const newParams = moduleParamsBuilders[idName](existingModule ? existingModule.params : null, params)
+
+    if (existingModule && !forceNewModule) {
+      ensureSelectedWfModuleId(dispatch, state, existingModule.id) // before state's existingModule changes
+
+      if (newParams) dispatch(setWfModuleParamsAction(existingModule.id, newParams))
     } else {
-      updateTableActionModule(wfm.id, 'clean-text', true, params)
+      dispatch(addModuleAction(idName, { afterWfModuleId: wfModuleId }, newParams))
     }
-  }
-  else {
-    store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: params.columnKey }))
   }
 }
 
-//TODO candicate for default multicolumn handler.
-function updateConvertDateModule (wfm, params) {
-  const existingColumns = findParamValByIdName(wfm, 'colnames')
-  const newColumn = params.columnKey
+function buildSelectColumnsParams (oldParams, params) {
+  if (Object.keys(params).length === 0) {
+    // A bit of a hack: if we call this with no params, we're just adding
+    // an empty select-columns module with default params.
+    return {}
+  }
 
-  if (existingColumns.value) {
-    if (existingColumns.value.split(',').includes(newColumn)) {
-      // Do nothing if column already exists
-    } else {
-      updateTableActionModule(wfm.id, 'convert-date', true, params)
-    }
+  const colnames = oldParams ? oldParams.colnames.split(',').filter(s => !!s) : []
+  const keep = params ? params.drop_or_keep == 1 : true
+  const oldKeep = oldParams ? oldParams.drop_or_keep == 1 : keep
+  const keepIdx = keep ? 1 : 0
+  const oldKeepIdx = oldKeep ? 1 : 0
+  const colname = params.columnKey // may be undefined
+
+  if (colnames.length === 0) {
+    // Adding a new module, or resetting an empty one
+    return { colnames: colname, drop_or_keep: keepIdx }
   } else {
-    store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: params.columnKey }))
-  }
-}
+    const idx = colnames.indexOf(colname)
 
-function updateConvertTextModule (wfm, params) {
-  let existingColumns = findParamValByIdName(wfm, 'colnames')
-  let newColumn = params.columnKey
-
-  if (existingColumns.value) {
-    // Do nothing if column already exists
-    if (existingColumns.value.split(',').includes(newColumn)) {}
-    else {
-      let entries = existingColumns.value + ',' + newColumn
-      store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: entries }))
-    }
-  } else {
-    store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: newColumn }))
-  }
-}
-
-function updateExtractNumbersModule (wfm, params) {
-  let extractedColumns = findParamValByIdName(wfm, 'colnames')
-
-  if (extractedColumns.value) {
-    let extract = findParamValByIdName(wfm, 'extract').value
-    let formatType = findParamValByIdName(wfm, 'type_format').value
-    let replaceType = findParamValByIdName(wfm, 'type_replace').value
-    // If column already an existing module parameter, do nothing
-    if (extractedColumns.value.split(',').includes(params.columnKey)) {}
-    // If existing module not defaults, force new
-    else if ((extract) | (formatType !== 0) | (replaceType !== 0)) {
-      updateTableActionModule(wfm.id, 'extract-numbers', true, params)
-    }
-    else {
-      let newColumns = extractedColumns.value + ',' + params.columnKey
-      store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: newColumns }))
-    }
-  } else {
-    // New module with extract type 'Any'
-    store.dispatch(setWfModuleParamsAction(wfm.id, {
-        colnames: params.columnKey,
-        type: extractNumberAny
-    }))
-  }
-}
-
-function updateFilterModule (wfm, params) {
-  store.dispatch(setWfModuleParamsAction(wfm.id, { column: params.columnKey }))
-}
-
-function updateSelectModule (wfm, params) {
-  let selectedColumns = findParamValByIdName(wfm, 'colnames')
-  const action = findParamValByIdName(wfm, 'drop_or_keep')
-  const dropColumnName = params.columnKey
-  const keepOverride = params.hasOwnProperty('keep') ? params.keep : false
-
-  if (keepOverride) {
-    if (selectedColumns.value || action.value === selectColumnKeep) {
-      // Do module already exists, do nothing
-    } else {
-      store.dispatch(setWfModuleParamsAction(wfm.id, { drop_or_keep: selectColumnKeep }))
-    }
-  } else if (selectedColumns.value && action.value === selectColumnDrop) {
-    // Case: If module exists and drop already selected
-    if (!(selectedColumns.value.split(',').includes(dropColumnName))) {
-      const entries = selectedColumns.value + ',' + dropColumnName
-      store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: entries }))
-    }
-  } else if (selectedColumns.value && action.value === selectColumnKeep) {
-    // Case: If module exists and keep already selected, deselect dropColumnName
-    selectedColumns = selectedColumns.value.split(',')
-    const dropColumnNameIdx = selectedColumns.indexOf(dropColumnName)
-    if (dropColumnNameIdx > -1) {
-      selectedColumns.splice(dropColumnNameIdx, 1)
-      store.dispatch(setWfModuleParamsAction(wfm.id, {
-        colnames: selectedColumns.toString(),
-        drop_or_keep: selectColumnKeep
-      }))
-    }
-  } else if (!selectedColumns.value) {
-    // Case: If no existing module
-    store.dispatch(setWfModuleParamsAction(wfm.id, {
-      colnames: dropColumnName,
-      drop_or_keep: selectColumnDrop
-    }))
-  }
-}
-
-function addEditToEditCellsModule (wfm, params) {
-  const param = findParamValByIdName(wfm, 'celledits')
-  const edit = params
-  let edits
-
-  if (param.value) {
-    try {
-      edits = JSON.parse(param.value)
-      // Remove the previous edit to the same cell
-      let idx = edits.findIndex((element) => {
-        return element.row === params.row && element.col === params.col
-      })
-      if (idx > -1) {
-        edits.splice(idx, idx + 1)
+    if (oldKeep) {
+      // Existing module is "keep"
+      if (keep) {
+        throw new Error('Unhandled case: trying to keep in a keep module')
+        return null
+      } else {
+        // We want to drop
+        if (idx === -1) {
+          return null // the keep module doesn't include colname: it's already dropped
+        } else {
+          colnames.splice(idx, 1)
+          return { colnames: colnames.join(','), drop_or_keep: oldKeepIdx }
+        }
       }
-    } catch (err) {
-      console.error(err)
-      edits = []
+    } else {
+      // Existing module is "drop"
+      if (keep) {
+        throw new Error('Unhandled case: trying to keep in a remove module')
+        return null
+      } else {
+        // We want to drop another one
+        if (idx === -1) {
+          colnames.push(colname)
+          return { colnames: colnames.join(','), drop_or_keep: oldKeepIdx }
+        } else {
+          return null // the drop module is already dropping colname
+        }
+      }
     }
+
+    if (keep === oldKeep) {
+      if (keep && idx === -1) {
+        colnames.push(params.columnKey)
+        return { colnames, drop_or_keep: keepIdx }
+      } else if (!keep && idx !== -1) {
+      } else {
+        return null
+      }
+    } else {
+      console.warn('Unimplemented drop/keep logic', oldKeep, keep, colnames, colname)
+      return null
+    }
+  }
+}
+
+function buildEditCellsParams (oldParams, params) {
+  const edits = (oldParams && oldParams.celledits) ? JSON.parse(oldParams.celledits) : []
+  const edit = params
+
+  // Remove the previous edit to the same cell
+  const idx = edits.findIndex(({ row, col }) => row === edit.row && col === edit.col)
+
+  if (idx === -1) {
+    edits.push(edit)
+    return { celledits: JSON.stringify(edits) }
+  } else if (edits[idx].value !== edit.value) {
+    edits.splice(idx, 1, edit)
+    return { celledits: JSON.stringify(edits) }
   } else {
-    edits = []
+    return null
   }
-
-  // Add this edit and update the server
-  edits.push(edit)
-  store.dispatch(setWfModuleParamsAction(wfm.id, { celledits: JSON.stringify(edits) }))
 }
 
-function updateDuplicateModule (wfm, params) {
-  const entriesParam = findParamValByIdName(wfm, 'colnames')
-  const duplicateColumnName = params.columnKey
-
-  // if params already exist, check if duplicateColumnName already exists
-  if (entriesParam.value) {
-    if (!(entriesParam.value.split(',').includes(duplicateColumnName))) {
-      const entries = entriesParam.value + ',' + duplicateColumnName
-      store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: entries }))
+function genericSetColumn (key) {
+  return (oldParams, params) => {
+    const newParams = { ...params }
+    const colname = newParams.columnKey
+    if (newParams.hasOwnProperty('columnKey')) {
+      delete newParams.columnKey
+      newParams[key] = colname
     }
-    // if duplicateColumnName already in entriesParam, do nothing
+    return newParamsUnlessNoChange(oldParams, newParams)
+  }
+}
+
+function newParamsUnlessNoChange (oldParams, newParams) {
+  if (!oldParams) return newParams
+  for (const key in oldParams) {
+    if (oldParams[key] !== newParams[key]) {
+      return newParams
+    }
+  }
+  return null
+}
+
+function genericAddColumn (key) {
+  return (oldParams, params) => {
+    const colnames = oldParams ? oldParams[key].split(',').filter(s => !!s) : []
+    if (!params.hasOwnProperty('columnKey'))  throw new Error('Expected "columnKey" column to add')
+    const colname = params.columnKey
+
+    if (!colname) throw new Error('Unexpected params: ' + JSON.stringify(params))
+
+    if (colnames.includes(colname)) {
+      return null
+    } else {
+      const newParams = { ...params }
+      const colname = newParams.columnKey
+      delete newParams.columnKey
+      newParams[key] = [ ...colnames, colname ].join(',')
+
+      return newParamsUnlessNoChange(oldParams, newParams)
+    }
+  }
+}
+
+function buildRenameColumnsParams (oldParams, params) {
+  // renameInfo format: {prevName: <current column name in table>, newName: <new name>}
+  const entries = (oldParams && oldParams['rename-entries']) ? JSON.parse(oldParams['rename-entries']) : {}
+  const { prevName, newName } = params
+
+  if (entries[prevName] === newName) {
+    return null
   } else {
-    store.dispatch(setWfModuleParamsAction(wfm.id, { colnames: duplicateColumnName }))
+    entries[prevName] = newName
+    return { 'rename-entries': JSON.stringify(entries) }
   }
 }
 
-function updateSortModule (wfm, params) {
-  // Must be kept in sync with sortfromtable.json
-  const sortTypeIdx = SortTypes.indexOf(params.sortType)
-  store.dispatch(setWfModuleParamsAction(wfm.id, {
-    column: params.columnKey,
-    direction: params.sortDirection,
-    dtype: sortTypeIdx,
-  }))
-}
+function buildReorderColumnsParams (oldParams, params) {
+  // Yes, yes, this is half-broken -- https://www.pivotaltracker.com/story/show/162592381
+  const historyEntries = (oldParams && oldParams['reorder-history']) ? JSON.parse(oldParams['reorder-history']) : []
 
-// renameInfo format: {prevName: <current column name in table>, newName: <new name>}
-
-function updateRenameModule (wfm, params) {
-  const entriesParam = findParamValByIdName(wfm, 'rename-entries')
-  let entries
-
-  if (entriesParam.value) {
-    try {
-      entries = JSON.parse(entriesParam.value)
-    } catch (e) {
-      console.warn(e)
-      entries = {}
-    }
-  } else {
-    entries = {}
-  }
-  // If "prevName" in renameInfo exists as a value in edit entries,
-  // update that entry (since we are renaming a renamed column)
-  let entryExists = false
-  for (let k in entries) {
-    if (entries[k] === params.prevName) {
-      entries[k] = params.newName
-      entryExists = true
-      break
-    }
-  }
-  // Otherwise, add the new entry to existing entries.
-  if (!entryExists) {
-    entries[params.prevName] = params.newName
-  }
-  store.dispatch(setWfModuleParamsAction(wfm.id, { 'rename-entries': JSON.stringify(entries) }))
-}
-
-function updateReorderModule (wfm, params) {
-  var historyParam = findParamValByIdName(wfm, 'reorder-history')
-  var historyStr = historyParam ? historyParam.value.trim() : ''
-  var historyEntries = []
-
-  try {
-    historyEntries = JSON.parse(historyStr)
-  } catch (e) {
-    // Something is wrong with our history. Erase it and start over, what else can we do?
-  }
+  let { column, to, from } = params
 
   // User must drag two spaces to indicate moving one column right (because drop = place before this column)
   // So to prevent all other code from having to deal with this forever, decrement the index here
-  if (params.to > params.from) {
-    params.to -= 1
+  if (to > from) {
+    to -= 1
   }
 
-  historyEntries.push(params)
-  store.dispatch(setWfModuleParamsAction(wfm.id, { 'reorder-history': JSON.stringify(historyEntries) }))
+  historyEntries.push({ column, to, from })
+  return { 'reorder-history': JSON.stringify(historyEntries) }
 }

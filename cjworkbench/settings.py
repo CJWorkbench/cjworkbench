@@ -158,15 +158,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'cjworkbench',
-    'server',
+    'channels',
     'webpack_loader',
     'rest_framework',
-    'channels',
     'polymorphic',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'cjworkbench',
+    'server',
 ]
 
 MIDDLEWARE = [
@@ -265,10 +265,9 @@ WEBPACK_LOADER = {
     }
 }
 
-# Always log to console
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
         'normal': {
             'format': '%(levelname)s %(asctime)s %(name)s %(thread)d %(message)s'
@@ -276,16 +275,24 @@ LOGGING = {
     },
     'handlers': {
         'console': {
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'normal'
+            'formatter': 'normal',
         },
     },
     'loggers': {
         '': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
+        # It's nice to have level=DEBUG, but we have experience with lots of
+        # modules that we think are now better off as INFO.
+        'aio_pika': {'level': 'INFO'},
+        'asyncio': {'level': 'INFO'},
+        'daphne': {'level': 'INFO'},
+        'oauthlib': {'level': 'INFO'},
+        'urllib3': {'level': 'INFO'},
         'django.request': {
             # Django prints WARNINGs for 400-level HTTP responses. That's
             # wrong: our code is _meant_ to output 400-level HTTP responses in
@@ -293,10 +300,8 @@ LOGGING = {
             # Ignore those WARNINGs and only log ERRORs.
             'level': 'ERROR',
         },
-        #'django.db.backends': {  # only gets messages when settings.DEBUG==True
-        #    'level': 'DEBUG',
-        #    'handlers': ['debug_console'],
-        #},
+        # DEBUG only gets messages when settings.DEBUG==True
+        'django.db.backends': {'level': 'INFO'},
     }
 }
 

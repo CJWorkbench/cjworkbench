@@ -1,7 +1,8 @@
 import React from 'react'
+import { Provider } from 'react-redux'
 import { mount } from 'enzyme'
-import { tick } from '../test-utils'
-import DataGrid, {ColumnHeader, EditableColumnName} from './DataGrid'
+import { mockStore, tick } from '../test-utils'
+import DataGrid, { ColumnHeader, EditableColumnName } from './DataGrid'
 
 describe('DataGrid', () => {
   // Column names are chosen to trigger
@@ -43,27 +44,30 @@ describe('DataGrid', () => {
     }
 
     const api = { render: apiRender }
+    // mock store for <ColumnHeader>, a descendent
+    const store = mockStore({ modules: {} }, api)
 
     const nRows = httpResponses.reduce(((s, j) => s + j.rows.length), 0)
 
     const ret = mount(
-      <DataGrid
-        api={api}
-        isReadOnly={false}
-        wfModuleId={1}
-        deltaId={2}
-        columns={testColumns}
-        nRows={nRows}
-        onEditCell={jest.fn()}
-        onGridSort={jest.fn()}
-        selectedRowIndexes={[]}
-        setDropdownAction={jest.fn()}
-        onSetSelectedRowIndexes={jest.fn()}
-        onReorderColumns={jest.fn()}
-        onRenameColumn={jest.fn()}
-        onLoadPage={jest.fn()}
-        {...extraProps}
-      />
+      <Provider store={store}>
+        <DataGrid
+          api={api}
+          isReadOnly={false}
+          wfModuleId={1}
+          deltaId={2}
+          columns={testColumns}
+          nRows={nRows}
+          editCell={jest.fn()}
+          onGridSort={jest.fn()}
+          selectedRowIndexes={[]}
+          setDropdownAction={jest.fn()}
+          onSetSelectedRowIndexes={jest.fn()}
+          reorderColumn={jest.fn()}
+          onLoadPage={jest.fn()}
+          {...extraProps}
+        />
+      </Provider>
     )
 
     await tick() // wait for updateSize(), which actually renders the grid
@@ -97,7 +101,7 @@ describe('DataGrid', () => {
     // No content except row numbers
     expect(tree.find('.react-grid-Viewport').text()).toMatch(/12/)
 
-    expect(tree.prop('api').render).toHaveBeenCalledWith(1, 0, 200)
+    expect(tree.find('DataGrid').prop('api').render).toHaveBeenCalledWith(1, 0, 200)
 
     resolveHttpRequest(testRows); await tick(); tree.update()
 
@@ -117,7 +121,7 @@ describe('DataGrid', () => {
     const input = tree.find('EditorContainer')
     input.find('input').instance().value = 'X' // react-data-grid has a weird way of editing cells
     input.simulate('keyDown', { key: 'Enter' })
-    expect(tree.prop('onEditCell')).toHaveBeenCalledWith(0, 'aaa', 'X')
+    expect(tree.find('DataGrid').prop('editCell')).toHaveBeenCalledWith(0, 'aaa', 'X')
   })
 
   it('should not edit a cell when its value does not change', async () => {
@@ -128,7 +132,7 @@ describe('DataGrid', () => {
     tree.find('.react-grid-Cell').first().simulate('doubleClick')
     const input = tree.find('EditorContainer')
     input.simulate('keyDown', { key: 'Enter' })
-    expect(tree.prop('onEditCell')).not.toHaveBeenCalled()
+    expect(tree.find('DataGrid').prop('editCell')).not.toHaveBeenCalled()
   })
 
   it('should render as a placeholder that loads no data', async () => {
@@ -138,8 +142,8 @@ describe('DataGrid', () => {
     expect(tree.text()).not.toMatch(/null/) // show blank cells, not "null" placeholders
 
     await tick(); tree.update() // ensure nothing happens
-    expect(tree.prop('api').render).not.toHaveBeenCalled()
-    expect(tree.prop('onLoadPage')).toHaveBeenCalledWith(1, 2)
+    expect(tree.find('DataGrid').prop('api').render).not.toHaveBeenCalled()
+    expect(tree.find('DataGrid').prop('onLoadPage')).toHaveBeenCalledWith(1, 2)
   })
 
   it('should show letters in the header according to props', async () => {
@@ -154,20 +158,6 @@ describe('DataGrid', () => {
   it('should hide letters in the header according to props', async () => {
     const tree = await wrapper({ showLetter: false })
     expect(tree.find('.column-letter')).toHaveLength(0)
-  })
-
-  it('should call column rename upon editing a column header', async () => {
-    const tree = await wrapper()
-
-    expect(tree.find('EditableColumnName')).toHaveLength(4)
-    // Tests rename on aaaColumn
-    tree.find('EditableColumnName').first().simulate('click')
-    tree.update()
-    const input = tree.find('EditableColumnName input[value="aaa"]')
-    input.simulate('change', { target: { value: 'aaaa' }})
-    input.simulate('blur')
-
-    expect(tree.prop('onRenameColumn')).toHaveBeenCalledWith(1, 'rename-columns', false, { prevName: 'aaa', newName: 'aaaa' })
   })
 
   it('should respect isReadOnly for rename columns', async () => {
@@ -206,7 +196,7 @@ describe('DataGrid', () => {
     await tick(); tree.update() // load data
     expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(false)
     tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: true } })
-    expect(tree.prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([1])
+    expect(tree.find('DataGrid').prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([1])
   })
 
   it('should deselect a row', async () => {
@@ -214,7 +204,7 @@ describe('DataGrid', () => {
     await tick(); tree.update() // load data
     expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(true)
     tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: false } })
-    expect(tree.prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([])
+    expect(tree.find('DataGrid').prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([])
   })
 
   it('should lazily load rows as needed', async () => {
@@ -236,15 +226,15 @@ describe('DataGrid', () => {
     }
 
     const tree = await wrapper({ nRows: 801 }, [ result(0), result(200), result(600) ])
-    const api = tree.prop('api')
+    const api = tree.find('DataGrid').prop('api')
 
     // Should load 0..initialRows at first
     expect(api.render).toHaveBeenCalledWith(1, 0, 200)
     await tick(); tree.update() // let rows load
 
     // force load by reading a missing row
-    const missingRowForNow = tree.instance().getRow(200)
-    tree.instance().getRow(201) // spurious getRow() -- there are lots
+    const missingRowForNow = tree.find('DataGrid').instance().getRow(200)
+    tree.find('DataGrid').instance().getRow(201) // spurious getRow() -- there are lots
     expect(missingRowForNow).not.toBe(null)
     await tick() // begin load
     expect(api.render).toHaveBeenCalledWith(1, 200, 400)
@@ -252,12 +242,12 @@ describe('DataGrid', () => {
     await tick(); tree.update() // let load finish
 
     // read a row, _not_ forcing a load
-    const nonMissingRow = tree.instance().getRow(201)
+    const nonMissingRow = tree.find('DataGrid').instance().getRow(201)
     expect(nonMissingRow.bbbb).toEqual('201')
     expect(api.render).not.toHaveBeenCalledWith(1, 201, 401)
 
     // force another load (to test we keep loading)
-    tree.instance().getRow(600)
+    tree.find('DataGrid').instance().getRow(600)
     await tick() // begin load
     expect(api.render).toHaveBeenCalledWith(1, 600, 800)
     await tick(); tree.update() // let load finish

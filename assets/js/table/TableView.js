@@ -6,13 +6,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
-import * as UpdateTableAction from './UpdateTableAction'
+import { connect } from 'react-redux'
+import { updateTableAction } from './UpdateTableAction'
 
 export const NMaxColumns = 100
 
-export default class TableView extends React.PureComponent {
+export class TableView extends React.PureComponent {
   static propTypes = {
-    api: PropTypes.object.isRequired,
     wfModuleId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(PropTypes.shape({
@@ -23,7 +23,9 @@ export default class TableView extends React.PureComponent {
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
-    showColumnLetter: PropTypes.bool.isRequired
+    showColumnLetter: PropTypes.bool.isRequired,
+    ensureSelectColumnsModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
+    reorderColumn: PropTypes.func.isRequired, // func(wfModuleId, colname, fromIndex, toIndex) => undefined
   }
 
   // componentDidMount will trigger first load
@@ -36,18 +38,16 @@ export default class TableView extends React.PureComponent {
   }
 
   // When a cell is edited we need to 1) update our own state 2) add this edit to an Edit Cells module
-  onEditCell = (rowIndex, colName, newVal) => {
-    // Add an edit if the data has actually changed. Cast everything to string for comparisons.
-    UpdateTableAction.updateTableActionModule(this.props.wfModuleId, 'editcells', false, {row: rowIndex, col: colName, value: newVal})
+  editCell = (rowIndex, colname, newValue) => {
+    this.props.editCell(this.props.wfModuleId, rowIndex, colname, newValue)
   }
 
-  onSelectColumns = () => {
-    UpdateTableAction.updateTableActionModule(this.props.wfModuleId,
-      'selectcolumns', false, {columnKey: '', keep: true})
+  ensureSelectColumnsModule = () => {
+    this.props.ensureSelectColumnsModule(this.props.wfModuleId)
   }
 
-  setDropdownAction = (idName, forceNewModule, params) => {
-    UpdateTableAction.updateTableActionModule(this.props.wfModuleId, idName, forceNewModule, params)
+  reorderColumn = (column, fromIndex, toIndex) => {
+    this.props.reorderColumn(this.props.wfModuleId, column, fromIndex, toIndex)
   }
 
   render() {
@@ -65,7 +65,7 @@ export default class TableView extends React.PureComponent {
             <div className="text">
               A maximum of 100 columns can be displayed
             </div>
-            <button className="add-select-module" onClick={this.onSelectColumns}>Select columns</button>
+            <button className="add-select-module" onClick={this.ensureSelectColumnsModule}>Select columns</button>
           </div>
         </div>
       )
@@ -78,12 +78,10 @@ export default class TableView extends React.PureComponent {
           deltaId={deltaId}
           columns={columns}
           nRows={nRows}
-          onEditCell={this.onEditCell}
           showLetter={showColumnLetter}
-          onReorderColumns={UpdateTableAction.updateTableActionModule}
-          onRenameColumn={UpdateTableAction.updateTableActionModule}
+          editCell={this.editCell}
+          reorderColumn={this.reorderColumn}
           isReadOnly={isReadOnly}
-          setDropdownAction={this.setDropdownAction}
           selectedRowIndexes={selectedRowIndexes}
           onLoadPage={onLoadPage}
           onSetSelectedRowIndexes={this.setSelectedRowIndexes}
@@ -108,3 +106,27 @@ export default class TableView extends React.PureComponent {
     )
   }
 }
+
+function mapDispatchToProps (dispatch) {
+  return {
+    ensureSelectColumnsModule: (wfModuleId) => {
+      dispatch(updateTableAction(wfModuleId, 'selectcolumns', false, {}))
+    },
+    reorderColumn: (wfModuleId, colname, fromIndex, toIndex) => {
+      dispatch(updateTableAction(wfModuleId, 'reorder-columns', false, {
+        column: colname,
+        from: fromIndex,
+        to: toIndex
+      }))
+    },
+    editCell: (wfModuleId, rowIndex, colname, newValue) => {
+      dispatch(updateTableAction(wfModuleId, 'editcells', false, {
+        row: rowIndex,
+        col: colname,
+        value: newValue
+      }))
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(TableView)

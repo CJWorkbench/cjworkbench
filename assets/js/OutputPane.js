@@ -5,8 +5,6 @@ import PropTypes from 'prop-types'
 import TableSwitcher from './table/TableSwitcher'
 import OutputIframe from './OutputIframe'
 import { connect } from 'react-redux'
-import { findParamValByIdName} from './utils'
-import { sortDirectionNone } from './table/UpdateTableAction'
 
 export class OutputPane extends React.Component {
   static propTypes = {

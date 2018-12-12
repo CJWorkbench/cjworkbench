@@ -93,7 +93,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         <WfParameter
           api={
             Object {
+              "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
+              "setSelectedWfModule": [MockFunction],
               "setWfModuleNotes": [MockFunction],
             }
           }
@@ -135,7 +137,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         <WfParameter
           api={
             Object {
+              "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
+              "setSelectedWfModule": [MockFunction],
               "setWfModuleNotes": [MockFunction],
             }
           }
@@ -175,7 +179,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         <WfParameter
           api={
             Object {
+              "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
+              "setSelectedWfModule": [MockFunction],
               "setWfModuleNotes": [MockFunction],
             }
           }
@@ -218,7 +224,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         <WfParameter
           api={
             Object {
+              "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
+              "setSelectedWfModule": [MockFunction],
               "setWfModuleNotes": [MockFunction],
             }
           }

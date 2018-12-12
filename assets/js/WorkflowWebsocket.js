@@ -1,5 +1,3 @@
-import * as Actions from './workflow-reducer'
-
 const MissingInflightHandler = {
   resolve: (result) => {
     console.warn('Unhandled result from server', result)
@@ -20,17 +18,17 @@ export class ErrorResponse extends Error {
 
 
 export default class WorkflowWebsocket {
-  constructor(workflowId, dispatch, createSocket=null) {
+  constructor(workflowId, onDelta, createSocket=null) {
     if (!createSocket) {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const url = `${protocol}//${window.location.host}/workflows/${this.workflowId}`
+      const url = `${protocol}//${window.location.host}/workflows/${workflowId}`
       createSocket = () => {
         return new window.WebSocket(url)
       }
     }
 
     this.workflowId = workflowId
-    this.dispatch = dispatch
+    this.onDelta = onDelta
     this.createSocket = createSocket
     this.hasConnectedBefore = false
     this.reconnectDelay = 1000
@@ -66,8 +64,8 @@ export default class WorkflowWebsocket {
     } else if (data.type) {
       switch (data.type) {
         case 'apply-delta':
-          this.dispatch(Actions.applyDeltaAction(data.data))
-          return
+          this.onDelta(data.data)
+          break
         default:
           console.error('Unhandled websocket message', data)
       }

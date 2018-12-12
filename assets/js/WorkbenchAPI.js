@@ -10,7 +10,11 @@ const apiHeaders = {
 }
 
 // All API calls which fetch data return a promise which returns JSON
-class WorkbenchAPI {
+export default class WorkbenchAPI {
+  constructor (websocket) {
+    this.websocket = websocket
+  }
+
   // We send at most one data-modification request at a time, to avoid races.
   // this._serializer always resolves to the last-returned fetch result.
   _serializer = Promise.resolve(null)
@@ -105,11 +109,12 @@ class WorkbenchAPI {
     return this._patch(`/api/workflows/${workflowId}`, { newOrder })
   }
 
-  addModule(workflowId, moduleId, index, values={}) {
-    return this._post(`/api/workflows/${workflowId}/addmodule`, {
-      index: index,
-      moduleId: moduleId,
-      values: values
+  addModule (tabId, moduleId, index, values={}) {
+    return this.websocket.callServerHandler('tab.add_module', {
+      tabId,
+      moduleId,
+      position: index,
+      paramValues: values
     })
   }
 
@@ -121,8 +126,11 @@ class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
   }
 
-  setWfModuleParams(wfModuleId, params) {
-    return this._patch(`/api/wfmodules/${wfModuleId}/params`, { 'values': params })
+  setWfModuleParams (wfModuleId, values) {
+    return this.websocket.callServerHandler('wf_module.set_params', {
+      wfModuleId,
+      values
+    })
   }
 
   render(wfModuleId, startrow, endrow) {
@@ -165,7 +173,7 @@ class WorkbenchAPI {
 
   // All available modules in the system
   getModules() {
-    return this._fetch(`/api/modules/`)
+    return this.websocket.callServerHandler('module.list')
   }
 
   setWfModuleVersion(wfModuleId, version) {
@@ -175,7 +183,7 @@ class WorkbenchAPI {
     )
   }
 
-  setWfModuleNotes(wfModuleId, text) {
+  setWfModuleNotes (wfModuleId, text) {
     return this._patch(`/api/wfmodules/${wfModuleId}`, { notes: text })
   }
 
@@ -264,7 +272,3 @@ class WorkbenchAPI {
     return this._delete(`/api/parameters/${paramId}/oauth_authorize`)
   }
 }
-
-// Singleton API object for global use
-const api = new WorkbenchAPI()
-export default api

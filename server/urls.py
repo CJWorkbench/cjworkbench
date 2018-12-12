@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^workflows/(?P<workflow_id>[0-9]+)/$', views.render_workflow, name="workflow"),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/?$', views.workflow_detail),
 
-    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/addmodule/?$', views.AddModule.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$',
         workflows.Duplicate.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/undo/?$', views.workflow_undo),
@@ -44,7 +43,6 @@ urlpatterns = [
 
     # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/params$', views.wfmodule_params),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/fetch$', views.wfmodule_fetch),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/tiles/v(?P<delta_id>[0-9]+)/r(?P<tile_row>[0-9]+)/c(?P<tile_column>[0-9]+).json$',
         views.wfmodule_tile),

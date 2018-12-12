@@ -106,6 +106,7 @@ export default class WorkflowNavBar extends React.Component {
 
     const shareModal = this.state.isShareModalOpen ? (
       <ShareModal
+        api={api}
         logShare={this.logShare}
         onClickClose={this.closeShareModal}
       />

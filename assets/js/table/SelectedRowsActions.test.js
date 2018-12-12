@@ -1,11 +1,7 @@
-jest.mock('../WorkbenchAPI')
-
 import React from 'react'
 import { mount } from 'enzyme'
-import { mockStore } from '../workflow-reducer'
 import { Provider } from 'react-redux'
-import { tick } from '../test-utils'
-import WorkbenchAPI from '../WorkbenchAPI'
+import { mockStore, tick } from '../test-utils'
 import ConnectedSelectedRowsActions, { SelectedRowsActions } from './SelectedRowsActions'
 
 describe('SelectedRowsActions', () => {
@@ -40,10 +36,14 @@ describe('SelectedRowsActions', () => {
   })
 
   describe('connected', () => {
+    let api
+
     beforeEach(() => {
-      WorkbenchAPI.addModule.mockReset()
-      WorkbenchAPI.setWfModuleParams.mockReset()
-      WorkbenchAPI.setSelectedWfModule.mockReset()
+      api = {
+        addModule: jest.fn(),
+        setWfModuleParams: jest.fn(),
+        setSelectedWfModule: jest.fn()
+      }
     })
 
     const wrapper = (modules=null, wf_module_ids=null, wfModules=null, extraProps={}) => {
@@ -78,7 +78,7 @@ describe('SelectedRowsActions', () => {
         wfModules,
         tabs: { 11: { id: 11, wf_module_ids } },
         workflow: { id: 321, tab_ids: [ 11, 12 ], selected_tab_position: 0 }
-      })
+      }, api)
       return mount(
         <Provider store={store}>
           <ConnectedSelectedRowsActions
@@ -109,7 +109,7 @@ describe('SelectedRowsActions', () => {
     })
 
     it('should use addModuleAction', async () => {
-      WorkbenchAPI.addModule.mockImplementation(_ => Promise.resolve({
+      api.addModule.mockImplementation(_ => Promise.resolve({
         index: 1,
         wfModule: {
           id: 103,
@@ -135,12 +135,12 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(WorkbenchAPI.addModule).toHaveBeenCalledWith(321, 15, 1, { rows: '2, 4-5' })
+      expect(api.addModule).toHaveBeenCalledWith(11, 15, 1, { rows: '2, 4-5' })
     })
 
     it('should use setWfModuleParams action, fromInput', async () => {
-      WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
-      WorkbenchAPI.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
+      api.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
+      api.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
 
       const w = wrapper(
         {
@@ -165,15 +165,15 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(WorkbenchAPI.setSelectedWfModule).toHaveBeenCalledWith(321, 1)
-      expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(
+      expect(api.setSelectedWfModule).toHaveBeenCalledWith(321, 1)
+      expect(api.setWfModuleParams).toHaveBeenCalledWith(
         100,
         { oldParams: { foo20: 'bar20' }, rows: '2, 4-5', fromInput: true }
       )
     })
 
     it('should use setWfModuleParams action, fromInput=false (from output)', async () => {
-      WorkbenchAPI.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
+      api.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
 
       const w = wrapper(
         {
@@ -199,7 +199,7 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(WorkbenchAPI.setWfModuleParams).toHaveBeenCalledWith(
+      expect(api.setWfModuleParams).toHaveBeenCalledWith(
         99,
         { oldParams: { foo10: 'bar10' }, rows: '2, 4-5', fromInput: false }
       )

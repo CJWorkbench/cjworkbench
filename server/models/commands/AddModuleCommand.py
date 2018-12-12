@@ -1,4 +1,3 @@
-import logging
 from django.db import models
 from django.db.models import F
 from server.models import Delta, WfModule
@@ -124,31 +123,21 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             self.wf_module.delete()
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow, module_version,
-                            insert_before, param_values, **kwargs):
-        tab = workflow.live_tabs.get(position=0)  # TODO let caller specify tab
-
+    def amend_create_kwargs(cls, *, workflow, tab, module_version,
+                            position, param_values, **kwargs):
         # wf_module starts off "deleted" and gets un-deleted in forward().
         wf_module = tab.wf_modules.create(module_version=module_version,
-                                          order=insert_before, is_deleted=True)
+                                          order=position, is_deleted=True)
         wf_module.create_parametervals(param_values or {})
 
         return {
             **kwargs,
             'workflow': workflow,
             'wf_module': wf_module,
-            'order': insert_before,
+            'order': position,
             'selected_wf_module_position': tab.selected_wf_module_position,
             'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
-
-    @classmethod
-    async def create(cls, workflow, module_version, insert_before,
-                     param_values):
-        return await cls.create_impl(workflow=workflow,
-                                     module_version=module_version,
-                                     insert_before=insert_before,
-                                     param_values=param_values)
 
     @property
     def command_description(self):

@@ -1,21 +1,10 @@
-jest.mock('../WorkbenchAPI', () => {
-  return {
-    updateWfModule: jest.fn(),
-  }
-})
-
-import { mockStore } from '../workflow-reducer'
+import { mockStore } from '../test-utils'
 import React from 'react'
 import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
 import { shallow, mount } from 'enzyme'
 import { Provider } from 'react-redux'
-import WorkbenchAPI from '../WorkbenchAPI'
 
 describe('UpdateFrequencySelect', () => {
-  beforeEach(() => {
-    WorkbenchAPI.updateWfModule.mockReset()
-  })
-
   describe('shallow', () => {
     const defaultProps = {
       wfModuleId: 212,
@@ -162,7 +151,10 @@ describe('UpdateFrequencySelect', () => {
     })
 
     it('should dispatch an update (and call the API method)', () => {
-      const store = mockStore(sampleState)
+      const api = {
+        updateWfModule: jest.fn().mockImplementation(() => Promise.resolve(null))
+      }
+      const store = mockStore(sampleState, api)
       wrapper = mount(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
@@ -179,7 +171,7 @@ describe('UpdateFrequencySelect', () => {
         timeNumber: 2,
         timeUnit: 'days',
       })
-      expect(WorkbenchAPI.updateWfModule).toHaveBeenCalledWith(212, {
+      expect(api.updateWfModule).toHaveBeenCalledWith(212, {
         auto_update_data: true,
         notifications: true,
         update_interval: 2,

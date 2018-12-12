@@ -5,21 +5,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Popover from 'reactstrap/lib/Popover'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
-import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc} from './UpdateTableAction'
-
-// Modifiers disabled to prevent menu flipping (occurs even when flip=false)
-var dropdownModifiers = {
-  preventOverflow: {
-    enabled: false
-  },
-  hide: {
-    enabled: false
-  }
-}
 
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {
-    setDropdownAction: PropTypes.func.isRequired,
+    onClickAction: PropTypes.func.isRequired, // func(idName, forceNewModule, params)
     columnType: PropTypes.string.isRequired,
     renameColumn: PropTypes.func.isRequired
   }
@@ -34,23 +23,13 @@ export default class ColumnContextMenu extends React.Component {
 
   dropdownRef = React.createRef()
 
-  // Modules that only need to pass the column name and do not force new modules use setDropdownActionDefault
-  setDropdownActionDefault (idName) {
-    this.props.setDropdownAction(idName, false, {})
+  createOrUpdate (idName, extraParams={}) {
+    this.props.onClickAction(idName, false, extraParams)
     this.setState({ isOpen: false })
   }
 
-  setDropdownActionForceNew (idName) {
-    this.props.setDropdownAction(idName, true, {})
-    this.setState({ isOpen: false })
-  }
-
-  setSortDirection (direction) {
-    let params = {
-      'sortType': this.props.columnType,
-      'sortDirection': direction
-    }
-    this.props.setDropdownAction('sort-from-table', false, params)
+  create (idName, extraParams={}) {
+    this.props.onClickAction(idName, true, extraParams)
     this.setState({ isOpen: false })
   }
 
@@ -59,15 +38,15 @@ export default class ColumnContextMenu extends React.Component {
     this.setState({ isOpen: false })
   }
 
-  duplicateColumn = () => this.setDropdownActionDefault('duplicate-column')
-  sortAscending = () => this.setSortDirection(sortDirectionAsc)
-  sortDescending = () => this.setSortDirection(sortDirectionDesc)
-  addNewFilter = () => this.setDropdownActionForceNew('filter')
-  extractNumbers = () => this.setDropdownActionDefault('extract-numbers')
-  cleanText = () => this.setDropdownActionDefault('clean-text')
-  dropColumn = () => this.setDropdownActionDefault('selectcolumns')
-  convertDate = () => this.setDropdownActionDefault('convert-date')
-  convertText = () => this.setDropdownActionDefault('convert-text')
+  duplicateColumn = () => this.createOrUpdate('duplicate-column')
+  sortAscending = () => this.createOrUpdate('sort-from-table', { direction: 1 })
+  sortDescending = () => this.createOrUpdate('sort-from-table', { direction: 2 })
+  addNewFilter = () => this.create('filter')
+  extractNumbers = () => this.createOrUpdate('extract-numbers')
+  cleanText = () => this.createOrUpdate('clean-text')
+  dropColumn = () => this.createOrUpdate('selectcolumns', { drop_or_keep: 0 })
+  convertDate = () => this.createOrUpdate('convert-date')
+  convertText = () => this.createOrUpdate('convert-text')
 
   render() {
     const { isOpen } = this.state

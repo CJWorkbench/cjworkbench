@@ -18,8 +18,8 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import Module, ModuleVersion, Workflow, WfModule
-from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
-        ChangeWorkflowTitleCommand, InitWorkflowCommand
+from server.models.commands import ReorderModulesCommand, \
+        ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
@@ -132,16 +132,13 @@ def render_workflows(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     """Create a new workflow."""
-    with transaction.atomic():
-        workflow = Workflow.objects.create(
-            name='New Workflow',
-            owner=request.user,
-            selected_tab_position=0
-        )
-        workflow.tabs.create(position=0)
-        InitWorkflowCommand.create(workflow)
-        serializer = WorkflowSerializerLite(workflow,
-                                            context={'request': request})
+    workflow = Workflow.create_and_init(
+        name='New Workflow',
+        owner=request.user,
+        selected_tab_position=0
+    )
+    serializer = WorkflowSerializerLite(workflow,
+                                        context={'request': request})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -164,8 +161,9 @@ def _get_anonymous_workflow_for(workflow: Workflow,
                                     anonymous_owner_session_key=session_key)
     except Workflow.DoesNotExist:
         if workflow.example:
-            server.utils.log_user_event(request, 'Opened Demo Workflow',
-                                        {'name': workflow.name})
+            server.utils.log_user_event_from_request(request,
+                                                     'Opened Demo Workflow',
+                                                     {'name': workflow.name})
         new_workflow = workflow.duplicate_anonymous(session_key)
 
         async_to_sync(new_workflow.last_delta.schedule_execute)()
@@ -286,59 +284,6 @@ def workflow_detail(request, workflow_id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AddModuleForm(forms.Form):
-    index = forms.IntegerField()
-    moduleId = forms.ModelChoiceField(queryset=Module.objects)
-    values = forms.Field(required=False)  # allow empty params
-
-
-# Invoked when user adds a module
-class AddModule(View):
-    @method_decorator(loads_workflow_for_write)
-    def post(self, request: HttpRequest, workflow: Workflow):
-        try:
-            request_data = json.loads(request.body)
-        except ValueError:
-            return JsonResponse({'error': 'request body must be JSON'},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-        form = AddModuleForm(request_data)
-        if not form.is_valid():
-            return JsonResponse({'errors': form.errors},
-                                status=status.HTTP_400_BAD_REQUEST)
-        data = form.cleaned_data
-
-        try:
-            values = dict(data['values'] or {})
-        except TypeError:
-            return JsonResponse({'error': 'values must be an Object'},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-        module = data['moduleId']
-        # don't allow python code module in anonymous workflow
-        if module.id_name == 'pythoncode' and workflow.is_anonymous:
-            return HttpResponseForbidden()
-
-        # always add the latest version of a module (do we need ordering on the
-        # objects to ensure last is always latest?)
-        module_version = module.module_versions.last()
-
-        server.utils.log_user_event(request, 'ADD STEP ' + module.name, {
-            'name': module.name,
-            'id_name': module.id_name
-        })
-
-        delta = async_to_sync(AddModuleCommand.create)(workflow,
-                                                       module_version,
-                                                       data['index'], values)
-        serializer = WfModuleSerializer(delta.wf_module)
-
-        return JsonResponse({
-            'wfModule': serializer.data,
-            'index': data['index'],
-        }, status=status.HTTP_201_CREATED)
-
-
 # Duplicate a workflow. Returns new wf as json in same format as wf list
 class Duplicate(View):
     @method_decorator(loads_workflow_for_read)
@@ -347,8 +292,9 @@ class Duplicate(View):
         serializer = WorkflowSerializerLite(workflow2,
                                             context={'request': request})
 
-        server.utils.log_user_event(request, 'Duplicate Workflow',
-                                    {'name': workflow.name})
+        server.utils.log_user_event_from_request(request,
+                                                 'Duplicate Workflow',
+                                                 {'name': workflow.name})
 
         async_to_sync(workflow2.last_delta.schedule_execute)()
 
