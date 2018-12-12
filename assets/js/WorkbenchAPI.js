@@ -222,8 +222,13 @@ export default class WorkbenchAPI {
     return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
   }
 
-  importFromGithub(eventData) {
-    return this._post(`/api/importfromgithub/`, eventData)
+  importModuleFromGitHub(url) {
+    return this._post('/api/importfromgithub/', { url })
+      .then(json => {
+        // Turn OK {'error': 'no can do'} into a Promise Error
+        if (json.error) throw new Error(json.error)
+        return json
+      })
   }
 
   // This is Bad. You should get a list of serialized data versions on the

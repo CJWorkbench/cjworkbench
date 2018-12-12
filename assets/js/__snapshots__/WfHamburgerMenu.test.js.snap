@@ -100,13 +100,12 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                 </a>
               </DropdownItem>
               <DropdownItem
-                className="test-export-button"
                 onClick={[Function]}
                 tag="button"
                 toggle={true}
               >
                 <button
-                  className="test-export-button dropdown-item"
+                  className="dropdown-item"
                   onClick={[Function]}
                   tabIndex="0"
                   type="button"

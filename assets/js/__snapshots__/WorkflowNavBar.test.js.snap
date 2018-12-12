@@ -419,13 +419,12 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                       </a>
                     </DropdownItem>
                     <DropdownItem
-                      className="test-export-button"
                       onClick={[Function]}
                       tag="button"
                       toggle={true}
                     >
                       <button
-                        className="test-export-button dropdown-item"
+                        className="dropdown-item"
                         onClick={[Function]}
                         tabIndex="0"
                         type="button"

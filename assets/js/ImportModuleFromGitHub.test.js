@@ -1,58 +1,36 @@
 import React from 'react'
-import { ImportModuleFromGitHub }  from './ImportModuleFromGitHub'
-import { mount, ReactWrapper } from 'enzyme'
-import { okResponseMock } from './test-utils'
-import { mockStore } from "./workflow-reducer";
+import ConnectedImportModuleFromGitHub  from './ImportModuleFromGitHub'
+import { mount } from 'enzyme'
+import { mockStore, tick } from './test-utils'
 
 describe('ImportModuleFromGitHub', () => {
-
-  var wrapper;
-  var modalLink;
-  var reloadModules;
-  var api = {
-    importFromGithub: okResponseMock()
-  };
-
-  beforeEach(() => {
-    api = {
-      importFromGithub: okResponseMock()
-    };
-    reloadModules = jest.fn();
-    wrapper = mount(
-      <ImportModuleFromGitHub
-        closeModal={()=>{}}
-        reloadModules={reloadModules}
-        api={api}
+  const wrapper = (store, extraProps={}) => {
+    return mount(
+      <ConnectedImportModuleFromGitHub
+        store={store}
+        closeModal={jest.fn()}
+        api={{importModuleFromGitHub: () => {}}}
+        {...extraProps}
       />
     )
-  });
+  }
 
-  afterEach(() => wrapper.unmount());
+  it('should load and replace a module', async () => {
+    const api = {
+      importModuleFromGitHub: jest.fn().mockImplementation(() => Promise.resolve({ id: 2, author: 'Aut', name: 'yay', category: 'cat' }))
+    }
+    const store = mockStore({ modules: {1: {foo: 'bar'}} }, null)
+    const w = wrapper(store, { api })
+    w.find('input').instance().value = 'https://github.com/example/repo'
+    w.find('form').simulate('submit')
 
-  it('makes API call when github URL submitted', (done) => {
-    let modal = wrapper.find('div.modal-dialog');
-    expect(modal).toHaveLength(1);
+    expect(api.importModuleFromGitHub).toHaveBeenCalledWith('https://github.com/example/repo')
+    await tick()
+    expect(store.getState().modules).toEqual({
+      1: { foo: 'bar' },
+      2: { id: 2, author: 'Aut', category: 'cat', name: 'yay' }
+    })
 
-    // For the moment, test the logic by calling handleSubmit
-    let event = {
-      preventDefault: ()=>{}
-    };
-    const url = 'http://github.com/somemodule';
-    wrapper.setState({url: url});
-
-    // find Import button and click it
-    const importButton = modal.find('button[name="import"]');
-    expect(importButton).toHaveLength(1);
-    importButton.simulate('click');
-    
-    expect(api.importFromGithub).toHaveBeenCalledWith({ url: url })
-
-    // resolve api promise; see that it refreshes module lib
-    setImmediate(() => {
-      wrapper.update();
-      expect(reloadModules).toHaveBeenCalled();
-      done();
-    });
-  });
-
-});
+    expect(w.find('.import-github-success').text()).toEqual('Imported Aut module "yay" under category "cat"')
+  })
+})

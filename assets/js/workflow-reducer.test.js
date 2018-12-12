@@ -87,29 +87,6 @@ describe('Reducer actions', () => {
     expect(state).toBe(testState)
   })
 
-   // LOAD_MODULES
-  it('loadModules', async () => {
-    const moduleArray = [
-      {
-        "id":1,
-        "name":"Chart",
-        "category":"Visualize",
-        "description":"Create line, column and scatter plot charts.",
-        "icon":"chart"
-      }
-    ]
-
-    // State stores a dict keyed by ID. API returns an Array.
-    const api = { getModules: jest.fn().mockImplementation(() => Promise.resolve(moduleArray)) }
-    const store = mockStore({ ...testState, modules: { 'foo': 'bar' } }, api)
-    await store.dispatch(wfr.loadModulesAction())
-
-    expect(api.getModules).toHaveBeenCalled()
-    expect(store.getState().modules).toEqual({
-      "1": moduleArray[0],
-    })
-  })
-
   // ADD_MODULE
   it('adds a module', async () => {
     const api = {

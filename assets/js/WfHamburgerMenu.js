@@ -9,26 +9,16 @@ import DropdownItem from 'reactstrap/lib/DropdownItem'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 
 export default class WfHamburgerMenu extends React.Component {
-  constructor (props) {
-    super(props)
-    this.toggleImportModal = this.toggleImportModal.bind(this)
-
-    this.state = {
-      importModalOpen: false
-    }
+  state = {
+    importModalOpen: false
   }
 
-  toggleImportModal () {
-    this.setState({ importModalOpen: !this.state.importModalOpen })
+  openImportModal = () => {
+    this.setState({ importModalOpen: true })
   }
 
-  renderImportModal () {
-    return (
-      <ImportModuleFromGitHub
-        closeModal={this.toggleImportModal}
-        api={this.props.api}
-      />
-    )
+  closeImportModal = () => {
+    this.setState({ importModalOpen: false })
   }
 
   render () {
@@ -57,12 +47,9 @@ export default class WfHamburgerMenu extends React.Component {
 
     // can import if logged in
     if (loggedIn) {
-      let importModal = this.state.importModalOpen ? this.renderImportModal() : null
-
       importModule = (
-        <DropdownItem onClick={this.toggleImportModal} className='test-export-button'>
+        <DropdownItem onClick={this.openImportModal}>
           <span>Import Module</span>
-          {importModal}
         </DropdownItem>
       )
     }
@@ -83,16 +70,24 @@ export default class WfHamburgerMenu extends React.Component {
     }
 
     return (
-      <UncontrolledDropdown>
-        <DropdownToggle title='menu' className='context-button'>
-          <i className='context-button--icon icon-more' />
-        </DropdownToggle>
-        <DropdownMenu right>
-          {homeLink}
-          {importModule}
-          {logInorOut}
-        </DropdownMenu>
-      </UncontrolledDropdown>
+      <React.Fragment>
+        <UncontrolledDropdown>
+          <DropdownToggle title='menu' className='context-button'>
+            <i className='context-button--icon icon-more' />
+          </DropdownToggle>
+          <DropdownMenu right>
+            {homeLink}
+            {importModule}
+            {logInorOut}
+          </DropdownMenu>
+        </UncontrolledDropdown>
+        {this.state.importModalOpen ? (
+          <ImportModuleFromGitHub
+            closeModal={this.closeImportModal}
+            api={this.props.api}
+          />
+        ) : null}
+      </React.Fragment>
     )
   }
 }

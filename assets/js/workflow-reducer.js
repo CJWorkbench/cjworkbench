@@ -3,8 +3,7 @@
 import { createStore, applyMiddleware } from 'redux'
 
 // Workflow
-const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW'
-const LOAD_MODULES = 'LOAD_MODULES'
+const UPDATE_MODULE = 'UPDATE_MODULE'
 const ADD_MODULE = 'ADD_MODULE'
 const DELETE_MODULE = 'DELETE_MODULE'
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE'
@@ -150,21 +149,20 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
   }
 })
 
-// LOAD_MODULES
-// Populate/refresh the module library
-export function loadModulesAction () {
-  return (dispatch, getState, api) => {
-    return dispatch({
-      type: LOAD_MODULES,
-      payload: api.getModules()
-    })
+// UPDATE_MODULE
+// Write or rewrite a module in state.modules
+export function updateModuleAction (module) {
+  return {
+    type: UPDATE_MODULE,
+    payload: { module }
   }
 }
-registerReducerFunc(LOAD_MODULES + '_FULFILLED', (state, action) => {
-  const modulesArray = action.payload
-  const modules = {}
-  for (const module of modulesArray) {
-    modules[String(module.id)] = module
+registerReducerFunc(UPDATE_MODULE, (state, action) => {
+  const { module } = action.payload
+
+  const modules = {
+    ...state.modules,
+    [String(module.id)]: module
   }
 
   return { ...state, modules }
