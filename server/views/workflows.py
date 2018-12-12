@@ -191,18 +191,8 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
 @api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, workflow_id, format=None):
-    if request.method == 'GET':
-        workflow = lookup_workflow_for_read(workflow_id, request)
-        with workflow.cooperative_lock():
-            data = make_init_state(request, workflow)
-            return Response({
-                'workflow': data['workflow'],
-                'tabs': data['tabs'],
-                'wfModules': data['wfModules'],
-            })
-
     # We use PATCH to set the order of the modules when the user drags.
-    elif request.method == 'PATCH':
+    if request.method == 'PATCH':
         workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:

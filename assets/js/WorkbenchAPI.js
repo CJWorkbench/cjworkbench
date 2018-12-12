@@ -77,10 +77,6 @@ export default class WorkbenchAPI {
     return this._fetch('/api/workflows')
   }
 
-  loadWorkflow(workflowId) {
-    return this._fetch(`/api/workflows/${workflowId}`)
-  }
-
   newWorkflow() {
     return this._post('/api/workflows', {})
   }

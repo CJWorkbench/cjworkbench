@@ -248,7 +248,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.client.force_login(self.otheruser)
 
         # GET: works
-        response = self.client.get(f'/api/workflows/{self.workflow1.id}/')
+        response = self.client.get(f'/workflows/{self.workflow1.id}/')
         self.assertEqual(response.status_code, 200)
 
         # POST: does not work
@@ -262,7 +262,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.client.force_login(self.otheruser)
 
         # GET: works
-        response = self.client.get(f'/api/workflows/{self.workflow1.id}/')
+        response = self.client.get(f'/workflows/{self.workflow1.id}/')
         self.assertEqual(response.status_code, 200)
 
         # POST: works
@@ -281,7 +281,7 @@ class WorkflowViewTests(LoggedInTestCase):
         # Also ensure the anonymous users can't access the Python module; first we need to load it
         load_module_version('pythoncode')
 
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id, user=AnonymousUser())
+        request = self._build_get('/workflows/%d/' % self.other_workflow_public.id, user=AnonymousUser())
         response = render_workflow(request, workflow_id=self.other_workflow_public.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -316,42 +316,6 @@ class WorkflowViewTests(LoggedInTestCase):
         self.workflow1.save()
         response = self.client.post('/api/workflows/%d/duplicate' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_workflow_detail_get(self):
-        # Should be able to get your own workflow
-        request = self._build_get('/api/workflows/%d/' % self.workflow1.id,
-                                  user=self.user)
-        response = workflow_detail(request, workflow_id=self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['workflow']['name'], 'Workflow 1')
-        self.assertEqual(response.data['workflow']['public'], False)
-
-        # bad ID should give 404
-        request = self._build_get('/api/workflows/%d/' % 10000,
-                                  user=self.user)
-        response = workflow_detail(request, workflow_id=10000)
-        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # someone else's public workflow should be gettable
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
-                                  user=self.user)
-        response = workflow_detail(request, workflow_id=self.other_workflow_public.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['workflow']['name'], 'Other workflow public')
-
-        # not authenticated should give 403 (not 404, because users try to
-        # share their URLs without setting them public first and we need to
-        # help them debug that case)
-        request = self._build_get('/api/workflows/%d/' % self.workflow1.id,
-                                  user=AnonymousUser())
-        response = workflow_detail(request, workflow_id=self.workflow1.id)
-        self.assertEqual(response.status_code, 403)
-
-        # similarly, someone else's private workflow should 403
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_private.id,
-                                  user=self.user)
-        response = workflow_detail(request, workflow_id=self.other_workflow_private.id)
-        self.assertEqual(response.status_code, 403)
 
     def test_workflow_reorder_modules(self):
         wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)
