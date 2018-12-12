@@ -209,7 +209,10 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.assertWfModuleVersions([v1])
 
         # Delete it. Yeah, you better run.
-        cmd = async_to_sync(DeleteModuleCommand.create)(existing_module)
+        cmd = async_to_sync(DeleteModuleCommand.create)(
+            workflow=self.workflow,
+            wf_module=existing_module
+        )
         self.assertEqual(all_modules.count(), 0)
         self.assertWfModuleVersions([])
 
@@ -242,7 +245,8 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         self.tab.selected_wf_module_position = 0
         self.tab.save(update_fields=['selected_wf_module_position'])
 
-        cmd = async_to_sync(DeleteModuleCommand.create)(wf_module)
+        cmd = async_to_sync(DeleteModuleCommand.create)(workflow=self.workflow,
+                                                        wf_module=wf_module)
 
         self.tab.refresh_from_db()
         self.assertIsNone(self.tab.selected_wf_module_position)
@@ -308,7 +312,8 @@ class AddDeleteModuleCommandTests(CommandTestCase):
             position=0,
             param_values={}
         )
-        async_to_sync(DeleteModuleCommand.create)(cmda.wf_module)
+        async_to_sync(DeleteModuleCommand.create)(workflow=self.workflow,
+                                                  wf_module=cmda.wf_module)
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 

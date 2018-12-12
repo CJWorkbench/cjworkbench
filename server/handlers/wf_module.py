@@ -2,7 +2,7 @@ import functools
 from typing import Any, Dict
 from channels.db import database_sync_to_async
 from server.models import Workflow, WfModule
-from server.models.commands import ChangeParametersCommand
+from server.models.commands import ChangeParametersCommand, DeleteModuleCommand
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 
@@ -35,3 +35,10 @@ async def set_params(workflow: Workflow, wf_module: WfModule,
     await ChangeParametersCommand.create(workflow=workflow,
                                          wf_module=wf_module,
                                          new_values=values)
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@loading_wf_module
+async def delete(workflow: Workflow, wf_module: WfModule, **kwargs):
+    await DeleteModuleCommand.create(workflow=workflow, wf_module=wf_module)

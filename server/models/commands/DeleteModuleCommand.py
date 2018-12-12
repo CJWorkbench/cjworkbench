@@ -87,12 +87,6 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
             'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
 
-    @classmethod
-    async def create(cls, wf_module):
-        # Accept positional arguments
-        return await cls.create_impl(workflow=wf_module.workflow,
-                                     wf_module=wf_module)
-
     @property
     def command_description(self):
         return f'Delete WfModule {self.wf_module}'

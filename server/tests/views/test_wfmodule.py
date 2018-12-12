@@ -245,14 +245,6 @@ class WfModuleTests(LoggedInTestCase):
         )
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_wf_module_delete(self):
-        response = self.client.delete('/api/wfmodules/%d' % self.wf_module2.id)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        wf_modules = list(self.tab.live_wf_modules)
-        self.assertEqual(len(wf_modules), 1)
-        self.assertEqual(wf_modules[0].pk, self.wf_module1.id)
-
     # test stored versions of data: create, retrieve, set, list, and views
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.websockets.queue_render_if_listening', async_noop)

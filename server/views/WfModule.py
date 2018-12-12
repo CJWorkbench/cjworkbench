@@ -15,9 +15,8 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from server.models import WfModule, StoredObject
-from server.models.commands import DeleteModuleCommand, \
-        ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
-        ChangeWfModuleUpdateSettingsCommand, ChangeParametersCommand
+from server.models.commands import ChangeDataVersionCommand, \
+        ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 from server.serializers import WfModuleSerializer
 import server.utils
 from server import rabbitmq, websockets
@@ -111,14 +110,6 @@ def wfmodule_detail(request, pk, format=None):
         with wf_module.workflow.cooperative_lock():
             serializer = WfModuleSerializer(wf_module)
             return Response(serializer.data)
-
-    elif request.method == 'DELETE':
-        delta = async_to_sync(DeleteModuleCommand.create)(wf_module)
-        if delta:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            # missing wf_module; can happen if two DELETE requests race.
-            return HttpResponseNotFound()
 
     elif request.method == 'PATCH':
         # For patch, we check which fields are set in data, and process all of

@@ -119,7 +119,9 @@ export default class WorkbenchAPI {
   }
 
   deleteModule(wfModuleId) {
-    return this._delete(`/api/wfmodules/${wfModuleId}`)
+    return this.websocket.callServerHandler('wf_module.delete', {
+      wfModuleId
+    })
   }
 
   setWorkflowPublic(workflowId, isPublic) {
