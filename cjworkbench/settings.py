@@ -300,6 +300,7 @@ LOGGING = {
             # Ignore those WARNINGs and only log ERRORs.
             'level': 'ERROR',
         },
+        'django.channels.server': { 'level': 'ERROR' },  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         'django.db.backends': {'level': 'INFO'},
     }
