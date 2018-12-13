@@ -23,9 +23,9 @@ class StoredObject(models.Model):
                                   on_delete=models.CASCADE)
 
     # identification for file backing store
-    file = models.FileField(null=True)  # DEPRECATED
-    bucket = models.CharField(max_length=255, null=True)
-    key = models.CharField(max_length=255, null=True)
+    bucket = models.CharField(max_length=255, null=False, blank=True,
+                              default='')
+    key = models.CharField(max_length=255, null=False, blank=True, default='')
     stored_at = models.DateTimeField(default=timezone.now)
 
     # used only for stored tables
@@ -82,67 +82,24 @@ class StoredObject(models.Model):
         )
 
     def get_table(self):
-        if self.bucket and self.key:
-            with minio.temporarily_download(self.bucket, self.key) as tf:
-                try:
-                    return parquet.read(tf.name)
-                except parquet.FastparquetCouldNotHandleFile:
-                    return pd.DataFrame()  # empty table
-
-        if not self.file:
-            # Before 2018-11-09, we did not write empty data frames.
-            #
-            # We changed this because #160865813 shows that zero-row Parquet
-            # files still contain important data: column information.
+        if not self.bucket or not self.key:
+            # Old (obsolete) objects have no bucket/key, usually because
+            # empty tables weren't being written.
             return pd.DataFrame()
 
-        try:
-            return parquet.read(self.file.path)
-        except (FileNotFoundError, parquet.FastparquetCouldNotHandleFile):
-            # Spotted on production for a duplicated workflow dated
-            # 2018-08-01. [adamhooper, 2018-09-20] I can think of no harm in
-            # returning an empty dataframe here.
-            return pd.DataFrame()  # empty table
-
-    def ensure_using_s3(self):
-        """
-        Ensure self.file is None.
-
-        self.file is deprecated
-        """
-        if not self.file:
-            return
-
-        path = self.file.path
-
-        self.bucket = minio.StoredObjectsBucket
-        self.key = _build_key(self.wf_module.workflow_id,
-                              self.wf_module.id)
-        try:
-            minio.minio_client.fput_object(self.bucket, self.key, path)
-            self.file = None
-            self.save(update_fields=['bucket', 'key', 'file'])
-
-            os.remove(path)
-        except FileNotFoundError:
-            # Migrate to S3: FileNotFoundError will become KeyNotFound.
-            self.file = None
-            self.save(update_fields=['bucket', 'key', 'file'])
+        with minio.temporarily_download(self.bucket, self.key) as tf:
+            try:
+                return parquet.read(tf.name)
+            except parquet.FastparquetCouldNotHandleFile:
+                return pd.DataFrame()  # empty table
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
-        if to_wf_module == self.wf_module:
-            # Filename would clash, therefore we can't do that
-            raise ValueError(
-                'Cannot duplicate a StoredObject to same WfModule'
-            )
-
-        self.ensure_using_s3()
         key = _build_key(to_wf_module.workflow_id, to_wf_module.id)
         minio.minio_client.copy_object(self.bucket, key,
                                        f'/{self.bucket}/{self.key}')
 
-        new_so = to_wf_module.stored_objects.create(
+        return to_wf_module.stored_objects.create(
             stored_at=self.stored_at,
             hash=self.hash,
             metadata=self.metadata,
@@ -150,7 +107,6 @@ class StoredObject(models.Model):
             key=key,
             size=self.size
         )
-        return new_so
 
 
 @receiver(pre_delete, sender=StoredObject)
@@ -167,10 +123,4 @@ def _delete_from_s3_pre_delete(sender, instance, **kwargs):
         try:
             minio.minio_client.remove_object(instance.bucket, instance.key)
         except minio.error.NoSuchKey:
-            pass
-
-    if instance.file:
-        try:
-            os.remove(instance.file.path)
-        except FileNotFoundError:
             pass

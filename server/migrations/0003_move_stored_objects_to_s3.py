@@ -5,9 +5,33 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
+def ensure_using_s3(so):
+    import os
+    from server import minio
+    from server.models.StoredObject import _build_key
+
+    if not so.file:
+        return
+
+    path = so.file.path
+
+    so.bucket = minio.StoredObjectsBucket
+    so.key = _build_key(so.wf_module.workflow_id, so.wf_module.id)
+    try:
+        minio.minio_client.fput_object(so.bucket, so.key, path)
+        so.file = None
+        so.save(update_fields=['bucket', 'key', 'file'])
+
+        os.remove(path)
+    except FileNotFoundError:
+        # Migrate to S3: FileNotFoundError will become KeyNotFound.
+        so.file = None
+        so.save(update_fields=['bucket', 'key', 'file'])
+
+
 def move_stored_objects_to_s3(apps, schema_editor):
+    StoredObject = apps.get_model('server', 'StoredObject')
     import sys
-    from server.models import StoredObject  # not from 'apps'
     sys.stdout.write('\n')
     for stored_object in (
         StoredObject.objects
@@ -25,7 +49,7 @@ def move_stored_objects_to_s3(apps, schema_editor):
             continue
 
         sys.stdout.write(f'Moving {stored_object.file}...')
-        stored_object.ensure_using_s3()
+        ensure_using_s3(stored_object)
         sys.stdout.write(f' {stored_object.bucket}/{stored_object.key}\n')
 
 
