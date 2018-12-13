@@ -72,7 +72,6 @@ async def handle(request: HandlerRequest) -> HandlerResponse:
     If the handler returns JSON, returns data HandlerResponse.
     """
     # Import -- so handlers are registered
-    import server.handlers.module  # noqa: F401
     import server.handlers.tab  # noqa: F401
     import server.handlers.wf_module  # noqa: F401
 

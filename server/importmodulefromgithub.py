@@ -278,7 +278,6 @@ MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 def import_module_from_directory(url, reponame, version, importdir,
                                  force_reload=False):
     destination_directory = None
-    ui_info = {}
 
     try:
         # check that right files exist
@@ -354,6 +353,7 @@ def import_module_from_directory(url, reponame, version, importdir,
                                            module_version__module=module):
             update_wfm_parameters_to_new_version(wfm, module_version)
 
+        return module
     except Exception:
         # On exception, clean up and raise
         if destination_directory:
@@ -368,13 +368,6 @@ def import_module_from_directory(url, reponame, version, importdir,
                 pass
 
         raise
-
-    # return data that we probably want displayed in the UI.
-    ui_info["category"] = module_config["category"]
-    ui_info["project"] = reponame
-    ui_info["author"] = module_config["author"]
-    ui_info["name"] = module_config["name"]
-    return ui_info
 
 
 # Top level import, clones from github
@@ -396,24 +389,26 @@ def import_module_from_github(url, force_reload=False):
         # pull contents from GitHub
         try:
             git.Repo.clone_from(url, importdir)
-        except (ValidationError, GitCommandError) as ve:
-            if type(ve) == GitCommandError:
-                message = "Received Git error status code {}".format(ve.status)
-            else:
-                message = ve.message
-            raise ValidationError('Unable to clone from GitHub: %s' % (url) +
-                                  ': %s' % (message))
+        except GitCommandError as err:
+            raise ValidationError(
+                f'Received Git error status code {err.status}'
+            )
+        except ValidationError as err:
+            raise ValidationError(
+                f'Unable to clone from GitHub: {url}: {str(err)}'
+            )
 
         # load it
         version = extract_version(importdir)
-        ui_info = import_module_from_directory(url, reponame, version,
-                                               importdir, force_reload)
+        module = import_module_from_directory(url, reponame, version,
+                                              importdir, force_reload)
+
+        logger.info('Imported module %s' % url)
+
+        return module
     except Exception as e:
         # Clean up any existing dirs and pass exception up
         # (ValidationErrors will have error message for user)
         if os.path.isdir(importdir):
             shutil.rmtree(importdir)
         raise
-
-    logger.info('Successfully imported module %s' % url)
-    return ui_info

@@ -169,11 +169,6 @@ export default class WorkbenchAPI {
     return this._fetch(`/api/wfmodules/${wfModuleId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
   }
 
-  // All available modules in the system
-  getModules() {
-    return this.websocket.callServerHandler('module.list')
-  }
-
   setWfModuleVersion(wfModuleId, version) {
     return this._patch(
       `/api/wfmodules/${wfModuleId}/dataversions`,
