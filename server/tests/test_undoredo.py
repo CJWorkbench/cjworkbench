@@ -200,8 +200,9 @@ class UndoRedoTests(DbTestCase):
         # stack and delete them from the db
         wfm = all_modules.first()
         cmd4 = self._run_async(ChangeWfModuleNotesCommand.create(
-            wfm,
-            "Note of no note"
+            workflow=workflow,
+            wf_module=wfm,
+            new_value='Note of no note'
         ))
         v4 = cmd4.id
         workflow.refresh_from_db()
@@ -215,8 +216,9 @@ class UndoRedoTests(DbTestCase):
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v1)
         cmd5 = self._run_async(ChangeWfModuleNotesCommand.create(
-            cmd1.wf_module,
-            "Note of some note"
+            workflow=workflow,
+            wf_module=cmd1.wf_module,
+            new_value='Note of some note'
         ))
         v5 = cmd5.id
         workflow.refresh_from_db()

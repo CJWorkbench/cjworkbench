@@ -2,7 +2,7 @@ from unittest.mock import patch
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from server.handlers.wf_module import set_params, delete, \
-        set_stored_data_version, set_notes
+        set_stored_data_version, set_notes, set_collapsed
 from server.models import Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -219,3 +219,47 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notes, "['a', 'b']")
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_collapsed(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0,
+                                                            is_collapsed=False)
+
+        response = self.run_handler(set_collapsed, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id, isCollapsed=True)
+        self.assertResponse(response, data=None)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.is_collapsed, True)
+
+    def test_set_collapsed_viewer_acces_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0,
+                                                            is_collapsed=False)
+
+        response = self.run_handler(set_collapsed, workflow=workflow,
+                                    wfModuleId=wf_module.id, isCollapsed=True)
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_collapsed_forces_bool(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0,
+                                                            is_collapsed=False)
+
+        # bool('False') is true
+        response = self.run_handler(set_collapsed, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    isCollapsed='False')
+        self.assertResponse(response, data=None)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.is_collapsed, True)

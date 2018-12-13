@@ -106,3 +106,19 @@ async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str,
     await ChangeWfModuleNotesCommand.create(workflow=workflow,
                                             wf_module=wf_module,
                                             new_value=notes)
+
+
+@database_sync_to_async
+def set_collapsed_in_db(wf_module: WfModule, is_collapsed: bool) -> None:
+    wf_module.is_collapsed = is_collapsed
+    wf_module.save(update_fields=['is_collapsed'])
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@loading_wf_module
+async def set_collapsed(workflow: Workflow, wf_module: WfModule,
+                        isCollapsed: bool, **kwargs):
+    is_collapsed = bool(isCollapsed)  # cannot error from JSON input
+    # TODO make this a Command
+    await set_collapsed_in_db(wf_module, is_collapsed)

@@ -71,11 +71,6 @@ def _lookup_wf_module_for_write(pk: int, request: HttpRequest) -> WfModule:
     return wf_module
 
 
-# The guts of patch commands for various WfModule fields
-def patch_notes(wf_module, data):
-    async_to_sync(ChangeWfModuleNotesCommand.create)(wf_module, data['notes'])
-
-
 def patch_update_settings(wf_module, data, request):
     auto_update_data = data['auto_update_data']
 
@@ -97,69 +92,53 @@ def patch_update_settings(wf_module, data, request):
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on
 # request type
-@api_view(['GET', 'DELETE', 'PATCH'])
+@api_view(['PATCH'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
-    if request.method in ['HEAD', 'GET']:
-        wf_module = _lookup_wf_module_for_read(pk, request)
-    else:
-        wf_module = _lookup_wf_module_for_write(pk, request)
+    wf_module = _lookup_wf_module_for_write(pk, request)
 
-    if request.method == 'GET':
-        # No need to execute_and_wait(): out-of-date response is fine
-        with wf_module.workflow.cooperative_lock():
-            serializer = WfModuleSerializer(wf_module)
-            return Response(serializer.data)
+    # For patch, we check which fields are set in data, and process all of
+    # them
+    # TODO: replace all of these with the generic patch method, most of
+    # this is unnecessary
+    if not set(request.data.keys()).intersection(
+        {'auto_update_data', 'notifications'}
+    ):
+        return Response({'error': 'Unknown fields: {}'.format(request.data)},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'PATCH':
-        # For patch, we check which fields are set in data, and process all of
-        # them
-        # TODO: replace all of these with the generic patch method, most of
-        # this is unnecessary
-        try:
-            if not set(request.data.keys()).intersection(
-                {'notes', 'auto_update_data', 'collapsed', 'notifications'}
-            ):
-                raise ValueError('Unknown fields: {}'.format(request.data))
+    try:
+        if 'auto_update_data' in request.data:
+            patch_update_settings(wf_module, request.data, request)
 
-            if 'notes' in request.data:
-                patch_notes(wf_module, request.data)
+            if bool(request.data['auto_update_data']):
+                server.utils.log_user_event_from_request(
+                    request,
+                    'Enabled auto-update',
+                    {
+                        'wfModuleId': wf_module.id
+                    }
+                )
 
-            if 'auto_update_data' in request.data:
-                patch_update_settings(wf_module, request.data, request)
+        if 'notifications' in request.data:
+            notifications = bool(request.data['notifications'])
+            wf_module.notifications = notifications
+            wf_module.save(update_fields=['notifications'])
 
-                if bool(request.data['auto_update_data']):
-                    server.utils.log_user_event_from_request(
-                        request,
-                        'Enabled auto-update',
-                        {
-                            'wfModuleId': wf_module.id
-                        }
-                    )
+            if notifications:
+                server.utils.log_user_event_from_request(
+                    request,
+                    'Enabled email notifications',
+                    {
+                        'wfModuleId': wf_module.id
+                    }
+                )
 
-            if 'collapsed' in request.data:
-                wf_module.is_collapsed = request.data['collapsed']
-                wf_module.save(update_fields=['is_collapsed'])
+    except ValueError as e:  # TODO make this less generic
+        return Response({'message': str(e), 'status_code': 400},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-            if 'notifications' in request.data:
-                notifications = bool(request.data['notifications'])
-                wf_module.notifications = notifications
-                wf_module.save(update_fields=['notifications'])
-
-                if notifications:
-                    server.utils.log_user_event_from_request(
-                        request,
-                        'Enabled email notifications',
-                        {
-                            'wfModuleId': wf_module.id
-                        }
-                    )
-
-        except ValueError as e:  # TODO make this less generic
-            return Response({'message': str(e), 'status_code': 400},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])

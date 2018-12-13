@@ -186,9 +186,11 @@ export default class WorkbenchAPI {
     })
   }
 
-
-  setWfModuleCollapsed(wfModuleId, isCollapsed) {
-    return this._patch(`/api/wfmodules/${wfModuleId}`, { collapsed: isCollapsed })
+  setWfModuleCollapsed (wfModuleId, isCollapsed) {
+    return this.websocket.callServerHandler('wf_module.set_collapsed', {
+      wfModuleId,
+      isCollapsed
+    })
   }
 
   setWfName(workflowId, newName) {

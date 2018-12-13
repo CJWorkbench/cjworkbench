@@ -11,8 +11,7 @@ from rest_framework.test import force_authenticate
 from server.models import Module, Workflow
 from server.modules.types import ProcessResult
 from server.views.WfModule import wfmodule_detail
-from server.tests.utils import LoggedInTestCase, mock_csv_table, \
-        mock_csv_table2
+from server.tests.utils import LoggedInTestCase
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
@@ -93,68 +92,6 @@ class WfModuleTests(LoggedInTestCase):
         request = self.factory.put(*args, **kwargs)
         self._augment_request(request, user, session_key)
         return request
-
-    # TODO test parameter values returned from this call
-    def test_wf_module_detail_get(self):
-        # Also tests [Workflow, Module, WfModule].get
-        module = Module.objects.create(name='Hi', id_name='hi', dispatch='hi')
-        module_version = module.module_versions.create(
-            source_version_hash='1.0'
-        )
-        wf_module = self.tab.wf_modules.create(
-            order=2,
-            last_relevant_delta_id=3,
-            module_version_id=module_version.id
-        )
-        wf_module.create_parametervals({})
-        wf_module.store_fetched_table(pd.DataFrame({'A': [1]}))
-        wf_module.store_fetched_table(pd.DataFrame({'A': [2]}))
-
-        response = self.client.get('/api/wfmodules/%d/' % wf_module.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], wf_module.id)
-        self.assertEqual(response.data['notes'], wf_module.notes)
-        self.assertEqual(response.data['module_version']['module'], module.id)
-        self.assertEqual(response.data['output_status'], wf_module.output_status)
-        self.assertEqual(response.data['fetch_error'], wf_module.fetch_error)
-        self.assertEqual(response.data['is_collapsed'], wf_module.is_collapsed)
-        self.assertEqual(response.data['auto_update_data'],
-                         wf_module.auto_update_data)
-        self.assertEqual(response.data['last_update_check'],
-                         wf_module.last_update_check)
-        # defaults here to avoid time unit conversion
-        self.assertEqual(response.data['update_interval'], 1)
-        self.assertEqual(response.data['update_units'], 'days')
-        self.assertEqual(response.data['notifications'],
-                         wf_module.notifications)
-        self.assertEqual(response.data['has_unseen_notification'], False)
-        self.assertEqual(len(response.data['versions']['versions']), 2)
-        self.assertEqual(response.data['html_output'],
-                         wf_module.module_version.html_output)
-
-        response = self.client.get('/api/wfmodules/10000/')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_missing_module(self):
-        # If the WfModule references a Module that does not exist, we should
-        # get a placeholder
-        wf_module = self.tab.wf_modules.create(
-            order=2,
-            last_relevant_delta_id=3
-        )
-        wf_module.cache_render_result(3,
-                                      ProcessResult(pd.DataFrame({'A': [1]})))
-        wf_module.save()
-
-        response = self.client.get('/api/wfmodules/%d/' % wf_module.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-
-        parsed = json.loads(response.content)
-        self.assertEqual(parsed['module_version']['module'], None)
-
-        response = self.client.get('/api/wfmodules/%d/render' % wf_module.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content)['rows'], [{'A': 1}])
 
     # Test some json conversion gotchas we encountered during development
     def test_pandas_13258(self):
@@ -245,43 +182,20 @@ class WfModuleTests(LoggedInTestCase):
         )
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # test Wf Module Notes change API
-    def test_wf_module_notes_post(self):
-        request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
-                                    {'notes': 'wow such doge'},
-                                    user=self.user)
-        response = wfmodule_detail(request, pk=self.wf_module1.id)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # see that we get the new value back
-        response = self.client.get('/api/wfmodules/%d/' % self.wf_module1.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['notes'], 'wow such doge')
-
-        # Test for error on missing notes field (and no other patachable fields)
-        request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
-                                    {'notnotes': 'forthcoming error'},
-                                    user=self.user)
-        response = wfmodule_detail(request, pk=self.wf_module1.id)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
     # Test set/get update interval
     def test_wf_module_update_settings(self):
-        settings = {'auto_update_data': True,
-                    'update_interval': 5,
+        settings = {'auto_update_data': True, 'update_interval': 5,
                     'update_units': 'weeks'}
 
-        request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
+        request = self._build_patch('/api/wfmodules/%d/' % self.wf_module1.id,
                                     settings, user=self.user)
         response = wfmodule_detail(request, pk=self.wf_module1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        # see that we get the new values back
-        response = self.client.get('/api/wfmodules/%d/' % self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['auto_update_data'], True)
-        self.assertEqual(response.data['update_interval'], 5)
-        self.assertEqual(response.data['update_units'], 'weeks')
+        # see that we set the values
+        self.wf_module1.refresh_from_db()
+        self.assertEqual(self.wf_module1.auto_update_data, True)
+        self.assertEqual(self.wf_module1.update_interval, 3024000)
 
         # Check we logged the event
         # #160041803
@@ -290,9 +204,7 @@ class WfModuleTests(LoggedInTestCase):
 
     # Test set/get update interval
     def test_wf_module_update_settings_missing_units(self):
-        settings = {'auto_update_data': True,
-                    'update_interval': 5,
-                    }
+        settings = {'auto_update_data': True, 'update_interval': 5}
 
         request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
                                     settings, user=self.user)

@@ -425,7 +425,7 @@ export class WfModule extends React.PureComponent {
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
           placeholder='Type a note...'
-          value={this.state.editedNotes || this.props.wfModule.notes}
+          value={this.state.editedNotes || this.props.wfModule.notes || ''}
           onChange={this.onChangeNote}
           onFocus={this.onFocusNote}
           onBlur={this.onBlurNote}

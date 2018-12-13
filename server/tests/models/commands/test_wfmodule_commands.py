@@ -501,8 +501,11 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
         )
 
         # do
-        cmd = async_to_sync(ChangeWfModuleNotesCommand.create)(wf_module,
-                                                               'text2')
+        cmd = async_to_sync(ChangeWfModuleNotesCommand.create)(
+            workflow=workflow,
+            wf_module=wf_module,
+            new_value='text2'
+        )
         self.assertEqual(wf_module.notes, 'text2')
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notes, 'text2')
