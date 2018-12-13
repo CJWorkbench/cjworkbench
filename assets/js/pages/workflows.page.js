@@ -2,7 +2,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Workflows from '../workflows'
-import api from '../WorkbenchAPI'
+import WorkbenchAPI from '../WorkbenchAPI'
+
+const api = new WorkbenchAPI(null) // no websocket
 
 ReactDOM.render(
     <Workflows api={api} workflows={window.initState.workflows}/>,
