@@ -88,6 +88,7 @@ class AccountAdmin:
         _Tables = [
             'server_aclentry',
             'server_addmodulecommand',
+            'server_addtabcommand',
             'server_changedataversioncommand',
             'server_changeparameterscommand',
             'server_changewfmodulenotescommand',

@@ -33,7 +33,7 @@ class TabTest(HandlerTestCase):
         self.assertResponse(response, data=None)
 
         command = AddModuleCommand.objects.first()
-        self.assertEquals(command.order, 3)
+        self.assertEquals(command.wf_module.order, 3)
         self.assertEquals(
             command.wf_module.get_params().get_param_string('foo'),
             'bar'

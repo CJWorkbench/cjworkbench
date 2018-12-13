@@ -1,0 +1,104 @@
+from django.db import models
+from django.db.models import F
+from server.models import Delta, Tab, Workflow
+from server.serializers import TabSerializer
+
+
+class AddTabCommand(Delta):
+    """
+    Create a `Tab` and insert it into the Workflow.
+
+    Our "backwards()" logic is to "soft-delete": set `tab.is_deleted=True`.
+    Most facets of Workbench's API should pretend a soft-deleted Tab does not
+    exist.
+    """
+
+    # Foreign keys can get a bit confusing. Here we go:
+    #
+    # * AddTabCommand can only exist if its Tab exists.
+    # * Tab depends on Workflow.
+    # * AddTabCommand depends on Workflow.
+    #
+    # So it's safe to delete Commands from a Workflow (as long as the workflow
+    # has at least one delta). But it's not safe to delete Tabs -- unless one
+    # clears the Deltas first.
+    #
+    # We set on_delete=PROTECT because if we set on_delete=CASCADE we'd be
+    # ambiguous: should one delete the Tab first, or the Delta? The answer is:
+    # you _must_ delete the Delta first; after deleting the Delta, you _may_
+    # delete the Tab.
+    tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
+    old_selected_tab_position = models.IntegerField()
+
+    def load_ws_data(self):
+        data = super().load_ws_data()
+        if self.tab.is_deleted:
+            data['clearTabIds'] = [self.tab_id]
+        else:
+            data['updateTabs'] = {
+                str(self.tab_id): TabSerializer(self.tab).data,
+            }
+        data['updateWorkflow']['tab_ids'] = list(
+            self.workflow.live_tabs.values_list('id', flat=True)
+        )
+        return data
+
+    def forward_impl(self):
+        self.workflow.live_tabs \
+            .filter(position__gte=self.tab.position) \
+            .update(position=F('position') + 1)
+
+        self.tab.is_deleted = False
+        self.tab.save(update_fields=['is_deleted'])
+
+        self.workflow.selected_tab_position = self.tab.position
+        self.workflow.save(update_fields=['selected_tab_position'])
+
+    def backward_impl(self):
+        self.tab.is_deleted = True
+        self.tab.save(update_fields=['is_deleted'])
+
+        self.workflow.live_tabs \
+            .filter(position__gt=self.tab.position) \
+            .update(position=F('position') - 1)
+
+        # We know old_selected_tab_position is valid, always
+        self.workflow.selected_tab_position = self.old_selected_tab_position
+        self.workflow.save(update_fields=['selected_tab_position'])
+
+    def delete(self):
+        # Don't let Django batch deletes. We really need to delete in order,
+        # because we need to delete AddModuleCommand last so we can
+        # garbage-collect its Tab.
+        #
+        # TODO let's avoid putting database IDs in deltas! Then we could
+        # hard-delete Tabs instead of soft-deleting them.
+        try:
+            self.next_delta.delete()
+        except Delta.DoesNotExist:
+            pass
+
+        super().delete()
+
+        if self.tab.is_deleted:
+            # The Tab was soft-deleted, and this is the last Delta that
+            # references it. After deleting this Delta there are no more
+            # pointers to this Tab. Delete it.
+            self.tab.delete()
+
+    async def schedule_execute(self):
+        pass
+
+    @classmethod
+    def amend_create_kwargs(cls, *, workflow: Workflow, position: int):
+        # tab starts off "deleted" and gets un-deleted in forward().
+        if position < 0 or position > workflow.live_tabs.count() + 1:
+            raise ValueError('position out of range')
+
+        tab = workflow.tabs.create(position=position, is_deleted=True)
+
+        return {
+            'workflow': workflow,
+            'tab': tab,
+            'old_selected_tab_position': workflow.selected_tab_position,
+        }

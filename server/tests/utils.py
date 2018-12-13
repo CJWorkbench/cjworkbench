@@ -95,6 +95,7 @@ def create_test_user(username='username', email='user@example.org',
 _Tables = [
     'server_aclentry',
     'server_addmodulecommand',
+    'server_addtabcommand',
     'server_changedataversioncommand',
     'server_changeparameterscommand',
     'server_changewfmodulenotescommand',

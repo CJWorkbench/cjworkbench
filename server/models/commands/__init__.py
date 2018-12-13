@@ -1,5 +1,6 @@
 # A Command is a Delta: it changes the state of a Workflow
 from .InitWorkflowCommand import InitWorkflowCommand
+from .AddTabCommand import AddTabCommand
 from .AddModuleCommand import AddModuleCommand
 from .DeleteModuleCommand import DeleteModuleCommand
 from .ReorderModulesCommand import ReorderModulesCommand
