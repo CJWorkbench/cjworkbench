@@ -334,7 +334,7 @@ describe('Reducer actions', () => {
     expect(store.getState().wfModules['10'].nClientRequests).toEqual(0)
   })
 
-  it('Sets the data version', () => {
+  it('sets the data version', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'SET_DATA_VERSION_PENDING',
       payload: {
@@ -345,24 +345,7 @@ describe('Reducer actions', () => {
     expect(state.wfModules['10'].versions.selected).toBe("2018-02-21T03:09:10.214054Z")
   })
 
-  it('marks the data versions read', async () => {
-    const api = { markDataVersionsRead: jest.fn().mockImplementation(_ => Promise.resolve({})) }
-
-    const store = mockStore(testState, api)
-    const done = store.dispatch(wfr.markDataVersionsReadAction(10, ["2018-02-21T03:09:15.214054Z", "2018-02-21T03:09:10.214054Z"]))
-
-    // state changed before send
-    const state = store.getState()
-    expect(state.wfModules['10'].versions.versions[1][1]).toBe(true)
-    expect(state.wfModules['10'].versions.versions[2][1]).toBe(true)
-
-    await done
-
-    // API request sent and received
-    expect(api.markDataVersionsRead).toHaveBeenCalledWith(10, ["2018-02-21T03:09:15.214054Z", "2018-02-21T03:09:10.214054Z"])
-  })
-
-  it('Clears the notification count', () => {
+  it('clears the notification count', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'CLEAR_NOTIFICATIONS_PENDING',
       payload: {

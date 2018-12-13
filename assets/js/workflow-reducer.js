@@ -24,7 +24,6 @@ const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
 
 // Data versions/notifications
 const SET_DATA_VERSION = 'SET_DATA_VERSION'
-const MARK_DATA_VERSIONS_READ = 'MARK_DATA_VERSIONS_READ'
 const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 
 // ---- Our Store ----
@@ -733,51 +732,6 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
       [String(wfModuleId)]: { ...wfModule,
         versions: { ...wfModule.versions,
           selected: selectedVersion
-        }
-      }
-    }
-  }
-})
-
-// MARK_DATA_VERSIONS_READ
-// Called when the user views a version that has a "new data" alert on it
-export function markDataVersionsReadAction (wfModuleId, versions) {
-  return (dispatch, getState, api) => {
-    const { workflow } = getState()
-
-    let versionsToUpdate = [].concat(versions) // will accept one or many
-    return dispatch({
-      type: MARK_DATA_VERSIONS_READ,
-      payload: {
-        promise: api.markDataVersionsRead(wfModuleId, versionsToUpdate),
-        data: {
-          wfModuleId,
-          versionsToUpdate
-        }
-      }
-    })
-  }
-}
-registerReducerFunc(MARK_DATA_VERSIONS_READ + '_PENDING', (state, action) => {
-  const { wfModuleId, versionsToUpdate } = action.payload
-  const wfModule = state.wfModules[String(wfModuleId)]
-  if (!wfModule) return state
-  if (!wfModule.versions) return state
-
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
-        versions: { ...wfModule.versions,
-          versions: wfModule.versions.versions.map(version => {
-            // If this is a version we want to mark read,
-            if (versionsToUpdate.includes(version[0])) {
-              // Set the 'read' bit to true
-              return [ version[0], true ]
-            } else {
-              // Return the version
-              return version
-            }
-          })
         }
       }
     }

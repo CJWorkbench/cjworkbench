@@ -230,14 +230,6 @@ export default class WorkbenchAPI {
       })
   }
 
-  // This is Bad. You should get a list of serialized data versions on the
-  // workflow module instead of a 2-tuple, and there should be a generic
-  // data version create/read/update/delete method. As there should be for
-  // every object in the database.
-  markDataVersionsRead(wfModuleId, data_versions) {
-    return this._patch(`/api/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
-  }
-
   requestFetch (wfModuleId) {
     return this.websocket.callServerHandler('wf_module.fetch', {
       wfModuleId

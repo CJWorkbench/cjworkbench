@@ -359,18 +359,3 @@ def wfmodule_public_output(request, pk, type, format=None):
         return HttpResponse(d, content_type="text/csv")
     else:
         raise Http404()
-
-
-@api_view(['PATCH'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_dataversion_read(request, pk):
-    wf_module = _lookup_wf_module_for_write(pk, request)
-
-    with wf_module.workflow.cooperative_lock():
-        stored_objects = wf_module.stored_objects.filter(
-            stored_at__in=request.data['versions']
-        )
-
-        stored_objects.update(read=True)
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
