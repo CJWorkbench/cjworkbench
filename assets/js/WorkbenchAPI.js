@@ -179,8 +179,11 @@ export default class WorkbenchAPI {
     })
   }
 
-  setWfModuleNotes (wfModuleId, text) {
-    return this._patch(`/api/wfmodules/${wfModuleId}`, { notes: text })
+  setWfModuleNotes (wfModuleId, notes) {
+    return this.websocket.callServerHandler('wf_module.set_notes', {
+      wfModuleId,
+      notes
+    })
   }
 
 

@@ -30,15 +30,6 @@ class ChangeWfModuleNotesCommand(Delta):
             'new_value': new_value,
         }
 
-
-    @classmethod
-    async def create(cls, wf_module, notes):
-        return await cls.create_impl(
-            workflow=wf_module.workflow,
-            wf_module=wf_module,
-            new_value=notes
-        )
-
     @property
     def command_description(self):
         return f'Change WfModule note to {self.new_value}'

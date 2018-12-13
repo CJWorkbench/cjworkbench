@@ -2,9 +2,10 @@ from unittest.mock import patch
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from server.handlers.wf_module import set_params, delete, \
-        set_stored_data_version
+        set_stored_data_version, set_notes
 from server.models import Workflow
-from server.models.commands import ChangeParametersCommand, DeleteModuleCommand
+from server.models.commands import ChangeParametersCommand, \
+        ChangeWfModuleNotesCommand, DeleteModuleCommand
 from .util import HandlerTestCase
 
 
@@ -15,18 +16,18 @@ async def async_noop(*args, **kwargs):
 class WfModuleTest(HandlerTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
-    def test_params(self):
+    def test_set_params(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(order=0)
 
         response = self.run_handler(set_params, user=user, workflow=workflow,
                                     wfModuleId=wf_module.id,
-                                    values={'foo':'bar'})
+                                    values={'foo': 'bar'})
         self.assertResponse(response, data=None)
 
         command = ChangeParametersCommand.objects.first()
-        self.assertEquals(command.new_values, {'foo':'bar'})
+        self.assertEquals(command.new_values, {'foo': 'bar'})
         self.assertEquals(command.old_values, {})
         self.assertEquals(command.wf_module_id, wf_module.id)
         self.assertEquals(command.workflow_id, workflow.id)
@@ -110,6 +111,7 @@ class WfModuleTest(HandlerTestCase):
         response = self.run_handler(set_stored_data_version, user=user,
                                     workflow=workflow, wfModuleId=wf_module.id,
                                     version=version)
+        self.assertResponse(response, data=None)
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.stored_data_version, isoparse(version))
 
@@ -126,6 +128,7 @@ class WfModuleTest(HandlerTestCase):
         response = self.run_handler(set_stored_data_version, user=user,
                                     workflow=workflow, wfModuleId=wf_module.id,
                                     version=version)
+        self.assertResponse(response, data=None)
         so.refresh_from_db()
         self.assertEqual(so.read, True)
 
@@ -145,12 +148,12 @@ class WfModuleTest(HandlerTestCase):
         response = self.run_handler(set_stored_data_version, user=user,
                                     workflow=workflow, wfModuleId=wf_module.id,
                                     version=version_js)
+        self.assertResponse(response, data=None)
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.stored_data_version,
                          isoparse(version_precise))
 
     def test_set_stored_data_version_invalid_date(self):
-        version = ['not a date']
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(order=0)
@@ -173,3 +176,46 @@ class WfModuleTest(HandlerTestCase):
                                     wfModuleId=wf_module.id, version=version)
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_notes(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, notes='A')
+
+        response = self.run_handler(set_notes, user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id, notes='B')
+        self.assertResponse(response, data=None)
+
+        command = ChangeWfModuleNotesCommand.objects.first()
+        self.assertEquals(command.new_value, 'B')
+        self.assertEquals(command.old_value, 'A')
+        self.assertEquals(command.wf_module_id, wf_module.id)
+        self.assertEquals(command.workflow_id, workflow.id)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notes, 'B')
+
+    def test_set_notes_viewer_acces_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, notes='A')
+
+        response = self.run_handler(set_notes, workflow=workflow,
+                                    wfModuleId=wf_module.id, notes='B')
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_notes_forces_str(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, notes='A')
+
+        response = self.run_handler(set_notes, user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id, notes=['a', 'b'])
+        self.assertResponse(response, data=None)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notes, "['a', 'b']")

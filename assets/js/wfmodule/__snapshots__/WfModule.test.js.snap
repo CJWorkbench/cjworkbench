@@ -96,7 +96,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
               "setSelectedWfModule": [MockFunction],
-              "setWfModuleNotes": [MockFunction],
             }
           }
           getParamId={[Function]}
@@ -140,7 +139,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
               "setSelectedWfModule": [MockFunction],
-              "setWfModuleNotes": [MockFunction],
             }
           }
           getParamId={[Function]}
@@ -182,7 +180,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
               "setSelectedWfModule": [MockFunction],
-              "setWfModuleNotes": [MockFunction],
             }
           }
           getParamId={[Function]}
@@ -227,7 +224,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               "addModule": [MockFunction],
               "postParamEvent": [MockFunction],
               "setSelectedWfModule": [MockFunction],
-              "setWfModuleNotes": [MockFunction],
             }
           }
           getParamId={[Function]}

@@ -14,6 +14,7 @@ const MOVE_MODULE = 'MOVE_MODULE'
 const APPLY_DELTA = 'APPLY_DELTA'
 
 // WfModule
+const SET_WF_MODULE_NOTES = 'SET_WF_MODULE_NOTES'
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS'
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
@@ -170,7 +171,7 @@ registerReducerFunc(UPDATE_MODULE, (state, action) => {
 
 // SET_WORKFLOW_PUBLIC
 // Set the workflow to public or private
-export function setWorkflowPublicAction (isPublic) {
+export function setWorkflowPublicAction (workflowId, isPublic) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: SET_WORKFLOW_PUBLIC,
@@ -538,6 +539,36 @@ registerReducerFunc(UPDATE_WF_MODULE + '_PENDING', (state, action) => {
         ...data
       }
     }
+  }
+})
+
+export function setWfModuleNotesAction (wfModuleId, notes) {
+  return (dispatch, getState, api) => {
+    return dispatch({
+      type: SET_WF_MODULE_NOTES,
+      payload: {
+        promise: api.setWfModuleNotes(wfModuleId, notes),
+        data: { wfModuleId, notes }
+      }
+    })
+  }
+}
+registerReducerFunc(SET_WF_MODULE_NOTES + '_PENDING', (state, action) => {
+  const { wfModuleId, notes } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  if (wfModule) {
+    return {
+      ...state,
+      wfModules: {
+        ...state.wfModules,
+        [String(wfModuleId)]: {
+          ...wfModule,
+          notes
+        }
+      }
+    }
+  } else {
+    return state
   }
 })
 

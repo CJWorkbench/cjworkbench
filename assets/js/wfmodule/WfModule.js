@@ -12,7 +12,8 @@ import {
   quickFixAction,
   setSelectedWfModuleAction,
   setWfModuleParamsAction,
-  setWfModuleCollapsedAction
+  setWfModuleCollapsedAction,
+  setWfModuleNotesAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -62,6 +63,7 @@ export class WfModule extends React.PureComponent {
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
     applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
+    setWfModuleNotes: PropTypes.func.isRequired // func(wfModuleId, notes) => undefined
   }
 
   constructor (props) {
@@ -71,7 +73,7 @@ export class WfModule extends React.PureComponent {
     this.notesInputRef = React.createRef()
 
     this.state = {
-      notes: this.props.wfModule.notes || '',
+      editedNotes: null, // when non-null, input is focused
       isNoteForcedVisible: false,
       isDataVersionModalOpen: false,
       isDragging: false,
@@ -190,31 +192,37 @@ export class WfModule extends React.PureComponent {
   // when Notes icon is clicked, show notes and start in editable state if not read-only
   focusNote = () => {
     const ref = this.notesInputRef.current
-    if (ref) {
-      this.setState({ isNoteForcedVisible: true })
-      ref.focus()
-      ref.select()
+    if (ref) { // only if not read-only
+      ref.focus() // calls this.onFocusNote()
     }
   }
 
   onChangeNote = (ev) => {
-    this.setState({ notes: ev.target.value })
+    this.setState({ editedNotes: ev.target.value })
   }
 
   onFocusNote = () => {
-    this.setState({ isNoteForcedVisible: true })
-  }
-
-  onBlurNote = (ev) => {
-    if (this.state.notes !== (this.props.wfModule.notes || '')) {
-      // TODO use a reducer action
-      this.props.api.setWfModuleNotes(this.props.wfModule.id, this.state.notes)
+    if (this.state.editedNotes === null) {
+      this.setState({ editedNotes: this.props.notes || '' })
     }
-    this.setState({ isNoteForcedVisible: false })
   }
 
-  onCancelNote = (ev) => {
-    this.setState({ notes: this.props.wfModule.notes })
+  onBlurNote = () => {
+    // Blur may come _immediately_ after cancel -- and before cancel's
+    // setState() is processed. Use the callback approach to setState() to
+    // make sure we're reading the value written by onCancelNote()
+    this.setState((state, props) => {
+      if (state.editedNotes === null) {
+        // we canceled
+      } else {
+        props.setWfModuleNotes(props.wfModule.id, state.editedNotes)
+      }
+      return { editedNotes: null }
+    })
+  }
+
+  onCancelNote = () => {
+    this.setState({ editedNotes: null })
   }
 
   onCloseDataVersionModal = () => {
@@ -409,13 +417,15 @@ export class WfModule extends React.PureComponent {
     // Each parameter gets a WfParameter
     const paramdivs = moduleName ? wfModule.parameter_vals.map(this.renderParam) : null
 
+    const isNoteVisible = this.state.editedNotes !== null || !!this.props.wfModule.notes
+
     const notes = (
-      <div className={`module-notes${(!!this.state.notes || this.state.isNoteForcedVisible) ? ' visible' : ''}`}>
+      <div className={`module-notes${isNoteVisible ? ' visible' : ''}`}>
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
           placeholder='Type a note...'
-          value={this.state.notes}
+          value={this.state.editedNotes || this.props.wfModule.notes}
           onChange={this.onChangeNote}
           onFocus={this.onFocusNote}
           onBlur={this.onBlurNote}
@@ -424,7 +434,7 @@ export class WfModule extends React.PureComponent {
       </div>
     )
 
-    let alertButton
+    let alertButton = null
     if (this.props.fetchModuleExists && !isReadOnly && !this.props.isAnonymous) {
       const notifications = wfModule.notifications
       const hasUnseen = wfModule.has_unseen_notification
@@ -440,7 +450,7 @@ export class WfModule extends React.PureComponent {
       )
     }
 
-    let helpIcon
+    let helpIcon = null
     if (!this.props.isReadOnly) {
       helpIcon = (
         <a title='Help for this module' className='help-button' href={moduleHelpUrl} target='_blank'>
@@ -449,7 +459,7 @@ export class WfModule extends React.PureComponent {
       )
     }
 
-    let notesIcon
+    let notesIcon = null
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
@@ -462,7 +472,7 @@ export class WfModule extends React.PureComponent {
       )
     }
 
-    let contextMenu
+    let contextMenu = null
     if (!this.props.isReadOnly) {
       contextMenu = (
         <WfModuleContextMenu
@@ -635,7 +645,9 @@ function mapDispatchToProps (dispatch) {
 
     applyQuickFix (wfModuleId, action, args) {
       dispatch(quickFixAction(action, wfModuleId, args))
-    }
+    },
+
+    setWfModuleNotes: (...args) => dispatch(setWfModuleNotesAction(...args))
   }
 }
 

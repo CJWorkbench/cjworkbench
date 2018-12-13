@@ -77,7 +77,7 @@ describe('Reducer actions', () => {
     modules: testModules,
   }
 
-  it('Returns the state if we feed garbage to the reducer', () => {
+  it('returns the state if we feed garbage to the reducer', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'An ill-advised request',
       payload: {
@@ -171,6 +171,29 @@ describe('Reducer actions', () => {
     const { workflow, tabs } = store.getState()
     expect(workflow.selected_tab_position).toEqual(0)
     expect(tabs['91'].selected_wf_module_position).toEqual(1)
+  })
+
+  it('sets a wfModule notes', async () => {
+    const api = {
+      setWfModuleNotes: jest.fn().mockImplementation(() => Promise.resolve(null))
+    }
+    const store = mockStore({
+      wfModules: {
+        1: { x: 'a', notes: 'foo' },
+        2: { x: 'b', notes: 'bar' }
+      }
+    }, api)
+
+    await store.dispatch(wfr.setWfModuleNotesAction(2, 'baz'))
+
+    expect(api.setWfModuleNotes).toHaveBeenCalledWith(2, 'baz')
+    const state = store.getState()
+    expect(state).toEqual({
+      wfModules: {
+        1: { x: 'a', notes: 'foo' },
+        2: { x: 'b', notes: 'baz' }
+      }
+    })
   })
 
   it('updates the workflow module with the specified data', () => {

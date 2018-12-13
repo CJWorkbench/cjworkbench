@@ -15,16 +15,14 @@ export default class EditableNotes extends React.PureComponent {
 
   // Make Enter key blur by default, instead of adding newline.
   handleKeyDown = (ev) => {
-    if (this.props.onKeyDown) this.props.onKeyDown(ev);
-
     if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Enter') {
-      ev.preventDefault();
-      ev.target.blur(); // triggers this.props.onBlur, if set
+      ev.preventDefault()
+      ev.target.blur() // triggers this.props.onBlur, if set
     }
 
     if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Escape') {
-      this.props.onCancel(ev);
-      ev.target.blur(); // ... which will do nothing
+      this.props.onCancel()
+      ev.target.blur() // triggers this.props.onBlur, if set
     }
   }
 

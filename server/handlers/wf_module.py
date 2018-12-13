@@ -5,7 +5,8 @@ from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
 from server.models import Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
-        DeleteModuleCommand, ChangeDataVersionCommand
+        DeleteModuleCommand, ChangeDataVersionCommand, \
+        ChangeWfModuleNotesCommand
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 
@@ -68,10 +69,12 @@ def find_precise_version(wf_module: WfModule,
     except:
         return version
 
+
 @database_sync_to_async
 def mark_stored_object_read(wf_module: WfModule,
                             version: datetime.datetime) -> None:
     wf_module.stored_objects.filter(stored_at=version).update(read=True)
+
 
 @register_websockets_handler
 @websockets_handler('write')
@@ -92,3 +95,14 @@ async def set_stored_data_version(workflow: Workflow, wf_module: WfModule,
                                           new_version=version)
 
     await mark_stored_object_read(wf_module, version)
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@loading_wf_module
+async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str,
+                    **kwargs):
+    notes = str(notes)  # cannot error from JSON input
+    await ChangeWfModuleNotesCommand.create(workflow=workflow,
+                                            wf_module=wf_module,
+                                            new_value=notes)

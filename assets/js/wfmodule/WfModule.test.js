@@ -21,9 +21,7 @@ describe('WfModule, not read-only mode', () => {
     mockApi = {
       addModule: jest.fn(),
       setSelectedWfModule: jest.fn(),
-      setWfModuleNotes: jest.fn(),
       postParamEvent: okResponseMock(),
-      setWfModuleNotes: okResponseMock()
     }
   })
 
@@ -55,6 +53,7 @@ describe('WfModule, not read-only mode', () => {
     setSelectedWfModule: jest.fn(),
     setWfModuleCollapsed: jest.fn(),
     setWfModuleParams: jest.fn(),
+    setWfModuleNotes: jest.fn(),
     maybeRequestFetch: jest.fn(),
     setZenMode: jest.fn(),
     applyQuickFix: jest.fn()
@@ -224,10 +223,7 @@ describe('WfModule, not read-only mode', () => {
     wrapper.find('EditableNotes').simulate('change', { target: { value: 'new note' } })
     wrapper.find('EditableNotes').simulate('blur')
 
-    expect(wrapper.find('EditableNotes').prop('value')).toEqual('new note')
-    expect(mockApi.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, 'new note')
-
-    expect(wrapper.find('.module-notes.visible')).toHaveLength(1)
+    expect(props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, 'new note')
   })
 
   it('deletes a note', () => {
@@ -238,10 +234,7 @@ describe('WfModule, not read-only mode', () => {
     wrapper.find('EditableNotes').simulate('change', { target: { value: '' } })
     wrapper.find('EditableNotes').simulate('blur')
 
-    expect(wrapper.find('EditableNotes').prop('value')).toEqual('')
-    expect(mockApi.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, '')
-
-    expect(wrapper.find('.module-notes.visible')).toHaveLength(0)
+    expect(props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, '')
   })
 
   it('queues changes from onChange and then submits them in onSubmit', () => {
