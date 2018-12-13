@@ -9,6 +9,7 @@ from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from server import rabbitmq, handlers
+from server.models import WfModule, Workflow
 from server.serializers import WorkflowSerializer, TabSerializer, \
         WfModuleSerializer
 
@@ -36,8 +37,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     def get_workflow_sync(self):
         """The current user's Workflow, if exists and authorized; else None"""
-        from server.models import Workflow
-
         try:
             ret = Workflow.objects.get(pk=self.workflow_id)
         except Workflow.DoesNotExist:
@@ -58,14 +57,13 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def authorize(self, level):
-        from server.models import Workflow
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
                 level,
                 self.scope['user'],
                 self.scope['session'],
                 pk=self.workflow_id
-            ) as workflow:
+            ):
                 return True
         except Workflow.DoesNotExist:
             return False
@@ -73,8 +71,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     @database_sync_to_async
     def get_workflow_as_delta(self):
         """Return an apply-delta dict, or raise Workflow.DoesNotExist."""
-        from server.models import Workflow
-
         with Workflow.authorized_lookup_and_cooperative_lock(
             'read',
             self.scope['user'],
@@ -93,7 +89,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             tabs = list(workflow.live_tabs)
             ret['updateTabs'] = dict((str(tab.id), TabSerializer(tab).data)
                                      for tab in tabs)
-            tab_ids = [tab.id for tab in tabs]
             wf_modules = list(WfModule.live_in_workflow(workflow.id))
             ret['updateWfModules'] = dict((str(wfm.id),
                                            WfModuleSerializer(wfm).data)
@@ -116,8 +111,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         logger.debug('Discarded from channel %s', self.workflow_channel_name)
 
     async def send_whole_workflow_to_client(self):
-        from server.models import Workflow
-
         try:
             delta = await self.get_workflow_as_delta()
             await self.send_data_to_workflow_client({
@@ -194,7 +187,7 @@ async def _workflow_group_send(workflow_id: int,
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
     logger.debug('Queue %s to Workflow %d', message_dict['type'],
-                  workflow_id)
+                 workflow_id)
     await channel_layer.group_send(channel_name, {
         'type': 'send_data_to_workflow_client',
         'data': message_dict,

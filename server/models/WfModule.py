@@ -209,8 +209,8 @@ class WfModule(models.Model):
     def create_parametervals(self, values={}):
         pspecs = list(
             ParameterSpec.objects
-                .filter(module_version__id=self.module_version_id)
-                .all()
+            .filter(module_version__id=self.module_version_id)
+            .all()
         )
 
         for pspec in pspecs:
@@ -284,7 +284,7 @@ class WfModule(models.Model):
             # because that would involve reading the whole thing.
             new_wfm.cached_render_result_delta_id = \
                 to_workflow.last_delta_id
-            for attr in [ 'status', 'error', 'json', 'quick_fixes' ]:
+            for attr in ('status', 'error', 'json', 'quick_fixes'):
                 full_attr = f'cached_render_result_{attr}'
                 setattr(new_wfm, full_attr, getattr(self, full_attr))
 
