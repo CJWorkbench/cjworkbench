@@ -77,6 +77,20 @@ describe('Reducer actions', () => {
     modules: testModules,
   }
 
+  it('sets the workflow name', async () => {
+    const api = {
+      setWorkflowName: jest.fn().mockImplementation(() => Promise.resolve(null))
+    }
+    const store = mockStore({ workflow: { a: 1, name: 'A' }, b: 2 }, api)
+
+    await store.dispatch(wfr.setWorkflowNameAction('B'))
+    expect(api.setWorkflowName).toHaveBeenCalledWith('B')
+    expect(store.getState()).toEqual({
+      workflow: { a: 1, name: 'B' },
+      b: 2
+    })
+  })
+
   it('returns the state if we feed garbage to the reducer', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'An ill-advised request',

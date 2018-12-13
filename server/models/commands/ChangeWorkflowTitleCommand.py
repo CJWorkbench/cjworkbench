@@ -15,14 +15,13 @@ class ChangeWorkflowTitleCommand(Delta):
         self.workflow.save(update_fields=['name'])
 
     @classmethod
-    async def create(cls, workflow, name):
-        old_name = workflow.name
-
-        return await cls.create_impl(
-            workflow=workflow,
-            new_value=name,
-            old_value=old_name
-        )
+    def amend_create_kwargs(cls, *, workflow, new_value, **kwargs):
+        return {
+            **kwargs,
+            'workflow': workflow,
+            'old_value': workflow.name,
+            'new_value': new_value,
+        }
 
     @property
     def command_description(self):

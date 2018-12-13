@@ -120,12 +120,7 @@ export default class WorkflowNavBar extends React.Component {
             <img className='image' src={`${window.STATIC_URL}images/logo.svg`}/>
           </a>
           <div className='title-metadata-stack'>
-            <EditableWorkflowName
-              value={workflow.name}
-              workflowId={workflow.id}
-              isReadOnly={isReadOnly}
-              api={api}
-            />
+            <EditableWorkflowName isReadOnly={isReadOnly} />
             <WorkflowMetadata workflow={this.props.workflow} openShareModal={this.openShareModal} />
           </div>
           <div className='nav-buttons'>

@@ -1,71 +1,81 @@
 import React from 'react';
-import Textarea from 'react-textarea-autosize';
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { setWorkflowNameAction } from './workflow-reducer'
 
-export default class EditableWorkflowName extends React.Component {
-  constructor(props) {
-    super(props);
-    this.saveName = this.saveName.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.keyPress = this.keyPress.bind(this);
-    this.state = {
-      value: this.props.value
+export class EditableWorkflowName extends React.Component {
+  static propTypes = {
+    value: PropTypes.string,
+    setWorkflowName: PropTypes.func.isRequired, // func(newName) => undefined
+    isReadOnly: PropTypes.bool.isRequired
+  }
+
+  inputRef = React.createRef()
+
+  state = {
+    value: null // non-null only when editing
+  }
+
+  onChange = (ev) => {
+    this.setState({ value: ev.target.value })
+  }
+
+  onKeyDown = (ev) => {
+    if (ev.key === 'Enter') {
+      ev.preventDefault() // [2018-12-13, adamhooper] why?
+      this.inputRef.current.blur() // Blur event will trigger save
+    } else if (ev.key === 'Escape') {
+      this.setState({ value: null })
+      this.inputRef.current.blur() // Blur event _won't_ trigger save
     }
   }
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  // selects the text for editing on a click
-  handleClick(event) {
-    if (!this.props.isReadOnly) this.textInput.childNodes[0].select();
-  }
-
-  // Make Enter key save the text in edit field, overriding default newline
-  keyPress(e) {
-    if (e.key == 'Enter' ) {
-      e.preventDefault();
-      // Blur event will trigger save
-      // Have to target child through parent b/c TextArea cannot be directly referenced
-      this.textInput.childNodes[0].blur();
-    }
-  }
-
-  saveName() {
-    this.props.api.setWfName(this.props.workflowId, this.state.value);
+  onBlur = () => {
+    // If we got here by pressing Escape, we don't want to save the new value;
+    // but the `value: null` we just wrote with this.setState() hasn't been
+    // committed yet (because we're in the same event handler). So use the
+    // callback type of setState() to pick up on the change.
+    //
+    // Other way value could be null: if we focused but didn't edit
+    this.setState((state, props) => {
+      if (state.value !== null) {
+        props.setWorkflowName(state.value)
+      }
+      return { value: null } // stop editing
+    })
   }
 
   render() {
-
-    return <div
-              // Saves a reference to parent to allow targeting of imported component
-              ref={(input) => {this.textInput = input;}}
-              onClick={this.handleClick}
-              className='editable-title--container'
-            >
-              {this.props.isReadOnly
-                ? ( <span className='editable-title--field'>{this.props.value}</span> )
-                : (
-                    <input type="text"
-                      name="name"
-                      value={this.state.value}
-                      onChange={this.handleChange}
-                      onBlur={this.saveName}
-                      onKeyPress={this.keyPress}
-                      className='editable-title--field'
-                    />
-                  )
-              }
-          </div>
+    return (
+      <div className='editable-title--container'>
+        {this.props.isReadOnly
+          ? ( <span className='editable-title--field'>{this.props.value}</span> )
+          : (
+            <input
+              type='text'
+              name='name'
+              ref={this.inputRef}
+              className='editable-title--field'
+              value={this.state.value === null ? this.props.value : this.state.value}
+              onChange={this.onChange}
+              onBlur={this.onBlur}
+              onKeyDown={this.onKeyDown}
+            />
+          )
+        }
+      </div>
+    )
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    value: state.workflow.name,
+  }
+}
 
-EditableWorkflowName.propTypes = {
-  value:      PropTypes.string,
-  workflowId: PropTypes.number.isRequired,
-  api:        PropTypes.object.isRequired,
-  isReadOnly: PropTypes.bool,
-};
+const mapDispatchToProps = {
+  setWorkflowName: setWorkflowNameAction
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditableWorkflowName)

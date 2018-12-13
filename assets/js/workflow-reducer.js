@@ -3,6 +3,7 @@
 import { createStore, applyMiddleware } from 'redux'
 
 // Workflow
+const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
 const UPDATE_MODULE = 'UPDATE_MODULE'
 const ADD_MODULE = 'ADD_MODULE'
 const DELETE_MODULE = 'DELETE_MODULE'
@@ -147,6 +148,30 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
     tabs,
     workflow,
     wfModules
+  }
+})
+
+// SET_WORKFLOW_NAME
+// Set name of workflow
+export function setWorkflowNameAction (name) {
+  return (dispatch, getState, api) => {
+    dispatch({
+      type: SET_WORKFLOW_NAME,
+      payload: {
+        promise: api.setWorkflowName(name),
+        data: { name }
+      }
+    })
+  }
+}
+registerReducerFunc(SET_WORKFLOW_NAME + '_PENDING', (state, action) => {
+  const { name } = action.payload
+  return {
+    ...state,
+    workflow: {
+      ...state.workflow,
+      name
+    }
   }
 })
 

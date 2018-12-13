@@ -16,7 +16,7 @@ class ChangeWfModuleNotesCommand(Delta):
         self.wf_module.save(update_fields=['notes'])
 
     @classmethod
-    def amend_create_kwargs(self, *, wf_module, new_value, **kwargs):
+    def amend_create_kwargs(cls, *, wf_module, new_value, **kwargs):
         wf_module.refresh_from_db()
 
         old_value = wf_module.notes or ''

@@ -1,23 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
-<WorkflowNavBar
-  api={
-    Object {
-      "duplicateWorkflow": [MockFunction],
-    }
-  }
-  isReadOnly={false}
-  onChangeIsPublic={[MockFunction]}
-  workflow={
-    Object {
-      "id": 303,
-      "name": "Original Version",
-      "owner_name": "Not LogggedIn",
-      "public": true,
-    }
-  }
->
+<Fragment>
   <nav
     className="navbar"
   >
@@ -33,31 +17,9 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
     <div
       className="title-metadata-stack"
     >
-      <EditableWorkflowName
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
-          }
-        }
+      <Connect(EditableWorkflowName)
         isReadOnly={false}
-        value="Original Version"
-        workflowId={303}
-      >
-        <div
-          className="editable-title--container"
-          onClick={[Function]}
-        >
-          <input
-            className="editable-title--field"
-            name="name"
-            onBlur={[Function]}
-            onChange={[Function]}
-            onKeyPress={[Function]}
-            type="text"
-            value="Original Version"
-          />
-        </div>
-      </EditableWorkflowName>
+      />
       <WorkflowMetadata
         openShareModal={[Function]}
         workflow={
@@ -68,45 +30,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
             "public": true,
           }
         }
-      >
-        <ul
-          className="metadata-container"
-        >
-          <li
-            className="attribution"
-          >
-            <span
-              className="metadata"
-            >
-              by 
-              Not LogggedIn
-            </span>
-            <span
-              className="separator"
-            >
-              -
-            </span>
-          </li>
-          <li>
-            Updated 
-            now
-          </li>
-          <li>
-            <span
-              className="separator"
-            >
-              -
-            </span>
-            <button
-              className="public-private"
-              onClick={[Function]}
-              title="Change privacy"
-            >
-              public
-            </button>
-          </li>
-        </ul>
-      </WorkflowMetadata>
+      />
     </div>
     <div
       className="nav-buttons"
@@ -114,30 +38,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
       <UndoRedoButtons
         redo={[Function]}
         undo={[Function]}
-      >
-        <div
-          className="group--undo-redo"
-        >
-          <button
-            name="undo"
-            onClick={[Function]}
-            title="Undo"
-          >
-            <i
-              className="icon-undo"
-            />
-          </button>
-          <button
-            name="redo"
-            onClick={[Function]}
-            title="Redo"
-          >
-            <i
-              className="icon-redo"
-            />
-          </button>
-        </div>
-      </UndoRedoButtons>
+      />
       <button
         name="duplicate"
         onClick={[Function]}
@@ -158,32 +59,11 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
       </a>
     </div>
   </nav>
-</WorkflowNavBar>
+</Fragment>
 `;
 
 exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new copy 1`] = `
-<WorkflowNavBar
-  api={
-    Object {
-      "duplicateWorkflow": [MockFunction],
-    }
-  }
-  isReadOnly={false}
-  loggedInUser={
-    Object {
-      "id": 8,
-    }
-  }
-  onChangeIsPublic={[MockFunction]}
-  workflow={
-    Object {
-      "id": 12,
-      "name": "Original Version",
-      "owner_name": "John Johnson",
-      "public": true,
-    }
-  }
->
+<Fragment>
   <nav
     className="navbar"
   >
@@ -199,31 +79,9 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
     <div
       className="title-metadata-stack"
     >
-      <EditableWorkflowName
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
-          }
-        }
+      <Connect(EditableWorkflowName)
         isReadOnly={false}
-        value="Original Version"
-        workflowId={12}
-      >
-        <div
-          className="editable-title--container"
-          onClick={[Function]}
-        >
-          <input
-            className="editable-title--field"
-            name="name"
-            onBlur={[Function]}
-            onChange={[Function]}
-            onKeyPress={[Function]}
-            type="text"
-            value="Original Version"
-          />
-        </div>
-      </EditableWorkflowName>
+      />
       <WorkflowMetadata
         openShareModal={[Function]}
         workflow={
@@ -234,45 +92,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
             "public": true,
           }
         }
-      >
-        <ul
-          className="metadata-container"
-        >
-          <li
-            className="attribution"
-          >
-            <span
-              className="metadata"
-            >
-              by 
-              John Johnson
-            </span>
-            <span
-              className="separator"
-            >
-              -
-            </span>
-          </li>
-          <li>
-            Updated 
-            now
-          </li>
-          <li>
-            <span
-              className="separator"
-            >
-              -
-            </span>
-            <button
-              className="public-private"
-              onClick={[Function]}
-              title="Change privacy"
-            >
-              public
-            </button>
-          </li>
-        </ul>
-      </WorkflowMetadata>
+      />
     </div>
     <div
       className="nav-buttons"
@@ -280,30 +100,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
       <UndoRedoButtons
         redo={[Function]}
         undo={[Function]}
-      >
-        <div
-          className="group--undo-redo"
-        >
-          <button
-            name="undo"
-            onClick={[Function]}
-            title="Undo"
-          >
-            <i
-              className="icon-undo"
-            />
-          </button>
-          <button
-            name="redo"
-            onClick={[Function]}
-            title="Redo"
-          >
-            <i
-              className="icon-redo"
-            />
-          </button>
-        </div>
-      </UndoRedoButtons>
+      />
       <button
         name="duplicate"
         onClick={[Function]}
@@ -329,135 +126,8 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
           }
         }
         workflowId={12}
-      >
-        <UncontrolledDropdown>
-          <Dropdown
-            active={false}
-            addonType={false}
-            direction="down"
-            inNavbar={false}
-            isOpen={false}
-            nav={false}
-            setActiveFromChild={false}
-            toggle={[Function]}
-          >
-            <Manager
-              className="dropdown"
-              onKeyDown={[Function]}
-              tag="div"
-            >
-              <div
-                className="dropdown"
-                onKeyDown={[Function]}
-              >
-                <DropdownToggle
-                  aria-haspopup={true}
-                  className="context-button"
-                  color="secondary"
-                  title="menu"
-                >
-                  <Target
-                    aria-expanded={false}
-                    aria-haspopup={true}
-                    className="context-button"
-                    color="secondary"
-                    component={[Function]}
-                    onClick={[Function]}
-                    title="menu"
-                  >
-                    <Button
-                      aria-expanded={false}
-                      aria-haspopup={true}
-                      className="context-button"
-                      color="secondary"
-                      innerRef={[Function]}
-                      onClick={[Function]}
-                      tag="button"
-                      title="menu"
-                    >
-                      <button
-                        aria-expanded={false}
-                        aria-haspopup={true}
-                        aria-label={null}
-                        className="context-button btn btn-secondary"
-                        onClick={[Function]}
-                        title="menu"
-                        type="button"
-                      >
-                        <i
-                          className="context-button--icon icon-more"
-                        />
-                      </button>
-                    </Button>
-                  </Target>
-                </DropdownToggle>
-                <DropdownMenu
-                  flip={true}
-                  right={true}
-                  tag="div"
-                >
-                  <div
-                    aria-hidden={true}
-                    className="dropdown-menu dropdown-menu-right"
-                    role="menu"
-                    tabIndex="-1"
-                  >
-                    <DropdownItem
-                      href="/workflows"
-                      tag="button"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-item"
-                        href="/workflows"
-                        onClick={[Function]}
-                        tabIndex="0"
-                      >
-                        <span>
-                          My Workflows
-                        </span>
-                      </a>
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <span>
-                          Import Module
-                        </span>
-                      </button>
-                    </DropdownItem>
-                    <DropdownItem
-                      href="/account/logout"
-                      tag="button"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-item"
-                        href="/account/logout"
-                        onClick={[Function]}
-                        tabIndex="0"
-                      >
-                        <span>
-                          Log Out
-                        </span>
-                      </a>
-                    </DropdownItem>
-                  </div>
-                </DropdownMenu>
-              </div>
-            </Manager>
-          </Dropdown>
-        </UncontrolledDropdown>
-      </WfHamburgerMenu>
+      />
     </div>
   </nav>
-</WorkflowNavBar>
+</Fragment>
 `;

@@ -193,8 +193,8 @@ export default class WorkbenchAPI {
     })
   }
 
-  setWfName(workflowId, newName) {
-    return this._post(`/api/workflows/${workflowId}`, { newName: newName })
+  setWorkflowName (name) {
+    return this.websocket.callServerHandler('workflow.set_name', { name })
   }
 
   setSelectedWfModule(workflowId, index) {

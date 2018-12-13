@@ -1,6 +1,6 @@
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
-import { mount } from 'enzyme'
+import { shallow } from 'enzyme'
 const Utils = require('./utils');
 import { jsonResponseMock } from './test-utils'
 
@@ -28,7 +28,6 @@ describe('WorkflowNavBar', () => {
   })
   afterEach(() => {
     Utils.goToUrl = globalGoToUrl
-    if (wrapper) wrapper.unmount();
   })
 
   it('With user logged in, Duplicate button sends user to new copy', (done) => {
@@ -44,7 +43,7 @@ describe('WorkflowNavBar', () => {
 
     Utils.goToUrl = jest.fn();
 
-    wrapper = mount(
+    wrapper = shallow(
       <WorkflowNavBar
         workflow={workflow}
         api={api}
@@ -80,7 +79,7 @@ describe('WorkflowNavBar', () => {
       public: true
     };
 
-    wrapper = mount(
+    wrapper = shallow(
       <WorkflowNavBar
         workflow={workflow}
         api={api}

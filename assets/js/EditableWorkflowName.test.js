@@ -1,71 +1,46 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
-import EditableWorkflowName from './EditableWorkflowName'
-import { okResponseMock } from './test-utils'
-
+import { mockStore, tick } from './test-utils'
+import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 
 describe('EditableWorkflowName', () => {
-
-  var wrapper;
-
-  describe('Read-only', () => {
-
-    beforeEach(() => wrapper = shallow(
+  const wrapper = (extraProps={}) => {
+    return shallow(
       <EditableWorkflowName
-        value={'Test Title'}
-        workflowId={808}
-        isReadOnly={true}
-        api={{}}
-      />
-    ));
-
-    it('Renders plain title', () => {
-      expect(wrapper).toMatchSnapshot();
-    });
-
-  });
-
-  describe('NOT Read-only', () => {
-
-    var api = {
-      setWfName: okResponseMock()
-    };
-    var container;
-    var titleField;
-
-    beforeEach(() => wrapper = mount(
-      <EditableWorkflowName
-        value={'Test Title'}
-        workflowId={808}
+        value='A'
+        setWorkflowName={jest.fn()}
         isReadOnly={false}
-        api={api}
+        {...extraProps}
       />
-    ));
-    beforeEach(() => container = wrapper.find('.editable-title--container'));    
-    beforeEach(() => titleField = wrapper.find('.editable-title--field'));
-    afterEach(() => wrapper.unmount())
+    )
+  }
 
+  it('renders a plain title when read-only', () => {
+    const w = wrapper({ isReadOnly: true })
+    expect(w.find('input')).toHaveLength(0)
+  })
 
-    it('Renders a title that can be edited and saved', () => {
-      expect(wrapper).toMatchSnapshot();
+  it('lets the user edit the title', () => {
+    const setWorkflowName = jest.fn()
+    const w = wrapper({ setWorkflowName })
+    w.find('input').simulate('change', { target: { value: 'B' } })
+    w.find('input').simulate('blur')
+    expect(setWorkflowName).toHaveBeenCalledWith('B')
+  })
 
-      // confirm existence of targets
-      expect(container).toHaveLength(1);
-      expect(titleField).toHaveLength(1);
-
-      // check value of field
-      expect(wrapper.state().value).toEqual('Test Title');
-
-      // click on container to select text
-      container.first().simulate('click');
-
-      // change the field value
-      titleField.simulate('change', {target: {value: 'New Title'}});
-
-      // Value of field should have changed
-      expect(wrapper.state().value).toEqual('New Title');
-    });
-
-  });
-
-});
+  it('connects to the store', async () => {
+    const api = {
+      setWorkflowName: jest.fn().mockImplementation(() => Promise.resolve(null))
+    }
+    const store = mockStore({ workflow: { name: 'A' } }, api)
+    const w = mount(
+      <ConnectedEditableWorkflowName store={store} isReadOnly={false} />
+    )
+    expect(w.find('input').prop('value')).toEqual('A')
+    w.find('input').simulate('change', { target: { value: 'B' } })
+    w.find('input').simulate('blur')
+    expect(api.setWorkflowName).toHaveBeenCalledWith('B')
+    await tick()
+    expect(store.getState().workflow.name).toEqual('B')
+  })
+})
