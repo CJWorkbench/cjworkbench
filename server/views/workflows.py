@@ -189,15 +189,9 @@ def workflow_detail(request, workflow_id, format=None):
         workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:
-            valid_fields = {'newName', 'public', 'selected_wf_module'}
+            valid_fields = {'public', 'selected_wf_module'}
             if not set(request.data.keys()).intersection(valid_fields):
                 raise ValueError('Unknown fields: {}'.format(request.data))
-
-            if 'newName' in request.data:
-                async_to_sync(ChangeWorkflowTitleCommand.create)(
-                    workflow,
-                    request.data['newName']
-                )
 
             if 'public' in request.data:
                 # TODO this should be a command, so it's undoable

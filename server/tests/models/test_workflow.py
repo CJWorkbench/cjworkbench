@@ -112,10 +112,16 @@ class WorkflowTests(DbTestCase):
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name='A')
         tab = workflow.tabs.create(position=0)
-        async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'B')
+        async_to_sync(ChangeWorkflowTitleCommand.create)(
+            workflow=workflow,
+            new_value='B'
+        )
         async_to_sync(AddModuleCommand.create)(workflow=workflow, tab=tab,
                                                module_version=None, position=0,
                                                param_values={})
-        async_to_sync(ChangeWorkflowTitleCommand.create)(workflow, 'C')
+        async_to_sync(ChangeWorkflowTitleCommand.create)(
+            workflow=workflow,
+            new_value='C'
+        )
         workflow.delete()
         self.assertTrue(True)  # no crash

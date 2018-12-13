@@ -251,7 +251,7 @@ class WorkflowViewTests(LoggedInTestCase):
 
         # POST: does not work
         response = self.client.post(f'/api/workflows/{self.workflow1.id}/',
-                                    data='{"newName":"X"}',
+                                    data='{"public":true}',
                                     content_type='application/json')
         self.assertEqual(response.status_code, 403)
 
@@ -265,7 +265,7 @@ class WorkflowViewTests(LoggedInTestCase):
 
         # POST: works
         response = self.client.post(f'/api/workflows/{self.workflow1.id}/',
-                                    data='{"newName":"X"}',
+                                    data='{"public":true}',
                                     content_type='application/json')
         self.assertEqual(response.status_code, 204)
 
@@ -312,7 +312,8 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_duplicate_public(self):
         self.workflow1.public = True
         self.workflow1.save()
-        response = self.client.post('/api/workflows/%d/duplicate' % self.workflow1.id)
+        response = self.client.post('/api/workflows/%d/duplicate'
+                                    % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_workflow_detail_delete(self):
@@ -322,16 +323,6 @@ class WorkflowViewTests(LoggedInTestCase):
         response = workflow_detail(request, workflow_id=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Workflow.objects.filter(name='Workflow 1').count(), 0)
-
-    def test_workflow_title_post(self):
-        pk_workflow = self.workflow1.id
-        request = self._build_post('/api/workflows/%d' % pk_workflow,
-                                   {'newName': 'Billy Bob Thornton'},
-                                   user=self.user)
-        response = workflow_detail(request, workflow_id=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.workflow1.refresh_from_db()
-        self.assertEqual(self.workflow1.name, 'Billy Bob Thornton')
 
     def test_workflow_public_post(self):
         pk_workflow = self.workflow1.id

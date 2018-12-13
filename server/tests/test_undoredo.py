@@ -4,10 +4,8 @@ import django.db
 from unittest.mock import patch
 from server.models import Delta, Workflow
 from server.models.commands import AddModuleCommand, ChangeParametersCommand, \
-        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand, \
-        InitWorkflowCommand
-from server.tests.utils import DbTestCase, load_module_version, \
-        get_param_by_id_name
+        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand
+from server.tests.utils import DbTestCase, load_module_version
 from server.versions import WorkflowUndo, WorkflowRedo
 
 
@@ -164,8 +162,10 @@ class UndoRedoTests(DbTestCase):
         self.assertWfModuleVersions(tab, [v2])
 
         # Add one more command so the stack is 3 deep
-        cmd3 = self._run_async(ChangeWorkflowTitleCommand.create(workflow,
-                                                                 'New Title'))
+        cmd3 = self._run_async(ChangeWorkflowTitleCommand.create(
+            workflow=workflow,
+            new_value='New Title'
+        ))
         v3 = cmd3.id
         self.assertGreater(v3, v2)
         self.assertWfModuleVersions(tab, [v2])
