@@ -65,7 +65,8 @@ class StoredObjectTests(DbTestCase):
         so1 = StoredObject.objects.create(
             wf_module=self.wfm1,
             metadata=self.metadata,
-            file=None,
+            bucket='',
+            key='',
             size=0,
             hash=0
         )
@@ -112,10 +113,6 @@ class StoredObjectTests(DbTestCase):
         self.assertEqual(so1.bucket, so2.bucket)
         self.assertNotEqual(so1.key, so2.key)
         assert_frame_equal(so2.get_table(), table)
-
-    def test_read_file_missing(self):
-        so = StoredObject(file='hello', size=10)
-        assert_frame_equal(so.get_table(), pd.DataFrame())
 
     def test_read_file_fastparquet_issue_375(self):
         file = os.path.join(os.path.dirname(__file__), '..', 'test_data',
@@ -190,22 +187,3 @@ class StoredObjectTests(DbTestCase):
                                              bucket=StoredObjectsBucket,
                                              key='missing-key', hash='123')
         so.delete()
-
-    def test_delete_deletes_from_filesystem(self):
-        """
-        First delete fails after S3 remove_object? Recover.
-        """
-        with tempfile.NamedTemporaryFile() as tf:
-            workflow = Workflow.objects.create()
-            tab = workflow.tabs.create(position=0)
-            wf_module = tab.wf_modules.create(order=0)
-            so = wf_module.stored_objects.create(size=4, file=tf.name,
-                                                 hash='123')
-            so.delete()
-
-            with self.assertRaises(FileNotFoundError):
-                open(tf.name, 'rb')
-
-            # Put the file back, so we can get out of our context manager
-            with open(tf.name, 'wb') as x:
-                x.write(b'')
