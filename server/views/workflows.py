@@ -1,11 +1,8 @@
-import json
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
 from django.db.models import Q
-from django import forms
-from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
@@ -16,16 +13,14 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
-from server.models import Module, ModuleVersion, Workflow, WfModule
+from server.models import Module, Workflow, WfModule
 from server.models.commands import ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
 import server.utils
-from server.versions import WorkflowUndo, WorkflowRedo
-from .auth import lookup_workflow_for_read, lookup_workflow_for_write, \
-        loads_workflow_for_read, loads_workflow_for_write, \
-        lookup_workflow_for_owner
+from .auth import lookup_workflow_for_write, \
+        loads_workflow_for_read, lookup_workflow_for_owner
 
 
 def make_init_state(request, workflow=None, modules=None):
@@ -246,17 +241,3 @@ class Duplicate(View):
         async_to_sync(workflow2.last_delta.schedule_execute)()
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-@loads_workflow_for_write
-def workflow_undo(request: HttpRequest, workflow: Workflow):
-    async_to_sync(WorkflowUndo)(workflow)
-    return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['POST'])
-@loads_workflow_for_write
-def workflow_redo(request: HttpRequest, workflow: Workflow):
-    async_to_sync(WorkflowRedo)(workflow)
-    return Response(status=status.HTTP_204_NO_CONTENT)

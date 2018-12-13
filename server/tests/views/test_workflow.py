@@ -4,13 +4,12 @@ import json
 from unittest.mock import patch
 from allauth.account.utils import user_display
 from django.contrib.auth.models import AnonymousUser
-from django.http.response import Http404
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
-from server.models import Module, User, WfModule, Workflow
+from server.models import User, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase, add_new_module_version, \
-        add_new_wf_module, load_module_version
+        load_module_version
 from server.views import workflow_list, workflow_detail, render_workflow, \
         render_workflows
 
@@ -184,10 +183,10 @@ class WorkflowViewTests(LoggedInTestCase):
     @patch('server.rabbitmq.queue_render')
     def test_workflow_view_triggers_render(self, queue_render):
         queue_render.return_value = future_none
-        wf_module = self.tab1.wf_modules.create(
+        self.tab1.wf_modules.create(
             order=0,
             last_relevant_delta_id=self.delta.id,
-            cached_render_result_delta_id=-1
+            cached_render_result_delta_id=-1  # stale
         )
         self.client.force_login(self.user)
         self.client.get('/workflows/%d/' % self.workflow1.id)

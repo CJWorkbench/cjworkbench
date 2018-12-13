@@ -206,11 +206,11 @@ export default class WorkbenchAPI {
   }
 
   undo(workflowId) {
-    return this._post(`/api/workflows/${workflowId}/undo`, null)
+    return this.websocket.callServerHandler('workflow.undo', {})
   }
 
   redo(workflowId) {
-    return this._post(`/api/workflows/${workflowId}/redo`, null)
+    return this.websocket.callServerHandler('workflow.redo', {})
   }
 
   duplicateWorkflow(workflowId) {

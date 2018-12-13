@@ -74,6 +74,7 @@ async def handle(request: HandlerRequest) -> HandlerResponse:
     # Import -- so handlers are registered
     import server.handlers.tab  # noqa: F401
     import server.handlers.wf_module  # noqa: F401
+    import server.handlers.workflow  # noqa: F401
 
     try:
         handler = Handlers[request.path]
