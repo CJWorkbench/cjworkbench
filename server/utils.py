@@ -138,7 +138,8 @@ class Headers:
     @classmethod
     def from_META(cls, meta: Dict[str, str]):
         """Parse Headers from a wsgi environ."""
-        data = dict((k, v[5:]) for k, v in meta if k.startswith('HTTP_'))
+        data = dict((k, v[5:])
+                    for k, v in meta.items() if k.startswith('HTTP_'))
         for wsgi_special_case in ['CONTENT_TYPE', 'CONTENT_LENGTH']:
             try:
                 data[wsgi_special_case] = meta[wsgi_special_case]
