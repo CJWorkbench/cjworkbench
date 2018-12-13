@@ -217,10 +217,6 @@ export default class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
-  currentUser() {
-    return this._fetch('/api/user/')
-  }
-
   deleteWfModuleNotifications(wfModuleId) {
     return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
   }
