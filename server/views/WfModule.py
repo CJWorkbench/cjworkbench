@@ -141,31 +141,6 @@ def wfmodule_detail(request, pk, format=None):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['POST'])
-@renderer_classes((JSONRenderer,))
-def wfmodule_fetch(request, pk, format=None):
-    wf_module = _lookup_wf_module_for_write(pk, request)
-    workflow_id = wf_module.workflow_id  # .workflow_id is a DB query
-
-    async def notify():
-        await rabbitmq.queue_fetch(wf_module)
-        await websockets.ws_client_send_delta_async(workflow_id, {
-            'updateWfModules': {
-                str(wf_module.id): {'is_busy': True, 'fetch_error': ''}
-            }
-        })
-
-    wf_module.is_busy = True
-    wf_module.save(update_fields=['is_busy'])
-    async_to_sync(notify)()
-
-    # TODO fix a race: the client might not receive the Websockets message
-    # until after the HTTP response -- which would make its is_busy status
-    # race. Solution: send the request over Websockets, not over HTTP.
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 N_COLUMNS_PER_TABLE = 101
 
 

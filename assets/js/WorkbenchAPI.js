@@ -242,8 +242,10 @@ export default class WorkbenchAPI {
     return this._patch(`/api/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
   }
 
-  requestFetch(wfModuleId) {
-    return this._post(`/api/wfmodules/${wfModuleId}/fetch`)
+  requestFetch (wfModuleId) {
+    return this.websocket.callServerHandler('wf_module.fetch', {
+      wfModuleId
+    })
   }
 
   /**

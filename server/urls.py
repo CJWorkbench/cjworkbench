@@ -39,7 +39,6 @@ urlpatterns = [
 
     # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/fetch$', views.wfmodule_fetch),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/tiles/v(?P<delta_id>[0-9]+)/r(?P<tile_row>[0-9]+)/c(?P<tile_column>[0-9]+).json$',
         views.wfmodule_tile),
     # TODO: "render" and "output" are bad names. Differentiate them.

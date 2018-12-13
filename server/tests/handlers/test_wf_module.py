@@ -1,8 +1,9 @@
+import asyncio
 from unittest.mock import patch
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from server.handlers.wf_module import set_params, delete, \
-        set_stored_data_version, set_notes, set_collapsed
+        set_stored_data_version, set_notes, set_collapsed, fetch
 from server.models import Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -263,3 +264,38 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.is_collapsed, True)
+
+    @patch('server.websockets.ws_client_send_delta_async')
+    @patch('server.rabbitmq.queue_fetch')
+    def test_fetch(self, queue_fetch, send_delta):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+
+        queue_fetch.return_value = future_none
+        send_delta.return_value = future_none
+
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+
+        response = self.run_handler(fetch, user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id)
+        self.assertResponse(response, data=None)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.is_busy, True)
+        queue_fetch.assert_called_with(wf_module)
+        send_delta.assert_called_with(workflow.id, {
+            'updateWfModules': {
+                str(wf_module.id): {'is_busy': True, 'fetch_error': ''},
+            }
+        })
+
+    def test_fetch_viewer_acces_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+
+        response = self.run_handler(fetch, workflow=workflow,
+                                    wfModuleId=wf_module.id)
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
