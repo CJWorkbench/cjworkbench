@@ -165,7 +165,7 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.setSelectedWfModule).toHaveBeenCalledWith(321, 1)
+      expect(api.setSelectedWfModule).toHaveBeenCalledWith(100)
       expect(api.setWfModuleParams).toHaveBeenCalledWith(
         100,
         { oldParams: { foo20: 'bar20' }, rows: '2, 4-5', fromInput: true }

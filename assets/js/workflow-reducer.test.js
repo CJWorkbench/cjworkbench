@@ -179,9 +179,9 @@ describe('Reducer actions', () => {
       setSelectedWfModule: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
     const store = mockStore(testState, api)
-    await store.dispatch(wfr.setSelectedWfModuleAction(1))
+    await store.dispatch(wfr.setSelectedWfModuleAction(20))
 
-    expect(api.setSelectedWfModule).toHaveBeenCalledWith(999, 1)
+    expect(api.setSelectedWfModule).toHaveBeenCalledWith(20)
     const { workflow, tabs } = store.getState()
     expect(workflow.selected_tab_position).toEqual(0)
     expect(tabs['91'].selected_wf_module_position).toEqual(1)

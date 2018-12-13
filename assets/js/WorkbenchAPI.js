@@ -197,11 +197,21 @@ export default class WorkbenchAPI {
     return this.websocket.callServerHandler('workflow.set_name', { name })
   }
 
-  setSelectedWfModule(workflowId, index) {
-    return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: index })
+  /**
+   * Tell the server which module to tell the client to open on next page load.
+   *
+   * This is a courtesy message: we really don't care if there are races or
+   * other shenanigans that prevent the selection from happening, as it doesn't
+   * affect any data.
+   */
+  setSelectedWfModule (wfModuleId ) {
+    return this.websocket.callServerHandler('workflow.set_selected_wf_module', {
+      wfModuleId
+    })
   }
 
   updateWfModule(wfModuleId, params) {
+    // TODO websocket-ize
     return this._patch(`/api/wfmodules/${wfModuleId}`, params)
   }
 
@@ -218,6 +228,7 @@ export default class WorkbenchAPI {
   }
 
   deleteWfModuleNotifications(wfModuleId) {
+    // TODO websocket-ize
     return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
   }
 

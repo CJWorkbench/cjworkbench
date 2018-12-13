@@ -59,7 +59,7 @@ export class WfModule extends React.PureComponent {
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
     maybeRequestFetch: PropTypes.func.isRequired, // func(wfModuleId) => undefined
-    setSelectedWfModule: PropTypes.func.isRequired, // func(tabId, index) => undefined
+    setSelectedWfModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
     applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
@@ -104,7 +104,7 @@ export class WfModule extends React.PureComponent {
   // We become the selected module on any click
   onMouseDown = () => {
     if (!this.props.isSelected) {
-      this.props.setSelectedWfModule(this.props.index)
+      this.props.setSelectedWfModule(this.props.wfModule.id)
     }
   }
 
@@ -621,34 +621,14 @@ function mapStateToProps (state, ownProps) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    clearNotifications (wfModuleId) {
-      dispatch(clearNotificationsAction(wfModuleId))
-    },
-
-    setSelectedWfModule (tabId, index) {
-      dispatch(setSelectedWfModuleAction(tabId, index))
-    },
-
-    setWfModuleCollapsed (wfModuleId, isCollapsed, isReadOnly) {
-      dispatch(setWfModuleCollapsedAction(wfModuleId, isCollapsed, isReadOnly))
-    },
-
-    setWfModuleParams (wfModuleId, params) {
-      dispatch(setWfModuleParamsAction(wfModuleId, params))
-    },
-
-    maybeRequestFetch (wfModuleId) {
-      dispatch(maybeRequestWfModuleFetchAction(wfModuleId))
-    },
-
-    applyQuickFix (wfModuleId, action, args) {
-      dispatch(quickFixAction(action, wfModuleId, args))
-    },
-
-    setWfModuleNotes: (...args) => dispatch(setWfModuleNotesAction(...args))
-  }
+const mapDispatchToProps = {
+  clearNotifications: clearNotificationsAction,
+  setSelectedWfModule: setSelectedWfModuleAction,
+  setWfModuleCollapsed: setWfModuleCollapsedAction,
+  setWfModuleParams: setWfModuleParamsAction,
+  maybeRequestFetch: maybeRequestWfModuleFetchAction,
+  applyQuickFix: quickFixAction,
+  setWfModuleNotes: setWfModuleNotesAction,
 }
 
 export default connect(

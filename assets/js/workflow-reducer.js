@@ -418,12 +418,18 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 
 // SET_SELECTED_MODULE
 // Set the selected module in the workflow
-export function setSelectedWfModuleAction (wfModulePosition) {
+export function setSelectedWfModuleAction (wfModuleId) {
   return (dispatch, getState, api) => {
-    const { workflow, tabs } = getState()
-    const tabPosition = 0  // TODO support other tabs
-    const tabId = workflow.tab_ids[tabPosition]
+    const { workflow, tabs, wfModules } = getState()
+
+    const wfModule = wfModules[String(wfModuleId)]
+    if (!wfModule) return
+
+    const tabId = wfModule.tab_id
     const tab = tabs[String(tabId)]
+
+    const tabPosition = workflow.tab_ids.indexOf(tabId)
+    const wfModulePosition = tab.wf_module_ids.indexOf(wfModuleId)
 
     if (
       workflow.selected_tab_position === tabPosition
@@ -435,8 +441,7 @@ export function setSelectedWfModuleAction (wfModulePosition) {
 
     // Fire-and-forget: tell the server about this new selection
     // so next time we load the page it will pass it in initState.
-    api.setSelectedWfModule(workflow.id, wfModulePosition)
-      .catch(console.warn)
+    api.setSelectedWfModule(wfModuleId).catch(console.warn)
 
     return dispatch({
       type: SET_SELECTED_MODULE,
@@ -771,7 +776,7 @@ function quickFixPrependModule(wfModuleId, moduleIdName, parameterValues) {
   return addModuleAction(moduleIdName, { beforeWfModuleId: wfModuleId }, parameterValues)
 }
 
-export function quickFixAction(action, wfModuleId, args) {
+export function quickFixAction(wfModuleId, action, args) {
   return {
     prependModule: quickFixPrependModule
   }[action](wfModuleId, ...args)

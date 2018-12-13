@@ -238,7 +238,7 @@ function ensureWfModuleForRowsAction (currentWfModuleId, moduleId, rowsString) {
     if (nextModule && nextModule.id === moduleId) {
       const newParams = maybeAddSelectedRowsToParams(nextModule, nextWfModule, rowsString, true)
       if (newParams !== null) {
-        dispatch(setSelectedWfModuleAction(index + 1))
+        dispatch(setSelectedWfModuleAction(nextWfModuleId))
         return dispatch(setWfModuleParamsAction(nextWfModuleId, newParams))
       }
     }

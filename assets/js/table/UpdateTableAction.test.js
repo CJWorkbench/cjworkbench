@@ -52,7 +52,7 @@ describe("UpdateTableAction actions", () => {
     })
     const dispatch = jest.fn()
     updateTableAction(10, 'filter', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 1 ])
+    expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 11 ])
     expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { column: 'B' } ])
   })
 

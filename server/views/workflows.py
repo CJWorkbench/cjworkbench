@@ -14,7 +14,6 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import Module, Workflow, WfModule
-from server.models.commands import ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
@@ -189,7 +188,7 @@ def workflow_detail(request, workflow_id, format=None):
         workflow = lookup_workflow_for_write(workflow_id, request)
 
         try:
-            valid_fields = {'public', 'selected_wf_module'}
+            valid_fields = {'public'}
             if not set(request.data.keys()).intersection(valid_fields):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
@@ -197,17 +196,6 @@ def workflow_detail(request, workflow_id, format=None):
                 # TODO this should be a command, so it's undoable
                 workflow.public = request.data['public']
                 workflow.save(update_fields=['public'])
-
-            if 'selected_wf_module' in request.data:
-                with workflow.cooperative_lock():
-                    tab = workflow.live_tabs.get(position=0)
-                    try:
-                        position = int(request.data['selected_wf_module'])
-                    except:
-                        # Malformed request; code defensively
-                        position = None
-                    tab.selected_wf_module_position = position
-                    tab.save(update_fields=['selected_wf_module_position'])
 
         except Exception as e:
             return JsonResponse({'message': str(e), 'status_code': 400},

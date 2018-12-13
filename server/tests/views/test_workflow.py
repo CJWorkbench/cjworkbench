@@ -332,13 +332,3 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.public, True)
-
-    def test_workflow_selected_wf_module_post(self):
-        self.assertEqual(self.tab1.selected_wf_module_position, None)
-        request = self._build_post('/api/workflows/%d' % self.workflow1.id,
-                                   {'selected_wf_module': 808},
-                                   user=self.user)
-        response = workflow_detail(request, workflow_id=self.workflow1.id)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.tab1.refresh_from_db()
-        self.assertEqual(self.tab1.selected_wf_module_position, 808)

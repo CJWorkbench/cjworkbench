@@ -102,20 +102,6 @@ function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
   return null
 }
 
-function ensureSelectedWfModuleId (dispatch, state, wfModuleId) {
-  const { wfModules, tabs } = state
-
-  const wfModule = wfModules[String(wfModuleId)]
-  const tabId = wfModule.tab_id
-  const tab = tabs[String(tabId)]
-  const current = tab.selected_wf_module_position
-  const wanted = tab.wf_module_ids.indexOf(wfModuleId)
-
-  if (wanted !== -1 && wanted !== current) {
-    dispatch(setSelectedWfModuleAction(wanted))
-  }
-}
-
 /**
  * Adds or edits a module, given `wfModuleId` as the selected table.
  *
@@ -130,13 +116,16 @@ export function updateTableAction (wfModuleId, idName, forceNewModule, params) {
       return
     }
 
-    const existingModule = forceNewModule ? null : findWfModuleWithIds(state, wfModuleId, idName)
-    const newParams = moduleParamsBuilders[idName](existingModule ? existingModule.params : null, params)
+    const existingWfModule = forceNewModule ? null : findWfModuleWithIds(state, wfModuleId, idName)
+    const newParams = moduleParamsBuilders[idName](existingWfModule ? existingWfModule.params : null, params)
 
-    if (existingModule && !forceNewModule) {
-      ensureSelectedWfModuleId(dispatch, state, existingModule.id) // before state's existingModule changes
-
-      if (newParams) dispatch(setWfModuleParamsAction(existingModule.id, newParams))
+    if (existingWfModule && !forceNewModule) {
+      if (existingWfModule.id !== wfModuleId) {
+        dispatch(setSelectedWfModuleAction(existingWfModule.id))
+      }
+      if (newParams) {
+        dispatch(setWfModuleParamsAction(existingWfModule.id, newParams))
+      }
     } else {
       dispatch(addModuleAction(idName, { afterWfModuleId: wfModuleId }, newParams))
     }
