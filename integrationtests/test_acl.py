@@ -14,7 +14,7 @@ class TestExampleWorkflow(WorkbenchBase):
         b = self.browser
 
         b.visit('/workflows/')
-        b.click_button('Create Workflow')
+        b.click_button('Create Workflow', wait=True)  # wait for React render
         # Wait for page to load
         b.assert_element('input[name="name"][value="New Workflow"]', wait=True)
 
@@ -60,7 +60,8 @@ class TestExampleWorkflow(WorkbenchBase):
         b.visit(url)
 
         # We see things
-        b.assert_element('.wf-module[data-module-name="Paste data"]', wait=True)
+        b.assert_element('.wf-module[data-module-name="Paste data"]',
+                         wait=True)
 
         # We can't edit them
         b.assert_no_element('button', text='ADD STEP')
