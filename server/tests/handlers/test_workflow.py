@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from server.handlers.workflow import set_name, set_position, set_tab_order
+from server.handlers.workflow import set_name, set_position, set_tab_order, \
+    set_selected_tab
 from server.models import Workflow
 from server.models.commands import ChangeWorkflowTitleCommand
 from .util import HandlerTestCase
@@ -82,6 +83,38 @@ class WorkflowTest(HandlerTestCase):
         response = self.run_handler(set_position, user=user, workflow=workflow,
                                     wfModuleId=wf_module.id)
         self.assertResponse(response, error='Invalid wfModuleId')
+
+    def test_set_selected_tab(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab2 = workflow.tabs.create(position=1)
+
+        response = self.run_handler(set_selected_tab, user=user,
+                                    workflow=workflow, tabId=tab2.id)
+        self.assertResponse(response, data=None)
+
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.selected_tab_position, 1)
+
+    def test_set_position_viewer_access_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        tab2 = workflow.tabs.create(position=1)
+
+        response = self.run_handler(set_selected_tab, workflow=workflow,
+                                    tabId=tab2.id)
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    def test_set_selected_tab_ignore_other_workflow(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+
+        workflow2 = Workflow.create_and_init(owner=user)
+
+        response = self.run_handler(set_selected_tab, user=user,
+                                    workflow=workflow,
+                                    tabId=workflow2.tabs.first().id)
+        self.assertResponse(response, error='Invalid tabId')
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_set_tab_order(self):

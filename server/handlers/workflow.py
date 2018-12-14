@@ -28,9 +28,10 @@ async def set_name(workflow: Workflow, name: str, **kwargs):
 
 
 @database_sync_to_async
-def _write_position(workflow: Workflow, wf_module_id: int) -> None:
+def _write_wf_module_position(workflow: Workflow, wf_module_id: int) -> None:
     """Write position in DB, or raise (Workflow|Tab|WfModule).DoesNotExist."""
-    with workflow.cooperative_lock():
+    with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
+        # Raises WfModule.DoesNotExist, e.g. if tab.is_deleted
         wf_module = WfModule.live_in_workflow(workflow).get(pk=wf_module_id)
         tab = wf_module.tab
 
@@ -44,15 +45,36 @@ def _write_position(workflow: Workflow, wf_module_id: int) -> None:
 @register_websockets_handler
 @websockets_handler('write')
 async def set_position(workflow: Workflow, wfModuleId: int, **kwargs):
-    try:
-        wf_module_id = int(wfModuleId)
-    except (TypeError, ValueError):
+    if not isinstance(wfModuleId, int):
         raise HandlerError('wfModuleId must be a Number')
 
     try:
-        await _write_position(workflow, wf_module_id)
+        await _write_wf_module_position(workflow, wfModuleId)
     except (Workflow.DoesNotExist, Tab.DoesNotExist, WfModule.DoesNotExist):
         raise HandlerError('Invalid wfModuleId')
+
+
+@database_sync_to_async
+def _write_tab_position(workflow: Workflow, tab_id: int) -> None:
+    """Write position in DB, or raise (Workflow|Tab).DoesNotExist."""
+    with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
+        # raises Tab.DoesNotExist, e.g. if tab.is_deleted
+        tab = workflow.live_tabs.get(pk=tab_id)
+
+        workflow.selected_tab_position = tab.position
+        workflow.save(update_fields=['selected_tab_position'])
+
+
+@register_websockets_handler
+@websockets_handler('write')
+async def set_selected_tab(workflow: Workflow, tabId: int, **kwargs):
+    if not isinstance(tabId, int):
+        raise HandlerError('tabId must be a Number')
+
+    try:
+        await _write_tab_position(workflow, tabId)
+    except (Workflow.DoesNotExist, Tab.DoesNotExist):
+        raise HandlerError('Invalid tabId')
 
 
 @register_websockets_handler
