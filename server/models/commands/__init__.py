@@ -3,6 +3,7 @@ from .InitWorkflowCommand import InitWorkflowCommand
 from .AddTabCommand import AddTabCommand
 from .AddModuleCommand import AddModuleCommand
 from .DeleteModuleCommand import DeleteModuleCommand
+from .DeleteTabCommand import DeleteTabCommand
 from .ReorderModulesCommand import ReorderModulesCommand
 from .ChangeDataVersionCommand import ChangeDataVersionCommand
 from .ChangeParametersCommand import ChangeParametersCommand

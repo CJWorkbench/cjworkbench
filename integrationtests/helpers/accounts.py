@@ -95,6 +95,7 @@ class AccountAdmin:
             'server_changewfmoduleupdatesettingscommand',
             'server_changeworkflowtitlecommand',
             'server_deletemodulecommand',
+            'server_deletetabcommand',
             'server_initworkflowcommand',
             'server_delta',
             'server_parameterval',
