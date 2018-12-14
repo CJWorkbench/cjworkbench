@@ -1,8 +1,10 @@
+from typing import List
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
 from channels.db import database_sync_to_async
 from server.models import Tab, Workflow, WfModule
-from server.models.commands import ChangeWorkflowTitleCommand
+from server.models.commands import ChangeWorkflowTitleCommand, \
+    ReorderTabsCommand
 from server.versions import WorkflowRedo, WorkflowUndo
 
 
@@ -51,3 +53,21 @@ async def set_position(workflow: Workflow, wfModuleId: int, **kwargs):
         await _write_position(workflow, wf_module_id)
     except (Workflow.DoesNotExist, Tab.DoesNotExist, WfModule.DoesNotExist):
         raise HandlerError('Invalid wfModuleId')
+
+
+@register_websockets_handler
+@websockets_handler('write')
+async def set_tab_order(workflow: Workflow, tabIds: List[int], **kwargs):
+    if not isinstance(tabIds, list):
+        raise HandlerError('tabIds must be an Array of integers')
+    for tab_id in tabIds:
+        if not isinstance(tab_id, int):
+            raise HandlerError('tabIds must be an Array of integers')
+
+    try:
+        await ReorderTabsCommand.create(workflow=workflow, new_order=tabIds)
+    except ValueError as err:
+        if str(err) == 'wrong tab IDs':
+            raise HandlerError('wrong tab IDs')
+        else:
+            raise

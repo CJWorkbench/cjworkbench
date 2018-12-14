@@ -1,7 +1,6 @@
 from unittest.mock import patch
-from dateutil.parser import isoparse
 from django.contrib.auth.models import User
-from server.handlers.workflow import set_name, set_position
+from server.handlers.workflow import set_name, set_position, set_tab_order
 from server.models import Workflow
 from server.models.commands import ChangeWorkflowTitleCommand
 from .util import HandlerTestCase
@@ -83,3 +82,45 @@ class WorkflowTest(HandlerTestCase):
         response = self.run_handler(set_position, user=user, workflow=workflow,
                                     wfModuleId=wf_module.id)
         self.assertResponse(response, error='Invalid wfModuleId')
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_set_tab_order(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab1 = workflow.tabs.first()
+        tab2 = workflow.tabs.create(position=1)
+
+        response = self.run_handler(set_tab_order, user=user,
+                                    workflow=workflow,
+                                    tabIds=[tab2.id, tab1.id])
+        self.assertResponse(response, data=None)
+
+    def test_set_tab_order_viewer_access_denied(self):
+        workflow = Workflow.create_and_init()
+        tab1 = workflow.tabs.first()
+        tab2 = workflow.tabs.create(position=1)
+
+        response = self.run_handler(set_tab_order, workflow=workflow,
+                                    tabIds=[tab2.id, tab1.id])
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    def test_set_tab_order_wrong_tab_ids(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab1 = workflow.tabs.first()
+        tab2 = workflow.tabs.create(position=1)
+
+        response = self.run_handler(set_tab_order, user=user,
+                                    workflow=workflow,
+                                    tabIds=[tab2.id + 1, tab1.id + 1])
+        self.assertResponse(response, error='wrong tab IDs')
+
+    def test_set_tab_order_invalid_tab_ids(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+
+        response = self.run_handler(set_tab_order, user=user,
+                                    workflow=workflow, tabIds=['1', '2'])
+        self.assertResponse(response,
+                            error='tabIds must be an Array of integers')
