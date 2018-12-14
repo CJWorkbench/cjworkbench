@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from server.handlers.tab import add_module, reorder_modules
+from server.handlers.tab import add_module, reorder_modules, create, delete, \
+    set_name
 from server.models import Module, Workflow
 from server.models.commands import AddModuleCommand, ReorderModulesCommand
 from .util import HandlerTestCase
@@ -152,3 +153,91 @@ class TabTest(HandlerTestCase):
             response,
             error='new_order does not have the expected elements'
         )
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_create(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+
+        response = self.run_handler(create, user=user, workflow=workflow,
+                                    position=1)
+        self.assertResponse(response, data=None)
+        self.assertEqual(workflow.live_tabs.count(), 2)
+
+    def test_create_viewer_access_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        response = self.run_handler(create, workflow=workflow, position=1)
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    def test_create_invalid_position(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+
+        response = self.run_handler(create, user=user, workflow=workflow,
+                                    position='threeve')
+        self.assertResponse(response, error='position must be an integer')
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_delete(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab2 = workflow.tabs.create(position=1)
+
+        response = self.run_handler(delete, user=user, workflow=workflow,
+                                    tabId=tab2.id)
+        self.assertResponse(response, data=None)
+        self.assertEqual(workflow.live_tabs.count(), 1)
+        tab2.refresh_from_db()
+        self.assertTrue(tab2.is_deleted)
+
+    def test_delete_viewer_access_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        tab2 = workflow.tabs.create(position=1)
+        response = self.run_handler(delete, workflow=workflow, tabId=tab2.id)
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    def test_delete_missing_tab(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        response = self.run_handler(delete, user=user, workflow=workflow,
+                                    tabId=workflow.tabs.first().id + 1)
+        self.assertResponse(response, error='DoesNotExist: Tab not found')
+
+    def test_delete_last_tab(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        response = self.run_handler(delete, user=user, workflow=workflow,
+                                    tabId=workflow.tabs.first().id)
+        # No-op
+        self.assertResponse(response, data=None)
+        self.assertEqual(workflow.live_tabs.count(), 1)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_set_name(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab = workflow.tabs.first()
+
+        response = self.run_handler(set_name, user=user, workflow=workflow,
+                                    tabId=tab.id, name='B')
+        self.assertResponse(response, data=None)
+        tab.refresh_from_db()
+        self.assertEqual(tab.name, 'B')
+
+    def test_set_name_viewer_access_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        tab = workflow.tabs.create(position=1)
+        response = self.run_handler(set_name, workflow=workflow,
+                                    tabId=tab.id, name='B')
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    def test_set_name_missing_tab(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        response = self.run_handler(set_name, user=user, workflow=workflow,
+                                    tabId=workflow.tabs.first().id + 1,
+                                    name='B')
+        self.assertResponse(response, error='DoesNotExist: Tab not found')

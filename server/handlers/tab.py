@@ -2,7 +2,8 @@ import functools
 from typing import Any, Dict, List
 from channels.db import database_sync_to_async
 from server.models import ModuleVersion, Workflow, Tab
-from server.models.commands import AddModuleCommand, ReorderModulesCommand
+from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
+    AddTabCommand, DeleteTabCommand, SetTabNameCommand
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 import server.utils
@@ -85,3 +86,27 @@ async def reorder_modules(workflow: Workflow, tab: Tab,
                                            new_order=wfModuleIds)
     except ValueError as err:
         raise HandlerError(str(err))
+
+
+@register_websockets_handler
+@websockets_handler('write')
+async def create(workflow: Workflow, position: int, **kwargs):
+    if not isinstance(position, int):
+        raise HandlerError('position must be an integer')
+
+    await AddTabCommand.create(workflow=workflow, position=position)
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@_loading_tab
+async def delete(workflow: Workflow, tab: Tab, **kwargs):
+    await DeleteTabCommand.create(workflow=workflow, tab=tab)
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@_loading_tab
+async def set_name(workflow: Workflow, tab: Tab, name: str, **kwargs):
+    name = str(name)  # JSON values can't lead to error
+    await SetTabNameCommand.create(workflow=workflow, tab=tab, new_name=name)
