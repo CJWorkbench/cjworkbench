@@ -95,6 +95,11 @@ class WorkflowTest(HandlerTestCase):
                                     tabIds=[tab2.id, tab1.id])
         self.assertResponse(response, data=None)
 
+        self.assertEqual(
+            list(workflow.live_tabs.values_list('id', flat=True)),
+            [tab2.id, tab1.id]
+        )
+
     def test_set_tab_order_viewer_access_denied(self):
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
