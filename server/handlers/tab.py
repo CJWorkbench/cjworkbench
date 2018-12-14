@@ -90,7 +90,7 @@ async def reorder_modules(workflow: Workflow, tab: Tab,
 
 @register_websockets_handler
 @websockets_handler('write')
-async def create(workflow: Workflow, position: int, **kwargs):
+async def create(workflow: Workflow, **kwargs):
     await AddTabCommand.create(workflow=workflow)
 
 
