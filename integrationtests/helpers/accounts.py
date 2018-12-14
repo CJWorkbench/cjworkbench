@@ -98,6 +98,7 @@ class AccountAdmin:
             'server_deletetabcommand',
             'server_reordermodulescommand',
             'server_reordertabscommand',
+            'server_settabnamecommand',
             'server_initworkflowcommand',
             'server_delta',
             'server_parameterval',
