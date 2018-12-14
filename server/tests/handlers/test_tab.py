@@ -159,24 +159,15 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
 
-        response = self.run_handler(create, user=user, workflow=workflow,
-                                    position=1)
+        response = self.run_handler(create, user=user, workflow=workflow)
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 2)
 
     def test_create_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        response = self.run_handler(create, workflow=workflow, position=1)
+        response = self.run_handler(create, workflow=workflow)
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
-
-    def test_create_invalid_position(self):
-        user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-
-        response = self.run_handler(create, user=user, workflow=workflow,
-                                    position='threeve')
-        self.assertResponse(response, error='position must be an integer')
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_delete(self):

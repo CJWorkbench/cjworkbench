@@ -91,10 +91,7 @@ async def reorder_modules(workflow: Workflow, tab: Tab,
 @register_websockets_handler
 @websockets_handler('write')
 async def create(workflow: Workflow, position: int, **kwargs):
-    if not isinstance(position, int):
-        raise HandlerError('position must be an integer')
-
-    await AddTabCommand.create(workflow=workflow, position=position)
+    await AddTabCommand.create(workflow=workflow)
 
 
 @register_websockets_handler

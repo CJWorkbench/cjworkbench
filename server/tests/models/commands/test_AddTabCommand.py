@@ -11,50 +11,11 @@ async def async_noop(*args, **kwargs):
 
 class AddTabCommandTest(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    def test_insert_tab(self):
-        workflow = Workflow.create_and_init(selected_tab_position=2)
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
-        tab3 = workflow.tabs.create(position=2)
-
-        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
-                                                          position=1))
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.selected_tab_position, 1)
-        new_tab = workflow.live_tabs.get(position=1)
-        self.assertEqual(new_tab.is_deleted, False)
-        self.assertEqual(
-            list(workflow.live_tabs.values_list('id', 'position')),
-            [(tab1.id, 0), (new_tab.id, 1), (tab2.id, 2), (tab3.id, 3)]
-        )
-
-        self.run_with_async_db(cmd.backward())
-        new_tab.refresh_from_db()
-        self.assertEqual(new_tab.is_deleted, True)
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.selected_tab_position, 2)
-        self.assertEqual(
-            list(workflow.live_tabs.values_list('id', 'position')),
-            [(tab1.id, 0), (tab2.id, 1), (tab3.id, 2)]
-        )
-
-        self.run_with_async_db(cmd.forward())
-        new_tab.refresh_from_db()
-        self.assertEqual(new_tab.is_deleted, False)
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.selected_tab_position, 1)
-        self.assertEqual(
-            list(workflow.live_tabs.values_list('id', 'position')),
-            [(tab1.id, 0), (new_tab.id, 1), (tab2.id, 2), (tab3.id, 3)]
-        )
-
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_append_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
         tab1 = workflow.tabs.first()
 
-        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
-                                                          position=1))
+        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow))
         new_tab = workflow.live_tabs.get(position=1)
         self.assertEqual(
             list(workflow.live_tabs.values_list('id', 'position')),
@@ -68,25 +29,27 @@ class AddTabCommandTest(DbTestCase):
         )
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    def test_hard_delete_when_deleting_delta(self):
+    def test_hard_delete_when_deleting_unapplied_delta(self):
         workflow = Workflow.create_and_init()
+        tab_ids = list(workflow.tabs.values_list('id', flat=True))
 
-        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
-                                                          position=0))
-        workflow.refresh_from_db()
-        new_tab = workflow.live_tabs.get(position=0)
+        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow))
+
         self.run_with_async_db(cmd.backward())
+        cmd.delete()
 
-        # Create a _different_ action -- causing Delta to delete `cmd`
-        self.run_with_async_db(AddTabCommand.create(workflow=workflow,
-                                                    position=0))
-        with self.assertRaises(Delta.DoesNotExist):
-            cmd.refresh_from_db()  # like I said: deletes `cmd`
+        self.assertEquals(
+            # Search for _all_ tabs -- even deleted ones
+            list(workflow.tabs.values_list('id', flat=True)),
+            tab_ids  # there should be no deleted ones
+        )
 
-        with self.assertRaises(Tab.DoesNotExist):
-            # We should delete `new_tab` because there is no reference to it
-            # any more.
-            new_tab.refresh_from_db()
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_no_hard_or_soft_delete_when_deleting_applied_delta(self):
+        workflow = Workflow.create_and_init()
+        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow))
+        cmd.delete()
+        self.assertEquals(workflow.live_tabs.count(), 2)
 
     @patch('server.websockets.ws_client_send_delta_async')
     def test_ws_data(self, send_delta):
@@ -96,8 +59,7 @@ class AddTabCommandTest(DbTestCase):
 
         workflow = Workflow.create_and_init(selected_tab_position=0)
         tab1 = workflow.tabs.first()
-        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
-                                                          position=1))
+        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow))
         new_tab = workflow.live_tabs.get(position=1)
         delta1 = send_delta.call_args[0][1]
         self.assertEqual(delta1['updateWorkflow']['tab_ids'],

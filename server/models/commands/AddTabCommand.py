@@ -90,12 +90,11 @@ class AddTabCommand(Delta):
         pass
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow: Workflow, position: int):
-        # tab starts off "deleted" and gets un-deleted in forward().
-        if position < 0 or position > workflow.live_tabs.count() + 1:
-            raise ValueError('position out of range')
-
-        tab = workflow.tabs.create(position=position, is_deleted=True)
+    def amend_create_kwargs(cls, *, workflow: Workflow):
+        # tab starts off "deleted" and appears at end of tabs list; we
+        # un-delete in forward().
+        tab = workflow.tabs.create(position=workflow.live_tabs.count(),
+                                   is_deleted=True)
 
         return {
             'workflow': workflow,
