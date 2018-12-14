@@ -101,6 +101,12 @@ export default class WorkbenchAPI {
     return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
   }
 
+  reorderTabs (tabIds) {
+    return this.websocket.callServerHandler('workflow.set_tab_order', {
+      tabIds
+    })
+  }
+
   reorderWfModules (tabId, wfModuleIds) {
     return this.websocket.callServerHandler('tab.reorder_modules', {
       tabId,
@@ -117,9 +123,19 @@ export default class WorkbenchAPI {
     })
   }
 
+  createTab () {
+    return this.websocket.callServerHandler('tab.create', {})
+  }
+
   deleteModule(wfModuleId) {
     return this.websocket.callServerHandler('wf_module.delete', {
       wfModuleId
+    })
+  }
+
+  deleteTab (tabId) {
+    return this.websocket.callServerHandler('tab.delete', {
+      tabId
     })
   }
 
@@ -172,6 +188,13 @@ export default class WorkbenchAPI {
     return this._fetch(`/api/wfmodules/${wfModuleId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
   }
 
+  setTabName (tabId, name) {
+    return this.websocket.callServerHandler('tab.set_name', {
+      tabId,
+      name
+    })
+  }
+
   setWfModuleVersion (wfModuleId, version) {
     return this.websocket.callServerHandler('wf_module.set_stored_data_version', {
       wfModuleId,
@@ -207,6 +230,19 @@ export default class WorkbenchAPI {
   setSelectedWfModule (wfModuleId ) {
     return this.websocket.callServerHandler('workflow.set_selected_wf_module', {
       wfModuleId
+    })
+  }
+
+  /**
+   * Tell the server which module to tell the client to open on next page load.
+   *
+   * This is a courtesy message: we really don't care if there are races or
+   * other shenanigans that prevent the selection from happening, as it doesn't
+   * affect any data.
+   */
+  setSelectedTab (tabId) {
+    return this.websocket.callServerHandler('workflow.set_selected_tab', {
+      tabId
     })
   }
 
