@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import EditableTabName from './EditableTabName'
+import TabName from './TabName'
 import TabDropdown from './TabDropdown'
 
 export default class Tab extends React.PureComponent {
@@ -42,22 +42,27 @@ export default class Tab extends React.PureComponent {
   }
 
   onClickTab = () => {
-    const { select, id } = this.props
-    select(id)
+    const { select, id, isSelected } = this.props
+    if (isSelected) {
+      this.startEditingTabName()
+    } else {
+      select(id)
+    }
   }
 
   render () {
-    const { id, isSelected, name, index, setName } = this.props
+    const { isSelected, name, index } = this.props
     const { isEditingTabName } = this.state
 
     return (
       <li className={isSelected ? 'selected' : ''}>
-        <EditableTabName
-          value={this.name}
+        <TabName
+          name={this.name}
+          index={index}
           isEditing={isEditingTabName}
           onClick={this.onClickTab}
-          onSubmit={this.submitName}
-          onCancel={this.cancelEditTabName}
+          onSubmitEdit={this.submitName}
+          onCancelEdit={this.cancelEditTabName}
         />
         <TabDropdown
           onClickRename={this.startEditingTabName}

@@ -5,7 +5,6 @@ export default class EditableTabName extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired,
     isEditing: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired, // func() => undefined
     onSubmit: PropTypes.func.isRequired, // func(value) => undefined
     onCancel: PropTypes.func.isRequired, // func() => undefined
   }
@@ -26,11 +25,43 @@ export default class EditableTabName extends React.PureComponent {
     }
   }
 
+  onChange = (ev) => {
+    this.setState({ value: ev.target.value })
+  }
+
+  onKeyDown = (ev) => {
+    switch (ev.key) {
+      case 'Enter':
+        this.props.onSubmit(this.state.value)
+        this.setState({ value: null }) // for onBlur()
+        return
+      case 'Escape':
+        this.setState({ value: null }) // for onBlur()
+        this.props.onCancel()
+        return
+    }
+  }
+
+  onBlur = () => {
+    // If 'Escape' was handled, `value` will be null _within setState()_.
+    this.setState(({ value }) => {
+      if (value === null) return // we already called this.props.onCancel()
+
+      this.props.onSubmit(this.state.value)
+    })
+  }
+
   render () {
+    const value = this.state.value === null ? this.props.value : this.state.value
+
     return (
-      <div className='tab-name'>
-        {this.renderInner()}
-      </div>
+      <input
+        name='tab-name'
+        value={value}
+        onChange={this.onChange}
+        onKeyDown={this.onKeyDown}
+        onBlur={this.onBlur}
+      />
     )
   }
 }
