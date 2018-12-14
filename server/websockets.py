@@ -2,9 +2,11 @@
 # Clients open a socket on a specific workflow, and all clients viewing that
 # workflow are a "group"
 from collections import namedtuple
+import json
 import logging
 from typing import Dict, Any
 from channels.db import database_sync_to_async
+from django.core.serializers.json import DjangoJSONEncoder
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
@@ -27,6 +29,11 @@ def _workflow_channel_name(workflow_id: int) -> str:
 
 
 class WorkflowConsumer(AsyncJsonWebsocketConsumer):
+    # Override Channels JSON-dumping to support datetime
+    @classmethod
+    async def encode_json(cls, data: Any) -> str:
+        return json.dumps(data, cls=DjangoJSONEncoder)
+
     @property
     def workflow_id(self):
         return int(self.scope['url_route']['kwargs']['workflow_id'])
@@ -82,7 +89,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             ret = {
                 'updateWorkflow': (
                     WorkflowSerializer(workflow,
-                                       context={'request': request})
+                                       context={'request': request}).data
                 ),
             }
 
@@ -105,6 +112,16 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         logger.debug('Added to channel %s', self.workflow_channel_name)
         await self.accept()
 
+        # Solve a race:
+        #
+        # 1. User loads a workflow that isn't rendered, triggering render
+        # 2. Server sends "busy" workflow
+        # 3. Render completes
+        # 4. User connects over Websockets
+        #
+        # Expected results: user sees completed render
+        await self.send_whole_workflow_to_client()
+
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.workflow_channel_name,
                                                self.channel_name)
@@ -114,8 +131,10 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         try:
             delta = await self.get_workflow_as_delta()
             await self.send_data_to_workflow_client({
-                'type': 'apply-delta',
-                'data': delta,
+                'data': {  # TODO why the nesting?
+                    'type': 'apply-delta',
+                    'data': delta,
+                }
             })
         except Workflow.DoesNotExist:
             pass
