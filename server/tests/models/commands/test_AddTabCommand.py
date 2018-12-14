@@ -1,6 +1,6 @@
 import asyncio
 from unittest.mock import patch
-from server.models import Workflow
+from server.models import Delta, Tab, Workflow
 from server.models.commands import AddTabCommand
 from server.tests.utils import DbTestCase
 
@@ -66,6 +66,27 @@ class AddTabCommandTest(DbTestCase):
             list(workflow.live_tabs.values_list('id', 'position')),
             [(tab1.id, 0)]
         )
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_hard_delete_when_deleting_delta(self):
+        workflow = Workflow.create_and_init()
+
+        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
+                                                          position=0))
+        workflow.refresh_from_db()
+        new_tab = workflow.live_tabs.get(position=0)
+        self.run_with_async_db(cmd.backward())
+
+        # Create a _different_ action -- causing Delta to delete `cmd`
+        self.run_with_async_db(AddTabCommand.create(workflow=workflow,
+                                                    position=0))
+        with self.assertRaises(Delta.DoesNotExist):
+            cmd.refresh_from_db()  # like I said: deletes `cmd`
+
+        with self.assertRaises(Tab.DoesNotExist):
+            # We should delete `new_tab` because there is no reference to it
+            # any more.
+            new_tab.refresh_from_db()
 
     @patch('server.websockets.ws_client_send_delta_async')
     def test_ws_data(self, send_delta):
