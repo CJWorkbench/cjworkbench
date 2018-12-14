@@ -1,0 +1,36 @@
+.tabs {
+  font-size: 1.6rem;
+
+  &>ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: block;
+
+    &>li {
+      display: inline-flex; // editor + dropdown-menu
+      flex-direction: row;
+      white-space: nowrap;
+
+      border: 1px solid $light-gray;
+
+      .tab-name {
+        button {
+          margin: 0;
+          padding: 1rem 0 1rem 1rem;
+          font: inherit;
+          color: inherit;
+          cursor: pointer;
+          border: 0;
+          outline: 0;
+          background: transparent;
+        }
+      }
+
+      &.selected {
+        font-weight: bold;
+        outline: 3px solid $brand-workspace;
+      }
+    }
+  }
+}

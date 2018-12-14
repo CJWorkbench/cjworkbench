@@ -14,15 +14,23 @@ export default class EditableTabName extends React.PureComponent {
     value: null
   }
 
-  render () {
+  renderInner () {
     const { value, isEditing } = this.props
 
     if (isEditing) {
       throw new Error('No edit feature yet')
     } else {
       return (
-        <span>{value}</span>
+        <button className='tab-name' onClick={this.props.onClick}>{value}</button>
       )
     }
+  }
+
+  render () {
+    return (
+      <div className='tab-name'>
+        {this.renderInner()}
+      </div>
+    )
   }
 }
