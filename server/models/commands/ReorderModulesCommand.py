@@ -1,17 +1,14 @@
 import json
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from server.models import Delta, WfModule
+from server.models import Delta
 from .util import ChangesWfModuleOutputs
 
 
 class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
     """Overwrite wf_module.order for all wf_modules in a tab."""
 
-    # For simplicity and compactness, we store the order of modules as json
-    # strings in the same format as the patch request:
-    # [ { id: x, order: y}, ... ]
     tab = models.ForeignKey('Tab', on_delete=models.PROTECT)
+    # We use a bizarre legacy data format: JSON [ { id: x, order: y}, ... ]
     old_order = models.TextField()
     new_order = models.TextField()
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
@@ -52,7 +49,9 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
 
         try:
             if sorted(new_order) != sorted(old_order):
-                raise ValueError('new_order does not have the expected elements')
+                raise ValueError(
+                    'new_order does not have the expected elements'
+                )
         except NameError:
             raise ValueError('new_order is not a list of numbers')
 
