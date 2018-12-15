@@ -76,9 +76,10 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
 }
 
 .refine-modal-prompt {
-  margin-top: 1.5rem;
+  margin-top: .5rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   font-size: 1.3rem;
   line-height: 1.4;
   color: $brand-text--medium;
@@ -88,12 +89,8 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
   button[name=cluster] {
     @extend .action-button;
     @extend .button-orange;
+    display: flex;
     margin-top: .5rem;
-  }
-
-  .instructions {
-    margin-top: .5rem;
-    width:15rem;
   }
 
   button {
@@ -172,6 +169,7 @@ ul.refine-groups {
       display: block;
       white-space: nowrap;
       overflow: hidden;
+      margin-left: .2rem;
 
       input {
         display: block;
@@ -198,13 +196,15 @@ ul.refine-groups {
       cursor: pointer;
       margin: 0;
 
-      i.icon-caret-down {
-        font-size: .6rem;
+      i.icon-caret-right {
+        margin-left: .3rem;
+        font-size: 1.1rem;
         line-height: 1em;
         vertical-align: -.5em; // work around broken font
       }
-      i.icon-caret-up {
-        font-size: .6rem;
+      i.icon-caret-down {
+        margin-top: .1rem;
+        font-size: .7rem;
         line-height: 1em;
         vertical-align: -.5em; // work around broken font
       }
@@ -215,7 +215,7 @@ ul.refine-groups {
       min-width: 1.5rem;
       margin-left: .8rem;
       text-align: right;
-      line-height: 2.9rem; // center vertically
+      line-height: 2.7rem; // center vertically
 
       // Display the count normally. If there are edits, display a reset
       // button instead, only when the user hovers.
@@ -239,6 +239,8 @@ ul.refine-groups {
         display: block;
 
         i {
+          position: relative;
+          top: .2rem;
           font-size: 1.3rem;
           color: $brand-text--dark;
           &:hover {color: $brand-text--darker; }

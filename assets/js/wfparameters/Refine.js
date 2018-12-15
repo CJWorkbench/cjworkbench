@@ -255,8 +255,8 @@ class RefineModalPrompt extends React.PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button name='cluster' onClick={this.openModal}>Cluster</button>
-        <span className='instructions'>Group values using algorithms</span>
+        <button name='cluster' onClick={this.openModal}>Auto cluster</button>
+        <span className='instructions'></span>
         { !isModalOpen ? null : (
           <RefineModal
             bucket={this.bucket}
@@ -342,7 +342,7 @@ class RefineGroup extends React.PureComponent {
           checked={isExpanded}
           onChange={this.onChangeIsExpanded}
         />
-        <i className={isExpanded ? 'icon-caret-up' : 'icon-caret-down'} />
+        <i className={isExpanded ? 'icon-caret-down' : 'icon-caret-right'} />
       </label>
     )
 
