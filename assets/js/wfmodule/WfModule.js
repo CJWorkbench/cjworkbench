@@ -523,28 +523,31 @@ export class WfModule extends React.PureComponent {
       >
         {notes}
         <h3>{numberFormat.format(index + 1)}</h3>
-        <div className='module-card' draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-          <div className='module-card-header'>
-            <WfModuleCollapseButton
-              isCollapsed={wfModule.is_collapsed}
-              isLessonHighlight={this.props.isLessonHighlightCollapse}
-              onCollapse={this.collapse}
-              onExpand={this.expand}
-            />
-            <i className={moduleIconClassName} />
-            <div className='module-name'>{moduleName}</div>
-            {contextBtns}
-          </div>
-          <div className={`module-card-details ${wfModule.is_collapsed ? 'collapsed' : 'expanded'}`}>
-            {/* --- Error message --- */}
-            <StatusLine
-              status={this.wfModuleStatus}
-              error={wfModule.output_error || ''}
-              quickFixes={wfModule.quick_fixes || []}
-              applyQuickFix={this.applyQuickFix}
-            />
-            <div className='module-card-params'>
-              {paramdivs}
+        <div className="module-card-and-link">
+
+          <div className='module-card' draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+            <div className='module-card-header'>
+              <WfModuleCollapseButton
+                isCollapsed={wfModule.is_collapsed}
+                isLessonHighlight={this.props.isLessonHighlightCollapse}
+                onCollapse={this.collapse}
+                onExpand={this.expand}
+              />
+              <i className={moduleIconClassName} />
+              <div className='module-name'>{moduleName}</div>
+              {contextBtns}
+            </div>
+            <div className={`module-card-details ${wfModule.is_collapsed ? 'collapsed' : 'expanded'}`}>
+              {/* --- Error message --- */}
+              <StatusLine
+                status={this.wfModuleStatus}
+                error={wfModule.output_error || ''}
+                quickFixes={wfModule.quick_fixes || []}
+                applyQuickFix={this.applyQuickFix}
+              />
+              <div className='module-card-params'>
+                {paramdivs}
+              </div>
             </div>
           </div>
         </div>

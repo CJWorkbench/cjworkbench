@@ -72,31 +72,29 @@
     }
   }
 
-  .module-card {
-    width: $module-width;
+  .module-card-and-link {
     margin: 0 $module-margin-right 0 $module-margin-left; // most of the in-between margin comes from .add-module-in-between-search
-    background-color: $module-background;
     position: relative;
-    border: 2px solid transparent;
     border-radius: 5px;
+    background-color: $module-background;
+    width: $module-width;
 
-    .module-card-details.collapsed {
-      display: none;
-    }
+    .module-card {
+      border-radius: 5px;
+      border: 2px solid transparent;
 
-    &:hover .context-buttons {
-      a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
-        opacity: 1;
+      .module-card-details.collapsed {
+        display: none;
+      }
+
+      &:hover .context-buttons {
+        a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
+          opacity: 1;
+        }
       }
     }
-    &.dragging {
-      opacity: .6;
-      outline: .5rem solid $brand-orange;
-      cursor: grabbing;
-      cursor: -moz-grabbing;
-      cursor: -webkit-grabbing;
-    }
   }
+
 
   @mixin module-colors($card-border-color, $number-color, $line-color) {
     // Color card border
@@ -150,14 +148,14 @@
     }
 
     // Show line to the right of module card
-    &.status-ok .module-card::after {
+    &.status-ok .module-card-and-link::after {
       content: '';
       display: block;
       position: absolute;
       top: 50%;
       left: 100%;
       margin-top: -1px;
-      margin-left: 2px;
+      margin-left: 0px;
       height: 3px;
       width: $module-margin-right;
       background-color: $module-color-ok;
@@ -225,8 +223,6 @@
         }
 
       }
-
-
 
       &::before {
         // "search" icon
@@ -449,6 +445,19 @@
     background-color: $brand-workspace--light;
     color: $brand-workspace;
     border-color: $brand-workspace--light
+  }
+
+  //module being dragged (old position)
+  &.selected.dragging .module-card-and-link {
+
+    .module-card {
+      opacity: .6;
+      border-color: $brand-orange;
+    }
+
+    &::after {
+      background-color: transparent;
+    }
   }
 }
 
