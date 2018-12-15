@@ -163,7 +163,7 @@
   }
 
   .module-card-params {
-    padding: 0 1.5rem 1rem 1.5rem;
+    padding: 0 1.2rem 1rem 1.2rem;
 
     // Spacing on top of each parameter, excpet the first one in module
     .wf-parameter:not(:first-child) {
@@ -281,7 +281,7 @@
       border: 0;
       background: transparent;
       font-size: 1.2rem;
-      padding: .75rem .3rem .75rem 1.5rem;
+      padding: .75rem .3rem .75rem 1.2rem;
       cursor: pointer;
       opacity: .7;
       &:hover{opacity: 1}
