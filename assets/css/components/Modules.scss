@@ -468,12 +468,13 @@
   }
 }
 
-/*** Module Parameters spacing ***/
-
-.label-margin {
+/*** Module Parameters labels ***/
+// static text can be used to replace parameter labels, such as in Calculate
+.module-card .parameter-label {
+  @extend .content-3;
   color:$labels;
-}
-
-.wf-card .label{
   margin-bottom: 0px;
+  &.wf-parameter-statictext {
+    margin-bottom: -.8rem;
+  }
 }

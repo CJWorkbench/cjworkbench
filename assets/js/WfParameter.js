@@ -331,7 +331,7 @@ export default class WfParameter extends React.PureComponent {
         if (this.props.p.parameter_spec.multiline) {
           return (
             <div {...this.outerDivProps}>
-              <div className='label-margin t-d-gray content-3'>{name}</div>
+              <div className='parameter-label'>{name}</div>
               <MultiLineTextArea
                 isReadOnly={this.props.isReadOnly}
                 name={id_name}
@@ -365,7 +365,7 @@ export default class WfParameter extends React.PureComponent {
         } else {
           return (
             <div {...this.outerDivProps}>
-              <div className='label-margin t-d-gray content-3'>{name}</div>
+              <div className='parameter-label'>{name}</div>
               <SingleLineTextField
                 isReadOnly={this.props.isReadOnly}
                 onSubmit={this.onSubmit}
@@ -384,7 +384,7 @@ export default class WfParameter extends React.PureComponent {
       case 'float':
         return (
           <div {...this.outerDivProps}>
-            <div className='label-margin t-d-gray content-3'>{name}</div>
+            <div className='parameter-label'>{name}</div>
             <NumberField
               isReadOnly={this.props.isReadOnly}
               onChange={this.onChange}
@@ -405,7 +405,7 @@ export default class WfParameter extends React.PureComponent {
         );
       case 'statictext':
         return (
-          <div {...this.outerDivProps} className={this.paramClassName + ' t-m-gray info-2'}>{name}</div>
+          <div {...this.outerDivProps} className={this.paramClassName + ' parameter-label'}>{name}</div>
         );
 
       case 'checkbox':
@@ -437,7 +437,7 @@ export default class WfParameter extends React.PureComponent {
       case 'menu':
         return (
           <div {...this.outerDivProps}>
-            <div className='label-margin t-d-gray content-3'>{name}</div>
+            <div className='parameter-label'>{name}</div>
             <MenuParam
               name={id_name}
               items={this.props.p.items}
@@ -449,7 +449,7 @@ export default class WfParameter extends React.PureComponent {
       case 'column':
         return (
           <div {...this.outerDivProps}>
-            <div className='label-margin t-d-gray content-3'>{name}</div>
+            <div className='parameter-label'>{name}</div>
             <ColumnParam
               value={this.props.p.value}
               name={id_name}

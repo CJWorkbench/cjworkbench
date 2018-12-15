@@ -135,7 +135,7 @@ export default class DropZone extends Component {
         ) : (
           <div className='upload-box'>
             <div>
-              <div className='label-margin t-d-gray content-3'>File name</div>
+              <div className='parameter-label'>File name</div>
               <div className='t-d-gray content-3 text-field-readonly'>{this.state.filename}</div>
             </div>
             {fileInput}
