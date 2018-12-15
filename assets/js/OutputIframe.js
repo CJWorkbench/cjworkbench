@@ -3,7 +3,10 @@ import PropTypes from 'prop-types'
 import Modal from 'reactstrap/lib/Modal'
 import ModalHeader from 'reactstrap/lib/ModalHeader'
 import ModalBody from 'reactstrap/lib/ModalBody'
-import { setWorkflowPublicAction } from './workflow-reducer'
+import {
+  setWorkflowPublicAction,
+  setWfModuleParamsAction
+} from './workflow-reducer'
 import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
 
@@ -66,6 +69,9 @@ export class OutputIframe extends React.PureComponent {
       switch (data.type) {
         case 'resize':
           this.setState({ heightFromIframe: data.height })
+          break
+        case 'set-params':
+          this.props.setWfModuleParams(data.wfModuleId, data.params)
           break
         default:
           console.error('Unhandled message from iframe', data)
@@ -176,6 +182,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     setWorkflowPublic: () => {
       dispatch(setWorkflowPublicAction(ownProps.workflowId, true))
+    },
+    setWfModuleParams: (wfModuleId, params) => {
+      dispatch(setWfModuleParamsAction(wfModuleId, params))
     }
   }
 }
