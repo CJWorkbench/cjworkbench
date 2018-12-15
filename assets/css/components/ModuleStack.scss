@@ -43,7 +43,7 @@
       font-size: 1.4rem;
       height: 3.5rem;
       opacity: .85;
-      &:hover{
+      &:hover {
         background-color: $brand-background;
         opacity: 1;
       }
@@ -63,6 +63,7 @@
     }
   }
 
+  // When adding a module between others
   .add-module-in-between-search {
     width: $module-width;
     margin-left: $module-margin-left;
@@ -81,9 +82,6 @@
       cursor: default;
 
       button.search {
-        // The whole element is one big button. Most of the button appears to
-        // be invisible; but the big borders are part of the button, so they're
-        // clickable/hoverable.
         display: block;
         position: absolute;
         width: $module-width;
@@ -93,8 +91,6 @@
         font-size: 1rem;
         color: transparent;
         background: transparent;
-        margin: 0;
-        padding: 0;
         border-radius: 1rem;
 
         i {
@@ -107,7 +103,7 @@
       }
 
       &:hover button.search {
-        background: $brand-background;
+        background: $brand-background--action;
         transition-delay: .1s;
         cursor: pointer;
 
@@ -131,16 +127,18 @@
     }
   }
 
+  // When droping a module between others
+
   .module-drop-target {
     display: block;
     position: absolute;
     top: 0;
-    left: 0;
+    bottom: 0;
     width: $module-width;
     margin: 0 $module-margin-right 0 $module-margin-left;
-    bottom: 0;
     z-index: 2;
     background: transparent;
+    border-radius: 1rem;
 
     &.is-drag-hovering {
       opacity: 1;
