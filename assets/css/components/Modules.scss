@@ -196,7 +196,7 @@
         display: block;
         width: 100%;
         color: $brand-text--dark;
-        @extend .content-3;
+        @extend .content-1;
         background: $Vlight-gray;
         border-radius: 2.5rem;
         border: 2px solid transparent;
@@ -271,7 +271,7 @@
     }
 
     .module-name {
-      @extend .title-4;
+      @extend .title-3;
     }
 
     button.wf-module-collapse {
@@ -477,7 +477,7 @@
 /*** Module Parameters labels ***/
 // static text can be used to replace parameter labels, such as in Calculate
 .module-card .parameter-label {
-  @extend .content-3;
+  @extend .content-1;
   color:$labels;
   margin-bottom: 0px;
   &.wf-parameter-statictext {

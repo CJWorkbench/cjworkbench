@@ -15,7 +15,7 @@
   }
 
   .lessons-list--title {
-    @extend .title-3;
+    @extend .title-2;
     color:$light-gray;
     margin-left: 3.5rem;
   }
@@ -69,7 +69,7 @@
               justify-content: space-between;
 
               .description {
-                @extend .content-3;
+                @extend .content-1;
                 color:$brand-text--medium;
                 height: 100%;
                 display: flex;

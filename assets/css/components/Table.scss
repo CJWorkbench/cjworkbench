@@ -140,7 +140,7 @@
           align-items: center;
 
           .text {
-            @extend .title-3;
+            @extend .title-2;
             color: $brand-text--dark;
             text-align: center;
             margin: 0;
@@ -390,7 +390,6 @@
 
         .cell-number {
           @extend .table-content;
-          font-size: 1.3rem;
           margin: 0 1rem;
           text-align: right;
         }

@@ -20,16 +20,14 @@
       width:7rem;
 
       .data {
-        color: $labels;
+        @extend .content-2;
         text-transform: uppercase;
-        font-size: 1.1rem;
-        line-height: 1.1;
+        color: $labels;
         cursor: default;
       }
       .value {
-        color: $dark-gray;
-        font-size: 1.4rem;
-        line-height: 1;
+        @extend .content-1;
+        color: $brand-text--dark;
         margin-top: .7rem;
       }
     }

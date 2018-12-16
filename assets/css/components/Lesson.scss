@@ -66,7 +66,7 @@ article.lesson {
     }
 
     .description, ol.steps {
-      @extend .content-3;
+      @extend .content-1;
       font-size: 1.6rem;
       line-height: 2.8rem;
     }
@@ -80,7 +80,7 @@ article.lesson {
       word-break: break-all;
       border-radius: .3rem;
       cursor: text;
-      @extend .content-3;
+      @extend .content-1;
     }
 
     .code-block {
@@ -256,7 +256,7 @@ article.lesson {
     }
 
     .current-and-total {
-      @extend .content-3;
+      @extend .content-1;
       color:$white;
       white-space: nowrap;
     }

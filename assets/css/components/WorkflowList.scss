@@ -26,17 +26,17 @@
       background-color: $brand-learn--med-light;
     }
 
-    .content-3 {
+    .content-1 {
       margin-bottom: .2rem;
     }
 
     .icon-star {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-right: .5rem;
     }
 
     p {
-      @extend .content-3;
+      @extend .content-1;
       margin-top: 1rem;
     }
 
@@ -75,9 +75,8 @@
       // group of tabs
       .tab-group {
         display: flex;
-        font-size: 1.3rem;
+        @extend .title-3;
         cursor: pointer;
-        font-weight: bold;
         text-transform: uppercase;
         margin-left: 2rem;
 
@@ -93,7 +92,7 @@
 
           .nav-link {
             float: left;
-            padding: 1.3rem 4rem 1rem 4rem;
+            padding: 1.4rem 4rem 1.2rem 4rem;
             text-decoration: none;
             border: none;
           }
@@ -178,7 +177,7 @@
       .sort-group {
         display: flex;
         align-items: center;
-        @extend .content-3;
+        @extend .content-1;
 
         span {
           position: relative;
@@ -233,7 +232,7 @@
 
       // when shared WF tab is empty
       .placeholder, .new-workflow-link {
-        @extend .content-3;
+        @extend .content-1;
         background-color: $white;
         height: 7rem;
         display: flex;
@@ -244,7 +243,7 @@
         margin: 1px;
       }
       .new-workflow-link {
-        @extend .content-3;
+        @extend .content-1;
         text-decoration: underline;
         @extend .button-blue;
         cursor: pointer;
@@ -289,8 +288,7 @@
         }
 
         .workflow-title {
-          @extend .title-4;
-          font-size: 1.4rem;
+          @extend .content-1;
           margin-bottom: .5rem;
           color:$brand-text--dark;
         }

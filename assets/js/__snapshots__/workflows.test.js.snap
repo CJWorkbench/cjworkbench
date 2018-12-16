@@ -222,7 +222,7 @@ exports[`Workflow list page renders correctly 1`] = `
       >
         <div>
           <div
-            className="content-3"
+            className="content-1"
           >
             NEW
           </div>

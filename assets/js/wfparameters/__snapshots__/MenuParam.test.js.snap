@@ -8,21 +8,21 @@ exports[`renders correctly 1`] = `
   value={1}
 >
   <option
-    className="dropdown-menu-item t-d-gray content-3"
+    className="dropdown-menu-item t-d-gray content-1"
     key="0"
     value={0}
   >
     Apple
   </option>
   <option
-    className="dropdown-menu-item t-d-gray content-3"
+    className="dropdown-menu-item t-d-gray content-1"
     key="1"
     value={1}
   >
     Kittens
   </option>
   <option
-    className="dropdown-menu-item t-d-gray content-3"
+    className="dropdown-menu-item t-d-gray content-1"
     key="2"
     value={2}
   >

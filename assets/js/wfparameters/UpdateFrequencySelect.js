@@ -53,7 +53,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
 
   render() {
     const lastChecked = this.props.lastCheckDate ? (
-      <div className="content-4 t-m-gray">
+      <div className="content-2 t-m-gray">
         Checked <time time={this.props.lastCheckDate.toISOString()}>{timeDifference(this.props.lastCheckDate, Date.now())}</time>
       </div>
     ) : null
@@ -71,8 +71,8 @@ export class UpdateFrequencySelect extends React.PureComponent {
     return (
       <div className='frequency-item'>
         <div>
-          <span className='content-3 t-d-gray'>Update </span>
-          <a href="#" title="change auto-update settings" className='content-3 ml-1 action-link' onClick={this.onOpenModal}>{autoOrManual}</a>
+          <span className='content-1 t-d-gray'>Update </span>
+          <a href="#" title="change auto-update settings" className='content-1 ml-1 action-link' onClick={this.onOpenModal}>{autoOrManual}</a>
         </div>
         {lastChecked}
         {maybeModal}

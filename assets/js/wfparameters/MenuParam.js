@@ -11,7 +11,7 @@ export default class MenuParam extends React.PureComponent {
   render() {
     var items = this.props.items.split('|');
     var itemDivs = items.map( (name, idx) => {
-        return <option key={idx} value={idx} className='dropdown-menu-item t-d-gray content-3'>{name}</option>;
+        return <option key={idx} value={idx} className='dropdown-menu-item t-d-gray content-1'>{name}</option>;
     });
 
     return (

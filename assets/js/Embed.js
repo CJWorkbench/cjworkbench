@@ -62,18 +62,18 @@ export default class Embed extends React.Component {
               </div>
               <div className="wf-meta--id">
                 <ul className="WF-meta">
-                  <div className="WF-meta--item content-3 t-m-gray">
+                  <div className="WF-meta--item content-1 t-m-gray">
                     <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     by {this.props.workflow.owner_name}
                     </a>
                   </div>
                   <li className="separator">-</li>
-                  <li className="WF-meta--item content-3 t-m-gray">
+                  <li className="WF-meta--item content-1 t-m-gray">
                     <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     Updated {timeDifference(this.props.workflow.last_update, new Date())}
                     </a>
                   </li>
-                  <li className="WF-meta--item content-3 t-m-gray">
+                  <li className="WF-meta--item content-1 t-m-gray">
                   </li>
                 </ul>
               </div>

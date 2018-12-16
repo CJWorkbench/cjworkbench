@@ -93,6 +93,7 @@
   }
 
   .links {
+    @extend .title-3;
     display: flex;
     align-items: center;
     font-weight: bold;
@@ -117,7 +118,7 @@
       flex-direction: column;
       align-items: center;
       margin: 0 2rem;
-      padding-top: .5rem;
+      padding-top: .9rem;
       height: 4.5rem;
       -webkit-transition: $buttons-anim;
 
@@ -125,7 +126,7 @@
         height:.4rem;
         background-color: $white;
         position: relative ;
-        top:1.3rem;
+        top:1.7rem;
         -webkit-transition: $buttons-anim;
       }
 
@@ -210,7 +211,7 @@
     }
 
     .editable-title--field {
-      @extend .title-5;
+      @extend .title-2;
       position: relative;
       top:.1rem;
       min-width: 100%;
@@ -223,7 +224,7 @@
       color: #FFFFFF;
       padding-right:1.5rem;
       text-overflow: ellipsis;
-    
+
     }
 
     .editable-title--field:hover{
@@ -260,7 +261,7 @@
 //// Readonly signout navbar
 
 .nav--link {
-  @extend .content-3;
+  @extend .content-1;
   text-transform: uppercase;
   font-size: 1.4rem;
   cursor: pointer;

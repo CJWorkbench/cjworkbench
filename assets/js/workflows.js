@@ -235,10 +235,10 @@ export default class Workflows extends React.Component {
         <div className='container'>
           <a href='/lessons/' className='lesson-banner mx-auto'>
             <div>
-              <div className='content-3'>NEW</div>
+              <div className='content-1'>NEW</div>
               <div className='d-flex'>
                 <span className='icon-star'></span>
-                <div className=' title-2 '>TUTORIALS</div>
+                <div className=' title-1 '>TUTORIALS</div>
               </div>
             </div>
             <p>Learn how to work with data without coding</p>

@@ -47,7 +47,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
             className="WF-meta"
           >
             <div
-              className="WF-meta--item content-3 t-m-gray"
+              className="WF-meta--item content-1 t-m-gray"
             >
               <a
                 href="/workflows/1"
@@ -63,7 +63,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
               -
             </li>
             <li
-              className="WF-meta--item content-3 t-m-gray"
+              className="WF-meta--item content-1 t-m-gray"
             >
               <a
                 href="/workflows/1"
@@ -74,7 +74,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
               </a>
             </li>
             <li
-              className="WF-meta--item content-3 t-m-gray"
+              className="WF-meta--item content-1 t-m-gray"
             />
           </ul>
         </div>

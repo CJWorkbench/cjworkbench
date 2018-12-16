@@ -36,12 +36,12 @@
     }
 
     .account-card {
-      background: rgba(250,250,250,0.3);
+      background: rgba(250,250,250,0.2);
       height: auto;
       max-width: 40rem;
       padding: 3rem 5rem;
       border: none;
-      border-radius: 0px;
+      border-radius: 5px;
       display: flex;
       align-items: center;
 
@@ -53,7 +53,7 @@
       }
 
       .remove-account {
-        @extend .content-3;
+        @extend .content-1;
         @extend .action-button;
         @extend .button-white;
         margin:auto;
@@ -64,7 +64,7 @@
         }
       }
 
-      .content-4 {
+      .content-2 {
         cursor: default;
       }
 
@@ -109,7 +109,7 @@
 
         .consent {
           width: 100%;
-          @extend .content-3;
+          @extend .content-1;
           color:$brand-text--dark;
           margin-top: 1rem;
           margin-bottom: 2rem;
@@ -128,7 +128,7 @@
     }
 
     a {
-      @extend .content-3;
+      @extend .content-1;
       color:$white;
     }
 
@@ -198,7 +198,7 @@
 
     .message-body {
       color: $brand-text--dark;
-      @extend .content-3;
+      @extend .content-1;
       text-align: center;
       margin-bottom: 3rem;
       width: 100%;

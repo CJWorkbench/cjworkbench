@@ -46,7 +46,7 @@
     justify-content: flex-start;
 
     .form-check-label {
-      @extend .content-3;
+      @extend .content-1;
       display: flex;
       align-items: center;
       line-height: 1rem!important;
@@ -56,7 +56,7 @@
     }
 
     p {
-      @extend .content-3; // because body font-size is 10px
+      @extend .content-1; // because body font-size is 10px
     }
 
     &>label {
@@ -76,7 +76,7 @@
       margin-left: 1rem;
       cursor: default;
       label {
-        @extend .content-3;
+        @extend .content-1;
         color: $brand-text--dark;
       }
     }

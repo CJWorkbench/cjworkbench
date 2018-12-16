@@ -78,7 +78,7 @@ export default class ColumnSelector extends React.PureComponent {
             name={`${name}-select-all`}
             title='Select All'
             onClick={this.onClickSelectAll}
-            className='mc-select-all content-4 t-d-gray'
+            className='mc-select-all content-2 t-d-gray'
           >
             All
           </button>
@@ -87,7 +87,7 @@ export default class ColumnSelector extends React.PureComponent {
             name={`${name}-select-none`}
             title='Select None'
             onClick={this.onClickSelectNone}
-            className='mc-select-none content-4 t-d-gray'
+            className='mc-select-none content-2 t-d-gray'
           >
             None
           </button>

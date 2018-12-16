@@ -63,7 +63,7 @@ export class ImportModuleFromGitHub extends React.Component {
               <input
                 name='url'
                 type='url'
-                className='text-field mb-3 mt-2 content-3'
+                className='text-field mb-3 mt-2 content-1'
                 ref={this.inputRef}
                 placeholder='https://github.com/user/repo.git'
               />

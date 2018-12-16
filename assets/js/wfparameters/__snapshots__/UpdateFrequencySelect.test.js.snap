@@ -6,12 +6,12 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
 >
   <div>
     <span
-      className="content-3 t-d-gray"
+      className="content-1 t-d-gray"
     >
       Update 
     </span>
     <a
-      className="content-3 ml-1 action-link"
+      className="content-1 ml-1 action-link"
       href="#"
       onClick={[Function]}
       title="change auto-update settings"
@@ -20,7 +20,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
     </a>
   </div>
   <div
-    className="content-4 t-m-gray"
+    className="content-2 t-m-gray"
   >
     Checked 
     <time

@@ -101,7 +101,7 @@ export default class DropZone extends Component {
 
     const fileInput = (
       <FileInput
-        className={files.length ? 'button-blue dropzone-button action-button' : 'content-3 action-link'}
+        className={files.length ? 'button-blue dropzone-button action-button' : 'content-1 action-link'}
         multiple={false}
         uploader={this.uploader}
       >
@@ -129,14 +129,14 @@ export default class DropZone extends Component {
             multiple={false}
             uploader={this.uploader}
           >
-            <div className='content-3 ml-4 mr-2'>Drag file here, or&nbsp;</div>
+            <div className='content-1 ml-4 mr-2'>Drag file here, or&nbsp;</div>
             {fileInput}
           </FineUploaderDropZone>
         ) : (
           <div className='upload-box'>
             <div>
               <div className='parameter-label'>File name</div>
-              <div className='t-d-gray content-3 text-field-readonly'>{this.state.filename}</div>
+              <div className='t-d-gray content-1 text-field-readonly'>{this.state.filename}</div>
             </div>
             {fileInput}
           </div>

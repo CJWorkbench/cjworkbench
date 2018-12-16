@@ -400,7 +400,7 @@ button:focus { outline:0 !important; }
 
 .mc-select-all, .mc-select-none {
   font-weight: normal;
-  @extend .content-4;
+  @extend .content-2;
   color: $brand-text--dark;
   background-color: transparent;
   cursor: pointer;
@@ -462,7 +462,7 @@ button:focus { outline:0 !important; }
   align-items: center;
 
   label {
-    @extend .content-3;
+    @extend .content-1;
     color: $brand-text--dark;
   }
 }

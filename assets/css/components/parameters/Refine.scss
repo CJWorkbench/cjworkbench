@@ -339,7 +339,7 @@ ul.refine-groups {
         padding:0 2rem;
 
         .method-description {
-          @extend .content-3;
+          @extend .content-1;
           flex: 1 1 auto;
           color:$brand-text--medium;
         }
@@ -376,7 +376,7 @@ ul.refine-groups {
     margin-top: 2rem;
 
     .no-bins {
-      @extend .title-3;
+      @extend .title-2;
       font-size: 1.5rem;
       margin-bottom: 2rem;
       color:$brand-orange;
@@ -389,7 +389,7 @@ ul.refine-groups {
     }
 
     th {
-      @extend .title-3;
+      @extend .title-2;
       font-size: 1.5rem;
       white-space: nowrap;
       padding-right: 4.2rem;

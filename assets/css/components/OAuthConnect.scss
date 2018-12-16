@@ -24,7 +24,7 @@
   }
 
   .disconnect {
-    @extend .content-3;
+    @extend .content-1;
     padding: 0!important;
     margin-top:.3rem;
     font-weight: normal;
@@ -44,7 +44,7 @@
 
 
   .change-file {
-    @extend .content-3;
+    @extend .content-1;
     cursor: pointer;
     border:0;
     margin-top:-.2rem;

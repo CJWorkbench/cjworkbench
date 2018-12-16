@@ -1,92 +1,59 @@
-
-
-/* --- Text Sizing ---  */
-
 .font404 {
+	@extend %font-nunito-bold;
 	font-size: 14rem;
 	line-height: 14rem;
-  @extend %font-nunito-bold;
   letter-spacing: -0.3px;
 	margin-bottom: 0.1rem;
-}
-
-.title-1 {
-	font-size: 2.5rem;
-	font-weight: normal;
-	line-height: 2.5rem;
-	@extend %font-nunito-regular;
-}
-
-.title-2 {
-	font-size: 2.2rem;
-	line-height: 2.2rem;
-  letter-spacing:0.8px;
-  @extend %font-nunito-regular;
-
-}
-
-.title-3 {
-	font-size: 1.8rem;
-	line-height: 2.2rem;
-  letter-spacing: 0.2px;
-}
-
-.title-4 {
-	font-size: 1.3rem;
-	font-weight: normal;
-	line-height: 1.4rem;
-}
-.title-5 {
-	font-size: 1.8rem;
 	font-weight: bold;
+}
+
+.title-1 { // Used in text..
+	@extend %font-nunito-regular;
+	font-size: 2.5rem;
+	line-height: 2.5rem;
+	font-weight: normal;
+}
+
+.title-2 { // Used to top a page, a list, a window..
+	@extend %font-nunito-regular;
+	font-size: 1.8rem;
+	line-height: 2.2rem;
+	letter-spacing: 0.2px;
+	font-weight: bold;
+}
+
+.title-3 { // used in lists - of modules (stack), wf list
+	@extend %font-nunito-regular;
+	font-size: 1.3rem;
+	line-height: 1.4rem;
+	font-weight: normal;
 }
 
 // main fonts for content
 
-.content-1 {
-	font-size: 1.6rem;
-	font-weight: normal;
-  line-height: 1.6rem;
-}
-
-.content-2 {
-	font-size: 1.5rem;
-	font-weight: normal;
-	line-height: 1.5rem;
-}
-
-.content-3 {
+.content-1 { // Main font for parameter's data, metadata, labels...
 	font-size: 1.4rem;
 	line-height: 2rem;
+	font-weight: normal;
 }
 
-.table-content {
-	font-size: 1.4rem;
-	line-height: 2rem;
-}
-
-.content-4 {
+.content-2 { // option or detail
 	font-size: 1.1rem;
 	font-weight: normal;
 	line-height: 1.1rem;
 }
-.content-4 {
-	@extend .content-4;
-}
-.content-5 {
-	font-size: 1.2rem;
-	line-height: 1.4rem;
-  font-weight: normal;
-}
 
-%code-1 {
-  font-family: "PT Mono";
+.table-content { // Only for content in the table -- do not use anywhere else
 	font-size: 1.4rem;
-	line-height: 2.4rem;
-	font-weight: 400;
+	line-height: 2rem;
+	font-weight: normal;
 }
-.code-1 {@extend %code-1;}
 
+.code-1 { // used in code snipets
+	@extend .content-1;
+  font-family: "PT Mono";
+	line-height: 2.4rem;
+}
 
 .info-1 {
 	font-size: 1.2rem;
@@ -94,29 +61,15 @@
   @extend %font-nunito-extra-light;
 }
 
-
-
 .info-2 {
 	font-size: 1.4rem;
 	line-height: 2rem;
   @extend %font-nunito-extra-light;
 }
 
-%info-3 {
+.info-3 {
   font-size: 1rem;
 	line-height: 1rem;
   @extend %font-nunito-extra-light;
 	cursor: pointer;
-}
-.info-3 {@extend %info-3;}
-
-.table-1 {
-	font-size: 1.3rem;
-	font-weight: 200;
-	line-height: 1.8rem;
-}
-.table-2 {
-	font-size: 1rem;
-	font-weight: normal;
-	line-height: 1.1rem;
 }

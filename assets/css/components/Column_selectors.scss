@@ -64,7 +64,7 @@
       box-shadow: none;
       border: $data-action--border!important;
       background-color: $Vlight-gray;
-      @extend .content-3;
+      @extend .content-1;
     }
 
     // placeholder when empty
@@ -91,7 +91,7 @@
       height: 2.7rem;
 
       .react-select__multi-value__label {
-        @extend .content-3;
+        @extend .content-1;
         color:$brand-orange;
       }
     }
@@ -147,7 +147,7 @@ div>.react-select__menu {
     height: 3.5rem;
     background-color: $white;
     color: $brand-text--dark;
-    @extend .content-3;
+    @extend .content-1;
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;

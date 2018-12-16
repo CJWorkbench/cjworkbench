@@ -10,7 +10,7 @@
   padding:0.5rem 0 0.5rem 0;
 
   .dropdown-item {
-    @extend .content-3;
+    @extend .content-1;
     height: 3.5rem;
     border-radius: 0;
     border: 0;
@@ -82,7 +82,7 @@ textarea:focus, input:focus{
   cursor: pointer;
   width:100%;
   color: $brand-text--darker;
-  @extend .content-3;
+  @extend .content-1;
   height:3.5rem;
   border-radius: 3px;
   border: 2px solid $Vlight-gray;
@@ -178,7 +178,7 @@ textarea:focus, input:focus{
 
   input {
     @extend .module-parameter;
-    @extend .content-3;
+    @extend .content-1;
     cursor: text;
     flex: 1 1 auto; // almost all horizontal space
     display: block;
@@ -234,7 +234,7 @@ textarea:focus, input:focus{
 
 .custom-select {
   @extend .module-parameter;
-  @extend .content-3;
+  @extend .content-1;
   color: $brand-text--darker;
   box-shadow: none;
   background-size: 0px;
@@ -317,7 +317,7 @@ select.form-control {
 
 // notes above module
 textarea[name="notes"], .editable-notes-read-only {
-  @extend .content-3;
+  @extend .content-1;
   position: relative;
   border: none;
   outline: none;

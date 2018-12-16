@@ -350,7 +350,7 @@ export default class WfParameter extends React.PureComponent {
         else if (id_name === 'colnames') {
           return (
             <div {...this.outerDivProps}>
-              <div className='t-d-gray content-3 label-margin'>{''}</div>
+              <div className='t-d-gray content-1 label-margin'>{''}</div>
               <ColumnSelector
                 name={id_name}
                 isReadOnly={this.props.isReadOnly}
@@ -473,7 +473,7 @@ export default class WfParameter extends React.PureComponent {
         if (id_name === 'colnames') {
           return (
             <div {...this.outerDivProps}>
-              <div className='t-d-gray content-3 label-margin'>{name}</div>
+              <div className='t-d-gray content-1 label-margin'>{name}</div>
               <ColumnSelector
                 name={id_name}
                 isReadOnly={this.props.isReadOnly}

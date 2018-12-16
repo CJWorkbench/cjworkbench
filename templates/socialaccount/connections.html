@@ -9,7 +9,7 @@
 {% if form.accounts %}
 <div class='title-1 t-d-gray text-center mb-3'>{% blocktrans %}Account linked!{% endblocktrans %}</div>
 <div class="d-flex justify-content-center">
-  <a href="{% url "account_login" %}" style="text-decoration:none"class="content-3 button-white action-button mb-5">{% trans "Sign in" %}</a>
+  <a href="{% url "account_login" %}" style="text-decoration:none"class="content-1 button-white action-button mb-5">{% trans "Sign in" %}</a>
 </div>
 
 
@@ -27,7 +27,7 @@
 {% with base_account.get_provider_account as account %}
 <div class='d-flex justify-content-center'>
   <div>
-    <label class='content-3 t-d-gray mx-auto text-center mb-2' for="id_account_{{ base_account.id }}">
+    <label class='content-1 t-d-gray mx-auto text-center mb-2' for="id_account_{{ base_account.id }}">
     <input id="id_account_{{ base_account.id }}" type="radio" name="account" value="{{ base_account.id }}"/>
     <span class="ml-2 socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">{{account.get_brand.name}}</span>
     {{ account }}
