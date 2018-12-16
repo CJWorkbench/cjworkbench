@@ -96,7 +96,7 @@ yxyx,1
         self._wait_for_table_value(3, 0, 'yxyx')
         self._wait_for_table_value(4, 0, 'yxyx')
 
-        b.click_button('Cluster')
+        b.click_button('Auto cluster')
         b.select('algorithm', 'Edit distance')
         b.fill_in('maxDistance', '2')
         # Wait for algo to finish
