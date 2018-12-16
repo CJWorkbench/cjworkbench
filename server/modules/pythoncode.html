@@ -10,7 +10,7 @@
 html, body {
   padding: 0;
   margin: 0;
-  background: #354752;
+  background: #373939;
   color: White;
 }
 
@@ -19,22 +19,26 @@ pre {
   margin: 0;
   width: 100%;
   white-space: pre-wrap;
+  font-size: 1rem;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: regular;
 }
 
 pre:empty {
   padding: 0;
 }
 
+/* title  */
 pre:not(:empty)::before {
   font-size: 1rem;
   font-family: 'Nunito Sans', sans-serif;
-  font-weight: 200;
-  font-style: normal;
-  content: 'Console output';
+  font-weight: bold;
+  content: 'Console';
+  letter-spacing: .06rem;
   padding-bottom: 1rem;
   display: block;
   text-transform: uppercase;
-  font-weight: bold;
+  opacity: .5;
 }
     </style>
   </head>
