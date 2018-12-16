@@ -233,7 +233,7 @@ exports[`Workflow list page renders correctly 1`] = `
               className="icon-star"
             />
             <div
-              className=" title-2 "
+              className=" title-1 "
             >
               TUTORIALS
             </div>
