@@ -459,6 +459,12 @@
       background-color: transparent;
     }
   }
+
+  &.zen-mode {
+    .module-card-and-link {
+      width: 50rem;
+    }
+  }
 }
 
 
