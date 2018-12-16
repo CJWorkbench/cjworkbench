@@ -64,12 +64,6 @@
 .info-2 {
 	font-size: 1.4rem;
 	line-height: 2rem;
+	letter-spacing: .3px;
   @extend %font-nunito-extra-light;
-}
-
-.info-3 {
-  font-size: 1rem;
-	line-height: 1rem;
-  @extend %font-nunito-extra-light;
-	cursor: pointer;
 }
