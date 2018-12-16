@@ -3,7 +3,7 @@
   position: absolute;
   top: 1rem;
   width: 28rem;
-  font-size: 1.4rem;
+  @extend .content-1;
   box-shadow: $overlay-shadow;
   border-radius: .3rem;
   overflow: hidden; // stay inside the border-radius
@@ -174,7 +174,7 @@
 
     .popover-body {
       padding:0;
-      @extend .info-2;
+      @extend .info-3;
     }
   }
 

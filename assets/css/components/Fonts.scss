@@ -63,7 +63,13 @@
 
 .info-2 {
 	font-size: 1.4rem;
-	line-height: 2rem;
+	line-height: 1.4rem;
 	letter-spacing: .3px;
+  @extend %font-nunito-extra-light;
+}
+
+.info-3 { // use in blocks of texts such as prompts or info popups
+	font-size: 1.4rem;
+	line-height: 2rem;
   @extend %font-nunito-extra-light;
 }

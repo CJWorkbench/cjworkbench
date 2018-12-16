@@ -40,7 +40,8 @@
       cursor: pointer;
       text-transform: uppercase;
       color: $brand-workspace;
-      font-size: 1.4rem;
+      @extend .content-1;
+      font-weight: bold;
       height: 3.5rem;
       opacity: .85;
       &:hover {

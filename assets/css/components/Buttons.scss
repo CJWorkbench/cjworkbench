@@ -137,8 +137,7 @@ button:focus { outline:0 !important; }
   min-width: 7rem;
 	height: 3.5rem;
   border-radius: 2.5rem;
-	font-size: 1.4rem;
-  line-height: 1.4rem;
+	@extend .content-1;
   padding: 0 1.6rem;
   text-decoration: none;
   display: flex;
