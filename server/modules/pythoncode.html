@@ -10,7 +10,8 @@
 html, body {
   padding: 0;
   margin: 0;
-  background: white;
+  background: #354752;
+  color: White;
 }
 
 pre {
@@ -25,10 +26,14 @@ pre:empty {
 }
 
 pre:not(:empty)::before {
-  content: 'Python console output';
-  padding-bottom: .5rem;
+  font-size: 1rem;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 200;
+  font-style: normal;
+  content: 'Console output';
+  padding-bottom: 1rem;
   display: block;
-  text-decoration: underline;
+  text-transform: uppercase;
   font-weight: bold;
 }
     </style>
