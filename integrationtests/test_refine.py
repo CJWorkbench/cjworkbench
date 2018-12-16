@@ -78,7 +78,7 @@ yxyx,1
     def test_cluster(self):
         b = self.browser
 
-        b.click_button('Cluster')
+        b.click_button('Auto cluster')
 
         # Default algorithm: fingerprint. There may be a momentary blip of
         # progressbar.
