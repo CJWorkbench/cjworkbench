@@ -29,6 +29,9 @@
       }
 
       .editable-tab-name {
+        // Contains a <span> (styled like .tab-name) and a <input>.
+        // Make the <input> position:absolute so the width is auto-calculated
+        // by the <span>.
         position: relative;
 
         span {
