@@ -90,11 +90,11 @@ class AddTabCommand(Delta):
         pass
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow: Workflow):
+    def amend_create_kwargs(cls, *, workflow: Workflow, name: str):
         # tab starts off "deleted" and appears at end of tabs list; we
         # un-delete in forward().
         tab = workflow.tabs.create(position=workflow.live_tabs.count(),
-                                   is_deleted=True)
+                                   is_deleted=True, name=name)
 
         return {
             'workflow': workflow,

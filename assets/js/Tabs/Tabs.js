@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Tab from './Tab'
+import PendingTab from './PendingTab'
 import NewTabPrompt from './NewTabPrompt'
 
 export default class Tabs extends React.PureComponent {
@@ -10,7 +11,7 @@ export default class Tabs extends React.PureComponent {
       name: PropTypes.string.isRequired
     }).isRequired).isRequired,
     selectedTabPosition: PropTypes.number.isRequired,
-    nPendingCreates: PropTypes.number.isRequired,
+    pendingTabNames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     create: PropTypes.func.isRequired, // func(position, name) => undefined
     setName: PropTypes.func.isRequired, // func(tabId, name) => undefined
     destroy: PropTypes.func.isRequired, // func(tabId) => undefined
@@ -22,7 +23,7 @@ export default class Tabs extends React.PureComponent {
   }
 
   render () {
-    const { tabs, selectedTabPosition, nPendingCreates, setName, select, destroy } = this.props
+    const { tabs, selectedTabPosition, pendingTabNames, setName, select, destroy } = this.props
 
     return (
       <div className='tabs'>
@@ -40,8 +41,17 @@ export default class Tabs extends React.PureComponent {
             />
           ))}
         </ul>
+        {pendingTabNames.length > 0 ? (
+          <ul className='pending'>
+            {pendingTabNames.map((name, index) => (
+              <PendingTab
+                key={index}
+                name={name}
+              />
+            ))}
+          </ul>
+        ) : null}
         <NewTabPrompt
-          nPendingCreates={nPendingCreates}
           create={this.create}
         />
       </div>

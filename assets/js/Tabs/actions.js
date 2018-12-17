@@ -1,3 +1,5 @@
+import * as util from './util'
+
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
 const TAB_CREATE = 'TAB_CREATE'
@@ -54,11 +56,19 @@ export function select (tabId) {
 
 export function create () {
   return (dispatch, getState, api) => {
+    const { workflow, tabs } = getState()
+    const tabNames = [ ...(workflow.pendingTabNames || []) ]
+    for (const k in tabs) {
+      tabNames.push(tabs[k].name)
+    }
+
+    const name = util.generateTabName(/Tab (\d+)/, 'Tab %d', tabNames)
+
     dispatch({
       type: TAB_CREATE,
       payload: {
-        promise: api.createTab(),
-        data: {}
+        promise: api.createTab(name).then(() => ({ name })),
+        data: { name }
       }
     })
   }
@@ -66,24 +76,34 @@ export function create () {
 
 function reduceCreatePending (state, action) {
   const { workflow } = state
+  const { name } = action.payload
 
   return {
     ...state,
     workflow: {
       ...workflow,
-      nPendingTabCreates: (workflow.nPendingTabCreates || 0) + 1
+      pendingTabNames: [ ...(workflow.pendingTabNames || []), name ]
     }
   }
 }
 
 function reduceCreateFulfilled (state, action) {
   const { workflow } = state
+  const { name } = action.payload
+
+  const { pendingTabNames } = workflow
+  const index = pendingTabNames.indexOf(name)
+
+  if (index === -1) return state
+
+  const newTabNames = pendingTabNames.slice()
+  newTabNames.splice(index, 1)
 
   return {
     ...state,
     workflow: {
       ...workflow,
-      nPendingTabCreates: (workflow.nPendingTabCreates - 1)
+      pendingTabNames: newTabNames
     }
   }
 }

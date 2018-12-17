@@ -30,7 +30,7 @@ class TabTest(HandlerTestCase):
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,
                                     moduleId=module.id,
-                                    paramValues={'foo':'bar'})
+                                    paramValues={'foo': 'bar'})
         self.assertResponse(response, data=None)
 
         command = AddModuleCommand.objects.first()
@@ -47,7 +47,7 @@ class TabTest(HandlerTestCase):
         tab = workflow.tabs.first()
         response = self.run_handler(add_module, workflow=workflow,
                                     tabId=tab.id, position=3,
-                                    moduleId=1, paramValues={'foo':'bar'})
+                                    moduleId=1, paramValues={'foo': 'bar'})
 
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
@@ -159,9 +159,11 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
 
-        response = self.run_handler(create, user=user, workflow=workflow)
+        response = self.run_handler(create, user=user, workflow=workflow,
+                                    name='Foo')
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 2)
+        self.assertEqual(workflow.live_tabs.last().name, 'Foo')
 
     def test_create_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)

@@ -90,8 +90,9 @@ async def reorder_modules(workflow: Workflow, tab: Tab,
 
 @register_websockets_handler
 @websockets_handler('write')
-async def create(workflow: Workflow, **kwargs):
-    await AddTabCommand.create(workflow=workflow)
+async def create(workflow: Workflow, name: str, **kwargs):
+    name = str(name)  # JSON values can't lead to error
+    await AddTabCommand.create(workflow=workflow, name=name)
 
 
 @register_websockets_handler

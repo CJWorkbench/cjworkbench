@@ -180,21 +180,69 @@ describe('Tabs.actions', () => {
   })
 
   describe('create', () => {
-    it('should increment and then decrement workflow.nPendingTabCreates', async () => {
+    it('should update workflow.pendingTabNames', async () => {
+      let endDelay
+      const delay = new Promise((resolve, reject) => {
+        endDelay = resolve
+      })
       const api = {
         // createTab(): takes one tick to fulfil
-        createTab: jest.fn(() => tick())
+        createTab: jest.fn(() => delay)
       }
       const store = mockStore({
         workflow: {
+        },
+        tabs: {
+          1: { name: 'A' }
         }
       }, api)
 
       await store.dispatch(actions.create())
-      expect(api.createTab).toHaveBeenCalledWith()
-      expect(store.getState().workflow.nPendingTabCreates).toEqual(1)
+      expect(api.createTab).toHaveBeenCalledWith('Tab 1')
+      expect(store.getState().workflow.pendingTabNames).toEqual([ 'Tab 1' ])
+      endDelay()
+      await delay
       await tick()
-      expect(store.getState().workflow.nPendingTabCreates).toEqual(0)
+      expect(store.getState().workflow.pendingTabNames).toEqual([])
+    })
+
+    it('should pick a new tab name based on current tab names', async () => {
+      const api = {
+        // createTab(): takes one tick to fulfil
+        createTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+        },
+        tabs: {
+          1: { name: 'Tab 1' },
+          3: { name: 'A' },
+          4: { name: 'Tab 3' }
+        }
+      }, api)
+
+      await store.dispatch(actions.create())
+      expect(api.createTab).toHaveBeenCalledWith('Tab 4')
+    })
+
+    it('should consider pendingTabNames when deciding new tab names', async () => {
+      const api = {
+        // createTab(): takes one tick to fulfil
+        createTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+          pendingTabNames: [ 'Tab 14' ],
+        },
+        tabs: {
+          1: { name: 'Tab 1' },
+          3: { name: 'A' },
+          4: { name: 'Tab 3' }
+        }
+      }, api)
+
+      await store.dispatch(actions.create())
+      expect(api.createTab).toHaveBeenCalledWith('Tab 15')
     })
   })
 })

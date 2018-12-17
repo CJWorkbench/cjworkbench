@@ -19,7 +19,8 @@ export default class Tab extends React.PureComponent {
   }
 
   get name () {
-    return this.props.name || `Tab ${this.props.index}`
+    return this.props.name || '…'
+
   }
 
   startEditingTabName = () => {

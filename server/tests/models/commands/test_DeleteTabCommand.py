@@ -9,7 +9,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-class AddTabCommandTest(DbTestCase):
+class DeleteTabCommandTest(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_delete_tab(self):
         workflow = Workflow.create_and_init()

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import EditableTabName from './EditableTabName'
 
-export default function TabName ({ name, index, isEditing, onClick, onSubmitEdit, onCancelEdit }) {
+export default function TabName ({ name, isEditing, onClick, onSubmitEdit, onCancelEdit }) {
   if (isEditing) {
     return (
       <EditableTabName

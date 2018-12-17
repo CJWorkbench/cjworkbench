@@ -123,8 +123,8 @@ export default class WorkbenchAPI {
     })
   }
 
-  createTab () {
-    return this.websocket.callServerHandler('tab.create', {})
+  createTab (name) {
+    return this.websocket.callServerHandler('tab.create', { name })
   }
 
   deleteModule(wfModuleId) {
