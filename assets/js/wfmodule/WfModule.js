@@ -573,7 +573,7 @@ class WfModuleCollapseButton extends React.PureComponent {
     const name = isCollapsed ? 'expand module' : 'collapse module'
     const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''
     return (
-      <button name={name} className='wf-module-collapse' onClick={onClick}>
+      <button name={name} className='workflow-step-collapse' onClick={onClick}>
         <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`} />
       </button>
     )

@@ -32,15 +32,23 @@
 // main fonts for content
 
 .content-1 { // Main font for parameter's data, metadata, labels...
+	@extend %font-nunito-regular;
 	font-size: 1.4rem;
 	line-height: 2rem;
 	font-weight: normal;
 }
 
 .content-2 { // option or detail
+	@extend %font-nunito-regular;
 	font-size: 1.1rem;
-	font-weight: normal;
 	line-height: 1.1rem;
+}
+
+.content-3 {
+	@extend %font-nunito-regular;
+	font-size: 1.6rem;
+	line-height: 2.4rem;
+
 }
 
 .table-content { // Only for content in the table -- do not use anywhere else

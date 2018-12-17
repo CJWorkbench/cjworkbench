@@ -274,7 +274,7 @@
       @extend .title-3;
     }
 
-    button.wf-module-collapse {
+    button.workflow-step-collapse {
       // Make it big and clickable! Lots of padding.
       // This button dictates the height of the entire header.
       margin: 0;
@@ -283,14 +283,14 @@
       font-size: 1.2rem;
       padding: .75rem .3rem .75rem 1.2rem;
       cursor: pointer;
-      opacity: .7;
+      opacity: .4;
       &:hover{opacity: 1}
 
       i.icon-caret-right {font-size:1rem;}
 
       i.icon-caret-down {font-size:.6rem;}
 
-      i {color:$medium-gray}
+      i {color:$brand-text--dark}
     }
 
     .module-name {
