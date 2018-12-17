@@ -14,16 +14,37 @@
 
       border: 1px solid $light-gray;
 
-      .tab-name {
-        button {
-          margin: 0;
-          padding: 1rem 0 1rem 1rem;
+      .tab-name, .editable-tab-name {
+        white-space: pre; // do not collapse whitespace
+        display: inline-block;
+        position: relative;
+        margin: 0;
+        padding: 1rem 0 1rem 1rem;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        border: 0;
+        outline: 0;
+        background: transparent;
+      }
+
+      .editable-tab-name {
+        position: relative;
+
+        span {
+          opacity: 0;
+        }
+
+        input {
           font: inherit;
-          color: inherit;
-          cursor: pointer;
+          position: absolute;
+          left: 0;
+          top: 0;
+          padding: 1rem 0 1rem 1rem;
+          width: 100%;
+          background: transparent;
           border: 0;
           outline: 0;
-          background: transparent;
         }
       }
 

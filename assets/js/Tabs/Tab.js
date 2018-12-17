@@ -32,7 +32,7 @@ export default class Tab extends React.PureComponent {
     this.setState({ isEditingTabName: false })
   }
 
-  cancelEditTabName = () => {
+  stopEditingTabName = () => {
     this.setState({ isEditingTabName: false })
   }
 
@@ -62,7 +62,7 @@ export default class Tab extends React.PureComponent {
           isEditing={isEditingTabName}
           onClick={this.onClickTab}
           onSubmitEdit={this.submitName}
-          onCancelEdit={this.cancelEditTabName}
+          onCancelEdit={this.stopEditingTabName}
         />
         <TabDropdown
           onClickRename={this.startEditingTabName}

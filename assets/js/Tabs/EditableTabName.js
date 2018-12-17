@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 export default class EditableTabName extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired,
-    isEditing: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired, // func(value) => undefined
     onCancel: PropTypes.func.isRequired, // func() => undefined
   }
@@ -13,20 +12,14 @@ export default class EditableTabName extends React.PureComponent {
     value: null
   }
 
-  renderInner () {
-    const { value, isEditing } = this.props
-
-    if (isEditing) {
-      throw new Error('No edit feature yet')
-    } else {
-      return (
-        <button className='tab-name' onClick={this.props.onClick}>{value}</button>
-      )
-    }
-  }
+  inputRef = React.createRef()
 
   onChange = (ev) => {
     this.setState({ value: ev.target.value })
+  }
+
+  componentDidMount = () => {
+    this.inputRef.current.focus()
   }
 
   onKeyDown = (ev) => {
@@ -37,7 +30,7 @@ export default class EditableTabName extends React.PureComponent {
         return
       case 'Escape':
         this.setState({ value: null }) // for onBlur()
-        this.props.onCancel()
+        this.inputRef.current.blur() // calls onBlur()
         return
     }
   }
@@ -45,9 +38,11 @@ export default class EditableTabName extends React.PureComponent {
   onBlur = () => {
     // If 'Escape' was handled, `value` will be null _within setState()_.
     this.setState(({ value }) => {
-      if (value === null) return // we already called this.props.onCancel()
-
-      this.props.onSubmit(this.state.value)
+      if (value === null) {
+        this.props.onCancel()
+      } else {
+        this.props.onSubmit(this.state.value)
+      }
     })
   }
 
@@ -55,13 +50,17 @@ export default class EditableTabName extends React.PureComponent {
     const value = this.state.value === null ? this.props.value : this.state.value
 
     return (
-      <input
-        name='tab-name'
-        value={value}
-        onChange={this.onChange}
-        onKeyDown={this.onKeyDown}
-        onBlur={this.onBlur}
-      />
+      <div className='editable-tab-name'>
+        <span className='size-calculator'>{value}</span>
+        <input
+          name='tab-name'
+          ref={this.inputRef}
+          value={value}
+          onChange={this.onChange}
+          onKeyDown={this.onKeyDown}
+          onBlur={this.onBlur}
+        />
+      </div>
     )
   }
 }
