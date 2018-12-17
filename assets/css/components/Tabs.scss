@@ -89,6 +89,10 @@
 
         .dropdown-menu {
           margin-bottom: 1rem;
+
+          .dropdown-item:active {
+            color: $brand-text--darker;
+          }
         }
       }
 
