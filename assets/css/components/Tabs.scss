@@ -21,6 +21,14 @@
       border-bottom-left-radius: 3px;
       border-bottom-right-radius: 3px;
 
+      &.pending {
+        // This is a tab that doesn't exist yet: the user clicked "+" and
+        // JS hasn't heard a response from the server.
+        //
+        // There's no dropdown menu on tabs that don't exist yet, so pad instead.
+        padding-right: 2rem;
+      }
+
       .tab-name, .editable-tab-name {
         white-space: pre; // do not collapse whitespace
         display: inline-block;
