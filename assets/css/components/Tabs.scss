@@ -12,16 +12,25 @@
     display: inline;
 
     &>li {
+      display: inline;
+      margin: 0;
+      padding: 0;
+      position: relative; // create stacking context, used during drag-and-drop
+    }
+
+    &>li .tab {
       display: inline-flex; // editor + dropdown-menu
       margin: -1px 0 0 0; // make border overlap with border-top of entire .tabs bar
       flex-direction: row;
       white-space: nowrap;
+      background: $WF-background;
+      transition: transform .1s ease-in-out; // for drag-and-drop
 
       border: 1px solid $light-gray;
       border-bottom-left-radius: 3px;
       border-bottom-right-radius: 3px;
 
-      &.pending {
+      .tab-pending {
         // This is a tab that doesn't exist yet: the user clicked "+" and
         // JS hasn't heard a response from the server.
         //
@@ -74,13 +83,32 @@
           height: 100%;
         }
       }
+    }
 
-      &.selected {
-        font-weight: bold;
-        border-color: $brand-workspace;
-        background: white;
-        border-top-color:  $tabs-background;
-      }
+    &>li.selected .tab {
+      font-weight: bold;
+      border-color: $brand-workspace;
+      background: white;
+      border-top-color:  $tabs-background;
+    }
+  }
+
+  ul.dragging {
+    $dragSpace: 2rem;
+
+    li.dragging .tab {
+      opacity: .5;
+    }
+
+    li.nudge-left, li.nudge-right {
+      z-index: 1; // Nudged tabs show up _above_ un-nudged ones
+    }
+
+    li.nudge-left .tab {
+      transform: translateX(-$dragSpace);
+    }
+    li.nudge-right .tab {
+      transform: translateX($dragSpace);
     }
   }
 

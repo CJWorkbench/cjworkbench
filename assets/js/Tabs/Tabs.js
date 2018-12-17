@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Tab from './Tab'
+import TabList from './TabList'
 import PendingTab from './PendingTab'
 import NewTabPrompt from './NewTabPrompt'
 
@@ -16,6 +16,7 @@ export default class Tabs extends React.PureComponent {
     setName: PropTypes.func.isRequired, // func(tabId, name) => undefined
     destroy: PropTypes.func.isRequired, // func(tabId) => undefined
     select: PropTypes.func.isRequired, // func(tabId) => undefined
+    setOrder: PropTypes.func.isRequired, // func(tabIds) => undefined
   }
 
   create = () => {
@@ -23,24 +24,18 @@ export default class Tabs extends React.PureComponent {
   }
 
   render () {
-    const { tabs, selectedTabPosition, pendingTabNames, setName, select, destroy } = this.props
+    const { tabs, selectedTabPosition, pendingTabNames, setName, select, destroy, setOrder } = this.props
 
     return (
       <div className='tabs'>
-        <ul>
-          {tabs.map(({ id, name }, index) => (
-            <Tab
-              key={id}
-              index={index}
-              id={id}
-              isSelected={selectedTabPosition === index}
-              name={name}
-              setName={setName}
-              destroy={destroy}
-              select={select}
-            />
-          ))}
-        </ul>
+        <TabList
+          tabs={tabs}
+          selectedTabPosition={selectedTabPosition}
+          setName={setName}
+          destroy={destroy}
+          select={select}
+          setOrder={setOrder}
+        />
         {pendingTabNames.length > 0 ? (
           <ul className='pending'>
             {pendingTabNames.map((name, index) => (
