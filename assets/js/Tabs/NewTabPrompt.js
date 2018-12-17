@@ -10,7 +10,7 @@ export default class NewTabPrompt extends React.PureComponent {
     const { create } = this.props
     return (
       <button title='Create tab' className='new-tab' onClick={create}>
-        +
+        <i className="icon-addc"/>
       </button>
     )
   }
