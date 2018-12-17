@@ -22,11 +22,12 @@
     }
   }
 
+  // Big button to call the module search at the bottom of stack
   .add-module-search {
     width: $module-width;
     margin: 0 $module-margin-right 0 $module-margin-left;
     top: 1.5rem;
-    margin-bottom: 40rem; // so there's always a scrollbar, and clicking "ADD STEP" doesn't add one
+    margin-bottom: 20rem; // so there's always a scrollbar, and clicking "ADD STEP" doesn't add one
     position: relative;
 
     button.search {
@@ -64,7 +65,7 @@
     }
   }
 
-  // When adding a module between others
+  // Button to call the module search between modules
   .add-module-in-between-search {
     width: $module-width;
     margin-left: $module-margin-left;
@@ -110,7 +111,7 @@
 
         i {
           background: transparent;
-          color:$brand-workspace;
+          color: darken($brand-workspace, 5%);
           transition-delay: .1s;
         }
       }
@@ -128,25 +129,38 @@
     }
   }
 
-  // When droping a module between others
-
-  .module-drop-target {
+  // Drop zone to place a module between others in the stack
+  .module-drop-zone {
     display: block;
     position: absolute;
-    top: 0;
-    bottom: 0;
-    width: $module-width;
-    margin: 0 $module-margin-right 0 $module-margin-left;
+    top: -5rem;
+    bottom: -5rem;
+    width: 100%;
     z-index: 2;
-    background: transparent;
-    border-radius: 1rem;
 
-    &.is-drag-hovering {
-      opacity: 1;
+    i {
+      display: none;
+    }
+
+    &.is-drag-hovering .highlight {
+      pointer-events: none;
+      margin: 5rem $module-margin-right 0 $module-margin-left;
+      border-radius: 1rem;
+      height: 1.5rem;
       background-color: $brand-background--action;
+
+      i {
+        display: block;
+        color: darken($brand-workspace, 5%);
+        position: relative;
+        left: 50%;
+        top: 3px;
+        font-size: 1rem;
+      }
     }
   }
 
+  // Module stack in zen mode
   &.zen-mode {
     .wf-module:not(.zen-mode),
     .in-between-modules {

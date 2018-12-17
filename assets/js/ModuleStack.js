@@ -64,7 +64,7 @@ class ModuleDropSpot extends React.PureComponent {
 
   render() {
     if (this.canDrop()) {
-      let className = 'module-drop-target'
+      let className = 'module-drop-zone'
       if (this.state.isDragHovering) className += ' is-drag-hovering'
       return (
         <div
@@ -73,7 +73,12 @@ class ModuleDropSpot extends React.PureComponent {
           onDragEnter={this.onDragEnter}
           onDragLeave={this.onDragLeave}
           onDrop={this.onDrop}
-          ></div>
+          >
+            <div className="highlight">
+              <i className="icon-add"></i>
+            </div>
+        </div>
+
       )
     } else {
       return null
