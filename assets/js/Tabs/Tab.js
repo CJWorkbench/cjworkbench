@@ -69,6 +69,7 @@ export default class Tab extends React.PureComponent {
           onClickRename={this.startEditingTabName}
           onClickDelete={this.destroy}
         />
+        <div className="separator"></div>
       </li>
     )
   }
