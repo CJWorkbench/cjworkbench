@@ -1,5 +1,5 @@
 .tabs {
-  $tabs-background: darken($WF-background,5%);
+  $tabs-background: darken($WF-background,4%);
   @extend .content-1;
   border-top: 2px solid $brand-workspace;
   background: $tabs-background;
