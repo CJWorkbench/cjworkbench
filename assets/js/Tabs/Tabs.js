@@ -39,11 +39,11 @@ export default class Tabs extends React.PureComponent {
               select={select}
             />
           ))}
-          <NewTabPrompt
-            nPendingCreates={nPendingCreates}
-            create={this.create}
-          />
         </ul>
+        <NewTabPrompt
+          nPendingCreates={nPendingCreates}
+          create={this.create}
+        />
       </div>
     )
   }
