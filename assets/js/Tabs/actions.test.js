@@ -81,6 +81,27 @@ describe('Tabs.actions', () => {
       expect(Object.keys(state.tabs)).toEqual([ '1' ])
     })
 
+    it('should not destroy the only remaining tab', async () => {
+      const api = {
+        deleteTab: jest.fn()
+      }
+      const store = mockStore({
+        workflow: {
+          tab_ids: [ 1 ],
+          selected_tab_position: 0,
+        },
+        tabs: {
+          1: {},
+        }
+      }, api)
+
+      await store.dispatch(actions.destroy(1))
+      expect(api.deleteTab).not.toHaveBeenCalled()
+      const state = store.getState()
+      expect(state.workflow.tab_ids).toEqual([ 1 ])
+      expect(Object.keys(state.tabs)).toEqual([ '1' ])
+    })
+
     it('should move selected_tab_position if selected is _after_ deleted', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))

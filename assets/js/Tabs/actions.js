@@ -32,6 +32,10 @@ export function setOrder (tabIds) {
 
 export function destroy (tabId) {
   return (dispatch, getState, api) => {
+    if (getState().workflow.tab_ids.length === 1) {
+      return
+    }
+
     return dispatch({
       type: TAB_DESTROY,
       payload: {
