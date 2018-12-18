@@ -128,7 +128,7 @@
           border-radius: .5rem;
           box-shadow: $menu-shadow;
           padding: .5rem 0;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
           .dropdown-item:active {
             color: $brand-text--darker;
           }
@@ -173,19 +173,20 @@
       display: block;
       position: absolute;
       top: 0;
+      border-top: 2px solid $tabs-border;
       bottom: 0;
       background-color: $brand-orange;
-      width: 8px;
+      width: 3px;
       pointer-events: none;
       z-index: 1;
     }
 
     li.dropping-left::before {
-      left: -4px - $overlap-width;
+      left: 0px - $overlap-width;
     }
 
     li.dropping-right::before {
-      right: -4px - (-$overlap-width);
+      right: -3px - (-$overlap-width);
     }
   }
 
@@ -195,7 +196,7 @@
     border-radius: 100%;
     width: 2.4rem;
     height: 2.4rem;
-    background: $light-accent--strong;
+    background: $light-accent--Vstrong;
     border: 1px solid $tabs-border;
     padding: 0;
     color: $tabs-border;
