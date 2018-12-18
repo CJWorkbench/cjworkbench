@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import EditableTabName from './EditableTabName'
 
-export default function TabName ({ name, isEditing, onClick, onSubmitEdit, onCancelEdit }) {
+export default function TabName ({ name, isEditing, onSelect, onRequestEdit, onSubmitEdit, onCancelEdit }) {
   if (isEditing) {
     return (
       <EditableTabName
@@ -13,7 +13,7 @@ export default function TabName ({ name, isEditing, onClick, onSubmitEdit, onCan
     )
   } else {
     return (
-      <button className='tab-name' onClick={onClick}>
+      <button className='tab-name' onMouseDown={onSelect} onClick={onRequestEdit}>
         {name}
       </button>
     )
@@ -22,7 +22,8 @@ export default function TabName ({ name, isEditing, onClick, onSubmitEdit, onCan
 TabName.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired, // func() => undefined
+  onSelect: PropTypes.func.isRequired, // func() => undefined
+  onRequestEdit: PropTypes.func.isRequired, // func() => undefined
   onSubmitEdit: PropTypes.func.isRequired, // func(name) => undefined
   onCancelEdit: PropTypes.func.isRequired, // func() => undefined
 }

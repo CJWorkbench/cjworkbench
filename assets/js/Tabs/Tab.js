@@ -51,15 +51,6 @@ export default class Tab extends React.PureComponent {
     destroy(id)
   }
 
-  onClickTab = () => {
-    const { select, id, isSelected } = this.props
-    if (isSelected) {
-      this.startEditingTabName()
-    } else {
-      select(id)
-    }
-  }
-
   get isDragMode () {
     return this.props.dragging !== null
   }
@@ -125,6 +116,11 @@ export default class Tab extends React.PureComponent {
     return null
   }
 
+  select = () => {
+    const { id, select } = this.props
+    select(id)
+  }
+
   get isDragging () {
     const { dragging, index } = this.props
     return dragging && dragging.fromIndex === index
@@ -157,7 +153,8 @@ export default class Tab extends React.PureComponent {
             name={this.name}
             index={index}
             isEditing={isEditingTabName}
-            onClick={this.onClickTab}
+            onSelect={this.select}
+            onRequestEdit={this.startEditingTabName}
             onSubmitEdit={this.submitName}
             onCancelEdit={this.stopEditingTabName}
           />
