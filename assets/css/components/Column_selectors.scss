@@ -70,6 +70,7 @@
     // placeholder when empty
     .react-select__placeholder {
       color: $placeholder;
+      white-space: nowrap;
 
       & + div {
         margin: 0;
