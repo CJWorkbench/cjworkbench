@@ -22,7 +22,7 @@
     "redux": "^4.0.1",
     "redux-promise-middleware": "^5.1.1",
     "redux-thunk": "^2.3.0",
-    "reselect": "^3.0.1"
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
