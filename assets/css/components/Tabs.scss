@@ -1,11 +1,11 @@
 .tabs {
   $tabs-background: darken($WF-background,5%);
   $tabs-border: $table-header;
-
+  line-height: 0;
   border-top: 2px solid $tabs-border;
   background: $tabs-background;
   color: $brand-text--medium;
-  padding-bottom: .3rem;
+  padding-bottom: 0;
   padding-left: 1.5rem;
 
   // list of tabs
@@ -18,7 +18,7 @@
     &>li {
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
-      top: -2px; // make border overlap with border-top of entire .tabs bar
+      margin-top: -2px; // make border overlap with border-top of entire .tabs bar
       margin-left: -3px; // tabs are overlapping and masking "::after" separators
       border: 2px solid transparent;
       border-bottom-left-radius: 5px;
@@ -124,7 +124,7 @@
           border-radius: .5rem;
           box-shadow: $menu-shadow;
           padding: .5rem 0;
-
+          margin-bottom: 0;
           .dropdown-item:active {
             color: $brand-text--darker;
           }
@@ -192,22 +192,18 @@
   button.new-tab {
     position: relative;
     font-size: 1.3rem;
-    margin-left: 2rem;
+    margin-left: .8rem;
     border-radius: 100%;
-    top:-.2rem;
-    width: 2.3rem;
-    height: 2.3rem;
-    background: $light-accent--Vstrong;
+    top:-1rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    background: $light-accent--strong;
     border: 1px solid $tabs-border;
     padding: 0;
     color: $tabs-border;
     cursor: pointer;
     &:hover {
       background-color: $white;
-    }
-    i {
-      position: relative;
-      top: .2rem;
     }
   }
 }
