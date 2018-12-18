@@ -1,7 +1,8 @@
 .tabs {
   $tabs-background: darken($WF-background,5%);
   $tabs-border: $table-header;
-  line-height: 0;
+
+  line-height: 0; // there are some `display: inline-block` elements and we want them to line up
   border-top: 2px solid $tabs-border;
   background: $tabs-background;
   color: $brand-text--medium;
@@ -23,7 +24,6 @@
       border: 2px solid transparent;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      overflow: hidden;
       border-top: 0;
     }
 
@@ -32,6 +32,8 @@
       display: inline-flex; // editor + dropdown-menu + "::after" separator
       white-space: nowrap;
       background: inherit; // shown when drag-and-dropping
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
 
       .tab-pending {
         // This is a tab that doesn't exist yet: the user clicked "+" and
