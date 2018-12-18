@@ -185,19 +185,23 @@
 
   button.new-tab {
     position: relative;
-    top: .5rem;
-    font-size: 2.1rem;
-    margin-left: 2.1rem;
+    font-size: 1.3rem;
+    margin-left: 2rem;
     border-radius: 100%;
-    width: 2rem;
-    height: 2rem;
+    top:-.2rem;
+    width: 2.3rem;
+    height: 2.3rem;
     background: $light-accent--Vstrong;
-    border: 0;
+    border: 1px solid $tabs-border;
     padding: 0;
     color: $tabs-border;
     cursor: pointer;
     &:hover {
       background-color: $white;
+    }
+    i {
+      position: relative;
+      top: .2rem;
     }
   }
 }
