@@ -15,8 +15,12 @@
     list-style: none;
     display: contents;
 
-    // single tab
     &>li {
+      display: inline-block;
+    }
+
+    // single tab
+    &>li .tab {
       display: inline-flex; // editor + dropdown-menu + "::after" separator
       position: relative;
       top: -2px; // make border overlap with border-top of entire .tabs bar
@@ -25,7 +29,7 @@
       border: 2px solid transparent;
       border-top: 0;
 
-      &.pending {
+      .tab-pending {
         // This is a tab that doesn't exist yet: the user clicked "+" and
         // JS hasn't heard a response from the server.
         //
@@ -133,20 +137,38 @@
         width: 1px;
         background: $dark-accent--strong;
       }
+    }
 
-      // when tab is selected
-      &.selected {
-        border-color: $tabs-border;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        background: $white;
-        box-shadow: none;
-        color: $brand-text--darker;
+    &>li.selected .tab {
+      border-color: $tabs-border;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      background: $white;
+      box-shadow: none;
+      color: $brand-text--darker;
 
-        &::after {
-          display: none;
-        }
+      &::after {
+        display: none;
       }
+    }
+  }
+
+  ul.dragging {
+    $dragSpace: 2rem;
+
+    li.dragging .tab {
+      opacity: .5;
+    }
+
+    li.nudge-left, li.nudge-right {
+      z-index: 1; // Nudged tabs show up _above_ un-nudged ones
+    }
+
+    li.nudge-left .tab {
+      transform: translateX(-$dragSpace);
+    }
+    li.nudge-right .tab {
+      transform: translateX($dragSpace);
     }
   }
 
@@ -167,5 +189,4 @@
       background-color: $white;
     }
   }
-
 }

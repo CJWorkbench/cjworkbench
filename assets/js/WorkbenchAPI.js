@@ -101,7 +101,7 @@ export default class WorkbenchAPI {
     return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
   }
 
-  reorderTabs (tabIds) {
+  setTabOrder (tabIds) {
     return this.websocket.callServerHandler('workflow.set_tab_order', {
       tabIds
     })
