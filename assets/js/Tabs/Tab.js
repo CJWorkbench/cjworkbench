@@ -66,10 +66,12 @@ export default class Tab extends React.PureComponent {
 
   onDragStart = (ev) => {
     const { onDragStart, index, name } = this.props
-    onDragStart(index)
 
     ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.setData('text/plain', name)
+    ev.dataTransfer.setDragImage(ev.target, 0, 0)
+
+    onDragStart(index)
   }
 
   onDragOver = (ev) => {
