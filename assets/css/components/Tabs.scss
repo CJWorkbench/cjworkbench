@@ -17,6 +17,7 @@
 
     &>li {
       display: inline-block;
+      position: relative; // for .dropping-left and .dropping-right
     }
 
     // single tab
@@ -136,6 +137,7 @@
         bottom: .6rem;
         width: 1px;
         background: $dark-accent--strong;
+        pointer-events: none;
       }
     }
 
@@ -157,18 +159,27 @@
     $dragSpace: 2rem;
 
     li.dragging .tab {
-      opacity: .5;
+      opacity: .3;
     }
 
-    li.nudge-left, li.nudge-right {
-      z-index: 1; // Nudged tabs show up _above_ un-nudged ones
+    li.dropping-left::before, li.dropping-right::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: $brand-orange;
+      width: 8px;
+      pointer-events: none;
+      z-index: 1;
     }
 
-    li.nudge-left .tab {
-      transform: translateX(-$dragSpace);
+    li.dropping-left::before {
+      left: -4px - 3px;
     }
-    li.nudge-right .tab {
-      transform: translateX($dragSpace);
+
+    li.dropping-right::before {
+      right: -4px - (-3px);
     }
   }
 

@@ -103,9 +103,9 @@ export default class Tab extends React.PureComponent {
   }
 
   /**
-   * 'nudge-left', 'nudge-right' or null
+   * 'dropping-left', 'dropping-right' or null
    */
-  get nudgeClassName () {
+  get droppingClassName () {
     if (!this.isDragMode) return null
 
     const { index, dragging } = this.props
@@ -113,15 +113,13 @@ export default class Tab extends React.PureComponent {
 
     if (fromIndex === toIndex || fromIndex + 1 === toIndex) return null
 
-    const draggingRight = toIndex > fromIndex
-
-    if (draggingRight) {
-      if (index <= fromIndex) return null // Don't nudge anything left of element being dragged
-      return index < toIndex ? 'nudge-left' : 'nudge-right'
-    } else { // dragging left
-      if (index >= fromIndex) return null // Don't nudge anything right of element being dragged
-      return index < toIndex ? 'nudge-left' : 'nudge-right'
+    if (index === toIndex) {
+      return 'dropping-left' // drop is happening to the _left_ of this tab
+    } else if (index === toIndex - 1) {
+      return 'dropping-right' // drop is happening to the _right_ of this tab
     }
+
+    return null
   }
 
   get isDragging () {
@@ -132,11 +130,11 @@ export default class Tab extends React.PureComponent {
   render () {
     const { isSelected, name, index } = this.props
     const { isEditingTabName } = this.state
-    const nudgeClassName = this.nudgeClassName
+    const droppingClassName = this.droppingClassName
 
     const classNames = []
     if (isSelected) classNames.push('selected')
-    if (nudgeClassName) classNames.push(nudgeClassName)
+    if (droppingClassName) classNames.push(droppingClassName)
     if (this.isDragging) classNames.push('dragging')
 
     return (
