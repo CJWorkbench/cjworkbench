@@ -68,6 +68,7 @@ export default class Tab extends React.PureComponent {
     const { onDragStart, index, name } = this.props
     onDragStart(index)
 
+    ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.setData('text/plain', name)
   }
 
@@ -141,13 +142,15 @@ export default class Tab extends React.PureComponent {
       <li
         ref={this.liRef}
         className={classNames.join(' ')}
-        draggable
-        onDragStart={this.onDragStart}
-        onDragOver={this.onDragOver}
-        onDragEnd={this.onDragEnd}
-        onDrop={this.onDrop}
       >
-        <div className='tab'>
+        <div
+          className='tab'
+          draggable
+          onDragStart={this.onDragStart}
+          onDragOver={this.onDragOver}
+          onDragEnd={this.onDragEnd}
+          onDrop={this.onDrop}
+        >
           <TabName
             name={this.name}
             index={index}

@@ -18,17 +18,20 @@
     &>li {
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
+      top: -2px; // make border overlap with border-top of entire .tabs bar
+      margin-left: -3px; // tabs are overlapping and masking "::after" separators
+      border: 2px solid transparent;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      overflow: hidden;
+      border-top: 0;
     }
 
     // single tab
     &>li .tab {
       display: inline-flex; // editor + dropdown-menu + "::after" separator
-      position: relative;
-      top: -2px; // make border overlap with border-top of entire .tabs bar
-      margin-left: -3px; // tabs are overlapping and masking "::after" separators
       white-space: nowrap;
-      border: 2px solid transparent;
-      border-top: 0;
+      background: inherit; // shown when drag-and-dropping
 
       .tab-pending {
         // This is a tab that doesn't exist yet: the user clicked "+" and
@@ -141,16 +144,16 @@
       }
     }
 
-    &>li.selected .tab {
+    &>li.selected {
       border-color: $tabs-border;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-      background: $white;
-      box-shadow: none;
-      color: $brand-text--darker;
 
-      &::after {
-        display: none;
+      .tab {
+        background: $white;
+        color: $brand-text--darker;
+
+        &::after {
+          display: none;
+        }
       }
     }
   }
@@ -158,8 +161,11 @@
   ul.dragging {
     $dragSpace: 2rem;
 
-    li.dragging .tab {
-      opacity: .3;
+    li.dragging {
+      .tab {
+        opacity: .3;
+      }
+      border-color: $brand-orange;
     }
 
     li.dropping-left::before, li.dropping-right::before {
