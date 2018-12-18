@@ -242,7 +242,7 @@ class Workflow(models.Model):
         with transaction.atomic():
             workflow = Workflow.objects.create(**kwargs)
             InitWorkflowCommand.create(workflow)
-            workflow.tabs.create(position=0)
+            workflow.tabs.create(position=0, name='Tab 1')
             return workflow
 
     def _duplicate(self, name: str, owner: Optional[User],

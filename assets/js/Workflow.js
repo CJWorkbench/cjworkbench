@@ -6,6 +6,7 @@ import OutputPane from './OutputPane'
 import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
+import Tabs from './Tabs'
 import { logUserEventEvenInLesson } from './utils'
 import { connect } from 'react-redux'
 
@@ -82,6 +83,8 @@ export class Workflow extends React.PureComponent {
             <ModuleStack api={this.props.api} />
             <OutputPane api={this.props.api} />
           </div>
+
+          <Tabs />
 
           <MaybeNotYourWorkflow
             workflowId={this.props.workflow.url_id}

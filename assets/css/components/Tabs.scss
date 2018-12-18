@@ -1,0 +1,203 @@
+.tabs {
+  $tabs-background: darken($WF-background,5%);
+  $tabs-border: $table-header;
+
+  border-top: 2px solid $tabs-border;
+  background: $tabs-background;
+  color: $brand-text--medium;
+  padding-bottom: .3rem;
+  padding-left: 1.5rem;
+
+  // list of tabs
+  &>ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: contents;
+
+    &>li {
+      display: inline-block;
+      position: relative; // for .dropping-left and .dropping-right
+    }
+
+    // single tab
+    &>li .tab {
+      display: inline-flex; // editor + dropdown-menu + "::after" separator
+      position: relative;
+      top: -2px; // make border overlap with border-top of entire .tabs bar
+      margin-left: -3px; // tabs are overlapping and masking "::after" separators
+      white-space: nowrap;
+      border: 2px solid transparent;
+      border-top: 0;
+
+      .tab-pending {
+        // This is a tab that doesn't exist yet: the user clicked "+" and
+        // JS hasn't heard a response from the server.
+        //
+        // There's no dropdown menu on tabs that don't exist yet, so pad instead.
+        padding-right: 2rem;
+      }
+
+      $tab-name-padding: .8rem .5rem .6rem 1.5rem;
+      $tab-button-padding: .8rem .5rem .6rem .1rem;
+
+      .tab-name, .editable-tab-name {
+        font-size: 1.6rem;
+        white-space: pre; // do not collapse whitespace
+        display: inline-block;
+        position: relative;
+        color: inherit;
+        cursor: pointer;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        padding: $tab-name-padding;
+      }
+
+      .editable-tab-name {
+        // Contains a <span> (styled like .tab-name) and a <input>.
+        // Make the <input> position:absolute so the width is auto-calculated
+        // by the <span>.
+        position: relative;
+
+        span {
+          opacity: 0;
+          display: inline-block; // so it has the same height even when it contains no text
+        }
+
+        input {
+          font: inherit;
+          line-height: inherit;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          padding: $tab-name-padding;
+          background: transparent;
+          border: 0;
+          outline: 0;
+        }
+      }
+
+      .dropdown {
+        button.toggle {
+          // Bears some relation to .context-button, but [adamhooper, 2018-12-18] it's too different
+          cursor: pointer;
+          border: 0;
+          padding: $tab-button-padding;
+          background: transparent; // override bootstrap
+          height: 100%;
+
+          i {
+            display: inline-block;
+            // icon font's caret is hard to size and position...:
+            font-size: .6rem;
+            width: 2rem;
+            height: 2rem;
+            padding-top: .8rem;
+            line-height: 1;
+            color: $dark-gray;
+            border-radius: 50%;
+            opacity: .6;
+            outline: 0; // even when :focusing in Webkit
+          }
+
+          &:hover i {
+            color: $brand-text--dark;
+            opacity: 1;
+          }
+
+          &:focus i {
+            color: $dark-gray;
+            background-color: $Vlight-gray;
+            opacity: 1;
+          }
+        }
+
+        .dropdown-menu {
+          border: 2px solid $brand-workspace;
+          background-color: $white;
+          border-radius: .5rem;
+          box-shadow: $menu-shadow;
+          padding: .5rem 0;
+
+          .dropdown-item:active {
+            color: $brand-text--darker;
+          }
+        }
+      }
+
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        right: 0;
+        top: .8rem;
+        bottom: .6rem;
+        width: 1px;
+        background: $dark-accent--strong;
+        pointer-events: none;
+      }
+    }
+
+    &>li.selected .tab {
+      border-color: $tabs-border;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      background: $white;
+      box-shadow: none;
+      color: $brand-text--darker;
+
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  ul.dragging {
+    $dragSpace: 2rem;
+
+    li.dragging .tab {
+      opacity: .3;
+    }
+
+    li.dropping-left::before, li.dropping-right::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: $brand-orange;
+      width: 8px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    li.dropping-left::before {
+      left: -4px - 3px;
+    }
+
+    li.dropping-right::before {
+      right: -4px - (-3px);
+    }
+  }
+
+  button.new-tab {
+    position: relative;
+    top: .5rem;
+    font-size: 2.1rem;
+    margin-left: 2.1rem;
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+    background: $light-accent--Vstrong;
+    border: 0;
+    padding: 0;
+    color: $tabs-border;
+    cursor: pointer;
+    &:hover {
+      background-color: $white;
+    }
+  }
+}

@@ -28,8 +28,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     # is: you _must_ delete the Delta first; after deleting the Delta, you
     # _may_ delete the WfModule.
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
-
-    order = models.IntegerField()
     # what was selected before we were added?
     selected_wf_module_position = models.IntegerField(null=True, blank=True)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
@@ -118,8 +116,8 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
 
         if self.wf_module.is_deleted:
             # The WfModule was soft-deleted, and this is the last Delta that
-            # references it. After deleting this Delta there are no more pointers
-            # to this WfModule. Delete it.
+            # references it. After deleting this Delta there are no more
+            # pointers to this WfModule. Delete it.
             self.wf_module.delete()
 
     @classmethod
@@ -134,7 +132,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             **kwargs,
             'workflow': workflow,
             'wf_module': wf_module,
-            'order': position,
             'selected_wf_module_position': tab.selected_wf_module_position,
             'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }

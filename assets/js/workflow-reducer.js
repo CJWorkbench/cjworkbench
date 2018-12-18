@@ -1,6 +1,7 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
 import { createStore, applyMiddleware } from 'redux'
+import { reducerFunctions as TabReducerFunctions } from './Tabs/actions'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -30,6 +31,8 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 // Master state for the workflow.
 
 const reducerFunc = {}
+
+Object.assign(reducerFunc, TabReducerFunctions)
 
 const registerReducerFunc = (key, func) => {
   reducerFunc[key] = func
@@ -785,14 +788,10 @@ export function quickFixAction(wfModuleId, action, args) {
 // ---- Reducer ----
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
 
-export function workflowReducer (state, action) {
-  if (!state) {
-    state = {} // initial state. we'll load a workflow soon.
-  }
-
-  if (reducerFunc && action.type in reducerFunc) {
+export function workflowReducer (state={}, action) {
+  if (action.type in reducerFunc) {
     return reducerFunc[action.type](state, action)
+  } else {
+    return state
   }
-
-  return state
 }
