@@ -6,7 +6,7 @@
   line-height: 0; // there are some `display: inline-block` elements and we want them to line up
   border-top: 2px solid $tabs-border;
   background: $tabs-background;
-  color: $brand-text--medium;
+  color: $brand-text--dark;
   padding-bottom: .5rem;
   padding-left: 1.5rem;
 
@@ -89,7 +89,6 @@
 
       .dropdown {
         button.toggle {
-          // Bears some relation to .context-button, but [adamhooper, 2018-12-18] it's too different
           cursor: pointer;
           border: 0;
           padding: $tab-button-padding;
@@ -102,7 +101,8 @@
             font-size: .6rem;
             width: 2rem;
             height: 2rem;
-            padding-top: .8rem;
+            padding-top: .6rem;
+            padding-left: .1rem;
             line-height: 1;
             color: $dark-gray;
             border-radius: 50%;
@@ -116,8 +116,8 @@
           }
 
           &:focus i {
-            color: $dark-gray;
-            background-color: $Vlight-gray;
+            color: $brand-text--darker;
+            background-color: $dark-accent--soft;
             opacity: 1;
           }
         }
@@ -128,7 +128,7 @@
           border-radius: .5rem;
           box-shadow: $menu-shadow;
           padding: .5rem 0;
-          margin-bottom: 0;
+          margin-bottom: 1rem;
           .dropdown-item:active {
             color: $brand-text--darker;
           }
@@ -173,35 +173,41 @@
       display: block;
       position: absolute;
       top: 0;
+      border-top: 2px solid $tabs-border;
       bottom: 0;
       background-color: $brand-orange;
-      width: 8px;
+      width: 3px;
       pointer-events: none;
       z-index: 1;
     }
 
     li.dropping-left::before {
-      left: -4px - $overlap-width;
+      left: 0px - $overlap-width;
     }
 
     li.dropping-right::before {
-      right: -4px - (-$overlap-width);
+      right: -3px - (-$overlap-width);
     }
   }
 
   button.new-tab {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     margin-left: .8rem;
     border-radius: 100%;
     width: 2.4rem;
     height: 2.4rem;
-    background: $light-accent--strong;
+    background: $light-accent--Vstrong;
     border: 1px solid $tabs-border;
     padding: 0;
     color: $tabs-border;
     cursor: pointer;
+    position: relative;
+    top: .2rem;
     &:hover {
       background-color: $white;
+    }
+    i {
+      position: relative;
     }
   }
 }

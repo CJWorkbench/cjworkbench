@@ -9,7 +9,7 @@ export default function TabContextMenu ({ onClickRename, onClickDelete }) {
   return (
     <UncontrolledDropdown direction='up'>
       <DropdownToggle className='toggle'>
-        <i className='icon-caret-down'/>
+        <i className='icon-caret-up'/>
       </DropdownToggle>
       <DropdownMenu positionFixed right>
         <DropdownItem onClick={onClickRename}><i className='icon-edit'></i> Rename</DropdownItem>
