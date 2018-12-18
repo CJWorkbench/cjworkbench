@@ -85,8 +85,9 @@ class RefineSpec:
         series -- already-renamed categories series
         """
         if self.blacklist:
-            mask = ~series.isin(self.blacklist)
-            table[series.name] = series.cat.remove_categories(self.blacklist)
+            blacklist = series.cat.categories.intersection(self.blacklist)
+            mask = ~series.isin(blacklist)
+            table[series.name] = series.cat.remove_categories(blacklist)
             return table[mask]
         else:
             # common case

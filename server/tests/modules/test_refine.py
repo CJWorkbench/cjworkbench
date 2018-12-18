@@ -205,6 +205,16 @@ class RefineSpecTest(unittest.TestCase):
             pd.DataFrame({'A': ['a', 'a']}, dtype='category')
         )
 
+    def test_refine_blacklist_missing_category(self):
+        # Pandas error: ValueError: removals must all be in old categories
+        # In this example, we try to remove 'c' which is not a category
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            RefineSpec({}, ['a', 'c']),
+            pd.DataFrame({'A': ['b']}, dtype='category')
+        )
+
     def test_refine_rename_swap(self):
         self._test_refine_spec_apply(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
