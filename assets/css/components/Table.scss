@@ -590,7 +590,6 @@
   // Popper positions the dropdown, not CSS. Cancel all the Bootstrap CSS
   // rules.
   .dropdown-menu {
-    border-color: $table-header;
     position: static;
     float: none;
     margin: 0;
