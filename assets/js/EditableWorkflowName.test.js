@@ -1,6 +1,7 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import { mockStore, tick } from './test-utils'
+import { Provider } from 'react-redux'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 
 describe('EditableWorkflowName', () => {
@@ -34,7 +35,9 @@ describe('EditableWorkflowName', () => {
     }
     const store = mockStore({ workflow: { name: 'A' } }, api)
     const w = mount(
-      <ConnectedEditableWorkflowName store={store} isReadOnly={false} />
+      <Provider store={store}>
+        <ConnectedEditableWorkflowName isReadOnly={false} />
+      </Provider>
     )
     expect(w.find('input').prop('value')).toEqual('A')
     w.find('input').simulate('change', { target: { value: 'B' } })

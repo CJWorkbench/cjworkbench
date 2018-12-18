@@ -398,22 +398,23 @@ describe('WfModule, not read-only mode', () => {
     })
 
     const w = mount(
-      <ConnectedWfModule
-        store={store}
-        isReadOnly={false}
-        isAnonymous={false}
-        isZenMode={false}
-        isZenModeAllowed={false}
-        index={1}
-        tabId={11}
-        wfModule={{ id: 20, tab_id: 11, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
-        isSelected={true}
-        isAfterSelected={false}
-        onDragStart={jest.fn()}
-        onDragEnd={jest.fn()}
-        setZenMode={jest.fn()}
-        api={mockApi}
-      />
+      <Provider store={store}>
+        <ConnectedWfModule
+          isReadOnly={false}
+          isAnonymous={false}
+          isZenMode={false}
+          isZenModeAllowed={false}
+          index={1}
+          tabId={11}
+          wfModule={{ id: 20, tab_id: 11, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+          isSelected={true}
+          isAfterSelected={false}
+          onDragStart={jest.fn()}
+          onDragEnd={jest.fn()}
+          setZenMode={jest.fn()}
+          api={mockApi}
+        />
+      </Provider>
     )
 
     mockApi.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
