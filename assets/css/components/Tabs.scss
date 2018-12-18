@@ -1,7 +1,8 @@
 .tabs {
-  $tabs-background: darken($WF-background,4%);
+  $tabs-background: darken($WF-background,5%);
+  $tabs-border: $brand-orange;
   @extend .content-1;
-  border-top: 2px solid $brand-workspace;
+  border-top: 2px solid $tabs-border;
   background: $tabs-background;
   color: $brand-text--medium;
   padding-bottom: .3rem;
@@ -88,10 +89,24 @@
         }
 
         .dropdown-menu {
-          margin-bottom: 1rem;
+          margin-bottom: .6rem;
+          margin-right: -.9rem;
+          background-color: transparent;
+          border-color: transparent;
+          padding-bottom: 1rem;
+          box-shadow: none;
+          border-radius: 0px;
 
-          .dropdown-item:active {
-            color: $brand-text--darker;
+          .dropdown-items-container { // created in order to have space between tabs and menu while moving the mouse from one another
+            border: 2px solid $tabs-border;
+            background-color: $white;
+            border-radius: .5rem;
+            box-shadow: $menu-shadow;
+            padding: .5rem 0;
+
+            .dropdown-item:active {
+              color: $brand-text--darker;
+            }
           }
         }
       }
@@ -104,7 +119,7 @@
 
       // when tab is selected
       &.selected {
-        border-color: $brand-workspace;
+        border-color: $tabs-border;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         background: $white;
@@ -136,7 +151,7 @@
     background: $light-accent--Vstrong;
     border: 0;
     padding: 0;
-    color: $brand-workspace;
+    color: $tabs-border;
     cursor: pointer;
     &:hover {
       background-color: $white;

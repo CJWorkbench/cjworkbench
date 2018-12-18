@@ -12,8 +12,10 @@ export default function TabContextMenu ({ onClickRename, onClickDelete }) {
         <i className="icon-caret-down"/>
       </DropdownToggle>
       <DropdownMenu positionFixed right>
-        <DropdownItem onClick={onClickRename}><i className='icon-edit'></i> Rename</DropdownItem>
-        <DropdownItem onClick={onClickDelete}><i className='icon-removec'></i> Delete</DropdownItem>
+        <div className="dropdown-items-container">
+          <DropdownItem onClick={onClickRename}><i className='icon-edit'></i> Rename</DropdownItem>
+          <DropdownItem onClick={onClickDelete}><i className='icon-removec'></i> Delete</DropdownItem>
+        </div>
       </DropdownMenu>
     </UncontrolledDropdown>
   )
