@@ -22,10 +22,6 @@
       position: relative; // for .dropping-left and .dropping-right
       margin-top: -2px; // make border overlap with border-top of entire .tabs bar
       margin-left: -$overlap-width; // tabs are overlapping and masking "::after" separators
-      border: 2px solid transparent;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-      border-top: 0;
     }
 
     // single tab
@@ -33,8 +29,10 @@
       display: inline-flex; // editor + dropdown-menu + "::after" separator
       white-space: nowrap;
       background: inherit; // shown when drag-and-dropping
+      border: 2px solid transparent;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
+      border-top: 0;
 
       .tab-pending {
         // This is a tab that doesn't exist yet: the user clicked "+" and
@@ -148,9 +146,8 @@
     }
 
     &>li.selected {
-      border-color: $tabs-border;
-
       .tab {
+        border-color: $tabs-border;
         background: $white;
         color: $brand-text--darker;
 
@@ -164,10 +161,7 @@
   ul.dragging {
     $dragSpace: 2rem;
 
-    li.dragging {
-      .tab {
-        opacity: .3;
-      }
+    li.dragging .tab {
       border-color: $brand-orange;
     }
 
