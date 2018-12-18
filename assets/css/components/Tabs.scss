@@ -1,6 +1,7 @@
 .tabs {
   $tabs-background: darken($WF-background,5%);
   $tabs-border: $table-header;
+  $overlap-width: 3px;
 
   line-height: 0; // there are some `display: inline-block` elements and we want them to line up
   border-top: 2px solid $tabs-border;
@@ -20,7 +21,7 @@
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
       margin-top: -2px; // make border overlap with border-top of entire .tabs bar
-      margin-left: -3px; // tabs are overlapping and masking "::after" separators
+      margin-left: -$overlap-width; // tabs are overlapping and masking "::after" separators
       border: 2px solid transparent;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
@@ -183,11 +184,11 @@
     }
 
     li.dropping-left::before {
-      left: -4px - 3px;
+      left: -4px - $overlap-width;
     }
 
     li.dropping-right::before {
-      right: -4px - (-3px);
+      right: -4px - (-$overlap-width);
     }
   }
 
