@@ -45,30 +45,27 @@
       $tab-name-padding: .8rem .5rem .6rem 1.5rem;
       $tab-button-padding: .8rem .5rem .6rem .1rem;
 
-      .tab-name, .editable-tab-name {
+      .tab-name {
         font-size: 1.4rem;
         line-height: 1.5;
         white-space: pre; // do not collapse whitespace
-        display: block;
-        position: relative;
-        color: inherit;
         cursor: pointer;
-        border: 0;
-        outline: 0;
-        background: transparent;
         padding: $tab-name-padding;
-      }
-
-      .editable-tab-name {
         // Contains a <span> (styled like .tab-name) and a <input>.
         // Make the <input> position:absolute so the width is auto-calculated
         // by the <span>.
         display: block;
         position: relative;
 
-        span {
+        span.size-calculator {
           opacity: 0;
           display: block; // so it has the same height even when it contains no text
+
+          &:empty::before {
+            // Never let size-calculator be empty: that will change the height
+            // of the <span>, which will affect the height of the <input>
+            content: '…';
+          }
         }
 
         input {
@@ -81,9 +78,20 @@
           width: 100%;
           height: 100%;
           padding: $tab-name-padding;
+          // Instead of width:100%, use right:-1px. Some widths are fractional,
+          // and if we round the wrong way the <input> will be drag-to-scroll.
+          padding-right: nth($tab-name-padding, 2) - .1rem;
           background: transparent;
           border: 0;
           outline: 0;
+
+          &:disabled {
+            // Every unselected tab's input is :disabled. That lets the user
+            // drag by the _parent_.
+            color: inherit;
+            background: inherit;
+            pointer-events: none;
+          }
         }
       }
 

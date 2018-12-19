@@ -6,6 +6,7 @@ import TabDropdown from './TabDropdown'
 export default class Tab extends React.PureComponent {
   static propTypes = {
     id: PropTypes.number.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
@@ -22,28 +23,19 @@ export default class Tab extends React.PureComponent {
     select: PropTypes.func.isRequired, // func(tabId) => undefined
   }
 
+  inputRef = React.createRef()
   liRef = React.createRef()
 
-  state = {
-    isEditingTabName: false
-  }
-
-  get name () {
-    return this.props.name || '…'
-  }
-
   startEditingTabName = () => {
-    this.setState({ isEditingTabName: true })
+    if (this.props.isReadOnly) return
+
+    this.inputRef.current.focus()
+    this.inputRef.current.select()
   }
 
   submitName = (name) => {
     const { setName, id } = this.props
     setName(id, name)
-    this.setState({ isEditingTabName: false })
-  }
-
-  stopEditingTabName = () => {
-    this.setState({ isEditingTabName: false })
   }
 
   destroy = () => {
@@ -56,11 +48,21 @@ export default class Tab extends React.PureComponent {
   }
 
   onDragStart = (ev) => {
-    const { onDragStart, index, name } = this.props
+    const { isReadOnly, isSelected, onDragStart, index, name } = this.props
+    if (isReadOnly) return
 
     ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.setData('text/plain', name)
-    ev.dataTransfer.setDragImage(ev.target, 0, 0)
+    ev.dataTransfer.setDragImage(ev.currentTarget, 0, 0)
+
+    // Styling is much easier if you can only move the selected element.
+    if (!isSelected) this.select()
+
+    // We disable the <input>'s _normal_ text-editing drag-and-drop
+    // functionality (e.g., double-click a word, drag it elsewhere): it's
+    // just too confusing to keep it running, especially across multiple
+    // browsers. To be extra-clear, blur the input.
+    this.inputRef.current.blur()
 
     onDragStart(index)
   }
@@ -127,8 +129,7 @@ export default class Tab extends React.PureComponent {
   }
 
   render () {
-    const { isSelected, name, index } = this.props
-    const { isEditingTabName } = this.state
+    const { isReadOnly, isSelected, name, index } = this.props
     const droppingClassName = this.droppingClassName
 
     const classNames = []
@@ -143,20 +144,19 @@ export default class Tab extends React.PureComponent {
       >
         <div
           className='tab'
-          draggable
+          draggable={!isReadOnly}
+          onClick={this.select}
           onDragStart={this.onDragStart}
           onDragOver={this.onDragOver}
           onDragEnd={this.onDragEnd}
           onDrop={this.onDrop}
         >
           <TabName
-            name={this.name}
-            index={index}
-            isEditing={isEditingTabName}
-            onSelect={this.select}
-            onRequestEdit={this.startEditingTabName}
-            onSubmitEdit={this.submitName}
-            onCancelEdit={this.stopEditingTabName}
+            value={name}
+            inputRef={this.inputRef}
+            isReadOnly={isReadOnly}
+            isSelected={isSelected}
+            onSubmit={this.submitName}
           />
           <TabDropdown
             onClickRename={this.startEditingTabName}

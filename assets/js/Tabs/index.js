@@ -8,7 +8,8 @@ function mapStateToProps (state) {
   return {
     tabs: workflow.tab_ids.map(id => tabs[String(id)]),
     selectedTabPosition: workflow.selected_tab_position,
-    pendingTabNames: workflow.pendingTabNames || []
+    pendingTabNames: workflow.pendingTabNames || [],
+    isReadOnly: workflow.read_only,
   }
 }
 

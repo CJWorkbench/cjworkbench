@@ -10,6 +10,7 @@ export default class Tabs extends React.PureComponent {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired
     }).isRequired).isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
     selectedTabPosition: PropTypes.number.isRequired,
     pendingTabNames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     create: PropTypes.func.isRequired, // func(position, name) => undefined
@@ -24,12 +25,13 @@ export default class Tabs extends React.PureComponent {
   }
 
   render () {
-    const { tabs, selectedTabPosition, pendingTabNames, setName, select, destroy, setOrder } = this.props
+    const { tabs, isReadOnly, selectedTabPosition, pendingTabNames, setName, select, destroy, setOrder } = this.props
 
     return (
       <div className='tabs'>
         <TabList
           tabs={tabs}
+          isReadOnly={isReadOnly}
           selectedTabPosition={selectedTabPosition}
           setName={setName}
           destroy={destroy}
@@ -46,9 +48,11 @@ export default class Tabs extends React.PureComponent {
             ))}
           </ul>
         ) : null}
-        <NewTabPrompt
-          create={this.create}
-        />
+        {isReadOnly ? null : (
+          <NewTabPrompt
+            create={this.create}
+          />
+        )}
       </div>
     )
   }
