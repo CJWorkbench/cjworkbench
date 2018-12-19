@@ -69,12 +69,6 @@ export default class Tab extends React.PureComponent {
 
   onDragOver = (ev) => {
     if (!this.isDragMode) return // we aren't dragging a tab
-
-    ev.preventDefault() // allow drop
-  }
-
-  onDragOver = (ev) => {
-    if (!this.isDragMode) return // we aren't dragging a tab
     ev.preventDefault() // drop is ok
 
     const { onDragHoverIndex, index } = this.props
