@@ -211,11 +211,9 @@
     cursor: pointer;
     position: relative;
     top: .2rem;
+
     &:hover {
       background-color: $white;
-    }
-    i {
-      position: relative;
     }
   }
 }
