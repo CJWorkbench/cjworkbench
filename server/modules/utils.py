@@ -20,6 +20,7 @@ import pandas
 from pandas import DataFrame
 import pandas.errors
 import xlrd
+import yarl  # aiohttp innards -- yuck!
 from server import rabbitmq
 from server.models import Workflow
 from server.sanitizedataframe import autocast_dtypes_in_place
@@ -443,6 +444,12 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str]={},
     """
     with tempfile.TemporaryFile(prefix='loadurl') as spool:
         async with aiohttp.ClientSession() as session:
+            # aiohttp internally performs URL canonization before sending
+            # request. DISABLE THIS: it breaks oauth and user's expectations.
+            #
+            # https://github.com/aio-libs/aiohttp/issues/3424
+            url = yarl.URL(url, encoded=True)  # prevent magic
+
             async with session.get(url, headers=headers,
                                    timeout=timeout,
                                    raise_for_status=True) as response:

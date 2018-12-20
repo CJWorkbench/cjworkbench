@@ -433,7 +433,7 @@ class TwitterTests(unittest.TestCase):
 
         # query should start where we left off
         self.assertEqual(
-            mock_session.requests[0].url,
+            str(mock_session.requests[0].url),
             (
                 'https://api.twitter.com/1.1/statuses/user_timeline.json'
                 '?screen_name=foouser&tweet_mode=extended&count=200'
@@ -441,7 +441,7 @@ class TwitterTests(unittest.TestCase):
             )
         )
         self.assertEqual(
-            mock_session.requests[1].url,
+            str(mock_session.requests[1].url),
             (
                 'https://api.twitter.com/1.1/statuses/user_timeline.json'
                 '?screen_name=foouser&tweet_mode=extended&count=200'
@@ -537,7 +537,7 @@ class TwitterTests(unittest.TestCase):
         # Actually fetch!
         result = fetch(P(querytype=1, query='cat'))
         self.assertEqual(result.error, '')
-        self.assertEqual([req.url for req in mock_session.requests], [
+        self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/search/tweets.json'
                 '?q=cat&tweet_mode=extended&count=100'
@@ -554,24 +554,6 @@ class TwitterTests(unittest.TestCase):
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
-    def test_twitter_search_quotes_quoted_query(self, session):
-        """
-        Twitter requires _double_ encodeURIComponent() calls for its "q" param.
-
-        This is totally unobvious. For instance, to encode '@cat', a sensible
-        HTTP request would have the URL fragment, 'q=%40cat'. But for no
-        apparent reason Twitter needs it escaped _again_ (escaping the '%'), so
-        it becomes 'q=%2540cat'.
-
-        Why? Looks like a bug to me -- maybe a bug created in 2006 that Twitter
-        has never been able to undo.
-        """
-        session.return_value = mock_session = MockAiohttpSession([[]])
-        fetch(P(querytype=1, query='@cat'))
-        self.assertRegex(mock_session.requests[0].url, 'q=%2540cat')
-
-    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
-    @patch('aiohttp.ClientSession')
     def test_twitter_list(self, session):
         session.return_value = mock_session = MockAiohttpSession([
             mock_statuses,
@@ -583,7 +565,7 @@ class TwitterTests(unittest.TestCase):
             P(querytype=2,
               listurl='https://twitter.com/thatuser/lists/theirlist')
         )
-        self.assertEqual([req.url for req in mock_session.requests], [
+        self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/lists/statuses.json'
                 '?owner_screen_name=thatuser&slug=theirlist'

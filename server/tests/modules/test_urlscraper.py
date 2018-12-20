@@ -93,6 +93,8 @@ class ScrapeUrlsTest(SimpleTestCase):
     @override_settings(SCRAPER_TIMEOUT=0.2)  # all our test data lags 0.25s max
     def scraper_result_test(self, results, response_times):
         async def session_get(url, *, timeout=None):
+            url = str(url)  # undo yarl un-magick-ing
+
             # Silly mock HTTP GET computes the test's input based on its
             # expected output. This defeats the purpose of a test.
             row = results[results['url'] == url]
@@ -134,7 +136,8 @@ class ScrapeUrlsTest(SimpleTestCase):
             )
 
             # ensure aiohttp.get() called with the right sequence of urls
-            call_urls = [args[0] for name, args, kwargs
+            # str() to un-magick the yarl.URL() magic
+            call_urls = [str(args[0]) for name, args, kwargs
                          in session_mock.get.mock_calls]
             self.assertEqual(set(call_urls), set(urls))
 

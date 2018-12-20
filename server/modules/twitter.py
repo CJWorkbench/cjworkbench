@@ -5,8 +5,9 @@ import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
 import numpy as np
 from oauthlib import oauth1
-from oauthlib.common import urlencode, quote
+from oauthlib.common import urlencode
 import pandas as pd
+import yarl # expose aiohttp's innards -- ick.
 from server import oauth
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
@@ -144,6 +145,12 @@ async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
                 headers={'Accept': 'application/json'}
             )
 
+            # aiohttp internally performs URL canonization before sending
+            # request. DISABLE THIS: it rewrites the signed URL!
+            #
+            # https://github.com/aio-libs/aiohttp/issues/3424
+            page_url = yarl.URL(page_url, encoded=True)  # disable magic
+
             response = await session.get(page_url, headers=headers)
             response.raise_for_status()
             page_statuses = await response.json()
@@ -179,7 +186,7 @@ async def twitter_search(access_token, q,
     # 1000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(access_token, 'search/tweets.json',
-                                    [('q', quote(q))], since_id, 100, 10)
+                                    [('q', q)], since_id, 100, 10)
 
 
 async def twitter_list_timeline(access_token, owner_screen_name, slug,

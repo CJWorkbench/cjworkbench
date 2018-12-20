@@ -4,6 +4,7 @@ import re
 from django.conf import settings
 from django.utils import timezone
 import pandas as pd
+import yarl  # aiohttp innards -- yuck!
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 
@@ -22,6 +23,12 @@ async def async_get_url(row, url):
     session = aiohttp.ClientSession()
 
     try:
+        # aiohttp internally performs URL canonization before sending
+        # request. DISABLE THIS: it breaks oauth and user's expectations.
+        #
+        # https://github.com/aio-libs/aiohttp/issues/3424
+        url = yarl.URL(url, encoded=True)  # prevent magic
+
         response = await session.get(url, timeout=settings.SCRAPER_TIMEOUT)
         # We have the header. Now read the content.
         # response.text() times out according to SCRAPER_TIMEOUT above. See
