@@ -12,10 +12,8 @@ describe('GoogleFileSelect', () => {
   })
 
   // Mount is necessary to invoke componentDidMount()
-  let api
-  const googleCredentialsParamId = 321
+  let createOauthAccessToken
   let googleCredentialsSecretName
-  let loadAccessToken
   let loadPickerFactory
   let pickerFactory
   let pickerOpen
@@ -25,7 +23,7 @@ describe('GoogleFileSelect', () => {
   beforeEach(() => {
     // set default props. Tests can change them before calling wrapper()
     fileMetadataJson = aFileMetadataJson
-    loadAccessToken = jest.fn().mockReturnValue(Promise.resolve('access-token'))
+    createOauthAccessToken = jest.fn().mockReturnValue(Promise.resolve('access-token'))
     pickerFactory = {
       open: jest.fn(),
       close: jest.fn(),
@@ -33,10 +31,6 @@ describe('GoogleFileSelect', () => {
     loadPickerFactory = jest.fn(() => Promise.resolve(pickerFactory))
     onChangeJson = jest.fn()
     googleCredentialsSecretName = 'user@example.org'
-
-    api = {
-      paramOauthGenerateAccessToken: loadAccessToken,
-    }
   })
 
   let mountedWrapper = null
@@ -44,8 +38,7 @@ describe('GoogleFileSelect', () => {
     // mount(), not shallow(), because we use componentDidMount()
     return mountedWrapper = mount(
       <GoogleFileSelect
-        api={api}
-        googleCredentialsParamId={googleCredentialsParamId}
+        createOauthAccessToken={createOauthAccessToken}
         googleCredentialsSecretName={googleCredentialsSecretName}
         fileMetadataJson={fileMetadataJson}
         onChangeJson={onChangeJson}
@@ -67,7 +60,7 @@ describe('GoogleFileSelect', () => {
     await tick()
     w.update()
     expect(w.find('.not-signed-in')).toHaveLength(1)
-    expect(loadAccessToken).not.toHaveBeenCalled()
+    expect(createOauthAccessToken).not.toHaveBeenCalled()
     expect(w.find('button')).toHaveLength(0)
   })
 
@@ -90,7 +83,7 @@ describe('GoogleFileSelect', () => {
   })
 
   it('shows loading when fetching access token', async () => {
-    loadAccessToken.mockReturnValue(new Promise(_ => {}))
+    createOauthAccessToken.mockReturnValue(new Promise(_ => {}))
     const w = wrapper()
     await tick()
     w.update()
@@ -100,7 +93,7 @@ describe('GoogleFileSelect', () => {
 
   it('shows errors when unauthenticated', async () => {
     googleCredentialsSecretName = 'hi'
-    loadAccessToken.mockReturnValue(Promise.resolve(null))
+    createOauthAccessToken.mockReturnValue(Promise.resolve(null))
     const w = wrapper()
     await tick()
     w.update()

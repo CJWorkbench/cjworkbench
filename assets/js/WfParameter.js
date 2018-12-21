@@ -73,21 +73,9 @@ export default class WfParameter extends React.PureComponent {
     value: PropTypes.any // value user has edited but not saved -- usually p.value, empty is allowed
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      value: this.props.p.value
-    }
-  }
-
-  componentDidUpdate (prevProps) {
-    if (prevProps.p.value !== this.props.p.value) {
-      // Overwrite user's changes to value, if there are any.
-      // More often, when this value changes the user _hasn't_ been editing
-      // values, so we want to change the value to what the server says it is.
-      this.setState({ value: this.props.p.value })
-    }
+  createGoogleOauthAccessToken = () => {
+    const { api, wfModuleId } = this.props
+    return api.createOauthAccessToken(wfModuleId, 'google_credentials')
   }
 
   get outerDivProps() {
@@ -207,9 +195,9 @@ export default class WfParameter extends React.PureComponent {
         const secretName = secret ? (secret.name || null) : null
         return (
           <GoogleFileSelect
+            createOauthAccessToken={this.createGoogleOauthAccessToken}
             api={this.props.api}
             isReadOnly={this.props.isReadOnly}
-            googleCredentialsParamId={this.props.getParamId('google_credentials')}
             googleCredentialsSecretName={secretName}
             fileMetadataJson={this.props.getParamText('googlefileselect')}
             onChangeJson={this.onChangeGoogleFileSelectJson}

@@ -1,7 +1,6 @@
 import json
 from asgiref.sync import async_to_sync
 from typing import Union
-from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
         HttpResponseNotFound
 from django.shortcuts import redirect
@@ -12,20 +11,6 @@ from rest_framework.response import Response
 from .. import oauth, websockets
 from ..models import ParameterSpec, ParameterVal
 from ..serializers import ParameterValSerializer
-
-
-def parameter_val_or_response_for_read(
-        pk: int, request: HttpRequest) -> Union[HttpResponse, ParameterVal]:
-    """ParameterVal the user can read, or HTTP error response."""
-    try:
-        param = ParameterVal.objects.get(pk=pk)  # raises
-    except ParameterVal.DoesNotExist:
-        return HttpResponseNotFound('Param not found')
-
-    if param.request_authorized_read(request):
-        return param
-    else:
-        return HttpResponseForbidden('Not allowed to read param')
 
 
 def parameter_val_or_response_for_write(
@@ -171,76 +156,3 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
             </body>
         </html>
     """)
-
-
-@api_view(['POST'])
-def parameterval_oauth_generate_access_token(request, pk) -> HttpResponse:
-    """Return a temporary access_token the client can use.
-
-    Only the owner can generate an access token: we must keep the secret away
-    from prying eyes. This access token lets the client read all the owner's
-    documents on GDrive.
-
-    The response is always text/plain. Status codes:
-
-    200 OK -- a token
-    404 Not Found -- param not found, or param has no secret
-    403 Forbidden -- user not allowed to generate token
-
-    We expect the caller to silently accept 404 Not Found but log other errors.
-    """
-    param = parameter_val_or_response_for_read(pk, request)
-    if isinstance(param, HttpResponse):
-        return param
-
-    workflow = param.wf_module.workflow
-    # Let's be abundantly clear: this is a _secret_. Users give us their
-    # refresh tokens under the assmption that we won't share access to all
-    # their files with _anybody_.
-    #
-    # We aren't checking if writes are allowed. We're checking the user's
-    # identity.
-    #
-    # See Workflow.request_authorized_write(), which is _currently_ the same
-    # but may not stay that way.
-    is_owner = False
-    if request.user and request.user == workflow.owner:
-        is_owner = True
-    if workflow.anonymous_owner_session_key and request.session.session_key:
-        if workflow.anonymous_owner_session_key == request.session.session_key:
-            is_owner = True
-    if not is_owner:
-        return HttpResponseForbidden(
-            'Only the workspace owner can generate an access token'
-        )
-
-    spec = param.parameter_spec
-    if spec.type != ParameterSpec.SECRET:
-        return HttpResponseForbidden(f'This is a {spec.type}, not a SECRET')
-
-    service = oauth.OAuthService.lookup_or_none(spec.id_name)
-    if not service:
-        allowed_services = settings.PARAMETER_OAUTH_SERVICES.keys()
-        return HttpResponseForbidden(
-            f'We only support id_name {", ".join(allowed_services)}'
-        )
-
-    secret_json = param.value
-    if not secret_json:
-        return HttpResponseNotFound('secret not set')
-    try:
-        secret_data = json.loads(secret_json)
-    except json.decoder.JSONDecodeError:
-        return HttpResponseForbidden('non-JSON secret')
-    try:
-        offline_token = secret_data['secret']
-    except KeyError:
-        return HttpResponseForbidden('secret value has no secret')
-
-    token = service.generate_access_token_or_str_error(offline_token)
-    if isinstance(token, str):
-        return HttpResponseForbidden(token)
-
-    # token['access_token'] is short-term (1hr). token['refresh_token'] is
-    # super-private and we should never transmit it.
-    return HttpResponse(token['access_token'], content_type='text/plain')

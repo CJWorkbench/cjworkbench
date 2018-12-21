@@ -116,12 +116,9 @@ async function loadDefaultPickerFactory() {
 
 export default class GoogleFileSelect extends React.PureComponent {
   static propTypes = {
-    api: PropTypes.shape({
-      paramOauthGenerateAccessToken: PropTypes.func.isRequired,
-    }).isRequired,
+    createOauthAccessToken: PropTypes.func.isRequired, // func() => Promise[str or null]
     isReadOnly: PropTypes.bool.isRequired,
-    googleCredentialsParamId: PropTypes.number.isRequired,
-    googleCredentialsSecretName: PropTypes.string, // when this changes, call api.paramOauthGenerateAccessToken
+    googleCredentialsSecretName: PropTypes.string, // when this changes, call createOauthAccessToken
     fileMetadataJson: PropTypes.string, // may be empty/null
     onChangeJson: PropTypes.func.isRequired, // func("{ id, name, url }") => undefined
     loadPickerFactory: PropTypes.func, // func() => Promise[PickerFactory], default uses Google APIs
@@ -164,7 +161,7 @@ export default class GoogleFileSelect extends React.PureComponent {
       unauthenticated: false,
     })
 
-    return this.props.api.paramOauthGenerateAccessToken(this.props.googleCredentialsParamId)
+    return this.props.createOauthAccessToken()
       .then(accessTokenOrNull => {
         if (googleCredentialsSecretName !== this.props.googleCredentialsSecretName) {
           // avoid race: another race is happening

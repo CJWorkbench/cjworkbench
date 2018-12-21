@@ -285,30 +285,21 @@ export default class WorkbenchAPI {
 
   /**
    * Return a String access token, or null.
+   *
+   * On auth error (or any other error), warn on console and return null.
    */
-  paramOauthGenerateAccessToken(paramId) {
-    // Unlike other API methods, this one accepts 404 and 403 as valid.
-    //
-    // The server happens to return text instead of JSON, but the real reason
-    // we can't share code is the status codes.
-    return fetch(`/api/parameters/${paramId}/oauth_generate_access_token`, {
-      method: 'post',
-      headers: apiHeaders,
-      credentials: 'include',
+  createOauthAccessToken (wfModuleId, param) {
+    return this.websocket.callServerHandler('wf_module.generate_secret_access_token', {
+      wfModuleId,
+      param
     })
-      .then(res => {
-        if (res.status === 404) {
+      .then(
+        (({ token }) => token), // token may be null
+        (err) => {
+          console.warn('Server did not generate OAuth token:', err)
           return null
-        } else if (res.status !== 200) {
-          console.warn('Server did not generate OAuth token: ', res.text())
-          return null
-        } else if ((res.headers.get('content-type') || '').toLowerCase().indexOf('text/plain') !== 0) {
-          console.warn('Server response is not text/plain', res)
-          return null
-        } else {
-          return res.text() || null
         }
-      })
+      )
   }
 
   paramOauthDisconnect(paramId) {

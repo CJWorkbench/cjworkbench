@@ -1,10 +1,13 @@
 import asyncio
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
+from django.test import override_settings
+from server import oauth
 from server.handlers.wf_module import set_params, delete, \
-        set_stored_data_version, set_notes, set_collapsed, fetch
-from server.models import Workflow
+        set_stored_data_version, set_notes, set_collapsed, fetch, \
+        generate_secret_access_token
+from server.models import Module, Params, ParameterSpec, Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
 from .util import HandlerTestCase
@@ -291,7 +294,7 @@ class WfModuleTest(HandlerTestCase):
             }
         })
 
-    def test_fetch_viewer_acces_denied(self):
+    def test_fetch_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
         wf_module = workflow.tabs.first().wf_modules.create(order=0)
 
@@ -299,3 +302,163 @@ class WfModuleTest(HandlerTestCase):
                                     wfModuleId=wf_module.id)
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
+
+    def test_generate_secret_access_token_writer_access_denied(self):
+        user = User.objects.create(email='write@example.org')
+        workflow = Workflow.create_and_init(public=True)
+        workflow.acl.create(email='write@example.org', can_edit=True)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals()
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response,
+                            error='AuthError: no owner access to workflow')
+
+    def test_generate_secret_access_token_no_value_gives_null(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({'google_credentials': ''})
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response, data={'token': None})
+
+    def test_generate_secret_access_token_wrong_param_type_gives_null(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.STRING,
+                                              id_name='s')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({'s': '{"name":"a","secret":"hello"}'})
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id, param='a')
+        self.assertResponse(response, data={'token': None})
+
+    def test_generate_secret_access_token_wrong_param_name_gives_null(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({
+            'google_credentials': {'name':'a', 'secret': 'hello'},
+        })
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    param='twitter_credentials')
+        self.assertResponse(response, data={'token': None})
+
+    @patch('server.oauth.OAuthService.lookup_or_none', lambda _: None)
+    @override_settings(PARAMETER_OAUTH_SERVICES={'twitter_credentials': {}})
+    def test_generate_secret_access_token_no_service_gives_error(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({
+            'google_credentials': {'name':'a', 'secret': 'hello'},
+        })
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response, error=(
+            'AuthError: we only support twitter_credentials'
+        ))
+
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    def test_generate_secret_access_token_auth_error_gives_error(self,
+                                                                 factory):
+        service = Mock(oauth.OAuth2)
+        service.generate_access_token_or_str_error.return_value = 'an error'
+        factory.return_value = service
+
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({
+            'google_credentials': {'name':'a', 'secret': 'hello'},
+        })
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response, error='AuthError: an error')
+
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    def test_generate_secret_access_token_happy_path(self, factory):
+        service = Mock(oauth.OAuth2)
+        service.generate_access_token_or_str_error.return_value = {
+            'access_token': 'a-token',
+            'refresh_token': 'something we must never share',
+        }
+        factory.return_value = service
+
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({
+            'google_credentials': {'name':'a', 'secret': 'hello'},
+        })
+
+        response = self.run_handler(generate_secret_access_token,
+                                    user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response, data={'token': 'a-token'})

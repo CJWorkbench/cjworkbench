@@ -1,10 +1,12 @@
+import asyncio
 import datetime
 import functools
 from typing import Any, Dict
 from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
-from server import rabbitmq, websockets
-from server.models import Workflow, WfModule
+from django.conf import settings
+from server import oauth, rabbitmq, websockets
+from server.models import Params, Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
@@ -142,3 +144,63 @@ async def fetch(workflow: Workflow, wf_module: WfModule, **kwargs):
             str(wf_module.id): {'is_busy': True, 'fetch_error': ''},
         }
     })
+
+
+@database_sync_to_async
+def _wf_module_params(wf_module: WfModule) -> Params:
+    return wf_module.get_params()
+
+
+@register_websockets_handler
+@websockets_handler('owner')
+@_loading_wf_module
+async def generate_secret_access_token(workflow: Workflow, wf_module: WfModule,
+                                       param: str, **kwargs):
+    """
+    Return a temporary access_token the client can use.
+
+    Only the owner can generate an access token: we must keep the secret away
+    from prying eyes. This access token lets the client read all the owner's
+    documents on GDrive.
+
+    The response will look like:
+
+        { "token": "asldkjfhalskdjfhas..." } -- success
+        { "token": null } -- no value (or no param, even)
+        { "error": "AuthError: ..." } -- access denied
+
+    A typical caller should accept `null` but log other errors.
+    """
+    param = str(param)  # cannot generate an error from JSON params
+    params = await _wf_module_params(wf_module)
+    try:
+        offline_token = params.get_param_secret_secret(param)
+    except KeyError:
+        # There is no such param
+        return {'token': None}
+    except ValueError:
+        # The param has the wrong type
+        return {'token': None}
+    if not offline_token:
+        # Empty JSON -- no value has been set
+        return {'token': None}
+
+    service = oauth.OAuthService.lookup_or_none(param)
+    if not service:
+        allowed_services = settings.PARAMETER_OAUTH_SERVICES.keys()
+        raise HandlerError(
+            f'AuthError: we only support {", ".join(allowed_services)}'
+        )
+
+    # TODO make oauth async. In the meantime, move these HTTP requests to a
+    # background thread.
+    loop = asyncio.get_event_loop()
+    func = functools.partial(service.generate_access_token_or_str_error,
+                             offline_token)
+    token = await loop.run_in_executor(None, func)
+    if isinstance(token, str):
+        raise HandlerError(f'AuthError: {token}')
+
+    # token['access_token'] is short-term (1hr). token['refresh_token'] is
+    # super-private and we should never transmit it.
+    return {'token': token['access_token']}
