@@ -102,6 +102,26 @@ describe('Tabs.actions', () => {
       expect(Object.keys(state.tabs)).toEqual([ '1' ])
     })
 
+    it('should move selected_tab_position when destroying selected', async () => {
+      const api = {
+        deleteTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+          tab_ids: [ 1, 2, 3 ],
+          selected_tab_position: 1, // tab 2
+        },
+        tabs: {
+          1: {},
+          2: {},
+          3: {}
+        }
+      }, api)
+
+      await store.dispatch(actions.destroy(2)) // tab 2
+      expect(store.getState().workflow.selected_tab_position).toEqual(0)
+    })
+
     it('should move selected_tab_position if selected is _after_ deleted', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
@@ -197,6 +217,26 @@ describe('Tabs.actions', () => {
       await store.dispatch(actions.select(2))
       expect(api.setSelectedTab).toHaveBeenCalledWith(2)
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
+    })
+
+    it('should ignore invalid tab ID', async () => {
+      // This happens if the user clicks a "delete" button on the module:
+      // 2. Browser dispatches "delete", which removes the tab
+      // 1. Browser dispatches "click", which tries to select it
+      // https://www.pivotaltracker.com/story/show/162803752
+      const api = {
+        setSelectedTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+          tab_ids: [ 1, 2 ],
+          selected_tab_position: 0
+        }
+      }, api)
+
+      await store.dispatch(actions.select(3))
+      expect(api.setSelectedTab).not.toHaveBeenCalled()
+      expect(store.getState().workflow.selected_tab_position).toEqual(0)
     })
   })
 

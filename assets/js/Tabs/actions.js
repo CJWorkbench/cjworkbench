@@ -48,6 +48,14 @@ export function destroy (tabId) {
 
 export function select (tabId) {
   return (dispatch, getState, api) => {
+    if (!getState().workflow.tab_ids.includes(tabId)) {
+      // This happens if the user clicks a "delete" button on the module:
+      // 2. Browser dispatches "delete", which removes the tab
+      // 1. Browser dispatches "click", which tries to select it
+      // https://www.pivotaltracker.com/story/show/162803752
+      return
+    }
+
     dispatch({
       type: TAB_SELECT,
       payload: {
@@ -124,7 +132,7 @@ function reduceDestroyPending (state, action) {
   newTabIds.splice(deleteIndex, 1)
 
   const oldPosition = workflow.selected_tab_position
-  let newPosition = (oldPosition < deleteIndex || oldPosition === 0) ? oldPosition : (oldPosition - 1)
+  const newPosition = (oldPosition < deleteIndex || oldPosition === 0) ? oldPosition : (oldPosition - 1)
 
   return {
     ...state,
