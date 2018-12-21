@@ -236,12 +236,23 @@ describe('Reducer actions', () => {
     const api = {
       reorderWfModules: jest.fn().mockImplementation(() => Promise.resolve(null))
     }
-    const store = mockStore(testState, api)
+    const store = mockStore({
+      workflow: {
+        tab_ids: [ 91 ]
+      },
+      tabs: {
+        91: {
+          wf_module_ids: [ 2, 4, 6 ],
+          selected_wf_module_position: 2
+        }
+      }
+    }, api)
     await store.dispatch(wfr.moveModuleAction(91, 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(api.reorderWfModules).toHaveBeenCalledWith(91, [ 30, 10, 20 ])
-    expect(store.getState().tabs['91'].wf_module_ids).toEqual([ 30, 10, 20 ])
+    expect(api.reorderWfModules).toHaveBeenCalledWith(91, [ 6, 2, 4])
+    expect(store.getState().tabs['91'].wf_module_ids).toEqual([ 6, 2, 4 ])
+    expect(store.getState().tabs['91'].selected_wf_module_position).toEqual(0)
   })
 
   it('applies delta to a Workflow', () => {

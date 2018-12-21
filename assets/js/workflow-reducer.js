@@ -250,13 +250,18 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
   let { tabId, wfModuleIds } = action.payload
   const tab = state.tabs[String(tabId)]
 
+  const oldIndex = tab.selected_wf_module_position
+  const oldId = tab.wf_module_ids[oldIndex]
+  const newIndex = wfModuleIds.indexOf(oldId)
+
   return {
     ...state,
     tabs: {
       ...state.tabs,
       [String(tabId)]: {
         ...tab,
-        wf_module_ids: wfModuleIds
+        wf_module_ids: wfModuleIds,
+        selected_wf_module_position: newIndex
       }
     }
   }
