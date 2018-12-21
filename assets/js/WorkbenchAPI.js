@@ -302,6 +302,55 @@ export default class WorkbenchAPI {
       )
   }
 
+  /**
+   * Open a popup, and close when the auth popup completes successfully.
+   *
+   * Yup, this is really strange. There's no return value here; watch the
+   * state to see success/failure.
+   */
+  startCreateSecret (workflowId, wfModuleId, param) {
+    /**
+     * Return true if popup is pointed at an oauth-success page.
+     */
+    const isOauthFinished = (popup) => {
+      try {
+        if (!/^\/oauth\/?/.test(popup.location.pathname)) {
+          // We're at the wrong URL.
+          return false
+        }
+      } catch (_) {
+        // We're cross-origin. That's certainly the wrong URL.
+        return false
+      }
+
+      return popup.document.querySelector('p.success')
+
+      // If p.success is not present, the server has not indicated success.
+      // That means one of the following:
+      // 1) error message
+      // 2) request has not completed
+      // ... in either case, oauth is not finished
+    }
+
+    const popup = window.open(
+      `/oauth/create-secret/${workflowId}/${wfModuleId}/${param}/`,
+      'workbench-oauth',
+      'height=500,width=400'
+    )
+    if (!popup) {
+      console.error('Could not open auth popup')
+      return
+    }
+
+    // Watch the popup incessantly, and close it when the user is done with it
+    const interval = window.setInterval(() => {
+      if (!popup || popup.closed || isOauthFinished(popup)) {
+        if (popup && !popup.closed) popup.close()
+        window.clearInterval(interval);
+      }
+    }, 100)
+  }
+
   deleteSecret (wfModuleId, param) {
     return this.websocket.callServerHandler('wf_module.delete_secret', {
       wfModuleId,

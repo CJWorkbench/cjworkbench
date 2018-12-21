@@ -780,6 +780,24 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
   }
 })
 
+export function startCreateSecretAction (wfModuleId, param) {
+  return (dispatch, getState, api) => {
+    const workflowId = getState().workflow.id
+    api.startCreateSecret(workflowId, wfModuleId, param)
+  }
+}
+
+export function deleteSecretAction (wfModuleId, param) {
+  return (dispatch, getState, api) => {
+    // TODO consider modifying state. Right now we don't. When the user clicks
+    // "sign out", we only show feedback after the server has deleted the param
+    // and sent a delta. Maybe that's actually what we want?.... Or maybe we
+    // need immediate feedback in
+    // the state.
+    api.deleteSecret(wfModuleId, param)
+  }
+}
+
 function quickFixPrependModule(wfModuleId, moduleIdName, parameterValues) {
   return addModuleAction(moduleIdName, { beforeWfModuleId: wfModuleId }, parameterValues)
 }

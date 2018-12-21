@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views import acl, uploads, workflows
+from .views import acl, oauth, uploads, workflows
 from .views.UploadedFileView import get_uploadedfile
 
 urlpatterns = [
@@ -49,9 +49,9 @@ urlpatterns = [
     url(r'^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', views.wfmodule_public_output),
 
     # Parameters
-    url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_authorize$',
-        views.parameterval_oauth_start_authorize),
-    url(r'^oauth/?$', views.parameterval_oauth_finish_authorize),
+    url(r'^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<wf_module_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/',
+        oauth.start_authorize),
+    url(r'^oauth/?$', oauth.finish_authorize),
 
     # Embeds
     url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),

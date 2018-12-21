@@ -10,8 +10,8 @@ describe('OAuthConnect', () => {
     return mount(
       <OAuthConnect
         paramIdName={'x'}
-        deleteSecret={jest.fn(() => Promise.resolve(null))}
-        paramId={321}
+        startCreateSecret={jest.fn()}
+        deleteSecret={jest.fn()}
         secretName={'a secret'}
         {...extraProps}
         />
@@ -26,6 +26,8 @@ describe('OAuthConnect', () => {
   it('renders without a secretName', () => {
     const w = wrapper({ secretName: null })
     expect(w.find('button.connect')).toHaveLength(1)
+    w.find('button.connect').simulate('click')
+    expect(w.prop('startCreateSecret')).toHaveBeenCalledWith('x')
   })
 
   it('disconnects', () => {

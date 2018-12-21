@@ -8,6 +8,8 @@ import EditableNotes from '../EditableNotes'
 import StatusLine from './StatusLine'
 import {
   clearNotificationsAction,
+  startCreateSecretAction,
+  deleteSecretAction,
   maybeRequestWfModuleFetchAction,
   quickFixAction,
   setSelectedWfModuleAction,
@@ -106,6 +108,16 @@ export class WfModule extends React.PureComponent {
     if (!this.props.isSelected) {
       this.props.setSelectedWfModule(this.props.wfModule.id)
     }
+  }
+
+  startCreateSecret = (paramIdName) => {
+    const { startCreateSecret, wfModule } = this.props
+    return startCreateSecret(wfModule.id, paramIdName)
+  }
+
+  deleteSecret = (paramIdName) => {
+    const { deleteSecret, wfModule } = this.props
+    return deleteSecret(wfModule.id, paramIdName)
   }
 
   onDragStart = (ev) => {
@@ -394,6 +406,8 @@ export class WfModule extends React.PureComponent {
         wfModuleOutputError={wfModule.output_error}
         key={index}
         p={p}
+        startCreateSecret={this.startCreateSecret}
+        deleteSecret={this.deleteSecret}
         onChange={this.onChange}
         onSubmit={this.onSubmit}
         onReset={this.onReset}
@@ -632,6 +646,8 @@ const mapDispatchToProps = {
   maybeRequestFetch: maybeRequestWfModuleFetchAction,
   applyQuickFix: quickFixAction,
   setWfModuleNotes: setWfModuleNotesAction,
+  deleteSecret: deleteSecretAction,
+  startCreateSecret: startCreateSecretAction,
 }
 
 export default connect(

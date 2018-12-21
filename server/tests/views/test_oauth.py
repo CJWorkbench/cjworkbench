@@ -5,7 +5,7 @@ from server.models import Workflow, Module, ModuleVersion, ParameterSpec
 from server.tests.utils import DbTestCase
 
 
-class ParameterValTest(DbTestCase):
+class OauthTest(DbTestCase):
     @patch('server.oauth.OAuthService.lookup_or_none')
     def test_oauth1a_token_request_denied(self, lookup):
         lookup.return_value = Mock(oauth.OAuthService)
@@ -34,7 +34,7 @@ class ParameterValTest(DbTestCase):
         parameter_val = wf_module.parameter_vals.first()
 
         response = self.client.get(
-            f'/api/parameters/{parameter_val.id}/oauth_authorize'
+            f'/oauth/create-secret/{workflow.id}/{wf_module.id}/auth/'
         )
         self.assertEqual(response.status_code, 403)
         self.assertRegex(

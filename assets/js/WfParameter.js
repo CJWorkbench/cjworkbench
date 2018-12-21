@@ -48,6 +48,8 @@ export default class WfParameter extends React.PureComponent {
         type: PropTypes.string.isRequired,
       }).isRequired,
     }).isRequired,
+    deleteSecret: PropTypes.func.isRequired, // func(paramId) => undefined
+    startCreateSecret: PropTypes.func.isRequired, // func(paramId) => undefined
     moduleName:     PropTypes.string.isRequired,
     wfModuleStatus: PropTypes.string, // module status, or null for placeholder
     wfModuleOutputError:  PropTypes.string, // module-level error message
@@ -76,14 +78,6 @@ export default class WfParameter extends React.PureComponent {
   createGoogleOauthAccessToken = () => {
     const { api, wfModuleId } = this.props
     return api.createOauthAccessToken(wfModuleId, 'google_credentials')
-  }
-
-  deleteSecret = (paramIdName) => {
-    // TODO consider putting this in the reducer. Right now it isn't, and
-    // that makes for a kinda nice behavior: when the user clicks "sign out",
-    // we only show feedback after the server has deleted the param.
-    const { api, wfModuleId } = this.props
-    return api.deleteSecret(wfModuleId, paramIdName)
   }
 
   get outerDivProps() {
@@ -157,8 +151,8 @@ export default class WfParameter extends React.PureComponent {
         return (
           <OAuthConnect
             paramIdName={id_name}
-            deleteSecret={this.deleteSecret}
-            paramId={id}
+            startCreateSecret={this.props.startCreateSecret}
+            deleteSecret={this.props.deleteSecret}
             secretName={secretName}
           />
         )
