@@ -6,17 +6,11 @@ import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../wo
 jest.mock('../workflow-reducer');
 
 describe('OAuthConnect', () => {
-  let api
-  beforeEach(() => {
-    api = {
-      paramOauthDisconnect: jest.fn().mockImplementation(() => Promise.resolve(null)),
-    }
-  })
-
   const wrapper = (extraProps) => {
     return mount(
       <OAuthConnect
-        api={api}
+        paramIdName={'x'}
+        deleteSecret={jest.fn(() => Promise.resolve(null))}
         paramId={321}
         secretName={'a secret'}
         {...extraProps}
@@ -37,6 +31,6 @@ describe('OAuthConnect', () => {
   it('disconnects', () => {
     const w = wrapper({ secretName: 'foo@example.org' })
     w.find('button.disconnect').simulate('click')
-    expect(api.paramOauthDisconnect).toHaveBeenCalledWith(321)
+    expect(w.prop('deleteSecret')).toHaveBeenCalledWith('x')
   })
 })

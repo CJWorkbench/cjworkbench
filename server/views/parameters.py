@@ -60,7 +60,7 @@ def _oauth_start_authorize(request, param: ParameterVal,
     return redirect(url)
 
 
-@api_view(['GET', 'DELETE'])
+@api_view(['GET'])
 def parameterval_oauth_start_authorize(request, pk):
     param = parameter_val_or_response_for_write(pk, request)
     if isinstance(param, HttpResponse):
@@ -70,27 +70,7 @@ def parameterval_oauth_start_authorize(request, pk):
     if spec.type != ParameterSpec.SECRET:
         return HttpResponseNotFound(f'This is a {spec.type}, not a SECRET')
 
-    if request.method == 'GET':
-        return _oauth_start_authorize(request, param, spec.id_name)
-
-    elif request.method == 'DELETE':
-        wf_module = param.wf_module
-        workflow = wf_module.workflow
-        with workflow.cooperative_lock():
-            param.set_value('')
-            vals = wf_module.parameter_vals.prefetch_related('parameter_spec')
-            delta_json = {
-                'updateWfModules': {
-                    str(wf_module.id): {
-                        'parameter_vals': (
-                            ParameterValSerializer(vals, many=True).data
-                        )
-                    }
-                }
-            }
-        async_to_sync(websockets.ws_client_send_delta_async)(workflow.id,
-                                                             delta_json)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    return _oauth_start_authorize(request, param, spec.id_name)
 
 
 @api_view(['GET'])

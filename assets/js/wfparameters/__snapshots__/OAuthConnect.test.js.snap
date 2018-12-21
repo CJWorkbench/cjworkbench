@@ -2,12 +2,9 @@
 
 exports[`OAuthConnect matches snapshot 1`] = `
 <OAuthConnect
-  api={
-    Object {
-      "paramOauthDisconnect": [MockFunction],
-    }
-  }
+  deleteSecret={[MockFunction]}
   paramId={321}
+  paramIdName="x"
   secretName="a secret"
 >
   <div

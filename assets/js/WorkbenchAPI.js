@@ -302,7 +302,10 @@ export default class WorkbenchAPI {
       )
   }
 
-  paramOauthDisconnect(paramId) {
-    return this._delete(`/api/parameters/${paramId}/oauth_authorize`)
+  deleteSecret (wfModuleId, param) {
+    return this.websocket.callServerHandler('wf_module.delete_secret', {
+      wfModuleId,
+      param
+    })
   }
 }

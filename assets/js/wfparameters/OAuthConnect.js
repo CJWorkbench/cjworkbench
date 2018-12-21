@@ -27,9 +27,8 @@ const isOauthFinished = (popup) => {
 export default class OAuthConnect extends React.PureComponent {
   static propTypes = {
     paramId: PropTypes.number.isRequired,
-    api: PropTypes.shape({
-      paramOauthDisconnect: PropTypes.func.isRequired, // func(paramId) => Promise[HttpResponse]
-    }).isRequired,
+    paramIdName: PropTypes.string.isRequired,
+    deleteSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
     secretName: PropTypes.string,
   }
 
@@ -59,8 +58,8 @@ export default class OAuthConnect extends React.PureComponent {
   }
 
   disconnect = () => {
-    this.props.api.paramOauthDisconnect(this.props.paramId)
-      .catch(console.error)
+    const { paramIdName, deleteSecret } = this.props
+    deleteSecret(paramIdName)
   }
 
   render () {

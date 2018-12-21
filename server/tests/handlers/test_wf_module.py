@@ -6,7 +6,7 @@ from django.test import override_settings
 from server import oauth
 from server.handlers.wf_module import set_params, delete, \
         set_stored_data_version, set_notes, set_collapsed, fetch, \
-        generate_secret_access_token
+        generate_secret_access_token, delete_secret
 from server.models import Module, Params, ParameterSpec, Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -306,7 +306,7 @@ class WfModuleTest(HandlerTestCase):
     def test_generate_secret_access_token_writer_access_denied(self):
         user = User.objects.create(email='write@example.org')
         workflow = Workflow.create_and_init(public=True)
-        workflow.acl.create(email='write@example.org', can_edit=True)
+        workflow.acl.create(email=user.email, can_edit=True)
         module = Module.objects.create()
         module_version = module.module_versions.create()
         module_version.parameter_specs.create(type=ParameterSpec.SECRET,
@@ -462,3 +462,74 @@ class WfModuleTest(HandlerTestCase):
                                     wfModuleId=wf_module.id,
                                     param='google_credentials')
         self.assertResponse(response, data={'token': 'a-token'})
+
+    def test_delete_secret_writer_access_denied(self):
+        user = User.objects.create(email='write@example.org')
+        workflow = Workflow.create_and_init(public=True)
+        workflow.acl.create(email=user.email, can_edit=True)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({
+            'google_credentials': {'name': 'a', 'secret': 'b'},
+        })
+
+        response = self.run_handler(delete_secret, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response,
+                            error='AuthError: no owner access to workflow')
+
+    def test_delete_secret_ignore_non_secret(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.STRING,
+                                              id_name='foo')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({'foo': 'bar'})
+
+        response = self.run_handler(delete_secret, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    param='foo')
+        self.assertResponse(response, data=None)
+        self.assertEqual(wf_module.get_params().get_param_string('foo'),
+                         'bar')
+
+    @patch('server.websockets.ws_client_send_delta_async')
+    def test_delete_secret_happy_path(self, send_delta):
+        send_delta.return_value = async_noop()
+
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        module = Module.objects.create()
+        module_version = module.module_versions.create()
+        module_version.parameter_specs.create(type=ParameterSpec.SECRET,
+                                              id_name='google_credentials')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_version=module_version,
+            order=0
+        )
+        wf_module.create_parametervals({
+            'google_credentials': {'name': 'a', 'secret': 'b'},
+        })
+
+        response = self.run_handler(delete_secret, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    param='google_credentials')
+        self.assertResponse(response, data=None)
+        self.assertEqual(wf_module.parameter_vals.first().value, '')
+
+        send_delta.assert_called()
+        delta = send_delta.call_args[0][1]
+        wf_module_delta = delta['updateWfModules'][str(wf_module.id)]
+        self.assertEqual(wf_module_delta['parameter_vals'][0]['value'], None)

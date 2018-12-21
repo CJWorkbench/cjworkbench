@@ -1,15 +1,17 @@
 import asyncio
 import datetime
 import functools
-from typing import Any, Dict
+import json
+from typing import Any, Dict, Optional
 from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
 from django.conf import settings
 from server import oauth, rabbitmq, websockets
-from server.models import Params, Workflow, WfModule
+from server.models import Params, ParameterSpec, Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
+from server.serializers import ParameterValSerializer
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 
@@ -204,3 +206,49 @@ async def generate_secret_access_token(workflow: Workflow, wf_module: WfModule,
     # token['access_token'] is short-term (1hr). token['refresh_token'] is
     # super-private and we should never transmit it.
     return {'token': token['access_token']}
+
+
+@database_sync_to_async
+def _wf_module_delete_secret_and_build_delta(
+    workflow: Workflow,
+    wf_module: WfModule,
+    param: str
+) -> Optional[Dict[str,Any]]:
+    """
+    Write a new secret (or `None`) to `wf_module`, or raise.
+
+    Return a "delta" for websockets.ws_client_send_delta_async(), or `None` if
+    the database has not been modified.
+
+    Raise Workflow.DoesNotExist if the Workflow was deleted.
+    """
+    with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
+        nrows = wf_module.parameter_vals.filter(
+            parameter_spec__type=ParameterSpec.SECRET,
+            parameter_spec__id_name=param
+        ).update(value='')
+
+        if not nrows:
+            return None
+
+        vals = wf_module.parameter_vals.prefetch_related('parameter_spec')
+        return {
+            'updateWfModules': {
+                str(wf_module.id): {
+                    'parameter_vals': (
+                        ParameterValSerializer(vals, many=True).data
+                    )
+                }
+            }
+        }
+
+
+@register_websockets_handler
+@websockets_handler('owner')
+@_loading_wf_module
+async def delete_secret(workflow: Workflow, wf_module: WfModule, param: str,
+                        **kwargs):
+    delta = await _wf_module_delete_secret_and_build_delta(workflow, wf_module,
+                                                           param)
+    if delta:
+        await websockets.ws_client_send_delta_async(workflow.id, delta)

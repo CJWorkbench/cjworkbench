@@ -78,6 +78,14 @@ export default class WfParameter extends React.PureComponent {
     return api.createOauthAccessToken(wfModuleId, 'google_credentials')
   }
 
+  deleteSecret = (paramIdName) => {
+    // TODO consider putting this in the reducer. Right now it isn't, and
+    // that makes for a kinda nice behavior: when the user clicks "sign out",
+    // we only show feedback after the server has deleted the param.
+    const { api, wfModuleId } = this.props
+    return api.deleteSecret(wfModuleId, paramIdName)
+  }
+
   get outerDivProps() {
     const { id_name } = this.props.p.parameter_spec
 
@@ -148,10 +156,11 @@ export default class WfParameter extends React.PureComponent {
       case 'twitter_credentials':
         return (
           <OAuthConnect
+            paramIdName={id_name}
+            deleteSecret={this.deleteSecret}
             paramId={id}
-            api={this.props.api}
             secretName={secretName}
-            />
+          />
         )
 
      default:
