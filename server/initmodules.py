@@ -202,13 +202,25 @@ def _is_pval_safe_to_keep(old_spec, new_spec):
         # iff the choices don't change.
         return old_spec.def_items == new_spec.def_items
 
+    if (
+        old_spec.id_name == 'colnames'
+        and old_spec.type == ParameterSpec.STRING
+        and new_spec.type == ParameterSpec.MULTICOLUMN
+    ):
+        # https://www.pivotaltracker.com/story/show/155455243
+        #
+        # TODO delete parameter migrations altogether.
+        return True
+
     if old_spec.type == new_spec.type:
         # Keeping same type is always safe.
         return True
 
     return False
 
-# Update a parameter value from one ParameterSpec to another. Resets to default if type changes.
+
+# Update a parameter value from one ParameterSpec to another. Resets to default
+# if type changes.
 def migrate_parameter_val(pval, old_spec, new_spec):
     pval.order = new_spec.order
     pval.parameter_spec = new_spec

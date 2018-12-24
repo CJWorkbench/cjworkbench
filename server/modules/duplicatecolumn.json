@@ -1,22 +1,15 @@
 {
   "name": "Duplicate Columns",
   "id_name": "duplicate-column",
-  "category" : "Clean",
-  "description" : "Duplicate a column with all its values",
-  "help_url":"modules/clean/Duplicate-columns",
-  "icon" : "duplicate",
+  "category": "Clean",
+  "description": "Duplicate a column with all its values",
+  "help_url": "modules/clean/Duplicate-columns",
+  "icon": "duplicate",
   "parameters": [
     {
-      "name" : "Columns",
-      "id_name" : "source-columns",
-      "type" : "multicolumn",
-      "ui-only": true
-    },
-    {
-      "name": "Column Names",
+      "name": "",
       "id_name": "colnames",
-      "type": "string",
-      "visible": false
+      "type": "multicolumn"
     }
   ]
 }
