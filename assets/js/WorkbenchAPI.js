@@ -239,7 +239,7 @@ export default class WorkbenchAPI {
    * affect any data.
    */
   setSelectedWfModule (wfModuleId ) {
-    return this._callExpectingNull('workflow.set_selected_wf_module', {
+    return this._callExpectingNull('workflow.set_position', {
       wfModuleId
     })
   }
