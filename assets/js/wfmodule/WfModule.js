@@ -389,7 +389,7 @@ export class WfModule extends React.PureComponent {
     return (
       <WfParameter
         api={api}
-        name={p.parameter_spec.name || idName}
+        name={p.parameter_spec.name || ''}
         idName={idName}
         type={p.parameter_spec.type}
         initialValue={p.value}
