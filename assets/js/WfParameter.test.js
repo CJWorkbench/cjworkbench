@@ -20,6 +20,8 @@ describe('WfParameter', () => {
         inputLastRelevantDeltaId={null}
         loggedInUser={{}}
         api={{}}
+        deleteSecret={jest.fn()}
+        startCreateSecret={jest.fn()}
         setWfModuleParams={jest.fn()}
         getParamId={jest.fn(_ => null)}
         getParamText={jest.fn(_ => paramtextReturnValue)}
