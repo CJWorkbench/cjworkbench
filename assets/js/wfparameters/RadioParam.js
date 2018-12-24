@@ -3,47 +3,41 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class RadioParam extends React.PureComponent {
-  onChange = (evt) => {
-    var idx = evt.target.value;
-    this.props.onChange(idx);
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    items: PropTypes.string.isRequired,  // like 'Apple|Banana|Kitten'
+    selectedIdx: PropTypes.number.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    onChange: PropTypes.func.isRequired // called with index of selected item
   }
 
-  isChecked = (idx) => {
-    // Cast to string because this.props.selectedIdx comes in both as int and string, for some reason.
-    return idx === this.props.selectedIdx.toString()
+  onChange = (ev) => {
+    this.props.onChange(+ev.target.value)
   }
 
   render() {
-    var items = this.props.items.split('|');
-    var itemDivs = items.map( (name, idx) => {
-      const strIdx = idx.toString()
+    const { items, isReadOnly, selectedIdx } = this.props
+    const itemDivs = items.split('|').map((name, idx) => {
       return (
         <label key={idx} className='t-d-gray content-1'>
           <input
             className='radio-button'
             type='radio'
-            value={strIdx}
-            checked={this.isChecked(strIdx)}
+            value={String(idx)}
+            checked={idx === selectedIdx}
             onChange={this.onChange}
             disabled={this.props.isReadOnly}
           />
           <span className="button"></span>
           {name}
         </label>
-      )});
+      )
+    })
 
     return (
       <div className='button-group'>
         {itemDivs}
       </div>
-    );
+    )
   }
 }
-
-RadioParam.propTypes = {
-  name:         PropTypes.string.isRequired,
-  items:        PropTypes.string,  // like 'Apple|Banana|Kitten'
-  selectedIdx:  PropTypes.number,
-  isReadOnly:   PropTypes.bool,
-  onChange:     PropTypes.func     // called with index of selected item
-};
