@@ -21,32 +21,30 @@ import SingleLineTextField from './wfparameters/SingleLineTextField'
 import RadioParam from './wfparameters/RadioParam'
 import MultiLineTextArea from './wfparameters/MultiLineTextArea'
 import ValueSelect from './wfparameters/ValueSelect'
-//import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
-//import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
-//import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
-
-const PRESSED_ENTER = true;
-const DIDNT_PRESS_ENTER = false;
-
-class TextOrNothing extends React.Component {
-  render() {
-    if (this.props.text.length > 0) {
-      return <div>{this.props.text}</div>;
-    } else {
-      return null;
-    }
-  }
-}
 
 export default class WfParameter extends React.PureComponent {
   static propTypes = {
-    p: PropTypes.shape({
-      value: PropTypes.any, // initial value -- value in Redux store
-      parameter_spec: PropTypes.shape({
-        id_name: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
+    idName: PropTypes.string.isRequired, // slug
+    name: PropTypes.string.isRequired, // user-visible
+    multiline: PropTypes.bool, // null if non-string
+    placeholder: PropTypes.string, // optional
+    type: PropTypes.oneOf([
+      'string',
+      'integer',
+      'float',
+      'button',
+      'statictext',
+      'checkbox',
+      'radio',
+      'menu',
+      'column',
+      'multicolumn',
+      'secret',
+      'custom'
+    ]).isRequired,
+    DEPRECATED_visible: PropTypes.bool, // if false and idName !== 'colnames', do not render. Deprecated because it is wrong to have an invisible param.
+    items: PropTypes.string, // for menu/radio params: 'item1|item2|item3'
+    initialValue: PropTypes.any, // initial value -- value in Redux store
     deleteSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
     moduleName:     PropTypes.string.isRequired,
@@ -70,7 +68,7 @@ export default class WfParameter extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // func(idName, newValue) => undefined
     onSubmit: PropTypes.func.isRequired, // func() => undefined
     onReset: PropTypes.func.isRequired, // func(idName) => undefined
-    value: PropTypes.any // value user has edited but not saved -- usually p.value, empty is allowed
+    value: PropTypes.any // value user has edited but not saved -- usually initialValue, empty is allowed
   }
 
   createGoogleOauthAccessToken = () => {
@@ -79,18 +77,18 @@ export default class WfParameter extends React.PureComponent {
   }
 
   get outerDivProps() {
-    const { id_name } = this.props.p.parameter_spec
+    const { idName } = this.props
 
     return {
       className: this.paramClassName,
-      'data-name': id_name, // super-useful when inspecting -- e.g., when developing lessons
+      'data-name': idName, // super-useful when inspecting -- e.g., when developing lessons
     }
   }
 
   get paramClassName() {
-    const { id_name, type } = this.props.p.parameter_spec
+    const { idName, type } = this.props
 
-    const nameParts = id_name.split('|')[0].split('.').slice(1)
+    const nameParts = idName.split('|')[0].split('.').slice(1)
 
     nameParts.unshift(`wf-parameter-${type}`)
     nameParts.unshift('wf-parameter')
@@ -98,12 +96,8 @@ export default class WfParameter extends React.PureComponent {
     return nameParts.join(' ')
   }
 
-  get idName () {
-    return this.props.p.parameter_spec.id_name
-  }
-
   onChange = (value) => {
-    this.props.onChange(this.idName, value)
+    this.props.onChange(this.props.idName, value)
   }
 
   onSubmit = () => {
@@ -111,11 +105,11 @@ export default class WfParameter extends React.PureComponent {
   }
 
   onReset = () => {
-    this.props.onReset(this.idName)
+    this.props.onReset(this.props.idName)
   }
 
   paramChanged = (value) => {
-    this.props.setWfModuleParams({ [this.idName]: value })
+    this.props.setWfModuleParams({ [this.props.idName]: value })
   }
 
   onClickCheckbox = (ev) => {
@@ -130,65 +124,68 @@ export default class WfParameter extends React.PureComponent {
   }
 
   onChangeGoogleFileSelectJson = (json) => {
-    this.props.onChange(this.idName, json)
-    this.props.onSubmit()
+    const { onChange, onSubmit, idName } = this.props
+    onChange(idName, json)
+    onSubmit()
   }
 
   onChangeYColumns = (arr) => {
-    this.props.setWfModuleParams({ [this.idName]: JSON.stringify(arr) })
+    const { setWfModuleParams, idName } = this.props
+    setWfModuleParams({ [idName]: JSON.stringify(arr) })
   }
 
   render_secret_parameter() {
-    const { id_name } = this.props.p.parameter_spec
-    const { value } = this.props.p
+    const { value, idName, deleteSecret, startCreateSecret } = this.props
     const secretName = value ? (value.name || null) : null
 
-    switch (id_name) {
+    switch (idName) {
       case 'google_credentials':
       case 'twitter_credentials':
         return (
           <OAuthConnect
-            paramIdName={id_name}
-            startCreateSecret={this.props.startCreateSecret}
-            deleteSecret={this.props.deleteSecret}
+            paramIdName={idName}
+            startCreateSecret={startCreateSecret}
+            deleteSecret={deleteSecret}
             secretName={secretName}
           />
         )
 
      default:
-       return (<p className="error">Secret type {id_name} not handled</p>)
+       return (<p className="error">Secret type {idName} not handled</p>)
     }
   }
 
   // Render one of the many parameter types that are specific to a particular module
   render_custom_parameter () {
-    const { id_name, name } = this.props.p.parameter_spec
+    const { idName, name, onSubmit, wfModuleId, wfModuleStatus, wfModuleOutputError,
+            isReadOnly, isZenMode, value, initialValue, lastRelevantDeltaId, api,
+            inputColumns } = this.props
 
-    switch (id_name) {
+    switch (idName) {
       case 'version_select':
         return (
           <div {...this.outerDivProps}>
             <VersionSelect
               name={name}
-              onSubmit={this.props.onSubmit}
-              wfModuleId={this.props.wfModuleId}
-              wfModuleStatus={this.props.wfModuleStatus}
-              isReadOnly={this.props.isReadOnly}
+              onSubmit={onSubmit}
+              wfModuleId={wfModuleId}
+              wfModuleStatus={wfModuleStatus}
+              isReadOnly={isReadOnly}
             />
           </div>
         )
       case 'version_select_simpler':
         return (
           <div className='versionSelect--uploadFile'>
-            <DataVersionSelect wfModuleId={this.props.wfModuleId}/>
+            <DataVersionSelect wfModuleId={wfModuleId}/>
           </div>
-        );
+        )
       case 'file':
         return (
           <LazyDropZone
-            wfModuleId={this.props.wfModuleId}
-            lastRelevantDeltaId={this.props.lastRelevantDeltaId}
-            api={this.props.api}
+            wfModuleId={wfModuleId}
+            lastRelevantDeltaId={lastRelevantDeltaId}
+            api={api}
           />
         )
       case 'googlefileselect':
@@ -197,27 +194,26 @@ export default class WfParameter extends React.PureComponent {
         return (
           <GoogleFileSelect
             createOauthAccessToken={this.createGoogleOauthAccessToken}
-            api={this.props.api}
-            isReadOnly={this.props.isReadOnly}
+            isReadOnly={isReadOnly}
             googleCredentialsSecretName={secretName}
-            fileMetadataJson={this.props.getParamText('googlefileselect')}
+            fileMetadataJson={value}
             onChangeJson={this.onChangeGoogleFileSelectJson}
           />
         )
       case 'code':
         return (
           <LazyAceEditor
-            name={this.props.p.parameter_spec.name}
-            isZenMode={this.props.isZenMode}
-            wfModuleError={this.props.wfModuleOutputError}
+            name={name}
+            isZenMode={isZenMode}
+            wfModuleError={wfModuleOutputError}
             save={this.paramChanged}
-            defaultValue={this.props.p.value}
+            defaultValue={value}
           />
         )
       case 'celledits':
         return (
           <CellEditor
-            edits={this.props.p.value}
+            edits={value}
             onSave={this.paramChanged}
           />
         )
@@ -226,23 +222,23 @@ export default class WfParameter extends React.PureComponent {
           <Refine
             fetchData={this.getInputValueCounts}
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
-            value={this.props.p.value}
+            value={value}
             onChange={this.paramChanged}
           />
         )
       case 'reorder-history':
         return (
           <ReorderHistory
-            history={this.props.getParamText('reorder-history')}
+            history={value}
           />
         )
       case 'rename-entries':
         return (
           <RenameEntries
-            wfModuleId={this.props.wfModuleId}
-            isReadOnly={this.props.isReadOnly}
-            entriesJsonString={this.props.p.value}
-            allColumns={this.props.inputColumns}
+            wfModuleId={wfModuleId}
+            isReadOnly={isReadOnly}
+            entriesJsonString={value}
+            allColumns={inputColumns}
             onChange={this.paramChanged}
           />
         )
@@ -250,11 +246,11 @@ export default class WfParameter extends React.PureComponent {
         return (
           <ChartSeriesMultiSelect
             prompt='Select a numeric column'
-            isReadOnly={this.props.isReadOnly}
-            allColumns={this.props.inputColumns}
-            series={JSON.parse(this.props.p.value || '[]')}
+            isReadOnly={isReadOnly}
+            allColumns={inputColumns}
+            series={JSON.parse(value || '[]')}
             onChange={this.onChangeYColumns}
-            name={id_name}
+            name={idName}
           />
         )
       case 'valueselect':
@@ -262,73 +258,41 @@ export default class WfParameter extends React.PureComponent {
           <ValueSelect
             fetchData={this.getInputValueCounts}
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
-            value={this.props.p.value}
+            value={value}
             onChange={this.paramChanged}
           />
         )
-//      case 'map-geojson':
-//        return (
-//          <MapLocationDropZone
-//            api={this.props.api}
-//            name={this.props.p.parameter_spec.name}
-//            paramData={this.props.p.value}
-//            paramId={this.props.p.id}
-//            isReadOnly={this.props.isReadOnly}
-//          />
-//        )
-//      case 'map-presets':
-//        return (
-//          <MapLocationPresets
-//            api={this.props.api}
-//            name={this.props.p.parameter_spec.name}
-//            paramData={this.props.p.value}
-//            paramId={this.props.p.id}
-//            isReadOnly={this.props.isReadOnly}
-//          />
-//        )
-//      case 'map-layers':
-//        return (
-//          <MapLayerEditor
-//            api={this.props.api}
-//            name={this.props.p.parameter_spec.name}
-//            paramId={this.props.p.id}
-//            keyColumn={this.props.getParamText("key-column")}
-//            wfModuleId={this.props.wf_module_id}
-//            isReadOnly={this.props.isReadOnly}
-//            paramData={this.props.p.value}
-//          />
-//        )
       default:
         return (
-          <p className="error">Custom type {id_name} not handled</p>
+          <p className="error">Custom type {idName} not handled</p>
         )
     }
   }
 
-
   render() {
-    const { id_name, name, type } = this.props.p.parameter_spec
+    const { idName, name, type, value, initialValue, DEPRECATED_visible,
+            multiline, isReadOnly, placeholder, items, inputColumns } = this.props
 
     // TODO: delete the 'colnames' check. Force display of 'colnames' for now since it will completely replace 'colselect' eventually
-    if (!this.props.p.visible && id_name !== 'colnames') {
+    if (DEPRECATED_visible === false && idName !== 'colnames') {
       return null // nothing to see here
     }
 
     switch (type) {
       case 'string':
         // Different size and style if it's a multiline string
-        if (this.props.p.parameter_spec.multiline) {
+        if (multiline) {
           return (
             <div {...this.outerDivProps}>
               <div className='parameter-label'>{name}</div>
               <MultiLineTextArea
-                isReadOnly={this.props.isReadOnly}
-                name={id_name}
-                value={this.props.value}
-                initialValue={this.props.p.value}
+                isReadOnly={isReadOnly}
+                name={idName}
+                value={value}
+                initialValue={initialValue}
                 onChange={this.onChange}
                 onSubmit={this.onSubmit}
-                placeholder={this.props.p.parameter_spec.placeholder}
+                placeholder={placeholder || ''}
               />
             </div>
           )
@@ -336,15 +300,15 @@ export default class WfParameter extends React.PureComponent {
         // For now, let's render the 'colnames' parameter instead of 'colselect' so that we
         // can keep the parameter's state in `WfModule`.
         // TODO: convert the `colnames` type to 'multicolumn' and nix all other `multicolumn` parameters in every module
-        else if (id_name === 'colnames') {
+        else if (idName === 'colnames') {
           return (
             <div {...this.outerDivProps}>
               <div className='t-d-gray content-1 label-margin'>{''}</div>
               <ColumnSelector
-                name={id_name}
-                isReadOnly={this.props.isReadOnly}
-                initialValue={this.props.p.value}
-                value={this.props.value}
+                name={idName}
+                isReadOnly={isReadOnly}
+                initialValue={initialValue}
+                value={value}
                 allColumns={this.props.inputColumns}
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}
@@ -356,14 +320,14 @@ export default class WfParameter extends React.PureComponent {
             <div {...this.outerDivProps}>
               <div className='parameter-label'>{name}</div>
               <SingleLineTextField
-                isReadOnly={this.props.isReadOnly}
+                isReadOnly={isReadOnly}
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}
                 onReset={this.onReset}
-                placeholder={this.props.p.parameter_spec.placeholder || ''}
-                name={id_name}
-                initialValue={this.props.p.value}
-                value={this.props.value}
+                placeholder={placeholder || ''}
+                name={idName}
+                initialValue={initialValue}
+                value={value}
               />
             </div>
           )
@@ -375,77 +339,80 @@ export default class WfParameter extends React.PureComponent {
           <div {...this.outerDivProps}>
             <div className='parameter-label'>{name}</div>
             <NumberField
-              isReadOnly={this.props.isReadOnly}
+              isReadOnly={isReadOnly}
               onChange={this.onChange}
               onSubmit={this.onSubmit}
               onReset={this.onReset}
-              initialValue={this.props.p.value}
-              value={this.props.value}
-              placeholder={this.props.p.parameter_spec.placeholder || ''}
+              initialValue={initialValue}
+              value={value}
+              placeholder={placeholder || ''}
             />
           </div>
-        );
+        )
 
       case 'button':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
-            <button className='action-button button-blue' onClick={this.props.readOnly ? null : this.props.onSubmit}>{name}</button>
+            <button className='action-button button-blue' disabled={isReadOnly}>{name}</button>
           </div>
-        );
+        )
+
       case 'statictext':
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' parameter-label'}>{name}</div>
-        );
+        )
 
       case 'checkbox':
-        const htmlId = `${id_name}-${this.props.wfModuleId}`
+        const htmlId = `${idName}-${this.props.wfModuleId}`
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' checkbox-wrapper'}>
             <input
-              disabled={this.props.isReadOnly}
+              disabled={isReadOnly}
               type="checkbox" className="checkbox"
-              checked={this.props.p.value}
+              checked={value}
               onChange={this.onClickCheckbox}
-              name={id_name}
+              name={idName}
               id={htmlId}
             />
             <label htmlFor={htmlId}>{name}</label>
           </div>
-        );
+        )
       case 'radio':
         return (
           <div {...this.outerDivProps}>
             <div className='d-flex align-items-center'>{name}</div>
             <RadioParam
-              name={id_name}
-              items={this.props.p.items}
-              selectedIdx={this.props.p.value}
-              isReadOnly={this.props.isReadOnly}
+              name={idName}
+              items={items}
+              selectedIdx={value}
+              isReadOnly={isReadOnly}
               onChange={this.paramChanged}
             />
-          </div> );
+          </div>
+        )
       case 'menu':
         return (
           <div {...this.outerDivProps}>
             <div className='parameter-label'>{name}</div>
             <MenuParam
-              name={id_name}
-              items={this.props.p.items}
-              selectedIdx={parseInt(this.props.p.value)}
-              isReadOnly={this.props.isReadOnly}
+              name={idName}
+              items={items}
+              selectedIdx={value}
+              isReadOnly={isReadOnly}
               onChange={this.paramChanged}
             />
-          </div> );
+          </div>
+        )
       case 'column':
         return (
           <div {...this.outerDivProps}>
             <div className='parameter-label'>{name}</div>
             <ColumnParam
-              value={this.props.p.value}
-              name={id_name}
-              prompt={this.props.p.parameter_spec.placeholder}
-              isReadOnly={this.props.isReadOnly}
-              allColumns={this.props.inputColumns}
+              value={value}
+              name={idName}
+              prompt={placeholder || ''}
+              isReadOnly={isReadOnly}
+              allColumns={inputColumns}
               onChange={this.paramChanged}
             />
           </div>
@@ -456,20 +423,20 @@ export default class WfParameter extends React.PureComponent {
       // finish cleaning up the multicolumn` parameter type.
       case 'multicolumn':
         // There's no good reason why we read/write `colnames` instead of our own
-        // id_name. But it'll be a chore to change it: we'll need to change all modules'
-        // id_name to `colnames` so that pre-chore data will migrate over.
+        // idName. But it'll be a chore to change it: we'll need to change all modules'
+        // idName to `colnames` so that pre-chore data will migrate over.
         //
         // (Then we'll have one more chore: select JSON instead of comma-separated strings)
-        if (id_name === 'colnames') {
+        if (idName === 'colnames') {
           return (
             <div {...this.outerDivProps}>
               <div className='t-d-gray content-1 label-margin'>{name}</div>
               <ColumnSelector
-                name={id_name}
-                isReadOnly={this.props.isReadOnly}
-                initialValue={this.props.p.value}
-                value={this.props.value}
-                allColumns={this.props.inputColumns}
+                name={idName}
+                isReadOnly={isReadOnly}
+                initialValue={initialValue}
+                value={value}
+                allColumns={inputColumns}
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}
               />
@@ -480,13 +447,13 @@ export default class WfParameter extends React.PureComponent {
         }
 
       case 'secret':
-        return this.render_secret_parameter();
+        return this.render_secret_parameter()
 
       case 'custom':
-        return this.render_custom_parameter();
+        return this.render_custom_parameter()
 
       default:
-        return null;  // unrecognized parameter type
+        return null // unrecognized parameter type
     }
   }
 }

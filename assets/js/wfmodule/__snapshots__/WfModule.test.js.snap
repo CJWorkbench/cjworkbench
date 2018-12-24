@@ -102,8 +102,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             deleteSecret={[Function]}
-            getParamMenuItems={[Function]}
             getParamText={[Function]}
+            idName="url"
+            initialValue="http://some.URL.me"
             inputWfModuleId={123}
             isReadOnly={false}
             isZenMode={false}
@@ -113,18 +114,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             onChange={[Function]}
             onReset={[Function]}
             onSubmit={[Function]}
-            p={
-              Object {
-                "id": 100,
-                "parameter_spec": Object {
-                  "id_name": "url",
-                  "type": "string",
-                },
-                "value": "http://some.URL.me",
-              }
-            }
             setWfModuleParams={[Function]}
             startCreateSecret={[Function]}
+            type="string"
             updateSettings={
               Object {
                 "autoUpdateData": undefined,
@@ -146,8 +138,8 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             deleteSecret={[Function]}
-            getParamMenuItems={[Function]}
             getParamText={[Function]}
+            idName="version_select"
             inputWfModuleId={123}
             isReadOnly={false}
             isZenMode={false}
@@ -157,17 +149,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             onChange={[Function]}
             onReset={[Function]}
             onSubmit={[Function]}
-            p={
-              Object {
-                "id": 101,
-                "parameter_spec": Object {
-                  "id_name": "version_select",
-                  "type": "custom",
-                },
-              }
-            }
             setWfModuleParams={[Function]}
             startCreateSecret={[Function]}
+            type="custom"
             updateSettings={
               Object {
                 "autoUpdateData": undefined,
@@ -188,30 +172,22 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             deleteSecret={[Function]}
-            getParamMenuItems={[Function]}
             getParamText={[Function]}
+            idName="menu_select"
+            initialValue={1}
             inputWfModuleId={123}
             isReadOnly={false}
             isZenMode={false}
+            items="Mango|Banana"
             key="2"
             moduleName="Load from URL"
             name="menu_select"
             onChange={[Function]}
             onReset={[Function]}
             onSubmit={[Function]}
-            p={
-              Object {
-                "id": 102,
-                "items": "Mango|Banana",
-                "parameter_spec": Object {
-                  "id_name": "menu_select",
-                  "type": "menu",
-                },
-                "value": 1,
-              }
-            }
             setWfModuleParams={[Function]}
             startCreateSecret={[Function]}
+            type="menu"
             updateSettings={
               Object {
                 "autoUpdateData": undefined,
@@ -233,8 +209,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             deleteSecret={[Function]}
-            getParamMenuItems={[Function]}
             getParamText={[Function]}
+            idName="some_boolean"
+            initialValue={true}
             inputWfModuleId={123}
             isReadOnly={false}
             isZenMode={false}
@@ -244,18 +221,9 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             onChange={[Function]}
             onReset={[Function]}
             onSubmit={[Function]}
-            p={
-              Object {
-                "id": 103,
-                "parameter_spec": Object {
-                  "id_name": "some_boolean",
-                  "type": "checkbox",
-                },
-                "value": true,
-              }
-            }
             setWfModuleParams={[Function]}
             startCreateSecret={[Function]}
+            type="checkbox"
             updateSettings={
               Object {
                 "autoUpdateData": undefined,

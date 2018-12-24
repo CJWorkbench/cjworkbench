@@ -244,7 +244,7 @@ describe('WfModule, not read-only mode', () => {
       is_collapsed: false,
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
-        { id: 2, parameter_spec: { id_name: 'b', type: 'String' }, value: 'B' }
+        { id: 2, parameter_spec: { id_name: 'b', type: 'string' }, value: 'B' }
       ]
     }
     const wrapper = shallow(
@@ -254,18 +254,18 @@ describe('WfModule, not read-only mode', () => {
       />
     )
 
-    wrapper.find('WfParameter[name="a"]').prop('onChange')('a', 'C')
+    wrapper.find('WfParameter[idName="a"]').prop('onChange')('a', 'C')
     wrapper.update()
-    expect(wrapper.find('WfParameter[name="a"]').prop('value')).toEqual('C')
+    expect(wrapper.find('WfParameter[idName="a"]').prop('value')).toEqual('C')
 
-    wrapper.find('WfParameter[name="b"]').prop('onChange')('b', 'D')
+    wrapper.find('WfParameter[idName="b"]').prop('onChange')('b', 'D')
     wrapper.update()
-    expect(wrapper.find('WfParameter[name="b"]').prop('value')).toEqual('D')
+    expect(wrapper.find('WfParameter[idName="b"]').prop('value')).toEqual('D')
 
     // ... and neither should be submitted to the server
     expect(props.setWfModuleParams).not.toHaveBeenCalled()
 
-    wrapper.find('WfParameter[name="b"]').prop('onSubmit')()
+    wrapper.find('WfParameter[idName="b"]').prop('onSubmit')()
     expect(props.setWfModuleParams).toHaveBeenCalledWith(999, { a: 'C', b: 'D' })
 
     // a bit of a white-box test: state should be cleared
@@ -279,7 +279,7 @@ describe('WfModule, not read-only mode', () => {
       is_collapsed: false,
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
-        { id: 2, parameter_spec: { id_name: 'b', type: 'String' }, value: 'B' }
+        { id: 2, parameter_spec: { id_name: 'b', type: 'string' }, value: 'B' }
       ]
     }
     const wrapper = shallow(
@@ -289,13 +289,13 @@ describe('WfModule, not read-only mode', () => {
       />
     )
 
-    wrapper.find('WfParameter[name="a"]').prop('onChange')('a', 'C')
-    wrapper.find('WfParameter[name="b"]').prop('onChange')('b', 'D')
+    wrapper.find('WfParameter[idName="a"]').prop('onChange')('a', 'C')
+    wrapper.find('WfParameter[idName="b"]').prop('onChange')('b', 'D')
     wrapper.update()
-    wrapper.find('WfParameter[name="b"]').prop('onReset')('b')
+    wrapper.find('WfParameter[idName="b"]').prop('onReset')('b')
     wrapper.update()
-    expect(wrapper.find('WfParameter[name="a"]').prop('value')).toEqual('C')
-    expect(wrapper.find('WfParameter[name="b"]').prop('value')).toEqual('B')
+    expect(wrapper.find('WfParameter[idName="a"]').prop('value')).toEqual('C')
+    expect(wrapper.find('WfParameter[idName="b"]').prop('value')).toEqual('B')
   })
 
   it('submits a fetch event in WfParameter onSubmit', () => {
@@ -310,7 +310,7 @@ describe('WfModule, not read-only mode', () => {
       is_collapsed: false,
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: '' },
-        { id: 2, parameter_spec: { id_name: 'version_select', type: 'String' }, value: 'B' }
+        { id: 2, parameter_spec: { id_name: 'version_select', type: 'custom' }, value: 'B' }
       ]
     }
     const wrapper = shallow(
@@ -320,14 +320,14 @@ describe('WfModule, not read-only mode', () => {
       />
     )
 
-    wrapper.find('WfParameter[name="url"]').prop('onChange')('url', 'http://example.org')
-    wrapper.find('WfParameter[name="url"]').prop('onSubmit')()
+    wrapper.find('WfParameter[idName="url"]').prop('onChange')('url', 'http://example.org')
+    wrapper.find('WfParameter[idName="url"]').prop('onSubmit')()
 
     expect(props.setWfModuleParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
     expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 
-  it('submits a fetch in WfParameter[name=version_select] onSubmit', () => {
+  it('submits a fetch in WfParameter[idName=version_select] onSubmit', () => {
     // Use case: user wants to re-fetch
     const wfModule = {
       id: 999,
@@ -335,7 +335,7 @@ describe('WfModule, not read-only mode', () => {
       is_collapsed: false,
       parameter_vals: [
         { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: 'http://example.org' },
-        { id: 2, parameter_spec: { id_name: 'version_select', type: 'String' }, value: 'B' }
+        { id: 2, parameter_spec: { id_name: 'version_select', type: 'custom' }, value: 'B' }
       ]
     }
     const wrapper = shallow(
@@ -345,7 +345,7 @@ describe('WfModule, not read-only mode', () => {
       />
     )
 
-    wrapper.find('WfParameter[name="version_select"]').prop('onSubmit')()
+    wrapper.find('WfParameter[idName="version_select"]').prop('onSubmit')()
 
     expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })

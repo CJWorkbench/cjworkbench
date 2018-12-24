@@ -4,12 +4,12 @@ import WfParameter from './WfParameter'
 import { shallow } from 'enzyme'
 
 describe('WfParameter', () => {
-
-
-  function shallowParameter (p, paramtextReturnValue, value) {
+  function shallowParameter (extraProps) {
     return shallow(
       <WfParameter
-        p={p}
+        name='name'
+        idName='idName'
+        placeholder='placeholder'
         isReadOnly={false}
         isZenMode={false}
         moduleName='test'
@@ -23,64 +23,56 @@ describe('WfParameter', () => {
         deleteSecret={jest.fn()}
         startCreateSecret={jest.fn()}
         setWfModuleParams={jest.fn()}
-        getParamId={jest.fn(_ => null)}
-        getParamText={jest.fn(_ => paramtextReturnValue)}
-        getParamMenuItems={jest.fn(_ => ['Sugar', 'Butter', '', 'Flour'])}
+        getParamText={jest.fn()}
+        deleteSecret={jest.fn()}
+        startCreateSecret={jest.fn()}
         startDrag={jest.fn()}
         stopDrag={jest.fn()}
         onChange={jest.fn()}
         onSubmit={jest.fn()}
         onReset={jest.fn()}
-        value={p.value || value}
+        value={null}
+        {...extraProps}
       />
     )
   }
 
-  it('Renders cell editor', () => {
+  it('should render a cell editor', () => {
     const wrapper = shallowParameter({
-      visible: true,
-      id: 123,
-      value: '',
-      parameter_spec: { type: 'custom', id_name: 'celledits' }
+      idName: 'celledits',
+      type: 'custom',
+      value: ''
     })
     expect(wrapper.find('CellEditor')).toHaveLength(1)
-    expect(wrapper).toMatchSnapshot()
   })
 
-  it('Renders string input field', () => {
+  it('should render a string input field', () => {
     const wrapper = shallowParameter({
-      visible: true,
-      id: 123,
+      type: 'string',
       value: 'data.sfgov.org',
-      parameter_spec: {type: 'string', id_name: 'url'}
     })
     expect(wrapper.find('SingleLineTextField')).toHaveLength(1)
-    expect(wrapper).toMatchSnapshot()
   })
 
-  it('Should render a "colnames" parameter that has type string', () => {
-    var wrapper = shallowParameter({
+  it('should render a "colnames" parameter that has type string', () => {
+    const wrapper = shallowParameter({
       visible: true,
-      id: 123,
+      idName: 'colnames',
+      type: 'string',
       value: 'A,B,C',
-      parameter_spec: {
-        id_name: 'colnames',
-        type: 'string'
-      }
-    }, 'A,B,C');
-    expect(wrapper.find('ColumnSelector')).toHaveLength(1);
+      initialValue: 'A,B,C'
+    }, 'A,B,C')
+    expect(wrapper.find('ColumnSelector')).toHaveLength(1)
   })
 
-  it('Should not render a "colselect" parameter that has type multicolumn', () => {
-    var wrapper = shallowParameter({
+  it('should not render a "colselect" parameter that has type multicolumn', () => {
+    const wrapper = shallowParameter({
+      type: 'multicolumn',
+      idName: 'colselect',
       visible: true,
-      id: 123,
       value: '',
-      parameter_spec: {
-        id_name: 'colselect',
-        type: 'multicolumn',
-      }
+      initialValue: ''
     }, '')
-    expect(wrapper.find('ColumnSelector')).toHaveLength(0);
+    expect(wrapper.find('ColumnSelector')).toHaveLength(0)
   })
 })

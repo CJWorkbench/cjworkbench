@@ -170,7 +170,7 @@ export class WfModule extends React.PureComponent {
   getParamMenuItems = (paramIdName) => {
     const p = this.getParameterValue(paramIdName)
 
-    if (p) {
+    if (p && p.items) {
       if (p.items) {
         return p.items.split('|').map(s => s.trim())
       }
@@ -386,36 +386,36 @@ export class WfModule extends React.PureComponent {
 
     const value = idName in edits ? edits[idName] : p.value
 
-    // We'll pass name=idName for unit tests, for now. In the future, we should
-    // nix `p` entirely and mass-rename `idName` to `slug`/`name` as
-    // appropriate (here, `name` is appropriate because it's like the HTML
-    // `name` attribute). TODO add `name` to WfParameter.propTypes.
     return (
       <WfParameter
         api={api}
-        name={idName}
+        name={p.parameter_spec.name || idName}
+        idName={idName}
+        type={p.parameter_spec.type}
+        initialValue={p.value}
+        value={value}
+        multiline={p.parameter_spec.multiline}
+        placeholder={p.parameter_spec.placeholder}
+        DEPRECATED_visible={p.visible}
+        items={p.items /* yes, a string */}
         moduleName={moduleName}
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
         wfModuleStatus={this.wfModuleStatus}
         wfModuleOutputError={wfModule.output_error}
         key={index}
-        p={p}
         startCreateSecret={this.startCreateSecret}
         deleteSecret={this.deleteSecret}
         onChange={this.onChange}
         onSubmit={this.onSubmit}
         onReset={this.onReset}
-        value={value}
         setWfModuleParams={this.setWfModuleParams}
         wfModuleId={wfModule.id}
         inputWfModuleId={inputWfModule ? inputWfModule.id : null}
         inputDeltaId={inputWfModule ? inputWfModule.cached_render_result_delta_id : null}
         inputColumns={inputWfModule ? inputWfModule.output_columns : null}
         updateSettings={updateSettings}
-        getParamId={this.getParamId}
         getParamText={this.getParamText}
-        getParamMenuItems={this.getParamMenuItems}
       />
     )
   }
