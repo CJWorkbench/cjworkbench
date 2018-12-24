@@ -167,11 +167,6 @@ export class WfModule extends React.PureComponent {
     return p ? p.value : null
   }
 
-  getParamId = (paramIdName) => {
-    const p = this.getParameterValue(paramIdName)
-    return p ? p.id : null
-  }
-
   getParamMenuItems = (paramIdName) => {
     const p = this.getParameterValue(paramIdName)
 

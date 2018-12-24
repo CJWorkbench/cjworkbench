@@ -41,15 +41,14 @@ class TextOrNothing extends React.Component {
 export default class WfParameter extends React.PureComponent {
   static propTypes = {
     p: PropTypes.shape({
-      id: PropTypes.number.isRequired,
       value: PropTypes.any, // initial value -- value in Redux store
       parameter_spec: PropTypes.shape({
         id_name: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
       }).isRequired,
     }).isRequired,
-    deleteSecret: PropTypes.func.isRequired, // func(paramId) => undefined
-    startCreateSecret: PropTypes.func.isRequired, // func(paramId) => undefined
+    deleteSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
+    startCreateSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
     moduleName:     PropTypes.string.isRequired,
     wfModuleStatus: PropTypes.string, // module status, or null for placeholder
     wfModuleOutputError:  PropTypes.string, // module-level error message
@@ -66,7 +65,6 @@ export default class WfParameter extends React.PureComponent {
     isReadOnly:     PropTypes.bool.isRequired,
     isZenMode:      PropTypes.bool.isRequired,
     setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined -- icky, prefer onChange
-    getParamId:     PropTypes.func.isRequired,
     getParamText:   PropTypes.func.isRequired,
     // "new-style" API: what it should have been all along. Normal React state stuff.
     onChange: PropTypes.func.isRequired, // func(idName, newValue) => undefined
@@ -142,7 +140,7 @@ export default class WfParameter extends React.PureComponent {
 
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
-    const { id, value } = this.props.p
+    const { value } = this.props.p
     const secretName = value ? (value.name || null) : null
 
     switch (id_name) {
@@ -400,17 +398,18 @@ export default class WfParameter extends React.PureComponent {
         );
 
       case 'checkbox':
+        const htmlId = `${id_name}-${this.props.wfModuleId}`
         return (
           <div {...this.outerDivProps} className={this.paramClassName + ' checkbox-wrapper'}>
-              <input
-                disabled={this.props.isReadOnly}
-                type="checkbox" className="checkbox"
-                checked={this.props.p.value}
-                onChange={this.onClickCheckbox}
-                name={id_name}
-                ref={ el => this.checkboxRef = el}
-                id={this.props.p.id} />
-              <label htmlFor={this.props.p.id}>{name}</label>
+            <input
+              disabled={this.props.isReadOnly}
+              type="checkbox" className="checkbox"
+              checked={this.props.p.value}
+              onChange={this.onClickCheckbox}
+              name={id_name}
+              id={htmlId}
+            />
+            <label htmlFor={htmlId}>{name}</label>
           </div>
         );
       case 'radio':
