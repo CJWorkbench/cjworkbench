@@ -1,6 +1,7 @@
 import json
 from django.db import models
-from server.models.ModuleVersion import *
+from server.models.ModuleVersion import ModuleVersion
+
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
@@ -38,28 +39,40 @@ class ParameterSpec(models.Model):
 
     TYPES = [x[0] for x in TYPE_CHOICES]
 
+    type = models.CharField(max_length=16, choices=TYPE_CHOICES,
+                            default=STRING)
 
-    # fields
-    type = models.CharField(max_length=16, choices=TYPE_CHOICES, default=STRING)
+    # user-visible
+    name = models.CharField('name', max_length=256)
 
-    name = models.CharField('name', max_length=256)          # user-visible
-    id_name = models.CharField('id_name', max_length=200)    # unique to this Module
+    # unique to this Module
+    id_name = models.CharField('id_name', max_length=200)
 
-    module_version = models.ForeignKey(ModuleVersion, related_name='parameter_specs',
-                               on_delete=models.CASCADE, null=True)  # delete spec if Module deleted
+    # delete spec if Module deleted
+    module_version = models.ForeignKey(ModuleVersion,
+                                       related_name='parameter_specs',
+                                       on_delete=models.CASCADE, null=True)
 
-    order = models.IntegerField('order', default=0)         # relative to other parameters
+    # relative to other parameters
+    order = models.IntegerField('order', default=0)
 
-    def_value = models.TextField(blank=True, default='')    # string representation, will be cast to field via setvalue
-    def_items = models.TextField(null=True, blank=True)     # initial menu and radio items here
+    # string representation, will be cast to field via setvalue
+    def_value = models.TextField(blank=True, default='')
+    # initial menu and radio items here
+    def_items = models.TextField(null=True, blank=True)
 
     # Flags which can be set per-instance
-    def_visible = models.BooleanField(default=True)         # Displayed in UI?
+    # Displayed in UI?
+    def_visible = models.BooleanField(default=True)
 
     # Flags which cannot be set on a per-instance basis
-    ui_only = models.BooleanField(default=False)            # Don't bother pushing value to server
-    multiline = models.BooleanField(default=False)          # For edit fields
-    placeholder = models.TextField(blank=True, default='')  # Placeholder/help text. Different from default in that it's not actually a value.
+    # Don't bother pushing value to server
+    ui_only = models.BooleanField(default=False)
+    # For edit fields
+    multiline = models.BooleanField(default=False)
+    # Placeholder/help text. Different from default in that it's not actually a
+    # value.
+    placeholder = models.TextField(blank=True, default='')
 
     # Conditional UI
     visible_if = models.TextField('visible_if', default='')
@@ -99,7 +112,7 @@ class ParameterSpec(models.Model):
 
         elif self.type == ParameterSpec.CHECKBOX:
             try:
-                # Be permissive, allow both actual booleans and "true"/"false" strings
+                # Be permissive, allow both actual booleans and "true"/"false"
                 if type(value) is bool:
                     return str(value)
                 elif type(value) is str:
@@ -163,7 +176,7 @@ class ParameterSpec(models.Model):
         elif self.type == ParameterSpec.SECRET:
             if s:
                 parsed = json.loads(s)
-                return { 'name': parsed['name'] }
+                return {'name': parsed['name']}
             else:
                 return None
 
