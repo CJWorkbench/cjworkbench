@@ -19,6 +19,17 @@ export default class WorkbenchAPI {
   // this._serializer always resolves to the last-returned fetch result.
   _serializer = Promise.resolve(null)
 
+  _callExpectingNull (...args) {
+    return this.websocket.callServerHandler(...args)
+      .catch(err => {
+        if (err.serverError) {
+          console.error('Message from server: ', err.serverError, err)
+        } else {
+          console.error(err)
+        }
+      })
+  }
+
   /**
    * Returns Promise of JSON on HTTP success (or `null` on HTTP 204 success).
    *
@@ -102,20 +113,20 @@ export default class WorkbenchAPI {
   }
 
   setTabOrder (tabIds) {
-    return this.websocket.callServerHandler('workflow.set_tab_order', {
+    return this._callExpectingNull('workflow.set_tab_order', {
       tabIds
     })
   }
 
   reorderWfModules (tabId, wfModuleIds) {
-    return this.websocket.callServerHandler('tab.reorder_modules', {
+    return this._callExpectingNull('tab.reorder_modules', {
       tabId,
       wfModuleIds
     })
   }
 
   addModule (tabId, moduleId, index, values={}) {
-    return this.websocket.callServerHandler('tab.add_module', {
+    return this._callExpectingNull('tab.add_module', {
       tabId,
       moduleId,
       position: index,
@@ -124,17 +135,17 @@ export default class WorkbenchAPI {
   }
 
   createTab (name) {
-    return this.websocket.callServerHandler('tab.create', { name })
+    return this._callExpectingNull('tab.create', { name })
   }
 
   deleteModule(wfModuleId) {
-    return this.websocket.callServerHandler('wf_module.delete', {
+    return this._callExpectingNull('wf_module.delete', {
       wfModuleId
     })
   }
 
   deleteTab (tabId) {
-    return this.websocket.callServerHandler('tab.delete', {
+    return this._callExpectingNull('tab.delete', {
       tabId
     })
   }
@@ -144,7 +155,7 @@ export default class WorkbenchAPI {
   }
 
   setWfModuleParams (wfModuleId, values) {
-    return this.websocket.callServerHandler('wf_module.set_params', {
+    return this._callExpectingNull('wf_module.set_params', {
       wfModuleId,
       values
     })
@@ -189,35 +200,35 @@ export default class WorkbenchAPI {
   }
 
   setTabName (tabId, name) {
-    return this.websocket.callServerHandler('tab.set_name', {
+    return this._callExpectingNull('tab.set_name', {
       tabId,
       name
     })
   }
 
   setWfModuleVersion (wfModuleId, version) {
-    return this.websocket.callServerHandler('wf_module.set_stored_data_version', {
+    return this._callExpectingNull('wf_module.set_stored_data_version', {
       wfModuleId,
       version
     })
   }
 
   setWfModuleNotes (wfModuleId, notes) {
-    return this.websocket.callServerHandler('wf_module.set_notes', {
+    return this._callExpectingNull('wf_module.set_notes', {
       wfModuleId,
       notes
     })
   }
 
   setWfModuleCollapsed (wfModuleId, isCollapsed) {
-    return this.websocket.callServerHandler('wf_module.set_collapsed', {
+    return this._callExpectingNull('wf_module.set_collapsed', {
       wfModuleId,
       isCollapsed
     })
   }
 
   setWorkflowName (name) {
-    return this.websocket.callServerHandler('workflow.set_name', { name })
+    return this._callExpectingNull('workflow.set_name', { name })
   }
 
   /**
@@ -228,7 +239,7 @@ export default class WorkbenchAPI {
    * affect any data.
    */
   setSelectedWfModule (wfModuleId ) {
-    return this.websocket.callServerHandler('workflow.set_selected_wf_module', {
+    return this._callExpectingNull('workflow.set_selected_wf_module', {
       wfModuleId
     })
   }
@@ -241,7 +252,7 @@ export default class WorkbenchAPI {
    * affect any data.
    */
   setSelectedTab (tabId) {
-    return this.websocket.callServerHandler('workflow.set_selected_tab', {
+    return this._callExpectingNull('workflow.set_selected_tab', {
       tabId
     })
   }
@@ -252,11 +263,11 @@ export default class WorkbenchAPI {
   }
 
   undo(workflowId) {
-    return this.websocket.callServerHandler('workflow.undo', {})
+    return this._callExpectingNull('workflow.undo', {})
   }
 
   redo(workflowId) {
-    return this.websocket.callServerHandler('workflow.redo', {})
+    return this._callExpectingNull('workflow.redo', {})
   }
 
   duplicateWorkflow(workflowId) {
@@ -278,7 +289,7 @@ export default class WorkbenchAPI {
   }
 
   requestFetch (wfModuleId) {
-    return this.websocket.callServerHandler('wf_module.fetch', {
+    return this._callExpectingNull('wf_module.fetch', {
       wfModuleId
     })
   }
@@ -352,7 +363,7 @@ export default class WorkbenchAPI {
   }
 
   deleteSecret (wfModuleId, param) {
-    return this.websocket.callServerHandler('wf_module.delete_secret', {
+    return this._callExpectingNull('wf_module.delete_secret', {
       wfModuleId,
       param
     })
