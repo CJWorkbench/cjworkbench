@@ -8,21 +8,8 @@
   "parameters": [
     {
       "name": "",
-      "id_name": "colselect",
-      "type": "multicolumn",
-      "ui-only": true,
-      "visible": false,
-      "visible_if": {
-        "id_name": "select_range",
-        "value": false,
-        "invert": false
-      }
-    },
-    {
-      "name": "Column Names",
       "id_name": "colnames",
-      "type": "string",
-      "visible": true,
+      "type": "multicolumn",
       "visible_if": {
         "id_name": "select_range",
         "value": false,
