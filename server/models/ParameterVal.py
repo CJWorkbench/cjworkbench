@@ -17,12 +17,9 @@ class ParameterVal(models.Model):
 
     value = models.TextField(blank=True, default='')
 
-    items = models.TextField(null=True, blank=True)
-
     def init_from_spec(self):
         self.value = self.parameter_spec.def_value
         self.order = self.parameter_spec.order
-        self.items = self.parameter_spec.def_items
 
     def duplicate(self, to_wf_module):
         if self.parameter_spec.type == ParameterSpec.SECRET:
@@ -34,8 +31,7 @@ class ParameterVal(models.Model):
             wf_module=to_wf_module,
             parameter_spec=self.parameter_spec,
             order=self.order,
-            value=value,
-            items=self.items
+            value=value
         )
         return newval
 

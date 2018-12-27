@@ -221,7 +221,7 @@ class InitmoduleTests(DbTestCase):
         radio_spec = ParameterSpec.objects.get(id_name='radio_options')
         self.assertEqual(radio_spec.type, ParameterSpec.RADIO)
         self.assertEqual(radio_spec.def_value, '1')
-        self.assertEqual(radio_spec.def_items, 'Cheese|Chocolate|Pudding')
+        self.assertEqual(radio_spec.items, 'Cheese|Chocolate|Pudding')
 
         # create wf_modules in two different workflows that reference this
         # module
@@ -267,7 +267,7 @@ class InitmoduleTests(DbTestCase):
         menu_spec = ParameterSpec.objects.get(id_name='caketype')
         self.assertEqual(menu_spec.type, ParameterSpec.MENU)
         self.assertEqual(menu_spec.def_value, '1')
-        self.assertEqual(menu_spec.def_items, 'Cheese|Chocolate')
+        self.assertEqual(menu_spec.items, 'Cheese|Chocolate')
         self.assertEqual(menu_spec.order, 0)
         menu_pval1 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm1)
         self.assertEqual(menu_pval1.value, '1')
@@ -366,9 +366,9 @@ class InitmoduleTests(DbTestCase):
         module = Module.objects.create()
         module_version3 = ModuleVersion.objects.create(module=module)
         unchanged_spec3 = ParameterSpec.objects.create(id_name='unchanged', type='menu', module_version=module_version3,
-                                                       def_items='Option 1|Option 2|Option 3', def_value='0')
+                                                       items='Option 1|Option 2|Option 3', def_value='0')
         changed_spec3 = ParameterSpec.objects.create(id_name='changed', type='menu', module_version=module_version3,
-                                                       def_items='Option 1|Option 2|Option 3', def_value='0')
+                                                       items='Option 1|Option 2|Option 3', def_value='0')
 
 
         wf2 = Workflow.objects.create(name='Ancient Workflow')
@@ -381,17 +381,17 @@ class InitmoduleTests(DbTestCase):
 
         module_version4 = ModuleVersion.objects.create(module=module)
         unchanged_spec4 = ParameterSpec.objects.create(id_name='unchanged', type='radio', module_version=module_version4,
-                                                       def_items='Option 1|Option 2|Option 3')
+                                                       items='Option 1|Option 2|Option 3')
         changed_spec4 = ParameterSpec.objects.create(id_name='changed', type='radio', module_version=module_version4,
-                                                     def_items='Option 1|Option 2', def_value='0')
+                                                     items='Option 1|Option 2', def_value='0')
 
         update_wfm_parameters_to_new_version(wfm2, module_version4)
         self.assertEqual(wfm2.module_version, module_version4)
 
-        # changed type, but def_items the same. Value should stay the same.
+        # changed type, but items the same. Value should stay the same.
         unchanged_pval.refresh_from_db()
         self.assertEqual(unchanged_pval.value, '2')
 
-        # changed type, but def_items different. Value should reset to default.
+        # changed type, but items different. Value should reset to default.
         changed_pval.refresh_from_db()
         self.assertEqual(changed_pval.value, '0')

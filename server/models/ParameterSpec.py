@@ -59,8 +59,8 @@ class ParameterSpec(models.Model):
     # Flags which can be set per-instance
     # string representation, will be cast to field via setvalue
     def_value = models.TextField(blank=True, default='')
-    # initial menu and radio items here
-    def_items = models.TextField(null=True, blank=True)
+    # menu and radio items, in "value0|value1|value2" format
+    items = models.TextField(null=True, blank=True)
 
     # Flags which cannot be set on a per-instance basis
     # For edit fields

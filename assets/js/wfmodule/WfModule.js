@@ -170,12 +170,11 @@ export class WfModule extends React.PureComponent {
   getParamMenuItems = (paramIdName) => {
     const p = this.getParameterValue(paramIdName)
 
-    if (p && p.items) {
-      if (p.items) {
-        return p.items.split('|').map(s => s.trim())
-      }
-    }
-    return []
+    if (!p) return []
+    if (!p.parameter_spec) return []
+    if (!p.parameter_spec.items) return []
+
+    return p.parameter_spec.items.split('|').map(s => s.trim())
   }
 
   removeModule = () => {
@@ -396,7 +395,7 @@ export class WfModule extends React.PureComponent {
         value={value}
         multiline={p.parameter_spec.multiline}
         placeholder={p.parameter_spec.placeholder}
-        items={p.items /* yes, a string */}
+        items={p.parameter_spec.items /* yes, a string */}
         moduleName={moduleName}
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}

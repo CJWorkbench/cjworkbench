@@ -160,12 +160,12 @@ def load_parameter_spec(d, module_version, order):
     if d['type'] == 'menu':
         if (not 'menu_items' in d) or (d['menu_items']==''):
             raise ValueError("Menu parameter specification missing menu_items")
-        pspec.def_items = d['menu_items']
+        pspec.items = d['menu_items']
 
     if d['type'] == 'radio':
         if (not 'radio_items' in d) or (d['radio_items']==''):
             raise ValueError("Radio parameter specification missing radio_items")
-        pspec.def_items = d['radio_items']
+        pspec.items = d['radio_items']
 
     if 'visible_if' in d:
         if 'id_name' in d['visible_if'] and 'value' in d['visible_if']:
@@ -183,10 +183,12 @@ def load_parameter_spec(d, module_version, order):
 # This can happen when reloading an internal module (because there is only one module_version)
 # or when updating a WfModule to a new module_version
 
+
 def create_parameter_val(wfm, new_spec):
     pval = ParameterVal.objects.create(wf_module=wfm, parameter_spec=new_spec)
     pval.init_from_spec()
     pval.save()
+
 
 # Checks if old parameter value can safely be maintained according to mapping in _safe_param_types_to_migrate
 def _is_pval_safe_to_keep(old_spec, new_spec):
@@ -198,7 +200,7 @@ def _is_pval_safe_to_keep(old_spec, new_spec):
     ):
         # Switching between menu/radio and/or changing options. We're "safe"
         # iff the choices don't change.
-        return old_spec.def_items == new_spec.def_items
+        return old_spec.items == new_spec.items
 
     if (
         old_spec.id_name == 'colnames'
@@ -222,7 +224,6 @@ def _is_pval_safe_to_keep(old_spec, new_spec):
 def migrate_parameter_val(pval, old_spec, new_spec):
     pval.order = new_spec.order
     pval.parameter_spec = new_spec
-    pval.items = new_spec.def_items
     if not _is_pval_safe_to_keep(old_spec, new_spec):
         pval.value = new_spec.def_value
     pval.save()

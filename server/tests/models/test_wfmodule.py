@@ -31,7 +31,7 @@ class WfModuleTestsBase(DbTestCase):
         self.pspec24 = add_new_parameter_spec(self.module2_version, ParameterSpec.CHECKBOX, def_value=True)
         self.pspec25 = ParameterSpec.objects.create(module_version=self.module2_version,
                                                     type=ParameterSpec.MENU,
-                                                    def_items='Apple|Banana|Kittens',
+                                                    items='Apple|Banana|Kittens',
                                                     def_value='1')
 
         self.module3_version = add_new_module_version('Module 3', dispatch='double_M_col')

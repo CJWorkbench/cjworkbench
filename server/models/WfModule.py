@@ -222,7 +222,6 @@ class WfModule(models.Model):
             self.parameter_vals.create(
                 parameter_spec=pspec,
                 order=pspec.order,
-                items=pspec.def_items,
                 value=value
             )
 

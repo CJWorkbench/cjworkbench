@@ -12,49 +12,49 @@ class ParameterValTestHelpers:
         self.module_version = add_new_module_version("TestModule")
         self.moduleID = self.module_version.module.id
 
-        stringSpec = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='StringParam',
             id_name='stringparam',
             module_version=self.module_version,
-            type= ParameterSpec.STRING,
+            type=ParameterSpec.STRING,
             def_value='foo',
             placeholder='placeholder')
-        stringSpecEmpty = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='StringParamEmpty',
             id_name='stringparamempty',
             module_version=self.module_version,
             type=ParameterSpec.STRING)
-        integerSpec = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='IntegerParam',
             id_name='integerparam',
             module_version=self.module_version,
             type=ParameterSpec.INTEGER,
             def_value='42')
-        floatSpec = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='FloatParam',
             id_name='floatparam',
             module_version=self.module_version,
             type=ParameterSpec.FLOAT,
             def_value='10.11')
-        checkboxSpec = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='CheckboxParam',
             id_name='checkboxparam',
             module_version=self.module_version,
             type=ParameterSpec.CHECKBOX,
             def_value='1')
-        menuSpec = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='MenuParam',
             id_name='menuparam',
             module_version=self.module_version,
             type=ParameterSpec.MENU,
-            def_items='Item A|Item B|Item C',
+            items='Item A|Item B|Item C',
             def_value='1')  # should refer to Item B
-        radioSpec = ParameterSpec.objects.create(
+        ParameterSpec.objects.create(
             name='RadioParam',
             id_name='radioparam',
             module_version=self.module_version,
             type=ParameterSpec.RADIO,
-            def_items='Item A|Item B|Item C',
+            items='Item A|Item B|Item C',
             def_value='0')  # should refer to Item A
 
         self.workflow = Workflow.objects.create()
@@ -63,7 +63,8 @@ class ParameterValTestHelpers:
             module_version=self.module_version,
             order=0
         )
-        # set non-default values for vals in order to reveal certain types of bugs
+        # set non-default values for vals in order to reveal certain types of
+        # bugs
         self.wfmodule.create_parametervals({
             'stringparam': 'fooval',
             # 'stringparamempty': '',
@@ -154,7 +155,6 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         self.assertEqual(spd.wf_module, wfmodule2)
         self.assertEqual(sp.parameter_spec, spd.parameter_spec)
         self.assertEqual(sp.value, spd.value)
-        self.assertEqual(sp.items, spd.items)
         self.assertEqual(sp.order, spd.order)
 
     def test_secret_default_none(self):
