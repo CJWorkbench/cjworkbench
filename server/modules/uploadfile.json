@@ -10,8 +10,7 @@
     {
       "name": "Upload File",
       "id_name": "file",
-      "type": "custom",
-      "ui-only": true
+      "type": "custom"
     },
     {
       "name": "Has header row",
