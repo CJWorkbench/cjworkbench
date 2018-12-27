@@ -155,7 +155,6 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         self.assertEqual(spd.wf_module, wfmodule2)
         self.assertEqual(sp.parameter_spec, spd.parameter_spec)
         self.assertEqual(sp.value, spd.value)
-        self.assertEqual(sp.order, spd.order)
 
     def test_secret_default_none(self):
         self.assertIs(self.secret_val().get_value(), None)

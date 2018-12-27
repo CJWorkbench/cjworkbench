@@ -6,20 +6,17 @@ import json
 # A parameter value, which might be string or float
 class ParameterVal(models.Model):
     class Meta:
-        ordering = ['order']
+        ordering = ['parameter_spec__order']
 
     wf_module = models.ForeignKey('WfModule', related_name='parameter_vals',
                                on_delete=models.CASCADE, null=True)  # delete value if Module deleted
     parameter_spec = models.ForeignKey(ParameterSpec, related_name='parameter_vals',
                                on_delete=models.CASCADE, null=True)  # delete value if Spec deleted
 
-    order = models.IntegerField('order', default=0)
-
     value = models.TextField(blank=True, default='')
 
     def init_from_spec(self):
         self.value = self.parameter_spec.def_value
-        self.order = self.parameter_spec.order
 
     def duplicate(self, to_wf_module):
         if self.parameter_spec.type == ParameterSpec.SECRET:
@@ -30,7 +27,6 @@ class ParameterVal(models.Model):
         newval = ParameterVal.objects.create(
             wf_module=to_wf_module,
             parameter_spec=self.parameter_spec,
-            order=self.order,
             value=value
         )
         return newval

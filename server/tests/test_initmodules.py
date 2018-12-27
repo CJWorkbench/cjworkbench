@@ -249,7 +249,7 @@ class InitmoduleTests(DbTestCase):
         with self.assertRaises(ParameterSpec.DoesNotExist):
             ParameterSpec.objects.get(id_name='fetch')
 
-        # parametervals should now point to spec with new type, order, default value
+        # parametervals should now point to spec with new type, default value
         # and have value=default value because type changed
         self.assertEqual(ParameterSpec.objects.filter(id_name='url').count(), 1)
         url_spec2 = ParameterSpec.objects.get(id_name='url')
@@ -271,10 +271,8 @@ class InitmoduleTests(DbTestCase):
         self.assertEqual(menu_spec.order, 0)
         menu_pval1 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm1)
         self.assertEqual(menu_pval1.value, '1')
-        self.assertEqual(menu_pval1.order, 0)
         menu_pval2 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm2)
         self.assertEqual(menu_pval2.value, '1')
-        self.assertEqual(menu_pval1.order, 0)
 
         # load the old one again, just for kicks (and to test updating a previously updated module_version)
         m2 = load_module_from_dict(LoadCsv)
