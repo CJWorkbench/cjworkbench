@@ -63,8 +63,12 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(pval.selected_menu_item_string(), 'Banana')
 
         # button has no value, so just checking existence here
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec31, wf_module=self.wfmodule3)
-        self.assertEqual(pval.visible, True)
+        self.assertEqual(
+            1,
+            self.wfmodule3.parameter_vals
+                .filter(parameter_spec=self.pspec31)
+                .count()
+        )
 
     def test_retrieve_table_error_missing_version(self):
         '''

@@ -154,8 +154,6 @@ def load_parameter_spec(d, module_version, order):
 
     # Optional keys
     pspec.def_value = d.get('default', '') # ParameterVal.set_value will translate to 0, false, etc. according to type
-    pspec.def_visible = d.get('visible', True)
-    pspec.ui_only = d.get('ui-only', False)
     pspec.multiline = d.get('multiline', False)
     pspec.placeholder = d.get('placeholder', '')
 

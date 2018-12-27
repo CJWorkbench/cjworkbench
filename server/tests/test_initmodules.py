@@ -1,12 +1,11 @@
 # test module (re)loading
-from django.test import TestCase
-from server.models import ParameterVal, ParameterSpec, Module, WfModule, \
+from server.models import ParameterVal, ParameterSpec, Module, \
         Workflow, ModuleVersion
-from server.initmodules import load_module_from_dict, update_wfm_parameters_to_new_version
+from server.initmodules import load_module_from_dict, \
+        update_wfm_parameters_to_new_version
 from server.tests.utils import DbTestCase
 import json
 import copy
-from cjworkbench.settings import KB_ROOT_URL
 
 
 LoadCsv = {
@@ -17,7 +16,7 @@ LoadCsv = {
     'parameters': [
         {
             'name': 'URL',
-            'id_name' : 'url',
+            'id_name': 'url',
             'type': 'string',
             'default': 'http://foo.com'
         },
@@ -29,10 +28,8 @@ LoadCsv = {
         },
         {
             'name': 'Fetch',
-            'id_name' : 'fetch',
-            'type': 'button',
-            'visible': False,
-            'ui-only': True
+            'id_name': 'fetch',
+            'type': 'button'
         },
         {
             'name': 'No default',
@@ -62,14 +59,14 @@ LoadCsv = {
 LoadCsv2 = {
     'name': 'Load CSV RELOADED',
     'id_name': 'loadcsv',
-    'category' : 'Sources',
+    'category': 'Sources',
     'parameters': [
         {
             'name': 'Cake type',
-            'id_name' : 'caketype',
+            'id_name': 'caketype',
             'type': 'menu',
-            'menu_items' : 'Cheese|Chocolate',
-            'default' : 1
+            'menu_items': 'Cheese|Chocolate',
+            'default': 1
         },
         {
             'name': 'URL',
@@ -79,6 +76,7 @@ LoadCsv2 = {
         }
     ]
 }
+
 
 class InitmoduleTests(DbTestCase):
     def test_load_valid(self):
@@ -100,8 +98,6 @@ class InitmoduleTests(DbTestCase):
         self.assertEqual(url_spec.id_name, 'url')
         self.assertEqual(url_spec.type, ParameterSpec.STRING)
         self.assertEqual(url_spec.def_value, 'http://foo.com')
-        self.assertEqual(url_spec.def_visible, True)
-        self.assertEqual(url_spec.ui_only, False)
         self.assertEqual(url_spec.multiline, False)
         self.assertEqual(url_spec.order, 0)
 
@@ -115,8 +111,6 @@ class InitmoduleTests(DbTestCase):
         self.assertEqual(button_spec.name, 'Fetch')
         self.assertEqual(button_spec.id_name, 'fetch')
         self.assertEqual(button_spec.type, ParameterSpec.BUTTON)
-        self.assertEqual(button_spec.def_visible, False)
-        self.assertEqual(button_spec.ui_only, True)
         self.assertEqual(button_spec.order, 2)
 
         # check missing default has a default, and that multiline works
@@ -126,37 +120,37 @@ class InitmoduleTests(DbTestCase):
         self.assertEqual(nodef_spec.multiline, True)
 
         # Make sure checkbox loads with correct default value
-        # This tests boolean -> string conversion (JSON is boolean, def_value is string)
+        # This tests boolean -> string conversion (JSON is boolean,
+        # def_value is string)
         cb_spec = ParameterSpec.objects.get(id_name='doitcheckbox')
         self.assertEqual(cb_spec.type, ParameterSpec.CHECKBOX)
         self.assertEqual(cb_spec.def_value, 'True')
 
-
     # we should bail when keys are missing
     def test_missing_keys(self):
-        module_keys = ['name','id_name','category']
+        module_keys = ['name', 'id_name', 'category']
         for k in module_keys:
             missing = copy.deepcopy(LoadCsv)
             del missing[k]
             with self.assertRaises(ValueError):
                 load_module_from_dict(missing)
 
-        param_keys = ['name','id_name','type']
+        param_keys = ['name', 'id_name', 'type']
         for k in param_keys:
             missing = copy.deepcopy(LoadCsv)
             del missing['parameters'][0][k]
             with self.assertRaises(ValueError):
                 load_module_from_dict(missing)
 
-
-    # Reloading an external module should create a new module_version, but not add new parameters
+    # Reloading an external module should create a new module_version,
+    # but not add new parameters
     def test_reload_external_module(self):
         # source_version => external
         mini_module = {
             'name': 'Test',
             'id_name': 'test',
             'category': 'Cats',
-            'source_version' : 'f00dbeef',
+            'source_version': 'f00dbeef',
             'parameters': [
                 {
                     'name': 'URL',
@@ -168,9 +162,9 @@ class InitmoduleTests(DbTestCase):
 
         m1 = load_module_from_dict(mini_module)
         self.assertEqual(m1.source_version_hash, mini_module['source_version'])
-        pspec1 = ParameterSpec.objects.get(id_name='url', module_version=m1)
 
-        # Create a wf_module that references this module. Should create a new ParameterVal
+        # Create a wf_module that references this module. Should create a new
+        # ParameterVal
         wf = Workflow.objects.create()
         tab = wf.tabs.create(position=0)
         wfm = tab.wf_modules.create(order=0, module_version=m1)
@@ -180,7 +174,7 @@ class InitmoduleTests(DbTestCase):
             'name': 'Test',
             'id_name': 'test',
             'category': 'Cats',
-            'source_version' : 'deadbeef',
+            'source_version': 'deadbeef',
             'parameters': [
                 {
                     'name': 'URL',
@@ -190,12 +184,13 @@ class InitmoduleTests(DbTestCase):
                 {
                     'name': 'New Integer',
                     'id_name': 'newint',
-                    'type' : 'integer'
+                    'type': 'integer'
                 }
             ]
         }
 
-        # loading new definition should create new module_version, should not add/alter old parameter values
+        # loading new definition should create new module_version, should not
+        # add/alter old parameter values
         m2 = load_module_from_dict(mini_module2)
         self.assertNotEqual(m1.id, m2.id)
         with self.assertRaises(ParameterVal.DoesNotExist):
@@ -211,23 +206,25 @@ class InitmoduleTests(DbTestCase):
         m4 = load_module_from_dict(mini_module4)
         self.assertNotEqual(m3.id, m4.id)
 
-
-    # Checks that re-importing an internal module (same id_name) overwrites the old fields
-    # and existing ParameterVals are updated
+    # Checks that re-importing an internal module (same id_name) overwrites the
+    # old fields and existing ParameterVals are updated
     def test_reload_internal_module(self):
-        self.assertEqual(len(Module.objects.all()), 0)   # we should be starting with no modules
+        # we should be starting with no modules
+        self.assertEqual(len(Module.objects.all()), 0)
 
         m1 = load_module_from_dict(LoadCsv)
         url_spec1 = ParameterSpec.objects.get(id_name='url')
         ParameterSpec.objects.get(id_name='fetch')
-        self.assertEqual(m1.source_version_hash, '1.0')  # internal modules get this version
+        # internal modules get this version
+        self.assertEqual(m1.source_version_hash, '1.0')
 
         radio_spec = ParameterSpec.objects.get(id_name='radio_options')
         self.assertEqual(radio_spec.type, ParameterSpec.RADIO)
         self.assertEqual(radio_spec.def_value, '1')
         self.assertEqual(radio_spec.def_items, 'Cheese|Chocolate|Pudding')
 
-        # create wf_modules in two different workflows that reference this module
+        # create wf_modules in two different workflows that reference this
+        # module
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wfm1 = tab.wf_modules.create(module_version=m1, order=0)
@@ -235,8 +232,9 @@ class InitmoduleTests(DbTestCase):
         wfm2 = tab.wf_modules.create(module_version=m1, order=0)
         wfm2.create_parametervals()
 
-        # precondition: corresponding parameter val exists for each wfm with correct default
-        # also tested in test_wfmodule.py but whatevs, won't hurt
+        # precondition: corresponding parameter val exists for each wfm with
+        # correct default also tested in test_wfmodule.py but whatevs, won't
+        # hurt
         url_pval1 = ParameterVal.objects.get(parameter_spec=url_spec1, wf_module=wfm1)
         self.assertEqual(url_pval1.value, 'http://foo.com')
         url_pval2 = ParameterVal.objects.get(parameter_spec=url_spec1, wf_module=wfm2)

@@ -43,7 +43,7 @@ class ParameterValSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ParameterVal
-        fields = ('parameter_spec', 'value', 'visible', 'items')
+        fields = ('parameter_spec', 'value', 'items')
 
 
 class ModuleSerializer(serializers.ModelSerializer):

@@ -223,7 +223,6 @@ class WfModule(models.Model):
                 parameter_spec=pspec,
                 order=pspec.order,
                 items=pspec.def_items,
-                visible=pspec.def_visible,
                 value=value
             )
 

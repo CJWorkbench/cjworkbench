@@ -2,6 +2,7 @@ from django.db import models
 from server.models.ParameterSpec import ParameterSpec
 import json
 
+
 # A parameter value, which might be string or float
 class ParameterVal(models.Model):
     class Meta:
@@ -18,13 +19,10 @@ class ParameterVal(models.Model):
 
     items = models.TextField(null=True, blank=True)
 
-    visible = models.BooleanField(default=True)
-
     def init_from_spec(self):
         self.value = self.parameter_spec.def_value
         self.order = self.parameter_spec.order
         self.items = self.parameter_spec.def_items
-        self.visible = self.parameter_spec.def_visible
 
     def duplicate(self, to_wf_module):
         if self.parameter_spec.type == ParameterSpec.SECRET:
@@ -37,8 +35,7 @@ class ParameterVal(models.Model):
             parameter_spec=self.parameter_spec,
             order=self.order,
             value=value,
-            items=self.items,
-            visible=self.visible
+            items=self.items
         )
         return newval
 

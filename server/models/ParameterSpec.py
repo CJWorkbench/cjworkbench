@@ -56,18 +56,13 @@ class ParameterSpec(models.Model):
     # relative to other parameters
     order = models.IntegerField('order', default=0)
 
+    # Flags which can be set per-instance
     # string representation, will be cast to field via setvalue
     def_value = models.TextField(blank=True, default='')
     # initial menu and radio items here
     def_items = models.TextField(null=True, blank=True)
 
-    # Flags which can be set per-instance
-    # Displayed in UI?
-    def_visible = models.BooleanField(default=True)
-
     # Flags which cannot be set on a per-instance basis
-    # Don't bother pushing value to server
-    ui_only = models.BooleanField(default=False)
     # For edit fields
     multiline = models.BooleanField(default=False)
     # Placeholder/help text. Different from default in that it's not actually a
