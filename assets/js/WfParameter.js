@@ -46,7 +46,6 @@ export default class WfParameter extends React.PureComponent {
     initialValue: PropTypes.any, // initial value -- value in Redux store
     deleteSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
-    moduleName:     PropTypes.string.isRequired,
     wfModuleStatus: PropTypes.string, // module status, or null for placeholder
     wfModuleOutputError:  PropTypes.string, // module-level error message
     wfModuleId: PropTypes.number.isRequired,

@@ -33,16 +33,16 @@ import lessonSelector from '../lessons/lessonSelector'
 
 describe('ModuleSearch', () => {
   const modules = {
-    4: {
-      id: 4,
+    'enigma': {
+      idName: 'enigma',
       name: "Load from Enigma",
       description: 'Enigma description',
       category: "Add data",
       icon: "url",
       isLessonHighlight: true,
     },
-    10: {
-      id: 10,
+    'filter': {
+      idName: 'filter',
       name: "Filter by Text",
       description: 'Text description',
       category: "Filter",
@@ -54,7 +54,7 @@ describe('ModuleSearch', () => {
 
   let defaultProps
   beforeEach(() => defaultProps = {
-    onClickModuleId: jest.fn(),
+    onClickModule: jest.fn(),
     onCancel: jest.fn(),
     index: 2,
     modules: modulesArray,
@@ -102,9 +102,9 @@ describe('ModuleSearch', () => {
       expect(wrapper.prop('onCancel')).toHaveBeenCalled()
     })
 
-    it('calls onClickModuleId on click', () => {
+    it('calls onClickModule on click', () => {
       wrapper.find('li[data-module-name="Load from Enigma"]').simulate('click')
-      expect(wrapper.prop('onClickModuleId')).toHaveBeenCalledWith(4)
+      expect(wrapper.prop('onClickModule')).toHaveBeenCalledWith('enigma')
     })
 
     it('should lesson-highlight module', () => {
@@ -115,43 +115,35 @@ describe('ModuleSearch', () => {
     it('should sort modules in alphabetical order', () => {
       wrapper.unmount()
       const modules = {
-        4: {
-          id: 4,
+        'a': {
+          idName: 'a',
           name: "Z",
           description: 'desc',
           category: "Add data",
           icon: "url",
-          isLessonHighlight: true,
+          isLessonHighlight: false
         },
-        1: {
-          id: 1,
+        'b': {
+          idName: 'b',
           name: "Y",
           description: 'desc',
           category: "Filter",
           icon: "filter",
-          isLessonHighlight: false,
+          isLessonHighlight: false
         },
-        6: {
-          id: 6,
+        'c': {
+          idName: 'c',
           name: "H",
           description: 'desc',
           category: "Filter",
           icon: "filter",
           isLessonHighlight: false,
         },
-        7: {
-          id: 7,
+        'd': {
+          idName: 'd',
           name: "A",
           description: 'desc',
           category: "Add data",
-          icon: "filter",
-          isLessonHighlight: false,
-        },
-        5: {
-          id: 5,
-          name: "A",
-          description: 'desc',
-          category: "Filter",
           icon: "filter",
           isLessonHighlight: false,
         }
@@ -159,7 +151,7 @@ describe('ModuleSearch', () => {
       const modulesArray = Object.keys(modules).map(id => modules[id])
 
       let defaultProps = {
-        onClickModuleId: jest.fn(),
+        onClickModule: jest.fn(),
         onCancel: jest.fn(),
         index: 2,
         modules: modulesArray,
@@ -169,7 +161,7 @@ describe('ModuleSearch', () => {
       wrapper = mount(<ModuleSearch {...defaultProps}/>)
 
       let resultList = wrapper.prop('modules').map(x => x.name)
-      let expectedResult = ['A', 'A', 'H', 'Y', 'Z']
+      let expectedResult = ['A', 'H', 'Y', 'Z']
       expect(resultList).toEqual(expectedResult)
     })
 

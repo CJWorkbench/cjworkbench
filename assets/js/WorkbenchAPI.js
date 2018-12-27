@@ -125,10 +125,10 @@ export default class WorkbenchAPI {
     })
   }
 
-  addModule (tabId, moduleId, index, values={}) {
+  addModule (tabId, moduleIdName, index, values={}) {
     return this._callExpectingNull('tab.add_module', {
       tabId,
-      moduleId,
+      moduleIdName,
       position: index,
       paramValues: values
     })

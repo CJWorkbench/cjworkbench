@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import functools
-import json
 from typing import Any, Dict, Optional
 from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
@@ -11,7 +10,6 @@ from server.models import Params, ParameterSpec, Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
-from server.serializers import ParameterValSerializer
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 
@@ -213,7 +211,7 @@ def _wf_module_delete_secret_and_build_delta(
     workflow: Workflow,
     wf_module: WfModule,
     param: str
-) -> Optional[Dict[str,Any]]:
+) -> Optional[Dict[str, Any]]:
     """
     Write a new secret (or `None`) to `wf_module`, or raise.
 
@@ -231,13 +229,10 @@ def _wf_module_delete_secret_and_build_delta(
         if not nrows:
             return None
 
-        vals = wf_module.parameter_vals.prefetch_related('parameter_spec')
         return {
             'updateWfModules': {
                 str(wf_module.id): {
-                    'parameter_vals': (
-                        ParameterValSerializer(vals, many=True).data
-                    )
+                    'params': wf_module.get_params().as_dict()
                 }
             }
         }

@@ -14,7 +14,6 @@ import lessonSelector from '../lessons/lessonSelector'
 jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 describe('WfModule, not read-only mode', () => {
-  let props
   let mockApi
 
   beforeEach(() => {
@@ -25,106 +24,92 @@ describe('WfModule, not read-only mode', () => {
     }
   })
 
-  const buildShallowProps = () => ({
-    isReadOnly: false,
-    isAnonymous: false,
-    isZenMode: false,
-    isZenModeAllowed: false,
-    moduleName: 'Load from URL',
-    moduleIcon: 'icon',
-    moduleHelpUrl: 'http://help-url',
-    name: 'TestModule',
-    wfModule: wfModule,
-    module: module,
-    removeModule: jest.fn(),
-    inputWfModule: { id: 123, last_relevant_delta_id: 707 },
-    isSelected: true,
-    isAfterSelected: false,
-    api: mockApi,
-    index: 2,
-    tabId: 11,
-    onDragStart: jest.fn(),
-    onDragEnd: jest.fn(),
-    isLessonHighlight: false,
-    isLessonHighlightCollapse: false,
-    isLessonHighlightNotes: false,
-    fetchModuleExists: false,
-    clearNotifications: jest.fn(),
-    setSelectedWfModule: jest.fn(),
-    setWfModuleCollapsed: jest.fn(),
-    setWfModuleParams: jest.fn(),
-    setWfModuleNotes: jest.fn(),
-    maybeRequestFetch: jest.fn(),
-    setZenMode: jest.fn(),
-    applyQuickFix: jest.fn()
-  })
-
   // A mock module that looks like LoadURL
   const wfModule = {
-    'id': 999,
-    'notes': '',
-    'is_collapsed': false, // false because we render more, so better test
-    'is_busy': false,
-    'output_status': 'ok',
-    'parameter_vals': [
-      {
-        'id': 100,
-        'parameter_spec': {
-          'id_name': 'url',
-          'type': 'string'
-        },
-        'value': 'http://some.URL.me'
-      },
-      {
-        'id': 101,
-        'parameter_spec': {
-          'id_name': 'version_select',
-          'type': 'custom'
-        }
-      },
-      {
-        'id': 102,
-        'parameter_spec': {
-          'id_name': 'menu_select',
-          'items': 'Mango|Banana',
-          'type': 'menu'
-        },
-        'value': 1,
-      },
-      {
-        'id': 103,
-        'parameter_spec': {
-          'id_name': 'some_boolean',
-          'type': 'checkbox'
-        },
-        'value': true
-      },
-      {
-        // used to test nested visibility. Test data set so param 102 makes this invisible'
-        'id': 104,
-        'parameter_spec': {
-          'id_name': 'invisible_by_default',
-          'type': 'menu',
-          'items': 'Strawberry|Durian',
-          'visible_if': '{"id_name": "menu_select", "value": "Mango"}'
-        },
-        'value': 1
-      }
-    ],
-    module_version: { module: 2 }
+    id: 999,
+    notes: '',
+    is_collapsed: false, // false because we render more, so better test
+    is_busy: false,
+    output_status: 'ok',
+    params: {
+      url: 'http://some.URL.me',
+      version_select: null,
+      menu_select: 1,
+      some_boolean: true,
+      invisible_by_default: 1
+    }
   }
 
-  beforeEach(() => {
-    props = buildShallowProps()
-  })
+  function pspec (idName, type, extraProps={}) {
+    return {
+      id_name: idName,
+      type,
+      multiline: false,
+      placeholder: '',
+      visible_if: '',
+      ...extraProps
+    }
+  }
+
+  const module = {
+    id_name: 'loadurl', // more or less
+    name: 'Load from URL',
+    icon: 'icon',
+    help_url: 'http://help-url',
+    parameter_specs: [
+      pspec('url', 'string'),
+      pspec('version_select', 'custom'),
+      pspec('menu_select', 'menu', { items: 'Mango|Banana' }),
+      pspec('some_boolean', 'checkbox'),
+      // used to test nested visibility. Test data set so param 'menu_select' makes this invisible'
+      pspec('invisible_by_default', 'menu', {
+        'items': 'Strawberry|Durian',
+        'visible_if': '{"id_name": "menu_select", "value": "Mango"}'
+      })
+    ],
+  }
+
+  const wrapper = (extraProps={}) => {
+    return shallow(
+      <WfModule
+        isReadOnly={false}
+        isAnonymous={false}
+        isZenMode={false}
+        isZenModeAllowed={false}
+        module={module}
+        wfModule={wfModule}
+        removeModule={jest.fn()}
+        inputWfModule={{ id: 123, last_relevant_delta_id: 707 }}
+        isSelected
+        isAfterSelected={false}
+        api={mockApi}
+        index={2}
+        tabId={11}
+        onDragStart={jest.fn()}
+        onDragEnd={jest.fn()}
+        isLessonHighlight={false}
+        isLessonHighlightCollapse={false}
+        isLessonHighlightNotes={false}
+        fetchModuleExists={false}
+        clearNotifications={jest.fn()}
+        setSelectedWfModule={jest.fn()}
+        setWfModuleCollapsed={jest.fn()}
+        setWfModuleParams={jest.fn()}
+        setWfModuleNotes={jest.fn()}
+        maybeRequestFetch={jest.fn()}
+        setZenMode={jest.fn()}
+        applyQuickFix={jest.fn()}
+        {...extraProps}
+      />
+    )
+  }
 
   it('matches snapshot', () => {
-    const wrapper = shallow(<WfModule {...props} />)
-    expect(wrapper).toMatchSnapshot()
+    expect(wrapper()).toMatchSnapshot()
   })
 
   it('is has .status-busy', () => {
-    const w = shallow(<WfModule {...props} wfModule={{...wfModule, output_status: 'busy'}} />)
+    const w = wrapper({ wfModule: { ...wfModule, output_status: 'busy' } })
     expect(w.hasClass('status-busy')).toBe(true)
     expect(w.find('WfParameter').at(0).prop('wfModuleStatus')).toEqual('busy')
     expect(w.find('StatusLine').prop('status')).toEqual('busy')
@@ -141,100 +126,94 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('has .status-busy overridden when wfModule.is_busy', () => {
-    const w = shallow(<WfModule {...props} wfModule={{...wfModule, is_busy: true, output_status: 'ok'}} />)
+    const w = wrapper({ wfModule: { ...wfModule, output_status: 'ok', is_busy: true } })
     expect(w.hasClass('status-busy')).toBe(true)
   })
 
   it('supplies getParamText', () => {
-    const wrapper = shallow(<WfModule {...props} />)
-    const instance = wrapper.instance()
+    const w = wrapper({ wfModule: { ...wfModule, params: { 'x': 'y' }}})
+    const instance = w.instance()
 
-    expect(instance.getParamText('url')).toEqual('http://some.URL.me')
-  })
-
-  it('supplies getParamMenuItems', () => {
-    const wrapper = shallow(<WfModule {...props} />)
-    const instance = wrapper.instance()
-    expect(instance.getParamMenuItems('menu_select')).toEqual(['Mango', 'Banana'])
+    expect(instance.getParamText('x')).toEqual('y')
   })
 
   it('renders a note', () => {
-    const wrapper = shallow(<WfModule {...props} wfModule={Object.assign({}, wfModule, { notes: 'some notes' })} />)
-    expect(wrapper.find('EditableNotes').prop('value')).toEqual('some notes')
+    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' } })
+    expect(w.find('EditableNotes').prop('value')).toEqual('some notes')
   })
 
   it('renders in Zen mode', () => {
-    const wrapper = shallow(<WfModule {...props} isZenMode />)
-    expect(wrapper.prop('className')).toMatch(/\bzen-mode\b/)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true, true ])
+    const w = wrapper({ isZenMode: true })
+    expect(w.prop('className')).toMatch(/\bzen-mode\b/)
+    expect(w.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true, true ])
   })
 
   it('has an "enter zen mode" button', () => {
-    const wrapper = shallow(<WfModule {...props} isZenModeAllowed />)
-    let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
+    const w = wrapper({ isZenModeAllowed: true })
+    let checkbox = w.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(false)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false, false, false ])
+    expect(w.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false, false, false ])
 
     checkbox.simulate('change', { target: { checked: true } })
-    expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, true)
-    wrapper.setProps({ isZenMode: true })
+    expect(w.instance().props.setZenMode).toHaveBeenCalledWith(wfModule.id, true)
+    w.setProps({ isZenMode: true })
 
-    checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
+    checkbox = w.find('input[type="checkbox"][name="zen-mode"]')
     expect(checkbox.prop('checked')).toBe(true)
-    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true, true ])
+    expect(w.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true, true, true ])
 
     checkbox.simulate('change', { target: { checked: false } })
-    expect(props.setZenMode).toHaveBeenCalledWith(wfModule.id, false)
+    expect(w.instance().props.setZenMode).toHaveBeenCalledWith(wfModule.id, false)
   })
 
   it('renders notifications, opening and closing a modal', () => {
-    const wrapper = shallow(<WfModule {...props} fetchModuleExists isReadOnly={false} isAnonymous={false} />)
+    const w = wrapper({ fetchModuleExists: true, isReadOnly: false, isAnonymous: false })
 
-    wrapper.find('button.notifications').simulate('click')
-    expect(props.clearNotifications).toHaveBeenCalledWith(999)
-    expect(wrapper.find(DataVersionModal).length).toBe(1)
+    w.find('button.notifications').simulate('click')
+    expect(w.instance().props.clearNotifications).toHaveBeenCalledWith(999)
+    expect(w.find(DataVersionModal).length).toBe(1)
 
-    wrapper.find(DataVersionModal).prop('onClose')()
-    wrapper.update()
-    expect(wrapper.find(DataVersionModal).length).toBe(0)
+    w.find(DataVersionModal).prop('onClose')()
+    w.update()
+    expect(w.find(DataVersionModal).length).toBe(0)
   })
 
   it('hides notifications when isAnonymous', () => {
-    const wrapper = shallow(<WfModule {...props} fetchModuleExists isReadOnly={false} isAnonymous />)
-    expect(wrapper.find('button.notifications').length).toBe(0)
+    const w = wrapper({ fetchModuleExists: true, isReadOnly: false, isAnonymous: true })
+    expect(w.find('button.notifications').length).toBe(0)
   })
 
   it('hides notifications when isReadOnly', () => {
-    const wrapper = shallow(<WfModule {...props} fetchModuleExists isReadOnly isAnonymous={false} />)
-    expect(wrapper.find('button.notifications').length).toBe(0)
+    const w = wrapper({ fetchModuleExists: true, isReadOnly: true, isAnonymous: false })
+    expect(w.find('button.notifications').length).toBe(0)
   })
 
   it('hides notifications when there is no fetch module', () => {
-    const wrapper = shallow(<WfModule {...props} fetchModuleExists={false} isReadOnly={false} isAnonymous={false} />)
-    expect(wrapper.find('button.notifications').length).toBe(0)
+    const w = wrapper({ fetchModuleExists: false, isReadOnly: false, isAnonymous: false })
+    expect(w.find('button.notifications').length).toBe(0)
   })
 
   it('adds a note', () => {
-    const wrapper = shallow(<WfModule {...props} />)
+    const w = wrapper({ wfModule: { ...wfModule, notes: '' }})
 
-    expect(wrapper.find('.module-notes.visible')).toHaveLength(0)
+    expect(w.find('.module-notes.visible')).toHaveLength(0)
 
-    wrapper.find('button.edit-note').simulate('click')
-    wrapper.find('EditableNotes').simulate('change', { target: { value: 'new note' } })
-    wrapper.find('EditableNotes').simulate('blur')
+    w.find('button.edit-note').simulate('click')
+    w.find('EditableNotes').simulate('change', { target: { value: 'new note' } })
+    w.find('EditableNotes').simulate('blur')
 
-    expect(props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, 'new note')
+    expect(w.instance().props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, 'new note')
   })
 
   it('deletes a note', () => {
-    const wrapper = shallow(<WfModule {...props} wfModule={Object.assign({}, wfModule, { notes: 'some notes' })} />)
+    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' }})
 
-    expect(wrapper.find('.module-notes.visible')).toHaveLength(1)
+    expect(w.find('.module-notes.visible')).toHaveLength(1)
 
-    wrapper.find('EditableNotes').simulate('change', { target: { value: '' } })
-    wrapper.find('EditableNotes').simulate('blur')
+    w.find('EditableNotes').simulate('change', { target: { value: '' } })
+    w.find('EditableNotes').simulate('blur')
 
-    expect(props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, '')
+    expect(w.instance().props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, '')
   })
 
   it('queues changes from onChange and then submits them in onSubmit', () => {
@@ -242,34 +221,33 @@ describe('WfModule, not read-only mode', () => {
       id: 999,
       notes: '',
       is_collapsed: false,
-      parameter_vals: [
-        { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
-        { id: 2, parameter_spec: { id_name: 'b', type: 'string' }, value: 'B' }
-      ]
+      params: {
+        a: 'A',
+        b: 'B'
+      }
     }
-    const wrapper = shallow(
-      <WfModule
-        {...props}
-        wfModule={wfModule}
-      />
-    )
+    const aModule = {
+      ...module,
+      parameter_specs: [ pspec('a', 'string'), pspec('b', 'string') ]
+    }
+    const w = wrapper({ wfModule, module: aModule })
 
-    wrapper.find('WfParameter[idName="a"]').prop('onChange')('a', 'C')
-    wrapper.update()
-    expect(wrapper.find('WfParameter[idName="a"]').prop('value')).toEqual('C')
+    w.find('WfParameter[idName="a"]').prop('onChange')('a', 'C')
+    w.update()
+    expect(w.find('WfParameter[idName="a"]').prop('value')).toEqual('C')
 
-    wrapper.find('WfParameter[idName="b"]').prop('onChange')('b', 'D')
-    wrapper.update()
-    expect(wrapper.find('WfParameter[idName="b"]').prop('value')).toEqual('D')
+    w.find('WfParameter[idName="b"]').prop('onChange')('b', 'D')
+    w.update()
+    expect(w.find('WfParameter[idName="b"]').prop('value')).toEqual('D')
 
     // ... and neither should be submitted to the server
-    expect(props.setWfModuleParams).not.toHaveBeenCalled()
+    expect(w.instance().props.setWfModuleParams).not.toHaveBeenCalled()
 
-    wrapper.find('WfParameter[idName="b"]').prop('onSubmit')()
-    expect(props.setWfModuleParams).toHaveBeenCalledWith(999, { a: 'C', b: 'D' })
+    w.find('WfParameter[idName="b"]').prop('onSubmit')()
+    expect(w.instance().props.setWfModuleParams).toHaveBeenCalledWith(999, { a: 'C', b: 'D' })
 
     // a bit of a white-box test: state should be cleared
-    expect(wrapper.state('edits')).toEqual({})
+    expect(w.state('edits')).toEqual({})
   })
 
   it('resets just the one WfParmeter in onReset', () => {
@@ -277,25 +255,24 @@ describe('WfModule, not read-only mode', () => {
       id: 999,
       notes: '',
       is_collapsed: false,
-      parameter_vals: [
-        { id: 1, parameter_spec: { id_name: 'a', type: 'string' }, value: 'A' },
-        { id: 2, parameter_spec: { id_name: 'b', type: 'string' }, value: 'B' }
-      ]
+      params: {
+        a: 'A',
+        b: 'B'
+      }
     }
-    const wrapper = shallow(
-      <WfModule
-        {...props}
-        wfModule={wfModule}
-      />
-    )
+    const aModule = {
+      ...module,
+      parameter_specs: [ pspec('a', 'string'), pspec('b', 'string') ]
+    }
+    const w = wrapper({ wfModule, module: aModule })
 
-    wrapper.find('WfParameter[idName="a"]').prop('onChange')('a', 'C')
-    wrapper.find('WfParameter[idName="b"]').prop('onChange')('b', 'D')
-    wrapper.update()
-    wrapper.find('WfParameter[idName="b"]').prop('onReset')('b')
-    wrapper.update()
-    expect(wrapper.find('WfParameter[idName="a"]').prop('value')).toEqual('C')
-    expect(wrapper.find('WfParameter[idName="b"]').prop('value')).toEqual('B')
+    w.find('WfParameter[idName="a"]').prop('onChange')('a', 'C')
+    w.find('WfParameter[idName="b"]').prop('onChange')('b', 'D')
+    w.update()
+    w.find('WfParameter[idName="b"]').prop('onReset')('b')
+    w.update()
+    expect(w.find('WfParameter[idName="a"]').prop('value')).toEqual('C')
+    expect(w.find('WfParameter[idName="b"]').prop('value')).toEqual('B')
   })
 
   it('submits a fetch event in WfParameter onSubmit', () => {
@@ -308,23 +285,22 @@ describe('WfModule, not read-only mode', () => {
       id: 999,
       notes: '',
       is_collapsed: false,
-      parameter_vals: [
-        { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: '' },
-        { id: 2, parameter_spec: { id_name: 'version_select', type: 'custom' }, value: 'B' }
-      ]
+      params: {
+        url: '',
+        version_select: 'B'
+      }
     }
-    const wrapper = shallow(
-      <WfModule
-        {...props}
-        wfModule={wfModule}
-      />
-    )
+    const aModule = {
+      ...module,
+      parameter_specs: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
+    }
+    const w = wrapper({ wfModule, module: aModule })
 
-    wrapper.find('WfParameter[idName="url"]').prop('onChange')('url', 'http://example.org')
-    wrapper.find('WfParameter[idName="url"]').prop('onSubmit')()
+    w.find('WfParameter[idName="url"]').prop('onChange')('url', 'http://example.org')
+    w.find('WfParameter[idName="url"]').prop('onSubmit')()
 
-    expect(props.setWfModuleParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
-    expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
+    expect(w.instance().props.setWfModuleParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
+    expect(w.instance().props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 
   it('submits a fetch in WfParameter[idName=version_select] onSubmit', () => {
@@ -333,38 +309,27 @@ describe('WfModule, not read-only mode', () => {
       id: 999,
       notes: '',
       is_collapsed: false,
-      parameter_vals: [
-        { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: 'http://example.org' },
-        { id: 2, parameter_spec: { id_name: 'version_select', type: 'custom' }, value: 'B' }
-      ]
+      params: {
+        url: '',
+        version_select: 'B'
+      }
     }
-    const wrapper = shallow(
-      <WfModule
-        {...props}
-        wfModule={wfModule}
-      />
-    )
+    const aModule = {
+      ...module,
+      parameter_specs: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
+    }
+    const w = wrapper({ wfModule, module: aModule })
 
-    wrapper.find('WfParameter[idName="version_select"]').prop('onSubmit')()
+    w.find('WfParameter[idName="version_select"]').prop('onSubmit')()
 
-    expect(props.maybeRequestFetch).toHaveBeenCalledWith(999)
+    expect(w.instance().props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 
   it('overrides status to busy when a fetch is pending', () => {
-    const wfModule = {
-      id: 999,
-      notes: '',
-      is_collapsed: false,
-      status: 'ok',
-      parameter_vals: [
-        { id: 1, parameter_spec: { id_name: 'url', type: 'string' }, value: 'http://example.org' }
-      ],
-      nClientRequests: 1
-    }
-    const wrapper = shallow(<WfModule {...props} wfModule={wfModule} />)
-    expect(wrapper.find('WfParameter').prop('wfModuleStatus')).toEqual('busy')
-    expect(wrapper.find('StatusLine').prop('status')).toEqual('busy')
-    expect(wrapper.prop('className')).toMatch(/\bstatus-busy\b/)
+    const w = wrapper({ wfModule: { ...wfModule, nClientRequests: 1 }})
+    expect(w.find('WfParameter').at(0).prop('wfModuleStatus')).toEqual('busy')
+    expect(w.find('StatusLine').prop('status')).toEqual('busy')
+    expect(w.prop('className')).toMatch(/\bstatus-busy\b/)
   })
 
   it('applies a quick fix', () => {
@@ -386,9 +351,13 @@ describe('WfModule, not read-only mode', () => {
         20: { id: 20, tab_id: 11 }
       },
       modules: {
-        100: { id: 100, id_name: 'pastecsv' },
-        200: { id: 200, id_name: 'linechart' },
-        300: { id: 300, id_name: 'fixtype' }
+        loadurl: {
+          name: 'Load from URL',
+          id_name: 'loadurl',
+          help_url: '',
+          icon: 'icon',
+          parameter_specs: []
+        }
       }
     }, mockApi)
 
@@ -406,7 +375,7 @@ describe('WfModule, not read-only mode', () => {
           isZenModeAllowed={false}
           index={1}
           tabId={11}
-          wfModule={{ id: 20, tab_id: 11, is_collapsed: false, status: 'error', error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+          wfModule={{ id: 20, module: 'loadurl', tab_id: 11, is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
           isSelected={true}
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -421,7 +390,7 @@ describe('WfModule, not read-only mode', () => {
     mockApi.addModule.mockImplementation(_ => Promise.resolve(null))
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addModule).toHaveBeenCalledWith(11, 300, 1, {foo: 'bar'})
+    expect(mockApi.addModule).toHaveBeenCalledWith(11, 'fixtype', 1, {foo: 'bar'})
   })
 
   describe('lesson highlights', () => {
@@ -455,9 +424,17 @@ describe('WfModule, not read-only mode', () => {
           11: { wf_module_ids: [1, 2, 999] }
         },
         wfModules: {
-          999: { module_version: { module: 2 } }
+          999: { module: 'loadurl', params: {} }
         },
-        modules: { 2: { name: 'Load from URL' } },
+        modules: {
+          'loadurl': {
+            id_name: 'loadurl',
+            name: 'Load from URL',
+            help_url: '',
+            icon: 'icon',
+            parameter_specs: [ pspec('url', 'string') ]
+          }
+        },
         ...action.payload
       }))
 
@@ -465,115 +442,126 @@ describe('WfModule, not read-only mode', () => {
 
       wrapper = mount(
         <Provider store={store}>
-          <ConnectedWfModule {...props} />
+          <ConnectedWfModule
+            isReadOnly={false}
+            isAnonymous={false}
+            isZenMode={false}
+            isZenModeAllowed={false}
+            index={1}
+            tabId={11}
+            wfModule={{ id: 20, module: 'loadurl', tab_id: 11, is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+            isSelected={true}
+            isAfterSelected={false}
+            onDragStart={jest.fn()}
+            onDragEnd={jest.fn()}
+            setZenMode={jest.fn()}
+            api={mockApi}
+          />
         </Provider>
       )
     })
     afterEach(() => {
-      wrapper.unmount()
-      wrapper = null
+      if (wrapper !== null) {
+        wrapper.unmount()
+        wrapper = null
+      }
     })
 
     it('highlights a WfModule', () => {
-      highlight([{ type: 'WfModule', index: 2, moduleName: 'Load from URL' }])
+      highlight([{ type: 'WfModule', index: 1, moduleName: 'Load from URL' }])
       expect(wrapper.find('.wf-module').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights a WfModule', () => {
       // wrong name
-      highlight([{ type: 'WfModule', index: 2, moduleName: 'TestModule2' }])
+      highlight([{ type: 'WfModule', index: 1, moduleName: 'TestModule2' }])
       expect(wrapper.find('.wf-module').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
     it('highlights the "collapse" button', () => {
-      highlight([{ type: 'WfModuleContextButton', index: 2, moduleName: 'Load from URL', button: 'collapse' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'Load from URL', button: 'collapse' }])
       expect(wrapper.find('i.context-collapse-button').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights the "collapse" button', () => {
       // wrong moduleName
-      highlight([{ type: 'WfModuleContextButton', index: 2, moduleName: 'TestModule2', button: 'collapse' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'TestModule2', button: 'collapse' }])
       expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
 
       // wrong button
-      highlight([{ type: 'WfModuleContextButton', index: 2, moduleName: 'Load from URL', button: 'notes' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'Load from URL', button: 'notes' }])
       expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
     it('highlights the notes button', () => {
-      highlight([{ type: 'WfModuleContextButton', index: 2, moduleName: 'Load from URL', button: 'notes' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'Load from URL', button: 'notes' }])
       expect(wrapper.find('button.edit-note').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights the notes button', () => {
       // wrong moduleName
-      highlight([{ type: 'WfModuleContextButton', index: 2, moduleName: 'TestModule2', button: 'notes' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'TestModule2', button: 'notes' }])
       expect(wrapper.find('button.edit-note').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
   })
 
   // Conditional UI tests
   describe('conditional parameter visibility', () => {
-
-
     // merge a visible_if block into the second parameter array of our test module
     const insertVisibleIf = (visibleIfTest) => {
       return {
-        ...wfModule,
-        parameter_vals: [
-          wfModule.parameter_vals[0],
+        ...module,
+        parameter_specs: [
+          module.parameter_specs[0],
           {
-            ...wfModule.parameter_vals[1],
-            parameter_spec: {
-              ...wfModule.parameter_vals[1].parameter_spec,
-              visible_if: visibleIfTest
-            }
+            ...module.parameter_specs[1],
+            visible_if: visibleIfTest
           },
-          wfModule.parameter_vals[2],
-          wfModule.parameter_vals[3],
-          wfModule.parameter_vals[4]
+          module.parameter_specs[2],
+          module.parameter_specs[3],
+          module.parameter_specs[4]
         ]
       }
     }
 
     // These depend on the test data
-    const numModulesIfVisible = 4     // five params, one invisible by default
+    const numModulesIfVisible = 4 // five params, one invisible by default
     const numModulesIfNotVisible = 3
 
     // These tests depend on there being a WfParameter id named menu_select that is set to "Banana"
     it('Conditional parameter visible via menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Banana"}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter not visible via menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Mango"}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter not visible via inverted menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Banana", "invert":true}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter visible via inverted menu', () => {
       const visibleIf = '{"id_name":"menu_select", "value":"Mango", "invert":true}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter visible via checkbox', () => {
       const visibleIf = '{"id_name":"some_boolean", "value":true}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter invisible via inverted checkbox', () => {
       const visibleIf = '{"id_name":"some_boolean", "value":true, "invert":true}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
@@ -581,22 +569,14 @@ describe('WfModule, not read-only mode', () => {
       // Even though the parent ("invisible_by_default" parameter) is set to the corrent menu item, it's not visible
       // So we shouldn't be either
       const visibleIf = '{"id_name":"invisible_by_default", "value":"Durian"}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
-    it('Conditional parameter with bad parent name is visible', () => {
-      const visibleIf = '{"id_name":"fooop", "value":"bar"}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
+    it('No infinite loop on parent name', () => {
+      const visibleIf = '{"id_name":"menu_select", "value":"Banana"}'
+      const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
-
-    it('No infinite looop on parent name', () => {
-      const visibleIf = '{"id_name":"' + wfModule.parameter_vals[1].parameter_spec.id_name + '", "value":"bar"}'
-      const w = shallow( <WfModule {...props} wfModule={insertVisibleIf(visibleIf)} />)
-      expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
-    })
-
   })
-
 })

@@ -21,7 +21,7 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","name":"Twitter"}]'
-    data-test="const json = workflow.tabs[0].wfModules[0].parameters.get('twitter_credentials'); return json && json.name && json.name.indexOf('@') !== -1;"
+    data-test="const json = workflow.tabs[0].wfModules[0].params.twitter_credentials; return json && json.name && json.name.indexOf('@') !== -1;"
     >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app</kbd>.
   </li>
 
@@ -34,13 +34,13 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="const param = workflow.tabs[0].wfModules[0].parameters.get('querytype'); return param === 0"
+    data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 0 && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
     >Select 'User tweets' in the first drop down, and paste in the following user name.
     <div class="copy-txt">neiltyson</div>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="const param = workflow.tabs[0].wfModules[0].parameters.get('username'); return (param || '').toLowerCase() === 'neiltyson'"
+    data-test="const param = workflow.tabs[0].wfModules[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
     >Click 'Update' to load tweets from that account.
   <p class="instruction-detail">Because of the limits of the <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, the number of past Tweets you can collect from a specific user is capped. You should be able to load about 3,000 of them, which is a good way to start.</p>
   </li>
@@ -61,7 +61,7 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Filter"}]',
-    data-test="const params = workflow.tabs[0].wfModules[1].parameters; return params.get('column') === 'text' && params.get('condition') === 2 && (params.get('value') || '').toLowerCase() === 'science'"
+    data-test="const params = workflow.tabs[0].wfModules[1].params; return params.column === 'text' && params.condition === 2 && (params.value || '').toLowerCase() === 'science'"
     >Select the column <kbd>text</kbd> to filter by. Choose <kbd>Text contains</kbd> as a condition, and search for 'science'.
     <p class="instruction-detail">
       Now let's group the resulting tweets by date.
@@ -74,7 +74,7 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Group by date"}]',
-    data-test="const params = workflow.tabs[0].wfModules[2].parameters; return params.get('column') === 'created_at' && params.get('groupby') === 5"
+    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.column === 'created_at' && params.groupby === 5"
     >Choose <kbd>created_at</kbd> as the date column, and group rows by <kbd>Quarter</kbd>.
   </li>
 </ol>
@@ -91,12 +91,12 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
-    data-test="const p = workflow.tabs[0].wfModules[3].parameters; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return p.get('x_column') === 'created_at' && yColumns[0].column === 'count'"
+    data-test="const p = workflow.tabs[0].wfModules[3].params; const yColumns = JSON.parse(p.y_columns || '[]'); return p.x_column === 'created_at' && yColumns[0].column === 'count'"
     >Select <kbd>created_at</kbd> for the X axis and <kbd>count</kbd> for the Y axis.
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
-    data-test="const p = workflow.tabs[0].wfModules[3].parameters; return !!p.get('title')"
+    data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
     >Add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail">
       Next, let's make this chart update every time our user tweets contain the word we chose.
@@ -117,7 +117,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-      data-test="return workflow.tabs[0].wfModules[0].parameters.get('accumulate') === true"
+      data-test="return workflow.tabs[0].wfModules[0].params.accumulate === true"
       >Make sure the option <kbd>Accumulate tweets</kbd> is checked so that new data gets added to the existing table.
     </li>
   </ol>

@@ -29,7 +29,7 @@ class TabTest(HandlerTestCase):
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,
-                                    moduleId=module.id,
+                                    moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response, data=None)
 
@@ -47,7 +47,8 @@ class TabTest(HandlerTestCase):
         tab = workflow.tabs.first()
         response = self.run_handler(add_module, workflow=workflow,
                                     tabId=tab.id, position=3,
-                                    moduleId=1, paramValues={'foo': 'bar'})
+                                    moduleIdName='amodule',
+                                    paramValues={'foo': 'bar'})
 
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
@@ -62,7 +63,7 @@ class TabTest(HandlerTestCase):
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,
-                                    moduleId=module.id,
+                                    moduleIdName='amodule',
                                     paramValues='foobar')
         self.assertResponse(response,
                             error='BadRequest: paramValues must be an Object')
@@ -77,7 +78,7 @@ class TabTest(HandlerTestCase):
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position='foo',
-                                    moduleId=module.id,
+                                    moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response,
                             error='BadRequest: position must be a Number')
@@ -93,7 +94,7 @@ class TabTest(HandlerTestCase):
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,
-                                    moduleId=module.id,
+                                    moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response,
                             error='DoesNotExist: Tab not found')
@@ -105,7 +106,8 @@ class TabTest(HandlerTestCase):
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position='foo',
-                                    moduleId=123, paramValues={'foo': 'bar'})
+                                    moduleIdName='notamodule',
+                                    paramValues={'foo': 'bar'})
         self.assertResponse(response,
                             error='DoesNotExist: ModuleVersion not found')
 

@@ -168,8 +168,8 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return workflow.selectedTab.wfModuleNames[0] === "foo"' },
-              { testJs: 'return workflow.selectedTab.wfModuleNames[1] === "foo"' },
+              { testJs: 'return workflow.selectedTab.wfModuleNames[0] === "Foo"' },
+              { testJs: 'return workflow.selectedTab.wfModuleNames[1] === "Foo"' },
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -184,12 +184,12 @@ describe('lessonSelector', () => {
         2: { wf_module_ids: [] }
       },
       wfModules: {
-        3: { module_version: { module: 5 } },
-        4: { module_version: { module: 6 } },
+        3: { module: 'foo' },
+        4: { module: 'bar' }
       },
       modules: {
-        5: { name: 'foo' },
-        6: { name: 'bar' }
+        foo: { name: 'Foo' },
+        bar: { name: 'Bar' }
       }
     }
     expect(lessonSelector(state).activeStepIndex).toBe(1)
@@ -202,8 +202,8 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return state.selectedTab.wfModuleNames[0] === "foo"' },
-              { testJs: 'return state.selectedTab.wfModuleNames[1] === "foo"' },
+              { testJs: 'return state.selectedTab.wfModuleNames[0] === "Foo"' },
+              { testJs: 'return state.selectedTab.wfModuleNames[1] === "Foo"' },
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -218,12 +218,12 @@ describe('lessonSelector', () => {
         2: { wf_module_ids: [] }
       },
       wfModules: {
-        3: { module_version: { module: 5 } },
-        4: { module_version: { module: 6 } },
+        3: { module: 'foo' },
+        4: { module: 'bar' },
       },
       modules: {
-        5: { name: 'foo' },
-        6: { name: 'bar' }
+        foo: { name: 'Foo' },
+        bar: { name: 'Bar' }
       }
     }
     expect(lessonSelector(state).activeStepIndex).toBe(1)

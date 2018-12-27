@@ -190,7 +190,7 @@ function mapStateToProps(state, ownProps) {
     }
   }
 
-  const selectedModule = modules[String(wfModule ? wfModule.module_version.module : null)] || null
+  const selectedModule = (wfModule ? modules[wfModule.module] : null) || null
   const id_name = selectedModule ? selectedModule.id_name : null
 
   const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns'
@@ -199,6 +199,7 @@ function mapStateToProps(state, ownProps) {
     workflowId: workflow.id,
     wfModule: wfModule ? {
       id: wfModule.id,
+      module: wfModule.module,
       htmlOutput: wfModule.html_output,
       status,
       deltaId: wfModule.cached_render_result_delta_id,

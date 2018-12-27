@@ -60,7 +60,7 @@ const escapeRegexCharacters = (str) => {
 export class ModuleSearch extends React.Component {
   static propTypes = {
     modules: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      idName: PropTypes.string.isRequired,
       isLessonHighlight: PropTypes.bool.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
@@ -70,13 +70,13 @@ export class ModuleSearch extends React.Component {
     index: PropTypes.number.isRequired, // helps mapStateToProps() calculate isLessonHighlight
     isLessonHighlight: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired, // func() => undefined
-    onClickModuleId: PropTypes.func.isRequired, // func(moduleId) => undefined
+    onClickModule: PropTypes.func.isRequired, // func(moduleIdName) => undefined
   }
 
   state = {
     input: '',
     resultGroups: groupModules(this.props.modules),
-    activeModuleId: null
+    activeModule: null // idName
   }
 
   inputRef = React.createRef()
@@ -109,13 +109,13 @@ export class ModuleSearch extends React.Component {
     this.setInput(input)
   }
 
-  onClickModuleId = (moduleId) => {
+  onClickModule = (moduleIdName) => {
     this.setInput('')
-    this.props.onClickModuleId(moduleId)
+    this.props.onClickModule(moduleIdName)
   }
 
-  onMouseEnterModuleId = (moduleId) => {
-    this.setState({ activeModuleId: moduleId })
+  onMouseEnterModule = (moduleIdName) => {
+    this.setState({ activeModule: moduleIdName })
   }
 
   onSubmit = (ev) => {
@@ -132,16 +132,16 @@ export class ModuleSearch extends React.Component {
   }
 
   render () {
-    const { input, resultGroups, activeModuleId } = this.state
+    const { input, resultGroups, activeModule } = this.state
 
     const resultGroupComponents = resultGroups.map(rg => (
       <SearchResultGroup
         key={rg.name}
         name={rg.name}
         modules={rg.modules}
-        activeModuleId={activeModuleId}
-        onClickModuleId={this.onClickModuleId}
-        onMouseEnterModuleId={this.onMouseEnterModuleId}
+        activeModule={activeModule}
+        onClickModule={this.onClickModule}
+        onMouseEnterModule={this.onMouseEnterModule}
       />
     ))
     const resultGroupsComponent = (
@@ -178,9 +178,10 @@ const mapStateToProps = (state, ownProps) => {
   const { testHighlight } = lessonSelector(state)
   return {
     isLessonHighlight: testHighlight({ type: 'Module', index: ownProps.index }),
-    modules: Object.keys(state.modules).map(moduleId => {
-      const module = state.modules[moduleId]
+    modules: Object.keys(state.modules).map(idName => {
+      const module = state.modules[idName]
       return {
+        idName,
         ...module,
         isLessonHighlight: testHighlight({ type: 'Module', name: module.name, index: ownProps.index })
       }

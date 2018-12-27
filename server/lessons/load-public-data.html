@@ -19,7 +19,7 @@
       >Add the data source ‘Add from URL’.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'http://production-static.workbenchdata.com/data/affordable_housing_1.csv' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule && wfModule.params.url === 'http://production-static.workbenchdata.com/data/affordable_housing_1.csv' && wfModule.selectedVersion"
       >Paste the URL of the dataset in the field. Click <kbd>Update</kbd> to load the data.
       <div class="copy-txt content-1 t-white">http://production-static.workbenchdata.com/data/affordable_housing_1.csv</div>
     </li>
@@ -54,12 +54,12 @@
       >Add the step ‘Column Chart’ using the search</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.parameters; if (p.get('x_column') !== 'city_neighborhood') return false; const yColumns = JSON.parse(p.get('y_columns') || '[]'); return yColumns.length === 1 && yColumns[0].column === 'affordable_units';"
+      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; if (p.x_column !== 'city_neighborhood') return false; const yColumns = JSON.parse(p.y_columns || '[]'); return yColumns.length === 1 && yColumns[0].column === 'affordable_units';"
       >
       Select <kbd>city_neighborhood</kbd> for the X axis and <kbd>affordable_units</kbd> for the Y axis.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.parameters; return !!p.get('title') && !!p.get('x_axis_label') && !!p.get('y_axis_label')"
+      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
       >Add a title, X-axis label and Y-axis label to the chart.</li>
   </ol>
 </section>
@@ -74,7 +74,7 @@
       >Add the step ‘Filter’ between 'Add from URL' and 'Column Chart'.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
-      data-test="const p = workflow.tabs[0].wfModules[1].parameters; return p.get('column') === 'affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
+      data-test="const p = workflow.tabs[0].wfModules[1].params; return p.column === 'affordable_units' && p.condition === 10 && p.value === '200' && p.keep === 0"
       >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd></br> and enter the value <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'

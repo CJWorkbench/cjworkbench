@@ -13,12 +13,12 @@ describe('DoneHelpers', () => {
           22: { wf_module_ids: [] }
         },
         wfModules: {
-          1: { module_version: { module: 12 } },
-          2: { module_version: { module: 22 } }
+          1: { module: 'foo' },
+          2: { module: 'bar' }
         },
         modules: {
-          12: { name: 'Foo' },
-          22: { name: 'Bar' }
+          foo: { name: 'Foo' },
+          bar: { name: 'Bar' }
         }
       })
 
@@ -35,34 +35,35 @@ describe('DoneHelpers', () => {
           22: { wf_module_ids: [] }
         },
         wfModules: {
-          1: { module_version: { module: 12 } },
-          2: { module_version: { module: 22 } }
+          1: { module: 'foo' },
+          2: { module: 'bar' }
         },
         modules: {
-          12: { name: 'Foo' },
-          22: { name: 'Bar' }
+          foo: { name: 'Foo' },
+          bar: { name: 'Bar' }
         }
       })
 
       expect(workflow.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
     })
 
-    it('should give wfModuleName=null when there is no module_version', () => {
+    it('should give wfModuleName=null when there is no module', () => {
       const workflow = new WorkflowWithHelpers({
         tab_ids: [ 21, 22 ],
         selected_tab_position: 0
       }, {
         tabs: {
-          21: { wf_module_ids: [ 1, "3_nonce" ] },
+          21: { wf_module_ids: [ 1, 2, "3_nonce" ] },
           22: { wf_module_ids: [] }
         },
         wfModules: {
-          1: { module_version: null },
+          1: { module: 'blah' }, // not a real module
+          2: {}, // no module
         },
         modules: {}
       })
 
-      expect(workflow.selectedTab.wfModuleNames).toEqual([ null, null ])
+      expect(workflow.selectedTab.wfModuleNames).toEqual([ null, null, null ])
     })
   })
 
@@ -81,30 +82,19 @@ describe('DoneHelpers', () => {
       expect(wfModule.note).toEqual('foo')
     })
 
-    it('should have parameters.get()', () => {
+    it('should have params', () => {
       const wfModule = new WorkflowModuleWithHelpers({
-        module_version: { module: 123 },
-        parameter_vals: [
-          { parameter_spec: { id_name: 'url' }, value: 'foo' },
-          { parameter_spec: { id_name: 'bar' }, value: 'baz' }
-        ]
-      }, {
-        modules: {
-          123: { name: 'Foo' }
-        }
+        params: { url: 'foo', bar: 'baz' }
       })
-      const parameters = wfModule.parameters
-      expect(parameters.get('url')).toEqual('foo')
-      expect(parameters.get('bar')).toEqual('baz')
-      expect(parameters.get('moo')).toBe(null)
+      expect(wfModule.params).toEqual({
+        url: 'foo',
+        bar: 'baz'
+      })
     })
 
-    it('should have null parameters.get() on placeholder', () => {
+    it('should have empty params on placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers(null, {})
-      const parameters = wfModule.parameters
-      expect(parameters.get('url')).toBe(null)
-      expect(parameters.get('bar')).toBe(null)
-      expect(parameters.get('moo')).toBe(null)
+      expect(wfModule.params).toEqual({})
     })
 
     it('should have moduleName=null when placeholder', () => {
@@ -190,12 +180,12 @@ describe('DoneHelpers', () => {
           22: { wf_module_ids: [ 1, 2 ] },
         },
         wfModules: {
-          1: { module_version: { module: 3 } },
-          2: { module_version: { module: 4 } }
+          1: { module: 'foo' },
+          2: { module: 'bar' }
         },
         modules: {
-          3: { name: 'Foo' },
-          4: { name: 'Bar' }
+          foo: { name: 'Foo' },
+          bar: { name: 'Bar' }
         }
       })
 
@@ -213,12 +203,12 @@ describe('DoneHelpers', () => {
           12: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 1 }
         },
         wfModules: {
-          2: { module_version: { module: 4 } },
-          3: { module_version: { module: 5 } }
+          2: { module: 'foo' },
+          3: { module: 'bar' }
         },
         modules: {
-          4: { name: 'Foo' },
-          5: { name: 'Bar' }
+          foo: { name: 'Foo' },
+          bar: { name: 'Bar' }
         },
       })
 

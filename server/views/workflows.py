@@ -13,7 +13,7 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
-from server.models import Module, Workflow, WfModule
+from server.models import ModuleVersion, Workflow, WfModule
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
@@ -54,7 +54,8 @@ def make_init_state(request, workflow=None, modules=None):
 
     if modules:
         modules_data_list = ModuleSerializer(modules, many=True).data
-        ret['modules'] = dict([(str(m['id']), m) for m in modules_data_list])
+        ret['modules'] = dict([(str(m['id_name']), m)
+                               for m in modules_data_list])
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
@@ -141,14 +142,17 @@ def _get_anonymous_workflow_for(workflow: Workflow,
         return new_workflow
 
 
-# Restrict the modules that are available, based on the user
 def visible_modules(request):
-    # excluding because no functional UI
-    if request.user.is_authenticated:
-        return Module.objects.all()
-    else:
-        # need to log in to write Python code
-        return Module.objects.exclude(id_name='pythoncode').all()
+    """Build a QuerySet of all ModuleVersions the user may use."""
+    queryset = ModuleVersion.objects.all().select_related('module')
+
+    if not request.user.is_authenticated:
+        # pythoncode is too obviously insecure
+        queryset = queryset.exclude(module__id_name='pythoncode')
+
+    queryset = queryset.prefetch_related('parameter_specs')
+
+    return queryset
 
 
 # no login_required as logged out users can view example/public workflows

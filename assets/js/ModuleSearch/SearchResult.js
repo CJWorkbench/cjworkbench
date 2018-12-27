@@ -8,22 +8,22 @@ export default class SearchResult extends React.PureComponent {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,
-    id: PropTypes.number.isRequired,
+    idName: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired, // func(id) => undefined
-    onMouseEnter: PropTypes.func.isRequired, // func(id) => undefined
+    onClick: PropTypes.func.isRequired, // func(idName) => undefined
+    onMouseEnter: PropTypes.func.isRequired, // func(idName) => undefined
   }
 
   liRef = React.createRef()
 
   onClick = () => {
-    this.props.onClick(this.props.id)
+    this.props.onClick(this.props.idName)
   }
 
   onMouseEnter = () => {
-    this.props.onMouseEnter(this.props.id)
+    this.props.onMouseEnter(this.props.idName)
   }
 
   getLiRef = () => {
@@ -33,9 +33,9 @@ export default class SearchResult extends React.PureComponent {
   }
 
   render() {
-    const { id, isActive, isLessonHighlight, isMatch, name, icon, description } = this.props
+    const { idName, isActive, isLessonHighlight, isMatch, name, icon, description } = this.props
 
-    const elId = `module-search-result-${id}`
+    const elId = `module-search-result-${idName}`
 
     const className = [ 'module-search-result' ]
     if (isLessonHighlight) className.push('lesson-highlight')

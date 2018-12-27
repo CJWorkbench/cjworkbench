@@ -18,23 +18,7 @@ describe('Reducer actions', () => {
     '10': {
       id: 10,
       tab_id: 91,
-      parameter_vals: [
-        {
-          id: 1,
-          parameter_spec: {
-            id_name: 'data',
-          },
-          value: 'Some Data'
-        },
-        {
-          // maybeRequestWfModuleFetchAction() requires version_select.
-          id: 2,
-          parameter_spec: {
-            id_name: 'version_select'
-          },
-          value: null
-        }
-      ],
+      params: { 'data': 'Some Data', 'version_select': null },
       versions: {
         selected: "2018-02-21T03:09:20.214054Z",
         versions: [
@@ -92,73 +76,103 @@ describe('Reducer actions', () => {
   })
 
   it('returns the state if we feed garbage to the reducer', () => {
-    const state = wfr.workflowReducer(testState, {
+    const initialState = {'x': 'y'}
+    const state = wfr.workflowReducer(initialState, {
       type: 'An ill-advised request',
       payload: {
         blob: 'malware.exe'
       }
     })
-    expect(state).toBe(testState)
+    expect(state).toBe(initialState)
   })
 
   // ADD_MODULE
-  it('adds a module', async () => {
+  it('adds a module by index', async () => {
     const api = {
-      addModule: jest.fn().mockImplementation(_ => Promise.resolve({
-        index: 2,
-        wfModule: {
-          id: 40,
-          foo: 'bar'
+      addModule: jest.fn(() => Promise.resolve(null))
+    }
+
+    const store = mockStore({
+      workflow: {
+        tab_ids: [1]
+      },
+      tabs: {
+        1: {
+          wf_module_ids: [2, 3],
+          selected_wf_module_position: 1
         }
-      }))
-    }
+      },
+      wfModules: {
+        2: {},
+        3: {}
+      },
+      modules: {
+        'module2': {}
+      }
+    }, api)
 
-    const store = mockStore(testState, api)
-    await store.dispatch(wfr.addModuleAction(1, { tabId: 91, index: 2 }, { x: 'y' }))
+    await store.dispatch(wfr.addModuleAction('module2', { tabId: 1, index: 0 }, { x: 'y' }))
 
-    expect(api.addModule).toHaveBeenCalledWith(91, 1, 2, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith(1, 'module2', 0, { x: 'y' })
     const state = store.getState()
-    expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 20, '1_1', 30 ])
-  })
-
-  it('adds a module by idName', async () => {
-    const api = {
-      addModule: jest.fn().mockImplementation(_ => Promise.resolve({
-        index: 2,
-        wfModule: { id: 40, foo: 'bar' }
-      }))
-    }
-
-    const store = mockStore(testState, api)
-    await store.dispatch(wfr.addModuleAction('module2', { tabId: 91, index: 2 }, { x: 'y' }))
-
-    expect(api.addModule).toHaveBeenCalledWith(91, 2, 2, { x: 'y' })
+    expect(state.tabs['1'].selected_wf_module_position).toEqual(0)
+    expect(state.tabs['1'].wf_module_ids).toEqual(['nonce-module2-0', 2, 3])
   })
 
   it('adds a module before another', async () => {
     const api = {
-      addModule: jest.fn().mockImplementation(_ => Promise.resolve({
-        index: 2,
-        wfModule: { id: 40, foo: 'bar' }
-      }))
+      addModule: jest.fn(() => Promise.resolve(null))
     }
 
-    const store = mockStore(testState, api)
-    await store.dispatch(wfr.addModuleAction(1, { beforeWfModuleId: 20 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith(91, 1, 1, { x: 'y' })
+    const store = mockStore({
+      workflow: {
+        tab_ids: [1]
+      },
+      tabs: {
+        1: {
+          wf_module_ids: [2, 3],
+          selected_wf_module_position: 1
+        }
+      },
+      wfModules: {
+        2: {},
+        3: { tab_id: 1 }
+      },
+      modules: {
+        'module2': {}
+      }
+    }, api)
+
+    await store.dispatch(wfr.addModuleAction('mod', { beforeWfModuleId: 3 }, { x: 'y' }))
+    expect(api.addModule).toHaveBeenCalledWith(1, 'mod', 1, { x: 'y' })
   })
 
   it('adds a module after another', async () => {
     const api = {
-      addModule: jest.fn().mockImplementation(_ => Promise.resolve({
-        index: 2,
-        wfModule: { id: 40, foo: 'bar' }
-      }))
+      addModule: jest.fn(() => Promise.resolve(null))
     }
 
-    const store = mockStore(testState, api)
-    await store.dispatch(wfr.addModuleAction(1, { afterWfModuleId: 20 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith(91, 1, 2, { x: 'y' })
+    const store = mockStore({
+      workflow: {
+        tab_ids: [1]
+      },
+      tabs: {
+        1: {
+          wf_module_ids: [2, 3],
+          selected_wf_module_position: 1
+        }
+      },
+      wfModules: {
+        2: { tab_id: 1 },
+        3: {}
+      },
+      modules: {
+        'module2': {}
+      }
+    }, api)
+
+    await store.dispatch(wfr.addModuleAction('mod', { afterWfModuleId: 2 }, { x: 'y' }))
+    expect(api.addModule).toHaveBeenCalledWith(1, 'mod', 1, { x: 'y' })
   })
 
   it('deletes a module', async () => {
@@ -316,25 +330,48 @@ describe('Reducer actions', () => {
 
   it('should setWfModuleParams', async () => {
     const api = {
-      setWfModuleParams: jest.fn().mockImplementation(_ => Promise.resolve({}))
+      setWfModuleParams: jest.fn(() => Promise.resolve(null))
     }
 
-    const store = mockStore(testState, api)
-    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { data: 'newdata' }))
+    const store = mockStore({
+      wfModules: {
+        10: {
+          params: {
+            'a': 'x',
+            'b': 'y'
+          }
+        }
+      }
+    }, api)
+    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { 'a': 'z' }))
 
     // should set value immediately
-    expect(store.getState().wfModules['10'].parameter_vals[0].value).toEqual('newdata')
-    await done
+    expect(store.getState().wfModules['10'].params).toEqual({ 'a': 'z', 'b': 'y' })
 
     // should send HTTP request
-    expect(api.setWfModuleParams).toHaveBeenCalledWith(10, { data: 'newdata' })
+    await done
+    expect(api.setWfModuleParams).toHaveBeenCalledWith(10, { 'a': 'z' })
   })
 
   it('requests fetch in maybeRequestWfModuleFetchAction', async () => {
     const api = {
       requestFetch: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
-    const store = mockStore(testState, api)
+    const store = mockStore({
+      wfModules: {
+        10: {
+          module: 'mod'
+        }
+      },
+      modules: {
+        mod: {
+          parameter_specs: [
+            { id_name: 'foo' },
+            { id_name: 'version_select' }
+          ]
+        }
+      }
+    }, api)
     const done = store.dispatch(wfr.maybeRequestWfModuleFetchAction(10))
 
     // should set nClientRequests immediately.

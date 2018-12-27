@@ -152,6 +152,13 @@ class WfModule(models.Model):
         else:
             return self.cached_render_result_error
 
+    @property
+    def module(self):
+        if self.module_version and self.module_version.module:
+            return self.module_version.module.id_name
+        else:
+            return None
+
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
     def request_authorized_read(self, request):

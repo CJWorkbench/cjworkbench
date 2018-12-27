@@ -19,9 +19,14 @@ describe('ImportModuleFromGitHub', () => {
 
   it('should load and replace a module', async () => {
     const api = {
-      importModuleFromGitHub: jest.fn().mockImplementation(() => Promise.resolve({ id: 2, author: 'Aut', name: 'yay', category: 'cat' }))
+      importModuleFromGitHub: jest.fn().mockImplementation(() => Promise.resolve({
+        id_name: 'b',
+        author: 'Aut',
+        name: 'yay',
+        category: 'cat'
+      }))
     }
-    const store = mockStore({ modules: {1: {foo: 'bar'}} }, null)
+    const store = mockStore({ modules: {a: {foo: 'bar'}} }, null)
     const w = wrapper(store, { api })
     w.find('input').instance().value = 'https://github.com/example/repo'
     w.find('form').simulate('submit')
@@ -29,8 +34,8 @@ describe('ImportModuleFromGitHub', () => {
     expect(api.importModuleFromGitHub).toHaveBeenCalledWith('https://github.com/example/repo')
     await tick()
     expect(store.getState().modules).toEqual({
-      1: { foo: 'bar' },
-      2: { id: 2, author: 'Aut', category: 'cat', name: 'yay' }
+      a: { foo: 'bar' },
+      b: { id_name: 'b', author: 'Aut', category: 'cat', name: 'yay' }
     })
 
     expect(w.find('.import-github-success').text()).toEqual('Imported Aut module "yay" under category "cat"')

@@ -353,7 +353,7 @@ def import_module_from_directory(url, reponame, version, importdir,
                                            module_version__module=module):
             update_wfm_parameters_to_new_version(wfm, module_version)
 
-        return module
+        return module_version
     except Exception:
         # On exception, clean up and raise
         if destination_directory:

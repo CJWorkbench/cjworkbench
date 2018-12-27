@@ -3,8 +3,8 @@ from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
-from server.models import AclEntry, Workflow, WfModule, ParameterVal, \
-        ParameterSpec, Module, ModuleVersion, StoredObject, Tab
+from server.models import AclEntry, Workflow, WfModule, \
+        ParameterSpec, ModuleVersion, StoredObject, Tab
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
 
@@ -31,22 +31,8 @@ class ParameterSpecSerializer(serializers.ModelSerializer):
                   'items', 'visible_if')
 
 
-class ParameterValSerializer(serializers.ModelSerializer):
-    parameter_spec = ParameterSpecSerializer(many=False, read_only=True)
-
-    # Custom serialization for value, to return correct types
-    # (e.g. boolean for checkboxes)
-    value = serializers.SerializerMethodField()
-
-    def get_value(self, obj):
-        return obj.get_value()
-
-    class Meta:
-        model = ParameterVal
-        fields = ('parameter_spec', 'value')
-
-
 class ModuleSerializer(serializers.ModelSerializer):
+    parameter_specs = ParameterSpecSerializer(many=True, read_only=True)
     help_url = serializers.SerializerMethodField()
 
     def get_help_url(self, obj):
@@ -58,19 +44,14 @@ class ModuleSerializer(serializers.ModelSerializer):
         return "%s%s" % (KB_ROOT_URL, obj.help_url)
 
     class Meta:
-        model = Module
-
-        fields = ('id', 'id_name', 'name', 'category', 'description', 'link',
-                  'author', 'icon', 'loads_data', 'help_url', 'has_zen_mode',
-                  'row_action_menu_entry_title', 'js_module')
-
-
-class ModuleVersionSerializer(serializers.ModelSerializer):
-    module = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-
-    class Meta:
+        # XXX model is _not_ Module! ModuleVersion duck-types Module and has
+        # parameter_specs.
         model = ModuleVersion
-        fields = ('module', 'source_version_hash', 'last_update_time')
+
+        fields = ('id_name', 'name', 'category', 'description', 'link',
+                  'author', 'icon', 'loads_data', 'help_url', 'has_zen_mode',
+                  'row_action_menu_entry_title', 'js_module',
+                  'parameter_specs')
 
 
 class TabSerializer(serializers.ModelSerializer):
@@ -96,21 +77,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class WfModuleSerializer(serializers.ModelSerializer):
-    parameter_vals = ParameterValSerializer(many=True, read_only=True)
-    module_version = serializers.SerializerMethodField()
+    params = serializers.SerializerMethodField()
     update_interval = serializers.SerializerMethodField()
     update_units = serializers.SerializerMethodField()
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
     quick_fixes = serializers.SerializerMethodField()
-
-    def get_module_version(self, wfm):
-        if wfm.module_version is not None:
-            s = ModuleVersionSerializer(wfm.module_version)
-            return s.data
-        else:
-            # Minimal fields so front end won't crash
-            return {'module': None}
 
     # update interval handling is a little tricky as we need to convert seconds
     # to count+units
@@ -167,15 +139,17 @@ class WfModuleSerializer(serializers.ModelSerializer):
         ret.update(self.get_cached_render_result_data(wfm))
         return ret
 
+    def get_params(self, wfm):
+        return wfm.get_params().as_dict()
+
     class Meta:
         model = WfModule
-        fields = ('id', 'module_version', 'tab_id', 'is_busy',
+        fields = ('id', 'module', 'tab_id', 'is_busy',
                   'output_error', 'output_status', 'fetch_error',
-                  'parameter_vals', 'is_collapsed', 'notes',
-                  'auto_update_data', 'update_interval', 'update_units',
-                  'last_update_check', 'notifications',
-                  'has_unseen_notification', 'html_output', 'versions',
-                  'last_relevant_delta_id', 'quick_fixes')
+                  'params', 'is_collapsed', 'notes', 'auto_update_data',
+                  'update_interval', 'update_units', 'last_update_check',
+                  'notifications', 'has_unseen_notification', 'html_output',
+                  'versions', 'last_relevant_delta_id', 'quick_fixes')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID.

@@ -6,7 +6,6 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from .. import oauth, websockets
 from ..models import ParameterSpec, ParameterVal, WfModule, Workflow
-from ..serializers import ParameterValSerializer
 
 
 Scope = namedtuple('Scope', (
@@ -136,18 +135,16 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
                     parameter_spec__id_name=scope.param
                 )
             except ParameterVal.DoesNotExist:
-                return HttpNotFound('Step or parameter was deleted.')
+                return HttpResponseNotFound('Step or parameter was deleted.')
 
-            parameter_val.set_value({'name': username, 'secret': offline_token})
+            parameter_val.set_value({'name': username,
+                                     'secret': offline_token})
 
-            vals = parameter_val.wf_module.parameter_vals \
-                .prefetch_related('parameter_spec')
+            params = parameter_val.wf_module.get_params()
             delta_json = {
                 'updateWfModules': {
                     str(scope.wf_module_id): {
-                        'parameter_vals': (
-                            ParameterValSerializer(vals, many=True).data
-                        )
+                        'params': params.as_dict(),
                     }
                 }
             }

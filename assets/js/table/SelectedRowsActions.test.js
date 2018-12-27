@@ -12,8 +12,8 @@ describe('SelectedRowsActions', () => {
           selectedRowIndexes={[3, 1, 4]}
           wfModuleId={99}
           rowActionModules={[
-            { id: 10, title: 'Foo these rows' },
-            { id: 20, title: 'Bar these rows' }
+            { idName: 'dofoo', title: 'Foo these rows' },
+            { idName: 'dobar', title: 'Bar these rows' }
           ]}
           onClickRowsAction={jest.fn()}
           {...extraProps}
@@ -31,7 +31,7 @@ describe('SelectedRowsActions', () => {
       w.find('button').at(0).simulate('click') // open the menu
       w.update()
       w.find('button').at(1).simulate('click')
-      expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 10, '3-6, 10, 8001-8003')
+      expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 'dofoo', '3-6, 10, 8001-8003')
     })
   })
 
@@ -40,50 +40,19 @@ describe('SelectedRowsActions', () => {
 
     beforeEach(() => {
       api = {
-        addModule: jest.fn(),
-        setWfModuleParams: jest.fn(),
-        setSelectedWfModule: jest.fn()
+        addModule: jest.fn(() => Promise.resolve(null)),
+        setWfModuleParams: jest.fn(() => Promise.resolve(null)),
+        setSelectedWfModule: jest.fn(() => Promise.resolve(null))
       }
     })
 
-    const wrapper = (modules=null, wf_module_ids=null, wfModules=null, extraProps={}) => {
-      if (wf_module_ids === null) {
-        wf_module_ids = [99, 100, 101]
-      }
-
-      if (wfModules === null) {
-        wfModules = {
-          '99': {
-            tab_id: 11,
-            module_version: { module: 10 },
-            parameter_vals: [ { parameter_spec: { id_name: 'foo10' }, value: 'bar10' } ]
-          },
-          '100': {
-            tab_id: 11,
-            module_version: { module: 20 },
-            parameter_vals: [ { parameter_spec: { id_name: 'foo20' }, value: 'bar20' } ]
-          }
-        }
-      }
-
-      if (modules === null) {
-        modules = {
-          '10': { row_action_menu_entry_title: 'Foo these rows' },
-          '20': { row_action_menu_entry_title: 'Bar these rows' }
-        }
-      }
-
-      const store = mockStore({
-        modules,
-        wfModules,
-        tabs: { 11: { id: 11, wf_module_ids } },
-        workflow: { id: 321, tab_ids: [ 11, 12 ], selected_tab_position: 0 }
-      }, api)
+    const wrapper = (state, extraProps={}) => {
+      const store = mockStore(state, api)
       return mount(
         <Provider store={store}>
           <ConnectedSelectedRowsActions
             selectedRowIndexes={[3, 1, 4]}
-            wfModuleId={99}
+            wfModuleId={2}
             onClickRowsAction={jest.fn()}
             {...extraProps}
           />
@@ -92,16 +61,25 @@ describe('SelectedRowsActions', () => {
     }
 
     it('should render modules', () => {
-      const w = wrapper({ '15': { row_action_menu_entry_title: 'Baz these rows' } })
+      const w = wrapper({
+        modules: {
+          dofoo: {
+            row_action_menu_entry_title: 'Foo these rows'
+          }
+        }
+      })
       w.find('button').at(0).simulate('click')
       w.update()
-      expect(w.text()).toMatch(/Baz these rows/)
+      expect(w.text()).toMatch(/Foo these rows/)
     })
 
     it('should not render modules that do not belong', () => {
       const w = wrapper({
-        '15': {}, // the dream: JSON does not contain title
-        '16': { row_action_menu_entry_title: '' } // reality: JSON contains empty-string title
+        modules: {
+          dofoo: {
+            row_action_menu_entry_title: '' // reality: JSON contains empty-string title
+          }
+        }
       })
       w.find('button').at(0).simulate('click')
       w.update()
@@ -109,25 +87,20 @@ describe('SelectedRowsActions', () => {
     })
 
     it('should use addModuleAction', async () => {
-      api.addModule.mockImplementation(_ => Promise.resolve({
-        index: 1,
-        wfModule: {
-          id: 103,
-          module_version: { module: 15 },
-          parameter_vals: [
-            { id: 123, value: '', parameter_spec: { id_name: 'rows', type: 'string' } }
-          ]
-        }
-      }))
-
       const w = wrapper({
-        '15': {
-          row_action_menu_entry_title: 'Baz these rows',
+        tabs: { 1: { wf_module_ids: [2] } },
+        wfModules: {
+          2: { module: 'dofoo', tab_id: 1 },
+        },
+        modules: {
+          dobar: {
+            row_action_menu_entry_title: 'Bar these rows'
+          }
         }
-      })
+      }, { wfModuleId: 2 })
       w.find('button').at(0).simulate('click')
       w.update()
-      expect(w.text()).toMatch(/Baz these rows/)
+      expect(w.text()).toMatch(/Bar these rows/)
       w.find('button').at(1).simulate('click')
 
       await tick() // wait for all promises to settle
@@ -135,26 +108,24 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.addModule).toHaveBeenCalledWith(11, 15, 1, { rows: '2, 4-5' })
+      expect(api.addModule).toHaveBeenCalledWith(1, 'dobar', 1, { rows: '2, 4-5' })
     })
 
     it('should use setWfModuleParams action, fromInput', async () => {
-      api.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
-      api.setSelectedWfModule.mockImplementation(_ => Promise.resolve(null))
-
-      const w = wrapper(
-        {
-          '10': {},
-          '20': {
-            id: 20,
+      const w = wrapper({
+        workflow: { tab_ids: [ 1 ] },
+        tabs: { 1: { wf_module_ids: [2, 3] } },
+        wfModules: {
+          2: { module: 'dofoo', tab_id: 1 },
+          3: { module: 'dobaz', tab_id: 1, params: { foo20: 'bar20' } }
+        },
+        modules: {
+          dobaz: {
             row_action_menu_entry_title: 'Baz these rows',
             js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
           }
-        },
-        [ 99, 100 ],
-        null, // wrapper() defaults to wfModule 99 has module 10, wfModule 100 has module 20
-        { wfModuleId: 99 } // we'll edit 100 from wfModule 99
-      )
+        }
+      }, { wfModuleId: 2 }) // selected module is the input
       w.find('button').at(0).simulate('click')
       w.update()
       expect(w.text()).toMatch(/Baz these rows/)
@@ -165,30 +136,28 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.setSelectedWfModule).toHaveBeenCalledWith(100)
+      expect(api.setSelectedWfModule).toHaveBeenCalledWith(3)
       expect(api.setWfModuleParams).toHaveBeenCalledWith(
-        100,
+        3,
         { oldParams: { foo20: 'bar20' }, rows: '2, 4-5', fromInput: true }
       )
     })
 
     it('should use setWfModuleParams action, fromInput=false (from output)', async () => {
-      api.setWfModuleParams.mockImplementation(_ => Promise.resolve(null))
-
-      const w = wrapper(
-        {
-          '10': {
-            id: 10,
+      const w = wrapper({
+        workflow: { tab_ids: [ 1 ] },
+        tabs: { 1: { wf_module_ids: [2, 3] } },
+        wfModules: {
+          2: { module: 'dobaz', tab_id: 1, params: { foo10: 'bar10' } },
+          3: { module: 'dofoo', tab_id: 1 }
+        },
+        modules: {
+          dobaz: {
             row_action_menu_entry_title: 'Baz these rows',
             js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
-          },
-          '20': {
           }
-        },
-        [ 99, 100 ],
-        null, // wrapper() defaults to wfModule 99 has module 10, wfModule 100 has module 20
-        { wfModuleId: 99 } // we'll edit 99 from wfModule 99
-      )
+        }
+      }, { wfModuleId: 2 }) // selected module is what's we're editing
       w.find('button').at(0).simulate('click')
       w.update()
       expect(w.text()).toMatch(/Baz these rows/)
@@ -200,7 +169,7 @@ describe('SelectedRowsActions', () => {
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
       expect(api.setWfModuleParams).toHaveBeenCalledWith(
-        99,
+        2,
         { oldParams: { foo10: 'bar10' }, rows: '2, 4-5', fromInput: false }
       )
     })

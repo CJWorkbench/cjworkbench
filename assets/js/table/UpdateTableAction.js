@@ -29,22 +29,6 @@ export const moduleParamsBuilders = {
   'convert-text': genericAddColumn('colnames')
 }
 
-function moduleExists (state, moduleIdName) {
-  const { modules } = state
-  for (const key in modules) {
-    if (modules[key].id_name === moduleIdName) return true
-  }
-  return false
-}
-
-function wfModuleParams (wfModule) {
-  const ret = {}
-  for (const param of wfModule.parameter_vals) {
-    ret[param.parameter_spec.id_name] = param.value
-  }
-  return ret
-}
-
 /**
  * Return { id, params, isNext } of _this_ WfModule or the one _after_ it, matching moduleIdName.
  *
@@ -53,14 +37,9 @@ function wfModuleParams (wfModule) {
 function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
   const { tabs, wfModules, modules } = state
 
-  let moduleId = null
-  for (const key in modules) {
-    if (modules[key].id_name === moduleIdName) {
-      moduleId = +key
-      break
-    }
+  if (!(moduleIdName in modules)) {
+    throw new Error(`Cannot find module '${moduleIdName}'`)
   }
-  if (moduleId === null) throw new Error(`Cannot find module '${moduleIdName}'`)
 
   const wfModule = wfModules[String(focusWfModuleId)]
   const tabId = wfModule.tab_id
@@ -70,7 +49,7 @@ function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
   // desired module (and have wfModuleIds 2 and 64), 1 and 2 aren't for
   // desired module
   const validIdsOrNulls = tab.wf_module_ids
-    .map(id => (wfModules[String(id)].module_version || {}).module === moduleId ? id : null)
+    .map(id => wfModules[String(id)].module === moduleIdName ? id : null)
 
   const focusIndex = tab.wf_module_ids.indexOf(focusWfModuleId)
   if (focusIndex === -1) return null
@@ -81,7 +60,7 @@ function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
     const wfModule = wfModules[String(atFocusIndex)]
     return {
       id: atFocusIndex,
-      params: wfModuleParams(wfModule),
+      params: wfModule.params,
       isNext: false
     }
   }
@@ -93,7 +72,7 @@ function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
     const wfModule = wfModules[String(atNextIndex)]
     return {
       id: atNextIndex,
-      params: wfModuleParams(wfModule),
+      params: wfModule.params,
       isNext: true
     }
   }
@@ -111,7 +90,7 @@ export function updateTableAction (wfModuleId, idName, forceNewModule, params) {
   return (dispatch, getState) => {
     const state = getState()
 
-    if (!moduleExists(state, idName)) {
+    if (!(idName in state.modules)) {
       window.alert("Module '" + idName + "' not imported.")
       return
     }

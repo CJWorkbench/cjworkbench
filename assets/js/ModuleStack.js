@@ -89,7 +89,7 @@ class ModuleDropSpot extends React.PureComponent {
 
 class BaseModuleStackInsertSpot extends React.PureComponent {
   static propTypes = {
-    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
+    addModule: PropTypes.func.isRequired, // func(idName, index) => undefined
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -112,11 +112,11 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
     })
   }
 
-  onClickModuleId = (moduleId) => {
+  onClickModule = (idName) => {
     this.setState({
       isSearching: false,
     })
-    this.props.addModule(moduleId, this.props.index)
+    this.props.addModule(idName, this.props.index)
   }
 
   renderModuleSearchButton() {
@@ -128,7 +128,7 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
       return (
         <ModuleSearch
           index={this.props.index}
-          onClickModuleId={this.onClickModuleId}
+          onClickModule={this.onClickModule}
           onCancel={this.onCancelSearch}
           />
       )
@@ -161,7 +161,7 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
 
 class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
   static propTypes = {
-    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
+    addModule: PropTypes.func.isRequired, // func(moduleIdName, index) => undefined
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -189,7 +189,7 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
 
 class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
   static propTypes = {
-    addModule: PropTypes.func.isRequired, // func(moduleId, index) => undefined
+    addModule: PropTypes.func.isRequired, // func(moduleIdName, index) => undefined
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
@@ -221,7 +221,7 @@ class ModuleStack extends React.Component {
     tabId: PropTypes.number,
     selected_wf_module_position: PropTypes.number,
     wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
-    addModule: PropTypes.func.isRequired, // func(tabId, moduleId, index) => undefined
+    addModule: PropTypes.func.isRequired, // func(tabId, moduleIdName, index) => undefined
     moveModuleByIndex: PropTypes.func.isRequired, // func(tabId, oldIndex, newIndex) => undefined
     removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
@@ -292,8 +292,8 @@ class ModuleStack extends React.Component {
     })
   }
 
-  addModule = (moduleId, index) => {
-    this.props.addModule(this.props.tabId, moduleId, index)
+  addModule = (moduleIdName, index) => {
+    this.props.addModule(this.props.tabId, moduleIdName, index)
   }
 
   moveModuleByIndex = (oldIndex, newIndex) => {
@@ -309,7 +309,7 @@ class ModuleStack extends React.Component {
         addModule={this.addModule}
         moveModuleByIndex={this.moveModuleByIndex}
         isLessonHighlightSearch={this.props.testLessonHighlightIndex(index)}
-        />
+      />
     )
   }
 
@@ -368,7 +368,7 @@ class ModuleStack extends React.Component {
           moveModuleByIndex={this.moveModuleByIndex}
           isLessonHighlightSearch={this.props.testLessonHighlightIndex(wfModules.length)}
           isReadOnly={this.props.isReadOnly}
-          />
+        />
       </div>
     )
   }
@@ -392,8 +392,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule(tabId, moduleId, index) {
-      const action = addModuleAction(moduleId, { tabId, index }, {})
+    addModule(tabId, moduleIdName, index) {
+      const action = addModuleAction(moduleIdName, { tabId, index }, {})
       dispatch(action)
     },
 

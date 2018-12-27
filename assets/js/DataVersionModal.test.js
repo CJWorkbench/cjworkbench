@@ -104,27 +104,27 @@ describe('DataVersionModal', () => {
         11: { wf_module_ids: [ 123, 124 ] },
       },
       modules: {
-        234: { name: 'Fetch Stuff', loads_data: true },
-        345: { name: 'Filter Stuff', loads_data: false }
+        fetch: { name: 'Fetch Stuff', loads_data: true },
+        filter: { name: 'Filter Stuff', loads_data: false }
       },
       wfModules: {
         123: {
-            id: 123,
-            notifications: true,
-            module_version: { module: 234 },
-            versions: {
-              versions: [
-                [ '2018-06-22T20:09:41.649Z', true ],
-                [ '2018-06-23T20:09:41.649Z', false ],
-              ],
-              selected: '2018-06-22T20:09:41.649Z',
-            }
+          id: 123,
+          notifications: true,
+          module: 'fetch',
+          versions: {
+            versions: [
+              [ '2018-06-22T20:09:41.649Z', true ],
+              [ '2018-06-23T20:09:41.649Z', false ],
+            ],
+            selected: '2018-06-22T20:09:41.649Z',
+          }
         },
         124: {
           id: 124,
+          module: 'filter',
           name: 'Filter Stuff',
           notifications: true,
-          module_version: { module: 345 }
         }
       }
     }

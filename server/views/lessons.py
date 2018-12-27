@@ -5,9 +5,9 @@ from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 import json
 from server.models.commands import InitWorkflowCommand
-from server.models import Lesson, Module, Workflow
+from server.models import Lesson, Workflow
 from server.serializers import LessonSerializer, UserSerializer
-from server.views.workflows import make_init_state
+from server.views.workflows import visible_modules, make_init_state
 
 
 # because get_object_or_404() is for _true_ django.db.models.Manager
@@ -49,7 +49,7 @@ def _ensure_workflow(request, lesson):
 
 def _render_get_lesson_detail(request, lesson):
     workflow = _ensure_workflow(request, lesson)
-    modules = Module.objects.all()
+    modules = visible_modules(request)
 
     init_state = make_init_state(request, workflow=workflow, modules=modules)
     init_state['lessonData'] = LessonSerializer(lesson).data

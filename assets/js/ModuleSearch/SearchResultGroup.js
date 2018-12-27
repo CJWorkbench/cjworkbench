@@ -5,28 +5,28 @@ import SearchResult from './SearchResult'
 export default class ModuleSearchResultGroup extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
-    activeModuleId: PropTypes.number, // null if none active
+    activeModule: PropTypes.string, // idName, null if none active
     modules: PropTypes.arrayOf(PropTypes.shape({
       isLessonHighlight: PropTypes.bool.isRequired,
-      id: PropTypes.number.isRequired,
+      idName: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired
     })).isRequired,
-    onClickModuleId: PropTypes.func.isRequired, // func(moduleId) => undefined
-    onMouseEnterModuleId: PropTypes.func.isRequired // func(moduleId) => undefined
+    onClickModule: PropTypes.func.isRequired, // func(moduleIdName) => undefined
+    onMouseEnterModule: PropTypes.func.isRequired // func(moduleIdName) => undefined
   }
 
   render() {
-    const { name, modules, hasMatch, activeModuleId } = this.props
+    const { name, modules, hasMatch, activeModule } = this.props
 
     const children = modules.map(module => (
       <SearchResult
         key={module.name}
-        isActive={module.id === activeModuleId}
+        isActive={module.idName === activeModule}
         {...module}
-        onClick={this.props.onClickModuleId}
-        onMouseEnter={this.props.onMouseEnterModuleId}
+        onClick={this.props.onClickModule}
+        onMouseEnter={this.props.onMouseEnterModule}
       />
     ))
 

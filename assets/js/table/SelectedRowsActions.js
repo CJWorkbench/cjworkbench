@@ -12,13 +12,14 @@ const numberFormat = new Intl.NumberFormat()
 
 class Action extends React.PureComponent {
   static propTypes = {
-    id: PropTypes.number.isRequired,
+    idName: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired, // onClick(id) => undefined
+    onClick: PropTypes.func.isRequired, // onClick(idName) => undefined
   }
 
   onClick = () => {
-    this.props.onClick(this.props.id)
+    const { idName, onClick } = this.props
+    onClick(idName)
   }
 
   render () {
@@ -35,10 +36,10 @@ export class SelectedRowsActions extends React.PureComponent {
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
     wfModuleId: PropTypes.number, // or null/undefined if none selected
     rowActionModules: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      idName: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    onClickRowsAction: PropTypes.func.isRequired, // func(wfModuleId, moduleId, rowString) => undefined
+    onClickRowsAction: PropTypes.func.isRequired, // func(wfModuleId, moduleIdName, rowString) => undefined
   }
 
   get rowString () {
@@ -93,8 +94,8 @@ export class SelectedRowsActions extends React.PureComponent {
   render () {
     const { selectedRowIndexes, wfModuleId, rowActionModules } = this.props
 
-    const actions = rowActionModules.map(({ id, title }) => (
-      <Action key={id} id={id} title={title} onClick={this.onClickAction} />
+    const actions = rowActionModules.map(({ idName, title }) => (
+      <Action key={idName} idName={idName} title={title} onClick={this.onClickAction} />
     ))
 
     const disabled = !wfModuleId || selectedRowIndexes.length === 0
@@ -119,11 +120,11 @@ export class SelectedRowsActions extends React.PureComponent {
 const getModules = ({ modules }) => modules
 const getRowActionModules = createSelector([ getModules ], (modules) => {
   const rowActionModules = []
-  for (const key in modules) {
-    const module = modules[key]
+  for (const moduleIdName in modules) {
+    const module = modules[moduleIdName]
     if (module.row_action_menu_entry_title) {
       rowActionModules.push({
-        id: Number(key),
+        idName: moduleIdName,
         title: module.row_action_menu_entry_title
       })
     }
@@ -181,10 +182,7 @@ function maybeAddSelectedRowsToParams (module, wfModule, rowsString, fromInput) 
   const addSelectedRows = loadModuleExport(module, 'addSelectedRows')
   if (!addSelectedRows) return null
 
-  const oldParams = {}
-  for (const pv of wfModule.parameter_vals) {
-    oldParams[pv.parameter_spec.id_name] = pv.value
-  }
+  const oldParams = { ...wfModule.params } // copy in case module modifies it
 
   try {
     return addSelectedRows(oldParams, rowsString, fromInput)
@@ -194,14 +192,14 @@ function maybeAddSelectedRowsToParams (module, wfModule, rowsString, fromInput) 
   }
 }
 
-function ensureWfModuleForRowsAction (currentWfModuleId, moduleId, rowsString) {
+function ensureWfModuleForRowsAction (currentWfModuleId, moduleIdName, rowsString) {
   return (dispatch, getState) => {
-    const { workflow, wfModules, tabs, modules } = getState()
+    const { wfModules, tabs, modules } = getState()
 
     // Fallback behavior: add new module with the given rows.
     function simplyAdd () {
       return dispatch(addModuleAction(
-        moduleId,
+        moduleIdName,
         { afterWfModuleId: currentWfModuleId },
         { rows: rowsString }
       ))
@@ -213,15 +211,15 @@ function ensureWfModuleForRowsAction (currentWfModuleId, moduleId, rowsString) {
     // If so -- and if the module has support.js defining addSelectedRows() --
     // modify the current WfModule.
     const currentWfModule = wfModules[String(currentWfModuleId)]
-    const currentModule = modules[String(currentWfModule.module_version.module)]
-    if (currentModule && currentModule.id === moduleId) {
+    if (currentWfModule.module === moduleIdName) {
+      const currentModule = modules[currentWfModule.module]
       const newParams = maybeAddSelectedRowsToParams(currentModule, currentWfModule, rowsString, false)
       if (newParams !== null) {
         return dispatch(setWfModuleParamsAction(currentWfModuleId, newParams))
       }
     }
 
-    const tab = tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+    const tab = tabs[String(currentWfModule.tab_id)]
 
     // Does nextWfModuleId point to the very module we're asking to add?
     // e.g., did we delete rows, select the input, and delete more rows?
@@ -234,8 +232,9 @@ function ensureWfModuleForRowsAction (currentWfModuleId, moduleId, rowsString) {
     if (!nextWfModuleId) return simplyAdd()
     const nextWfModule = wfModules[String(nextWfModuleId)]
     if (!nextWfModule) return simplyAdd()
-    const nextModule = modules[String(nextWfModule.module_version.module)]
-    if (nextModule && nextModule.id === moduleId) {
+
+    if (nextWfModule.module === moduleIdName) {
+      const nextModule = modules[nextWfModule.module]
       const newParams = maybeAddSelectedRowsToParams(nextModule, nextWfModule, rowsString, true)
       if (newParams !== null) {
         dispatch(setSelectedWfModuleAction(nextWfModuleId))

@@ -81,7 +81,7 @@ describe('TableView', () => {
   it('reorders columns', async () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
-    const api = { addModule: jest.fn().mockImplementation(() => Promise.resolve(null)) }
+    const api = { addModule: jest.fn(() => Promise.resolve(null)) }
     const store = mockStore({
       workflow: {
         tab_ids: [1],
@@ -95,7 +95,7 @@ describe('TableView', () => {
         3: {}
       },
       modules: {
-        4: { id_name: 'reorder-columns' },
+        'reorder-columns': {}
       }
     }, api)
 
@@ -104,7 +104,7 @@ describe('TableView', () => {
 
     await tick()
 
-    expect(api.addModule).toHaveBeenCalledWith(1, 4, 1, {
+    expect(api.addModule).toHaveBeenCalledWith(1, 'reorder-columns', 1, {
       'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
     })
 
@@ -128,7 +128,7 @@ describe('TableView', () => {
         3: {}
       },
       modules: {
-        4: { id_name: 'editcells' },
+        'editcells': {}
       }
     }, api)
 
@@ -142,7 +142,7 @@ describe('TableView', () => {
       updated: { b: 'b2' }
     })
 
-    expect(api.addModule).toHaveBeenCalledWith(1, 4, 1, {
+    expect(api.addModule).toHaveBeenCalledWith(1, 'editcells', 1, {
       'celledits': JSON.stringify([{ row: 0, col: 'b', value: 'b2' }])
     })
 

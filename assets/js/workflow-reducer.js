@@ -38,25 +38,13 @@ const registerReducerFunc = (key, func) => {
   reducerFunc[key] = func
 }
 
-let _nonce = 0
-const generateNonce = (prefix) => {
-  // Generate a nonce with some prefix from
-  // the object we're creating the nonce for
-  _nonce += 1
-  return `${prefix}_${_nonce}`
-}
-
-// ---- Utilities for translating between ID and index ----
-
-function findIdxByProp (searchArray, searchProp, searchValue) {
-  let returnIdx
-  for (let i = 0; i < searchArray.length; i++) {
-    if (searchArray[i][searchProp] === searchValue) {
-      returnIdx = i
-      break
+function generateNonce (invalidValues, prefix) {
+  for (let i = 0; true; i++) {
+    const attempt = `nonce-${prefix}-${i}`
+    if (!(attempt in invalidValues)) {
+      return attempt
     }
   }
-  return returnIdx
 }
 
 // ---- Actions ----
@@ -190,7 +178,7 @@ registerReducerFunc(UPDATE_MODULE, (state, action) => {
 
   const modules = {
     ...state.modules,
-    [String(module.id)]: module
+    [String(module.id_name)]: module
   }
 
   return { ...state, modules }
@@ -282,13 +270,10 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
  * @param parameterValues {id_name:value} Object of parameters for the
  *                        newly-created WfModule.
  */
-export function addModuleAction (moduleId, position, parameterValues) {
+export function addModuleAction (moduleIdName, position, parameterValues) {
   return (dispatch, getState, api) => {
     const { modules, tabs, wfModules, workflow } = getState()
-    if (typeof moduleId === 'string' || moduleId instanceof String) {
-      moduleId = moduleIdNameToModuleId(modules, moduleId)
-    }
-    const nonce = generateNonce(moduleId)
+    const nonce = generateNonce(wfModules, moduleIdName)
 
     let tabId, index
 
@@ -323,7 +308,7 @@ export function addModuleAction (moduleId, position, parameterValues) {
       type: ADD_MODULE,
       payload: {
         promise: (
-          api.addModule(tabId, moduleId, index, parameterValues || {})
+          api.addModule(tabId, moduleIdName, index, parameterValues || {})
             .then(response => {
               return {
                 tabId,
@@ -487,9 +472,10 @@ registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
  */
 export function maybeRequestWfModuleFetchAction (wfModuleId) {
   return (dispatch, getState, api) => {
-    const { workflow, wfModules } = getState()
+    const { workflow, wfModules, modules } = getState()
     const wfModule = wfModules[String(wfModuleId)]
-    const hasVersionSelect = !!wfModule.parameter_vals.find(pv => pv.parameter_spec.id_name === 'version_select')
+    const module = wfModule.module ? modules[wfModule.module] : null
+    const hasVersionSelect = module ? !!module.parameter_specs.find(ps => ps.id_name === 'version_select') : null
 
     if (!hasVersionSelect) return
 
@@ -697,20 +683,13 @@ registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
   const { wfModuleId, params } = action.payload
   const wfModule = state.wfModules[String(wfModuleId)]
 
-  // Copy parameter_vals, setting new values based on params.
-  const paramVals = wfModule.parameter_vals.map(pv => {
-    const id_name = pv.parameter_spec.id_name
-    if (id_name in params) {
-      return { ...pv, value: params[id_name] }
-    } else {
-      return pv
-    }
-  })
-
   return { ...state,
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
-        parameter_vals: paramVals
+        params: {
+          ...wfModule.params,
+          ...params
+        }
       }
     }
   }

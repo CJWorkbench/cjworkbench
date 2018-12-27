@@ -10,7 +10,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
         "category": "Filter",
         "description": "Text description",
         "icon": "filter",
-        "id": 10,
+        "idName": "filter",
         "isLessonHighlight": false,
         "name": "Filter by Text",
       },
@@ -18,14 +18,14 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
         "category": "Add data",
         "description": "Enigma description",
         "icon": "url",
-        "id": 4,
+        "idName": "enigma",
         "isLessonHighlight": true,
         "name": "Load from Enigma",
       },
     ]
   }
   onCancel={[MockFunction]}
-  onClickModuleId={[MockFunction]}
+  onClickModule={[MockFunction]}
 >
   <div
     className="module-search"
@@ -58,7 +58,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
       className="module-search-result-groups"
     >
       <ModuleSearchResultGroup
-        activeModuleId={null}
+        activeModule={null}
         key="Add data"
         modules={
           Array [
@@ -66,15 +66,15 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               "category": "Add data",
               "description": "Enigma description",
               "icon": "url",
-              "id": 4,
+              "idName": "enigma",
               "isLessonHighlight": true,
               "name": "Load from Enigma",
             },
           ]
         }
         name="Add data"
-        onClickModuleId={[Function]}
-        onMouseEnterModuleId={[Function]}
+        onClickModule={[Function]}
+        onMouseEnterModule={[Function]}
       >
         <li
           className="module-search-result-group"
@@ -90,7 +90,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               category="Add data"
               description="Enigma description"
               icon="url"
-              id={4}
+              idName="enigma"
               isActive={false}
               isLessonHighlight={true}
               key="Load from Enigma"
@@ -101,7 +101,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               <li
                 className="module-search-result lesson-highlight"
                 data-module-name="Load from Enigma"
-                id="module-search-result-4"
+                id="module-search-result-enigma"
                 onClick={[Function]}
                 onMouseEnter={[Function]}
               >
@@ -119,7 +119,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
         </li>
       </ModuleSearchResultGroup>
       <ModuleSearchResultGroup
-        activeModuleId={null}
+        activeModule={null}
         key="Filter"
         modules={
           Array [
@@ -127,15 +127,15 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               "category": "Filter",
               "description": "Text description",
               "icon": "filter",
-              "id": 10,
+              "idName": "filter",
               "isLessonHighlight": false,
               "name": "Filter by Text",
             },
           ]
         }
         name="Filter"
-        onClickModuleId={[Function]}
-        onMouseEnterModuleId={[Function]}
+        onClickModule={[Function]}
+        onMouseEnterModule={[Function]}
       >
         <li
           className="module-search-result-group"
@@ -151,7 +151,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               category="Filter"
               description="Text description"
               icon="filter"
-              id={10}
+              idName="filter"
               isActive={false}
               isLessonHighlight={false}
               key="Filter by Text"
@@ -162,7 +162,7 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               <li
                 className="module-search-result"
                 data-module-name="Filter by Text"
-                id="module-search-result-10"
+                id="module-search-result-filter"
                 onClick={[Function]}
                 onMouseEnter={[Function]}
               >

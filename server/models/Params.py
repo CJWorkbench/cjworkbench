@@ -162,6 +162,14 @@ class Params:
         else:
             return {}
 
+    def as_dict(self):
+        """Present parameters as a dict."""
+        pdict = {}
+        for p in self.vals.values():
+            id_name = p.parameter_spec.id_name
+            pdict[id_name] = p.get_value()
+        return pdict
+
     def to_painful_dict(self, table):
         """
         Present parameters as a dict, with some inconsistent munging.

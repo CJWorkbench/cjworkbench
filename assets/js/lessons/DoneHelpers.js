@@ -98,19 +98,14 @@ export class WorkflowModuleWithHelpers {
   }
 
   get module () {
-    if (!this.moduleVersion) return null
-    const moduleId = this.moduleVersion.module
-    return this.state.modules[String(moduleId)] || null
+    if (!this.wfModule) return null
+    if (!this.wfModule.module) return null
+    return this.state.modules[this.wfModule.module] || null
   }
 
   get moduleName () {
-    if (!this.module) return null
-    return this.module.name
-  }
-
-  get moduleVersion () {
-    if (!this.wfModule) return null
-    return this.wfModule.module_version || null
+    const module = this.module
+    return module ? module.name : null
   }
 
   get note () {
@@ -118,9 +113,9 @@ export class WorkflowModuleWithHelpers {
     return this.wfModule.notes
   }
 
-  get parameters () {
-    if (!this.wfModule) return new ParametersWithHelpers([])
-    return new ParametersWithHelpers(this.wfModule.parameter_vals || [])
+  get params () {
+    if (!this.wfModule) return {}
+    return this.wfModule.params
   }
 
   get selectedVersion () {
@@ -160,20 +155,5 @@ export class WorkflowModuleWithHelpers {
     if (!this.wfModule) return null
     const s = this.wfModule.last_update_check
     return s ? new Date(s) : null
-  }
-}
-
-export class ParametersWithHelpers {
-  constructor (parameters) {
-    this.parameters = parameters
-  }
-
-  get (key) {
-    const p = this.parameters.find(p => p.parameter_spec.id_name === key)
-    if (p) {
-      return p.value
-    } else {
-      return null
-    }
   }
 }

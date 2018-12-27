@@ -243,8 +243,7 @@ const getModules = ({ modules }) => modules
  */
 const getFetchWfModule = createSelector([ getSelectedTabWfModules, getModules ], (wfModules, modules) => {
   for (const wfModule of wfModules) {
-    const moduleId = wfModule.module_version ? wfModule.module_version.module : null
-    const module = modules[String(moduleId)] || {}
+    const module = modules[wfModule.module] || {}
     if (module.loads_data) {
       return { fetchWfModule: wfModule, fetchModule: module }
     }

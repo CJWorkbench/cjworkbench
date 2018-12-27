@@ -23,10 +23,10 @@ describe("UpdateTableAction actions", () => {
     const dispatch = jest.fn()
     const getState = () => ({
       wfModules: {
-        17: { module_version: { module: 1 } },
+        17: { module: 'loadurl' },
       },
       modules: {
-        1: { id_name: 'loadurl' }
+        loadurl: {}
         // 'filter' is not present -- so we'll get an error
       }
     })
@@ -43,11 +43,11 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: { tab_id: 2 },
-        11: { tab_id: 2, module_version: { module: 77 }, parameter_vals: [ { value: 'A', parameter_spec: { id_name: 'column' } } ] }
+        11: { tab_id: 2, module: 'filter', params: { column: 'A' }}
       },
       modules: {
-        1: { id_name: 'loadurl' },
-        77: { id_name: 'filter' }
+        loadurl: {},
+        filter: {}
       }
     })
     const dispatch = jest.fn()
@@ -63,11 +63,11 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: {},
-        11: { tab_id: 2, module_version: { module: 77 }, parameter_vals: [ { value: 'A', parameter_spec: { id_name: 'column' } } ] }
+        11: { tab_id: 2, module: 'filter', params: { column: 'A' }}
       },
       modules: {
-        1: { id_name: 'loadurl' },
-        77: { id_name: 'filter' }
+        loadurl: {},
+        filter: {}
       }
     })
     const dispatch = jest.fn()
@@ -82,14 +82,14 @@ describe("UpdateTableAction actions", () => {
         2: { wf_module_ids: [ 10, 11, 12, 13 ] }
       },
       wfModules: {
-        10: { module_version: { module: 20 } },
-        11: { tab_id: 2, module_version: { module: 21 } },
-        12: { module_version: { module: 21 } },
-        13: { module_version: { module: 20 } }
+        10: { module: 'filter' },
+        11: { tab_id: 2, module: 'sort' },
+        12: { module: 'sort' },
+        13: { module: 'filter' }
       },
       modules: {
-        20: { id_name: 'filter' },
-        21: { id_name: 'sort' },
+        filter: {},
+        sort: {}
       }
     })
     const dispatch = jest.fn()
@@ -104,11 +104,11 @@ describe("UpdateTableAction actions", () => {
         2: { wf_module_ids: [ 10, 11 ] }
       },
       wfModules: {
-        10: { tab_id: 2, module_version: { module: 20 } },
-        11: { module_version: { module: 20 } }
+        10: { tab_id: 2, module: 'filter' },
+        11: { module: 'filter' }
       },
       modules: {
-        20: { id_name: 'filter' },
+        filter: {}
       }
     })
     const dispatch = jest.fn()
@@ -123,11 +123,11 @@ describe("UpdateTableAction actions", () => {
         2: { wf_module_ids: [ 10, 11 ] }
       },
       wfModules: {
-        10: {},
-        11: { tab_id: 2 }
+        10: { module: 'fetch' },
+        11: { tab_id: 2, module: 'sort' }
       },
       modules: {
-        20: { id_name: 'filter' },
+        filter: {},
       }
     })
     const dispatch = jest.fn()

@@ -21,7 +21,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
 import { createSelector } from 'reselect'
-import { findParamValByIdName } from '../utils'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -32,12 +31,25 @@ export class WfModule extends React.PureComponent {
     isAnonymous: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
     isZenModeAllowed: PropTypes.bool.isRequired,
-    moduleHelpUrl: PropTypes.string, // or null
-    moduleName: PropTypes.string, // or null
-    moduleIcon: PropTypes.string, // or null
+    module: PropTypes.shape({
+      id_name: PropTypes.string.isRequired,
+      help_url: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
+      parameter_specs: PropTypes.arrayOf(PropTypes.shape({
+        id_name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
+        multiline: PropTypes.bool.isRequired,
+        placeholder: PropTypes.string.isRequired, // may be ''
+        visible_if: PropTypes.string.isRequired, // may be ''; otherwise, JSON spec
+      }).isRequired).isRequired
+    }), // or null for no module
     tabId: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
-    wfModule: PropTypes.object,
+    wfModule: PropTypes.shape({
+      params: PropTypes.object.isRequired,
+    }), // null if loading
     inputWfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
       last_relevant_delta_id: PropTypes.number,
@@ -47,7 +59,6 @@ export class WfModule extends React.PureComponent {
         type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
       })) // or null
     }), // or null
-    module: PropTypes.object,
     isSelected: PropTypes.bool.isRequired,
     isAfterSelected: PropTypes.bool.isRequired,
     setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined -- icky, prefer onChange
@@ -68,19 +79,13 @@ export class WfModule extends React.PureComponent {
     setWfModuleNotes: PropTypes.func.isRequired // func(wfModuleId, notes) => undefined
   }
 
-  constructor (props) {
-    super(props)
+  notesInputRef = React.createRef()
 
-    this.getParamText = this.getParamText.bind(this)
-    this.notesInputRef = React.createRef()
-
-    this.state = {
-      editedNotes: null, // when non-null, input is focused
-      isNoteForcedVisible: false,
-      isDataVersionModalOpen: false,
-      isDragging: false,
-      edits: {} // id_name => newValue
-    }
+  state = {
+    editedNotes: null, // when non-null, input is focused
+    isDataVersionModalOpen: false,
+    isDragging: false,
+    edits: {} // id_name => newValue
   }
 
   /**
@@ -157,24 +162,16 @@ export class WfModule extends React.PureComponent {
   }
 
   getParameterValue (idName) {
-    return this.props.wfModule.parameter_vals.find(p => p.parameter_spec.id_name === idName)
+    const fromState = this.state.edits[idName]
+    const fromProps = this.props.wfModule ? this.props.wfModule.params[idName] : null
+
+    return fromState === undefined ? fromProps : fromState
   }
 
   // Allow parameters to access each others value (text params only)
   // Used e.g. for custom UI elements to save/restore their state from hidden parameters
-  getParamText (paramIdName) {
-    const p = this.getParameterValue(paramIdName)
-    return p ? p.value : null
-  }
-
-  getParamMenuItems = (paramIdName) => {
-    const p = this.getParameterValue(paramIdName)
-
-    if (!p) return []
-    if (!p.parameter_spec) return []
-    if (!p.parameter_spec.items) return []
-
-    return p.parameter_spec.items.split('|').map(s => s.trim())
+  getParamText = (paramIdName) => {
+    return this.getParameterValue(paramIdName)
   }
 
   removeModule = () => {
@@ -308,10 +305,19 @@ export class WfModule extends React.PureComponent {
     }
   }
 
+  getParameterSpec(idName) {
+    const ret = this.props.module.parameter_specs.find(ps => ps.id_name === idName)
+    if (ret === undefined) {
+      console.warn(`ParameterSpec ${idName} does not exist`)
+      return null
+    }
+    return ret
+  }
+
   // checks visible_if fields, recursively (we are not visible if parent referenced in visbile_if is not visible)
-  isParameterVisible(p) {
+  isParameterVisible(pspec) {
     // No visibility condition, we are visible
-    const visibleIf = p.parameter_spec.visible_if
+    const visibleIf = pspec.visible_if
     if (!visibleIf) {
       return true
     }
@@ -325,25 +331,25 @@ export class WfModule extends React.PureComponent {
     }
 
     // We are invisible if our parent is invisible
-    if (condition['id_name'] != p.parameter_spec.id_name) { // prevent infinite recurse; see droprowsbyposition.json
-      const parent = findParamValByIdName(this.props.wfModule, condition['id_name'])
-      if (parent && !this.isParameterVisible(parent)) {
+    if (condition['id_name'] !== pspec.id_name) { // prevent simple infinite recurse; see droprowsbyposition.json
+      const parentSpec = this.getParameterSpec(condition['id_name'])
+      if (parentSpec && !this.isParameterVisible(parentSpec)) { // recurse
         return false
       }
     }
 
     if ('value' in condition) {
-      const value = this.getParamText(condition['id_name'])
+      const value = this.getParameterValue(condition['id_name'])
 
       // If the condition value is a boolean:
-      if (typeof condition['value'] === typeof true || typeof condition['value'] === typeof 0) {
+      if (typeof condition['value'] === 'boolean' || typeof condition['value'] === 'number') {
         let match
         if (value === condition['value']) {
           // Just return if it matches
           match = true
-        } else if (typeof condition['value'] === typeof true && typeof value !== typeof true) {
-          // If value: true or value: false, return whether string is set
-          match = condition['value'] === (value !== '')
+        } else if (typeof condition['value'] === 'boolean' && typeof value !== 'boolean') {
+          // Test for _truthiness_, not truth.
+          match = condition['value'] === (!!value)
         } else {
           match = false
         }
@@ -352,14 +358,12 @@ export class WfModule extends React.PureComponent {
 
       // Otherwise, if it's a menu item:
       const condValues = condition['value'].split('|').map(cond => cond.trim())
-      const selectionIdx = parseInt(value)
-      if (!isNaN(selectionIdx)) {
-        const menuItems = this.getParamMenuItems(condition['id_name'])
-        if (menuItems.length > selectionIdx) {
-          const selection = menuItems[selectionIdx]
-          const selectionInCondition = (condValues.indexOf(selection) >= 0)
-          return invert !== selectionInCondition
-        }
+      const condSpec = this.getParameterSpec(condition['id_name'])
+      const menuItems = condSpec.items.split('|').map(item => item.trim())
+      if (menuItems.length > value) {
+        const selection = menuItems[value]
+        const selectionInCondition = (condValues.indexOf(selection) !== -1)
+        return invert !== selectionInCondition
       }
     }
 
@@ -367,12 +371,12 @@ export class WfModule extends React.PureComponent {
     return true
   }
 
-  renderParam = (p, index) => {
-    if (!this.isParameterVisible(p)) {
+  renderParam = (pspec, index) => {
+    if (!this.isParameterVisible(pspec)) {
       return null
     }
 
-    const { api, wfModule, moduleName, isReadOnly, isZenMode, inputWfModule } = this.props
+    const { api, wfModule, isReadOnly, isZenMode, inputWfModule } = this.props
     const updateSettings = {
       lastUpdateCheck: wfModule.last_update_check,
       autoUpdateData: wfModule.auto_update_data,
@@ -380,23 +384,20 @@ export class WfModule extends React.PureComponent {
       updateUnits: wfModule.update_units
     }
 
-    const { edits } = this.state
-    const idName = p.parameter_spec.id_name
-
-    const value = idName in edits ? edits[idName] : p.value
+    const initialValue = wfModule ? wfModule.params[pspec.id_name] : null
+    const value = this.getParameterValue(pspec.id_name)
 
     return (
       <WfParameter
         api={api}
-        name={p.parameter_spec.name || ''}
-        idName={idName}
-        type={p.parameter_spec.type}
-        initialValue={p.value}
+        name={pspec.name || ''}
+        idName={pspec.id_name}
+        type={pspec.type}
+        initialValue={initialValue}
         value={value}
-        multiline={p.parameter_spec.multiline}
-        placeholder={p.parameter_spec.placeholder}
-        items={p.parameter_spec.items /* yes, a string */}
-        moduleName={moduleName}
+        multiline={pspec.multiline}
+        placeholder={pspec.placeholder}
+        items={pspec.items /* yes, a string */}
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
         wfModuleStatus={this.wfModuleStatus}
@@ -419,10 +420,14 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, index, wfModule, module, moduleHelpUrl, moduleName, moduleIcon } = this.props
+    const { isReadOnly, index, wfModule, module } = this.props
+
+    const moduleName = module ? module.name : '_undefined'
+    const moduleIcon = module ? module.icon : '_undefined'
+    const moduleHelpUrl = module ? module.help_url : ''
 
     // Each parameter gets a WfParameter
-    const paramdivs = moduleName ? wfModule.parameter_vals.map(this.renderParam) : null
+    const paramdivs = module ? module.parameter_specs.map(this.renderParam) : null
 
     const isNoteVisible = this.state.editedNotes !== null || !!this.props.wfModule.notes
 
@@ -602,8 +607,7 @@ const firstFetchIndex = createSelector([ getSelectedTab, getWfModules, getModule
   const index = tab.wf_module_ids.findIndex(id => {
     const wfModule = wfModules[String(id)]
     if (!wfModule) return false // add-module not yet loaded
-    const moduleId = wfModule.module_version ? wfModule.module_version.module : null
-    const module = modules[String(moduleId)]
+    const module = modules[wfModule.module]
     return module ? module.loads_data : false
   })
   return index === -1 ? null : index
@@ -612,15 +616,13 @@ const firstFetchIndex = createSelector([ getSelectedTab, getWfModules, getModule
 function mapStateToProps (state, ownProps) {
   const { testHighlight } = lessonSelector(state)
   const { index } = ownProps
-  const module = ownProps.wfModule.module_version ? state.modules[String(ownProps.wfModule.module_version.module)] : null
+  const moduleIdName = ownProps.wfModule.module || null
+  const module = moduleIdName ? state.modules[moduleIdName] : null
   const moduleName = module ? module.name : null
   const fetchIndex = firstFetchIndex(state)
 
   return {
     module,
-    moduleName,
-    moduleIcon: module ? module.icon : null,
-    moduleHelpUrl: module ? module.help_url : null,
     isZenModeAllowed: module ? !!module.has_zen_mode : false,
     isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),

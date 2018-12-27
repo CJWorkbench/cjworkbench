@@ -19,10 +19,10 @@ def _load_tab(workflow: Workflow, tab_id: int) -> Tab:
 
 
 @database_sync_to_async
-def _load_module_version(module_id: int) -> Tab:
+def _load_module_version(module_id_name: str) -> Tab:
     """Returns a ModuleVersion or raises HandlerError."""
     module_version = (ModuleVersion.objects
-                      .filter(module_id=module_id)
+                      .filter(module__id_name=module_id_name)
                       .order_by('-last_update_time')
                       .first())
     if module_version is None:
@@ -41,8 +41,8 @@ def _loading_tab(func):
 
 def _loading_module_version(func):
     @functools.wraps(func)
-    async def inner(moduleId: int, **kwargs):
-        module_version = await _load_module_version(moduleId)
+    async def inner(moduleIdName: str, **kwargs):
+        module_version = await _load_module_version(moduleIdName)
         return await func(module_version=module_version, **kwargs)
     return inner
 
