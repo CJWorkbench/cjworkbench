@@ -86,10 +86,10 @@ describe('WfModule, not read-only mode', () => {
         'id': 102,
         'parameter_spec': {
           'id_name': 'menu_select',
+          'items': 'Mango|Banana',
           'type': 'menu'
         },
         'value': 1,
-        'items': 'Mango|Banana'
       },
       {
         'id': 103,
@@ -105,9 +105,9 @@ describe('WfModule, not read-only mode', () => {
         'parameter_spec': {
           'id_name': 'invisible_by_default',
           'type': 'menu',
-          'visible_if': '{"id_name":"menu_select", "value": "Mango"}'
+          'items': 'Strawberry|Durian',
+          'visible_if': '{"id_name": "menu_select", "value": "Mango"}'
         },
-        'items': 'Strawberry|Durian',
         'value': 1
       }
     ],
