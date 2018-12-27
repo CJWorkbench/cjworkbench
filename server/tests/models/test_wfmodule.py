@@ -1,11 +1,11 @@
 import io
-from django.core.exceptions import ValidationError
 import pandas as pd
 from server.models import ParameterSpec, WfModule, ParameterVal, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_module_version, add_new_parameter_spec, add_new_wf_module, \
         mock_csv_table, mock_csv_table2, add_new_workflow
+
 
 # Set up a simple pipeline on test data
 # Our WfModule unit tests derive from this, below, and WfModule view tests also use this
@@ -60,7 +60,7 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(pval.get_value(), True)
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec25, wf_module=self.wfmodule2)
-        self.assertEqual(pval.selected_menu_item_string(), 'Banana')
+        self.assertEqual(pval.get_value(), 1)
 
         # button has no value, so just checking existence here
         self.assertEqual(

@@ -39,53 +39,12 @@ class ParameterVal(models.Model):
         )
         return newval
 
-
     # User can access param if they can access wf_module
     def request_authorized_read(self, request):
         return self.wf_module.request_authorized_read(request)
 
     def request_authorized_write(self, request):
         return self.wf_module.request_authorized_write(request)
-
-    # Return selected menu item index. Insensitive to menu item text, either in config json or at runtime.
-    def selected_menu_item_idx(self):
-        if self.parameter_spec.type != ParameterSpec.MENU:
-            raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
-        return int(self.value)
-
-    # Return text of currently selected menu item. Warning: will vary between locales etc.
-    def selected_menu_item_string(self):
-        if self.parameter_spec.type != ParameterSpec.MENU:
-            raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
-
-        items = self.items
-        if (items is not None):
-            items = items.split('|')
-            idx = int(self.value)
-            if items != [''] and idx >=0 and idx < len(items):
-                return items[idx]
-            else:
-                return ''  # return empty if bad idx, to allow for possible errors when menu items changed
-
-    # Return selected radio item index. Insensitive to menu item text, either in config json or at runtime.
-    def selected_radio_item_idx(self):
-        if self.parameter_spec.type != ParameterSpec.RADIO:
-            raise ValueError('Request for current item of non-radio parameter ' + self.parameter_spec.name)
-        return int(self.value)
-
-    # Return text of currently selected radio item. Warning: will vary between locales etc.
-    def selected_radio_item_string(self):
-        if self.parameter_spec.type != ParameterSpec.RADIO:
-            raise ValueError('Request for current item of non-radio parameter ' + self.parameter_spec.name)
-
-        items = self.items
-        if (items is not None):
-            items = items.split('|')
-            idx = int(self.value)
-            if items != [''] and idx >= 0 and idx < len(items):
-                return items[idx]
-            else:
-                return ''  # return empty if bad idx, to allow for possible errors when radio items changed
 
     # This is where type checking / coercion happens.
     def set_value(self, new_value):
@@ -105,4 +64,10 @@ class ParameterVal(models.Model):
                 return None
 
     def __str__(self):
-        return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.get_value())
+        return (
+            self.wf_module.__str__()
+            + ' - '
+            + self.parameter_spec.name
+            + ' - '
+            + str(self.get_value())
+        )
