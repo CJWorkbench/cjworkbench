@@ -115,14 +115,8 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         m = params.get_param_menu_idx('menuparam')
         self.assertEqual(m, 2)
 
-        m = params.get_param_menu_string('menuparam')
-        self.assertEqual(m, 'Item C')
-
         m = params.get_param_radio_idx('radioparam')
         self.assertEqual(m, 0)
-
-        m = params.get_param_radio_string('radioparam')
-        self.assertEqual(m, 'Item A')
 
         # Retrieving value of wrong type should raise exception
         with self.assertRaises(ValueError):
@@ -137,8 +131,6 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
             params.get_param_checkbox('stringparam')
         with self.assertRaises(ValueError):
             params.get_param_checkbox('menuparam')
-        with self.assertRaises(ValueError):
-            params.get_param_radio_string('menuparam')
 
         # error if no param by that name
         with self.assertRaises(KeyError):

@@ -22,11 +22,7 @@ class MockParams:
 
     def get_param_radio_idx(self, name): return self.get_param(name)
 
-    def get_param_radio_string(self, name): return self.get_param(name)
-
     def get_param_menu_idx(self, name): return self.get_param(name)
-
-    def get_param_menu_string(self, name): return self.get_param(name)
 
     def get_param_secret_secret(self, name): return self.get_param(name)
 
