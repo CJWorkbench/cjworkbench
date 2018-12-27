@@ -23,7 +23,7 @@
       "name": "",
       "id_name": "x_column",
       "type": "column",
-      "placeholder": "Select X-Axis Column"
+      "placeholder": "Select column"
     },
     {
       "name": "Y axis",
@@ -34,7 +34,8 @@
     {
       "name": "Columns",
       "id_name": "y_columns",
-      "type": "custom"
+      "type": "custom",
+      "placeholder": "Select column"
     }
   ]
 }

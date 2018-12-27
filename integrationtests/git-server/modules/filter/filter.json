@@ -4,6 +4,7 @@
   "category" : "Analyze",
   "icon": "filter",
   "help_url":"modules/analyse/filter",
+  "description": "Filter rows by applying a condition to one of its values.",
   "parameters": [
     {
       "name": "",
@@ -50,15 +51,16 @@
       }
     },
     {
-      "name": "",
-      "id_name": "keep",
-      "type": "menu",
-      "menu_items": "Keep|Delete",
+      "name" : "",
+      "id_name" : "keep",
+      "type" : "radio",
+      "radio_items" : "Keep|Delete",
+      "default": "0",
       "visible_if": {
         "invert":true,
         "id_name": "condition",
         "value": "Select"
-       }
-     }
+      }
+    }
   ]
 }

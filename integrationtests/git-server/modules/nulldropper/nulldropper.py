@@ -10,8 +10,9 @@ def render(table, params):
 
     # Now drop cols where all are empty string
     keepcols = []
+    str_dtypes = ['object', 'category']
     for c in table.columns:
-        if not ((table[c].dtype == np.object) and (table[c]=='').all()):
+        if not ((table[c].dtype.name in str_dtypes) and (table[c]=='').all()):
             keepcols.append(c)
 
     if len(keepcols) != len(table.columns):

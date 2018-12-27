@@ -1,28 +1,95 @@
-"""
-This module converts a string column to a datetime column.
-Inputting a numerical column will throw an error.
-"""
-import pandas as pd
+from enum import Enum
+from typing import Optional
 import numpy as np
+import pandas as pd
+from pandas.api.types import is_numeric_dtype
 
 
-date_input_map = 'AUTO|Date (U.S.) MM/DD/YYYY|Date (E.U.) DD/MM/YYYY'.lower().split('|')
+class InputFormat(Enum):
+    AUTO = 0
+    US = 1
+    EU = 2
 
-# Map to pd.to_datetime() parameters
-input_settings_map = {
-    'auto': {
-        'infer_datetime_format': True,
-        'format': None
-    },
-    'date (u.s.) mm/dd/yyyy': {
-        'infer_datetime_format': False,
-        'format': '%m/%d/%Y'
-    },
-    'date (e.u.) dd/mm/yyyy': {
-        'infer_datetime_format': False,
-        'format': '%d/%m/%Y'
-    }
-}
+    @property
+    def kwargs(self):
+        return {
+            InputFormat.AUTO: {
+                'infer_datetime_format': True,
+                'format': None
+            },
+            InputFormat.US: {
+                'infer_datetime_format': False,
+                'format': '%m/%d/%Y'
+            },
+            InputFormat.EU: {
+                'infer_datetime_format': False,
+                'format': '%d/%m/%Y'
+            }
+        }[self]
+
+
+class ErrorCount:
+    """
+    Tally of errors in all rows.
+
+    This stores the first erroneous value and a count of all others. It's false
+    if there aren't any errors.
+    """
+
+    def __init__(self, a_column: Optional[str]=None, a_row: Optional[int]=None,
+                 a_value: Optional[str]=None, total: int=0, n_columns: int=0):
+        self.a_column = a_column
+        self.a_row = a_row
+        self.a_value = a_value
+        self.total = total
+        self.n_columns = n_columns
+
+    def __add__(self, rhs: 'ErrorCount') -> 'ErrorCount':
+        """Add more errors to this ErrorCount."""
+        return ErrorCount(self.a_column or rhs.a_column,
+                          self.a_row or rhs.a_row,
+                          self.a_value or rhs.a_value,
+                          self.total + rhs.total,
+                          self.n_columns + rhs.n_columns)
+
+    def __str__(self):
+        if self.total == 1:
+            n_errors_str = 'is 1 error'
+        else:
+            n_errors_str = f'are {self.total} errors'
+
+        if self.n_columns == 1:
+            n_columns_str = '1 column'
+        else:
+            n_columns_str = f'{self.n_columns} columns'
+
+        return (
+            f"'{self.a_value}' in row {self.a_row + 1} of "
+            f"'{self.a_column}' cannot be converted. Overall, there "
+            f"{n_errors_str} in {n_columns_str}. Select 'non-dates "
+            "to null' to set these values to null"
+        )
+
+    def __len__(self):
+        """
+        Count errors. 0 (which means __bool__ is false) if there are none.
+        """
+        return self.total
+
+    @staticmethod
+    def from_diff(in_series, out_series) -> 'ErrorCount':
+        in_na = in_series.isna()
+        out_na = out_series.isna()
+        out_errors = out_na.index[out_na & ~in_na]
+
+        if out_errors.empty:
+            return ErrorCount()
+        else:
+            column = in_series.name
+            row = out_errors[0]
+            value = in_series[row]
+            return ErrorCount(column, row, value, len(out_errors), 1)
+
 
 def render(table, params):
     # No processing if no columns selected
@@ -30,79 +97,29 @@ def render(table, params):
         return table
 
     columns = [c.strip() for c in params['colnames'].split(',')]
-    type_date = date_input_map[params['type_date']]
+    input_format = InputFormat(params['type_date'])
     type_null = params['type_null']
 
-    original_table = table.copy()
-    error_map = {'first': None}
+    error_count = ErrorCount()
 
     for column in columns:
-        # For now, re-categorize after replace. Can improve performance by operating
-        # directly on categorical index, if needed
+        in_series = table[column]
 
-        if table[column].dtype.name == 'category':
-            table[column] = prep_cat(table[column])
-            table[column] = pd.to_datetime(table[column].astype(str), errors='coerce',
-                                           format=input_settings_map[type_date]['format'],
-                                           infer_datetime_format=input_settings_map[type_date]['infer_datetime_format'],
-                                           exact=False, cache=True)
-        # For now, assume value is year and cast to string
-        elif np.issubdtype(table[column].dtype, np.number):
-            table[column] = pd.to_datetime(table[column].astype(str), errors='coerce',
-                                           format=input_settings_map[type_date]['format'],
-                                           infer_datetime_format=input_settings_map[type_date]['infer_datetime_format'],
-                                           exact=False, cache=True)
-        # Object
-        else:
-            table[column] = pd.to_datetime(table[column], errors='coerce',
-                                           format=input_settings_map[type_date]['format'],
-                                           infer_datetime_format=input_settings_map[type_date]['infer_datetime_format'],
-                                           exact=False, cache=True)
+        kwargs = {**input_format.kwargs}
+
+        if is_numeric_dtype(in_series):
+            # For now, assume value is year and cast to string
+            kwargs['format'] = '%Y'
+
+        out_series = pd.to_datetime(in_series, errors='coerce', exact=False,
+                                    cache=True, **kwargs)
 
         if not type_null:
-            error_map = find_errors(table[column], error_map) if error_map['first'] \
-                    else find_errors(table[column], error_map, original_table[column])
+            error_count += ErrorCount.from_diff(in_series, out_series)
 
-    if not type_null:
-        error_message = display_error(error_map)
-        if error_message:
-            return (original_table, error_message)
+        table[column] = out_series
+
+    if error_count:
+        return (None, str(error_count))
 
     return table
-
-def prep_cat(series):
-    if '' not in series.cat.categories:
-        series.cat.add_categories('', inplace=True)
-    if any(series.isna()):
-            series.fillna('', inplace=True)
-    return series
-
-def find_errors(new_series, error_map, old_series=None):
-    error_map[new_series.name] = new_series[new_series.isnull()].index
-
-    if type(old_series) == pd.Series and error_map[new_series.name].empty is False:
-        error_map['first'] = {
-            'column': old_series.name,
-            'row': error_map[old_series.name][0] + 1,
-            'value': old_series[error_map[old_series.name][0]]
-        }
-
-    return error_map
-
-def display_error(error_map):
-    num_errors = 0
-
-    for column, errors in error_map.items():
-        if column != 'first':
-            num_errors += len(errors)
-
-    if num_errors > 0:
-        first_column = error_map['first']['column']
-        first_row = error_map['first']['row']
-        first_value = error_map['first']['value']
-        num_columns = len(error_map.keys()) - 1
-        return f"'{first_value}' in row {first_row} of '{first_column}' cannot be converted. " \
-                f'Overall, there {"are " + str(num_errors) + " errors" if num_errors > 1 else "is " + str(num_errors) + " error"} ' \
-                f'in {num_columns} column{"s" if num_columns > 1 else ""}. ' \
-                f"Select 'non-dates to null' to set these cells to null"
-    return None

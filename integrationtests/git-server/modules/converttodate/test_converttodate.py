@@ -1,79 +1,152 @@
 import unittest
-import pandas as pd
-from converttodate import render
 import numpy as np
+import pandas as pd
+from pandas.testing import assert_frame_equal
+from converttodate import render
 
-date_input_map = 'AUTO|Date (U.S.) MM/DD/YYYY|Date (E.U.) DD/MM/YYYY'.lower().split('|')
-reference_date = np.datetime64('2018-08-07T00:00:00.000000000')
+reference_date = np.datetime64('2018-08-07T00:00:00')
 
 class TestConvertDate(unittest.TestCase):
-
-    def setUp(self):
-        # Very simple test cases for now to deliver MVP, auto-detection does not catch most cases
-        self.table = pd.DataFrame([
-            ['08/07/2018', '07/08/2018', '2018-08-07', '08.07.2018', '08/07/2018', 2018, 'August 7, 2018'],
-            [' 08/07/2018T00:00:00 ', ' 07/08/2018T00:00:00 ', ' 2018.08.07T00:00:00 ', '08.07.2018', 99, 1960, 'August 07, 2018'],
-            ['..08/07/2018T00:00:00:00..', '..07/08/2018T00:00:00..', '..2018.08.07T00:00:00..', '08.07.2018', 99, 99999, 'August 07, 2018']],
-            columns=['us', 'eu', 'yearfirst', 'catcol', 'null', 'number', 'written'])
-
-        self.table['catcol'] = self.table['catcol'].astype('category')
-        self.table['null'] = self.table['null'].astype('category')
-
-    def test_NOP(self):
+    def test_no_column_no_op(self):
+        # should NOP when first applied
+        table = pd.DataFrame({'A': [1, 2]})
         params = {'colnames': ''}
-        out = render(self.table, params)
-        self.assertTrue(out.equals(self.table))  # should NOP when first applied
+        result = render(table.copy(), params)
+        assert_frame_equal(result, table)
 
     def test_us(self):
-        # All cells should have the same date
-        params = {'colnames': 'us', 'type_null': True, 'type_date': date_input_map.index('date (u.s.) mm/dd/yyyy')}
-        out = render(self.table.copy(), params)
-        for y in out['us']:
-            self.assertTrue(y.to_datetime64() == reference_date)
+        # All values should have the same date
+        table = pd.DataFrame({
+            'us': ['08/07/2018', ' 08/07/2018T00:00:00 ',
+                   '..08/07/2018T00:00:00:00..']
+        })
+        params = {'colnames': 'us', 'type_null': True, 'type_date': 1}
+        expected = pd.DataFrame({'us': [reference_date] * 3})
+        result = render(table.copy(), params)
+        assert_frame_equal(result, expected)
 
     def test_eu(self):
-        # All cells should have the same date
-        params = {'colnames': 'eu', 'type_null': True, 'type_date': date_input_map.index('date (e.u.) dd/mm/yyyy')}
-        out = render(self.table.copy(), params)
-        for y in out['eu']:
-            self.assertTrue(y.to_datetime64() == reference_date)
+        # All values should have the same date
+        table = pd.DataFrame({
+            'eu': ['07/08/2018', ' 07/08/2018T00:00:00 ',
+                   '..07/08/2018T00:00:00..'],
+        })
+        params = {'colnames': 'eu', 'type_null': True, 'type_date': 2}
+        expected = pd.DataFrame({'eu': [reference_date] * 3})
+        result = render(table.copy(), params)
+        assert_frame_equal(result, expected)
 
     def test_numbers(self):
         # For now, assume value is year and cast to string
-        params = {'colnames': 'number', 'type_null': True, 'type_date': date_input_map.index('auto')}
+        table = pd.DataFrame({
+            'number': [2018, 1960, 99999],
+        })
+        params = {'colnames': 'number', 'type_null': True, 'type_date': 0}
+        expected = pd.DataFrame({
+            'number': [
+                np.datetime64('2018-01-01T00:00:00.000000000'),
+                np.datetime64('1960-01-01T00:00:00.000000000'),
+                pd.NaT,
+            ]
+        })
 
-        out = render(self.table.copy(), params)
-
-        self.assertTrue(out['number'][0] == np.datetime64('2018-01-01T00:00:00.000000000'))
-        self.assertTrue(out['number'][1] == np.datetime64('1960-01-01T00:00:00.000000000'))
-        self.assertTrue(pd.isna(out['number'][2]))
+        result = render(table.copy(), params)
+        assert_frame_equal(result, expected)
 
     def test_auto(self):
-        # All cells should have the same date
-        params = {'colnames': 'catcol,written,yearfirst', 'type_null': True, 'type_date': date_input_map.index('auto')}
-        out = render(self.table.copy(), params)
-        for y in out[['catcol', 'yearfirst', 'written']].values:
-            for x in y:
-                self.assertTrue(x == reference_date)
+        table = pd.DataFrame({
+            'written': ['August 7, 2018', 'August 07, 2018',
+                        'August 07, 2018'],
+            'yearfirst': ['2018-08-07', ' 2018.08.07T00:00:00 ',
+                          '..2018.08.07T00:00:00..'],
+        })
+        params = {'colnames': 'written,yearfirst', 'type_null': True,
+                  'type_date': 0}
+        expected = pd.DataFrame({
+            'written': [reference_date] * 3,
+            'yearfirst': [reference_date] * 3,
+        })
+
+        result = render(table.copy(), params)
+        assert_frame_equal(result, expected)
+
+    def test_date_input(self):
+        table = pd.DataFrame({
+            'A': [reference_date, pd.NaT, reference_date]
+        })
+        params = {'colnames': 'A', 'type_null': False, 'type_date': 0}
+        expected = table.copy()
+        result = render(table.copy(), params)
+        assert_frame_equal(result, expected)
+
+    def test_multi_types_error(self):
+        table = pd.DataFrame({
+            'A': [reference_date, pd.NaT, reference_date],
+            'B': ['not a date', 'another bad date', 'no way'],
+        })
+        params = {'colnames': 'A,B', 'type_null': False, 'type_date': 0}
+        expected = table.copy()
+        result = render(table.copy(), params)
+        self.assertEqual(result, (None, (
+            "'not a date' in row 1 of 'B' cannot be converted. Overall, there "
+            "are 3 errors in 1 column. Select 'non-dates to null' to set "
+            'these values to null'
+        )))
+
+    def test_categories(self):
+        table = pd.DataFrame({
+            'A': ['August 7, 2018', None, 'T8'],
+        }, dtype='category')
+        params = {'colnames': 'A', 'type_null': True, 'type_date': 0}
+        expected = pd.DataFrame({
+            'A': [reference_date, pd.NaT, pd.NaT],
+        })
+
+        result = render(table.copy(), params)
+        assert_frame_equal(result, expected)
+
+    def test_null_input_is_not_error(self):
+        table = pd.DataFrame({'null': ['08/07/2018', None, 99]})
+        params = {'colnames': 'null', 'type_null': False, 'type_date': 0}
+
+        self.assertEqual(render(table.copy(), params), (
+            None,
+            (
+                "'99' in row 3 of 'null' cannot be converted. Overall, there "
+                "is 1 error in 1 column. Select 'non-dates to null' to set "
+                'these values to null'
+            )
+        ))
 
     def test_error(self):
-        # Error should indicate there are 2 cells that have formatting issues
-        params = {'colnames': 'null', 'type_null': False, 'type_date': date_input_map.index('auto')}
+        table = pd.DataFrame({'null': ['08/07/2018', '99', '98']})
+        params = {'colnames': 'null', 'type_null': False, 'type_date': 0}
 
-        # Test exact error message
-        self.assertTrue(render(self.table.copy(), params)[1] == "'99' in row 2 of 'null' cannot be converted. Overall, there are 2 errors in 1 column. Select 'non-dates to null' to set these cells to null")
+        self.assertEqual(render(table.copy(), params), (
+            None,
+            (
+                "'99' in row 2 of 'null' cannot be converted. Overall, there "
+                "are 2 errors in 1 column. Select 'non-dates to null' to set "
+                'these values to null'
+            )
+        ))
 
-        params = {'colnames': 'null,number', 'type_null': False, 'type_date': date_input_map.index('auto')}
+    def test_error_multicolumn(self):
+        table = pd.DataFrame({
+            'null': ['08/07/2018', '99', '99'],
+            'number': [1960, 2018, 99999],
+        })
+        params = {'colnames': 'null,number', 'type_null': False,
+                  'type_date': 0}
 
-        # Test exact error message
-        self.assertTrue(render(self.table.copy(), params)[1] == "'99' in row 2 of 'null' cannot be converted. Overall, there are 3 errors in 2 columns. Select 'non-dates to null' to set these cells to null")
-
-        # No error
-        params = {'colnames': 'catcol,written,yearfirst', 'type_null': False, 'type_date': date_input_map.index('auto')}
-        out = render(self.table.copy(), params)
-        for y in out[['catcol', 'yearfirst', 'written']].values:
-            for x in y:
-                self.assertTrue(x == reference_date)
+        self.assertEqual(render(table.copy(), params), (
+            None,
+            (
+                "'99' in row 2 of 'null' cannot be converted. Overall, there "
+                "are 3 errors in 2 columns. Select 'non-dates to null' to set "
+                'these values to null'
+            )
+        ))
 
 if __name__ == '__main__':
     unittest.main()

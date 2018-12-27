@@ -13,14 +13,15 @@
         height: 100%;
         overflow: hidden;
         background: white;
+        border-bottom: 0.05rem solid #f4f4f4;
       }
 
       main {
         position: absolute;
         top: 1rem;
-        left: 2rem;
+        left: 1rem;
         bottom: 1rem;
-        right: 2rem;
+        right: 1rem;
         overflow-x: auto;
         overflow-y: hidden;
       }
@@ -35,7 +36,7 @@
         display: inline-flex;
         position: absolute;
         top: 0;
-        right: 0;
+        right: .5rem;
         z-index: 1000;
         width: 31px;
         height: 31px;
@@ -92,7 +93,7 @@
         padding: 8px 16px;
         font-family: 'Nunito Sans', sans-serif;
         font-size: 13px;
-        font-weight: normal;
+        font-weight: 400;
         white-space: nowrap;
         color: #686768;
         text-decoration: none;
@@ -112,7 +113,7 @@
     <main><div id="vega"></div></main>
     <script src="https://cdn.jsdelivr.net/npm/vega@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.23.1"></script>
     <script>
       const loadingSpec = {
         "title": "loading",

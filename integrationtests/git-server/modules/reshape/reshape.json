@@ -14,7 +14,7 @@
       "default": "0"
     },
     {
-      "name": "Key column",
+      "name": "Row variable",
       "id_name": "colnames",
       "type": "column",
       "visible_if": {
@@ -33,7 +33,7 @@
       }
     },
     {
-      "name": "2nd key",
+      "name": "2nd row variable",
       "id_name": "has_second_key",
       "type": "checkbox",
       "visible_if": {
@@ -42,7 +42,7 @@
       }
     },
     {
-      "name": "Variable",
+      "name": "Column variable",
       "id_name" : "varcol",
       "type": "column",
       "visible_if": {
