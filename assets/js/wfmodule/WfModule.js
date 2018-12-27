@@ -396,7 +396,6 @@ export class WfModule extends React.PureComponent {
         value={value}
         multiline={p.parameter_spec.multiline}
         placeholder={p.parameter_spec.placeholder}
-        DEPRECATED_visible={p.visible}
         items={p.items /* yes, a string */}
         moduleName={moduleName}
         isReadOnly={isReadOnly}

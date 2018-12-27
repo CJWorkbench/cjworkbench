@@ -42,7 +42,6 @@ export default class WfParameter extends React.PureComponent {
       'secret',
       'custom'
     ]).isRequired,
-    DEPRECATED_visible: PropTypes.bool, // if false and idName !== 'colnames', do not render. Deprecated because it is wrong to have an invisible param.
     items: PropTypes.string, // for menu/radio params: 'item1|item2|item3'
     initialValue: PropTypes.any, // initial value -- value in Redux store
     deleteSecret: PropTypes.func.isRequired, // func(paramIdName) => undefined
@@ -270,13 +269,8 @@ export default class WfParameter extends React.PureComponent {
   }
 
   render() {
-    const { idName, name, type, value, initialValue, DEPRECATED_visible,
+    const { idName, name, type, value, initialValue,
             multiline, isReadOnly, placeholder, items, inputColumns } = this.props
-
-    // TODO: delete the 'colnames' check. Force display of 'colnames' for now since it will completely replace 'colselect' eventually
-    if (DEPRECATED_visible === false && idName !== 'colnames') {
-      return null // nothing to see here
-    }
 
     switch (type) {
       case 'string':
