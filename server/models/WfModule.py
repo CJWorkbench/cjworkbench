@@ -124,7 +124,7 @@ class WfModule(models.Model):
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
     params = JSONField(null=True, default={})  # TODO migrate, set NOT NULL
-    secrets = JSONField(null=True, default={})  # TODO migrate, set NOT NULL
+    secrets = JSONField(default={})
 
     def get_module_name(self):
         if self.module_version is not None:

@@ -45,36 +45,19 @@ class Params:
     def from_parameter_vals(cls, specs: List[ParameterSpec],
                             old_vals: Dict[str, str],
                             override_params: Dict[str, Any],
-                            override_secrets: Dict[str, Any]) -> 'Params':
+                            secrets: Dict[str, Any]) -> 'Params':
         """
         DEPRECATED. We'd win by nixing Parameter(Val|Spec) DB models.
 
         https://www.pivotaltracker.com/story/show/162704742
         """
         values = {}
-        secrets = {}
 
         for spec in specs:
             name = spec.id_name
 
             if spec.type == ParameterSpec.SECRET:
-                if override_secrets is not None:
-                    try:
-                        secret = override_secrets[name]
-                    except KeyError:
-                        continue  # we want no secret, not even the key
-                else:
-                    try:
-                        secret = old_vals[name]
-                    except KeyError:
-                        # [adamhooper, 2018-12-28] this should only occur on my
-                        # dev machine.
-                        continue  # we want no secret, not even the key
-
-                if secret:
-                    secrets[name] = json.loads(secret)
-                else:
-                    secrets[name] = None
+                continue  # it's already in `secrets`
             else:
                 if override_params is not None:
                     value = override_params[name]
