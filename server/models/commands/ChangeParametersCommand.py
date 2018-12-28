@@ -10,22 +10,14 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
     new_values = JSONField('new_values')
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def _apply_values(self, values):
-        pvs = list(self.wf_module.parameter_vals
-                   .prefetch_related('parameter_spec').all())
-        for pv in pvs:
-            pspec = pv.parameter_spec
-            id_name = pspec.id_name
-            if pspec.id_name in values:
-                pv.value = pspec.value_to_str(values[id_name])
-                pv.save(update_fields=['value'])
-
     def forward_impl(self):
-        self._apply_values(self.new_values)
+        self.wf_module.params = self.new_values
+        self.wf_module.save(update_fields=['params'])
         self.forward_affected_delta_ids()
 
     def backward_impl(self):
-        self._apply_values(self.old_values)
+        self.wf_module.params = self.old_values
+        self.wf_module.save(update_fields=['params'])
         self.backward_affected_delta_ids()
 
     @classmethod
@@ -47,14 +39,25 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
 
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, new_values, **kwargs):
-        if cls.wf_module_is_deleted(wf_module):
+        if cls.wf_module_is_deleted(wf_module):  # refreshes from DB
             return None
 
-        old_values = dict(
-            wf_module.parameter_vals
-            .filter(parameter_spec__id_name__in=new_values.keys())
-            .values_list('parameter_spec__id_name', 'value')
-        )
+        old_values = wf_module.params
+
+        if old_values is None:
+            # TODO nix this when we set WfModule.params to NOT NULL
+            params = wf_module.get_params()
+            old_values = params.as_dict()
+            # Delete secrets
+            for key in params.secrets.keys():
+                del old_values[key]
+
+        new_values = {
+            **old_values,
+            **new_values,
+        }
+        # TODO migrate params here: when the user changes params, we want to
+        # save something consistent.
 
         return {
             **kwargs,

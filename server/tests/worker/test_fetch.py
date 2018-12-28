@@ -151,8 +151,8 @@ class FetchTests(DbTestCase):
         module_version = module.module_versions.create()
         module_version.parameter_specs.create(id_name='foo')
         wf_module = tab.wf_modules.create(order=0,
-                                          module_version=module_version)
-        wf_module.create_parametervals({'foo': 'bar'})
+                                          module_version=module_version,
+                                          params={'foo': 'bar'})
 
         async def fetch(params, **kwargs):
             self.assertEqual(params.get_param_string('foo'), 'bar')

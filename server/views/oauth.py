@@ -1,11 +1,15 @@
-from asgiref.sync import async_to_sync
 from collections import namedtuple
+import logging
+from asgiref.sync import async_to_sync
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
         HttpResponseNotFound
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from .. import oauth, websockets
-from ..models import ParameterSpec, ParameterVal, WfModule, Workflow
+from ..models import ParameterSpec, WfModule, Workflow
+
+
+logger = logging.getLogger(__name__)
 
 
 Scope = namedtuple('Scope', (
@@ -15,6 +19,36 @@ Scope = namedtuple('Scope', (
     'wf_module_id',
     'param',
 ))
+
+
+def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
+                                   param: str) -> WfModule:
+    """
+    Load WfModule from the database, or raise.
+
+    Raise WfModule.DoesNotExist if the WfModule is deleted or missing.
+
+    Raise ParameterSpec.DoesNotExist if the WfModule does not have the
+    given param.
+
+    Invoke this within a Workflow.cooperative_lock().
+    """
+    # raises WfModule.DoesNotExist
+    wf_module = (
+        WfModule
+        .live_in_workflow(workflow)
+        .get(pk=wf_module_id)
+    )
+    # raises ParameterSpec.DoesNotExist
+    #
+    # This ParameterSpec formulation will raise ParameterSpec.DoesNotExist even
+    # if wf_module.module_version_id is None.
+    ParameterSpec.objects.get(
+        module_version_id=wf_module.module_version_id,
+        type=ParameterSpec.SECRET,
+        id_name=param
+    )
+    return wf_module
 
 
 def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
@@ -50,20 +84,15 @@ def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
             request.session,
             pk=workflow_id
         ) as workflow:
-            try:
-                ParameterVal.objects.get(
-                    wf_module__in=WfModule.live_in_workflow(workflow),
-                    wf_module_id=wf_module_id,
-                    parameter_spec__type=ParameterSpec.SECRET,
-                    parameter_spec__id_name=param
-                )
-            except ParameterVal.DoesNotExist:
-                return HttpResponseForbidden('Step or parameter was deleted.')
+            # raises WfModule.DoesNotExist, ParameterSpec.DoesNotExist
+            _load_sane_wf_module_for_param(workflow, wf_module_id, param)
     except Workflow.DoesNotExist as err:
         # Possibilities:
         # str(err) = 'owner access denied'
         # str(err) = 'Workflow matching query does not exist'
         return HttpResponseForbidden(str(err))
+    except (WfModule.DoesNotExist, ParameterSpec.DoesNotExist):
+        return HttpResponseForbidden('Step or parameter was deleted.')
 
     try:
         url, state = service.generate_redirect_url_and_state()
@@ -127,24 +156,24 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             request.session,
             pk=scope.workflow_id
         ) as workflow:
-            try:
-                parameter_val = ParameterVal.objects.get(
-                    wf_module__in=WfModule.live_in_workflow(workflow),
-                    wf_module_id=scope.wf_module_id,
-                    parameter_spec__type=ParameterSpec.SECRET,
-                    parameter_spec__id_name=scope.param
-                )
-            except ParameterVal.DoesNotExist:
-                return HttpResponseNotFound('Step or parameter was deleted.')
+            # raises WfModule.DoesNotExist, ParameterSpec.DoesNotExist
+            wf_module = _load_sane_wf_module_for_param(workflow,
+                                                       scope.wf_module_id,
+                                                       scope.param)
 
-            parameter_val.set_value({'name': username,
-                                     'secret': offline_token})
+            # TODO nix 'or {}' when NOT NULL
+            secrets = dict(wf_module.secrets or {})
+            secrets[scope.param] = {
+                'name': username,
+                'secret': offline_token,
+            }
+            wf_module.secrets = secrets
+            wf_module.save(update_fields=['secrets'])
 
-            params = parameter_val.wf_module.get_params()
             delta_json = {
                 'updateWfModules': {
                     str(scope.wf_module_id): {
-                        'params': params.as_dict(),
+                        'params': wf_module.get_params().as_dict(),
                     }
                 }
             }
@@ -153,6 +182,8 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
         # str(err) = 'owner access denied'
         # str(err) = 'Workflow matching query does not exist'
         return HttpResponseForbidden(str(err))
+    except (ParameterSpec.DoesNotExist, WfModule.DoesNotExist):
+        return HttpResponseNotFound('Step or parameter was deleted.')
 
     async_to_sync(websockets.ws_client_send_delta_async)(workflow.id,
                                                          delta_json)

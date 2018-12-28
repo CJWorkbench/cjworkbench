@@ -3,7 +3,8 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.utils import timezone
 import pandas as pd
-from server.models import Delta, Module, ModuleVersion, Workflow, WfModule
+from server.models import Delta, Module, ModuleVersion, Workflow, WfModule, \
+        ParameterSpec
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
         ChangeWfModuleUpdateSettingsCommand, InitWorkflowCommand
@@ -54,9 +55,9 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     def test_add_module(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=self.delta.id
+            last_relevant_delta_id=self.delta.id,
+            params={'url': ''}
         )
-        existing_module.create_parametervals()
 
         all_modules = self.tab.live_wf_modules
 
@@ -116,14 +117,39 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 
+    def test_add_module_default_params(self):
+        workflow = Workflow.create_and_init()
+        module_version = ModuleVersion.objects.create(
+            module=Module.objects.create(id_name='mod')
+        )
+        module_version.parameter_specs.create(id_name='a', def_value='x',
+                                              type=ParameterSpec.STRING)
+        module_version.parameter_specs.create(id_name='b', def_value='2',
+                                              type=ParameterSpec.MENU)
+        module_version.parameter_specs.create(id_name='c', def_value='True',
+                                              type=ParameterSpec.CHECKBOX)
+
+        cmd = async_to_sync(AddModuleCommand.create)(
+            workflow=self.workflow,
+            tab=workflow.tabs.first(),
+            module_version=module_version,
+            position=0,
+            param_values={}
+        )
+        self.assertEqual(cmd.wf_module.params, {
+            'a': 'x',
+            'b': 2,
+            'c': True,
+        })
+
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
     def test_add_many_modules(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=self.delta.id
+            last_relevant_delta_id=self.delta.id,
+            params={'url': ''}
         )
-        existing_module.create_parametervals()
 
         self.workflow.refresh_from_db()
         v1 = self.workflow.last_delta_id
@@ -198,9 +224,9 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     def test_delete_module(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=self.delta.id
+            last_relevant_delta_id=self.delta.id,
+            params={'url': ''}
         )
-        existing_module.create_parametervals()
 
         all_modules = self.tab.live_wf_modules
 
@@ -239,9 +265,9 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     def test_delete_selected(self):
         wf_module = self.tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=self.delta.id
+            last_relevant_delta_id=self.delta.id,
+            params={'url': ''}
         )
-        wf_module.create_parametervals()
         self.tab.selected_wf_module_position = 0
         self.tab.save(update_fields=['selected_wf_module_position'])
 
@@ -276,11 +302,11 @@ class AddDeleteModuleCommandTests(CommandTestCase):
     # test_delete_selected)
     def test_add_undo_selected(self):
         """Undoing an add sets selection."""
-        existing_module = self.tab.wf_modules.create(
+        self.tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=self.delta.id
+            last_relevant_delta_id=self.delta.id,
+            params={'url': ''}
         )
-        existing_module.create_parametervals()
 
         # beginning state: one WfModule
         all_modules = self.tab.live_wf_modules

@@ -1,6 +1,6 @@
 import io
 import pandas as pd
-from server.models import ParameterSpec, WfModule, ParameterVal, Workflow
+from server.models import ParameterSpec, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, create_testdata_workflow, \
         add_new_module_version, add_new_parameter_spec, add_new_wf_module, \
@@ -43,33 +43,6 @@ class WfModuleTestsBase(DbTestCase):
 
 
 class WfModuleTests(WfModuleTestsBase):
-    # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
-    def test_default_parameters(self):
-        self.createTestWorkflow()
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec21, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 'foo')
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec22, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 3.14)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec23, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 42)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec24, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), True)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec25, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 1)
-
-        # button has no value, so just checking existence here
-        self.assertEqual(
-            1,
-            self.wfmodule3.parameter_vals
-                .filter(parameter_spec=self.pspec31)
-                .count()
-        )
-
     def test_retrieve_table_error_missing_version(self):
         '''
         If user selects a version and then the version disappers, no version is
@@ -174,6 +147,7 @@ class WfModuleTests(WfModuleTestsBase):
         # store data to test that it is duplicated
         s1 = wfm1.store_fetched_table(mock_csv_table)
         s2 = wfm1.store_fetched_table(mock_csv_table2)
+        wfm1.secrets = {'do not copy': {'name': 'evil', 'secret': 'evil'}}
         wfm1.stored_data_version = s2
         wfm1.save()
         self.assertEqual(len(wfm1.list_fetched_data_versions()), 2)
@@ -192,10 +166,8 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(wfm1d.last_update_check, wfm1.last_update_check)
         self.assertEqual(wfm1d.is_collapsed, wfm1.is_collapsed)
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
-
-        # parameters should be duplicated
-        self.assertEqual(ParameterVal.objects.filter(wf_module=wfm1d).count(),
-                         ParameterVal.objects.filter(wf_module=wfm1).count())
+        self.assertEqual(wfm1d.params, wfm1.params)
+        self.assertEqual(wfm1d.secrets, {})
 
         # Stored data should contain a clone of content only, not complete version history
         self.assertIsNotNone(wfm1d.stored_data_version)

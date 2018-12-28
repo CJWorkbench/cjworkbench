@@ -140,6 +140,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
         return ret
 
     def get_params(self, wfm):
+        """WfModule.params, _plus secret metadata_"""
         return wfm.get_params().as_dict()
 
     class Meta:

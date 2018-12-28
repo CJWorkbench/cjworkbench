@@ -1,17 +1,16 @@
-# Initialize the list of available modules on startup
-# For the moment, this consists of loading them from json files at startup
-
 import os
 import json
 from cjworkbench.settings import BASE_DIR
-from server.models import Module, ModuleVersion, WfModule, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, ParameterSpec
 from django.db import transaction
 
 import logging
 logger = logging.getLogger(__name__)
 
+
 class InitModuleError(Exception):
     pass
+
 
 # Top level call, (re)load module definitions from files.
 # Raises on error.
@@ -97,35 +96,33 @@ def load_module_from_dict(d):
         module_version.html_output = d.get('html_output', False)
         module_version.save()
 
-        # load params
-        if 'parameters' in d:
-            pspecs = [ load_parameter_spec(p, module_version, order) for (order,p) in enumerate(d['parameters']) ]
-        else:
-            pspecs = []
+        # XXX commented out during migration away from Parameter(Val|Spec). If
+        # we didn't comment this out, then the next time the server starts it
+        # will delete all module params.
+        ## load params
+        #if 'parameters' in d:
+        #    pspecs = [ load_parameter_spec(p, module_version, order) for (order,p) in enumerate(d['parameters']) ]
+        #else:
+        #    pspecs = []
 
-        # Migrate parameters, if we're updating an existing module_version
-        if reusing_version:
-            # Deleted parameters
-            new_id_names = [p.id_name for p in pspecs]
-            for old_spec in ParameterSpec.objects.filter(module_version=module_version):
-                if old_spec.id_name not in new_id_names:
-                    old_spec.delete() # also deletes old ParameterVals via cascade
+        ## Migrate parameters, if we're updating an existing module_version
+        #if reusing_version:
+        #    # Deleted parameters
+        #    new_id_names = [p.id_name for p in pspecs]
+        #    for old_spec in ParameterSpec.objects.filter(module_version=module_version):
+        #        if old_spec.id_name not in new_id_names:
+        #            old_spec.delete()
 
-            for new_spec in pspecs:
-                try:
-                    # Changed parameters
-                    old_spec = ParameterSpec.objects.\
-                        exclude(id=new_spec.id).\
-                        get(id_name=new_spec.id_name, module_version=module_version)
-                    for pv in ParameterVal.objects.filter(parameter_spec=old_spec):
-                        migrate_parameter_val(pv, old_spec, new_spec)
-                    old_spec.delete()
+        #    for new_spec in pspecs:
+        #        try:
+        #            # Changed parameters
+        #            old_spec = ParameterSpec.objects.\
+        #                exclude(id=new_spec.id).\
+        #                get(id_name=new_spec.id_name, module_version=module_version)
+        #            old_spec.delete()
+        #        except ParameterSpec.DoesNotExist:
+        #            pass
 
-                except ParameterSpec.DoesNotExist:
-                    # Added parameters
-                    for wfm in WfModule.objects.filter(module_version=module_version,
-                                                       is_deleted=False):
-                        create_parameter_val(wfm, new_spec)
 
     return module_version
 
@@ -139,7 +136,7 @@ def load_parameter_spec(d, module_version, order):
     # minimally required fields
     required = ['name', 'id_name', 'type']
     for x in required:
-        if not x in d:
+        if x not in d:
             raise ValueError("Parameter specification missing field " + x)
 
     name = d['name']
@@ -182,74 +179,3 @@ def load_parameter_spec(d, module_version, order):
 # Handles existing ParameterVals when a module's parameters change
 # This can happen when reloading an internal module (because there is only one module_version)
 # or when updating a WfModule to a new module_version
-
-
-def create_parameter_val(wfm, new_spec):
-    pval = ParameterVal.objects.create(wf_module=wfm, parameter_spec=new_spec)
-    pval.init_from_spec()
-    pval.save()
-
-
-# Checks if old parameter value can safely be maintained according to mapping in _safe_param_types_to_migrate
-def _is_pval_safe_to_keep(old_spec, new_spec):
-    if (
-        (old_spec.type == ParameterSpec.MENU
-         or old_spec.type == ParameterSpec.RADIO)
-        and (new_spec.type == ParameterSpec.MENU
-             or new_spec.type == ParameterSpec.RADIO)
-    ):
-        # Switching between menu/radio and/or changing options. We're "safe"
-        # iff the choices don't change.
-        return old_spec.items == new_spec.items
-
-    if (
-        old_spec.id_name == 'colnames'
-        and old_spec.type == ParameterSpec.STRING
-        and new_spec.type == ParameterSpec.MULTICOLUMN
-    ):
-        # https://www.pivotaltracker.com/story/show/155455243
-        #
-        # TODO delete parameter migrations altogether.
-        return True
-
-    if old_spec.type == new_spec.type:
-        # Keeping same type is always safe.
-        return True
-
-    return False
-
-
-# Update a parameter value from one ParameterSpec to another. Resets to default
-# if type changes.
-def migrate_parameter_val(pval, old_spec, new_spec):
-    pval.order = new_spec.order
-    pval.parameter_spec = new_spec
-    if not _is_pval_safe_to_keep(old_spec, new_spec):
-        pval.value = new_spec.def_value
-    pval.save()
-
-
-# Bump a module and all its existing ParameterVals to a new version of a module
-def update_wfm_parameters_to_new_version(wfm, new_version):
-    old_version = wfm.module_version
-
-    if old_version != new_version:
-        with transaction.atomic():
-
-            # added or changed parameters
-            for new_spec in ParameterSpec.objects.filter(module_version=new_version):
-                try:
-                    old_spec = ParameterSpec.objects.get(module_version=old_version, id_name=new_spec.id_name)
-                    for pv in ParameterVal.objects.filter(wf_module=wfm, parameter_spec=old_spec):
-                        migrate_parameter_val(pv, old_spec, new_spec)
-                except ParameterSpec.DoesNotExist:
-                    create_parameter_val(wfm, new_spec)
-
-            # deleted parameters
-            for old_spec in ParameterSpec.objects.filter(module_version=old_version):
-                if not ParameterSpec.objects.filter(module_version=new_version, id_name=old_spec.id_name).exists():
-                    ParameterVal.objects.get(wf_module=wfm, parameter_spec=old_spec).delete() # must exist b/c wfm exists
-
-            wfm.cache_render_result(None, None)
-            wfm.module_version = new_version
-            wfm.save()

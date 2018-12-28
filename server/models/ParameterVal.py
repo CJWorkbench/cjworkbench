@@ -10,7 +10,7 @@ class ParameterVal(models.Model):
 
     wf_module = models.ForeignKey('WfModule', related_name='parameter_vals',
                                on_delete=models.CASCADE, null=True)  # delete value if Module deleted
-    parameter_spec = models.ForeignKey(ParameterSpec, related_name='parameter_vals',
+    parameter_spec = models.ForeignKey(ParameterSpec,
                                on_delete=models.CASCADE, null=True)  # delete value if Spec deleted
 
     value = models.TextField(blank=True, default='')

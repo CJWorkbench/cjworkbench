@@ -27,11 +27,10 @@ class OauthTest(DbTestCase):
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
             module_version=module_version,
-            order=0
+            order=0,
+            params={},
+            secrets={'auth': None}
         )
-        wf_module.create_parametervals()
-
-        parameter_val = wf_module.parameter_vals.first()
 
         response = self.client.get(
             f'/oauth/create-secret/{workflow.id}/{wf_module.id}/auth/'

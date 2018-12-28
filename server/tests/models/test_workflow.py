@@ -45,7 +45,7 @@ class WorkflowTests(DbTestCase):
         # Create workflow with two WfModules
         wf1 = Workflow.create_and_init(name='Foo')
         tab = wf1.tabs.first()
-        wfm1 = tab.wf_modules.create(order=0)
+        tab.wf_modules.create(order=0)
 
         wf2 = wf1.duplicate(self.bob)
 

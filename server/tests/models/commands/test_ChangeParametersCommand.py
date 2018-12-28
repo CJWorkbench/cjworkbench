@@ -39,14 +39,14 @@ class ChangeParametersCommandTest(DbTestCase):
             module_version=module_version,
             order=0,
             last_relevant_delta_id=delta.id,
+            params={
+                'url': 'http://example.org',
+                'has_header': True,
+                'version_select': None
+            }
         )
-        # Set original parameters
-        wf_module.create_parametervals({
-            'url': 'http://example.org',
-            'has_header': True,
-        })
 
-        params1 = wf_module.get_params().to_painful_dict(pd.DataFrame())
+        params1 = wf_module.get_params().as_dict()
 
         # Create and apply delta. It should change params.
         cmd = self.run_with_async_db(ChangeParametersCommand.create(
@@ -57,7 +57,8 @@ class ChangeParametersCommandTest(DbTestCase):
                 'has_header': False,
             }
         ))
-        params2 = wf_module.get_params().to_painful_dict(pd.DataFrame())
+        wf_module.refresh_from_db()
+        params2 = wf_module.get_params().as_dict()
 
         self.assertEqual(params2['url'], 'http://example.com/foo')
         self.assertEqual(params2['has_header'], False)
@@ -65,11 +66,13 @@ class ChangeParametersCommandTest(DbTestCase):
 
         # undo
         self.run_with_async_db(cmd.backward())
+        wf_module.refresh_from_db()
         params3 = wf_module.get_params().to_painful_dict(pd.DataFrame())
         self.assertEqual(params3, params1)
 
         # redo
         self.run_with_async_db(cmd.forward())
+        wf_module.refresh_from_db()
         params4 = wf_module.get_params().to_painful_dict(pd.DataFrame())
         self.assertEqual(params4, params2)
 
@@ -91,9 +94,9 @@ class ChangeParametersCommandTest(DbTestCase):
             order=0,
             module_version=module_version,
             last_relevant_delta_id=delta.id,
-            is_deleted=True
+            is_deleted=True,
+            params={'url': ''}
         )
-        wf_module.create_parametervals()
 
         cmd = self.run_with_async_db(ChangeParametersCommand.create(
             workflow=workflow,
@@ -119,9 +122,9 @@ class ChangeParametersCommandTest(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0,
             module_version=module_version,
-            last_relevant_delta_id=delta.id
+            last_relevant_delta_id=delta.id,
+            params={'url': ''}
         )
-        wf_module.create_parametervals()
 
         cmd = self.run_with_async_db(ChangeParametersCommand.create(
             workflow=workflow,
@@ -147,9 +150,9 @@ class ChangeParametersCommandTest(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0,
             module_version=module_version,
-            last_relevant_delta_id=delta.id
+            last_relevant_delta_id=delta.id,
+            params={'url': ''}
         )
-        wf_module.create_parametervals()
         wf_module.delete()
 
         cmd = self.run_with_async_db(ChangeParametersCommand.create(

@@ -73,7 +73,7 @@ class ParameterSpec(models.Model):
     visible_if = models.TextField('visible_if', default='')
 
     def __str__(self):
-        return self.module_version.module.name + ' - ' + self.name
+        return self.id_name + ':' + self.type
 
     def value_to_str(self, value):
         if (

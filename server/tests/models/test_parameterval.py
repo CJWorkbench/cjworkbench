@@ -1,4 +1,4 @@
-from server.models import ParameterSpec, WfModule, Workflow
+from server.models import ParameterSpec, Workflow
 from server.tests.utils import DbTestCase, add_new_module_version, \
         add_new_workflow
 
@@ -61,19 +61,21 @@ class ParameterValTestHelpers:
         self.tab = self.workflow.tabs.create(position=0)
         self.wfmodule = self.tab.wf_modules.create(
             module_version=self.module_version,
-            order=0
+            order=0,
+            # set non-default values for vals in order to reveal certain types
+            # of bugs
+            #
+            # [2018-12-28, adamhooper] ^^ what types of bugs?
+            params={
+                'stringparam': 'fooval',
+                'stringparamempty': '',
+                'integerparam': 10,
+                'floatparam': 3.14159,
+                'checkboxparam': True,
+                'menuparam': 2,
+                'radioparam': 0,
+            }
         )
-        # set non-default values for vals in order to reveal certain types of
-        # bugs
-        self.wfmodule.create_parametervals({
-            'stringparam': 'fooval',
-            # 'stringparamempty': '',
-            'integerparam': 10,
-            'floatparam': 3.14159,
-            'checkboxparam': True,
-            'menuparam': 2,
-            'radioparam': 0,
-        })
 
 
 class ParameterValTests(DbTestCase, ParameterValTestHelpers):
@@ -136,25 +138,6 @@ class ParameterValTests(DbTestCase, ParameterValTestHelpers):
         # error if no param by that name
         with self.assertRaises(KeyError):
             params.get_param_string('FooParam')
-
-    def test_duplicate(self):
-        # Create a new WfModule of the same type, that has no parametervals yet
-        # This is the context where duplicate is normally called, when
-        # duplicating a WfModule
-        workflow2 = Workflow.objects.create()
-        tab2 = workflow2.tabs.create(position=0)
-        wfmodule2 = tab2.wf_modules.create(
-            module_version=self.module_version,
-            order=0
-        )
-
-        sp = self.wfmodule.parameter_vals.get(
-            parameter_spec__id_name='stringparam'
-        )
-        spd = sp.duplicate(wfmodule2)
-        self.assertEqual(spd.wf_module, wfmodule2)
-        self.assertEqual(sp.parameter_spec, spd.parameter_spec)
-        self.assertEqual(sp.value, spd.value)
 
     def test_secret_default_none(self):
         self.assertIs(self.secret_val().get_value(), None)

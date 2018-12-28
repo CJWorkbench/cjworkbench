@@ -6,7 +6,7 @@ from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
 from django.conf import settings
 from server import oauth, rabbitmq, websockets
-from server.models import Params, ParameterSpec, Workflow, WfModule
+from server.models import Params, Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
@@ -69,7 +69,7 @@ def _find_precise_version(wf_module: WfModule,
             stored_at__gte=version - datetime.timedelta(microseconds=500),
             stored_at__lt=version + datetime.timedelta(milliseconds=1)
         ).values_list('stored_at', flat=True)[0]
-    except:
+    except IndexError:
         return version
 
 
@@ -123,7 +123,6 @@ def _set_collapsed_in_db(wf_module: WfModule, is_collapsed: bool) -> None:
 async def set_collapsed(workflow: Workflow, wf_module: WfModule,
                         isCollapsed: bool, **kwargs):
     is_collapsed = bool(isCollapsed)  # cannot error from JSON input
-    # TODO make this a Command
     await _set_collapsed_in_db(wf_module, is_collapsed)
 
 
@@ -221,13 +220,25 @@ def _wf_module_delete_secret_and_build_delta(
     Raise Workflow.DoesNotExist if the Workflow was deleted.
     """
     with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
-        nrows = wf_module.parameter_vals.filter(
-            parameter_spec__type=ParameterSpec.SECRET,
-            parameter_spec__id_name=param
-        ).update(value='')
+        wf_module.refresh_from_db()  # may return None
 
-        if not nrows:
-            return None
+        if wf_module.secrets is None:
+            # TODO nix this when we set WfModule.secrets NOT NULL
+            # In the meantime, fake it without the rigamarole of database
+            # queries.
+            wf_module.secrets = {}  # will be deleted
+            wf_module.save(update_fields=['secrets'])
+        else:
+            if (
+                wf_module is None
+                or param not in wf_module.secrets
+                or wf_module.secrets[param] is None
+            ):
+                return None
+
+            wf_module.secrets = dict(wf_module.secrets)
+            del wf_module.secrets[param]
+            wf_module.save(update_fields=['secrets'])
 
         return {
             'updateWfModules': {

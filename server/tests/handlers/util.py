@@ -1,9 +1,9 @@
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.models import Session
 from server.models import Workflow
-from server.handlers.types import HandlerRequest, HandlerResponse, \
-        HandlerError
+from server.handlers.types import HandlerRequest
 from server.tests.utils import DbTestCase
+
 
 class HandlerTestCase(DbTestCase):
     def build_request(self, **kwargs):

@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(ParameterVal)
 admin.site.register(ParameterSpec)
 admin.site.register(Module)
 admin.site.register(ModuleVersion)
@@ -16,4 +15,3 @@ class WorkflowAdmin(admin.ModelAdmin):
     list_filter = ('owner',)
 
 admin.site.register(Workflow, WorkflowAdmin)
-

@@ -7,7 +7,6 @@ from server.modules.types import ProcessResult
 from .Params import Params
 from .CachedRenderResult import CachedRenderResult
 from .ModuleVersion import ModuleVersion
-from .ParameterSpec import ParameterSpec
 from .StoredObject import StoredObject
 from .Tab import Tab
 from .Workflow import Workflow
@@ -124,6 +123,9 @@ class WfModule(models.Model):
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
+    params = JSONField(null=True, default={})  # TODO migrate, set NOT NULL
+    secrets = JSONField(null=True, default={})  # TODO migrate, set NOT NULL
+
     def get_module_name(self):
         if self.module_version is not None:
             return self.module_version.module.name
@@ -211,26 +213,6 @@ class WfModule(models.Model):
                     .order_by('-stored_at')
                     .values_list('stored_at', 'read'))
 
-    # --- Parameter acessors ----
-    # Hydrates ParameterVal objects from ParameterSpec objects
-    def create_parametervals(self, values={}):
-        pspecs = list(
-            ParameterSpec.objects
-            .filter(module_version__id=self.module_version_id)
-            .all()
-        )
-
-        for pspec in pspecs:
-            try:
-                value = pspec.value_to_str(values[pspec.id_name])
-            except KeyError:
-                value = pspec.def_value
-
-            self.parameter_vals.create(
-                parameter_spec=pspec,
-                value=value
-            )
-
     def get_params(self) -> Params:
         """
         Load ParameterVals from the database for easy access.
@@ -238,8 +220,26 @@ class WfModule(models.Model):
         The Params object is a "snapshot" of database values. You can call
         `get_params()` in a lock and then safely release the lock.
         """
-        vals = self.parameter_vals.prefetch_related('parameter_spec').all()
-        return Params.from_parameter_vals(vals)
+        if self.module_version is None:
+            return Params([], {}, {})
+        else:
+            specs = list(self.module_version.parameter_specs.all())
+
+            if self.params is not None and self.secrets is not None:
+                # Happy path
+                return Params(specs, self.params, self.secrets)
+            else:
+                # We're in the process of migrating ParameterVals to
+                # self.params. Do something sensible in the interim.
+                #
+                # TODO nix ParameterVal, make self.params and self.secrets NOT
+                # NULL, and nix this if-statement.
+                old_vals = dict(
+                    self.parameter_vals.select_related('parameter_spec')
+                    .values_list('parameter_spec__id_name', 'value')
+                )
+                return Params.from_parameter_vals(specs, old_vals, self.params,
+                                                  self.secrets)
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available
@@ -269,7 +269,9 @@ class WfModule(models.Model):
             # to_workflow has exactly one delta, and that's the version of all
             # its modules. This is so we can cache render results. (Cached
             # render results require a delta ID.)
-            last_relevant_delta_id=to_workflow.last_delta_id
+            last_relevant_delta_id=to_workflow.last_delta_id,
+            params=self.params,
+            secrets={}  # DO NOT COPY SECRETS
         )
 
         # Copy cached render result, if there is one.
@@ -308,6 +310,7 @@ class WfModule(models.Model):
         new_wfm.save()
 
         # copy all parameter values
+        # TODO nix this -- we have self.params and self.secrets now
         pvs = list(self.parameter_vals.all())
         for pv in pvs:
             pv.duplicate(new_wfm)

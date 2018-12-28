@@ -87,5 +87,11 @@ class ModuleVersion(models.Model):
     def js_module(self):
         return self.module.js_module
 
+    def get_default_params(self):
+        ret = {}
+        for spec in self.parameter_specs.all():
+            ret[spec.id_name] = spec.str_to_value(spec.def_value)
+        return ret
+
     def __str__(self):
         return self.module.name + ":" + self.source_version_hash

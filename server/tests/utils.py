@@ -1,12 +1,11 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor, wait
+from concurrent.futures import ThreadPoolExecutor
 from django.db import connection, connections
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
 from server import minio
-from server.models import Module, ModuleVersion, Workflow, WfModule, \
-        ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, Workflow, ParameterSpec
 from server.models.commands import InitWorkflowCommand
 from server.initmodules import load_module_from_dict
 import os
@@ -27,6 +26,7 @@ mock_xlsx_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/test.xl
 
 class DbTestCase(SimpleTestCase):
     allow_database_queries = True
+
     def setUp(self):
         clear_db()
         clear_minio()
@@ -45,7 +45,7 @@ class DbTestCase(SimpleTestCase):
         See
         https://github.com/django/channels/issues/1091#issuecomment-436067763.
         """
-		# We'll execute with a 1-worker thread pool. That's because Django
+        # We'll execute with a 1-worker thread pool. That's because Django
         # database methods will spin up new connections and never close them.
         # (@database_sync_to_async -- which execute uses --only closes _old_
         # connections, not valid ones.)
@@ -65,9 +65,9 @@ class DbTestCase(SimpleTestCase):
             return loop.run_until_complete(task)
         finally:
             def close_thread_connection():
-                # Close the connection that was created by @database_sync_to_async.
-                # Assumes we're running in the same thread that ran the database
-                # stuff.
+                # Close the connection that was created by
+                # @database_sync_to_async.  Assumes we're running in the same
+                # thread that ran the database stuff.
                 connections.close_all()
 
             loop.run_until_complete(
@@ -185,13 +185,16 @@ def add_new_workflow(name, *, owner=None, **kwargs):
 
 def add_new_wf_module(workflow, module_version, order=0,
                       param_values={}, last_relevant_delta_id=0):
-    wfm = workflow.tabs.first().wf_modules.create(
+    return workflow.tabs.first().wf_modules.create(
         module_version=module_version,
         order=order,
-        last_relevant_delta_id=last_relevant_delta_id
+        last_relevant_delta_id=last_relevant_delta_id,
+        params={
+            **module_version.get_default_params(),
+            **param_values,
+        }
+
     )
-    wfm.create_parametervals(param_values)
-    return wfm
 
 # setup a workflow with some test data loaded into a PasteCSV module
 # If no data given, use standard mock data
@@ -207,21 +210,10 @@ def create_testdata_workflow(csv_text=mock_csv_text):
 
     # Create new WfModule and set param to mock_csv_text
     wfmodule = add_new_wf_module(workflow, csv_module, 0)
-    pval = ParameterVal.objects.get(parameter_spec=pspec)
-    pval.set_value(csv_text)
-    pval.save()
+    wfmodule.params = {'csv': csv_text}
+    wfmodule.save(update_fields=['params'])
 
     return workflow
-
-
-# returns the ParameterVal defined by spec with given id_name
-# optionally looks only within a specific WfModule
-# Eerror if more than one ParameterVal matches
-def get_param_by_id_name(id_name, wf_module=None):
-    if wf_module is None:
-        return ParameterVal.objects.get(parameter_spec__id_name=id_name)
-    else:
-        return ParameterVal.objects.get(parameter_spec__id_name=id_name, wf_module=wf_module)
 
 
 # --- set parameters ---

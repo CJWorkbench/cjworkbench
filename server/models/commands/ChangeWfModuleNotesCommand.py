@@ -17,7 +17,7 @@ class ChangeWfModuleNotesCommand(Delta):
 
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, new_value, **kwargs):
-        wf_module.refresh_from_db()
+        wf_module.refresh_from_db()  # now that we're atomic
 
         old_value = wf_module.notes or ''
         if new_value == old_value:

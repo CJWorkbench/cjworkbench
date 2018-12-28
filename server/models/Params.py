@@ -1,7 +1,6 @@
 import json
 from typing import Any, Dict, List, Tuple
 from .ParameterSpec import ParameterSpec
-from .ParameterVal import ParameterVal
 
 
 def _sanitize_column_param(value, table_cols):
@@ -38,33 +37,51 @@ class Params:
     def __init__(self, specs: List[ParameterSpec], values: Dict[str, Any],
                  secrets: Dict[str, Any]):
         self.specs = specs
+        self.specs_by_name = dict((spec.id_name, spec) for spec in specs)
         self.values = values
         self.secrets = secrets
 
     @classmethod
-    def from_parameter_vals(cls, parameter_vals: List[ParameterVal]):
+    def from_parameter_vals(cls, specs: List[ParameterSpec],
+                            old_vals: Dict[str, str],
+                            override_params: Dict[str, Any],
+                            override_secrets: Dict[str, Any]) -> 'Params':
         """
         DEPRECATED. We'd win by nixing Parameter(Val|Spec) DB models.
 
         https://www.pivotaltracker.com/story/show/162704742
         """
-        specs = {}
         values = {}
         secrets = {}
 
-        for pval in parameter_vals:
-            spec = pval.parameter_spec
+        for spec in specs:
             name = spec.id_name
 
-            specs[name] = spec
-
             if spec.type == ParameterSpec.SECRET:
-                if pval.value:
-                    secrets[name] = json.loads(pval.value)
+                if override_secrets is not None:
+                    try:
+                        secret = override_secrets[name]
+                    except KeyError:
+                        pass  # we want no secret, not even the key
+                else:
+                    secret = old_vals[name]
+
+                if secret:
+                    secrets[name] = json.loads(secret)
                 else:
                     secrets[name] = None
             else:
-                values[name] = spec.str_to_value(pval.value)
+                if override_params is not None:
+                    value = override_params[name]
+                else:
+                    try:
+                        value = spec.str_to_value(old_vals[name])
+                    except KeyError:
+                        # [adamhooper, 2018-12-28] this should only occur on my
+                        # dev machine.
+                        value = spec.str_to_value(spec.def_value)
+
+                values[name] = value
 
         return cls(specs, values, secrets)
 
@@ -76,7 +93,7 @@ class Params:
 
         Raise KeyError on invalid parameter.
         """
-        pspec = self.specs[name]  # raises KeyError
+        pspec = self.specs_by_name[name]  # raises KeyError
 
         if expected_type and pspec.type != expected_type:
             raise ValueError(
@@ -114,7 +131,11 @@ class Params:
 
     def get_param_secret_secret(self, name: str) -> Dict[str, str]:
         """Get a secret's "secret" data, or None."""
-        secret = self.secrets[name]
+        try:
+            secret = self.secrets[name]
+        except KeyError:
+            secret = None
+
         if secret is None:
             return None
         else:
@@ -149,23 +170,9 @@ class Params:
         # multi-column selector doesn't have a value. So when testing types, we
         # test that the parameter name is 'colnames', _not_ the parameter type
         # (which we assume is STRING).
-        try:
-            pval = self.vals[name]
-        except KeyError:
-            raise KeyError(
-                f'Request for non-existent multicolumn parameter {name}'
-            )
+        value = self.get_param_typed(name, ParameterSpec.MULTICOLUMN)
 
-        if (
-            pval.parameter_spec.type != ParameterSpec.MULTICOLUMN
-            and pval.parameter_spec.id_name != 'colnames'
-        ):
-            raise ValueError(
-                f'Request for multicolumn parameter {name} '
-                f'but actual type is {pval.parameter_spec.type}'
-            )
-
-        cols = pval.value.split(',')
+        cols = value.split(',')
         cols = [c.strip() for c in cols if c.strip()]
 
         table_columns = list(table.columns)
@@ -201,9 +208,14 @@ class Params:
         """Present parameters as a dict."""
         ret = {}
 
-        for name, pspec in self.specs.items():
+        for pspec in self.specs:
+            name = pspec.id_name
             if pspec.type == ParameterSpec.SECRET:
-                secret = self.secrets[name]
+                try:
+                    secret = self.secrets[name]
+                except KeyError:
+                    secret = None
+
                 if secret:
                     ret[name] = {'name': secret['name']}
                 else:
@@ -226,13 +238,17 @@ class Params:
         TODO present an interface with fewer surprises.
         """
         pdict = {}
-        for pspec in self.specs.values():
+        for pspec in self.specs:
             type = pspec.type
             id_name = pspec.id_name
             value = self.values[id_name]
 
             if type == ParameterSpec.SECRET:
-                secret = self.secrets[id_name]
+                try:
+                    secret = self.secrets[id_name]
+                except KeyError:
+                    secret = None
+
                 if secret:
                     pdict[id_name] = {'name': secret['name']}
                 else:

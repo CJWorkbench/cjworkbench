@@ -13,7 +13,7 @@ from server.importmodulefromgithub import sanitise_url, \
 from server.models import LoadedModule, Module, ModuleVersion, Workflow
 import server.models.loaded_module
 from server.modules.types import ProcessResult
-from server.tests.utils import DbTestCase, get_param_by_id_name
+from server.tests.utils import DbTestCase
 
 
 # Patch get_already_imported from importmodulefromgithub
@@ -324,8 +324,11 @@ class ImportFromGitHubTest(DbTestCase):
         module_version = module_version_q.first()
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wfm = tab.wf_modules.create(module_version=module_version, order=1)
-        wfm.create_parametervals()
+        wfm = tab.wf_modules.create(
+            module_version=module_version,
+            order=1,
+            params=module_version.get_default_params()
+        )
 
         # import "new" version (different version hash)
         test_dir = self.fake_github_clone()
@@ -364,19 +367,16 @@ class ImportFromGitHubTest(DbTestCase):
             # Create a test workflow that uses this imported module
             workflow = Workflow.objects.create()
             tab = workflow.tabs.create(position=0)
-            wfm = tab.wf_modules.create(order=0, module_version=module_version)
-            wfm.create_parametervals()
-
-            # These will fail if we haven't correctly loaded the json
-            # describing the parameters
-            colparam = get_param_by_id_name('test_column', wf_module=wfm)
-            multicolparam = get_param_by_id_name('test_multicolumn',
-                                                 wf_module=wfm)
+            wfm = tab.wf_modules.create(
+                order=0,
+                module_version=module_version,
+                params=module_version.get_default_params()
+            )
 
             # Does it render right?
             test_csv = 'Class,M,F,Other\n' \
                        'math,10,12,100\n' \
-                       'english,,7\,200\n' \
+                       'english,,7,200\n' \
                        'history,11,13,\n' \
                        'economics,20,20,20'
             test_table = pd.read_csv(io.StringIO(test_csv), header=0,
@@ -385,8 +385,13 @@ class ImportFromGitHubTest(DbTestCase):
             test_table_out['M'] *= 2
             test_table_out[['F', 'Other']] *= 3
 
-            colparam.set_value('M')  # double this
-            multicolparam.set_value('F,Other')  # triple these
+            wfm.params = {
+                **wfm.params,
+                'test_column': 'M',  # double this
+                'test_multicolumn': 'F,Other'  # triple these
+            }
+            wfm.save(update_fields=['params'])
+
             with self.assertLogs():
                 lm = LoadedModule.for_module_version_sync(module_version)
                 result = lm.render(wfm.get_params(), test_table, None)

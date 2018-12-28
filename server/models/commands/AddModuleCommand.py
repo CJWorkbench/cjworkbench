@@ -123,10 +123,24 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, module_version,
                             position, param_values, **kwargs):
+        if module_version is None:
+            # This is common in unit tests.
+            default_params = {}
+        else:
+            default_params = module_version.get_default_params()
+
+        # Set _all_ params (not just the user-specified ones). This is so if
+        # you ever upgrade a module, the _new_ code will get the _old_ default
+        # values -- keeping the user's intent intact.
+        params = {
+            **default_params,
+            **param_values,
+        }
+
         # wf_module starts off "deleted" and gets un-deleted in forward().
         wf_module = tab.wf_modules.create(module_version=module_version,
-                                          order=position, is_deleted=True)
-        wf_module.create_parametervals(param_values or {})
+                                          order=position, is_deleted=True,
+                                          params=params, secrets={})
 
         return {
             **kwargs,
