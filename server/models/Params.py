@@ -60,11 +60,8 @@ class Params:
 
             if spec.type == ParameterSpec.SECRET:
                 if pval.value:
-                    parsed = json.loads(pval.value)
-                    values[name] = {'name': parsed['name']}
-                    secrets[name] = parsed['secret']
+                    secrets[name] = json.loads(pval.value)
                 else:
-                    values[name] = None
                     secrets[name] = None
             else:
                 values[name] = spec.str_to_value(pval.value)
@@ -115,9 +112,13 @@ class Params:
     def get_param_menu_idx(self, name: str) -> int:
         return self.get_param_typed(name, ParameterSpec.MENU)
 
-    def get_param_secret_secret(self, id_name: str) -> Dict[str, str]:
+    def get_param_secret_secret(self, name: str) -> Dict[str, str]:
         """Get a secret's "secret" data, or None."""
-        return self.secrets[id_name]
+        secret = self.secrets[name]
+        if secret is None:
+            return None
+        else:
+            return secret['secret']
 
     def get_param_column(self, name, table) -> str:
         """
@@ -198,7 +199,19 @@ class Params:
 
     def as_dict(self):
         """Present parameters as a dict."""
-        return self.values
+        ret = {}
+
+        for name, pspec in self.specs.items():
+            if pspec.type == ParameterSpec.SECRET:
+                secret = self.secrets[name]
+                if secret:
+                    ret[name] = {'name': secret['name']}
+                else:
+                    ret[name] = None
+            else:
+                ret[name] = self.values[name]
+
+        return ret
 
     def to_painful_dict(self, table):
         """
@@ -218,9 +231,12 @@ class Params:
             id_name = pspec.id_name
             value = self.values[id_name]
 
-            # Do not worry about ParameterSpec.SECRET: we only use
-            # to_painful_dict() for external modules, and none of those have
-            # secrets.
+            if type == ParameterSpec.SECRET:
+                secret = self.secrets[id_name]
+                if secret:
+                    pdict[id_name] = {'name': secret['name']}
+                else:
+                    pdict[id_name] = None
             if type == ParameterSpec.COLUMN:
                 pdict[id_name] = _sanitize_column_param(value, table.columns)
             elif type == ParameterSpec.MULTICOLUMN or id_name == 'colnames':
