@@ -516,7 +516,7 @@ class WfModuleTest(HandlerTestCase):
                                     param='google_credentials')
         self.assertResponse(response, data=None)
         wf_module.refresh_from_db()
-        self.assertIsNone(wf_module.secrets['google_credentials'])
+        self.assertEqual(wf_module.secrets, {})
 
         send_delta.assert_called()
         delta = send_delta.call_args[0][1]
