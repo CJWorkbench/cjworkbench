@@ -62,9 +62,14 @@ class Params:
                     try:
                         secret = override_secrets[name]
                     except KeyError:
-                        pass  # we want no secret, not even the key
+                        continue  # we want no secret, not even the key
                 else:
-                    secret = old_vals[name]
+                    try:
+                        secret = old_vals[name]
+                    except KeyError:
+                        # [adamhooper, 2018-12-28] this should only occur on my
+                        # dev machine.
+                        continue  # we want no secret, not even the key
 
                 if secret:
                     secrets[name] = json.loads(secret)
