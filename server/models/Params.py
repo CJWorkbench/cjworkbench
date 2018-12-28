@@ -20,7 +20,7 @@ def _sanitize_multicolumn_param(value, table_cols):
 
 class Params:
     """
-    Easy lookup methods for ParameterVals.
+    Easy lookup methods for ParameterSpecs.
 
     These lookups are guaranteed to not result in any database queries as long
     as you supply ParmeterVals with `parameter_spec` prefetched. You won't need
@@ -45,7 +45,7 @@ class Params:
 
     def get_param_typed(self, name, expected_type):
         """
-        Return ParameterVal value, with a typecheck.
+        Return ParameterSpec value, with a typecheck.
 
         Raise ValueError if expected type is wrong.
 
@@ -63,7 +63,7 @@ class Params:
 
     def get_param(self, name) -> Any:
         """
-        Return ParameterVal value, of the parameter's type.
+        Return ParameterSpec value, of the parameter's type.
 
         Raise KeyError on invalid parameter.
         """

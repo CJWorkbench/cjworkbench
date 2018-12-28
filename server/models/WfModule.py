@@ -215,7 +215,7 @@ class WfModule(models.Model):
 
     def get_params(self) -> Params:
         """
-        Load ParameterVals from the database for easy access.
+        Load ParameterSpecs from the database for easy access.
 
         The Params object is a "snapshot" of database values. You can call
         `get_params()` in a lock and then safely release the lock.
