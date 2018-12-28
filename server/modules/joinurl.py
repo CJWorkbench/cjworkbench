@@ -73,7 +73,7 @@ class JoinURL(ModuleImpl):
                 + ', '.join(errs)
             ))
 
-        join_type_idx = params.get_param('type', 'menu')
+        join_type_idx = params.get_param_menu_idx('type')
         join_type = _join_type_map[join_type_idx]
         select_columns = params.get_param_checkbox('select_columns')
 

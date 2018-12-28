@@ -198,7 +198,7 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
 
 
 def render(params: Params, table: pandas.DataFrame, **kwargs) -> ProcessResult:
-    code = params.get_param_raw('code', 'custom')
+    code = params.get_param('code')
 
     if not code.strip():
         # empty code, NOP

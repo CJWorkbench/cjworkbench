@@ -239,7 +239,7 @@ class WfModule(models.Model):
         `get_params()` in a lock and then safely release the lock.
         """
         vals = self.parameter_vals.prefetch_related('parameter_spec').all()
-        return Params(vals)
+        return Params.from_parameter_vals(vals)
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available

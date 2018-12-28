@@ -4,16 +4,15 @@ from .ParameterSpec import ParameterSpec
 from .ParameterVal import ParameterVal
 
 
-def _sanitize_column_param(pval, table_cols):
-    col = pval.get_value()
-    if col in table_cols:
-        return col
+def _sanitize_column_param(value, table_cols):
+    if value in table_cols:
+        return value
     else:
         return ''
 
 
-def _sanitize_multicolumn_param(pval, table_cols):
-    cols = pval.get_value().split(',')
+def _sanitize_multicolumn_param(value, table_cols):
+    cols = value.split(',')
     cols = [c.strip() for c in cols]
     cols = [c for c in cols if c in table_cols]
 
@@ -31,67 +30,94 @@ class Params:
     To initialize:
 
         vals = self.parameter_vals.prefetch_related('parameter_spec').all()
-        params = Params(vals)
+        params = Params.from_parameter_vals(vals)
 
     The accessor names here are all legacy. They could benefit from a redesign.
     """
 
-    def __init__(self, parameter_vals: List[ParameterVal]):
-        self.vals = dict((pv.parameter_spec.id_name, pv)
-                         for pv in parameter_vals)
+    def __init__(self, specs: List[ParameterSpec], values: Dict[str, Any],
+                 secrets: Dict[str, Any]):
+        self.specs = specs
+        self.values = values
+        self.secrets = secrets
 
-    def get_parameter_val(self, name, expected_type=None):
-        try:
-            pval = self.vals[name]
-        except KeyError:
-            raise KeyError(
-                f'Request for non-existent {expected_type} parameter {name}'
-            )
+    @classmethod
+    def from_parameter_vals(cls, parameter_vals: List[ParameterVal]):
+        """
+        DEPRECATED. We'd win by nixing Parameter(Val|Spec) DB models.
 
-        if expected_type and pval.parameter_spec.type != expected_type:
+        https://www.pivotaltracker.com/story/show/162704742
+        """
+        specs = {}
+        values = {}
+        secrets = {}
+
+        for pval in parameter_vals:
+            spec = pval.parameter_spec
+            name = spec.id_name
+
+            specs[name] = spec
+
+            if spec.type == ParameterSpec.SECRET:
+                if pval.value:
+                    parsed = json.loads(pval.value)
+                    values[name] = {'name': parsed['name']}
+                    secrets[name] = parsed['secret']
+                else:
+                    values[name] = None
+                    secrets[name] = None
+            else:
+                values[name] = spec.str_to_value(pval.value)
+
+        return cls(specs, values, secrets)
+
+    def get_param_typed(self, name, expected_type):
+        """
+        Return ParameterVal value, with a typecheck.
+
+        Raise ValueError if expected type is wrong.
+
+        Raise KeyError on invalid parameter.
+        """
+        pspec = self.specs[name]  # raises KeyError
+
+        if expected_type and pspec.type != expected_type:
             raise ValueError(
                 f'Request for {expected_type} parameter {name} '
-                f'but actual type is {pval.parameter_spec.type}'
+                f'but actual type is {pspec.type}'
             )
 
-        return pval
+        return self.get_param(name)
 
-    # Retrieve current parameter values.
-    # Should never throw ValueError on type conversions because
-    # ParameterVal.set_value coerces
-    def get_param_raw(self, name, expected_type) -> Any:
-        pval = self.get_parameter_val(name, expected_type)
-        return pval.value
+    def get_param(self, name) -> Any:
+        """
+        Return ParameterVal value, of the parameter's type.
 
-    def get_param(self, name: str, expected_type) -> Any:
-        pval = self.get_parameter_val(name, expected_type)
-        return pval.get_value()
+        Raise KeyError on invalid parameter.
+        """
+        return self.values[name]  # raises KeyError
 
     def get_param_string(self, name: str) -> str:
-        return self.get_param(name, ParameterSpec.STRING)
+        return self.get_param_typed(name, ParameterSpec.STRING)
 
     def get_param_integer(self, name: str) -> int:
-        return self.get_param(name, ParameterSpec.INTEGER)
+        return self.get_param_typed(name, ParameterSpec.INTEGER)
 
     def get_param_float(self, name: str) -> float:
-        return self.get_param(name, ParameterSpec.FLOAT)
+        return self.get_param_typed(name, ParameterSpec.FLOAT)
 
     def get_param_checkbox(self, name: str) -> bool:
-        return self.get_param(name, ParameterSpec.CHECKBOX)
+        return self.get_param_typed(name, ParameterSpec.CHECKBOX)
 
     def get_param_radio_idx(self, name: str) -> int:
-        return self.get_param(name, ParameterSpec.RADIO)
+        return self.get_param_typed(name, ParameterSpec.RADIO)
 
     def get_param_menu_idx(self, name: str) -> int:
-        return self.get_param(name, ParameterSpec.MENU)
+        return self.get_param_typed(name, ParameterSpec.MENU)
 
     def get_param_secret_secret(self, id_name: str) -> Dict[str, str]:
         """Get a secret's "secret" data, or None."""
-        pval = self.get_parameter_val(id_name, ParameterSpec.SECRET)
-
-        # Don't use get_value(), since it hides the secret. (We're paranoid
-        # about leaking users' secrets.)
-        return pval.get_secret()
+        return self.secrets[id_name]
 
     def get_param_column(self, name, table) -> str:
         """
@@ -100,7 +126,7 @@ class Params:
         It's easy for a user to select a missing column: just add a rename
         or column-select before the module that selected a valid column.
         """
-        value = self.get_param(name, ParameterSpec.COLUMN)
+        value = self.get_param_typed(name, ParameterSpec.COLUMN)
         if value in table.columns:
             return value
         else:
@@ -152,23 +178,27 @@ class Params:
         """
         Parse a JSON param.
 
-        TODO store as JSON in the database instead of parsing all the time.
-        There are potential errors we don't consider here.
+        Sometimes, database values are already JSON. Other times, they're
+        stored as ``str``. When given ``str``, we decode here (or raise
+        ValueError on invalid JSON).
+
+        TODO nix the duality. That way, users can store strings....
         """
-        pval = self.get_parameter_val(name)
-        s = str(pval.value)
-        if s:
-            return json.loads(s)
+        value = self.get_param(name)
+        if isinstance(value, str):
+            if value:
+                return json.loads(value)  # raises ValueError
+            else:
+                # [2018-12-28] `None` seems more appropriate, but `{}` is
+                # backwards-compatibile. TODO migrate database to nix this
+                # ambiguity.
+                return {}
         else:
-            return {}
+            return value
 
     def as_dict(self):
         """Present parameters as a dict."""
-        pdict = {}
-        for p in self.vals.values():
-            id_name = p.parameter_spec.id_name
-            pdict[id_name] = p.get_value()
-        return pdict
+        return self.values
 
     def to_painful_dict(self, table):
         """
@@ -183,15 +213,20 @@ class Params:
         TODO present an interface with fewer surprises.
         """
         pdict = {}
-        for p in self.vals.values():
-            type = p.parameter_spec.type
-            id_name = p.parameter_spec.id_name
+        for pspec in self.specs.values():
+            type = pspec.type
+            id_name = pspec.id_name
+            value = self.values[id_name]
 
+            # Do not worry about ParameterSpec.SECRET: we only use
+            # to_painful_dict() for external modules, and none of those have
+            # secrets.
             if type == ParameterSpec.COLUMN:
-                pdict[id_name] = _sanitize_column_param(p, table.columns)
+                pdict[id_name] = _sanitize_column_param(value, table.columns)
             elif type == ParameterSpec.MULTICOLUMN or id_name == 'colnames':
-                pdict[id_name] = _sanitize_multicolumn_param(p, table.columns)
+                pdict[id_name] = _sanitize_multicolumn_param(value,
+                                                             table.columns)
             else:
-                pdict[id_name] = p.get_value()
+                pdict[id_name] = value
 
         return pdict

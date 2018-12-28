@@ -10,8 +10,6 @@ class MockParams:
     def get_param(self, name, _type=None):
         return self.d[name.replace('-', '_')]
 
-    def get_param_raw(self, name, _expected_type): return self.get_param(name)
-
     def get_param_string(self, name): return self.get_param(name)
 
     def get_param_integer(self, name): return self.get_param(name)
