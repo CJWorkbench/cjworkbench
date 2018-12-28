@@ -8,13 +8,6 @@ export function goToUrl(url) {
 // Current CSRF token
 export const csrfToken = Cookies.get('csrftoken');
 
-// Find the parameter value by its id name
-export function findParamValByIdName(wfm, paramValIdName) {
-  return wfm.parameter_vals.find((parameterVal) => {
-        return parameterVal.parameter_spec.id_name === paramValIdName;
-    });
-}
-
 // Gets the letter coordinate of a column from its index within the column names array
 export function idxToLetter(idx) {
   var letters = '';
