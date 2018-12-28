@@ -293,6 +293,7 @@ LOGGING = {
         'daphne': {'level': 'INFO'},
         'oauthlib': {'level': 'INFO'},
         'urllib3': {'level': 'INFO'},
+        'requests_oauthlib': {'level': 'INFO'},
         'django.request': {
             # Django prints WARNINGs for 400-level HTTP responses. That's
             # wrong: our code is _meant_ to output 400-level HTTP responses in
@@ -300,7 +301,7 @@ LOGGING = {
             # Ignore those WARNINGs and only log ERRORs.
             'level': 'ERROR',
         },
-        'django.channels.server': { 'level': 'ERROR' },  # ditto djano.request
+        'django.channels.server': {'level': 'ERROR'},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         'django.db.backends': {'level': 'INFO'},
     }
