@@ -99,7 +99,6 @@ class AccountAdmin:
             'server_settabnamecommand',
             'server_initworkflowcommand',
             'server_delta',
-            'server_parameterval',
             'server_storedobject',
             'server_uploadedfile',
             'server_wfmodule',

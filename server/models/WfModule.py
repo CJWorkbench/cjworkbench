@@ -123,7 +123,7 @@ class WfModule(models.Model):
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
-    params = JSONField(null=True, default={})  # TODO migrate, set NOT NULL
+    params = JSONField(default={})
     secrets = JSONField(default={})
 
     def get_module_name(self):
@@ -221,25 +221,11 @@ class WfModule(models.Model):
         `get_params()` in a lock and then safely release the lock.
         """
         if self.module_version is None:
-            return Params([], {}, {})
+            specs = []
         else:
             specs = list(self.module_version.parameter_specs.all())
 
-            if self.params is not None and self.secrets is not None:
-                # Happy path
-                return Params(specs, self.params, self.secrets)
-            else:
-                # We're in the process of migrating ParameterVals to
-                # self.params. Do something sensible in the interim.
-                #
-                # TODO nix ParameterVal, make self.params and self.secrets NOT
-                # NULL, and nix this if-statement.
-                old_vals = dict(
-                    self.parameter_vals.select_related('parameter_spec')
-                    .values_list('parameter_spec__id_name', 'value')
-                )
-                return Params.from_parameter_vals(specs, old_vals, self.params,
-                                                  self.secrets)
+        return Params(specs, self.params, self.secrets)
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available
@@ -308,12 +294,6 @@ class WfModule(models.Model):
                 pass
 
         new_wfm.save()
-
-        # copy all parameter values
-        # TODO nix this -- we have self.params and self.secrets now
-        pvs = list(self.parameter_vals.all())
-        for pv in pvs:
-            pv.duplicate(new_wfm)
 
         # Duplicate the current stored data only, not the history
         if self.stored_data_version is not None:

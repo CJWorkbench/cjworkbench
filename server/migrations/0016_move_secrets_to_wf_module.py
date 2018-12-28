@@ -59,4 +59,18 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(move_secrets_to_wf_module, elidable=True,
                              atomic=False),
+        # Delete secrets that were obsolete -- as in, wf_module.secrets was not
+        # NULL prior to migration.
+        #
+        # This happens when users modify their secrets prior to the migration:
+        # the code we've deployed writes new values to wf_module.secrets
+        # without deleting obsolete secrets. We _definitely_ want to delete
+        # these secrets, since the user didn't mean for us to keep them!
+        migrations.RunSQL([
+            """
+            DELETE FROM server_parameterval WHERE parameter_spec_id IN (
+                SELECT id FROM server_parameterspec WHERE type = 'secret'
+            )
+            """
+        ], elidable=True),
     ]

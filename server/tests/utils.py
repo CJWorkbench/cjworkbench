@@ -111,7 +111,6 @@ _Tables = [
     'server_module',
     'server_moduleversion',
     'server_parameterspec',
-    'server_parameterval',
     'server_storedobject',
     'server_uploadedfile',
     'server_wfmodule',

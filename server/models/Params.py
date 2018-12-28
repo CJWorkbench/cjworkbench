@@ -28,8 +28,10 @@ class Params:
 
     To initialize:
 
-        vals = self.parameter_vals.prefetch_related('parameter_spec').all()
-        params = Params.from_parameter_vals(vals)
+        specs = wf_module.parameter_specs.all()
+        values = { 'param1': 1, 'param2': 'something', ... }
+        secrets = { 'secret1': { 'name': '@adamhooper', 'secret': ... } }
+        params = Params(specs, values, secrets)
 
     The accessor names here are all legacy. They could benefit from a redesign.
     """
@@ -40,38 +42,6 @@ class Params:
         self.specs_by_name = dict((spec.id_name, spec) for spec in specs)
         self.values = values
         self.secrets = secrets
-
-    @classmethod
-    def from_parameter_vals(cls, specs: List[ParameterSpec],
-                            old_vals: Dict[str, str],
-                            override_params: Dict[str, Any],
-                            secrets: Dict[str, Any]) -> 'Params':
-        """
-        DEPRECATED. We'd win by nixing Parameter(Val|Spec) DB models.
-
-        https://www.pivotaltracker.com/story/show/162704742
-        """
-        values = {}
-
-        for spec in specs:
-            name = spec.id_name
-
-            if spec.type == ParameterSpec.SECRET:
-                continue  # it's already in `secrets`
-            else:
-                if override_params is not None:
-                    value = override_params[name]
-                else:
-                    try:
-                        value = spec.str_to_value(old_vals[name])
-                    except KeyError:
-                        # [adamhooper, 2018-12-28] this should only occur on my
-                        # dev machine.
-                        value = spec.str_to_value(spec.def_value)
-
-                values[name] = value
-
-        return cls(specs, values, secrets)
 
     def get_param_typed(self, name, expected_type):
         """
