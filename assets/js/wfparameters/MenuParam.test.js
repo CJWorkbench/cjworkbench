@@ -3,10 +3,17 @@ import { shallow, render, mount } from 'enzyme'
 
 import MenuParam from './MenuParam';
 
-it('renders correctly', () => {
-  var menuStr = 'Apple|Kittens|Banana';
-
-  const wrapper = shallow( <MenuParam items={menuStr} name="SuperMenu" selectedIdx={1} onChange={ () => {} } /> );
-  expect(wrapper).toMatchSnapshot();
-});
-
+describe('MenuParam', () => {
+  it('matches snapshot', () => {
+    const w = shallow(
+      <MenuParam
+        items='Apple|Kittens|Banana'
+        name='somename'
+        selectedIdx={1}
+        onChange={jest.fn()}
+        isReadOnly={false}
+      />
+    )
+    expect(w).toMatchSnapshot()
+  })
+})

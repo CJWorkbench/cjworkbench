@@ -8,7 +8,7 @@ export default class RadioParam extends React.PureComponent {
     items: PropTypes.string.isRequired,  // like 'Apple|Banana|Kitten'
     selectedIdx: PropTypes.number.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired // called with index of selected item
+    onChange: PropTypes.func.isRequired // onChange(newIndex) => undefined
   }
 
   onChange = (ev) => {

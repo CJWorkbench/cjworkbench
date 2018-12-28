@@ -3,34 +3,43 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class MenuParam extends React.PureComponent {
-  onChange = (evt) => {
-    var idx =  evt.target.value;
-    this.props.onChange(idx);
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    items: PropTypes.string.isRequired, // like 'Apple|Banana|Kitten'
+    selectedIdx: PropTypes.number.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    onChange: PropTypes.func.isRequired, // onChange(newIndex) => undefined
+  }
+
+  onChange = (ev) => {
+    this.props.onChange(+ev.target.value)
   }
 
   render() {
-    var items = this.props.items.split('|');
-    var itemDivs = items.map( (name, idx) => {
-        return <option key={idx} value={idx} className='dropdown-menu-item t-d-gray content-1'>{name}</option>;
-    });
+    const { items, name, isReadOnly, selectedIdx } = this.props
+
+    const itemDivs = items.split('|').map((name, idx) => {
+        return (
+          <option
+            key={idx}
+            value={idx}
+            className='dropdown-menu-item t-d-gray content-1'
+          >
+            {name}
+          </option>
+        )
+    })
 
     return (
         <select
           className='custom-select'
-          name={this.props.name}
-          value={this.props.selectedIdx}
+          name={name}
+          value={selectedIdx}
           onChange={this.onChange}
-          disabled={this.props.isReadOnly}
+          disabled={isReadOnly}
         >
           {itemDivs}
         </select>
     );
   }
 }
-
-MenuParam.propTypes = {
-  name:         PropTypes.string.isRequired,
-  items:        PropTypes.string,  // like 'Apple|Banana|Kitten'
-  selectedIdx:  PropTypes.number,
-  onChange:     PropTypes.func     // called with index of selected item
-};

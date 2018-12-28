@@ -1,9 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`MenuParam matches snapshot 1`] = `
 <select
   className="custom-select"
-  name="SuperMenu"
+  disabled={false}
+  name="somename"
   onChange={[Function]}
   value={1}
 >
