@@ -48,7 +48,6 @@ def load_module_from_file(fname):
 # testable entrypoint
 # returns module_version
 def load_module_from_dict(d):
-
     with transaction.atomic():
         required = ['name', 'id_name', 'category']
         for x in required:
@@ -88,13 +87,16 @@ def load_module_from_dict(d):
         try:
             # if we are loading the same version again, re-use existing module_version
             module_version = ModuleVersion.objects.get(module=module, source_version_hash=source_version)
-            reusing_version = True
+            module_version.html_output = d.get('html_output', False)
+            module_version.save()
         except ModuleVersion.DoesNotExist:
             module_version = ModuleVersion(module=module, source_version_hash=source_version)
-            reusing_version = False
+            module_version.html_output = d.get('html_output', False)
+            module_version.save()
+            for order, p in enumerate(d['parameters']):
+                load_parameter_spec(p, module_version, order)
 
-        module_version.html_output = d.get('html_output', False)
-        module_version.save()
+    return module_version
 
         # XXX commented out during migration away from Parameter(Val|Spec). If
         # we didn't comment this out, then the next time the server starts it
@@ -124,9 +126,6 @@ def load_module_from_dict(d):
         #            pass
 
 
-    return module_version
-
-
 # Load parameter spec from json def
 # If it's a brand new parameter spec, add it to all existing WfModules
 # Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
@@ -147,20 +146,24 @@ def load_parameter_spec(d, module_version, order):
     if ptype not in ParameterSpec.TYPES:
         raise ValueError("Unknown parameter type " + ptype)
 
-    pspec = ParameterSpec(name=name, id_name=id_name, type=ptype, module_version=module_version)
-
-    # Optional keys
-    pspec.def_value = d.get('default', '') # ParameterVal.set_value will translate to 0, false, etc. according to type
-    pspec.multiline = d.get('multiline', False)
-    pspec.placeholder = d.get('placeholder', '')
+    pspec = ParameterSpec(
+        name=name,
+        id_name=id_name,
+        type=ptype,
+        module_version=module_version,
+        order=order,
+        def_value=d.get('default', ''),
+        multiline=d.get('multiline', False),
+        placeholder=d.get('placeholder', '')
+    )
 
     if d['type'] == 'menu':
-        if (not 'menu_items' in d) or (d['menu_items']==''):
+        if 'menu_items' not in d or d['menu_items'] == '':
             raise ValueError("Menu parameter specification missing menu_items")
         pspec.items = d['menu_items']
 
     if d['type'] == 'radio':
-        if (not 'radio_items' in d) or (d['radio_items']==''):
+        if 'radio_items' not in d or d['radio_items'] == '':
             raise ValueError("Radio parameter specification missing radio_items")
         pspec.items = d['radio_items']
 
@@ -170,12 +173,6 @@ def load_parameter_spec(d, module_version, order):
         else:
             raise ValueError('visible_if must have "id_name" and "value" attributes')
 
-    pspec.order = order
     pspec.save()
 
     return pspec
-
-# --- Parameter Spec migration ----
-# Handles existing ParameterVals when a module's parameters change
-# This can happen when reloading an internal module (because there is only one module_version)
-# or when updating a WfModule to a new module_version

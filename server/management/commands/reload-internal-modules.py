@@ -1,5 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 import server.initmodules
+
 
 class Command(BaseCommand):
     help = 'Reloads all modules which are in the main server repo'

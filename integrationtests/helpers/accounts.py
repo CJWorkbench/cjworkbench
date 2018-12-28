@@ -5,8 +5,6 @@ import hashlib
 import os
 import shutil
 from typing import Optional
-from urllib.error import HTTPError
-from urllib.request import urlopen
 import weakref
 import psycopg2
 from integrationtests.browser import Browser
