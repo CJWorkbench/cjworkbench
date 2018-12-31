@@ -6,12 +6,15 @@ from .util import ChangesWfModuleOutputs
 
 class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
-    old_values = JSONField('old_values')
-    new_values = JSONField('new_values')
+    old_values = JSONField('old_values')  # _all_ params
+    new_values = JSONField('new_values')  # only _changed_ params
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def forward_impl(self):
-        self.wf_module.params = self.new_values
+        self.wf_module.params = {
+            **self.old_values,
+            **self.new_values
+        }
         self.wf_module.save(update_fields=['params'])
         self.forward_affected_delta_ids()
 
@@ -52,10 +55,6 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
             for key in params.secrets.keys():
                 del old_values[key]
 
-        new_values = {
-            **old_values,
-            **new_values,
-        }
         # TODO migrate params here: when the user changes params, we want to
         # save something consistent.
 
