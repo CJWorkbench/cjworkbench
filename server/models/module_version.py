@@ -128,7 +128,8 @@ class ModuleVersion(models.Model):
                     'dispatch': '',  # TODO nix (unused) dispatch
                     'source': spec.get('source', ''),
                     'description': spec.get('description', ''),
-                    'author': spec.get('author', ''),  # TODO (unused) author
+                    # TODO (unused) author
+                    'author': spec.get('author', 'Workbench'),
                     'link': spec.get('link', ''),
                     'icon': spec.get('icon', 'url'),
                     'loads_data': spec.get('loads_data', False),
