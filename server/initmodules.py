@@ -1,15 +1,12 @@
+import glob
+import logging
 import os
 import json
 from cjworkbench.settings import BASE_DIR
-from server.models import Module, ModuleVersion, ParameterSpec
-from django.db import transaction
+from server.models import ModuleVersion
 
-import logging
+
 logger = logging.getLogger(__name__)
-
-
-class InitModuleError(Exception):
-    pass
 
 
 # Top level call, (re)load module definitions from files.
@@ -17,162 +14,17 @@ class InitModuleError(Exception):
 def init_modules():
     module_path = os.path.join(BASE_DIR, 'server/modules')
 
-    # Get all json files in this directory (exclude dirs)
-    modfiles = [f for f in os.listdir(module_path) if os.path.isfile(os.path.join(module_path, f)) and f.endswith(".json")]
+    json_paths = glob.glob(f'{module_path}/*.json')
 
-    # Load all modules from files
-    for f in modfiles:
-        try:
-            load_module_from_file(os.path.join(module_path, f))
-        except ValueError as e:
-            logger.error(
-                "Error loading Module definition file %s: %s",
-                f,
-                str(e)
-            )
-            raise InitModuleError() from e
+    for json_path in json_paths:
+        # Raises OSError
+        with open(json_path, 'rb') as json_bytes:
+            # Raises ValueError
+            spec = json.load(json_bytes)
 
-    logger.info('Loaded %d modules', len(modfiles))
+        # Raises all sorts of exceptions
+        ModuleVersion.create_or_replace_from_spec(spec,
+                                                  source_version_hash='1.0',
+                                                  js_module='')
 
-
-# Create a module object by reading in the json description in a file
-def load_module_from_file(fname):
-    logger.info("Loading module " + fname)
-
-    with open(fname) as json_data:
-        d = json.load(json_data)
-        load_module_from_dict(d)
-
-
-# Create a module from dictionary of properties, corresponding to the json in the config file
-# testable entrypoint
-# returns module_version
-def load_module_from_dict(d):
-    with transaction.atomic():
-        required = ['name', 'id_name', 'category']
-        for x in required:
-            if not x in d:
-                raise ValueError("Module specification missing field " + x)
-
-        id_name = d['id_name']
-
-        # If we can find an existing module with the same id_name, use that
-        try:
-            module = Module.objects.get(id_name=id_name)
-        except Module.DoesNotExist:
-            module = Module()
-
-        # save module data
-        module.name = d['name']
-        module.category = d['category']
-        module.id_name = id_name
-        module.dispatch = id_name
-        module.source = d.get('source', '')
-        module.description = d.get('description', '')
-        module.author = d.get('author', 'Workbench')
-        module.link = d.get('link', '')
-        module.icon = d.get('icon', 'settings')
-        module.loads_data = d.get('loads_data', False)
-        module.help_url = d.get('help_url', '')
-        module.has_zen_mode = d.get('has_zen_mode', False)
-        module.row_action_menu_entry_title = d.get(
-            'row_action_menu_entry_title',
-            ''
-        )
-        module.js_module = d.get('js_module', '')
-
-        module.save()
-
-        source_version = d.get('source_version', '1.0')  # if no source_version, internal module, version 1.0 always
-        try:
-            # if we are loading the same version again, re-use existing module_version
-            module_version = ModuleVersion.objects.get(module=module, source_version_hash=source_version)
-            module_version.html_output = d.get('html_output', False)
-            module_version.save()
-        except ModuleVersion.DoesNotExist:
-            module_version = ModuleVersion(module=module, source_version_hash=source_version)
-            module_version.html_output = d.get('html_output', False)
-            module_version.save()
-            for order, p in enumerate(d['parameters']):
-                load_parameter_spec(p, module_version, order)
-
-    return module_version
-
-        # XXX commented out during migration away from Parameter(Val|Spec). If
-        # we didn't comment this out, then the next time the server starts it
-        # will delete all module params.
-        ## load params
-        #if 'parameters' in d:
-        #    pspecs = [ load_parameter_spec(p, module_version, order) for (order,p) in enumerate(d['parameters']) ]
-        #else:
-        #    pspecs = []
-
-        ## Migrate parameters, if we're updating an existing module_version
-        #if reusing_version:
-        #    # Deleted parameters
-        #    new_id_names = [p.id_name for p in pspecs]
-        #    for old_spec in ParameterSpec.objects.filter(module_version=module_version):
-        #        if old_spec.id_name not in new_id_names:
-        #            old_spec.delete()
-
-        #    for new_spec in pspecs:
-        #        try:
-        #            # Changed parameters
-        #            old_spec = ParameterSpec.objects.\
-        #                exclude(id=new_spec.id).\
-        #                get(id_name=new_spec.id_name, module_version=module_version)
-        #            old_spec.delete()
-        #        except ParameterSpec.DoesNotExist:
-        #            pass
-
-
-# Load parameter spec from json def
-# If it's a brand new parameter spec, add it to all existing WfModules
-# Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
-# returns ParameterSpec
-def load_parameter_spec(d, module_version, order):
-
-    # minimally required fields
-    required = ['name', 'id_name', 'type']
-    for x in required:
-        if x not in d:
-            raise ValueError("Parameter specification missing field " + x)
-
-    name = d['name']
-    id_name = d['id_name']
-    ptype = d['type']
-
-    # Is this type recognized?
-    if ptype not in ParameterSpec.TYPES:
-        raise ValueError("Unknown parameter type " + ptype)
-
-    pspec = ParameterSpec(
-        name=name,
-        id_name=id_name,
-        type=ptype,
-        module_version=module_version,
-        order=order,
-        def_value=d.get('default', ''),
-        multiline=d.get('multiline', False),
-        placeholder=d.get('placeholder', '')
-    )
-
-    if d['type'] == 'menu':
-        if 'menu_items' not in d or d['menu_items'] == '':
-            raise ValueError("Menu parameter specification missing menu_items")
-        pspec.items = d['menu_items']
-
-    if d['type'] == 'radio':
-        if 'radio_items' not in d or d['radio_items'] == '':
-            raise ValueError("Radio parameter specification missing radio_items")
-        pspec.items = d['radio_items']
-
-    if 'visible_if' in d:
-        if 'id_name' in d['visible_if'] and 'value' in d['visible_if']:
-            pspec.visible_if = json.dumps(d.get('visible_if', {}))
-        else:
-            raise ValueError('visible_if must have "id_name" and "value" attributes')
-
-    pspec.save()
-
-    return pspec
+    logger.info('Loaded %d modules', len(json_paths))

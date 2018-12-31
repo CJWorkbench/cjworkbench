@@ -1,7 +1,7 @@
 from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from server import oauth
-from server.models import Workflow, Module, ModuleVersion, ParameterSpec
+from server.models import Workflow, ModuleVersion
 from server.tests.utils import DbTestCase
 
 
@@ -12,13 +12,14 @@ class OauthTest(DbTestCase):
         lookup.return_value.generate_redirect_url_and_state.side_effect = \
             oauth.TokenRequestDenied('no!', {})
 
-        module_version = ModuleVersion.objects.create(
-            module=Module.objects.create(id_name='twitter')
-        )
-        module_version.parameter_specs.create(
-            id_name='auth',
-            type=ParameterSpec.SECRET
-        )
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'twitter',
+            'name': '',
+            'category': '',
+            'parameters': [
+                {'id_name': 'auth', 'type': 'secret'}
+            ]
+        })
 
         user = User.objects.create(username='a@example.org',
                                    email='a@example.org')

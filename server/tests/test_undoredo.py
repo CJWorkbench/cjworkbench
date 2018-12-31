@@ -2,10 +2,10 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import django.db
 from unittest.mock import patch
-from server.models import Delta, Workflow
+from server.models import Delta, ModuleVersion, Workflow
 from server.models.commands import AddModuleCommand, ChangeParametersCommand, \
         ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand
-from server.tests.utils import DbTestCase, load_module_version
+from server.tests.utils import DbTestCase
 from server.versions import WorkflowUndo, WorkflowRedo
 
 
@@ -66,7 +66,14 @@ class UndoRedoTests(DbTestCase):
     # Command types used here are arbitrary, but different so that we test
     # polymorphism
     def test_undo_redo(self):
-        csv = load_module_version('pastecsv')
+        csv = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'pastecsv',
+            'name': 'pastecsv',
+            'category': 'Cat',
+            'parameters': [
+                {'id_name': 'csv', 'type': 'string'},
+            ]
+        })
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

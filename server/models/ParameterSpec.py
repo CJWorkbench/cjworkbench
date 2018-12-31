@@ -1,6 +1,6 @@
 import json
 from django.db import models
-from server.models.ModuleVersion import ModuleVersion
+from server.models.module_version import ModuleVersion
 
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module

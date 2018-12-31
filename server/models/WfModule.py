@@ -6,7 +6,7 @@ from django.db import models
 from server.modules.types import ProcessResult
 from .Params import Params
 from .CachedRenderResult import CachedRenderResult
-from .ModuleVersion import ModuleVersion
+from .module_version import ModuleVersion
 from .StoredObject import StoredObject
 from .Tab import Tab
 from .Workflow import Workflow

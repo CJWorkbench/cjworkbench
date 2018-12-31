@@ -2,7 +2,7 @@ from unittest.mock import patch
 from django.contrib.auth.models import User
 from server.handlers.tab import add_module, reorder_modules, create, delete, \
     set_name
-from server.models import Module, Workflow
+from server.models import ModuleVersion, Workflow
 from server.models.commands import AddModuleCommand, ReorderModulesCommand
 from .util import HandlerTestCase
 
@@ -23,9 +23,14 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()
-        module = Module.objects.create(id_name='amodule')
-        module_version = module.module_versions.create()
-        module_version.parameter_specs.create(id_name='foo')
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'amodule',
+            'name': 'A Module',
+            'category': 'Cat',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,
@@ -35,6 +40,7 @@ class TabTest(HandlerTestCase):
 
         command = AddModuleCommand.objects.first()
         self.assertEquals(command.wf_module.order, 3)
+        self.assertEquals(command.wf_module.module_version, module_version)
         self.assertEquals(
             command.wf_module.get_params().get_param_string('foo'),
             'bar'
@@ -45,6 +51,14 @@ class TabTest(HandlerTestCase):
     def test_add_module_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
         tab = workflow.tabs.first()
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'amodule',
+            'name': 'A Module',
+            'category': 'Cat',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
         response = self.run_handler(add_module, workflow=workflow,
                                     tabId=tab.id, position=3,
                                     moduleIdName='amodule',
@@ -57,9 +71,14 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()
-        module = Module.objects.create(id_name='amodule')
-        module_version = module.module_versions.create()
-        module_version.parameter_specs.create(id_name='foo')
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'amodule',
+            'name': 'A Module',
+            'category': 'Cat',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,
@@ -72,9 +91,14 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()
-        module = Module.objects.create(id_name='amodule')
-        module_version = module.module_versions.create()
-        module_version.parameter_specs.create(id_name='foo')
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'amodule',
+            'name': 'A Module',
+            'category': 'Cat',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position='foo',
@@ -88,9 +112,14 @@ class TabTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         other_workflow = Workflow.create_and_init(owner=user)
         tab = other_workflow.tabs.first()
-        module = Module.objects.create(id_name='amodule')
-        module_version = module.module_versions.create()
-        module_version.parameter_specs.create(id_name='foo')
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'amodule',
+            'name': 'A Module',
+            'category': 'Cat',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
                                     tabId=tab.id, position=3,

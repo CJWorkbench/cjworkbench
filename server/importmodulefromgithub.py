@@ -8,8 +8,8 @@ from django.forms import URLField
 from django.core.exceptions import ValidationError
 import git
 from git.exc import GitCommandError
-from server.initmodules import load_module_from_dict
 from server.models import Module, ModuleVersion, WfModule
+from server.models.module_version import validate_module_spec
 import server.models.loaded_module
 
 
@@ -28,12 +28,6 @@ def get_already_imported_module_urls():
     for module in modules:
         already_imported[module.id_name] = module.link
     return already_imported
-
-
-def refresh_module_from_github(url):
-    # we should check if this is a refreshable module: does the module exist,
-    # and if it does, ...and if it is, we should import it.
-    import_module_from_github(url)
 
 
 def sanitise_url(url):
@@ -290,6 +284,7 @@ def import_module_from_directory(url, reponame, version, importdir,
         module_config = get_module_config_from_json(url,
                                                     extension_file_mapping,
                                                     importdir)
+        validate_module_spec(module_config)  # raises ValidationError
         id_name = module_config['id_name']
 
         # Don't allow importing the same version twice, unless forced
@@ -314,14 +309,15 @@ def import_module_from_directory(url, reponame, version, importdir,
                 f' from a different repo: {source}'
             )
 
-        module_config['source_version'] = version
         module_config['link'] = url
         if 'author' not in module_config:
             module_config['author'] = retrieve_author(url)
 
         if js_file:
-            with open(os.path.join(importdir, js_file)) as f:
-                module_config['js_module'] = f.read()
+            with open(os.path.join(importdir, js_file), 'rt') as f:
+                js_module = f.read()
+        else:
+            js_module = ''
 
         # Ensure that modules are categorised properly – if a module category
         # isn't one of our pre-defined categories, then we just set it to
@@ -337,7 +333,11 @@ def import_module_from_directory(url, reponame, version, importdir,
         validate_python_functions(destination_directory, python_file)
 
         # If that succeeds, initialise module in our database
-        module_version = load_module_from_dict(module_config)
+        module_version = ModuleVersion.create_or_replace_from_spec(
+            module_config,
+            source_version_hash=version,
+            js_module=js_module
+        )
 
         # clean-up
         shutil.rmtree(importdir)
@@ -410,7 +410,7 @@ def import_module_from_github(url, force_reload=False):
         logger.info('Imported module %s' % url)
 
         return module
-    except Exception as e:
+    except Exception:
         # Clean up any existing dirs and pass exception up
         # (ValidationErrors will have error message for user)
         if os.path.isdir(importdir):

@@ -38,6 +38,8 @@ asyncpg = "*"
 oauthlib = "*"
 "fb-re2" = "*"
 hext = "==0.2.0"
+jsonschema = "*"
+rfc3987 = "*"  # for jsonschema 'uri' format
 
 [dev-packages]
 watchdog = "*"

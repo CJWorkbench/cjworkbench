@@ -2,6 +2,7 @@
 # Module is the class, WfModule is the instance (applied in a Workflow)
 from django.db import models
 
+
 class Module(models.Model):
     class Meta:
         ordering = ['name']
@@ -53,4 +54,4 @@ class Module(models.Model):
     js_module = models.TextField('js_module', default='')
 
     def __str__(self):
-        return self.name
+        return self.id_name

@@ -15,7 +15,7 @@ from channels.db import database_sync_to_async
 from django.conf import settings
 from django.contrib.auth.models import User
 import pandas as pd
-from .ModuleVersion import ModuleVersion
+from .module_version import ModuleVersion
 from .Params import Params
 from ..modules.types import ProcessResult
 from ..modules.countbydate import CountByDate
