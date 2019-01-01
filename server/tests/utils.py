@@ -5,12 +5,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
 from server import minio
-from server.models import Module, ModuleVersion, Workflow, ParameterSpec
-from server.models.commands import InitWorkflowCommand
-from server.initmodules import load_module_from_dict
 import os
 import io
-import json
 import pandas as pd
 
 # --- Test data ----
@@ -146,123 +142,8 @@ def clear_minio():
     minio.minio_client.remove_objects(minio.UserFilesBucket, user_files)
 
     stored_objects = [o.object_name
-                  for o in
-                  minio.minio_client.list_objects_v2(minio.UserFilesBucket,
-                                                     recursive=True)]
+                      for o in
+                      minio.minio_client.list_objects_v2(minio.UserFilesBucket,
+                                                         recursive=True)]
     minio.minio_client.remove_objects(minio.StoredObjectsBucket,
                                       stored_objects)
-
-
-# ---- Setting up workflows ----
-
-def add_new_module_version(name, *, id_name='', dispatch=''):  # * means don't let extra arguments fill up the kwargs
-    module = Module.objects.create(name=name, id_name=id_name, dispatch=dispatch)
-    module_version = ModuleVersion.objects.create(source_version_hash='1.0', module=module)
-    return module_version
-
-def add_new_parameter_spec(module_version, type, id_name='', order=0, def_value=''):
-    return ParameterSpec.objects.create(
-        module_version=module_version,
-        id_name=id_name,
-        type=type,
-        order=order,
-        def_value=def_value)
-
-
-def add_new_workflow(name, *, owner=None, **kwargs):
-    # Workflows have to have an owner, which means we need at least one user
-    if 'owner' not in kwargs:
-        if not User.objects.exists():
-            kwargs['owner'] = User.objects.create_user(username='username', password='password')
-        else:
-            kwargs['owner'] = User.objects.first()
-    workflow = Workflow.objects.create(name=name, **kwargs)
-    workflow.tabs.create(position=0)
-    InitWorkflowCommand.create(workflow)
-    return workflow
-
-
-def add_new_wf_module(workflow, module_version, order=0,
-                      param_values={}, last_relevant_delta_id=0):
-    return workflow.tabs.first().wf_modules.create(
-        module_version=module_version,
-        order=order,
-        last_relevant_delta_id=last_relevant_delta_id,
-        params={
-            **module_version.get_default_params(),
-            **param_values,
-        }
-
-    )
-
-# setup a workflow with some test data loaded into a PasteCSV module
-# If no data given, use standard mock data
-# returns workflow
-def create_testdata_workflow(csv_text=mock_csv_text):
-    # Define paste CSV module from scratch
-    csv_module = add_new_module_version('Module 1', dispatch='pastecsv')
-    pspec = add_new_parameter_spec(csv_module, ParameterSpec.STRING, id_name='csv')
-    add_new_parameter_spec(csv_module, ParameterSpec.CHECKBOX, id_name='has_header_row', def_value='True')
-
-    # New workflow
-    workflow = add_new_workflow('Workflow 1')
-
-    # Create new WfModule and set param to mock_csv_text
-    wfmodule = add_new_wf_module(workflow, csv_module, 0)
-    wfmodule.params = {'csv': csv_text}
-    wfmodule.save(update_fields=['params'])
-
-    return workflow
-
-
-# --- set parameters ---
-def set_param(pval, value):
-    pval.set_value(value)
-    pval.save()
-
-
-set_integer = set_param
-set_string = set_param
-set_checkbox = set_param
-
-
-# ---- Load Modules ----
-
-# Load module spec from same place initmodules gets it, return dict
-def load_module_dict(filename):
-    module_path = os.path.join(settings.BASE_DIR, 'server/modules')
-    fullname = os.path.join(module_path, filename + '.json')
-    with open(fullname) as json_data:
-        d = json.load(json_data)
-    return d
-
-# Load module spec from filename, return module_version ready for use
-def load_module_version(filename):
-    return load_module_from_dict(load_module_dict(filename))
-
-# Given a module spec, add it to end of workflow. Create new workflow if null
-# Returns WfModule
-def load_and_add_module_from_dict(module_dict, workflow=None, param_values={},
-                                  last_relevant_delta_id=0):
-    if not workflow:
-        workflow = add_new_workflow('Workflow 1')
-
-    module_version = load_module_from_dict(module_dict)
-    num_modules = workflow.tabs.first().live_wf_modules.count()
-    wf_module = add_new_wf_module(workflow, module_version,
-                                  param_values=param_values,
-                                  last_relevant_delta_id=last_relevant_delta_id,
-                                  order=num_modules)
-
-    return wf_module
-
-# Given a module spec, add it to end of workflow. Create new workflow if null.
-# Returns WfModule
-def load_and_add_module(filename, workflow=None, param_values={},
-                        last_relevant_delta_id=0):
-    return load_and_add_module_from_dict(
-        load_module_dict(filename),
-        workflow=workflow,
-        param_values=param_values,
-        last_relevant_delta_id=last_relevant_delta_id
-    )

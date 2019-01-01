@@ -1,6 +1,6 @@
 import json
 from django.db import models
-from server.models.ModuleVersion import ModuleVersion
+from server.models.module_version import ModuleVersion
 
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module
@@ -74,6 +74,51 @@ class ParameterSpec(models.Model):
 
     def __str__(self):
         return self.id_name + ':' + self.type
+
+    def coerce_value(self, value):
+        if (
+            self.type == ParameterSpec.STRING
+            or self.type == ParameterSpec.COLUMN
+            or self.type == ParameterSpec.MULTICOLUMN
+            or self.type == ParameterSpec.CUSTOM
+            or self.type == ParameterSpec.BUTTON
+            or self.type == ParameterSpec.STATICTEXT
+        ):
+            if value is None:
+                return ''
+            else:
+                return str(value)
+
+        elif (
+            self.type == ParameterSpec.INTEGER
+            or self.type == ParameterSpec.MENU
+            or self.type == ParameterSpec.RADIO
+        ):
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return 0
+
+        elif self.type == ParameterSpec.FLOAT:
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                return 0.0
+
+        elif self.type == ParameterSpec.CHECKBOX:
+            # Be permissive, allow both actual booleans and "true"/"false"
+            if type(value) is str:
+                return value.lower().strip() == 'true'
+            else:
+                try:
+                    return bool(value)  # we catch number types here
+                except (ValueError, TypeError):
+                    return False
+
+        else:
+            raise ValueError(
+                f'Unknown type {self.type} for parameter {self.id_name}'
+            )
 
     def value_to_str(self, value):
         if (

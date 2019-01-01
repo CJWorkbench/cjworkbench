@@ -6,10 +6,9 @@ from allauth.account.utils import user_display
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
-from server.models import User, Workflow
+from server.models import ModuleVersion, User, Workflow
 from server.models.commands import InitWorkflowCommand
-from server.tests.utils import LoggedInTestCase, add_new_module_version, \
-        load_module_version
+from server.tests.utils import LoggedInTestCase
 from server.views import workflow_list, workflow_detail, render_workflow, \
         render_workflows
 
@@ -39,7 +38,12 @@ class WorkflowViewTests(LoggedInTestCase):
                                                  owner=self.user)
         self.delta = InitWorkflowCommand.create(self.workflow1)
         self.tab1 = self.workflow1.tabs.create(position=0)
-        self.module_version1 = add_new_module_version('Module 1')
+        self.module_version1 = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'module1',
+            'name': 'Module 1',
+            'category': 'Cat',
+            'parameters': []
+        })
 
         # Add another user, with one public and one private workflow
         self.otheruser = User.objects.create(username='user2',
@@ -277,7 +281,12 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public.save()
 
         # Also ensure the anonymous users can't access the Python module; first we need to load it
-        load_module_version('pythoncode')
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'pythoncode',
+            'name': 'Python',
+            'category': 'not allowed',
+            'parameters': [],
+        })
 
         request = self._build_get('/workflows/%d/' % self.other_workflow_public.id, user=AnonymousUser())
         response = render_workflow(request, workflow_id=self.other_workflow_public.id)

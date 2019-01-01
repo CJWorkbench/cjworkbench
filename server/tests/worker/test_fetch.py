@@ -123,7 +123,7 @@ class FetchTests(DbTestCase):
 
         try:
             workflow_id = wf_module.workflow_id
-        except:
+        except AttributeError:  # No tab/workflow in database
             workflow_id = 1
 
         # Mock the module we load, so it calls fn() directly.
@@ -147,9 +147,14 @@ class FetchTests(DbTestCase):
     def test_fetch_get_params(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        module = Module.objects.create()
-        module_version = module.module_versions.create()
-        module_version.parameter_specs.create(id_name='foo')
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x',
+            'name': 'x',
+            'category': 'x',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'}
+            ]
+        })
         wf_module = tab.wf_modules.create(order=0,
                                           module_version=module_version,
                                           params={'foo': 'bar'})

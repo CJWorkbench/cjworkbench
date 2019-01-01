@@ -3,10 +3,11 @@ import shutil
 from typing import Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from server.models import loaded_module
 from server.modules.types import ProcessResult
 from .Params import Params
 from .CachedRenderResult import CachedRenderResult
-from .ModuleVersion import ModuleVersion
+from .module_version import ModuleVersion
 from .StoredObject import StoredObject
 from .Tab import Tab
 from .Workflow import Workflow
@@ -219,13 +220,27 @@ class WfModule(models.Model):
 
         The Params object is a "snapshot" of database values. You can call
         `get_params()` in a lock and then safely release the lock.
+
+        Raise ValueError on _programmer_ error. That's usually the module
+        author's problem, and we'll want to display the error to the user so
+        the user can pester the module author.
         """
         if self.module_version is None:
             specs = []
+            values = self.params
         else:
             specs = list(self.module_version.parameter_specs.all())
+            lm = (
+                # we don't import LoadedModule directly, because we'll mock it
+                # out in unit tests.
+                loaded_module.LoadedModule.for_module_version_sync(
+                    self.module_version
+                )
+            )
+            # raises ValueError
+            values = lm.migrate_params(specs, self.params)
 
-        return Params(specs, self.params, self.secrets)
+        return Params(specs, values, self.secrets)
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available

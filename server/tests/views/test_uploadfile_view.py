@@ -1,17 +1,13 @@
 import asyncio
 from collections import namedtuple
 import json
-import io
 from unittest.mock import patch
-import pandas as pd
-from pandas.testing import assert_frame_equal
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import force_authenticate, APIRequestFactory
-from server import rabbitmq
-from server.models import UploadedFile, User
-from server.views.UploadedFileView import get_uploadedfile
+from server.models import ModuleVersion, User, Workflow
 from server.views import uploads
-from server.tests.utils import load_and_add_module, LoggedInTestCase
+from server.tests.utils import LoggedInTestCase
 
 
 FakeMinioStat = namedtuple('FakeMinioStat', ['size'])
@@ -31,7 +27,16 @@ class FakeSession:
 class UploadFileViewTests(LoggedInTestCase):
     def setUp(self):
         super(UploadFileViewTests, self).setUp()  # log in
-        self.wfm = load_and_add_module('uploadfile')
+        self.workflow = Workflow.create_and_init(owner=self.user)
+        with open(settings.BASE_DIR + '/server/modules/uploadfile.json') as f:
+            upload_spec = json.load(f)
+            module_version = ModuleVersion.create_or_replace_from_spec(
+                upload_spec, source_version_hash='1.0'
+            )
+        self.wfm = self.workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_version=module_version
+        )
         self.factory = APIRequestFactory()
 
     def _augment_request(self, request, user):

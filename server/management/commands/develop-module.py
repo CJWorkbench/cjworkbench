@@ -1,3 +1,4 @@
+import logging
 import os.path
 import shutil
 import tempfile
@@ -8,25 +9,30 @@ from watchdog.observers import Observer
 from server.importmodulefromgithub import import_module_from_directory
 
 
+logger = logging.getLogger(__name__)
+
+
 def main(directory, pretend_git_url):
     basename = os.path.basename(directory)
 
     def reload():
-        print(f'Reloading {basename}')
+        logger.info(f'Reloading {basename}')
         # import_module_from_directory is unintuitive: it _destroys_ the input
         # directory.
         tmpdir = tempfile.mkdtemp()
         shutil.rmtree(tmpdir)
         shutil.copytree(directory, tmpdir)
-        import_module_from_directory(pretend_git_url, basename, 'develop',
-                                     tmpdir, force_reload=True)
-        print('Reloaded')
+        try:
+            import_module_from_directory(pretend_git_url, basename, 'develop',
+                                         tmpdir, force_reload=True)
+        except Exception:
+            logger.exception('Error loading module')
 
     class ReloadEventHandler(RegexMatchingEventHandler):
         def on_any_event(self, ev):
             reload()
 
-    regexes = ['.*\.(py|json|html)']
+    regexes = ['.*\\.(py|json|html)']
 
     event_handler = ReloadEventHandler(regexes=regexes)
     observer = Observer()

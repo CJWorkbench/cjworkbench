@@ -1,6 +1,6 @@
 from unittest.mock import patch
 import pandas as pd
-from server.models import Module, Workflow
+from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand, ChangeParametersCommand
 from server.tests.utils import DbTestCase
 
@@ -21,20 +21,16 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0)
 
-        module = Module.objects.create(name='loadurl', id_name='loadurl',
-                                       dispatch='loadurl')
-        module_version = module.module_versions.create(
-            source_version_hash='1.0',
-            module=module
-        )
-        module_version.parameter_specs.create(id_name='url', type='string',
-                                              order=0, def_value='')
-        module_version.parameter_specs.create(id_name='has_header',
-                                              type='checkbox', order=1,
-                                              def_value='')
-        module_version.parameter_specs.create(id_name='version_select',
-                                              type='custom', order=2,
-                                              def_value='')
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'loadurl',
+            'name': 'loadurl',
+            'category': 'Test',
+            'parameters': [
+                {'id_name': 'url', 'type': 'string'},
+                {'id_name': 'has_header', 'type': 'checkbox'},
+                {'id_name': 'version_select', 'type': 'custom'},
+            ]
+        })
         wf_module = tab.wf_modules.create(
             module_version=module_version,
             order=0,
@@ -81,14 +77,14 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0)
 
-        module = Module.objects.create(name='loadurl', id_name='loadurl',
-                                       dispatch='loadurl')
-        module_version = module.module_versions.create(
-            source_version_hash='1.0',
-            module=module
-        )
-        module_version.parameter_specs.create(id_name='url', type='string',
-                                              order=0, def_value='')
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'loadurl',
+            'name': 'loadurl',
+            'category': 'Test',
+            'parameters': [
+                {'id_name': 'url', 'type': 'string'},
+            ]
+        })
 
         wf_module = tab.wf_modules.create(
             order=0,
@@ -110,14 +106,14 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0, is_deleted=True)
 
-        module = Module.objects.create(name='loadurl', id_name='loadurl',
-                                       dispatch='loadurl')
-        module_version = module.module_versions.create(
-            source_version_hash='1.0',
-            module=module
-        )
-        module_version.parameter_specs.create(id_name='url', type='string',
-                                              order=0, def_value='')
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'loadurl',
+            'name': 'loadurl',
+            'category': 'Test',
+            'parameters': [
+                {'id_name': 'url', 'type': 'string'},
+            ]
+        })
 
         wf_module = tab.wf_modules.create(
             order=0,
@@ -138,14 +134,14 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0)
 
-        module = Module.objects.create(name='loadurl', id_name='loadurl',
-                                       dispatch='loadurl')
-        module_version = module.module_versions.create(
-            source_version_hash='1.0',
-            module=module
-        )
-        module_version.parameter_specs.create(id_name='url', type='string',
-                                              order=0, def_value='')
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'loadurl',
+            'name': 'loadurl',
+            'category': 'Test',
+            'parameters': [
+                {'id_name': 'url', 'type': 'string'},
+            ]
+        })
 
         wf_module = tab.wf_modules.create(
             order=0,

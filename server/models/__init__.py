@@ -7,9 +7,8 @@ from .Module import Module
 from .WfModule import WfModule
 from .Tab import Tab
 from .ParameterSpec import ParameterSpec
-from .ParameterVal import ParameterVal
 from .Params import Params
-from .ModuleVersion import ModuleVersion
+from .module_version import ModuleVersion
 from .Delta import Delta
 from .UploadedFile import UploadedFile
 from .StoredObject import StoredObject

@@ -1,13 +1,11 @@
 import asyncio
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
-from django.utils import timezone
 import pandas as pd
-from server.models import Delta, Module, ModuleVersion, Workflow, WfModule, \
-        ParameterSpec
+from server.models import Delta, ModuleVersion, Workflow, WfModule
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
-        ChangeWfModuleUpdateSettingsCommand, InitWorkflowCommand
+        InitWorkflowCommand
 from server.tests.utils import DbTestCase
 
 
@@ -16,6 +14,14 @@ async def async_noop(*args, **kwargs):
 
 future_none = asyncio.Future()
 future_none.set_result(None)
+
+
+class MockLoadedModule:
+    def __init__(self, *args):
+        pass
+
+    def migrate_params(self, specs, values):
+        return values
 
 
 class CommandTestCase(DbTestCase):
@@ -40,11 +46,14 @@ class AddDeleteModuleCommandTests(CommandTestCase):
 
         self.workflow = Workflow.objects.create()
         self.tab = self.workflow.tabs.create(position=0)
-        module = Module.objects.create(name='a', id_name='a', dispatch='a')
-        self.module_version = ModuleVersion.objects.create(
-            source_version_hash='1.0',
-            module=module
-        )
+        self.module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'loadurl',
+            'name': 'Load URL',
+            'category': 'Load',
+            'parameters': [
+                {'id_name': 'url', 'type': 'string'},
+            ],
+        }, source_version_hash='1.0')
         self.module_version.parameter_specs.create(id_name='url',
                                                    type='string',
                                                    order=0, def_value='')
@@ -117,17 +126,21 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
     def test_add_module_default_params(self):
         workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.objects.create(
-            module=Module.objects.create(id_name='mod')
-        )
-        module_version.parameter_specs.create(id_name='a', def_value='x',
-                                              type=ParameterSpec.STRING)
-        module_version.parameter_specs.create(id_name='b', def_value='2',
-                                              type=ParameterSpec.MENU)
-        module_version.parameter_specs.create(id_name='c', def_value='True',
-                                              type=ParameterSpec.CHECKBOX)
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'blah',
+            'name': 'Blah',
+            'category': 'Blah',
+            'parameters': [
+                {'id_name': 'a', 'type': 'string', 'default': 'x'},
+                {'id_name': 'b', 'type': 'menu', 'menu_items': 'a|b|c',
+                 'default': 2},
+                {'id_name': 'c', 'type': 'checkbox', 'default': True},
+            ],
+        }, source_version_hash='1.0')
 
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
@@ -547,65 +560,3 @@ class ChangeWfModuleNotesCommandTests(CommandTestCase):
         self.assertEqual(wf_module.notes, 'text2')
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notes, 'text2')
-
-
-@patch('server.models.Delta.schedule_execute', async_noop)
-@patch('server.models.Delta.ws_notify', async_noop)
-class ChangeWfModuleUpdateSettingsCommandTests(CommandTestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.workflow = Workflow.objects.create()
-        self.delta = InitWorkflowCommand.create(self.workflow)
-        self.tab = self.workflow.tabs.create(position=0)
-        module = Module.objects.create(name='a', id_name='a', dispatch='a')
-        self.module_version = ModuleVersion.objects.create(
-            source_version_hash='1.0',
-            module=module
-        )
-
-    def test_change_update_settings(self):
-        wf_module = self.tab.wf_modules.create(
-            module_version=self.module_version,
-            last_relevant_delta_id=self.delta.id,
-            order=0,
-            auto_update_data=False,
-            next_update=None,
-            update_interval=600
-        )
-
-        # do
-        mydate = timezone.now()
-        cmd = async_to_sync(ChangeWfModuleUpdateSettingsCommand.create)(
-            wf_module,
-            True,
-            mydate,
-            1000
-        )
-        self.assertTrue(wf_module.auto_update_data)
-        self.assertEqual(wf_module.next_update, mydate)
-        self.assertEqual(wf_module.update_interval, 1000)
-        wf_module.refresh_from_db()
-        self.assertTrue(wf_module.auto_update_data)
-        self.assertEqual(wf_module.next_update, mydate)
-        self.assertEqual(wf_module.update_interval, 1000)
-
-        # undo
-        async_to_sync(cmd.backward)()
-        self.assertFalse(wf_module.auto_update_data)
-        self.assertEqual(wf_module.next_update, None)
-        self.assertEqual(wf_module.update_interval, 600)
-        wf_module.refresh_from_db()
-        self.assertFalse(wf_module.auto_update_data)
-        self.assertEqual(wf_module.next_update, None)
-        self.assertEqual(wf_module.update_interval, 600)
-
-        # redo
-        async_to_sync(cmd.forward)()
-        self.assertTrue(wf_module.auto_update_data)
-        self.assertEqual(wf_module.next_update, mydate)
-        self.assertEqual(wf_module.update_interval, 1000)
-        wf_module.refresh_from_db()
-        self.assertTrue(wf_module.auto_update_data)
-        self.assertEqual(wf_module.next_update, mydate)
-        self.assertEqual(wf_module.update_interval, 1000)
