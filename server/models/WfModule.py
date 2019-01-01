@@ -64,6 +64,8 @@ class WfModule(models.Model):
         null=True  # goes null if referenced Module deleted
     )
 
+    module_id_name = models.CharField(max_length=200, null=True)
+
     order = models.IntegerField()
 
     notes = models.TextField(
@@ -128,10 +130,18 @@ class WfModule(models.Model):
     secrets = JSONField(default={})
 
     def get_module_name(self):
-        if self.module_version is not None:
+        if self.module_id_name is not None:
+            return self.module_id_name
+        elif self.module_version is not None:
             return self.module_version.module.name
         else:
             return 'Missing module'  # deleted from server
+
+    def save(self, *args, **kwargs):
+        if self.module_id_name is None and self.module_version is not None:
+            self.module_id_name = self.module_version.id_name
+
+        return super().save(*args, **kwargs)
 
     @property
     def output_status(self):
