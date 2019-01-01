@@ -268,6 +268,7 @@ class WfModule(models.Model):
         new_wfm = WfModule(
             tab=to_tab,
             module_version=self.module_version,
+            module_id_name=self.module_id_name,
             fetch_error=self.fetch_error,
             stored_data_version=self.stored_data_version,
             order=self.order,
