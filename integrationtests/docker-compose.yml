@@ -17,6 +17,9 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.7.8
+    environment:
+      # Use just one CPU
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   migrate:
     #image:
