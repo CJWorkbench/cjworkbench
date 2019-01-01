@@ -8,6 +8,8 @@ export default class UndoRedoButtons extends React.PureComponent {
   }
 
   onDocumentKeyDown = (ev) => {
+    const { undo, redo } = this.props
+
     // Ignore keypresses when they're users inputting into things.
     //
     // Custom components that want to eat keydowns should
@@ -26,8 +28,14 @@ export default class UndoRedoButtons extends React.PureComponent {
 
     if (ev.metaKey || ev.ctrlKey) {  // Meta on OS X, Ctrl on Windows
       switch (ev.key) {
-        case 'z': return this.props.undo()
-        case 'y': return this.props.redo()
+        case 'z':
+          return undo()
+        case 'Z':
+          // Mac OS standard for "redo" is Meta+Shift+z
+          return redo()
+        case 'y':
+          // Windows/Linux standard for "redo" is Meta+y
+          return redo()
       }
     }
   }
