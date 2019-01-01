@@ -10,12 +10,13 @@ import sys
 import time
 import traceback
 from types import ModuleType
-from typing import Awaitable, Callable, Optional
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 from channels.db import database_sync_to_async
 from django.conf import settings
 from django.contrib.auth.models import User
 import pandas as pd
 from .module_version import ModuleVersion
+from .ParameterSpec import ParameterSpec
 from .Params import Params
 from ..modules.types import ProcessResult
 from ..modules.countbydate import CountByDate
@@ -42,12 +43,6 @@ from ..modules.concaturl import ConcatURL
 logger = logging.getLogger(__name__)
 
 
-def _double_M_col(params, table, **kwargs):
-    table = table.copy()
-    table['M'] *= 2
-    return table
-
-
 MockModule = namedtuple('MockModule', ['render'])
 
 
@@ -71,11 +66,54 @@ StaticModules = {
     'duplicate-column': DuplicateColumn,
     'joinurl': JoinURL,
     'concaturl': ConcatURL,
-
-    # For testing. FIXME nix these
-    'NOP': MockModule(lambda params, table, **kwargs: table),
-    'double_M_col': MockModule(_double_M_col),
 }
+
+
+def _validate_params(specs: List[ParameterSpec],
+                     values: Dict[str, Any]) -> None:
+    """Raise ValueError if `values` has wrong types."""
+    seen_keys = set()
+    for spec in specs:
+        id_name = spec.id_name
+        if spec.type == 'secret':
+            continue
+        try:
+            value = values[id_name]
+        except KeyError:
+            raise ValueError(f"migrate_params() did not return '{id_name}")
+
+        if not isinstance(value, type(spec.coerce_value(value))):
+            raise ValueError(
+                f"migrate_params() gave wrong type for '{id_name}'"
+            )
+
+        seen_keys.add(id_name)
+
+    extra_keys = values.keys() - seen_keys
+    if extra_keys:
+        raise ValueError(
+            f"migrate_params() gave extra key '{next(iter(extra_keys))}'"
+        )
+
+
+def _coerce_params(specs: List[ParameterSpec],
+                   values: Dict[str, Any]) -> None:
+    ret = {}
+
+    for spec in specs:
+        id_name = spec.id_name
+        if spec.type == 'secret':
+            continue
+        try:
+            value = values[id_name]
+        except KeyError:
+            value = spec.str_to_value(spec.def_value)
+
+        value = spec.coerce_value(value)
+
+        ret[id_name] = value
+
+    return ret
 
 
 def _default_render(param1, param2,
@@ -124,14 +162,16 @@ class LoadedModule:
     """
     def __init__(self, module_id_name: str, version_sha1: str,
                  is_external: bool=True,
-                 render_impl: Optional[Callable]=_default_render,
-                 fetch_impl: Optional[Callable]=_default_fetch):
+                 render_impl: Callable=_default_render,
+                 fetch_impl: Callable=_default_fetch,
+                 migrate_params_impl: Optional[Callable]=None):
         self.module_id_name = module_id_name
         self.version_sha1 = version_sha1
         self.is_external = is_external
         self.name = f'{module_id_name}:{version_sha1}'
         self.render_impl = render_impl
         self.fetch_impl = fetch_impl
+        self.migrate_params_impl = migrate_params_impl
 
     def _wrap_exception(self, err) -> ProcessResult:
         """Coerce an Exception (must be on the stack) into a ProcessResult."""
@@ -292,6 +332,19 @@ class LoadedModule:
         """
         return cls.for_module_version_sync(module_version)
 
+    def migrate_params(self, specs: List[ParameterSpec],
+                       values: Dict[str, Any]) -> Dict[str, Any]:
+        if self.migrate_params_impl is not None:
+            try:
+                values = self.migrate_params_impl(values)
+            except Exception as err:
+                raise ValueError(err)
+
+            _validate_params(specs, values)
+            return values
+        else:
+            return _coerce_params(specs, values)
+
     @classmethod
     def for_module_version_sync(
         cls,
@@ -317,7 +370,7 @@ class LoadedModule:
         if module_version is None:
             return DeletedModule()
 
-        module_id_name = module_version.module.id_name  # TODO DoesNotExist
+        module_id_name = module_version.id_name  # TODO DoesNotExist
         version_sha1 = module_version.source_version_hash
 
         try:

@@ -90,7 +90,7 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         )
 
         await save.save_result_if_changed(workflow_id, wf_module, result)
-    except Exception as e:
+    except Exception:
         # Log exceptions but keep going
         logger.exception(f'Error fetching {wf_module}')
 

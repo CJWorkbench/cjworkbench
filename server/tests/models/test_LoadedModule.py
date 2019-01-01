@@ -10,7 +10,7 @@ from django.conf import settings
 from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.models import LoadedModule, ModuleVersion, Module
+from server.models import LoadedModule, ModuleVersion, Module, ParameterSpec
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv
@@ -480,3 +480,63 @@ class LoadedModuleTest(SimpleTestCase):
         self.assertEqual(result, ProcessResult(error=(
             f'Ick: Oops at line {lineno + 1} of test_LoadedModule.py'
         )))
+
+    def test_migrate_params_default(self):
+        lm = LoadedModule('x', '1', True, migrate_params_impl=None)
+        result = lm.migrate_params([
+            ParameterSpec(id_name='missing', type='string', def_value='x'),
+            ParameterSpec(id_name='wrong_type', type='checkbox'),
+            ParameterSpec(id_name='ok', type='integer'),
+        ], {
+            'wrong_type': 'true',
+            'ok': 3,
+        })
+        self.assertEqual(result, {'missing': 'x', 'wrong_type': True, 'ok': 3})
+
+    def test_migrate_params_impl(self):
+        def migrate_params(params):
+            return {
+                'x': params['a'],
+                'y': params['b']
+            }
+
+        specs = [
+            ParameterSpec(id_name='x', type='integer'),
+            ParameterSpec(id_name='y', type='integer')
+        ]
+
+        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        result = lm.migrate_params(specs, {'a': 1, 'b': 2})
+        self.assertEqual(result, {'x': 1, 'y': 2})
+
+    def test_migrate_params_impl_exception(self):
+        def migrate_params(params):
+            raise KeyError
+
+        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        with self.assertRaises(ValueError):
+            lm.migrate_params([], {})
+
+    def test_migrate_params_impl_missing_output(self):
+        def migrate_params(params):
+            return {}  # should have 'x' key
+
+        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        with self.assertRaises(ValueError):
+            lm.migrate_params([ParameterSpec(id_name='x', type='string')], {})
+
+    def test_migrate_params_impl_wrong_output_type(self):
+        def migrate_params(params):
+            return {'x': 2}  # should be str
+
+        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        with self.assertRaises(ValueError):
+            lm.migrate_params([ParameterSpec(id_name='x', type='string')], {})
+
+    def test_migrate_params_impl_extra_output(self):
+        def migrate_params(params):
+            return {'x': 'should not be here'}
+
+        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        with self.assertRaises(ValueError):
+            lm.migrate_params([], {})

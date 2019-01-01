@@ -2,8 +2,7 @@ import asyncio
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import pandas as pd
-from server.models import Delta, Module, ModuleVersion, Workflow, WfModule, \
-        ParameterSpec
+from server.models import Delta, ModuleVersion, Workflow, WfModule
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         ChangeDataVersionCommand, ChangeWfModuleNotesCommand, \
         InitWorkflowCommand
@@ -15,6 +14,14 @@ async def async_noop(*args, **kwargs):
 
 future_none = asyncio.Future()
 future_none.set_result(None)
+
+
+class MockLoadedModule:
+    def __init__(self, *args):
+        pass
+
+    def migrate_params(self, specs, values):
+        return values
 
 
 class CommandTestCase(DbTestCase):
@@ -119,6 +126,8 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
     def test_add_module_default_params(self):
         workflow = Workflow.create_and_init()
         module_version = ModuleVersion.create_or_replace_from_spec({
@@ -132,12 +141,6 @@ class AddDeleteModuleCommandTests(CommandTestCase):
                 {'id_name': 'c', 'type': 'checkbox', 'default': True},
             ],
         }, source_version_hash='1.0')
-        module_version.parameter_specs.create(id_name='a', def_value='x',
-                                              type=ParameterSpec.STRING)
-        module_version.parameter_specs.create(id_name='b', def_value='2',
-                                              type=ParameterSpec.MENU)
-        module_version.parameter_specs.create(id_name='c', def_value='True',
-                                              type=ParameterSpec.CHECKBOX)
 
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,

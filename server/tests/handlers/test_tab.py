@@ -15,7 +15,17 @@ def noop(*args, **kwargs):
     pass
 
 
+class MockLoadedModule:
+    def __init__(self, *args):
+        pass
+
+    def migrate_params(self, specs, values):
+        return values
+
+
 class TabTest(HandlerTestCase):
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
     @patch('server.utils.log_user_event_from_scope', noop)
