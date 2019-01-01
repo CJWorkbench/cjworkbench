@@ -20,7 +20,7 @@ def _sanitize_multicolumn_param(value, table_cols):
 
 class Params:
     """
-    Easy lookup methods for ParameterVals.
+    Easy lookup methods for ParameterSpecs.
 
     These lookups are guaranteed to not result in any database queries as long
     as you supply ParmeterVals with `parameter_spec` prefetched. You won't need
@@ -28,8 +28,10 @@ class Params:
 
     To initialize:
 
-        vals = self.parameter_vals.prefetch_related('parameter_spec').all()
-        params = Params.from_parameter_vals(vals)
+        specs = wf_module.parameter_specs.all()
+        values = { 'param1': 1, 'param2': 'something', ... }
+        secrets = { 'secret1': { 'name': '@adamhooper', 'secret': ... } }
+        params = Params(specs, values, secrets)
 
     The accessor names here are all legacy. They could benefit from a redesign.
     """
@@ -41,58 +43,9 @@ class Params:
         self.values = values
         self.secrets = secrets
 
-    @classmethod
-    def from_parameter_vals(cls, specs: List[ParameterSpec],
-                            old_vals: Dict[str, str],
-                            override_params: Dict[str, Any],
-                            override_secrets: Dict[str, Any]) -> 'Params':
-        """
-        DEPRECATED. We'd win by nixing Parameter(Val|Spec) DB models.
-
-        https://www.pivotaltracker.com/story/show/162704742
-        """
-        values = {}
-        secrets = {}
-
-        for spec in specs:
-            name = spec.id_name
-
-            if spec.type == ParameterSpec.SECRET:
-                if override_secrets is not None:
-                    try:
-                        secret = override_secrets[name]
-                    except KeyError:
-                        continue  # we want no secret, not even the key
-                else:
-                    try:
-                        secret = old_vals[name]
-                    except KeyError:
-                        # [adamhooper, 2018-12-28] this should only occur on my
-                        # dev machine.
-                        continue  # we want no secret, not even the key
-
-                if secret:
-                    secrets[name] = json.loads(secret)
-                else:
-                    secrets[name] = None
-            else:
-                if override_params is not None:
-                    value = override_params[name]
-                else:
-                    try:
-                        value = spec.str_to_value(old_vals[name])
-                    except KeyError:
-                        # [adamhooper, 2018-12-28] this should only occur on my
-                        # dev machine.
-                        value = spec.str_to_value(spec.def_value)
-
-                values[name] = value
-
-        return cls(specs, values, secrets)
-
     def get_param_typed(self, name, expected_type):
         """
-        Return ParameterVal value, with a typecheck.
+        Return ParameterSpec value, with a typecheck.
 
         Raise ValueError if expected type is wrong.
 
@@ -110,7 +63,7 @@ class Params:
 
     def get_param(self, name) -> Any:
         """
-        Return ParameterVal value, of the parameter's type.
+        Return ParameterSpec value, of the parameter's type.
 
         Raise KeyError on invalid parameter.
         """

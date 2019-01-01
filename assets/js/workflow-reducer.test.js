@@ -282,7 +282,7 @@ describe('Reducer actions', () => {
       updateWfModules: { '10': { foo: 'bar' } }
     }))
     expect(state.wfModules['10'].foo).toEqual('bar') // new property
-    expect(state.wfModules['10'].parameter_vals).toBe(testState.wfModules['10'].parameter_vals) // old property
+    expect(state.wfModules['10'].params).toBe(testState.wfModules['10'].params) // old property
     expect(state.wfModules['20']).toBe(testState.wfModules['20']) // old WfModule
     expect(state.wfModules).not.toBe(testState.wfModules) // immutable
   })
