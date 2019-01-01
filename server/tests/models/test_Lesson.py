@@ -93,6 +93,10 @@ class LessonManagerTests(SimpleTestCase):
         with self.assertRaises(Lesson.DoesNotExist):
             self.build_manager().get('nonexistent-slug')
 
+    def test_get_hidden(self):
+        result = self.build_manager().get('hidden-slug')
+        self.assertEquals(result.title, 'Hidden Lesson')
+
     def test_all(self):
         out = self.build_manager().all()
         self.assertEquals(out, [

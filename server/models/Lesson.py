@@ -1,10 +1,11 @@
-from django.conf import settings
 from io import StringIO
-import pathlib
-from xml.etree import ElementTree
-import html5lib
 import json
 import os.path
+import pathlib
+from typing import List
+from xml.etree import ElementTree
+from django.conf import settings
+import html5lib
 
 
 def _build_inner_html(el):
@@ -31,23 +32,41 @@ class LessonManager:
     def __init__(self, path):
         self.path = path
 
-    def get(self, slug):
+    def _get(self, slug, path) -> 'Lesson':
+        """
+        Parse the lesson at `path` or raises FileNotFoundError.
+        """
+        with open(path, 'r', encoding='utf-8') as f:
+            return Lesson.parse(slug, f.read())
+
+    def get(self, slug) -> 'Lesson':
+        """
+        Find and load the lesson `slug`.
+
+        Raise Lesson.DoesNotExist() on invalid slug.
+        """
         path = os.path.join(self.path, slug + '.html')
         try:
-            with open(path, 'r', encoding='utf-8') as f:
-                return Lesson.parse(slug, f.read())
+            return self._get(slug, path)
         except FileNotFoundError:
-            raise Lesson.DoesNotExist()
+            # Maybe it's in the hidden/ directory? That's where we put lessons
+            # that we won't list in self.all().
+            hidden_path = os.path.join(self.path, 'hidden', slug + '.html')
+            try:
+                return self._get(slug, hidden_path)
+            except FileNotFoundError:
+                raise Lesson.DoesNotExist()
 
-    def all(self):
+    def all(self) -> List['Lesson']:
         """
-        The list (not a QuerySet!) of all lessons, ordered alphabetically.
+        List non-hidden lessons, sorted alphabetically.
         """
         ret = []
 
         for html_path in pathlib.Path(self.path).glob('*.html'):
             slug = html_path.stem
-            ret.append(self.get(slug))
+            if slug[0] != '_':
+                ret.append(self.get(slug))
 
         ret.sort(key=lambda lesson: lesson.header.title)
 
