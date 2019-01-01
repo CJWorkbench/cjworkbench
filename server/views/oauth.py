@@ -39,15 +39,18 @@ def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
         .live_in_workflow(workflow)
         .get(pk=wf_module_id)
     )
+
+    # raise ParameterSpec.DoesNotExist if ModuleVersion was deleted
+    module_version = wf_module.module_version
+    if module_version is None:
+        raise ParameterSpec.DoesNotExist
+
     # raises ParameterSpec.DoesNotExist
-    #
-    # This ParameterSpec formulation will raise ParameterSpec.DoesNotExist even
-    # if wf_module.module_version_id is None.
-    ParameterSpec.objects.get(
-        module_version_id=wf_module.module_version_id,
+    module_version.parameter_specs.get(
         type=ParameterSpec.SECRET,
         id_name=param
     )
+
     return wf_module
 
 

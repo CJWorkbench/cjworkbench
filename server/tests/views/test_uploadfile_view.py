@@ -35,7 +35,7 @@ class UploadFileViewTests(LoggedInTestCase):
             )
         self.wfm = self.workflow.tabs.first().wf_modules.create(
             order=0,
-            module_version=module_version
+            module_id_name=module_version.id_name
         )
         self.factory = APIRequestFactory()
 

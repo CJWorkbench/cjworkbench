@@ -83,9 +83,23 @@ def validate_module_spec(spec):
         raise ValidationError(messages)
 
 
+class ModuleVersionManager(models.Manager):
+    def latest(self, module_id_name):
+        try:
+            return (
+                self.get_queryset()
+                .filter(module__id_name=module_id_name)
+                .order_by('-last_update_time')
+            )[0]
+        except IndexError:
+            raise ModuleVersion.DoesNotExist
+
+
 class ModuleVersion(models.Model):
     class Meta:
         ordering = ['last_update_time']
+
+    objects = ModuleVersionManager()
 
     # which version of this module are we currently at (based on the source)?
     source_version_hash = models.CharField('source_version_hash',

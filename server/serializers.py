@@ -83,6 +83,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
     quick_fixes = serializers.SerializerMethodField()
+    module = serializers.SerializerMethodField()
 
     # update interval handling is a little tricky as we need to convert seconds
     # to count+units
@@ -102,6 +103,9 @@ class WfModuleSerializer(serializers.ModelSerializer):
         versions = wfm.list_fetched_data_versions()
         current_version = wfm.stored_data_version
         return {'versions': versions, 'selected': current_version}
+
+    def get_module(self, wfm):
+        return wfm.module_id_name
 
     def get_cached_render_result_data(self, wfm):
         cached_result = wfm.get_cached_render_result()

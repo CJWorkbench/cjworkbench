@@ -66,7 +66,7 @@ class UndoRedoTests(DbTestCase):
     # Command types used here are arbitrary, but different so that we test
     # polymorphism
     def test_undo_redo(self):
-        csv = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'pastecsv',
             'name': 'pastecsv',
             'category': 'Cat',
@@ -93,7 +93,7 @@ class UndoRedoTests(DbTestCase):
         cmd1 = self._run_async(AddModuleCommand.create(
             workflow=workflow,
             tab=tab,
-            module_version=csv,
+            module_id_name='pastecsv',
             position=0,
             param_values={}
         ))
