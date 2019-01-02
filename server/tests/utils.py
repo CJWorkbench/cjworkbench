@@ -105,7 +105,6 @@ _Tables = [
     'server_initworkflowcommand',
     'server_delta',
     'server_moduleversion',
-    'server_parameterspec',
     'server_storedobject',
     'server_uploadedfile',
     'server_wfmodule',

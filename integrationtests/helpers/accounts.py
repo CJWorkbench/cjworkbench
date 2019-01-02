@@ -119,13 +119,6 @@ class AccountAdmin:
         _clear_db_sql = f"""
             WITH
             f{', '.join([f't{i} AS (DELETE FROM {table})' for i, table in enumerate(_Tables)])},
-            dps AS (
-                DELETE FROM server_parameterspec
-                WHERE module_version_id NOT IN (
-                    SELECT id FROM server_moduleversion
-                    WHERE source_version_hash = '1.0'
-                )
-            ),
             dmv AS (
                 DELETE FROM server_moduleversion
                 WHERE source_version_hash <> '1.0'

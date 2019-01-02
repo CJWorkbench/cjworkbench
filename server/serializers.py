@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
 from server.models import AclEntry, Workflow, WfModule, \
-        ParameterSpec, ModuleVersion, StoredObject, Tab
+        ModuleVersion, StoredObject, Tab
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
 

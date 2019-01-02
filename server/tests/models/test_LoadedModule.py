@@ -11,7 +11,7 @@ from django.conf import settings
 from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.models import LoadedModule, ParameterSpec
+from server.models import LoadedModule
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv
@@ -525,7 +525,6 @@ class LoadedModuleTest(SimpleTestCase):
                 ParamDTypeDict({'x': ParamDTypeString()}),
                 {}  # should have 'x' key
             )
-            lm.migrate_params([ParameterSpec(id_name='x', type='string')], {})
 
     def test_migrate_params_impl_wrong_output_type(self):
         lm = LoadedModule('x', '1', True, migrate_params_impl=lambda x: x)

@@ -1,8 +1,6 @@
 from django.contrib import admin
-from .models import ParameterSpec, ModuleVersion, WfModule, StoredObject, \
-        Delta, Workflow
+from .models import ModuleVersion, WfModule, StoredObject, Delta, Workflow
 
-admin.site.register(ParameterSpec)
 admin.site.register(ModuleVersion)
 admin.site.register(WfModule)
 admin.site.register(StoredObject)

@@ -5,7 +5,6 @@ from .Workflow import Workflow
 from .Lesson import Lesson
 from .WfModule import WfModule
 from .Tab import Tab
-from .ParameterSpec import ParameterSpec
 from .Params import Params
 from .module_version import ModuleVersion
 from .Delta import Delta
