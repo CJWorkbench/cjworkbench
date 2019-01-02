@@ -116,15 +116,7 @@ class ModuleVersion(models.Model):
         on_delete=models.CASCADE
     )
 
-    # Does this module provide an html file for additional output?
-    html_output = models.BooleanField('html_output', default=False)
-
-    spec = JSONField('spec', null=True, validators=[validate_module_spec])
-
-    def save(self, *args, **kwargs):
-        # TODO nix html_output field and nix this (once spec is NOT NULL)
-        self.html_output = self.spec.get('html_output', False)
-        super().save(*args, **kwargs)
+    spec = JSONField('spec', validators=[validate_module_spec])
 
     @staticmethod
     def create_or_replace_from_spec(spec, *, source_version_hash='',
@@ -202,80 +194,51 @@ class ModuleVersion(models.Model):
     # not exist at all). `ModuleVersion` is the only user-visible thing.
     @property
     def id_name(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.id_name
-
         return self.spec['id_name']
 
     @property
     def name(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.name
-
         return self.spec['name']
 
     @property
     def category(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.category
-
         return self.spec['category']
 
     @property
     def description(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.description
-
         return self.spec.get('description', '')
 
     @property
     def author(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.author
-
         return self.spec.get('author', 'Workbench')
 
     @property
     def link(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.link
-
         return self.spec.get('link', '')
 
     @property
     def icon(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.icon
-
         return self.spec.get('icon', 'url')
 
     @property
     def loads_data(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.loads_data
-
         return self.spec.get('loads_data', False)
 
     @property
     def has_zen_mode(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.has_zen_mode
-
         return self.spec.get('has_zen_mode', False)
 
     @property
     def help_url(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.help_url
-
         return self.spec.get('help_url', '')
 
     @property
     def row_action_menu_entry_title(self):
-        if not self.spec:  # TODO nix this case
-            return self.module.row_action_menu_entry_title
-
         return self.spec.get('row_action_menu_entry_title', '')
+
+    @property
+    def html_output(self):
+        return self.spec.get('html_output', False)
 
     @property
     def js_module(self):

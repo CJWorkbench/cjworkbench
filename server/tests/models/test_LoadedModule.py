@@ -1,4 +1,5 @@
 import asyncio
+from collections import namedtuple
 import inspect
 import logging
 import os.path
@@ -10,11 +11,15 @@ from django.conf import settings
 from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.models import LoadedModule, ModuleVersion, Module, ParameterSpec
+from server.models import LoadedModule, Module, ParameterSpec
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv
 from server.tests.modules.util import MockParams
+
+
+MockModuleVersion = namedtuple('MockModuleVersion', ('id_name',
+                                                     'source_version_hash'))
 
 
 def call_fetch(loaded_module, params, workflow_id=1, input_dataframe=None,
@@ -85,8 +90,7 @@ class LoadedModuleTest(SimpleTestCase):
     def test_load_static(self):
         # Test with a _real_ static module
         lm = LoadedModule.for_module_version_sync(
-            ModuleVersion(module=Module(id_name='pastecsv'),
-                          source_version_hash='(ignored)')
+            MockModuleVersion('pastecsv', '(ignored)')
         )
         self.assertEqual(lm.name, 'pastecsv:internal')
         self.assertEqual(lm.is_external, False)
@@ -106,8 +110,7 @@ class LoadedModuleTest(SimpleTestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                ModuleVersion(module=Module(id_name='imported'),
-                              source_version_hash='abcdef')
+                MockModuleVersion('imported', 'abcdef')
             )
 
         self.assertEqual(lm.name, 'imported:abcdef')
@@ -137,14 +140,12 @@ class LoadedModuleTest(SimpleTestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                ModuleVersion(module=Module(id_name='imported'),
-                              source_version_hash='abcdef')
+                MockModuleVersion('imported', 'abcdef')
             )
 
         with patch('importlib.util.module_from_spec', None):
             lm2 = LoadedModule.for_module_version_sync(
-                ModuleVersion(module=Module(id_name='imported'),
-                              source_version_hash='abcdef')
+                MockModuleVersion('imported', 'abcdef')
             )
 
         self.assertIs(lm.render_impl, lm2.render_impl)

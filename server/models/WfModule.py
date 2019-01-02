@@ -57,7 +57,7 @@ class WfModule(models.Model):
         on_delete=models.CASCADE
     )
 
-    module_id_name = models.CharField(max_length=200, null=True, default='')
+    module_id_name = models.CharField(max_length=200, default='')
 
     order = models.IntegerField()
 
