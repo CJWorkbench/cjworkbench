@@ -299,7 +299,6 @@ class ImportFromGitHubTest(DbTestCase):
         with self.assertRaises(ValidationError):
             import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
 
-
     # We will do a reload of same version if force_reload==True
     def test_load_twice_force_relaod(self):
         test_dir = self.fake_github_clone()
@@ -311,7 +310,6 @@ class ImportFromGitHubTest(DbTestCase):
 
         # should replace existing module_version, not add a new one
         self.assertEqual(ModuleVersion.objects.filter(module__id_name=self.importable_id_name).count(), 1)
-
 
     # all exsting wf_modules should get bumped to new version when we import a new version of the module
     def test_updates_module_version(self):
@@ -325,7 +323,7 @@ class ImportFromGitHubTest(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wfm = tab.wf_modules.create(
-            module_version=module_version,
+            module_id_name=self.importable_id_name,
             order=1,
             params=module_version.get_default_params()
         )
@@ -335,8 +333,7 @@ class ImportFromGitHubTest(DbTestCase):
         import_module_from_directory("https://test_url_of_test_module", "importable", "222222", test_dir)
         self.assertEqual(module_version_q.count(), 2)
 
-        # should have updated the wfm to newly imported version
-        wfm.refresh_from_db()
+        # should be able to update wfm to newly imported version
         self.assertEqual(wfm.module_version.source_version_hash, "222222")
 
 
@@ -369,7 +366,7 @@ class ImportFromGitHubTest(DbTestCase):
             tab = workflow.tabs.create(position=0)
             wfm = tab.wf_modules.create(
                 order=0,
-                module_version=module_version,
+                module_id_name=self.importable_id_name,
                 params=module_version.get_default_params()
             )
 

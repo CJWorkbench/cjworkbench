@@ -54,9 +54,6 @@ class AddDeleteModuleCommandTests(CommandTestCase):
                 {'id_name': 'url', 'type': 'string'},
             ],
         }, source_version_hash='1.0')
-        self.module_version.parameter_specs.create(id_name='url',
-                                                   type='string',
-                                                   order=0, def_value='')
 
         self.delta = InitWorkflowCommand.create(self.workflow)
 
@@ -78,7 +75,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={'url': 'https://x.com'}
         )
@@ -145,7 +142,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=workflow.tabs.first(),
-            module_version=module_version,
+            module_id_name=module_version.id_name,
             position=0,
             param_values={}
         )
@@ -174,7 +171,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd1 = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={}
         )
@@ -189,7 +186,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd2 = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=2,
             param_values={}
         )
@@ -202,7 +199,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd3 = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=2,
             param_values={}
         )
@@ -297,7 +294,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={}
         )
@@ -328,7 +325,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=1,
             param_values={}
         )
@@ -347,7 +344,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmda = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={}
         )
@@ -360,7 +357,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={}
         )
@@ -369,7 +366,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={}
         )
@@ -384,7 +381,7 @@ class AddDeleteModuleCommandTests(CommandTestCase):
         cmd = async_to_sync(AddModuleCommand.create)(
             workflow=self.workflow,
             tab=self.workflow.tabs.first(),
-            module_version=self.module_version,
+            module_id_name=self.module_version.id_name,
             position=0,
             param_values={}
         )

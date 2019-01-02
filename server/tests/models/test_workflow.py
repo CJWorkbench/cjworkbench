@@ -1,9 +1,10 @@
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
-from server.models import Workflow
+from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand, AddModuleCommand, \
         ChangeWorkflowTitleCommand
+from server.models.loaded_module import LoadedModule
 from server.tests.utils import DbTestCase
 
 
@@ -45,7 +46,7 @@ class WorkflowTests(DbTestCase):
         # Create workflow with two WfModules
         wf1 = Workflow.create_and_init(name='Foo')
         tab = wf1.tabs.first()
-        tab.wf_modules.create(order=0)
+        tab.wf_modules.create(order=0, module_id_name='x')
 
         wf2 = wf1.duplicate(self.bob)
 
@@ -109,6 +110,8 @@ class WorkflowTests(DbTestCase):
 
     @patch('server.rabbitmq.queue_render', async_noop)
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           lambda *args: LoadedModule('', ''))
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name='A')
         tab = workflow.tabs.create(position=0)
@@ -116,8 +119,14 @@ class WorkflowTests(DbTestCase):
             workflow=workflow,
             new_value='B'
         )
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x',
+            'name': 'x',
+            'category': 'x',
+            'parameters': [],
+        })
         async_to_sync(AddModuleCommand.create)(workflow=workflow, tab=tab,
-                                               module_version=None, position=0,
+                                               module_id_name='x', position=0,
                                                param_values={})
         async_to_sync(ChangeWorkflowTitleCommand.create)(
             workflow=workflow,

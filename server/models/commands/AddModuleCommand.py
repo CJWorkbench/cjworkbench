@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import F
-from server.models import Delta, WfModule
+from server.models import Delta, ModuleVersion, WfModule
 from .util import ChangesWfModuleOutputs
 
 
@@ -121,13 +121,14 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             self.wf_module.delete()
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow, tab, module_version,
+    def amend_create_kwargs(cls, *, workflow, tab, module_id_name,
                             position, param_values, **kwargs):
-        if module_version is None:
-            # This is common in unit tests.
-            default_params = {}
-        else:
+        try:
+            module_version = ModuleVersion.objects.latest(module_id_name)
             default_params = module_version.get_default_params()
+        except ModuleVersion.DoesNotExist:
+            # No need to add a module here
+            return None
 
         # Set _all_ params (not just the user-specified ones). This is so if
         # you ever upgrade a module, the _new_ code will get the _old_ default
@@ -138,7 +139,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         }
 
         # wf_module starts off "deleted" and gets un-deleted in forward().
-        wf_module = tab.wf_modules.create(module_version=module_version,
+        wf_module = tab.wf_modules.create(module_id_name=module_id_name,
                                           order=position, is_deleted=True,
                                           params=params, secrets={})
 

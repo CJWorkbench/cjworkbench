@@ -12,7 +12,7 @@ class OauthTest(DbTestCase):
         lookup.return_value.generate_redirect_url_and_state.side_effect = \
             oauth.TokenRequestDenied('no!', {})
 
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'twitter',
             'name': '',
             'category': '',
@@ -27,7 +27,7 @@ class OauthTest(DbTestCase):
         workflow = Workflow.objects.create(owner=user)
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
-            module_version=module_version,
+            module_id_name='twitter',
             order=0,
             params={},
             secrets={'auth': None}

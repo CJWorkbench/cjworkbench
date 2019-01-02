@@ -71,7 +71,7 @@ async def add_module(scope, workflow: Workflow, tab: Tab,
     })
 
     await AddModuleCommand.create(workflow=workflow, tab=tab,
-                                  module_version=module_version,
+                                  module_id_name=module.id_name,
                                   position=position,
                                   param_values=paramValues)
 

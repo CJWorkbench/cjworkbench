@@ -18,7 +18,7 @@ class OutputDelta:
         self.user = workflow.owner
         self.workflow_name = workflow.name
         self.wf_module_id = wf_module.id
-        self.module_name = wf_module.get_module_name()
+        self.module_name = wf_module.module_id_name
         self.workflow_url = get_absolute_url(workflow.get_absolute_url())
         self.old_result = old_result
         self.new_result = new_result

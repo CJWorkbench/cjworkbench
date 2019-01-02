@@ -315,7 +315,7 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(email='write@example.org')
         workflow = Workflow.create_and_init(public=True)
         workflow.acl.create(email=user.email, can_edit=True)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -324,7 +324,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0
         )
 
@@ -340,7 +340,7 @@ class WfModuleTest(HandlerTestCase):
     def test_generate_secret_access_token_no_value_gives_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -349,7 +349,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': None}
         )
@@ -365,7 +365,7 @@ class WfModuleTest(HandlerTestCase):
     def test_generate_secret_access_token_wrong_param_type_gives_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -374,7 +374,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             params={'s': '{"name":"a","secret":"hello"}'}
         )
@@ -389,7 +389,7 @@ class WfModuleTest(HandlerTestCase):
     def test_generate_secret_access_token_wrong_param_name_gives_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -398,7 +398,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )
@@ -416,7 +416,7 @@ class WfModuleTest(HandlerTestCase):
     def test_generate_secret_access_token_no_service_gives_error(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -425,7 +425,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )
@@ -449,7 +449,7 @@ class WfModuleTest(HandlerTestCase):
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -458,7 +458,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )
@@ -482,7 +482,7 @@ class WfModuleTest(HandlerTestCase):
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -491,7 +491,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )
@@ -506,7 +506,7 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(email='write@example.org')
         workflow = Workflow.create_and_init(public=True)
         workflow.acl.create(email=user.email, can_edit=True)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -515,7 +515,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )
@@ -529,7 +529,7 @@ class WfModuleTest(HandlerTestCase):
     def test_delete_secret_ignore_non_secret(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -538,7 +538,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             params={'foo': 'bar'},
             secrets={}
@@ -559,7 +559,7 @@ class WfModuleTest(HandlerTestCase):
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
             'category': 'g',
@@ -568,7 +568,7 @@ class WfModuleTest(HandlerTestCase):
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_version=module_version,
+            module_id_name='g',
             order=0,
             secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )

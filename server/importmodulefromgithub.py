@@ -342,21 +342,6 @@ def import_module_from_directory(url, reponame, version, importdir,
         # clean-up
         shutil.rmtree(importdir)
 
-        if force_reload:
-            server.models.loaded_module.load_external_module.cache_clear()
-
-        # For now, our policy is to update all wfmodules to this just-imported
-        # version.
-        #
-        # We don't touch cached render results. The only race that could hit us
-        # is if another process already had a `WfModule` loaded and will
-        # neglect to supply an `update_fields` parameter to its `.save()`.
-        # Shame on that other process.
-        WfModule.objects \
-            .filter(module_version__module_id=module_version.module_id) \
-            .exclude(module_version_id=module_version.id) \
-            .update(module_version_id=module_version.id)
-
         return module_version
     except Exception:
         # On exception, clean up and raise

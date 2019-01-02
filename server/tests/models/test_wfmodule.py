@@ -1,5 +1,5 @@
 import pandas as pd
-from server.models import Workflow
+from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, mock_csv_table, mock_csv_table2
 
@@ -170,3 +170,27 @@ class WfModuleTests(DbTestCase):
         wf_module2 = wf_module.duplicate(tab2)
 
         self.assertEqual(wf_module2.secrets, {})
+
+    def test_module_version_lookup(self):
+        workflow = Workflow.create_and_init()
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'floob',
+            'name': 'Floob',
+            'category': 'Flib',
+            'parameters': []
+        })
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='floob'
+        )
+        self.assertEqual(wf_module.module_version, module_version)
+        # white-box testing: test that we work even from cache
+        self.assertEqual(wf_module.module_version, module_version)
+
+    def test_module_version_missing(self):
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='floob'
+        )
+        self.assertIsNone(wf_module.module_version)

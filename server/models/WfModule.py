@@ -57,14 +57,7 @@ class WfModule(models.Model):
         on_delete=models.CASCADE
     )
 
-    module_version = models.ForeignKey(
-        ModuleVersion,
-        related_name='wf_modules',
-        on_delete=models.SET_NULL,
-        null=True  # goes null if referenced Module deleted
-    )
-
-    module_id_name = models.CharField(max_length=200, null=True)
+    module_id_name = models.CharField(max_length=200, null=True, default='')
 
     order = models.IntegerField()
 
@@ -129,19 +122,17 @@ class WfModule(models.Model):
     params = JSONField(default={})
     secrets = JSONField(default={})
 
-    def get_module_name(self):
-        if self.module_id_name is not None:
-            return self.module_id_name
-        elif self.module_version is not None:
-            return self.module_version.module.name
-        else:
-            return 'Missing module'  # deleted from server
+    @property
+    def module_version(self):
+        if not hasattr(self, '_module_version'):
+            try:
+                self._module_version = ModuleVersion.objects.latest(
+                    self.module_id_name
+                )
+            except ModuleVersion.DoesNotExist:
+                self._module_version = None
 
-    def save(self, *args, **kwargs):
-        if self.module_id_name is None and self.module_version is not None:
-            self.module_id_name = self.module_version.id_name
-
-        return super().save(*args, **kwargs)
+        return self._module_version
 
     @property
     def output_status(self):
@@ -164,13 +155,6 @@ class WfModule(models.Model):
             return ''
         else:
             return self.cached_render_result_error
-
-    @property
-    def module(self):
-        if self.module_version and self.module_version.module:
-            return self.module_version.module.id_name
-        else:
-            return None
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
@@ -267,7 +251,6 @@ class WfModule(models.Model):
         # Initialize but don't save
         new_wfm = WfModule(
             tab=to_tab,
-            module_version=self.module_version,
             module_id_name=self.module_id_name,
             fetch_error=self.fetch_error,
             stored_data_version=self.stored_data_version,

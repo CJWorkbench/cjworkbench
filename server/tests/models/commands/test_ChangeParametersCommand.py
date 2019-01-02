@@ -21,7 +21,7 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0)
 
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
             'category': 'Test',
@@ -32,7 +32,7 @@ class ChangeParametersCommandTest(DbTestCase):
             ]
         })
         wf_module = tab.wf_modules.create(
-            module_version=module_version,
+            module_id_name='loadurl',
             order=0,
             last_relevant_delta_id=delta.id,
             params={
@@ -77,7 +77,7 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0)
 
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
             'category': 'Test',
@@ -88,7 +88,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
         wf_module = tab.wf_modules.create(
             order=0,
-            module_version=module_version,
+            module_id_name='loadurl',
             last_relevant_delta_id=delta.id,
             is_deleted=True,
             params={'url': ''}
@@ -106,7 +106,7 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0, is_deleted=True)
 
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
             'category': 'Test',
@@ -117,7 +117,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
         wf_module = tab.wf_modules.create(
             order=0,
-            module_version=module_version,
+            module_id_name='loadurl',
             last_relevant_delta_id=delta.id,
             params={'url': ''}
         )
@@ -134,7 +134,7 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0)
 
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
             'category': 'Test',
@@ -145,7 +145,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
         wf_module = tab.wf_modules.create(
             order=0,
-            module_version=module_version,
+            module_id_name='loadurl',
             last_relevant_delta_id=delta.id,
             params={'url': ''}
         )

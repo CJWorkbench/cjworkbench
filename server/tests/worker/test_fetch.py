@@ -117,9 +117,10 @@ class FetchTests(DbTestCase):
         Return result.
         """
         if wf_module.module_version is None:
-            # ModuleVersion=None is the special-case "module was deleted." That
-            # isn't what we're testing here.
-            wf_module.module_version = ModuleVersion(module=Module())
+            # White-box: we aren't testing what happens in the (valid) case
+            # that a ModuleVersion has been deleted while in use. Pretend it's
+            # there.
+            wf_module._module_version = ModuleVersion(module=Module())
 
         try:
             workflow_id = wf_module.workflow_id
@@ -147,7 +148,7 @@ class FetchTests(DbTestCase):
     def test_fetch_get_params(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        module_version = ModuleVersion.create_or_replace_from_spec({
+        ModuleVersion.create_or_replace_from_spec({
             'id_name': 'x',
             'name': 'x',
             'category': 'x',
@@ -155,8 +156,7 @@ class FetchTests(DbTestCase):
                 {'id_name': 'foo', 'type': 'string'}
             ]
         })
-        wf_module = tab.wf_modules.create(order=0,
-                                          module_version=module_version,
+        wf_module = tab.wf_modules.create(order=0, module_id_name='x',
                                           params={'foo': 'bar'})
 
         async def fetch(params, **kwargs):
