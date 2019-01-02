@@ -11,10 +11,9 @@ import json
 import jsonschema
 import yaml
 from django.contrib.postgres.fields import JSONField
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import F, OuterRef, Subquery
-from django.core.exceptions import ValidationError
-from .Module import Module
 
 
 _SpecPath = os.path.join(os.path.dirname(__file__), 'module_spec_schema.yaml')
@@ -124,13 +123,7 @@ class ModuleVersion(models.Model):
     source_version_hash = models.CharField(max_length=200, default='1.0')
 
     # time this module was last updated
-    last_update_time = models.DateTimeField(auto_now_add=True)
-
-    module = models.ForeignKey(
-        'Module',
-        related_name='module_versions',
-        on_delete=models.CASCADE
-    )
+    last_update_time = models.DateTimeField(auto_now=True)
 
     spec = JSONField('spec', validators=[validate_module_spec])
 
@@ -144,36 +137,12 @@ class ModuleVersion(models.Model):
         from .ParameterSpec import ParameterSpec
 
         with transaction.atomic():
-            module, _ = Module.objects.update_or_create(
+            module_version, _ = ModuleVersion.objects.update_or_create(
                 id_name=id_name,
-                defaults={
-                    'name': spec.get('name', ''),
-                    'category': spec.get('category', ''),
-                    'dispatch': '',  # TODO nix (unused) dispatch
-                    'source': spec.get('source', ''),
-                    'description': spec.get('description', ''),
-                    # TODO (unused) author
-                    'author': spec.get('author', 'Workbench'),
-                    'link': spec.get('link', ''),
-                    'icon': spec.get('icon', 'url'),
-                    'loads_data': spec.get('loads_data', False),
-                    'has_zen_mode': spec.get('has_zen_mode', False),
-                    'help_url': spec.get('help_url', ''),
-                    'row_action_menu_entry_title': spec.get(
-                        'row_action_menu_entry_title',
-                        ''
-                    ),
-                    'js_module': js_module
-                }
-            )
-
-            module_version, _ = module.module_versions.update_or_create(
-                id_name=id_name,
-                module=module,
                 source_version_hash=source_version_hash,
                 defaults={
                     'spec': spec,
-                    'js_module': js_module
+                    'js_module': js_module,
                 }
             )
 

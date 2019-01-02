@@ -11,7 +11,7 @@ from django.conf import settings
 from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.models import LoadedModule, Module, ParameterSpec
+from server.models import LoadedModule, ParameterSpec
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv

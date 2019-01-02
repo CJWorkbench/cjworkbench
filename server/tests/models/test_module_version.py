@@ -158,7 +158,6 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'x', 'name': 'x', 'category': 'x', 'parameters': []
         }, source_version_hash='b')
         self.assertNotEqual(mv1.id, mv2.id)
-        self.assertEqual(mv1.module_id, mv2.module_id)
 
     def test_create_new_module(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
@@ -168,7 +167,7 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'y', 'name': 'x', 'category': 'x', 'parameters': []
         }, source_version_hash='a')
         self.assertNotEqual(mv1.id, mv2.id)
-        self.assertNotEqual(mv1.module_id, mv2.module_id)
+        # even though source_version_hash is the same
 
     def test_create_overwrite_version(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({

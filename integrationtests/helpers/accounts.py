@@ -129,8 +129,7 @@ class AccountAdmin:
             dmv AS (
                 DELETE FROM server_moduleversion
                 WHERE source_version_hash <> '1.0'
-            ),
-            dm AS (DELETE FROM server_module WHERE author <> 'Workbench')
+            )
             SELECT 1
         """
         self._sql(_clear_db_sql)

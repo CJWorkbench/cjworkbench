@@ -104,7 +104,6 @@ _Tables = [
     'server_settabnamecommand',
     'server_initworkflowcommand',
     'server_delta',
-    'server_module',
     'server_moduleversion',
     'server_parameterspec',
     'server_storedobject',
