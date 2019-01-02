@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from server.modules.reorder import ReorderFromTable
+from server.modules.reordercolumns import ReorderFromTable
 from server.modules.types import ProcessResult
 from .util import MockParams
 

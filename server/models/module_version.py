@@ -84,11 +84,11 @@ def validate_module_spec(spec):
 
 
 class ModuleVersionManager(models.Manager):
-    def latest(self, module_id_name):
+    def latest(self, id_name):
         try:
             return (
                 self.get_queryset()
-                .filter(module__id_name=module_id_name)
+                .filter(id_name=id_name)
                 .order_by('-last_update_time')
             )[0]
         except IndexError:
@@ -99,16 +99,17 @@ class ModuleVersion(models.Model):
     class Meta:
         ordering = ['last_update_time']
 
+        unique_together = ('id_name', 'last_update_time')
+
     objects = ModuleVersionManager()
 
+    id_name = models.CharField(max_length=200)
+
     # which version of this module are we currently at (based on the source)?
-    source_version_hash = models.CharField('source_version_hash',
-                                           max_length=200, default='1.0')
+    source_version_hash = models.CharField(max_length=200, default='1.0')
 
     # time this module was last updated
-    # null for the core (read internal) modules.
-    last_update_time = models.DateTimeField('last_update_time', null=True,
-                                            auto_now_add=True)
+    last_update_time = models.DateTimeField(auto_now_add=True)
 
     module = models.ForeignKey(
         'Module',
@@ -150,6 +151,7 @@ class ModuleVersion(models.Model):
             )
 
             module_version, _ = module.module_versions.update_or_create(
+                id_name=id_name,
                 module=module,
                 source_version_hash=source_version_hash,
                 defaults={
@@ -186,15 +188,6 @@ class ModuleVersion(models.Model):
                 param_spec.save()
 
             return module_version
-
-    # Shortcut properties so we can duck-type ModuleVersion and make it look
-    # exactly like a Module.
-    #
-    # Really, this is inverted: `Module` should have no properties (or, heck,
-    # not exist at all). `ModuleVersion` is the only user-visible thing.
-    @property
-    def id_name(self):
-        return self.spec['id_name']
 
     @property
     def name(self):

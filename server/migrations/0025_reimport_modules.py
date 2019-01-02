@@ -27,7 +27,7 @@ def reimport_module(apps, module):
     if latest.source_version_hash == '1.0':
         # It's an internal module.
         path = join(dirname(dirname(dirname(__file__))), 'server', 'modules',
-                    module.id_name + '.json')
+                    module.id_name.replace('-', '') + '.json')
     else:
         # It's an external module.
         dirpath = join(dirname(dirname(dirname(__file__))), 'importedmodules',
