@@ -1,6 +1,6 @@
 import pandas as pd
 import unittest
-from server.modules.rename import RenameFromTable
+from server.modules.renamecolumns import RenameFromTable
 from server.modules.types import ProcessResult
 from .util import MockParams
 

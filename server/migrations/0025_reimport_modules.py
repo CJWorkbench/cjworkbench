@@ -13,7 +13,6 @@ def reimport_module(apps, module):
     from server.models.module_version import validate_module_spec
 
     ModuleVersion = apps.get_model('server', 'ModuleVersion')
-    WfModule = apps.get_model('server', 'WfModule')
 
     versions = list(
         module.module_versions.order_by('-last_update_time').all()
@@ -28,7 +27,7 @@ def reimport_module(apps, module):
     if latest.source_version_hash == '1.0':
         # It's an internal module.
         path = join(dirname(dirname(dirname(__file__))), 'server', 'modules',
-                    module.id_name + '.json')
+                    module.id_name.replace('-', '') + '.json')
     else:
         # It's an external module.
         dirpath = join(dirname(dirname(dirname(__file__))), 'importedmodules',
@@ -45,8 +44,8 @@ def reimport_module(apps, module):
     # 2. Delete all non-`latest` versions
     obsolete_ids = [mv.id for mv in obsolete]
     ModuleVersion.objects \
-            .filter(id__in=obsolete_ids) \
-            .delete()
+        .filter(id__in=obsolete_ids) \
+        .delete()
 
 
 def reimport_modules(apps, schema_editor):

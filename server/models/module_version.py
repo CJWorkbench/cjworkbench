@@ -12,6 +12,7 @@ import jsonschema
 import yaml
 from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
+from django.db.models import F, OuterRef, Subquery
 from django.core.exceptions import ValidationError
 from .Module import Module
 
@@ -84,11 +85,25 @@ def validate_module_spec(spec):
 
 
 class ModuleVersionManager(models.Manager):
-    def latest(self, module_id_name):
+    def all_latest(self):
+        # https://docs.djangoproject.com/en/1.11/ref/models/expressions/#subquery-expressions
+        latest = (
+            self.get_queryset()
+            .filter(id_name=OuterRef('id_name'))
+            .order_by('-last_update_time')
+            .values('id')
+        )[:1]
+        return (
+            self.get_queryset()
+            .annotate(_latest=Subquery(latest))
+            .filter(id=F('_latest'))
+        )
+
+    def latest(self, id_name):
         try:
             return (
                 self.get_queryset()
-                .filter(module__id_name=module_id_name)
+                .filter(id_name=id_name)
                 .order_by('-last_update_time')
             )[0]
         except IndexError:
@@ -99,16 +114,17 @@ class ModuleVersion(models.Model):
     class Meta:
         ordering = ['last_update_time']
 
+        unique_together = ('id_name', 'last_update_time')
+
     objects = ModuleVersionManager()
 
+    id_name = models.CharField(max_length=200)
+
     # which version of this module are we currently at (based on the source)?
-    source_version_hash = models.CharField('source_version_hash',
-                                           max_length=200, default='1.0')
+    source_version_hash = models.CharField(max_length=200, default='1.0')
 
     # time this module was last updated
-    # null for the core (read internal) modules.
-    last_update_time = models.DateTimeField('last_update_time', null=True,
-                                            auto_now_add=True)
+    last_update_time = models.DateTimeField(auto_now_add=True)
 
     module = models.ForeignKey(
         'Module',
@@ -117,6 +133,8 @@ class ModuleVersion(models.Model):
     )
 
     spec = JSONField('spec', validators=[validate_module_spec])
+
+    js_module = models.TextField('js_module', default='')
 
     @staticmethod
     def create_or_replace_from_spec(spec, *, source_version_hash='',
@@ -150,10 +168,12 @@ class ModuleVersion(models.Model):
             )
 
             module_version, _ = module.module_versions.update_or_create(
+                id_name=id_name,
                 module=module,
                 source_version_hash=source_version_hash,
                 defaults={
                     'spec': spec,
+                    'js_module': js_module
                 }
             )
 
@@ -186,15 +206,6 @@ class ModuleVersion(models.Model):
                 param_spec.save()
 
             return module_version
-
-    # Shortcut properties so we can duck-type ModuleVersion and make it look
-    # exactly like a Module.
-    #
-    # Really, this is inverted: `Module` should have no properties (or, heck,
-    # not exist at all). `ModuleVersion` is the only user-visible thing.
-    @property
-    def id_name(self):
-        return self.spec['id_name']
 
     @property
     def name(self):
@@ -239,12 +250,6 @@ class ModuleVersion(models.Model):
     @property
     def html_output(self):
         return self.spec.get('html_output', False)
-
-    @property
-    def js_module(self):
-        # TODO migrate module.js_module to module_version.js_module, then nix
-        # this getter entirely
-        return self.module.js_module
 
     def get_default_params(self):
         # TODO use self.spec instead of table data

@@ -33,8 +33,8 @@ from ..modules.refine import Refine
 from ..modules.urlscraper import URLScraper
 from ..modules.scrapetable import ScrapeTable
 from ..modules.sortfromtable import SortFromTable
-from ..modules.reorder import ReorderFromTable
-from ..modules.rename import RenameFromTable
+from ..modules.reordercolumns import ReorderFromTable
+from ..modules.renamecolumns import RenameFromTable
 from ..modules.duplicatecolumn import DuplicateColumn
 from ..modules.joinurl import JoinURL
 from ..modules.concaturl import ConcatURL

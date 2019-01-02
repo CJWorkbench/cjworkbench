@@ -144,11 +144,11 @@ def _get_anonymous_workflow_for(workflow: Workflow,
 
 def visible_modules(request):
     """Build a QuerySet of all ModuleVersions the user may use."""
-    queryset = ModuleVersion.objects.all().select_related('module')
+    queryset = ModuleVersion.objects.all_latest()
 
     if not request.user.is_authenticated:
         # pythoncode is too obviously insecure
-        queryset = queryset.exclude(module__id_name='pythoncode')
+        queryset = queryset.exclude(id_name='pythoncode')
 
     queryset = queryset.prefetch_related('parameter_specs')
 

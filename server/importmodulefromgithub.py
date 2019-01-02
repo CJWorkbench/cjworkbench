@@ -8,9 +8,8 @@ from django.forms import URLField
 from django.core.exceptions import ValidationError
 import git
 from git.exc import GitCommandError
-from server.models import Module, ModuleVersion, WfModule
+from server.models import ModuleVersion
 from server.models.module_version import validate_module_spec
-import server.models.loaded_module
 
 
 logger = logging.getLogger(__name__)
@@ -19,15 +18,6 @@ logger = logging.getLogger(__name__)
 # Categories allowed for modules. If not in this list, will be assigned "Other"
 def get_categories():
     return ['Add data', 'Scrape', 'Clean', 'Analyze', 'Code', 'Visualize']
-
-
-# Returns dict of {id_name: url} for existing Module objects
-def get_already_imported_module_urls():
-    already_imported = dict()
-    modules = Module.objects.all()
-    for module in modules:
-        already_imported[module.id_name] = module.link
-    return already_imported
 
 
 def sanitise_url(url):
@@ -289,25 +279,28 @@ def import_module_from_directory(url, reponame, version, importdir,
 
         # Don't allow importing the same version twice, unless forced
         if not force_reload:
-            if ModuleVersion.objects.filter(module__id_name=id_name,
-                                            source_version_hash=version):
+            try:
+                ModuleVersion.objects.get(id_name=id_name,
+                                          source_version_hash=version)
                 raise ValidationError(
-                    f'Version {version} of module {url}'
+                    f'Version {version} of module {id_name}'
                     ' has already been imported'
                 )
+            except ModuleVersion.DoesNotExist:
+                # this is what we want
+                pass
 
         # Don't allow loading a module with the same id_name from a different
         # repo. Prevents replacement attacks.
-        module_urls = get_already_imported_module_urls()
-        if module_config["id_name"] in module_urls \
-           and url != module_urls[module_config["id_name"]]:
-            source = module_urls[module_config["id_name"]]
-            if source == '':
-                source = "Internal"
-            raise ValidationError(
-                f"Module {module_config['id_name']} has already been loaded"
-                f' from a different repo: {source}'
-            )
+        try:
+            latest_existing = ModuleVersion.objects.latest(id_name)
+            if url != latest_existing.link:
+                raise ValidationError(
+                    f'Module {id_name} has already been loaded '
+                    f'from a different repo: {latest_existing.link}'
+                )
+        except ModuleVersion.DoesNotExist:
+            pass  # it hasn't been loaded from _anywhere_ yet
 
         module_config['link'] = url
         if 'author' not in module_config:
