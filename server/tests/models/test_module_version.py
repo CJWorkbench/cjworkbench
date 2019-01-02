@@ -1,5 +1,6 @@
 import unittest
 from server.models.module_version import ModuleVersion, validate_module_spec
+from server.models.param_field import ParamDType
 from django.core.exceptions import ValidationError
 from server.tests.utils import DbTestCase
 
@@ -122,6 +123,46 @@ class ModuleVersionTest(DbTestCase):
         self.assertEqual(mv.category, 'Cat')
         self.assertEqual(mv.link, 'http://foo.com')
         self.assertEqual(mv.help_url, 'a/b/c')
+
+    def test_param_schema_implicit(self):
+        mv = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string', 'default': 'X'},
+                {'id_name': 'bar', 'type': 'secret'},
+                {'id_name': 'baz', 'type': 'menu', 'menu_items': 'a|b|c',
+                 'default': 2},
+            ]
+        }, source_version_hash='1.0')
+
+        self.assertEqual(repr(mv.param_schema), repr(ParamDType.Dict({
+            'foo': ParamDType.String(default='X'),
+            'baz': ParamDType.Enum(choices={0, 1, 2}, default=2),
+        })))
+
+    def test_param_schema_explicit(self):
+        mv = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'parameters': [
+                {'id_name': 'whee', 'type': 'custom'}
+            ],
+            'param_schema': {
+                'id_name': {
+                    'type': 'dict',
+                    'properties': {
+                        'x': {'type': 'integer'},
+                        'y': {'type': 'string', 'default': 'X'},
+                    },
+                },
+            },
+        }, source_version_hash='1.0')
+
+        self.assertEqual(repr(mv.param_schema), repr(ParamDType.Dict({
+            'id_name': ParamDType.Dict({
+                'x': ParamDType.Integer(),
+                'y': ParamDType.String(default='X'),
+            }),
+        })))
 
     def test_default_params(self):
         mv = ModuleVersion.create_or_replace_from_spec({

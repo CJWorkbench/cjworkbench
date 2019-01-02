@@ -41,6 +41,20 @@ class ParamDType:
         # default implementation: no-op. Most dtypes aren't nested or columnar
         return value
 
+    @classmethod
+    def _from_plain_data(cls, **kwargs):
+        return cls(**kwargs)
+
+    @classmethod
+    def parse(cls, json_value):
+        json_type = json_value['type']
+        dtype = cls.JsonTypeToDType[json_type]
+
+        kwargs = {**json_value}
+        del kwargs['type']
+
+        return dtype._from_plain_data(**kwargs)
+
 
 class ParamDTypeString(ParamDType):
     def __init__(self, default=''):
@@ -97,6 +111,12 @@ class ParamDTypeFloat(ParamDType):
     def validate(self, value):
         if not isinstance(value, float):
             raise ValueError('Value %r is not a float', value)
+
+    @classmethod
+    def _from_plain_data(cls, default=0.0):
+        # JSON won't differentiate between int and float
+        default = float(default)
+        return cls(default=default)
 
 
 class ParamDTypeBoolean(ParamDType):
@@ -196,6 +216,11 @@ class ParamDTypeList(ParamDType):
         return [self.inner_dtype.omit_missing_table_columns(v, columns)
                 for v in value]
 
+    @classmethod
+    def _from_plain_data(cls, *, inner_dtype, **kwargs):
+        inner_dtype = cls.parse(inner_dtype)
+        return cls(inner_dtype=inner_dtype, **kwargs)
+
 
 class ParamDTypeDict(ParamDType):
     def __init__(self, properties: Dict[str, ParamDType], default=None):
@@ -235,6 +260,11 @@ class ParamDTypeDict(ParamDType):
             for k, v in value.items()
         )
 
+    @classmethod
+    def _from_plain_data(cls, *, properties, **kwargs):
+        properties = dict((k, cls.parse(v)) for k, v in properties.items())
+        return cls(properties=properties, **kwargs)
+
 
 # Aliases to help with import. e.g.:
 # from server.models.param_field import ParamDType
@@ -248,6 +278,18 @@ ParamDType.List = ParamDTypeList
 ParamDType.Dict = ParamDTypeDict
 ParamDType.Column = ParamDTypeColumn
 ParamDType.Multicolumn = ParamDTypeMulticolumn
+
+ParamDType.JsonTypeToDType = {
+    'string': ParamDTypeString,
+    'integer': ParamDTypeInteger,
+    'float': ParamDTypeFloat,
+    'boolean': ParamDTypeBoolean,
+    'enum': ParamDTypeEnum,
+    'list': ParamDTypeList,
+    'dict': ParamDTypeDict,
+    'column': ParamDTypeColumn,
+    'multicolumn': ParamDTypeMulticolumn,
+}
 
 
 class ParamField:

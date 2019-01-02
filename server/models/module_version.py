@@ -13,7 +13,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, OuterRef, Subquery
-from .param_field import ParamField, ParamDTypeDict
+from .param_field import ParamField, ParamDType
 
 
 _SpecPath = os.path.join(os.path.dirname(__file__), 'module_spec_schema.yaml')
@@ -195,9 +195,17 @@ class ModuleVersion(models.Model):
 
     @property
     def param_schema(self):
-        return ParamDTypeDict(dict((f.id_name, f.dtype)
-                                   for f in self.param_fields
-                                   if f.dtype is not None))
+        try:
+            json_schema = self.spec['param_schema']
+        except KeyError:
+            return ParamDType.Dict(dict((f.id_name, f.dtype)
+                                        for f in self.param_fields
+                                        if f.dtype is not None))
+
+        return ParamDType.parse({
+            'type': 'dict',
+            'properties': json_schema
+        })
 
     @property
     def default_params(self):
