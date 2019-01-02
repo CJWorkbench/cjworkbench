@@ -12,6 +12,7 @@ import jsonschema
 import yaml
 from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
+from django.db.models import F, OuterRef, Subquery
 from django.core.exceptions import ValidationError
 from .Module import Module
 
@@ -84,6 +85,20 @@ def validate_module_spec(spec):
 
 
 class ModuleVersionManager(models.Manager):
+    def all_latest(self):
+        # https://docs.djangoproject.com/en/1.11/ref/models/expressions/#subquery-expressions
+        latest = (
+            self.get_queryset()
+            .filter(id_name=OuterRef('id_name'))
+            .order_by('-last_update_time')
+            .values('id')
+        )[:1]
+        return (
+            self.get_queryset()
+            .annotate(_latest=Subquery(latest))
+            .filter(id=F('_latest'))
+        )
+
     def latest(self, id_name):
         try:
             return (

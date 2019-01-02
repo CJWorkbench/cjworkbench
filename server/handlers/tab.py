@@ -21,14 +21,10 @@ def _load_tab(workflow: Workflow, tab_id: int) -> Tab:
 @database_sync_to_async
 def _load_module_version(module_id_name: str) -> Tab:
     """Returns a ModuleVersion or raises HandlerError."""
-    module_version = (ModuleVersion.objects
-                      .filter(module__id_name=module_id_name)
-                      .order_by('-last_update_time')
-                      .first())
-    if module_version is None:
+    try:
+        return ModuleVersion.objects.latest(module_id_name)
+    except ModuleVersion.DoesNotExist:
         raise HandlerError('DoesNotExist: ModuleVersion not found')
-    else:
-        return module_version
 
 
 def _loading_tab(func):
@@ -61,17 +57,19 @@ async def add_module(scope, workflow: Workflow, tab: Tab,
         raise HandlerError('BadRequest: position must be a Number')
 
     # don't allow python code module in anonymous workflow
-    module = module_version.module
-    if module.id_name == 'pythoncode' and workflow.is_anonymous:
+    if module_version.id_name == 'pythoncode' and workflow.is_anonymous:
         return None
 
-    server.utils.log_user_event_from_scope(scope, f'ADD STEP {module.name}', {
-        'name': module.name,
-        'id_name': module.id_name
-    })
+    server.utils.log_user_event_from_scope(
+        scope,
+        f'ADD STEP {module_version.name}', {
+            'name': module_version.name,
+            'id_name': module_version.id_name
+        }
+    )
 
     await AddModuleCommand.create(workflow=workflow, tab=tab,
-                                  module_id_name=module.id_name,
+                                  module_id_name=module_version.id_name,
                                   position=position,
                                   param_values=paramValues)
 

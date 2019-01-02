@@ -16,14 +16,6 @@ from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
 
 
-# Patch get_already_imported from importmodulefromgithub
-def overriden_get_already_imported():
-    return {
-        "accio": "www.github.com/something",
-        "lumos": ""
-    }
-
-
 class ImportFromGitHubTest(DbTestCase):
     def setUp(self):
         super().setUp()
@@ -190,11 +182,7 @@ class ImportFromGitHubTest(DbTestCase):
              'but the function returned {}.'.format('427847c', version))
         )
 
-    @patch(
-        'server.importmodulefromgithub.get_already_imported_module_urls',
-        side_effect=overriden_get_already_imported
-    )
-    def test_validate_json(self, get_already_imported_function):
+    def test_validate_json(self):
         test_dir = self.fake_github_clone()
 
         # ensure we get a ValidationError if the mapping doesn't have a json
@@ -303,19 +291,19 @@ class ImportFromGitHubTest(DbTestCase):
     def test_load_twice_force_relaod(self):
         test_dir = self.fake_github_clone()
         import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
-        self.assertEqual(ModuleVersion.objects.filter(module__id_name=self.importable_id_name).count(), 1)
+        self.assertEqual(ModuleVersion.objects.filter(id_name=self.importable_id_name).count(), 1)
 
         test_dir = self.fake_github_clone() # import moves files, so get same files again
         import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir, force_reload=True)
 
         # should replace existing module_version, not add a new one
-        self.assertEqual(ModuleVersion.objects.filter(module__id_name=self.importable_id_name).count(), 1)
+        self.assertEqual(ModuleVersion.objects.filter(id_name=self.importable_id_name).count(), 1)
 
     # all exsting wf_modules should get bumped to new version when we import a new version of the module
     def test_updates_module_version(self):
         test_dir = self.fake_github_clone()
         import_module_from_directory("https://test_url_of_test_module", "importable", "111111", test_dir)
-        module_version_q = ModuleVersion.objects.filter(module__id_name=self.importable_id_name)
+        module_version_q = ModuleVersion.objects.filter(id_name=self.importable_id_name)
         self.assertEqual(module_version_q.count(), 1)
 
         # Create a test workflow that uses this imported module
@@ -356,10 +344,9 @@ class ImportFromGitHubTest(DbTestCase):
             import_module_from_directory('https://github.com/account/reponame',
                                          'reponame', '123456', test_dir)
 
-            # Module and ModuleVersion should have loaded -- these will raise
-            # exception if they don't exist
-            module = Module.objects.get(id_name=self.importable_id_name)
-            module_version = ModuleVersion.objects.get(module=module)
+            # ModuleVersion should have loaded -- raise exception if not
+            module_version = ModuleVersion.objects \
+                .latest(id_name=self.importable_id_name)
 
             # Create a test workflow that uses this imported module
             workflow = Workflow.objects.create()
