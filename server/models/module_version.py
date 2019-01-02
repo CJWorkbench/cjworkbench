@@ -134,6 +134,8 @@ class ModuleVersion(models.Model):
 
     spec = JSONField('spec', validators=[validate_module_spec])
 
+    js_module = models.TextField('js_module', default='')
+
     @staticmethod
     def create_or_replace_from_spec(spec, *, source_version_hash='',
                                     js_module='') -> 'ModuleVersion':
@@ -171,6 +173,7 @@ class ModuleVersion(models.Model):
                 source_version_hash=source_version_hash,
                 defaults={
                     'spec': spec,
+                    'js_module': js_module
                 }
             )
 
@@ -247,12 +250,6 @@ class ModuleVersion(models.Model):
     @property
     def html_output(self):
         return self.spec.get('html_output', False)
-
-    @property
-    def js_module(self):
-        # TODO migrate module.js_module to module_version.js_module, then nix
-        # this getter entirely
-        return self.module.js_module
 
     def get_default_params(self):
         # TODO use self.spec instead of table data
