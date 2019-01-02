@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL([
             """
             UPDATE server_moduleversion
-            SET id_name = spec -> 'id_name'
+            SET id_name = spec ->> 'id_name'
             """,
             """
             UPDATE server_moduleversion
