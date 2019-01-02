@@ -125,7 +125,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
                             position, param_values, **kwargs):
         try:
             module_version = ModuleVersion.objects.latest(module_id_name)
-            default_params = module_version.get_default_params()
         except ModuleVersion.DoesNotExist:
             # No need to add a module here
             return None
@@ -134,7 +133,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         # you ever upgrade a module, the _new_ code will get the _old_ default
         # values -- keeping the user's intent intact.
         params = {
-            **default_params,
+            **module_version.default_params,
             **param_values,
         }
 

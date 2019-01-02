@@ -3,10 +3,8 @@ from .AclEntry import AclEntry
 from .CachedRenderResult import CachedRenderResult
 from .Workflow import Workflow
 from .Lesson import Lesson
-from .Module import Module
 from .WfModule import WfModule
 from .Tab import Tab
-from .ParameterSpec import ParameterSpec
 from .Params import Params
 from .module_version import ModuleVersion
 from .Delta import Delta

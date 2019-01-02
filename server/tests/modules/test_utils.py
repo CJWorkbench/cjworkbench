@@ -9,7 +9,7 @@ import pandas as pd
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
-from server.models import Workflow, Module, ModuleVersion
+from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase

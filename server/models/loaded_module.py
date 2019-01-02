@@ -10,14 +10,14 @@ import sys
 import time
 import traceback
 from types import ModuleType
-from typing import Any, Awaitable, Callable, Dict, List, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional
 from channels.db import database_sync_to_async
 from django.conf import settings
 from django.contrib.auth.models import User
 import pandas as pd
 from .module_version import ModuleVersion
-from .ParameterSpec import ParameterSpec
 from .Params import Params
+from .param_field import ParamDTypeDict
 from ..modules.types import ProcessResult
 from ..modules.countbydate import CountByDate
 from ..modules.formula import Formula
@@ -67,53 +67,6 @@ StaticModules = {
     'joinurl': JoinURL,
     'concaturl': ConcatURL,
 }
-
-
-def _validate_params(specs: List[ParameterSpec],
-                     values: Dict[str, Any]) -> None:
-    """Raise ValueError if `values` has wrong types."""
-    seen_keys = set()
-    for spec in specs:
-        id_name = spec.id_name
-        if spec.type == 'secret':
-            continue
-        try:
-            value = values[id_name]
-        except KeyError:
-            raise ValueError(f"migrate_params() did not return '{id_name}")
-
-        if not isinstance(value, type(spec.coerce_value(value))):
-            raise ValueError(
-                f"migrate_params() gave wrong type for '{id_name}'"
-            )
-
-        seen_keys.add(id_name)
-
-    extra_keys = values.keys() - seen_keys
-    if extra_keys:
-        raise ValueError(
-            f"migrate_params() gave extra key '{next(iter(extra_keys))}'"
-        )
-
-
-def _coerce_params(specs: List[ParameterSpec],
-                   values: Dict[str, Any]) -> None:
-    ret = {}
-
-    for spec in specs:
-        id_name = spec.id_name
-        if spec.type == 'secret':
-            continue
-        try:
-            value = values[id_name]
-        except KeyError:
-            value = spec.str_to_value(spec.def_value)
-
-        value = spec.coerce_value(value)
-
-        ret[id_name] = value
-
-    return ret
 
 
 def _default_render(param1, param2,
@@ -332,7 +285,7 @@ class LoadedModule:
         """
         return cls.for_module_version_sync(module_version)
 
-    def migrate_params(self, specs: List[ParameterSpec],
+    def migrate_params(self, schema: ParamDTypeDict,
                        values: Dict[str, Any]) -> Dict[str, Any]:
         if self.migrate_params_impl is not None:
             try:
@@ -340,10 +293,15 @@ class LoadedModule:
             except Exception as err:
                 raise ValueError(err)
 
-            _validate_params(specs, values)
+            try:
+                schema.validate(values)
+            except ValueError as err:
+                raise ValueError('migrate_params() gave bad output: %s',
+                                 str(err))
+
             return values
         else:
-            return _coerce_params(specs, values)
+            return schema.coerce(values)
 
     @classmethod
     def for_module_version_sync(
@@ -437,7 +395,7 @@ if settings.CACHE_MODULES:
 
 
 def module_get_html_path(module_version: ModuleVersion) -> Optional[str]:
-    module_id_name = module_version.module.id_name
+    module_id_name = module_version.id_name
     version_sha1 = module_version.source_version_hash
 
     if module_id_name in StaticModules:

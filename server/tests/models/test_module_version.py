@@ -1,4 +1,3 @@
-import json
 import unittest
 from server.models.module_version import ModuleVersion, validate_module_spec
 from django.core.exceptions import ValidationError
@@ -124,20 +123,7 @@ class ModuleVersionTest(DbTestCase):
         self.assertEqual(mv.link, 'http://foo.com')
         self.assertEqual(mv.help_url, 'a/b/c')
 
-    def test_create_parameters(self):
-        mv = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
-            'parameters': [
-                {'id_name': 'foo', 'type': 'string'},
-                {'id_name': 'bar', 'type': 'secret'},
-            ]
-        }, source_version_hash='1.0')
-
-        self.assertEqual([(p.id_name, p.type) for p in
-                          mv.parameter_specs.all()],
-                         [('foo', 'string'), ('bar', 'secret')])
-
-    def test_create_parameter_defaults(self):
+    def test_default_params(self):
         mv = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'x', 'name': 'x', 'category': 'x',
             'parameters': [
@@ -148,7 +134,7 @@ class ModuleVersionTest(DbTestCase):
             ]
         }, source_version_hash='1.0')
 
-        self.assertEqual(mv.get_default_params(), {'foo': 'X', 'baz': 2})
+        self.assertEqual(mv.default_params, {'foo': 'X', 'baz': 2})
 
     def test_create_new_version(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
@@ -158,7 +144,6 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'x', 'name': 'x', 'category': 'x', 'parameters': []
         }, source_version_hash='b')
         self.assertNotEqual(mv1.id, mv2.id)
-        self.assertEqual(mv1.module_id, mv2.module_id)
 
     def test_create_new_module(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
@@ -168,7 +153,7 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'y', 'name': 'x', 'category': 'x', 'parameters': []
         }, source_version_hash='a')
         self.assertNotEqual(mv1.id, mv2.id)
-        self.assertNotEqual(mv1.module_id, mv2.module_id)
+        # even though source_version_hash is the same
 
     def test_create_overwrite_version(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
@@ -180,18 +165,3 @@ class ModuleVersionTest(DbTestCase):
         }, source_version_hash='a')
 
         self.assertEqual(mv1.id, mv2.id)
-        # Test we overwrite parameters, too
-        self.assertEqual(mv1.parameter_specs.count(), 0)
-
-    def test_create_parameter_visible_if(self):
-        mv = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
-            'parameters': [
-                {'id_name': 'a', 'type': 'string'},
-                {'id_name': 'b', 'type': 'string',
-                 'visible_if': {'id_name': 'a', 'value': 'x'}},
-            ]
-        })
-        pspec = list(mv.parameter_specs.all())[1]
-        self.assertEqual(json.loads(pspec.visible_if),
-                         {'id_name': 'a', 'value': 'x'})

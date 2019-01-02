@@ -7,14 +7,13 @@
 # [adamhooper, 2018-12-27] ... and we support zero of those reasons.
 
 import os
-import json
 import jsonschema
 import yaml
 from django.contrib.postgres.fields import JSONField
-from django.db import models, transaction
-from django.db.models import F, OuterRef, Subquery
 from django.core.exceptions import ValidationError
-from .Module import Module
+from django.db import models
+from django.db.models import F, OuterRef, Subquery
+from .param_field import ParamField, ParamDTypeDict
 
 
 _SpecPath = os.path.join(os.path.dirname(__file__), 'module_spec_schema.yaml')
@@ -124,13 +123,7 @@ class ModuleVersion(models.Model):
     source_version_hash = models.CharField(max_length=200, default='1.0')
 
     # time this module was last updated
-    last_update_time = models.DateTimeField(auto_now_add=True)
-
-    module = models.ForeignKey(
-        'Module',
-        related_name='module_versions',
-        on_delete=models.CASCADE
-    )
+    last_update_time = models.DateTimeField(auto_now=True)
 
     spec = JSONField('spec', validators=[validate_module_spec])
 
@@ -140,72 +133,17 @@ class ModuleVersion(models.Model):
     def create_or_replace_from_spec(spec, *, source_version_hash='',
                                     js_module='') -> 'ModuleVersion':
         validate_module_spec(spec)  # raises ValidationError
-        id_name = spec['id_name']
-        from .ParameterSpec import ParameterSpec
 
-        with transaction.atomic():
-            module, _ = Module.objects.update_or_create(
-                id_name=id_name,
-                defaults={
-                    'name': spec.get('name', ''),
-                    'category': spec.get('category', ''),
-                    'dispatch': '',  # TODO nix (unused) dispatch
-                    'source': spec.get('source', ''),
-                    'description': spec.get('description', ''),
-                    # TODO (unused) author
-                    'author': spec.get('author', 'Workbench'),
-                    'link': spec.get('link', ''),
-                    'icon': spec.get('icon', 'url'),
-                    'loads_data': spec.get('loads_data', False),
-                    'has_zen_mode': spec.get('has_zen_mode', False),
-                    'help_url': spec.get('help_url', ''),
-                    'row_action_menu_entry_title': spec.get(
-                        'row_action_menu_entry_title',
-                        ''
-                    ),
-                    'js_module': js_module
-                }
-            )
+        module_version, _ = ModuleVersion.objects.update_or_create(
+            id_name=spec['id_name'],
+            source_version_hash=source_version_hash,
+            defaults={
+                'spec': spec,
+                'js_module': js_module,
+            }
+        )
 
-            module_version, _ = module.module_versions.update_or_create(
-                id_name=id_name,
-                module=module,
-                source_version_hash=source_version_hash,
-                defaults={
-                    'spec': spec,
-                    'js_module': js_module
-                }
-            )
-
-            # Wipe parameter_specs and start again
-            module_version.parameter_specs.all().delete()
-
-            # Build parameter_specs
-            #
-            # TODO do not write parameter_specs to the database. It's
-            # convoluted. Use helpers atop module_version.spec['parameters']
-            # (once module_version.spec IS NOT NULL)
-            for i, param in enumerate(spec['parameters']):
-                param_spec = ParameterSpec(
-                    module_version=module_version,
-                    order=i,
-                    id_name=param['id_name'],
-                    name=param.get('name', ''),
-                    type=param['type'],
-                    items=param.get('menu_items',
-                                    param.get('radio_items', '')),
-                    multiline=param.get('multiline', False),
-                    placeholder=param.get('placeholder', ''),
-                )
-                # now that param_spec.type is set, convert default to str
-                param_spec.def_value = param_spec.value_to_str(
-                    param.get('default', '')
-                )
-                if 'visible_if' in param:
-                    param_spec.visible_if = json.dumps(param['visible_if'])
-                param_spec.save()
-
-            return module_version
+        return module_version
 
     @property
     def name(self):
@@ -251,13 +189,19 @@ class ModuleVersion(models.Model):
     def html_output(self):
         return self.spec.get('html_output', False)
 
-    def get_default_params(self):
-        # TODO use self.spec instead of table data
-        ret = {}
-        for spec in self.parameter_specs.all():
-            if spec.type != 'secret':
-                ret[spec.id_name] = spec.str_to_value(spec.def_value)
-        return ret
+    @property
+    def param_fields(self):
+        return [ParamField.from_dict(d) for d in self.spec['parameters']]
+
+    @property
+    def param_schema(self):
+        return ParamDTypeDict(dict((f.id_name, f.dtype)
+                                   for f in self.param_fields
+                                   if f.dtype is not None))
+
+    @property
+    def default_params(self):
+        return self.param_schema.coerce(None)
 
     def __str__(self):
         return '%s#%s' % (self.id_name, self.source_version_hash)

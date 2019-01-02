@@ -3,14 +3,13 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from unittest.mock import patch
 import pandas as pd
 from server.importmodulefromgithub import sanitise_url, \
         retrieve_project_name, validate_module_structure, \
         get_module_config_from_json, create_destination_directory, \
         add_boilerplate_and_check_syntax, validate_python_functions, \
         extract_version, import_module_from_directory, ValidationError
-from server.models import LoadedModule, Module, ModuleVersion, Workflow
+from server.models import LoadedModule, ModuleVersion, Workflow
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
@@ -313,7 +312,7 @@ class ImportFromGitHubTest(DbTestCase):
         wfm = tab.wf_modules.create(
             module_id_name=self.importable_id_name,
             order=1,
-            params=module_version.get_default_params()
+            params=module_version.default_params
         )
 
         # import "new" version (different version hash)
@@ -354,7 +353,7 @@ class ImportFromGitHubTest(DbTestCase):
             wfm = tab.wf_modules.create(
                 order=0,
                 module_id_name=self.importable_id_name,
-                params=module_version.get_default_params()
+                params=module_version.default_params
             )
 
             # Does it render right?

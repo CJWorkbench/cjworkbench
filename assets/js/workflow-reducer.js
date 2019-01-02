@@ -475,7 +475,7 @@ export function maybeRequestWfModuleFetchAction (wfModuleId) {
     const { workflow, wfModules, modules } = getState()
     const wfModule = wfModules[String(wfModuleId)]
     const module = wfModule.module ? modules[wfModule.module] : null
-    const hasVersionSelect = module ? !!module.parameter_specs.find(ps => ps.id_name === 'version_select') : null
+    const hasVersionSelect = module ? !!module.param_fields.find(ps => ps.id_name === 'version_select') : null
 
     if (!hasVersionSelect) return
 
