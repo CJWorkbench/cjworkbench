@@ -26,19 +26,21 @@ def reimport_module(apps, module):
 
     # 1. Make sure `latest.spec` is non-NULL.
     if latest.source_version_hash == '1.0':
-        # It's an internal module. We've already run initmodules on it 
-        pass
+        # It's an internal module.
+        path = join(dirname(dirname(dirname(__file__))), 'server', 'modules',
+                    module.id_name + '.json')
     else:
-        # It's an external module. Reload it.
+        # It's an external module.
         dirpath = join(dirname(dirname(dirname(__file__))), 'importedmodules',
                        module.id_name, latest.source_version_hash)
         path = glob(join(dirpath, '*.json'))[0]
-        with open(path, 'r', encoding='utf-8') as f:
-            spec = json.load(f)
 
-        validate_module_spec(spec)  # or crash
-        latest.spec = spec
-        latest.save(update_fields=['spec'])
+    with open(path, 'r', encoding='utf-8') as f:
+        spec = json.load(f)
+
+    validate_module_spec(spec)  # or crash
+    latest.spec = spec
+    latest.save(update_fields=['spec'])
 
     # 2. Delete all non-`latest` versions
     obsolete_ids = [mv.id for mv in obsolete]
@@ -48,12 +50,6 @@ def reimport_module(apps, module):
 
 
 def reimport_modules(apps, schema_editor):
-    # Reload internal modules. The `migrate-prod` command already does this,
-    # but it does it _after_ migrations and we want it to run _before_ the rest
-    # of this function.
-    from server import initmodules
-    initmodules.init_modules()
-
     Module = apps.get_model('server', 'Module')
 
     for module in Module.objects.all():
