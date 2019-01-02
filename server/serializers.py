@@ -23,16 +23,19 @@ class StoredObjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# So far, no one actually wants to see the default value.
-class ParameterSpecSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ParameterSpec
-        fields = ('name', 'id_name', 'type', 'multiline', 'placeholder',
-                  'items', 'visible_if')
+class ParamFieldSerializer(serializers.Serializer):
+    id_name = serializers.CharField()
+    type = serializers.CharField(source='ftype')
+    name = serializers.CharField()
+    multiline = serializers.BooleanField()
+    placeholder = serializers.CharField()
+    items = serializers.CharField()
+    visible_if = serializers.JSONField()
+    # So far, no one actually wants to see the default value.
 
 
 class ModuleSerializer(serializers.ModelSerializer):
-    parameter_specs = ParameterSpecSerializer(many=True, read_only=True)
+    param_fields = ParamFieldSerializer(many=True, read_only=True)
     help_url = serializers.SerializerMethodField()
 
     def get_help_url(self, obj):
@@ -44,14 +47,12 @@ class ModuleSerializer(serializers.ModelSerializer):
         return "%s%s" % (KB_ROOT_URL, obj.help_url)
 
     class Meta:
-        # XXX model is _not_ Module! ModuleVersion duck-types Module and has
-        # parameter_specs.
         model = ModuleVersion
 
         fields = ('id_name', 'name', 'category', 'description', 'link',
                   'author', 'icon', 'loads_data', 'help_url', 'has_zen_mode',
                   'row_action_menu_entry_title', 'js_module',
-                  'parameter_specs')
+                  'param_fields')
 
 
 class TabSerializer(serializers.ModelSerializer):

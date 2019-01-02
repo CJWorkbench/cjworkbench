@@ -56,7 +56,7 @@ describe('WfModule, not read-only mode', () => {
     name: 'Load from URL',
     icon: 'icon',
     help_url: 'http://help-url',
-    parameter_specs: [
+    param_fields: [
       pspec('url', 'string'),
       pspec('version_select', 'custom'),
       pspec('menu_select', 'menu', { items: 'Mango|Banana' }),
@@ -64,7 +64,7 @@ describe('WfModule, not read-only mode', () => {
       // used to test nested visibility. Test data set so param 'menu_select' makes this invisible'
       pspec('invisible_by_default', 'menu', {
         'items': 'Strawberry|Durian',
-        'visible_if': '{"id_name": "menu_select", "value": "Mango"}'
+        'visible_if': { id_name: 'menu_select', value: 'Mango' }
       })
     ],
   }
@@ -228,7 +228,7 @@ describe('WfModule, not read-only mode', () => {
     }
     const aModule = {
       ...module,
-      parameter_specs: [ pspec('a', 'string'), pspec('b', 'string') ]
+      param_fields: [ pspec('a', 'string'), pspec('b', 'string') ]
     }
     const w = wrapper({ wfModule, module: aModule })
 
@@ -262,7 +262,7 @@ describe('WfModule, not read-only mode', () => {
     }
     const aModule = {
       ...module,
-      parameter_specs: [ pspec('a', 'string'), pspec('b', 'string') ]
+      param_fields: [ pspec('a', 'string'), pspec('b', 'string') ]
     }
     const w = wrapper({ wfModule, module: aModule })
 
@@ -292,7 +292,7 @@ describe('WfModule, not read-only mode', () => {
     }
     const aModule = {
       ...module,
-      parameter_specs: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
+      param_fields: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
     }
     const w = wrapper({ wfModule, module: aModule })
 
@@ -316,7 +316,7 @@ describe('WfModule, not read-only mode', () => {
     }
     const aModule = {
       ...module,
-      parameter_specs: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
+      param_fields: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
     }
     const w = wrapper({ wfModule, module: aModule })
 
@@ -356,7 +356,7 @@ describe('WfModule, not read-only mode', () => {
           id_name: 'loadurl',
           help_url: '',
           icon: 'icon',
-          parameter_specs: []
+          param_fields: []
         }
       }
     }, mockApi)
@@ -432,7 +432,7 @@ describe('WfModule, not read-only mode', () => {
             name: 'Load from URL',
             help_url: '',
             icon: 'icon',
-            parameter_specs: [ pspec('url', 'string') ]
+            param_fields: [ pspec('url', 'string') ]
           }
         },
         ...action.payload
@@ -511,15 +511,15 @@ describe('WfModule, not read-only mode', () => {
     const insertVisibleIf = (visibleIfTest) => {
       return {
         ...module,
-        parameter_specs: [
-          module.parameter_specs[0],
+        param_fields: [
+          module.param_fields[0],
           {
-            ...module.parameter_specs[1],
+            ...module.param_fields[1],
             visible_if: visibleIfTest
           },
-          module.parameter_specs[2],
-          module.parameter_specs[3],
-          module.parameter_specs[4]
+          module.param_fields[2],
+          module.param_fields[3],
+          module.param_fields[4]
         ]
       }
     }
@@ -530,37 +530,37 @@ describe('WfModule, not read-only mode', () => {
 
     // These tests depend on there being a WfParameter id named menu_select that is set to "Banana"
     it('Conditional parameter visible via menu', () => {
-      const visibleIf = '{"id_name":"menu_select", "value":"Banana"}'
+      const visibleIf = { id_name: 'menu_select', value: 'Banana' }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter not visible via menu', () => {
-      const visibleIf = '{"id_name":"menu_select", "value":"Mango"}'
+      const visibleIf = { id_name: 'menu_select', value: 'Mango' }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter not visible via inverted menu', () => {
-      const visibleIf = '{"id_name":"menu_select", "value":"Banana", "invert":true}'
+      const visibleIf = { id_name: 'menu_select', value: 'Banana', invert: true }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('Conditional parameter visible via inverted menu', () => {
-      const visibleIf = '{"id_name":"menu_select", "value":"Mango", "invert":true}'
+      const visibleIf = { id_name: 'menu_select', value: 'Mango', invert: true }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter visible via checkbox', () => {
-      const visibleIf = '{"id_name":"some_boolean", "value":true}'
+      const visibleIf = { id_name: 'some_boolean', value: true }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })
 
     it('Conditional parameter invisible via inverted checkbox', () => {
-      const visibleIf = '{"id_name":"some_boolean", "value":true, "invert":true}'
+      const visibleIf = { id_name: 'some_boolean', value: true, invert: true }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
@@ -568,13 +568,13 @@ describe('WfModule, not read-only mode', () => {
     it('Conditional parameter invisible via invisible parent', () => {
       // Even though the parent ("invisible_by_default" parameter) is set to the corrent menu item, it's not visible
       // So we shouldn't be either
-      const visibleIf = '{"id_name":"invisible_by_default", "value":"Durian"}'
+      const visibleIf = { id_name: 'invisible_by_default', value: 'Durian' }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfNotVisible)
     })
 
     it('No infinite loop on parent name', () => {
-      const visibleIf = '{"id_name":"menu_select", "value":"Banana"}'
+      const visibleIf = { id_name: 'menu_select', value: 'Banana' }
       const w = wrapper({ module: insertVisibleIf(visibleIf) })
       expect(w.find('WfParameter')).toHaveLength(numModulesIfVisible)
     })

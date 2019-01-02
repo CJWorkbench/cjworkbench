@@ -120,7 +120,7 @@ class FetchTests(DbTestCase):
             # White-box: we aren't testing what happens in the (valid) case
             # that a ModuleVersion has been deleted while in use. Pretend it's
             # there.
-            wf_module._module_version = ModuleVersion()
+            wf_module._module_version = ModuleVersion(spec={'parameters': []})
 
         try:
             workflow_id = wf_module.workflow_id

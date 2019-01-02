@@ -222,23 +222,15 @@ def _wf_module_delete_secret_and_build_delta(
     with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
         wf_module.refresh_from_db()  # may return None
 
-        if wf_module.secrets is None:
-            # TODO nix this when we set WfModule.secrets NOT NULL
-            # In the meantime, fake it without the rigamarole of database
-            # queries.
-            wf_module.secrets = {}  # will be deleted
-            wf_module.save(update_fields=['secrets'])
-        else:
-            if (
-                wf_module is None
-                or param not in wf_module.secrets
-                or wf_module.secrets[param] is None
-            ):
-                return None
+        if (
+            wf_module is None
+            or wf_module.secrets.get(param) is None
+        ):
+            return None
 
-            wf_module.secrets = dict(wf_module.secrets)
-            del wf_module.secrets[param]
-            wf_module.save(update_fields=['secrets'])
+        wf_module.secrets = dict(wf_module.secrets)
+        del wf_module.secrets[param]
+        wf_module.save(update_fields=['secrets'])
 
         return {
             'updateWfModules': {

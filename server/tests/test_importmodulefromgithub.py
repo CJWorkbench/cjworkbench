@@ -312,7 +312,7 @@ class ImportFromGitHubTest(DbTestCase):
         wfm = tab.wf_modules.create(
             module_id_name=self.importable_id_name,
             order=1,
-            params=module_version.get_default_params()
+            params=module_version.default_params
         )
 
         # import "new" version (different version hash)
@@ -353,7 +353,7 @@ class ImportFromGitHubTest(DbTestCase):
             wfm = tab.wf_modules.create(
                 order=0,
                 module_id_name=self.importable_id_name,
-                params=module_version.get_default_params()
+                params=module_version.default_params
             )
 
             # Does it render right?

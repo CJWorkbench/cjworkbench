@@ -1,91 +1,73 @@
 import json
 from typing import Any, Dict, List, Tuple
-from .ParameterSpec import ParameterSpec
-
-
-def _sanitize_column_param(value, table_cols):
-    if value in table_cols:
-        return value
-    else:
-        return ''
-
-
-def _sanitize_multicolumn_param(value, table_cols):
-    cols = value.split(',')
-    cols = [c.strip() for c in cols]
-    cols = [c for c in cols if c in table_cols]
-
-    return ','.join(cols)
+from .param_field import ParamDTypeString, ParamDTypeInteger, \
+        ParamDTypeFloat, ParamDTypeBoolean, ParamDTypeEnum, \
+        ParamDTypeColumn, ParamDTypeMulticolumn, ParamDTypeDict
 
 
 class Params:
     """
-    Easy lookup methods for ParameterSpecs.
-
-    These lookups are guaranteed to not result in any database queries as long
-    as you supply ParmeterVals with `parameter_spec` prefetched. You won't need
-    to lock anything here to prevent races.
+    Wrap params and secrets to pass to module `fetch` and `render`.
 
     To initialize:
 
-        specs = wf_module.parameter_specs.all()
+        schema = wf_module.module_version.param_schema
         values = { 'param1': 1, 'param2': 'something', ... }
         secrets = { 'secret1': { 'name': '@adamhooper', 'secret': ... } }
-        params = Params(specs, values, secrets)
+        params = Params(schema, values, secrets)
 
     The accessor names here are all legacy. They could benefit from a redesign.
     """
 
-    def __init__(self, specs: List[ParameterSpec], values: Dict[str, Any],
+    def __init__(self, schema: ParamDTypeDict, values: Dict[str, Any],
                  secrets: Dict[str, Any]):
-        self.specs = specs
-        self.specs_by_name = dict((spec.id_name, spec) for spec in specs)
+        self.schema = schema
         self.values = values
         self.secrets = secrets
 
     def get_param_typed(self, name, expected_type):
         """
-        Return ParameterSpec value, with a typecheck.
+        Return value value, with a typecheck.
 
         Raise ValueError if expected type is wrong.
 
         Raise KeyError on invalid parameter.
         """
-        pspec = self.specs_by_name[name]  # raises KeyError
+        if expected_type:
+            dtype = self.schema.properties[name]  # raises KeyError
+            if not isinstance(dtype, expected_type):
+                raise ValueError(
+                    f'Request for {expected_type} parameter {name} '
+                    f'but actual type is {dtype}'
+                )
 
-        if expected_type and pspec.type != expected_type:
-            raise ValueError(
-                f'Request for {expected_type} parameter {name} '
-                f'but actual type is {pspec.type}'
-            )
-
-        return self.get_param(name)
+        return self.get_param(name)  # raises KeyError
 
     def get_param(self, name) -> Any:
         """
-        Return ParameterSpec value, of the parameter's type.
+        Return value, of the parameter's type.
 
         Raise KeyError on invalid parameter.
         """
         return self.values[name]  # raises KeyError
 
     def get_param_string(self, name: str) -> str:
-        return self.get_param_typed(name, ParameterSpec.STRING)
+        return self.get_param_typed(name, ParamDTypeString)
 
     def get_param_integer(self, name: str) -> int:
-        return self.get_param_typed(name, ParameterSpec.INTEGER)
+        return self.get_param_typed(name, ParamDTypeInteger)
 
     def get_param_float(self, name: str) -> float:
-        return self.get_param_typed(name, ParameterSpec.FLOAT)
+        return self.get_param_typed(name, ParamDTypeFloat)
 
     def get_param_checkbox(self, name: str) -> bool:
-        return self.get_param_typed(name, ParameterSpec.CHECKBOX)
+        return self.get_param_typed(name, ParamDTypeBoolean)
 
     def get_param_radio_idx(self, name: str) -> int:
-        return self.get_param_typed(name, ParameterSpec.RADIO)
+        return self.get_param_typed(name, ParamDTypeEnum)
 
     def get_param_menu_idx(self, name: str) -> int:
-        return self.get_param_typed(name, ParameterSpec.MENU)
+        return self.get_param_typed(name, ParamDTypeEnum)
 
     def get_param_secret_secret(self, name: str) -> Dict[str, str]:
         """Get a secret's "secret" data, or None."""
@@ -106,7 +88,7 @@ class Params:
         It's easy for a user to select a missing column: just add a rename
         or column-select before the module that selected a valid column.
         """
-        value = self.get_param_typed(name, ParameterSpec.COLUMN)
+        value = self.get_param_typed(name, ParamDTypeColumn)
         if value in table.columns:
             return value
         else:
@@ -128,7 +110,7 @@ class Params:
         # multi-column selector doesn't have a value. So when testing types, we
         # test that the parameter name is 'colnames', _not_ the parameter type
         # (which we assume is STRING).
-        value = self.get_param_typed(name, ParameterSpec.MULTICOLUMN)
+        value = self.get_param_typed(name, ParamDTypeMulticolumn)
 
         cols = value.split(',')
         cols = [c.strip() for c in cols if c.strip()]
@@ -162,26 +144,22 @@ class Params:
         else:
             return value
 
-    def as_dict(self):
-        """Present parameters as a dict."""
-        ret = {}
-
-        for pspec in self.specs:
-            name = pspec.id_name
-            if pspec.type == ParameterSpec.SECRET:
-                try:
-                    secret = self.secrets[name]
-                except KeyError:
-                    secret = None
-
-                if secret:
-                    ret[name] = {'name': secret['name']}
-                else:
-                    ret[name] = None
+    @property
+    def secret_metadata(self):
+        metadata = {}
+        for key, value in self.secrets.items():
+            if value:
+                metadata[key] = {'name': value['name']}
             else:
-                ret[name] = self.values[name]
+                metadata[key] = None
+        return metadata
 
-        return ret
+    def as_dict(self):
+        """Present parameters as a dict (including secret metadata)."""
+        return {
+            **self.values,
+            **self.secret_metadata,
+        }
 
     def to_painful_dict(self, table):
         """
@@ -195,28 +173,8 @@ class Params:
 
         TODO present an interface with fewer surprises.
         """
-        pdict = {}
-        for pspec in self.specs:
-            type = pspec.type
-            id_name = pspec.id_name
-            value = self.values[id_name]
-
-            if type == ParameterSpec.SECRET:
-                try:
-                    secret = self.secrets[id_name]
-                except KeyError:
-                    secret = None
-
-                if secret:
-                    pdict[id_name] = {'name': secret['name']}
-                else:
-                    pdict[id_name] = None
-            if type == ParameterSpec.COLUMN:
-                pdict[id_name] = _sanitize_column_param(value, table.columns)
-            elif type == ParameterSpec.MULTICOLUMN or id_name == 'colnames':
-                pdict[id_name] = _sanitize_multicolumn_param(value,
-                                                             table.columns)
-            else:
-                pdict[id_name] = value
-
-        return pdict
+        return {
+            **self.schema.omit_missing_table_columns(self.values,
+                                                     set(table.columns)),
+            **self.secret_metadata,
+        }

@@ -150,8 +150,6 @@ def visible_modules(request):
         # pythoncode is too obviously insecure
         queryset = queryset.exclude(id_name='pythoncode')
 
-    queryset = queryset.prefetch_related('parameter_specs')
-
     return queryset
 
 

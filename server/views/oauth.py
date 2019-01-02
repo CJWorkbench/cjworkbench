@@ -6,7 +6,8 @@ from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from .. import oauth, websockets
-from ..models import ParameterSpec, WfModule, Workflow
+from ..models import ModuleVersion, WfModule, Workflow
+from ..models.param_field import ParamField
 
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
 
     Raise WfModule.DoesNotExist if the WfModule is deleted or missing.
 
-    Raise ParameterSpec.DoesNotExist if the WfModule does not have the
+    Raise ModuleVersion.DoesNotExist if the WfModule does not have the
     given param.
 
     Invoke this within a Workflow.cooperative_lock().
@@ -40,18 +41,17 @@ def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
         .get(pk=wf_module_id)
     )
 
-    # raise ParameterSpec.DoesNotExist if ModuleVersion was deleted
+    # raise ModuleVersion.DoesNotExist if ModuleVersion was deleted
     module_version = wf_module.module_version
     if module_version is None:
-        raise ParameterSpec.DoesNotExist
+        raise ModuleVersion.DoesNotExist
 
-    # raises ParameterSpec.DoesNotExist
-    module_version.parameter_specs.get(
-        type=ParameterSpec.SECRET,
-        id_name=param
-    )
-
-    return wf_module
+    # raises ModuleVersion.DoesNotExist
+    for field in module_version.param_fields:
+        if field.id_name == param and field.ftype == ParamField.FType.SECRET:
+            return wf_module
+    else:
+        raise ModuleVersion.DoesNotExist
 
 
 def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
@@ -87,14 +87,14 @@ def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
             request.session,
             pk=workflow_id
         ) as workflow:
-            # raises WfModule.DoesNotExist, ParameterSpec.DoesNotExist
+            # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
             _load_sane_wf_module_for_param(workflow, wf_module_id, param)
     except Workflow.DoesNotExist as err:
         # Possibilities:
         # str(err) = 'owner access denied'
         # str(err) = 'Workflow matching query does not exist'
         return HttpResponseForbidden(str(err))
-    except (WfModule.DoesNotExist, ParameterSpec.DoesNotExist):
+    except (WfModule.DoesNotExist, ModuleVersion.DoesNotExist):
         return HttpResponseForbidden('Step or parameter was deleted.')
 
     try:
@@ -159,7 +159,7 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             request.session,
             pk=scope.workflow_id
         ) as workflow:
-            # raises WfModule.DoesNotExist, ParameterSpec.DoesNotExist
+            # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
             wf_module = _load_sane_wf_module_for_param(workflow,
                                                        scope.wf_module_id,
                                                        scope.param)
@@ -185,7 +185,7 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
         # str(err) = 'owner access denied'
         # str(err) = 'Workflow matching query does not exist'
         return HttpResponseForbidden(str(err))
-    except (ParameterSpec.DoesNotExist, WfModule.DoesNotExist):
+    except (ModuleVersion.DoesNotExist, WfModule.DoesNotExist):
         return HttpResponseNotFound('Step or parameter was deleted.')
 
     async_to_sync(websockets.ws_client_send_delta_async)(workflow.id,

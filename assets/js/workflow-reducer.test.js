@@ -365,7 +365,7 @@ describe('Reducer actions', () => {
       },
       modules: {
         mod: {
-          parameter_specs: [
+          param_fields: [
             { id_name: 'foo' },
             { id_name: 'version_select' }
           ]

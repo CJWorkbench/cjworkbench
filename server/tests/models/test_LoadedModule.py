@@ -16,6 +16,8 @@ import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv
 from server.tests.modules.util import MockParams
+from server.models.param_field import ParamDTypeDict, ParamDTypeString, \
+        ParamDTypeInteger, ParamDTypeBoolean
 
 
 MockModuleVersion = namedtuple('MockModuleVersion', ('id_name',
@@ -484,14 +486,11 @@ class LoadedModuleTest(SimpleTestCase):
 
     def test_migrate_params_default(self):
         lm = LoadedModule('x', '1', True, migrate_params_impl=None)
-        result = lm.migrate_params([
-            ParameterSpec(id_name='missing', type='string', def_value='x'),
-            ParameterSpec(id_name='wrong_type', type='checkbox'),
-            ParameterSpec(id_name='ok', type='integer'),
-        ], {
-            'wrong_type': 'true',
-            'ok': 3,
-        })
+        result = lm.migrate_params(ParamDTypeDict({
+            'missing': ParamDTypeString(default='x'),
+            'wrong_type': ParamDTypeBoolean(),
+            'ok': ParamDTypeInteger(),
+        }), {'wrong_type': 'true', 'ok': 3})
         self.assertEqual(result, {'missing': 'x', 'wrong_type': True, 'ok': 3})
 
     def test_migrate_params_impl(self):
@@ -501,43 +500,45 @@ class LoadedModuleTest(SimpleTestCase):
                 'y': params['b']
             }
 
-        specs = [
-            ParameterSpec(id_name='x', type='integer'),
-            ParameterSpec(id_name='y', type='integer')
-        ]
+        schema = ParamDTypeDict({
+            'x': ParamDTypeInteger(),
+            'y': ParamDTypeInteger(),
+        })
 
         lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
-        result = lm.migrate_params(specs, {'a': 1, 'b': 2})
+        result = lm.migrate_params(schema, {'a': 1, 'b': 2})
         self.assertEqual(result, {'x': 1, 'y': 2})
 
     def test_migrate_params_impl_exception(self):
         def migrate_params(params):
             raise KeyError
 
-        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        lm = LoadedModule('x', '1', True,
+                          migrate_params_impl=migrate_params)
         with self.assertRaises(ValueError):
             lm.migrate_params([], {})
 
     def test_migrate_params_impl_missing_output(self):
-        def migrate_params(params):
-            return {}  # should have 'x' key
-
-        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        lm = LoadedModule('x', '1', True, migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
+            lm.migrate_params(
+                ParamDTypeDict({'x': ParamDTypeString()}),
+                {}  # should have 'x' key
+            )
             lm.migrate_params([ParameterSpec(id_name='x', type='string')], {})
 
     def test_migrate_params_impl_wrong_output_type(self):
-        def migrate_params(params):
-            return {'x': 2}  # should be str
-
-        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        lm = LoadedModule('x', '1', True, migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
-            lm.migrate_params([ParameterSpec(id_name='x', type='string')], {})
+            lm.migrate_params(
+                ParamDTypeDict({'x': ParamDTypeString()}),
+                {'x': 2}  # should be str
+            )
 
     def test_migrate_params_impl_extra_output(self):
-        def migrate_params(params):
-            return {'x': 'should not be here'}
-
-        lm = LoadedModule('x', '1', True, migrate_params_impl=migrate_params)
+        lm = LoadedModule('x', '1', True, migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
-            lm.migrate_params([], {})
+            lm.migrate_params(
+                ParamDTypeDict({}),
+                {'x': 'should not be here'}
+            )

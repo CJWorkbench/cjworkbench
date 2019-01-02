@@ -36,7 +36,7 @@ export class WfModule extends React.PureComponent {
       help_url: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
-      parameter_specs: PropTypes.arrayOf(PropTypes.shape({
+      param_fields: PropTypes.arrayOf(PropTypes.shape({
         id_name: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
         items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
@@ -306,7 +306,7 @@ export class WfModule extends React.PureComponent {
   }
 
   getParameterSpec(idName) {
-    const ret = this.props.module.parameter_specs.find(ps => ps.id_name === idName)
+    const ret = this.props.module.param_fields.find(ps => ps.id_name === idName)
     if (ret === undefined) {
       console.warn(`ParameterSpec ${idName} does not exist`)
       return null
@@ -317,21 +317,16 @@ export class WfModule extends React.PureComponent {
   // checks visible_if fields, recursively (we are not visible if parent referenced in visbile_if is not visible)
   isParameterVisible(pspec) {
     // No visibility condition, we are visible
-    const visibleIf = pspec.visible_if
-    if (!visibleIf) {
-      return true
-    }
+    const condition = pspec.visible_if
+    if (!condition) return true
 
-    const condition = JSON.parse(visibleIf)
     const invert = condition['invert'] === true
 
     // missing id_name, default to visible
-    if (!('id_name' in condition)) {
-      return true
-    }
+    if (!condition.id_name) return true
 
     // We are invisible if our parent is invisible
-    if (condition['id_name'] !== pspec.id_name) { // prevent simple infinite recurse; see droprowsbyposition.json
+    if (condition.id_name !== pspec.id_name) { // prevent simple infinite recurse; see droprowsbyposition.json
       const parentSpec = this.getParameterSpec(condition['id_name'])
       if (parentSpec && !this.isParameterVisible(parentSpec)) { // recurse
         return false
@@ -427,7 +422,7 @@ export class WfModule extends React.PureComponent {
     const moduleHelpUrl = module ? module.help_url : ''
 
     // Each parameter gets a WfParameter
-    const paramdivs = module ? module.parameter_specs.map(this.renderParam) : null
+    const paramdivs = module ? module.param_fields.map(this.renderParam) : null
 
     const isNoteVisible = this.state.editedNotes !== null || !!this.props.wfModule.notes
 

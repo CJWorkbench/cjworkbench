@@ -6,6 +6,7 @@ from django.db import models
 from server.models import loaded_module
 from server.modules.types import ProcessResult
 from .Params import Params
+from .param_field import ParamDTypeDict, ParamField
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .StoredObject import StoredObject
@@ -210,31 +211,34 @@ class WfModule(models.Model):
 
     def get_params(self) -> Params:
         """
-        Load ParameterSpecs from the database for easy access.
-
-        The Params object is a "snapshot" of database values. You can call
-        `get_params()` in a lock and then safely release the lock.
+        Generate valid parameters (reading from the database) for easy access.
 
         Raise ValueError on _programmer_ error. That's usually the module
         author's problem, and we'll want to display the error to the user so
         the user can pester the module author.
         """
         if self.module_version is None:
-            specs = []
-            values = self.params
-        else:
-            specs = list(self.module_version.parameter_specs.all())
-            lm = (
-                # we don't import LoadedModule directly, because we'll mock it
-                # out in unit tests.
-                loaded_module.LoadedModule.for_module_version_sync(
-                    self.module_version
-                )
-            )
-            # raises ValueError
-            values = lm.migrate_params(specs, self.params)
+            return Params(ParamDTypeDict({}), {}, {})
 
-        return Params(specs, values, self.secrets)
+        schema = self.module_version.param_schema
+        lm = (
+            # we don't import LoadedModule directly, because we'll mock it
+            # out in unit tests.
+            loaded_module.LoadedModule.for_module_version_sync(
+                self.module_version
+            )
+        )
+        # raises ValueError
+        values = lm.migrate_params(schema, self.params)
+
+        # "migrate" secrets: exactly the id_names specified in module_version
+        # spec, with values maybe None
+        secrets = {}
+        for field in self.module_version.param_fields:
+            if field.ftype == ParamField.FType.SECRET:
+                secrets[field.id_name] = self.secrets.get(field.id_name)
+
+        return Params(schema, values, secrets)
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available
