@@ -16,10 +16,7 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def forward_impl(self):
-        self.wf_module.params = {
-            **self.old_values,
-            **self.new_values
-        }
+        self.wf_module.params = self.new_values
         self.wf_module.save(update_fields=['params'])
         self.forward_affected_delta_ids()
 
