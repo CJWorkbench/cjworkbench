@@ -1,10 +1,6 @@
-# ModuleVersion is a module that keeps track of the different versions of a
-# single module, thereby allowing users to create workflows with different
-# versions of the same module. This could be for a myriad of reasons, including
-# backward compatibiity (not everyone's ready to use the latest version of a
-# module), beta testing, etc.
-#
-# [adamhooper, 2018-12-27] ... and we support zero of those reasons.
+# ModuleVersion is an id_name plus the code that goes along with it. We store
+# multiple _versions_ of its code, but users can only access the latest
+# version.
 
 import os
 import jsonschema

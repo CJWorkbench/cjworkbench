@@ -1,7 +1,12 @@
+import logging
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from .. import Delta, WfModule
+from .. import loaded_module
 from .util import ChangesWfModuleOutputs
+
+
+logger = logging.getLogger(__name__)
 
 
 class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
@@ -45,15 +50,31 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
         if cls.wf_module_is_deleted(wf_module):  # refreshes from DB
             return None
 
+        module_version = wf_module.module_version
+        if module_version is None:
+            return None
+
+        # Old values: store exactly what we had
         old_values = wf_module.params
 
-        if old_values is None:
-            # TODO nix this when we set WfModule.params to NOT NULL
-            params = wf_module.get_params()
-            old_values = params.as_dict()
-            # Delete secrets
-            for key in params.secrets.keys():
-                del old_values[key]
+        # New values: store _migrated_ old_values, with new_values applied on
+        # top
+        lm = loaded_module.LoadedModule.for_module_version_sync(module_version)
+        migrated_old_values = lm.migrate_params(module_version.param_schema,
+                                                old_values)
+        new_values = {
+            **migrated_old_values,
+            **new_values,
+        }
+
+        try:
+            module_version.param_schema.validate(new_values)
+        except ValueError:
+            logger.exception(
+                "User submitted bad parameters. Please verify that this isn't "
+                'a bug in Workbench, then delete this log message.'
+            )
+            return None
 
         # TODO migrate params here: when the user changes params, we want to
         # save something consistent.
