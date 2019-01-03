@@ -45,7 +45,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.module_version = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'Load URL',
-            'category': 'Load',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'url', 'type': 'string'},
             ],
@@ -126,7 +126,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         module_version = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'blah',
             'name': 'Blah',
-            'category': 'Blah',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'a', 'type': 'string', 'default': 'x'},
                 {'id_name': 'b', 'type': 'menu', 'menu_items': 'a|b|c',

@@ -22,7 +22,7 @@ class ChangeParametersCommandTest(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
-            'category': 'Test',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'url', 'type': 'string'},
                 {'id_name': 'has_header', 'type': 'checkbox'},
@@ -76,7 +76,7 @@ class ChangeParametersCommandTest(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
-            'category': 'Test',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'url', 'type': 'string'},
             ]
@@ -105,7 +105,7 @@ class ChangeParametersCommandTest(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
-            'category': 'Test',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'url', 'type': 'string'},
             ]
@@ -131,7 +131,7 @@ class ChangeParametersCommandTest(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'loadurl',
             'name': 'loadurl',
-            'category': 'Test',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'url', 'type': 'string'},
             ]
@@ -171,7 +171,7 @@ class ChangeParametersCommandTest(DbTestCase):
         # Version '2''s migrate_params() could do anything; in this test, it
         # simply changes 'version' from 'v1' to 'v2'
         ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'version', 'type': 'string'},
                 {'id_name': 'x', 'type': 'integer'},
@@ -217,20 +217,17 @@ class ChangeParametersCommandTest(DbTestCase):
         )
 
         ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'x', 'type': 'integer'},
             ]
         })
         load_module.return_value = LoadedModule('x', '1')
 
-        # We log an exception even though this case is probably okay. If you
-        # delete the log message, delete this `with self.assertLogs()` too.
-        with self.assertLogs():
+        with self.assertRaises(ValueError):
             # Now the user requests to change params, giving an invalid param.
-            cmd = self.run_with_async_db(ChangeParametersCommand.create(
+            self.run_with_async_db(ChangeParametersCommand.create(
                 workflow=workflow,
                 wf_module=wf_module,
                 new_values={'x': 'Threeve'}
             ))
-        self.assertIsNone(cmd)

@@ -15,7 +15,7 @@ class OauthTest(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'twitter',
             'name': '',
-            'category': '',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'auth', 'type': 'secret'}
             ]

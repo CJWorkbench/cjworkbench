@@ -36,7 +36,7 @@ class TabTest(HandlerTestCase):
         module_version = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string'},
             ],
@@ -64,7 +64,7 @@ class TabTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string'},
             ],
@@ -84,7 +84,7 @@ class TabTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string'},
             ],
@@ -104,7 +104,7 @@ class TabTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string'},
             ],
@@ -125,7 +125,7 @@ class TabTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string'},
             ],

@@ -32,7 +32,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
             validate_module_spec({
                 'id_name': 'id',
                 'name': 'Name',
-                'category': 'Cat',
+                'category': 'Clean',
                 'parameters': [
                     {'id_name': 'dup', 'type': 'string'},
                     {'id_name': 'original', 'type': 'string'},
@@ -48,7 +48,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
             validate_module_spec({
                 'id_name': 'id',
                 'name': 'Name',
-                'category': 'Cat',
+                'category': 'Clean',
                 'parameters': [
                     {'id_name': 'menu', 'type': 'menu'},
                 ],
@@ -62,7 +62,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
             validate_module_spec({
                 'id_name': 'id',
                 'name': 'Name',
-                'category': 'Cat',
+                'category': 'Clean',
                 'parameters': [
                     {'id_name': 'radio', 'type': 'radio'},
                 ],
@@ -76,7 +76,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
             validate_module_spec({
                 'id_name': 'id',
                 'name': 'Name',
-                'category': 'Cat',
+                'category': 'Clean',
                 'parameters': [
                     {
                         'id_name': 'a',
@@ -91,7 +91,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
         validate_module_spec({
             'id_name': 'id',
             'name': 'Name',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {
                     'id_name': 'a',
@@ -111,7 +111,7 @@ class ModuleVersionTest(DbTestCase):
         mv = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'idname',
             'name': 'Name',
-            'category': 'Cat',
+            'category': 'Clean',
             'link': 'http://foo.com',
             'help_url': 'a/b/c',
             'parameters': []
@@ -120,13 +120,13 @@ class ModuleVersionTest(DbTestCase):
         mv.refresh_from_db()
         self.assertEqual(mv.id_name, 'idname')
         self.assertEqual(mv.name, 'Name')
-        self.assertEqual(mv.category, 'Cat')
+        self.assertEqual(mv.category, 'Clean')
         self.assertEqual(mv.link, 'http://foo.com')
         self.assertEqual(mv.help_url, 'a/b/c')
 
     def test_param_schema_implicit(self):
         mv = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
                 {'id_name': 'bar', 'type': 'secret'},
@@ -142,7 +142,7 @@ class ModuleVersionTest(DbTestCase):
 
     def test_param_schema_explicit(self):
         mv = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'whee', 'type': 'custom'}
             ],
@@ -166,7 +166,7 @@ class ModuleVersionTest(DbTestCase):
 
     def test_default_params(self):
         mv = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
                 {'id_name': 'bar', 'type': 'secret'},
@@ -179,30 +179,30 @@ class ModuleVersionTest(DbTestCase):
 
     def test_create_new_version(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x', 'parameters': []
+            'id_name': 'x', 'name': 'x', 'category': 'Clean', 'parameters': []
         }, source_version_hash='a')
         mv2 = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x', 'parameters': []
+            'id_name': 'x', 'name': 'x', 'category': 'Clean', 'parameters': []
         }, source_version_hash='b')
         self.assertNotEqual(mv1.id, mv2.id)
 
     def test_create_new_module(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x', 'parameters': []
+            'id_name': 'x', 'name': 'x', 'category': 'Clean', 'parameters': []
         }, source_version_hash='a')
         mv2 = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'y', 'name': 'x', 'category': 'x', 'parameters': []
+            'id_name': 'y', 'name': 'x', 'category': 'Clean', 'parameters': []
         }, source_version_hash='a')
         self.assertNotEqual(mv1.id, mv2.id)
         # even though source_version_hash is the same
 
     def test_create_overwrite_version(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x',
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [{'id_name': 'x', 'type': 'string'}]
         }, source_version_hash='a')
         mv2 = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'x', 'parameters': []
+            'id_name': 'x', 'name': 'x', 'category': 'Clean', 'parameters': []
         }, source_version_hash='a')
 
         self.assertEqual(mv1.id, mv2.id)

@@ -69,7 +69,7 @@ class UndoRedoTests(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'pastecsv',
             'name': 'pastecsv',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'csv', 'type': 'string'},
             ]

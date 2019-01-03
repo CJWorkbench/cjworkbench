@@ -41,7 +41,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.module_version1 = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'module1',
             'name': 'Module 1',
-            'category': 'Cat',
+            'category': 'Clean',
             'parameters': []
         })
 
@@ -284,7 +284,7 @@ class WorkflowViewTests(LoggedInTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'pythoncode',
             'name': 'Python',
-            'category': 'not allowed',
+            'category': 'Clean',
             'parameters': [],
         })
 

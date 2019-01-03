@@ -28,10 +28,22 @@ class MockLoadedModule:
 class WfModuleTest(HandlerTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
     def test_set_params(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='x'
+        )
+
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
 
         response = self.run_handler(set_params, user=user, workflow=workflow,
                                     wfModuleId=wf_module.id,
@@ -43,6 +55,49 @@ class WfModuleTest(HandlerTestCase):
         self.assertEquals(command.old_values, {})
         self.assertEquals(command.wf_module_id, wf_module.id)
         self.assertEquals(command.workflow_id, workflow.id)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
+    def test_set_params_invalid_params(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='x'
+        )
+
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
+
+        response = self.run_handler(set_params, user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    values={'foo1': 'bar'})
+        self.assertResponse(response, error=(
+            "ValueError: Value {'foo1': 'bar'} has wrong names: "
+            "expected names {'foo'}"
+        ))
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_params_no_module(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='x'
+        )
+
+        response = self.run_handler(set_params, user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    values={'foo': 'bar'})
+        self.assertResponse(response,
+                            error='ValueError: Module x does not exist')
 
     def test_set_params_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
@@ -318,7 +373,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -343,7 +398,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -368,7 +423,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -392,7 +447,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -419,7 +474,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -452,7 +507,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -485,7 +540,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -509,7 +564,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],
@@ -532,7 +587,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'string'},
             ],
@@ -562,7 +617,7 @@ class WfModuleTest(HandlerTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'g',
             'name': 'g',
-            'category': 'g',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret'},
             ],

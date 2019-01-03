@@ -72,7 +72,7 @@ class ParamDTypeString(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, str):
-            raise ValueError('Value %r is not a string', value)
+            raise ValueError('Value %r is not a string' % value)
 
 
 class ParamDTypeInteger(ParamDType):
@@ -91,7 +91,7 @@ class ParamDTypeInteger(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, int):
-            raise ValueError('Value %r is not an integer', value)
+            raise ValueError('Value %r is not an integer' % value)
 
 
 class ParamDTypeFloat(ParamDType):
@@ -110,7 +110,7 @@ class ParamDTypeFloat(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, float):
-            raise ValueError('Value %r is not a float', value)
+            raise ValueError('Value %r is not a float' % value)
 
     @classmethod
     def _from_plain_data(cls, default=0.0):
@@ -140,7 +140,7 @@ class ParamDTypeBoolean(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, bool):
-            raise ValueError('Value %r is not a boolean', value)
+            raise ValueError('Value %r is not a boolean' % value)
 
 
 class ParamDTypeColumn(ParamDTypeString):
@@ -167,8 +167,10 @@ class ParamDTypeEnum(ParamDType):
     def __init__(self, choices: Set[Any], default: Any):
         super().__init__()
         if default not in choices:
-            raise ValueError('Default %r is not in choices %r',
-                             default, choices)
+            raise ValueError(
+                'Default %(default)r is not in choices %(choices)r'
+                % {'default': default, 'choices': choices}
+            )
         self.choices = choices
         self.default = default
 
@@ -183,8 +185,10 @@ class ParamDTypeEnum(ParamDType):
 
     def validate(self, value):
         if value not in self.choices:
-            raise ValueError('Value %r is not in choices %r',
-                             value, self.choices)
+            raise ValueError(
+                'Value %(value)r is not in choices %(choices)r'
+                % {'value': value, 'choices': self.choices}
+            )
 
 
 class ParamDTypeList(ParamDType):
@@ -207,7 +211,7 @@ class ParamDTypeList(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, list):
-            raise ValueError('Value %r is not a list', value)
+            raise ValueError('Value %r is not a list' % value)
 
         for v in value:
             self.inner_dtype.validate(v)
@@ -243,13 +247,15 @@ class ParamDTypeDict(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, dict):
-            raise ValueError('Value %r is not a dict', value)
+            raise ValueError('Value %r is not a dict' % value)
 
         expect_keys = set(self.properties.keys())
         actual_keys = set(value.keys())
         if expect_keys != actual_keys:
-            raise ValueError('Value %r has wrong names: expected names %r',
-                             value, expect_keys)
+            raise ValueError(
+                'Value %(value)r has wrong names: expected names %(names)r'
+                % {'value': value, 'names': expect_keys}
+            )
 
         for name, dtype in self.properties.items():
             dtype.validate(value[name])
@@ -409,4 +415,4 @@ class ParamField:
                 **kwargs
             )
         else:
-            raise ValueError('Unknown ftype %r', self.ftype)
+            raise ValueError('Unknown ftype %r' % self.ftype)

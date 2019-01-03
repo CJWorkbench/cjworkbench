@@ -47,12 +47,19 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
 
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, new_values, **kwargs):
+        """
+        Prepare `old_values` and `new_values`.
+
+        Raise ValueError if `new_values` won't be valid according to the module
+        spec.
+        """
         if cls.wf_module_is_deleted(wf_module):  # refreshes from DB
             return None
 
         module_version = wf_module.module_version
         if module_version is None:
-            return None
+            raise ValueError('Module %s does not exist'
+                             % wf_module.module_id_name)
 
         # Old values: store exactly what we had
         old_values = wf_module.params
@@ -67,17 +74,7 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
             **new_values,
         }
 
-        try:
-            module_version.param_schema.validate(new_values)
-        except ValueError:
-            logger.exception(
-                "User submitted bad parameters. Please verify that this isn't "
-                'a bug in Workbench, then delete this log message.'
-            )
-            return None
-
-        # TODO migrate params here: when the user changes params, we want to
-        # save something consistent.
+        module_version.param_schema.validate(new_values)  # raises ValueError
 
         return {
             **kwargs,
@@ -89,4 +86,4 @@ class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
 
     @property
     def command_description(self):
-        return f"Change params {', '.join(self.old_values.keys())}"
+        return 'Change params'

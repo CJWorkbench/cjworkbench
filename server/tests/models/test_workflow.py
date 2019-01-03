@@ -122,7 +122,7 @@ class WorkflowTests(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'x',
             'name': 'x',
-            'category': 'x',
+            'category': 'Clean',
             'parameters': [],
         })
         async_to_sync(AddModuleCommand.create)(workflow=workflow, tab=tab,

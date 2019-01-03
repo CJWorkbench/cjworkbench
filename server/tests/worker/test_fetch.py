@@ -151,7 +151,7 @@ class FetchTests(DbTestCase):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'x',
             'name': 'x',
-            'category': 'x',
+            'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string'}
             ]

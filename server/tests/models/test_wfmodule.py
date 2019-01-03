@@ -176,7 +176,7 @@ class WfModuleTests(DbTestCase):
         module_version = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'floob',
             'name': 'Floob',
-            'category': 'Flib',
+            'category': 'Clean',
             'parameters': []
         })
         wf_module = workflow.tabs.first().wf_modules.create(

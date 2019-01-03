@@ -39,9 +39,12 @@ async def set_params(workflow: Workflow, wf_module: WfModule,
     if not isinstance(values, dict):
         raise HandlerError('BadRequest: values must be an Object')
 
-    await ChangeParametersCommand.create(workflow=workflow,
-                                         wf_module=wf_module,
-                                         new_values=values)
+    try:
+        await ChangeParametersCommand.create(workflow=workflow,
+                                             wf_module=wf_module,
+                                             new_values=values)
+    except ValueError as err:
+        raise HandlerError('ValueError: ' + str(err))
 
 
 @register_websockets_handler
