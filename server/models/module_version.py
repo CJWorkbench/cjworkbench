@@ -154,14 +154,6 @@ class ModuleVersion(models.Model):
         return self.spec.get('description', '')
 
     @property
-    def author(self):
-        return self.spec.get('author', 'Workbench')
-
-    @property
-    def link(self):
-        return self.spec.get('link', '')
-
-    @property
     def icon(self):
         return self.spec.get('icon', 'url')
 

@@ -1,7 +1,7 @@
 {
   "name": "Importable Test Repo",
   "id_name": "importable_not_repo_name",
-  "category" : "tests",
+  "category" : "Clean",
   "description": "This is a test module",
   "parameters": [
     {

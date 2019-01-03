@@ -38,6 +38,6 @@ describe('ImportModuleFromGitHub', () => {
       b: { id_name: 'b', author: 'Aut', category: 'cat', name: 'yay' }
     })
 
-    expect(w.find('.import-github-success').text()).toEqual('Imported Aut module "yay" under category "cat"')
+    expect(w.find('.import-github-success').text()).toEqual('Imported module "yay" under category "cat"')
   })
 })

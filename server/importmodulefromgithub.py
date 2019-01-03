@@ -15,11 +15,6 @@ from server.models.module_version import validate_module_spec
 logger = logging.getLogger(__name__)
 
 
-# Categories allowed for modules. If not in this list, will be assigned "Other"
-def get_categories():
-    return ['Add data', 'Scrape', 'Clean', 'Analyze', 'Code', 'Visualize']
-
-
 def sanitise_url(url):
     url = url.strip()
     if not url:
@@ -40,14 +35,6 @@ def sanitise_url(url):
 def retrieve_project_name(url):
     # - extract the folder name from the url
     return url.rsplit('/', 1)[1]
-
-
-def retrieve_author(url):
-    if url[-1] == '/':
-        url = url[:-1]
-    # - extract the account name from the url
-    account = url.rsplit('/', 2)[1]
-    return account
 
 
 # Check that we have one .py and one .json file in the repo root dir
@@ -186,7 +173,7 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
 
     try:
         script = open(os.path.join(filename), 'r').read() + '\n'
-    except:
+    except Exception:  # TODO what exception?
         raise ValidationError(f'Unable to open Python code file {python_file}')
 
     # Indent the user's function declaration to put it inside the Importable
@@ -208,7 +195,7 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
     except SyntaxError as se:
         # Change the reported line number to account for our boilerplate
         errstr = str(se)
-        linenostr = re.search('line (\d+)', errstr).group(1)
+        linenostr = re.search('line (\\d+)', errstr).group(1)
         newlineno = original_module_lineno(int(linenostr))
         newstr = errstr.replace(linenostr, str(newlineno))
         raise ValidationError(newstr)
@@ -224,7 +211,7 @@ def validate_python_functions(destination_directory, python_file):
         spec = importlib.util.spec_from_file_location('test', path)
         test_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(test_module)
-    except:
+    except Exception:  # TODO what exception?
         raise ValidationError('Cannot load module')
 
     if hasattr(test_module, 'render'):
@@ -290,33 +277,11 @@ def import_module_from_directory(url, reponame, version, importdir,
                 # this is what we want
                 pass
 
-        # Don't allow loading a module with the same id_name from a different
-        # repo. Prevents replacement attacks.
-        try:
-            latest_existing = ModuleVersion.objects.latest(id_name)
-            if url != latest_existing.link:
-                raise ValidationError(
-                    f'Module {id_name} has already been loaded '
-                    f'from a different repo: {latest_existing.link}'
-                )
-        except ModuleVersion.DoesNotExist:
-            pass  # it hasn't been loaded from _anywhere_ yet
-
-        module_config['link'] = url
-        if 'author' not in module_config:
-            module_config['author'] = retrieve_author(url)
-
         if js_file:
             with open(os.path.join(importdir, js_file), 'rt') as f:
                 js_module = f.read()
         else:
             js_module = ''
-
-        # Ensure that modules are categorised properly – if a module category
-        # isn't one of our pre-defined categories, then we just set it to
-        # other.
-        if module_config["category"] not in get_categories():
-            module_config["category"] = "Other"
 
         # The core work of creating a module
         destination_directory = create_destination_directory(id_name, version)

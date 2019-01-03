@@ -121,7 +121,6 @@ class ModuleVersionTest(DbTestCase):
         self.assertEqual(mv.id_name, 'idname')
         self.assertEqual(mv.name, 'Name')
         self.assertEqual(mv.category, 'Clean')
-        self.assertEqual(mv.link, 'http://foo.com')
         self.assertEqual(mv.help_url, 'a/b/c')
 
     def test_param_schema_implicit(self):

@@ -11,6 +11,7 @@ properties:
     category:
         type: string
         description: Category that appears in Module Search
+        enum: [ Add data, Scrape, Clean, Analyze, Code, Visualize, Other ]
     icon:
         type: string
         description: "Icon name that appears in Module Search and atop the Step (default: 'url')"

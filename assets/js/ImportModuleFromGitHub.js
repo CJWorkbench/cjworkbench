@@ -38,7 +38,7 @@ export class ImportModuleFromGitHub extends React.Component {
     this.props.addModuleToState(data)
     this.setState({
       status: {
-        message: `Imported ${data.author} module "${data.name}" under category "${data.category}"`
+        message: `Imported module "${data.name}" under category "${data.category}"`
       }
     })
   }

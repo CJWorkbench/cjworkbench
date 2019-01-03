@@ -1,7 +1,7 @@
 {
   "name": "imported",
   "id_name": "imported" ,
-  "category" : "tests",
+  "category" : "Clean",
   "description": "This is a test module",
   "parameters": [
     {
