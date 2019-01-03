@@ -42,7 +42,7 @@ export class WfModule extends React.PureComponent {
         items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
         multiline: PropTypes.bool.isRequired,
         placeholder: PropTypes.string.isRequired, // may be ''
-        visible_if: PropTypes.string.isRequired, // may be ''; otherwise, JSON spec
+        visible_if: PropTypes.object // JSON spec or null
       }).isRequired).isRequired
     }), // or null for no module
     tabId: PropTypes.number.isRequired,

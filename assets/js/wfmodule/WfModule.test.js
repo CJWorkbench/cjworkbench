@@ -46,7 +46,7 @@ describe('WfModule, not read-only mode', () => {
       type,
       multiline: false,
       placeholder: '',
-      visible_if: '',
+      visible_if: null,
       ...extraProps
     }
   }
