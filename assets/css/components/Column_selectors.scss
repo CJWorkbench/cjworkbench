@@ -8,10 +8,8 @@
   }
 }
 
-.wf-parameter {
-
+.column-selector, .column-param {
   .react-select {
-
     .react-select__control {
       @extend .module-parameter;
       min-height: 3.5rem;

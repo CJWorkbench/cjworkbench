@@ -78,7 +78,7 @@ textarea:focus, input:focus{
 
 // Shared style to all paramters in modules
 
-.module-parameter {
+%module-parameter {
   cursor: pointer;
   width:100%;
   color: $brand-text--darker;
@@ -94,6 +94,10 @@ textarea:focus, input:focus{
     border: $data-action--border;
     outline: none;
   }
+}
+
+.module-parameter {
+  @extend %module-parameter;
 }
 
 .text-field-large {

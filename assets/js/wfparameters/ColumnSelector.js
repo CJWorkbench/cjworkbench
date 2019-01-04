@@ -47,7 +47,7 @@ export default class ColumnSelector extends React.PureComponent {
 
     if (allColumns === null) {
       return (
-        <div className='loading'></div>
+        <div className='column-selector loading'></div>
       )
     }
 
@@ -71,8 +71,8 @@ export default class ColumnSelector extends React.PureComponent {
     )
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
-      <div>
-        <div className="d-flex mb-2 mt-2 ">
+      <div className='column-selector'>
+        <div className="d-flex mb-2 mt-2">
           <button
             disabled={isReadOnly}
             name={`${name}-select-all`}

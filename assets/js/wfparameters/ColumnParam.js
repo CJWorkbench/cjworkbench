@@ -35,20 +35,21 @@ export default class ColumnParam extends React.PureComponent {
 
     // Keeping classNamePrefix since CSS definitions already exist
     return (
-      <Select
-        className={className}
-        name={name}
-        options={columnOptions}
-        value={selectedOption}
-        isLoading={isLoading}
-        className={`react-select ${className || ''}`}
-        classNamePrefix='react-select'
-        menuPortalTarget={document.body}
-        onChange={this.onChange}
-        isClearable={false}
-        isDisabled={this.props.isReadOnly}
-        placeholder={prompt || 'Select'}
-      />
+      <div className={`column-param ${className || ''}`}>
+        <Select
+          name={name}
+          options={columnOptions}
+          value={selectedOption}
+          isLoading={isLoading}
+          className='react-select'
+          classNamePrefix='react-select'
+          menuPortalTarget={document.body}
+          onChange={this.onChange}
+          isClearable={false}
+          isDisabled={this.props.isReadOnly}
+          placeholder={prompt || 'Select'}
+        />
+      </div>
     )
   }
 }

@@ -16,6 +16,8 @@ import CellEditor from './wfparameters/CellEditor'
 import NumberField from './wfparameters/NumberField'
 import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
+import Aggregations from './wfparameters/Aggregations'
+import Groups from './wfparameters/Groups'
 import RenameEntries from './wfparameters/RenameEntries'
 import SingleLineTextField from './wfparameters/SingleLineTextField'
 import RadioParam from './wfparameters/RadioParam'
@@ -160,6 +162,26 @@ export default class WfParameter extends React.PureComponent {
             inputColumns } = this.props
 
     switch (idName) {
+      case 'aggregations':
+        return (
+          <Aggregations
+            isReadOnly={isReadOnly}
+            name={idName}
+            value={value}
+            allColumns={inputColumns}
+            onChange={this.paramChanged}
+          />
+        )
+      case 'groups':
+        return (
+          <Groups
+            isReadOnly={isReadOnly}
+            name={idName}
+            value={value}
+            allColumns={inputColumns}
+            onChange={this.paramChanged}
+          />
+        )
       case 'version_select':
         return (
           <div {...this.outerDivProps}>
