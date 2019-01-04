@@ -227,6 +227,12 @@ class ParamDTypeList(ParamDType):
 
 
 class ParamDTypeDict(ParamDType):
+    """
+    A grouping of properties with a schema defined in the dtype.
+
+    This is different from ParamDTypeMap, which allows arbitrary keys and
+    forces all values to have the same dtype.
+    """
     def __init__(self, properties: Dict[str, ParamDType], default=None):
         super().__init__()
         self.properties = properties
@@ -272,6 +278,46 @@ class ParamDTypeDict(ParamDType):
         return cls(properties=properties, **kwargs)
 
 
+class ParamDTypeMap(ParamDType):
+    """
+    A key-value store with arbitrary string keys and all-the-same-dtype values.
+
+    This is different from ParamDTypeDict, which has dtype-defined properties,
+    each with its own dtype.
+    """
+    def __init__(self, value_dtype: ParamDType, default={}):
+        super().__init__()
+        self.value_dtype = value_dtype
+        self.default = default
+
+    def __repr__(self):
+        return 'ParamDTypeMap' + repr((self.value_dtype, self.default))
+
+    def coerce(self, value):
+        if not isinstance(value, dict):
+            return self.default
+
+        return dict((k, self.value_dtype.coerce(v)) for k, v in value.items())
+
+    def validate(self, value):
+        if not isinstance(value, dict):
+            raise ValueError('Value %r is not a dict' % value)
+
+        for _, v in value.items():
+            self.value_dtype.validate(v)
+
+    def omit_missing_table_columns(self, value, columns):
+        return dict(
+            (k, self.value_dtype.omit_missing_table_columns(v, columns))
+            for k, v in value.items()
+        )
+
+    @classmethod
+    def _from_plain_data(cls, *, value_dtype, **kwargs):
+        value_dtype = cls.parse(value_dtype)
+        return cls(value_dtype=value_dtype, **kwargs)
+
+
 # Aliases to help with import. e.g.:
 # from server.models.param_field import ParamDType
 # dtype = ParamDType.String()
@@ -282,6 +328,7 @@ ParamDType.Boolean = ParamDTypeBoolean
 ParamDType.Enum = ParamDTypeEnum
 ParamDType.List = ParamDTypeList
 ParamDType.Dict = ParamDTypeDict
+ParamDType.Map = ParamDTypeMap
 ParamDType.Column = ParamDTypeColumn
 ParamDType.Multicolumn = ParamDTypeMulticolumn
 
@@ -293,6 +340,7 @@ ParamDType.JsonTypeToDType = {
     'enum': ParamDTypeEnum,
     'list': ParamDTypeList,
     'dict': ParamDTypeDict,
+    'map': ParamDTypeMap,
     'column': ParamDTypeColumn,
     'multicolumn': ParamDTypeMulticolumn,
 }

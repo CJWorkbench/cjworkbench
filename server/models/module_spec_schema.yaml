@@ -140,6 +140,12 @@ definitions:
                 properties:
                     type: object
                     additionalProperties: { '$ref': '#/definitions/dtypes/any' }
+        map:
+            type: object
+            required: [ type, value_dtype ]
+            properties:
+                type: { const: map }
+                value_dtype: { '$ref': '#/definitions/dtypes/any' }
         any:
             anyOf: [
                 { $ref: '#/definitions/dtypes/string' },
@@ -151,4 +157,5 @@ definitions:
                 { $ref: '#/definitions/dtypes/enum' },
                 { $ref: '#/definitions/dtypes/list' },
                 { $ref: '#/definitions/dtypes/dict' },
+                { $ref: '#/definitions/dtypes/map' },
             ]
