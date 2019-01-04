@@ -70,6 +70,7 @@ export default class Aggregations extends React.PureComponent {
               operation='sum'
               colname=''
               outname=''
+              allColumns={allColumns}
               onChange={this.onChangeAggregation}
               onDelete={null}
             />
