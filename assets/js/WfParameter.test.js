@@ -21,6 +21,7 @@ describe('WfParameter', () => {
         loggedInUser={{}}
         api={{}}
         deleteSecret={jest.fn()}
+        applyQuickFix={jest.fn()}
         startCreateSecret={jest.fn()}
         setWfModuleParams={jest.fn()}
         getParamText={jest.fn()}

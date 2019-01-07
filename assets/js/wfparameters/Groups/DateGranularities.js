@@ -2,14 +2,33 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DateGranularity from './DateGranularity'
 
+function DateGranularityList({ isReadOnly, name, colnames, value, onChange }) {
+  return (
+    <ul>
+      {colnames.map(colname => (
+        <li key={colname}>
+          <DateGranularity
+            isReadOnly={isReadOnly}
+            name={`${name}[${colname}]`}
+            colname={colname}
+            value={value[colname] || null}
+            onChange={onChange}
+          />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export default class DateGranularities extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <select> names
-    value: PropTypes.objectOf(PropTypes.oneOf('STHDMQY').isRequired).isRequired,
+    value: PropTypes.objectOf(PropTypes.oneOf('STHDMQY'.split('')).isRequired).isRequired,
     colnames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     dateColnames: PropTypes.arrayOf(PropTypes.string.isRequired), // null if unknown
-    onChange: PropTypes.func.isRequired // func(newObject) => undefined
+    onChange: PropTypes.func.isRequired, // func(newObject) => undefined
+    addConvertToDateModule: PropTypes.func.isRequired // func() => undefined
   }
 
   onChangeDateGranularity = (colname, granularity) => {
@@ -24,25 +43,38 @@ export default class DateGranularities extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, value, colnames, dateColnames } = this.props
+    const { isReadOnly, name, value, colnames, dateColnames, addConvertToDateModule } = this.props
 
     const focusColnames = colnames.filter(c => dateColnames !== null && dateColnames.includes(c))
 
     return (
       <div className='date-granularities'>
-        <ul>
-          {focusColnames.map(colname => (
-            <li>
-              <DateGranularity
-                isReadOnly={isReadOnly}
-                name={`${name}[date_granularities][${colname}]`}
-                colname={colname}
-                value={value[colname] || null}
-                onChange={this.onChangeDateGranularity}
-              />
-            </li>
-          ))}
-        </ul>
+        {focusColnames.length > 0 ? (
+          <DateGranularityList
+            isReadOnly={isReadOnly}
+            name={name}
+            colnames={focusColnames}
+            value={value}
+            onChange={this.onChangeDateGranularity}
+          />
+        ) : (
+          <div className='no-date-selected'>
+            {(dateColnames !== null && dateColnames.length === 0) ? (
+              <React.Fragment>
+                <p>There are no Date and Time columns to group by date</p>
+                <button
+                  name={`${name}[add-module]`}
+                  className='quick-fix action-button button-orange'
+                  onClick={addConvertToDateModule}
+                >
+                  Convert columns
+                </button>
+              </React.Fragment>
+            ) : (
+              <p>Select a Date and Time column to group it by date</p>
+            )}
+          </div>
+        )}
       </div>
     )
   }

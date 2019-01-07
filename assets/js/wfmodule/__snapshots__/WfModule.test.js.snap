@@ -101,6 +101,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "setSelectedWfModule": [MockFunction],
               }
             }
+            applyQuickFix={[Function]}
             deleteSecret={[Function]}
             getParamText={[Function]}
             idName="url"
@@ -138,6 +139,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "setSelectedWfModule": [MockFunction],
               }
             }
+            applyQuickFix={[Function]}
             deleteSecret={[Function]}
             getParamText={[Function]}
             idName="version_select"
@@ -175,6 +177,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "setSelectedWfModule": [MockFunction],
               }
             }
+            applyQuickFix={[Function]}
             deleteSecret={[Function]}
             getParamText={[Function]}
             idName="menu_select"
@@ -213,6 +216,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 "setSelectedWfModule": [MockFunction],
               }
             }
+            applyQuickFix={[Function]}
             deleteSecret={[Function]}
             getParamText={[Function]}
             idName="some_boolean"

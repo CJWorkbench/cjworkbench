@@ -397,6 +397,7 @@ export class WfModule extends React.PureComponent {
         isZenMode={isZenMode}
         wfModuleStatus={this.wfModuleStatus}
         wfModuleOutputError={wfModule.output_error}
+        applyQuickFix={this.applyQuickFix}
         key={index}
         startCreateSecret={this.startCreateSecret}
         deleteSecret={this.deleteSecret}

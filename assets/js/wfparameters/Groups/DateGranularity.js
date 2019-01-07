@@ -6,7 +6,7 @@ export default class DateGranularity extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <select name=...>
     colname: PropTypes.string.isRequired,
-    value: PropTypes.oneOf('STHDMQY'), // or null
+    value: PropTypes.oneOf('STHDMQY'.split('')), // or null
     onChange: PropTypes.func.isRequired, // func(colname, value) => undefined
   }
 

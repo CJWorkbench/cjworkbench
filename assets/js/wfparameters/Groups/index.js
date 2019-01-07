@@ -16,7 +16,8 @@ export default class Groups extends React.PureComponent {
       name: PropTypes.string.isRequired,
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     })), // or null if unknown
-    onChange: PropTypes.func.isRequired // func(value) => undefined
+    onChange: PropTypes.func.isRequired, // func(value) => undefined
+    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
   }
 
   onChangeColnames = (colnames) => {
@@ -37,6 +38,10 @@ export default class Groups extends React.PureComponent {
   onChangeDateGranularities = (newValue) => {
     const { value, onChange } = this.props
     onChange({ ...value, date_granularities: newValue })
+  }
+
+  addConvertToDateModule = () => {
+    this.props.applyQuickFix('prependModule', [ 'convert-date', {} ])
   }
 
   render () {
@@ -69,11 +74,12 @@ export default class Groups extends React.PureComponent {
         {value.group_dates ? (
           <DateGranularities
             isReadOnly={isReadOnly}
-            name={name}
+            name={`${name}[date_granularities]`}
             value={value.date_granularities}
             colnames={value.colnames.split(',').filter(s => !!s)}
             dateColnames={dateColnames}
             onChange={this.onChangeDateGranularities}
+            addConvertToDateModule={this.addConvertToDateModule}
           />
         ) : null}
       </div>

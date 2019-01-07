@@ -63,6 +63,7 @@ export default class WfParameter extends React.PureComponent {
     isReadOnly:     PropTypes.bool.isRequired,
     isZenMode:      PropTypes.bool.isRequired,
     setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined -- icky, prefer onChange
+    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     getParamText:   PropTypes.func.isRequired,
     // "new-style" API: what it should have been all along. Normal React state stuff.
     onChange: PropTypes.func.isRequired, // func(idName, newValue) => undefined
@@ -159,7 +160,7 @@ export default class WfParameter extends React.PureComponent {
   render_custom_parameter () {
     const { idName, name, onSubmit, wfModuleId, wfModuleStatus, wfModuleOutputError,
             isReadOnly, isZenMode, value, initialValue, lastRelevantDeltaId, api,
-            inputColumns } = this.props
+            inputColumns, applyQuickFix } = this.props
 
     switch (idName) {
       case 'aggregations':
@@ -180,6 +181,7 @@ export default class WfParameter extends React.PureComponent {
             value={value}
             allColumns={inputColumns}
             onChange={this.paramChanged}
+            applyQuickFix={applyQuickFix}
           />
         )
       case 'version_select':
