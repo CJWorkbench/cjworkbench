@@ -1,6 +1,7 @@
 import asyncio
 from collections import namedtuple
-from functools import lru_cache, partial
+import datetime
+from functools import partial
 import importlib
 import importlib.util
 import inspect
@@ -334,7 +335,7 @@ class LoadedModule:
         if module_version is None:
             return DeletedModule()
 
-        module_id_name = module_version.id_name  # TODO DoesNotExist
+        module_id_name = module_version.id_name
         version_sha1 = module_version.source_version_hash
 
         try:
@@ -342,7 +343,8 @@ class LoadedModule:
             version_sha1 = 'internal'
             is_external = False
         except KeyError:
-            module = load_external_module(module_id_name, version_sha1)
+            module = load_external_module(module_id_name, version_sha1,
+                                          module_version.last_update_time)
             is_external = True
 
         render_impl = getattr(module, 'render', _default_render)
@@ -352,19 +354,10 @@ class LoadedModule:
                    render_impl=render_impl, fetch_impl=fetch_impl)
 
 
-def load_external_module(module_id_name: str, version_sha1: str) -> ModuleType:
-    """Load a Python Module given a name and version.
-
-    This is memoized.
-
-    Assume:
-
-    * the files exist on disk and are valid
-    * the files never change
-    * the files' dependencies are in our PYTHONPATH
-    * the files' dependencies haven't changed (i.e., its imports)
-
-    ... in short: this function shouldn't raise an error.
+def _load_external_module_uncached(module_id_name: str,
+                                   version_sha1: str) -> ModuleType:
+    """
+    Load a Python Module given a name and version.
     """
     path_to_code = os.path.join(
         settings.IMPORTED_MODULES_ROOT,
@@ -396,8 +389,41 @@ def load_external_module(module_id_name: str, version_sha1: str) -> ModuleType:
     return module
 
 
-if settings.CACHE_MODULES:
-    load_external_module = lru_cache(maxsize=None)(load_external_module)
+def load_external_module(module_id_name: str, version_sha1: str,
+                         last_update_time: datetime.datetime) -> ModuleType:
+    """
+    Load a Python Module given a name and version.
+
+    This is memoized: for each module_id_name, the latest
+    (version_sha1, last_update_time) is kept in memory to speed up future
+    calls. (It's common during development for `version_sha1` to stay
+    `develop`, though `last_update_time` changes frequently. We want to reload
+    the module each time that happens.)
+
+    Assume:
+
+    * the files exist on disk and are valid
+    * the files never change
+    * the files' dependencies are in our PYTHONPATH
+    * the files' dependencies haven't changed (i.e., its imports)
+
+    ... in short: this function shouldn't raise an error.
+    """
+    cache = load_external_module._cache
+    cache_condition = (version_sha1, last_update_time)
+    cached_condition, cached_value = cache.get(module_id_name, (None, None))
+
+    if cached_condition == cache_condition:
+        return cached_value
+
+    value = _load_external_module_uncached(module_id_name, version_sha1)
+    cache[module_id_name] = (cache_condition, value)
+    return value
+
+
+load_external_module._cache = {}
+load_external_module.cache_clear = load_external_module._cache.clear
+
 
 
 def module_get_html_path(module_version: ModuleVersion) -> Optional[str]:

@@ -21,7 +21,8 @@ from server.models.param_field import ParamDTypeDict, ParamDTypeString, \
 
 
 MockModuleVersion = namedtuple('MockModuleVersion', ('id_name',
-                                                     'source_version_hash'))
+                                                     'source_version_hash',
+                                                     'last_update_time'))
 
 
 def call_fetch(loaded_module, params, workflow_id=1, input_dataframe=None,
@@ -66,14 +67,9 @@ def async_mock(*, return_value):
 @override_settings(IMPORTED_MODULES_ROOT=tempfile.mkdtemp())
 class LoadedModuleTest(SimpleTestCase):
     def setUp(self):
-        # Individual tests can't overwrite settings.CACHE_MODULES because we
-        # only read it once. (And we need it to be True, so we can test that
-        # caching works -- it's the default.) These tests care about the cache;
-        # so let's clear the cache between each test.
-        #
-        # This includes _before_ the test (in case other unit tests wrote to
-        # the cache -- they aren't testing the cache so they aren't responsible
-        # for wiping it) and _after_ the unit tests (so we don't leak stuff
+        # Clear cache _before_ the test (in case other unit tests wrote to
+        # the cache -- they aren't testing the cache so they may not remember
+        # to wipe it) and _after_ the unit tests (so we don't leak stuff
         # that ought to be deleted).
         server.models.loaded_module.load_external_module.cache_clear()
 
@@ -92,7 +88,7 @@ class LoadedModuleTest(SimpleTestCase):
     def test_load_static(self):
         # Test with a _real_ static module
         lm = LoadedModule.for_module_version_sync(
-            MockModuleVersion('pastecsv', '(ignored)')
+            MockModuleVersion('pastecsv', '(ignored)', 'now')
         )
         self.assertEqual(lm.name, 'pastecsv:internal')
         self.assertEqual(lm.is_external, False)
@@ -112,7 +108,7 @@ class LoadedModuleTest(SimpleTestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef')
+                MockModuleVersion('imported', 'abcdef', 'now')
             )
 
         self.assertEqual(lm.name, 'imported:abcdef')
@@ -142,12 +138,12 @@ class LoadedModuleTest(SimpleTestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef')
+                MockModuleVersion('imported', 'abcdef', 'now')
             )
 
         with patch('importlib.util.module_from_spec', None):
             lm2 = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef')
+                MockModuleVersion('imported', 'abcdef', 'now')
             )
 
         self.assertIs(lm.render_impl, lm2.render_impl)

@@ -411,10 +411,6 @@ if I_AM_TESTING:
         if provider not in INSTALLED_APPS:
             INSTALLED_APPS.append(provider)
 
-# CACHE_MODULES: if false, reload module code each time it is invoked.
-# (This is handy when developing modules.)
-CACHE_MODULES = os.getenv('CACHE_MODULES', 'true').upper() != 'FALSE'
-
 TEST_RUNNER = 'server.tests.runner.TimeLoggingDiscoverRunner'
 
 if 'MINIO_URL' not in os.environ:

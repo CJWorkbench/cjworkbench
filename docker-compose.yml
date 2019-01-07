@@ -69,7 +69,6 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_EXTERNAL_URL: http://localhost:8001
       MINIO_BUCKET_PREFIX: dev
-      CACHE_MODULES: "${CACHE_MODULES:-}"
     ports: [ '8000:8080' ]
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
@@ -95,37 +94,6 @@ services:
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
-      CACHE_MODULES: "${CACHE_MODULES:-}"
-    depends_on: [ 'database', 'rabbitmq', 'minio' ]
-    networks: [ 'dev' ]
-    command: [ 'pipenv', 'run', 'python', './manage.py', 'worker' ]
-
-  # docker-compose won't obey `services[*].deploy.replicas=2`, so here's an
-  # exact copy of the `worker` service.
-  #
-  # We deploy two copies because A) a dev machine tends to have >1 CPU, and
-  # B) it's great to test contention and locking.
-  worker2:
-    # It'd be nice to use YAML anchors to copy these parameters ... but
-    # PyCharm's YAML parser seems to die when we use YAML anchors.
-    build:
-      context: .
-      target: pydev
-    volumes:
-      - ./:/app/:rw
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
-    environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
-      CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: dev
-      CACHE_MODULES: "${CACHE_MODULES:-}"
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'worker' ]
@@ -151,7 +119,6 @@ services:
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: dev
-      CACHE_MODULES: "${CACHE_MODULES:-}"
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [ 'pipenv', 'run', 'python', './manage.py', 'cron' ]
