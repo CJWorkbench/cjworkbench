@@ -97,6 +97,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
             isClearable={false}
             isDisabled={false}
             isLoading={false}
+            key="foo"
             menuPortalTarget={<body />}
             name="column"
             onChange={[Function]}

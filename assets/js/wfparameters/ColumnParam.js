@@ -38,6 +38,7 @@ export default class ColumnParam extends React.PureComponent {
       <div className={`column-param ${className || ''}`}>
         <Select
           name={name}
+          key={value}
           options={columnOptions}
           value={selectedOption}
           isLoading={isLoading}

@@ -33,6 +33,7 @@ exports[`ColumnParam matches snapshot 1`] = `
       isClearable={false}
       isDisabled={false}
       isLoading={false}
+      key="null"
       menuPortalTarget={<body />}
       name="col"
       onChange={[Function]}
