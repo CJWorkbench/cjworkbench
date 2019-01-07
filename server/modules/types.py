@@ -55,7 +55,7 @@ class QuickFix:
                 return QuickFix(value['text'], value['action'], value['args'])
             except KeyError:
                 raise ValueError(
-                    'QuickFix needs "text", "action" and "args" keys: {value}'
+                    f'QuickFix needs "text", "action" and "args" keys: {value}'
                 )
         else:
             raise ValueError(f'QuickFix is not a tuple or dict: {value}')
