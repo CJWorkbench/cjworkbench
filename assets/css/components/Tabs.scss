@@ -29,7 +29,7 @@
     &>li .tab {
       display: inline-flex; // editor + dropdown-menu + "::after" separator
       white-space: nowrap;
-      background: inherit; // shown when drag-and-dropping
+      will-change: transform; // https://bugs.chromium.org/p/chromium/issues/detail?id=916801
       border: 2px solid transparent;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
