@@ -311,6 +311,21 @@ class LoadedModuleTest(SimpleTestCase):
             f'Ick: Oops at line {lineno + 1} of test_LoadedModule.py'
         )))
 
+    def test_render_dynamic_cannot_coerce_output(self):
+        """Log and display error to user when module output is invalid."""
+        def render(table, params, **kwargs):
+            return {'foo': 'bar'}  # not a valid retval
+
+        lm = LoadedModule('int', '1', True, render_impl=render)
+        with self.assertLogs(level=logging.ERROR):
+            result = lm.render(MockParams(), pd.DataFrame(), fetch_result=None)
+
+        _, lineno = inspect.getsourcelines(render)
+        self.assertRegex(result.error, (
+            r'ValueError: ProcessResult input must only contain '
+            r'\{dataframe, error, json, quick_fixes\} '
+        ))
+
     def test_render_dynamic_default(self):
         lm = LoadedModule('int', '1', True)
         with self.assertLogs():

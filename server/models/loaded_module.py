@@ -180,7 +180,13 @@ class LoadedModule:
             logger.exception('Exception in %s.render', self.module_id_name)
             out = self._wrap_exception(err)
 
-        out = ProcessResult.coerce(out)
+        try:
+            out = ProcessResult.coerce(out)
+        except Exception as err:
+            logger.exception('Exception coercing %s.render output',
+                             self.module_id_name)
+            out = self._wrap_exception(err)
+
         out.truncate_in_place_if_too_big()
         out.sanitize_in_place()
 
