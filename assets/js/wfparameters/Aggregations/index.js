@@ -67,7 +67,7 @@ export default class Aggregations extends React.PureComponent {
               name={name}
               isReadOnly={isReadOnly}
               index={0}
-              operation='sum'
+              operation='size'
               colname=''
               outname=''
               allColumns={allColumns}
