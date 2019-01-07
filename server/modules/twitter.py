@@ -187,7 +187,8 @@ async def twitter_search(access_token, q,
     # 1000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(access_token, 'search/tweets.json',
-                                    [('q', q)], since_id, 100, 10)
+                                    [('q', q), ('result_type', 'recent')],
+                                    since_id, 100, 10)
 
 
 async def twitter_list_timeline(access_token, owner_screen_name, slug,

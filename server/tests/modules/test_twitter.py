@@ -545,11 +545,11 @@ class TwitterTests(unittest.TestCase):
         self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/search/tweets.json'
-                '?q=cat&tweet_mode=extended&count=100'
+                '?q=cat&result_type=recent&tweet_mode=extended&count=100'
             ),
             (
                 'https://api.twitter.com/1.1/search/tweets.json'
-                '?q=cat&tweet_mode=extended&count=100'
+                '?q=cat&result_type=recent&tweet_mode=extended&count=100'
                 '&max_id=795017147651162111'
             )
         ])
