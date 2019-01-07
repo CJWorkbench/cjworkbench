@@ -6,19 +6,18 @@ import Select, { components } from 'react-select'
 
 class MenuList extends React.PureComponent {
   onClickSelectAll = () => {
-    const { onChange, options } = this.props.selectProps
-    onChange(options)
+    const { setValue, selectProps } = this.props
+    const { options } = selectProps
+    setValue(options)
   }
 
   onClickSelectNone = () => {
-    const { onChange } = this.props.selectProps
-    onChange([])
+    const { clearValue } = this.props
+    clearValue()
   }
 
   render () {
     const { name } = this.props.selectProps
-
-    console.log(this.props)
 
     return (
       <components.MenuList {...this.props}>
@@ -48,7 +47,7 @@ const Components = {
   MenuList
 }
 
-export default class ColumnSelector extends React.PureComponent {
+export default class Multicolumn extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -120,6 +119,7 @@ export default class ColumnSelector extends React.PureComponent {
         <div className="multi-select-input-group">
           <Select
             isMulti
+            isDisabled={isReadOnly}
             name={name}
             options={columnOptions}
             menuPortalTarget={document.body}

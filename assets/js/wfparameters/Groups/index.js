@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ColumnSelector from '../ColumnSelector'
+import Multicolumn from '../Multicolumn'
 import DateGranularities from './DateGranularities'
 
 export default class Groups extends React.PureComponent {
@@ -50,7 +50,7 @@ export default class Groups extends React.PureComponent {
 
     return (
       <div className='groups'>
-        <ColumnSelector
+        <Multicolumn
           isReadOnly={isReadOnly}
           name={`${name}[colnames]`}
           initialValue={value.colnames}

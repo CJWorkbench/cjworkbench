@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import MenuParam from './wfparameters/MenuParam'
 import ChartSeriesMultiSelect from './wfparameters/ChartSeriesMultiSelect'
 import ColumnParam from './wfparameters/ColumnParam'
-import ColumnSelector from './wfparameters/ColumnSelector'
+import Multicolumn from './wfparameters/Multicolumn'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import LazyDropZone from './wfparameters/LazyDropZone'
 import VersionSelect from './wfparameters/VersionSelect'
@@ -313,25 +313,6 @@ export default class WfParameter extends React.PureComponent {
               />
             </div>
           )
-        }
-        // For now, let's render the 'colnames' parameter instead of 'colselect' so that we
-        // can keep the parameter's state in `WfModule`.
-        // TODO: convert the `colnames` type to 'multicolumn' and nix all other `multicolumn` parameters in every module
-        else if (idName === 'colnames') {
-          return (
-            <div {...this.outerDivProps}>
-              <div className='t-d-gray content-1 label-margin'>{''}</div>
-              <ColumnSelector
-                name={idName}
-                isReadOnly={isReadOnly}
-                initialValue={initialValue}
-                value={value}
-                allColumns={this.props.inputColumns}
-                onSubmit={this.onSubmit}
-                onChange={this.onChange}
-              />
-            </div>
-          )
         } else {
           return (
             <div {...this.outerDivProps}>
@@ -448,7 +429,7 @@ export default class WfParameter extends React.PureComponent {
           return (
             <div {...this.outerDivProps}>
               <div className='t-d-gray content-1 label-margin'>{name}</div>
-              <ColumnSelector
+              <Multicolumn
                 name={idName}
                 isReadOnly={isReadOnly}
                 initialValue={initialValue}

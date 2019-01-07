@@ -55,17 +55,6 @@ describe('WfParameter', () => {
     expect(wrapper.find('SingleLineTextField')).toHaveLength(1)
   })
 
-  it('should render a "colnames" parameter that has type string', () => {
-    const wrapper = shallowParameter({
-      visible: true,
-      idName: 'colnames',
-      type: 'string',
-      value: 'A,B,C',
-      initialValue: 'A,B,C'
-    }, 'A,B,C')
-    expect(wrapper.find('ColumnSelector')).toHaveLength(1)
-  })
-
   it('should not render a "colselect" parameter that has type multicolumn', () => {
     const wrapper = shallowParameter({
       type: 'multicolumn',
@@ -74,6 +63,6 @@ describe('WfParameter', () => {
       value: '',
       initialValue: ''
     }, '')
-    expect(wrapper.find('ColumnSelector')).toHaveLength(0)
+    expect(wrapper.find('Multicolumn')).toHaveLength(0)
   })
 })
