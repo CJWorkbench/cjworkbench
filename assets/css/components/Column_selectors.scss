@@ -130,8 +130,7 @@
   }
 }
 
-
-// Menu when open
+// Menu when open (it's attached to <body>, not in the spot of the DOM where the <Select> is)
 div>.react-select__menu {
   z-index: 2;
   border-radius: 0 0 5px 5px;
@@ -141,6 +140,41 @@ div>.react-select__menu {
   border-top-width: 1px;
   box-shadow: $menu-shadow;
   outline: none;
+
+  .multicolumn-select-all-none {
+    border-bottom: 1px solid $Vlight-gray;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    padding: 8px 12px;
+
+    button {
+      display: inline-block;
+      font: inherit;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      background: inherit;
+      color: inherit;
+      cursor: pointer;
+
+      &:first-child {
+        padding-right: 1rem;
+      }
+
+      &:hover {
+        color: $brand-text--medium;
+      }
+
+      &:not(:first-child)::before {
+        content: '';
+        display: inline-block;
+        width: 1rem;
+        height: 2rem;
+        border-left: 1px solid $table-border;
+        vertical-align: middle;
+      }
+    }
+  }
 
   .react-select__option {
     height: 3.5rem;
