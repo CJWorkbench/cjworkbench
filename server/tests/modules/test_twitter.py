@@ -368,6 +368,7 @@ mock_tweet_table = pd.DataFrame({
     'favorite_count': [0, 0],
     'in_reply_to_screen_name': [None, None],
     'retweeted_status_screen_name': [None, None],
+    'user_description': ['', ''],
     'source': ['Twitter Web Client', 'Tweepy dev'],
     'id': [795017539831103489, 795017147651162112],
 })
@@ -384,6 +385,10 @@ mock_tweet_table2 = pd.DataFrame({
     'favorite_count': [0, 0],
     'in_reply_to_screen_name': [None, None],
     'retweeted_status_screen_name': [None, 'ritanyaaskar'],
+    'user_description': [
+        '',
+        '\u0ca8\u0cbe\u0ca8\u0cc1....\u2764 \u0cb8\u0cc1\u0c9c\u0cc1 \u2764..!!!  \u0ca8\u0cbf\u0cae\u0ccd\u0cae  \u0cb9\u0cc3\u0ca6\u0caf\u0ca6  \u0c97\u0cc6\u0cb3\u0cc6\u0caf',
+    ],
     'source': ['Tweepy dev', 'Twitter Web Client'],
     'id': [795018956507582465, 794967685113188400],
 })

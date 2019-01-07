@@ -7,7 +7,7 @@ import numpy as np
 from oauthlib import oauth1
 from oauthlib.common import urlencode
 import pandas as pd
-import yarl # expose aiohttp's innards -- ick.
+import yarl  # expose aiohttp's innards -- ick.
 from server import oauth
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
@@ -43,6 +43,7 @@ Columns = [
            None),
     Column('retweeted_status_screen_name',
            ['retweeted_status', 'user', 'screen_name'], np.object, None),
+    Column('user_description', ['user', 'description'], np.object, None),
     Column('source', ['source'], np.object, parse_source),
     Column('id', ['id'], np.int64, None),
 ]
