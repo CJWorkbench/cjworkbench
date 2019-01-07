@@ -216,6 +216,14 @@ describe('WfModule, not read-only mode', () => {
     expect(w.instance().props.setWfModuleNotes).toHaveBeenCalledWith(wfModule.id, '')
   })
 
+  it('does not show old value during edit when editing ""', () => {
+    // https://www.pivotaltracker.com/story/show/163005781
+    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' }})
+
+    w.find('EditableNotes').simulate('change', { target: { value: '' } })
+    expect(w.find('EditableNotes').prop('value')).toEqual('')
+  })
+
   it('queues changes from onChange and then submits them in onSubmit', () => {
     const wfModule = {
       id: 999,

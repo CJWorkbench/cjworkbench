@@ -59,7 +59,7 @@ export default class EditableNotes extends React.PureComponent {
           name='notes'
           {...subprops}
           onKeyDown={this.handleKeyDown}
-          />
+        />
       )
     }
   }

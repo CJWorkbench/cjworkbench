@@ -206,7 +206,7 @@ export class WfModule extends React.PureComponent {
 
   onFocusNote = () => {
     if (this.state.editedNotes === null) {
-      this.setState({ editedNotes: this.props.notes || '' })
+      this.setState({ editedNotes: this.props.wfModule.notes || '' })
     }
   }
 
@@ -433,7 +433,7 @@ export class WfModule extends React.PureComponent {
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
           placeholder='Type a note...'
-          value={this.state.editedNotes || this.props.wfModule.notes || ''}
+          value={this.state.editedNotes === null ? (this.props.wfModule.notes || '') : this.state.editedNotes}
           onChange={this.onChangeNote}
           onFocus={this.onFocusNote}
           onBlur={this.onBlurNote}
