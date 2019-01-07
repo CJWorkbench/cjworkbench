@@ -61,6 +61,28 @@ export default class Aggregation extends React.PureComponent {
     this.outnameRef.current.removeEventListener('change', this.onChangeOutname)
   }
 
+  get placeholder () {
+    // Duplicated from grroupby/groupby.py
+    const { operation, colname } = this.props
+
+    if (operation === 'size') return 'Group Size'
+
+    if (colname === '') {
+      // reduce clutter -- groupby.py won't add this operation anyway
+      return ''
+    }
+
+    switch (operation) {
+      case 'nunique': return `Unique count of ${colname}`
+      case 'sum': return `Sum of ${colname}`
+      case 'mean': return `Average of ${colname}`
+      case 'min': return `Minimum of ${colname}`
+      case 'max': return `Maximum of ${colname}`
+      case 'first': return `First of ${colname}`
+      default: return '(default)'
+    }
+  }
+
   render () {
     const { name, index, onDelete, operation, colname, outname, allColumns, isReadOnly } = this.props
 
@@ -90,7 +112,7 @@ export default class Aggregation extends React.PureComponent {
             name={`${name}[${index}[outname]`}
             defaultValue={outname}
             onChange={this.onChangeOutname}
-            placeholder='(default)'
+            placeholder={this.placeholder}
           />
         </label>
         {(onDelete && !isReadOnly) ? (
