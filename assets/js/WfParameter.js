@@ -416,33 +416,21 @@ export default class WfParameter extends React.PureComponent {
           </div>
         )
 
-      // TODO: Set all multi-column select modules to have type 'multicolumn' for 'colnames', remove 'colselect' condition
-      // [2018-11-06] right now this code is never reached, but it will be when we
-      // finish cleaning up the multicolumn` parameter type.
       case 'multicolumn':
-        // There's no good reason why we read/write `colnames` instead of our own
-        // idName. But it'll be a chore to change it: we'll need to change all modules'
-        // idName to `colnames` so that pre-chore data will migrate over.
-        //
-        // (Then we'll have one more chore: select JSON instead of comma-separated strings)
-        if (idName === 'colnames') {
-          return (
-            <div {...this.outerDivProps}>
-              <div className='t-d-gray content-1 label-margin'>{name}</div>
-              <Multicolumn
-                name={idName}
-                isReadOnly={isReadOnly}
-                initialValue={initialValue}
-                value={value}
-                allColumns={inputColumns}
-                onSubmit={this.onSubmit}
-                onChange={this.onChange}
-              />
-            </div>
-          )
-        } else {
-          return null
-        }
+        return (
+          <div {...this.outerDivProps}>
+            <div className='t-d-gray content-1 label-margin'>{name}</div>
+            <Multicolumn
+              name={idName}
+              isReadOnly={isReadOnly}
+              initialValue={initialValue}
+              value={value}
+              allColumns={inputColumns}
+              onSubmit={this.onSubmit}
+              onChange={this.onChange}
+            />
+          </div>
+        )
 
       case 'secret':
         return this.render_secret_parameter()
