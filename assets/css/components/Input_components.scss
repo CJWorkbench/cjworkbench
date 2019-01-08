@@ -245,7 +245,12 @@ textarea:focus, input:focus{
   border: 2px solid transparent;
   box-shadow: none;
   height: 3.5rem;
-  border-radius: 3px;
+  -webkit-appearance: none;
+  -webkit-border-radius: 3px;
+  background-image: url("https://image.flaticon.com/icons/svg/60/60781.svg");
+  background-position: 96% 50%;
+  background-repeat: no-repeat;
+  background-size: 11px;
 
   &:focus{
     box-shadow: none;
