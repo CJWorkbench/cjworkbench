@@ -1,7 +1,6 @@
 .aggregations {
   h5 {
-    font-size: 1.4rem;
-    color: $brand-text--medium;
+    @extend .parameter-label;
   }
 
   ul {
@@ -13,7 +12,7 @@
   li.aggregation {
     & + li.aggregation {
       // Spacing between items
-      padding-top: 1rem;
+      padding-top: .5rem;
     }
 
     .operation {
@@ -27,7 +26,13 @@
     .react-select {
       // 2. (optional) colname: has no radius
       .react-select__control {
-        border-radius: 0;
+        background-color: $table-background;
+        border-radius: 3px;
+        border-color: transparent;
+        margin-top: $group-margin;
+        &:hover {
+          border-color: darken($Vlight-gray,5%);
+        }
       }
     }
 
@@ -39,26 +44,31 @@
       span {
         font-size: 1.4rem;
         flex: 0 0 auto;
-        line-height: 3.3rem; // line up with <input>
-        border: 1px solid $Vlight-gray;
-        border-top-color: transparent;
-        border-right-color: transparent;
+        line-height: 3.1rem; // line up with <input>
+        border: 2px solid $table-background;
+        border-right: 0;
         border-bottom-left-radius: 3px;
-        padding: 0 1.3rem; // line up with <select> innards above it
-        color: $light-gray;
+        border-top-left-radius: 3px;
+        padding: 0 1.2rem; // line up with <select> innards above it
+        color: $brand-text--medium;
+        margin-top: $group-margin;
       }
 
       input {
         @extend %module-parameter;
         background-color: $table-background;
-        border-color: $Vlight-gray;
+        border-color: transparent;
         color: $brand-text--medium;
         padding: 0 1.3rem; // same as <span>
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
-        border-top-right-radius: 0;
         display: block;
         flex: 1 1 auto;
+        margin-top: $group-margin;
+        &:hover {
+          cursor: text;
+          border-color: darken($Vlight-gray,5%);
+        }
       }
     }
 
@@ -74,6 +84,11 @@
         font-size: 1.2rem;
         background: inherit;
         color: $light-gray;
+        //margin-top: $group-margin;
+      }
+
+      i {
+        margin-right: 1rem;
       }
     }
   }
@@ -83,7 +98,8 @@
     font: inherit;
     font-size: 1.2rem;
     text-transform: uppercase;
-    margin: 0;
+    margin-top: $group-margin;
+    margin-left: 0;
     padding: 0;
     border: 0;
     background: inherit;

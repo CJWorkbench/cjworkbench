@@ -88,7 +88,7 @@ textarea:focus, input:focus{
   border: 2px solid $Vlight-gray;
   background-color: $Vlight-gray;
   &:hover {
-    border: 2px solid $dark-accent--soft;
+    border: 2px solid darken($Vlight-gray,5%);
   }
   &:focus {
     border: $data-action--border;

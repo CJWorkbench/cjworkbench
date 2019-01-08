@@ -24,7 +24,7 @@ export default class DateGranularity extends React.PureComponent {
 
     return (
       <label className='date-granularity'>
-        <h5>Group dates in “{colname}”</h5>
+        <h5>Granularity of “{colname}”</h5>
         <select
           className='custom-select'
           name={name}
@@ -32,7 +32,7 @@ export default class DateGranularity extends React.PureComponent {
           onChange={this.onChange}
           readOnly={isReadOnly}
         >
-          <option value=''>Exactly</option>
+          <option value=''>as is</option>
           <option value='S'>by second</option>
           <option value='T'>by minute</option>
           <option value='H'>by hour</option>

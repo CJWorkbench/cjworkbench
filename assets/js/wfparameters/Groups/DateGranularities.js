@@ -64,7 +64,7 @@ export default class DateGranularities extends React.PureComponent {
                 <p>There are no Date and Time columns to group by date</p>
                 <button
                   name={`${name}[add-module]`}
-                  className='quick-fix action-button button-orange'
+                  className='quick-fix action-button button-blue'
                   onClick={addConvertToDateModule}
                 >
                   Convert columns

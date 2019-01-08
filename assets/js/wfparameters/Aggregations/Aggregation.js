@@ -107,7 +107,7 @@ export default class Aggregation extends React.PureComponent {
         <label className='outname'>
           <span className='name'>Name</span>
           <input
-            className='outname' 
+            className='outname'
             ref={this.outnameRef}
             name={`${name}[${index}[outname]`}
             defaultValue={outname}
@@ -121,7 +121,7 @@ export default class Aggregation extends React.PureComponent {
               className='delete'
               onClick={this.onClickDelete}
             >
-              <i className='icon-close' /> Remove
+              <i className='icon-close' />
             </button>
           </div>
         ) : null}
