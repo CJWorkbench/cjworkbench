@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Aggregation from './Aggregation'
 
+const DefaultValue = [{ operation: 'size', colname: '', outname: '' }]
+const DefaultAddValue = { operation: 'sum', colname: '', outname: '' }
+
 export default class Aggregations extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
@@ -18,31 +21,46 @@ export default class Aggregations extends React.PureComponent {
   }
 
   onChangeAggregation = (index, aggregation) => {
-    const { value, onChange, isReadOnly } = this.props
+    const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
-    const newValue = value.slice()
+    const newValue = this.value.slice()
     newValue[index] = aggregation // may append an element
     onChange(newValue)
   }
 
   onDeleteAggregation = (index) => {
-    const { value, onChange, isReadOnly } = this.props
+    const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
-    const newValue = value.slice()
+    const newValue = this.value.slice()
     newValue.splice(index, 1)
     onChange(newValue)
   }
 
   onAdd = () => {
-    const { value, onChange, isReadOnly } = this.props
+    const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
-    const newValue = value.slice()
-    newValue.push({ operation: 'sum', colname: '', outname: '' })
+    const newValue = this.value.slice()
+    newValue.push(DefaultAddValue)
     onChange(newValue)
   }
 
+  /**
+   * Given value, or default of {operation:size} if empty.
+   *
+   * groupby.py uses this default. Read comments there to see why.
+   */
+  get value () {
+    const actual = this.props.value
+    if (actual.length === 0) {
+      return DefaultValue
+    } else {
+      return actual
+    }
+  }
+
   render () {
-    const { value, name, allColumns, isReadOnly } = this.props
+    const { name, allColumns, isReadOnly } = this.props
+    const value = this.value
     const onDelete = value.length <= 1 ? null : this.onDeleteAggregation
 
     return (
@@ -61,24 +79,11 @@ export default class Aggregations extends React.PureComponent {
               onDelete={onDelete}
             />
           ))}
-          {value.length === 0 ? (
-            <Aggregation
-              key={0}
-              name={name}
-              isReadOnly={isReadOnly}
-              index={0}
-              operation='size'
-              colname=''
-              outname=''
-              allColumns={allColumns}
-              onChange={this.onChangeAggregation}
-              onDelete={null}
-            />
-          ) : null}
         </ul>
         {isReadOnly ? null : (
           <button
             className='add'
+            name={`${name}[add]`}
             onClick={this.onAdd}
           >
             <i className='icon-add'/> Add
