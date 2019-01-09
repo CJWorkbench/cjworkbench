@@ -234,6 +234,8 @@ textarea:focus, input:focus{
   line-height: 1.5rem;
   height: 1.5rem;
   overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 .custom-select {
