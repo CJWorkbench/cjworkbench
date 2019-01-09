@@ -5,11 +5,13 @@ import { MaybeLabel } from '../util'
 /**
  * A text field for multiline text areas
  */
-export default class MultiLineTextArea extends React.PureComponent {
+export default class MultiLineString extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func(str) => undefined
     name: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    fieldId: PropTypes.string.isRequired,
     value: PropTypes.string, // sometimes empty string
     placeholder: PropTypes.string // sometimes empty string
   }

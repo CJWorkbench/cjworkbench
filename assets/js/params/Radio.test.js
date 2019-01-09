@@ -1,14 +1,14 @@
 import React from 'react'
 import { mount } from 'enzyme'
 
-import RadioParam from './RadioParam'
+import Radio from './Radio'
 
-describe('RadioButtons', () => {
+describe('Radio', () => {
   const wrapper = (extraProps = {}) => mount(
-    <RadioParam
+    <Radio
       name='radio-buttons'
       items='Apple|Kittens|Banana'
-      selectedIdx={0}
+      value={0}
       onChange={jest.fn()}
       {...extraProps}
     />
@@ -31,10 +31,10 @@ describe('RadioButtons', () => {
   })
 
   it('should be disabled when read only', () => {
-    let items = 'Apple|Kittens|Banana'.split('|')
+    const items = 'Apple|Kittens|Banana'.split('|')
     const w = wrapper({ isReadOnly: true })
-    for (let item in items) {
-      let button = w.find(('input[value="' + item + '"]'))
+    for (const item in items) {
+      const button = w.find(`input[value="${item}"]`)
       expect(button.prop('disabled')).toEqual(true)
     }
   })

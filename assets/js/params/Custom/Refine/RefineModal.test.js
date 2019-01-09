@@ -1,7 +1,7 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { mount } from 'enzyme'
-import { tick } from '../test-utils'
+import { tick } from '../../../test-utils'
 import RefineModal from './RefineModal'
 
 describe('RefineModal', () => {

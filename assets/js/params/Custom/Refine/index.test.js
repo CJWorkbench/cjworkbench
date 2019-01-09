@@ -1,15 +1,17 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import LoadingRefine, { Refine, RefineSpec } from './Refine'
+import LoadingRefine, { Refine, RefineSpec } from './index'
 import { mount } from 'enzyme'
-import { tick } from '../test-utils'
+import { tick } from '../../../test-utils'
+
+const DefaultValue = { renames: {}, blacklist: [] }
 
 describe('Refine', () => {
   const wrapper = (props={}) => mount(
     <Refine
       valueCounts={{}}
       loading={false}
-      value={''}
+      value={DefaultValue}
       onChange={jest.fn()}
       {...props}
     />
@@ -88,7 +90,7 @@ describe('Refine', () => {
   it('should render value counts in order', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 2 },
-      value: ''
+      value: DefaultValue
     })
 
     const dt1 = w.find('.summary').at(0)
@@ -103,7 +105,7 @@ describe('Refine', () => {
   it('should render commas in value counts', () => {
     const w = wrapper({
       valueCounts: { 'a': 1234 },
-      value: ''
+      value: DefaultValue
     })
 
     expect(w.find('.count').text()).toEqual('1,234')
@@ -112,7 +114,7 @@ describe('Refine', () => {
   it('should render a rename', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 2 },
-      value: JSON.stringify({ renames: { a: 'c' }, blacklist: [] })
+      value: { renames: { a: 'c' }, blacklist: [] }
     })
 
     expect(w.find('input[value="c"]')).toHaveLength(1)
@@ -121,7 +123,7 @@ describe('Refine', () => {
   it('should render when valueCounts have not loaded', () => {
     const w = wrapper({
       valueCounts: null,
-      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+      value: { renames: { 'a': 'b' }, blacklist: [] }
     })
 
     expect(w.find('input')).toHaveLength(0)
@@ -130,7 +132,7 @@ describe('Refine', () => {
   it('should blacklist', () => {
     const w = wrapper({
       valueCounts: { 'a': 2, 'b': 1 },
-      value: JSON.stringify({ renames: {}, blacklist: [ 'a' ] })
+      value: { renames: {}, blacklist: [ 'a' ] }
     })
 
     // 'a': blacklisted ("shown" checkbox is unchecked)
@@ -143,7 +145,7 @@ describe('Refine', () => {
     // Add 'b' to blacklist
     w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: false } })
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).blacklist).toEqual([ 'a', 'b' ])
+    expect(changeCalls[0][0].blacklist).toEqual([ 'a', 'b' ])
 
     // The change is only applied _after_ we change the prop; outside of the
     // test environment, this is the Redux state.
@@ -157,37 +159,37 @@ describe('Refine', () => {
     w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
 
     expect(changeCalls).toHaveLength(2)
-    expect(JSON.parse(changeCalls[1][0]).blacklist).toEqual([ 'a' ])
+    expect(changeCalls[1][0].blacklist).toEqual([ 'a' ])
   })
 
   it('should rename a value', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1 },
-      value: JSON.stringify({ renames: {}, blacklist: [] })
+      value: { renames: {}, blacklist: [] }
     })
 
     w.find('input[value="a"]').simulate('change', { target: { value: 'b' } }).simulate('blur')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ 'a': 'b' })
+    expect(changeCalls[0][0].renames).toEqual({ 'a': 'b' })
   })
 
   it('should re-rename a group', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+      value: { renames: { 'a': 'b' }, blacklist: [] }
     })
 
     w.find('input[value="b"]').simulate('change', { target: { value: 'd' } }).simulate('blur')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ 'a': 'd', 'b': 'd' })
+    expect(changeCalls[0][0].renames).toEqual({ 'a': 'd', 'b': 'd' })
   })
 
   it('should show group values', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: JSON.stringify({ renames: { 'a': 'b' }, blacklist: [] })
+      value: { renames: { 'a': 'b' }, blacklist: [] }
     })
 
     expect(w.find('.values')).toHaveLength(0) // collapsed to begin with
@@ -206,7 +208,7 @@ describe('Refine', () => {
   it('should un-group values', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, d: 1 },
-      value: JSON.stringify({ renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] })
+      value: { renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] }
     })
 
     // expand to see the values:
@@ -221,13 +223,13 @@ describe('Refine', () => {
     // test environment, this is the Redux state.
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ d: 'e' })
+    expect(changeCalls[0][0].renames).toEqual({ d: 'e' })
   })
 
   it('should un-group a single value', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, d: 1 },
-      value: JSON.stringify({ renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] })
+      value: { renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] }
     })
 
     // expand to see the values:
@@ -242,13 +244,13 @@ describe('Refine', () => {
     // test environment, this is the Redux state.
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).renames).toEqual({ b: 'c', d: 'e' })
+    expect(changeCalls[0][0].renames).toEqual({ b: 'c', d: 'e' })
   })
 
   it('should not allow un-grouping a value from a group with the same name', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1 },
-      value: JSON.stringify({ renames: { b: 'a' }, blacklist: [] })
+      value: { renames: { b: 'a' }, blacklist: [] }
     })
 
     // expand to see the values:
@@ -273,10 +275,10 @@ describe('Refine', () => {
     // one test here will have to do.
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, d: 1 },
-      value: JSON.stringify([
+      value: [
         { type: 'change', column: 'A', content: { fromVal: 'c', toVal: 'a' } },
         { type: 'select', column: 'A', content: { value: 'a' } }
-      ])
+      ]
     })
 
     expect(w.prop('onChange')).not.toHaveBeenCalled()
@@ -291,7 +293,7 @@ describe('Refine', () => {
 
     const onChangeCalls = w.prop('onChange').mock.calls
     expect(onChangeCalls).toHaveLength(1)
-    expect(JSON.parse(onChangeCalls[0][0])).toEqual({
+    expect(onChangeCalls[0][0]).toEqual({
       renames: { c: 'a' },
       blacklist: []
     })
@@ -300,7 +302,7 @@ describe('Refine', () => {
   it('should find search results within both group names and members', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: JSON.stringify({ renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] })
+      value: { renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] }
     })
     // Ensure 3 groups initially rendered
     expect(w.find('.visible').children()).toHaveLength(3)
@@ -313,29 +315,29 @@ describe('Refine', () => {
   it('should set the blacklist to full when "None" pressed', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: JSON.stringify({ renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] })
+      value: { renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] }
     })
     w.find('button[title="Select None"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).blacklist).toEqual(['a', 'b', 'd'])
+    expect(changeCalls[0][0].blacklist).toEqual(['a', 'b', 'd'])
   })
 
   it('should clear the blacklist when "All" pressed', () => {
     const w = wrapper({
       valueCounts: {'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: JSON.stringify({renames: {'c': 'b', 'bb': 'a'}, blacklist: ['a', 'b', 'd']})
+      value: {renames: {'c': 'b', 'bb': 'a'}, blacklist: ['a', 'b', 'd']}
     })
     w.find('button[title="Select All"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0]).blacklist).toEqual([])
+    expect(changeCalls[0][0].blacklist).toEqual([])
   })
 
-  it('All and None buttons should be disabled when a search has taken place', () => {
+  it('disables All and None buttons when searching', () => {
     const w = wrapper({
       valueCounts: {'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1},
-      value: JSON.stringify({renames: {'c': 'b', 'BB': 'a'}, blacklist: ['a']})
+      value: {renames: {'c': 'b', 'BB': 'a'}, blacklist: ['a']}
     })
     // Search for 'a' even though it is blacklisted
     w.find('input[type="search"]').simulate('change', {target: {value: 'a'}})

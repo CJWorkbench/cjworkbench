@@ -1,34 +1,27 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { mount } from 'enzyme'
-import NumberField from './NumberField'
+import Number from './Number'
 
-describe('NumberField', () => {
+describe('Number', () => {
   const wrapper = (props) => mount(
-    <NumberField
+    <Number
       isReadOnly={false}
       value={3}
       upstreamValue={5}
-      placeholder={'a-placeholder'}
+      name='name'
+      label='Label'
+      fieldId='field-id'
+      placeholder='a-placeholder'
       onChange={jest.fn()}
-      onSubmit={jest.fn()}
       {...props}
     />
   )
 
-  it('should call onChange but not onSubmit when text changes', () => {
+  it('should call onChange when text changes', () => {
     const w = wrapper()
     w.find('input').simulate('change', { target: { value: '6' } })
     expect(w.prop('onChange')).toHaveBeenCalledWith(6)
-    expect(w.prop('onSubmit')).not.toHaveBeenCalled()
-  })
-
-  it('should not show a submit button when value is unchanged', () => {
-    const w = wrapper({
-      value: 5,
-      upstreamValue: 5
-    })
-    expect(w.find('button')).toHaveLength(0)
   })
 
   it('should submit a changed value by button', () => {
@@ -40,21 +33,12 @@ describe('NumberField', () => {
     expect(w.prop('onSubmit')).toHaveBeenCalled()
   })
 
-  it('should submit a changed value by pressing Enter', () => {
-    const w = wrapper({
-      value: 6,
-      upstreamValue: 5
-    })
-    w.find('input').simulate('keydown', { keyCode: 13, preventDefault: jest.fn() })
-    expect(w.prop('onSubmit')).toHaveBeenCalled()
-  })
-
   it('should change back to initial value by pressing Escape', () => {
     const w = wrapper({
       value: 6,
       upstreamValue: 5
     })
-    w.find('input').simulate('keydown', { keyCode: 27, preventDefault: jest.fn() })
+    w.find('input').simulate('keydown', { key: 'Escape', preventDefault: jest.fn() })
     expect(w.prop('onChange')).toHaveBeenCalledWith(5)
   })
 

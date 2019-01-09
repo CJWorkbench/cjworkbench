@@ -1,15 +1,14 @@
 import React from 'react'
-import { shallow, render, mount } from 'enzyme'
+import { shallow } from 'enzyme'
+import Menu from './Menu';
 
-import MenuParam from './MenuParam';
-
-describe('MenuParam', () => {
+describe('Menu', () => {
   it('matches snapshot', () => {
     const w = shallow(
-      <MenuParam
+      <Menu
         items='Apple|Kittens|Banana'
         name='somename'
-        selectedIdx={1}
+        value={1}
         onChange={jest.fn()}
         isReadOnly={false}
       />

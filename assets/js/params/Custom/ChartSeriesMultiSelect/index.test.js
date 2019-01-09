@@ -1,21 +1,21 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import ChartSeriesMultiSelect from './ChartSeriesMultiSelect'
+import { ChartSeriesMultiSelect } from './index'
 import { mount } from 'enzyme'
 
 describe('ChartSeriesMultiSelect', () => {
   function wrapper (props = {}) {
     return mount(
       <ChartSeriesMultiSelect
-        series={[
+        value={[
           { column: 'A', color: '#aaaaaa' },
           { column: 'B', color: '#bbbbbb' }
         ]}
         isReadOnly={false}
-        prompt={'prompt'}
+        placeholder='placeholder'
         inputColumns={[ { name: 'A' }, { name: 'B' }, { name: 'C' } ]}
         onChange={jest.fn()}
-        name={'y_columns'}
+        name='y_columns'
         {...props}
       />
     )
@@ -47,7 +47,7 @@ describe('ChartSeriesMultiSelect', () => {
   })
 
   it('should present a placeholder when empty', () => {
-    const w = wrapper({ series: [] })
+    const w = wrapper({ value: [] })
     expect(w.find('ChartSeriesSelect')).toHaveLength(1)
     // No add/remove buttons
     expect(w.find('button[title="add another column"]')).toHaveLength(0)
@@ -71,7 +71,7 @@ describe('ChartSeriesMultiSelect', () => {
   })
 
   it('should not allow removing last column', () => {
-    const w = wrapper({ series: [
+    const w = wrapper({ value: [
       { column: 'A', color: '#aaaaaa' }
     ]})
     expect(w.find('button[title="remove last column"]')).toHaveLength(0)

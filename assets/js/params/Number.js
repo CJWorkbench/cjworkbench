@@ -15,7 +15,9 @@ export default class NumberField extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // onChange(n) => undefined
-    onSubmit: PropTypes.func.isRequired, // onSubmit() => undefined
+    name: PropTypes.string.isRequired, // <input name=...>
+    fieldId: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
     value: PropTypes.number, // maybe 0/null
     upstreamValue: PropTypes.number, // maybe 0/null
     placeholder: PropTypes.string // maybe empty
@@ -32,8 +34,8 @@ export default class NumberField extends React.PureComponent {
         ev.preventDefault()
         return this.props.onChange(this.props.upstreamValue)
       case 'Enter':
-        ev.preventDefault()
-        return this.props.onSubmit()
+        // The default is to submit the form -- which is what we want
+        return
       // else handle the key as usual
     }
   }

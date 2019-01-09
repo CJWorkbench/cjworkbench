@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Menu matches snapshot 1`] = `
+<Fragment>
+  <MaybeLabel />
+  <select
+    disabled={false}
+    name="somename"
+    onChange={[Function]}
+    value={1}
+  >
+    <option
+      key="0"
+      value={0}
+    >
+      Apple
+    </option>
+    <option
+      key="1"
+      value={1}
+    >
+      Kittens
+    </option>
+    <option
+      key="2"
+      value={2}
+    >
+      Banana
+    </option>
+  </select>
+</Fragment>
+`;

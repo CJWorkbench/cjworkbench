@@ -2,14 +2,14 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { ValueSelect } from './ValueSelect'
-import { tick } from '../test-utils'
+import { tick } from '../../test-utils'
 
 describe('ValueSelect', () => {
   const wrapper = (props={}) => mount(
     <ValueSelect
       valueCounts={{}}
       loading={false}
-      value={''}
+      value={[]}
       onChange={jest.fn()}
       {...props}
     />
@@ -18,7 +18,7 @@ describe('ValueSelect', () => {
   it('should render value texts in order', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 2 },
-      value: ''
+      value: []
     })
 
     const value1 = w.find('.value').at(0)
@@ -33,7 +33,7 @@ describe('ValueSelect', () => {
   it('should render commas in value counts', () => {
     const w = wrapper({
       valueCounts: { 'a': 1234 },
-      value: ''
+      value: []
     })
 
     expect(w.find('.count').text()).toEqual('1,234')
@@ -42,16 +42,17 @@ describe('ValueSelect', () => {
   it('should render when valueCounts have not loaded', () => {
     const w = wrapper({
       valueCounts: null,
-      value: JSON.stringify({ 'a': 'b' })
+      value: ['a', 'b'],
+      loading: true
     })
 
     expect(w.find('.text')).toHaveLength(0)
   })
 
-  it('should show appropriate state', () => {
+  it('should show appropriate state (TODO rename this test)', () => {
     const w = wrapper({
       valueCounts: { 'a': 2, 'b': 1 },
-      value: JSON.stringify([ 'a' ])
+      value: [ 'a' ]
     })
 
     // 'a': selected value ("shown" checkbox is checked)
@@ -64,7 +65,7 @@ describe('ValueSelect', () => {
     // Add 'b' to selected values
     w.find('.value').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0])).toEqual([ 'a', 'b' ])
+    expect(changeCalls[0][0]).toEqual([ 'a', 'b' ])
 
     // The change is only applied _after_ we change the prop; outside of the
     // test environment, this is the Redux state.
@@ -80,7 +81,7 @@ describe('ValueSelect', () => {
   it('should find search results', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
-      value: JSON.stringify([])
+      value: []
     })
 
     expect(w.find('.value')).toHaveLength(5)
@@ -93,30 +94,30 @@ describe('ValueSelect', () => {
   it('should set the value to [] when "None" pressed', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: JSON.stringify([])
+      value: []
     })
     w.find('button[title="Select None"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0])).toEqual([])
+    expect(changeCalls[0][0]).toEqual([])
   })
 
   it('should clear the blacklist when "All" pressed', () => {
     const w = wrapper({
       valueCounts: {'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: JSON.stringify(['a', 'b', 'd'])
+      value: ['a', 'b', 'd']
     })
 
     w.find('button[title="Select All"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(JSON.parse(changeCalls[0][0])).toEqual(['a', 'b', 'c', 'bb', 'd'])
+    expect(changeCalls[0][0].sort()).toEqual(['a', 'b', 'bb', 'c', 'd'])
   })
 
-  it('All and None buttons should be disabled when a search has taken place', () => {
+  it('should disable All and None buttons when a search has taken place', () => {
     const w = wrapper({
       valueCounts: {'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1},
-      value: JSON.stringify(['a'])
+      value: ['a']
     })
 
     w.find('input[type="search"]').simulate('change', {target: {value: 'a'}})

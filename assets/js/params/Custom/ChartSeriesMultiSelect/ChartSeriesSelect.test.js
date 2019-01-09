@@ -11,7 +11,7 @@ describe('ChartSeriesSelect', () => {
         column='foo'
         color='#abcdef'
         isReadOnly={false}
-        prompt={'prompt'}
+        placeholder='placeholder'
         availableColumns={[{ name: 'foo' }, { name: 'bar' }]}
         onChange={jest.fn()}
         {...props}

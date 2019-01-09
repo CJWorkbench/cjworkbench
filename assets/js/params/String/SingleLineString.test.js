@@ -1,14 +1,13 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { mount } from 'enzyme' // mount, not shallow, because we do DOM calculations
-import SingleLineTextField from './SingleLineTextField'
+import SingleLineString from './SingleLineString'
 
-describe('SingleLineTextField', () => {
+describe('SingleLineString', () => {
   const wrapper = (props) => mount(
-    <SingleLineTextField
+    <SingleLineString
       onChange={jest.fn()}
       onSubmit={jest.fn()}
-      onReset={jest.fn()}
       isReadOnly={false}
       name='field-name'
       value='value'
@@ -18,11 +17,10 @@ describe('SingleLineTextField', () => {
     />
   )
 
-  it('should call onChange but not onSubmit when text changes', () => {
+  it('should call onChange when text changes', () => {
     const w = wrapper()
     w.find('textarea').simulate('change', { target: { value: 'new' } })
     expect(w.prop('onChange')).toHaveBeenCalledWith('new')
-    expect(w.prop('onSubmit')).not.toHaveBeenCalled()
   })
 
   it('should submit a changed value by pressing Enter', () => {
@@ -30,7 +28,7 @@ describe('SingleLineTextField', () => {
       value: 'new',
       upstreamValue: 'old'
     })
-    w.find('textarea').simulate('keydown', { keyCode: 13, preventDefault: jest.fn() })
+    w.find('textarea').simulate('keydown', { key: 'Enter', preventDefault: jest.fn() })
     expect(w.prop('onSubmit')).toHaveBeenCalled()
   })
 
@@ -39,7 +37,7 @@ describe('SingleLineTextField', () => {
       value: 'new',
       upstreamValue: 'old'
     })
-    w.find('textarea').simulate('keydown', { keyCode: 27, preventDefault: jest.fn() })
+    w.find('textarea').simulate('keydown', { key: 'Escape', preventDefault: jest.fn() })
     expect(w.prop('onChange')).toHaveBeenCalledWith('old')
   })
 

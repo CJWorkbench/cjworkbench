@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DataVersionSelect should match snapshot 1`] = `
+<div
+  className="version-item"
+>
+  <div
+    className="label"
+  >
+    Version
+  </div>
+  <button
+    onClick={[Function]}
+    title="Select version"
+    type="button"
+  >
+    7
+     of 
+    7
+  </button>
+</div>
+`;

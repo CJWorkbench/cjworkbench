@@ -6,7 +6,6 @@ describe('Multicolumn', () => {
   const wrapper = (extraProps={}) => mount(
     <Multicolumn
       onChange={jest.fn()}
-      onSubmit={jest.fn()}
       name='columns'
       isReadOnly={false}
       upstreamValue={'A,C'}
@@ -60,7 +59,6 @@ describe('Multicolumn', () => {
       const w = mount(
         <Multicolumn
           onChange={jest.fn()}
-          onSubmit={jest.fn()}
           name='column'
           isReadOnly={false}
           value='C,A,D'
@@ -76,27 +74,7 @@ describe('Multicolumn', () => {
       expect(w.find('Select').prop('value')).toEqual(expected)
     })
 
-    it('should not show a submit button when value is unchanged', () => {
-      const w = wrapper()
-      expect(w.find('button.submit')).toHaveLength(0)
-    })
-
-    it('should show submit button when new column added', () => {
-      const w = mount(
-        <Multicolumn
-          onChange={jest.fn()}
-          onSubmit={jest.fn()}
-          name='column'
-          isReadOnly={false}
-          upstreamValue='A,B,C'
-          value='A,C'
-          inputColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
-        />
-      )
-      expect(w.find('button[title="submit"]')).toHaveLength(1)
-    })
-
-    it('should call onChange but not onSubmit when columns are added', () => {
+    it('should call onChange when columns are added', () => {
       const w = wrapper({
         upstreamValue: 'A',
         value: 'A',
@@ -106,24 +84,6 @@ describe('Multicolumn', () => {
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('.react-select__option').at(0).simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith('A,B')
-      expect(w.prop('onSubmit')).not.toHaveBeenCalled()
-    })
-
-    it('should call onSubmit when columns added and button pressed', () => {
-      const w = mount(
-        <Multicolumn
-          upstreamValue={'A,B,C'}
-          value='A,C'
-          inputColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
-          onChange={jest.fn()}
-          onSubmit={jest.fn()}
-          name='column'
-          isReadOnly={false}
-        />
-      )
-      w.find('button[title="submit"]').simulate('click')
-      expect(w.prop('onChange')).not.toHaveBeenCalled()
-      expect(w.prop('onSubmit')).toHaveBeenCalled()
     })
   })
 })

@@ -1,15 +1,15 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import ColumnParam from './ColumnParam'
+import Column from './Column'
 import { mount } from 'enzyme'
 import { tick } from '../test-utils'
 
-describe('ColumnParam', () => {
+describe('Column', () => {
   const wrapper = (props) => mount(
-    <ColumnParam
+    <Column
       value={null}
       name='col'
-      prompt='SelectACol'
+      placeholder='SelectACol'
       isReadOnly={false}
       inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}
       onChange={jest.fn()}
@@ -25,7 +25,7 @@ describe('ColumnParam', () => {
   })
 
   it('renders loading', () => {
-    const w = wrapper({value: 'A', prompt: 'Prompt!', inputColumns: null})
+    const w = wrapper({value: 'A', placeholder: 'Prompt!', inputColumns: null})
 
     // dropdown has 1 option, prompt as placeholder
     const select = w.find('Select')
@@ -34,7 +34,7 @@ describe('ColumnParam', () => {
   })
 
   it('renders a prompt', async () => {
-    const w = wrapper({ value: 'A', prompt: 'Prompt!' })
+    const w = wrapper({ value: 'A', placeholder: 'Prompt!' })
     await tick() // load columns
     w.update()
 
