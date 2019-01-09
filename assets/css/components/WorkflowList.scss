@@ -1,7 +1,6 @@
 //////////////////* ---- Workflow list ---- */
 
 .workflows-page {
-
   background-color: $page-background;
 
   .container { height: 100vh; }
@@ -263,13 +262,14 @@
         height: 7rem;
         margin-bottom: 1px;
         border: 0;
-        border-radius:0;
+        border-radius: 0;
         padding: 0 2.5rem;
-        background:$white;
-        display:flex;
-        align-items:center;
+        background: white;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
         z-index: 3;
+
         &:first-child {
           border-radius: .5rem .5rem 0 0;
         }
@@ -282,9 +282,13 @@
           }
         }
 
+        .metadata-container {
+          color: $dark-gray;
+        }
+
         &:hover {
-        background-color: $SuperLightGray;
-        text-decoration: none;
+          background-color: $SuperLightGray;
+          text-decoration: none;
         }
 
         .workflow-title {

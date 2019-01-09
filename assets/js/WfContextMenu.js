@@ -30,7 +30,7 @@ export default class WfContextMenu extends React.Component {
         <DropdownToggle className='context-button'>
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu positionFixed right>
           <DropdownItem onClick={this.props.duplicateWorkflow} className='test-duplicate-button'>
             <i className="icon-duplicate"></i>
             <span>Duplicate</span>

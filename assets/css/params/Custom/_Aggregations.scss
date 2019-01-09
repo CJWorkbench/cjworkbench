@@ -1,0 +1,91 @@
+.aggregations {
+  h5 {
+    font-size: 1.4rem;
+    color: $brand-text--medium;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li.aggregation {
+    & + li.aggregation {
+      // Spacing between items
+      padding-top: 1rem;
+    }
+
+    select.operation {
+      // 1. operation: has top radius, not bottom radius
+      @extend %custom-select;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .column {
+      // 2. (optional) colname: has no radius
+      .react-select__control {
+        border-radius: 0;
+      }
+    }
+
+    label.outname {
+      // 3. outname: no top radius
+      display: flex;
+      margin: 0;
+
+      span {
+        font-size: 1.4rem;
+        flex: 0 0 auto;
+        line-height: 3.3rem; // line up with <input>
+        border: 1px solid $Vlight-gray;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        border-bottom-left-radius: 3px;
+        padding: 0 1.3rem; // line up with <select> innards above it
+        color: $light-gray;
+      }
+
+      input {
+        @extend %module-parameter;
+        background-color: $table-background;
+        border-color: $Vlight-gray;
+        color: $brand-text--medium;
+        padding: 0 1.3rem; // same as <span>
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        display: block;
+        flex: 1 1 auto;
+      }
+    }
+
+    .delete {
+      text-align: right;
+
+      button {
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        font-size: 1.2rem;
+        background: inherit;
+        color: $light-gray;
+      }
+    }
+  }
+
+  button.add {
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: inherit;
+    color: inherit;
+  }
+}

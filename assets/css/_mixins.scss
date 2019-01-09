@@ -6,18 +6,33 @@
 
 %font-nunito-regular {
   font-family: 'Nunito Sans', sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-%font-lato-regular {
-  font-family: 'Lato', sans-serif;
   font-weight: normal;
   font-style: normal;
 }
 
 %font-nunito-bold {
-  font-family: 'Lato', sans-serif;
-  font-weight: 600;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: bold;
   font-style: normal;
+}
+
+%module-parameter {
+  display: block;
+  @extend %content-1;
+  width: 100%;
+  height: 3.5rem;
+  padding: .5rem 1rem;
+  color: $brand-text--darker;
+  border-radius: 3px;
+  border: 2px solid $Vlight-gray;
+  background-color: $Vlight-gray;
+  outline: none;
+
+  &:hover {
+    border-color: $dark-accent--soft;
+  }
+
+  &:focus {
+    border-color: $data-action--border;
+  }
 }

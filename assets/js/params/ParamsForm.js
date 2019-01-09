@@ -1,0 +1,246 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+import Param from './Param'
+import ParamsFormFooter from './ParamsFormFooter'
+
+/**
+ * Displays Params and maintains user's "edits" in its state.
+ */
+export default class ParamsForm extends React.PureComponent {
+  static propTypes = {
+    isReadOnly: PropTypes.bool.isRequired,
+    isZenMode: PropTypes.bool.isRequired,
+    api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
+      createOauthAccessToken: PropTypes.func.isRequired, // for secrets
+      valueCounts: PropTypes.func.isRequired, // for ValueFilter/Refine
+      _fetch: PropTypes.func.isRequired, // for DropZone
+    }),
+    fields: PropTypes.arrayOf(PropTypes.shape({
+      id_name: PropTypes.string.isRequired,
+      name: PropTypes.string, // or null or ''
+      type: PropTypes.string.isRequired,
+      items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
+      multiline: PropTypes.bool.isRequired,
+      placeholder: PropTypes.string.isRequired, // may be ''
+      visible_if: PropTypes.object // JSON spec or null
+    }).isRequired).isRequired,
+    value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
+    wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
+    wfModuleOutputError: PropTypes.string, // `null` if no wfModule, '' if no error
+    isWfModuleBusy: PropTypes.bool.isRequired,
+    inputWfModuleId: PropTypes.number, // or `null`
+    inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
+    inputColumns: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+    }).isRequired),
+    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
+    startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
+    deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
+    getParamText: PropTypes.func.isRequired, // func(idName) => value ... TODO nix this by making 0 fields depend on it
+    onSubmit: PropTypes.func.isRequired, // func(values) => undefined
+  }
+
+  state = {
+    edits: {}
+  }
+
+  onKeyDown = (ev) => {
+    if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) {
+      ev.preventDefault() // in case it was already going to submit
+      this.onSubmit()
+    }
+  }
+
+  onSubmit = (maybeEv) => {
+    if (maybeEv) {
+      // it's an HTML submit event: don't spawn the default HTTP request
+      maybeEv.preventDefault()
+    }
+
+    if (!this.isEditing && !this.hasFetch) return
+
+    const { onSubmit } = this.props
+    const { edits } = this.state
+    onSubmit(edits)
+    this.setState({ edits: {} })
+  }
+
+  onChange = (name, value) => {
+    this.setState((state, props) => {
+      if (value === state.edits[name]) {
+        // setting a value to itself
+        return null
+      }
+      const edits = { ...state.edits }
+
+      if (props.value !== null && value === props.value[name]) {
+        // setting a value to its upstream value: mark it "not editing"
+        delete edits[name] // if it exists
+      } else {
+        // setting a value to something new
+        edits[name] = value
+      }
+
+      return { edits }
+    })
+  }
+
+  get hasFetch () {
+    return this.props.fields.some(f => f.type === 'custom' && (f.id_name === 'version_select' || f.id_name === 'version_select_simpler'))
+  }
+
+  get isEditing () {
+    return Object.keys(this.state.edits).length > 0
+  }
+
+  get value () {
+    if (this.props.value === null) return this.props.value
+    if (!this.isEditing) return this.props.value
+    return {
+      ...this.props.value,
+      ...this.state.edits
+    }
+  }
+
+  isFieldVersionSelect = ({ type, id_name }) => {
+    return type === 'custom' && (id_name === 'version_select' || id_name === 'version_select_simpler')
+  }
+
+  isFieldVisible = (field) => {
+    // No visibility condition, we are visible
+    const condition = field.visible_if
+    if (!condition) return true
+
+    const invert = !!condition.invert
+
+    // missing id_name, default to visible
+    if (!condition.id_name) return true
+
+    // We are invisible if our parent is invisible
+    if (condition.id_name !== field.id_name) { // prevent simple infinite recurse; see droprowsbyposition.json
+      const parentField = this.props.fields.find(f => f.id_name === condition.id_name)
+      if (parentField && !this.isFieldVisible(parentField)) { // recurse
+        return false
+      }
+    }
+
+    if ('value' in condition) {
+      const value = this.value[condition.id_name]
+
+      // If the condition value is a boolean:
+      if (typeof condition.value === 'boolean' || typeof condition.value === 'number') {
+        let match
+        if (value === condition.value) {
+          // Just return if it matches
+          match = true
+        } else if (typeof condition.value === 'boolean' && typeof value !== 'boolean') {
+          // Test for _truthiness_, not truth.
+          match = condition.value === (!!value)
+        } else {
+          match = false
+        }
+        return invert !== match
+      }
+
+      // Otherwise, if it's a menu item:
+      const condValues = condition.value.split('|').map(cond => cond.trim())
+      const condField = this.props.fields.find(f => f.id_name === condition.id_name)
+      const menuItems = condField.items.split('|').map(item => item.trim())
+      if (menuItems.length > value) {
+        const selection = menuItems[value]
+        const selectionInCondition = (condValues.indexOf(selection) !== -1)
+        return invert !== selectionInCondition
+      }
+    }
+
+    // If the visibility condition is empty or invalid, default to showing the parameter
+    return true
+  }
+
+  render () {
+    const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
+            inputWfModuleId, inputDeltaId, inputColumns, applyQuickFix,
+            startCreateSecret, deleteSecret, getParamText, fields } = this.props
+    const { edits } = this.state
+    const isEditing = this.isEditing
+
+    const upstreamValue = this.props.value
+    const value = this.value
+
+    // TODO make secrets "special" -- not just a param type. Then we'll have something
+    // sensible to pass components that use a secret (such as GoogleFileSelect). The
+    // dream: the client manages wf_modules[id].params and wf_modules[id].secrets (just
+    // like the server).
+    //
+    // In the meantime: find and pass `secretName` to all params if a secret is set.
+    const secretParam = fields.find(f => f.type === 'secret')
+    const secretParamName = secretParam ? secretParam.id_name : null
+    const secretName = (secretParamName && value && value[secretParamName]) ? value[secretParamName].name : null
+
+    // TODO Revamp Refine and ValueFilter so the select-column and edit-value components
+    // are nested together. Until then, we need to pass `selectedColumn` to the edit-value
+    // components so they can load data.
+    const columnParam = fields.find(f => f.type === 'column')
+    const selectedColumn = columnParam && value && value[columnParam.id_name] || null
+
+    let className = 'module-card-params'
+    if (isEditing) className += ' editing'
+
+    const visibleFields = fields
+      .filter(f => !this.isFieldVersionSelect(f))
+      .filter(this.isFieldVisible)
+
+    return (
+      <form
+        className={className}
+        action=''
+        onSubmit={this.onSubmit}
+        onKeyDown={this.onKeyDown}
+      >
+        <div className='params'>
+          {visibleFields.map(field => (
+            <Param
+              api={api}
+              isReadOnly={isReadOnly}
+              isZenMode={isZenMode}
+              api={api}
+              key={field.id_name}
+              name={field.id_name}
+              label={field.name}
+              type={field.type}
+              items={field.items}
+              isMultiline={field.multiline || false}
+              placeholder={field.placeholder || ''}
+              visibleIf={field.visible_if || null}
+              upstreamValue={upstreamValue ? upstreamValue[field.id_name] : null}
+              value={value ? value[field.id_name] : null}
+              wfModuleId={wfModuleId}
+              wfModuleOutputError={wfModuleOutputError}
+              isWfModuleBusy={isWfModuleBusy}
+              inputWfModuleId={inputWfModuleId}
+              inputDeltaId={inputDeltaId}
+              inputColumns={inputColumns}
+              applyQuickFix={applyQuickFix}
+              secretName={secretName}
+              secretParamName={secretParamName}
+              startCreateSecret={startCreateSecret}
+              deleteSecret={deleteSecret}
+              getParamText={getParamText}
+              selectedColumn={selectedColumn}
+              onChange={this.onChange}
+              onSubmit={this.onSubmit}
+            />
+          ))}
+        </div>
+        <ParamsFormFooter
+          wfModuleId={wfModuleId}
+          isWfModuleBusy={isWfModuleBusy}
+          isEditing={isEditing}
+          isReadOnly={isReadOnly}
+          fields={fields}
+        />
+      </form>
+    )
+  }
+}

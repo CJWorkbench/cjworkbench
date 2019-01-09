@@ -21,6 +21,8 @@ $medium-gray: #a2a2a2;
 $dark-gray: #8b8b8b;
 $Vlight-gray: lighten($dark-gray,39%);
 
+$font-family-sans-serif: 'Nunito Sans', sans-serif;
+
 $modal-footer: #F5F7F8;
 $table-border: #D7E4E7;
 
@@ -30,7 +32,7 @@ $dark-orange:#F88630;
 $heading-bg: #7a9bb0;
 $header-hover: #8AABC0;
 $input-alt-bg: #96afc3;
-$input-alt: $white;
+$input-alt: white;
 $input-alt-placeholder: $SuperLightGray;
 
 $error-prompt: lighten($brand-red,18%);
@@ -38,7 +40,7 @@ $error-prompt--light: lighten($brand-red,35%);
 $error-prompt--Vlight: lighten($brand-red,37%);
 
 // menus
-$data-action--border: 2px solid lighten($brand-orange,7%);
+$data-action--border: lighten($brand-orange,7%);
 
 // Text colors ＼(＾O＾)／
 $brand-text--darker: #2B2A2A;
@@ -51,17 +53,21 @@ $brand-text--learn: #FFB5D8; // for lesson panel
 $grayed--out: $medium-gray;
 
 // Accent: transparent light or dark color use on top of backgrounds
+// [adamhooper, 2019-01-09] DO NOT USE: transparent borders lead to one of two
+// outcomes: a page with an _enormous_ number of colors (because colors atop
+// colors multiply the number of potential colors) or a page with few colors
+// that we've never actually _defined_. Instead of these, use the color we want.
 
-$dark-accent--soft: rgba(0,0,0,.05);
-$dark-accent--soft-M: rgba(0,0,0,.075);
-$dark-accent--medium: rgba(0,0,0,.1);
-$dark-accent--strong: rgba(0,0,0,.15);
+$dark-accent--soft: rgba(0,0,0,.05); // DO NOT USE: rgba is bad
+$dark-accent--soft-M: rgba(0,0,0,.075); // DO NOT USE: rgba is bad
+$dark-accent--medium: rgba(0,0,0,.1); // DO NOT USE: rgba is bad
+$dark-accent--strong: rgba(0,0,0,.15); // DO NOT USE: rgba is bad
 
-$light-accent--soft: rgba(255,255,255,.05);
-$light-accent--medium: rgba(255,255,255,.1);
-$light-accent--strong: rgba(255,255,255,.2);
-$light-accent--Vstrong: rgba(255,255,255,0.5);
-$light-accent--Extrastrong: rgba(255,255,255,0.9);
+$light-accent--soft: rgba(255,255,255,.05); // DO NOT USE: rgba is bad
+$light-accent--medium: rgba(255,255,255,.1); // DO NOT USE: rgba is bad
+$light-accent--strong: rgba(255,255,255,.2); // DO NOT USE: rgba is bad
+$light-accent--Vstrong: rgba(255,255,255,0.5); // DO NOT USE: rgba is bad
+$light-accent--Extrastrong: rgba(255,255,255,0.9); // DO NOT USE: rgba is bad
 
 $table-header--light: lighten($table-header,18%);
 
@@ -69,8 +75,8 @@ $brand-workspace--Vlight: lighten($brand-workspace,41%);
 $brand-workspace--light: lighten($brand-workspace,39%);
 $brand-workspace--medium: lighten($brand-workspace,15%);
 
-$brand-background: rgba($brand-workspace--medium, .25); // used for blending in backgrounds
-$brand-background--action:rgba($brand-workspace--medium, .60);
+$brand-background: rgba($brand-workspace--medium, .25); // used for blending in backgrounds // DO NOT USE
+$brand-background--action:rgba($brand-workspace--medium, .60); // DO NOT USE
 
 $brand-orange--light: lighten($brand-orange,26%);
 $brand-orange--medium: lighten($brand-orange,12%);
@@ -86,15 +92,12 @@ $table-header--light:lighten($table-header,13%);
 
 // Overlays
 
-$light-overlay: rgba(255,255,255,.5);
+$light-overlay: rgba(255,255,255,.5); // DO NOT USE: rgba is bad (see comment elsewhere)
 
 
 // Input fields  ᕕ( ᐛ )ᕗ
 
-$search-field--light: rgba(255,255,255,.2);
-
 $placeholder: #A0A0A0;
-$placeholder--light: rgba(255,255,255,.5);
 
 // box shadows ~~~~ ༼ つ ◕_◕ ༽つ
 

@@ -1,0 +1,13 @@
+.param {
+  &:not(:first-child) {
+    margin-top: 0.8rem;
+  }
+
+  &>label {
+    display: block;
+    @extend %content-1;
+    color: $labels;
+    cursor: pointer;
+    margin: 0; // override Bootstrap
+  }
+}

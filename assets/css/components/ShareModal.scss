@@ -105,7 +105,7 @@
       display: flex;
 
       input {
-        @extend .single-line-text-field;
+        // TODO @extend .single-line-text-field;
         z-index: 1;
         cursor: text;
 

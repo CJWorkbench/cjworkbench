@@ -14,11 +14,6 @@
       "type": "custom",
       "multiline": true,
       "default": "def process(table):\u000a    print('Hello, World!')\u000a    return table"
-    },
-    {
-      "name": "Run",
-      "id_name": "run",
-      "type": "button"
     }
   ]
 }

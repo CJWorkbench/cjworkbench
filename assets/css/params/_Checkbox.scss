@@ -1,0 +1,10 @@
+.param-checkbox {
+  margin-top: 0.4rem; // instead of default
+  display: flex;
+  align-items: center;
+
+  label {
+    display: inline;
+    color: $brand-text--dark;
+  }
+}

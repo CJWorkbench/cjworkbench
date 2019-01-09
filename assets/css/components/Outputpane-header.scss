@@ -67,7 +67,7 @@
     }
 
     .dropdown-menu {
-      border:$data-action--border;
+      border: 2px solid $data-action--border;
 
       &.show {
         button {

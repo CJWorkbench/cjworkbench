@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ModuleSearch from './ModuleSearch'
+import ErrorBoundary from './ErrorBoundary'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import { addModuleAction, deleteModuleAction, moveModuleAction } from './workflow-reducer'
@@ -334,21 +335,23 @@ class ModuleStack extends React.Component {
         return (
           <React.Fragment key={`module-${item.id}`}>
             {this.moduleStackInsertSpot(i)}
-            <WfModule
-              tabId={this.props.tabId}
-              isReadOnly={this.props.workflow.read_only}
-              isZenMode={this.state.zenModeWfModuleId === item.id}
-              wfModule={item}
-              removeModule={this.props.removeModule}
-              inputWfModule={i === 0 ? null : wfModules[i - 1]}
-              isSelected={i === this.props.selected_wf_module_position}
-              isAfterSelected={i > this.props.selected_wf_module_position}
-              api={this.props.api}
-              index={i}
-              setZenMode={this.setZenMode}
-              onDragStart={this.onDragStart}
-              onDragEnd={this.onDragEnd}
-            />
+            <ErrorBoundary>
+              <WfModule
+                tabId={this.props.tabId}
+                isReadOnly={this.props.workflow.read_only}
+                isZenMode={this.state.zenModeWfModuleId === item.id}
+                wfModule={item}
+                removeModule={this.props.removeModule}
+                inputWfModule={i === 0 ? null : wfModules[i - 1]}
+                isSelected={i === this.props.selected_wf_module_position}
+                isAfterSelected={i > this.props.selected_wf_module_position}
+                api={this.props.api}
+                index={i}
+                setZenMode={this.setZenMode}
+                onDragStart={this.onDragStart}
+                onDragEnd={this.onDragEnd}
+              />
+            </ErrorBoundary>
           </React.Fragment>
         )
       }

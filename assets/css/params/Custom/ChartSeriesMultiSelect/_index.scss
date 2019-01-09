@@ -1,0 +1,49 @@
+// Add-delete additional column
+.chart-series-multi-select {
+  .buttons {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-top: .5rem;
+    cursor: default;
+
+    button {
+      background-color: transparent;
+      color: $brand-text--dark;
+      border: none;
+      font-size: 1.6rem;
+      padding-right: 0;
+      opacity: .7;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.chart-series-select {
+  display: flex;
+  // [color][col select      v], all on one line
+
+  button.color-picker {
+    display: block;
+    flex: 0 0 auto;
+    width: 2.5rem;
+    height: 3.5rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .react-select.column {
+    flex: 1 1 auto;
+
+    .react-select__control {
+      // Line up with color selector
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+@import 'ColorPicker'

@@ -109,12 +109,8 @@ export default class WfParameter extends React.PureComponent {
     this.props.onReset(this.props.idName)
   }
 
-  paramChanged = (value) => {
-    this.props.setWfModuleParams({ [this.props.idName]: value })
-  }
-
   onClickCheckbox = (ev) => {
-    this.paramChanged(ev.target.checked)
+    this.onChange(ev.target.checked)
   }
 
   getInputValueCounts = () => {
@@ -128,6 +124,13 @@ export default class WfParameter extends React.PureComponent {
     const { onChange, onSubmit, idName } = this.props
     onChange(idName, json)
     onSubmit()
+  }
+
+  /**
+   * DEPRECATED: change a value to be JSON-stringified.
+   */
+  onChangeJsonStringify = (value) => {
+    return this.onChange(JSON.stringify(value))
   }
 
   onChangeYColumns = (arr) => {
@@ -170,7 +173,7 @@ export default class WfParameter extends React.PureComponent {
             name={idName}
             value={value}
             allColumns={inputColumns}
-            onChange={this.paramChanged}
+            onChange={this.onChange}
           />
         )
       case 'groups':
@@ -180,7 +183,7 @@ export default class WfParameter extends React.PureComponent {
             name={idName}
             value={value}
             allColumns={inputColumns}
-            onChange={this.paramChanged}
+            onChange={this.onChange}
             applyQuickFix={applyQuickFix}
           />
         )
@@ -228,7 +231,7 @@ export default class WfParameter extends React.PureComponent {
             name={name}
             isZenMode={isZenMode}
             wfModuleError={wfModuleOutputError}
-            save={this.paramChanged}
+            save={this.onChange}
             defaultValue={value}
           />
         )
@@ -236,7 +239,7 @@ export default class WfParameter extends React.PureComponent {
         return (
           <CellEditor
             edits={value}
-            onSave={this.paramChanged}
+            onSave={this.onChange}
           />
         )
       case 'refine':
@@ -245,7 +248,7 @@ export default class WfParameter extends React.PureComponent {
             fetchData={this.getInputValueCounts}
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
             value={value}
-            onChange={this.paramChanged}
+            onChange={this.onChange}
           />
         )
       case 'reorder-history':
@@ -261,7 +264,7 @@ export default class WfParameter extends React.PureComponent {
             isReadOnly={isReadOnly}
             entriesJsonString={value}
             allColumns={inputColumns}
-            onChange={this.paramChanged}
+            onChange={this.onChange}
           />
         )
       case 'y_columns':
@@ -271,7 +274,7 @@ export default class WfParameter extends React.PureComponent {
             isReadOnly={isReadOnly}
             allColumns={inputColumns}
             series={JSON.parse(value || '[]')}
-            onChange={this.onChangeYColumns}
+            onChange={this.onChangeJsonStringify}
             name={idName}
           />
         )
@@ -281,7 +284,7 @@ export default class WfParameter extends React.PureComponent {
             fetchData={this.getInputValueCounts}
             fetchDataCacheId={`${this.props.inputDeltaId}-${this.props.getParamText('column')}`}
             value={value}
-            onChange={this.paramChanged}
+            onChange={this.onChange}
           />
         )
       default:
@@ -308,7 +311,6 @@ export default class WfParameter extends React.PureComponent {
                 value={value}
                 initialValue={initialValue}
                 onChange={this.onChange}
-                onSubmit={this.onSubmit}
                 placeholder={placeholder || ''}
               />
             </div>
@@ -319,7 +321,6 @@ export default class WfParameter extends React.PureComponent {
               <div className='parameter-label'>{name}</div>
               <SingleLineTextField
                 isReadOnly={isReadOnly}
-                onSubmit={this.onSubmit}
                 onChange={this.onChange}
                 onReset={this.onReset}
                 placeholder={placeholder || ''}
@@ -339,7 +340,6 @@ export default class WfParameter extends React.PureComponent {
             <NumberField
               isReadOnly={isReadOnly}
               onChange={this.onChange}
-              onSubmit={this.onSubmit}
               onReset={this.onReset}
               initialValue={initialValue}
               value={value}
@@ -348,33 +348,6 @@ export default class WfParameter extends React.PureComponent {
           </div>
         )
 
-      case 'button':
-        return (
-          <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
-            <button className='action-button button-blue' disabled={isReadOnly}>{name}</button>
-          </div>
-        )
-
-      case 'statictext':
-        return (
-          <div {...this.outerDivProps} className={this.paramClassName + ' parameter-label'}>{name}</div>
-        )
-
-      case 'checkbox':
-        const htmlId = `${idName}-${this.props.wfModuleId}`
-        return (
-          <div {...this.outerDivProps} className={this.paramClassName + ' checkbox-wrapper'}>
-            <input
-              disabled={isReadOnly}
-              type="checkbox" className="checkbox"
-              checked={value}
-              onChange={this.onClickCheckbox}
-              name={idName}
-              id={htmlId}
-            />
-            <label htmlFor={htmlId}>{name}</label>
-          </div>
-        )
       case 'radio':
         return (
           <div {...this.outerDivProps}>
@@ -384,7 +357,7 @@ export default class WfParameter extends React.PureComponent {
               items={items}
               selectedIdx={value}
               isReadOnly={isReadOnly}
-              onChange={this.paramChanged}
+              onChange={this.onChange}
             />
           </div>
         )
@@ -397,7 +370,7 @@ export default class WfParameter extends React.PureComponent {
               items={items}
               selectedIdx={value}
               isReadOnly={isReadOnly}
-              onChange={this.paramChanged}
+              onChange={this.onChange}
             />
           </div>
         )
@@ -411,7 +384,7 @@ export default class WfParameter extends React.PureComponent {
               prompt={placeholder || ''}
               isReadOnly={isReadOnly}
               allColumns={inputColumns}
-              onChange={this.paramChanged}
+              onChange={this.onChange}
             />
           </div>
         )
@@ -426,7 +399,6 @@ export default class WfParameter extends React.PureComponent {
               initialValue={initialValue}
               value={value}
               allColumns={inputColumns}
-              onSubmit={this.onSubmit}
               onChange={this.onChange}
             />
           </div>

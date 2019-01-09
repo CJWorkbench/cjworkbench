@@ -1,0 +1,21 @@
+.submit-button {
+  margin-top: .8rem;
+  text-align: right;
+
+  button {
+    @extend .action-button;
+    @extend .button-orange;
+    display: inline-block; // override whatever .action-button does
+
+    // Now resize: this button can be a good deal smaller than a typical .action-button
+    min-width: 0;
+    min-height: 0;
+    width: auto;
+    height: auto;
+    font-size: 1rem;
+
+    i::before {
+      vertical-align: -2px; // font bug? glyph isn't centered?
+    }
+  }
+}

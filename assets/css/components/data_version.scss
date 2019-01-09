@@ -1,43 +1,4 @@
 /* ---- Data Module: data versions box */
-
-
-
-.version-item {
-  font-size: 1.3rem;
-  color: $brand-text--dark;
-  display: flex;
-  align-items: center;
-
-  .no-versions {
-    margin-left: .5rem;
-  }
-
-  button {
-    // button looks like a link
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: inline;
-    background: inherit;
-    font: inherit;
-    color: $brand-workspace;
-    cursor: pointer;
-    margin-left: .5rem;
-
-    &:hover {
-      color: $link-hover-success;
-    }
-  }
-}
-
-.frequency-item {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 1rem;
-}
-
 .modal-body.update-frequency-form {
 
   .big-radio {
@@ -125,19 +86,19 @@
   input[name="timeNumber"] {
     display: inline;
     width: 5rem;
-    @extend .module-parameter;
+    @extend %module-parameter;
     text-align: right;
   }
 
   input[name="timeUnit"] {
     display: inline-block;
     width:10rem;
-    @extend .module-parameter;
+    @extend %module-parameter;
   }
 
   select {
     border-radius: 0px;
-    @extend .module-parameter;
+    @extend %module-parameter;
     height: 3.5rem!important;
     border-radius: 3px!important;
   }

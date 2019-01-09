@@ -1,74 +1,61 @@
-@import 'bootstrap/scss/bootstrap.scss';
-
 @import './variables';
 @import './mixins';
 @import './fonts';
 @import './Icons.scss';
 
-@import './components/Embed.scss';
-@import './components/Fonts.scss';
-@import './components/Buttons.scss';
-@import './components/Accounts.scss';
-@import './components/Spinner.scss';
-@import './components/Navbar.scss';
-@import './components/WorkflowList.scss';
-@import './components/WorkflowPage.scss';
-@import './components/Lesson.scss';
-@import './components/LessonList.scss';
-@import './components/Metadata.scss';
-@import './components/ModuleSearch.scss';
-@import './components/ModuleStack.scss';
-@import './components/Modules.scss';
-@import './components/Table.scss';
-@import './components/CellEditor.scss';
-@import './components/OAuthConnect.scss';
-@import './components/UploadFile.scss';
-@import './components/Input_components.scss';
-@import './components/Modals.scss';
-@import './components/Code_editor.scss';
-@import './components/Alerts.scss';
-@import './components/data_version.scss';
-@import './components/renameColumn.scss';
-@import './components/reorderColumn.scss';
-@import './components/mobilePrompt.scss';
-@import './components/parameters/AceEditor.scss';
-@import './components/parameters/Aggregations.scss';
-@import './components/parameters/ChartSeriesSelect.scss';
-@import './components/parameters/Groups.scss';
-@import './components/parameters/Refine.scss';
-@import './components/Column_selectors.scss';
-@import './components/Outputpane-header.scss';
-@import './components/RadioButton.scss';
-@import './components/ShareModal.scss';
-@import './components/color-picker.scss';
-@import './components/right-pane-messages.scss';
-@import './components/valuefilter.scss';
-@import './components/Tabs.scss';
+// Bootstrap
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/code';
+@import '~bootstrap/scss/grid';
+@import '~bootstrap/scss/tables';
+@import '~bootstrap/scss/forms';
+@import '~bootstrap/scss/buttons';
+@import '~bootstrap/scss/transitions';
+@import '~bootstrap/scss/dropdown';
+@import '~bootstrap/scss/button-group';
+@import '~bootstrap/scss/input-group';
+@import '~bootstrap/scss/custom-forms';
+@import '~bootstrap/scss/nav';
+@import '~bootstrap/scss/navbar';
+@import '~bootstrap/scss/close';
+@import '~bootstrap/scss/modal';
+@import '~bootstrap/scss/popover'; // for ColorPicker
+@import '~bootstrap/scss/utilities';
 
+@import './reset.scss';
+@import './bootstrap-overrides.scss';
+@import './custom-select.scss';
 
-html {
-  height: 100vh;
-  /* sets the basis for `rem` styling units */
-  font-size: 10px;
-}
+@import 'components/Embed.scss';
+@import 'components/data_version.scss';
+@import 'components/dropdown-menu.scss';
+@import 'components/Fonts.scss';
+@import 'components/Buttons.scss';
+@import 'components/Accounts.scss';
+@import 'components/Spinner.scss';
+@import 'components/Navbar.scss';
+@import 'components/WorkflowList.scss';
+@import 'components/WorkflowPage.scss';
+@import 'components/Lesson.scss';
+@import 'components/LessonList.scss';
+@import 'components/Metadata.scss';
+@import 'components/ModuleSearch.scss';
+@import 'components/ModuleStack.scss';
+@import 'components/Modules.scss';
+@import 'components/Table.scss';
+@import 'components/Modals.scss';
+@import 'components/Alerts.scss';
+@import 'components/mobilePrompt.scss';
+@import 'components/Outputpane-header.scss';
+@import 'components/ShareModal.scss';
+@import 'components/right-pane-messages.scss';
+@import 'components/Tabs.scss';
 
-body {
-  margin: 0px;
-  height: 100%;
-  @extend %font-nunito-regular;
-  background-color:$page-background;
-  color: $brand-text--dark;
-}
+@import 'ImportModuleFromGitHub';
 
-/* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space.
-  Not sure why position absolute is needed, but it gets push down the screen (not flush with top) otherwise. */
-
-#root {
-	width: 100%;
-  background-color:$page-background;
-}
-
-::-webkit-scrollbar-thumb{
-  width:0.2rem;
-  opacity: 0.2;
-}
+@import 'params/index';

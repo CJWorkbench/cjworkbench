@@ -26,7 +26,7 @@ export default class WfSortMenu extends React.Component {
         <DropdownToggle className='btn btn-secondary context-button'>
           <i className={this.setSortIcon()}></i>
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu positionFixed right>
           <DropdownItem onClick={this.sortDateAsc} className='test-sort-date-ascending'>
             <span>Last modified</span>
           </DropdownItem>

@@ -1,0 +1,21 @@
+// A fairly-common <select> style
+%custom-select {
+  @extend %module-parameter;
+  @extend %content-1;
+  cursor: pointer;
+  color: $brand-text--darker;
+  box-shadow: none;
+  background-size: 0px;
+  border: 2px solid transparent;
+  box-shadow: none;
+  height: 3.5rem;
+  border-radius: 3px;
+
+  &:focus{
+    box-shadow: none;
+  }
+}
+
+.custom-select {
+  @extend %custom-select;
+}

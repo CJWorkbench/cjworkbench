@@ -40,22 +40,20 @@ export default class WfModuleContextMenu extends React.Component {
         <DropdownToggle title="more" className='context-button'>
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
-        <Portal>
-          <DropdownMenu persist position='left'>
-            <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
-              <i className='icon-download'></i>
-              <span>Export data</span>
-              <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
-            </DropdownItem>
+        <DropdownMenu positionFixed right>
+          <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
+            <i className='icon-download'></i>
+            <span>Export data</span>
+            <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
+          </DropdownItem>
 
-            <DropdownItem key={2} onClick={this.deleteOption} className='test-delete-button'>
-              <i className='icon-bin'></i>
-              <span>Delete</span>
-            </DropdownItem>
-          </DropdownMenu>
-        </Portal>
+          <DropdownItem key={2} onClick={this.deleteOption} className='test-delete-button'>
+            <i className='icon-bin'></i>
+            <span>Delete</span>
+          </DropdownItem>
+        </DropdownMenu>
        </UncontrolledDropdown>
-    );
+    )
   }
 }
 

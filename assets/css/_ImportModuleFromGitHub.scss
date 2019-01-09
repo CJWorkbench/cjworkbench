@@ -1,0 +1,5 @@
+#import-from-github-form {
+  input[type=url] {
+    @extend %module-parameter;
+  }
+}

@@ -1,0 +1,64 @@
+.version-select, .version-select-simpler {
+  margin-top: 1rem;
+
+  .update-frequency-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 1rem;
+  }
+
+  .version-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: .5rem;
+  }
+
+  .version-item {
+    font-size: 1.3rem;
+    color: $brand-text--dark;
+    display: flex;
+    align-items: center;
+
+    .no-versions {
+      margin-left: .5rem;
+    }
+
+    button {
+      // button looks like a link
+      border: 0;
+      margin: 0;
+      padding: 0;
+      display: inline;
+      background: inherit;
+      font: inherit;
+      color: $brand-workspace;
+      cursor: pointer;
+      margin-left: .5rem;
+
+      &:hover {
+        color: $link-hover-success;
+      }
+    }
+  }
+
+  .version-row>button { // fetch button
+    @extend .action-button;
+    @extend .button-blue;
+
+    &[disabled] {
+      @extend .button-orange;
+      color: transparent!important;
+      background-color: $brand-orange--light;
+    }
+    &:hover .spinner::after {
+      background-color: $brand-orange--light;
+    }
+  }
+}
+
+.version-select-simpler {
+  border-top: 1px solid $Vlight-gray;
+  padding-top: 2rem;
+  margin-bottom: 0.8rem;
+}

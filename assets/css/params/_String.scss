@@ -1,0 +1,33 @@
+.param-string {
+  .autosize {
+    position: relative;
+
+    .inivisible-size-setter, textarea {
+      word-break: break-all;
+    }
+
+    .invisible-size-setter {
+      visibility: hidden;
+
+      &:empty::before {
+        content: 'X';
+        display: inline;
+      }
+    }
+
+    textarea {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .invisible-size-setter, textarea {
+    @extend %module-parameter;
+    height: auto; // unset %module-parameter height: our height varies
+    resize: none;
+  }
+}
+

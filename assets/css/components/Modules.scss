@@ -1,9 +1,10 @@
 .wf-module {
   position: relative;
 
+  // numbers at the left-hand side
   h3 {
     position: absolute;
-    @extend %font-lato-regular;
+    @extend %font-nunito-regular;
     font-size: 2.25rem;
     width: 4rem;
     text-align: center;
@@ -11,6 +12,24 @@
     padding-bottom: .6rem; // so vertical line's distance is same above as below
     color: $module-color-unreachable;
     background-color: $WF-background; // appear atop vertical line
+  }
+
+  // notes above module
+  textarea[name="notes"], .editable-notes-read-only {
+    @extend %font-nunito-regular;
+    display: block;
+    position: relative;
+    border: 0;
+    outline: none;
+    width: 27rem; // FIXME variable
+    left: 1rem; // FIXME margin-left?
+    min-height: 3rem;
+    resize: none;
+    font-size: 1.3rem;
+    line-height: 2.2rem;
+    color: $brand-text--dark;
+    background-color: transparent;
+    margin: auto;
   }
 
   // Show a vertical line to the left of the module stack
@@ -53,22 +72,6 @@
       margin: 0;
       padding: 0;
       height: 0;
-    }
-  }
-
-// Data fetch button
-  .wf-parameter {
-    button[name=data-fetch] {
-      @extend .action-button;
-      @extend .button-blue;
-      &[disabled] {
-        @extend .button-orange;
-        color: transparent!important;
-        background-color: $brand-orange--light;
-      }
-    &:hover .spinner::after {
-      background-color: $brand-orange--light;
-      }
     }
   }
 
@@ -164,16 +167,6 @@
 
   .module-card-params {
     padding: 0 1.2rem 1rem 1.2rem;
-
-    // Spacing on top of each parameter, excpet the first one in module
-    .wf-parameter:not(:first-child) {
-      margin-top: 0.8rem;
-    }
-
-    //spacing for add/remove param button
-    .wf-parameter.wf-parameter-checkbox {
-      margin-top: 0.4rem;
-    }
 
     .react-select__value-container {
       width:50%;
@@ -467,19 +460,6 @@
 }
 
 
-.wf-module {
-  &.lesson-highlight .module-content {
-    outline: 2px solid $brand-learn;
-  }
-}
-
-/*** Module Parameters labels ***/
-// static text can be used to replace parameter labels, such as in Calculate
-.module-card .parameter-label {
-  @extend .content-1;
-  color:$labels;
-  margin-bottom: 0px;
-  &.wf-parameter-statictext {
-    margin-bottom: -.8rem;
-  }
+.wf-module.lesson-highlight .module-content {
+  outline: 2px solid $brand-learn;
 }

@@ -1,0 +1,19 @@
+.param-integer, .param-float {
+  height: auto;
+  padding: 0;
+
+  input {
+    display: block;
+    @extend %module-parameter;
+    @extend %content-1;
+    padding: 0 1rem;
+
+    // Hide "spin" arrows
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+

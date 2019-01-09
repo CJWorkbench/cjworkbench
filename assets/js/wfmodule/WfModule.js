@@ -2,8 +2,8 @@
 
 import React from 'react'
 import DataVersionModal from '../DataVersionModal'
-import WfParameter from '../WfParameter'
 import WfModuleContextMenu from './WfModuleContextMenu'
+import ParamsForm from '../params/ParamsForm'
 import EditableNotes from '../EditableNotes'
 import StatusLine from './StatusLine'
 import {
@@ -264,28 +264,17 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  onSubmit = () => {
-    const { edits } = this.state
-
+  onSubmit = (edits) => {
     this.props.setWfModuleParams(this.props.wfModule.id, edits)
-    this.setState({ edits: {} })
-
     this.props.maybeRequestFetch(this.props.wfModule.id)
-  }
-
-  onReset = (idName) => {
-    const oldEdits = this.state.edits
-    if (!(idName in oldEdits)) return
-
-    const edits = Object.assign({}, oldEdits)
-    delete edits[idName]
-    this.setState({ edits })
   }
 
   get wfModuleStatus () {
     // TODO don't copy/paste from OutputPane.js
     const { wfModule } = this.props
-    if (wfModule.nClientRequests > 0) {
+    if (!wfModule) {
+      return null
+    } else if (wfModule.nClientRequests > 0) {
       // When we've just sent an HTTP request and not received a response,
       // mark ourselves "busy". This is great for when the user clicks "fetch"
       // and then is waiting for the server to set the status.
@@ -305,125 +294,13 @@ export class WfModule extends React.PureComponent {
     }
   }
 
-  getParameterSpec(idName) {
-    const ret = this.props.module.param_fields.find(ps => ps.id_name === idName)
-    if (ret === undefined) {
-      console.warn(`ParameterSpec ${idName} does not exist`)
-      return null
-    }
-    return ret
-  }
-
-  // checks visible_if fields, recursively (we are not visible if parent referenced in visbile_if is not visible)
-  isParameterVisible(pspec) {
-    // No visibility condition, we are visible
-    const condition = pspec.visible_if
-    if (!condition) return true
-
-    const invert = condition['invert'] === true
-
-    // missing id_name, default to visible
-    if (!condition.id_name) return true
-
-    // We are invisible if our parent is invisible
-    if (condition.id_name !== pspec.id_name) { // prevent simple infinite recurse; see droprowsbyposition.json
-      const parentSpec = this.getParameterSpec(condition['id_name'])
-      if (parentSpec && !this.isParameterVisible(parentSpec)) { // recurse
-        return false
-      }
-    }
-
-    if ('value' in condition) {
-      const value = this.getParameterValue(condition['id_name'])
-
-      // If the condition value is a boolean:
-      if (typeof condition['value'] === 'boolean' || typeof condition['value'] === 'number') {
-        let match
-        if (value === condition['value']) {
-          // Just return if it matches
-          match = true
-        } else if (typeof condition['value'] === 'boolean' && typeof value !== 'boolean') {
-          // Test for _truthiness_, not truth.
-          match = condition['value'] === (!!value)
-        } else {
-          match = false
-        }
-        return invert !== match
-      }
-
-      // Otherwise, if it's a menu item:
-      const condValues = condition['value'].split('|').map(cond => cond.trim())
-      const condSpec = this.getParameterSpec(condition['id_name'])
-      const menuItems = condSpec.items.split('|').map(item => item.trim())
-      if (menuItems.length > value) {
-        const selection = menuItems[value]
-        const selectionInCondition = (condValues.indexOf(selection) !== -1)
-        return invert !== selectionInCondition
-      }
-    }
-
-    // If the visibility condition is empty or invalid, default to showing the parameter
-    return true
-  }
-
-  renderParam = (pspec, index) => {
-    if (!this.isParameterVisible(pspec)) {
-      return null
-    }
-
-    const { api, wfModule, isReadOnly, isZenMode, inputWfModule } = this.props
-    const updateSettings = {
-      lastUpdateCheck: wfModule.last_update_check,
-      autoUpdateData: wfModule.auto_update_data,
-      updateInterval: wfModule.update_interval,
-      updateUnits: wfModule.update_units
-    }
-
-    const initialValue = wfModule ? wfModule.params[pspec.id_name] : null
-    const value = this.getParameterValue(pspec.id_name)
-
-    return (
-      <WfParameter
-        api={api}
-        name={pspec.name || ''}
-        idName={pspec.id_name}
-        type={pspec.type}
-        initialValue={initialValue}
-        value={value}
-        multiline={pspec.multiline}
-        placeholder={pspec.placeholder}
-        items={pspec.items /* yes, a string */}
-        isReadOnly={isReadOnly}
-        isZenMode={isZenMode}
-        wfModuleStatus={this.wfModuleStatus}
-        wfModuleOutputError={wfModule.output_error}
-        applyQuickFix={this.applyQuickFix}
-        key={index}
-        startCreateSecret={this.startCreateSecret}
-        deleteSecret={this.deleteSecret}
-        onChange={this.onChange}
-        onSubmit={this.onSubmit}
-        onReset={this.onReset}
-        setWfModuleParams={this.setWfModuleParams}
-        wfModuleId={wfModule.id}
-        inputWfModuleId={inputWfModule ? inputWfModule.id : null}
-        inputDeltaId={inputWfModule ? inputWfModule.cached_render_result_delta_id : null}
-        inputColumns={inputWfModule ? inputWfModule.output_columns : null}
-        updateSettings={updateSettings}
-        getParamText={this.getParamText}
-      />
-    )
-  }
-
   render () {
-    const { isReadOnly, index, wfModule, module } = this.props
+    const { isReadOnly, index, wfModule, module, inputWfModule } = this.props
+    const { edits } = this.state
 
     const moduleName = module ? module.name : '_undefined'
     const moduleIcon = module ? module.icon : '_undefined'
     const moduleHelpUrl = module ? module.help_url : ''
-
-    // Each parameter gets a WfParameter
-    const paramdivs = module ? module.param_fields.map(this.renderParam) : null
 
     const isNoteVisible = this.state.editedNotes !== null || !!this.props.wfModule.notes
 
@@ -553,9 +430,26 @@ export class WfModule extends React.PureComponent {
                 quickFixes={wfModule.quick_fixes || []}
                 applyQuickFix={this.applyQuickFix}
               />
-              <div className='module-card-params'>
-                {paramdivs}
-              </div>
+              {this.props.module ? (
+                <ParamsForm
+                  isReadOnly={this.props.isReadOnly}
+                  isZenMode={this.props.isZenMode}
+                  api={this.props.api}
+                  fields={this.props.module.param_fields}
+                  value={this.props.wfModule ? this.props.wfModule.params : null}
+                  wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
+                  wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}
+                  isWfModuleBusy={this.wfModuleStatus === 'busy'}
+                  inputWfModuleId={inputWfModule ? inputWfModule.id : null}
+                  inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}
+                  inputColumns={inputWfModule ? inputWfModule.output_columns : null}
+                  applyQuickFix={this.applyQuickFix}
+                  startCreateSecret={this.startCreateSecret}
+                  deleteSecret={this.deleteSecret}
+                  getParamText={this.getParamText}
+                  onSubmit={this.onSubmit}
+                />
+              ) : null}
             </div>
           </div>
         </div>

@@ -75,7 +75,7 @@ export default class WfHamburgerMenu extends React.Component {
           <DropdownToggle title='menu' className='context-button'>
             <i className='context-button--icon icon-more' />
           </DropdownToggle>
-          <DropdownMenu right>
+          <DropdownMenu positionFixed right>
             {homeLink}
             {importModule}
             {logInorOut}
