@@ -25,15 +25,15 @@ xxxy,2
 yxxx,1
 yxyx,1
 ''')
-        b.click_button('submit')
+        self.submit_wf_module()
 
         self.add_wf_module('Refine')
         self.select_column('Refine', 'column', 'A')
         b.wait_for_element('input[value="xxxy"]')
 
-    def _fill_in_and_blur(self, *args, **kwargs):
+    def _fill_in_and_submit(self, *args, **kwargs):
         """
-        Call fill_in(), then click to blur (thus submitting the value).
+        Call fill_in(), then submit the change.
 
         You'll usually want to wait for the commit to complete afterwards.
         That's challenging because we don't know ahead of time what's meant
@@ -41,7 +41,9 @@ yxyx,1
         """
         b = self.browser
         b.fill_in(*args, **kwargs)
+        # Blur, so the commit gets rendered and the 'submit' button is enabled
         b.click_whatever('.module-name', text='Refine')
+        self.submit_wf_module()  # actually submit
 
     def _wait_for_table_value(self, row, column, value):
         """
@@ -61,10 +63,10 @@ yxyx,1
     def test_manual_edits(self):
         b = self.browser
 
-        self._fill_in_and_blur('rename[xxxy]', 'yyyy')
+        self._fill_in_and_submit('rename[xxxy]', 'yyyy')
         self._wait_for_table_value(6, 0, 'yyyy')
         self._wait_for_table_value(7, 0, 'yyyy')
-        self._fill_in_and_blur('rename[yxyx]', 'yyyy')
+        self._fill_in_and_subimt('rename[yxyx]', 'yyyy')
         self._wait_for_table_value(9, 0, 'yyyy')
 
         # Now the UI lets you see the group

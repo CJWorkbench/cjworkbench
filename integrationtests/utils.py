@@ -136,7 +136,7 @@ class WorkbenchBase(unittest.TestCase):
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
         """
-        with self.browser.scope(f'.wf-module[data-module-name="{module_name}"] .wf-parameter[data-name="{name}"]', **kwargs):
+        with self.browser.scope(f'.wf-module[data-module-name="{module_name}"] .param[data-name="{name}"]', **kwargs):
             self.browser.assert_element(
                 f'.react-select:not(.loading)',
                 wait=True
@@ -144,6 +144,12 @@ class WorkbenchBase(unittest.TestCase):
             self.browser.click_whatever('.react-select__dropdown-indicator')
 
         self.browser.click_whatever('.react-select__option', text=text)
+
+    def submit_wf_module(self):
+        """Clicks the submit button of the active WfModule."""
+        self.browser.click_whatever(
+            'form.module-card-params button[name=submit]:not(:disabled)'
+        )
 
 # Derive from this to perform all tests logged in
 class LoggedInIntegrationTest(WorkbenchBase):

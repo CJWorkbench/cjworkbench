@@ -91,7 +91,7 @@ class TestExampleWorkflow(WorkbenchBase):
 
         # We can edit them
         b.fill_in('csv', 'A,B\n1,2')
-        b.click_button('submit')
+        self.submit_wf_module()
         b.assert_element('.column-key', text='A', wait=True)
 
         # We can view collaborators, read-only

@@ -76,7 +76,7 @@ class TestLesson(LessonTest):
         b.click_whatever('.react-select__option', text='MetroArea', wait=True)
         b.click_whatever('.react-select__indicator', wait=True)
         b.click_whatever('.react-select__option', text='Population', wait=True)
-        b.click_button('submit')
+        self.submit_wf_module()
 
         self.expect_highlight_next()
         self.click_next()
@@ -111,10 +111,12 @@ class TestLesson(LessonTest):
         )
         self.expect_highlight(1)  # not done this step
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
+        self.submit_wf_module()
 
         # Okay, we're done now
         self.expect_highlight(2, '.wf-module[data-module-name="Refine"]')
         b.uncheck('include[Denver - Aurora]')
+        self.submit_wf_module()
 
         self.expect_highlight_next()
         self.click_next()
@@ -134,6 +136,7 @@ class TestLesson(LessonTest):
         )
         # Wait for module to load
         b.select('direction', 'Long to wide', wait=True)
+        self.submit_wf_module()
 
         # Wait for param change to register
         self.expect_highlight(
@@ -142,6 +145,7 @@ class TestLesson(LessonTest):
             wait=True
         )
         self.select_column('Reshape', 'colnames', 'Date')
+        self.submit_wf_module()
 
         # Wait for param change to register
         self.expect_highlight(
@@ -150,6 +154,7 @@ class TestLesson(LessonTest):
             wait=True
         )
         self.select_column('Reshape', 'varcol', 'MetroArea')
+        self.submit_wf_module()
 
         # Navigate to footer
         self.expect_highlight_next(wait=True)

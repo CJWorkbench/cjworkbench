@@ -23,7 +23,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         b.click_whatever('#code-editor')
 
         # Code set. Run it!
-        b.click_button('Run')
+        self.submit_wf_module()
 
     def test_return_dataframe(self):
         self._execute_code("""

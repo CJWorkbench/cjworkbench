@@ -26,7 +26,7 @@ class TestExampleWorkflow(WorkbenchBase):
 
         self.add_wf_module('Paste data')
         b.fill_in('csv', 'foo,bar,baz\n1,2,\n2,3,\n3,4,', wait=True)
-        b.click_button('submit')
+        self.submit_wf_module()
 
         self.import_module('nulldropper')
         self.add_wf_module('Drop empty columns')

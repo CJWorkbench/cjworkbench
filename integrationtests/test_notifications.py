@@ -29,7 +29,7 @@ class TestNotifications(LoggedInIntegrationTest):
         self.select_column('Filter', 'column', 'data', wait=True)
         b.select('condition', 'Greater than')
         b.fill_in('value', '-0.1', wait=True)  # wait for field to appear
-        b.click_button('submit')
+        self.submit_wf_module()
 
         # Enable notifications
         with b.scope('.wf-module[data-module-name="Filter"]'):
