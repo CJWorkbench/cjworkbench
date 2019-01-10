@@ -437,7 +437,6 @@ export class AllNoneButtons extends React.PureComponent {
           name='refine-select-all'
           title='Select All'
           onClick={clearBlacklist}
-          className='mc-select-all'
         >
           All
         </button>
@@ -447,7 +446,6 @@ export class AllNoneButtons extends React.PureComponent {
           name='refine-select-none'
           title='Select None'
           onClick={fillBlacklist}
-          className='mc-select-none'
         >
           None
         </button>

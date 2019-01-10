@@ -420,6 +420,7 @@
 
     p {
       margin: 0;
+      margin-bottom: .5rem;
     }
 
     ul.quick-fixes {
@@ -431,6 +432,10 @@
         @extend .button-red;
       }
     }
+  }
+
+  %wf-module-error-msg {
+    @extend .wf-module-error-msg;
   }
   // prompt that isn't an error (module working as expected)
   &.status-ok .wf-module-error-msg {

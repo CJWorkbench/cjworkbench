@@ -131,7 +131,7 @@ button:focus { outline:0 !important; }
 
 //* - Action button - */
 
-.action-button {
+%action-button {
   cursor: pointer;
   border: 1px solid $brand-workspace;
   min-width: 7rem;
@@ -143,15 +143,19 @@ button:focus { outline:0 !important; }
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:disabled {
+    color: $light-gray;
+    border-color: $light-gray;
+    &:hover{
+      background-color: transparent;
+      cursor: default;
+    }
+  }
 }
 
-.action-button:disabled {
-  color: $light-gray;
-  border-color: $light-gray;
-  &:hover{
-    background-color: transparent;
-    cursor: default;
-  }
+.action-button {
+  @extend %action-button;
 }
 
 // In lesson left pannel:
@@ -374,140 +378,6 @@ button:focus { outline:0 !important; }
   }
 }
 
-.help-shortcut{
-  margin: auto;
-  background-color: #769BB0;
-  height: 3rem;
-  width:3rem;
-  z-index: 1000;
-  border-radius: 50px;
-  //border:2px solid #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 1rem 0 rgba(0,0,0,0.10);
-  cursor:pointer;
-  -webkit-transition: opacity 0.1s;
-    transition: opacity 0.1s;
-  box-shadow: 0.3rem 0.3rem 2.5rem 0 rgba(0,0,0,0.20);
-}
-
-
-/*checkbox-list*/
-
-// All - none selectors
-
-.mc-select-all, .mc-select-none {
-  font-weight: normal;
-  @extend .content-2;
-  color: $brand-text--dark;
-  background-color: transparent;
-  cursor: pointer;
-  border: 0px;
-  text-transform: uppercase;
-}
-
-.mc-select-all {
-  border-right: 1px solid $dark-accent--strong;
-  padding: 0 .6rem 0 0;
-}
-
-.mc-select-none {
-  padding: 0 0 0 .6rem;
-}
-
-.mc-select-all:hover,
-.mc-select-none:hover {
-  color:$brand-orange;
-}
-
-//Checkboxes
-
-.checkbox-container {
-  background-color: $white;
-  height: 3.4rem;
-  width: 100%;
-  margin-bottom: 1px;
-  padding: 0 1rem;
-  display:flex;
-  align-items: center;
-  &:last-child{
-  margin-bottom: 0px;
-  }
-}
-
-
-.list-wrapper{
-  background-color: #ededed;
-  resize: vertical;
-  border-radius: 3px;
-  max-height: 24rem;
-  overflow: auto;
-  border: 1px solid $Vlight-gray;
-}
-
-.list-scroll{
-  overflow-y:hidden;
-}
-
-.addremove label {
-  @extend .icon;
-  background: transparent;
-  width:1.6rem;
-  height:1.6rem;
-  font-size:1.6rem;
-  display:block;
-  color: $brand-text--dark;
-  cursor: pointer;
-  opacity: .6;
-}
-
-.addremove label:hover{
-  opacity: 1;
-}
-
-.addremove .checkbox + label {
-  @extend .icon-addc;
-  position: relative;
-  padding:0 0.5rem;
-  left: 22.3rem;
-  top:0.2rem;
-}
-
-.addremove .checkbox:checked + label {
-  @extend .icon-addm;
-  margin-right: 0.7rem;
-}
-
-.addremove .checkbox:checked + label, .addremove + .addremove label {
-  padding:0 0.5rem;
-  left: 20rem;
-  top:0.2rem;
-}
-
-.addremove.last .checkbox:checked + label {
-  padding:0 0.5rem;
-  left: 22.2rem;
-  top:0.2rem;
-}
-
-/* This is here until we create actual grouped parameters. When the
-next group down has its 'active' checkbox checked, we insert an element
-before the previous checkbox, then hide both that checkbox and its
-sibling. This is a terrible hack and also the most lightweight way
-to do this until we make larger architectural changes. */
-.cheat, .cheat + .addremove {
-  display:none;
-}
-
-.hide-with-sibling {
-  display:none;
-}
-
-.show-sibling + .hide-with-sibling {
-  display: block;
-}
-
 // Application links
 
 %action-link {
@@ -520,13 +390,4 @@ to do this until we make larger architectural changes. */
 }
 .action-link {
 	@extend %action-link;
-}
-
-.system-link {
-	@extend %action-link;
-  color: $brand-orange!important;
-	&:hover {
-		color: $dark-orange!important;
-		text-decoration: none;
-	}
 }

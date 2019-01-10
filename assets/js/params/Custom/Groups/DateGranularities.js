@@ -65,7 +65,7 @@ export default class DateGranularities extends React.PureComponent {
                 <button
                   type='button'
                   name={`${name}[add-module]`}
-                  className='quick-fix action-button button-orange'
+                  className='quick-fix action-button button-blue'
                   onClick={addConvertToDateModule}
                 >
                   Convert columns

@@ -67,14 +67,6 @@
   }
 }
 
-button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disabled, {
-  color:$grayed--out;
-  cursor: default;
-  &:hover {
-    color:$grayed--out;
-  }
-}
-
 .refine-modal-prompt {
   margin-top: .5rem;
   display: flex;
@@ -94,6 +86,38 @@ button[name="refine-select-all"]:disabled,button[name="refine-select-none"]:disa
 
   button {
     margin-right: 1rem;
+  }
+}
+
+.param-refine, .param-valueselect {
+  .all-none-buttons {
+    button {
+      font-weight: normal;
+      @extend %content-2;
+      color: $brand-text--dark;
+      background-color: transparent;
+      cursor: pointer;
+      border: 0;
+      text-transform: uppercase;
+
+      &:not(:last-child) {
+        border-right: 1px solid $dark-accent--strong;
+        padding: 0 .6rem 0 0;
+      }
+
+      &:last-child {
+        padding: 0 0 0 .6rem;
+      }
+
+      &:hover {
+        color:$brand-orange;
+      }
+
+      &:disabled {
+        cursor: default;
+        color: $grayed--out;
+      }
+    }
   }
 }
 

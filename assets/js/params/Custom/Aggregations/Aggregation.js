@@ -98,7 +98,7 @@ export default class Aggregation extends React.PureComponent {
               name={`${name}[delete]`}
               onClick={this.onClickDelete}
             >
-              <i className='icon-close' /> Remove
+              <i className='icon-close' />
             </button>
           </div>
         ) : null}

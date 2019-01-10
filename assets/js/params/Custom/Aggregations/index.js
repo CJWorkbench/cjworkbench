@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Aggregation from './Aggregation'
 
+const DefaultValue = [{ operation: 'size', colname: '', outname: '' }]
+const DefaultAddValue = { operation: 'sum', colname: '', outname: '' }
+
 export default class Aggregations extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
@@ -18,42 +21,51 @@ export default class Aggregations extends React.PureComponent {
   }
 
   onChangeAggregation = (index, aggregation) => {
-    const { value, onChange, isReadOnly } = this.props
+    const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
-    const newValue = value.slice()
+    const newValue = this.value.slice()
     newValue[index] = aggregation // may append an element
     onChange(newValue)
   }
 
   onDeleteAggregation = (index) => {
-    const { value, onChange, isReadOnly } = this.props
+    const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
-    const newValue = value.slice()
+    const newValue = this.value.slice()
     newValue.splice(index, 1)
     onChange(newValue)
   }
 
   onAdd = () => {
-    const { value, onChange, isReadOnly } = this.props
+    const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
-    const newValue = value.slice()
-    newValue.push({ operation: 'sum', colname: '', outname: '' })
+    const newValue = this.value.slice()
+    newValue.push(DefaultAddValue)
     onChange(newValue)
   }
 
-  render () {
-    let { value } = this.props
-    const { name, inputColumns, isReadOnly } = this.props
-
-    if (!value || value.length === 0) {
-      value = [{ operation: 'count', colname: '', outname: ''}]
+  /**
+   * Given value, or default of {operation:size} if empty.
+   *
+   * groupby.py uses this default. Read comments there to see why.
+   */
+  get value () {
+    const actual = this.props.value
+    if (actual.length === 0) {
+      return DefaultValue
+    } else {
+      return actual
     }
+  }
 
+  render () {
+    const { name, inputColumns, isReadOnly } = this.props
+    const value = this.value
     const onDelete = value.length <= 1 ? null : this.onDeleteAggregation
 
     return (
-      <div className='aggregations'>
-        <h5>Operations</h5>
+      <React.Fragment>
+        <label>Operations</label>
         <ul>
           {value.map((aggregation, index) => (
             <Aggregation
@@ -72,12 +84,13 @@ export default class Aggregations extends React.PureComponent {
           <button
             type='button'
             className='add'
+            name={`${name}[add]`}
             onClick={this.onAdd}
           >
             <i className='icon-add'/> Add
           </button>
         )}
-      </div>
+      </React.Fragment>
     )
   }
 }
