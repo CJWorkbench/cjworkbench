@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import RefineModal from './RefineModal'
 import { withFetchedData } from '../FetchedData'
-import { withJsonStringValues } from '../../util'
 
 const NumberFormatter = new Intl.NumberFormat()
 
@@ -166,41 +165,6 @@ export class RefineSpec {
 
   withBlacklist (newBlacklist) {
     return new RefineSpec(this.renames, newBlacklist)
-  }
-
-  static parse_v0 (arr) {
-    // See comments in modules/refine.py
-    let spec = new RefineSpec({}, [])
-
-    for (const action of arr) {
-      if (action.type === 'select') {
-        // Toggle isBlacklisted for the given group
-        const group = action.content.value
-        const isBlacklisted = spec.blacklist.includes(group)
-        spec = spec.setIsBlacklisted(group, !isBlacklisted)
-      } else {
-        // Rename from oldValue to newValue
-        const fromGroup = action.content.fromVal
-        const toGroup = action.content.toVal
-        spec = spec.rename(fromGroup, toGroup)
-      }
-    }
-
-    return spec
-  }
-
-  static parse_v1 (obj) {
-    const { renames, blacklist } = obj
-
-    return new RefineSpec(renames, blacklist)
-  }
-
-  static parse (data) {
-    if (Array.isArray(data)) {
-      return RefineSpec.parse_v0(data)
-    } else {
-      return RefineSpec.parse_v1(data)
-    }
   }
 }
 
@@ -494,7 +458,8 @@ export class Refine extends React.PureComponent {
       // Memoized
       return this._parsedSpec.retval
     } else {
-      const retval = RefineSpec.parse(value)
+      const { renames, blacklist } = value
+      const retval = new RefineSpec(renames, blacklist)
       this._parsedSpec = { value, retval }
       return retval
     }
@@ -637,7 +602,7 @@ export class Refine extends React.PureComponent {
 }
 
 export default withFetchedData(
-  withJsonStringValues(Refine, { renames: {}, blacklist: [] }),
+  Refine,
   'valueCounts',
   ({ api, inputWfModuleId, selectedColumn }) => api.valueCounts(inputWfModuleId, selectedColumn),
   ({ inputDeltaId, selectedColumn }) => `${inputDeltaId}-${selectedColumn}`

@@ -262,43 +262,6 @@ describe('Refine', () => {
     expect(w.find('.count-and-remove button[data-value="a"]')).toHaveLength(0)
   })
 
-  it('should migrate a v0 spec', () => {
-    // Previous versions of Refine had an awful spec with "select" and "change"
-    // actions. See the "v0" stuff in `modules/refine.py` for further whinging.
-    //
-    // We need to migrate on the server side so renders continue to work when
-    // users haven't edited params. _AND_ we need to migrate on the client side
-    // so users can edit params. That's right: we need to write this migration
-    // code and tests in two programming languages.
-    //
-    // So excuse me for not writing two identical barrages of unit tests. The
-    // one test here will have to do.
-    const w = wrapper({
-      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
-      value: [
-        { type: 'change', column: 'A', content: { fromVal: 'c', toVal: 'a' } },
-        { type: 'select', column: 'A', content: { value: 'a' } }
-      ]
-    })
-
-    expect(w.prop('onChange')).not.toHaveBeenCalled()
-
-    // The 'a' group renders
-    expect(w.find('.summary input[type="text"]').at(0).prop('value')).toEqual('a')
-    // The 'a' group is blacklisted
-    expect(w.find('input[type="checkbox"]').at(0).prop('checked')).toBe(false)
-
-    // Run _one_ action. Here, we choose, "un-blacklist a"
-    w.find('input[type="checkbox"]').at(0).simulate('change', { target: { checked: true } })
-
-    const onChangeCalls = w.prop('onChange').mock.calls
-    expect(onChangeCalls).toHaveLength(1)
-    expect(onChangeCalls[0][0]).toEqual({
-      renames: { c: 'a' },
-      blacklist: []
-    })
-  })
-
   it('should find search results within both group names and members', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},

@@ -6,6 +6,16 @@
   "description": "Find and edit facets in seconds. Search and edit manually or use algorythms",
   "has_zen_mode": true,
   "help_url":"modules/clean/refine",
+  "param_schema": {
+      "column": { "type": "column" },
+      "refine": {
+          "type": "dict",
+          "properties": {
+              "renames": { "type": "map", "value_dtype": { "type": "string" } },
+              "blacklist": { "type": "list", "inner_dtype": { "type": "string" } }
+          }
+      }
+  },
   "parameters": [
     {
       "name": "",

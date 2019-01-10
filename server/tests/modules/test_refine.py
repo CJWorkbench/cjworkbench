@@ -1,9 +1,10 @@
+import json
 import unittest
+from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
-from typing import Any, Dict, List
 from pandas.testing import assert_frame_equal
-from server.modules.refine import Refine, RefineSpec
+from server.modules.refine import render, migrate_params, RefineSpec
 from server.modules.types import ProcessResult
 from .util import MockParams
 
@@ -12,15 +13,20 @@ def P(column: str, refine: Dict[str, Any]) -> MockParams:
     return MockParams(column=column, refine=refine)
 
 
-class RefineSpecTest(unittest.TestCase):
+class MigrateParamsTest(unittest.TestCase):
     def _test_parse_v0(self, column: str, arr: List[Dict[str, Any]],
                        expected: RefineSpec) -> None:
         """
         Test that deprecated input is transformed into what the user expects.
         """
-        result = RefineSpec.parse_v0(column, arr)
-        self.assertEqual(result.renames, expected.renames)
-        self.assertEqual(set(result.blacklist), set(expected.blacklist))
+        result = migrate_params({
+            'column': column,
+            'refine': json.dumps(arr),
+        })
+        self.assertEqual(result['column'], column)
+        refine = result['refine']
+        self.assertEqual(refine['renames'], expected.renames)
+        self.assertEqual(set(refine['blacklist']), set(expected.blacklist))
 
     def test_parse_v0_filter(self):
         self._test_parse_v0(
@@ -117,53 +123,33 @@ class RefineSpecTest(unittest.TestCase):
 
     def test_parse_v0_valueerror_bad_select_bad_value(self):
         with self.assertRaises(ValueError):
-            RefineSpec.parse_v0('A', [
+            migrate_params({'column': 'A', 'refine': json.dumps([
                 {'type': 'select', 'column': 'A', 'content': {'valu': 'x'}},
-            ])
+            ])})
 
     def test_parse_v0_valueerror_bad_change_bad_content_key(self):
         with self.assertRaises(ValueError):
-            RefineSpec.parse_v0('A', [
+            migrate_params({'column': 'A', 'refine': json.dumps([
                 {'type': 'change', 'column': 'A',
                  'content': {'fromValx': 'x', 'toVal': 'y'}},
-            ])
+            ])})
 
     def test_parse_v0_valueerror_bad_change_no_content_key(self):
         with self.assertRaises(ValueError):
-            RefineSpec.parse_v0('A', [
+            migrate_params({'column': 'A', 'refine': json.dumps([
                 {'type': 'change', 'column': 'A',
                  'contentx': {'fromVal': 'x', 'toVal': 'y'}},
-            ])
+            ])})
 
     def test_parse_v0_valueerror_bad_type(self):
         with self.assertRaises(ValueError):
-            RefineSpec.parse_v0('A', [
+            migrate_params({'column': 'A', 'refine': json.dumps([
                 {'type': 'selec', 'column': 'A', 'content': {'value': 'x'}},
-            ])
+            ])})
 
     def test_parse_v0_valueerror_not_dict(self):
         with self.assertRaises(ValueError):
-            RefineSpec.parse_v0('A', ['foo'])
-
-    def test_parse_v1_missing_renames(self):
-        with self.assertRaises(ValueError):
-            RefineSpec.parse('A', {'enames': {}, 'blacklist': []})
-
-    def test_parse_v1_bad_renames(self):
-        with self.assertRaises(ValueError):
-            RefineSpec.parse('A', {'renames': [], 'blacklist': []})
-
-    def test_parse_v1_bad_blacklist(self):
-        with self.assertRaises(ValueError):
-            RefineSpec.parse('A', {'renames': {}, 'blacklist': 3})
-
-    def test_parse_v1(self):
-        result = RefineSpec.parse('A', {
-            'renames': {'x': 'y', 'y': 'z'},
-            'blacklist': ['z']
-        })
-        self.assertEqual(result.renames, {'x': 'y', 'y': 'z'})
-        self.assertEqual(result.blacklist, ['z'])
+            migrate_params({'column': 'A', 'refine': json.dumps('A')})
 
     def _test_refine_spec_apply(self, in_table: pd.DataFrame, column: str,
                                 spec: RefineSpec,
@@ -253,7 +239,7 @@ class RefineSpecTest(unittest.TestCase):
                      expected_error: str='') -> None:
         """Test that the render method works (kinda an integration test)."""
         params = P(column, edits_json)
-        result = Refine.render(params, in_table)
+        result = render(params, in_table)
         result.sanitize_in_place()
 
         expected = ProcessResult(expected_out, expected_error)
@@ -276,33 +262,4 @@ class RefineSpecTest(unittest.TestCase):
             'A',
             {},
             pd.DataFrame({'A': ['b']}, dtype='category')
-        )
-
-    def test_render_parse_v0(self):
-        self._test_render(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            [
-                {'type': 'change', 'column': 'A',
-                 'content': {'fromVal': 'a', 'toVal': 'c'}},
-                {'type': 'select', 'column': 'A', 'content': {'value': 'b'}},
-            ],
-            pd.DataFrame({'A': ['c']}, dtype='category')
-        )
-
-    def test_render_parse_v1(self):
-        self._test_render(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            {'renames': {'a': 'c'}, 'blacklist': ['b']},
-            pd.DataFrame({'A': ['c']}, dtype='category')
-        )
-
-    def test_render_parse_error(self):
-        self._test_render(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            {'renames': ['foo', 'bar'], 'blacklist': 4},
-            pd.DataFrame(),
-            'Internal error: "renames" must be a dict from old value to new'
         )
