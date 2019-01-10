@@ -33,6 +33,6 @@
   }
 
   &:focus {
-    border-color: $data-action--border;
+    border-color: $data-action--border; // overrides :hover
   }
 }

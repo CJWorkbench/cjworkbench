@@ -14,20 +14,14 @@
     select.operation {
       // 1. operation: has top radius, not bottom radius
       @extend %custom-select;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      border-radius: 3px 3px 0 0;
     }
 
     .column {
       // 2. (optional) colname: has no radius
       .react-select__control {
         background-color: $table-background;
-        border-radius: 3px;
-        border-color: transparent;
-        margin-top: $group-margin;
-        &:hover {
-          border-color: darken($Vlight-gray,5%);
-        }
+        border-radius: 0;
       }
     }
 
@@ -42,28 +36,18 @@
         line-height: 3.1rem; // line up with <input>
         border: 2px solid $table-background;
         border-right: 0;
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
+        border-radius: 0 0 0 3px;
         padding: 0 1.2rem; // line up with <select> innards above it
         color: $brand-text--medium;
-        margin-top: $group-margin;
       }
 
       input {
         @extend %module-parameter;
         background-color: $table-background;
-        border-color: transparent;
-        color: $brand-text--medium;
         padding: 0 1.3rem; // same as <span>
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
+        border-radius: 0 0 3px 0;
         display: block;
         flex: 1 1 auto;
-        margin-top: $group-margin;
-        &:hover {
-          cursor: text;
-          border-color: darken($Vlight-gray,5%);
-        }
       }
     }
 
@@ -79,7 +63,6 @@
         font-size: 1.2rem;
         background: inherit;
         color: $light-gray;
-        //margin-top: $group-margin;
       }
 
       i {
@@ -93,7 +76,7 @@
     font: inherit;
     font-size: 1.2rem;
     text-transform: uppercase;
-    margin-top: $group-margin;
+    margin-top: .2rem;
     margin-left: 0;
     padding: 0;
     border: 0;
