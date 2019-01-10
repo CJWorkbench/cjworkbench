@@ -29,10 +29,12 @@ export default class UndoRedoButtons extends React.PureComponent {
     if (ev.metaKey || ev.ctrlKey) {  // Meta on OS X, Ctrl on Windows
       switch (ev.key) {
         case 'z':
-          return undo()
-        case 'Z':
-          // Mac OS standard for "redo" is Meta+Shift+z
-          return redo()
+          if (ev.shiftKey) {
+            // Mac OS standard for "redo" is Meta+Shift+z
+            return redo()
+          } else {
+            return undo()
+          }
         case 'y':
           // Windows/Linux standard for "redo" is Meta+y
           return redo()
