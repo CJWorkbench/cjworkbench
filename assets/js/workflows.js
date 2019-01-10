@@ -204,7 +204,7 @@ export default class Workflows extends React.Component {
       return (
         <TabPane tabId={'owned'}>
           <div>
-            <a className={'new-workflow-link'} onClick={this.click}>Create you first workflow</a>
+            <a className={'new-workflow-link'} onClick={this.click}>Create your first workflow</a>
           </div>
         </TabPane>
       )

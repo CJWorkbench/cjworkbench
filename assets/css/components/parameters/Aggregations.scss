@@ -18,8 +18,8 @@
     .operation {
       // 1. operation: has top radius, not bottom radius
       select.custom-select {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+        // border-bottom-left-radius: 0;
+        // border-bottom-right-radius: 0
       }
     }
 

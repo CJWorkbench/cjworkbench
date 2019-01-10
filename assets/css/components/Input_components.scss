@@ -234,6 +234,8 @@ textarea:focus, input:focus{
   line-height: 1.5rem;
   height: 1.5rem;
   overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 .custom-select {
@@ -245,7 +247,12 @@ textarea:focus, input:focus{
   border: 2px solid transparent;
   box-shadow: none;
   height: 3.5rem;
-  border-radius: 3px;
+  -webkit-appearance: none;
+  -webkit-border-radius: 3px;
+  background-image: url("../images/carret-down.png");
+  background-position: 96% 50%;
+  background-repeat: no-repeat;
+  background-size: 12px;
 
   &:focus{
     box-shadow: none;
