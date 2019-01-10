@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CellEdits renders correctly 1`] = `
+<CellEdits
+  value={
+    Array [
+      Object {
+        "col": "foo",
+        "row": 3,
+        "value": "bar",
+      },
+      Object {
+        "col": "food",
+        "row": 6,
+        "value": "sandwich",
+      },
+      Object {
+        "col": "foo",
+        "row": 5,
+        "value": "gak",
+      },
+      Object {
+        "col": "food",
+        "row": 17,
+        "value": "pizza",
+      },
+    ]
+  }
+>
+  <div
+    className="cell-edits--column"
+    key="foo"
+  >
+    <div
+      className="edited-column"
+    >
+      foo
+    </div>
+    <div
+      className="cell-edits--rows"
+    >
+      <div
+        className="cell-edits--row"
+        key="0"
+      >
+        <div
+          className="edited-row"
+        >
+          4
+        </div>
+        <div
+          className="edited-text"
+        >
+          bar
+        </div>
+      </div>
+      <div
+        className="cell-edits--row"
+        key="1"
+      >
+        <div
+          className="edited-row"
+        >
+          6
+        </div>
+        <div
+          className="edited-text"
+        >
+          gak
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="cell-edits--column"
+    key="food"
+  >
+    <div
+      className="edited-column"
+    >
+      food
+    </div>
+    <div
+      className="cell-edits--rows"
+    >
+      <div
+        className="cell-edits--row"
+        key="0"
+      >
+        <div
+          className="edited-row"
+        >
+          7
+        </div>
+        <div
+          className="edited-text"
+        >
+          sandwich
+        </div>
+      </div>
+      <div
+        className="cell-edits--row"
+        key="1"
+      >
+        <div
+          className="edited-row"
+        >
+          18
+        </div>
+        <div
+          className="edited-text"
+        >
+          pizza
+        </div>
+      </div>
+    </div>
+  </div>
+</CellEdits>
+`;
+
+exports[`CellEdits renders empty data 1`] = `
+<CellEdits
+  value={Array []}
+/>
+`;

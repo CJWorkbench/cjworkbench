@@ -31,15 +31,6 @@ describe('MultiLineString', () => {
     expect(w.find('button')).toHaveLength(0)
   })
 
-  it('should invoke onChange when clicked out of text box', () => {
-    const w = wrapper({
-      value: 'new',
-      upstreamValue: 'old'
-    })
-    w.find('textarea').simulate('blur')
-    expect(w.prop('onChange')).toHaveBeenCalled()
-  })
-
   it('should disable when read-only', () => {
     const w = wrapper({ isReadOnly: true })
     expect(w.find('textarea').prop('readOnly')).toBe(true)

@@ -6,7 +6,7 @@ describe('CellEdits', () => {
   it('renders correctly', () => {
     const wrapper = mount(
       <CellEdits
-        edits={[
+        value={[
           { row: 3, col: 'foo', value:'bar' },
           { row: 6, col: 'food', value:'sandwich' },
           { row: 5, col: 'foo', value:'gak' },
@@ -23,7 +23,7 @@ describe('CellEdits', () => {
 
   it('renders empty data', () => {
      const wrapper = mount(
-      <CellEdits edits={[]} />
+      <CellEdits value={[]} />
      )
 
     expect(wrapper.find('.cell-edits--column')).toHaveLength(0)

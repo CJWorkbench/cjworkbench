@@ -1,72 +1,51 @@
 import React from 'react'
-import GoogleFileSelect  from './GoogleFileSelect'
+import { GoogleFileSelect } from './GoogleFileSelect'
 import { mount, shallow } from 'enzyme'
-import { jsonResponseMock } from '../test-utils'
 
 const tick = async() => new Promise(resolve => setTimeout(resolve, 0))
 
 describe('GoogleFileSelect', () => {
-  const aFileMetadataJson = JSON.stringify({
-    "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
-    "name": "Police Data",
-  })
+  const aFileMetadataJson = {
+    id: 'aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj',
+    name: 'Police Data',
+    url: 'https://example.org'
+  }
+
+  let pickerFactory
 
   // Mount is necessary to invoke componentDidMount()
-  let createOauthAccessToken
-  let googleCredentialsSecretName
-  let loadPickerFactory
-  let pickerFactory
-  let pickerOpen
-  let pickerClose
-  let fileMetadataJson
-  let onChangeJson
-  beforeEach(() => {
-    // set default props. Tests can change them before calling wrapper()
-    fileMetadataJson = aFileMetadataJson
-    createOauthAccessToken = jest.fn().mockReturnValue(Promise.resolve('access-token'))
+  const wrapper = (extraProps={}) => {
     pickerFactory = {
       open: jest.fn(),
-      close: jest.fn(),
+      close: jest.fn()
     }
-    loadPickerFactory = jest.fn(() => Promise.resolve(pickerFactory))
-    onChangeJson = jest.fn()
-    googleCredentialsSecretName = 'user@example.org'
-  })
 
-  let mountedWrapper = null
-  let wrapper = (extraProps={}) => {
-    // mount(), not shallow(), because we use componentDidMount()
-    return mountedWrapper = mount(
+    return mount(
       <GoogleFileSelect
-        createOauthAccessToken={createOauthAccessToken}
-        googleCredentialsSecretName={googleCredentialsSecretName}
-        fileMetadataJson={fileMetadataJson}
-        onChangeJson={onChangeJson}
-        loadPickerFactory={loadPickerFactory}
+        createOauthAccessToken={jest.fn(() => Promise.resolve('access-token'))}
         isReadOnly={false}
+        secretName='user@example.org'
+        value={aFileMetadataJson}
+        onChange={jest.fn()}
+        loadPickerFactory={jest.fn(() => Promise.resolve(pickerFactory))}
         {...extraProps}
-        />
+      />
     )
   }
 
-  afterEach(() => {
-    if (mountedWrapper) mountedWrapper.unmount()
-    mountedWrapper = null
-  })
-
   it('indicates when not connected', async () => {
-    googleCredentialsSecretName = null
-    const w = wrapper()
+    const w = wrapper({ secretName: null })
     await tick()
     w.update()
     expect(w.find('.not-signed-in')).toHaveLength(1)
-    expect(createOauthAccessToken).not.toHaveBeenCalled()
+    expect(w.prop('createOauthAccessToken')).not.toHaveBeenCalled()
     expect(w.find('button')).toHaveLength(0)
   })
 
   it('shows loading when google API has not loaded', async () => {
-    loadPickerFactory.mockReturnValue(new Promise(_ => {}))
-    const w = wrapper()
+    const w = wrapper({
+      loadPickerFactory: () => new Promise(_ => 'never resolves')
+    })
     await tick()
     w.update()
     expect(w.find('.loading')).toHaveLength(1)
@@ -83,8 +62,9 @@ describe('GoogleFileSelect', () => {
   })
 
   it('shows loading when fetching access token', async () => {
-    createOauthAccessToken.mockReturnValue(new Promise(_ => {}))
-    const w = wrapper()
+    const w = wrapper({
+      createOauthAccessToken: () => new Promise(_ => 'never resolves')
+    })
     await tick()
     w.update()
     w.find('button.change-file').simulate('click')
@@ -92,9 +72,10 @@ describe('GoogleFileSelect', () => {
   })
 
   it('shows errors when unauthenticated', async () => {
-    googleCredentialsSecretName = 'hi'
-    createOauthAccessToken.mockReturnValue(Promise.resolve(null))
-    const w = wrapper()
+    const w = wrapper({
+      secretName: 'hi',
+      createOauthAccessToken: () => Promise.resolve(null)
+    })
     await tick()
     w.update()
     w.find('button.change-file').simulate('click')
@@ -104,8 +85,7 @@ describe('GoogleFileSelect', () => {
   })
 
   it('allows Change of existing file', async () => {
-    fileMetadataJson = aFileMetadataJson
-    const w = wrapper()
+    const w = wrapper({ value: aFileMetadataJson })
     await tick()
     w.update()
     expect(w.find('button')).toHaveLength(1)
@@ -121,10 +101,10 @@ describe('GoogleFileSelect', () => {
 
     w.find('button').simulate('click')
     await tick() // let fetchAccessToken() return
-    expect(onChangeJson).toHaveBeenCalledWith(JSON.stringify({
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
       id: 'newid',
       name: 'new file',
-    }))
+    })
   })
 
   it('works when pick is canceled', async () => {
@@ -138,12 +118,11 @@ describe('GoogleFileSelect', () => {
 
     w.find('button').simulate('click')
     await tick() // let fetchAccessToken() return
-    expect(onChangeJson).not.toHaveBeenCalled()
+    expect(w.prop('onChange')).not.toHaveBeenCalled()
   })
 
   it('calls it Choose, not Change, when no file is selected', async () => {
-    fileMetadataJson = null
-    const w = wrapper()
+    const w = wrapper({ value: null })
     await tick()
     w.update()
     expect(w.find('button').text()).toEqual('Choose')
@@ -154,8 +133,7 @@ describe('GoogleFileSelect', () => {
     await tick()
     w.update()
     w.find('button').simulate('click')
-    mountedWrapper.unmount()
-    mountedWrapper = null
+    w.unmount()
     expect(pickerFactory.close).toHaveBeenCalled()
   })
 });

@@ -61,7 +61,7 @@ export class WfModule extends React.PureComponent {
     }), // or null
     isSelected: PropTypes.bool.isRequired,
     isAfterSelected: PropTypes.bool.isRequired,
-    setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined -- icky, prefer onChange
+    setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined
     removeModule: PropTypes.func,
     api: PropTypes.object.isRequired,
     onDragStart: PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
@@ -88,16 +88,12 @@ export class WfModule extends React.PureComponent {
     edits: {} // id_name => newValue
   }
 
-  /**
-   * Overwrite some params on this WfModule.
-   *
-   * TODO nix this entirely? onChange and onSubmit are more appropriate.
-   * [2018-11-22, adamhooper] I can't see any place this function belongs,
-   * because we don't have any params that should write to _other_ params.
-   * (Especially not our multi-column selector.)
-   */
-  setWfModuleParams = (params) => {
-    this.props.setWfModuleParams(this.props.wfModule.id, params)
+  get hasFetch () {
+    return this.props.fields.some(f => f.type === 'custom' && (f.id_name === 'version_select' || f.id_name === 'version_select_simpler'))
+  }
+
+  get isEditing () {
+    return Object.keys(this.state.edits).length > 0
   }
 
   onClickNotification = () => {
@@ -258,15 +254,20 @@ export class WfModule extends React.PureComponent {
     )
   }
 
-  onChange = (idName, newValue) => {
-    this.setState({
-      edits: { ...this.state.edits, [idName]: newValue }
-    })
+  onChange = (edits) => {
+    this.setState({ edits })
   }
 
-  onSubmit = (edits) => {
-    this.props.setWfModuleParams(this.props.wfModule.id, edits)
-    this.props.maybeRequestFetch(this.props.wfModule.id)
+  onSubmit = () => {
+    const { wfModule, setWfModuleParams, maybeRequestFetch } = this.props
+    const { edits } = this.state
+
+    if (this.isEditing) {
+      setWfModuleParams(wfModule.id, edits)
+      this.setState({ edits: {} })
+    }
+
+    maybeRequestFetch(wfModule.id)
   }
 
   get wfModuleStatus () {
@@ -396,6 +397,7 @@ export class WfModule extends React.PureComponent {
     className += this.state.isDragging ? ' dragging' : ''
     className += this.props.isSelected ? ' selected' : ''
     className += this.props.isAfterSelected ? ' after-selected' : ''
+    className += this.isEditing ? ' editing' : ''
     if (this.props.isLessonHighlight) className += ' lesson-highlight'
     if (this.props.isZenMode) className += ' zen-mode'
 
@@ -437,6 +439,7 @@ export class WfModule extends React.PureComponent {
                   api={this.props.api}
                   fields={this.props.module.param_fields}
                   value={this.props.wfModule ? this.props.wfModule.params : null}
+                  edits={this.state.edits}
                   wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
                   wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}
                   isWfModuleBusy={this.wfModuleStatus === 'busy'}
@@ -447,6 +450,7 @@ export class WfModule extends React.PureComponent {
                   startCreateSecret={this.startCreateSecret}
                   deleteSecret={this.deleteSecret}
                   getParamText={this.getParamText}
+                  onChange={this.onChange}
                   onSubmit={this.onSubmit}
                 />
               ) : null}

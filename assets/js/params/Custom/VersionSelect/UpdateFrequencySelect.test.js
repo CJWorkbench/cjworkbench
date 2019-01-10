@@ -1,4 +1,4 @@
-import { mockStore } from '../test-utils'
+import { mockStore } from '../../../test-utils'
 import React from 'react'
 import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
 import { shallow, mount } from 'enzyme'

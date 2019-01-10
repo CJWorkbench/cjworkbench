@@ -408,13 +408,14 @@ class RefineGroup extends React.PureComponent {
   }
 }
 
-const buildSpecModifier = (_this, helperName) => {
+const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
   const func = RefineSpec.prototype[helperName]
 
   return (...args) => {
     const oldSpec = _this.parsedSpec
     const newSpec = func.apply(oldSpec, args)
     _this.props.onChange(newSpec.toJsonObject())
+    if (shouldSubmit) _this.props.onSubmit()
   }
 }
 
@@ -567,7 +568,7 @@ export class Refine extends React.PureComponent {
   }
 
   rename = buildSpecModifier(this, 'rename')
-  massRename = buildSpecModifier(this, 'massRename')
+  massRename = buildSpecModifier(this, 'massRename', true)
   setIsBlacklisted = buildSpecModifier(this, 'setIsBlacklisted')
   resetGroup = buildSpecModifier(this, 'resetGroup')
   resetValue = buildSpecModifier(this, 'resetValue')

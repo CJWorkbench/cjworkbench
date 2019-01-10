@@ -178,12 +178,14 @@ exports[`Workflow list page renders correctly 1`] = `
                     </DropdownToggle>
                     <DropdownMenu
                       flip={true}
+                      positionFixed={true}
                       right={true}
                       tag="div"
                     >
                       <div
                         aria-hidden={true}
                         className="dropdown-menu dropdown-menu-right"
+                        positionFixed={true}
                         role="menu"
                         tabIndex="-1"
                       >
@@ -400,12 +402,14 @@ exports[`Workflow list page renders correctly 1`] = `
                         </DropdownToggle>
                         <DropdownMenu
                           flip={true}
+                          positionFixed={true}
                           right={true}
                           tag="div"
                         >
                           <div
                             aria-hidden={true}
                             className="dropdown-menu dropdown-menu-right"
+                            positionFixed={true}
                             role="menu"
                             tabIndex="-1"
                           >
@@ -652,12 +656,14 @@ exports[`Workflow list page renders correctly 1`] = `
                                 </DropdownToggle>
                                 <DropdownMenu
                                   flip={true}
+                                  positionFixed={true}
                                   right={true}
                                   tag="div"
                                 >
                                   <div
                                     aria-hidden={true}
                                     className="dropdown-menu dropdown-menu-right"
+                                    positionFixed={true}
                                     role="menu"
                                     tabIndex="-1"
                                   >
@@ -847,12 +853,14 @@ exports[`Workflow list page renders correctly 1`] = `
                                 </DropdownToggle>
                                 <DropdownMenu
                                   flip={true}
+                                  positionFixed={true}
                                   right={true}
                                   tag="div"
                                 >
                                   <div
                                     aria-hidden={true}
                                     className="dropdown-menu dropdown-menu-right"
+                                    positionFixed={true}
                                     role="menu"
                                     tabIndex="-1"
                                   >
@@ -1042,12 +1050,14 @@ exports[`Workflow list page renders correctly 1`] = `
                                 </DropdownToggle>
                                 <DropdownMenu
                                   flip={true}
+                                  positionFixed={true}
                                   right={true}
                                   tag="div"
                                 >
                                   <div
                                     aria-hidden={true}
                                     className="dropdown-menu dropdown-menu-right"
+                                    positionFixed={true}
                                     role="menu"
                                     tabIndex="-1"
                                   >
@@ -1250,12 +1260,14 @@ exports[`Workflow list page renders correctly 1`] = `
                                 </DropdownToggle>
                                 <DropdownMenu
                                   flip={true}
+                                  positionFixed={true}
                                   right={true}
                                   tag="div"
                                 >
                                   <div
                                     aria-hidden={true}
                                     className="dropdown-menu dropdown-menu-right"
+                                    positionFixed={true}
                                     role="menu"
                                     tabIndex="-1"
                                   >
@@ -1425,12 +1437,14 @@ exports[`Workflow list page renders correctly 1`] = `
                                 </DropdownToggle>
                                 <DropdownMenu
                                   flip={true}
+                                  positionFixed={true}
                                   right={true}
                                   tag="div"
                                 >
                                   <div
                                     aria-hidden={true}
                                     className="dropdown-menu dropdown-menu-right"
+                                    positionFixed={true}
                                     role="menu"
                                     tabIndex="-1"
                                   >
@@ -1613,12 +1627,14 @@ exports[`Workflow list page renders correctly 1`] = `
                                 </DropdownToggle>
                                 <DropdownMenu
                                   flip={true}
+                                  positionFixed={true}
                                   right={true}
                                   tag="div"
                                 >
                                   <div
                                     aria-hidden={true}
                                     className="dropdown-menu dropdown-menu-right"
+                                    positionFixed={true}
                                     role="menu"
                                     tabIndex="-1"
                                   >

@@ -90,163 +90,55 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           quickFixes={Array []}
           status="ok"
         />
-        <div
-          className="module-card-params"
-        >
-          <WfParameter
-            api={
-              Object {
-                "addModule": [MockFunction],
-                "postParamEvent": [MockFunction],
-                "setSelectedWfModule": [MockFunction],
-              }
+        <ParamsForm
+          api={
+            Object {
+              "_fetch": [MockFunction],
+              "createOauthAccessToken": [MockFunction],
+              "valueCounts": [MockFunction],
             }
-            applyQuickFix={[Function]}
-            deleteSecret={[Function]}
-            getParamText={[Function]}
-            idName="url"
-            initialValue="http://some.URL.me"
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            key="0"
-            multiline={false}
-            name=""
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            placeholder=""
-            setWfModuleParams={[Function]}
-            startCreateSecret={[Function]}
-            type="string"
-            updateSettings={
+          }
+          applyQuickFix={[Function]}
+          deleteSecret={[Function]}
+          edits={Object {}}
+          fields={
+            Array [
               Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
-            }
-            value="http://some.URL.me"
-            wfModuleId={999}
-            wfModuleStatus="ok"
-          />
-          <WfParameter
-            api={
+                "id_name": "url",
+                "multiline": false,
+                "name": "",
+                "placeholder": "",
+                "type": "string",
+                "visible_if": null,
+              },
               Object {
-                "addModule": [MockFunction],
-                "postParamEvent": [MockFunction],
-                "setSelectedWfModule": [MockFunction],
-              }
+                "id_name": "menu_select",
+                "items": "Mango|Banana",
+                "multiline": false,
+                "name": "",
+                "placeholder": "",
+                "type": "menu",
+                "visible_if": null,
+              },
+            ]
+          }
+          getParamText={[Function]}
+          inputDeltaId={null}
+          inputWfModuleId={123}
+          isReadOnly={false}
+          isWfModuleBusy={false}
+          isZenMode={false}
+          onChange={[Function]}
+          onSubmit={[Function]}
+          startCreateSecret={[Function]}
+          value={
+            Object {
+              "menu_select": 1,
+              "url": "http://some.URL.me",
             }
-            applyQuickFix={[Function]}
-            deleteSecret={[Function]}
-            getParamText={[Function]}
-            idName="version_select"
-            initialValue={null}
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            key="1"
-            multiline={false}
-            name=""
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            placeholder=""
-            setWfModuleParams={[Function]}
-            startCreateSecret={[Function]}
-            type="custom"
-            updateSettings={
-              Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
-            }
-            value={null}
-            wfModuleId={999}
-            wfModuleStatus="ok"
-          />
-          <WfParameter
-            api={
-              Object {
-                "addModule": [MockFunction],
-                "postParamEvent": [MockFunction],
-                "setSelectedWfModule": [MockFunction],
-              }
-            }
-            applyQuickFix={[Function]}
-            deleteSecret={[Function]}
-            getParamText={[Function]}
-            idName="menu_select"
-            initialValue={1}
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            items="Mango|Banana"
-            key="2"
-            multiline={false}
-            name=""
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            placeholder=""
-            setWfModuleParams={[Function]}
-            startCreateSecret={[Function]}
-            type="menu"
-            updateSettings={
-              Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
-            }
-            value={1}
-            wfModuleId={999}
-            wfModuleStatus="ok"
-          />
-          <WfParameter
-            api={
-              Object {
-                "addModule": [MockFunction],
-                "postParamEvent": [MockFunction],
-                "setSelectedWfModule": [MockFunction],
-              }
-            }
-            applyQuickFix={[Function]}
-            deleteSecret={[Function]}
-            getParamText={[Function]}
-            idName="some_boolean"
-            initialValue={true}
-            inputWfModuleId={123}
-            isReadOnly={false}
-            isZenMode={false}
-            key="3"
-            multiline={false}
-            name=""
-            onChange={[Function]}
-            onReset={[Function]}
-            onSubmit={[Function]}
-            placeholder=""
-            setWfModuleParams={[Function]}
-            startCreateSecret={[Function]}
-            type="checkbox"
-            updateSettings={
-              Object {
-                "autoUpdateData": undefined,
-                "lastUpdateCheck": undefined,
-                "updateInterval": undefined,
-                "updateUnits": undefined,
-              }
-            }
-            value={true}
-            wfModuleId={999}
-            wfModuleStatus="ok"
-          />
-        </div>
+          }
+          wfModuleId={999}
+        />
       </div>
     </div>
   </div>

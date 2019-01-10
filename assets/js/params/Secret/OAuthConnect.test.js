@@ -1,9 +1,8 @@
 import React from 'react'
 import OAuthConnect  from './OAuthConnect'
-import { mount, ReactWrapper } from 'enzyme'
-import { jsonResponseMock } from '../utils'
-import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
-jest.mock('../workflow-reducer');
+import { mount } from 'enzyme'
+import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../../workflow-reducer';
+jest.mock('../../workflow-reducer');
 
 describe('OAuthConnect', () => {
   const wrapper = (extraProps) => {

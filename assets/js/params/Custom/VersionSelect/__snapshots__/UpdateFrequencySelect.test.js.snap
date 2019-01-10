@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
+<div
+  className="update-frequency-select"
+>
+  <div>
+    <span
+      className="content-1 t-d-gray"
+    >
+      Update 
+    </span>
+    <a
+      className="content-1 ml-1 action-link"
+      href="#"
+      onClick={[Function]}
+      title="change auto-update settings"
+    >
+      Manual
+    </a>
+  </div>
+  <div
+    className="content-2 t-m-gray"
+  >
+    Checked 
+    <time
+      time="2018-05-28T19:00:54.154Z"
+    >
+      12m ago
+    </time>
+  </div>
+</div>
+`;

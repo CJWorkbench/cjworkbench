@@ -1,9 +1,8 @@
 import React from 'react'
-import RenameEntries, {RenameEntry} from './RenameEntries'
-import {mount} from 'enzyme'
-import {jsonResponseMock} from '../test-utils'
+import { RenameEntries, RenameEntry } from './RenameEntries'
+import { mount } from 'enzyme'
 
-describe('RenameEntries rendering and interactions', () => {
+describe('RenameEntries', () => {
   const testEntries = {
     'name': 'host_name',
     'narrative': 'nrtv'
@@ -17,7 +16,7 @@ describe('RenameEntries rendering and interactions', () => {
       inputColumns={inputColumns}
       wfModuleId={1}
       onChange={jest.fn()}
-      entriesJsonString={JSON.stringify(testEntries)}
+      value={testEntries}
       isReadOnly={false}
       {...extraProps}
     />
@@ -25,7 +24,7 @@ describe('RenameEntries rendering and interactions', () => {
 
   it('displays all columns when initialized empty', () => {
     // This test corresponds to behavior when added from module library.
-    const tree = wrapper({ entriesJsonString: '' })
+    const tree = wrapper({ value: {} })
 
     expect(tree.find('.rename-input')).toHaveLength(4)
     expect(tree.find('.rename-input').get(0).props.value).toEqual('name')
@@ -33,63 +32,40 @@ describe('RenameEntries rendering and interactions', () => {
   })
 
   it('displays only columns in entries', () => {
-    const tree = wrapper({ entriesJsonString: JSON.stringify(testEntries) })
+    const tree = wrapper({ value: testEntries })
 
     expect(tree.find('.rename-input')).toHaveLength(2)
     expect(tree.find('.rename-input').get(0).props.value).toEqual('host_name')
     expect(tree.find('.rename-input').get(1).props.value).toEqual('nrtv')
   })
 
-  it('updates parameter upon input completion via blur', () => {
+  it('updates parameter upon input', () => {
     const tree = wrapper()
-
     const yearInput = tree.find('input[value="host_name"]')
     yearInput.simulate('change', { target: { value: 'hn' } })
-    yearInput.simulate('blur')
-
-    expect(tree.prop('onChange')).toHaveBeenCalled()
-    const calls = tree.prop('onChange').mock.calls
-    expect(JSON.parse(calls[0][0])).toEqual({
-      name: 'hn',
-      narrative: 'nrtv'
-    })
-  })
-
-  it('updates parameter upon input completion via enter key', () => {
-    const tree = wrapper()
-
-    const yearInput = tree.find('input[value="host_name"]')
-    yearInput.simulate('change', { target: { value: 'hn' } })
-    yearInput.simulate('keypress', { key: 'Enter' })
-
-    expect(tree.prop('onChange')).toHaveBeenCalled()
-    const calls = tree.prop('onChange').mock.calls
-    expect(JSON.parse(calls[0][0])).toEqual({
-      name: 'hn',
-      narrative: 'nrtv'
-    })
+    expect(tree.prop('onChange')).toHaveBeenCalledWith({ name: 'hn', narrative: 'nrtv' })
   })
 
   it('updates when receiving data from elsewhere', () => {
     // related: https://www.pivotaltracker.com/story/show/160661659
     const tree = wrapper({
       inputColumns: [{name: 'A'}, {name: 'B'}],
-      entriesJsonString: '{}'
+      value: {}
     })
 
-    tree.setProps({ entriesJsonString: '{"A":"C"}' })
+    tree.setProps({ value: { A: 'C' }})
     expect(tree.find('.rename-input').get(0).props.value).toEqual('C')
   })
 
   it('does not crash when there are no columns', () => {
     // https://www.pivotaltracker.com/story/show/161945886
-    const tree = wrapper({ inputColumns: null, entriesJsonString: '' })
+    const tree = wrapper({ inputColumns: null, value: {} })
     expect(tree.find('.rename-entry')).toHaveLength(0)
   })
 
   it('updates parameter upon deleting an entry', () => {
     const tree = wrapper()
     tree.find('RenameEntry').first().find('.rename-delete').simulate('click')
-    expect(tree.prop('onChange')).toHaveBeenCalledWith(JSON.stringify({ narrative: 'nrtv' }))
+    expect(tree.prop('onChange')).toHaveBeenCalledWith({ narrative: 'nrtv' })
   })
 })

@@ -45,7 +45,6 @@ export default class Param extends React.PureComponent {
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
-    getParamText: PropTypes.func.isRequired, // func(idName) => value ... TODO nix this by making 0 fields depend on it
     onChange: PropTypes.func.isRequired, // func(idName, value) => undefined -- will set `value` in parent
     onSubmit: PropTypes.func.isRequired, // func() => undefined
   }

@@ -13,6 +13,8 @@ describe('SingleLineString', () => {
       value='value'
       upstreamValue='upstreamValue'
       placeholder='a-placeholder'
+      fieldId='field-id'
+      label=''
       {...props}
     />
   )

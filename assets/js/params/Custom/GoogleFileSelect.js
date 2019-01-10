@@ -119,7 +119,11 @@ export class GoogleFileSelect extends React.PureComponent {
     createOauthAccessToken: PropTypes.func.isRequired, // func() => Promise[str or null]
     isReadOnly: PropTypes.bool.isRequired,
     secretName: PropTypes.string, // when this changes, call createOauthAccessToken
-    value: PropTypes.object, // may be empty/null
+    value: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired
+    }), // may be empty/null
     onChange: PropTypes.func.isRequired, // func({ id, name, url }) => undefined
     loadPickerFactory: PropTypes.func, // func() => Promise[PickerFactory], default uses Google APIs
   }
@@ -254,7 +258,7 @@ export class GoogleFileSelect extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <a className="file-info" title={`Edit in Google Sheets: ${fileName}`} target="_blank" href={fileUrl}>{fileName}</a>
+        <a className="file-info" title={`Open in Google Sheets: ${fileName}`} target='_blank' href={fileUrl}>{fileName}</a>
         {button}
       </React.Fragment>
     )

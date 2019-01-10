@@ -24,15 +24,6 @@ describe('Number', () => {
     expect(w.prop('onChange')).toHaveBeenCalledWith(6)
   })
 
-  it('should submit a changed value by button', () => {
-    const w = wrapper({
-      value: 6,
-      upstreamValue: 5
-    })
-    w.find('button').simulate('click')
-    expect(w.prop('onSubmit')).toHaveBeenCalled()
-  })
-
   it('should change back to initial value by pressing Escape', () => {
     const w = wrapper({
       value: 6,

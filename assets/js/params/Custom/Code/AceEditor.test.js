@@ -7,7 +7,8 @@ import AceEditor from 'react-ace/lib/ace'
 describe('AceEditor', () => {
   const defaultProps = {
     name: 'code',
-    defaultValue: 'def process(table)\n    return table',
+    value: 'def process(table)\n    return table',
+    onChange: jest.fn(),
     isZenMode: false
   }
 

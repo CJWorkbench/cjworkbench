@@ -56,7 +56,7 @@ describe('RefineModal', () => {
     w.update()
     w.find('textarea').simulate('change', { target: { value: 'x' } })
     w.update()
-    w.find('button[type="submit"]').simulate('click')
+    w.find('button[name="submit"]').simulate('click')
     expect(w.prop('onSubmit')).toHaveBeenCalledWith({ a: 'x', 'a ': 'x' })
   })
 })

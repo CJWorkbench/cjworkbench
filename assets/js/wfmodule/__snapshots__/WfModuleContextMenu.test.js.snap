@@ -72,133 +72,68 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
               </Button>
             </Target>
           </DropdownToggle>
-          <Portal>
-            <Portal
-              containerInfo={
-                <div>
-                  <div
-                    aria-hidden="true"
-                    class="dropdown-menu"
-                    position="left"
-                    role="menu"
-                    style="position: absolute; pointer-events: none; opacity: 0;"
-                    tabindex="-1"
-                    x-placement="bottom-start"
-                  >
-                    <button
-                      class="test-export-button dropdown-item"
-                      tabindex="0"
-                      type="button"
-                    >
-                      <i
-                        class="icon-download"
-                      />
-                      <span>
-                        Export data
-                      </span>
-                    </button>
-                    <button
-                      class="test-delete-button dropdown-item"
-                      tabindex="0"
-                      type="button"
-                    >
-                      <i
-                        class="icon-bin"
-                      />
-                      <span>
-                        Delete
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              }
+          <DropdownMenu
+            flip={true}
+            positionFixed={true}
+            right={true}
+            tag="div"
+          >
+            <div
+              aria-hidden={true}
+              className="dropdown-menu dropdown-menu-right"
+              positionFixed={true}
+              role="menu"
+              tabIndex="-1"
             >
-              <DropdownMenu
-                flip={true}
-                persist={true}
-                position="left"
-                tag="div"
+              <DropdownItem
+                className="test-export-button"
+                key="1"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
               >
-                <Popper
-                  aria-hidden={true}
-                  className="dropdown-menu"
-                  component="div"
-                  eventsEnabled={true}
-                  modifiers={Object {}}
-                  placement="bottom-start"
-                  position="left"
-                  positionFixed={false}
-                  role="menu"
-                  tabIndex="-1"
-                  x-placement="bottom-start"
+                <button
+                  className="test-export-button dropdown-item"
+                  onClick={[Function]}
+                  tabIndex="0"
+                  type="button"
                 >
-                  <div
-                    aria-hidden={true}
-                    className="dropdown-menu"
-                    position="left"
-                    role="menu"
-                    style={
-                      Object {
-                        "opacity": 0,
-                        "pointerEvents": "none",
-                        "position": "absolute",
-                      }
-                    }
-                    tabIndex="-1"
-                    x-placement="bottom-start"
-                  >
-                    <DropdownItem
-                      className="test-export-button"
-                      key="1"
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="test-export-button dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <i
-                          className="icon-download"
-                        />
-                        <span>
-                          Export data
-                        </span>
-                        <ExportModal
-                          onClose={[Function]}
-                          open={false}
-                          wfModuleId={415}
-                        />
-                      </button>
-                    </DropdownItem>
-                    <DropdownItem
-                      className="test-delete-button"
-                      key="2"
-                      onClick={[Function]}
-                      tag="button"
-                      toggle={true}
-                    >
-                      <button
-                        className="test-delete-button dropdown-item"
-                        onClick={[Function]}
-                        tabIndex="0"
-                        type="button"
-                      >
-                        <i
-                          className="icon-bin"
-                        />
-                        <span>
-                          Delete
-                        </span>
-                      </button>
-                    </DropdownItem>
-                  </div>
-                </Popper>
-              </DropdownMenu>
-            </Portal>
-          </Portal>
+                  <i
+                    className="icon-download"
+                  />
+                  <span>
+                    Export data
+                  </span>
+                  <ExportModal
+                    onClose={[Function]}
+                    open={false}
+                    wfModuleId={415}
+                  />
+                </button>
+              </DropdownItem>
+              <DropdownItem
+                className="test-delete-button"
+                key="2"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
+              >
+                <button
+                  className="test-delete-button dropdown-item"
+                  onClick={[Function]}
+                  tabIndex="0"
+                  type="button"
+                >
+                  <i
+                    className="icon-bin"
+                  />
+                  <span>
+                    Delete
+                  </span>
+                </button>
+              </DropdownItem>
+            </div>
+          </DropdownMenu>
         </div>
       </Manager>
     </Dropdown>

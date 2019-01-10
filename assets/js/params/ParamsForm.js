@@ -2,9 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Param from './Param'
 import ParamsFormFooter from './ParamsFormFooter'
+import deepEqual from 'fast-deep-equal'
 
 /**
- * Displays Params and maintains user's "edits" in its state.
+ * Displays Params and user's "edits".
  */
 export default class ParamsForm extends React.PureComponent {
   static propTypes = {
@@ -17,7 +18,7 @@ export default class ParamsForm extends React.PureComponent {
     }),
     fields: PropTypes.arrayOf(PropTypes.shape({
       id_name: PropTypes.string.isRequired,
-      name: PropTypes.string, // or null or ''
+      name: PropTypes.string.isRequired, // or null or ''
       type: PropTypes.string.isRequired,
       items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
       multiline: PropTypes.bool.isRequired,
@@ -25,6 +26,7 @@ export default class ParamsForm extends React.PureComponent {
       visible_if: PropTypes.object // JSON spec or null
     }).isRequired).isRequired,
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
+    edits: PropTypes.object.isRequired, // local edits, same keys as `value`
     wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
     wfModuleOutputError: PropTypes.string, // `null` if no wfModule, '' if no error
     isWfModuleBusy: PropTypes.bool.isRequired,
@@ -37,12 +39,8 @@ export default class ParamsForm extends React.PureComponent {
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
-    getParamText: PropTypes.func.isRequired, // func(idName) => value ... TODO nix this by making 0 fields depend on it
-    onSubmit: PropTypes.func.isRequired, // func(values) => undefined
-  }
-
-  state = {
-    edits: {}
+    onChange: PropTypes.func.isRequired, // func(newValues) => undefined
+    onSubmit: PropTypes.func.isRequired, // func() => undefined
   }
 
   onKeyDown = (ev) => {
@@ -58,48 +56,47 @@ export default class ParamsForm extends React.PureComponent {
       maybeEv.preventDefault()
     }
 
-    if (!this.isEditing && !this.hasFetch) return
-
-    const { onSubmit } = this.props
-    const { edits } = this.state
-    onSubmit(edits)
-    this.setState({ edits: {} })
+    this.props.onSubmit()
   }
 
-  onChange = (name, value) => {
-    this.setState((state, props) => {
-      if (value === state.edits[name]) {
-        // setting a value to itself
-        return null
-      }
-      const edits = { ...state.edits }
+  onChange = (fieldName, fieldValue) => {
+    const { value, edits, onChange } = this.props
 
-      if (props.value !== null && value === props.value[name]) {
-        // setting a value to its upstream value: mark it "not editing"
-        delete edits[name] // if it exists
-      } else {
-        // setting a value to something new
-        edits[name] = value
-      }
+    if (deepEqual(fieldValue, edits[fieldName])) {
+      // setting a value to itself
+      return
+    }
 
-      return { edits }
-    })
-  }
+    const newEdits = {
+      ...edits,
+      [fieldName]: fieldValue
+    }
 
-  get hasFetch () {
-    return this.props.fields.some(f => f.type === 'custom' && (f.id_name === 'version_select' || f.id_name === 'version_select_simpler'))
+    if (value !== null && deepEqual(value[fieldName], newEdits[fieldName])) {
+      // setting a value to its upstream value: mark it "not editing"
+      delete newEdits[fieldName] // if it exists
+    }
+
+    onChange(newEdits)
   }
 
   get isEditing () {
-    return Object.keys(this.state.edits).length > 0
+    return Object.keys(this.props.edits).length > 0
   }
 
+  /**
+   * Flip name meanings: this.value is _edited_ values.
+   *
+   * The parent sets our `value` and `edits` prop. _We_ set our `Param`
+   * childrens' values as `upstreamValue` (redux state) and `value`
+   * (WfModule state).
+   */
   get value () {
     if (this.props.value === null) return this.props.value
-    if (!this.isEditing) return this.props.value
+    if (!this.isEditing) return this.props.value // instead of creating a new object
     return {
       ...this.props.value,
-      ...this.state.edits
+      ...this.props.edits
     }
   }
 
@@ -161,8 +158,7 @@ export default class ParamsForm extends React.PureComponent {
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
             inputWfModuleId, inputDeltaId, inputColumns, applyQuickFix,
-            startCreateSecret, deleteSecret, getParamText, fields } = this.props
-    const { edits } = this.state
+            startCreateSecret, deleteSecret, fields } = this.props
     const isEditing = this.isEditing
 
     const upstreamValue = this.props.value
@@ -226,7 +222,6 @@ export default class ParamsForm extends React.PureComponent {
               secretParamName={secretParamName}
               startCreateSecret={startCreateSecret}
               deleteSecret={deleteSecret}
-              getParamText={getParamText}
               selectedColumn={selectedColumn}
               onChange={this.onChange}
               onSubmit={this.onSubmit}
