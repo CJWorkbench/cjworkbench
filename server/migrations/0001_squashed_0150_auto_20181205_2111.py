@@ -37,8 +37,6 @@ import server.models.commands.util
 
 
 class Migration(migrations.Migration):
-    replaces = [('server', '0001_squashed_0125_merge_20180919_1835'), ('server', '0126_move_uploadedfile_to_s3'), ('server', '0127_remove_delta_command_description'), ('server', '0128_wfmodule_cached_render_result_quick_fixes'), ('server', '0129_wfmodule_cached_render_result_status'), ('server', '0130_auto_20181003_1916'), ('server', '0131_auto_20181011_1618'), ('server', '0132_initworkflowcommand'), ('server', '0133_module_js_module'), ('server', '0134_changeparameterscommand'), ('server', '0135_auto_20181113_1655'), ('server', '0136_auto_20181114_1453'), ('server', '0137_auto_20181114_1525'), ('server', '0138_auto_20181114_1801'), ('server', '0139_auto_20181123_1611'), ('server', '0140_auto_20181127_2031'), ('server', '0141_wfmodule_is_deleted_data'), ('server', '0142_wfmodule_nix_cached_render_result_delta_id'), ('server', '0143_auto_20181127_2202'), ('server', '0140_auto_20181128_1622'), ('server', '0144_merge_20181128_1900'), ('server', '0145_clear_undo_history'), ('server', '0146_auto_20181129_1950'), ('server', '0147_add_tabs_pre_data'), ('server', '0148_write_tabs_20181130_1407'), ('server', '0149_nix_wf_module_workflow_id_20181130_1813'), ('server', '0150_auto_20181205_2111')]
-
     initial = True
 
     dependencies = [
