@@ -28,9 +28,10 @@ export default class UndoRedoButtons extends React.PureComponent {
 
     if (ev.metaKey || ev.ctrlKey) {  // Meta on OS X, Ctrl on Windows
       switch (ev.key) {
-        case 'z':
+        case 'Z':
+        case 'z':   // HTML spec says 'Z' but on Mac we get 'z'. React weirdness?
           if (ev.shiftKey) {
-            // Mac OS standard for "redo" is Meta+Shift+z
+            // Max standard for redo is Cmd+Shift+z
             return redo()
           } else {
             return undo()
