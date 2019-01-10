@@ -6,6 +6,7 @@ from server.models import Params
 from server.modules import utils
 from .types import _dtype_to_column_type
 import numpy as np
+from pandas.api.types import is_numeric_dtype
 
 #------ For now, only load workbench urls
 
@@ -27,10 +28,15 @@ def check_key_types(left_dtypes, right_dtypes):
 # If column types are numeric but do not match (ie. int and float) cast as float to match
 def cast_numerical_types(left_table, right_table, keys):
     for key in keys:
-        if np.issubdtype(left_table[key].dtype, np.number):
-            if left_table[key].dtype != right_table[key].dtype:
-                left_table[key] = left_table[key].astype(np.float64)
-                right_table[key] = right_table[key].astype(np.float64)
+        left_dtype = left_table[key].dtype
+        right_dtype = right_table[key].dtype
+        if (
+            is_numeric_dtype(left_dtype)
+            and is_numeric_dtype(right_dtype)
+            and left_dtype != right_dtype
+        ):
+            left_table[key] = left_table[key].astype(np.float64)
+            right_table[key] = right_table[key].astype(np.float64)
 
 # Insert new duplicate column next to matching source column for legibility
 def sort_columns(og_columns, new_columns):
@@ -79,7 +85,8 @@ class JoinURL(ModuleImpl):
 
         if select_columns:
             import_cols, errs = params.get_param_multicolumn('importcols',
-                                                             right_table)
+                                                             right_table,
+                                                             ignore_type=True)
             if errs:
                 return ProcessResult(error=(
                     'Selected columns not in target workflow: '
@@ -95,7 +102,7 @@ class JoinURL(ModuleImpl):
                                    on=key_cols, how=join_type,
                                    lsuffix=lsuffix, rsuffix=rsuffix)
         except Exception as err:  # TODO catch something specific
-            return ProcessResult(error=(str(err.args[0])))
+            return ProcessResult(error=(str(err)))
 
         new_table = new_table[sort_columns(table.columns, new_table.columns)]
 

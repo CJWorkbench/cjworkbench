@@ -26,7 +26,8 @@ class MockParams:
 
     def get_param_column(self, name, _table): return self.get_param(name)
 
-    def get_param_multicolumn(self, name, _table): return self.get_param(name)
+    def get_param_multicolumn(self, name, _table, ignore_type=False):
+        return self.get_param(name)
 
     def get_param_json(self, name): return self.get_param(name)
 
