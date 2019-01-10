@@ -66,7 +66,7 @@ yxyx,1
         self._fill_in_and_submit('rename[xxxy]', 'yyyy')
         self._wait_for_table_value(6, 0, 'yyyy')
         self._wait_for_table_value(7, 0, 'yyyy')
-        self._fill_in_and_subimt('rename[yxyx]', 'yyyy')
+        self._fill_in_and_submit('rename[yxyx]', 'yyyy')
         self._wait_for_table_value(9, 0, 'yyyy')
 
         # Now the UI lets you see the group
