@@ -262,12 +262,19 @@ export class WfModule extends React.PureComponent {
     const { wfModule, setWfModuleParams, maybeRequestFetch } = this.props
     const { edits } = this.state
 
-    if (this.isEditing) {
-      setWfModuleParams(wfModule.id, edits)
-      this.setState({ edits: {} })
-    }
+    // We sometimes call onSubmit() _immediately_ after onChange(). onChange()
+    // sets this.state.edits, and then onSubmit() should submit them. To make
+    // that happen, we need to use the callback version of setState().
+    // (this.state.edits is the pre-onChange() data.)
+    this.setState(({ edits }) => {
+      if (Object.keys(edits).length > 0) {
+        setWfModuleParams(wfModule.id, edits)
+      }
 
-    maybeRequestFetch(wfModule.id)
+      maybeRequestFetch(wfModule.id)
+
+      return { edits: {} }
+    })
   }
 
   get wfModuleStatus () {
