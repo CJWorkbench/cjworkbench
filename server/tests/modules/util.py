@@ -7,6 +7,9 @@ class MockParams:
     def __init__(self, **kwargs):
         self.d = kwargs
 
+    def __getitem__(self, key):
+        return self.d[key]
+
     def get_param(self, name, _type=None):
         return self.d[name.replace('-', '_')]
 

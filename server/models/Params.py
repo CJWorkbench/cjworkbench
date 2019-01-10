@@ -25,6 +25,22 @@ class Params:
         self.values = values
         self.secrets = secrets
 
+    def __getitem__(self, name):
+        """
+        Return parameter value.
+
+        Raise KeyError on invalid parameter.
+        """
+        return self.values[name]  # raises KeyError
+
+    def get(self, value, default=None):
+        """
+        Return parameter value.
+
+        Return default on invalid parameter.
+        """
+        return self.values.get(value, default)
+
     def get_param_typed(self, name, expected_type):
         """
         Return value value, with a typecheck.
