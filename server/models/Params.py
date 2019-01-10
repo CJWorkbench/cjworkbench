@@ -95,7 +95,9 @@ class Params:
             return ''
 
     def get_param_multicolumn(self, name,
-                              table) -> Tuple[List[str], List[str]]:
+                              table,
+                              ignore_type=False
+                              ) -> Tuple[List[str], List[str]]:
         """
         Get (valid_colnames, invalid_colnames) lists in `table`.
 
@@ -110,7 +112,10 @@ class Params:
         # multi-column selector doesn't have a value. So when testing types, we
         # test that the parameter name is 'colnames', _not_ the parameter type
         # (which we assume is STRING).
-        value = self.get_param_typed(name, ParamDTypeMulticolumn)
+        if ignore_type:
+            value = self.get_param(name)
+        else:
+            value = self.get_param_typed(name, ParamDTypeMulticolumn)
 
         cols = value.split(',')
         cols = [c.strip() for c in cols if c.strip()]
