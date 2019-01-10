@@ -25,12 +25,12 @@ from ..modules.formula import Formula
 from ..modules.loadurl import LoadURL
 from ..modules.pastecsv import PasteCSV
 import server.modules.pythoncode
+import server.modules.refine
 from ..modules.selectcolumns import SelectColumns
 from ..modules.twitter import Twitter
 from ..modules.uploadfile import UploadFile
 from ..modules.googlesheets import GoogleSheets
 from ..modules.editcells import EditCells
-from ..modules.refine import Refine
 from ..modules.urlscraper import URLScraper
 from ..modules.scrapetable import ScrapeTable
 from ..modules.sortfromtable import SortFromTable
@@ -48,25 +48,25 @@ MockModule = namedtuple('MockModule', ['render'])
 
 
 StaticModules = {
+    'concaturl': ConcatURL,
+    'countbydate': CountByDate,
+    'duplicate-column': DuplicateColumn,
+    'editcells': EditCells,
+    'formula': Formula,
+    'googlesheets': GoogleSheets,
+    'joinurl': JoinURL,
     'loadurl': LoadURL,
     'pastecsv': PasteCSV,
-    'formula': Formula,
-    'selectcolumns': SelectColumns,
     'pythoncode': server.modules.pythoncode,
-    'twitter': Twitter,
-    'countbydate': CountByDate,
-    'uploadfile': UploadFile,
-    'googlesheets': GoogleSheets,
-    'editcells': EditCells,
-    'refine': Refine,
-    'urlscraper': URLScraper,
-    'scrapetable': ScrapeTable,
-    'sort-from-table': SortFromTable,
-    'reorder-columns': ReorderFromTable,
+    'refine': server.modules.refine,
     'rename-columns': RenameFromTable,
-    'duplicate-column': DuplicateColumn,
-    'joinurl': JoinURL,
-    'concaturl': ConcatURL,
+    'reorder-columns': ReorderFromTable,
+    'scrapetable': ScrapeTable,
+    'selectcolumns': SelectColumns,
+    'sort-from-table': SortFromTable,
+    'twitter': Twitter,
+    'uploadfile': UploadFile,
+    'urlscraper': URLScraper,
 }
 
 
@@ -349,9 +349,11 @@ class LoadedModule:
 
         render_impl = getattr(module, 'render', _default_render)
         fetch_impl = getattr(module, 'fetch', _default_fetch)
+        migrate_params_impl = getattr(module, 'migrate_params', None)
 
         return cls(module_id_name, version_sha1, is_external=is_external,
-                   render_impl=render_impl, fetch_impl=fetch_impl)
+                   render_impl=render_impl, fetch_impl=fetch_impl,
+                   migrate_params_impl=migrate_params_impl)
 
 
 def _load_external_module_uncached(module_id_name: str,
