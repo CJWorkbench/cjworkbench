@@ -63,7 +63,7 @@ module.exports = {
       },
       {
         // static files
-        test: /\.(png|jpg|gif|woff|woff2)$/,
+        test: /\.(gif|png|jpg|svg|woff|woff2)$/,
         loader: 'url-loader',
         options: {
           limit: 40000,
