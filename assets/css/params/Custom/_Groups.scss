@@ -2,8 +2,10 @@
   padding-bottom: 2rem;
 
   .group-dates {
+    margin-top:$param-margin;
     text-align: right;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    line-height: 1.4rem;
     position: relative;
 
     label {

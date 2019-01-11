@@ -18,6 +18,10 @@
   background-size: 1.3rem;
   background-position: 96% 51%;
 
+  &:hover {
+    border-color: darken($Vlight-gray, 7%);
+  }
+
   &:focus{
     box-shadow: none;
   }

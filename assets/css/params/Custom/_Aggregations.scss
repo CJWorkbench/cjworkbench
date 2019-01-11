@@ -21,7 +21,12 @@
       // 2. (optional) colname: has no radius
       .react-select__control {
         background-color: $table-background;
+        border: 2px solid $Vlight-gray;
+        border-top-color: transparent;
         border-radius: 0;
+        &:hover {
+          border-color: darken($Vlight-gray, 7%);
+        }
       }
     }
 
@@ -34,11 +39,12 @@
         font-size: 1.4rem;
         flex: 0 0 auto;
         line-height: 3.1rem; // line up with <input>
-        border: 2px solid $table-background;
+        border: 2px solid $Vlight-gray;
+        border-top-color: transparent;
         border-right: 0;
         border-radius: 0 0 0 3px;
         padding: 0 1.2rem; // line up with <select> innards above it
-        color: $brand-text--medium;
+        color: $placeholder;
       }
 
       input {
@@ -46,12 +52,17 @@
         background-color: $table-background;
         padding: 0 1.3rem; // same as <span>
         border-radius: 0 0 3px 0;
+        border-top-color: transparent;
         display: block;
         flex: 1 1 auto;
+        &:hover {
+          border-color: darken($Vlight-gray, 7%);
+        }
       }
     }
 
     .delete {
+      margin-top: $param-margin;
       text-align: right;
 
       button {
@@ -63,6 +74,9 @@
         font-size: 1.2rem;
         background: inherit;
         color: $light-gray;
+        &:hover {
+          color: $brand-text--dark;
+        }
       }
 
       i {
@@ -76,11 +90,14 @@
     font: inherit;
     font-size: 1.2rem;
     text-transform: uppercase;
-    margin-top: .2rem;
+    margin-top: $param-margin;
     margin-left: 0;
     padding: 0;
     border: 0;
     background: inherit;
     color: inherit;
+    &:hover {
+      color: $brand-text--darker;
+    }
   }
 }
