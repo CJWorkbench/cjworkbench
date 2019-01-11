@@ -56,7 +56,7 @@
       >Add the step 'Refine' using the search.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.tabs[0].wfModules[3].params; if (params.column !== 'MetroArea') return false; const json = params.refine; if (!json) return false; const renames = JSON.parse(json).renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
+      data-test="const params = workflow.tabs[0].wfModules[3].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five groups.
       <figure>
         <img alt="Inspect element" src="images/clean_standardize_lesson/1_refine_row.png">
@@ -70,7 +70,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.tabs[0].wfModules[3].params; const json = JSON.parse(params.refine); return json.blacklist.join('|') === 'Denver - Aurora'"
+      data-test="const params = workflow.tabs[0].wfModules[3].params; const blacklist = params.refine.blacklist; return blacklist.join('|') === 'Denver - Aurora'"
     >Un-check <kbd>Denver - Aurora</kbd> which does not contain valid population data.
     </li>
   </ol>
