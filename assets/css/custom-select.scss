@@ -10,6 +10,17 @@
   box-shadow: none;
   height: 3.5rem;
   border-radius: 3px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("../images/carret-down.png");
+  background-repeat: no-repeat;
+  background-size: 1.3rem;
+  background-position: 96% 51%;
+
+  &:hover {
+    border-color: darken($Vlight-gray, 7%);
+  }
 
   &:focus{
     box-shadow: none;

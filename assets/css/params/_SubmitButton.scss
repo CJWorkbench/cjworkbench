@@ -6,6 +6,7 @@
     @extend .action-button;
     @extend .button-orange;
     display: inline-block; // override whatever .action-button does
+    cursor: pointer;
 
     // Now resize: this button can be a good deal smaller than a typical .action-button
     min-width: 0;
@@ -14,8 +15,15 @@
     height: auto;
     font-size: 1rem;
 
+
     i::before {
       vertical-align: -2px; // font bug? glyph isn't centered?
+      margin-left: 3px;
+    }
+    &:disabled:hover {
+      border: 1px solid $brand-orange;
+      background-color: lighten($brand-orange,20%);
+      cursor: pointer;
     }
   }
 }
