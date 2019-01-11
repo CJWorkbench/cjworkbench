@@ -36,3 +36,34 @@
     border-color: $data-action--border; // overrides :hover
   }
 }
+
+%autosize-with-textarea {
+  // HTML <div> with the following structure:
+  // <div class="this-div">
+  //   <div class="invisible-size-setter">Value value value</div>
+  //   <textarea ...>Value value value</textarea>
+  // </div>
+  //
+  // That is, the _contents_ of .invisible-size-setter and textarea are the
+  // same. We set position=relative and textarea position absolute -- this
+  // makes the textarea take the size of its contents.
+  position: relative;
+
+  .invisible-size-setter {
+    visibility: hidden;
+
+    &:empty::before {
+      content: 'X';
+      display: inline;
+    }
+  }
+
+  textarea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    resize: none;
+  }
+}

@@ -1,27 +1,6 @@
 .param-string {
   .autosize {
-    position: relative;
-
-    .inivisible-size-setter, textarea {
-      word-break: break-all;
-    }
-
-    .invisible-size-setter {
-      visibility: hidden;
-
-      &:empty::before {
-        content: 'X';
-        display: inline;
-      }
-    }
-
-    textarea {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+    @extend %autosize-with-textarea;
   }
 
   .invisible-size-setter, textarea {
