@@ -22,10 +22,14 @@
     &:disabled {
       @extend .button-blue;
       opacity: .6;
+      cursor: default;
 
       &:hover {
       background-color: transparent;
       cursor: default;
+      }
+      &:active {
+        color: $brand-workspace;
       }
     }
     &:active {
