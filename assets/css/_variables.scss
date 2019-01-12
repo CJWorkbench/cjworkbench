@@ -118,6 +118,8 @@ $module-color-unreachable: lighten($light-gray,5%);
 $module-color-selected: $module-action;
 $module-color-busy: $brand-orange;
 $module-color-error: $error-prompt;
+$module-padding: 1rem;
+$param-margin: .2rem;
 
 // Helper ⊂(◉‿◉)つ
 
@@ -128,4 +130,3 @@ $module-popover-border-width: 2px;
 $buttons-anim: all 0.1s;
 
 // Param Groups
-$param-margin: .2rem;

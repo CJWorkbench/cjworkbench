@@ -19,17 +19,19 @@ export default class Checkbox extends React.PureComponent {
     const { name, fieldId, label, isReadOnly, value } = this.props
     return (
       <React.Fragment>
-        <input
-          type='checkbox'
-          readOnly={isReadOnly}
-          checked={value || false}
-          name={name}
-          id={fieldId}
-          onChange={this.onChange}
-        />
-        <label htmlFor={fieldId}>
-          {' '}{label}
-        </label>
+        <div className="checkbox-container">
+          <input
+            type='checkbox'
+            readOnly={isReadOnly}
+            checked={value || false}
+            name={name}
+            id={fieldId}
+            onChange={this.onChange}
+          />
+          <label htmlFor={fieldId}>
+            {' '}{label}
+          </label>
+        </div>
       </React.Fragment>
     )
   }

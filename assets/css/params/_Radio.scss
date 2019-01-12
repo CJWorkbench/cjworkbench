@@ -1,15 +1,15 @@
 .param-radio {
+  position: absolute;
   .button-group {
     display: flex;
     align-items: center;
-    flex-direction: row-reverse;
 
     // each radio group
-    label {
+    label{
       cursor: pointer;
       display: flex;
       align-items: center;
-      margin-left: 1.5rem;
+      margin-right: 1.5rem;
       margin-bottom: 0;
 
       .button {

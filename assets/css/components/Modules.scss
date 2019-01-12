@@ -166,7 +166,7 @@
   }
 
   .module-card-params {
-    padding: 0 1rem 1rem 1rem;
+    padding: 0 $module-padding $module-padding $module-padding;
 
     .react-select__value-container {
       width:50%;
