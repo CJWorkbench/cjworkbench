@@ -5,7 +5,6 @@
   button {
     @extend .action-button;
     @extend .button-orange;
-    border: solid 2px;
     display: inline-block; // override whatever .action-button does
 
     // Now resize: this button can be a good deal smaller than a typical .action-button
@@ -25,12 +24,12 @@
       opacity: .6;
 
       &:hover {
-      border: 2px solid $brand-orange;
-      cursor: pointer;
+      background-color: transparent;
+      cursor: default;
       }
     }
     &:active {
-      border: 2px solid $brand-orange;
+      border: 1px solid $brand-orange;
     }
   }
 }
