@@ -13,17 +13,21 @@
     min-height: 0;
     width: auto;
     height: auto;
-    font-size: 1rem;
+    font-size: 1.1rem;
 
 
     i::before {
       vertical-align: -2px; // font bug? glyph isn't centered?
       margin-left: 3px;
     }
-    &:disabled:hover {
+    &:disabled {
+      @extend .button-blue;
+
+      &:hover {
       border: 1px solid $brand-orange;
       background-color: lighten($brand-orange,20%);
       cursor: pointer;
+      }
     }
   }
 }
