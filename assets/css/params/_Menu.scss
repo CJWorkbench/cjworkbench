@@ -2,4 +2,7 @@
   select {
     @extend %custom-select;
   }
+  label {
+    line-height: 1.6rem;
+  }
 }
