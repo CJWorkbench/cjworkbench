@@ -335,11 +335,26 @@ button:focus { outline:0 !important; }
   background-color: transparent;
   &:hover {
     background-color: $brand-orange--light;
-    color: darken($brand-orange,10%);
   }
   &:active {
     background: $brand-orange;
     color: $white;
+  }
+}
+
+.button-orange--fill {
+  color: $brand-workspace;
+  border-color: $brand-orange;
+  &, .spinner::after {
+    background-color: $brand-orange;
+  }
+  &:hover, &:hover .spinner::after {
+    background-color:$light-accent--strong;
+    color: white;
+  }
+  &:active, &:active .spinner::after {
+    background-color: $light-accent--Vstrong;
+    border: 1px solid $brand-orange;
   }
 }
 
