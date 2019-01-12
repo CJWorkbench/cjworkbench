@@ -3,6 +3,10 @@
   display: flex;
   align-items: center;
 
+  &.param {
+    margin-top: $param-margin;
+  }
+
   label {
     display: inline;
     color: $brand-text--dark;
