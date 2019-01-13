@@ -1,5 +1,5 @@
 .module-card-params .groups {
-  padding-bottom: 1.5rem;
+  padding-bottom: .5rem;
 
   .group-dates {
     margin-top:$param-group-margin;
@@ -19,6 +19,10 @@
 
   .date-granularities {
     margin-top: 2.5rem;
+
+    .custom-select {
+      @extend %custom-select;
+    }
 
     ul {
       margin: 0;
