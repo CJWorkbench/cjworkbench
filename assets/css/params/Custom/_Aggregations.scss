@@ -8,7 +8,7 @@
   li.aggregation {
     & + li.aggregation {
       // Spacing between items
-      padding-top: 2rem;
+      padding-top: 1.8rem;
     }
 
     select.operation {
@@ -63,15 +63,16 @@
 
     .delete {
       margin-top: $param-group-margin;
-      //text-align: right;
       position: relative;
 
       button {
         position: absolute;
         cursor: pointer;
         margin: 0;
-        padding-right: 0;
+        padding: 0;
+        padding-left: 1rem;
         right: 0;
+        top: 0;
         border: 0;
         font: inherit;
         font-size: 1.1rem;
@@ -87,17 +88,17 @@
 
   button.add {
     cursor: pointer;
-    font: inherit;
-    font-size: 1.2rem;
+    @extend %content-2;
     text-transform: uppercase;
     margin-top: $param-group-margin;
     margin-left: 0;
     padding: 0;
     border: 0;
     background: inherit;
-    color: inherit;
+    color: $brand-text--dark;
+    opacity: .7;
     &:hover {
-      color: $brand-text--darker;
+      opacity: 1;
     }
   }
 }
