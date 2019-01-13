@@ -1,5 +1,5 @@
 .module-card-params .groups {
-  padding-bottom: 2rem;
+  padding-bottom: 1.5rem;
 
   .group-dates {
     margin-top:$param-group-margin;
@@ -13,6 +13,7 @@
       align-items: center;
       right: 0px;
       position: absolute;
+      margin-bottom: 0;
     }
   }
 
@@ -39,7 +40,6 @@
       @extend .content-1;
       text-align: left;
       word-wrap: break-word;
-      margin-bottom: 1rem;
     }
   }
 }

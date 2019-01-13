@@ -90,15 +90,14 @@
     cursor: pointer;
     @extend %content-2;
     text-transform: uppercase;
-    margin-top: $param-group-margin;
+    margin-top: .5rem;
     margin-left: 0;
     padding: 0;
     border: 0;
     background: inherit;
     color: $brand-text--dark;
-    opacity: .7;
     &:hover {
-      opacity: 1;
+      color: $brand-orange;
     }
   }
 }
