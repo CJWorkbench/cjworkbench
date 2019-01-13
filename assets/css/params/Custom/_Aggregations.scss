@@ -8,7 +8,7 @@
   li.aggregation {
     & + li.aggregation {
       // Spacing between items
-      padding-top: .5rem;
+      padding-top: 2rem;
     }
 
     select.operation {
@@ -63,13 +63,15 @@
 
     .delete {
       margin-top: $param-group-margin;
-      text-align: right;
+      //text-align: right;
+      position: relative;
 
       button {
+        position: absolute;
         cursor: pointer;
         margin: 0;
         padding-right: 0;
-
+        right: 0;
         border: 0;
         font: inherit;
         font-size: 1.1rem;
