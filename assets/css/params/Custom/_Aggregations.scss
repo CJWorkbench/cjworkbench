@@ -62,7 +62,7 @@
     }
 
     .delete {
-      margin-top: $param-margin;
+      margin-top: $param-group-margin;
       text-align: right;
 
       button {
@@ -90,7 +90,7 @@
     font: inherit;
     font-size: 1.2rem;
     text-transform: uppercase;
-    margin-top: $param-margin;
+    margin-top: $param-group-margin;
     margin-left: 0;
     padding: 0;
     border: 0;

@@ -14,7 +14,7 @@ export default function AddFilter ({ isReadOnly, name, operator, nFilters, onCli
           className='and'
           onClick={onClickAddAnd}
         >
-          <i className='icon-addc' /> ADD
+         AND
         </button>
       ) : null}
       {(nFilters <= 1 || operator === 'or') ? (
@@ -24,7 +24,7 @@ export default function AddFilter ({ isReadOnly, name, operator, nFilters, onCli
           className='or'
           onClick={onClickAddOr}
         >
-          <i className='icon-addc' /> OR
+        OR
         </button>
       ) : null}
     </div>

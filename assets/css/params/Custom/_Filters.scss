@@ -1,11 +1,18 @@
 .param-filters {
+  @extend %content-2;
+  line-height: 1.5rem; //FIXME fix class of text that does not wrap
+
   h5 {
-    @extend %font-nunito-extra-light;
+    @extend .content-1;
+    color: $brand-orange;
     text-transform: uppercase;
+    line-height: 1.6rem;
+    margin-bottom: 0;
   }
 
   .filter {
     border: 1px solid $brand-orange;
+    border-radius: 5px;
     padding: 1rem;
 
     & + .filter {
@@ -15,33 +22,51 @@
     .filter-heading {
       position: relative;
 
-      button {
+      button.delete { // delete filter group
         position: absolute;
-        right: 0;
-        top: 0;
+        right: -1rem;
+        top: -.5rem;
+        border: 0;
+        color: $brand-orange;
       }
+    }
+
+    .filter-operator {
+      text-align: left; // in a filter, operators stay on the left
     }
   }
 
   .filter-operator {
     // both &>.filter-operator and .filter>.filter-operator
     text-align: center;
+    margin-top: .5rem;
+    margin-bottom: .4rem;
 
     button, span {
       background: none;
-      border: 0;
       box-shadow: none;
-      padding: .5rem;
       margin: 0;
-    }
+      padding: 0;
+      border: 0;
 
-    button {
-      cursor: pointer;
-      color: $text-muted;
-    }
+      &.unselected-operator {
+        cursor: pointer;
+        color: $text-muted;
+        &:hover {
+          color: $brand-text--dark;
+        }
+      }
 
-    span {
-      color: $brand-orange--darker;
+      &.selected-operator {
+        //font-weight: bold;
+        color: $brand-orange--darker;
+      }
+
+      &:last-child {
+        margin-left: .5rem;
+        border-left: 1px solid $light-gray;
+        padding-left: .4rem;
+      }
     }
   }
 
@@ -53,17 +78,23 @@
       padding: 0;
       margin: 0;
       cursor: pointer;
-      color: $text-muted;
+      color: $brand-text--dark;
+
+      &:hover {
+        color: $brand-orange;
+      }
     }
 
     button + button {
-      margin-left: 1rem;
+      margin-left: .5rem;
+      border-left: 1px solid $light-gray;
+      padding-left: .4rem;
     }
   }
 
   &>.add-filter {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: .5rem;
   }
 
   .filter {
@@ -75,10 +106,13 @@
   .subfilter {
     position: relative; // to position button.delete
 
-    button.delete {
+    button.delete { // delete condition
+      margin-top: $param-group-margin;
       position: absolute;
-      bottom: -2rem; // overlaps operation underneath
       right: 0;
+      border: 0;
+      color: $light-gray;
+      margin-right: .5rem;
     }
   }
 
@@ -89,6 +123,16 @@
         @extend %module-parameter;
         height: auto; // unset %module-parameter height: our height varies
       }
+    }
+  }
+
+  button.delete { // for all button.delette
+    font-size: 1.1rem;
+    background-color: transparent;
+    opacity: .7;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
     }
   }
 
