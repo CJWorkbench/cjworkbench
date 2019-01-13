@@ -24,6 +24,12 @@
       @extend %custom-select;
     }
 
+    .date-granularity h5 {
+      @extend %content-1;
+      color: $placeholder;
+      margin: 0;
+    }
+
     ul {
       margin: 0;
       padding: 0;
