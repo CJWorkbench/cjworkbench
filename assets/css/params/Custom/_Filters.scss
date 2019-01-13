@@ -13,7 +13,7 @@
   .filter {
     border: 1px solid $brand-orange;
     border-radius: 5px;
-    padding: 1rem;
+    padding: .5rem;
 
     & + .filter {
       margin-top: 1rem;
@@ -24,8 +24,8 @@
 
       button.delete { // delete filter group
         position: absolute;
-        right: -1rem;
-        top: -.5rem;
+        right: -.75rem;
+        top: -.25rem;
         border: 0;
         color: $brand-orange--darker;
       }
@@ -113,7 +113,7 @@
       border: 0;
       color: $medium-gray;
       padding-right: 0;
-      //margin-right: .5rem;
+      padding-top: 0;
     }
   }
 
