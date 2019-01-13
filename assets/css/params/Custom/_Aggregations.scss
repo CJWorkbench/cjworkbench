@@ -68,19 +68,17 @@
       button {
         cursor: pointer;
         margin: 0;
-        padding: 0;
+        padding-right: 0;
+
         border: 0;
         font: inherit;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         background: inherit;
-        color: $light-gray;
+        color: $medium-gray;
+        opacity: .5;
         &:hover {
-          color: $brand-text--dark;
+          opacity: 1;
         }
-      }
-
-      i {
-        margin-right: 1rem;
       }
     }
   }

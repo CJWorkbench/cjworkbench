@@ -27,7 +27,7 @@
         right: -1rem;
         top: -.5rem;
         border: 0;
-        color: $brand-orange;
+        color: $brand-orange--darker;
       }
     }
 
@@ -111,8 +111,9 @@
       position: absolute;
       right: 0;
       border: 0;
-      color: $light-gray;
-      margin-right: .5rem;
+      color: $medium-gray;
+      padding-right: 0;
+      //margin-right: .5rem;
     }
   }
 
@@ -129,7 +130,7 @@
   button.delete { // for all button.delette
     font-size: 1.1rem;
     background-color: transparent;
-    opacity: .7;
+    opacity: .5;
     cursor: pointer;
     &:hover {
       opacity: 1;
