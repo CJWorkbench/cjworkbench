@@ -59,6 +59,14 @@
           border-color: darken($Vlight-gray, 7%);
         }
       }
+      &:nth-child(2) { // change color depending if it's in position 2 or not
+        input {
+          background-color: $table-background;
+        }
+        span {
+          border-top: $table-background;
+        }
+      }
     }
 
     .delete {
