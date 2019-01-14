@@ -261,7 +261,7 @@ export default class Workflows extends React.Component {
                 </NavItem>
                 <NavItem active={this.state.activeTab === 'templates'} onClick={this.setTabTemplates}>
                   <NavLink>
-                    Templates
+                    Recipes
                   </NavLink>
                 </NavItem>
               </div>

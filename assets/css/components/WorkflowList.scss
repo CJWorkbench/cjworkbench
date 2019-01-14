@@ -81,12 +81,12 @@
 
         .nav-item {
           position: relative;
-          color: $medium-gray;
+          color: darken($medium-gray,13%);
           float: left;
           border-radius: 1rem 1rem 0 0;
           background-color: darken($page-background,3%);
           &:hover {
-            color: darken($medium-gray,13%);
+            color: $brand-text--dark;
           }
 
           .nav-link {
