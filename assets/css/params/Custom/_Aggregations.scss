@@ -23,7 +23,9 @@
         background-color: $table-background;
         border: 2px solid $Vlight-gray;
         border-top-color: transparent;
+        border-bottom-color: transparent;
         border-radius: 0;
+        cursor: pointer;
         &:hover {
           border-color: darken($Vlight-gray, 7%);
         }
@@ -49,7 +51,6 @@
 
       input {
         @extend %module-parameter;
-        background-color: $table-background;
         padding: 0 1.3rem; // same as <span>
         border-radius: 0 0 3px 0;
         border-top-color: transparent;
