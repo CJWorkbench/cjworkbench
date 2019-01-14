@@ -17,7 +17,7 @@ export default class ErrorBoundary extends React.PureComponent {
     if (this.state.error) {
       return (
         <div className='caught-error'>
-          We ran into an unexpected error. Please refresh the page to retry.
+          Something is wrong. <br></br> Please refresh the page.
         </div>
       )
     } else {

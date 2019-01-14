@@ -66,21 +66,25 @@
 	line-height: 2.4rem;
 }
 
-.info-1 {
+%info-1 {
 	font-size: 1.2rem;
 	line-height: 1.2rem;
   @extend %font-nunito-extra-light;
 }
 
-.info-2 {
+%info-2 {
 	font-size: 1.4rem;
 	line-height: 1.4rem;
 	letter-spacing: .3px;
   @extend %font-nunito-extra-light;
 }
 
-.info-3 { // use in blocks of texts such as prompts or info popups
+%info-3 { // use in blocks of texts such as prompts or info popups
 	font-size: 1.4rem;
 	line-height: 2rem;
   @extend %font-nunito-extra-light;
 }
+
+.info-1 { @extend %info-1; }
+.info-2 { @extend %info-2; }
+.info-3 { @extend %info-3; }
