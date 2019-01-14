@@ -117,6 +117,41 @@
     }
   }
 
+  .column .react-select__control { // #1, column always there
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  select { // #2, select condition, aways there, 3px border-radius when no #3
+    background-color: $table-background;
+    border: 2px solid $Vlight-gray;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 0;
+    &:hover {
+      border-color: darken($Vlight-gray, 7%);
+    }
+    &:last-child {
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+      border-bottom-color: $Vlight-gray;
+      &:hover {
+        border-color: darken($Vlight-gray, 7%);
+      }
+    }
+  }
+
+  .value textarea[name="filters[0][0][value]"] { // #1, value display if required buy condition in #2
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background-color: $table-background;
+    border: 2px solid $Vlight-gray;
+    border-top-color: transparent;
+    &:hover {
+      border-color: darken($Vlight-gray, 7%);
+    }
+  }
+
   .value {
     .autosize {
       @extend %autosize-with-textarea;
