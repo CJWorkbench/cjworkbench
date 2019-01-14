@@ -327,7 +327,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       className="nav-link"
                       onClick={[Function]}
                     >
-                      Templates
+                      Recipes
                     </a>
                   </NavLink>
                 </li>

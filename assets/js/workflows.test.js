@@ -130,7 +130,7 @@ describe('Workflow list page', () => {
       expect(w.find('.tab-pane.active').find('.workflow-item')).toHaveLength(2)
 
       // template tab should have 1 workflow1
-      w.find('.nav-link').findWhere(node => node.props().children === 'Templates').simulate('click')
+      w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
       expect(w.find('.tab-pane.active').find('.workflow-item')).toHaveLength(1)
 
       done();
@@ -223,7 +223,7 @@ describe('Workflow list page', () => {
       w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
       expect(w.find('.tab-pane.active').find('.workflow-item')).toHaveLength(0)
       expect(w.find('.tab-pane.active').find('.placeholder')).toHaveLength(1)
-      w.find('.nav-link').findWhere(node => node.props().children === 'Templates').simulate('click')
+      w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
       expect(w.find('.tab-pane.active').find('.workflow-item')).toHaveLength(0)
       expect(w.find('.tab-pane.active').find('.placeholder')).toHaveLength(1)
       done()
@@ -271,7 +271,7 @@ describe('Workflow list page', () => {
       w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
       expect(w.find('.tab-pane.active').find('.test-delete-button')).toHaveLength(0)
       // templates tab
-      w.find('.nav-link').findWhere(node => node.props().children === 'Templates').simulate('click')
+      w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
       expect(w.find('.tab-pane.active').find('.test-delete-button')).toHaveLength(0)
       done()
     })
