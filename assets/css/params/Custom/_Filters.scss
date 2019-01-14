@@ -144,8 +144,8 @@
   .value textarea[name="filters[0][0][value]"] { // #1, value display if required buy condition in #2
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    background-color: $table-background;
-    border: 2px solid $Vlight-gray;
+    //background-color: $table-background;
+    //border: 2px solid $Vlight-gray;
     border-top-color: transparent;
     &:hover {
       border-color: darken($Vlight-gray, 7%);
