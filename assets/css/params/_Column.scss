@@ -107,10 +107,9 @@
 div>.react-select__menu {
   z-index: 2;
   border-radius: 0 0 5px 5px;
-  margin-top: -.2px; // overlap the border of the .react-select__control
+  margin-top: -.2rem; // overlap the border of the .react-select__control
   background-color: white;
   border: 2px solid $data-action--border;
-  border-top: 0;
   box-shadow: $menu-shadow;
   outline: none;
 
