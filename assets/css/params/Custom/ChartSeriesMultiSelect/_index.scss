@@ -24,6 +24,7 @@
 
 .chart-series-select {
   display: flex;
+  margin-bottom: $param-group-margin;
   // [color][col select      v], all on one line
 
   button.color-picker {

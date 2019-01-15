@@ -1,12 +1,13 @@
-.param-string {
-  .autosize {
-    @extend %autosize-with-textarea;
-  }
+.params {
+  .param-string {
+    .autosize {
+      @extend %autosize-with-textarea;
+    }
 
-  .invisible-size-setter, textarea {
-    @extend %module-parameter;
-    height: auto; // unset %module-parameter height: our height varies
-    resize: none;
+    .invisible-size-setter, textarea {
+      @extend %module-parameter;
+      height: auto; // unset %module-parameter height: our height varies
+      resize: none;
+    }
   }
 }
-
