@@ -29,6 +29,12 @@
         bottom:1rem;
       }
 
+      .parameter-label {
+        @extend %content-2;
+        color: $text-muted;
+        margin-bottom: $param-group-margin;
+      }
+
       // Button 'browse' before loading and 'replace' after loading
       .react-fine-uploader-file-input-container {
         display: flex!important;
@@ -49,7 +55,7 @@
       left:0;
       background-color:transparent;
       box-shadow: none;
-      width: 24.5rem;
+      width: 25.5rem;
       height:2px;
       margin: 0;
       margin-bottom: .5rem;
