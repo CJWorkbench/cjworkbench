@@ -4,9 +4,11 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
 <div
   className="update-frequency-select"
 >
-  <div>
+  <div
+    className="update-option"
+  >
     <span
-      className="content-1 t-d-gray"
+      className="version-box-option"
     >
       Update 
     </span>
@@ -20,7 +22,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
     </a>
   </div>
   <div
-    className="content-2 t-m-gray"
+    className="last-checked"
   >
     Checked 
     <time
