@@ -15,10 +15,7 @@
 
   &.param {
     margin-top: $param-group-margin;
-    display: flex;
-    flex-direction: row-reverse;
-    .checkbox-container {
-
-    }
+    display: inline-block;
+    margin-right: 1.5rem;
   }
 }
