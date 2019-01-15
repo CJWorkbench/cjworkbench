@@ -3,7 +3,7 @@
   "id_name": "sort-from-table",
   "category" : "Analyze",
   "icon" : "transform-v",
-  "description": "Sort rows using a specific column.",
+  "description": "Sort rows by column",
   "help_url":"modules/analyze/sort",
   "parameters": [
     {

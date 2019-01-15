@@ -3,7 +3,7 @@
   "id_name": "editcells" ,
   "category" : "Clean",
   "icon" : "edit",
-  "description" : "Edit individual cells",
+  "description" : "Edit cells and keep a log of all changes",
   "help_url":"modules/clean/edit-cells",
   "parameters": [
     {

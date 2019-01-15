@@ -3,7 +3,7 @@
   "id_name": "pythoncode",
   "category": "Code",
   "icon": "code",
-  "description": "Python code editor.",
+  "description": "Python code editor with console",
   "has_zen_mode": true,
   "html_output": true,
   "help_url":"modules/code/python-editor",
