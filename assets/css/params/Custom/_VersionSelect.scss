@@ -25,32 +25,32 @@
     display: flex;
     justify-content: space-between;
     position: relative;
+  }
 
-    .version-item {
-      font-size: 1.3rem;
-      color: $brand-text--dark;
-      display: flex;
-      align-items: flex-end;
+  .version-item {
+    font-size: 1.3rem;
+    color: $brand-text--dark;
+    display: flex;
+    align-items: flex-end;
 
-      .no-versions {
-        margin-left: .5rem;
-      }
+    .no-versions {
+      margin-left: .5rem;
+    }
 
-      button {
-        // button looks like a link
-        border: 0;
-        margin: 0;
-        padding: 0;
-        display: inline;
-        background: inherit;
-        font: inherit;
-        color: $brand-workspace;
-        cursor: pointer;
-        margin-left: .5rem;
+    button {
+      // button looks like a link
+      border: 0;
+      margin: 0;
+      padding: 0;
+      display: inline;
+      background: inherit;
+      font: inherit;
+      color: $brand-workspace;
+      cursor: pointer;
+      margin-left: .5rem;
 
-        &:hover {
-          color: $link-hover-success;
-        }
+      &:hover {
+        color: $link-hover-success;
       }
     }
   }
