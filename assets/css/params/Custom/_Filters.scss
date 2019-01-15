@@ -135,7 +135,7 @@
     }
   }
 
-  .column .react-select__control { // #1, column always there
+  .column:not(:last-child):not(:last-of-type) .react-select__control { // #1, column always there - keep round border at bottom if the last of list within filter of type (buttons are in the subfilter)
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
@@ -159,11 +159,9 @@
     }
   }
 
-  .value textarea[name="filters[0][0][value]"] { // #1, value display if required buy condition in #2
+  .value .autosize textarea { // value displayed if required by condition in #2 //FIXME when the
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    //background-color: $table-background;
-    //border: 2px solid $Vlight-gray;
     border-top-color: transparent;
     &:hover {
       border-color: darken($Vlight-gray, 7%);
