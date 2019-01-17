@@ -3,6 +3,7 @@
   .checkbox-container {
     display: flex;
     align-items: center;
+    cursor: pointer;
 
     label {
       font-size: 1.3rem;
@@ -10,6 +11,11 @@
       display: inline;
       color: $brand-text--dark;
       margin-bottom: 0;
+      cursor: pointer;
+    }
+
+    input {
+      cursor: pointer;
     }
   }
 
