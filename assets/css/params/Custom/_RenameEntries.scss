@@ -1,5 +1,5 @@
 .param-rename-entries {
-  padding: 1rem 0;
+  padding: 1rem 0 2rem 0;
 
   max-height: 25rem;
   overflow-y: auto;
@@ -9,8 +9,8 @@
   }
 
   label {
-    @extend %font-nunito-extra-light;
-    font-size: 1.4rem;
+    @extend %content-1;
+    color: $text-muted;
     display: block;
     overflow-x: hidden;
     white-space: nowrap;
