@@ -7,7 +7,7 @@
     display: block;
     @extend %content-1;
     color: $labels;
-    cursor: pointer;
+    cursor: default;
     margin: 0; // override Bootstrap
   }
 }

@@ -176,6 +176,10 @@
       z-index: 5 !important;
     }
 
+    .label {
+      cursor: default;
+    }
+
     // Search bar within a module
     .in-module--search {
       color: $input-alt;
