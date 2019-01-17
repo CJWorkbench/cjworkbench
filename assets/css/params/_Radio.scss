@@ -1,7 +1,10 @@
 .param-radio {
-  position: absolute;
-  bottom: 1.25rem;
+  position: relative;
+  height: 1rem; // hack for consistant positioning in readonly (no button to give parent div height)
+  margin-bottom: 1.4rem; // hack for consistant positioning in readonly (no button to give parent div height)
   .button-group {
+    position: absolute;
+    top: .5rem;
     display: flex;
     align-items: center;
 

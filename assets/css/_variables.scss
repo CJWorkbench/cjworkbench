@@ -56,15 +56,15 @@ $text-muted: $medium-gray;
 // [adamhooper, 2019-01-09] DO NOT USE: transparent borders lead to one of two
 // outcomes: a page with an _enormous_ number of colors (because colors atop
 // colors multiply the number of potential colors) or a page with few colors
-// that we've never actually _defined_. Instead of these, use the color we want.
+// that we've never actually _defined_. Instead of these, use the color we want.//FIXME PIERRE
 
-$dark-accent--soft: rgba(0,0,0,.05); // DO NOT USE: rgba is bad
-$dark-accent--soft-M: rgba(0,0,0,.075); // DO NOT USE: rgba is bad
+$dark-accent--soft: rgba(0,0,0,.05); // DO NOT USE: rgba is bad FIXME
+$dark-accent--soft-M: rgba(0,0,0,.075); // DO NOT USE: rgba is bad FIXME
 $dark-accent--medium: rgba(0,0,0,.1); // DO NOT USE: rgba is bad
 $dark-accent--strong: rgba(0,0,0,.15); // DO NOT USE: rgba is bad
 
-$light-accent--soft: rgba(255,255,255,.05); // DO NOT USE: rgba is bad
-$light-accent--medium: rgba(255,255,255,.1); // DO NOT USE: rgba is bad
+$light-accent--soft: rgba(255,255,255,.05); // DO NOT USE: rgba is bad FIXME
+$light-accent--medium: rgba(255,255,255,.1); // DO NOT USE: rgba is bad FIXME
 $light-accent--strong: rgba(255,255,255,.2); // DO NOT USE: rgba is bad
 $light-accent--Vstrong: rgba(255,255,255,0.5); // DO NOT USE: rgba is bad
 $light-accent--Extrastrong: rgba(255,255,255,0.9); // DO NOT USE: rgba is bad

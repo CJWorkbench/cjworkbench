@@ -1,8 +1,13 @@
 .submit-button {
-  margin-top: 1rem;
+  position: relative;
+  margin-top: 1.5rem;
   text-align: right;
+  //height: 2rem;
 
   button {
+    position: absolute;
+    bottom: 0;
+    right:0;
     @extend .action-button;
     @extend .button-orange;
     display: inline-block; // override whatever .action-button does
