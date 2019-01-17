@@ -5,12 +5,12 @@
   overflow-y: auto;
 
   .rename-entry:not(:first-child) {
-    margin-top: 1rem;
+    margin-top: $param-margin;
   }
 
   label {
     @extend %content-1;
-    color: $text-muted;
+    color: $labels;
     display: block;
     overflow-x: hidden;
     white-space: nowrap;

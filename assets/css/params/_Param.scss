@@ -1,6 +1,6 @@
 .param {
   &:not(:first-child) {
-    margin-top: 0.8rem;
+    margin-top: $param-margin;
   }
 
   &>label {

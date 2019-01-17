@@ -1,44 +1,74 @@
 .module-card-params {
 
-  //header
-  thead tr {
-    height:2.5rem;
-    .reorder-info {
-      @extend .info-1;
-      text-align: left;
+
+  .table {
+
+    //header
+    thead tr {
+      height:2.5rem;
+      border: 0;
+
+      td {
+        border: 0;
+      }
+
+      .reorder-info {
+        @extend .info-1;
+        color: $labels;
+        text-align: left;
+      }
+
+      .reorder-position  {
+        @extend .info-1;
+        color: $labels;
+        text-align: center;
+      }
+
+      .reorder-from, .reorder-to {
+        text-align: center;
+      }
     }
-  }
 
-  //body
-  tbody tr {
-    @extend .content-1;
-    font-weight: normal;
-    height:3.5rem;
-    border-top: 1px solid $dark-accent--soft;
-  }
+    //body
+    tbody tr {
+      @extend .content-1;
+      font-weight: normal;
+      height:3.5rem;
+      background-color: $Vlight-gray;
+      border-bottom: 1px solid darken($Vlight-gray,5%);
 
-  .table td {
-    max-width: 13.5rem;
-    overflow-x: hidden;
-    border:0;
+      &:first-child { // first and last rows in any col has border radius
+        border-top-left-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
+        border-top-right-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
+      }
+      &:last-child { // first and last rows in any col has border radius
+        border-bottom-left-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
+        border-bottom-right-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
+        border-bottom-color: transparent;
+      }
 
-    .reorder-column{
-      text-align: left;
+      td {
+        vertical-align: middle;
+        border-top: 0;
+        background-color: transparent;
+        text-align: center;
+
+
+        &.reorder-idx {
+          @extend %info-1;
+          background-color: transparent;
+        }
+
+        &.reorder-column{
+          text-align: left;
+          padding: .75rem 0 .75rem .75rem;
+          white-space: nowrap;
+          overflow: hidden;
+          max-width: 15rem;
+          text-overflow: ellipsis;
+          background-color: transparent;
+        }
+      }
     }
-  }
-
-
-  .reorder-info {
-    @extend .info-1;
-    text-align: left;
-  }
-
-  .reorder-position  {
-    @extend .info-1;
-    text-align: center;
-  }
-
-  .reorder-from, .reorder-to {
-    text-align: center;
   }
 }

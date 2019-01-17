@@ -4,27 +4,28 @@
     color: $brand-text--dark;
     overflow-x: hidden;
     margin-left: 0;
+    margin-bottom: $param-margin;
 
     .edited-column {
-      @extend .info-2;
+      @extend %content-1;
+      color: $labels;
     }
 
     .cell-edits--row {
-      border-top: 1px solid $dark-accent--soft;
-      background-color: transparent;
+      background-color: $Vlight-gray;
       line-height:2rem;
       height: 3.5rem;
       width:none;
       display: flex;
+      border-bottom: 1px solid darken($Vlight-gray,5%); // FIXME by creating a class for all module param borders
 
       .edited-row {
-        @extend .info-2;
+        @extend .info-1;
         width: 3.5rem;
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        padding: 0;
-        font-size:1.2rem;
+        padding: 0 0 0 1rem;
         overflow-x: hidden;
 
       }
@@ -36,6 +37,15 @@
         line-height:2rem;
         overflow-x: hidden;
         white-space: nowrap;
+      }
+      &:first-child { // first and last rows in any col has border radius
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+      }
+      &:last-child { // first and last rows in any col has border radius
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+        border-bottom-color: transparent;
       }
     }
   }
