@@ -14,7 +14,7 @@
 
   .react-select__indicator.react-select__dropdown-indicator,
   .react-select__indicator.react-select__dropdown-indicator {
-    padding: 0 .5rem;
+    padding: 0 .5rem 0 0;
     cursor: pointer;
   }
 
@@ -65,8 +65,6 @@
     min-height: 3.5rem;
     height: auto;
     cursor: text;
-    // max-height: 25rem;
-    overflow-y: scroll;
   }
 
   // Style for selected values within multi select
@@ -99,7 +97,9 @@
   }
 
   .react-select__value-container.react-select__value-container--is-multi.react-select__value-container--has-value {
-    padding: 0 .2rem
+    padding: 0 .2rem;
+    max-height: 20rem;
+    overflow-y: scroll;
   }
 }
 
