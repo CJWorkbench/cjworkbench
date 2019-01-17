@@ -1,7 +1,5 @@
 .param-radio {
-  position: relative;
-  height: 1rem; // hack for consistant positioning in readonly (no button to give parent div height)
-  margin-bottom: 1.4rem; // hack for consistant positioning in readonly (no button to give parent div height)
+  position: relative; // place the radio buttons at the same height as play button
   .button-group {
     position: absolute;
     top: .5rem;
@@ -44,5 +42,8 @@
         background-color: $brand-orange;
       }
     }
+  }
+  &.read-only {
+    height: 2rem;
   }
 }
