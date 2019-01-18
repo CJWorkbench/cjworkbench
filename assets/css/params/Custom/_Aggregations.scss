@@ -20,6 +20,7 @@
     .column {
       // 2. (optional) colname: has no radius
       .react-select__control {
+        // @extend %custom-select;
         background-color: $table-background;
         border: 2px solid $Vlight-gray;
         border-top-color: transparent;
@@ -28,6 +29,9 @@
         cursor: pointer;
         &:hover {
           border-color: darken($Vlight-gray, 7%);
+        }
+        &.react-select__control--is-focused {
+          border-color: $data-action--border;
         }
       }
     }
@@ -57,6 +61,9 @@
         flex: 1 1 auto;
         &:hover {
           border-color: darken($Vlight-gray, 7%);
+        }
+        &:focus {
+          border-color: $data-action--border;
         }
       }
       &:nth-child(2) { // change color depending if it's in position 2 or not

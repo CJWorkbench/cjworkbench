@@ -24,6 +24,7 @@
 
   &:focus{
     box-shadow: none;
+    border-color: $data-action--border;
   }
 }
 

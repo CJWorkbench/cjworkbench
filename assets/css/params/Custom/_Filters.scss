@@ -149,6 +149,9 @@
     &:hover {
       border-color: darken($Vlight-gray, 7%);
     }
+    &:focus {
+      border-color: $data-action--border;
+    }
     &:last-child {
       border-bottom-left-radius: 3px;
       border-bottom-right-radius: 3px;
@@ -165,6 +168,9 @@
     border-top-color: transparent;
     &:hover {
       border-color: darken($Vlight-gray, 7%);
+    }
+    &:focus {
+      border-color: $data-action--border;
     }
   }
 
