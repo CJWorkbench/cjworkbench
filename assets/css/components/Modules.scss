@@ -16,17 +16,15 @@
 
   // notes above module
   textarea[name="notes"], .editable-notes-read-only {
-    @extend %font-nunito-regular;
+    @extend %content-1;
     display: block;
     position: relative;
     border: 0;
     outline: none;
-    width: 27rem; // FIXME variable
-    left: 1rem; // FIXME margin-left?
+    width: $module-width; 
+    left: 1rem;
     min-height: 3rem;
     resize: none;
-    font-size: 1.3rem;
-    line-height: 2.2rem;
     color: $brand-text--dark;
     background-color: transparent;
     margin: auto;
