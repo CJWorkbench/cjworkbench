@@ -1,22 +1,32 @@
 .react-select.column, .react-select.multicolumn {
+
   .react-select__control {
+
     @extend %module-parameter;
     padding: 0; // override %module-parameter: react-select padding is _inside_
     display: flex; // override %module-parameter: react-select CSS is built around flex
     cursor: text; // because when you click inside, react-select lets you type
+    position: relative;
   }
 
-  // separator with carret
-  .react-select__indicator-separator {
-    margin: 1rem 0;
-    display: none;
+  .react-select__indicators {
+    position: absolute;
+    right: 0;
+    align-self: center;
+    height: 100%;
+
+    // separator with carret
+    .react-select__indicator-separator {
+      margin: 1rem 0;
+      display: none;
+    }
+
+    .react-select__indicator.react-select__dropdown-indicator {
+      padding: 0 .5rem 0 0;
+      cursor: pointer;
+    }
   }
 
-  .react-select__indicator.react-select__dropdown-indicator,
-  .react-select__indicator.react-select__dropdown-indicator {
-    padding: 0 .5rem 0 0;
-    cursor: pointer;
-  }
 
   //carret container
   .react-select__value-container {
@@ -97,7 +107,7 @@
   }
 
   .react-select__value-container.react-select__value-container--is-multi.react-select__value-container--has-value {
-    padding: 0 .2rem;
+    padding: 0 2.5rem 0 .2rem;
     max-height: 20rem;
     overflow-y: scroll;
   }
