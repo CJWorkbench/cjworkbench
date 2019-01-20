@@ -161,6 +161,7 @@
         border-color: $tabs-border;
         background: $white;
         color: $brand-text--darker;
+        border-top: 2px solid $module-background;
 
         &::after {
           display: none;
