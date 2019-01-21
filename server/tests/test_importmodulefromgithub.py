@@ -125,6 +125,15 @@ class ImportFromGitHubTest(DbTestCase):
                 pass
             validate_module_structure(good_dir)  # no error
 
+    def test_ignore_test_py(self):
+        test_dir = self._test_module_path('importable')
+        with tempfile.TemporaryDirectory() as td:
+            good_dir = os.path.join(td, 'module')
+            shutil.copytree(test_dir, good_dir)
+            with open(os.path.join(good_dir, 'test_filter.py'), 'w'):
+                pass
+            validate_module_structure(good_dir)  # no error
+
     def test_ignore_package_json(self):
         test_dir = self._test_module_path('importable')
         with tempfile.TemporaryDirectory() as td:
