@@ -30,7 +30,7 @@ class PasteCSV(ModuleImpl):
         try:
             table = pd.read_table(io.StringIO(tablestr), header=header_row,
                                   skipinitialspace=True, sep=sep,
-                                  dtype='category')
+                                  na_filter=False, dtype='category')
             autocast_dtypes_in_place(table)
         except EmptyDataError:
             return ProcessResult(pd.DataFrame())
