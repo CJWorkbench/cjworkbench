@@ -52,161 +52,139 @@ class ImportFromGitHubTest(DbTestCase):
         return os.path.join(pwd, '..', '..', 'importedmodules',
                             self.importable_id_name)
 
-    # fills clone_dir() with a set of module files in "freshly cloned from github" state
-    # erases anything previously there
-    def fake_github_clone(self, source_dir='test_data/importable'):
-        clonedir = self.clone_dir()
-        if os.path.isdir(clonedir):
-            shutil.rmtree(clonedir)
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        shutil.copytree(os.path.join(pwd, source_dir), clonedir)
-        return clonedir
+    def _test_module_path(self, subpath):
+        """Return a subdir of ./test_data/ -- assuming it's a module."""
+        return os.path.join(
+            os.path.dirname(__file__),
+            'test_data',
+            subpath
+        )
 
-    def test_validate_module_structure(self):
-        # We don't want to rely on a remote repo existing, so we drive this test off a local repo equivalent
-        test_dir = self.fake_github_clone()
-
+    def test_validate_valid_dir(self):
+        test_dir = self._test_module_path('importable')
         mapping = validate_module_structure(test_dir)
-        self.assertTrue(len(mapping) == 2, "We should only have two files in the module structure: one Python " +
-                        "and one JSON.")
-        self.assertTrue("json" in mapping, "A json file must exist in the module structure.")
-        self.assertTrue("py" in mapping, "A python file must exist in the module structure.")
-        self.assertTrue(mapping["py"] == "importable.py", "The py mapping in the module must be against the only " +
-                                                        "Python file in the directory: importable.py.")
-        self.assertTrue(mapping["json"] == "importable.json", "The json mapping in the module must be against the only JSON" +
-                        " file in the directory: importable.json")
+        self.assertEqual(mapping, {
+            'py': 'importable.py',
+            'json': 'importable.json',
+        })
 
+    def test_validate_extra_json(self):
+        test_dir = self._test_module_path('importable')
+        with tempfile.TemporaryDirectory() as td:
+            bad_dir = os.path.join(td, 'module')
+            shutil.copytree(test_dir, bad_dir)
+            with open(os.path.join(bad_dir, 'extra.json'), 'w'):
+                pass
+            with self.assertRaisesMessage(
+                ValidationError,
+                'Multiple files exist with extension json. '
+                "This isn't currently supported"
+            ):
+                validate_module_structure(bad_dir)
 
-        # Test invalid modules: 1/ ensure only one Python and one JSON file exist.
-        # Add additional JSON file to directory.
-        self.fake_github_clone()
-        more_json = os.path.join(test_dir, 'disposable.json')
-        open(more_json, 'a').close()
-        # ensure that disposable.json is created – we need this for the tests to run properly.
-        self.assertTrue(os.path.isfile(more_json),
-                        "disposable.json must be created in order for these unit tests to run properly.")
+    def test_validate_extra_py(self):
+        test_dir = self._test_module_path('importable')
+        with tempfile.TemporaryDirectory() as td:
+            bad_dir = os.path.join(td, 'module')
+            shutil.copytree(test_dir, bad_dir)
+            with open(os.path.join(bad_dir, 'extra.py'), 'w'):
+                pass
+            with self.assertRaisesMessage(
+                ValidationError,
+                'Multiple files exist with extension py. '
+                "This isn't currently supported"
+            ):
+                validate_module_structure(bad_dir)
 
-        with self.assertRaisesMessage(ValidationError, "Multiple files exist with extension json. This isn't currently"+
-                                                       " supported"):
-            mapping = validate_module_structure(test_dir)
+    def test_validate_missing_json(self):
+        with tempfile.TemporaryDirectory() as td:
+            with open(os.path.join(td, 'code.py'), 'w'):
+                pass
+            with self.assertRaisesMessage(
+                ValidationError,
+                'Missing ".json" module-spec file'
+            ):
+                validate_module_structure(td)
 
-
-        # Add additional Python file directory, assert this fails
-        self.fake_github_clone()
-        open(os.path.join(test_dir, 'disposable.py'), 'a').close()
-        # ensure that disposable.py is created – we need this for the tests to run properly.
-        self.assertTrue(os.path.isfile(os.path.join(test_dir, 'disposable.py')),
-                        "disposable.py must be created in order for these unit tests to run properly.")
-
-        with self.assertRaises(ValidationError):
-            mapping = validate_module_structure(test_dir)
-
-        # Test invalid modules: 2/ ensure that at least one Python and one JSON file exist.
-        self.fake_github_clone()
-        os.remove(os.path.join(test_dir, 'importable.json'))
-        with self.assertRaises(ValidationError):
-            mapping = validate_module_structure(test_dir)
-
-        self.fake_github_clone()
-        os.remove(os.path.join(test_dir, 'importable.py'))
-        with self.assertRaises(ValidationError):
-            mapping = validate_module_structure(test_dir)
+    def test_validate_missing_py(self):
+        with tempfile.TemporaryDirectory() as td:
+            with open(os.path.join(td, 'spec.json'), 'w'):
+                pass
+            with self.assertRaisesMessage(
+                ValidationError,
+                'Missing ".py" module-code file'
+            ):
+                validate_module_structure(td)
 
     def test_ignore_setup_py(self):
-        test_dir = self.fake_github_clone()
-        open(os.path.join(test_dir, 'setup.py'), 'w').close()
-        mapping = validate_module_structure(test_dir)
-        self.assertEqual(mapping['py'], 'importable.py')
+        test_dir = self._test_module_path('importable')
+        with tempfile.TemporaryDirectory() as td:
+            good_dir = os.path.join(td, 'module')
+            shutil.copytree(test_dir, good_dir)
+            with open(os.path.join(good_dir, 'setup.py'), 'w'):
+                pass
+            validate_module_structure(good_dir)  # no error
+
+    def test_ignore_package_json(self):
+        test_dir = self._test_module_path('importable')
+        with tempfile.TemporaryDirectory() as td:
+            good_dir = os.path.join(td, 'module')
+            shutil.copytree(test_dir, good_dir)
+            with open(os.path.join(good_dir, 'package.json'), 'w'):
+                pass
+            with open(os.path.join(good_dir, 'package-lock.json'), 'w'):
+                pass
+            validate_module_structure(good_dir)  # no error
 
     def test_validate_python_functions(self):
-        test_dir = self.fake_github_clone()
-        validate_python_functions(test_dir , "importable.py")
+        test_dir = self._test_module_path('importable')
+        validate_python_functions(test_dir, "importable.py")
 
+    def test_validate_python_missing_render(self):
         # test missing/unloadable render function
-        test_dir = self.fake_github_clone('test_data/missing_render_module')
+        test_dir = self._test_module_path('missing_render_module')
         with self.assertRaises(ValidationError):
-            validate_python_functions(test_dir, "missing_render_module.py")
+            validate_python_functions(test_dir, 'missing_render_module.py')
 
+    def test_load_invalid_json(self):
+        test_dir = self._test_module_path('bad_json_module')
+        with self.assertRaises(ValidationError):
+            import_module_from_directory('123456', test_dir)
 
     # syntax errors in module source files should be detected
-    def test_load_invalid_code(self):
-        test_dir = self.fake_github_clone('test_data/bad_json_module')
+    def test_load_invalid_python(self):
+        test_dir = self._test_module_path('bad_py_module')
         with self.assertRaises(ValidationError):
             import_module_from_directory("123456", test_dir)
-
-        test_dir = self.fake_github_clone('test_data/bad_py_module')
-        with self.assertRaises(ValidationError):
-            import_module_from_directory("123456", test_dir)
-
 
     # loading the same version of the same module twice should fail
     def test_load_twice(self):
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("123456", test_dir)
-
-        test_dir = self.fake_github_clone() # import moves files, so get same files again
+        test_dir = self._test_module_path('importable')
+        with self.assertLogs():
+            import_module_from_directory('123456', test_dir)
         with self.assertRaises(ValidationError):
-            import_module_from_directory("123456", test_dir)
+            import_module_from_directory('123456', test_dir)
 
     # We will do a reload of same version if force_reload==True
     def test_load_twice_force_relaod(self):
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("123456", test_dir)
-        self.assertEqual(ModuleVersion.objects.filter(id_name=self.importable_id_name).count(), 1)
-
-        test_dir = self.fake_github_clone() # import moves files, so get same files again
-        import_module_from_directory("123456", test_dir, force_reload=True)
+        test_dir = self._test_module_path('importable')
+        with self.assertLogs():
+            import_module_from_directory('develop', test_dir)
+        with self.assertLogs():
+            import_module_from_directory('develop', test_dir,
+                                         force_reload=True)
 
         # should replace existing module_version, not add a new one
-        self.assertEqual(ModuleVersion.objects.filter(id_name=self.importable_id_name).count(), 1)
-
-    # all exsting wf_modules should get bumped to new version when we import a new version of the module
-    def test_updates_module_version(self):
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("111111", test_dir)
-        module_version_q = ModuleVersion.objects.filter(id_name=self.importable_id_name)
-        self.assertEqual(module_version_q.count(), 1)
-
-        # Create a test workflow that uses this imported module
-        module_version = module_version_q.first()
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wfm = tab.wf_modules.create(
-            module_id_name=self.importable_id_name,
-            order=1,
-            params=module_version.default_params
-        )
-
-        # import "new" version (different version hash)
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("222222", test_dir)
-        self.assertEqual(module_version_q.count(), 2)
-
-        # should be able to update wfm to newly imported version
-        self.assertEqual(wfm.module_version.source_version_hash, "222222")
-
-
-    # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion
-    def test_already_imported(self):
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("123456", test_dir)
-
-        test_dir = self.fake_github_clone() # import moves files, so get same files again
-        with self.assertRaises(ValidationError):
-            with self.assertLogs():
-                import_module_from_directory("123456", test_dir)
+        self.assertEqual(ModuleVersion.objects.count(), 1)
 
     # THE BIG TEST. Load a module and test that we can render it correctly
     # This is really an integration test, runs both load and dispatch code
     def test_load_and_dispatch(self):
         try:
-            test_dir = self.fake_github_clone()
-
-            import_module_from_directory('123456', test_dir)
-
-            # ModuleVersion should have loaded -- raise exception if not
-            module_version = ModuleVersion.objects \
-                .latest(id_name=self.importable_id_name)
+            test_dir = self._test_module_path('importable')
+            with self.assertLogs():
+                module_version = import_module_from_directory('123456',
+                                                              test_dir)
 
             # Create a test workflow that uses this imported module
             workflow = Workflow.objects.create()

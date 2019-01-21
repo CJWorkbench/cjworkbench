@@ -290,12 +290,6 @@ class LoadedModuleTest(SimpleTestCase):
             pass
 
         def render(table, params, **kwargs):
-            # Pre
-            # am
-            # bl
-            # e
-            #
-            # The user never wrote the top 6 lines of code
             raise Ick('Oops')
 
         lm = LoadedModule('int', '1', True, render_impl=render)
@@ -478,12 +472,6 @@ class LoadedModuleTest(SimpleTestCase):
             pass
 
         async def fetch(params, **kwargs):
-            # Pre
-            # am
-            # bl
-            # e
-            #
-            # The user never wrote the top 6 lines of code
             raise Ick('Oops')
 
         lm = LoadedModule('int', '1', True, fetch_impl=fetch)

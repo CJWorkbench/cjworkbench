@@ -20,9 +20,6 @@ class ValidationError(Exception):
 # Check that we have one .py and one .json file in the repo root dir
 def validate_module_structure(directory):
     files = os.listdir(directory)
-    if len(files) < 3:
-        raise ValidationError(f'{directory} is not a valid workflow module')
-
     extension_file_mapping = {}
     for item in files:
         # check file extension and ensure that we have one python, one JSON,
@@ -150,6 +147,8 @@ def import_module_from_directory(version, importdir, force_reload=False):
         js_module=js_module
     )
 
+    logger.info('Imported module %s' % id_name)
+
     return module_version
 
 
@@ -179,8 +178,4 @@ def import_module_from_github(url, force_reload=False):
         # Nix ".git" subdir: not a Git repo any more, just a dir
         shutil.rmtree(os.path.join(importdir, '.git'))
 
-        module = import_module_from_directory(version, importdir, force_reload)
-
-        logger.info('Imported module %s' % url)
-
-        return module
+        return import_module_from_directory(version, importdir, force_reload)

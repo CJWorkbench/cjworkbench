@@ -138,10 +138,6 @@ class LoadedModule:
         fname = os.path.split(tb[0])[1]
         lineno = tb[1]
 
-        if self.is_external:
-            from server.importmodulefromgithub import original_module_lineno
-            lineno = original_module_lineno(lineno)
-
         error = f'{exc_name}: {str(err)} at line {lineno} of {fname}'
         return ProcessResult(error=error)
 
