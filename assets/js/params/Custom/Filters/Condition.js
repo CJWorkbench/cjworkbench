@@ -33,7 +33,7 @@ export default class Condition extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
-    value: ConditionPropType, // or null
+    value: ConditionPropType.isRequired, // may be ''
     dtype: PropTypes.oneOf([ 'text', 'datetime', 'number' ]).isRequired,
     onChange: PropTypes.func.isRequired // func('text_is_exactly' or other) => undefined
   }
@@ -50,7 +50,7 @@ export default class Condition extends React.PureComponent {
       <select
         name={name}
         disabled={isReadOnly}
-        value={value || ''}
+        value={value}
         onChange={this.onChange}
       >
         <option value=''>Select condition</option>

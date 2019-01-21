@@ -18,7 +18,7 @@ import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } f
 export const moduleParamsBuilders = {
   'selectcolumns': buildSelectColumnsParams,
   'duplicate-column': genericAddColumn('colnames'),
-  'filter': genericSetColumn('column'),
+  'filter': buildFilterParams,
   'editcells': buildEditCellsParams,
   'rename-columns': buildRenameColumnsParams,
   'reorder-columns': buildReorderColumnsParams,
@@ -194,6 +194,27 @@ function buildEditCellsParams (oldParams, params) {
   }
 }
 
+function buildFilterParams (_oldParams, params) {
+  return {
+    filters: {
+      operator: 'and',
+      filters: [
+        {
+          operator: 'and',
+          subfilters: [
+            {
+              colname: params.columnKey,
+              condition: '',
+              value: '',
+              case_sensitive: false
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
 function genericSetColumn (key) {
   return (oldParams, params) => {
     const newParams = { ...params }
@@ -218,7 +239,7 @@ function newParamsUnlessNoChange (oldParams, newParams) {
 
 function genericAddColumn (key) {
   return (oldParams, params) => {
-    const colnames = oldParams ? oldParams[key].split(',').filter(s => !!s) : []
+    const colnames = oldParams ? (oldParams[key] || '').split(',').filter(s => !!s) : []
     if (!params.hasOwnProperty('columnKey'))  throw new Error('Expected "columnKey" column to add')
     const colname = params.columnKey
 

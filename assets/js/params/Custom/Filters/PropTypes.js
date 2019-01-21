@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 
 export const ConditionPropType = PropTypes.oneOf([
+  '',
   'text_contains',
   'text_does_not_contain',
   'text_is_exactly',
@@ -21,7 +22,7 @@ export const ConditionPropType = PropTypes.oneOf([
 
 export const SubfilterPropType = PropTypes.shape({
   colname: PropTypes.string.isRequired,
-  condition: ConditionPropType, // default null
+  condition: ConditionPropType.isRequired, // default ''
   value: PropTypes.string.isRequired, // default ''
   case_sensitive: PropTypes.bool.isRequired // default false
 })

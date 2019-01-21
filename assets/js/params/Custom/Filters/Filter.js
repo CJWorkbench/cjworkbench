@@ -7,7 +7,7 @@ import FilterOperator from './FilterOperator'
 
 const DefaultSubfilter = {
   colname: '',
-  condition: null,
+  condition: '',
   value: '',
   case_sensitive: false
 }

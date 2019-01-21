@@ -43,17 +43,17 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: { tab_id: 2 },
-        11: { tab_id: 2, module: 'filter', params: { column: 'A' }}
+        11: { tab_id: 2, module: 'convert-text', params: { column: 'A' }}
       },
       modules: {
         loadurl: {},
-        filter: {}
+        'convert-text': {}
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(10, 'filter', false, { columnKey: 'B' })(dispatch, getState)
+    updateTableAction(10, 'convert-text', false, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 11 ])
-    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: 'B' } ])
   })
 
   it('should update an existing, selected module', () => {
@@ -63,16 +63,16 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: {},
-        11: { tab_id: 2, module: 'filter', params: { column: 'A' }}
+        11: { tab_id: 2, module: 'clean-text', params: { column: 'A' }}
       },
       modules: {
         loadurl: {},
-        filter: {}
+        'clean-text': {}
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { column: 'B' } ])
+    updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: 'B' } ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
@@ -82,19 +82,19 @@ describe("UpdateTableAction actions", () => {
         2: { wf_module_ids: [ 10, 11, 12, 13 ] }
       },
       wfModules: {
-        10: { module: 'filter' },
+        10: { module: 'clean-text' },
         11: { tab_id: 2, module: 'sort' },
         12: { module: 'sort' },
-        13: { module: 'filter' }
+        13: { module: 'clean-text' }
       },
       modules: {
-        filter: {},
+        'clean-text': {},
         sort: {}
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 11 }, { column: 'B' } ])
+    updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'clean-text', { afterWfModuleId: 11 }, { colnames: 'B' } ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
@@ -113,7 +113,24 @@ describe("UpdateTableAction actions", () => {
     })
     const dispatch = jest.fn()
     updateTableAction(10, 'filter', true, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 10 }, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 10 }, {
+      filters: {
+        operator: 'and',
+        filters: [
+          {
+            operator: 'and',
+            subfilters: [
+              {
+                colname: 'B',
+                condition: '',
+                value: '',
+                case_sensitive: false
+              }
+            ]
+          }
+        ]
+      }
+    }])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
@@ -132,7 +149,24 @@ describe("UpdateTableAction actions", () => {
     })
     const dispatch = jest.fn()
     updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 11 }, { column: 'B' } ])
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 11 }, {
+      filters: {
+        operator: 'and',
+        filters: [
+          {
+            operator: 'and',
+            subfilters: [
+              {
+                colname: 'B',
+                condition: '',
+                value: '',
+                case_sensitive: false
+              }
+            ]
+          }
+        ]
+      }
+    }])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 })
