@@ -24,15 +24,16 @@ class TestNotifications(LoggedInIntegrationTest):
         # Wait for the update to finish
         b.assert_element('button', text='Update', wait=True)
 
-        self.add_wf_module('Filter')
+        self.add_wf_module('Filter by condition')
         # wait for module load
-        self.select_column('Filter', 'column', 'data', wait=True)
-        b.select('condition', 'Greater than')
-        b.fill_in('value', '-0.1', wait=True)  # wait for field to appear
+        self.select_column('Filter by condition', 'filters', 'data', wait=True)
+        b.select('filters[0][0][condition]', 'Number is greater than')
+        # wait for field to appear
+        b.fill_in('filters[0][0][value]', '-0.1', wait=True)
         self.submit_wf_module()
 
         # Enable notifications
-        with b.scope('.wf-module[data-module-name="Filter"]'):
+        with b.scope('.wf-module[data-module-name="Filter by condition"]'):
             # [adamhooper, 2018-10-26] wait because one time I got
             # ElementNotFound on my dev machine
             b.click_button('Email alerts disabled', wait=True)
