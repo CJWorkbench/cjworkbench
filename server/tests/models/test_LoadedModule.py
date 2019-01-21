@@ -125,6 +125,27 @@ class LoadedModuleTest(SimpleTestCase):
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
 
+    def test_load_dynamic_ignore_test_py(self):
+        destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
+        os.makedirs(destdir)
+
+        versiondir = os.path.join(destdir, 'abcdef')
+        shutil.copytree(os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            'test_data',
+            'imported'
+        ), versiondir)
+        # write other .py files that aren't module code and should be ignored
+        with open(os.path.join(versiondir, 'setup.py'), 'w'):
+            pass
+        with open(os.path.join(versiondir, 'test_filter.py'), 'w'):
+            pass
+
+        with self.assertLogs('server.models.loaded_module'):
+            LoadedModule.for_module_version_sync(
+                MockModuleVersion('imported', 'abcdef', 'now')
+            )
+
     def test_load_dynamic_is_cached(self):
         destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
         os.makedirs(destdir)

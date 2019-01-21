@@ -370,7 +370,7 @@ def _load_external_module_uncached(module_id_name: str,
         if f == 'setup.py':
             continue
 
-        if f.endswith(".py"):
+        if f.endswith('.py') and not f.startswith('test_'):
             python_file = os.path.join(path_to_code, f)
             break
     else:
@@ -421,7 +421,6 @@ def load_external_module(module_id_name: str, version_sha1: str,
 
 load_external_module._cache = {}
 load_external_module.cache_clear = load_external_module._cache.clear
-
 
 
 def module_get_html_path(module_version: ModuleVersion) -> Optional[str]:
