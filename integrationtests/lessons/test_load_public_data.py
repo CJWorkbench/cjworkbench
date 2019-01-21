@@ -95,13 +95,17 @@ class TestLesson(LessonTest):
 
         # 4. 3. Filter with a condition
         self.expect_highlight(0)
-        self.add_wf_module('Filter', position=1)
+        self.add_wf_module('Filter by condition', position=1)
 
-        self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
+        self.expect_highlight(
+            1,
+            '.wf-module[data-module-name="Filter by condition"]'
+        )
         # wait for module load
-        self.select_column('Filter', 'column', 'affordable_units', wait=True)
-        b.select('condition', 'Greater than')
-        b.fill_in('value', 200, wait=True)  # wait for field to appear
+        self.select_column('Filter by condition', 'filters',
+                           'affordable_units', wait=True)
+        b.select('filters[0][0][condition]', 'Number is greater than')
+        b.fill_in('filters[0][0][value]', '200', wait=True)  # wait for field to appear
         self.submit_wf_module()
 
         self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]',
