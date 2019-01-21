@@ -105,7 +105,8 @@ class TestLesson(LessonTest):
         self.select_column('Filter by condition', 'filters',
                            'affordable_units', wait=True)
         b.select('filters[0][0][condition]', 'Number is greater than')
-        b.fill_in('filters[0][0][value]', '200', wait=True)  # wait for field to appear
+        b.fill_in('filters[0][0][value]', '200',
+                  wait=True)  # wait for field to appear
         self.submit_wf_module()
 
         self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]',
