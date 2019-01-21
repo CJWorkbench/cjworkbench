@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import hmac
 import hashlib
+import pathlib
 import tempfile
 from django.conf import settings
 from minio import Minio
@@ -34,6 +35,14 @@ StoredObjectsBucket = ''.join([
     settings.MINIO_BUCKET_PREFIX,
     '-',
     'stored-objects',
+    settings.MINIO_BUCKET_SUFFIX
+])
+
+
+ExternalModulesBucket = ''.join([
+    settings.MINIO_BUCKET_PREFIX,
+    '-',
+    'external-modules',
     settings.MINIO_BUCKET_SUFFIX
 ])
 
@@ -81,6 +90,55 @@ def open_for_read(bucket: str, key: str):
         yield response
     finally:
         response.release_conn()
+
+
+def list_file_keys(bucket: str, prefix: str):
+    """
+    List keys of non-directory objects, non-recursively, in `prefix`.
+
+    >>> minio.list_file_keys('bucket', 'filter/a132b3f/')
+    ['filter/a132b3f/spec.json', 'filter/a132b3f/filter.py']
+    """
+    objects = minio_client.list_objects_v2(bucket, prefix)
+    return [o.object_name for o in objects
+            if not o.is_dir]
+
+
+def fput_directory_contents(bucket: str, prefix: str,
+                            dirpath: pathlib.Path) -> None:
+    if not prefix.endswith('/'):
+        prefix = prefix + '/'
+
+    paths = dirpath.glob('**/*')
+    file_paths = [p for p in paths if p.is_file()]
+    for file_path in file_paths:
+        minio_client.fput_object(
+            bucket_name=bucket,
+            object_name=prefix + str(file_path.relative_to(dirpath)),
+            file_path=str(file_path.resolve())
+        )
+
+
+def remove_recursive(bucket: str, prefix: str, force=False) -> None:
+    """
+    Remove all objects in `bucket` whose keys begin with `prefix`.
+
+    If you really mean to use `prefix=''` -- which will wipe the entire bucket,
+    up to 1,000 keys -- pass `force=True`. Otherwise, there is a safeguard
+    against `prefix=''` specifically.
+    """
+    if not prefix.endswith('/'):
+        raise ValueError('`prefix` must end with `/`')
+
+    if prefix == '/' and not force:
+        raise ValueError('Refusing to remove prefix=/ when force=False')
+
+    objects = minio_client.list_objects_v2(bucket, prefix, recursive=True)
+    keys = (o.object_name for o in objects if not o.is_dir)
+    for err in minio_client.remove_objects(bucket, keys):
+        raise Exception('Error %s removing %s: %s' % (err.error_code,
+                                                      err.object_name,
+                                                      err.error_message))
 
 
 @contextmanager

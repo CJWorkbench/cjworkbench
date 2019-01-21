@@ -13,45 +13,6 @@ from server.tests.utils import DbTestCase
 
 
 class ImportFromGitHubTest(DbTestCase):
-    def setUp(self):
-        super().setUp()
-
-        # must match importable.json test data file
-        self.importable_id_name = 'importable_not_repo_name'
-
-        self.cleanup()
-
-        self.clone_temp_dir = tempfile.TemporaryDirectory(
-            'importedmodules-test'
-        )
-
-    def tearDown(self):
-        try:
-            self.cleanup()
-            self.clone_temp_dir.cleanup()
-        except FileNotFoundError:
-            pass
-        finally:
-            super().tearDown()
-
-    def cleanup(self):
-        # remove any directories we may have created during the last test
-        importdir = self.imported_dir()
-        if os.path.isdir(importdir):
-            shutil.rmtree(importdir)
-
-    # Where do we initially "clone" (fake clone) github files to?
-    def clone_dir(self):
-        return self.clone_temp_dir.name
-
-    # Where do we install the files?
-    # Actual final location has version number added to the end of this,
-    # e.g. imported_dir() + "/123456"
-    def imported_dir(self):
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(pwd, '..', '..', 'importedmodules',
-                            self.importable_id_name)
-
     def _test_module_path(self, subpath):
         """Return a subdir of ./test_data/ -- assuming it's a module."""
         return os.path.join(
@@ -200,7 +161,7 @@ class ImportFromGitHubTest(DbTestCase):
             tab = workflow.tabs.create(position=0)
             wfm = tab.wf_modules.create(
                 order=0,
-                module_id_name=self.importable_id_name,
+                module_id_name=module_version.id_name,
                 params=module_version.default_params
             )
 

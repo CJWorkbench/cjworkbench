@@ -36,4 +36,4 @@ services:
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: unittest
-    # importedmodules and saveddata don't get volumes
+    # saveddata doesn't get volumes

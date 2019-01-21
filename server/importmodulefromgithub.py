@@ -2,10 +2,12 @@ import importlib.util
 import json
 import logging
 import os
+from pathlib import Path
 import shutil
 import tempfile
 import git
 from git.exc import GitCommandError
+from server import minio
 from server.models import ModuleVersion
 from server.models.module_version import validate_module_spec
 
@@ -108,17 +110,7 @@ def import_module_from_directory(version, importdir, force_reload=False):
 
     destination_directory = os.path.join(MODULE_DIRECTORY, id_name, version)
 
-    if force_reload:
-        # Allow re-import. If files already exist, delete them so we can
-        # overwrite them.
-        #
-        # This can race with module callers. Assuming we only force_reload
-        # in dev/test, races won't harm anyone.
-        try:
-            shutil.rmtree(destination_directory)
-        except FileNotFoundError:
-            pass  # we aren't reloading after all -- this is a new version
-    else:
+    if not force_reload:
         # Don't allow importing the same version twice
         try:
             ModuleVersion.objects.get(id_name=id_name,
@@ -137,8 +129,25 @@ def import_module_from_directory(version, importdir, force_reload=False):
     else:
         js_module = ''
 
-    # Copy code into filesystem
-    shutil.copytree(importdir, destination_directory)
+    # Copy code to S3
+    prefix = '%s/%s/' % (id_name, version)
+
+    try:
+        # If files already exist, delete them so we can overwrite them.
+        #
+        # This can race: a worker may be loading the code to execute it. But
+        # races are unlikely to affect anybody because:
+        #
+        # * If force_reload=True we're in dev or test, where we control
+        #   everything.
+        # * Otherwise, we've already checked there's no ModuleVersion, so
+        #   probably nothing is trying and load what we're deleting here.
+        minio.remove_recursive(minio.ExternalModulesBucket, prefix)
+    except FileNotFoundError:
+        pass  # common case: we aren't overwriting code
+
+    minio.fput_directory_contents(minio.ExternalModulesBucket, prefix,
+                                  Path(importdir))
 
     # If that succeeds, initialise module in our database
     module_version = ModuleVersion.create_or_replace_from_spec(

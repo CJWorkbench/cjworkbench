@@ -1,21 +1,20 @@
 import asyncio
 from collections import namedtuple
 import inspect
+import io
 import logging
-import os.path
-import shutil
-import tempfile
+import unittest
 from unittest.mock import Mock, patch
 from asgiref.sync import async_to_sync
-from django.conf import settings
-from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from server import minio
 from server.models import LoadedModule
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv
 from server.tests.modules.util import MockParams
+from server.tests.utils import clear_minio
 from server.models.param_field import ParamDTypeDict, ParamDTypeString, \
         ParamDTypeInteger, ParamDTypeBoolean
 
@@ -64,24 +63,18 @@ def async_mock(*, return_value):
     return Mock(return_value=retval)
 
 
-@override_settings(IMPORTED_MODULES_ROOT=tempfile.mkdtemp())
-class LoadedModuleTest(SimpleTestCase):
+class LoadedModuleTest(unittest.TestCase):
     def setUp(self):
         # Clear cache _before_ the test (in case other unit tests wrote to
         # the cache -- they aren't testing the cache so they may not remember
         # to wipe it) and _after_ the unit tests (so we don't leak stuff
         # that ought to be deleted).
         server.models.loaded_module.load_external_module.cache_clear()
-
-        # tearDown() nixes our IMPORTED_MODULES_ROOT and that's good because we
-        # want the directory gone when _all_ tests complete. But in _between_
-        # tests, we should recreate it.
-        if not os.path.isdir(settings.IMPORTED_MODULES_ROOT):
-            os.mkdir(settings.IMPORTED_MODULES_ROOT)
+        clear_minio()
 
     def tearDown(self):
         server.models.loaded_module.load_external_module.cache_clear()
-        shutil.rmtree(settings.IMPORTED_MODULES_ROOT)
+        clear_minio()
 
         super().tearDown()
 
@@ -96,15 +89,10 @@ class LoadedModuleTest(SimpleTestCase):
                          server.modules.pastecsv.PasteCSV.render)
 
     def test_load_dynamic(self):
-        destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
-        os.makedirs(destdir)
-
-        versiondir = os.path.join(destdir, 'abcdef')
-        shutil.copytree(os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            'test_data',
-            'imported'
-        ), versiondir)
+        code = b'def render(table, params):\n    return table * 2'
+        minio.minio_client.put_object(minio.ExternalModulesBucket,
+                                      'imported/abcdef/imported.py',
+                                      io.BytesIO(code), len(code))
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
@@ -126,36 +114,40 @@ class LoadedModuleTest(SimpleTestCase):
         assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
 
     def test_load_dynamic_ignore_test_py(self):
-        destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
-        os.makedirs(destdir)
-
-        versiondir = os.path.join(destdir, 'abcdef')
-        shutil.copytree(os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            'test_data',
-            'imported'
-        ), versiondir)
+        code = b'def render(table, params):\n    return table * 2'
+        minio.minio_client.put_object(minio.ExternalModulesBucket,
+                                      'imported/abcdef/imported.py',
+                                      io.BytesIO(code), len(code))
         # write other .py files that aren't module code and should be ignored
-        with open(os.path.join(versiondir, 'setup.py'), 'w'):
-            pass
-        with open(os.path.join(versiondir, 'test_filter.py'), 'w'):
-            pass
+        minio.minio_client.put_object(minio.ExternalModulesBucket,
+                                      'imported/abcdef/setup.py',
+                                      io.BytesIO(b''), 0)
+        minio.minio_client.put_object(minio.ExternalModulesBucket,
+                                      'imported/abcdef/test_imported.py',
+                                      io.BytesIO(b''), 0)
 
         with self.assertLogs('server.models.loaded_module'):
-            LoadedModule.for_module_version_sync(
+            lm = LoadedModule.for_module_version_sync(
                 MockModuleVersion('imported', 'abcdef', 'now')
             )
 
-    def test_load_dynamic_is_cached(self):
-        destdir = os.path.join(settings.IMPORTED_MODULES_ROOT, 'imported')
-        os.makedirs(destdir)
+        # We can't test that render_impl is exactly something, because we
+        # don't have a handle on the loaded Python module outside of
+        # LoadedModule. So we'll test by executing it.
+        #
+        # This ends up being kinda an integration test.
+        with self.assertLogs('server.models.loaded_module'):
+            result = lm.render(MockParams(col='A'),
+                               pd.DataFrame({'A': [1, 2]}),
+                               fetch_result=ProcessResult())
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
 
-        versiondir = os.path.join(destdir, 'abcdef')
-        shutil.copytree(os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            'test_data',
-            'imported'
-        ), versiondir)
+    def test_load_dynamic_is_cached(self):
+        code = b'def render(table, params):\n    return table * 2'
+        minio.minio_client.put_object(minio.ExternalModulesBucket,
+                                      'imported/abcdef/imported.py',
+                                      io.BytesIO(code), len(code))
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(

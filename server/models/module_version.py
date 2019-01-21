@@ -1,7 +1,3 @@
-# ModuleVersion is an id_name plus the code that goes along with it. We store
-# multiple _versions_ of its code, but users can only access the latest
-# version.
-
 import os
 import jsonschema
 import yaml
@@ -9,7 +5,10 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, OuterRef, Subquery
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from .param_field import ParamField, ParamDType
+from server import minio
 
 
 _SpecPath = os.path.join(os.path.dirname(__file__), 'module_spec_schema.yaml')
@@ -106,6 +105,14 @@ class ModuleVersionManager(models.Manager):
 
 
 class ModuleVersion(models.Model):
+    """
+    An (id_name, version) pair and all its logic.
+
+    There are two main parts to a (id_name, version) pair: a database record
+    and code. This class, ModuleVersion, is the database record. The code is in
+    S3 or our repository, and it's handled by LoadedModule.
+    """
+
     class Meta:
         ordering = ['last_update_time']
 
@@ -201,3 +208,12 @@ class ModuleVersion(models.Model):
 
     def __str__(self):
         return '%s#%s' % (self.id_name, self.source_version_hash)
+
+
+@receiver(post_delete, sender=ModuleVersion)
+def _delete_from_s3_post_delete(sender, instance, **kwargs):
+    """
+    Delete module _code_ from S3, now that ModuleVersion is gone.
+    """
+    prefix = '%s/%s/' % (sender.id_name, sender.source_version_hash)
+    minio.remove_recursive(minio.ExternalModulesBucket, prefix)

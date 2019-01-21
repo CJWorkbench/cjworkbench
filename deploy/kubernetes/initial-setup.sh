@@ -59,10 +59,12 @@ gcloud iam service-accounts create production-minio --display-name production-mi
 gsutil mb gs://production-user-files.workbenchdata.com
 gsutil mb gs://production-static.workbenchdata.com
 gsutil mb gs://production-stored-objects.workbenchdata.com
+gsutil mb gs://production-external-modules.workbenchdata.com
 gsutil acl set public-read gs://production-static.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-user-files.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-static.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-stored-objects.workbenchdata.com
+gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-external-modules.workbenchdata.com
 gcloud dns record-sets transaction start --zone=workbenchdata-com
 gcloud dns record-sets transaction add --zone workbenchdata-com --name production-static.workbenchdata.com. --ttl 7200 --type CNAME c.storage.googleapis.com.
 gcloud dns record-sets transaction execute --zone workbenchdata-com

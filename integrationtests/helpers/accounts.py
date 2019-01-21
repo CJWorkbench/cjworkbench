@@ -127,14 +127,15 @@ class AccountAdmin:
         """
         self._sql(_clear_db_sql)
 
-        for subdir in ['importedmodules', 'saveddata']:
-            path = os.path.join(self.data_path, subdir)
-            for subbasename in os.listdir(path):
-                subpath = os.path.join(path, subbasename)
-                if os.path.isfile(subpath):
-                    os.unlink(subpath)
-                else:
-                    shutil.rmtree(subpath)
+        # TODO wipe minio entirely
+
+        path = os.path.join(self.data_path, 'saveddata')
+        for subbasename in os.listdir(path):
+            subpath = os.path.join(path, subbasename)
+            if os.path.isfile(subpath):
+                os.unlink(subpath)
+            else:
+                shutil.rmtree(subpath)
 
     def create_user(self, email: str, username: str=None,
                     password: str=None, is_staff: bool=False,

@@ -3,6 +3,7 @@ from collections import namedtuple
 import datetime
 from functools import partial
 import importlib
+import importlib.abc
 import importlib.util
 import inspect
 import logging
@@ -39,6 +40,7 @@ from ..modules.renamecolumns import RenameFromTable
 from ..modules.duplicatecolumn import DuplicateColumn
 from ..modules.joinurl import JoinURL
 from ..modules.concaturl import ConcatURL
+from server import minio
 
 
 logger = logging.getLogger(__name__)
@@ -352,38 +354,62 @@ class LoadedModule:
                    migrate_params_impl=migrate_params_impl)
 
 
+def _is_basename_python_code(key: str) -> bool:
+    """
+    True iff the given filename is a module's Python code file.
+
+    >>> _is_basename_python_code('filter.py')
+    True
+    >>> _is_basename_python_code('filter.json')  # not Python
+    True
+    >>> _is_basename_python_code('setup.py')  # setup.py is an exception
+    False
+    >>> _is_basename_python_code('test_filter.py')  # tests are exceptions
+    False
+    """
+    if key == 'setup.py':
+        return False
+    if key.startswith('test_'):
+        return False
+    return key.endswith('.py')
+
+
+class TempfileLoader(importlib.abc.SourceLoader):
+    def __init__(self, tf):
+        with open(tf.name, 'rb') as f:
+            self._data = f.read()
+        self._name = tf.name
+
+    def get_data(self, *args):
+        return self._data
+
+    def get_filename(self, *args):
+        return self._name
+
+
 def _load_external_module_uncached(module_id_name: str,
                                    version_sha1: str) -> ModuleType:
     """
     Load a Python Module given a name and version.
     """
-    path_to_code = os.path.join(
-        settings.IMPORTED_MODULES_ROOT,
-        module_id_name,
-        version_sha1
-    )
+    prefix = '%s/%s/' % (module_id_name, version_sha1)
+    all_keys = minio.list_file_keys(minio.ExternalModulesBucket, prefix)
+    python_code_key = next(k for k in all_keys
+                           if _is_basename_python_code(k[len(prefix):]))
 
-    # for now, we are working on the assumption that there's a single Python
-    # file per importable module, so we can just find the single file that
-    # should be in this directory, and boom, job done.
-    for f in os.listdir(path_to_code):
-        if f == 'setup.py':
-            continue
+    with minio.temporarily_download(minio.ExternalModulesBucket,
+                                    python_code_key) as tf:
+        # Now we can load the code into memory.
+        name = '%s.%s' % (module_id_name, version_sha1)
+        logger.info(f'Loading {name} from {tf.name}')
+        spec = importlib.util.spec_from_file_location(
+            name,
+            tf.name,
+            loader=TempfileLoader(tf)
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
 
-        if f.endswith('.py') and not f.startswith('test_'):
-            python_file = os.path.join(path_to_code, f)
-            break
-    else:
-        raise ValueError(f'Expected .py file in {path_to_code}')
-
-    # Now we can load the code into memory.
-    logger.info(f'Loading {python_file}')
-    spec = importlib.util.spec_from_file_location(
-        f'{module_id_name}.{version_sha1}',
-        python_file
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
     return module
 
 
@@ -423,33 +449,14 @@ load_external_module._cache = {}
 load_external_module.cache_clear = load_external_module._cache.clear
 
 
-def module_get_html_path(module_version: ModuleVersion) -> Optional[str]:
-    module_id_name = module_version.id_name
-    version_sha1 = module_version.source_version_hash
-
-    if module_id_name in StaticModules:
-        try:
-            # Store _path_, not _bytes_, in the module. Django's autoreload
-            # won't notice when the HTML changes in dev mode, so it's hard to
-            # develop if the module stores the bytes themselves.
-            return StaticModules[module_id_name].html_path
-        except AttributeError:
-            return None
-    else:
-        path_to_file = os.path.join(settings.IMPORTED_MODULES_ROOT,
-                                    module_id_name, version_sha1)
-
-        for f in os.listdir(path_to_file):
-            if f.endswith('.html'):
-                return os.path.join(path_to_file, f)
-
-        return None
-
-
 def module_get_html_bytes(module_version: ModuleVersion) -> Optional[bytes]:
-    path = module_get_html_path(module_version)
-    if path:
-        with open(path, 'rb') as f:
-            return f.read()
-    else:
-        return None
+    prefix = '%s/%s/' % (module_version.id_name,
+                         module_version.source_version_hash)
+    all_keys = minio.list_file_keys(minio.ExternalModulesBucket, prefix)
+    try:
+        html_key = next(k for k in all_keys if k.endswith('.html'))
+    except StopIteration:
+        return None  # there is no HTML file
+
+    with minio.open_for_read(minio.ExternalModulesBucket, html_key) as f:
+        return f.read()
