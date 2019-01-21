@@ -2,4 +2,19 @@
   input[type=url] {
     @extend %module-parameter;
   }
+
+  .import-github-error, .import-github-success {
+    @extend %font-nunito-extra-light;
+    font-size: 1.3rem;
+    line-height: 1.9rem;
+    margin: 2rem 0;
+  }
+
+  .import-github-error {
+    color: $brand-red;
+  }
+
+  .import-github-success {
+    color: $link-hover-success;
+  }
 }

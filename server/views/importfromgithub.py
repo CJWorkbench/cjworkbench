@@ -1,9 +1,9 @@
-from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
-from server.importmodulefromgithub import import_module_from_github
+from server.importmodulefromgithub import import_module_from_github, \
+        ValidationError
 from server.serializers import ModuleSerializer
 
 

@@ -1,14 +1,11 @@
 import io
 import os
-from pathlib import Path
 import shutil
 import tempfile
 import pandas as pd
-from server.importmodulefromgithub import sanitise_url, \
-        retrieve_project_name, validate_module_structure, \
-        get_module_config_from_json, create_destination_directory, \
-        add_boilerplate_and_check_syntax, validate_python_functions, \
-        extract_version, import_module_from_directory, ValidationError
+from server.importmodulefromgithub import validate_module_structure, \
+        validate_python_functions, import_module_from_directory, \
+        ValidationError
 from server.models import LoadedModule, ModuleVersion, Workflow
 import server.models.loaded_module
 from server.modules.types import ProcessResult
@@ -64,53 +61,6 @@ class ImportFromGitHubTest(DbTestCase):
         pwd = os.path.dirname(os.path.abspath(__file__))
         shutil.copytree(os.path.join(pwd, source_dir), clonedir)
         return clonedir
-
-    # -- Tests ---
-    def test_sanitise_url(self):
-        #test valid url
-        input_url = "https://github.com/anothercookiecrumbles/somerepo"
-        returned_url = sanitise_url(input_url)
-        self.assertEqual(input_url, returned_url, "In this case, the input url doesn't need to be cleaned. Therefore " +
-                         " the output {} should be the input {}.".format(returned_url, input_url))
-
-        #test valid url with a git suffix
-        input_url_git = "https://github.com/anothercookiecrumbles/somerepo.git"
-        returned_url_git = sanitise_url(input_url_git)
-        self.assertEqual(input_url_git, returned_url_git, ".git is optional, and we leave it")
-
-        #test valid url with padding (i.e. extra spaces)
-        input_url_spaces = "     https://github.com/anothercookiecrumbles/somerepo"
-        returned_url_spaces = sanitise_url(input_url)
-        self.assertEqual(input_url, returned_url_spaces, "In this case, the input url just needs to be trimmed."
-                "Therefore the output {} should be the trimmed input {}.".format(returned_url, input_url_spaces))
-
-        input_url_spaces = "     https://github.com/anothercookiecrumbles/somerepo     "
-        returned_url_spaces = sanitise_url(input_url)
-        self.assertEqual(input_url, returned_url_spaces, "In this case, the input url needs to be trimmed. "
-                    "Therefore the output {} should be the input trimmed {}.".format(returned_url, input_url_spaces))
-
-        #test empty string
-        input_url = ""
-        with self.assertRaisesMessage(ValidationError, 'Empty URL'):
-            sanitise_url(input_url)
-
-        input_url = "    " #non-trimmed empty string
-        with self.assertRaisesMessage(ValidationError, 'Empty URL'):
-            sanitise_url(input_url)
-
-        #test non-url
-        input_url = "this is not a url"
-        with self.assertRaisesMessage(ValidationError, 'Invalid Git repo URL entered: %s' % (input_url)):
-            sanitise_url(input_url)
-
-    def test_retrieve_project_name(self):
-        #Here, we assume that we have a _clean_/_sanitised_ URL; if we didn't, the code should've thrown an exception
-        #earlier in the stack. Hence, we don't test _bad_ urls.
-
-        #retrieve project name for a GitHub url, but one that doesn't end .git.
-        git_url = "https://github.com/anothercookiecrumbles/somerepo"
-        project_name = retrieve_project_name(git_url)
-        self.assertEqual(project_name, "somerepo")
 
     def test_validate_module_structure(self):
         # We don't want to rely on a remote repo existing, so we drive this test off a local repo equivalent
@@ -168,100 +118,12 @@ class ImportFromGitHubTest(DbTestCase):
         mapping = validate_module_structure(test_dir)
         self.assertEqual(mapping['py'], 'importable.py')
 
-    def test_extract_version_hash(self):
-        test_dir = self.fake_github_clone()
-        os.rename(os.path.join(test_dir, 'git'),
-                  os.path.join(test_dir, '.git'))
-        self.assertTrue(os.path.isdir(os.path.join(test_dir, ".git")))
-        version = extract_version(test_dir)
-        self.assertEquals(
-            version,
-            '7832830',
-            ('The hash of the git repo should be {}, '
-             'but the function returned {}.'.format('427847c', version))
-        )
-
-    def test_validate_json(self):
-        test_dir = self.fake_github_clone()
-
-        # ensure we get a ValidationError if the mapping doesn't have a json
-        # key, i.e. missing json file.
-        mapping = {}
-        with self.assertRaises(ValidationError):
-            get_module_config_from_json("", mapping, test_dir)
-
-        # check valid scenario, i.e. the system successfully parses the JSON
-        # configuration.
-        mapping = {'json': 'importable.json', 'py': 'importable.py'}
-        module_config = get_module_config_from_json("", mapping, test_dir)
-        self.assertTrue(
-            len(module_config) == 5,
-            ('The configuration should have loaded 5 items, but it loaded '
-             ' {} items.').format(len(module_config)))
-        self.assertTrue(
-            all(k in module_config
-                for k in ("id_name", "description", "name",
-                          "category", "parameters")),
-            "Not all mandatory keys exist in the module_config/json file."
-        )
-
-    def test_create_destination_directory(self):
-        pwd = os.path.dirname(os.path.abspath(__file__))
-
-        # Should create destination and originals files directory
-        destination_directory = create_destination_directory('my_id_name', '123456')
-        expected_path = os.path.normpath(pwd + '/../../importedmodules/my_id_name/123456')
-        self.assertTrue(Path(destination_directory) == Path(expected_path))
-        self.assertTrue(os.path.isdir(destination_directory))
-        self.assertTrue(os.path.isdir(destination_directory + '-original'))
-
-        # should work even if files already exists for the given module-version combination
-        # in which case the dir should be deleted, so as to be ready for re-import
-        junkfile = os.path.join(destination_directory, "junk")
-        open(junkfile, 'w+')
-        self.assertTrue(os.path.isfile(junkfile))
-        create_destination_directory('my_id_name','123456')
-        self.assertFalse(os.path.isfile(junkfile))
-
-
-    def test_add_boilerplate_and_check_syntax(self):
-        test_dir = self.fake_github_clone()
-        destination_directory = os.path.join(self.imported_dir(), "123456")
-
-        os.makedirs(destination_directory)
-        shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
-
-        # test valid scenario. Failures should raise ValidationError
-        compiled = add_boilerplate_and_check_syntax(destination_directory, "importable.py")
-        shutil.rmtree(destination_directory)
-
-        # test invalid scenario: what if Python file doesn't exist.
-        self.fake_github_clone()
-        os.makedirs(destination_directory)
-        with self.assertRaises(ValidationError):
-            compiled = add_boilerplate_and_check_syntax(destination_directory, "importable.py")
-
-        # test invalid scenario: what if Python file exists but can't be compiled.
-        # create file and add some random content to file
-        f = open(os.path.join(test_dir, 'additional_file.py'), 'a')
-        f.write("random content here")
-        f.close()
-        shutil.copy(os.path.join(test_dir, "additional_file.py"), destination_directory)
-
-        with self.assertRaises(ValidationError):
-            compiled = add_boilerplate_and_check_syntax(destination_directory, "additional_file.py")
-
-
     def test_validate_python_functions(self):
-
-        #test valid scenario
         test_dir = self.fake_github_clone()
-        add_boilerplate_and_check_syntax(test_dir , "importable.py")  # adds crucial boilerplate to the file
         validate_python_functions(test_dir , "importable.py")
 
         # test missing/unloadable render function
         test_dir = self.fake_github_clone('test_data/missing_render_module')
-        add_boilerplate_and_check_syntax(test_dir, "missing_render_module.py")
         with self.assertRaises(ValidationError):
             validate_python_functions(test_dir, "missing_render_module.py")
 
@@ -270,30 +132,30 @@ class ImportFromGitHubTest(DbTestCase):
     def test_load_invalid_code(self):
         test_dir = self.fake_github_clone('test_data/bad_json_module')
         with self.assertRaises(ValidationError):
-            import_module_from_directory("https://test_url_of_test_module", "bad_json_module", "123456", test_dir)
+            import_module_from_directory("123456", test_dir)
 
         test_dir = self.fake_github_clone('test_data/bad_py_module')
         with self.assertRaises(ValidationError):
-            import_module_from_directory("https://test_url_of_test_module", "bad_py_module", "123456", test_dir)
+            import_module_from_directory("123456", test_dir)
 
 
     # loading the same version of the same module twice should fail
     def test_load_twice(self):
         test_dir = self.fake_github_clone()
-        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+        import_module_from_directory("123456", test_dir)
 
         test_dir = self.fake_github_clone() # import moves files, so get same files again
         with self.assertRaises(ValidationError):
-            import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+            import_module_from_directory("123456", test_dir)
 
     # We will do a reload of same version if force_reload==True
     def test_load_twice_force_relaod(self):
         test_dir = self.fake_github_clone()
-        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+        import_module_from_directory("123456", test_dir)
         self.assertEqual(ModuleVersion.objects.filter(id_name=self.importable_id_name).count(), 1)
 
         test_dir = self.fake_github_clone() # import moves files, so get same files again
-        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir, force_reload=True)
+        import_module_from_directory("123456", test_dir, force_reload=True)
 
         # should replace existing module_version, not add a new one
         self.assertEqual(ModuleVersion.objects.filter(id_name=self.importable_id_name).count(), 1)
@@ -301,7 +163,7 @@ class ImportFromGitHubTest(DbTestCase):
     # all exsting wf_modules should get bumped to new version when we import a new version of the module
     def test_updates_module_version(self):
         test_dir = self.fake_github_clone()
-        import_module_from_directory("https://test_url_of_test_module", "importable", "111111", test_dir)
+        import_module_from_directory("111111", test_dir)
         module_version_q = ModuleVersion.objects.filter(id_name=self.importable_id_name)
         self.assertEqual(module_version_q.count(), 1)
 
@@ -317,7 +179,7 @@ class ImportFromGitHubTest(DbTestCase):
 
         # import "new" version (different version hash)
         test_dir = self.fake_github_clone()
-        import_module_from_directory("https://test_url_of_test_module", "importable", "222222", test_dir)
+        import_module_from_directory("222222", test_dir)
         self.assertEqual(module_version_q.count(), 2)
 
         # should be able to update wfm to newly imported version
@@ -327,12 +189,12 @@ class ImportFromGitHubTest(DbTestCase):
     # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion
     def test_already_imported(self):
         test_dir = self.fake_github_clone()
-        import_module_from_directory("https://github.com/account/importable1", "importable1", "123456", test_dir)
+        import_module_from_directory("123456", test_dir)
 
         test_dir = self.fake_github_clone() # import moves files, so get same files again
         with self.assertRaises(ValidationError):
             with self.assertLogs():
-                import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)
+                import_module_from_directory("123456", test_dir)
 
     # THE BIG TEST. Load a module and test that we can render it correctly
     # This is really an integration test, runs both load and dispatch code
@@ -340,8 +202,7 @@ class ImportFromGitHubTest(DbTestCase):
         try:
             test_dir = self.fake_github_clone()
 
-            import_module_from_directory('https://github.com/account/reponame',
-                                         'reponame', '123456', test_dir)
+            import_module_from_directory('123456', test_dir)
 
             # ModuleVersion should have loaded -- raise exception if not
             module_version = ModuleVersion.objects \
