@@ -4,7 +4,7 @@
   "category" : "Clean",
   "help_url":"modules/convert-to-date-time",
   "icon": "calendar",
-  "description": "",
+  "description": "Convert columns type to Date and time.",
   "parameters": [
     {
       "name": "",

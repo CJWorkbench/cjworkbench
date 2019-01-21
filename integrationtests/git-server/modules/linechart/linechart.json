@@ -26,13 +26,13 @@
       "placeholder": "Select column"
     },
     {
-      "name": "Y axis",
+      "name": "Y Axis",
       "id_name": "y_axis_label",
       "type": "string",
       "placeholder": "Label"
     },
     {
-      "name": "Columns",
+      "name": "Column",
       "id_name": "y_columns",
       "type": "custom",
       "placeholder": "Select column"

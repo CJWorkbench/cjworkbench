@@ -29,7 +29,7 @@ To add a feature on the HTML/JavaScript side:
 To develop continuously on Workbench:
 
 1. Check this code out in a sibling directory to your checked-out Workbench code
-1. Start Workbench with ``CACHE_MODULES=false bin/dev start``
+1. Start Workbench with ``bin/dev start``
 2. In a separate tab in the Workbench directory, run ``bin/dev develop-module linechart``
 3. Edit this code; the module will be reloaded in Workbench immediately
 4. When viewing the chart in Workbench, modify parameters to re-render JSON and refresh the page to load new HTML

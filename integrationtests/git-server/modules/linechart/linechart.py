@@ -167,6 +167,7 @@ class Chart:
                     'field': 'line',
                     'type': 'nominal',
                     'scale': {
+                        'domain': [y.name for y in self.y_columns],
                         'range': [y.color for y in self.y_columns],
                     },
                 },
@@ -176,10 +177,7 @@ class Chart:
         if len(self.y_columns) == 1:
             ret['encoding']['color']['legend'] = None
         else:
-            ret['encoding']['color']['legend'] = {
-                'title': '',
-                'shape': 'circle',
-            }
+            ret['encoding']['color']['legend'] = {'title': None}
             ret['config']['legend'] = {
                 'symbolType': 'circle',
                 'titlePadding': 20,
