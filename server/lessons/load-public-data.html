@@ -69,12 +69,12 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
-      data-test="return workflow.tabs[0].wfModules.length > 2 && workflow.tabs[0].wfModuleNames[1] === 'Filter'"
-      >Add the step ‘Filter’ between 'Add from URL' and 'Column Chart'.</li>
+      data-highlight='[{"type":"Module","index":1,"name":"Filter by condition"}]'
+      data-test="return workflow.tabs[0].wfModules.length > 2 && workflow.tabs[0].wfModuleNames[1] === 'Filter by condition'"
+      >Add the step ‘Filter by condition’ between 'Add from URL' and 'Column Chart'.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
-      data-test="const p = workflow.tabs[0].wfModules[1].params; return p.column === 'affordable_units' && p.condition === 10 && p.value === '200' && p.keep === 0"
+      data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
+      data-test="const p = workflow.tabs[0].wfModules[1].params; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep === 0"
       >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd></br> and enter the value <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
