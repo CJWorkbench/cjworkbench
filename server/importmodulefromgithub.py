@@ -165,9 +165,15 @@ def import_module_from_github(url, force_reload=False):
         importdir = os.path.join(td, 'repo')
         os.mkdir(importdir)
 
+        clone_kwargs = {}
+        if url.startswith('https://github.com/'):
+            # depth=1: do not clone entire repo -- just the latest commit. Not
+            # every HTTP server supports `depth`. (Indeed, our integration-test
+            # HTTP server doesn't.) But we know GitHub does.
+            clone_kwargs['depth'] = 1
+
         try:
-            # depth=1: do not clone entire repo -- just the latest commit
-            repo = git.Repo.clone_from(url, importdir, depth=1)
+            repo = git.Repo.clone_from(url, importdir, **clone_kwargs)
         except GitCommandError as err:
             raise ValidationError(
                 f'Unable to clone {url}: {str(err)}'
