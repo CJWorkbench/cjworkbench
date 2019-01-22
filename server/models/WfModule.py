@@ -3,6 +3,7 @@ import shutil
 from typing import Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from server import minio
 from server.models import loaded_module
 from server.modules.types import ProcessResult
 from .Params import Params
@@ -281,7 +282,7 @@ class WfModule(models.Model):
         # fully-rendered duplicate Workflow.
         #
         # get_cached_render_result() does not check for the existence of
-        # Parquet files. But it does let us access `.parquet_path`.
+        # Parquet files. But it does let us access `.parquet_key`.
         cached_result = self.get_cached_render_result(only_fresh=True)
         if cached_result:
             # assuming file-copy succeeds, copy cached results.
@@ -293,14 +294,20 @@ class WfModule(models.Model):
                 full_attr = f'cached_render_result_{attr}'
                 setattr(new_wfm, full_attr, getattr(self, full_attr))
 
-            new_wfm.save()  # so there is a new_wfm.id for parquet_path
+            new_wfm.save()  # so there is a new_wfm.id for parquet_key
 
-            parquet_path = new_wfm.get_cached_render_result().parquet_path
+            parquet_key = new_wfm.get_cached_render_result().parquet_key
 
             try:
-                os.makedirs(os.path.dirname(parquet_path), exist_ok=True)
-                shutil.copy(cached_result.parquet_path, parquet_path)
-            except FileNotFoundError:
+                minio.minio_client.copy_object(
+                    minio.CachedRenderResultsBucket,
+                    parquet_key,
+                    '%(Bucket)s/%(Key)s' % {
+                        'Bucket': minio.CachedRenderResultsBucket,
+                        'Key': cached_result.parquet_key,
+                    }
+                )
+            except minio.error.NoSuchKey:
                 # DB and filesystem are out of sync. CachedRenderResult handles
                 # such cases gracefully. So `new_result` will behave exactly
                 # like `cached_result`.

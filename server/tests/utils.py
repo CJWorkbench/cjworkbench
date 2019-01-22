@@ -130,16 +130,24 @@ def clear_db():
 
 
 def clear_minio():
+    buckets = (
+        minio.UserFilesBucket,
+        minio.StoredObjectsBucket,
+        minio.ExternalModulesBucket,
+        minio.CachedRenderResultsBucket,
+    )
+
     if not hasattr(clear_minio, '_initialized'):
-        minio.ensure_bucket_exists(minio.UserFilesBucket)
-        minio.ensure_bucket_exists(minio.StoredObjectsBucket)
-        minio.ensure_bucket_exists(minio.ExternalModulesBucket)
+        # Ensure buckets exist -- only on first call
+        for bucket in buckets:
+            minio.ensure_bucket_exists(bucket)
         clear_minio._initialized = True
 
-    for bucket in (minio.UserFilesBucket, minio.StoredObjectsBucket,
-                   minio.ExternalModulesBucket):
+    for bucket in buckets:
         keys = [o.object_name
                 for o in minio.minio_client.list_objects_v2(bucket,
                                                             recursive=True)
                 if not o.is_dir]
-        minio.minio_client.remove_objects(bucket, keys)
+        if keys:
+            for err in minio.minio_client.remove_objects(bucket, keys):
+                raise err

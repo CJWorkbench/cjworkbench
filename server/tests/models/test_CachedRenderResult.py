@@ -5,6 +5,7 @@ from server.tests.utils import DbTestCase
 from server.models import Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import Column, ProcessResult, QuickFix
+from server import minio
 
 
 class CachedRenderResultTests(DbTestCase):
@@ -34,7 +35,13 @@ class CachedRenderResultTests(DbTestCase):
         self.assertEqual(cached.delta_id, 2)
         self.assertEqual(cached.result, result)
 
-        self.assertTrue(os.path.isfile(cached.parquet_path))
+        self.assertEqual(
+            cached.parquet_key,
+            (
+                f'wf-{self.workflow.id}/wfm-{self.wf_module.id}'
+                f'/delta-2.dat'
+            )
+        )
 
         self.wf_module.save()
         db_wf_module = WfModule.objects.get(id=self.wf_module.id)
@@ -48,7 +55,7 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.cache_render_result(2, result)
         self.wf_module.save()
 
-        parquet_path = self.wf_module.get_cached_render_result().parquet_path
+        parquet_key = self.wf_module.get_cached_render_result().parquet_key
 
         db_wf_module = WfModule.objects.get(id=self.wf_module.id)
         db_wf_module.cache_render_result(3, None)
@@ -56,7 +63,9 @@ class CachedRenderResultTests(DbTestCase):
 
         db_wf_module = WfModule.objects.get(id=self.wf_module.id)
         self.assertIsNone(db_wf_module.get_cached_render_result())
-        self.assertFalse(os.path.isfile(parquet_path))
+        with self.assertRaises(minio.error.NoSuchKey):
+            minio.minio_client.get_object(minio.CachedRenderResultsBucket,
+                                          parquet_key)
 
     def test_metadata_comes_from_memory_when_available(self):
         result = ProcessResult(pandas.DataFrame({
@@ -71,7 +80,8 @@ class CachedRenderResultTests(DbTestCase):
         #
         # This is great for the render pipeline: it never reads from the file
         # it writes, as it renders all modules sequentially.
-        os.unlink(cached_result.parquet_path)
+        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
+                                         cached_result.parquet_key)
         self.assertFalse(cached_result._result is None)
 
         self.assertEqual(cached_result.result, result)
@@ -99,7 +109,8 @@ class CachedRenderResultTests(DbTestCase):
 
         cached_result = self.wf_module.get_cached_render_result()
         cached_result.parquet_file  # read header
-        os.unlink(cached_result.parquet_path)
+        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
+                                         cached_result.parquet_key)
         self.assertEqual(len(cached_result), 1)
         self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
         self.assertEqual(cached_result.column_types,
@@ -120,23 +131,11 @@ class CachedRenderResultTests(DbTestCase):
         self.wf_module.cache_render_result(2, result)
         self.wf_module.save()
 
-        parquet_path = self.wf_module.get_cached_render_result().parquet_path
+        parquet_key = self.wf_module.get_cached_render_result().parquet_key
         self.wf_module.delete()
-        self.assertFalse(os.path.isfile(parquet_path))
-
-    def test_delete_after_wf_module_hard_delete(self):
-        result = ProcessResult(pandas.DataFrame({'a': [1]}))
-        self.wf_module.cache_render_result(2, result)
-        self.wf_module.save()
-
-        parquet_path = self.wf_module.get_cached_render_result().parquet_path
-
-        db_wf_module = WfModule.objects.get(id=self.wf_module.id)
-        db_wf_module.delete()
-
-        self.assertIsNone(db_wf_module.get_cached_render_result())
-        self.assertFalse(os.path.isfile(parquet_path))
-
+        with self.assertRaises(minio.error.NoSuchKey):
+            minio.minio_client.get_object(minio.CachedRenderResultsBucket,
+                                          parquet_key)
         # Note: we _don't_ test soft-delete. Soft-deleted modules aren't
         # extremely common, so it's not like we'll be preserving terabytes of
         # unused cached render results.

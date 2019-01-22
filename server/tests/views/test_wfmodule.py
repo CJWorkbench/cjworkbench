@@ -8,6 +8,7 @@ import pandas as pd
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
+from server import minio
 from server.models import Workflow
 from server.modules.types import ProcessResult
 from server.views.WfModule import wfmodule_detail
@@ -140,7 +141,8 @@ class WfModuleTests(LoggedInTestCase):
 
         # Simulate a race: we're overwriting the cache or deleting the WfModule
         # or some-such.
-        os.unlink(crr.parquet_path)
+        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
+                                         crr.parquet_key)
 
         response = self.client.get('/api/wfmodules/%d/render'
                                    % self.wf_module2.id)
@@ -257,7 +259,8 @@ class WfModuleTests(LoggedInTestCase):
 
         # Simulate a race: we're overwriting the cache or deleting the WfModule
         # or some-such.
-        os.unlink(crr.parquet_path)
+        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
+                                         crr.parquet_key)
 
         response = self.client.get(
             f'/api/wfmodules/{self.wf_module2.id}/value-counts?column=A'

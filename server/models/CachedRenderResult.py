@@ -1,17 +1,19 @@
-import os
 import json
 from typing import Any, Dict, List, Optional
-from django.core.files.storage import default_storage
 import pandas
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server.modules.types import Column, ProcessResult, QuickFix
-from server import parquet
+from server import minio, parquet
 
 
-def _parquet_path(workflow_id: int, wf_module_id: int):
-    """Return the path on disk where we save Parquet. for this wf_module."""
-    path = f'cached-render-results/wf-{workflow_id}/wfm-{wf_module_id}.dat'
-    return default_storage.path(path)
+def parquet_prefix(workflow_id: int, wf_module_id: int) -> str:
+    """
+    "Directory" name in the `minio.CachedRenderResultsBucket` bucket.
+    
+    The name ends with '/'. _All_ cached data for the specified WfModule is
+    stored under that prefix.
+    """
+    return 'wf-%d/wfm-%d/' % (workflow_id, wf_module_id)
 
 
 def _dtype_to_column_type(dtype) -> str:
@@ -50,14 +52,23 @@ class CachedRenderResult:
         self.quick_fixes = quick_fixes
 
     @property
-    def parquet_path(self):
-        return _parquet_path(self.workflow_id, self.wf_module_id)
+    def parquet_key(self):
+        """
+        Path to a file, used by the `parquet` module.
+        """
+        return '%sdelta-%d.dat' % (
+            parquet_prefix(self.workflow_id, self.wf_module_id),
+            self.delta_id
+        )
 
     @property
     def parquet_file(self):
         if not hasattr(self, '_parquet_file'):
             try:
-                self._parquet_file = parquet.read_header(self.parquet_path)
+                self._parquet_file = parquet.read_header(
+                    minio.CachedRenderResultsBucket,
+                    self.parquet_key
+                )
             except OSError:
                 # Two possibilities:
                 #
@@ -208,13 +219,9 @@ class CachedRenderResult:
         wf_module.cached_render_result_json = b'null'
         wf_module.cached_render_result_quick_fixes = []
 
-        # We're setting non-None to None. That means there's probably
-        # a file to delete.
-        parquet_path = _parquet_path(wf_module.workflow_id, wf_module.id)
-        try:
-            os.remove(parquet_path)
-        except FileNotFoundError:
-            pass
+        minio.remove_recursive(minio.CachedRenderResultsBucket,
+                               parquet_prefix(wf_module.workflow_id,
+                                              wf_module.id))
 
     @staticmethod
     def assign_wf_module(wf_module: 'WfModule',
@@ -249,23 +256,17 @@ class CachedRenderResult:
         wf_module.cached_render_result_quick_fixes = [qf.to_dict()
                                                       for qf in quick_fixes]
 
-        parquet_path = _parquet_path(wf_module.workflow_id, wf_module.id)
+        minio.remove_recursive(minio.CachedRenderResultsBucket,
+                               parquet_prefix(wf_module.workflow_id,
+                                              wf_module.id))
 
-        os.makedirs(os.path.dirname(parquet_path), exist_ok=True)
-
-        if result is None:
-            try:
-                os.remove(parquet_path)
-            except FileNotFoundError:
-                pass
-            return None
-        else:
-            parquet.write(parquet_path, result.dataframe)
-
+        if result is not None:
             ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
                                      wf_module_id=wf_module.id,
                                      delta_id=delta_id, status=status,
                                      error=error, json=json_dict,
                                      quick_fixes=quick_fixes)
+            parquet.write(minio.CachedRenderResultsBucket, ret.parquet_key,
+                          result.dataframe)
             ret._result = result  # no need to read from disk
             return ret

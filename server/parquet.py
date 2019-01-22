@@ -1,9 +1,30 @@
-from pathlib import Path
+import io
+import tempfile
 import fastparquet
 from fastparquet import ParquetFile
 import pandas
 import snappy
 import warnings
+from server import minio
+
+
+def _minio_open(path, mode):
+    assert mode == 'rb'
+    bucket, key = path.split('/', 1)
+
+    if path.endswith('/_metadata'):
+        # fastparquet insists upon trying for the 'hive' storage schema before
+        # settling on the 'simple' storage schema. At no time have we ever
+        # saved a file in 'hive' format; therefore there are no '_metadata'
+        # files; therefore we can skip hitting minio here.
+        raise FileNotFoundError
+
+    # TODO store column metadata in the database, so we don't need to read it
+    # from S3. Then consider minio.FullReadMinioFile, which could be faster.
+    # (We'll want to benchmark.) Another option is to use the 'hive' format and
+    # FullReadMinioFile; but that choice would be hard to un-choose, so let's
+    # not rush into it.
+    return minio.RandomReadMinioFile(bucket, key)
 
 
 # Suppress this arning:
@@ -44,19 +65,20 @@ class FastparquetIssue375(FastparquetCouldNotHandleFile):
     pass
 
 
-def read_header(path: Path) -> ParquetFile:
+def read_header(bucket: str, key: str) -> ParquetFile:
     """
     Ensure a ParquetFile exists, and return it with headers read.
 
-    May raise OSError (e.g., FileNotFoundError) or
-    FastparquetCouldNotHandleFile.
+    May raise FileNotFoundError or FastparquetCouldNotHandleFile.
 
     `retval.fn` gives the filename; `retval.columns` gives column names;
     `retval.dtypes` gives pandas dtypes, and `retval.to_pandas()` reads
     the entire file.
     """
     try:
-        return fastparquet.ParquetFile(path)
+        # file_scheme='simple' saves us a test for the '_metadata' key
+        return fastparquet.ParquetFile(('%s/%s' % (bucket, key),),
+                                       open_with=_minio_open)
     except IndexError:
         # TODO nix this when fastparquet resolves
         # https://github.com/dask/fastparquet/issues/361
@@ -69,7 +91,7 @@ def read_header(path: Path) -> ParquetFile:
         raise FastparquetIssue361
 
 
-def read(path: Path) -> pandas.DataFrame:
+def read(bucket: str, key: str) -> pandas.DataFrame:
     """
     Load a Pandas DataFrame from disk or raise FileNotFoundError or
     FastparquetCouldNotHandleFile.
@@ -81,8 +103,8 @@ def read(path: Path) -> pandas.DataFrame:
     files are so old we won't attempt to support them.
     """
     try:
-        pf = read_header(path)
-        return pf.to_pandas()  # no need to close? Weird API
+        pf = read_header(bucket, key)
+        return pf.to_pandas()  # does its own open()-ing.
     except snappy.UncompressError as err:
         if str(err) == 'Error while decompressing: invalid input':
             # Assume Fastparquet is reporting the wrong bug.
@@ -95,16 +117,19 @@ def read(path: Path) -> pandas.DataFrame:
         raise FastparquetIssue375
 
 
-def write(path: Path, table: pandas.DataFrame) -> None:
+def write(bucket: str, key: str, table: pandas.DataFrame) -> int:
     """
-    Write a Pandas DataFrame to a file on disk, overwriting if needed.
+    Write a Pandas DataFrame to a minio file, overwriting if needed.
 
-    `path`'s directory must exist, and the user must have permission to write
-    to `path`: otherwise, this function raises OSError.
+    Return number of bytes written.
 
     We aim to keep the file format "stable": all future versions of
     parquet.read() should support all files written by today's version of this
     function.
     """
-    fastparquet.write(path, table, compression='SNAPPY',
-                      object_encoding='utf8')
+    with tempfile.NamedTemporaryFile() as tf:
+        fastparquet.write(tf.name, table, compression='SNAPPY',
+                          object_encoding='utf8')
+        minio.minio_client.fput_object(bucket, key, tf.name)
+        tf.seek(0, io.SEEK_END)
+        return tf.tell()

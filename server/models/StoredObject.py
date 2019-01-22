@@ -66,11 +66,7 @@ class StoredObject(models.Model):
         # Write to minio bucket/key
         bucket = minio.StoredObjectsBucket
         key = _build_key(wf_module.workflow_id, wf_module.id)
-        with tempfile.NamedTemporaryFile() as tf:
-            parquet.write(tf.name, table)
-            size = tf.seek(0, os.SEEK_END)
-            tf.seek(0)
-            minio.minio_client.put_object(bucket, key, tf, length=size)
+        size = parquet.write(bucket, key, table)
 
         # Create the object that references the bucket/key
         return wf_module.stored_objects.create(
@@ -87,17 +83,16 @@ class StoredObject(models.Model):
             # empty tables weren't being written.
             return pd.DataFrame()
 
-        with minio.temporarily_download(self.bucket, self.key) as tf:
-            try:
-                return parquet.read(tf.name)
-            except parquet.FastparquetCouldNotHandleFile:
-                return pd.DataFrame()  # empty table
+        try:
+            return parquet.read(self.bucket, self.key)
+        except parquet.FastparquetCouldNotHandleFile:
+            return pd.DataFrame()  # empty table
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
         key = _build_key(to_wf_module.workflow_id, to_wf_module.id)
         minio.minio_client.copy_object(self.bucket, key,
-                                       f'/{self.bucket}/{self.key}')
+                                       f'{self.bucket}/{self.key}')
 
         return to_wf_module.stored_objects.create(
             stored_at=self.stored_at,

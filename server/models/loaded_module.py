@@ -14,7 +14,6 @@ import traceback
 from types import ModuleType
 from typing import Any, Awaitable, Callable, Dict, Optional
 from channels.db import database_sync_to_async
-from django.conf import settings
 from django.contrib.auth.models import User
 import pandas as pd
 from .module_version import ModuleVersion
