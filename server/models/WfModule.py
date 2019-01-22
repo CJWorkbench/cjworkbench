@@ -1,5 +1,3 @@
-import os
-import shutil
 from typing import Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models

@@ -9,7 +9,7 @@ from server import minio, parquet
 def parquet_prefix(workflow_id: int, wf_module_id: int) -> str:
     """
     "Directory" name in the `minio.CachedRenderResultsBucket` bucket.
-    
+
     The name ends with '/'. _All_ cached data for the specified WfModule is
     stored under that prefix.
     """
