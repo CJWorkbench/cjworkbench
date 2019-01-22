@@ -2,8 +2,8 @@ import binascii
 import email
 import email.message
 import hashlib
+import minio
 import os
-import shutil
 from typing import Optional
 import weakref
 import psycopg2
@@ -11,6 +11,32 @@ from integrationtests.browser import Browser
 
 
 EmailPath = '/app/local_mail'
+
+
+def _minio_connect():
+    try:
+        return _minio_connect._connection
+    except AttributeError:
+        protocol, _unused, endpoint = os.environ['MINIO_URL'].split('/')
+        mc = minio.Minio(endpoint, access_key=os.environ['MINIO_ACCESS_KEY'],
+                         secret_key=os.environ['MINIO_SECRET_KEY'],
+                         secure=(protocol == 'https:'))
+        _minio_connect._connection = mc
+        return mc
+
+
+def _clear_minio():
+    mc = _minio_connect()
+
+    for bucket_name in ('user-files', 'stored-objects',
+                        'external-modules', 'cached-render-results'):
+        bucket = f'integrationtest-{bucket_name}'
+        keys = [o.object_name
+                for o in mc.list_objects_v2(bucket, '', recursive=True)
+                if not o.is_dir]
+        if keys:
+            for err in mc.remove_objects(bucket, keys):
+                raise err
 
 
 def login(browser: Browser, email: str, password: str) -> None:
@@ -127,15 +153,7 @@ class AccountAdmin:
         """
         self._sql(_clear_db_sql)
 
-        # TODO wipe minio entirely
-
-        path = os.path.join(self.data_path, 'saveddata')
-        for subbasename in os.listdir(path):
-            subpath = os.path.join(path, subbasename)
-            if os.path.isfile(subpath):
-                os.unlink(subpath)
-            else:
-                shutil.rmtree(subpath)
+        _clear_minio()
 
     def create_user(self, email: str, username: str=None,
                     password: str=None, is_staff: bool=False,

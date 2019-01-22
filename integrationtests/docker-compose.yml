@@ -72,7 +72,6 @@ services:
       MINIO_BUCKET_PREFIX: integrationtest
     volumes:
       - local_mail:/app/local_mail
-      - saveddata:/app/media
 
   cron:
     #image:
@@ -91,8 +90,6 @@ services:
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: integrationtest
-    volumes:
-      - saveddata:/app/media
 
   frontend:
     #image:
@@ -115,7 +112,6 @@ services:
       STATIC_URL: http://minio:9000/integrationtest-static/
     volumes:
       - local_mail:/app/local_mail
-      - saveddata:/app/media
 
   integration-test:
     #image:
@@ -125,13 +121,15 @@ services:
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     volumes:
       - local_mail:/app/local_mail
-      - saveddata:/app/saveddata
     environment:
       PYTHONUNBUFFERED: '1'
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio:9000
+      MINIO_BUCKET_PREFIX: integrationtest
 
 volumes:
   local_mail: {}  # worker/frontend write emails; integration-test reads them
-  saveddata: {}
 
 networks:
   default: {}

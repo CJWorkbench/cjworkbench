@@ -30,7 +30,7 @@ RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.23.0/gec
 #
 # Integration tests don't rely on the Django stack, and that makes this
 # Dockerfile compile faster and cache better.
-RUN pip install psycopg2-binary capybara-py selenium
+RUN pip install psycopg2-binary capybara-py selenium minio
 
 WORKDIR /app
 
