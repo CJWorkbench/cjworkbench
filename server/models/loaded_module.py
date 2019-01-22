@@ -8,6 +8,7 @@ import importlib.util
 import inspect
 import logging
 import os
+from pathlib import Path
 import sys
 import time
 import traceback
@@ -116,10 +117,10 @@ class LoadedModule:
     """A module with `fetch` and `render` methods.
     """
     def __init__(self, module_id_name: str, version_sha1: str,
-                 is_external: bool=True,
-                 render_impl: Callable=_default_render,
-                 fetch_impl: Callable=_default_fetch,
-                 migrate_params_impl: Optional[Callable]=None):
+                 is_external: bool = True,
+                 render_impl: Callable = _default_render,
+                 fetch_impl: Callable = _default_fetch,
+                 migrate_params_impl: Optional[Callable] = None):
         self.module_id_name = module_id_name
         self.version_sha1 = version_sha1
         self.is_external = is_external
@@ -449,8 +450,29 @@ load_external_module.cache_clear = load_external_module._cache.clear
 
 
 def module_get_html_bytes(module_version: ModuleVersion) -> Optional[bytes]:
-    prefix = '%s/%s/' % (module_version.id_name,
-                         module_version.source_version_hash)
+    if module_version.id_name in StaticModules:
+        return _internal_module_get_html_bytes(module_version.id_name)
+    else:
+        return _external_module_get_html_bytes(
+            module_version.id_name,
+            module_version.source_version_hash
+        )
+
+
+def _internal_module_get_html_bytes(id_name: str) -> Optional[bytes]:
+    try:
+        with open(
+            Path(__file__).parent.parent / 'modules' / f'{id_name}.html',
+            'rb'
+        ) as f:
+            return f.read()
+    except FileNotFoundError:
+        return None
+
+
+def _external_module_get_html_bytes(id_name: str,
+                                    version: str) -> Optional[bytes]:
+    prefix = '%s/%s/' % (id_name, version)
     all_keys = minio.list_file_keys(minio.ExternalModulesBucket, prefix)
     try:
         html_key = next(k for k in all_keys if k.endswith('.html'))
