@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 import json
 from server.models.commands import InitWorkflowCommand
-from server.models import Lesson, Workflow
+from server.models import Lesson, Workflow, ModuleVersion
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
 
@@ -41,10 +41,48 @@ def _ensure_workflow(request, lesson):
             anonymous_owner_session_key=session_key,
             lesson_slug=lesson.slug
         )
+
         if created:
-            workflow.tabs.create(position=0)
-            InitWorkflowCommand.create(workflow)
+            _init_workflow_for_lesson(workflow, lesson)
         return workflow
+
+
+def _init_workflow_for_lesson(workflow, lesson):
+    InitWorkflowCommand.create(workflow)
+
+    if lesson.initial_workflow is None:
+        workflow.tabs.create(position=0)
+    else:
+        # Create each wfModule of each tab
+        tab_dicts = lesson.initial_workflow.tabs
+        for position, tab_dict in enumerate(tab_dicts):
+            tab = workflow.tabs.create(position=position, name=tab_dict['name'])
+            for order, wfm in enumerate(tab_dict['wfModules']):
+                newwfm = _add_wf_module_to_tab(wfm, order, tab)
+
+
+def _add_wf_module_to_tab(wfm_dict, order, tab):
+    """
+    Rehydrate a WfModule from the lesson "initial workflow" json serialization format
+    """
+    id_name = wfm_dict['module']
+    module_version = ModuleVersion.objects.latest(id_name)  # 500 error if bad module id name
+
+    # All params not set in json get default values
+    # Also, we must have a dict with all param values set or we can't migrate_params later
+    params = {
+        **module_version.default_params,
+        **wfm_dict['params'],
+    }
+
+    wfm = tab.wf_modules.create(
+        order=order,
+        module_id_name=id_name,
+        params=params
+    )
+
+    return wfm
+
 
 
 def _render_get_lesson_detail(request, lesson):
