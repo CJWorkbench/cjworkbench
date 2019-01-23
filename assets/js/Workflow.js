@@ -66,6 +66,12 @@ export class Workflow extends React.PureComponent {
     if (this.props.lesson) {
       className += ' in-lesson'
     }
+    if (this.props.isReadOnly) {
+      className += ' read-only'
+    }
+    if (this.props.isAnonymous) {
+      className += ' anonymous'
+    }
 
     return (
       <div className={className}>
@@ -110,4 +116,4 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps
-)(Workflow);
+)(Workflow)
