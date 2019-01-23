@@ -211,9 +211,11 @@ class RandomReadMinioFile(io.RawIOBase):
     def writable(self):
         return False
 
-    def read(self, size):
-        ret = super().read(size)
-        return ret
+    def read(self, size=-1):
+        # TODO optimization: when size extends beyond our block (and in
+        # particular, is -1), read all the blocks we need _in a single HTTP
+        # request_ and then call super().read(size).
+        return super().read(size)
 
     # override io.RawIOBase
     def readinto(self, b: bytes) -> int:
