@@ -8,11 +8,8 @@ import warnings
 from server import minio
 
 
-def _minio_open(path, mode):
-    assert mode == 'rb'
-    bucket, key = path.split('/', 1)
-
-    if path.endswith('/_metadata'):
+def _minio_open(bucket, key):
+    if key.endswith('/_metadata'):
         # fastparquet insists upon trying for the 'hive' storage schema before
         # settling on the 'simple' storage schema. At no time have we ever
         # saved a file in 'hive' format; therefore there are no '_metadata'
@@ -24,7 +21,13 @@ def _minio_open(path, mode):
     # (We'll want to benchmark.) Another option is to use the 'hive' format and
     # FullReadMinioFile; but that choice would be hard to un-choose, so let's
     # not rush into it.
-    return minio.RandomReadMinioFile(bucket, key)
+    raw = minio.RandomReadMinioFile(bucket, key)
+
+    # fastparquet actually expects a _buffered_ reader -- it expects `read()`
+    # to always return a buffer of the same length it requests.
+    buffered = io.BufferedReader(raw)
+
+    return buffered
 
 
 # Suppress this arning:
@@ -75,10 +78,10 @@ def read_header(bucket: str, key: str) -> ParquetFile:
     `retval.dtypes` gives pandas dtypes, and `retval.to_pandas()` reads
     the entire file.
     """
+    filelike = _minio_open(bucket, key)  # raises FileNotFoundError
     try:
         # file_scheme='simple' saves us a test for the '_metadata' key
-        return fastparquet.ParquetFile(('%s/%s' % (bucket, key),),
-                                       open_with=_minio_open)
+        return fastparquet.ParquetFile(filelike)
     except IndexError:
         # TODO nix this when fastparquet resolves
         # https://github.com/dask/fastparquet/issues/361
