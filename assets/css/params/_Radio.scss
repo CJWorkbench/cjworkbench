@@ -1,8 +1,6 @@
 .param-radio {
-  position: relative; // place the radio buttons at the same height as play button
+
   .button-group {
-    position: absolute;
-    top: .5rem;
     display: flex;
     align-items: center;
 
@@ -42,8 +40,5 @@
         background-color: $brand-orange;
       }
     }
-  }
-  &.read-only {
-    height: 2rem;
   }
 }

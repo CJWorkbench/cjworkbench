@@ -1,6 +1,7 @@
-from server.models import Workflow
+from server.models import Lesson, Workflow, ModuleVersion
 from server.tests.utils import DbTestCase, create_test_user
-
+from server.tests.models.test_Lesson import lesson_text_with_initial_workflow
+from unittest.mock import patch
 
 class LessonDetailTests(DbTestCase):
     def log_in(self):
@@ -83,9 +84,9 @@ class LessonDetailTests(DbTestCase):
     # to keep canonical-URL tests in one file.
     #
     # We're testing that the rules are:
-    # * GET /workflows/:id/ when there is a lesson: redirect to lesson
-    # * GET /workflows/:id/ when there is no lesson: display
-    # * GET /lessons/:slug/ when there is a workflow: display, with 'lesson'
+    # * GET /workflows/:id/ when the wf has lesson_slug=...: redirect to lesson (the user already started this lesson)
+    # * GET /workflows/:id/ when the wf is not a lesson (lesson_slug==None): display wf as usual
+    # * GET /lessons/:slug/ when there is a wf with that slug (user has already started lesson): display, with 'lesson'
     def test_get_workflow_with_lesson_slug(self):
         self.log_in()
 
@@ -113,3 +114,50 @@ class LessonDetailTests(DbTestCase):
         response = self.client.get(workflow.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
+
+
+    # Check that lesson initial workflow json gets rehydrated into a real workflow with multiple tabs
+    @patch.object(Lesson.objects, 'get')
+    def test_initial_workflow_from_json(self, get):
+
+        initial_workflow_json = """
+            {
+              "tabs": [
+                {
+                  "name": "Tab X",
+                  "wfModules": [
+                    {
+                      "module": "loadurl",
+                      "params": {
+                        "url": "http://foo.com",
+                        "has_header": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+        """
+        get.return_value = Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
+
+        load_module_spec = {
+          "name": "Add from URL",
+          "id_name": "loadurl" ,
+          "category" : "Add data",
+          "parameters": [
+            {
+              "name": "",
+              "id_name" : "url",
+              "type": "string",
+            }
+          ]
+        }
+        ModuleVersion.create_or_replace_from_spec(load_module_spec)
+
+        self.log_in()
+        response = self.client.get('/lessons/whatever')
+        tabs = response.context_data['initState']['tabs']
+        keys=list(tabs.keys())
+        self.assertEqual(tabs[keys[0]]['name'], 'Tab X')
+
+

@@ -48,6 +48,7 @@
   // same. We set position=relative and textarea position absolute -- this
   // makes the textarea take the size of its contents.
   position: relative;
+  word-break: break-all;
 
   .invisible-size-setter {
     visibility: hidden;
