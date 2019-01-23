@@ -1,5 +1,9 @@
 .param-radio {
 
+  &:last-child {
+    margin-bottom: -3rem;
+  }
+
   .button-group {
     display: flex;
     align-items: center;
@@ -40,5 +44,12 @@
         background-color: $brand-orange;
       }
     }
+  }
+}
+
+// Exec button will not be displayed on read only 
+.workflow-root.read-only {
+  .param-radio:last-child {
+      margin-bottom: 0;
   }
 }

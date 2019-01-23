@@ -21,7 +21,7 @@
     position: relative;
     border: 0;
     outline: none;
-    width: $module-width; 
+    width: $module-width;
     left: 1rem;
     min-height: 3rem;
     resize: none;
@@ -63,7 +63,6 @@
     // if they are non-empty. But we cannot set display:none, because the user
     // may call notesInputRef.current.focus() before they become visible.
     position: relative; // so we can position `.wf-module .module-notes::before`
-    margin-bottom: .5rem;
 
     &:not(.visible) {
       overflow: hidden;
@@ -466,6 +465,13 @@
   }
 }
 
+// margin top to compensate for the absence of in-between module button
+.workflow-root.read-only {
+
+  .module-notes {
+      margin-top: 2rem;
+  }
+}
 
 .wf-module.lesson-highlight .module-content {
   outline: 2px solid $brand-learn;

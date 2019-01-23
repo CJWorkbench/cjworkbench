@@ -16,10 +16,6 @@
         top:0;
       }
     }
-
-    &.read-only {
-      height: 2rem;
-    }
   }
 
   .caught-error { // when a module does not load
