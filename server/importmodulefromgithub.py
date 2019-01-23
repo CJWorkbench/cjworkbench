@@ -80,12 +80,6 @@ def validate_python_functions(destination_directory, python_file):
         raise ValidationError("Module render() function is missing.")
 
 
-# Directories that the module files go through as we load and validate them
-CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))  # path of this file
-ROOT_DIRECTORY = os.path.dirname(CURRENT_PATH)
-MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
-
-
 # Load a module after cloning from github
 # This is the guts of our module import, also a good place to hook into for
 # tests (bypassing github access). Returns a dictionary of info to display to
@@ -107,8 +101,6 @@ def import_module_from_directory(version, importdir, force_reload=False):
     validate_python_functions(importdir, python_file)
 
     id_name = module_config['id_name']
-
-    destination_directory = os.path.join(MODULE_DIRECTORY, id_name, version)
 
     if not force_reload:
         # Don't allow importing the same version twice
