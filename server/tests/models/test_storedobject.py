@@ -1,7 +1,6 @@
 import io
 import os
 import json
-import tempfile
 from django.conf import settings
 import numpy as np
 import pandas as pd
@@ -10,12 +9,8 @@ from server.minio import minio_client, StoredObjectsBucket, error
 from server.models import StoredObject, Workflow
 from server.sanitizedataframe import sanitize_dataframe
 from server.tests.utils import DbTestCase
-from django.test import override_settings
 
 
-# don't clutter media directory with our tests (and don't accidentally succeed
-# because of files there)
-@override_settings(MEDIA_ROOT=tempfile.gettempdir())
 class StoredObjectTests(DbTestCase):
     def setUp(self):
         super().setUp()

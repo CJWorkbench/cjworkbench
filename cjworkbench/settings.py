@@ -52,11 +52,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Configuration below uses these instead of BASE_DIR
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
-# /media is where uploaded files, fetched data, and cached tables are strored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-if not os.path.isdir(MEDIA_ROOT):
-    os.makedirs(MEDIA_ROOT)
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 

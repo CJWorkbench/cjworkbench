@@ -55,17 +55,11 @@ spec:
             - name: MINIO_BUCKET_SUFFIX
               value: '.workbenchdata.com'
           volumeMounts:
-            # TODO make sure no migrations depend on mounted volumes, then nix mounts
-            - mountPath: /app/importedmodules
-              name: importedmodules-pv
             # TODO Find a way to load_socialaccounts? Depending on a secret takes a lot of config
             - mountPath: /app/secrets/socialaccount-secrets
               name: socialaccount-secrets
               readOnly: true
       volumes:
-        - name: importedmodules-pv
-          persistentVolumeClaim:
-            claimName: importedmodules-pvc
         - name: socialaccount-secrets
           secret:
             secretName: socialaccount-secrets
