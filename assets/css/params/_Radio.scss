@@ -1,7 +1,7 @@
 .param-radio {
 
   &:last-child {
-    margin-bottom: -3rem;
+    margin-bottom: -3.2rem;
   }
 
   .button-group {
@@ -47,7 +47,7 @@
   }
 }
 
-// Exec button will not be displayed on read only 
+// Exec button will not be displayed on read only
 .workflow-root.read-only {
   .param-radio:last-child {
       margin-bottom: 0;
