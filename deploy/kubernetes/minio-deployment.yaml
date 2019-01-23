@@ -6,8 +6,10 @@ metadata:
   # This name uniquely identifies the Deployment
   name: minio-deployment
 spec:
-  strategy:
-    type: Recreate
+  selector:
+    matchLabels:
+      app: minio-app
+  replicas: 2
   template:
     metadata:
       labels:
@@ -29,11 +31,11 @@ spec:
         - gcs
         resources:
           requests:
-            cpu: 0.05
-            memory: 75Mi
-          limits:
             cpu: 0.1
-            memory: 75Mi
+            memory: 150Mi
+          limits:
+            cpu: 0.25
+            memory: 150Mi
         env:
         # Minio access key and secret key determine which clients have access
         # to minio (and thus all uploaded files). For us, the correct answer is
