@@ -81,10 +81,6 @@ spec:
             - name: MINIO_BUCKET_SUFFIX
               value: '.workbenchdata.com'
           volumeMounts:
-            - mountPath: /app/importedmodules
-              name: importedmodules-pv
-            - mountPath: /app/media
-              name: saveddata-pv
             - mountPath: /app/secrets/google-oauth-secret
               name: google-oauth-secret
               readOnly: true
@@ -95,12 +91,6 @@ spec:
               name: twitter-oauth-secret
               readOnly: true
       volumes:
-        - name: importedmodules-pv
-          persistentVolumeClaim:
-            claimName: importedmodules-pvc
-        - name: saveddata-pv
-          persistentVolumeClaim:
-            claimName: saveddata-pvc
         - name: google-oauth-secret
           secret:
             secretName: google-oauth-secret

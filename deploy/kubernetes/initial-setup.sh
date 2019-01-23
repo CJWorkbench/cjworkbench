@@ -28,43 +28,20 @@ CLUSTER_NAME="workbench"
 #kubectl create namespace production
 #kubectl create namespace staging
 
-
-# 1. Create NFS volumes (ReadWriteMany volumes). TODO stop using the
-# filesystem, so we can stop using NFS and end the madness.
-
-# 1.1 Create NFS server, with a _real_ disk backing it
-kubectl -n production apply -f nfs-server-pvc.yaml
-kubectl -n production apply -f nfs-server-service.yaml
-kubectl -n production apply -f nfs-server-deployment.yaml
-
-# 1.2 Mount that volume (over NFS), simply to
-# mkdir /importedmodules /saveddata
-kubectl -n production apply -f all-nfs-data-pvc.yaml
-kubectl -n production apply -f all-nfs-data-pv.yaml
-kubectl -n production apply -f init-nfs-data-job.yaml
-kubectl -n production wait --for=condition=complete job/init-nfs-data-job
-kubectl -n production delete -f all-nfs-data-pv.yaml
-kubectl -n production delete -f all-nfs-data-pvc.yaml
-
-# 1.3 Create the volumes. After this, mounting either PersistentVolumeClaim
-# will mean, "mount using NFS."
-kubectl -n production apply -f saveddata-pvc.yaml
-kubectl -n production apply -f saveddata-pv.yaml
-kubectl -n production apply -f importedmodules-pvc.yaml
-kubectl -n production apply -f importedmodules-pv.yaml
-
-# 1.4 Prepare Google Cloud Storage and Minio
-# 1.4.1 GCS account, so minio can create buckets/objects
+# 1 Prepare Google Cloud Storage and Minio
+# 1.1 GCS account, so minio can create buckets/objects
 gcloud iam service-accounts create production-minio --display-name production-minio
 gsutil mb gs://production-user-files.workbenchdata.com
 gsutil mb gs://production-static.workbenchdata.com
 gsutil mb gs://production-stored-objects.workbenchdata.com
 gsutil mb gs://production-external-modules.workbenchdata.com
+gsutil mb gs://production-cached-render-results.workbenchdata.com
 gsutil acl set public-read gs://production-static.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-user-files.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-static.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-stored-objects.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-external-modules.workbenchdata.com
+gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-cached-render-results.workbenchdata.com
 gcloud dns record-sets transaction start --zone=workbenchdata-com
 gcloud dns record-sets transaction add --zone workbenchdata-com --name production-static.workbenchdata.com. --ttl 7200 --type CNAME c.storage.googleapis.com.
 gcloud dns record-sets transaction execute --zone workbenchdata-com
@@ -74,7 +51,7 @@ gcloud iam service-accounts keys create application_default_credentials.json \
 kubectl -n production create secret generic minio-gcs-credentials \
   --from-file=./application_default_credentials.json
 rm application_default_credentials.json
-# 1.4.2 minio access key and secret key
+# 1.2 minio access key and secret key
 #docker run --name minio-genkey --rm minio/minio server /nodata and after it prints info, Ctrl+C
 kubectl -n production create secret generic minio-access-key \
   --from-literal=access_key="$MINIO_ACCESS_KEY" \
