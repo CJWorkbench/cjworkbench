@@ -230,7 +230,7 @@ class Delta(PolymorphicModel):
 
     @property
     def command_description(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def __str__(self):
         return str(self.datetime) + ' ' + self.command_description
