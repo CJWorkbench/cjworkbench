@@ -174,7 +174,7 @@ class RandomReadMinioFile(io.RawIOBase):
 
         response = self._request_block(0)
 
-        self.size = int(response.headers['Content-Length'])
+        self.size = int(response.headers['Content-Range'].split('/')[1])
         self.tempfile = tempfile.TemporaryFile(prefix='RandomReadMinioFile')
         self.tempfile.truncate(self.size)  # allocate disk space
         nblocks = math.ceil(self.size / self.block_size)
@@ -204,8 +204,16 @@ class RandomReadMinioFile(io.RawIOBase):
         super().close()
 
     # override io.IOBase
-    def writable():
+    def readable(self):
+        return True
+
+    # override io.IOBase
+    def writable(self):
         return False
+
+    def read(self, size):
+        ret = super().read(size)
+        return ret
 
     # override io.RawIOBase
     def readinto(self, b: bytes) -> int:
