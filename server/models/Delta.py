@@ -6,10 +6,11 @@ import json
 from typing import Any
 from channels.db import database_sync_to_async
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import models
+from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
 from server import rabbitmq, websockets
+from server.models import WfModule
 from server.serializers import WfModuleSerializer
 
 
@@ -227,6 +228,71 @@ class Delta(PolymorphicModel):
             workflow.save(update_fields=['last_delta_id'])
 
             return (delta, delta.load_ws_data())
+
+    def delete_with_successors(self):
+        # Delete all the deltas. Do it in SQL, not code -- there can be
+        # thousands.
+        #
+        # Assumes a delta with a higher ID is a successor.
+        #
+        # Oh, Did You Know: django-polymorphic does not have a "delete"
+        # feature?
+        command_relations = [
+            rel
+            for rel in Delta._meta.related_objects
+            if rel.parent_link
+        ]
+        with_clauses = [
+            f"""
+            delete_{i} AS (
+                DELETE FROM {rel.related_model._meta.db_table} t
+                WHERE t.{rel.get_joining_columns()[0][1]} IN (
+                    SELECT id FROM to_delete
+                )
+            )
+            """
+            for i, rel in enumerate(command_relations)
+        ]
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+            WITH
+            to_delete AS (
+                SELECT id
+                FROM {Delta._meta.db_table}
+                WHERE workflow_id = {int(self.workflow_id)}
+                  AND id >= {int(self.id)}
+            ),
+            {', '.join(with_clauses)}
+            DELETE FROM {Delta._meta.db_table}
+            WHERE id IN (SELECT id FROM to_delete)
+            """)
+
+        # Delete any soft-deleted WfModules that aren't referenced by deltas
+        # any more.
+        #
+        # There are lots of foreign relations -- one per WfModule-related
+        # Delta. Let's build the query dynamically.
+        related_fields = [
+            f
+            for f in WfModule._meta.get_fields()
+            if f.is_relation and issubclass(f.related_model, Delta)
+        ]
+        conditions = [
+            f"""
+            NOT EXISTS (
+                SELECT TRUE
+                FROM {f.related_model._meta.db_table}
+                WHERE {f.get_joining_columns()[0][1]} = wf_module.id
+            )
+            """
+            for f in related_fields
+        ]
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                DELETE FROM {WfModule._meta.db_table} wf_module
+                WHERE is_deleted
+                  AND {' AND '.join(conditions)}
+            """)
 
     @property
     def command_description(self):

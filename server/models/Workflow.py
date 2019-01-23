@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from typing import Optional
 import warnings
 from django.db import models, transaction
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import F
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
@@ -215,7 +215,8 @@ class Workflow(models.Model):
 
     @classmethod
     @contextmanager
-    def authorized_lookup_and_cooperative_lock(cls, level, user, session, **kwargs):
+    def authorized_lookup_and_cooperative_lock(cls, level, user, session,
+                                               **kwargs):
         """
         Efficiently lookup and lock a Workflow in one operation.
 
@@ -289,15 +290,6 @@ class Workflow(models.Model):
     def get_absolute_url(self):
         return reverse('workflow', args=[str(self.pk)])
 
-    def delete(self, *args, **kwargs):
-        # Delete deltas before deleting everything else. This avoids trying to
-        # delete a WfModule before its Delta.
-        deltas = list(self.deltas.order_by('-id'))
-        for delta in deltas:
-            delta.delete()
-
-        super().delete(*args, **kwargs)
-
     def __str__(self):
         return self.name + ' - id: ' + str(self.id)
 
@@ -351,12 +343,12 @@ class Workflow(models.Model):
             # We're already a 1-delta Workflow
             return
 
-        second_delta.delete()  # will CASCADE to delete all subsequent deltas
+        second_delta.delete_with_successors()
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         # Clear delta history. Deltas can reference WfModules: if we don't
         # clear the deltas, Django may decide to CASCADE to WfModule first and
         # we'll raise a ProtectedError.
         self.clear_deltas()
 
-        super().delete()
+        super().delete(*args, **kwargs)

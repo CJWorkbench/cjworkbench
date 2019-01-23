@@ -100,26 +100,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
 
         self.backward_affected_delta_ids()
 
-    def delete(self):
-        # Don't let Django batch deletes. We really need to delete in order,
-        # because we need to delete AddModuleCommand last so we can
-        # garbage-collect its WfModule.
-        #
-        # TODO let's avoid putting database IDs in deltas! Then we could
-        # hard-delete WfModules instead of soft-deleting them.
-        try:
-            self.next_delta.delete()
-        except Delta.DoesNotExist:
-            pass
-
-        super().delete()
-
-        if self.wf_module.is_deleted:
-            # The WfModule was soft-deleted, and this is the last Delta that
-            # references it. After deleting this Delta there are no more
-            # pointers to this WfModule. Delete it.
-            self.wf_module.delete()
-
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, module_id_name,
                             position, param_values, **kwargs):
