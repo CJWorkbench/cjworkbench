@@ -65,12 +65,6 @@
         margin-top: .1rem;
       }
     }
-
-    &.lesson-highlight button.search {
-      border:2px solid $brand-learn;
-      color: $brand-learn;
-      &:hover{background-color: $brand-learn--light}
-    }
   }
 
   // Button to call the module search between modules

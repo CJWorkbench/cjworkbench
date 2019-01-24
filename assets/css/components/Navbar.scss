@@ -221,10 +221,9 @@
       padding-right:1.5rem;
       text-overflow: ellipsis;
 
-    }
-
-    .editable-title--field:hover{
-      background-color: rgba(250,250,250,0.2);
+      &:hover {
+        background-color: $light-accent--strong;
+      }
     }
   }
 }
@@ -244,6 +243,18 @@
 
   button[name=duplicate] {
     display: none;
+  }
+
+  .editable-title--field {
+    cursor: default;
+
+    &:hover {
+      background-color: transparent; // FIXME The title should no be editable in lesson
+    }
+  }
+
+  .metadata-container {
+    cursor: default;
   }
 }
 
