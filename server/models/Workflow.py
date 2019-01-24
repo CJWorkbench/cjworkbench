@@ -185,10 +185,6 @@ class Workflow(models.Model):
             return self.creation_date
         return self.last_delta.datetime
 
-    @property
-    def live_wf_modules(self):
-        return self.wf_modules.filter(is_deleted=False)
-
     @classmethod
     @contextmanager
     def lookup_and_cooperative_lock(cls, **kwargs):

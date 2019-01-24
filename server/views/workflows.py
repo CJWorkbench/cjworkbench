@@ -38,9 +38,7 @@ def make_init_state(request, workflow=None, modules=None):
             ret['tabs'] = dict((str(tab.id), TabSerializer(tab).data)
                                for tab in tabs)
 
-            tab_ids = [tab.id for tab in tabs]
-            wf_modules = list(WfModule.objects.filter(is_deleted=False,
-                                                      tab_id__in=tab_ids))
+            wf_modules = list(WfModule.live_in_workflow(workflow))
 
             ret['wfModules'] = dict((str(wfm.id), WfModuleSerializer(wfm).data)
                                     for wfm in wf_modules)

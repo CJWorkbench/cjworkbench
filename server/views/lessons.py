@@ -11,6 +11,7 @@ from server.views.workflows import visible_modules, make_init_state
 from asgiref.sync import async_to_sync
 from server import rabbitmq
 
+
 # because get_object_or_404() is for _true_ django.db.models.Manager
 def _get_lesson_or_404(slug):
     try:
@@ -57,42 +58,64 @@ def _init_workflow_for_lesson(workflow, lesson):
         # Create each wfModule of each tab
         tab_dicts = lesson.initial_workflow.tabs
         for position, tab_dict in enumerate(tab_dicts):
-
             # Set selected module to last wfmodule in stack
-            tab = workflow.tabs.create(position=position,
-                                       name=tab_dict['name'],
-                                       selected_wf_module_position=len(tab_dict['wfModules']) - 1)
+            tab = workflow.tabs.create(
+                position=position,
+                name=tab_dict['name'],
+                selected_wf_module_position=len(tab_dict['wfModules']) - 1
+            )
 
             for order, wfm in enumerate(tab_dict['wfModules']):
-                newwfm = _add_wf_module_to_tab(wfm, order, tab)
-
-                # mimic AddModuleCommand.forward(). If we don't set this, the module gets confused about cache state
-                newwfm.last_relevant_delta_id = workflow.last_delta.id
-                newwfm.save()
+                _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id)
 
 
-def _add_wf_module_to_tab(wfm_dict, order, tab):
+def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id):
     """
-    Rehydrate a WfModule from the lesson "initial workflow" json serialization format
+    Deserialize a WfModule from lesson initial_workflow
     """
     id_name = wfm_dict['module']
-    module_version = ModuleVersion.objects.latest(id_name)  # 500 error if bad module id name
+
+    # 500 error if bad module id name
+    module_version = ModuleVersion.objects.latest(id_name)
 
     # All params not set in json get default values
-    # Also, we must have a dict with all param values set or we can't migrate_params later
+    # Also, we must have a dict with all param values set or we can't migrate
+    # params later
     params = {
         **module_version.default_params,
         **wfm_dict['params'],
     }
 
-    wfm = tab.wf_modules.create(
+    # 500 error if params are invalid
+    # TODO testme
+    module_version.param_schema.validate(params)  # raises ValueError
+
+    return tab.wf_modules.create(
         order=order,
         module_id_name=id_name,
+        is_busy=module_version.loads_data,  # assume we'll send a fetch
+        last_relevant_delta_id=delta_id,
         params=params
     )
 
-    return wfm
 
+def _queue_workflow_updates(workflow: Workflow) -> None:
+    have_a_module = False
+    have_a_fetch_module = False
+
+    for tab in workflow.tabs.all():
+        for wfm in tab.wf_modules.all():
+            have_a_module = True
+            # If this module fetches, do the fetch now (so e.g. Loadurl loads
+            # immediately)
+            if wfm.is_busy:
+                have_a_fetch_module = True
+                async_to_sync(rabbitmq.queue_fetch)(wfm)
+
+    if have_a_module and not have_a_fetch_module:
+        # Render. (e.g., pastecsv)
+        async_to_sync(rabbitmq.queue_render)(workflow.id,
+                                             workflow.last_delta_id)
 
 
 def _render_get_lesson_detail(request, lesson):
@@ -104,17 +127,7 @@ def _render_get_lesson_detail(request, lesson):
 
     # If we just initialized this workflow, start fetches and render
     if created:
-        for tab in workflow.tabs.all():
-            for wfm in tab.wf_modules.all():
-                # If this module fetches, do the fetch now (so e.g. Loadurl loads immediately)
-                if wfm.module_version.loads_data:
-                     wfm.is_busy = True
-                     wfm.save()
-                     async_to_sync(rabbitmq.queue_fetch)(wfm)
-
-        # Force a complete wf render. The fetch can also cause a render, but modules on other tabs still need to render
-        async_to_sync(rabbitmq.queue_render)(workflow.id,
-                                             workflow.last_delta_id)
+        _queue_workflow_updates(workflow)
 
     return TemplateResponse(request, 'workflow.html',
                             {'initState': init_state})

@@ -1,8 +1,48 @@
-from server.models import Lesson, Workflow, ModuleVersion
-from server.tests.utils import DbTestCase, create_test_user
-from server.tests.models.test_Lesson import lesson_text_with_initial_workflow
+import asyncio
+from typing import Any, Dict, List
 from unittest.mock import patch
+from server.models import Lesson, LessonHeader, LessonFooter, \
+    LessonInitialWorkflow, Workflow, ModuleVersion, LoadedModule
+from server.tests.utils import DbTestCase, create_test_user
 
+
+async def async_noop(*args, **kwargs):
+    pass
+
+
+future_none = asyncio.Future()
+future_none.set_result(None)
+
+
+class MockLoadedModule():
+    """Make a valid migrate_params()"""
+    def migrate_params(self, schema, params):
+        return params
+
+
+def lesson_with_initial_workflow(initial_workflow):
+    return Lesson(
+        'slug',
+        LessonHeader('', ''),
+        [],
+        LessonFooter('', ''),
+        LessonInitialWorkflow(initial_workflow),
+    )
+
+
+def create_module_version(id_name: str, parameters: List[Dict[str, Any]],
+                          **kwargs):
+    ModuleVersion.create_or_replace_from_spec({
+        'id_name': id_name,
+        'name': 'something',
+        'category': 'Clean',
+        'parameters': parameters,
+        **kwargs
+    })
+
+
+@patch.object(LoadedModule, 'for_module_version_sync',
+              lambda x: MockLoadedModule())
 class LessonDetailTests(DbTestCase):
     def log_in(self):
         self.user = create_test_user()
@@ -115,49 +155,73 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
 
-
-    # Check that lesson initial workflow json gets rehydrated into a real workflow with multiple tabs
+    @patch('server.rabbitmq.queue_render')
     @patch.object(Lesson.objects, 'get')
-    def test_initial_workflow_from_json(self, get):
-
-        initial_workflow_json = """
+    def test_create_initial_workflow(self, get, render):
+        get.return_value = lesson_with_initial_workflow([
             {
-              "tabs": [
-                {
-                  "name": "Tab X",
-                  "wfModules": [
+                'name': 'Tab X',
+                'wfModules': [
                     {
-                      "module": "loadurl",
-                      "params": {
-                        "url": "http://foo.com",
-                        "has_header": true
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-        """
-        get.return_value = Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
+                        'module': 'amodule',
+                        'params': {'foo': 'bar'},
+                    },
+                ],
+            },
+        ])
 
-        load_module_spec = {
-          "name": "Add from URL",
-          "id_name": "loadurl" ,
-          "category" : "Add data",
-          "parameters": [
-            {
-              "name": "",
-              "id_name" : "url",
-              "type": "string",
-            }
-          ]
-        }
-        ModuleVersion.create_or_replace_from_spec(load_module_spec)
+        render.return_value = future_none
+
+        create_module_version('amodule', [
+            {'id_name': 'foo', 'type': 'string'},
+        ], loads_data=False)
 
         self.log_in()
         response = self.client.get('/lessons/whatever')
-        tabs = response.context_data['initState']['tabs']
-        keys=list(tabs.keys())
-        self.assertEqual(tabs[keys[0]]['name'], 'Tab X')
+        state = response.context_data['initState']
+        tabs = state['tabs']
+        tab1 = list(tabs.values())[0]
+        self.assertEqual(tab1['name'], 'Tab X')
+        wf_modules = state['wfModules']
+        wfm1 = list(wf_modules.values())[0]
+        self.assertEqual(wfm1['module'], 'amodule')
+        self.assertEqual(wfm1['params'], {'foo': 'bar'})
+        self.assertEqual(wfm1['is_busy'], False)
 
+        # We should be rendering the modules
+        render.assert_called_with(state['workflow']['id'],
+                                  wfm1['last_relevant_delta_id'])
 
+    @patch('server.rabbitmq.queue_fetch')
+    @patch('server.rabbitmq.queue_render')
+    @patch.object(Lesson.objects, 'get')
+    def test_fetch_initial_workflow(self, get, render, fetch):
+        get.return_value = lesson_with_initial_workflow([
+            {
+                'name': 'Tab X',
+                'wfModules': [
+                    {
+                        'module': 'amodule',
+                        'params': {'foo': 'bar'},
+                    },
+                ],
+            },
+        ])
+
+        fetch.return_value = future_none
+
+        create_module_version('amodule', [
+            {'id_name': 'foo', 'type': 'string'},
+        ], loads_data=True)
+
+        self.log_in()
+        response = self.client.get('/lessons/whatever')
+        state = response.context_data['initState']
+        wf_modules = state['wfModules']
+        wfm1 = list(wf_modules.values())[0]
+        self.assertEqual(wfm1['is_busy'], True)  # because we sent a fetch
+
+        # We should be rendering the modules
+        fetch.assert_called()
+        self.assertEqual(fetch.call_args[0][0].id, wfm1['id'])
+        render.assert_not_called()

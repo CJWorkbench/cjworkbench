@@ -180,7 +180,7 @@ class LessonHeader:
 
 class LessonInitialWorkflow:
     def __init__(self, initial_tabs):
-        self.tabs = initial_tabs # a list of dicts, each describing a tab
+        self.tabs = initial_tabs  # a list of dicts, each describing a tab
 
     def __eq__(self, other):
         return self.tabs == other.tabs
