@@ -114,8 +114,8 @@ class ChannelTests(DbTestCase):
 
         self.user = User.objects.create(username='usual',
                                         email='usual@example.org')
-        self.workflow = Workflow.objects.create(name='Workflow 1',
-                                                owner=self.user)
+        self.workflow = Workflow.create_and_init(name='Workflow 1',
+                                                 owner=self.user)
         self.application = self.mock_auth_middleware(create_url_router())
 
         self.communicators = []
@@ -135,7 +135,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_deny_other_users_workflow(self, communicate):
-        other_workflow = Workflow.objects.create(
+        other_workflow = Workflow.create_and_init(
                 name='Workflow 2',
                 owner=User.objects.create(username='other',
                                           email='other@example.org')
@@ -147,7 +147,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_allow_anonymous_workflow(self, communicate):
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=None,
             anonymous_owner_session_key='a-key'
         )
@@ -159,7 +159,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_deny_other_users_anonymous_workflow(self, communicate):
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             anonymous_owner_session_key='some-other-key'
         )
         comm = communicate(self.application, f'/workflows/{workflow.id}/')
@@ -347,3 +347,31 @@ class ChannelTests(DbTestCase):
                 'error': 'request.requestId must be an integer',
             }
         })
+
+    @patch('server.rabbitmq.queue_render')
+    @async_test
+    async def test_connect_queues_render_if_needed(self, communicate,
+                                                   queue_render):
+        """
+        Queue a render if connecting to a stale workflow.
+        """
+        future_args = asyncio.get_event_loop().create_future()
+
+        async def do_queue(*args):
+            future_args.set_result(args)
+        queue_render.side_effect = do_queue
+
+        # Make it so the workflow needs a render
+        self.workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='whatever',
+            last_relevant_delta_id=self.workflow.last_delta_id,
+            cached_render_result_delta_id=None
+        )
+
+        comm = communicate(self.application, f'/workflows/{self.workflow.id}')
+        connected, _ = await comm.connect()
+        self.assertTrue(connected)
+        await comm.receive_from()  # ignore initial workflow delta
+        args = await asyncio.wait_for(future_args, 0.005)
+        self.assertEqual(args, (self.workflow.id, self.workflow.last_delta_id))

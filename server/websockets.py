@@ -76,8 +76,12 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             return False
 
     @database_sync_to_async
-    def get_workflow_as_delta(self):
-        """Return an apply-delta dict, or raise Workflow.DoesNotExist."""
+    def get_workflow_as_delta_and_needs_render(self):
+        """
+        Return (apply-delta dict, needs_render), or raise Workflow.DoesNotExist
+
+        needs_render is a (workflow_id, delta_id) pair.
+        """
         with Workflow.authorized_lookup_and_cooperative_lock(
             'read',
             self.scope['user'],
@@ -101,7 +105,12 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                                            WfModuleSerializer(wfm).data)
                                           for wfm in wf_modules)
 
-            return ret
+            if workflow.are_all_render_results_fresh():
+                needs_render = None
+            else:
+                needs_render = (workflow.id, workflow.last_delta_id)
+
+            return (ret, needs_render)
 
     async def connect(self):
         if not await self.authorize('read'):
@@ -129,13 +138,27 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_whole_workflow_to_client(self):
         try:
-            delta = await self.get_workflow_as_delta()
+            delta, needs_render = \
+                    await self.get_workflow_as_delta_and_needs_render()
             await self.send_data_to_workflow_client({
                 'data': {  # TODO why the nesting?
                     'type': 'apply-delta',
                     'data': delta,
                 }
             })
+            if needs_render:
+                # Solve a problem: what if, when the user reconnects, the
+                # workflow isn't rendered?
+                #
+                # Usually, a render is happening. But sometimes not. Perhaps we
+                # cleared the cache. Or perhaps we deployed a new version of
+                # Workbench that doesn't use the same cache format -- making
+                # every workflow's cache invalid. In those cases, we should
+                # cause a render just by dint of a user reconnecting.
+                workflow_id, delta_id = needs_render
+                logger.debug('Queue render of Workflow %d v%d',
+                             workflow_id, delta_id)
+                await rabbitmq.queue_render(workflow_id, delta_id)
         except Workflow.DoesNotExist:
             pass
 
