@@ -155,5 +155,5 @@ async def handle_fetch(message):
         kwargs = msgpack.unpackb(message.body, raw=False)
         try:
             await fetch(**kwargs)
-        except:
+        except Exception:
             logger.exception('Error during fetch')

@@ -31,9 +31,8 @@ class FetchTests(DbTestCase):
         load_module.return_value = fake_module
         fake_module.fetch.side_effect = fake_fetch
 
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
             next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
             update_interval=600
@@ -135,8 +134,10 @@ class FetchTests(DbTestCase):
         # Mock wf_module.save(), which we aren't testing.
         wf_module.save = Mock()
 
-        self.run_with_async_db(fetch.fetch_wf_module(workflow_id, wf_module,
-                                                     timezone.now()))
+        with self.assertLogs(fetch.__name__, logging.DEBUG):
+            self.run_with_async_db(fetch.fetch_wf_module(workflow_id,
+                                                         wf_module,
+                                                         timezone.now()))
 
         save.assert_called_once()
         self.assertEqual(save.call_args[0][0], workflow_id)
