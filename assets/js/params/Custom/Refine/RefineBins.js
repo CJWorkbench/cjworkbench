@@ -101,7 +101,7 @@ export default class RefineBins extends React.PureComponent {
     if (bins.length === 0) {
       return (
         <div className="refine-bins">
-          <div className="no-bins">No clusters was found. Try different settings.</div>
+          <div className="no-bins">No clusters found. Try different settings.</div>
         </div>
       )
     }
