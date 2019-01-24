@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.http.request import HttpRequest
 from intercom.client import Client
+import intercom.errors
 
 
 logger = logging.getLogger(__name__)
@@ -196,7 +197,16 @@ def _log_user_event(user: User, headers: Headers, event: str,
             created_at=int(time.time()),
             metadata=metadata
         )
-    except Exception as err:
+    except intercom.errors.ServiceUnavailableError:
+        # on production, this happens every few days:
+        # intercom.errors.ServiceUnavailableError: Sorry, the API service is
+        # temporarily unavailable
+        #
+        # _log_ the problem, but don't logger.exception(): we don't want to
+        # receive an email about it.
+        logger.info("(known) error logging Intercom event '%s'", event)
+        pass
+    except Exception:
         logger.exception("Error logging Intercom event '%s'", event)
 
 
