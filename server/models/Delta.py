@@ -296,7 +296,7 @@ class Delta(PolymorphicModel):
 
     @property
     def command_description(self):
-        raise NotImplementedError
+        return "Base Delta object"  # can be called from Django admin when deleting a wf
 
     def __str__(self):
         return str(self.datetime) + ' ' + self.command_description

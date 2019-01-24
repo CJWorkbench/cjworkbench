@@ -5,10 +5,11 @@ from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 import json
 from server.models.commands import InitWorkflowCommand
-from server.models import Lesson, Workflow
+from server.models import Lesson, Workflow, ModuleVersion
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
-
+from asgiref.sync import async_to_sync
+from server import rabbitmq
 
 # because get_object_or_404() is for _true_ django.db.models.Manager
 def _get_lesson_or_404(slug):
@@ -41,18 +42,80 @@ def _ensure_workflow(request, lesson):
             anonymous_owner_session_key=session_key,
             lesson_slug=lesson.slug
         )
+
         if created:
-            workflow.tabs.create(position=0)
-            InitWorkflowCommand.create(workflow)
-        return workflow
+            _init_workflow_for_lesson(workflow, lesson)
+        return workflow, created
+
+
+def _init_workflow_for_lesson(workflow, lesson):
+    InitWorkflowCommand.create(workflow)
+
+    if lesson.initial_workflow is None:
+        workflow.tabs.create(position=0)
+    else:
+        # Create each wfModule of each tab
+        tab_dicts = lesson.initial_workflow.tabs
+        for position, tab_dict in enumerate(tab_dicts):
+
+            # Set selected module to last wfmodule in stack
+            tab = workflow.tabs.create(position=position,
+                                       name=tab_dict['name'],
+                                       selected_wf_module_position=len(tab_dict['wfModules']) - 1)
+
+            for order, wfm in enumerate(tab_dict['wfModules']):
+                newwfm = _add_wf_module_to_tab(wfm, order, tab)
+
+                # mimic AddModuleCommand.forward(). If we don't set this, the module gets confused about cache state
+                newwfm.last_relevant_delta_id = workflow.last_delta.id
+                newwfm.save()
+
+
+def _add_wf_module_to_tab(wfm_dict, order, tab):
+    """
+    Rehydrate a WfModule from the lesson "initial workflow" json serialization format
+    """
+    id_name = wfm_dict['module']
+    module_version = ModuleVersion.objects.latest(id_name)  # 500 error if bad module id name
+
+    # All params not set in json get default values
+    # Also, we must have a dict with all param values set or we can't migrate_params later
+    params = {
+        **module_version.default_params,
+        **wfm_dict['params'],
+    }
+
+    wfm = tab.wf_modules.create(
+        order=order,
+        module_id_name=id_name,
+        params=params
+    )
+
+    return wfm
+
 
 
 def _render_get_lesson_detail(request, lesson):
-    workflow = _ensure_workflow(request, lesson)
+    workflow, created = _ensure_workflow(request, lesson)
     modules = visible_modules(request)
 
     init_state = make_init_state(request, workflow=workflow, modules=modules)
     init_state['lessonData'] = LessonSerializer(lesson).data
+
+    # If we just initialized this workflow, start fetches and render
+    if created:
+        for tab in workflow.tabs.all():
+            for wfm in tab.wf_modules.all():
+                # If this module fetches, do the fetch now (so e.g. Loadurl loads immediately)
+                if wfm.module_version.loads_data:
+                     wfm.is_busy = True
+                     wfm.save()
+                     async_to_sync(rabbitmq.queue_fetch)(wfm)
+
+        # Force a complete wf render. The fetch can also cause a render, but modules on other tabs still need to render
+        async_to_sync(rabbitmq.queue_render)(workflow.id,
+                                             workflow.last_delta_id)
+
     return TemplateResponse(request, 'workflow.html',
                             {'initState': init_state})
 

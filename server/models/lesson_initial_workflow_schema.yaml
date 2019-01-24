@@ -1,0 +1,29 @@
+$schema: https://json-schema.org/schema#
+type: object
+required: [ tabs ]
+properties:
+  tabs:
+    type: array
+    description: Initial tabs for this workflow
+    items:
+      type: object
+      description: a tab
+      required: [name, wfModules]
+      properties:
+        name:
+          type: string
+          description: User-visible name of tab
+        wfModules:
+          type: array
+          description: Modules applied in this tab
+          items:
+            type: object
+            description: A single WfModule
+            required: [module, params]
+            properties:
+              module:
+                type: string
+                description: id_name of module to be applied
+              params:
+                type: object
+                description: non-default parameter values

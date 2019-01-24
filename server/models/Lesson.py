@@ -6,7 +6,18 @@ from typing import List
 from xml.etree import ElementTree
 from django.conf import settings
 import html5lib
+import jsonschema
+import yaml
 
+
+# Load and parse the spec that defines the format of the initial workflow JSON, once
+_SpecPath = os.path.join(os.path.dirname(__file__), 'lesson_initial_workflow_schema.yaml')
+with open(_SpecPath, 'rt') as spec_file:
+    _SpecSchema = yaml.load(spec_file)
+_initial_workflow_validator = jsonschema.Draft7Validator(
+    _SpecSchema,
+    format_checker=jsonschema.FormatChecker()
+)
 
 def _build_inner_html(el):
     """Extract HTML text from a xml.etree.ElementTree."""
@@ -78,11 +89,12 @@ class LessonManager:
 # We implement Lessons in HTML, so they're stored as code, not in the database.
 # This interface mimics django.db.models.Model.
 class Lesson:
-    def __init__(self, slug, header, sections, footer):
+    def __init__(self, slug, header, sections, footer, initial_workflow=None):
         self.slug = slug
         self.header = header
         self.sections = sections
         self.footer = footer
+        self.initial_workflow = initial_workflow
 
     def __eq__(self, other):
         return (self.slug, self.header, self.sections) == \
@@ -101,7 +113,7 @@ class Lesson:
     @staticmethod
     def parse(slug, html):
         parser = html5lib.HTMLParser(strict=False, namespaceHTMLElements=False)
-        root = parser.parse(StringIO(html))
+        root = parser.parse(StringIO(html))  # this is an xml.etree.ElementTree
 
         # HTML may have <html> and <body> tags. If so, navigate within. We only
         # care about the body.
@@ -123,7 +135,13 @@ class Lesson:
             raise LessonParseError('Lesson HTML needs a top-level <footer>')
         lesson_footer = LessonFooter._from_etree(footer_el)
 
-        return Lesson(slug, lesson_header, lesson_sections, lesson_footer)
+        initial_workflow_el = root.find('./script[@id="initialWorkflow"]')
+        if initial_workflow_el is None:
+            lesson_initial_workflow = None  # initial workflow is optional, blank wf if missing
+        else:
+            lesson_initial_workflow = LessonInitialWorkflow._from_etree(initial_workflow_el)
+
+        return Lesson(slug, lesson_header, lesson_sections, lesson_footer, lesson_initial_workflow)
 
     class DoesNotExist(Exception):
         pass
@@ -158,6 +176,34 @@ class LessonHeader:
         html = _build_inner_html(el)
 
         return LessonHeader(title, html)
+
+
+class LessonInitialWorkflow:
+    def __init__(self, initial_tabs):
+        self.tabs = initial_tabs # a list of dicts, each describing a tab
+
+    def __eq__(self, other):
+        return self.tabs == other.tabs
+
+    def __repr__(self):
+        return 'LessonInitialWorkflow' + repr((self.initial_workflow,))
+
+    @staticmethod
+    def _from_etree(el):
+        text = el.text
+        try:
+            jsondict = json.loads(text)
+        except ValueError as e:
+            raise LessonParseError(
+                'Initial workflow json parse error: ' + str(e)
+            )
+        try:
+            _initial_workflow_validator.validate(jsondict)
+        except jsonschema.ValidationError as e:
+            raise LessonParseError(
+                'Initial workflow json validation error: ' + str(e)
+            )
+        return LessonInitialWorkflow(jsondict['tabs'])
 
 
 class LessonSection:

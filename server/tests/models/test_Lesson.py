@@ -1,7 +1,13 @@
 import os.path
 from django.test import SimpleTestCase
-from server.models.Lesson import Lesson, LessonHeader, LessonSection, \
-        LessonSectionStep, LessonFooter, LessonParseError, LessonManager
+from server.models.Lesson import *
+
+
+# Small helper to avoid repeated code. Lesson HTML includes passed json, is otherwise valid.
+def lesson_text_with_initial_workflow(initial_workflow_json):
+    initial_workflow_script = '<script id="initialWorkflow" type="application/json">\n' + initial_workflow_json + '\n</script>'
+
+    return '<header><h1>x</h1></header>' + initial_workflow_script + '<section><h2>title</h2><p class="not-steps">content</p></section><footer><h2>z</h2></footer>'
 
 
 class LessonTests(SimpleTestCase):
@@ -20,7 +26,6 @@ class LessonTests(SimpleTestCase):
     def test_parse_invalid_step_highlight_json(self):
         with self.assertRaisesMessage(LessonParseError, 'data-highlight contains invalid JSON'):
             Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"]\' data-test="true">1</li></ol></section>')
-
 
     def test_parse_missing_step_highlight_done(self):
         with self.assertRaisesMessage(LessonParseError, 'missing data-test attribute, which must be JavaScript'):
@@ -59,6 +64,39 @@ class LessonTests(SimpleTestCase):
         out = Lesson.parse('a-slug', '<header><h1>x</h1><p>y</p></header><section><h2>title</h2><ol class="not-steps"><li>foo</li></ol></section><footer><h2>Foot</h2><p>My foot</p>')
         self.assertEquals(out.footer, LessonFooter('Foot', '<p>My foot</p>'))
 
+    def test_parse_initial_workflow(self):
+        initial_workflow_json = """
+            {
+              "tabs": [
+                {
+                  "name": "Tab 1",
+                  "wfModules": [
+                    {
+                      "module": "loadurl",
+                      "params": {
+                        "url": "http://foo.com",
+                        "has_header": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+        """
+        out = Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
+
+        self.assertIsNotNone(out.initial_workflow)
+        self.assertEquals(
+            out.initial_workflow,
+            LessonInitialWorkflow(json.loads(initial_workflow_json)['tabs'])
+        )
+
+
+    def test_parse_initial_workflow_bad_json(self):
+        initial_workflow_json = "{ not valid json }"
+
+        with self.assertRaisesMessage(LessonParseError, "Initial workflow json parse error"):
+            Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
 
 class LessonManagerTests(SimpleTestCase):
     def build_manager(self, path=None):

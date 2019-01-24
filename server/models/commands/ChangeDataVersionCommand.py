@@ -83,5 +83,5 @@ class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
     def command_description(self):
         return (
             f'Change WfModule[{self.wf_module_id}] data version to '
-            f'{self.version}'
+            f'{self.new_version}'
         )
