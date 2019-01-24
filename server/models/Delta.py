@@ -10,13 +10,65 @@ from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
 from server import rabbitmq, websockets
-from server.models import WfModule
+from server.models import Tab, WfModule
 from server.serializers import WfModuleSerializer
 
 
 def _prepare_json(data: Any) -> Any:
     """Convert `data` into a simple, JSON-ready dict."""
     return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
+
+
+def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
+    # all Delta subclasses that have a tab_id
+    relations = [
+        f
+        for f in Tab._meta.get_fields()
+        if f.is_relation and issubclass(f.related_model, Delta)
+    ]
+
+    tab_table_alias = Tab._meta.db_table  # Django auto-name
+
+    conditions = [
+        f"""
+        NOT EXISTS (
+            SELECT TRUE
+            FROM {r.related_model._meta.db_table}
+            WHERE {r.get_joining_columns()[0][1]} = {tab_table_alias}.id
+        )
+        """
+        for r in relations
+    ]
+
+    return Tab.objects \
+        .filter(workflow_id=workflow_id, is_deleted=True) \
+        .extra(where=conditions)
+
+
+def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
+    # all Delta subclasses that have a wf_module_id
+    relations = [
+        f
+        for f in WfModule._meta.get_fields()
+        if f.is_relation and issubclass(f.related_model, Delta)
+    ]
+
+    wf_module_table_alias = WfModule._meta.db_table  # Django auto-name
+
+    conditions = [
+        f"""
+        NOT EXISTS (
+            SELECT TRUE
+            FROM {r.related_model._meta.db_table}
+            WHERE {r.get_joining_columns()[0][1]} = {wf_module_table_alias}.id
+        )
+        """
+        for r in relations
+    ]
+
+    return WfModule.objects \
+        .filter(tab__workflow_id=workflow_id, is_deleted=True) \
+        .extra(where=conditions)
 
 
 # Base class of a single undoable/redoable action
@@ -216,7 +268,7 @@ class Delta(PolymorphicModel):
                 .filter(prev_delta_id=workflow.last_delta_id) \
                 .first()
             if orphan_delta:
-                orphan_delta.delete()  # recurses through CASCADE
+                orphan_delta.delete_with_successors()
 
             delta = cls.objects.create(*args,
                                        prev_delta_id=workflow.last_delta_id,
@@ -267,32 +319,8 @@ class Delta(PolymorphicModel):
             WHERE id IN (SELECT id FROM to_delete)
             """)
 
-        # Delete any soft-deleted WfModules that aren't referenced by deltas
-        # any more.
-        #
-        # There are lots of foreign relations -- one per WfModule-related
-        # Delta. Let's build the query dynamically.
-        related_fields = [
-            f
-            for f in WfModule._meta.get_fields()
-            if f.is_relation and issubclass(f.related_model, Delta)
-        ]
-        conditions = [
-            f"""
-            NOT EXISTS (
-                SELECT TRUE
-                FROM {f.related_model._meta.db_table}
-                WHERE {f.get_joining_columns()[0][1]} = wf_module.id
-            )
-            """
-            for f in related_fields
-        ]
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-                DELETE FROM {WfModule._meta.db_table} wf_module
-                WHERE is_deleted
-                  AND {' AND '.join(conditions)}
-            """)
+        _find_orphan_soft_deleted_tabs(self.workflow_id).delete()
+        _find_orphan_soft_deleted_wf_modules(self.workflow_id).delete()
 
     @property
     def command_description(self):

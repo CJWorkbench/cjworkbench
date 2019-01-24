@@ -66,26 +66,6 @@ class AddTabCommand(Delta):
         self.workflow.selected_tab_position = self.old_selected_tab_position
         self.workflow.save(update_fields=['selected_tab_position'])
 
-    def delete(self):
-        # Don't let Django batch deletes. We really need to delete in order,
-        # because we need to delete AddModuleCommand last so we can
-        # garbage-collect its Tab.
-        #
-        # TODO let's avoid putting database IDs in deltas! Then we could
-        # hard-delete Tabs instead of soft-deleting them.
-        try:
-            self.next_delta.delete()
-        except Delta.DoesNotExist:
-            pass
-
-        super().delete()
-
-        if self.tab.is_deleted:
-            # The Tab was soft-deleted, and this is the last Delta that
-            # references it. After deleting this Delta there are no more
-            # pointers to this Tab. Delete it.
-            self.tab.delete()
-
     async def schedule_execute(self):
         pass
 
