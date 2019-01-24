@@ -232,6 +232,7 @@ class RefineModalPrompt extends React.PureComponent {
 class RefineGroup extends React.PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
+    isFocused: PropTypes.bool,  // focus text area immediately after group merged
     isVisible: PropTypes.bool.isRequired,
     name: PropTypes.string, // new value -- may be empty string
     values: PropTypes.arrayOf(PropTypes.string).isRequired, // sorted by count, descending -- may be empty
@@ -243,6 +244,8 @@ class RefineGroup extends React.PureComponent {
     onResetValue: PropTypes.func.isRequired // func(value) => undefined
   }
 
+  textInput = React.createRef()
+
   state = {
     name: this.props.name,
     isExpanded: false
@@ -251,10 +254,20 @@ class RefineGroup extends React.PureComponent {
   onChangeName = (ev) => {
     this.setState({ name: ev.target.value })
   }
-  // TODO: Focus when merged
+
   onBlurName = () => {
     if (this.props.name !== this.state.name) {
       this.props.onChangeName(this.props.name, this.state.name)
+    }
+  }
+
+  // Set focus when group finishes merging
+  componentDidUpdate(oldProps, newProps) {
+    if (this.props.isFocused) {
+      this.textInput.current.focus()
+      if (this.textInput.current.value === this.props.name) {
+        this.textInput.current.select()
+      }
     }
   }
 
@@ -364,6 +377,7 @@ class RefineGroup extends React.PureComponent {
               type='text'
               name={`rename[${this.props.name}]`}
               value={this.state.name}
+              ref={this.textInput}
               onChange={this.onChangeName}
               onBlur={this.onBlurName}
               onKeyDown={this.onKeyDown}
@@ -376,7 +390,6 @@ class RefineGroup extends React.PureComponent {
   }
 }
 
-// TODO: Fix submit
 const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
   const func = RefineSpec.prototype[helperName]
 
@@ -454,7 +467,8 @@ export class Refine extends React.PureComponent {
 
   state = {
     searchInput: '',
-    selectedValues: {} // object for quick lookup
+    selectedValues: {}, // object for quick lookup
+    focusedValue: ''
   }
 
   get parsedSpec () {
@@ -569,6 +583,10 @@ export class Refine extends React.PureComponent {
     return groupNames
   }
 
+  clearFocus() {
+    this.setState({ focusedValue: '' })
+  }
+
   /*
     Determines the name value to default to for new group.
     Order:
@@ -598,11 +616,11 @@ export class Refine extends React.PureComponent {
       groupMap[fromGroup] = toGroup
     })
     this.massRename(groupMap)
-    this.setState( {selectedValues: []} )
+    this.setState( {selectedValues: [], focusedValue: toGroup} )
   }
 
   rename = buildSpecModifier(this, 'rename')
-  massRename = buildSpecModifier(this, 'massRename', true)
+  massRename = buildSpecModifier(this, 'massRename')
   setIsBlacklisted = buildSpecModifier(this, 'setIsBlacklisted')
   resetGroup = buildSpecModifier(this, 'resetGroup')
   resetValue = buildSpecModifier(this, 'resetValue')
@@ -610,7 +628,7 @@ export class Refine extends React.PureComponent {
 
   render () {
     const { valueCounts } = this.props
-    const { searchInput, selectedValues } = this.state
+    const { searchInput, selectedValues, focusedValue } = this.state
     const groups = this.groups
     const isSearching = (searchInput !== '')
     const matchingGroups = isSearching ? this.groupNamesMatching(searchInput) : null
@@ -618,6 +636,7 @@ export class Refine extends React.PureComponent {
     const groupComponents = groups.map(group => (
       <RefineGroup
         key={group.name}
+        isFocused={group.name === this.state.focusedValue}
         isSelected={group.name in selectedValues}
         isVisible={(matchingGroups === null) || (group.name in matchingGroups)}
         valueCounts={valueCounts}
@@ -630,6 +649,11 @@ export class Refine extends React.PureComponent {
     ))
 
     const canSearch = this.groups.length > 1
+    if (focusedValue !== '') this.clearFocus()
+
+    const maybeMergeButton = groups.length > 0 ? (
+      <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={Object.keys(selectedValues).length < 2}>Merge</button>)
+      : null
 
     return (
       <div className='refine-parameter'>
@@ -656,11 +680,13 @@ export class Refine extends React.PureComponent {
         <ul className='refine-groups'>
           {groupComponents}
         </ul>
-        <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={this.state.selectedValues.length > 1}>Merge</button>
-        <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
-        { (isSearching && matchingGroups !== null && matchingGroups.length === 0) ? (
-          <div className='wf-module-error-msg'>No values</div>
-        ) : null}
+        <div>
+          {maybeMergeButton}
+          <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
+          { (isSearching && matchingGroups !== null && matchingGroups.length === 0) ? (
+            <div className='wf-module-error-msg'>No values</div>
+          ) : null}
+        </div>
       </div>
     )
   }
