@@ -206,10 +206,6 @@ class RefineModalPrompt extends React.PureComponent {
     this.props.massRename(renames)
   }
 
-  onMerge = () =>{
-
-  }
-
   render () {
     const { isModalOpen } = this.state
     const { groups } = this.props
@@ -255,7 +251,7 @@ class RefineGroup extends React.PureComponent {
   onChangeName = (ev) => {
     this.setState({ name: ev.target.value })
   }
-
+  // TODO: Focus when merged
   onBlurName = () => {
     if (this.props.name !== this.state.name) {
       this.props.onChangeName(this.props.name, this.state.name)
@@ -380,6 +376,7 @@ class RefineGroup extends React.PureComponent {
   }
 }
 
+// TODO: Fix submit
 const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
   const func = RefineSpec.prototype[helperName]
 
@@ -572,6 +569,38 @@ export class Refine extends React.PureComponent {
     return groupNames
   }
 
+  /*
+    Determines the name value to default to for new group.
+    Order:
+      1. Group 'values' count
+      2. Group 'count'
+      3. Alphabetical
+  */
+  mergeSelectedValues = () => {
+    const selectedValuesList = Object.keys(this.state.selectedValues)
+    const selectedGroups = this.groups.filter(obj => selectedValuesList.indexOf(obj.name) > -1)
+
+    selectedGroups.sort(function (a, b) {
+        // Compare length of values
+        if (a.values.length > b.values.length) return -1
+        if (b.values.length > a.values.length) return 1
+        // Compare count
+        if (a.count > b.count) return -1
+        if (b.count < a.count) return 1
+        // Alphabetical
+        if (a.name < b.name) return -1
+        return 1
+    })
+
+    const toGroup = selectedGroups[0].name
+    let groupMap = {}
+    selectedValuesList.forEach(function (fromGroup) {
+      groupMap[fromGroup] = toGroup
+    })
+    this.massRename(groupMap)
+    this.setState( {selectedValues: []} )
+  }
+
   rename = buildSpecModifier(this, 'rename')
   massRename = buildSpecModifier(this, 'massRename', true)
   setIsBlacklisted = buildSpecModifier(this, 'setIsBlacklisted')
@@ -627,7 +656,7 @@ export class Refine extends React.PureComponent {
         <ul className='refine-groups'>
           {groupComponents}
         </ul>
-        <button type='button' name='merge' onClick={this.openModal}>Merge</button>
+        <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={this.state.selectedValues.length > 1}>Merge</button>
         <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
         { (isSearching && matchingGroups !== null && matchingGroups.length === 0) ? (
           <div className='wf-module-error-msg'>No values</div>
