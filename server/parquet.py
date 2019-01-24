@@ -1,6 +1,7 @@
 import io
 import tempfile
 import fastparquet
+from typing import Any, Callable
 from fastparquet import ParquetFile
 import pandas
 import snappy
@@ -8,7 +9,7 @@ import warnings
 from server import minio
 
 
-def _minio_open(bucket, key):
+def _minio_open_random(bucket, key):
     if key.endswith('/_metadata'):
         # fastparquet insists upon trying for the 'hive' storage schema before
         # settling on the 'simple' storage schema. At no time have we ever
@@ -28,6 +29,23 @@ def _minio_open(bucket, key):
     buffered = io.BufferedReader(raw)
 
     return buffered
+
+
+def _minio_open_full(bucket, key):
+    """
+    Optimized open call, for when we know we'll read the entire file.
+    """
+    if key.endswith('/_metadata'):
+        # fastparquet insists upon trying for the 'hive' storage schema before
+        # settling on the 'simple' storage schema. At no time have we ever
+        # saved a file in 'hive' format; therefore there are no '_metadata'
+        # files; therefore we can skip hitting minio here.
+        raise FileNotFoundError
+
+    # Don't worry about needing a _buffered_ reader here (like we worry in
+    # _minio_open_random). FullReadMinioFile actually does a regular open() on
+    # a regular file -- so it will behave exactly as fastparquet expects.
+    return minio.FullReadMinioFile(bucket, key)
 
 
 # Suppress this arning:
@@ -68,7 +86,9 @@ class FastparquetIssue375(FastparquetCouldNotHandleFile):
     pass
 
 
-def read_header(bucket: str, key: str) -> ParquetFile:
+def read_header(bucket: str, key: str,
+                open_with: Callable[[str, str], Any] = _minio_open_random
+                ) -> ParquetFile:
     """
     Ensure a ParquetFile exists, and return it with headers read.
 
@@ -78,7 +98,7 @@ def read_header(bucket: str, key: str) -> ParquetFile:
     `retval.dtypes` gives pandas dtypes, and `retval.to_pandas()` reads
     the entire file.
     """
-    filelike = _minio_open(bucket, key)  # raises FileNotFoundError
+    filelike = open_with(bucket, key)  # raises FileNotFoundError
     try:
         # file_scheme='simple' saves us a test for the '_metadata' key
         return fastparquet.ParquetFile(filelike)
@@ -106,7 +126,7 @@ def read(bucket: str, key: str) -> pandas.DataFrame:
     files are so old we won't attempt to support them.
     """
     try:
-        pf = read_header(bucket, key)
+        pf = read_header(bucket, key, open_with=_minio_open_full)
         return pf.to_pandas()  # does its own open()-ing.
     except snappy.UncompressError as err:
         if str(err) == 'Error while decompressing: invalid input':

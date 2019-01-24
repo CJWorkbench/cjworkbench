@@ -143,8 +143,9 @@ def temporarily_download(bucket: str, key: str) -> None:
             print(repr(tf.name))  # a path on the filesystem
             tf.read()
     """
-    with FullReadMinioFile(bucket, key) as tf:
-        yield tf
+    with tempfile.NamedTemporaryFile(prefix='minio_download') as tf:
+        minio_client.fget_object(bucket, key, tf.name)
+        yield tf  # really, only tf.name is useful
 
 
 class RandomReadMinioFile(io.RawIOBase):
@@ -279,15 +280,18 @@ class FullReadMinioFile(io.RawIOBase):
         self.bucket = bucket
         self.key = key
 
-        self.tempfile = tempfile.NamedTemporaryFile(prefix='FullReadMinioFile')
-        self.name = self.tempfile.name
-        try:
-            minio_client.fget_object(self.bucket, self.key, self.tempfile.name)
-        except error.NoSuchKey:
-            raise FileNotFoundError(
-                errno.ENOENT,
-                f'No file at {self.bucket}/{self.key}'
-            )
+        with tempfile.NamedTemporaryFile(prefix='FullReadMinioFile') as tf:
+            try:
+                minio_client.fget_object(self.bucket, self.key, tf.name)
+            except error.NoSuchKey:
+                raise FileNotFoundError(
+                    errno.ENOENT,
+                    f'No file at {self.bucket}/{self.key}'
+                )
+
+            # POSIX-specific: reopen the file, then delete it from the
+            # filesystem
+            self.tempfile = open(tf.name, 'rb')
 
     # override io.IOBase
     def tell(self) -> int:
@@ -296,6 +300,10 @@ class FullReadMinioFile(io.RawIOBase):
     # override io.IOBase
     def seek(self, offset: int, whence: int = 0) -> int:
         return self.tempfile.seek(offset, whence)
+
+    # override io.IOBase
+    def readable(self):
+        return True
 
     # override io.IOBase
     def seekable(self):
