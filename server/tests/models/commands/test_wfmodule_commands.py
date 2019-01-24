@@ -115,7 +115,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.run_with_async_db(cmd.backward())
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(all_modules.first(), existing_module)
-        cmd.delete()
+        cmd.delete_with_successors()
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 

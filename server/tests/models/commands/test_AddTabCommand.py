@@ -31,23 +31,6 @@ class AddTabCommandTest(DbTestCase):
         )
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    def test_hard_delete_when_deleting_unapplied_delta(self):
-        workflow = Workflow.create_and_init()
-        tab_ids = list(workflow.tabs.values_list('id', flat=True))
-
-        cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
-                                                          name='A'))
-
-        self.run_with_async_db(cmd.backward())
-        cmd.delete()
-
-        self.assertEquals(
-            # Search for _all_ tabs -- even deleted ones
-            list(workflow.tabs.values_list('id', flat=True)),
-            tab_ids  # there should be no deleted ones
-        )
-
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_no_hard_or_soft_delete_when_deleting_applied_delta(self):
         workflow = Workflow.create_and_init()
         cmd = self.run_with_async_db(AddTabCommand.create(workflow=workflow,
