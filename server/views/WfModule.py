@@ -2,7 +2,6 @@ from datetime import timedelta
 import json
 import re
 import pandas as pd
-from asgiref.sync import async_to_sync
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, \
         Http404, HttpResponseNotFound, JsonResponse
@@ -15,7 +14,6 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from server.models import WfModule
-from server.models.commands import ChangeWfModuleUpdateSettingsCommand
 import server.utils
 from server.utils import units_to_seconds
 from server.models.loaded_module import module_get_html_bytes

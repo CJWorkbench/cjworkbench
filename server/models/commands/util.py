@@ -1,8 +1,7 @@
 from typing import List, Tuple
 from django.contrib.postgres.fields import ArrayField
-from django.core.validators import int_list_validator
 from django.db import models
-from server.models import WfModule, Workflow
+from server.models import WfModule
 
 
 class ChangesWfModuleOutputs:
@@ -88,11 +87,11 @@ class ChangesWfModuleOutputs:
         Write new last_relevant_delta_id to `wf_module` and its dependents.
         """
         prev_ids = self.wf_module_delta_ids
- 
+
         for wfm_id, delta_id in prev_ids:
             WfModule.objects.filter(id=wfm_id) \
                  .update(last_relevant_delta_id=delta_id)
- 
+
             if hasattr(self, 'wf_module_id') and wfm_id == self.wf_module_id:
                 # If we have a wf_module in memory, update it
                 self.wf_module.last_relevant_delta_id = delta_id
