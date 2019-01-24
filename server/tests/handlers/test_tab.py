@@ -77,7 +77,7 @@ class TabTest(HandlerTestCase):
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
 
-    def test_add_module_invalid_param_values(self):
+    def test_add_module_param_values_not_object(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()
@@ -96,6 +96,27 @@ class TabTest(HandlerTestCase):
                                     paramValues='foobar')
         self.assertResponse(response,
                             error='BadRequest: paramValues must be an Object')
+
+    def test_add_module_invalid_param_values(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab = workflow.tabs.first()
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'amodule',
+            'name': 'A Module',
+            'category': 'Clean',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
+
+        response = self.run_handler(add_module, user=user, workflow=workflow,
+                                    tabId=tab.id, position=3,
+                                    moduleIdName='amodule',
+                                    paramValues={'foo': 3})
+        self.assertResponse(response, error=(
+            'BadRequest: param validation failed: Value 3 is not a string'
+        ))
 
     def test_add_module_invalid_position(self):
         user = User.objects.create(username='a', email='a@example.org')
@@ -144,11 +165,11 @@ class TabTest(HandlerTestCase):
         tab = workflow.tabs.first()
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position='foo',
+                                    tabId=tab.id, position=3,
                                     moduleIdName='notamodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response,
-                            error='DoesNotExist: ModuleVersion not found')
+                            error='BadRequest: module does not exist')
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)

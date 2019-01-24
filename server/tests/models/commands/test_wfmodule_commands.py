@@ -136,7 +136,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         }, source_version_hash='1.0')
 
         cmd = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
+            workflow=workflow,
             tab=workflow.tabs.first(),
             module_id_name=module_version.id_name,
             position=0,
@@ -147,6 +147,37 @@ class AddDeleteModuleCommandTests(DbTestCase):
             'b': 2,
             'c': True,
         })
+
+    def test_add_module_raise_module_version_does_not_exist(self):
+        workflow = Workflow.create_and_init()
+        with self.assertRaises(ModuleVersion.DoesNotExist):
+            self.run_with_async_db(AddModuleCommand.create(
+                workflow=workflow,
+                tab=workflow.tabs.first(),
+                module_id_name='doesnotexist',
+                position=0,
+                param_values={}
+            ))
+
+    def test_add_module_validate_params(self):
+        workflow = Workflow.create_and_init()
+        module_version = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'blah',
+            'name': 'Blah',
+            'category': 'Clean',
+            'parameters': [
+                {'id_name': 'a', 'type': 'string'}
+            ]
+        }, source_version_hash='1.0')
+
+        with self.assertRaises(ValueError):
+            self.run_with_async_db(AddModuleCommand.create(
+                workflow=workflow,
+                tab=workflow.tabs.first(),
+                module_id_name=module_version.id_name,
+                position=0,
+                param_values={'a': 3}
+            ))
 
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times

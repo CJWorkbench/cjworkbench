@@ -103,19 +103,24 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, module_id_name,
                             position, param_values, **kwargs):
-        try:
-            module_version = ModuleVersion.objects.latest(module_id_name)
-        except ModuleVersion.DoesNotExist:
-            # No need to add a module here
-            return None
+        """
+        Add a step to the tab.
 
-        # Set _all_ params (not just the user-specified ones). This is so if
-        # you ever upgrade a module, the _new_ code will get the _old_ default
-        # values -- keeping the user's intent intact.
+        Raise ModuleVersion.DoesNotExist if `module_id_name` is invalid.
+        Raise ValueError if `param_values` do not match the module's spec.
+        """
+        # raises ModuleVersion.DoesNotExist
+        module_version = ModuleVersion.objects.latest(module_id_name)
+
+        # Set _all_ params (not just the user-specified ones). Our
+        # dropdown-menu actions only specify the relevant params and expect us
+        # to set the others to defaults.
         params = {
             **module_version.default_params,
             **param_values,
         }
+
+        module_version.param_schema.validate(params)  # raises ValueError
 
         # wf_module starts off "deleted" and gets un-deleted in forward().
         wf_module = tab.wf_modules.create(module_id_name=module_id_name,

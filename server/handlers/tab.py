@@ -46,9 +46,7 @@ def _loading_module_version(func):
 @register_websockets_handler
 @websockets_handler('write')
 @_loading_tab
-@_loading_module_version
-async def add_module(scope, workflow: Workflow, tab: Tab,
-                     module_version: ModuleVersion,
+async def add_module(scope, workflow: Workflow, tab: Tab, moduleIdName: str,
                      position: int, paramValues: Dict[str, Any], **kwargs):
     if not isinstance(paramValues, dict):
         raise HandlerError('BadRequest: paramValues must be an Object')
@@ -56,22 +54,29 @@ async def add_module(scope, workflow: Workflow, tab: Tab,
     if not isinstance(position, int):
         raise HandlerError('BadRequest: position must be a Number')
 
+    moduleIdName = str(moduleIdName)
+
     # don't allow python code module in anonymous workflow
-    if module_version.id_name == 'pythoncode' and workflow.is_anonymous:
+    if moduleIdName == 'pythoncode' and workflow.is_anonymous:
         return None
+
+    try:
+        await AddModuleCommand.create(workflow=workflow, tab=tab,
+                                      module_id_name=moduleIdName,
+                                      position=position,
+                                      param_values=paramValues)
+    except ModuleVersion.DoesNotExist:
+        raise HandlerError('BadRequest: module does not exist')
+    except ValueError as err:
+        raise HandlerError('BadRequest: param validation failed: %s'
+                           % str(err))
 
     server.utils.log_user_event_from_scope(
         scope,
-        f'ADD STEP {module_version.name}', {
-            'name': module_version.name,
-            'id_name': module_version.id_name
+        f'ADD STEP {moduleIdName}', {
+            'id_name': moduleIdName
         }
     )
-
-    await AddModuleCommand.create(workflow=workflow, tab=tab,
-                                  module_id_name=module_version.id_name,
-                                  position=position,
-                                  param_values=paramValues)
 
 
 @register_websockets_handler
