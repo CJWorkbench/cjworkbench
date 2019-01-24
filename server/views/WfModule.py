@@ -76,15 +76,15 @@ def patch_update_settings(wf_module, data, request):
         raise ValueError('missing update_interval and update_units fields')
 
     # Use current time as base update time. Not the best?
-    interval = units_to_seconds(int(data['update_interval']),
-                                data['update_units'])
-    next_update = timezone.now() + timedelta(seconds=interval)
-    async_to_sync(ChangeWfModuleUpdateSettingsCommand.create)(
-        wf_module,
-        auto_update_data,
-        next_update,
-        interval
-    )
+    update_interval = units_to_seconds(int(data['update_interval']),
+                                       data['update_units'])
+    next_update = timezone.now() + timedelta(seconds=update_interval)
+
+    wf_module.auto_update_data = auto_update_data
+    wf_module.next_update = next_update
+    wf_module.update_interval = update_interval
+    wf_module.save(update_fields=['auto_update_data', 'next_update',
+                                  'update_interval'])
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on
