@@ -1,7 +1,15 @@
+import io
 import pandas as pd
 from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
-from server.tests.utils import DbTestCase, mock_csv_table, mock_csv_table2
+from server.tests.utils import DbTestCase, mock_csv_table
+
+
+mock_csv_text2 = """Month,Amount,Name
+Jan,10,Alicia Aliciason
+Feb,666,Fred Frederson
+"""
+mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 
 
 # Set up a simple pipeline on test data

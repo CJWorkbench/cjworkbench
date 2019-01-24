@@ -13,11 +13,9 @@ import pandas as pd
 
 mock_csv_text = 'Month,Amount\nJan,10\nFeb,20'
 mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
-mock_csv_text2 = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
-mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 
-mock_csv_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.csv')
-mock_xlsx_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/test.xlsx')
+mock_xlsx_path = os.path.join(settings.BASE_DIR,
+                              'server/tests/test_data/test.xlsx')
 
 
 class DbTestCase(SimpleTestCase):

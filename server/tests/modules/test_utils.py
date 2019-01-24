@@ -130,6 +130,14 @@ class ParseBytesIoTest(SimpleTestCase):
         expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['D']}))
         self.assertEqual(result, expected)
 
+    def test_csv_no_na_filter(self):
+        """
+        We override pandas' urge to turn 'NA' into `np.nan`
+        """
+        result = parse_bytesio(io.BytesIO(b'A;C\nB;NA'), 'text/csv', 'utf-8')
+        expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['NA']}))
+        self.assertEqual(result, expected)
+
     def test_excel(self):
         with open(os.path.join(os.path.dirname(__file__), '..', 'test_data',
                                'example.xls'), 'rb') as file:

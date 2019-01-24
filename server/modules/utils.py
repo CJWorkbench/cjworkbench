@@ -153,7 +153,7 @@ def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
         # usage grows by the number of cells. In the case of `general.csv`,
         # the cost is an extra 1GB.
         data = pandas.read_csv(textio, dtype='category', sep=sep,
-                               low_memory=False)
+                               na_filter=False, low_memory=False)
 
         autocast_dtypes_in_place(data)
         return data
@@ -333,7 +333,7 @@ _Parsers = {
 
 
 def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
-                  text_encoding: _TextEncoding=None) -> ProcessResult:
+                  text_encoding: _TextEncoding = None) -> ProcessResult:
     """Parse bytes to produce a ProcessResult.
 
     You should call .sanitize_in_place() on the result: otherwise there may be
@@ -431,8 +431,8 @@ def fetch_external_workflow(calling_workflow_id: int,
 
 
 @asynccontextmanager
-async def spooled_data_from_url(url: str, headers: Dict[str, str]={},
-                                timeout: aiohttp.ClientTimeout=None):
+async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
+                                timeout: aiohttp.ClientTimeout = None):
     """
     Download `url` to a tempfile and yield `(bytesio, headers, charset)`.
 
