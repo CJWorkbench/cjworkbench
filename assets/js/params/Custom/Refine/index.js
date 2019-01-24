@@ -206,6 +206,10 @@ class RefineModalPrompt extends React.PureComponent {
     this.props.massRename(renames)
   }
 
+  onMerge = () =>{
+
+  }
+
   render () {
     const { isModalOpen } = this.state
     const { groups } = this.props
@@ -215,7 +219,7 @@ class RefineModalPrompt extends React.PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button type='button' name='cluster' onClick={this.openModal}>Auto cluster</button>
+        <button type='button' name='cluster' onClick={this.openModal}>Find clusters...</button>
         <span className='instructions'></span>
         { !isModalOpen ? null : (
           <RefineModal
@@ -236,9 +240,9 @@ class RefineGroup extends React.PureComponent {
     name: PropTypes.string, // new value -- may be empty string
     values: PropTypes.arrayOf(PropTypes.string).isRequired, // sorted by count, descending -- may be empty
     count: PropTypes.number.isRequired, // number, strictly greater than 0
-    isBlacklisted: PropTypes.bool.isRequired,
+    isSelected: PropTypes.bool.isRequired,
     onChangeName: PropTypes.func.isRequired, // func(oldName, newName) => undefined
-    onChangeIsBlacklisted: PropTypes.func.isRequired, // func(name, isBlacklisted) => undefined
+    setIsSelected: PropTypes.func.isRequired, // func(name, isBlacklisted) => undefined
     onResetGroup: PropTypes.func.isRequired, // func(name) => undefined
     onResetValue: PropTypes.func.isRequired // func(value) => undefined
   }
@@ -260,6 +264,10 @@ class RefineGroup extends React.PureComponent {
 
   onChangeIsBlacklisted = (ev) => {
     this.props.onChangeIsBlacklisted(this.props.name, !ev.target.checked)
+  }
+
+  onChangeIsSelected = (ev) => {
+    this.props.setIsSelected(this.props.name, ev.target.checked)
   }
 
   onChangeIsExpanded = (ev) => {
@@ -347,8 +355,8 @@ class RefineGroup extends React.PureComponent {
             name={`include[${this.props.name}]`}
             type='checkbox'
             title='Include these rows'
-            checked={!this.props.isBlacklisted}
-            onChange={this.onChangeIsBlacklisted}
+            checked={this.props.isSelected}
+            onChange={this.onChangeIsSelected}
           />
           {maybeExpandCheckbox}
           <span className='count-and-reset'>
@@ -386,12 +394,12 @@ const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
 export class AllNoneButtons extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    clearBlacklist: PropTypes.func.isRequired, // func() => undefined
-    fillBlacklist: PropTypes.func.isRequired // func() => undefined
+    clearSelectedSearchValues: PropTypes.func.isRequired, // func() => undefined
+    fillSelectedSearchValues: PropTypes.func.isRequired // func() => undefined
   }
 
   render() {
-    const { isReadOnly, clearBlacklist, fillBlacklist } = this.props
+    const { isReadOnly, clearSelectedSearchValues, fillSelectedSearchValues } = this.props
 
     return (
       <div className="all-none-buttons">
@@ -400,7 +408,7 @@ export class AllNoneButtons extends React.PureComponent {
           type='button'
           name='refine-select-all'
           title='Select All'
-          onClick={clearBlacklist}
+          onClick={fillSelectedSearchValues}
         >
           All
         </button>
@@ -409,7 +417,7 @@ export class AllNoneButtons extends React.PureComponent {
           type='button'
           name='refine-select-none'
           title='Select None'
-          onClick={fillBlacklist}
+          onClick={clearSelectedSearchValues}
         >
           None
         </button>
@@ -448,7 +456,8 @@ export class Refine extends React.PureComponent {
   }
 
   state = {
-    searchInput: ''
+    searchInput: '',
+    selectedValues: {} // object for quick lookup
   }
 
   get parsedSpec () {
@@ -507,6 +516,39 @@ export class Refine extends React.PureComponent {
     this.setState({ searchInput })
   }
 
+  setIsSelected = (value, isChecked) => {
+    isChecked ? this.addSelectedValues([value]) : this.removeSelectedValues([value])
+  }
+
+  // ADD values to selectedValues. "All" button will not overwrite previously selected values.
+  addSelectedValues = (values) => {
+    let selectedValues = Object.assign({}, this.state.selectedValues)
+    for (var idx in values){
+      selectedValues[values[idx]] = null
+    }
+    this.setState({ selectedValues: selectedValues })
+  }
+
+  removeSelectedValues = (values) => {
+    let selectedValues = Object.assign({}, this.state.selectedValues)
+    for (var idx in values){
+      if (values[idx] in selectedValues) {
+        delete selectedValues[values[idx]]
+      }
+    }
+    this.setState({ selectedValues: selectedValues })
+  }
+
+  clearSelectedSearchValues = () => {
+    const matchingGroupsList = Object.keys(this.groupNamesMatching(this.state.searchInput))
+    this.removeSelectedValues(matchingGroupsList)
+  }
+
+  fillSelectedSearchValues = () => {
+    const matchingGroupsList = Object.keys(this.groupNamesMatching(this.state.searchInput))
+    this.addSelectedValues(matchingGroupsList)
+  }
+
   /**
    * Find { name: null } Object enumerating matching group names
    */
@@ -537,17 +579,9 @@ export class Refine extends React.PureComponent {
   resetValue = buildSpecModifier(this, 'resetValue')
   setBlacklist = buildSpecModifier(this, 'withBlacklist')
 
-  clearBlacklist = () => {
-    this.setBlacklist([])
-  }
-
-  fillBlacklist = () => {
-    this.setBlacklist(this.groups.map(g => g.name))
-  }
-
   render () {
     const { valueCounts } = this.props
-    const { searchInput } = this.state
+    const { searchInput, selectedValues } = this.state
     const groups = this.groups
     const isSearching = (searchInput !== '')
     const matchingGroups = isSearching ? this.groupNamesMatching(searchInput) : null
@@ -555,10 +589,11 @@ export class Refine extends React.PureComponent {
     const groupComponents = groups.map(group => (
       <RefineGroup
         key={group.name}
+        isSelected={group.name in selectedValues}
         isVisible={(matchingGroups === null) || (group.name in matchingGroups)}
         valueCounts={valueCounts}
         onChangeName={this.rename}
-        onChangeIsBlacklisted={this.setIsBlacklisted}
+        setIsSelected={this.setIsSelected}
         onResetGroup={this.resetGroup}
         onResetValue={this.resetValue}
         {...group}
@@ -569,7 +604,6 @@ export class Refine extends React.PureComponent {
 
     return (
       <div className='refine-parameter'>
-        <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
         { !canSearch ? null : (
           <React.Fragment>
             <fieldset className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
@@ -584,15 +618,17 @@ export class Refine extends React.PureComponent {
               <button type="button" onClick={this.onReset} className="close" title="Clear Search"><i className="icon-close"></i></button>
             </fieldset>
             <AllNoneButtons
-              isReadOnly={isSearching}
-              clearBlacklist={this.clearBlacklist}
-              fillBlacklist={this.fillBlacklist}
+              isReadOnly={false}
+              clearSelectedSearchValues={this.clearSelectedSearchValues}
+              fillSelectedSearchValues={this.fillSelectedSearchValues}
             />
           </React.Fragment>
         )}
         <ul className='refine-groups'>
           {groupComponents}
         </ul>
+        <button type='button' name='merge' onClick={this.openModal}>Merge</button>
+        <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
         { (isSearching && matchingGroups !== null && matchingGroups.length === 0) ? (
           <div className='wf-module-error-msg'>No values</div>
         ) : null}
