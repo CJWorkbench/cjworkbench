@@ -35,14 +35,6 @@ def _loading_tab(func):
     return inner
 
 
-def _loading_module_version(func):
-    @functools.wraps(func)
-    async def inner(moduleIdName: str, **kwargs):
-        module_version = await _load_module_version(moduleIdName)
-        return await func(module_version=module_version, **kwargs)
-    return inner
-
-
 @register_websockets_handler
 @websockets_handler('write')
 @_loading_tab
@@ -71,9 +63,13 @@ async def add_module(scope, workflow: Workflow, tab: Tab, moduleIdName: str,
         raise HandlerError('BadRequest: param validation failed: %s'
                            % str(err))
 
+    # TODO switch Intercom around and log by moduleIdName, not module name
+    # (Currently, we end up with two events every time we change names)
+    module_version = await _load_module_version(moduleIdName)
     server.utils.log_user_event_from_scope(
         scope,
-        f'ADD STEP {moduleIdName}', {
+        f'ADD STEP {module_version.name}', {
+            'name': module_version.name,
             'id_name': moduleIdName
         }
     )
