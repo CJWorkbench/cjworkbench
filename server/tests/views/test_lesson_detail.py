@@ -225,3 +225,43 @@ class LessonDetailTests(DbTestCase):
         fetch.assert_called()
         self.assertEqual(fetch.call_args[0][0].id, wfm1['id'])
         render.assert_not_called()
+
+    @patch.object(Lesson.objects, 'get')
+    def test_fetch_initial_workflow_with_missing_module_throws_500(self, get):
+        get.return_value = lesson_with_initial_workflow([
+            {
+                'name': 'Tab X',
+                'wfModules': [
+                    {
+                        'module': 'amodule',  # does not exist
+                        'params': {'foo': 'bar'},
+                    },
+                ],
+            },
+        ])
+
+        self.log_in()
+        response = self.client.get('/lessons/whatever')
+        self.assertEqual(response.status_code, 500)
+
+    @patch.object(Lesson.objects, 'get')
+    def test_fetch_initial_workflow_with_invalid_params_throws_500(self, get):
+        get.return_value = lesson_with_initial_workflow([
+            {
+                'name': 'Tab X',
+                'wfModules': [
+                    {
+                        'module': 'amodule',
+                        'params': {'fooTYPO': 'bar'},  # typo
+                    },
+                ],
+            },
+        ])
+
+        create_module_version('amodule', [
+            {'id_name': 'foo', 'type': 'string'},
+        ])
+
+        self.log_in()
+        response = self.client.get('/lessons/whatever')
+        self.assertEqual(response.status_code, 500)

@@ -1,14 +1,15 @@
-from django.http import Http404
+import json
+from asgiref.sync import async_to_sync
 from django.db import transaction
+from django.http import Http404
+from django.http.response import HttpResponseServerError
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
-from django.shortcuts import redirect
-import json
 from server.models.commands import InitWorkflowCommand
 from server.models import Lesson, Workflow, ModuleVersion
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
-from asgiref.sync import async_to_sync
 from server import rabbitmq
 
 
@@ -119,7 +120,14 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
 
 
 def _render_get_lesson_detail(request, lesson):
-    workflow, created = _ensure_workflow(request, lesson)
+    try:
+        workflow, created = _ensure_workflow(request, lesson)
+    except ModuleVersion.DoesNotExist:
+        return HttpResponseServerError('initial_json asks for missing module')
+    except ValueError as err:
+        return HttpResponseServerError('initial_json has invalid params: '
+                                       + str(err))
+
     modules = visible_modules(request)
 
     init_state = make_init_state(request, workflow=workflow, modules=modules)
