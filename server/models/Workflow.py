@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from typing import Optional
 import warnings
 from django.db import models, transaction
-from django.db.models import F
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
@@ -292,14 +291,10 @@ class Workflow(models.Model):
     def are_all_render_results_fresh(self):
         """Query whether all live WfModules are rendered."""
         from .WfModule import WfModule
-        return not WfModule.objects \
-            .filter(
-                tab__workflow_id=self.id,
-                tab__is_deleted=False,
-                is_deleted=False
-            ).exclude(
-                cached_render_result_delta_id=F('last_relevant_delta_id')
-            ).exists()
+        for wf_module in WfModule.live_in_workflow(self):
+            if not wf_module.get_cached_render_result(only_fresh=True):
+                return False
+        return True
 
     @property
     def lesson(self):

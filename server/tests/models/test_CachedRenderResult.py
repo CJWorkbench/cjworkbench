@@ -1,4 +1,3 @@
-import os.path
 import datetime
 import pandas
 from server.tests.utils import DbTestCase
@@ -67,7 +66,7 @@ class CachedRenderResultTests(DbTestCase):
             minio.minio_client.get_object(minio.CachedRenderResultsBucket,
                                           parquet_key)
 
-    def test_metadata_comes_from_memory_when_available(self):
+    def test_result_and_metadata_come_from_memory_when_available(self):
         result = ProcessResult(pandas.DataFrame({
             'A': [1],  # int64
             'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
@@ -75,21 +74,15 @@ class CachedRenderResultTests(DbTestCase):
         }))
         result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
         cached_result = self.wf_module.cache_render_result(2, result)
+
         # cache_render_result() keeps its `result` parameter in memory, so we
-        # can avoid disk entirely.
-        #
-        # This is great for the render pipeline: it never reads from the file
-        # it writes, as it renders all modules sequentially.
+        # can avoid disk entirely. Prove it by deleting from disk.
         minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
                                          cached_result.parquet_key)
         self.assertFalse(cached_result._result is None)
 
         self.assertEqual(cached_result.result, result)
-
-        self.assertEqual(len(cached_result), 1)
-        self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
-        self.assertEqual(cached_result.column_types,
-                         ['number', 'datetime', 'text', 'text'])
+        self.assertEqual(cached_result.nrows, 1)
         self.assertEqual(cached_result.columns, [
             Column('A', 'number'),
             Column('B', 'datetime'),
@@ -97,37 +90,33 @@ class CachedRenderResultTests(DbTestCase):
             Column('D', 'text'),
         ])
 
-    # To test this, we'd need a >5MB file (since our Parquet chunk size is
-    # 5MB). Or we'd need to make the chunk size configurable. Not worth the
-    # effort.
-    #def test_metadata_does_not_read_whole_file_from_disk(self):
-    #    result = ProcessResult(pandas.DataFrame({
-    #        'A': [1],  # int64
-    #        'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
-    #        'C': ['foo'],  # str
-    #    }))
-    #    result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
-    #    self.wf_module.cache_render_result(2, result)
-    #    self.wf_module.save()
+    def test_metadata_comes_from_db_columns(self):
+        result = ProcessResult(pandas.DataFrame({
+            'A': [1],  # int64
+            'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
+            'C': ['foo'],  # str
+        }))
+        result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
+        cached_result = self.wf_module.cache_render_result(2, result)
 
-    #    cached_result = self.wf_module.get_cached_render_result()
-    #    cached_result.parquet_file  # read header
-    #    minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
-    #                                     cached_result.parquet_key)
-    #    self.assertEqual(len(cached_result), 1)
-    #    self.assertEqual(cached_result.column_names, ['A', 'B', 'C', 'D'])
-    #    self.assertEqual(cached_result.column_types,
-    #                     ['number', 'datetime', 'text', 'text'])
-    #    self.assertEqual(cached_result.columns, [
-    #        Column('A', 'number'),
-    #        Column('B', 'datetime'),
-    #        Column('C', 'text'),
-    #        Column('D', 'text'),
-    #    ])
+        # cache_render_result() keeps its `result` parameter in memory, so we
+        # can avoid disk entirely. Prove it by deleting from disk.
+        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
+                                         cached_result.parquet_key)
 
-    #    with self.assertRaises(FileNotFoundError):
-    #        # Prove that we didn't read from the file
-    #        self.assertIsNone(cached_result.result)
+        # Load _new_ CachedRenderResult -- from DB columns, not memory
+        self.wf_module.save()
+        fresh_wf_module = WfModule.objects.get(id=self.wf_module.id)
+        cached_result = fresh_wf_module.get_cached_render_result()
+        self.assertFalse(hasattr(cached_result, '_result'))
+
+        self.assertEqual(cached_result.nrows, 1)
+        self.assertEqual(cached_result.columns, [
+            Column('A', 'number'),
+            Column('B', 'datetime'),
+            Column('C', 'text'),
+            Column('D', 'text'),
+        ])
 
     def test_delete_wfmodule(self):
         result = ProcessResult(pandas.DataFrame({'a': [1]}))

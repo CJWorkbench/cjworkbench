@@ -4,6 +4,7 @@ from django.db import models
 from server import minio
 from server.models import loaded_module
 from server.modules.types import ProcessResult
+from .fields import ColumnsField
 from .Params import Params
 from .param_field import ParamDTypeDict, ParamField
 from .CachedRenderResult import CachedRenderResult
@@ -106,6 +107,8 @@ class WfModule(models.Model):
     # should be JSONField but we need backwards-compatibility
     cached_render_result_json = models.BinaryField(blank=True)
     cached_render_result_quick_fixes = JSONField(blank=True, default=list)
+    cached_render_result_columns = ColumnsField(null=True, blank=True)
+    cached_render_result_nrows = models.IntegerField(null=True, blank=True)
 
     # TODO once we auto-compute stale module outputs, nix is_busy -- it will
     # be implied by the fact that the cached output revision is wrong.
@@ -144,14 +147,14 @@ class WfModule(models.Model):
         'unreachable': a previous module had 'error' so we will not run this
         'ok': render produced a table
         """
-        if self.cached_render_result_delta_id != self.last_relevant_delta_id:
+        if not self.get_cached_render_result(only_fresh=True):
             return 'busy'
         else:
             return self.cached_render_result_status
 
     @property
     def output_error(self):
-        if self.cached_render_result_delta_id != self.last_relevant_delta_id:
+        if not self.get_cached_render_result(only_fresh=True):
             return ''
         else:
             return self.cached_render_result_error
@@ -288,7 +291,8 @@ class WfModule(models.Model):
             # because that would involve reading the whole thing.
             new_wfm.cached_render_result_delta_id = \
                 to_workflow.last_delta_id
-            for attr in ('status', 'error', 'json', 'quick_fixes'):
+            for attr in ('status', 'error', 'json', 'quick_fixes', 'columns',
+                         'nrows'):
                 full_attr = f'cached_render_result_{attr}'
                 setattr(new_wfm, full_attr, getattr(self, full_attr))
 

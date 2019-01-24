@@ -152,15 +152,9 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
     if not cached_result:
         dataframe = pd.DataFrame()
     else:
-        column_names = cached_result.column_names[:N_COLUMNS_PER_TABLE]
-        parquet_file = cached_result.parquet_file
-        if parquet_file:
-            dataframe = parquet_file.to_pandas(column_names)
-        else:
-            # There was a race: the cached data is gone.
-            #
-            # This probably means the user doesn't need it any more.
-            dataframe = pd.DataFrame()
+        columns = cached_result.columns[:N_COLUMNS_PER_TABLE]
+        column_names = [c.name for c in columns]
+        dataframe = cached_result.read_dataframe(column_names)
 
     nrows = len(dataframe)
     if startrow is None:
@@ -249,14 +243,14 @@ def wfmodule_value_counts(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     try:
-        column = request.GET['column']
+        colname = request.GET['column']
     except KeyError:
         return JsonResponse(
             {'error': 'Missing a "column" parameter'},
             status=400
         )
 
-    if not column:
+    if not colname:
         # User has not yet chosen a column. Empty response.
         return JsonResponse({'values': {}})
 
@@ -266,12 +260,21 @@ def wfmodule_value_counts(request, pk):
             # assume we'll get another request after execute finishes
             return JsonResponse({'values': {}})
 
-        if column not in cached_result.column_names:
-            return JsonResponse({'error': f'column "{column}" not found'},
+        colnames = [c.name for c in cached_result.columns]
+        if colname not in colnames:
+            return JsonResponse({'error': f'column "{colname}" not found'},
                                 status=404)
 
         # Only load the one column
-        series = cached_result.parquet_file.to_pandas([column])[column]
+        dataframe = cached_result.read_dataframe([colname])
+        try:
+            series = dataframe[colname]
+        except KeyError:
+            # Cache has disappeared. (read_dataframe() returns empty DataFrame
+            # instead of throwing, as it maybe ought to.) We're probably going
+            # to make another request soon.
+            return JsonResponse({'error': f'column "{colname}" not found'},
+                                status=404)
 
     # We only handle string. If it's not string, convert to string.
     if not (series.dtype == object or hasattr(series, 'cat')):
@@ -320,8 +323,9 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
     cend = N_COLUMNS_PER_TILE * (int(tile_column) + 1)
 
     # TODO handle races in the following file reads....
-    pf = cached_result.parquet_file
-    df = pf.to_pandas(columns=cached_result.column_names[cbegin:cend])
+    df = cached_result.read_dataframe(
+        columns=cached_result.column_names[cbegin:cend]
+    )
 
     rbegin = N_ROWS_PER_TILE * int(tile_row)
     rend = N_ROWS_PER_TILE * (int(tile_row) + 1)

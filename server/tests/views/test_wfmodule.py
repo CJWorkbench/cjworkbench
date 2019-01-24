@@ -186,6 +186,8 @@ class WfModuleTests(LoggedInTestCase):
 
     # Test set/get update interval
     def test_wf_module_update_settings(self):
+        # FIXME this test runs async_to_sync() to run database operations, thus
+        # leaking a database connection. TODO move to a handler, not a view.
         settings = {'auto_update_data': True, 'update_interval': 5,
                     'update_units': 'weeks'}
 
