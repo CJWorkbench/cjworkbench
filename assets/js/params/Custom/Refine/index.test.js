@@ -129,39 +129,6 @@ describe('Refine', () => {
     expect(w.find('input')).toHaveLength(0)
   })
 
-  it('should blacklist', () => {
-    const w = wrapper({
-      valueCounts: { 'a': 2, 'b': 1 },
-      value: { renames: {}, blacklist: [ 'a' ] }
-    })
-
-    // 'a': blacklisted ("shown" checkbox is unchecked)
-    expect(w.find('.summary').at(0).find('input[type="checkbox"]').prop('checked')).toBe(false)
-    // 'b': not blacklisted ("shown" checkbox is checked)
-    expect(w.find('.summary').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
-
-    const changeCalls = w.prop('onChange').mock.calls
-
-    // Add 'b' to blacklist
-    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: false } })
-    expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].blacklist).toEqual([ 'a', 'b' ])
-
-    // The change is only applied _after_ we change the prop; outside of the
-    // test environment, this is the Redux state.
-    w.update()
-    expect(w.find('.summary').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
-    w.setProps({ value: changeCalls[0][0] })
-    w.update()
-    expect(w.find('.summary').at(1).find('input[type="checkbox"]').prop('checked')).toBe(false)
-
-    // Remove 'b' from blacklist
-    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
-
-    expect(changeCalls).toHaveLength(2)
-    expect(changeCalls[1][0].blacklist).toEqual([ 'a' ])
-  })
-
   it('should rename a value', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1 },
@@ -275,49 +242,115 @@ describe('Refine', () => {
     expect(w.find('.visible')).toHaveLength(2)
   })
 
-  it('should set the blacklist to full when "None" pressed', () => {
+  it('should uncheck all _search results_ when "None" pressed', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      value: { blacklist: [], renames: {} }
+    })
+    w.find('input[type="checkbox"]').forEach(obj => {
+      obj.simulate('change', { target: { checked: true } })
+    })
+
+    expect(w.find('input[checked=true]')).toHaveLength(5)
+    w.find('input[type="search"]').simulate('change', {target: {value: 'b'}})
+    w.update()
+
+    w.find('button[title="Select None"]').simulate('click')
+    w.find('input[type="search"]').simulate('change', {target: {value: ''}})
+    expect(w.find('input[checked=true]')).toHaveLength(3)
+
+    //Now clear the rest with no search input
+    w.find('button[title="Select None"]').simulate('click')
+    expect(w.find('input[checked=true]')).toHaveLength(0)
+  })
+
+  it('should check all _search results_ when "All" pressed', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      value: { blacklist: [], renames: {} }
+    })
+
+    expect(w.find('input[checked=true]')).toHaveLength(0)
+    w.find('input[type="search"]').simulate('change', {target: {value: 'b'}})
+    w.update()
+
+    w.find('button[title="Select All"]').simulate('click')
+    w.find('input[type="search"]').simulate('change', {target: {value: ''}})
+    expect(w.find('input[checked=true]')).toHaveLength(2)
+
+    //Now select the rest with no search input
+    w.find('button[title="Select All"]').simulate('click')
+    expect(w.find('input[checked=true]')).toHaveLength(5)
+  })
+
+  it('should disable merge button when less than 2 values selected', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: { renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] }
+      value: { renames: { }, blacklist: [] }
     })
-    w.find('button[title="Select None"]').simulate('click')
-    const changeCalls = w.prop('onChange').mock.calls
-    expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].blacklist).toEqual(['a', 'b', 'd'])
+    expect(w.find('button[name="merge"]').prop('disabled')).toEqual(true)
+    w.find('.summary').at(0).find('input[type="checkbox"]').simulate('change',{ target: { checked: true } })
+    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change',{ target: { checked: true } })
+    expect(w.find('button[name="merge"]').prop('disabled')).toEqual(false)
   })
 
-  it('should clear the blacklist when "All" pressed', () => {
+  it('should merge values into one group when checked and merge button pressed', () => {
     const w = wrapper({
-      valueCounts: {'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: {renames: {'c': 'b', 'bb': 'a'}, blacklist: ['a', 'b', 'd']}
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1},
+      value: { renames: { }, blacklist: [] }
     })
-    w.find('button[title="Select All"]').simulate('click')
+    w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="include[bb]"]').simulate('change', { target: { checked: true } })
+    w.find('button[name="merge"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].blacklist).toEqual([])
+    expect(changeCalls[0][0].renames).toEqual({"b": "bb", "bb": "bb"})
   })
 
-  it('disables All and None buttons when searching', () => {
+  /*
+      Default value order rules:
+      1. Group 'values' count
+      2. Group 'count'
+      3. Alphabetical
+   */
+  it('should merge values to default value based on rules', () => {
     const w = wrapper({
-      valueCounts: {'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1},
-      value: {renames: {'c': 'b', 'BB': 'a'}, blacklist: ['a']}
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},
+      value: { renames: { 'bb': 'a' }, blacklist: [] }
     })
-    // Search for 'a' even though it is blacklisted
-    w.find('input[type="search"]').simulate('change', {target: {value: 'a'}})
-    w.update()
-    expect(w.find('button[name="refine-select-all"]').prop('disabled')).toBe(true)
-    expect(w.find('button[name="refine-select-none"]').prop('disabled')).toBe(true)
+    // Group 'value' count
+    w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
+    w.find('button[name="merge"]').simulate('click')
+    const changeCalls = w.prop('onChange').mock.calls
+    expect(changeCalls).toHaveLength(1)
+    expect(changeCalls[0][0].renames).toEqual({"a": "a", "b": "a", "bb": "a"})
 
-    // Select All should be disabled
-    expect(w.find('button[title="Select All"]').prop('disabled')).toEqual(true)
-    w.find('button[title="Select All"]').simulate('click')
-    w.update()
-    expect(w.prop('onChange').mock.calls).toHaveLength(0)
+    // Group count
+    w.setProps({value: { renames: {}, blacklist: [] }})
+    w.find('input[name="include[c]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="include[e]"]').simulate('change', { target: { checked: true } })
+    w.find('button[name="merge"]').simulate('click')
+    expect(changeCalls).toHaveLength(2)
+    expect(changeCalls[1][0].renames).toEqual({"e": "e", "c": "e"})
 
-    // Select None should be disabled
-    expect(w.find('button[title="Select None"]').prop('disabled')).toEqual(true)
-    w.find('button[title="Select None"]').simulate('click')
-    w.update()
-    expect(w.prop('onChange').mock.calls).toHaveLength(0)
+    // Alphabetical
+    w.setProps({value: { renames: {}, blacklist: [] }})
+    w.find('input[name="include[f]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="include[d]"]').simulate('change', { target: { checked: true } })
+    w.find('button[name="merge"]').simulate('click')
+    expect(changeCalls).toHaveLength(3)
+    expect(changeCalls[2][0].renames).toEqual({"f": "d", "d": "d"})
+  })
+  it('should focus the new group text for editing after merge', () => {
+    const w = wrapper({
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},
+      value: { renames: { 'bb': 'a' }, blacklist: [] }
+    })
+
+    w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
+    w.find('button[name="merge"]').simulate('click')
+    expect(document.activeElement['value']).toBe('a')
   })
 })
