@@ -23,7 +23,6 @@
     flex: 0 0 auto;
     width:100%;
     height: 100%; // OutputIframe.js will override this ...
-    max-height: calc(75% - 3rem); // ... and this is the max
     position:relative;
 
     iframe {
