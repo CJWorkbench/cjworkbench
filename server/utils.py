@@ -2,7 +2,6 @@
 import io
 import os
 import time
-import sys
 import logging
 import tempfile
 from typing import Any, Dict, Iterable, Optional, Tuple
@@ -197,10 +196,16 @@ def _log_user_event(user: User, headers: Headers, event: str,
             created_at=int(time.time()),
             metadata=metadata
         )
-    except intercom.errors.ServiceUnavailableError:
-        # on production, this happens every few days:
+    except (
+        intercom.errors.ServiceUnavailableError,
+        intercom.errors.ResourceNotFound
+    ):
+        # on production, these happen every day or two:
+        #
         # intercom.errors.ServiceUnavailableError: Sorry, the API service is
         # temporarily unavailable
+        #
+        # intercom.errors.ResourceNotFound: User Not Found
         #
         # _log_ the problem, but don't logger.exception(): we don't want to
         # receive an email about it.
