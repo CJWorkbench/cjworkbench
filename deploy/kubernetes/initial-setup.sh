@@ -28,6 +28,14 @@ CLUSTER_NAME="workbench"
 #kubectl create namespace production
 #kubectl create namespace staging
 
+## Grant yourself the ability to create roles in Kubernetes
+#kubectl create clusterrolebinding cluster-admin-binding \
+#  --clusterrole cluster-admin \
+#  --user $(gcloud config get-value account)
+
+# Enable "Application" resources (we use one for RabbitMQ)
+kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
+
 # 1 Prepare Google Cloud Storage and Minio
 # 1.1 GCS account, so minio can create buckets/objects
 gcloud iam service-accounts create production-minio --display-name production-minio
@@ -63,8 +71,7 @@ kubectl -n production create secret generic minio-access-key \
 kubectl -n production apply -f dbdata-pvc.yaml
 kubectl -n production apply -f database-service.yaml
 kubectl -n production apply -f database-deployment.yaml
-kubectl -n production apply -f rabbitmq-service.yaml
-kubectl -n production apply -f rabbitmq-deployment.yaml
+rabbitmq/init.sh production
 kubectl -n production apply -f minio-service.yaml
 kubectl -n production apply -f minio-deployment.yaml
 

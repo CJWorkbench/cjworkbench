@@ -35,8 +35,6 @@ spec:
               value: UA-104106561-1
             - name: CJW_HEAP_ANALYTICS_ID
               value: '70406982'
-            - name: CJW_RABBITMQ_HOST
-              value: amqp://guest:guest@rabbitmq-service/
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD
@@ -102,6 +100,13 @@ spec:
               value: '.workbenchdata.com'
             - name: MINIO_STATIC_URL_PATTERN
               value: 'https://storage.googleapis.com/{MINIO_BUCKET_PREFIX}-static.workbenchdata.com/'
+            - name: _RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-1-rabbitmq-secret
+                  key: rabbitmq-pass
+            - name: CJW_RABBITMQ_HOST
+              value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"
           volumeMounts:
             - mountPath: /app/secrets/google-oauth-secret
               name: google-oauth-secret
