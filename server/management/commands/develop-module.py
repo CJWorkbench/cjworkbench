@@ -23,8 +23,7 @@ def main(directory, pretend_git_url):
         shutil.rmtree(tmpdir)
         shutil.copytree(directory, tmpdir)
         try:
-            import_module_from_directory(pretend_git_url, basename, 'develop',
-                                         tmpdir, force_reload=True)
+            import_module_from_directory('develop', tmpdir, force_reload=True)
         except Exception:
             logger.exception('Error loading module')
 
