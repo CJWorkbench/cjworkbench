@@ -58,8 +58,8 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
 
         # Move subsequent modules over to make way for this one.
         tab.live_wf_modules \
-                .filter(order__gte=self.wf_module.order) \
-                .update(order=F('order') + 1)
+            .filter(order__gte=self.wf_module.order) \
+            .update(order=F('order') + 1)
 
         self.wf_module.is_deleted = False
         self.wf_module.save(update_fields=['is_deleted'])

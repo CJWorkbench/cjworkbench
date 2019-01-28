@@ -75,10 +75,12 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
 # Derived classes implement the actual mutations on the database
 # (via polymorphic forward()/backward())
 # To derive a command from Delta:
-#   - implement forward_impl() and backward_impl()
-#   - implement a static create() that takes parameters and calls
-#     `MyCommandClass.create_impl(**kwargs)`. `Delta.create_impl()`
-#     will call `delta.forward()` within a Workflow.cooperative_lock().
+#
+#   - implement @classmethod amend_create_kwargs() -- a database-sync method.
+#   - implement forward_impl() and backward_impl() -- database-sync methods.
+#
+# When creating a Delta, the two commands will be called in the same atomic
+# transaction.
 class Delta(PolymorphicModel):
     class Meta:
         # OMG this bug ate so many hours...
@@ -188,19 +190,7 @@ class Delta(PolymorphicModel):
                                     self.workflow.last_delta_id)
 
     @classmethod
-    async def create(cls, *, workflow, **kwargs):
-        """
-        Wrap create_impl().
-
-        A bit of history: previously, we used @staticmethod instead of
-        @classmethod to define `create()` methods, meaning we needed one on
-        each command. They tend to look alike. Now we've switched to
-        @classmethod. TODO delete the subclasses' `create()` methods.
-        """
-        return await cls.create_impl(workflow=workflow, **kwargs)
-
-    @classmethod
-    async def create_impl(cls, *args, **kwargs) -> None:
+    async def create(cls, *, workflow, **kwargs) -> None:
         """Create the given Delta and run .forward().
 
         Keyword arguments vary by cls, but `workflow` is always required.
@@ -209,16 +199,15 @@ class Delta(PolymorphicModel):
 
         Example:
 
-            delta = await ChangeWfModuleNotesCommand.create_impl(
+            delta = await ChangeWfModuleNotesCommand.create(
                 workflow=wf_module.workflow,
                 # ... other kwargs
             )
             # now delta has been applied and committed to the database, and
             # websockets users have been notified.
         """
-
         delta, ws_data = await cls._first_forward_and_save_returning_ws_data(
-            *args,
+            workflow=workflow,
             **kwargs
         )
 
@@ -248,7 +237,7 @@ class Delta(PolymorphicModel):
 
     @classmethod
     @database_sync_to_async
-    def _first_forward_and_save_returning_ws_data(cls, *args, **kwargs):
+    def _first_forward_and_save_returning_ws_data(cls, **kwargs):
         """
         Create and execute command, returning `(Delta, WebSockets data)`.
 
@@ -270,8 +259,7 @@ class Delta(PolymorphicModel):
             if orphan_delta:
                 orphan_delta.delete_with_successors()
 
-            delta = cls.objects.create(*args,
-                                       prev_delta_id=workflow.last_delta_id,
+            delta = cls.objects.create(prev_delta_id=workflow.last_delta_id,
                                        **create_kwargs)
             delta.forward_impl()
 

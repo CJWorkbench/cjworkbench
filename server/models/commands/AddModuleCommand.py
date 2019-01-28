@@ -28,8 +28,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     # is: you _must_ delete the Delta first; after deleting the Delta, you
     # _may_ delete the WfModule.
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
-    # what was selected before we were added?
-    selected_wf_module_position = models.IntegerField(null=True, blank=True)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def load_ws_data(self):
@@ -131,7 +129,6 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             **kwargs,
             'workflow': workflow,
             'wf_module': wf_module,
-            'selected_wf_module_position': tab.selected_wf_module_position,
             'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
         }
 

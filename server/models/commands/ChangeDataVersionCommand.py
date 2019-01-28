@@ -9,7 +9,7 @@ from .util import ChangesWfModuleOutputs
 def _workflow_has_notifications(workflow):
     """Detect whether a workflow sends email on changes."""
     return WfModule.live_in_workflow(workflow) \
-            .filter(notifications=True).exists()
+        .filter(notifications=True).exists()
 
 
 class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
