@@ -262,15 +262,20 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'normal': {
-            'format': '%(levelname)s %(asctime)s %(name)s %(thread)d %(message)s'
+        'plaintext': {
+            'format': (
+                '%(levelname)s %(asctime)s %(name)s %(thread)d %(message)s'
+            ),
+        },
+        'json': {
+            'class': 'server.logging.json.JsonFormatter',
         },
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'normal',
+            'formatter': 'plaintext' if DEBUG else 'json',
         },
     },
     'loggers': {
