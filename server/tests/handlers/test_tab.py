@@ -222,10 +222,11 @@ class TabTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
 
         response = self.run_handler(create, user=user, workflow=workflow,
-                                    name='Foo')
+                                    slug='tab-ab13', name='Foo')
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 2)
         self.assertEqual(workflow.live_tabs.last().name, 'Foo')
+        self.assertEqual(workflow.live_tabs.last().slug, 'tab-ab13')
 
     def test_create_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)

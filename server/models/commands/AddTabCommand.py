@@ -27,6 +27,9 @@ class AddTabCommand(Delta):
     # ambiguous: should one delete the Tab first, or the Delta? The answer is:
     # you _must_ delete the Delta first; after deleting the Delta, you _may_
     # delete the Tab.
+    #
+    # TODO nix soft-deleting Tabs and WfModules; instead, give DeleteTabCommand
+    # all the info it needs to undo itself. Change this field to `tab_slug`.
     tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
     old_selected_tab_position = models.IntegerField()
 
@@ -70,11 +73,11 @@ class AddTabCommand(Delta):
         pass
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow: Workflow, name: str):
+    def amend_create_kwargs(cls, *, workflow: Workflow, slug: str, name: str):
         # tab starts off "deleted" and appears at end of tabs list; we
         # un-delete in forward().
         tab = workflow.tabs.create(position=workflow.live_tabs.count(),
-                                   is_deleted=True, name=name)
+                                   is_deleted=True, slug=slug, name=name)
 
         return {
             'workflow': workflow,
