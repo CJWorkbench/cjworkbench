@@ -119,6 +119,12 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(Workflow.objects.count(), 4)  # create Workflow
         self.assertEqual(Workflow.objects
                          .filter(lesson_slug='load-public-data').count(), 2)
+        workflow = Workflow.objects.get(lesson_slug='load-public-data',
+                                        owner=self.user)
+        # Assert the workflow is created with a valid Tab
+        tab1 = workflow.tabs.first()
+        self.assertEqual(tab1.slug, 'tab-1')
+        self.assertEqual(tab1.name, 'Tab 1')
 
     # The next three tests are of GET /workflows/:id/. They're here, not there,
     # to keep canonical-URL tests in one file.
@@ -181,6 +187,7 @@ class LessonDetailTests(DbTestCase):
         state = response.context_data['initState']
         tabs = state['tabs']
         tab1 = list(tabs.values())[0]
+        self.assertEqual(tab1['slug'], 'tab-1')
         self.assertEqual(tab1['name'], 'Tab X')
         wf_modules = state['wfModules']
         wfm1 = list(wf_modules.values())[0]

@@ -87,21 +87,21 @@ class WorkflowTest(HandlerTestCase):
     def test_set_selected_tab(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
-        tab2 = workflow.tabs.create(position=1)
+        workflow.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(set_selected_tab, user=user,
-                                    workflow=workflow, tabId=tab2.id)
+                                    workflow=workflow, tabSlug='tab-2')
         self.assertResponse(response, data=None)
 
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 1)
 
-    def test_set_position_viewer_access_denied(self):
+    def test_set_selected_tab_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        tab2 = workflow.tabs.create(position=1)
+        workflow.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(set_selected_tab, workflow=workflow,
-                                    tabId=tab2.id)
+                                    tabSlug='tab-2')
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
 
@@ -110,55 +110,53 @@ class WorkflowTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
 
         workflow2 = Workflow.create_and_init(owner=user)
+        workflow2.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(set_selected_tab, user=user,
                                     workflow=workflow,
-                                    tabId=workflow2.tabs.first().id)
-        self.assertResponse(response, error='Invalid tabId')
+                                    tabSlug='tab-2')
+        self.assertResponse(response, error='Invalid tab slug')
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_set_tab_order(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
+        workflow = Workflow.create_and_init(owner=user)  # initial tab: tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(set_tab_order, user=user,
                                     workflow=workflow,
-                                    tabIds=[tab2.id, tab1.id])
+                                    tabSlugs=['tab-2', 'tab-1'])
         self.assertResponse(response, data=None)
 
         self.assertEqual(
-            list(workflow.live_tabs.values_list('id', flat=True)),
-            [tab2.id, tab1.id]
+            list(workflow.live_tabs.values_list('slug', flat=True)),
+            ['tab-2', 'tab-1']
         )
 
     def test_set_tab_order_viewer_access_denied(self):
-        workflow = Workflow.create_and_init()
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
+        workflow = Workflow.create_and_init()  # tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(set_tab_order, workflow=workflow,
-                                    tabIds=[tab2.id, tab1.id])
+                                    tabSlugs=['tab-2', 'tab-1'])
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
 
-    def test_set_tab_order_wrong_tab_ids(self):
+    def test_set_tab_order_wrong_tab_slugs(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(set_tab_order, user=user,
                                     workflow=workflow,
-                                    tabIds=[tab2.id + 1, tab1.id + 1])
-        self.assertResponse(response, error='wrong tab IDs')
+                                    tabSlugs=['tab-3', 'tab-2'])
+        self.assertResponse(response, error='wrong tab slugs')
 
     def test_set_tab_order_invalid_tab_ids(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
 
         response = self.run_handler(set_tab_order, user=user,
-                                    workflow=workflow, tabIds=['1', '2'])
+                                    workflow=workflow, tabSlugs=[1, 2])
         self.assertResponse(response,
-                            error='tabIds must be an Array of integers')
+                            error='tabSlugs must be an Array of slugs')

@@ -74,7 +74,6 @@ describe('WfModule, not read-only mode', () => {
         isAfterSelected={false}
         api={mockApi}
         index={2}
-        tabId={11}
         onDragStart={jest.fn()}
         onDragEnd={jest.fn()}
         isLessonHighlight={false}
@@ -282,18 +281,18 @@ describe('WfModule, not read-only mode', () => {
     const store = mockStore({
       workflow: {
         id: 99,
-        tab_ids: [ 11, 12 ],
+        tab_slugs: [ 'tab-11', 'tab-12' ],
         read_only: false,
         is_anonymous: false,
         selected_tab_position: 0
       },
       tabs: {
-        11: { id: 11, wf_module_ids: [ 10, 20 ] },
-        12: { id: 12, wf_module_ids: [] }
+        'tab-11': { slug: 'tab-11', wf_module_ids: [ 10, 20 ] },
+        'tab-12': { slug: 'tab-12', wf_module_ids: [] }
       },
       wfModules: {
-        10: { id: 10, tab_id: 11 },
-        20: { id: 20, tab_id: 11 }
+        10: { id: 10, tab_slug: 'tab-11' },
+        20: { id: 20, tab_slug: 'tab-11' }
       },
       modules: {
         loadurl: {
@@ -319,8 +318,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          tabId={11}
-          wfModule={{ id: 20, module: 'loadurl', tab_id: 11, is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
           isSelected={true}
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -332,7 +330,7 @@ describe('WfModule, not read-only mode', () => {
     )
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addModule).toHaveBeenCalledWith(11, 'fixtype', 1, {foo: 'bar'})
+    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'fixtype', 1, {foo: 'bar'})
   })
 
   describe('lesson highlights', () => {
@@ -359,11 +357,11 @@ describe('WfModule, not read-only mode', () => {
         workflow: {
           read_only: false,
           is_anonymous: false,
-          tab_ids: [11],
+          tab_slugs: ['tab-11'],
           selected_tab_position: 0
         },
         tabs: {
-          11: { wf_module_ids: [1, 2, 999] }
+          'tab-11': { wf_module_ids: [1, 2, 999] }
         },
         wfModules: {
           999: { module: 'loadurl', params: {} }
@@ -390,8 +388,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            tabId={11}
-            wfModule={{ id: 20, module: 'loadurl', tab_id: 11, is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
             isSelected={true}
             isAfterSelected={false}
             onDragStart={jest.fn()}

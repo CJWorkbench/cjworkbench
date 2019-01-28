@@ -39,11 +39,11 @@ describe("UpdateTableAction actions", () => {
   it('should select and update an existing module after the selected one', () => {
     const getState = () => ({
       tabs: {
-        2: { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 0 }
+        'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 0 }
       },
       wfModules: {
-        10: { tab_id: 2 },
-        11: { tab_id: 2, module: 'convert-text', params: { column: 'A' }}
+        10: { tab_slug: 'tab-2' },
+        11: { tab_slug: 'tab-2', module: 'convert-text', params: { column: 'A' }}
       },
       modules: {
         loadurl: {},
@@ -59,11 +59,11 @@ describe("UpdateTableAction actions", () => {
   it('should update an existing, selected module', () => {
     const getState = () => ({
       tabs: {
-        2: { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
+        'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
       },
       wfModules: {
         10: {},
-        11: { tab_id: 2, module: 'clean-text', params: { column: 'A' }}
+        11: { tab_slug: 'tab-2', module: 'clean-text', params: { column: 'A' }}
       },
       modules: {
         loadurl: {},
@@ -79,11 +79,11 @@ describe("UpdateTableAction actions", () => {
   it('should insert a new module when the current+next have the wrong id_name', () => {
     const getState = () => ({
       tabs: {
-        2: { wf_module_ids: [ 10, 11, 12, 13 ] }
+        'tab-2': { wf_module_ids: [ 10, 11, 12, 13 ] }
       },
       wfModules: {
         10: { module: 'clean-text' },
-        11: { tab_id: 2, module: 'sort' },
+        11: { tab_slug: 'tab-2', module: 'sort' },
         12: { module: 'sort' },
         13: { module: 'clean-text' }
       },
@@ -101,10 +101,10 @@ describe("UpdateTableAction actions", () => {
   it('should insert a new module when forceNewModule', () => {
     const getState = () => ({
       tabs: {
-        2: { wf_module_ids: [ 10, 11 ] }
+        'tab-2': { wf_module_ids: [ 10, 11 ] }
       },
       wfModules: {
-        10: { tab_id: 2, module: 'filter' },
+        10: { tab_slug: 'tab-2', module: 'filter' },
         11: { module: 'filter' }
       },
       modules: {
@@ -137,11 +137,11 @@ describe("UpdateTableAction actions", () => {
   it('should append a new module to the end of the tab', () => {
     const getState = () => ({
       tabs: {
-        2: { wf_module_ids: [ 10, 11 ] }
+        'tab-2': { wf_module_ids: [ 10, 11 ] }
       },
       wfModules: {
         10: { module: 'fetch' },
-        11: { tab_id: 2, module: 'sort' }
+        11: { tab_slug: 'tab-2', module: 'sort' }
       },
       modules: {
         filter: {},

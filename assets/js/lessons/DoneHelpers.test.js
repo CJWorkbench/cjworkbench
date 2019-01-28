@@ -5,12 +5,12 @@ describe('DoneHelpers', () => {
   describe('WorkflowWithHelpers', () => {
     it('should give wfModules', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_ids: [ 21, 22 ],
+        tab_slugs: [ 'tab-21', 'tab-22' ],
         selected_tab_position: 0
       }, {
         tabs: {
-          21: { wf_module_ids: [ 1, 2 ] },
-          22: { wf_module_ids: [] }
+          'tab-21': { wf_module_ids: [ 1, 2 ] },
+          'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
           1: { module: 'foo' },
@@ -27,12 +27,12 @@ describe('DoneHelpers', () => {
 
     it('should give wfModuleNames', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_ids: [ 21, 22 ],
+        tab_slugs: [ 'tab-21', 'tab-22' ],
         selected_tab_position: 0
       }, {
         tabs: {
-          21: { wf_module_ids: [ 1, 2 ] },
-          22: { wf_module_ids: [] }
+          'tab-21': { wf_module_ids: [ 1, 2 ] },
+          'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
           1: { module: 'foo' },
@@ -49,12 +49,12 @@ describe('DoneHelpers', () => {
 
     it('should give wfModuleName=null when there is no module', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_ids: [ 21, 22 ],
+        tab_slugs: [ 'tab-21', 'tab-22' ],
         selected_tab_position: 0
       }, {
         tabs: {
-          21: { wf_module_ids: [ 1, 2, "3_nonce" ] },
-          22: { wf_module_ids: [] }
+          'tab-21': { wf_module_ids: [ 1, 2, "3_nonce" ] },
+          'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
           1: { module: 'blah' }, // not a real module
@@ -172,12 +172,12 @@ describe('DoneHelpers', () => {
       // when we test the same thing in a StateWithHelpers({ workflow: ... }).
       const state = new StateWithHelpers({
         workflow: {
-          tab_ids: [ 21, 22 ],
+          tab_slugs: [ 'tab-21', 'tab-22' ],
           selected_tab_position: 1
         },
         tabs: {
-          21: { wf_module_ids: [] },
-          22: { wf_module_ids: [ 1, 2 ] },
+          'tab-21': { wf_module_ids: [] },
+          'tab-22': { wf_module_ids: [ 1, 2 ] },
         },
         wfModules: {
           1: { module: 'foo' },
@@ -195,12 +195,12 @@ describe('DoneHelpers', () => {
     it('should have a .selectedWfModule', () => {
       const state = new StateWithHelpers({
         workflow: {
-          tab_ids: [ 11, 12 ],
+          tab_slugs: [ 'tab-11', 'tab-12' ],
           selected_tab_position: 1,
         },
         tabs: {
-          11: { wf_module_ids: [] },
-          12: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 1 }
+          'tab-11': { wf_module_ids: [] },
+          'tab-12': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 1 }
         },
         wfModules: {
           2: { module: 'foo' },

@@ -34,14 +34,6 @@
       border-bottom-right-radius: 5px;
       border-top: 0;
 
-      .tab-pending {
-        // This is a tab that doesn't exist yet: the user clicked "+" and
-        // JS hasn't heard a response from the server.
-        //
-        // There's no dropdown menu on tabs that don't exist yet, so pad instead.
-        padding-right: 2rem;
-      }
-
       $tab-name-padding: .8rem .5rem .6rem 1.5rem;
       $tab-button-padding: .8rem .5rem .6rem .1rem;
 

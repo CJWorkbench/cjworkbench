@@ -98,7 +98,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             }
 
             tabs = list(workflow.live_tabs)
-            ret['updateTabs'] = dict((str(tab.id), TabSerializer(tab).data)
+            ret['updateTabs'] = dict((tab.slug, TabSerializer(tab).data)
                                      for tab in tabs)
             wf_modules = list(WfModule.live_in_workflow(workflow.id))
             ret['updateWfModules'] = dict((str(wfm.id),

@@ -97,11 +97,11 @@ describe('DataVersionModal', () => {
     const IdealState = {
       workflow: {
         is_anonymous: false,
-        tab_ids: [ 11 ],
+        tab_slugs: [ 'tab-11' ],
         selected_tab_position: 0
       },
       tabs: {
-        11: { wf_module_ids: [ 123, 124 ] },
+        'tab-11': { wf_module_ids: [ 123, 124 ] },
       },
       modules: {
         fetch: { name: 'Fetch Stuff', loads_data: true },

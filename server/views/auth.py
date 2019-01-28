@@ -222,7 +222,7 @@ def loads_tab_for_write(f):
         def view_workflow(request, workflow, tab, ...):
             # workflow+tab are loaded and the user has access.
             workflow.save()
-            return JsonResponse(tab.id)
+            return JsonResponse(tab.slug)
 
     `request`, `workflow_id` are the first and second positional arguments
     in the returned function.

@@ -231,7 +231,7 @@ export class DataVersionModal extends React.PureComponent {
 const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs
 const getSelectedTab = createSelector([ getWorkflow, getTabs ], (workflow, tabs) => {
-  return tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+  return tabs[workflow.tab_slugs[workflow.selected_tab_position]]
 })
 const getWfModules = ({ wfModules }) => wfModules
 const getSelectedTabWfModules = createSelector([ getSelectedTab, getWfModules ], (tab, wfModules) => {

@@ -49,11 +49,11 @@ describe('lessonSelector', () => {
     const state = {
       lessonData: lessonFixture,
       workflow: {
-        tab_ids: [ 1 ],
+        tab_slugs: [ 'tab-1' ],
         selected_tab_position: 0
       },
       tabs: {
-        1: { wf_modules: [] }
+        'tab-1': { wf_modules: [] }
       },
       wfModules: {}
     }
@@ -78,11 +78,11 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_ids: [ 1 ],
+        tab_slugs: [ 'tab-1' ],
         selected_tab_position: 0,
       },
       tabs: {
-        1: { wf_module_ids: [] }
+        'tab-1': { wf_module_ids: [] }
       }
     }
     const { testHighlight } = lessonSelector(state)
@@ -111,11 +111,11 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_ids: [ 1 ],
+        tab_slugs: [ 'tab-1' ],
         selected_tab_position: 0,
       },
       tabs: {
-        1: { wf_module_ids: [] }
+        'tab-1': { wf_module_ids: [] }
       }
     }
     const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
@@ -176,12 +176,12 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_ids: [ 1, 2 ],
+        tab_slugs: [ 'tab-1', 'tab-2' ],
         selected_tab_position: 0
       },
       tabs: {
-        1: { wf_module_ids: [ 3, 4 ] },
-        2: { wf_module_ids: [] }
+        'tab-1': { wf_module_ids: [ 3, 4 ] },
+        'tab-2': { wf_module_ids: [] }
       },
       wfModules: {
         3: { module: 'foo' },
@@ -210,12 +210,12 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_ids: [ 1, 2 ],
+        tab_slugs: [ 'tab-1', 'tab-2' ],
         selected_tab_position: 0
       },
       tabs: {
-        1: { wf_module_ids: [ 3, 4 ], selected_wf_module_position: 1 },
-        2: { wf_module_ids: [] }
+        'tab-1': { wf_module_ids: [ 3, 4 ], selected_wf_module_position: 1 },
+        'tab-2': { wf_module_ids: [] }
       },
       wfModules: {
         3: { module: 'foo' },
@@ -251,11 +251,11 @@ describe('lessonSelector', () => {
           ]
         },
         workflow: {
-          tab_ids: [ 1 ],
+          tab_slugs: [ 'tab-1' ],
           selected_tab_position: 0
         },
         tabs: {
-          1: { wf_module_ids: [], selected_wf_module_position: null }
+          'tab-1': { wf_module_ids: [], selected_wf_module_position: null }
         }
       }
       expect(lessonSelector(state).activeStepIndex).toBe(0)

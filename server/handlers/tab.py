@@ -10,10 +10,10 @@ import server.utils
 
 
 @database_sync_to_async
-def _load_tab(workflow: Workflow, tab_id: int) -> Tab:
+def _load_tab(workflow: Workflow, tab_slug: int) -> Tab:
     """Returns a WfModule or raises HandlerError."""
     try:
-        return workflow.live_tabs.get(id=tab_id)
+        return workflow.live_tabs.get(slug=tab_slug)
     except Tab.DoesNotExist:
         raise HandlerError('DoesNotExist: Tab not found')
 
@@ -29,8 +29,9 @@ def _load_module_version(module_id_name: str) -> Tab:
 
 def _loading_tab(func):
     @functools.wraps(func)
-    async def inner(workflow: Workflow, tabId: int, **kwargs):
-        tab = await _load_tab(workflow, tabId)
+    async def inner(workflow: Workflow, tabSlug: str, **kwargs):
+        tabSlug = str(tabSlug)  # never raises anything
+        tab = await _load_tab(workflow, tabSlug)
         return await func(workflow=workflow, tab=tab, **kwargs)
     return inner
 

@@ -55,11 +55,11 @@ async def set_position(workflow: Workflow, wfModuleId: int, **kwargs):
 
 
 @database_sync_to_async
-def _write_tab_position(workflow: Workflow, tab_id: int) -> None:
+def _write_tab_position(workflow: Workflow, tab_slug: str) -> None:
     """Write position in DB, or raise (Workflow|Tab).DoesNotExist."""
     with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
         # raises Tab.DoesNotExist, e.g. if tab.is_deleted
-        tab = workflow.live_tabs.get(pk=tab_id)
+        tab = workflow.live_tabs.get(slug=tab_slug)
 
         workflow.selected_tab_position = tab.position
         workflow.save(update_fields=['selected_tab_position'])
@@ -67,29 +67,28 @@ def _write_tab_position(workflow: Workflow, tab_id: int) -> None:
 
 @register_websockets_handler
 @websockets_handler('write')
-async def set_selected_tab(workflow: Workflow, tabId: int, **kwargs):
-    if not isinstance(tabId, int):
-        raise HandlerError('tabId must be a Number')
+async def set_selected_tab(workflow: Workflow, tabSlug: str, **kwargs):
+    tabSlug = str(tabSlug)  # cannot raise anything
 
     try:
-        await _write_tab_position(workflow, tabId)
+        await _write_tab_position(workflow, tabSlug)
     except (Workflow.DoesNotExist, Tab.DoesNotExist):
-        raise HandlerError('Invalid tabId')
+        raise HandlerError('Invalid tab slug')
 
 
 @register_websockets_handler
 @websockets_handler('write')
-async def set_tab_order(workflow: Workflow, tabIds: List[int], **kwargs):
-    if not isinstance(tabIds, list):
-        raise HandlerError('tabIds must be an Array of integers')
-    for tab_id in tabIds:
-        if not isinstance(tab_id, int):
-            raise HandlerError('tabIds must be an Array of integers')
+async def set_tab_order(workflow: Workflow, tabSlugs: List[str], **kwargs):
+    if not isinstance(tabSlugs, list):
+        raise HandlerError('tabSlugs must be an Array of slugs')
+    for tab_id in tabSlugs:
+        if not isinstance(tab_id, str):
+            raise HandlerError('tabSlugs must be an Array of slugs')
 
     try:
-        await ReorderTabsCommand.create(workflow=workflow, new_order=tabIds)
+        await ReorderTabsCommand.create(workflow=workflow, new_order=tabSlugs)
     except ValueError as err:
-        if str(err) == 'wrong tab IDs':
-            raise HandlerError('wrong tab IDs')
+        if str(err) == 'wrong tab slugs':
+            raise HandlerError('wrong tab slugs')
         else:
             raise

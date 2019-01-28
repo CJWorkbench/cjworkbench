@@ -5,15 +5,15 @@ import Tab from './Tab'
 export default class TabList extends React.PureComponent {
   static propTypes = {
     tabs: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      slug: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired
     }).isRequired).isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     selectedTabPosition: PropTypes.number.isRequired,
-    setName: PropTypes.func.isRequired, // func(tabId, name) => undefined
-    destroy: PropTypes.func.isRequired, // func(tabId) => undefined
-    select: PropTypes.func.isRequired, // func(tabId) => undefined
-    setOrder: PropTypes.func.isRequired, // func(tabIds) => undefined
+    setName: PropTypes.func.isRequired, // func(tabSlug, name) => undefined
+    destroy: PropTypes.func.isRequired, // func(tabSlug) => undefined
+    select: PropTypes.func.isRequired, // func(tabSlug) => undefined
+    setOrder: PropTypes.func.isRequired, // func(tabSlugs) => undefined
   }
 
   state = {
@@ -65,11 +65,10 @@ export default class TabList extends React.PureComponent {
 
     const { fromIndex, toIndex } = dragging
     if (fromIndex !== toIndex) {
-      const tabIds = tabs.map(t => t.id)
-      const fromId = tabIds[fromIndex]
-      tabIds.splice(fromIndex, 1)
-      tabIds.splice(toIndex > fromIndex ? toIndex - 1 : toIndex, 0, fromId)
-      this.props.setOrder(tabIds)
+      const tabSlugs = tabs.map(t => t.slug)
+      tabSlugs.splice(fromIndex, 1)
+      tabSlugs.splice(toIndex > fromIndex ? toIndex - 1 : toIndex, 0, fromId)
+      this.props.setOrder(tabSlugs)
     }
   }
 
@@ -82,11 +81,11 @@ export default class TabList extends React.PureComponent {
         className={dragging ? 'dragging' : ''}
         onDragLeave={this.onDragLeave}
       >
-        {tabs.map(({ id, name }, index) => (
+        {tabs.map(({ slug, name }, index) => (
           <Tab
-            key={id}
+            key={slug}
             index={index}
-            id={id}
+            slug={slug}
             isReadOnly={isReadOnly}
             isSelected={selectedTabPosition === index}
             name={name}

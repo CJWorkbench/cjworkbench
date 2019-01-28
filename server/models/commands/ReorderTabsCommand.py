@@ -11,8 +11,8 @@ class ReorderTabsCommand(Delta):
 
     def load_ws_data(self):
         data = super().load_ws_data()
-        data['updateWorkflow']['tab_ids'] = list(
-            self.workflow.live_tabs.values_list('id', flat=True)
+        data['updateWorkflow']['tab_slugs'] = list(
+            self.workflow.live_tabs.values_list('slug', flat=True)
         )
         return data
 
@@ -53,10 +53,18 @@ class ReorderTabsCommand(Delta):
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_order):
+        tab_slugs = dict(workflow.live_tabs.values_list('slug', 'id'))
+
         old_order = list(workflow.live_tabs.values_list('id', flat=True))
 
+        try:
+            new_order = [tab_slugs[slug] for slug in new_order]
+        except KeyError:
+            raise ValueError('wrong tab slugs')
+        # Need same number of elements, same elements. Don't compare sets
+        # because that doesn't test number of elements.
         if sorted(new_order) != sorted(old_order):
-            raise ValueError('wrong tab IDs')
+            raise ValueError('wrong tab slugs')
 
         if new_order == old_order:
             return None

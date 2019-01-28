@@ -1,4 +1,5 @@
 import * as util from './util'
+import { generateSlug } from '../utils'
 
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
@@ -6,49 +7,49 @@ const TAB_CREATE = 'TAB_CREATE'
 const TAB_SELECT = 'TAB_SELECT'
 const TAB_SET_ORDER = 'TAB_SET_ORDER'
 
-export function setName (tabId, name) {
+export function setName (slug, name) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: TAB_SET_NAME,
       payload: {
-        promise: api.setTabName(tabId, name),
-        data: { tabId, name }
+        promise: api.setTabName(slug, name),
+        data: { slug, name }
       }
     })
   }
 }
 
-export function setOrder (tabIds) {
+export function setOrder (tabSlugs) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: TAB_SET_ORDER,
       payload: {
-        promise: api.setTabOrder(tabIds),
-        data: { tabIds }
+        promise: api.setTabOrder(tabSlugs),
+        data: { tabSlugs }
       }
     })
   }
 }
 
-export function destroy (tabId) {
+export function destroy (slug) {
   return (dispatch, getState, api) => {
-    if (getState().workflow.tab_ids.length === 1) {
+    if (getState().workflow.tab_slugs.length === 1) {
       return
     }
 
     return dispatch({
       type: TAB_DESTROY,
       payload: {
-        promise: api.deleteTab(tabId),
-        data: { tabId }
+        promise: api.deleteTab(slug),
+        data: { slug }
       }
     })
   }
 }
 
-export function select (tabId) {
+export function select (slug) {
   return (dispatch, getState, api) => {
-    if (!getState().workflow.tab_ids.includes(tabId)) {
+    if (!getState().workflow.tab_slugs.includes(slug)) {
       // This happens if the user clicks a "delete" button on the module:
       // 2. Browser dispatches "delete", which removes the tab
       // 1. Browser dispatches "click", which tries to select it
@@ -59,8 +60,8 @@ export function select (tabId) {
     dispatch({
       type: TAB_SELECT,
       payload: {
-        promise: api.setSelectedTab(tabId),
-        data: { tabId }
+        promise: api.setSelectedTab(slug),
+        data: { slug }
       }
     })
   }
@@ -68,68 +69,67 @@ export function select (tabId) {
 
 export function create () {
   return (dispatch, getState, api) => {
-    const { workflow, tabs } = getState()
-    const tabNames = [ ...(workflow.pendingTabNames || []) ]
+    const state = getState()
+    const { workflow, tabs } = state
+    const pendingTabs = state.pendingTabs || {}
+
+    const tabNames = []
     for (const k in tabs) {
       tabNames.push(tabs[k].name)
     }
+    for (const k in pendingTabs) {
+      tabNames.push(pendingTabs[k].name)
+    }
 
+    const slug = generateSlug('tab-')
     const name = util.generateTabName(/Tab (\d+)/, 'Tab %d', tabNames)
 
     dispatch({
       type: TAB_CREATE,
       payload: {
-        promise: api.createTab(name).then(() => ({ name })),
-        data: { name }
+        promise: api.createTab(slug, name).then(() => ({ slug, name })),
+        data: { slug, name }
       }
     })
   }
 }
 
 function reduceCreatePending (state, action) {
-  const { workflow } = state
-  const { name } = action.payload
+  const { pendingTabs, workflow } = state
+  const { slug, name } = action.payload
 
   return {
     ...state,
     workflow: {
       ...workflow,
-      pendingTabNames: [ ...(workflow.pendingTabNames || []), name ]
-    }
-  }
-}
-
-function reduceCreateFulfilled (state, action) {
-  const { workflow } = state
-  const { name } = action.payload
-
-  const { pendingTabNames } = workflow
-  const index = pendingTabNames.indexOf(name)
-
-  if (index === -1) return state
-
-  const newTabNames = pendingTabNames.slice()
-  newTabNames.splice(index, 1)
-
-  return {
-    ...state,
-    workflow: {
-      ...workflow,
-      pendingTabNames: newTabNames
+      tab_slugs: [ ...workflow.tab_slugs, slug ]
+    },
+    pendingTabs: {
+      ...pendingTabs,
+      [slug]: {
+        slug,
+        name,
+        wf_module_ids: [],
+        selected_wf_module_position: null
+      }
     }
   }
 }
 
 function reduceDestroyPending (state, action) {
-  const { tabId } = action.payload
+  const { slug } = action.payload
   const { workflow, tabs } = state
+  const pendingTabs = state.pendingTabs || {}
 
-  const newTabs = { ... tabs }
-  delete newTabs[String(tabId)]
+  const newTabs = { ...tabs }
+  delete newTabs[slug]
 
-  const newTabIds = [ ... workflow.tab_ids ]
-  const deleteIndex = workflow.tab_ids.indexOf(tabId)
-  newTabIds.splice(deleteIndex, 1)
+  const newPendingTabs = { ...pendingTabs }
+  delete newPendingTabs[slug]
+
+  const newTabSlugs = [ ...workflow.tab_slugs ]
+  const deleteIndex = workflow.tab_slugs.indexOf(slug)
+  newTabSlugs.splice(deleteIndex, 1)
 
   const oldPosition = workflow.selected_tab_position
   const newPosition = (oldPosition < deleteIndex || oldPosition === 0) ? oldPosition : (oldPosition - 1)
@@ -138,23 +138,24 @@ function reduceDestroyPending (state, action) {
     ...state,
     workflow: {
       ...workflow,
-      tab_ids: newTabIds,
+      tab_slugs: newTabSlugs,
       selected_tab_position: newPosition
     },
+    pendingTabs: newPendingTabs,
     tabs: newTabs
   }
 }
 
 function reduceSetNamePending (state, action) {
-  const { tabId, name } = action.payload
+  const { slug, name } = action.payload
   const { tabs } = state
-  const tab = tabs[String(tabId)]
+  const tab = tabs[slug]
 
   return {
     ...state,
     tabs: {
       ...tabs,
-      [String(tabId)]: {
+      [slug]: {
         ...tab,
         name
       }
@@ -163,31 +164,31 @@ function reduceSetNamePending (state, action) {
 }
 
 function reduceSelectPending (state, action) {
-  const { tabId } = action.payload
+  const { slug } = action.payload
   const { workflow } = state
 
   return {
     ...state,
     workflow: {
       ...workflow,
-      selected_tab_position: workflow.tab_ids.indexOf(tabId)
+      selected_tab_position: workflow.tab_slugs.indexOf(slug)
     }
   }
 }
 
 function reduceSetOrderPending (state, action) {
-  const { tabIds } = action.payload
+  const { tabSlugs } = action.payload
   const { workflow } = state
 
   const oldPosition = workflow.selected_tab_position
-  const selectedTabId = workflow.tab_ids[oldPosition]
-  const newPosition = tabIds.indexOf(selectedTabId)
+  const selectedTabSlug = workflow.tab_slugs[oldPosition]
+  const newPosition = tabSlugs.indexOf(selectedTabSlug)
 
   return {
     ...state,
     workflow: {
       ...workflow,
-      tab_ids: tabIds,
+      tab_slugs: tabSlugs,
       selected_tab_position: newPosition
     }
   }
@@ -195,7 +196,6 @@ function reduceSetOrderPending (state, action) {
 
 export var reducerFunctions = {
   [TAB_CREATE + '_PENDING']: reduceCreatePending,
-  [TAB_CREATE + '_FULFILLED']: reduceCreateFulfilled,
   [TAB_DESTROY + '_PENDING']: reduceDestroyPending,
   [TAB_SET_NAME + '_PENDING']: reduceSetNamePending,
   [TAB_SELECT + '_PENDING']: reduceSelectPending,

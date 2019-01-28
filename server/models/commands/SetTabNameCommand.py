@@ -11,7 +11,7 @@ class SetTabNameCommand(Delta):
     def load_ws_data(self):
         data = super().load_ws_data()
         data['updateTabs'] = {
-            str(self.tab_id): {'name': self.tab.name}
+            self.tab.slug: {'name': self.tab.name}
         }
         return data
 

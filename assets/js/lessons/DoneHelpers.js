@@ -36,15 +36,15 @@ export class WorkflowWithHelpers {
     const { workflow } = this
     const { tabs } = this.state
 
-    return workflow.tab_ids.map(tabId => {
-      return new TabWithHelpers(tabs[String(tabId)], this.state)
+    return workflow.tab_slugs.map(tabSlug => {
+      return new TabWithHelpers(tabs[tabSlug], this.state)
     })
   }
 
   get selectedTab () {
     const { workflow } = this
     const { tabs } = this.state
-    const tab = tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+    const tab = tabs[workflow.tab_slugs[workflow.selected_tab_position]]
     if (!tab) throw new Error('No selected tab -- this is always an error')
     return new TabWithHelpers(tab, this.state)
   }

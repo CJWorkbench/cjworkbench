@@ -1,4 +1,3 @@
-import asyncio
 from unittest.mock import patch
 from server.models import Workflow
 from server.models.commands import ReorderTabsCommand
@@ -11,43 +10,42 @@ async def async_noop(*args, **kwargs):
 
 class ReorderTabsCommandTest(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    def test_reorder_ids(self):
-        workflow = Workflow.create_and_init()
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
-        tab3 = workflow.tabs.create(position=2)
+    def test_reorder_slugs(self):
+        workflow = Workflow.create_and_init()  # tab slug: tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
+        workflow.tabs.create(position=2, slug='tab-3')
 
         cmd = self.run_with_async_db(ReorderTabsCommand.create(
             workflow=workflow,
-            new_order=[tab3.id, tab1.id, tab2.id]
+            new_order=['tab-3', 'tab-1', 'tab-2']
         ))
         self.assertEqual(
-            list(workflow.live_tabs.values_list('id', 'position')),
-            [(tab3.id, 0), (tab1.id, 1), (tab2.id, 2)]
+            list(workflow.live_tabs.values_list('slug', 'position')),
+            [('tab-3', 0), ('tab-1', 1), ('tab-2', 2)]
         )
 
         self.run_with_async_db(cmd.backward())
         self.assertEqual(
-            list(workflow.live_tabs.values_list('id', 'position')),
-            [(tab1.id, 0), (tab2.id, 1), (tab3.id, 2)]
+            list(workflow.live_tabs.values_list('slug', 'position')),
+            [('tab-1', 0), ('tab-2', 1), ('tab-3', 2)]
         )
 
         self.run_with_async_db(cmd.forward())
         self.assertEqual(
-            list(workflow.live_tabs.values_list('id', 'position')),
-            [(tab3.id, 0), (tab1.id, 1), (tab2.id, 2)]
+            list(workflow.live_tabs.values_list('slug', 'position')),
+            [('tab-3', 0), ('tab-1', 1), ('tab-2', 2)]
         )
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_adjust_selected_tab_position(self):
+        # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
-        tab3 = workflow.tabs.create(position=2)
+        workflow.tabs.create(position=1, slug='tab-2')
+        workflow.tabs.create(position=2, slug='tab-3')
 
         cmd = self.run_with_async_db(ReorderTabsCommand.create(
             workflow=workflow,
-            new_order=[tab3.id, tab1.id, tab2.id]
+            new_order=['tab-3', 'tab-1', 'tab-2']
         ))
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 0)
@@ -64,70 +62,46 @@ class ReorderTabsCommandTest(DbTestCase):
     def test_ws_data(self, send_delta):
         send_delta.return_value = async_noop()
 
+        # initial tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
-        tab3 = workflow.tabs.create(position=2)
+        workflow.tabs.create(position=1, slug='tab-2')
+        workflow.tabs.create(position=2, slug='tab-3')
 
         self.run_with_async_db(ReorderTabsCommand.create(
             workflow=workflow,
-            new_order=[tab3.id, tab1.id, tab2.id]
+            new_order=['tab-3', 'tab-1', 'tab-2']
         ))
 
         delta = send_delta.call_args[0][1]
-        self.assertEqual(delta['updateWorkflow']['tab_ids'],
-                         [tab3.id, tab1.id, tab2.id])
+        self.assertEqual(delta['updateWorkflow']['tab_slugs'],
+                         ['tab-3', 'tab-1', 'tab-2'])
 
-    def test_disallow_duplicate_tab_id(self):
-        workflow = Workflow.create_and_init()
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
+    def test_disallow_duplicate_tab_slug(self):
+        workflow = Workflow.create_and_init()  # tab 1 slug: tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(ReorderTabsCommand.create(
                 workflow=workflow,
-                new_order=[tab1.id, tab1.id, tab2.id]
+                new_order=['tab-1', 'tab-1', 'tab-2']
             ))
 
-    def test_disallow_missing_tab_id(self):
-        workflow = Workflow.create_and_init()
-        tab1 = workflow.tabs.first()
-        workflow.tabs.create(position=1)
+    def test_disallow_missing_tab_slug(self):
+        workflow = Workflow.create_and_init()  # initial tab slug: tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(ReorderTabsCommand.create(
                 workflow=workflow,
-                new_order=[tab1.id]
-            ))
-
-    def test_disallow_unowned_tab_id(self):
-        workflow = Workflow.create_and_init()
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
-        other_workflow = Workflow.create_and_init()
-        other_tab = other_workflow.tabs.first()
-
-        with self.assertRaises(ValueError):
-            # Does the checker check tab _counts_?
-            self.run_with_async_db(ReorderTabsCommand.create(
-                workflow=workflow,
-                new_order=[tab1.id, other_tab.id]
-            ))
-
-        with self.assertRaises(ValueError):
-            # Does the checker check only for _matching_ ids?
-            self.run_with_async_db(ReorderTabsCommand.create(
-                workflow=workflow,
-                new_order=[tab1.id, tab2.id, other_tab.id]
+                new_order=['tab-1']
             ))
 
     def test_no_op(self):
-        workflow = Workflow.create_and_init()
-        tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1)
+        workflow = Workflow.create_and_init()  # initial tab slug: tab-1
+        workflow.tabs.create(position=1, slug='tab-2')
 
         cmd = self.run_with_async_db(ReorderTabsCommand.create(
             workflow=workflow,
-            new_order=[tab1.id, tab2.id]
+            new_order=['tab-1', 'tab-2']
         ))
         self.assertIsNone(cmd)

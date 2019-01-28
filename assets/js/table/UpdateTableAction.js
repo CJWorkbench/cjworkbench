@@ -42,8 +42,8 @@ function findWfModuleWithIds (state, focusWfModuleId, moduleIdName) {
   }
 
   const wfModule = wfModules[String(focusWfModuleId)]
-  const tabId = wfModule.tab_id
-  const tab = tabs[String(tabId)]
+  const tabSlug = wfModule.tab_slug
+  const tab = tabs[tabSlug]
 
   // validIdsOrNulls: [ 2, null, null, 65 ] means indices 0 and 3 are for
   // desired module (and have wfModuleIds 2 and 64), 1 and 2 aren't for

@@ -219,7 +219,7 @@ function ensureWfModuleForRowsAction (currentWfModuleId, moduleIdName, rowsStrin
       }
     }
 
-    const tab = tabs[String(currentWfModule.tab_id)]
+    const tab = tabs[currentWfModule.tab_slug]
 
     // Does nextWfModuleId point to the very module we're asking to add?
     // e.g., did we delete rows, select the input, and delete more rows?

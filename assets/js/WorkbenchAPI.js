@@ -112,30 +112,30 @@ export default class WorkbenchAPI {
     return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
   }
 
-  setTabOrder (tabIds) {
+  setTabOrder (tabSlugs) {
     return this._callExpectingNull('workflow.set_tab_order', {
-      tabIds
+      tabSlugs
     })
   }
 
-  reorderWfModules (tabId, wfModuleIds) {
+  reorderWfModules (tabSlug, wfModuleIds) {
     return this._callExpectingNull('tab.reorder_modules', {
-      tabId,
+      tabSlug,
       wfModuleIds
     })
   }
 
-  addModule (tabId, moduleIdName, index, values={}) {
+  addModule (tabSlug, moduleIdName, index, values={}) {
     return this._callExpectingNull('tab.add_module', {
-      tabId,
+      tabSlug,
       moduleIdName,
       position: index,
       paramValues: values
     })
   }
 
-  createTab (name) {
-    return this._callExpectingNull('tab.create', { name })
+  createTab (slug, name) {
+    return this._callExpectingNull('tab.create', { slug, name })
   }
 
   deleteModule(wfModuleId) {
@@ -144,9 +144,9 @@ export default class WorkbenchAPI {
     })
   }
 
-  deleteTab (tabId) {
+  deleteTab (tabSlug) {
     return this._callExpectingNull('tab.delete', {
-      tabId
+      tabSlug
     })
   }
 
@@ -199,9 +199,9 @@ export default class WorkbenchAPI {
     return this._fetch(`/api/wfmodules/${wfModuleId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
   }
 
-  setTabName (tabId, name) {
+  setTabName (tabSlug, name) {
     return this._callExpectingNull('tab.set_name', {
-      tabId,
+      tabSlug,
       name
     })
   }
@@ -251,9 +251,9 @@ export default class WorkbenchAPI {
    * other shenanigans that prevent the selection from happening, as it doesn't
    * affect any data.
    */
-  setSelectedTab (tabId) {
+  setSelectedTab (tabSlug) {
     return this._callExpectingNull('workflow.set_selected_tab', {
-      tabId
+      tabSlug
     })
   }
 

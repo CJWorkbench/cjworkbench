@@ -17,7 +17,7 @@ describe('Reducer actions', () => {
   const testWfModules = {
     '10': {
       id: 10,
-      tab_id: 91,
+      tab_slug: 'tab-91',
       params: { 'data': 'Some Data', 'version_select': null },
       versions: {
         selected: "2018-02-21T03:09:20.214054Z",
@@ -31,17 +31,17 @@ describe('Reducer actions', () => {
     },
     '20': {
       id: 20,
-      tab_id: 91
+      tab_slug: 'tab-91'
     },
     '30': {
       id: 30,
-      tab_id: 91
+      tab_slug: 'tab-91'
     }
   }
 
   const testTabs = {
-    '91': {
-      id: 91,
+    'tab-91': {
+      slug: 'tab-91',
       wf_module_ids: [ 10, 20, 30 ],
       selected_wf_module_position: 1
     }
@@ -50,7 +50,7 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const testWorkflow = {
     id: 999,
-    tab_ids: [ 91 ]
+    tab_slugs: [ 'tab-91' ]
   }
 
   // test state has second module selected
@@ -94,10 +94,10 @@ describe('Reducer actions', () => {
 
     const store = mockStore({
       workflow: {
-        tab_ids: [1]
+        tab_slugs: [ 'tab-1' ]
       },
       tabs: {
-        1: {
+        'tab-1': {
           wf_module_ids: [2, 3],
           selected_wf_module_position: 1
         }
@@ -111,12 +111,12 @@ describe('Reducer actions', () => {
       }
     }, api)
 
-    await store.dispatch(wfr.addModuleAction('module2', { tabId: 1, index: 0 }, { x: 'y' }))
+    await store.dispatch(wfr.addModuleAction('module2', { tabSlug: 'tab-1', index: 0 }, { x: 'y' }))
 
-    expect(api.addModule).toHaveBeenCalledWith(1, 'module2', 0, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'module2', 0, { x: 'y' })
     const state = store.getState()
-    expect(state.tabs['1'].selected_wf_module_position).toEqual(0)
-    expect(state.tabs['1'].wf_module_ids).toEqual(['nonce-module2-0', 2, 3])
+    expect(state.tabs['tab-1'].selected_wf_module_position).toEqual(0)
+    expect(state.tabs['tab-1'].wf_module_ids).toEqual(['nonce-module2-0', 2, 3])
   })
 
   it('adds a module before another', async () => {
@@ -126,17 +126,17 @@ describe('Reducer actions', () => {
 
     const store = mockStore({
       workflow: {
-        tab_ids: [1]
+        tab_slugs: [ 'tab-1' ]
       },
       tabs: {
-        1: {
+        'tab-1': {
           wf_module_ids: [2, 3],
           selected_wf_module_position: 1
         }
       },
       wfModules: {
         2: {},
-        3: { tab_id: 1 }
+        3: { tab_slug: 'tab-1' }
       },
       modules: {
         'module2': {}
@@ -144,7 +144,7 @@ describe('Reducer actions', () => {
     }, api)
 
     await store.dispatch(wfr.addModuleAction('mod', { beforeWfModuleId: 3 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith(1, 'mod', 1, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'mod', 1, { x: 'y' })
   })
 
   it('adds a module after another', async () => {
@@ -154,16 +154,16 @@ describe('Reducer actions', () => {
 
     const store = mockStore({
       workflow: {
-        tab_ids: [1]
+        tab_slugs: [ 'tab-1' ]
       },
       tabs: {
-        1: {
+        'tab-1': {
           wf_module_ids: [2, 3],
           selected_wf_module_position: 1
         }
       },
       wfModules: {
-        2: { tab_id: 1 },
+        2: { tab_slug: 'tab-1' },
         3: {}
       },
       modules: {
@@ -172,7 +172,7 @@ describe('Reducer actions', () => {
     }, api)
 
     await store.dispatch(wfr.addModuleAction('mod', { afterWfModuleId: 2 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith(1, 'mod', 1, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'mod', 1, { x: 'y' })
   })
 
   it('deletes a module', async () => {
@@ -184,7 +184,7 @@ describe('Reducer actions', () => {
 
     expect(api.deleteModule).toHaveBeenCalledWith(20)
     const state = store.getState()
-    expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 30 ])
+    expect(state.tabs['tab-91'].wf_module_ids).toEqual([ 10, 30 ])
     expect(state.wfModules['20']).not.toBeDefined()
   })
 
@@ -198,7 +198,7 @@ describe('Reducer actions', () => {
     expect(api.setSelectedWfModule).toHaveBeenCalledWith(20)
     const { workflow, tabs } = store.getState()
     expect(workflow.selected_tab_position).toEqual(0)
-    expect(tabs['91'].selected_wf_module_position).toEqual(1)
+    expect(tabs['tab-91'].selected_wf_module_position).toEqual(1)
   })
 
   it('sets a wfModule notes', async () => {
@@ -252,21 +252,21 @@ describe('Reducer actions', () => {
     }
     const store = mockStore({
       workflow: {
-        tab_ids: [ 91 ]
+        tab_slugs: 'tab-1'
       },
       tabs: {
-        91: {
+        'tab-1': {
           wf_module_ids: [ 2, 4, 6 ],
           selected_wf_module_position: 2
         }
       }
     }, api)
-    await store.dispatch(wfr.moveModuleAction(91, 2, 0))
+    await store.dispatch(wfr.moveModuleAction('tab-1', 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(api.reorderWfModules).toHaveBeenCalledWith(91, [ 6, 2, 4])
-    expect(store.getState().tabs['91'].wf_module_ids).toEqual([ 6, 2, 4 ])
-    expect(store.getState().tabs['91'].selected_wf_module_position).toEqual(0)
+    expect(api.reorderWfModules).toHaveBeenCalledWith('tab-1', [ 6, 2, 4])
+    expect(store.getState().tabs['tab-1'].wf_module_ids).toEqual([ 6, 2, 4 ])
+    expect(store.getState().tabs['tab-1'].selected_wf_module_position).toEqual(0)
   })
 
   it('applies delta to a Workflow', () => {
@@ -300,21 +300,47 @@ describe('Reducer actions', () => {
   it('applies delta to a Tab', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
       updateTabs: {
-        '91': { foo: 'bar', selected_wf_module_position: 0 },
-        '92': { foo: 'baz' }
+        'tab-91': { foo: 'bar', selected_wf_module_position: 0 },
+        'tab-92': { foo: 'baz' }
       }
     }))
-    expect(state.tabs['91'].foo).toEqual('bar') // new property
-    expect(state.tabs['92'].foo).toEqual('baz')
-    expect(state.tabs['91'].wf_module_ids).toEqual([ 10, 20, 30 ]) // old property
-    expect(state.tabs['91'].selected_wf_module_position).toEqual(1) // immutable
+    expect(state.tabs['tab-91'].foo).toEqual('bar') // new property
+    expect(state.tabs['tab-92'].foo).toEqual('baz')
+    expect(state.tabs['tab-91'].wf_module_ids).toEqual([ 10, 20, 30 ]) // old property
+    expect(state.tabs['tab-91'].selected_wf_module_position).toEqual(1) // immutable
   })
 
   it('applies delta to clearing a Tab', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      clearTabIds: [ 91 ],
+      clearTabSlugs: [ 'tab-91' ],
     }))
     expect(state.tabs).toEqual({})
+  })
+
+  it('moves a tab from pendingTabs to tabs', () => {
+    // This "pendingTabs" thing is half-baked. Really, we're trying to simulate
+    // a "command queue" on the client  -- that is, commands the user sees that
+    // haven't been applied on the server yet. TODO nix pendingTabs when we
+    // have a sane way of doing that.
+    const oldTab = { slug: 'tab-1', name: 'Old' }
+    const newTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [], selected_wf_module_position: null }
+
+    const state = wfr.workflowReducer({
+      workflow: {
+        tab_slugs: [ 'tab-1', 'tab-NEW' ],
+      },
+      tabs: { 'tab-1': oldTab },
+      pendingTabs: { 'tab-NEW': newTab }
+    }, wfr.applyDeltaAction({
+      updateTabs: { 'tab-NEW': newTab }
+    }))
+
+    expect(state.tabs).toEqual({
+      'tab-1': oldTab,
+      'tab-NEW': newTab
+    })
+
+    expect(state.pendingTabs).toEqual({})
   })
 
   it('sets the module collapse state', () => {

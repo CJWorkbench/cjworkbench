@@ -63,7 +63,8 @@ class TabSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tab
-        fields = ('id', 'name', 'wf_module_ids', 'selected_wf_module_position')
+        fields = ('slug', 'name', 'wf_module_ids',
+                  'selected_wf_module_position')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -148,7 +149,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WfModule
-        fields = ('id', 'module', 'tab_id', 'is_busy',
+        fields = ('id', 'module', 'tab_slug', 'is_busy',
                   'output_error', 'output_status', 'fetch_error',
                   'params', 'is_collapsed', 'notes', 'auto_update_data',
                   'update_interval', 'update_units', 'last_update_check',
@@ -195,14 +196,14 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
 
 
 class WorkflowSerializer(WorkflowSerializerLite):
-    tab_ids = serializers.SerializerMethodField()
+    tab_slugs = serializers.SerializerMethodField()
 
-    def get_tab_ids(self, obj):
-        return list(obj.live_tabs.values_list('id', flat=True))
+    def get_tab_slugs(self, obj):
+        return list(obj.live_tabs.values_list('slug', flat=True))
 
     class Meta:
         model = Workflow
-        fields = ('id', 'url_id', 'name', 'tab_ids', 'public', 'read_only',
+        fields = ('id', 'url_id', 'name', 'tab_slugs', 'public', 'read_only',
                   'last_update', 'is_owner', 'owner_email', 'owner_name',
                   'selected_tab_position', 'is_anonymous')
 

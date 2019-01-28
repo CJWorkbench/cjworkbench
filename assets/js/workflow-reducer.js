@@ -77,7 +77,7 @@ function moduleIdNameToModuleId (modules, idName) {
   return Number(key)
 }
 
-// 'data' is { updateWorkflow, updateWfModules, updateTabs, clearWfModuleIds }, all
+// 'data' is { updateWorkflow, updateWfModules, updateTabs, clearTabSlugs, clearWfModuleIds }, all
 // optional
 export function applyDeltaAction (data) {
   return { type: APPLY_DELTA, payload: data }
@@ -85,7 +85,7 @@ export function applyDeltaAction (data) {
 registerReducerFunc(APPLY_DELTA, (state, action) => {
   const data = action.payload
 
-  let { workflow, wfModules, tabs } = state
+  let { workflow, wfModules, tabs, pendingTabs } = state
 
   if (data.updateWorkflow) {
     const update = data.updateWorkflow
@@ -116,26 +116,30 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
     }
   }
 
-  if (data.updateTabs || data.clearTabIds) {
+  if (data.updateTabs || data.clearTabSlugs) {
     tabs = { ...tabs }
+    pendingTabs = { ...(pendingTabs || {}) } // shallow copy
 
-    for (const tabId in (data.updateTabs || {})) {
-      const update = data.updateTabs[tabId]
+    for (const tabSlug in (data.updateTabs || {})) {
+      const update = data.updateTabs[tabSlug]
       delete update.selected_wf_module_position
-      tabs[tabId] = {
-        ...tabs[tabId],
+      tabs[tabSlug] = {
+        ...tabs[tabSlug],
         ...update
       }
+      delete pendingTabs[tabSlug] // if it's a pendingTab
     }
 
-    for (const tabId of (data.clearTabIds || [])) {
-      delete tabs[String(tabId)]
+    for (const tabSlug of (data.clearTabSlugs || [])) {
+      delete tabs[tabSlug]
+      delete pendingTabs[tabSlug]
     }
   }
 
   return {
     ...state,
     tabs,
+    pendingTabs,
     workflow,
     wfModules
   }
@@ -210,14 +214,14 @@ registerReducerFunc(SET_WORKFLOW_PUBLIC + '_PENDING', (state, action) => {
 
 // MOVE_MODULE
 // Re-order the modules in the module stack
-export function moveModuleAction (tabId, oldIndex, newIndex) {
+export function moveModuleAction (tabSlug, oldIndex, newIndex) {
   return (dispatch, getState, api) => {
     if (oldIndex < newIndex) {
       newIndex -= 1
     }
 
     const { workflow, tabs } = getState()
-    const tab = tabs[String(tabId)]
+    const tab = tabs[tabSlug]
 
     const newIds = tab.wf_module_ids.slice()
     newIds.splice(newIndex, 0, ...newIds.splice(oldIndex, 1))
@@ -225,9 +229,9 @@ export function moveModuleAction (tabId, oldIndex, newIndex) {
     return dispatch({
       type: MOVE_MODULE,
       payload: {
-        promise: api.reorderWfModules(tabId, newIds),
+        promise: api.reorderWfModules(tabSlug, newIds),
         data: {
-          tabId,
+          tabSlug,
           wfModuleIds: newIds
         }
       }
@@ -235,8 +239,8 @@ export function moveModuleAction (tabId, oldIndex, newIndex) {
   }
 }
 registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
-  let { tabId, wfModuleIds } = action.payload
-  const tab = state.tabs[String(tabId)]
+  const { tabSlug, wfModuleIds } = action.payload
+  const tab = state.tabs[tabSlug]
 
   const oldIndex = tab.selected_wf_module_position
   const oldId = tab.wf_module_ids[oldIndex]
@@ -246,7 +250,7 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
     ...state,
     tabs: {
       ...state.tabs,
-      [String(tabId)]: {
+      [tabSlug]: {
         ...tab,
         wf_module_ids: wfModuleIds,
         selected_wf_module_position: newIndex
@@ -264,7 +268,7 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
  * Parameters:
  * @param moduleId String module id_name or Number module ID.
  * @param position Object position this module should be in. One of:
- *                 * { tabId, index }
+ *                 * { tabSlug, index }
  *                 * { beforeWfModuleId }
  *                 * { afterWfModuleId }
  * @param parameterValues {id_name:value} Object of parameters for the
@@ -275,16 +279,16 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
     const { modules, tabs, wfModules, workflow } = getState()
     const nonce = generateNonce(wfModules, moduleIdName)
 
-    let tabId, index
+    let tabSlug, index
 
-    if (position.tabId !== undefined && position.index !== undefined) {
-      tabId = position.tabId
+    if (position.tabSlug !== undefined && position.index !== undefined) {
+      tabSlug = position.tabSlug
       index = position.index
     } else {
       const aWfModuleId = position.beforeWfModuleId || position.afterWfModuleId
       const aWfModule = wfModules[String(aWfModuleId)]
-      tabId = aWfModule.tab_id
-      const tab = tabs[String(tabId)]
+      tabSlug = aWfModule.tab_slug
+      const tab = tabs[tabSlug]
 
       if (position.beforeWfModuleId) {
         const previous = tab.wf_module_ids.indexOf(position.beforeWfModuleId)
@@ -308,17 +312,17 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
       type: ADD_MODULE,
       payload: {
         promise: (
-          api.addModule(tabId, moduleIdName, index, parameterValues || {})
+          api.addModule(tabSlug, moduleIdName, index, parameterValues || {})
             .then(response => {
               return {
-                tabId,
+                tabSlug,
                 nonce: nonce,
                 data: response
               }
             })
         ),
         data: {
-          tabId,
+          tabSlug,
           index,
           nonce
         }
@@ -329,8 +333,8 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
 
 registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
   const { tabs, workflow } = state
-  const { tabId, index, nonce } = action.payload
-  const tab = tabs[String(tabId)]
+  const { tabSlug, index, nonce } = action.payload
+  const tab = tabs[tabSlug]
   const wfModuleIds = tab.wf_module_ids.slice()
 
   // Add a nonce to wf_modules Array of IDs. Don't add anything to wfModules:
@@ -341,7 +345,7 @@ registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
     ...state,
     tabs: {
       ...tabs,
-      [String(tabId)]: {
+      [tabSlug]: {
         ...tab,
         wf_module_ids: wfModuleIds,
         selected_wf_module_position: index
@@ -370,8 +374,7 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 
   const { tabs, wfModules } = state
   const wfModule = wfModules[String(wfModuleId)]
-  const tabId = wfModule.tab_id
-  const tab = tabs[String(tabId)]
+  const tab = tabs[wfModule.tab_slug]
 
   const wfModuleIds = tab.wf_module_ids.slice()
   const index = wfModuleIds.indexOf(wfModuleId)
@@ -399,7 +402,7 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
     ...state,
     tabs: {
       ...tabs,
-      [String(tabId)]: {
+      [tab.slug]: {
         ...tab,
         wf_module_ids: wfModuleIds,
         selected_wf_module_position: selected
@@ -418,10 +421,10 @@ export function setSelectedWfModuleAction (wfModuleId) {
     const wfModule = wfModules[String(wfModuleId)]
     if (!wfModule) return
 
-    const tabId = wfModule.tab_id
-    const tab = tabs[String(tabId)]
+    const tabSlug = wfModule.tab_slug
+    const tab = tabs[tabSlug]
 
-    const tabPosition = workflow.tab_ids.indexOf(tabId)
+    const tabPosition = workflow.tab_slugs.indexOf(tabSlug)
     const wfModulePosition = tab.wf_module_ids.indexOf(wfModuleId)
 
     if (
@@ -438,14 +441,14 @@ export function setSelectedWfModuleAction (wfModuleId) {
 
     return dispatch({
       type: SET_SELECTED_MODULE,
-      payload: { tabPosition, tabId, wfModulePosition }
+      payload: { tabPosition, tabSlug, wfModulePosition }
     })
   }
 }
 registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
   const { workflow, tabs } = state
-  const { tabPosition, tabId, wfModulePosition } = action.payload
-  const tab = tabs[String(tabId)]
+  const { tabPosition, tabSlug, wfModulePosition } = action.payload
+  const tab = tabs[tabSlug]
 
   return {
     ...state,
@@ -455,7 +458,7 @@ registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
     },
     tabs: {
       ...tabs,
-      [String(tabId)]: {
+      [tabSlug]: {
         ...tab,
         selected_wf_module_position: wfModulePosition
       }

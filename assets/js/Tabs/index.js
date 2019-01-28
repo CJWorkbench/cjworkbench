@@ -4,11 +4,11 @@ import * as mapDispatchToProps from './actions'
 
 function mapStateToProps (state) {
   const { workflow, tabs } = state
+  const pendingTabs = state.pendingTabs ? state.pendingTabs : {}
 
   return {
-    tabs: workflow.tab_ids.map(id => tabs[String(id)]),
+    tabs: workflow.tab_slugs.map(slug => tabs[slug] || pendingTabs[slug]),
     selectedTabPosition: workflow.selected_tab_position,
-    pendingTabNames: workflow.pendingTabNames || [],
     isReadOnly: workflow.read_only,
   }
 }

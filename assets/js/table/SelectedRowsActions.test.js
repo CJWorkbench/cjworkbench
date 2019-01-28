@@ -88,9 +88,9 @@ describe('SelectedRowsActions', () => {
 
     it('should use addModuleAction', async () => {
       const w = wrapper({
-        tabs: { 1: { wf_module_ids: [2] } },
+        tabs: { 'tab-1': { wf_module_ids: [2] } },
         wfModules: {
-          2: { module: 'dofoo', tab_id: 1 },
+          2: { module: 'dofoo', tab_slug: 'tab-1' }
         },
         modules: {
           dobar: {
@@ -108,16 +108,16 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.addModule).toHaveBeenCalledWith(1, 'dobar', 1, { rows: '2, 4-5' })
+      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'dobar', 1, { rows: '2, 4-5' })
     })
 
     it('should use setWfModuleParams action, fromInput', async () => {
       const w = wrapper({
-        workflow: { tab_ids: [ 1 ] },
-        tabs: { 1: { wf_module_ids: [2, 3] } },
+        workflow: { tab_slugs: [ 'tab-1' ] },
+        tabs: { 'tab-1': { wf_module_ids: [2, 3] } },
         wfModules: {
-          2: { module: 'dofoo', tab_id: 1 },
-          3: { module: 'dobaz', tab_id: 1, params: { foo20: 'bar20' } }
+          2: { module: 'dofoo', tab_slug: 'tab-1' },
+          3: { module: 'dobaz', tab_slug: 'tab-1', params: { foo20: 'bar20' } }
         },
         modules: {
           dobaz: {
@@ -145,11 +145,11 @@ describe('SelectedRowsActions', () => {
 
     it('should use setWfModuleParams action, fromInput=false (from output)', async () => {
       const w = wrapper({
-        workflow: { tab_ids: [ 1 ] },
-        tabs: { 1: { wf_module_ids: [2, 3] } },
+        workflow: { tab_slugs: [ 'tab-1' ] },
+        tabs: { 'tab-1': { wf_module_ids: [2, 3] } },
         wfModules: {
-          2: { module: 'dobaz', tab_id: 1, params: { foo10: 'bar10' } },
-          3: { module: 'dofoo', tab_id: 1 }
+          2: { module: 'dobaz', tab_slug: 'tab-1', params: { foo10: 'bar10' } },
+          3: { module: 'dofoo', tab_slug: 'tab-1' }
         },
         modules: {
           dobaz: {

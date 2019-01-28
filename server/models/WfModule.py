@@ -31,6 +31,10 @@ class WfModule(models.Model):
     def workflow_id(self):
         return self.tab.workflow_id
 
+    @property
+    def tab_slug(self):
+        return self.tab.slug
+
     @classmethod
     def live_in_workflow(cls,
                          workflow: Union[int, Workflow]) -> models.QuerySet:

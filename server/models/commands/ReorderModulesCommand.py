@@ -16,7 +16,7 @@ class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
     def load_ws_data(self):
         data = super().load_ws_data()
         data['updateTabs'] = {
-            str(self.tab_id): {
+            self.tab.slug: {
                 'wf_module_ids': list(
                     self.tab.live_wf_modules.values_list('id', flat=True)
                 ),

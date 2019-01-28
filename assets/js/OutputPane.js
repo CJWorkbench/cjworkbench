@@ -168,8 +168,8 @@ function wfModuleStatus(wfModule) {
 
 function mapStateToProps(state, ownProps) {
   const { workflow, wfModules, tabs, modules } = state
-  const tabId = workflow.tab_ids[workflow.selected_tab_position]
-  const tab = tabs[String(tabId)]
+  const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
+  const tab = tabs[tabSlug]
   const wfModuleArray = tab.wf_module_ids.map(id => wfModules[String(id)])
 
   let wfModuleIndex = tab.selected_wf_module_position

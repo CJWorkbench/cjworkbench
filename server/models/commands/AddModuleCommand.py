@@ -33,7 +33,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
     def load_ws_data(self):
         data = super().load_ws_data()
         data['updateTabs'] = {
-            str(self.wf_module.tab_id): {
+            self.wf_module.tab.slug: {
                 'wf_module_ids': list(self.wf_module.tab.live_wf_modules
                                       .values_list('id', flat=True)),
             },

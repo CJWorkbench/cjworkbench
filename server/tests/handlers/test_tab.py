@@ -31,8 +31,7 @@ class TabTest(HandlerTestCase):
     @patch('server.utils.log_user_event_from_scope', noop)
     def test_add_module(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(owner=user)  # with tab-1
         module_version = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
@@ -43,7 +42,7 @@ class TabTest(HandlerTestCase):
         })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position=3,
+                                    tabSlug='tab-1', position=3,
                                     moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response, data=None)
@@ -55,12 +54,11 @@ class TabTest(HandlerTestCase):
             command.wf_module.get_params().get_param_string('foo'),
             'bar'
         )
-        self.assertEquals(command.wf_module.tab_id, tab.id)
+        self.assertEquals(command.wf_module.tab.slug, 'tab-1')
         self.assertEquals(command.workflow_id, workflow.id)
 
     def test_add_module_viewer_access_denied(self):
-        workflow = Workflow.create_and_init(public=True)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(public=True)  # tab-1
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
@@ -70,7 +68,7 @@ class TabTest(HandlerTestCase):
             ],
         })
         response = self.run_handler(add_module, workflow=workflow,
-                                    tabId=tab.id, position=3,
+                                    tabSlug='tab-1', position=3,
                                     moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
 
@@ -79,8 +77,7 @@ class TabTest(HandlerTestCase):
 
     def test_add_module_param_values_not_object(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
@@ -91,7 +88,7 @@ class TabTest(HandlerTestCase):
         })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position=3,
+                                    tabSlug='tab-1', position=3,
                                     moduleIdName='amodule',
                                     paramValues='foobar')
         self.assertResponse(response,
@@ -99,8 +96,7 @@ class TabTest(HandlerTestCase):
 
     def test_add_module_invalid_param_values(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
@@ -111,7 +107,7 @@ class TabTest(HandlerTestCase):
         })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position=3,
+                                    tabSlug='tab-1', position=3,
                                     moduleIdName='amodule',
                                     paramValues={'foo': 3})
         self.assertResponse(response, error=(
@@ -120,8 +116,7 @@ class TabTest(HandlerTestCase):
 
     def test_add_module_invalid_position(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
@@ -132,7 +127,7 @@ class TabTest(HandlerTestCase):
         })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position='foo',
+                                    tabSlug='tab-1', position='foo',
                                     moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response,
@@ -142,7 +137,9 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         other_workflow = Workflow.create_and_init(owner=user)
-        tab = other_workflow.tabs.first()
+        # Create a "honeypot" tab -- make sure the module doesn't get inserted
+        # in the other workflow's 'tab-2'!
+        other_workflow.tabs.create(position=1, slug='tab-2')
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'amodule',
             'name': 'A Module',
@@ -153,7 +150,7 @@ class TabTest(HandlerTestCase):
         })
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position=3,
+                                    tabSlug='tab-2', position=3,
                                     moduleIdName='amodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response,
@@ -161,11 +158,10 @@ class TabTest(HandlerTestCase):
 
     def test_add_module_missing_module_version(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
 
         response = self.run_handler(add_module, user=user, workflow=workflow,
-                                    tabId=tab.id, position=3,
+                                    tabSlug='tab-1', position=3,
                                     moduleIdName='notamodule',
                                     paramValues={'foo': 'bar'})
         self.assertResponse(response,
@@ -175,13 +171,13 @@ class TabTest(HandlerTestCase):
     @patch('server.rabbitmq.queue_render', async_noop)
     def test_reorder_modules(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
+        tab = workflow.tabs.first()  # tab-1
         wfm1 = tab.wf_modules.create(order=0)
         wfm2 = tab.wf_modules.create(order=1)
 
         response = self.run_handler(reorder_modules, user=user,
-                                    workflow=workflow, tabId=tab.id,
+                                    workflow=workflow, tabSlug='tab-1',
                                     wfModuleIds=[wfm2.id, wfm1.id])
         self.assertResponse(response, data=None)
 
@@ -191,12 +187,12 @@ class TabTest(HandlerTestCase):
 
     def test_reorder_modules_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)
-        tab = workflow.tabs.first()
+        tab = workflow.tabs.first()  # tab-1
         wfm1 = tab.wf_modules.create(order=0)
         wfm2 = tab.wf_modules.create(order=1)
 
         response = self.run_handler(reorder_modules,
-                                    workflow=workflow, tabId=tab.id,
+                                    workflow=workflow, tabSlug='tab-1',
                                     wfModuleIds=[wfm2.id, wfm1.id])
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
@@ -204,12 +200,12 @@ class TabTest(HandlerTestCase):
     def test_reorder_modules_invalid_wf_module_ids(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        tab = workflow.tabs.first()  # tab-1
         wfm1 = tab.wf_modules.create(order=0)
         wfm2 = tab.wf_modules.create(order=1)
 
         response = self.run_handler(reorder_modules, user=user,
-                                    workflow=workflow, tabId=tab.id,
+                                    workflow=workflow, tabSlug='tab-1',
                                     wfModuleIds=[wfm2.id, wfm1.id, 2])
         self.assertResponse(
             response,
@@ -238,10 +234,10 @@ class TabTest(HandlerTestCase):
     def test_delete(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
-        tab2 = workflow.tabs.create(position=1)
+        tab2 = workflow.tabs.create(position=1, slug='tab-2')
 
         response = self.run_handler(delete, user=user, workflow=workflow,
-                                    tabId=tab2.id)
+                                    tabSlug='tab-2')
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 1)
         tab2.refresh_from_db()
@@ -249,8 +245,8 @@ class TabTest(HandlerTestCase):
 
     def test_delete_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        tab2 = workflow.tabs.create(position=1)
-        response = self.run_handler(delete, workflow=workflow, tabId=tab2.id)
+        workflow.tabs.create(position=1, slug='tab-2')
+        response = self.run_handler(delete, workflow=workflow, tabSlug='tab-2')
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
 
@@ -258,14 +254,14 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         response = self.run_handler(delete, user=user, workflow=workflow,
-                                    tabId=workflow.tabs.first().id + 1)
+                                    tabSlug='tab-2')
         self.assertResponse(response, error='DoesNotExist: Tab not found')
 
     def test_delete_last_tab(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
         response = self.run_handler(delete, user=user, workflow=workflow,
-                                    tabId=workflow.tabs.first().id)
+                                    tabSlug='tab-1')
         # No-op
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 1)
@@ -274,26 +270,24 @@ class TabTest(HandlerTestCase):
     def test_set_name(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
-        tab = workflow.tabs.first()
+        tab = workflow.tabs.first()  # tab-1
 
         response = self.run_handler(set_name, user=user, workflow=workflow,
-                                    tabId=tab.id, name='B')
+                                    tabSlug='tab-1', name='B')
         self.assertResponse(response, data=None)
         tab.refresh_from_db()
         self.assertEqual(tab.name, 'B')
 
     def test_set_name_viewer_access_denied(self):
-        workflow = Workflow.create_and_init(public=True)
-        tab = workflow.tabs.create(position=1)
+        workflow = Workflow.create_and_init(public=True)  # tab-1
         response = self.run_handler(set_name, workflow=workflow,
-                                    tabId=tab.id, name='B')
+                                    tabSlug='tab-1', name='B')
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
 
     def test_set_name_missing_tab(self):
         user = User.objects.create(username='a', email='a@example.org')
-        workflow = Workflow.create_and_init(owner=user)
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
         response = self.run_handler(set_name, user=user, workflow=workflow,
-                                    tabId=workflow.tabs.first().id + 1,
-                                    name='B')
+                                    tabSlug='tab-2', name='B')
         self.assertResponse(response, error='DoesNotExist: Tab not found')

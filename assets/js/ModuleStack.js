@@ -219,11 +219,11 @@ class ModuleStack extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     workflow: PropTypes.object,
-    tabId: PropTypes.number,
+    tabSlug: PropTypes.string,
     selected_wf_module_position: PropTypes.number,
     wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
-    addModule: PropTypes.func.isRequired, // func(tabId, moduleIdName, index) => undefined
-    moveModuleByIndex: PropTypes.func.isRequired, // func(tabId, oldIndex, newIndex) => undefined
+    addModule: PropTypes.func.isRequired, // func(tabSlug, moduleIdName, index) => undefined
+    moveModuleByIndex: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
     removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
     isReadOnly: PropTypes.bool.isRequired,
@@ -294,11 +294,11 @@ class ModuleStack extends React.Component {
   }
 
   addModule = (moduleIdName, index) => {
-    this.props.addModule(this.props.tabId, moduleIdName, index)
+    this.props.addModule(this.props.tabSlug, moduleIdName, index)
   }
 
   moveModuleByIndex = (oldIndex, newIndex) => {
-    this.props.moveModuleByIndex(this.props.tabId, oldIndex, newIndex)
+    this.props.moveModuleByIndex(this.props.tabSlug, oldIndex, newIndex)
   }
 
   moduleStackInsertSpot(index) {
@@ -324,7 +324,7 @@ class ModuleStack extends React.Component {
           <React.Fragment key={`placeholder-${i}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModuleHeader
-              tabId={this.props.tabId}
+              tabSlug={this.props.tabSlug}
               moduleName={''/*item.name*/}
               moduleIcon={''/*item.icon*/}
               isSelected={false}
@@ -337,7 +337,6 @@ class ModuleStack extends React.Component {
             {this.moduleStackInsertSpot(i)}
             <ErrorBoundary>
               <WfModule
-                tabId={this.props.tabId}
                 isReadOnly={this.props.workflow.read_only}
                 isZenMode={this.state.zenModeWfModuleId === item.id}
                 wfModule={item}
@@ -380,13 +379,13 @@ class ModuleStack extends React.Component {
 const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
   const tabPosition = state.workflow.selected_tab_position
-  const tabId = state.workflow.tab_ids[tabPosition]
-  const tab = state.tabs[String(tabId)]
+  const tabSlug = state.workflow.tab_slugs[tabPosition]
+  const tab = state.tabs[tabSlug]
   const wfModules = tab.wf_module_ids.map(id => state.wfModules[String(id)])
   return {
     workflow: state.workflow,
     selected_wf_module_position: tab.selected_wf_module_position,
-    tabId,
+    tabSlug,
     wfModules,
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index }),
@@ -395,13 +394,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule(tabId, moduleIdName, index) {
-      const action = addModuleAction(moduleIdName, { tabId, index }, {})
+    addModule(tabSlug, moduleIdName, index) {
+      const action = addModuleAction(moduleIdName, { tabSlug, index }, {})
       dispatch(action)
     },
 
-    moveModuleByIndex(tabId, oldIndex, newIndex) {
-      const action = moveModuleAction(tabId, oldIndex, newIndex)
+    moveModuleByIndex(tabSlug, oldIndex, newIndex) {
+      const action = moveModuleAction(tabSlug, oldIndex, newIndex)
       dispatch(action)
     },
 

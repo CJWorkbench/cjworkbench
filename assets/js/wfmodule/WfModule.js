@@ -45,7 +45,6 @@ export class WfModule extends React.PureComponent {
         visible_if: PropTypes.object // JSON spec or null
       }).isRequired).isRequired
     }), // or null for no module
-    tabId: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.shape({
       params: PropTypes.object.isRequired,
@@ -497,7 +496,8 @@ const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs
 const getWfModules = ({ wfModules }) => wfModules
 const getSelectedTab = createSelector([ getWorkflow, getTabs ], (workflow, tabs) => {
-  return tabs[String(workflow.tab_ids[workflow.selected_tab_position])]
+  const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
+  return tabs[tabSlug]
 })
 const getModules = ({ modules }) => modules
 

@@ -5,7 +5,7 @@ import TabDropdown from './TabDropdown'
 
 export default class Tab extends React.PureComponent {
   static propTypes = {
-    id: PropTypes.number.isRequired,
+    slug: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
@@ -18,9 +18,9 @@ export default class Tab extends React.PureComponent {
     onDragHoverIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined -- from source Tab after drop/cancel
     onDrop: PropTypes.func.isRequired, // func() => undefined -- from dest Tab after drop
-    setName: PropTypes.func.isRequired, // func(tabId, name) => undefined
-    destroy: PropTypes.func.isRequired, // func(tabId) => undefined
-    select: PropTypes.func.isRequired, // func(tabId) => undefined
+    setName: PropTypes.func.isRequired, // func(slug, name) => undefined
+    destroy: PropTypes.func.isRequired, // func(slug) => undefined
+    select: PropTypes.func.isRequired, // func(slug) => undefined
   }
 
   inputRef = React.createRef()
@@ -34,13 +34,13 @@ export default class Tab extends React.PureComponent {
   }
 
   submitName = (name) => {
-    const { setName, id } = this.props
-    setName(id, name)
+    const { setName, slug } = this.props
+    setName(slug, name)
   }
 
   destroy = () => {
-    const { destroy, id } = this.props
-    destroy(id)
+    const { destroy, slug } = this.props
+    destroy(slug)
   }
 
   get isDragMode () {
@@ -113,8 +113,8 @@ export default class Tab extends React.PureComponent {
   }
 
   select = () => {
-    const { id, select } = this.props
-    select(id)
+    const { slug, select } = this.props
+    select(slug)
   }
 
   get isDragging () {

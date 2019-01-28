@@ -129,7 +129,7 @@ class ReorderModulesCommandTest(DbTestCase):
             order=0,
             last_relevant_delta_id=self.delta.id
         )
-        wfm2 = self.tab.wf_modules.create(
+        self.tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=self.delta.id
         )

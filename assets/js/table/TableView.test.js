@@ -84,14 +84,14 @@ describe('TableView', () => {
     const api = { addModule: jest.fn(() => Promise.resolve(null)) }
     const store = mockStore({
       workflow: {
-        tab_ids: [1],
+        tab_slugs: [ 'tab-1' ],
         selected_tab_position: 0
       },
       tabs: {
-        1: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
+        'tab-1': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
       },
       wfModules: {
-        2: { tab_id: 1 },
+        2: { tab_slug: 'tab-1' },
         3: {}
       },
       modules: {
@@ -104,7 +104,7 @@ describe('TableView', () => {
 
     await tick()
 
-    expect(api.addModule).toHaveBeenCalledWith(1, 'reorder-columns', 1, {
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'reorder-columns', 1, {
       'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
     })
 
@@ -117,14 +117,14 @@ describe('TableView', () => {
     const api = { addModule: jest.fn().mockImplementation(() => Promise.resolve(null)) }
     const store = mockStore({
       workflow: {
-        tab_ids: [1],
+        tab_slugs: [ 'tab-1' ],
         selected_tab_position: 0
       },
       tabs: {
-        1: { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
+        'tab-1': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
       },
       wfModules: {
-        2: { tab_id: 1 },
+        2: { tab_slug: 'tab-1' },
         3: {}
       },
       modules: {
@@ -142,7 +142,7 @@ describe('TableView', () => {
       updated: { b: 'b2' }
     })
 
-    expect(api.addModule).toHaveBeenCalledWith(1, 'editcells', 1, {
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'editcells', 1, {
       'celledits': JSON.stringify([{ row: 0, col: 'b', value: 'b2' }])
     })
 

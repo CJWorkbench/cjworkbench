@@ -54,7 +54,7 @@ def _init_workflow_for_lesson(workflow, lesson):
     InitWorkflowCommand.create(workflow)
 
     if lesson.initial_workflow is None:
-        workflow.tabs.create(position=0)
+        workflow.tabs.create(position=0, slug='tab-1', name='Tab 1')
     else:
         # Create each wfModule of each tab
         tab_dicts = lesson.initial_workflow.tabs
@@ -62,6 +62,7 @@ def _init_workflow_for_lesson(workflow, lesson):
             # Set selected module to last wfmodule in stack
             tab = workflow.tabs.create(
                 position=position,
+                slug=f'tab-{position + 1}',
                 name=tab_dict['name'],
                 selected_wf_module_position=len(tab_dict['wfModules']) - 1
             )

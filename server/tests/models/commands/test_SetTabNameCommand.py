@@ -47,12 +47,12 @@ class SetTabNameCommandTest(DbTestCase):
         ))
         send_delta.assert_called()
         delta1 = send_delta.call_args[0][1]
-        self.assertEqual(delta1['updateTabs'], {str(tab.id): {'name': 'bar'}})
+        self.assertEqual(delta1['updateTabs'], {tab.slug: {'name': 'bar'}})
 
         send_delta.return_value = async_noop()
         self.run_with_async_db(cmd.backward())
         delta2 = send_delta.call_args[0][1]
-        self.assertEqual(delta2['updateTabs'], {str(tab.id): {'name': 'foo'}})
+        self.assertEqual(delta2['updateTabs'], {tab.slug: {'name': 'foo'}})
 
     def test_no_op(self):
         workflow = Workflow.create_and_init()

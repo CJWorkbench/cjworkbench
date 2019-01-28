@@ -36,13 +36,13 @@ class AddTabCommand(Delta):
     def load_ws_data(self):
         data = super().load_ws_data()
         if self.tab.is_deleted:
-            data['clearTabIds'] = [self.tab_id]
+            data['clearTabSlugs'] = [self.tab.slug]
         else:
             data['updateTabs'] = {
-                str(self.tab_id): TabSerializer(self.tab).data,
+                self.tab.slug: TabSerializer(self.tab).data,
             }
-        data['updateWorkflow']['tab_ids'] = list(
-            self.workflow.live_tabs.values_list('id', flat=True)
+        data['updateWorkflow']['tab_slugs'] = list(
+            self.workflow.live_tabs.values_list('slug', flat=True)
         )
         return data
 
