@@ -6,7 +6,8 @@ export default class TabList extends React.PureComponent {
   static propTypes = {
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
+      name: PropTypes.string.isRequired,
+      isPending: PropTypes.bool // or undefined
     }).isRequired).isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     selectedTabPosition: PropTypes.number.isRequired,
@@ -81,11 +82,12 @@ export default class TabList extends React.PureComponent {
         className={dragging ? 'dragging' : ''}
         onDragLeave={this.onDragLeave}
       >
-        {tabs.map(({ slug, name }, index) => (
+        {tabs.map(({ slug, name, isPending }, index) => (
           <Tab
             key={slug}
             index={index}
             slug={slug}
+            isPending={isPending}
             isReadOnly={isReadOnly}
             isSelected={selectedTabPosition === index}
             name={name}

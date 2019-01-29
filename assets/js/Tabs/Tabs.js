@@ -7,7 +7,8 @@ export default class Tabs extends React.PureComponent {
   static propTypes = {
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
+      name: PropTypes.string.isRequired,
+      isPending: PropTypes.bool // or undefined
     }).isRequired).isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     selectedTabPosition: PropTypes.number.isRequired,
