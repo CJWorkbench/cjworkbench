@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 
 def main(directory, pretend_git_url):
-    basename = os.path.basename(directory)
-
     def reload():
-        logger.info(f'Reloading {basename}')
-        # import_module_from_directory is unintuitive: it _destroys_ the input
-        # directory.
-        tmpdir = tempfile.mkdtemp()
-        shutil.rmtree(tmpdir)
-        shutil.copytree(directory, tmpdir)
-        try:
-            import_module_from_directory('develop', tmpdir, force_reload=True)
-        except Exception:
-            logger.exception('Error loading module')
+        logger.info(f'Reloading...')
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            importdir = os.path.join(tmpdir, 'importme')
+            shutil.copytree(directory, importdir)
+            shutil.rmtree(os.path.join(importdir, '.git'), ignore_errors=True)
+
+            try:
+                import_module_from_directory('develop', importdir,
+                                             force_reload=True)
+            except Exception:
+                logger.exception('Error loading module')
 
     class ReloadEventHandler(RegexMatchingEventHandler):
         def on_any_event(self, ev):
