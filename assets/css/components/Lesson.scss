@@ -1,7 +1,22 @@
+article.fullscreen {
+  position: relative;
+  top:0px;
+  bottom:0px;
+  width: 100%;
+
+  section.current {
+    width: 100%;
+  }
+
+  footer {
+    background-color: lime ;
+  }
+}
+
 article.lesson {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 21vh;
   flex: 0 0 auto;
   min-width: 20rem;
 
@@ -260,3 +275,4 @@ article.lesson {
     }
   }
 }
+
