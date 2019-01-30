@@ -121,7 +121,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
             return data
 
         try:
-            columns = [{'name': c.name, 'type': c.type}
+            columns = [{'name': c.name, 'type': c.type.value}
                        for c in cached_result.columns]
         except FileNotFoundError:
             # We're serializing without locking the workflow, and we're in a

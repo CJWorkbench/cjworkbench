@@ -1,7 +1,8 @@
 import json
 from typing import Any, Dict, List, Optional
 import pandas as pd
-from server.modules.types import Column, ProcessResult, QuickFix
+from server.modules.types import ProcessResult, QuickFix
+from server.types import Column
 from server import minio, parquet
 
 

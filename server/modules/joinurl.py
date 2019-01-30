@@ -4,7 +4,7 @@ from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 from server.models import Params
 from server.modules import utils
-from .types import _dtype_to_column_type
+from server.types import ColumnType
 import numpy as np
 from pandas.api.types import is_numeric_dtype
 
@@ -13,17 +13,21 @@ from pandas.api.types import is_numeric_dtype
 _join_type_map = 'Left|Inner|Right'.lower().split('|')
 
 # Prefixes for column matches (and not keys)
-lsuffix='_source'
-rsuffix='_imported'
+lsuffix = '_source'
+rsuffix = '_imported'
 
-#TODO: Check that types match, maybe cast if necessary (or user requests)
+
 def check_key_types(left_dtypes, right_dtypes):
     for key in left_dtypes.index:
-        l_type = _dtype_to_column_type(left_dtypes.loc[key])
-        r_type = _dtype_to_column_type(right_dtypes.loc[key])
+        l_type = ColumnType.from_dtype(left_dtypes.loc[key])
+        r_type = ColumnType.from_dtype(right_dtypes.loc[key])
         if l_type != r_type:
-            raise TypeError(f'Types do not match for key column "{key}" ({l_type} and {r_type}). ' \
-                            f'Please use a type conversion module to make these column types consistent.')
+            raise TypeError(
+                f'Types do not match for key column "{key}" ({l_type.value} '
+                f'and {r_type.value}). Please use a type conversion module to '
+                'make these column types consistent.'
+            )
+
 
 # If column types are numeric but do not match (ie. int and float) cast as float to match
 def cast_numerical_types(left_table, right_table, keys):
@@ -38,6 +42,7 @@ def cast_numerical_types(left_table, right_table, keys):
             left_table[key] = left_table[key].astype(np.float64)
             right_table[key] = right_table[key].astype(np.float64)
 
+
 # Insert new duplicate column next to matching source column for legibility
 def sort_columns(og_columns, new_columns):
     result = list(new_columns)
@@ -48,6 +53,7 @@ def sort_columns(og_columns, new_columns):
             result.pop(result.index(new_right))
             result.insert(result.index(new_left) + 1, new_right)
     return result
+
 
 class JoinURL(ModuleImpl):
     @staticmethod

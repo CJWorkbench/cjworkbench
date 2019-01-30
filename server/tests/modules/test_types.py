@@ -2,7 +2,7 @@ import datetime
 import unittest
 from unittest import mock
 from pandas import DataFrame, Series
-from server.modules.types import Column, ProcessResult, QuickFix
+from server.modules.types import Column, ColumnType, ProcessResult, QuickFix
 
 
 class ProcessResultTests(unittest.TestCase):
@@ -238,13 +238,17 @@ class ProcessResultTests(unittest.TestCase):
         df['D'] = Series(['cat'], dtype='category')
         result = ProcessResult(df)
         self.assertEqual(result.column_names, ['A', 'B', 'C', 'D'])
-        self.assertEqual(result.column_types,
-                         ['number', 'text', 'datetime', 'text'])
+        self.assertEqual(result.column_types, [
+            ColumnType.NUMBER,
+            ColumnType.TEXT,
+            ColumnType.DATETIME,
+            ColumnType.TEXT,
+        ])
         self.assertEqual(result.columns, [
-            Column('A', 'number'),
-            Column('B', 'text'),
-            Column('C', 'datetime'),
-            Column('D', 'text'),
+            Column('A', ColumnType.NUMBER),
+            Column('B', ColumnType.TEXT),
+            Column('C', ColumnType.DATETIME),
+            Column('D', ColumnType.TEXT),
         ])
 
     def test_empty_columns(self):

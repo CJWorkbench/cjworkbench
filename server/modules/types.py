@@ -1,24 +1,8 @@
-from collections import namedtuple
 from typing import Any, Dict, List
 from pandas import DataFrame
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server import sanitizedataframe
+from server.types import Column, ColumnType
 from django.utils.translation import gettext as _
-
-
-Column = namedtuple('Column', ['name', 'type'])
-
-
-def _dtype_to_column_type(dtype) -> str:
-    """Return 'text', 'number' or 'datetime'."""
-    if is_numeric_dtype(dtype):
-        return 'number'
-    elif is_datetime64_dtype(dtype):
-        return 'datetime'
-    elif dtype == object or dtype == 'category':
-        return 'text'
-    else:
-        raise ValueError(f'Unknown dtype: {dtype}')
 
 
 class QuickFix:
@@ -171,7 +155,7 @@ class ProcessResult:
 
     @property
     def column_types(self):
-        return [_dtype_to_column_type(t) for t in self.dataframe.dtypes]
+        return [ColumnType.from_dtype(t) for t in self.dataframe.dtypes]
 
     @property
     def columns(self):
