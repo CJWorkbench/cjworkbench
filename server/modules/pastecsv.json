@@ -10,14 +10,14 @@
       "name": "",
       "id_name": "csv",
       "type": "string",
-      "multiline": "True",
+      "multiline": true,
       "placeholder":"Paste data from a spreadsheet, or a CSV"
     },
     {
       "name": "Has header row",
       "id_name": "has_header_row",
       "type": "checkbox",
-      "default": "True"
+      "default": true
     }
   ]
 }

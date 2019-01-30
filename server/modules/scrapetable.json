@@ -11,15 +11,14 @@
       "name": "",
       "id_name" : "url",
       "type": "string",
-      "default": "",
       "placeholder":"http://"
     },
     {
       "name": "Table's position on the page",
       "id_name" : "tablenum",
       "type": "integer",
-      "default": "1",
-      "placeholder":"1"
+      "default": 1,
+      "placeholder": "1"
     },
     {
       "name": "Scrape",
@@ -30,7 +29,7 @@
       "name": "First row is header",
       "id_name": "first_row_is_header",
       "type": "checkbox",
-      "default": "False"
+      "default": false
     }
   ]
 }

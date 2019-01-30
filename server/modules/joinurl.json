@@ -11,7 +11,6 @@
       "name": "",
       "id_name" : "url",
       "type": "string",
-      "default": "",
       "placeholder":"http://…"
     },
     {
@@ -29,13 +28,12 @@
       "name": "Select columns to import",
       "id_name": "select_columns",
       "type": "checkbox",
-      "default": "False"
+      "default": false
     },
     {
       "name": "Columns to import",
       "id_name" : "importcols",
       "type": "string",
-      "default": "",
       "placeholder":"Column 1, Column 2",
       "visible_if": {
         "id_name": "select_columns",

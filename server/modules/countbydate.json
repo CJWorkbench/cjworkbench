@@ -17,14 +17,14 @@
       "id_name" : "groupby",
       "type" : "menu",
       "menu_items" : "Second|Minute|Hour|Day|Month|Quarter - Calendar|Year|Second (time-of-day)|Minute (time-of-day)|Hour (time-of-day)",
-      "default": "3"
+      "default": 3
     },
     {
       "name": "Operation",
       "id_name" : "operation",
       "type" : "menu",
       "menu_items" : "Count|Average|Sum|Min|Max",
-      "default": "0"
+      "default": 0
     },
     {
       "name": "",
@@ -40,7 +40,7 @@
       "name": "Include missing dates",
       "id_name": "include_missing_dates",
       "type": "checkbox",
-      "default": "False"
+      "default": false
     }
   ]
 }

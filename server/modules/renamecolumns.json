@@ -10,13 +10,13 @@
       "name": "Paste list of new names",
       "id_name": "custom_list",
       "type": "checkbox",
-      "default": "False"
+      "default": false
     },
     {
       "name": "",
       "id_name": "list_string",
       "type": "string",
-      "multiline": "True",
+      "multiline": true,
       "placeholder":"Paste values of column names",
       "visible_if": {
         "id_name": "custom_list",

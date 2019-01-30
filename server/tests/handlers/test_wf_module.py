@@ -375,7 +375,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -400,7 +401,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -425,7 +427,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -449,7 +452,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -476,7 +480,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -509,7 +514,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -542,7 +548,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -566,7 +573,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -619,7 +627,8 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret'},
+                {'id_name': 'google_credentials', 'type': 'secret',
+                 'name': 'Google'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(

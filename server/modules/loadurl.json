@@ -11,14 +11,13 @@
       "name": "",
       "id_name" : "url",
       "type": "string",
-      "default": "",
       "placeholder":"http://…"
     },
     {
       "name": "Has header row",
       "id_name": "has_header",
       "type": "checkbox",
-      "default": "True"
+      "default": true
     },
     {
       "name": "Update",

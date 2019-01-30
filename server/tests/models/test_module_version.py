@@ -41,10 +41,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
             })
 
     def test_missing_menu_items(self):
-        with self.assertRaisesRegex(
-            ValidationError,
-            "Param 'menu' needs menu_items"
-        ):
+        with self.assertRaises(ValidationError):
             validate_module_spec({
                 'id_name': 'id',
                 'name': 'Name',
@@ -55,10 +52,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
             })
 
     def test_missing_radio_items(self):
-        with self.assertRaisesRegex(
-            ValidationError,
-            "Param 'radio' needs radio_items"
-        ):
+        with self.assertRaises(ValidationError):
             validate_module_spec({
                 'id_name': 'id',
                 'name': 'Name',
@@ -105,6 +99,65 @@ class ValidateModuleSpecTest(unittest.TestCase):
             ],
         })
 
+    def test_multicolumn_missing_tab_parameter(self):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Param 'a' has a 'tab_parameter' that is not in 'parameters'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'column',
+                        'tab_parameter': 'b',  # does not exist
+                    }
+                ],
+            })
+
+    def test_multicolumn_non_tab_parameter(self):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Param 'a' has a 'tab_parameter' that is not a 'tab'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'column',
+                        'tab_parameter': 'b',
+                    },
+                    {
+                        'id_name': 'b',
+                        'type': 'string',  # Not a 'tab'
+                    },
+                ],
+            })
+
+    def test_multicolumn_tab_parameter(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'column',
+                    'tab_parameter': 'b',
+                },
+                {
+                    'id_name': 'b',
+                    'type': 'tab',
+                },
+            ],
+        })
+
 
 class ModuleVersionTest(DbTestCase):
     def test_create_module_properties(self):
@@ -128,7 +181,7 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
-                {'id_name': 'bar', 'type': 'secret'},
+                {'id_name': 'bar', 'type': 'secret', 'name': 'Secret'},
                 {'id_name': 'baz', 'type': 'menu', 'menu_items': 'a|b|c',
                  'default': 2},
             ]
@@ -168,7 +221,7 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
-                {'id_name': 'bar', 'type': 'secret'},
+                {'id_name': 'bar', 'type': 'secret', 'name': 'Secret'},
                 {'id_name': 'baz', 'type': 'menu', 'menu_items': 'a|b|c',
                  'default': 2},
             ]

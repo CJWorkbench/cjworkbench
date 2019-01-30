@@ -25,7 +25,7 @@ class ChangeParametersCommandTest(DbTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'url', 'type': 'string'},
-                {'id_name': 'has_header', 'type': 'checkbox'},
+                {'id_name': 'has_header', 'type': 'checkbox', 'name': 'HH'},
                 {'id_name': 'version_select', 'type': 'custom'},
             ]
         })

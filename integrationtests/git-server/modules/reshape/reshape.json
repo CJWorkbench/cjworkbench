@@ -11,7 +11,7 @@
       "id_name" : "direction",
       "type" : "menu",
       "menu_items" : "Wide to long|Long to wide|Transpose",
-      "default": "0"
+      "default": 0
     },
     {
       "name": "Row variable",

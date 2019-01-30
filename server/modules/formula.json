@@ -11,7 +11,7 @@
       "id_name" : "syntax",
       "type" : "menu",
       "menu_items" : "Excel|Python",
-      "default": "0"
+      "default": 0
     },
     {
       "name": "Output column",
@@ -23,7 +23,6 @@
       "name": "Formula",
       "id_name" : "formula_excel",
       "type": "string",
-      "default": "",
       "placeholder": "Begin with equal sign e.g.=A1+B1",
       "visible_if": {
         "id_name": "syntax",
@@ -34,7 +33,7 @@
       "name": "Apply to all rows",
       "id_name" : "all_rows",
       "type": "checkbox",
-      "default": "False",
+      "default": true,
       "visible_if": {
         "id_name": "syntax",
         "value": "Excel"
@@ -44,7 +43,6 @@
       "name": "Formula",
       "id_name" : "formula_python",
       "type": "string",
-      "default": "",
       "placeholder": "e.g. col1 * (col2 + col3)",
       "visible_if": {
         "id_name": "syntax",

@@ -17,13 +17,12 @@
       "id_name" : "querytype",
       "type" : "menu",
       "menu_items" : "User tweets|Any tweet|Twitter list",
-      "default": "0"
+      "default": 0
     },
     {
       "name": "",
       "id_name" : "query",
       "type": "string",
-      "default": "",
       "placeholder":"Keywords to match",
       "visible_if": {
         "id_name": "querytype",
@@ -34,7 +33,6 @@
       "name": "",
       "id_name" : "username",
       "type": "string",
-      "default": "",
       "placeholder":"@UserName",
       "visible_if": {
         "id_name": "querytype",
@@ -45,7 +43,6 @@
       "name": "",
       "id_name" : "listurl",
       "type": "string",
-      "default": "",
       "placeholder":"https://twitter.com/someuser/lists/somelist",
       "visible_if": {
         "id_name": "querytype",
@@ -61,7 +58,7 @@
       "name": "Accumulate tweets",
       "id_name": "accumulate",
       "type": "checkbox",
-      "default": "True"
+      "default": true
     }
   ]
 }

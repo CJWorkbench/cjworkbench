@@ -66,10 +66,6 @@ definitions:
         # add new properties on top of the $ref-ed ones.
         _common: &common_ftype
             type: object
-            # All ftypes have a 'type' 'const' validation, so we don't need 'type'
-            # here to be marked 'required'. (If 'type' is missing, each individual
-            # 'ftype' will fail to match because each individual 'ftype' is
-            # checking for onw.)
             required: [ id_name, type ]
             properties: &common_ftype_properties
                 id_name:
@@ -90,7 +86,7 @@ definitions:
 
         statictext:
             <<: *common_ftype
-            required: [ id_name, name ]
+            required: [ id_name, type, name ]
             properties:
                 <<: *common_ftype_properties
                 type: { const: statictext }
@@ -129,6 +125,7 @@ definitions:
                     description: "Value to set on the user's behalf (default null)"
         checkbox:
             <<: *common_ftype
+            required: [ id_name, type, name ]
             properties:
                 <<: *common_ftype_properties
                 type: { const: checkbox }
@@ -138,6 +135,7 @@ definitions:
                     description: "Value to set on the user's behalf (default False)"
         menu:
             <<: *common_ftype
+            required: [ id_name, type, menu_items ]
             properties:
                 <<: *common_ftype_properties
                 type: { const: menu }
@@ -145,26 +143,26 @@ definitions:
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
                 menu_items:
                     type: string
-                    description: "Menu entries, separated by '|' (only for menu type) (default: '')"
+                    description: "Menu entries, separated by '|'"
                 default:
                     type: integer
-                    description: "Value to set on the user's behalf (default null)"
+                    description: "Value to set on the user's behalf (default 0)"
         radio:
             <<: *common_ftype
+            required: [ id_name, type, radio_items ]
             properties:
                 <<: *common_ftype_properties
                 type: { const: radio }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
                 radio_items:
                     type: string
-                    description: "Radio entries, separated by '|' (only for radio type) (default: '')"
+                    description: "Radio entries, separated by '|'"
                 default:
                     type: integer
-                    description: "Value to set on the user's behalf (default null)"
+                    description: "Value to set on the user's behalf (default 0)"
         button:
             <<: *common_ftype
-            required: [ id_name, name ]
+            required: [ id_name, type, name ]
             properties:
                 <<: *common_ftype_properties
                 type: { const: button }
@@ -185,9 +183,17 @@ definitions:
                 type: { const: multicolumn }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                tab_parameter: { type: string }  # optional
+        tab:
+            <<: *common_ftype
+            properties:
+                <<: *common_ftype_properties
+                type: { const: tab }
+                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
         secret:
             <<: *common_ftype
-            required: [ id_name, name ]
+            required: [ id_name, type, name ]
             properties:
                 <<: *common_ftype_properties
                 type: { const: secret }
@@ -196,9 +202,9 @@ definitions:
                     description: "'Connect' button text"
         custom:
             <<: *common_ftype
-            required: [ id_name ]
             properties:
                 <<: *common_ftype_properties
+                type: { const: custom }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
         any:
@@ -213,6 +219,7 @@ definitions:
                 { $ref: '#/definitions/ftypes/button' },
                 { $ref: '#/definitions/ftypes/column' },
                 { $ref: '#/definitions/ftypes/multicolumn' },
+                { $ref: '#/definitions/ftypes/tab' },
                 { $ref: '#/definitions/ftypes/secret' },
                 { $ref: '#/definitions/ftypes/custom' },
             ]
@@ -261,6 +268,12 @@ definitions:
             required: [ type ]
             properties:
                 type: { const: multicolumn }
+                tab_parameter: { type: string }
+        tab:
+            type: object
+            required: [ type ]
+            properties:
+                type: { const: tab }
         list:
             type: object
             requred: [ type, inner_dtype ]
@@ -289,6 +302,7 @@ definitions:
                 { $ref: '#/definitions/dtypes/boolean' },
                 { $ref: '#/definitions/dtypes/column' },
                 { $ref: '#/definitions/dtypes/multicolumn' },
+                { $ref: '#/definitions/dtypes/tab' },
                 { $ref: '#/definitions/dtypes/enum' },
                 { $ref: '#/definitions/dtypes/list' },
                 { $ref: '#/definitions/dtypes/dict' },

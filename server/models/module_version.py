@@ -45,33 +45,47 @@ def validate_module_spec(spec):
         # the schema is valid.
         raise ValidationError(messages)
 
-    param_id_names = set()
+    param_id_types = {}
     for param in spec['parameters']:
         id_name = param['id_name']
 
-        if id_name in param_id_names:
+        if id_name in param_id_types:
             messages.append(f"Param '{id_name}' appears twice")
         else:
-            param_id_names.add(id_name)
+            param_id_types[id_name] = param['type']
 
-        if param['type'] == 'menu' and not param.get('menu_items', ''):
-            messages.append(f"Param '{id_name}' needs menu_items")
-        if param['type'] == 'radio' and not param.get('radio_items', ''):
-            messages.append(f"Param '{id_name}' needs radio_items")
-
-    # Now that param_id_names is full, loop again to check visible_if refs
+    # Now that param_id_types is full, loop again to check visible_if refs
     for param in spec['parameters']:
         try:
             visible_if = param['visible_if']
         except KeyError:
             continue
 
-        if visible_if['id_name'] not in param_id_names:
+        if visible_if['id_name'] not in param_id_types:
             param_id_name = param['id_name']
             ref_id_name = visible_if['id_name']
             messages.append(
                 f"Param '{param_id_name}' has visible_if "
                 f"id_name '{ref_id_name}', which does not exist",
+            )
+
+    # Now that param_id_types is full, loop again to check tab_parameter refs
+    for param in spec['parameters']:
+        try:
+            tab_parameter = param['tab_parameter']
+        except KeyError:
+            continue  # we aren't referencing a "tab" parameter
+
+        param_id_name = param['id_name']
+        if tab_parameter not in param_id_types:
+            messages.append(
+                f"Param '{param_id_name}' has a 'tab_parameter' "
+                "that is not in 'parameters'"
+            )
+        elif param_id_types[tab_parameter] != 'tab':
+            messages.append(
+                f"Param '{param_id_name}' has a 'tab_parameter' "
+                "that is not a 'tab'"
             )
 
     if messages:

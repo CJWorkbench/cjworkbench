@@ -46,7 +46,7 @@
       "id_name" : "keep",
       "type" : "radio",
       "radio_items" : "Keep|Delete",
-      "default": "0"
+      "default": 0
     }
   ]
 }

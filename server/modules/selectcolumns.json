@@ -20,7 +20,6 @@
       "name": "Column numbers",
       "id_name": "column_numbers",
       "type": "string",
-      "default": "",
       "placeholder": "1-5, 8",
       "visible_if": {
         "id_name": "select_range",
@@ -32,14 +31,14 @@
       "name": "Select range",
       "id_name": "select_range",
       "type": "checkbox",
-      "default": "False"
+      "default": false
     },
     {
       "name" : "",
       "id_name" : "drop_or_keep",
       "type" : "radio",
       "radio_items" : "Delete|Keep",
-      "default": "1"
+      "default": 1
     }
   ]
 }

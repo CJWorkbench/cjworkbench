@@ -131,7 +131,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 {'id_name': 'a', 'type': 'string', 'default': 'x'},
                 {'id_name': 'b', 'type': 'menu', 'menu_items': 'a|b|c',
                  'default': 2},
-                {'id_name': 'c', 'type': 'checkbox', 'default': True},
+                {'id_name': 'c', 'type': 'checkbox', 'name': 'C',
+                 'default': True},
             ],
         }, source_version_hash='1.0')
 

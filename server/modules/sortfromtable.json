@@ -16,7 +16,7 @@
       "id_name" : "direction",
       "type" : "menu",
       "menu_items" : "Select|Ascending|Descending",
-      "default": "0"
+      "default": 0
     }
   ]
 }
