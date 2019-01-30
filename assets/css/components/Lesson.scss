@@ -16,7 +16,6 @@ article.fullscreen {
 article.lesson {
   display: flex;
   flex-direction: column;
-  height: 21vh;
   flex: 0 0 auto;
   min-width: 20rem;
 
@@ -44,7 +43,7 @@ article.lesson {
     display: flex;
     flex-direction: column;
     background-color: $table-header;
-    height: calc(100vh - 8rem);
+    height: calc(100vh - 6rem);
     width: 36rem;
     padding:2rem;
     overflow-y: scroll;
@@ -253,7 +252,7 @@ article.lesson {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem;
+    padding: 1rem 3rem;
 
     .action-button {
       width:9rem;
@@ -275,4 +274,3 @@ article.lesson {
     }
   }
 }
-
