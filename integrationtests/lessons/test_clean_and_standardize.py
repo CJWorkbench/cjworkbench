@@ -2,7 +2,7 @@ from integrationtests.lessons import LessonTest
 
 
 DataUrl = (
-    'https://raw.githubusercontent.com/pierreconti/Data/master/population_dirty_data.csv'
+    'http://production-static.workbenchdata.com/data/population_dirty_data.csv'
 )
 
 
