@@ -26,13 +26,13 @@ class MigrateParamsTest(unittest.TestCase):
         self.assertEqual(result['column'], column)
         refine = result['refine']
         self.assertEqual(refine['renames'], expected.renames)
-        self.assertEqual(set(refine['blacklist']), set(expected.blacklist))
 
+    # v0 blacklist values ignored
     def test_parse_v0_filter(self):
         self._test_parse_v0(
             'A',
             [{'type': 'select', 'column': 'A', 'content': {'value': 'foo'}}],
-            RefineSpec(blacklist=['foo'])
+            RefineSpec()
         )
 
     def test_parse_v0_filter_toggle(self):
@@ -42,7 +42,7 @@ class MigrateParamsTest(unittest.TestCase):
               {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
               {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
             ],
-            RefineSpec(blacklist=[])
+            RefineSpec()
         )
 
     def test_parse_v0_filter_multiple(self):
@@ -52,14 +52,14 @@ class MigrateParamsTest(unittest.TestCase):
               {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
               {'type': 'select', 'column': 'A', 'content': {'value': 'foo'}},
             ],
-            RefineSpec(blacklist=[])
+            RefineSpec()
         )
 
     def test_parse_v0_ignore_wrong_column(self):
         self._test_parse_v0(
             'A',
             [{'type': 'select', 'column': 'B', 'content': {'value': 'foo'}}],
-            RefineSpec(blacklist=[])
+            RefineSpec()
         )
 
     def test_parse_v0_rename(self):
@@ -84,7 +84,7 @@ class MigrateParamsTest(unittest.TestCase):
             RefineSpec({'x': 'z', 'y': 'z'})
         )
 
-    def test_parse_v0_blacklist_after_rename(self):
+    def test_parse_v0_no_blacklist_after_rename(self):
         # The old logic would run one edit at a time, modifying the dataframe
         # each time and adding a separate "selected" column. When the user
         # added a 'change', the old logic would check the 'selected' of the
@@ -99,6 +99,10 @@ class MigrateParamsTest(unittest.TestCase):
         # be deselected. Now, after the upgrade, it's deselected. This isn't
         # strictly compatible, but how hard are we meant to work on supporting
         # this old format?
+
+        # UPDATE 1/29/2019
+        # New Refine module does not filter and therefore does not make use of the blacklist.
+        # blacklist now omitted from RefineSpec, so only rename should be included
         self._test_parse_v0(
             'A',
             [
@@ -106,7 +110,7 @@ class MigrateParamsTest(unittest.TestCase):
                 {'type': 'change', 'column': 'A',
                  'content': {'fromVal': 'x', 'toVal': 'y'}},
             ],
-            RefineSpec({'x': 'y'}, [])  # opinionated
+            RefineSpec({'x': 'y'})  # opinionated
         )
 
     def test_parse_v0_rename_remove_non_rename(self):
@@ -120,12 +124,6 @@ class MigrateParamsTest(unittest.TestCase):
             ],
             RefineSpec({'y': 'x'})
         )
-
-    def test_parse_v0_valueerror_bad_select_bad_value(self):
-        with self.assertRaises(ValueError):
-            migrate_params({'column': 'A', 'refine': json.dumps([
-                {'type': 'select', 'column': 'A', 'content': {'valu': 'x'}},
-            ])})
 
     def test_parse_v0_valueerror_bad_change_bad_content_key(self):
         with self.assertRaises(ValueError):
@@ -191,30 +189,12 @@ class MigrateParamsTest(unittest.TestCase):
             pd.DataFrame({'A': ['a', 'a']}, dtype='category')
         )
 
-    def test_refine_blacklist_missing_category(self):
-        # Pandas error: ValueError: removals must all be in old categories
-        # In this example, we try to remove 'c' which is not a category
-        self._test_refine_spec_apply(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            RefineSpec({}, ['a', 'c']),
-            pd.DataFrame({'A': ['b']}, dtype='category')
-        )
-
     def test_refine_rename_swap(self):
         self._test_refine_spec_apply(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
             'A',
             RefineSpec({'a': 'b', 'b': 'a'}),
             pd.DataFrame({'A': ['b', 'a']}, dtype='category')
-        )
-
-    def test_refine_blacklist(self):
-        self._test_refine_spec_apply(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            RefineSpec({}, ['a']),
-            pd.DataFrame({'A': ['b']}, dtype='category')
         )
 
     def test_refine_cast_int_to_str(self):
@@ -262,4 +242,13 @@ class MigrateParamsTest(unittest.TestCase):
             'A',
             {},
             pd.DataFrame({'A': ['b']}, dtype='category')
+        )
+
+    # if an old version of refine contains a blacklist, new refine should not filter
+    def test_render_blacklist_no_filter(self):
+        self._test_render(
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
+            'A',
+            {'renames': {}, 'blacklist': ['a']},
+            pd.DataFrame({'A': ['a', 'b']}, dtype='category')
         )

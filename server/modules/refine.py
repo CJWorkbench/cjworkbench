@@ -28,13 +28,10 @@ class RefineSpec:
     This is a set of instructions:
 
     1. `renames` renames every key to its value, _not_ recursively.
-    2. If `blacklist` is non-empty, the results from step 2 are filtered so
-       blacklisted values are missing.
     """
 
-    def __init__(self, renames: Dict[str, str]={}, blacklist: List[str]=[]):
+    def __init__(self, renames: Dict[str, str]={}):
         self.renames = renames
-        self.blacklist = blacklist
 
     def apply_renames(self, series: pd.Series) -> pd.Series:
         """Build a series with changed categories."""
@@ -74,25 +71,6 @@ class RefineSpec:
 
         return ret
 
-    def filter_table(self, table: pd.DataFrame,
-                     series: pd.Series) -> pd.DataFrame:
-        """
-        Filter dataframe by blacklist.
-
-        Arguments:
-
-        table -- table to filter
-        series -- already-renamed categories series
-        """
-        if self.blacklist:
-            blacklist = series.cat.categories.intersection(self.blacklist)
-            mask = ~series.isin(blacklist)
-            table[series.name] = series.cat.remove_categories(blacklist)
-            return table[mask]
-        else:
-            # common case
-            return table
-
     def apply(self, table, column):
         # 1. Turn into categories
         series = _str_categories(table[column])
@@ -101,8 +79,7 @@ class RefineSpec:
         series = self.apply_renames(series)
         table[column] = series
 
-        # 3. Filter
-        return self.filter_table(table, series)
+        return table
 
 def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
     """
@@ -127,12 +104,11 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
     Rules:
 
     * Ignore anything with the wrong 'column'
+    * Ignore blacklist for new module specs as of 1/29/2019
     * 'select' toggles a value onto and then off the blacklist
-    * 'change' edits values -- and the blacklist applies to the new value,
-      not the old one
+    * 'change' edits values
     """
     renames = {}
-    blacklist = set()
 
     for item in refine:
         if not isinstance(item, dict):
@@ -177,30 +153,9 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
 
             renames = renames2
 
-            # Bug: this sequence:
-            # 1. Toggle 'A' into blacklist
-            # 2. Rename 'A' to 'B', where 'B' is not in the blacklist
-            # Expected results: is 'B' blacklisted? Before, it would depend
-            # on the table: if 'B' was present in the table and not
-            # blacklisted, no. If 'B' was missing before the rename, then
-            # yes.
-            #
-            # We don't look at the table any more, so we can't
-            # differentiate. The best approach is probably, 'if B is
-            # blacklisted, keep it blacklisted; otherwise don't.'
-            blacklist.discard(from_val)  # adopt to_val's state
-
+        # Filtering removed from Refine, previous blacklists now ignored -ER 1/29/2019
         elif item_type == 'select':
-            try:
-                value = str(item_content['value'])
-            except KeyError:
-                raise ValueError('Missing "content.value"')
-
-            # Toggle
-            try:
-                blacklist.remove(value)
-            except KeyError:
-                blacklist.add(value)
+            continue
 
         else:
             raise ValueError(f'Invalid "type": {item_type}')
@@ -209,7 +164,6 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
         'column': column,
         'refine': json.dumps({
             'renames': renames,
-            'blacklist': list(blacklist),
         }),
     }
 
@@ -217,9 +171,11 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
 def migrate_params_v1_to_v2(column: str,
                             refine: Dict[str, Any]) -> Dict[str, Any]:
     """JSON-decode `refine`."""
+    # Remove blacklist from 'refine' since module as of 1/29/2018 no longer filters
+    new_refine = {'renames': refine['renames']}
     return {
         'column': column,
-        'refine': refine,
+        'refine': new_refine,
     }
 
 
@@ -247,7 +203,6 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
         refine = params['refine']
         refine_decoded = json.loads(refine)
         refine_decoded['renames']
-        refine_decoded['blacklist']
         is_v1 = True
     except (ValueError, TypeError):
         # These all mean `params` aren't v0, so we should continue:
@@ -270,7 +225,8 @@ def render(params, table, **kwargs):
         return ProcessResult(table)
 
     refine = params['refine']
-    spec = RefineSpec(refine.get('renames', {}), refine.get('blacklist', []))
+    # Omit blacklist
+    spec = RefineSpec(refine.get('renames', {}))
     table = spec.apply(table, column)
 
     return ProcessResult(table)
