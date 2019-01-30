@@ -273,7 +273,7 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-gray {
+%button-gray {
   color: $medium-gray;
   border-color: $medium-gray;
   background-color: transparent;
@@ -283,6 +283,10 @@ button:focus { outline:0 !important; }
   &:active {
     background-color: $dark-accent--soft-M;
   }
+}
+
+.button-gray {
+  @extend %button-gray;
 }
 
 
@@ -299,7 +303,7 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-red {
+%button-red {
   color: $brand-red;
   border-color: $brand-red ;
   background-color: transparent;
@@ -312,6 +316,9 @@ button:focus { outline:0 !important; }
   }
 }
 
+.button-red {
+  @extend %button-red;
+}
 
 .button-blue--fill {
   background-color: $brand-workspace;
@@ -329,7 +336,7 @@ button:focus { outline:0 !important; }
 }
 
 
-.button-orange {
+%button-orange {
   color: $brand-orange;
   border-color: $brand-orange ;
   background-color: transparent;
@@ -342,13 +349,21 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-orange--fill {
-  color: $brand-workspace;
+.button-orange {
+  @extend %button-orange;
+}
+
+%button-orange--fill {
+  color: white;
   border-color: $brand-orange;
+  &:hover {
+    color: $brand-orange;
+    background-color: white;
+  }
   &, .spinner::after {
     background-color: $brand-orange;
   }
-  &:hover, &:hover .spinner::after {
+  &:hover .spinner::after {
     background-color:$light-accent--strong;
     color: white;
   }
@@ -356,6 +371,10 @@ button:focus { outline:0 !important; }
     background-color: $light-accent--Vstrong;
     border: 1px solid $brand-orange;
   }
+}
+
+.button-orange--fill {
+  @extend %button-orange--fill;
 }
 
 .button-dark-blue {

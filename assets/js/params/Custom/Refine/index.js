@@ -652,7 +652,7 @@ export class Refine extends React.PureComponent {
     if (focusedValue !== '') this.clearFocus()
 
     const maybeMergeButton = groups.length > 0 ? (
-      <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={Object.keys(selectedValues).length < 2}>Merge</button>)
+      <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={Object.keys(selectedValues).length < 2}>Merge facets</button>)
       : null
 
     return (
@@ -680,7 +680,7 @@ export class Refine extends React.PureComponent {
         <ul className='refine-groups'>
           {groupComponents}
         </ul>
-        <div>
+        <div className="refine-actions">
           {maybeMergeButton}
           <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
           { (isSearching && matchingGroups !== null && matchingGroups.length === 0) ? (
