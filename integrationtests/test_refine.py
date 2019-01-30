@@ -80,7 +80,7 @@ yxyx,1
     def test_cluster(self):
         b = self.browser
 
-        b.click_button('Auto cluster')
+        b.click_button('Find clusters...')
 
         # Default algorithm: fingerprint. There may be a momentary blip of
         # progressbar.
@@ -89,6 +89,7 @@ yxyx,1
         b.assert_element('.refine-modal td.new-value textarea', text='a b')
         b.fill_in('value-0', 'yxyx')  # a twist: input into the next algo
         b.click_button('Merge selected')
+        self.submit_wf_module()
 
         # Now the UI lets you see the change
         b.assert_element('li.visible:nth-child(1) input[value="yxyx"]')
@@ -98,7 +99,7 @@ yxyx,1
         self._wait_for_table_value(3, 0, 'yxyx')
         self._wait_for_table_value(4, 0, 'yxyx')
 
-        b.click_button('Auto cluster')
+        b.click_button('Find clusters...')
         b.select('algorithm', 'Edit distance')
         b.fill_in('maxDistance', '2')
         # Wait for algo to finish
@@ -107,6 +108,7 @@ yxyx,1
         b.fill_in('value-0', 'YYYY')
         b.uncheck('selected-1')  # Deselect the group, 'a aa => a'
         b.click_button('Merge selected')
+        self.submit_wf_module()
 
         self._wait_for_table_value(0, 0, 'a')
         self._wait_for_table_value(1, 0, 'aa')  # deselected - not clustered
