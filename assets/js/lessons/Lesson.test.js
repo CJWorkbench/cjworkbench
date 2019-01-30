@@ -17,7 +17,8 @@ describe('Lesson', () => {
         steps: [
           { html: 'Step One-Ay' },
           { html: 'Step One-<strong>Bee</strong>' }
-        ]
+        ],
+        isFullScreen: false
       },
       {
         title: 'Section Two',
@@ -25,7 +26,8 @@ describe('Lesson', () => {
         steps: [
           { html: 'Step Two-Ay' },
           { html: 'Step Two-<strong>Bee</strong>' }
-        ]
+        ],
+        isFullScreen: false
       }
     ],
     footer: {
@@ -39,13 +41,13 @@ describe('Lesson', () => {
     activeStepIndex: 0,
   }
 
-  function wrapper(extraProps) {
-    return shallow(
-      <Lesson {...lesson} logUserEvent={jest.fn()} {...navProps} {...(extraProps || {})} />
-    )
-  }
-
   describe('shallow', () => {
+    function wrapper(extraProps) {
+      return shallow(
+        <Lesson {...lesson} logUserEvent={jest.fn()} {...navProps} {...(extraProps || {})} />
+      )
+    }
+
     it('renders a title', () => {
       expect(wrapper().find('h1').text()).toEqual('Lesson Title')
     })
@@ -99,6 +101,7 @@ describe('Lesson', () => {
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
+    // the "footer" is the last "section" which usually says "you finished the lesson!" or something
     it('moves to the footer', () => {
       const w = wrapper()
       w.find('footer button[name="Next"]').simulate('click').simulate('click').simulate('click')

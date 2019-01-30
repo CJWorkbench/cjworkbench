@@ -82,7 +82,9 @@ export class Lesson extends React.PureComponent {
       />
     })
 
-    const isFullScreen = this.props.sections[this.state.currentSectionIndex].isFullScreen
+    const isFullScreen = this.props.sections[this.state.currentSectionIndex]  ?
+      this.props.sections[this.state.currentSectionIndex].isFullScreen :
+      null
     const articleClass = isFullScreen ? "lesson fullscreen" : "lesson"
 
     return (

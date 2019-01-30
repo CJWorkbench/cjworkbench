@@ -283,6 +283,8 @@ class LessonSectionStep:
         return LessonSectionStep(html, highlight, test_js)
 
 
+# The Footer is the last "section" which usually says "you finished the lesson" or something
+# It is not included in the page count displayed in the nav bar, and it has confetti!
 class LessonFooter:
     def __init__(self, title, html):
         self.title = title
