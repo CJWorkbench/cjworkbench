@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, List, Optional
 import pandas as pd
 from server.modules.types import ProcessResult, QuickFix
-from server.types import Column
+from server.types import TableShape
 from server import minio, parquet
 
 
@@ -30,8 +30,7 @@ class CachedRenderResult:
 
     def __init__(self, workflow_id: int, wf_module_id: int, delta_id: int,
                  status: str, error: str, json: Optional[Dict[str, Any]],
-                 quick_fixes: List[QuickFix], columns: List[Column],
-                 nrows: int):
+                 quick_fixes: List[QuickFix], table_shape: TableShape):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
         self.delta_id = delta_id
@@ -39,8 +38,15 @@ class CachedRenderResult:
         self.error = error
         self.json = json
         self.quick_fixes = quick_fixes
-        self.columns = columns
-        self.nrows = nrows
+        self.table_shape = table_shape
+
+    @property
+    def columns(self):
+        return self.table_shape.columns
+
+    @property
+    def nrows(self):
+        return self.table_shape.nrows
 
     @property
     def parquet_key(self):
@@ -162,8 +168,8 @@ class CachedRenderResult:
         ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
                                  wf_module_id=wf_module.id, delta_id=delta_id,
                                  status=status, error=error, json=json_dict,
-                                 quick_fixes=quick_fixes, columns=columns,
-                                 nrows=nrows)
+                                 quick_fixes=quick_fixes,
+                                 table_shape=TableShape(nrows, columns))
         # Keep in mind: ret.result has not been loaded yet. It might not exist
         # when we do try reading it.
         return ret
@@ -232,8 +238,8 @@ class CachedRenderResult:
                                      wf_module_id=wf_module.id,
                                      delta_id=delta_id, status=status,
                                      error=error, json=json_dict,
-                                     quick_fixes=quick_fixes, columns=columns,
-                                     nrows=nrows)
+                                     quick_fixes=quick_fixes,
+                                     table_shape=TableShape(nrows, columns))
             ret._result = result
             parquet.write(minio.CachedRenderResultsBucket, ret.parquet_key,
                           result.dataframe)

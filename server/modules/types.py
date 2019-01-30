@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 from pandas import DataFrame
 from server import sanitizedataframe
-from server.types import Column, ColumnType
+from server.types import Column, ColumnType, TableShape
 from django.utils.translation import gettext as _
 
 
@@ -161,6 +161,10 @@ class ProcessResult:
     def columns(self):
         return [Column(c, t)
                 for c, t in zip(self.column_names, self.column_types)]
+
+    @property
+    def table_shape(self) -> TableShape:
+        return TableShape(len(self.dataframe), self.columns)
 
     @staticmethod
     def coerce(value: Any) -> 'ProcessResult':

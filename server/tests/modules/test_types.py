@@ -2,7 +2,8 @@ import datetime
 import unittest
 from unittest import mock
 from pandas import DataFrame, Series
-from server.modules.types import Column, ColumnType, ProcessResult, QuickFix
+from server.modules.types import Column, ColumnType, ProcessResult, QuickFix, \
+        TableShape
 
 
 class ProcessResultTests(unittest.TestCase):
@@ -256,3 +257,13 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result.column_names, [])
         self.assertEqual(result.column_types, [])
         self.assertEqual(result.columns, [])
+
+    def test_table_shape(self):
+        df = DataFrame({'A': [1, 2, 3]})
+        result = ProcessResult(df)
+        self.assertEqual(result.table_shape,
+                         TableShape(3, [Column('A', ColumnType.NUMBER)]))
+
+    def test_empty_table_shape(self):
+        result = ProcessResult()
+        self.assertEqual(result.table_shape, TableShape(0, []))
