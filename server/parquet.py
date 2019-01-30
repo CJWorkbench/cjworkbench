@@ -116,7 +116,7 @@ def read_header(bucket: str, key: str,
         raise FastparquetIssue361
 
 
-def _retry_on_protocol_error(n_attempts: int):
+def _retry_on_transient_error(n_attempts: int):
     """
     Retry `fn()` up to `n_attempts` times, handling `ProtocolError`.
 
@@ -124,14 +124,17 @@ def _retry_on_protocol_error(n_attempts: int):
     we're reading/writing large files over several seconds, network resets are
     common.
 
-    This only handles _resets_. It doesn't handle the other myriad network
-    errors that can occur -- such as _connect_ errors ("connection refused") or
-    _http_ errors ("404 not found"). It isn't obvious that we should retry on
-    non-ProtocolError errors.
+    `minio.error.NoSuchUpload` happens sometimes during multipart upload. Minio
+    devs suggest retrying -- see https://github.com/minio/mc/issues/2301.
+
+    This wrapper doesn't handle the other myriad network errors that can occur
+    -- such as _connect_ errors ("connection refused") or _http_ errors ("404
+    not found"). Not all errors warrant retrying: only the errors we've seen on
+    production and expect a retry to fix.
 
     Usage:
 
-        @_retry_on_protocol_error(3)
+        @_retry_on_transient_error(3)
         def read_something(arg):
             # Code in here may run up to 3 times
             return network_request(arg)
@@ -145,7 +148,10 @@ def _retry_on_protocol_error(n_attempts: int):
             for attempt in range(n_attempts):
                 try:
                     return fn(*args, **kwargs)  # do not continue loop
-                except ProtocolError:
+                except (
+                    ProtocolError,
+                    minio.error.NoSuchUpload
+                ):
                     # ProtocolError: "Raised when something unexpected happens
                     # mid-request/response."
                     if attempt < n_attempts - 1:
@@ -157,7 +163,7 @@ def _retry_on_protocol_error(n_attempts: int):
     return outer_func
 
 
-@_retry_on_protocol_error(3)
+@_retry_on_transient_error(3)
 def read(bucket: str, key: str, to_parquet_args=[],
          to_parquet_kwargs={}) -> pandas.DataFrame:
     """
@@ -190,7 +196,7 @@ def read(bucket: str, key: str, to_parquet_args=[],
         raise FastparquetIssue375
 
 
-@_retry_on_protocol_error(3)
+@_retry_on_transient_error(3)
 def write(bucket: str, key: str, table: pandas.DataFrame) -> int:
     """
     Write a Pandas DataFrame to a minio file, overwriting if needed.
