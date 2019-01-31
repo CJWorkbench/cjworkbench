@@ -23,9 +23,9 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'http://production-static.workbenchdata.com/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'http://production-static.workbenchdata.com/data/population_growth_data.csv' && wfModule.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
-      <div class="copy-txt content-1 t-white">http://production-static.workbenchdata.com/data/population_dirty_data.csv</div>
+      <div class="copy-txt content-1 t-white">http://production-static.workbenchdata.com/data/population_growth_data.csv</div>
       <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
     </li>
     <li
@@ -56,8 +56,8 @@
       >Add the step 'Refine' using the search.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.tabs[0].wfModules[3].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['San Jose-San Francisco-Oakland CSA'] && renames['DallasFORTHWorth'])"
-      >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are four groups.
+      data-test="const params = workflow.tabs[0].wfModules[3].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
+      >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five left.
       <figure>
         <img alt="Inspect element" src="images/clean_standardize_lesson/1_refine_row.png">
       </figure>
@@ -92,8 +92,8 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[4].params.colnames == 'Year'"
-      >Choose <kbd>Year</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
+      data-test="return workflow.tabs[0].wfModules[4].params.colnames == 'Date'"
+      >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.tabs[0].wfModules[4].params.varcol == 'MetroArea'"

@@ -2,7 +2,7 @@ from integrationtests.lessons import LessonTest
 
 
 DataUrl = (
-    'http://production-static.workbenchdata.com/data/population_dirty_data.csv'
+    'http://production-static.workbenchdata.com/data/population_growth_data.csv'
 )
 
 
@@ -107,7 +107,7 @@ class TestLesson(LessonTest):
 
         b.assert_element('input[name="rename[Seattle - Tacoma]"]', wait=True)
         self._rename_column(
-            'San Jose-San Francisco-Oakland CSA', 'San Francisco - Bay Area'
+            'Austin', 'Austin - Round Rock'
         )
         self.expect_highlight(1)  # not done this step
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
@@ -147,7 +147,7 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Reshape"]',
             wait=True
         )
-        self.select_column('Reshape', 'colnames', 'Year')
+        self.select_column('Reshape', 'colnames', 'Date')
         self.submit_wf_module()
 
         # Wait for param change to register
