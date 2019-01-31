@@ -107,7 +107,7 @@ class TestLesson(LessonTest):
 
         b.assert_element('input[name="rename[Seattle - Tacoma]"]', wait=True)
         self._rename_column(
-            'San Jose-San Francisco-Oakland', 'San Francisco - Bay Area'
+            'San Jose-San Francisco-Oakland CSA', 'San Francisco - Bay Area'
         )
         self.expect_highlight(1)  # not done this step
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
@@ -147,7 +147,7 @@ class TestLesson(LessonTest):
             '.wf-module[data-module-name="Reshape"]',
             wait=True
         )
-        self.select_column('Reshape', 'colnames', 'Date')
+        self.select_column('Reshape', 'colnames', 'Year')
         self.submit_wf_module()
 
         # Wait for param change to register

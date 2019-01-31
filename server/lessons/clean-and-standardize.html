@@ -56,7 +56,7 @@
       >Add the step 'Refine' using the search.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.tabs[0].wfModules[3].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['San Jose-San Francisco-Oakland'] && renames['DallasFORTHWorth'])"
+      data-test="const params = workflow.tabs[0].wfModules[3].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['San Jose-San Francisco-Oakland CSA'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are four groups.
       <figure>
         <img alt="Inspect element" src="images/clean_standardize_lesson/1_refine_row.png">
@@ -92,8 +92,8 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[4].params.colnames == 'Date'"
-      >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
+      data-test="return workflow.tabs[0].wfModules[4].params.colnames == 'Year'"
+      >Choose <kbd>Year</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.tabs[0].wfModules[4].params.varcol == 'MetroArea'"
