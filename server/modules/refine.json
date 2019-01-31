@@ -3,7 +3,7 @@
   "id_name": "refine",
   "category": "Clean",
   "icon": "clean",
-  "description": "Clean inconsistencies and typos accross values in seconds using algorythms, or standardize facets manually.",
+  "description": "Clean inconsistencies and typos across values in seconds using algorithms, or standardize facets manually.",
   "has_zen_mode": true,
   "help_url":"modules/clean/refine",
   "param_schema": {
@@ -11,8 +11,7 @@
       "refine": {
           "type": "dict",
           "properties": {
-              "renames": { "type": "map", "value_dtype": { "type": "string" } },
-              "blacklist": { "type": "list", "inner_dtype": { "type": "string" } }
+              "renames": { "type": "map", "value_dtype": { "type": "string" } }
           }
       }
   },

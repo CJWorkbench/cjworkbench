@@ -4,7 +4,7 @@ import LoadingRefine, { Refine, RefineSpec } from './index'
 import { mount } from 'enzyme'
 import { tick } from '../../../test-utils'
 
-const DefaultValue = { renames: {}, blacklist: [] }
+const DefaultValue = { renames: {} }
 
 describe('Refine', () => {
   const wrapper = (props={}) => mount(
@@ -23,65 +23,48 @@ describe('Refine', () => {
     // errors.
 
     describe('massRename', () => {
-      function testMassRename (fromRenames, fromBlacklist, renames, toRenames, toBlacklist) {
-        const fromSpec = new RefineSpec(fromRenames, fromBlacklist)
+      function testMassRename (fromRenames, renames, toRenames) {
+        const fromSpec = new RefineSpec(fromRenames)
         const result = fromSpec.massRename(renames)
-        const expected = new RefineSpec(toRenames, toBlacklist)
+        const expected = new RefineSpec(toRenames)
         expect(result.renames).toEqual(expected.renames)
-        expect(result.blacklist.sort()).toEqual(expected.blacklist.sort())
       }
 
       it('should work in the simplest case', () => {
-        testMassRename({}, [], { foo: 'bar' }, { foo: 'bar' }, [])
+        testMassRename({}, { foo: 'bar' }, { foo: 'bar' })
       })
 
       it('should rename an existing rename', () => {
-        testMassRename({ a: 'b' }, [], { b: 'c' }, { a: 'c', b: 'c' }, [])
+        testMassRename({ a: 'b' }, { b: 'c' }, { a: 'c', b: 'c' })
       })
 
       it('should rename a group that does not have its fromGroup as a member', () => {
         testMassRename(
           // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
-          { a: 'b', b: 'c' }, [],
+          { a: 'b', b: 'c' },
           // Rename group 'b'
           { b: 'd' },
           // New groups: 'd' (contains original 'a') and 'c' (contains original 'b' and 'c')
-          { a: 'd', b: 'c' }, []
+          { a: 'd', b: 'c' }
         )
       })
 
       it('should rename a group that does have its fromGroup as a member', () => {
         testMassRename(
           // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
-          { a: 'b', b: 'c' }, [],
+          { a: 'b', b: 'c' },
           // Rename group 'c'
           { c: 'd' },
           // New groups: 'b' (contains original 'a') and 'd' (contains original 'b' and 'c')
-          { a: 'b', b: 'd', c: 'd' }, []
-        )
-      })
-
-      it('should blacklist a new group if an old group is blacklisted', () => {
-        testMassRename(
-          { a: 'b' }, [ 'b' ],
-          { b: 'c' },
-          { a: 'c', b: 'c' }, [ 'c' ]
-        )
-      })
-
-      it('should blacklist a new group if it was already blacklisted', () => {
-        testMassRename(
-          { a: 'b' }, [ 'c' ],
-          { b: 'c' },
-          { a: 'c', b: 'c' }, [ 'c' ]
+          { a: 'b', b: 'd', c: 'd' }
         )
       })
 
       it('should swap two groups', () => {
         testMassRename(
-          { a: 'x', b: 'x', c: 'y', d: 'y' }, [ 'x' ],
+          { a: 'x', b: 'x', c: 'y', d: 'y' },
           { x: 'y', y: 'x' },
-          { a: 'y', b: 'y', x: 'y', c: 'x', d: 'x', y: 'x' }, [ 'y' ]
+          { a: 'y', b: 'y', x: 'y', c: 'x', d: 'x', y: 'x' }
         )
       })
     })
@@ -114,7 +97,7 @@ describe('Refine', () => {
   it('should render a rename', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 2 },
-      value: { renames: { a: 'c' }, blacklist: [] }
+      value: { renames: { a: 'c' } }
     })
 
     expect(w.find('input[value="c"]')).toHaveLength(1)
@@ -123,7 +106,7 @@ describe('Refine', () => {
   it('should render when valueCounts have not loaded', () => {
     const w = wrapper({
       valueCounts: null,
-      value: { renames: { 'a': 'b' }, blacklist: [] }
+      value: { renames: { 'a': 'b' } }
     })
 
     expect(w.find('input')).toHaveLength(0)
@@ -132,7 +115,7 @@ describe('Refine', () => {
   it('should rename a value', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1 },
-      value: { renames: {}, blacklist: [] }
+      value: { renames: {} }
     })
 
     w.find('input[value="a"]').simulate('change', { target: { value: 'b' } }).simulate('blur')
@@ -144,7 +127,7 @@ describe('Refine', () => {
   it('should re-rename a group', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: { renames: { 'a': 'b' }, blacklist: [] }
+      value: { renames: { 'a': 'b' } }
     })
 
     w.find('input[value="b"]').simulate('change', { target: { value: 'd' } }).simulate('blur')
@@ -156,7 +139,7 @@ describe('Refine', () => {
   it('should show group values', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: { renames: { 'a': 'b' }, blacklist: [] }
+      value: { renames: { 'a': 'b' } }
     })
 
     expect(w.find('.values')).toHaveLength(0) // collapsed to begin with
@@ -175,7 +158,7 @@ describe('Refine', () => {
   it('should un-group values', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, d: 1 },
-      value: { renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] }
+      value: { renames: { a: 'c', b: 'c', d: 'e' } }
     })
 
     // expand to see the values:
@@ -196,7 +179,7 @@ describe('Refine', () => {
   it('should un-group a single value', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, d: 1 },
-      value: { renames: { a: 'c', b: 'c', d: 'e' }, blacklist: [] }
+      value: { renames: { a: 'c', b: 'c', d: 'e' } }
     })
 
     // expand to see the values:
@@ -217,7 +200,7 @@ describe('Refine', () => {
   it('should not allow un-grouping a value from a group with the same name', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1 },
-      value: { renames: { b: 'a' }, blacklist: [] }
+      value: { renames: { b: 'a' } }
     })
 
     // expand to see the values:
@@ -232,7 +215,7 @@ describe('Refine', () => {
   it('should find search results within both group names and members', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: { renames: { 'c': 'b', 'bb': 'a' }, blacklist: [] }
+      value: { renames: { 'c': 'b', 'bb': 'a' } }
     })
     // Ensure 3 groups initially rendered
     expect(w.find('.visible').children()).toHaveLength(3)
@@ -245,7 +228,7 @@ describe('Refine', () => {
   it('should uncheck all _search results_ when "None" pressed', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
-      value: { blacklist: [], renames: {} }
+      value: { renames: {} }
     })
     w.find('input[type="checkbox"]').forEach(obj => {
       obj.simulate('change', { target: { checked: true } })
@@ -267,7 +250,7 @@ describe('Refine', () => {
   it('should check all _search results_ when "All" pressed', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
-      value: { blacklist: [], renames: {} }
+      value: { renames: {} }
     })
 
     expect(w.find('input[checked=true]')).toHaveLength(0)
@@ -286,7 +269,7 @@ describe('Refine', () => {
   it('should disable merge button when less than 2 values selected', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
-      value: { renames: { }, blacklist: [] }
+      value: { renames: { } }
     })
     expect(w.find('button[name="merge"]').prop('disabled')).toEqual(true)
     w.find('.summary').at(0).find('input[type="checkbox"]').simulate('change',{ target: { checked: true } })
@@ -297,7 +280,7 @@ describe('Refine', () => {
   it('should merge values into one group when checked and merge button pressed', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1},
-      value: { renames: { }, blacklist: [] }
+      value: { renames: { } }
     })
     w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
     w.find('input[name="include[bb]"]').simulate('change', { target: { checked: true } })
@@ -316,7 +299,7 @@ describe('Refine', () => {
   it('should merge values to default value based on rules', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},
-      value: { renames: { 'bb': 'a' }, blacklist: [] }
+      value: { renames: { 'bb': 'a' } }
     })
     // Group 'value' count
     w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
@@ -327,7 +310,7 @@ describe('Refine', () => {
     expect(changeCalls[0][0].renames).toEqual({"a": "a", "b": "a", "bb": "a"})
 
     // Group count
-    w.setProps({value: { renames: {}, blacklist: [] }})
+    w.setProps({value: { renames: {} }})
     w.find('input[name="include[c]"]').simulate('change', { target: { checked: true } })
     w.find('input[name="include[e]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
@@ -335,7 +318,7 @@ describe('Refine', () => {
     expect(changeCalls[1][0].renames).toEqual({"e": "e", "c": "e"})
 
     // Alphabetical
-    w.setProps({value: { renames: {}, blacklist: [] }})
+    w.setProps({value: { renames: {} }})
     w.find('input[name="include[f]"]').simulate('change', { target: { checked: true } })
     w.find('input[name="include[d]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
@@ -345,7 +328,7 @@ describe('Refine', () => {
   it('should focus the new group text for editing after merge', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},
-      value: { renames: { 'bb': 'a' }, blacklist: [] }
+      value: { renames: { 'bb': 'a' } }
     })
 
     w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
