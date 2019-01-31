@@ -230,6 +230,7 @@ class LessonSerializer(serializers.BaseSerializer):
             'html': obj.html,
             'steps': list(self._step_to_representation(step)
                           for step in obj.steps),
+            'isFullScreen': obj.is_full_screen,
         }
 
     def _step_to_representation(self, obj):

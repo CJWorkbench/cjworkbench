@@ -207,17 +207,18 @@ class LessonInitialWorkflow:
 
 
 class LessonSection:
-    def __init__(self, title, html, steps):
+    def __init__(self, title, html, steps, is_full_screen=False):
         self.title = title
         self.html = html
         self.steps = steps
+        self.is_full_screen = is_full_screen
 
     def __eq__(self, other):
-        return (self.title, self.html, self.steps) == \
-                (other.title, other.html, other.steps)
+        return (self.title, self.html, self.steps, self.is_full_screen) == \
+                (other.title, other.html, other.steps, other.is_full_screen)
 
     def __repr__(self):
-        return 'LessonSection' + repr((self.title, self.html, self.steps))
+        return 'LessonSection' + repr((self.title, self.html, self.steps, self.is_full_screen))
 
     @staticmethod
     def _from_etree(el):
@@ -240,7 +241,11 @@ class LessonSection:
             el.remove(steps_el)  # hacky mutation
         html = _build_inner_html(el)
 
-        return LessonSection(title, html, steps)
+        # Look for "fullscreen" class on section, set fullscreen flag if so
+        full_screen_el = el.find('[@class="fullscreen"]')
+        is_full_screen = full_screen_el is not None
+
+        return LessonSection(title, html, steps, is_full_screen=is_full_screen)
 
 
 class LessonSectionStep:
@@ -278,6 +283,8 @@ class LessonSectionStep:
         return LessonSectionStep(html, highlight, test_js)
 
 
+# The Footer is the last "section" which usually says "you finished the lesson" or something
+# It is not included in the page count displayed in the nav bar, and it has confetti!
 class LessonFooter:
     def __init__(self, title, html):
         self.title = title

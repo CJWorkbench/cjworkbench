@@ -1,7 +1,6 @@
 article.lesson {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   flex: 0 0 auto;
   min-width: 20rem;
 
@@ -10,6 +9,7 @@ article.lesson {
 
   .sections {
     flex-grow: 1;
+    background-color: $table-header;
   }
 
   img {
@@ -28,8 +28,7 @@ article.lesson {
     cursor: default;
     display: flex;
     flex-direction: column;
-    background-color: $table-header;
-    height: calc(100vh - 8rem);
+    height: calc(100vh - 6rem);
     width: 36rem;
     padding:2rem;
     overflow-y: scroll;
@@ -88,7 +87,7 @@ article.lesson {
 
     .highlight {
       font-weight: normal;
-      color:$brand-text--learn;
+      color: $brand-text--learn;
     }
 
     figure {
@@ -106,9 +105,9 @@ article.lesson {
 
     .instruction-detail {
       position: relative;
+      font-weight:400;
       margin-top: 3rem;
       color: $white;
-      &.highlight {font-weight:400;}
     }
 
     code {
@@ -121,7 +120,7 @@ article.lesson {
 
     kbd {
       font-weight: normal;
-      color:$brand-text--learn;
+      color: $brand-text--learn;
       background-color: transparent;
     }
 
@@ -158,7 +157,10 @@ article.lesson {
           left:-2rem;
         }
 
-        .copy-txt {width:30rem;}
+        .copy-txt {
+          left: -2rem;
+          width: 32rem;
+        }
 
         &::before {
           content: "\e938";
@@ -234,29 +236,99 @@ article.lesson {
   footer {
     background-color: $table-header;
     border-top: 1px solid $dark-accent--medium;
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem;
+    height: 6rem;
+    flex: 0 0 auto;
 
-    .action-button {
-      width:9rem;
+    .buttons-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 3rem;
+      flex: 0 0 auto;
 
-      &.lesson-highlight {
-        background-color: $brand-learn;
-        border: $brand-learn;
-        &:hover {
-          background-color: $light-accent--strong;
-          border: 1px solid $brand-learn;
+      .action-button {
+        width: 9rem;
+
+        &.lesson-highlight {
+          background-color: $brand-learn;
+          border: $brand-learn;
+          &:hover {
+            background-color: $light-accent--strong;
+            border: 1px solid $brand-learn;
+          }
+        }
+
+        &:disabled {
+          opacity: 0;
         }
       }
+
+      .current-and-total {
+        @extend .content-1;
+        color:$white;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+article.fullscreen {
+  position: relative;
+  top:0px;
+  bottom:0px;
+  width: 100%;
+  position: absolute;
+  top: 6rem;
+  bottom: 0; // and no height
+  z-index: 2;
+  width: 100%;
+
+  .sections {
+    display: flex;
+    justify-content: center;
+
+  }
+
+  section.current {
+    width: 100%;
+    height: calc(100vh - 12rem); // accounts for both nav and footer
+  }
+
+  .content {
+    width: 80rem;
+  }
+
+  footer {
+    display: flex;
+    justify-content: center;
+
+    .buttons-container {
+      width: 80rem;
+      justify-content: flex-start;
+      padding-left: 2rem;
+
+      button, div {
+        margin-right: 5rem;
+      }
+    }
+  }
+}
+
+// hide both navbar menu  and undo redo when fullscreen
+article.fullscreen ~ .workflow-container .navbar {
+  display: flex;
+  justify-content: center;
+
+  .navbar-elements {
+    width: 80rem;
+    padding: 2rem;
+
+    .dropdown, .group--undo-redo {
+      display: none;
     }
 
-    .current-and-total {
-      @extend .content-1;
-      color:$white;
-      white-space: nowrap;
+    button[name="share"] {
+      margin-right: 0;
     }
   }
 }

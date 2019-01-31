@@ -17,6 +17,7 @@ export class Lesson extends React.PureComponent {
     sections: PropTypes.arrayOf(PropTypes.shape({
       title: PropTypes.string.isRequired,
       html: PropTypes.string.isRequired,
+      isFullScreen: PropTypes.bool.isRequired,
       steps: PropTypes.arrayOf(PropTypes.shape({
         html: PropTypes.string.isRequired
       })).isRequired
@@ -81,8 +82,13 @@ export class Lesson extends React.PureComponent {
       />
     })
 
+    const isFullScreen = this.props.sections[this.state.currentSectionIndex]  ?
+      this.props.sections[this.state.currentSectionIndex].isFullScreen :
+      null
+    const articleClass = isFullScreen ? "lesson fullscreen" : "lesson"
+
     return (
-      <article className="lesson">
+      <article className={articleClass}>
         <LessonAnalyticsTracker
           slug={slug}
           sections={sections}
@@ -93,7 +99,9 @@ export class Lesson extends React.PureComponent {
         <h1>{header.title}</h1>
         <div className="description" dangerouslySetInnerHTML={({__html: header.html})}></div>
         <div className="sections">
-          {sectionComponents}
+          <div className="content">
+            {sectionComponents}
+          </div>
           <LessonFooter
             key='footer'
             isCurrent={this.state.currentSectionIndex === sections.length}

@@ -49,8 +49,19 @@ class LessonTests(SimpleTestCase):
         self.assertEquals(
             out.sections[0],
             LessonSection('title', '<ol class="not-steps"><li>foo</li></ol>',
-                          [])
+                          [],
+                          is_full_screen=False)
         )
+
+    def test_parse_fullscreen_section(self):
+        lesson_html = '<header><h1>x</h1></header><section class="fullscreen"><h2>title</h2><p>content</p></section><footer><h2>z</h2></footer>'
+        out = Lesson.parse('a-slug', lesson_html)
+
+        self.assertEqual(
+            out.sections[0],
+            LessonSection('title', '<p>content</p>', [], is_full_screen=True)
+        )
+
 
     def test_parse_no_footer(self):
         with self.assertRaisesMessage(LessonParseError, 'Lesson HTML needs a top-level <footer>'):

@@ -2,9 +2,6 @@
 
 .navbar {
   flex: 0 0 auto; // fixed height
-  display:flex;
-  flex-direction: row;
-  justify-content: space-between;
   background-color: $brand-workspace;
   color: #FFFFFF;
   padding: 1.1rem 4rem 1.1rem 4rem;
@@ -12,134 +9,143 @@
   position: relative;
   z-index: 1;
 
-  .dropdown {
-    display: flex;
+  .navbar-elements {
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
   }
+}
 
-  .nav-buttons {
+.dropdown {
+  display: flex;
+  align-items: center;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+
+  &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
+    @extend .action-button;
+    @extend .button-white;
+    white-space: nowrap;
+
+    &[name=duplicate] {
+      @extend .button-white--fill;
+    }
+  }
+
+  &>button, &>.group--undo-redo {
+    margin-right: 3rem;
+  }
+
+  // undo redo buttons
+  .group--undo-redo {
     display: flex;
-    align-items: center;
 
-    &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
-      @extend .action-button;
-      @extend .button-white;
-      white-space: nowrap;
-
-      &[name=duplicate] {
-        @extend .button-white--fill;
-      }
-    }
-
-    &>button, &>.group--undo-redo {
-      margin-right: 3rem;
-    }
-
-    // undo redo buttons
-    .group--undo-redo {
-      display: flex;
-
-      button {
-        font-size: 1.9rem;
-        min-width: 0;
-        width: 3.5rem;
-        height: 3.5rem;
-        padding: 0;
-        border:1px solid $white;
-        opacity: .8;
-        &:hover {
-          border-color: $white;
-          opacity: 1;
-        }
-      }
-      button:first-child {
-        margin-right: 1rem;
-      }
-    }
-
-    &>.dropdown {
-      display: inline-block;
-    }
-  }
-
-  // Brand logo
-
-  .logo {
-
-    display: flex;
-    align-items: center;
-
-    img.logo {
-      vertical-align: middle;
-      margin-right: 0.4rem;
-      width: 2.5rem;
-    }
-
-    img.logo-text {
-      position: relative;
-      top:0;
-      width: 13.5rem;
-    }
-  }
-
-
-  .workflow-container .navbar .action-link {
-    color:white;
-    text-decoration: underline;
-  }
-
-  .workflow-container .navbar {
-    color:white;
-  }
-
-  .links {
-    @extend .title-3;
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    letter-spacing: 0.04rem;
-    font-size: 1.5rem;
-    position: relative;
-    left: -7.7rem;
-    height:100%;
-    top: .8rem;
-    cursor: pointer;
-
-    a {
-      color: $white;
+    button {
+      font-size: 1.9rem;
+      min-width: 0;
+      width: 3.5rem;
+      height: 3.5rem;
+      padding: 0;
+      border:1px solid $white;
+      opacity: .8;
       &:hover {
-        text-decoration: none;
+        border-color: $white;
+        opacity: 1;
       }
     }
+    button:first-child {
+      margin-right: 1rem;
+    }
+  }
 
-    .LS-toggle--link, .WF-toggle--link {
-      text-transform: uppercase;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0 2rem;
-      padding-top: .9rem;
-      height: 4.5rem;
+  &>.dropdown {
+    display: inline-block;
+  }
+}
+
+// Brand logo
+
+.logo {
+
+  display: flex;
+  align-items: center;
+
+  img.logo {
+    vertical-align: middle;
+    margin-right: 0.4rem;
+    width: 2.5rem;
+  }
+
+  img.logo-text {
+    position: relative;
+    top:0;
+    width: 13.5rem;
+  }
+}
+
+
+.workflow-container .navbar .action-link {
+  color:white;
+  text-decoration: underline;
+}
+
+.workflow-container .navbar {
+  color:white;
+}
+
+.links {
+  @extend .title-3;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  letter-spacing: 0.04rem;
+  font-size: 1.5rem;
+  position: relative;
+  left: -7.7rem;
+  height:100%;
+  top: .8rem;
+  cursor: pointer;
+
+  a {
+    color: $white;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .LS-toggle--link, .WF-toggle--link {
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 2rem;
+    padding-top: .9rem;
+    height: 4.5rem;
+    -webkit-transition: $buttons-anim;
+
+    .WF-link--under, .LS-link--under {
+      height:.4rem;
+      background-color: $white;
+      position: relative ;
+      top:1.7rem;
       -webkit-transition: $buttons-anim;
+    }
 
-      .WF-link--under, .LS-link--under {
-        height:.4rem;
-        background-color: $white;
-        position: relative ;
-        top:1.7rem;
-        -webkit-transition: $buttons-anim;
-      }
+    .WF-link--under {
+      width: 10.2rem;
+    }
 
-      .WF-link--under {
-        width: 10.2rem;
-      }
-
-      .LS-link--under {
-        width: 8.5rem;
-      }
+    .LS-link--under {
+      width: 8.5rem;
     }
   }
 }
+
 
 .workflows-page {
 

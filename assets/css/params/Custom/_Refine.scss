@@ -1,95 +1,74 @@
-.in-module--search {
-  color: $input-alt;
-  position: relative;
-  margin-bottom: 1.5rem;
+.param-refine {
 
-  input {
-    height: 3.5rem;
-    padding: .6rem 3.4rem .4rem; // left padding for "search" icon; right padding for "close" button
-    display: block;
-    width: 100%;
-    color: $brand-text--dark;
-    background: $Vlight-gray;
-    border-radius: 2rem;
-    border: 2px solid transparent;
-    &:hover {
-      border-color: $brand-orange--medium;
-    }
+  .in-module--search {
+    color: $input-alt;
+    position: relative;
+    margin-bottom: 1.5rem;
 
-    &:focus {
-      border-color: $brand-orange;
-    }
-
-    //search placeholder when empty
-    &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    input {
+      height: 3.5rem;
+      padding: .6rem 3.4rem .4rem; // left padding for "search" icon; right padding for "close" button
+      display: block;
+      width: 100%;
       color: $brand-text--dark;
-      opacity: .9;
+      background: $Vlight-gray;
+      border-radius: 2rem;
+      border: 2px solid transparent;
+      &:hover {
+        border-color: $brand-orange--medium;
+      }
+
+      &:focus {
+        border-color: $brand-orange;
+      }
+
+      //search placeholder when empty
+      &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color: $brand-text--dark;
+        opacity: .9;
+      }
+      :-ms-input-placeholder { /* IE 10+ */
+        color: $brand-text--dark;
+        opacity: .9;
+      }
+      :-moz-placeholder { /* Firefox 18- */
+        color: $brand-text--dark;
+        opacity: .9;
+      }
+
     }
-    :-ms-input-placeholder { /* IE 10+ */
+
+
+
+    &::before {
+      // "search" icon
+      display: inline-block;
+      position: absolute;
+      top: .8rem;
+      left: 1.3rem;
+      font-size: 1.4rem;
+      font-family: 'Workbench';
+      content: "\e91a "; // .icon-search
       color: $brand-text--dark;
-      opacity: .9;
-    }
-    :-moz-placeholder { /* Firefox 18- */
-      color: $brand-text--dark;
-      opacity: .9;
     }
 
-  }
-
-
-
-  &::before {
-    // "search" icon
-    display: inline-block;
-    position: absolute;
-    top: .8rem;
-    left: 1.3rem;
-    font-size: 1.4rem;
-    font-family: 'Workbench';
-    content: "\e91a "; // .icon-search
-    color: $brand-text--dark;
-  }
-
-  button.close {
-    border: 0;
-    position: absolute;
-    right: 1.3rem;
-    top: 1rem;
-    font-size: 1.4rem;
-    margin: 0;
-    padding: 0;
-    text-shadow: none;
-    color: $brand-text--medium;
-    &:hover {
-      color: $brand-orange;
-      opacity: 1;
+    button.close {
+      border: 0;
+      position: absolute;
+      right: 1.3rem;
+      top: 1rem;
+      font-size: 1.4rem;
+      margin: 0;
+      padding: 0;
+      text-shadow: none;
+      color: $brand-text--medium;
+      &:hover {
+        color: $brand-orange;
+        opacity: 1;
+      }
     }
   }
-}
 
-.refine-modal-prompt {
-  margin-top: .5rem;
-  display: flex;
-  align-items: center;
-  font-size: 1.3rem;
-  line-height: 1.4;
-  color: $brand-text--medium;
-  margin-bottom: 1rem;
-
-  //launches the clustering modal
-  button[name=cluster] {
-    @extend .action-button;
-    @extend .button-orange;
-    display: flex;
-    margin-top: .5rem;
-  }
-
-  button {
-    margin-right: 1rem;
-  }
-}
-
-.param-refine, .param-valueselect {
   .all-none-buttons {
     button {
       font-weight: normal;
@@ -119,363 +98,400 @@
       }
     }
   }
-}
 
-ul.refine-groups {
-  display: block;
-  max-height: 30rem;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 
-  // Throughout Refine, any <button> should appear as inline text
-  button {
-    border: 0;
+  .refine-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: $param-margin;
+
+    // Merge button changes color when at least 2 checkboxes have been selected
+    button[name='merge'] {
+      @extend %action-button;
+      @extend %button-orange--fill;
+      &:disabled {
+        color: $text-muted;
+        border-color: $text-muted;
+        background-color: transparent;
+      }
+    }
+
+    //launches the clustering modal
+    button[name=cluster] {
+      @extend .action-button;
+      @extend .button-orange;
+      display: flex;
+      margin-left: 1rem;
+    }
+  }
+
+
+
+  ul.refine-groups { // contains the list of values
+    display: block;
+    max-height: 30rem;
+    overflow-y: auto;
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
-    color: $light-gray;
-    background: transparent;
-    font-size: 1.4rem;
-    cursor: pointer;
-
-    &:hover {
-      color: $medium-gray;
-    }
-  }
-
-  &>li { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    padding: .5rem 0 0;
-
-    & + li {
-      border-top: 1px solid $Vlight-gray;
-    }
-
-    &.not-visible {
-      display: none; // omitted by search
-    }
-  }
-
-  div.summary {
-    // Use float instead of flexbox for speedier rendering.
-    // see https://www.pivotaltracker.com/story/show/160173068
-    &>input {
-      // "filter" checkbox
-      float: left;
-      position: relative;
-      top: .5rem;
-    }
-
-    label.expand {
-      // "expand" checkbox -- renders as an icon
-      float: left;
-
-      margin: 0;
-      width: 1rem;
-
-      // Line up with the rest
-      position: relative;
-      top: .2rem;
-
-      input {
-        display: none;
-      }
-    }
-
-    &>.growing {
-      // The name and "expand" icon appear together. They take all available
-      // space, so the count is right-aligned.
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      margin-left: .2rem;
-
-      input {
-        display: block;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-        margin: 0;
-        padding: .5rem;
-        font-size: 1.3rem;
-        background: transparent;
-        color: $brand-text--dark;
-        &:hover {
-          background-color: $dark-accent--soft;
-        }
-
-      }
-    }
-
-    label.expand {
-      // Display the icon, not the checkbox
-      input { display: none; }
-      cursor: pointer;
-      margin: 0;
-
-      i.icon-caret-right {
-        margin-left: .3rem;
-        font-size: 1.1rem;
-        line-height: 1em;
-        vertical-align: -.5em; // work around broken font
-      }
-      i.icon-caret-down {
-        margin-top: .1rem;
-        font-size: .7rem;
-        line-height: 1em;
-        vertical-align: -.5em; // work around broken font
-      }
-    }
-
-    .count-and-reset {
-      float: right;
-      min-width: 1.5rem;
-      margin-left: .8rem;
-      text-align: right;
-      line-height: 2.7rem; // center vertically
-
-      // Display the count normally. If there are edits, display a reset
-      // button instead, only when the user hovers.
-      button, span {
-        text-align: right;
-      }
-
-      span {
-        @extend %font-nunito-extra-light;
-        font-size: 1.3rem;
-      }
-
-      button {
-        display: none;
-        font-size: 1rem;
-      }
-
-    }
-    &:hover {
-      button {
-        display: block;
-
-        i {
-          position: relative;
-          top: .2rem;
-          font-size: 1.3rem;
-          color: $brand-text--dark;
-          &:hover {color: $brand-text--darker; }
-        }
-      }
-      button + span { display: none; }
-    }
-  }
-
-  li.edited .summary .growing input {
-    // Show edited values as bold
-    font-weight: bold;
-    color: $brand-text--darker;
-  }
-
-  ul.values { // details: list of values, each with a count and remove button
-    display: block;
     list-style: none;
-    margin: 0;
-    padding: 0 0 .5rem;
+    margin-top: $param-group-margin;
 
-    &>li {
-      display: flex;
+    // Throughout Refine, any <button> should appear as inline text
+    button {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      color: $light-gray;
+      background: transparent;
+      font-size: 1.4rem;
+      cursor: pointer;
+
+      &:hover {
+        color: $medium-gray;
+      }
+    }
+
+    &>li { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
+      display: block;
       width: 100%;
-      overflow: hidden;
-      font-size: 1.3rem;
-      padding-top: .5rem;
-      padding-left: 2.5rem;
-      font-weight: 200;
+      max-width: 100%;
+      padding: .3rem 0 0;
 
-      .value {
-        flex: 1 1 auto;
-        overflow: hidden;
+      & + li {
+        //border-top: 1px solid $Vlight-gray;
       }
 
-      .count-and-remove {
+      &.not-visible {
+        display: none; // omitted by search
+      }
+    }
+
+    div.summary {
+      // Use float instead of flexbox for speedier rendering.
+      // see https://www.pivotaltracker.com/story/show/160173068
+
+      &>input {// "filter" checkbox
+        float: left;
+        position: relative;
+        top: .5rem;
+        cursor: pointer;
+      }
+
+      label.expand {
+        // "expand" checkbox -- renders as an icon
+        float: left;
+
+        margin: 0;
+        width: 1rem;
+
+        // Line up with the rest
+        position: relative;
+        top: .2rem;
+
+        input {
+          display: none;
+        }
+      }
+
+      &>.growing {
+        // The name and "expand" icon appear together. They take all available
+        // space, so the count is right-aligned.
+        display: block;
+        white-space: nowrap;
+        margin-left: .2rem;
+        max-width: 100%;
+        overflow-x: hidden;
+
+        input { // Click to rename value
+          display: block;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: 0;
+          margin: 0;
+          padding: .5rem 0;
+          font-size: 1.3rem;
+          background: transparent;
+          color: $brand-text--dark;
+          text-overflow: ellipsis;
+
+
+          &:hover {
+            background-color: $dark-accent--soft;
+          }
+
+        }
+      }
+
+      label.expand {
+        // Display the icon, not the checkbox
+        input { display: none; }
+        cursor: pointer;
+        margin: 0;
+        margin-right: .5rem;
+
+        i.icon-caret-right {
+          margin-left: .3rem;
+          font-size: 1.1rem;
+          line-height: 1em;
+          vertical-align: -.5em; // work around broken font
+        }
+        i.icon-caret-down {
+          margin-top: .1rem;
+          font-size: .7rem;
+          line-height: 1em;
+          vertical-align: -.5em; // work around broken font
+        }
+      }
+
+      .count-and-reset {
+        float: right;
         min-width: 1.5rem;
         margin-left: .8rem;
         text-align: right;
+        line-height: 2.7rem; // center vertically
 
-        // Display the count normally. If the user hovers, display a remove
-        // button instead -- but only if the button exists. (One can't remove
-        // the value "A" from the group "A".)
+        // Display the count normally. If there are edits, display a reset
+        // button instead, only when the user hovers.
         button, span {
-          min-width: 3rem;
           text-align: right;
-        }
-
-        // button
-        .icon-close {
-          font-size: 1.2rem;
-          line-height: 1.4em;
-          color: $brand-text--dark;
-          &:hover {color: $brand-text--darker; }
         }
 
         span {
           @extend %font-nunito-extra-light;
+          font-size: 1.3rem;
         }
 
         button {
           display: none;
-          font-size: .9rem;
+          font-size: 1rem;
         }
+
       }
-    }
-    li:hover {
-      button { display: block; }
-      button + span { display: none; }
-    }
-  }
-}
+      &:hover {
+        button {
+          display: block;
 
-.zen-mode {
-  .refine-groups {
-    max-height: calc(100vh - 25rem);
-  }
-}
-
-.refine-modal {
-  font-size: 1.3rem;
-
-  .refine-clusterer {
-    .method {
-      display: flex;
-
-      .method-select {
-        flex: 0 0 auto;
-        margin-right: 1.6rem;
-
-        .custom-select {
-          width: 13rem;
-        }
-      }
-
-      .method-form {
-        padding:0 2rem;
-
-        .method-description {
-          @extend .content-1;
-          flex: 1 1 auto;
-          color:$brand-text--medium;
-        }
-
-        input[id=refine-clusterer-max-distance] {
-          background-color: $Vlight-gray;
-          font-size: 1.4rem;
-          height: 3.5rem;
-          border: 2px solid $Vlight-gray;
-
-          &:hover {
-            border: 2px solid $dark-accent--medium;
-          }
-          &:focus {
-            outline: none;
-            border:2px solid $brand-orange;
+          i {
+            position: relative;
+            top: .2rem;
+            font-size: 1.3rem;
+            color: $brand-text--dark;
+            &:hover {color: $brand-text--darker; }
           }
         }
+        button + span { display: none; }
       }
+    }
 
-      .form-group {
-        margin-top: 1.6rem;
+    li.edited .summary .growing input {
+      // Show edited values as bold
+      font-weight: bold;
+      color: $brand-text--darker;
+    }
+
+    ul.values { // details: list of values, each with a count and remove button
+      display: block;
+      list-style: none;
+      margin: 0;
+      padding: 0 0 .5rem;
+
+      &>li {
+        display: flex;
         width: 100%;
+        overflow: hidden;
+        font-size: 1.3rem;
+        padding-top: .5rem;
+        padding-left: 2.5rem;
+        font-weight: 200;
+
+        .value {
+          flex: 1 1 auto;
+          overflow: hidden;
+        }
+
+        .count-and-remove {
+          min-width: 1.5rem;
+          margin-left: .8rem;
+          text-align: right;
+
+          // Display the count normally. If the user hovers, display a remove
+          // button instead -- but only if the button exists. (One can't remove
+          // the value "A" from the group "A".)
+          button, span {
+            min-width: 3rem;
+            text-align: right;
+          }
+
+          // button
+          .icon-close {
+            font-size: 1.2rem;
+            line-height: 1.4em;
+            color: $brand-text--dark;
+            &:hover {color: $brand-text--darker; }
+          }
+
+          span {
+            @extend %font-nunito-extra-light;
+          }
+
+          button {
+            display: none;
+            font-size: .9rem;
+          }
+        }
+      }
+      li:hover {
+        button { display: block; }
+        button + span { display: none; }
+      }
+    }
+  }
+
+  .zen-mode {
+    .refine-groups {
+      max-height: calc(100vh - 25rem);
+    }
+  }
+
+  .refine-modal {
+    font-size: 1.3rem;
+
+    .refine-clusterer {
+      .method {
         display: flex;
 
-        label {
+        .method-select {
+          flex: 0 0 auto;
           margin-right: 1.6rem;
+
+          .custom-select {
+            width: 13rem;
+          }
+        }
+
+        .method-form {
+          padding:0 2rem;
+
+          .method-description {
+            @extend .content-1;
+            flex: 1 1 auto;
+            color:$brand-text--medium;
+          }
+
+          input[id=refine-clusterer-max-distance] {
+            background-color: $Vlight-gray;
+            font-size: 1.4rem;
+            height: 3.5rem;
+            border: 2px solid $Vlight-gray;
+
+            &:hover {
+              border: 2px solid $dark-accent--medium;
+            }
+            &:focus {
+              outline: none;
+              border:2px solid $brand-orange;
+            }
+          }
+        }
+
+        .form-group {
+          margin-top: 1.6rem;
+          width: 100%;
+          display: flex;
+
+          label {
+            margin-right: 1.6rem;
+          }
         }
       }
     }
-  }
 
-  .refine-bins {
-    margin-top: 2rem;
+    .refine-bins {
+      margin-top: 2rem;
 
-    .no-bins {
-      @extend .title-2;
-      font-size: 1.5rem;
-      margin-bottom: 2rem;
-      color:$brand-orange;
-      margin-left: 16.5rem;
+      .no-bins {
+        @extend .title-2;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color:$brand-orange;
+        margin-left: 16.5rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        @extend .title-2;
+        font-size: 1.5rem;
+        white-space: nowrap;
+        padding-right: 4.2rem;
+      }
+
+      td {
+        vertical-align: top;
+        padding: .8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
+      }
+
+      .value, .new-value {
+        // Give these two _all_ the space
+        width: 9999rem;
+      }
+
+      tr.bin {
+        border-top: 1px solid $dark-accent--medium;
+      }
+
+      tr.value td {
+        padding-top: 0;
+      }
     }
 
-    table {
+    .autosize-cluster-input {
       width: 100%;
-      border-collapse: collapse;
+      margin: 0;
+      position: relative;
+      // TODO @extend .single-line-text-field;
+
+      span, textarea {
+        // Exact same font for invisible text and visible textarea
+        font: inherit;
+        word-break: break-all;
+        padding: 0;
+        border: 0;
+      }
+
+      span {
+        visibility: hidden; // invisible text, sets the height of the div
+      }
+
+      textarea {
+        position: absolute;
+        top: .5rem;
+        left: 1rem;
+        width: 93%;
+        height: 100%; // grow to the same size as the div
+        resize: none;
+        overflow: hidden;
+      }
     }
 
-    th {
-      @extend .title-2;
-      font-size: 1.5rem;
-      white-space: nowrap;
-      padding-right: 4.2rem;
+    .modal-footer {
+      .actions {
+        display: flex;
+      }
     }
 
-    td {
-      vertical-align: top;
-      padding: .8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
-    }
-
-    .value, .new-value {
-      // Give these two _all_ the space
-      width: 9999rem;
-    }
-
-    tr.bin {
-      border-top: 1px solid $dark-accent--medium;
-    }
-
-    tr.value td {
-      padding-top: 0;
-    }
-  }
-
-  .autosize-cluster-input {
-    width: 100%;
-    margin: 0;
-    position: relative;
-    // TODO @extend .single-line-text-field;
-
-    span, textarea {
-      // Exact same font for invisible text and visible textarea
-      font: inherit;
-      word-break: break-all;
-      padding: 0;
-      border: 0;
-    }
-
-    span {
-      visibility: hidden; // invisible text, sets the height of the div
-    }
-
-    textarea {
-      position: absolute;
-      top: .5rem;
-      left: 1rem;
-      width: 93%;
-      height: 100%; // grow to the same size as the div
-      resize: none;
-      overflow: hidden;
+    .refine-status {
+      flex-grow: 1; // left-align in modal footer
+      text-transform: uppercase;
+      color: $brand-orange;
     }
   }
 
-  .modal-footer {
-    .actions {
-      display: flex;
-    }
-  }
-
-  .refine-status {
-    flex-grow: 1; // left-align in modal footer
-    text-transform: uppercase;
-    color: $brand-orange;
-  }
 }

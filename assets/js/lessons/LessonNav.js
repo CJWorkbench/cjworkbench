@@ -28,29 +28,31 @@ export default class LessonNav extends React.PureComponent {
 
     return (
       <footer className="lesson-nav">
-        <button
-          name="Previous"
-          className={`previous action-button button-white ${a < c ? 'lesson-highlight' : ''}`}
-          disabled={c <= 0}
-          onClick={this.onClickPrevious}
-        >
-          Previous
-        </button>
-        {c === n ? null : (
-          <div className="current-and-total">
-            <span className="current">{c + 1}</span>
-            <span> of </span>
-            <span className="total">{n}</span>
-          </div>
-        )}
-        <button
-          name="Next"
-          className={`next action-button button-white ${a > c ? 'lesson-highlight' : ''}`}
-          disabled={c + 1 > n}
-          onClick={this.onClickNext}
-        >
-          Next
-        </button>
+        <div className="buttons-container">
+          <button
+            name="Previous"
+            className={`previous action-button button-white ${a < c ? 'lesson-highlight' : ''}`}
+            disabled={c <= 0}
+            onClick={this.onClickPrevious}
+          >
+            Previous
+          </button>
+          {c === n ? null : (
+            <div className="current-and-total">
+              <span className="current">{c + 1}</span>
+              <span> of </span>
+              <span className="total">{n}</span>
+            </div>
+          )}
+          <button
+            name="Next"
+            className={`next action-button button-white ${a > c ? 'lesson-highlight' : ''}`}
+            disabled={c + 1 > n}
+            onClick={this.onClickNext}
+          >
+            Next
+          </button>
+        </div>
       </footer>
     )
   }
