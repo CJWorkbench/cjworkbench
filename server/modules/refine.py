@@ -219,7 +219,7 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 
 def render(params, table, **kwargs):
     # 'refine' holds the edits
-    column = params.get_param_column('column', table)
+    column: str = params['column']
     if not column:
         # No user input yet
         return ProcessResult(table)

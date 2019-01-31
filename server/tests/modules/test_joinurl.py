@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any, Dict
 import unittest
 from unittest.mock import patch
 import pandas as pd
@@ -6,12 +7,17 @@ from asgiref.sync import async_to_sync
 from pandas.testing import assert_frame_equal
 from server.modules.joinurl import JoinURL, _join_type_map
 from server.modules.types import ProcessResult
-from .util import MockParams
 
 
-P = MockParams.factory(url='https://app.workbenchdata.com/workflows/2/',
-                       colnames=([], []), importcols=([], []), type=0,
-                       select_columns=False)
+def P(url='https://app.workbenchdata.com/workflows/2/', colnames='',
+      importcols='', type=0, select_columns=False) -> Dict[str, Any]:
+    return {
+        'url': url,
+        'colnames': colnames,
+        'importcols': importcols,
+        'type': type,
+        'select_columns': select_columns,
+    }
 
 
 async def get_workflow_owner():
@@ -61,7 +67,7 @@ class JoinURLTests(unittest.TestCase):
     def test_join(self):
         # Nothing too technical, do not need to test pandas functions
         result = render(P(type=_join_type_map.index('inner'),
-                          colnames=(['key'], [])),
+                          colnames='key'),
                         pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
                         PR('', {
                             'key': ['b', 'd'],
@@ -77,8 +83,8 @@ class JoinURLTests(unittest.TestCase):
 
     def test_importcols(self):
         result = render(P(type=_join_type_map.index('inner'),
-                          colnames=(['key'], []), select_columns=True,
-                          importcols=(['col2'], [])),
+                          colnames='key', select_columns=True,
+                          importcols='col2'),
                         pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
                         PR('', {
                             'key': ['b', 'd'],
@@ -89,8 +95,8 @@ class JoinURLTests(unittest.TestCase):
                          list(result.dataframe.columns))
 
     def test_colnames_not_in_right(self):
-        result = render(P(colnames=(['B'], []), select_columns=True,
-                          importcols=([], ['B'])),
+        result = render(P(colnames='A', select_columns=True,
+                          importcols='B'),
                         pd.DataFrame({'A': [1], 'B': [2]}),
                         PR('', {'A': [1], 'C': [2]}))
         self.assertEqual(result, ProcessResult(error=(
@@ -99,7 +105,7 @@ class JoinURLTests(unittest.TestCase):
 
     def test_cast_int_to_float(self):
         result = render(P(type=_join_type_map.index('inner'),
-                          colnames=(['A'], [])),
+                          colnames='A'),
                         pd.DataFrame({'A': [1, 2, 3]}),
                         PR('', {'A': [1.0, 2.0, 4.0]}))
         expected = pd.DataFrame({'A': [1.0, 2.0]})
@@ -107,7 +113,7 @@ class JoinURLTests(unittest.TestCase):
 
     def test_type_mismatch(self):
         result = render(P(type=_join_type_map.index('inner'),
-                          colnames=(['A'], [])),
+                          colnames='A'),
                         pd.DataFrame({'A': [1, 2, 3]}),
                         PR('', {'A': ['1', '2', '3']}))
         self.assertEqual(result, ProcessResult(error=(

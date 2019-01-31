@@ -323,8 +323,11 @@ user_timeline2_json = """[
 
 P = MockParams.factory(querytype=0, username='username', query='query',
                        listurl='listurl', twitter_credentials={
-                           'oauth_token': 'a-token',
-                           'oauth_token_secret': 'a-token-secret',
+                           'name': 'x',
+                           'secret': {
+                               'oauth_token': 'a-token',
+                               'oauth_token_secret': 'a-token-secret',
+                           },
                        }, accumulate=True)
 
 
@@ -336,21 +339,6 @@ def fetch(params, stored_dataframe=None):
         params,
         get_stored_dataframe=get_stored_dataframe
     )
-
-
-class MockWfModule:
-    def __init__(self, **kwargs):
-        self.params = P(**kwargs)
-        self.fetched_table = None
-
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def get_params(self):
-        return self.params
-
-    def retrieve_fetched_table(self):
-        return self.fetched_table
 
 
 def dt(s):

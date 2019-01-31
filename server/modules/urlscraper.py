@@ -77,12 +77,12 @@ async def scrape_urls(urls, result_table):
 
 
 def are_params_empty(params, input_table):
-    urlsource = params.get_param_menu_idx('urlsource')
+    urlsource: int = params['urlsource']
     if urlsource == 0:
-        urllist = params.get_param_string('urllist')
+        urllist: str = params['urllist']
         return not urllist
     else:
-        urlcol = params.get_param_column('urlcol', input_table)
+        urlcol: str = params['urlcol']
         return urlcol is None
 
 
@@ -102,12 +102,12 @@ class URLScraper(ModuleImpl):
     @staticmethod
     async def fetch(params, *, get_input_dataframe, **kwargs):
         urls = []
-        urlsource = params.get_param_menu_idx('urlsource')
+        urlsource: int = params['urlsource']
 
         if urlsource == 0:
             if are_params_empty(params, None):
                 return None
-            urllist_text = params.get_param_string('urllist')
+            urllist_text: str = params['urllist']
             urllist_raw = urllist_text.split('\n')
             for url in urllist_raw:
                 s_url = url.strip()
@@ -129,8 +129,8 @@ class URLScraper(ModuleImpl):
                 return None
 
             # get our list of URLs from a column in the input table
-            urlcol = params.get_param_column('urlcol', prev_table)
-            if urlcol:
+            urlcol: str = params['urlcol']
+            if urlcol in prev_table.columns:
                 urls = prev_table[urlcol].tolist()
             else:
                 urls = []

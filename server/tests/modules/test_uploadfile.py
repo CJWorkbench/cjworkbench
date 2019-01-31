@@ -15,6 +15,9 @@ from server.tests.utils import mock_xlsx_path
 from .util import MockParams
 
 
+P = MockParams.factory(has_header=False)
+
+
 class FakeMinioObject(io.BytesIO):
     def release_conn(self):
         pass
@@ -40,7 +43,7 @@ Csv = """A,B
 
 
 def render(has_header, table, fetch_result):
-    x = UploadFile.render(MockParams(has_header=has_header), table,
+    x = UploadFile.render(P(has_header=has_header), table,
                           fetch_result=fetch_result)
     result = ProcessResult.coerce(x)
     result.sanitize_in_place()

@@ -58,7 +58,8 @@ class LoadURL(ModuleImpl):
         table = fetch_result.dataframe
         error = fetch_result.error
 
-        if not params.get_param_checkbox('has_header'):
+        has_header: bool = params['has_header']
+        if not has_header:
             table = turn_header_into_first_row(table)
 
         return ProcessResult(table, error)
@@ -66,7 +67,7 @@ class LoadURL(ModuleImpl):
     # Load a CSV from file when fetch pressed
     @staticmethod
     async def fetch(params, **kwargs):
-        url = params.get_param_string('url').strip()
+        url: str = params['url'].strip()
 
         mimetypes = ','.join(AllowedMimeTypes)
         headers = {'Accept': mimetypes}

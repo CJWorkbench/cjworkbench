@@ -320,7 +320,7 @@ class CountByDate(ModuleImpl):
             return table
 
         try:
-            form = Form.parse(params.to_painful_dict(table))
+            form = Form.parse(params)
         except ValueError as err:
             return (table, str(err))
         if form is None:

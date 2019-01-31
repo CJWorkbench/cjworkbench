@@ -161,7 +161,7 @@ class FetchTests(DbTestCase):
                                           params={'foo': 'bar'})
 
         async def fetch(params, **kwargs):
-            self.assertEqual(params.get_param_string('foo'), 'bar')
+            self.assertEqual(params['foo'], 'bar')
 
         self._test_fetch(fetch, wf_module)
 

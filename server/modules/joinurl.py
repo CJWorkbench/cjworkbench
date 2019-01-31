@@ -2,6 +2,7 @@ from typing import Awaitable, Callable
 from django.contrib.auth.models import User
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
+from .utils import parse_multicolumn_param
 from server.models import Params
 from server.modules import utils
 from server.types import ColumnType
@@ -67,7 +68,7 @@ class JoinURL(ModuleImpl):
 
         right_table = fetch_result.dataframe
 
-        key_cols, errs = params.get_param_multicolumn('colnames', table)
+        key_cols, errs = parse_multicolumn_param(params['colnames'], table)
 
         if errs:
             return ProcessResult(error=(
@@ -78,21 +79,22 @@ class JoinURL(ModuleImpl):
         if not key_cols:
             return ProcessResult(table)
 
-        _, errs = params.get_param_multicolumn('colnames', right_table)
+        _, errs = parse_multicolumn_param(params['colnames'], right_table)
         if errs:
             return ProcessResult(error=(
                 'Key columns not in target workflow: '
                 + ', '.join(errs)
             ))
 
-        join_type_idx = params.get_param_menu_idx('type')
+        join_type_idx: int = params['type']
         join_type = _join_type_map[join_type_idx]
-        select_columns = params.get_param_checkbox('select_columns')
+        select_columns: bool = params['select_columns']
 
         if select_columns:
-            import_cols, errs = params.get_param_multicolumn('importcols',
-                                                             right_table,
-                                                             ignore_type=True)
+            # 'importcols' is a str param, but we can parse it anyway. For now.
+            # Hack upon hack upon hack.
+            import_cols, errs = parse_multicolumn_param(params['importcols'],
+                                                        right_table)
             if errs:
                 return ProcessResult(error=(
                     'Selected columns not in target workflow: '
@@ -119,9 +121,9 @@ class JoinURL(ModuleImpl):
     async def fetch(params: Params, *, workflow_id: int,
                     get_workflow_owner: Callable[[], Awaitable[User]],
                     **kwargs) -> ProcessResult:
-        url = params.get_param_string('url')
+        url: str = params['url'].strip()
 
-        if not url.strip():
+        if not url:
             return None
 
         try:

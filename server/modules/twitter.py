@@ -297,9 +297,9 @@ class Twitter(ModuleImpl):
             QUERY_TYPE_LIST: 'listurl'
         }
 
-        querytype = params.get_param_menu_idx("querytype")
-        query = params.get_param_string(param_names[querytype])
-        access_token = params.get_param_secret_secret('twitter_credentials')
+        querytype: int = params['querytype']
+        query: str = params[param_names[querytype]]
+        access_token = (params['twitter_credentials'] or {}).get('secret')
 
         if not query.strip() and not access_token:
             return None  # Don't create a version
@@ -311,7 +311,7 @@ class Twitter(ModuleImpl):
             return Err('Please sign in to Twitter')
 
         try:
-            if params.get_param_checkbox('accumulate'):
+            if params['accumulate']:
                 old_tweets = await get_stored_tweets(get_stored_dataframe)
                 tweets = await get_new_tweets(access_token, querytype, query,
                                               old_tweets)

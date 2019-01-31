@@ -1,7 +1,6 @@
 import os.path
 import unittest
 from unittest.mock import patch, Mock
-from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
@@ -38,7 +37,12 @@ class MockResponse:
             self.content = text
 
 
-default_secret = {'refresh_token': 'a-refresh-token'}
+default_secret = {
+    'name': 'x',
+    'secret': {
+        'refresh_token': 'a-refresh-token',
+    },
+}
 default_googlefileselect = {
     "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
     "name": "Police Data",

@@ -6,6 +6,7 @@ from pandas.api.types import is_numeric_dtype
 import numpy as np
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
+from .utils import parse_json_param
 
 logger = logging.getLogger(__name__)
 
@@ -84,8 +85,9 @@ class EditCells(ModuleImpl):
     #  ]
     @staticmethod
     def render(params, table, **kwargs):
-        edits = parse_json(params.get_param_json('celledits'))
+        edits = parse_json(parse_json_param(params['celledits']))
         if isinstance(edits, str):
+            # [adamhooper, 2019-01-31] Huh? How does this happen?
             return ProcessResult(error=edits)
 
         # Ignore missing columns and rows: delete them from the Array of edits

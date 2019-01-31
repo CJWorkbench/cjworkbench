@@ -2,7 +2,6 @@ import unittest
 import pandas as pd
 from server.modules.reordercolumns import ReorderFromTable
 from server.modules.types import ProcessResult
-from .util import MockParams
 
 
 a_table = pd.DataFrame({
@@ -18,7 +17,7 @@ def fake_result(colnames):
 
 
 def render(reorder_history, table):
-    params = MockParams(reorder_history=reorder_history)
+    params = {'reorder-history': reorder_history}
     result = ReorderFromTable.render(params, table.copy())
     return ProcessResult.coerce(result)
 

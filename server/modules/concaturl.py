@@ -4,6 +4,7 @@ import pandas as pd
 from .moduleimpl import ModuleImpl
 from server.models import Params
 from server.modules import utils
+
 from .types import ProcessResult
 
 _join_type_map = 'outer|inner|outer'.split('|')
@@ -23,9 +24,9 @@ class ConcatURL(ModuleImpl):
             return ProcessResult(table,
                                  error='The workflow you chose is empty')
 
-        type = params.get_param_menu_idx('type')
-        url = params.get_param_string('url').strip()
-        source_columns = params.get_param_checkbox('source_columns')
+        type: int = params['type']
+        url: str = params['url'].strip()
+        source_columns: bool = params['source_columns']
 
         try:
             right_id = str(utils.workflow_url_to_id(url))
@@ -53,7 +54,7 @@ class ConcatURL(ModuleImpl):
     async def fetch(params: Params, *, workflow_id: int,
                     get_workflow_owner: Callable[[], Awaitable[User]],
                     **kwargs) -> ProcessResult:
-        url = params.get_param_string('url')
+        url: str = params['url']
 
         if not url.strip():
             return None

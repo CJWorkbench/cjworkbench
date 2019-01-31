@@ -162,7 +162,7 @@ class LoadedModule:
         if self.is_external:
             arg1, arg2 = (table, params.to_painful_dict(table))
         else:
-            arg1, arg2 = (params, table)
+            arg1, arg2 = (params.to_painful_dict(table), table)
 
         kwargs = {}
         spec = inspect.getfullargspec(self.render_impl)
@@ -225,18 +225,27 @@ class LoadedModule:
         if varkw or 'get_workflow_owner' in kwonlyargs:
             kwargs['get_workflow_owner'] = get_workflow_owner
 
-        if self.is_external:
-            # Pass input to params.to_painful_dict().
-            input_dataframe_future = get_input_dataframe()
+        # Pass input to params.to_painful_dict().
+        #
+        # TODO consider ... _not_ doing this. It's only needed if the module
+        # has 'column' params ... which [2019-01-31, adamhooper] is unwise. We
+        # use it in old-style 'join' and 'concat' (which require fetch of
+        # another workflow) and in 'urlscraper' (which seems like a unique
+        # case).
 
-            input_dataframe = await input_dataframe_future
-            if input_dataframe is None:
-                input_dataframe = pd.DataFrame()
-            params = params.to_painful_dict(input_dataframe)
-            # If we're passing get_input_dataframe via kwargs, short-circuit it
-            # because we already know the result.
-            if 'get_input_dataframe' in kwargs:
-                kwargs['get_input_dataframe'] = lambda: input_dataframe_future
+        input_dataframe_future = get_input_dataframe()
+
+        input_dataframe = await input_dataframe_future
+        if input_dataframe is None:
+            input_dataframe = pd.DataFrame()
+        params = params.to_painful_dict(input_dataframe)
+
+        # If we're passing get_input_dataframe via kwargs, short-circuit it
+        # because we already know the result.
+        async def get_input_dataframe_again():
+            return input_dataframe
+        if 'get_input_dataframe' in kwargs:
+            kwargs['get_input_dataframe'] = get_input_dataframe_again
 
         time1 = time.time()
 

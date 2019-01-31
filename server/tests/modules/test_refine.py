@@ -6,11 +6,13 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from server.modules.refine import render, migrate_params, RefineSpec
 from server.modules.types import ProcessResult
-from .util import MockParams
 
 
-def P(column: str, refine: Dict[str, Any]) -> MockParams:
-    return MockParams(column=column, refine=refine)
+def P(column: str, refine: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        'column': column,
+        'refine': refine,
+    }
 
 
 class MigrateParamsTest(unittest.TestCase):

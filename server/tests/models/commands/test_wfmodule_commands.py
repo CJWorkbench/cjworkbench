@@ -79,10 +79,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         added_module = all_modules.get(order=0)
         self.assertNotEqual(added_module, existing_module)
         # Test that supplied param is written
-        self.assertEqual(
-            added_module.get_params().get_param_string('url'),
-            'https://x.com'
-        )
+        self.assertEqual(added_module.params['url'], 'https://x.com')
         bumped_module = all_modules.get(order=1)
         self.assertEqual(bumped_module, existing_module)
 

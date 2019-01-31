@@ -13,10 +13,17 @@ from server.models import LoadedModule
 import server.models.loaded_module
 from server.modules.types import ProcessResult
 import server.modules.pastecsv
-from server.tests.modules.util import MockParams
 from server.tests.utils import clear_minio
 from server.models.param_field import ParamDTypeDict, ParamDTypeString, \
         ParamDTypeInteger, ParamDTypeBoolean
+
+
+class MockParams:
+    def __init__(self, **kwargs):
+        self.d = kwargs
+
+    def to_painful_dict(self, table):
+        return self.d
 
 
 MockModuleVersion = namedtuple('MockModuleVersion', ('id_name',
@@ -193,7 +200,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('int', '1', False, render_impl=render)
         with self.assertLogs():
             result = lm.render(params, in_table, fetch_result=fetch_result)
-        self.assertIs(args[0], params)
+        self.assertEqual(args[0], {'foo': 'bar'})
         self.assertIs(args[1], in_table)
         self.assertIs(args[2], fetch_result)
         self.assertEqual(args[3], {})
@@ -214,7 +221,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('int', '1', False, render_impl=render)
         with self.assertLogs():
             result = lm.render(params, in_table, fetch_result=None)
-        self.assertIs(args[0], params)
+        self.assertEqual(args[0], {'foo': 'bar'})
         self.assertIs(args[1], in_table)
         self.assertEqual(len(args), 2)
         self.assertEqual(result, expected)
@@ -402,8 +409,8 @@ class LoadedModuleTest(unittest.TestCase):
         async def fetch(params, *, workflow_id, **kwargs):
             # Params are a Params object
             return ProcessResult(pd.DataFrame({
-                'foo': [params.get_param_string('foo')],
-                'bar': [params.get_param_string('bar')],
+                'foo': [params['foo']],
+                'bar': [params['bar']],
             }))
             return ProcessResult(params.items(), columns=['key', 'val'])
 

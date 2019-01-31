@@ -2,11 +2,10 @@ import unittest
 import pandas as pd
 from server.modules.duplicatecolumn import DuplicateColumn
 from server.modules.types import ProcessResult
-from .util import MockParams
 
 
 def render(colnames, table):
-    result = DuplicateColumn.render(MockParams(colnames=colnames), table)
+    result = DuplicateColumn.render({'colnames': colnames}, table)
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()  # important: duplicate makes colname conflicts
     return result
@@ -19,7 +18,7 @@ class DuplicateColumnTests(unittest.TestCase):
             'B': [2, 3],
             'C': [3, 4],
         })
-        result = render((['A', 'C'], []), table)
+        result = render('A,C', table)
 
         expected = ProcessResult(pd.DataFrame({
             'A': [1, 2],
@@ -37,7 +36,7 @@ class DuplicateColumnTests(unittest.TestCase):
             'Copy of A 1': [3, 4],
             'C': [4, 5],
         })
-        result = render((['A'], []), table)
+        result = render('A', table)
 
         expected = ProcessResult(pd.DataFrame({
             'A': [1, 2],

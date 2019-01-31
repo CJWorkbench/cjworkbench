@@ -127,8 +127,7 @@ class UndoRedoTests(DbTestCase):
         v2 = cmd2.id
         workflow.refresh_from_db()
         self.assertEqual(
-            tab.live_wf_modules.first()
-                .get_params().get_param_string('csv'),
+            tab.live_wf_modules.first().params['csv'],
             'some value'
         )
         self.assertEqual(workflow.last_delta_id, v2)
@@ -140,8 +139,7 @@ class UndoRedoTests(DbTestCase):
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v1)
         self.assertEqual(
-            tab.live_wf_modules.first()
-                .get_params().get_param_string('csv'),
+            tab.live_wf_modules.first().params['csv'],
             ''
         )
         self.assertWfModuleVersions(tab, [v1])
@@ -151,8 +149,7 @@ class UndoRedoTests(DbTestCase):
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v2)
         self.assertEqual(
-            tab.live_wf_modules.first()
-                .get_params().get_param_string('csv'),
+            tab.live_wf_modules.first().params['csv'],
             'some value'
         )
         self.assertWfModuleVersions(tab, [v2])
@@ -162,8 +159,7 @@ class UndoRedoTests(DbTestCase):
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v2)
         self.assertEqual(
-            tab.live_wf_modules.first()
-                .get_params().get_param_string('csv'),
+            tab.live_wf_modules.first().params['csv'],
             'some value'
         )
         self.assertWfModuleVersions(tab, [v2])

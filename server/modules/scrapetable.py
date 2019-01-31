@@ -49,7 +49,8 @@ class ScrapeTable(ModuleImpl):
 
         table = fetch_result.dataframe
 
-        if params.get_param_checkbox('first_row_is_header'):
+        has_header: bool = params['first_row_is_header']
+        if has_header:
             table.columns = [str(c) for c in list(table.iloc[0, :])]
             table = table[1:]
             table.reset_index(drop=True, inplace=True)
@@ -59,8 +60,8 @@ class ScrapeTable(ModuleImpl):
     @staticmethod
     async def fetch(params, **kwargs):
         table = None
-        url = params.get_param_string('url').strip()
-        tablenum = params.get_param_integer('tablenum') - 1  # 1 based for user
+        url: str = params['url'].strip()
+        tablenum: int = params['tablenum'] - 1  # 1-based for user
 
         if tablenum < 0:
             return ProcessResult(error='Table number must be at least 1')

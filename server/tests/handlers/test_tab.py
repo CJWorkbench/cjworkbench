@@ -51,7 +51,7 @@ class TabTest(HandlerTestCase):
         self.assertEquals(command.wf_module.order, 3)
         self.assertEquals(command.wf_module.module_version, module_version)
         self.assertEquals(
-            command.wf_module.get_params().get_param_string('foo'),
+            command.wf_module.get_params()['foo'],
             'bar'
         )
         self.assertEquals(command.wf_module.tab.slug, 'tab-1')

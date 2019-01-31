@@ -1,5 +1,6 @@
 from .moduleimpl import ModuleImpl
 from .types import ProcessResult
+from .utils import parse_multicolumn_param
 
 
 def _do_render(table, dup_columns):
@@ -26,6 +27,6 @@ def _do_render(table, dup_columns):
 
 class DuplicateColumn(ModuleImpl):
     def render(params, table, **kwargs):
-        columns, _ = params.get_param_multicolumn('colnames', table)
+        columns, _ = parse_multicolumn_param(params['colnames'], table)
 
         return _do_render(table, columns)

@@ -2,10 +2,14 @@ import pandas as pd
 import unittest
 from server.modules.renamecolumns import RenameFromTable
 from server.modules.types import ProcessResult
-from .util import MockParams
 
 
-P = MockParams.factory(custom_list=False, rename_entries={}, list_string='')
+def P(custom_list=False, rename_entries={}, list_string=''):
+    return {
+        'custom_list': custom_list,
+        'rename-entries': rename_entries,
+        'list_string': list_string,
+    }
 
 a_table = pd.DataFrame({
     'A': [1, 2],

@@ -69,7 +69,8 @@ class UploadFile(ModuleImpl):
             return fetch_result
 
         table = fetch_result.dataframe
-        if not params.get_param_checkbox('has_header'):
+        has_header: bool = params['has_header']
+        if not has_header:
             table = turn_header_into_first_row(table)
 
         return ProcessResult(table, fetch_result.error)

@@ -1,24 +1,29 @@
 from .moduleimpl import ModuleImpl
+from .utils import parse_multicolumn_param
 from server.modules.types import ProcessResult
 from pandas import IntervalIndex
 from typing import Tuple
 import re
 
 commas = re.compile('\\s*,\\s*')
-numbers = re.compile('(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
+numbers = re.compile(r'(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
+
+
+Drop = 0
+Keep = 1
 
 
 class SelectColumns(ModuleImpl):
     def render(params, table, **kwargs):
-        drop_or_keep = params.get_param_radio_idx('drop_or_keep')
-        select_range = params.get_param_checkbox('select_range')
+        drop_or_keep: int = params['drop_or_keep']
+        select_range: bool = params['select_range']
 
         if not select_range:
-            cols, _ = params.get_param_multicolumn('colnames', table)
+            cols, _ = parse_multicolumn_param(params['colnames'], table)
             return select_columns_by_name(table, cols, drop_or_keep)
 
         else:
-            str_col_nums = params.get_param_string('column_numbers')
+            str_col_nums: str = params['column_numbers']
             return select_columns_by_number(table, str_col_nums, drop_or_keep)
 
 
@@ -32,7 +37,7 @@ def select_columns_by_name(table, cols, drop_or_keep):
     # columns (can happen when re-ordering module, etc.)
     newcols = table.columns.intersection(set(cols))
 
-    if drop_or_keep == 1:
+    if drop_or_keep == Keep:
         newtab = table[newcols]
     else:
         newtab = table.drop(newcols, axis=1)
@@ -59,7 +64,7 @@ def select_columns_by_number(table, str_col_nums, drop_or_keep):
     except Exception as err:
         return ProcessResult(table, error=str(err.args[0]))
 
-    if drop_or_keep == 0:
+    if drop_or_keep == Drop:
         new_col_nums = [x[0] for x in enumerate(mask) if not x[1]]
     else:
         new_col_nums = [x[0] for x in enumerate(mask) if x[1]]

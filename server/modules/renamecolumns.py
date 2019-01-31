@@ -1,10 +1,11 @@
 from .moduleimpl import ModuleImpl
+from .utils import parse_json_param
 
 s_map = [',', ';', '\t', '\n']
 
 
 def parse_list(params, table):
-    list_string = params.get_param_string('list_string')
+    list_string: str = params['list_string']
     if not list_string:
         return table
 
@@ -54,13 +55,15 @@ class RenameFromTable(ModuleImpl):
     # Rename entry structure: Dictionary of {old_name: new_name}
     @staticmethod
     def render(params, table, **kwargs):
-        custom_list = params.get_param_checkbox('custom_list')
+        custom_list: bool = params['custom_list']
         if not custom_list:
-            entries = params.get_param_json('rename-entries')
+            entries = parse_json_param(params['rename-entries'])
 
             og_columns = table.columns.tolist()
             new_columns = [entries.get(col, col) for col in og_columns]
             table.columns = new_columns
             return table
         else:
+            # XXX [adamhooper, 2019-01-31] rename this function. What does it
+            # do?
             return parse_list(params, table)

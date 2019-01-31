@@ -31,6 +31,52 @@ _TextEncoding = Optional[str]
 _ChunkSize = 1024 * 1024
 
 
+def parse_multicolumn_param(value, table):
+    """
+    Get (valid_colnames, invalid_colnames) lists in `table`.
+
+    It's easy for a user to select a missing column: just add a rename
+    or column-select before the module that selected a valid column.
+
+    Columns will be ordered as they are ordered in `table`.
+
+    XXX this function is _weird_. By the time a module can call it, Workbench
+    has _already_ nixed missing columns. So `invalid_colnames` will be empty
+    unless `table` isn't the module's input table.
+    """
+    cols = value.split(',')
+    cols = [c.strip() for c in cols if c.strip()]
+
+    table_columns = list(table.columns)
+
+    valid = [c for c in table.columns if c in cols]
+    invalid = [c for c in cols if c not in table_columns]
+
+    return (valid, invalid)
+
+
+def parse_json_param(value) -> Dict[str, Any]:
+    """
+    Parse a JSON param.
+
+    Sometimes, database values are already JSON. Other times, they're
+    stored as ``str``. When given ``str``, we decode here (or raise
+    ValueError on invalid JSON).
+
+    TODO nix the duality. That way, users can store strings....
+    """
+    if isinstance(value, str):
+        if value:
+            return json.loads(value)  # raises ValueError
+        else:
+            # [2018-12-28] `None` seems more appropriate, but `{}` is
+            # backwards-compatibile. TODO migrate database to nix this
+            # ambiguity.
+            return {}
+    else:
+        return value
+
+
 class PythonFeatureDisabledError(Exception):
     def __init__(self, name):
         super().__init__(self)

@@ -148,11 +148,6 @@ async def fetch(workflow: Workflow, wf_module: WfModule, **kwargs):
     })
 
 
-@database_sync_to_async
-def _wf_module_params(wf_module: WfModule) -> Params:
-    return wf_module.get_params()
-
-
 @register_websockets_handler
 @websockets_handler('owner')
 @_loading_wf_module
@@ -174,11 +169,14 @@ async def generate_secret_access_token(workflow: Workflow, wf_module: WfModule,
     A typical caller should accept `null` but log other errors.
     """
     param = str(param)  # cannot generate an error from JSON params
-    params = await _wf_module_params(wf_module)
+    secrets = wf_module.secrets
     try:
-        offline_token = params.get_param_secret_secret(param)
+        offline_token = secrets[param]['secret']
+    except TypeError:
+        # secrets[param] is None
+        return {'token': None}
     except KeyError:
-        # There is no such param
+        # There is no such secret param, or it is unset
         return {'token': None}
     except ValueError:
         # The param has the wrong type
