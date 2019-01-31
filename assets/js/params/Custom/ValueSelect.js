@@ -195,9 +195,11 @@ export class ValueSelect extends React.PureComponent {
   }
   /** Force react-virtualized render when props change **/
   componentDidUpdate (prevProps) {
-    if ((this.props.valueCounts !== prevProps.valueCounts || this.props.value !== prevProps.value) &&
-      (Object.keys(this.props.valueCounts).length > 0)) {
-      this.valueListRef.forceUpdateGrid()
+    if (this.props.valueCounts !== null) {
+      if ((this.props.valueCounts !== prevProps.valueCounts || this.props.value !== prevProps.value) &&
+        (Object.keys(this.props.valueCounts).length > 0)) {
+        this.valueListRef.forceUpdateGrid()
+      }
     }
   }
   render () {

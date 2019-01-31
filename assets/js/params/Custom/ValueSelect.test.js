@@ -137,4 +137,13 @@ describe('ValueSelect', () => {
     w.update()
     expect(w.prop('onChange').mock.calls).toHaveLength(0)
   })
+
+  it('should render without error when valueCounts = null', () => {
+    const w = wrapper({
+      valueCounts: null,
+      value: null
+    })
+    // Used to throw TypeError
+    w.setProps({value: ['a']})
+  })
 })
