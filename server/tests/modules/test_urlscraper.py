@@ -198,14 +198,14 @@ class ScrapeUrlsTest(SimpleTestCase):
 
     def test_module_initial_nop(self):
         table = pd.DataFrame({'A': [1]})
-        result = URLScraper.render(P(urlsource=0, urllist=''), table.copy(),
+        result = URLScraper.render(table.copy(), P(urlsource=0, urllist=''),
                                    fetch_result=None)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, table)
 
     def test_module_nop_with_initial_col_selection(self):
         table = pd.DataFrame({'A': [1]})
-        result = URLScraper.render(P(urlsource=1, urlcol=''), table.copy(),
+        result = URLScraper.render(table.copy(), P(urlsource=1, urlcol=''),
                                    fetch_result=None)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, table)

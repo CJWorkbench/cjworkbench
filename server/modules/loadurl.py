@@ -51,7 +51,7 @@ def guess_mime_type_or_none(content_type: str, url: str) -> str:
 class LoadURL(ModuleImpl):
     # Input table ignored.
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if not fetch_result:
             return ProcessResult(table)  # no-op
 

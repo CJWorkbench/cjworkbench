@@ -42,8 +42,8 @@ Csv = """A,B
 2,bar""".encode('utf-8')
 
 
-def render(has_header, table, fetch_result):
-    x = UploadFile.render(P(has_header=has_header), table,
+def render(has_header, fetch_result):
+    x = UploadFile.render(pd.DataFrame(), P(has_header=has_header),
                           fetch_result=fetch_result)
     result = ProcessResult.coerce(x)
     result.sanitize_in_place()
@@ -53,20 +53,20 @@ def render(has_header, table, fetch_result):
 # See UploadFileViewTests for that
 class UploadFileTests(unittest.TestCase):
     def test_render_no_file(self):
-        result = render(True, None, None)
+        result = render(True, None)
         self.assertEqual(result, ProcessResult())
 
     def test_render_has_header_true(self):
-        result = render(True, None, ProcessResult(pd.DataFrame({'A': [1]})))
+        result = render(True, ProcessResult(pd.DataFrame({'A': [1]})))
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 
     def test_render_has_header_false(self):
-        result = render(False, None, ProcessResult(pd.DataFrame({'A': [1]})))
+        result = render(False, ProcessResult(pd.DataFrame({'A': [1]})))
         self.assertEqual(result,
                          ProcessResult(pd.DataFrame({'0': ['A', '1']})))
 
     def test_render_file_error(self):
-        result = render(False, None, ProcessResult(error='x'))
+        result = render(False, ProcessResult(error='x'))
         self.assertEqual(result, ProcessResult(error='x'))
 
     def _test_upload(self, *, uuid, filename, ext, size,

@@ -19,7 +19,7 @@ def P(colnames, drop_or_keep, select_range, column_numbers):
 def render(table, colnames, drop_or_keep, select_range,
            column_numbers) -> ProcessResult:
     params = P(colnames, drop_or_keep, select_range, column_numbers)
-    result = SelectColumns.render(params, table)
+    result = SelectColumns.render(table, params)
     return result
 
 

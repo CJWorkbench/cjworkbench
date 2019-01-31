@@ -13,7 +13,7 @@ _source_column_name = 'Source Workflow'
 
 class ConcatURL(ModuleImpl):
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if not fetch_result:
             return ProcessResult(table)
 

@@ -14,7 +14,7 @@ Keep = 1
 
 
 class SelectColumns(ModuleImpl):
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         drop_or_keep: int = params['drop_or_keep']
         select_range: bool = params['select_range']
 

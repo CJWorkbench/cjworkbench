@@ -35,7 +35,7 @@ _SortAscendings = {
 
 
 class SortFromTable(ModuleImpl):
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         column: str = params['column']
 
         is_ascending_int: int = params['direction']

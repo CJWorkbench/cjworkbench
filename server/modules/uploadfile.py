@@ -64,7 +64,7 @@ async def parse_uploaded_file(uploaded_file) -> ProcessResult:
 
 class UploadFile(ModuleImpl):
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if not fetch_result or fetch_result.status == 'error':
             return fetch_result
 

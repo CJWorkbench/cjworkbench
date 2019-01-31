@@ -19,8 +19,8 @@ def PR(error, *args, **kwargs):
     return ProcessResult(pd.DataFrame(*args, **kwargs), error)
 
 
-def render(params, table, fetch_result):
-    result = ConcatURL.render(params, table, fetch_result=fetch_result)
+def render(table, params, fetch_result):
+    result = ConcatURL.render(table, params, fetch_result=fetch_result)
     result.sanitize_in_place()
     return result
 
@@ -45,18 +45,18 @@ ext_workflow = pd.DataFrame({
 
 class ConcatURLTest(unittest.TestCase):
     def test_empty(self):
-        result = render(P(url=''), pd.DataFrame({'A': [1]}), None)
+        result = render(pd.DataFrame({'A': [1]}), P(url=''), None)
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 
     def test_empty_right(self):
-        result = render(P(), pd.DataFrame({'A': [1]}), ProcessResult())
+        result = render(pd.DataFrame({'A': [1]}), P(), ProcessResult())
         self.assertEqual(result, ProcessResult(
             dataframe=pd.DataFrame({'A': [1]}),
             error='The workflow you chose is empty'
         ))
 
     def test_invalid_url(self):
-        result = render(P(url='not a url'), pd.DataFrame({'A': [1]}),
+        result = render(pd.DataFrame({'A': [1]}), P(url='not a url'),
                         ProcessResult(error='Not a URL'))
         self.assertEqual(result, ProcessResult(
             dataframe=pd.DataFrame({'A': [1]}),
@@ -65,8 +65,8 @@ class ConcatURLTest(unittest.TestCase):
 
     def test_concat_only_left_columns(self):
         result = render(
-            P(type=0, source_columns=False),
             table,
+            P(type=0, source_columns=False),
             ProcessResult(ext_workflow)
         )
 
@@ -78,8 +78,8 @@ class ConcatURLTest(unittest.TestCase):
 
     def test_concat_all_columns(self):
         result = render(
-            P(type=1, source_columns=False),
             table,
+            P(type=1, source_columns=False),
             ProcessResult(ext_workflow)
         )
 
@@ -90,8 +90,8 @@ class ConcatURLTest(unittest.TestCase):
 
     def test_concat_matching_columns(self):
         result = render(
-            P(type=2, source_columns=False),
             table,
+            P(type=2, source_columns=False),
             ProcessResult(ext_workflow)
         )
 
@@ -104,8 +104,8 @@ class ConcatURLTest(unittest.TestCase):
 
     def test_concat_with_source(self):
         result = render(
-            P(type=1, source_columns=True),
             table,
+            P(type=1, source_columns=True),
             ProcessResult(ext_workflow)
         )
 

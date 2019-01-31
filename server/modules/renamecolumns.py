@@ -54,7 +54,7 @@ def fill_column_names(column_names, expected_length):
 class RenameFromTable(ModuleImpl):
     # Rename entry structure: Dictionary of {old_name: new_name}
     @staticmethod
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         custom_list: bool = params['custom_list']
         if not custom_list:
             entries = parse_json_param(params['rename-entries'])

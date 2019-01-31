@@ -39,18 +39,6 @@ class fake_spooled_data_from_url:
         return
 
 
-def render(wf_module):
-    if hasattr(wf_module, 'fetch_result'):
-        fetch_result = wf_module.fetch_result
-    else:
-        fetch_result = None
-
-    result = ScrapeTable.render(wf_module.get_params(), pd.DataFrame(),
-                                fetch_result=fetch_result)
-    result = ProcessResult.coerce(result)
-    return result
-
-
 a_table_html = b"""
 <html>
     <body>
@@ -86,8 +74,8 @@ class ScrapeTableTest(unittest.TestCase):
         # TODO make fetch_result _not_ a pd.DataFrame, so we don't lose info
         # when converting types here
         fetch_result = ProcessResult(pd.DataFrame(a_table.copy()))
-        result = ScrapeTable.render(P(first_row_is_header=True),
-                                    pd.DataFrame(),
+        result = ScrapeTable.render(pd.DataFrame(),
+                                    P(first_row_is_header=True),
                                     fetch_result=fetch_result)
         result = ProcessResult.coerce(result)
         expected = pd.DataFrame({'1': [2], '2': [3]})

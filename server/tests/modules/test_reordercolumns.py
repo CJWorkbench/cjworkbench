@@ -16,15 +16,15 @@ def fake_result(colnames):
     return ProcessResult(a_table[colnames])
 
 
-def render(reorder_history, table):
+def render(table, reorder_history):
     params = {'reorder-history': reorder_history}
-    result = ReorderFromTable.render(params, table.copy())
+    result = ReorderFromTable.render(table.copy(), params)
     return ProcessResult.coerce(result)
 
 
 class ReorderTest(unittest.TestCase):
     def test_reorder_empty(self):
-        result = render({}, a_table)
+        result = render(a_table, {})
         self.assertEqual(result,
                          fake_result(['name', 'date', 'count', 'float']))
 
@@ -48,7 +48,7 @@ class ReorderTest(unittest.TestCase):
                 'to': 1
             },  # gives ['count', 'float', 'date', 'name']
         ]
-        result = render(reorder_ops, a_table)
+        result = render(a_table, reorder_ops)
         self.assertEqual(result,
                          fake_result(['count', 'float', 'date', 'name']))
 
@@ -78,6 +78,6 @@ class ReorderTest(unittest.TestCase):
                 'to': 2
             },  # gives ['count', 'name', 'float', 'date']
         ]
-        result = render(reorder_ops, a_table)
+        result = render(a_table, reorder_ops)
         self.assertEqual(result,
                          fake_result(['count', 'name', 'float', 'date']))

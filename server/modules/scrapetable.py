@@ -40,7 +40,7 @@ def merge_colspan_headers_in_place(table) -> None:
 
 class ScrapeTable(ModuleImpl):
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if not fetch_result:
             return table
 

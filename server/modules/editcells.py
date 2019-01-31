@@ -84,7 +84,7 @@ class EditCells(ModuleImpl):
     #    ...
     #  ]
     @staticmethod
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         edits = parse_json(parse_json_param(params['celledits']))
         if isinstance(edits, str):
             # [adamhooper, 2019-01-31] Huh? How does this happen?

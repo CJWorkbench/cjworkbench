@@ -273,7 +273,7 @@ def merge_tweets(old_table, new_table):
 class Twitter(ModuleImpl):
     # Render just returns previously retrieved tweets
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if fetch_result is None:
             return ProcessResult()
 

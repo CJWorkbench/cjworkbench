@@ -5,7 +5,7 @@ from server.modules.types import ProcessResult
 
 
 def render(colnames, table):
-    result = DuplicateColumn.render({'colnames': colnames}, table)
+    result = DuplicateColumn.render(table, {'colnames': colnames})
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()  # important: duplicate makes colname conflicts
     return result

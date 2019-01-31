@@ -256,7 +256,7 @@ class MigrateParamsTest(unittest.TestCase):
                      expected_error: str='') -> None:
         """Test that the render method works (kinda an integration test)."""
         params = P(column, edits_json)
-        result = render(params, in_table)
+        result = render(in_table, params)
         result.sanitize_in_place()
 
         expected = ProcessResult(expected_out, expected_error)
@@ -281,7 +281,8 @@ class MigrateParamsTest(unittest.TestCase):
             pd.DataFrame({'A': ['b']}, dtype='category')
         )
 
-    # if an old version of refine contains a blacklist, new refine should not filter
+    # if an old version of refine contains a blacklist, new refine should not
+    # filter
     def test_render_blacklist_no_filter(self):
         self._test_render(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),

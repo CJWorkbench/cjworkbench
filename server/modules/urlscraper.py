@@ -88,7 +88,7 @@ def are_params_empty(params, input_table):
 
 class URLScraper(ModuleImpl):
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if are_params_empty(params, table):
             return ProcessResult(table)
 

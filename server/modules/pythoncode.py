@@ -197,7 +197,7 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
     return result
 
 
-def render(params: Params, table: pandas.DataFrame, **kwargs) -> ProcessResult:
+def render(table: pandas.DataFrame, params: Params, **kwargs) -> ProcessResult:
     code: str = params['code']
 
     if not code.strip():

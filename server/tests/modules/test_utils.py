@@ -189,7 +189,7 @@ class FetchExternalWorkflowTest(DbTestCase):
         )
 
     def _fetch(self, *args):
-        return async_to_sync(fetch_external_workflow)(*args)
+        return self.run_with_async_db(fetch_external_workflow(*args))
 
     def test_workflow_access_denied(self):
         wrong_user = User(username='b', email='b@example.org')

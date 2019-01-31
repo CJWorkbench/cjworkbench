@@ -16,7 +16,7 @@ def test_render(in_table, patch_json, out_table=pd.DataFrame(),
                 out_error=''):
     sanitize_dataframe(in_table)
 
-    result = EditCells.render(P(celledits=patch_json), in_table)
+    result = EditCells.render(in_table, P(celledits=patch_json))
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()
 

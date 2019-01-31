@@ -9,8 +9,8 @@ from .util import MockParams
 P = MockParams.factory(csv='', has_header_row=True)
 
 
-def render(params, table=pd.DataFrame()):
-    result = PasteCSV.render(params, pd.DataFrame())
+def render(params):
+    result = PasteCSV.render(pd.DataFrame(), params)
     result = ProcessResult.coerce(result)
     return result
 

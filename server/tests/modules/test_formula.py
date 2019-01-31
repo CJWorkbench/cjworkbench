@@ -16,7 +16,7 @@ class FormulaTests(unittest.TestCase):
     def _test(self, table: pd.DataFrame, params: Dict[str, Any]={},
               expected_table: pd.DataFrame=pd.DataFrame(),
               expected_error: str=''):
-        result = ProcessResult.coerce(Formula.render(P(**params), table))
+        result = ProcessResult.coerce(Formula.render(table, P(**params)))
         result.sanitize_in_place()
 
         expected = ProcessResult(expected_table, expected_error)

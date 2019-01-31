@@ -315,7 +315,7 @@ class Form:
 
 class CountByDate(ModuleImpl):
     @staticmethod
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         if table is None or table.empty:
             return table
 

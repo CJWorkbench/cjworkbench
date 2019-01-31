@@ -206,8 +206,8 @@ async def execute_wfmodule(wf_module: WfModule,
     loop = asyncio.get_event_loop()
     # Render may take a while. run_in_executor to push that slowdown to a
     # thread and keep our event loop responsive.
-    result = await loop.run_in_executor(None, loaded_module.render, params,
-                                        table, fetch_result)
+    result = await loop.run_in_executor(None, loaded_module.render, table,
+                                        params, fetch_result)
 
     cached_render_result, output_delta = \
         await _execute_wfmodule_save(wf_module, result, old_result)

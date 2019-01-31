@@ -9,7 +9,7 @@ from ..sanitizedataframe import autocast_dtypes_in_place
 # ---- PasteCSV ----
 # Lets the user paste in text which it interprets as CSV or TSV
 class PasteCSV(ModuleImpl):
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         tablestr: str = params['csv']
         has_header_row: bool = params['has_header_row']
 

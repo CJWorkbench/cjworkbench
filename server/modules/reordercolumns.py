@@ -4,7 +4,7 @@ from .utils import parse_json_param
 
 class ReorderFromTable(ModuleImpl):
     @staticmethod
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         # Entries should appear in chronological order as new
         # operations are appended to the end of the stack
         history_entries = parse_json_param(params['reorder-history'])

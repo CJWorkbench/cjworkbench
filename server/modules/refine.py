@@ -1,8 +1,7 @@
 import json
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 import numpy as np
 import pandas as pd
-from .moduleimpl import ModuleImpl
 from .types import ProcessResult
 
 
@@ -263,7 +262,7 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     return params
 
 
-def render(params, table, **kwargs):
+def render(table, params, **kwargs):
     # 'refine' holds the edits
     column: str = params['column']
     if not column:

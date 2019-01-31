@@ -105,7 +105,7 @@ def download_data_frame(sheet_id: str, sheet_mime_type: str,
 
 class GoogleSheets(ModuleImpl):
     @staticmethod
-    def render(params, _unused_table, *, fetch_result, **kwargs):
+    def render(_unused_table, params, *, fetch_result, **kwargs):
         # Must perform header operation here in the event the header checkbox
         # state changes
         if not fetch_result:

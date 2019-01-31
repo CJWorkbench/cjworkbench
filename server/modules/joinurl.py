@@ -58,7 +58,7 @@ def sort_columns(og_columns, new_columns):
 
 class JoinURL(ModuleImpl):
     @staticmethod
-    def render(params, table, *, fetch_result, **kwargs):
+    def render(table, params, *, fetch_result, **kwargs):
         if not fetch_result:
             # User hasn't fetched yet
             return ProcessResult()

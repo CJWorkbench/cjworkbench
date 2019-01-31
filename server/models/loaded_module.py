@@ -72,21 +72,13 @@ StaticModules = {
 }
 
 
-def _default_render(param1, param2,
+def _default_render(table, params,
                     *, fetch_result, **kwargs) -> ProcessResult:
     """Render fetch_result or pass-through input."""
     if fetch_result is not None:
         return fetch_result
     else:
-        # Pass-through input.
-        #
-        # Internal and external modules have opposite calling conventions: one
-        # takes (params, table) and the other takes (table, params). Return
-        # whichever input is a pd.DataFrame.
-        if isinstance(param1, pd.DataFrame):
-            return ProcessResult(param1)
-        else:
-            return ProcessResult(param2)
+        return ProcessResult(table)
 
 
 async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
@@ -95,7 +87,7 @@ async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
 
 
 class DeletedModule:
-    def render(self, params: Params, table: Optional[pd.DataFrame],
+    def render(self, table: Optional[pd.DataFrame], params: Params,
                fetch_result: Optional[ProcessResult]) -> ProcessResult:
         logger.info('render() deleted module')
         return ProcessResult(error='Cannot render: module was deleted')
@@ -117,13 +109,11 @@ class LoadedModule:
     """A module with `fetch` and `render` methods.
     """
     def __init__(self, module_id_name: str, version_sha1: str,
-                 is_external: bool = True,
                  render_impl: Callable = _default_render,
                  fetch_impl: Callable = _default_fetch,
                  migrate_params_impl: Optional[Callable] = None):
         self.module_id_name = module_id_name
         self.version_sha1 = version_sha1
-        self.is_external = is_external
         self.name = f'{module_id_name}:{version_sha1}'
         self.render_impl = render_impl
         self.fetch_impl = fetch_impl
@@ -143,8 +133,7 @@ class LoadedModule:
         error = f'{exc_name}: {str(err)} at line {lineno} of {fname}'
         return ProcessResult(error=error)
 
-    def render(self, params: Params,
-               table: Optional[pd.DataFrame],
+    def render(self, table: Optional[pd.DataFrame], params: Params,
                fetch_result: Optional[ProcessResult]) -> ProcessResult:
         """
         Process `table` with module `render` method, for a ProcessResult.
@@ -158,11 +147,7 @@ class LoadedModule:
         This synchronous method can be slow for complex modules or large
         datasets. Consider calling it from an executor.
         """
-        # Internal and external modules have different calling conventions
-        if self.is_external:
-            arg1, arg2 = (table, params.to_painful_dict(table))
-        else:
-            arg1, arg2 = (params.to_painful_dict(table), table)
+        params = params.to_painful_dict(table)
 
         kwargs = {}
         spec = inspect.getfullargspec(self.render_impl)
@@ -174,7 +159,7 @@ class LoadedModule:
         time1 = time.time()
 
         try:
-            out = self.render_impl(arg1, arg2, **kwargs)
+            out = self.render_impl(table, params, **kwargs)
         except Exception as err:
             logger.exception('Exception in %s.render', self.module_id_name)
             out = self._wrap_exception(err)
@@ -348,17 +333,15 @@ class LoadedModule:
         try:
             module = StaticModules[module_id_name]
             version_sha1 = 'internal'
-            is_external = False
         except KeyError:
             module = load_external_module(module_id_name, version_sha1,
                                           module_version.last_update_time)
-            is_external = True
 
         render_impl = getattr(module, 'render', _default_render)
         fetch_impl = getattr(module, 'fetch', _default_fetch)
         migrate_params_impl = getattr(module, 'migrate_params', None)
 
-        return cls(module_id_name, version_sha1, is_external=is_external,
+        return cls(module_id_name, version_sha1,
                    render_impl=render_impl, fetch_impl=fetch_impl,
                    migrate_params_impl=migrate_params_impl)
 

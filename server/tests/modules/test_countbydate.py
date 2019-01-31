@@ -12,8 +12,8 @@ P = MockParams.factory(column='', groupby=0, operation=0, targetcolumn='',
                        include_missing_dates=False)
 
 
-def render(params, table):
-    return ProcessResult.coerce(CountByDate.render(params, table))
+def render(table, params):
+    return ProcessResult.coerce(CountByDate.render(table, params))
 
 
 def dt(s):
@@ -57,7 +57,7 @@ agg_int_table = pandas.DataFrame({
 
 class CountByDateTests(SimpleTestCase):
     def _assertRendersTable(self, in_table, params, expected_table):
-        result = render(params, in_table)
+        result = render(in_table, params)
 
         if hasattr(expected_table['Date'], 'dt'):
             expected_table['Date'] = \
@@ -182,32 +182,32 @@ class CountByDateTests(SimpleTestCase):
         )
 
     def test_no_col_gives_noop(self):
-        result = render(P(column=''), count_table)
+        result = render(count_table, P(column=''))
         expected = ProcessResult(count_table)
         self.assertResultEqual(result, expected)
 
     def test_invalid_colname_gives_error(self):
         # bad column name should produce error
-        result = render(P(column='hilarious'), count_table)
+        result = render(count_table, P(column='hilarious'))
         self.assertEqual(result.error, 'There is no column named "hilarious"')
 
     def test_integer_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': [1], 'B': [2]})
-        result = render(P(column='A'), table)
+        result = render(table, P(column='A'))
         self.assertEqual(result.error, 'Column "A" must be Date & Time')
 
     def test_string_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': ['2018'], 'B': [2]})
-        result = render(P(column='A'), table)
+        result = render(table, P(column='A'))
         self.assertEqual(result.error, 'Column "A" must be Date & Time')
         self.assertEqual(len(result.quick_fixes), 1)
 
     def test_average_no_error_when_missing_target(self):
         # 1 = mean
         params = P(column='Date', operation=1, targetcolumn='')
-        result = render(params, count_table)
+        result = render(count_table, params)
         self.assertResultEqual(
             result,
             ProcessResult(count_table)
@@ -215,7 +215,7 @@ class CountByDateTests(SimpleTestCase):
 
     def test_average_require_target(self):
         params = P(column='Date', operation=1, targetcolumn='Invalid')
-        result = render(params, count_table)
+        result = render(count_table, params)
         self.assertEqual(result.error, 'There is no column named "Invalid"')
 
     def test_average_by_date(self):
@@ -366,7 +366,7 @@ class CountByDateTests(SimpleTestCase):
     def test_include_too_many_missing_dates(self):
         # 0 - group by seconds
         params = P(column='Date', groupby=0, include_missing_dates=True)
-        result = render(params, count_table)
+        result = render(count_table, params)
         self.assertEqual(
             result.error,
             ('Including missing dates would create 174787201 rows, '

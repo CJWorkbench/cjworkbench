@@ -8,7 +8,7 @@ from .types import ProcessResult
 # Base class for all modules. Really just a reminder of function signatures
 class ModuleImpl:
     @staticmethod
-    def render(params: Params, table: pd.DataFrame, **kwargs) -> ProcessResult:
+    def render(table: pd.DataFrame, params: Params, **kwargs) -> ProcessResult:
         return ProcessResult(table)
 
     @staticmethod

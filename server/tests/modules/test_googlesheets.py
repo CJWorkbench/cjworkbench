@@ -141,7 +141,7 @@ class GoogleSheetsTests(unittest.TestCase):
             'has_header': False,
         }
         fetch_result = fetch(**kwargs)
-        result = GoogleSheets.render(P(**kwargs), pd.DataFrame(),
+        result = GoogleSheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
         result.sanitize_in_place()  # TODO fix header-shift code; nix this
         assert_frame_equal(result.dataframe, pd.DataFrame({
@@ -178,6 +178,6 @@ class GoogleSheetsTests(unittest.TestCase):
             }
         }
         fetch_result = fetch(**kwargs)
-        result = GoogleSheets.render(P(**kwargs), pd.DataFrame(),
+        result = GoogleSheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
         self.assertEqual(result, ProcessResult(expected_table))

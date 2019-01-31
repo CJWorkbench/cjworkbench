@@ -26,7 +26,7 @@ def _do_render(table, dup_columns):
 
 
 class DuplicateColumn(ModuleImpl):
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         columns, _ = parse_multicolumn_param(params['colnames'], table)
 
         return _do_render(table, columns)

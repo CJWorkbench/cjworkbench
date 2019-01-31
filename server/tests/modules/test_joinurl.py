@@ -32,8 +32,8 @@ def PR(error, *args, **kwargs):
     return ProcessResult(pd.DataFrame(*args, **kwargs), error)
 
 
-def render(params, table, fetch_result):
-    return JoinURL.render(params, table, fetch_result=fetch_result)
+def render(table, params, fetch_result):
+    return JoinURL.render(table, params, fetch_result=fetch_result)
 
 
 table = pd.DataFrame([['a', 'b'], ['a', 'c']], columns=['col1', 'key'])
@@ -53,22 +53,22 @@ ref_left_join_with_types = pd.DataFrame(
 
 class JoinURLTests(unittest.TestCase):
     def test_no_left(self):
-        result = render(P(), pd.DataFrame(), PR('', {'A': [1]}))
+        result = render(pd.DataFrame(), P(), PR('', {'A': [1]}))
         self.assertEqual(result, ProcessResult())
 
     def test_no_right(self):
-        result = render(P(), pd.DataFrame({'A': [1]}), None)
+        result = render(pd.DataFrame({'A': [1]}), P(), None)
         self.assertEqual(result, ProcessResult())
 
     def test_right_is_error(self):
-        result = render(P(), pd.DataFrame({'A': [1]}), PR('error'))
+        result = render(pd.DataFrame({'A': [1]}), P(), PR('error'))
         self.assertEqual(result, ProcessResult(error='error'))
 
     def test_join(self):
         # Nothing too technical, do not need to test pandas functions
-        result = render(P(type=_join_type_map.index('inner'),
+        result = render(pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
+                        P(type=_join_type_map.index('inner'),
                           colnames='key'),
-                        pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
                         PR('', {
                             'key': ['b', 'd'],
                             'col2': ['c', 'a'],
@@ -82,10 +82,10 @@ class JoinURLTests(unittest.TestCase):
         }))
 
     def test_importcols(self):
-        result = render(P(type=_join_type_map.index('inner'),
+        result = render(pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
+                        P(type=_join_type_map.index('inner'),
                           colnames='key', select_columns=True,
                           importcols='col2'),
-                        pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
                         PR('', {
                             'key': ['b', 'd'],
                             'col2': ['c', 'a'],
@@ -95,26 +95,26 @@ class JoinURLTests(unittest.TestCase):
                          list(result.dataframe.columns))
 
     def test_colnames_not_in_right(self):
-        result = render(P(colnames='A', select_columns=True,
+        result = render(pd.DataFrame({'A': [1], 'B': [2]}),
+                        P(colnames='A', select_columns=True,
                           importcols='B'),
-                        pd.DataFrame({'A': [1], 'B': [2]}),
                         PR('', {'A': [1], 'C': [2]}))
         self.assertEqual(result, ProcessResult(error=(
             "Selected columns not in target workflow: B"
         )))
 
     def test_cast_int_to_float(self):
-        result = render(P(type=_join_type_map.index('inner'),
+        result = render(pd.DataFrame({'A': [1, 2, 3]}),
+                        P(type=_join_type_map.index('inner'),
                           colnames='A'),
-                        pd.DataFrame({'A': [1, 2, 3]}),
                         PR('', {'A': [1.0, 2.0, 4.0]}))
         expected = pd.DataFrame({'A': [1.0, 2.0]})
         assert_frame_equal(result.dataframe, expected)
 
     def test_type_mismatch(self):
-        result = render(P(type=_join_type_map.index('inner'),
+        result = render(pd.DataFrame({'A': [1, 2, 3]}),
+                        P(type=_join_type_map.index('inner'),
                           colnames='A'),
-                        pd.DataFrame({'A': [1, 2, 3]}),
                         PR('', {'A': ['1', '2', '3']}))
         self.assertEqual(result, ProcessResult(error=(
             'Types do not match for key column "A" (number and text). '

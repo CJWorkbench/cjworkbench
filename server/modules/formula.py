@@ -144,7 +144,7 @@ def excel_formula(table, formula, all_rows):
 
 class Formula(ModuleImpl):
     @staticmethod
-    def render(params, table, **kwargs):
+    def render(table, params, **kwargs):
         if table is None:
             return None     # no rows to process
 
