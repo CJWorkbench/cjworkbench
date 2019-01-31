@@ -127,6 +127,12 @@ class MigrateParamsTest(unittest.TestCase):
             RefineSpec({'y': 'x'})
         )
 
+    def test_parse_v0_valueerror_bad_select_bad_value(self):
+        with self.assertRaises(ValueError):
+            migrate_params({'column': 'A', 'refine': json.dumps([
+                {'type': 'select', 'column': 'A', 'content': {'valu': 'x'}},
+            ])})
+
     def test_parse_v0_valueerror_bad_change_bad_content_key(self):
         with self.assertRaises(ValueError):
             migrate_params({'column': 'A', 'refine': json.dumps([
@@ -150,6 +156,35 @@ class MigrateParamsTest(unittest.TestCase):
     def test_parse_v0_valueerror_not_dict(self):
         with self.assertRaises(ValueError):
             migrate_params({'column': 'A', 'refine': json.dumps('A')})
+
+    def _test_parse_v2(self, column: str, arr: Dict[str, Any],
+                           expected: RefineSpec) -> None:
+            """
+            Test that deprecated input is transformed into what the user expects.
+            """
+            result = migrate_params({
+                'column': column,
+                'refine': arr,
+            })
+            self.assertEqual(result['column'], column)
+            refine = result['refine']
+            self.assertEqual(refine['renames'], expected.renames)
+            self.assertTrue('blackist' not in refine)
+            self.assertEqual(len(refine.keys()), 1)
+
+    def test_parse_v2_no_blacklist_after_rename(self):
+        self._test_parse_v2(
+            'A',
+            {'renames': {'a': 'b'}, 'blacklist': ['c']},
+            RefineSpec({'a': 'b'})
+        )
+
+    def test_parse_v3_only_rename(self):
+        self._test_parse_v2(
+            'A',
+            {'renames': {'a': 'b'}},
+            RefineSpec({'a': 'b'})
+        )
 
     def _test_refine_spec_apply(self, in_table: pd.DataFrame, column: str,
                                 spec: RefineSpec,

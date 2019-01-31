@@ -6,15 +6,13 @@ import { withFetchedData } from '../FetchedData'
 const NumberFormatter = new Intl.NumberFormat()
 
 export class RefineSpec {
-  constructor (renames, blacklist) {
+  constructor (renames) {
     this.renames = renames
-    this.blacklist = blacklist
   }
 
   toJsonObject () {
     return {
-      renames: this.renames,
-      blacklist: this.blacklist
+      renames: this.renames
     }
   }
 
@@ -25,10 +23,9 @@ export class RefineSpec {
    *
    * * `name`: a string describing the desired output
    * * `values`: strings describing the desired input; empty if no edits
-   * * `isBlacklisted`: true if we are omitting this group from output
    */
   buildGroupsForValueCounts (valueCounts) {
-    const { renames, blacklist } = this
+    const { renames } = this
 
     const groupNames = []
     const groupsByName = {}
@@ -46,16 +43,8 @@ export class RefineSpec {
         groupsByName[groupName] = {
           name: groupName,
           values: [ value ],
-          count: count,
-          isBlacklisted: false // for now
+          count: count
         }
-      }
-    }
-
-    // Blacklist groups
-    for (const groupName of blacklist) {
-      if (groupName in groupsByName) {
-        groupsByName[groupName].isBlacklisted = true
       }
     }
 
@@ -72,15 +61,8 @@ export class RefineSpec {
   }
 
   massRename (groupMap) {
-    const { renames, blacklist } = this
+    const { renames } = this
     const newRenames = Object.assign({}, renames)
-
-    // Start with blacklist as a "Set": { groupA: null, groupB: null, ... }
-    const oldBlacklistSet = {}
-    for (const group of blacklist) {
-      oldBlacklistSet[group] = null
-    }
-    const newBlacklistSet = Object.assign({}, oldBlacklistSet)
 
     // Rewrite every value=>fromGroup to be value=>toGroup
     for (const oldValue in renames) {
@@ -88,12 +70,6 @@ export class RefineSpec {
       if (oldGroup in groupMap) {
         const toGroup = groupMap[oldGroup]
         newRenames[oldValue] = toGroup
-
-        // Rename a blacklist entry if we need to
-        if (oldGroup in oldBlacklistSet) {
-          delete newBlacklistSet[oldGroup]
-          newBlacklistSet[toGroup] = null
-        }
       }
     }
 
@@ -102,24 +78,16 @@ export class RefineSpec {
       if (!(fromGroup in newRenames)) {
         const toGroup = groupMap[fromGroup]
         newRenames[fromGroup] = toGroup
-
-        if (fromGroup in oldBlacklistSet) {
-          delete newBlacklistSet[fromGroup]
-          newBlacklistSet[toGroup] = null
-        }
       }
     }
 
-    const newBlacklist = Object.keys(newBlacklistSet)
-
-    return new RefineSpec(newRenames, newBlacklist)
+    return new RefineSpec(newRenames)
   }
 
   resetGroup (group) {
-    const { renames, blacklist } = this
+    const { renames } = this
 
     const newRenames = Object.assign({}, renames)
-    const newBlacklist = blacklist.filter(g => g !== group)
 
     for (const key in renames) {
       if (renames[key] === group) {
@@ -127,44 +95,22 @@ export class RefineSpec {
       }
     }
 
-    return new RefineSpec(newRenames, newBlacklist)
+    return new RefineSpec(newRenames)
   }
 
   resetValue (value) {
-    const { renames, blacklist } = this
+    const { renames } = this
 
     const newRenames = Object.assign({}, renames)
     delete newRenames[value]
 
     // This _might_ remove a group. If it does, we need to remove that from
-    // blacklist. So let's track all the groups.
     const newGroups = {}
     for (const key in newRenames) {
       newGroups[newRenames[key]] = null
     }
 
-    const newBlacklist = blacklist.filter(g => g in newGroups)
-
-    return new RefineSpec(newRenames, newBlacklist)
-  }
-
-  setIsBlacklisted (group, isBlacklisted) {
-    const newBlacklist = this.blacklist.slice()
-
-    const index = newBlacklist.indexOf(group)
-    if (index === -1) {
-      // Add to blacklist
-      newBlacklist.push(group)
-    } else {
-      // Remove from blacklist
-      newBlacklist.splice(index, 1)
-    }
-
-    return new RefineSpec(this.renames, newBlacklist)
-  }
-
-  withBlacklist (newBlacklist) {
-    return new RefineSpec(this.renames, newBlacklist)
+    return new RefineSpec(newRenames)
   }
 }
 
@@ -239,7 +185,7 @@ class RefineGroup extends React.PureComponent {
     count: PropTypes.number.isRequired, // number, strictly greater than 0
     isSelected: PropTypes.bool.isRequired,
     onChangeName: PropTypes.func.isRequired, // func(oldName, newName) => undefined
-    setIsSelected: PropTypes.func.isRequired, // func(name, isBlacklisted) => undefined
+    setIsSelected: PropTypes.func.isRequired, // func(value, isChecked) => undefined
     onResetGroup: PropTypes.func.isRequired, // func(name) => undefined
     onResetValue: PropTypes.func.isRequired // func(value) => undefined
   }
@@ -269,10 +215,6 @@ class RefineGroup extends React.PureComponent {
         this.textInput.current.select()
       }
     }
-  }
-
-  onChangeIsBlacklisted = (ev) => {
-    this.props.onChangeIsBlacklisted(this.props.name, !ev.target.checked)
   }
 
   onChangeIsSelected = (ev) => {
@@ -437,7 +379,7 @@ export class AllNoneButtons extends React.PureComponent {
 }
 
 /**
- * Edit a column's values to become "groups", then blacklist unwanted groups.
+ * Edit a column's values to become "groups"
  *
  * The "value" here is a JSON-encoded String. Its format:
  *
@@ -446,10 +388,7 @@ export class AllNoneButtons extends React.PureComponent {
  *             "foo": "bar", // "edit every 'foo' value to become 'bar'"
  *             //      ^^^ from the user's point of view, "bar" is the "group"
  *             ...
- *         },
- *         "blacklist": [
- *             "bar", // "Filter out every row where the post-rename value is "bar"
- *         ]
+ *         }
  *     }
  *
  * `valueCounts` describes the input: `{ "foo": 1, "bar": 3, ... }`
@@ -459,8 +398,7 @@ export class Refine extends React.PureComponent {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
     loading: PropTypes.bool.isRequired, // true iff loading from server
     value: PropTypes.shape({
-      renames: PropTypes.object.isRequired,
-      blacklist: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+      renames: PropTypes.object.isRequired
     }).isRequired,
     onChange: PropTypes.func.isRequired, // fn(newValue) => undefined
   }
@@ -478,8 +416,8 @@ export class Refine extends React.PureComponent {
       // Memoized
       return this._parsedSpec.retval
     } else {
-      const { renames, blacklist } = value
-      const retval = new RefineSpec(renames, blacklist)
+      const { renames } = value
+      const retval = new RefineSpec(renames)
       this._parsedSpec = { value, retval }
       return retval
     }
@@ -492,7 +430,6 @@ export class Refine extends React.PureComponent {
    *
    * * `name`: a string describing the desired output
    * * `values`: strings describing the desired input; empty if no edits
-   * * `isBlacklisted`: true if we are omitting this group from output
    */
   get groups () {
     const valueCounts = this.props.valueCounts
@@ -621,10 +558,8 @@ export class Refine extends React.PureComponent {
 
   rename = buildSpecModifier(this, 'rename')
   massRename = buildSpecModifier(this, 'massRename')
-  setIsBlacklisted = buildSpecModifier(this, 'setIsBlacklisted')
   resetGroup = buildSpecModifier(this, 'resetGroup')
   resetValue = buildSpecModifier(this, 'resetValue')
-  setBlacklist = buildSpecModifier(this, 'withBlacklist')
 
   render () {
     const { valueCounts } = this.props
