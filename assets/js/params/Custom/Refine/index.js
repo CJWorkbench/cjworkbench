@@ -611,12 +611,12 @@ export class Refine extends React.PureComponent {
     })
 
     const toGroup = selectedGroups[0].name
-    let groupMap = {}
+    const groupMap = {}
     selectedValuesList.forEach(function (fromGroup) {
       groupMap[fromGroup] = toGroup
     })
     this.massRename(groupMap)
-    this.setState( {selectedValues: [], focusedValue: toGroup} )
+    this.setState({ selectedValues: [], focusedValue: toGroup })
   }
 
   rename = buildSpecModifier(this, 'rename')
@@ -649,7 +649,6 @@ export class Refine extends React.PureComponent {
     ))
 
     const canSearch = this.groups.length > 1
-    if (focusedValue !== '') this.clearFocus()
 
     const maybeMergeButton = groups.length > 0 ? (
       <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={Object.keys(selectedValues).length < 2}>Merge facets</button>)
