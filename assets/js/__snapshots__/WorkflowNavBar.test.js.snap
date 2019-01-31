@@ -5,58 +5,62 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
   <nav
     className="navbar"
   >
-    <a
-      className="logo-navbar"
-      href="/workflows/"
-    >
-      <img
-        className="image"
-        src="undefinedimages/logo.svg"
-      />
-    </a>
     <div
-      className="title-metadata-stack"
+      className="navbar-elements"
     >
-      <Connect(EditableWorkflowName)
-        isReadOnly={false}
-      />
-      <WorkflowMetadata
-        openShareModal={[Function]}
-        workflow={
-          Object {
-            "id": 303,
-            "name": "Original Version",
-            "owner_name": "Not LogggedIn",
-            "public": true,
-          }
-        }
-      />
-    </div>
-    <div
-      className="nav-buttons"
-    >
-      <UndoRedoButtons
-        redo={[Function]}
-        undo={[Function]}
-      />
-      <button
-        name="duplicate"
-        onClick={[Function]}
-      >
-        Duplicate
-      </button>
-      <button
-        name="share"
-        onClick={[Function]}
-      >
-        Share
-      </button>
       <a
-        className="nav--link"
-        href="/account/login"
+        className="logo-navbar"
+        href="/workflows/"
       >
-        Sign in
+        <img
+          className="image"
+          src="undefinedimages/logo.svg"
+        />
       </a>
+      <div
+        className="title-metadata-stack"
+      >
+        <Connect(EditableWorkflowName)
+          isReadOnly={false}
+        />
+        <WorkflowMetadata
+          openShareModal={[Function]}
+          workflow={
+            Object {
+              "id": 303,
+              "name": "Original Version",
+              "owner_name": "Not LogggedIn",
+              "public": true,
+            }
+          }
+        />
+      </div>
+      <div
+        className="nav-buttons"
+      >
+        <UndoRedoButtons
+          redo={[Function]}
+          undo={[Function]}
+        />
+        <button
+          name="duplicate"
+          onClick={[Function]}
+        >
+          Duplicate
+        </button>
+        <button
+          name="share"
+          onClick={[Function]}
+        >
+          Share
+        </button>
+        <a
+          className="nav--link"
+          href="/account/login"
+        >
+          Sign in
+        </a>
+      </div>
     </div>
   </nav>
 </Fragment>
@@ -67,66 +71,70 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
   <nav
     className="navbar"
   >
-    <a
-      className="logo-navbar"
-      href="/workflows/"
-    >
-      <img
-        className="image"
-        src="undefinedimages/logo.svg"
-      />
-    </a>
     <div
-      className="title-metadata-stack"
+      className="navbar-elements"
     >
-      <Connect(EditableWorkflowName)
-        isReadOnly={false}
-      />
-      <WorkflowMetadata
-        openShareModal={[Function]}
-        workflow={
-          Object {
-            "id": 12,
-            "name": "Original Version",
-            "owner_name": "John Johnson",
-            "public": true,
-          }
-        }
-      />
-    </div>
-    <div
-      className="nav-buttons"
-    >
-      <UndoRedoButtons
-        redo={[Function]}
-        undo={[Function]}
-      />
-      <button
-        name="duplicate"
-        onClick={[Function]}
+      <a
+        className="logo-navbar"
+        href="/workflows/"
       >
-        Duplicate
-      </button>
-      <button
-        name="share"
-        onClick={[Function]}
+        <img
+          className="image"
+          src="undefinedimages/logo.svg"
+        />
+      </a>
+      <div
+        className="title-metadata-stack"
       >
-        Share
-      </button>
-      <WfHamburgerMenu
-        api={
-          Object {
-            "duplicateWorkflow": [MockFunction],
+        <Connect(EditableWorkflowName)
+          isReadOnly={false}
+        />
+        <WorkflowMetadata
+          openShareModal={[Function]}
+          workflow={
+            Object {
+              "id": 12,
+              "name": "Original Version",
+              "owner_name": "John Johnson",
+              "public": true,
+            }
           }
-        }
-        isReadOnly={false}
-        user={
-          Object {
-            "id": 8,
+        />
+      </div>
+      <div
+        className="nav-buttons"
+      >
+        <UndoRedoButtons
+          redo={[Function]}
+          undo={[Function]}
+        />
+        <button
+          name="duplicate"
+          onClick={[Function]}
+        >
+          Duplicate
+        </button>
+        <button
+          name="share"
+          onClick={[Function]}
+        >
+          Share
+        </button>
+        <WfHamburgerMenu
+          api={
+            Object {
+              "duplicateWorkflow": [MockFunction],
+            }
           }
-        }
-        workflowId={12}
-      />
+          isReadOnly={false}
+          user={
+            Object {
+              "id": 8,
+            }
+          }
+          workflowId={12}
+        />
+      </div>
     </div>
   </nav>
 </Fragment>

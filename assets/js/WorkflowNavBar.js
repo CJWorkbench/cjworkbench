@@ -116,20 +116,22 @@ export default class WorkflowNavBar extends React.Component {
       <React.Fragment>
         {spinner}
         <nav className='navbar'>
-          <a href='/workflows/' className='logo-navbar'>
-            <img className='image' src={`${window.STATIC_URL}images/logo.svg`}/>
-          </a>
-          <div className='title-metadata-stack'>
-            <EditableWorkflowName isReadOnly={isReadOnly} />
-            <WorkflowMetadata workflow={this.props.workflow} openShareModal={this.openShareModal} />
-          </div>
-          <div className='nav-buttons'>
-            {isReadOnly ? null : (
-              <UndoRedoButtons undo={this.undo} redo={this.redo} />
-            )}
-            <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
-            <button name='share' onClick={this.openShareModal}>Share</button>
-            {contextMenu}
+          <div className="navbar-elements">
+            <a href='/workflows/' className='logo-navbar'>
+              <img className='image' src={`${window.STATIC_URL}images/logo.svg`}/>
+            </a>
+            <div className='title-metadata-stack'>
+              <EditableWorkflowName isReadOnly={isReadOnly} />
+              <WorkflowMetadata workflow={this.props.workflow} openShareModal={this.openShareModal} />
+            </div>
+            <div className='nav-buttons'>
+              {isReadOnly ? null : (
+                <UndoRedoButtons undo={this.undo} redo={this.redo} />
+              )}
+              <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
+              <button name='share' onClick={this.openShareModal}>Share</button>
+              {contextMenu}
+            </div>
           </div>
         </nav>
         {shareModal}

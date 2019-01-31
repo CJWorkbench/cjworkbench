@@ -99,7 +99,9 @@ export class Lesson extends React.PureComponent {
         <h1>{header.title}</h1>
         <div className="description" dangerouslySetInnerHTML={({__html: header.html})}></div>
         <div className="sections">
-          {sectionComponents}
+          <div className="content">
+            {sectionComponents}
+          </div>
           <LessonFooter
             key='footer'
             isCurrent={this.state.currentSectionIndex === sections.length}
