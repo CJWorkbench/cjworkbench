@@ -305,7 +305,7 @@ class LoadedModule:
             try:
                 values = self.migrate_params_impl(values)
             except Exception as err:
-                raise ValueError(err)
+                raise ValueError('migrate_params() raised %r' % err)
 
             try:
                 schema.validate(values)

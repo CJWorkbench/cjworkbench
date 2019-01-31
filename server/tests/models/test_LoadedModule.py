@@ -530,11 +530,12 @@ class LoadedModuleTest(unittest.TestCase):
 
     def test_migrate_params_impl_exception(self):
         def migrate_params(params):
-            raise KeyError
+            {}['a']
 
         lm = LoadedModule('x', '1', True,
                           migrate_params_impl=migrate_params)
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(ValueError,
+                                    r'migrate_params\(\) raised KeyError'):
             lm.migrate_params([], {})
 
     def test_migrate_params_impl_missing_output(self):
