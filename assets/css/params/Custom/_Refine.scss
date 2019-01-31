@@ -200,8 +200,9 @@
         // space, so the count is right-aligned.
         display: block;
         white-space: nowrap;
-        overflow: hidden;
         margin-left: .2rem;
+        max-width: 100%;
+        overflow-x: hidden;
 
         input { // Click to rename value
           display: block;
@@ -211,10 +212,13 @@
           height: 100%;
           border: 0;
           margin: 0;
-          padding: .5rem .5rem .5rem 0;
+          padding: .5rem 0;
           font-size: 1.3rem;
           background: transparent;
           color: $brand-text--dark;
+          text-overflow: ellipsis;
+
+
           &:hover {
             background-color: $dark-accent--soft;
           }
