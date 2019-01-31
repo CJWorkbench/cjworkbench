@@ -1,7 +1,7 @@
 import asyncio
 import contextlib
 import datetime
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 from channels.db import database_sync_to_async
 from server import notifications
 from server.models import CachedRenderResult, LoadedModule, WfModule, Workflow
@@ -44,8 +44,8 @@ def locked_wf_module(wf_module):
                     last_relevant_delta_id=delta_id
                 )
             except WfModule.DoesNotExist:
-                # Module was deleted or changed input/params _after_ we requested
-                # render but _before_ we start rendering
+                # Module was deleted or changed input/params _after_ we
+                # requested render but _before_ we start rendering
                 raise UnneededExecution
 
             retval = yield safe_wf_module
@@ -229,7 +229,7 @@ def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
     quick_fixes = [qf.to_dict()
                    for qf in cached_result.quick_fixes]
 
-    output_columns = [{'name': c.name, 'type': c.type}
+    output_columns = [{'name': c.name, 'type': c.type.value}
                       for c in cached_result.columns]
 
     return {
@@ -266,7 +266,10 @@ def _load_tabs_wf_modules_and_input(workflow: Workflow):
 
             # 2. Find index of first one that needs render
             index = 0
-            while index < len(wf_modules) and not _needs_render(wf_modules[index]):
+            while (
+                index < len(wf_modules)
+                and not _needs_render(wf_modules[index])
+            ):
                 index += 1
 
             wf_modules_needing_render = wf_modules[index:]
@@ -279,10 +282,11 @@ def _load_tabs_wf_modules_and_input(workflow: Workflow):
             if index == 0:
                 prev_result = None
             else:
-                # if the CachedRenderResult is obsolete because of a race (it's on
-                # the filesystem as well as in the DB), we'll get _something_ back:
-                # this method doesn't raise exceptions. There's no harm done if the
-                # value is wrong: we'll check that later anyway.
+                # if the CachedRenderResult is obsolete because of a race (it's
+                # on the filesystem as well as in the DB), we'll get
+                # _something_ back: this method doesn't raise exceptions.
+                # There's no harm done if the value is wrong: we'll check that
+                # later anyway.
                 prev_result = wf_modules[index - 1].get_cached_render_result()
 
             ret.append((wf_modules_needing_render, prev_result))

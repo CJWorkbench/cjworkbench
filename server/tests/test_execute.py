@@ -1,7 +1,5 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import Mock, patch
-import django.db
 import pandas as pd
 from server.tests.utils import DbTestCase
 from server.execute import execute_workflow, UnneededExecution
@@ -70,11 +68,11 @@ class ExecuteTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wf_module1 = tab.wf_modules.create(
+        tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=delta.id
         )
-        wf_module2 = tab.wf_modules.create(
+        tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=delta.id
         )
