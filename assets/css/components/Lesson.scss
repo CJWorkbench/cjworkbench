@@ -105,9 +105,9 @@ article.lesson {
 
     .instruction-detail {
       position: relative;
+      font-weight:400;
       margin-top: 3rem;
       color: $white;
-      &.highlight {font-weight:400;}
     }
 
     code {
@@ -157,7 +157,10 @@ article.lesson {
           left:-2rem;
         }
 
-        .copy-txt {width:30rem;}
+        .copy-txt {
+          left: -2rem;
+          width: 32rem;
+        }
 
         &::before {
           content: "\e938";
