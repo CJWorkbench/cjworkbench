@@ -142,6 +142,7 @@ COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
 COPY --from=jsbuild /app/webpack-stats.json /app/
 COPY cjworkbench/ /app/cjworkbench/
 COPY server/ /app/server/
+COPY worker/ /app/worker/
 COPY bin/ /app/bin/
 COPY templates/ /app/templates/
 COPY manage.py /app/
