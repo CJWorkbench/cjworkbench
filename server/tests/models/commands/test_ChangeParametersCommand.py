@@ -1,5 +1,4 @@
 from unittest.mock import patch
-import pandas as pd
 from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand, ChangeParametersCommand
 from server.tests.utils import DbTestCase
@@ -29,18 +28,19 @@ class ChangeParametersCommandTest(DbTestCase):
                 {'id_name': 'version_select', 'type': 'custom'},
             ]
         })
+
+        params1 = {
+            'url': 'http://example.org',
+            'has_header': True,
+            'version_select': '',
+        }
+
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='loadurl',
             order=0,
             last_relevant_delta_id=workflow.last_delta_id,
-            params={
-                'url': 'http://example.org',
-                'has_header': True,
-                'version_select': None
-            }
+            params=params1
         )
-
-        params1 = wf_module.get_params().as_dict()
 
         # Create and apply delta. It should change params.
         cmd = self.run_with_async_db(ChangeParametersCommand.create(
@@ -52,23 +52,23 @@ class ChangeParametersCommandTest(DbTestCase):
             }
         ))
         wf_module.refresh_from_db()
-        params2 = wf_module.get_params().as_dict()
 
-        self.assertEqual(params2['url'], 'http://example.com/foo')
-        self.assertEqual(params2['has_header'], False)
-        self.assertEqual(params2['version_select'], params1['version_select'])
+        params2 = {
+            'url': 'http://example.com/foo',
+            'has_header': False,
+            'version_select': '',
+        }
+        self.assertEqual(wf_module.params, params2)
 
         # undo
         self.run_with_async_db(cmd.backward())
         wf_module.refresh_from_db()
-        params3 = wf_module.get_params().to_painful_dict(pd.DataFrame())
-        self.assertEqual(params3, params1)
+        self.assertEqual(wf_module.params, params1)
 
         # redo
         self.run_with_async_db(cmd.forward())
         wf_module.refresh_from_db()
-        params4 = wf_module.get_params().to_painful_dict(pd.DataFrame())
-        self.assertEqual(params4, params2)
+        self.assertEqual(wf_module.params, params2)
 
     def test_change_parameters_on_soft_deleted_wf_module(self):
         workflow = Workflow.create_and_init()
