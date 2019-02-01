@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 from channels.db import database_sync_to_async
 from server.models import WfModule, UploadedFile
 from server.modules import uploadfile
-from server.worker import save
+from worker import save
 from .util import benchmark
 
 
@@ -71,5 +71,5 @@ async def handle_upload_DELETEME(message):
         kwargs = msgpack.unpackb(message.body, raw=False)
         try:
             await upload_DELETEME(**kwargs)
-        except:
+        except Exception:
             logger.exception('Error during fetch')

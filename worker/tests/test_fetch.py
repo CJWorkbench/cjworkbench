@@ -10,7 +10,7 @@ from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
-from server.worker import fetch
+from worker import fetch
 
 
 future_none = asyncio.Future()
@@ -20,7 +20,7 @@ future_none.set_result(None)
 # Test the scan loop that updates all auto-updating modules
 class FetchTests(DbTestCase):
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('server.worker.save.save_result_if_changed')
+    @patch('worker.save.save_result_if_changed')
     def test_fetch_wf_module(self, save_result, load_module):
         result = ProcessResult(pd.DataFrame({'A': [1]}), error='hi')
 
@@ -108,7 +108,7 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.next_update, due_for_update)
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('server.worker.save.save_result_if_changed')
+    @patch('worker.save.save_result_if_changed')
     def _test_fetch(self, fn, wf_module, save, load) -> ProcessResult:
         """
         Stub out a `fetch` method for `wf_module`.

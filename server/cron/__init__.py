@@ -4,7 +4,7 @@ import math
 import time
 import warnings
 from django.conf import settings
-from server.worker.pg_locker import PgLocker
+from worker.pg_locker import PgLocker
 from .autoupdate import queue_fetches
 from .sessions import delete_expired_sessions_and_workflows
 

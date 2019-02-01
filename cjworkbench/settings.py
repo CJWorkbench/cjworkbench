@@ -163,6 +163,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'cjworkbench',
     'server',
+    'worker',
 ]
 
 MIDDLEWARE = [

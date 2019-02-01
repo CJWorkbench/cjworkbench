@@ -1,6 +1,6 @@
 from asgiref.sync import async_to_sync
 from server.tests.utils import DbTestCase
-from server.worker.pg_locker import PgLocker, WorkflowAlreadyLocked
+from worker.pg_locker import PgLocker, WorkflowAlreadyLocked
 
 
 class PgLockerTest(DbTestCase):

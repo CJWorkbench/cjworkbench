@@ -9,7 +9,7 @@ from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
 import msgpack
 from server.models import LoadedModule, Params, WfModule
-from server.worker import save
+from worker import save
 from .util import benchmark
 
 

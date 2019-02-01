@@ -103,7 +103,7 @@ async def render_or_reschedule(
     except DatabaseError:
         # Two possibilities:
         #
-        # 1. There's a bug in server.worker.execute. This may leave the event
+        # 1. There's a bug in worker.execute. This may leave the event
         # loop's executor thread's database connection in an inconsistent
         # state. [2018-11-06 saw this on production.] The best way to clear
         # up the leaked, broken connection is to die. (Our parent process

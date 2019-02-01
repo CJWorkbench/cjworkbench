@@ -4,7 +4,7 @@ from channels.db import database_sync_to_async
 from django.utils import timezone
 from server import rabbitmq, websockets
 from server.models import WfModule
-from server.worker.pg_locker import PgLocker, WorkflowAlreadyLocked
+from worker.pg_locker import PgLocker, WorkflowAlreadyLocked
 
 
 logger = logging.getLogger(__name__)

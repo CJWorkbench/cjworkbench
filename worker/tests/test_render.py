@@ -5,9 +5,9 @@ import msgpack
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
-from server.worker import execute
-from server.worker.render import handle_render, render_or_reschedule
-from server.worker.pg_locker import WorkflowAlreadyLocked
+from worker import execute
+from worker.render import handle_render, render_or_reschedule
+from worker.pg_locker import WorkflowAlreadyLocked
 
 
 future_none = asyncio.Future()
@@ -64,17 +64,17 @@ class RenderTest(DbTestCase):
                 return msgpack.packb({'workflow_id': 123})
 
         async def inner():
-            with self.assertLogs('server.worker', level='INFO') as cm:
+            with self.assertLogs('worker', level='INFO') as cm:
                 await handle_render(None, None, FakeRender())
                 self.assertEqual(cm.output, [
-                    ('INFO:server.worker.render:Ignoring invalid render '
+                    ('INFO:worker.render:Ignoring invalid render '
                      'request. Expected {workflow_id:int, delta_id:int}; got '
                      "{'workflow_id': 123}"),
                 ])
 
         self.run_with_async_db(inner())
 
-    @patch('server.worker.execute.execute_workflow')
+    @patch('worker.execute.execute_workflow')
     def test_render_or_reschedule_render(self, execute):
         execute.return_value = future_none
         workflow = Workflow.objects.create()
@@ -92,7 +92,7 @@ class RenderTest(DbTestCase):
         execute.assert_called_with(workflow)
         self.assertEqual(rescheduler.calls, [])
 
-    @patch('server.worker.execute.execute_workflow')
+    @patch('worker.execute.execute_workflow')
     def test_render_or_reschedule_reschedule(self, execute):
         execute.return_value = future_none
         workflow = Workflow.objects.create()
@@ -100,12 +100,12 @@ class RenderTest(DbTestCase):
         rescheduler = Rescheduler()
 
         async def inner():
-            with self.assertLogs('server.worker', level='INFO') as cm:
+            with self.assertLogs('worker', level='INFO') as cm:
                 await render_or_reschedule(FailedRenderLocker,
                                            rescheduler.reschedule,
                                            workflow.id, delta.id)
                 self.assertEqual(cm.output, [
-                    (f'INFO:server.worker.render:Workflow {workflow.id} is '
+                    (f'INFO:worker.render:Workflow {workflow.id} is '
                      'being rendered elsewhere; rescheduling'),
                 ])
 
@@ -120,12 +120,12 @@ class RenderTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
 
         async def inner():
-            with self.assertLogs('server.worker', level='INFO') as cm:
+            with self.assertLogs('worker', level='INFO') as cm:
                 await render_or_reschedule(SuccessfulRenderLocker,
                                            rescheduler.reschedule,
                                            workflow.id, delta.id - 1)
                 self.assertEqual(cm.output, [
-                    (f'INFO:server.worker.render:Ignoring stale render request'
+                    (f'INFO:worker.render:Ignoring stale render request'
                      f' {delta.id - 1} for Workflow {workflow.id}'),
                 ])
 
@@ -135,17 +135,17 @@ class RenderTest(DbTestCase):
         rescheduler = Rescheduler()
 
         async def inner():
-            with self.assertLogs('server.worker', level='INFO') as cm:
+            with self.assertLogs('worker', level='INFO') as cm:
                 await render_or_reschedule(SuccessfulRenderLocker,
                                            rescheduler.reschedule, 12345, 1)
                 self.assertEqual(cm.output, [
-                    ('INFO:server.worker.render:Skipping render of deleted '
+                    ('INFO:worker.render:Skipping render of deleted '
                      'Workflow 12345'),
                 ])
 
         self.run_with_async_db(inner())
 
-    @patch('server.worker.execute.execute_workflow')
+    @patch('worker.execute.execute_workflow')
     def test_render_or_reschedule_aborted(self, mock_execute):
         mock_execute.side_effect = execute.UnneededExecution
         workflow = Workflow.objects.create()
@@ -153,12 +153,12 @@ class RenderTest(DbTestCase):
         rescheduler = Rescheduler()
 
         async def inner():
-            with self.assertLogs('server.worker', level='INFO') as cm:
+            with self.assertLogs('worker', level='INFO') as cm:
                 await render_or_reschedule(SuccessfulRenderLocker,
                                            rescheduler.reschedule,
                                            workflow.id, delta.id)
                 self.assertEqual(cm.output, [
-                    ('INFO:server.worker.render:UnneededExecution in '
+                    ('INFO:worker.render:UnneededExecution in '
                      f'execute_workflow({workflow.id})')
                 ])
 

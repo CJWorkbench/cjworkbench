@@ -1,13 +1,11 @@
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.test import override_settings
 import pandas as pd
 from server.models import StoredObject, Workflow
-from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase, mock_csv_table
-from server.worker.save import save_result_if_changed
+from worker.save import save_result_if_changed
 
 
 async def async_noop(*args, **kwargs):
