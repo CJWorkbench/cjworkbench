@@ -2,7 +2,7 @@ import asyncio
 from unittest.mock import Mock, patch
 import pandas as pd
 from server.tests.utils import DbTestCase
-from server.execute import execute_workflow, UnneededExecution
+from server.worker.execute import execute_workflow, UnneededExecution
 from server.models import LoadedModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult

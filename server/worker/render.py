@@ -6,10 +6,11 @@ import aio_pika
 from channels.db import database_sync_to_async
 from django.db import DatabaseError, InterfaceError
 import msgpack
-from server import execute, rabbitmq
+from server import rabbitmq
 from server.models import Workflow
 from .pg_locker import PgLocker, WorkflowAlreadyLocked
 from .util import benchmark
+from . import execute
 
 
 logger = logging.getLogger(__name__)
@@ -102,7 +103,7 @@ async def render_or_reschedule(
     except DatabaseError:
         # Two possibilities:
         #
-        # 1. There's a bug in server.execute. This may leave the event
+        # 1. There's a bug in server.worker.execute. This may leave the event
         # loop's executor thread's database connection in an inconsistent
         # state. [2018-11-06 saw this on production.] The best way to clear
         # up the leaked, broken connection is to die. (Our parent process

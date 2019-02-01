@@ -2,10 +2,10 @@ import asyncio
 from contextlib import contextmanager
 from unittest.mock import patch
 import msgpack
-from server import execute
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
+from server.worker import execute
 from server.worker.render import handle_render, render_or_reschedule
 from server.worker.pg_locker import WorkflowAlreadyLocked
 
@@ -74,7 +74,7 @@ class RenderTest(DbTestCase):
 
         self.run_with_async_db(inner())
 
-    @patch('server.execute.execute_workflow')
+    @patch('server.worker.execute.execute_workflow')
     def test_render_or_reschedule_render(self, execute):
         execute.return_value = future_none
         workflow = Workflow.objects.create()
@@ -92,7 +92,7 @@ class RenderTest(DbTestCase):
         execute.assert_called_with(workflow)
         self.assertEqual(rescheduler.calls, [])
 
-    @patch('server.execute.execute_workflow')
+    @patch('server.worker.execute.execute_workflow')
     def test_render_or_reschedule_reschedule(self, execute):
         execute.return_value = future_none
         workflow = Workflow.objects.create()
@@ -145,7 +145,7 @@ class RenderTest(DbTestCase):
 
         self.run_with_async_db(inner())
 
-    @patch('server.execute.execute_workflow')
+    @patch('server.worker.execute.execute_workflow')
     def test_render_or_reschedule_aborted(self, mock_execute):
         mock_execute.side_effect = execute.UnneededExecution
         workflow = Workflow.objects.create()
