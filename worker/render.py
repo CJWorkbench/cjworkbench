@@ -137,7 +137,7 @@ async def handle_render(pg_locker: PgLocker,
         try:
             workflow_id = int(body['workflow_id'])
             delta_id = int(body['delta_id'])
-        except:
+        except Exception:
             logger.info(
                 ('Ignoring invalid render request. '
                  'Expected {workflow_id:int, delta_id:int}; got %r'),
@@ -150,5 +150,5 @@ async def handle_render(pg_locker: PgLocker,
                                         delta_id)
             await benchmark(logger, task, 'render_or_reschedule(%d, %d)',
                             workflow_id, delta_id)
-        except:
+        except Exception:
             logger.exception('Error during render')
