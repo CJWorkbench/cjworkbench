@@ -292,7 +292,7 @@ class Workflow(models.Model):
         """Query whether all live WfModules are rendered."""
         from .WfModule import WfModule
         for wf_module in WfModule.live_in_workflow(self):
-            if not wf_module.get_cached_render_result(only_fresh=True):
+            if wf_module.cached_render_result is None:
                 return False
         return True
 

@@ -44,7 +44,6 @@ class ExecuteTests(DbTestCase):
 
         result1 = ProcessResult(pd.DataFrame({'A': [1]}))
         wf_module.cache_render_result(delta1.id, result1)
-        wf_module.save()
 
         result2 = ProcessResult(pd.DataFrame({'B': [2]}))
         delta2 = InitWorkflowCommand.create(workflow)
@@ -58,10 +57,7 @@ class ExecuteTests(DbTestCase):
         self._execute(workflow)
 
         wf_module.refresh_from_db()
-        self.assertEqual(
-            wf_module.get_cached_render_result(only_fresh=True).result,
-            result2
-        )
+        self.assertEqual(wf_module.cached_render_result.result, result2)
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     def test_execute_race_delete_workflow(self, fake_load_module):
@@ -117,20 +113,20 @@ class ExecuteTests(DbTestCase):
         self._execute(workflow)
 
         wf_module1.refresh_from_db()
-        self.assertEqual(wf_module1.get_cached_render_result().status, 'error')
-        self.assertEqual(wf_module1.get_cached_render_result().result,
+        self.assertEqual(wf_module1.cached_render_result.status, 'error')
+        self.assertEqual(wf_module1.cached_render_result.result,
                          ProcessResult(error='foo'))
 
         wf_module2.refresh_from_db()
-        self.assertEqual(wf_module2.get_cached_render_result().status,
+        self.assertEqual(wf_module2.cached_render_result.status,
                          'unreachable')
-        self.assertEqual(wf_module2.get_cached_render_result().result,
+        self.assertEqual(wf_module2.cached_render_result.result,
                          ProcessResult())
 
         wf_module3.refresh_from_db()
-        self.assertEqual(wf_module3.get_cached_render_result().status,
+        self.assertEqual(wf_module3.cached_render_result.status,
                          'unreachable')
-        self.assertEqual(wf_module3.get_cached_render_result().result,
+        self.assertEqual(wf_module3.cached_render_result.result,
                          ProcessResult())
 
         send_delta_async.assert_called_with(workflow.id, {
@@ -159,14 +155,12 @@ class ExecuteTests(DbTestCase):
         )
         result1 = ProcessResult(pd.DataFrame({'A': [1]}))
         wf_module1.cache_render_result(delta.id, result1)
-        wf_module1.save()
         wf_module2 = tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=delta.id
         )
         result2 = ProcessResult(pd.DataFrame({'B': [2]}))
         wf_module2.cache_render_result(delta.id, result2)
-        wf_module2.save()
 
         fake_module.assert_not_called()
 
@@ -176,13 +170,16 @@ class ExecuteTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
+
+        # wf_module1: has a valid, cached result
         wf_module1 = tab.wf_modules.create(
             order=0,
             last_relevant_delta_id=delta.id
         )
         result1 = ProcessResult(pd.DataFrame({'A': [1]}))
         wf_module1.cache_render_result(delta.id, result1)
-        wf_module1.save()
+
+        # wf_module2: has no cached result (must be rendered)
         wf_module2 = tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=delta.id
@@ -196,7 +193,7 @@ class ExecuteTests(DbTestCase):
         self._execute(workflow)
 
         wf_module2.refresh_from_db()
-        actual = wf_module2.get_cached_render_result().result
+        actual = wf_module2.cached_render_result.result
         self.assertEqual(actual, result2)
         fake_loaded_module.render.assert_called_once()  # only with module2
 
@@ -207,17 +204,21 @@ class ExecuteTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
-        delta2 = InitWorkflowCommand.create(workflow)
         wf_module = tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=delta2.id
+            last_relevant_delta_id=delta1.id,
+            notifications=True
         )
         wf_module.cache_render_result(
             delta1.id,
             ProcessResult(pd.DataFrame({'A': [1]}))
         )
-        wf_module.notifications = True
-        wf_module.save()
+
+        # Now make a new delta, so we need to re-render. The render function's
+        # output won't change.
+        delta2 = InitWorkflowCommand.create(workflow)
+        wf_module.last_relevant_delta_id = delta2.id
+        wf_module.save(update_fields=['last_relevant_delta_id'])
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
@@ -235,17 +236,21 @@ class ExecuteTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
-        delta2 = InitWorkflowCommand.create(workflow)
         wf_module = tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=delta2.id
+            last_relevant_delta_id=delta1.id,
+            notifications=True
         )
         wf_module.cache_render_result(
             delta1.id,
             ProcessResult(pd.DataFrame({'A': [1]}))
         )
-        wf_module.notifications = True
-        wf_module.save()
+
+        # Now make a new delta, so we need to re-render. The render function's
+        # output won't change.
+        delta2 = InitWorkflowCommand.create(workflow)
+        wf_module.last_relevant_delta_id = delta2.id
+        wf_module.save(update_fields=['last_relevant_delta_id'])
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module

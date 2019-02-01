@@ -457,7 +457,7 @@ def fetch_external_workflow(calling_workflow_id: int,
             return ProcessResult(error='Target workflow is empty')
 
         # Always pull the cached result, so we can't execute() an infinite loop
-        crr = other_wf_module.get_cached_render_result(only_fresh=True)
+        crr = other_wf_module.cached_render_result
 
         if not crr:
             # Workflow has not been rendered completely. This is either because

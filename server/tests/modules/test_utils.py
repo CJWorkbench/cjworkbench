@@ -3,7 +3,6 @@ import io
 import os.path
 import unittest
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
 import numpy
 import pandas as pd
 from django.contrib.auth.models import User
@@ -230,11 +229,13 @@ class FetchExternalWorkflowTest(DbTestCase):
         future_none.set_result(None)
         queue_render.return_value = future_none
 
+        self.wf_module.last_relevant_delta_id = self.delta.id - 1
         self.wf_module.cache_render_result(
             self.delta.id - 1,
             ProcessResult(pd.DataFrame({'A': [1]}))
         )
-        self.wf_module.save()
+        self.wf_module.last_relevant_delta_id = self.delta.id
+        self.wf_module.save(update_fields=['last_relevant_delta_id'])
 
         result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
         self.assertEqual(result, ProcessResult(

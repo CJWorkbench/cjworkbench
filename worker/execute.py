@@ -65,18 +65,10 @@ def mark_wfmodule_unreachable(wf_module: WfModule):
     """
     with locked_wf_module(wf_module) as safe_wf_module:
         unreachable = ProcessResult()
-        cached_render_result = safe_wf_module.cache_render_result(
+        return safe_wf_module.cache_render_result(
             safe_wf_module.last_relevant_delta_id,
             unreachable
         )
-
-        # Save safe_wf_module, not wf_module, because we know we've only
-        # changed the cached_render_result columns. (We know because we
-        # locked the row before fetching it.) `wf_module.save()` might
-        # overwrite some newer values.
-        safe_wf_module.save()
-
-        return cached_render_result
 
 
 @database_sync_to_async
@@ -98,19 +90,20 @@ def _execute_wfmodule_pre(wf_module: WfModule) -> Tuple:
     a context that doesn't use a database thread.)
     """
     with locked_wf_module(wf_module) as safe_wf_module:
-        cached_render_result = wf_module.get_cached_render_result()
-
-        old_result = None
-        if cached_render_result:
+        cached_render_result = wf_module.cached_render_result
+        if cached_render_result is not None:
             # If the cache is good, skip everything. No need for old_result,
             # because we know the output won't change (since we won't even run
             # render()).
-            if (cached_render_result.delta_id
-                    == wf_module.last_relevant_delta_id):
-                return (cached_render_result, None, None, None, None)
+            return (cached_render_result, None, None, None, None)
 
-            if safe_wf_module.notifications:
-                old_result = cached_render_result.result
+        # Get a handle on `old_result`, if we're about to re-render and we want
+        # to notify the user if new_result != old_result
+        old_result = None
+        if safe_wf_module.notifications:
+            stale_result = wf_module.get_stale_cached_render_result()
+            if stale_result is not None:
+                old_result = stale_result.result
 
         module_version = wf_module.module_version
         params = safe_wf_module.get_params()
@@ -151,16 +144,11 @@ def _execute_wfmodule_save(wf_module: WfModule, result: ProcessResult,
 
         if safe_wf_module.notifications and result != old_result:
             safe_wf_module.has_unseen_notification = True
+            safe_wf_module.save(update_fields=['has_unseen_notification'])
             output_delta = notifications.OutputDelta(safe_wf_module,
                                                      old_result, result)
         else:
             output_delta = None
-
-        # Save safe_wf_module, not wf_module, because we know we've only
-        # changed the cached_render_result columns. (We know because we
-        # locked the row before fetching it.) `wf_module.save()` might
-        # overwrite some newer values.
-        safe_wf_module.save()
 
         return (cached_render_result, output_delta)
 
@@ -263,14 +251,15 @@ def _load_tabs_wf_modules_and_input(workflow: Workflow):
         for tab in tabs:
             # 1. Load list of wf_modules
             wf_modules = list(tab.live_wf_modules)
+            # ... including their cached results, if they're fresh
+            cached_results = [wf_module.cached_render_result
+                              for wf_module in wf_modules]
 
             # 2. Find index of first one that needs render
-            index = 0
-            while (
-                index < len(wf_modules)
-                and not _needs_render(wf_modules[index])
-            ):
-                index += 1
+            try:
+                index = cached_results.index(None)
+            except ValueError:
+                index = len(wf_modules)
 
             wf_modules_needing_render = wf_modules[index:]
 
@@ -282,12 +271,7 @@ def _load_tabs_wf_modules_and_input(workflow: Workflow):
             if index == 0:
                 prev_result = None
             else:
-                # if the CachedRenderResult is obsolete because of a race (it's
-                # on the filesystem as well as in the DB), we'll get
-                # _something_ back: this method doesn't raise exceptions.
-                # There's no harm done if the value is wrong: we'll check that
-                # later anyway.
-                prev_result = wf_modules[index - 1].get_cached_render_result()
+                prev_result = cached_results[index - 1]
 
             ret.append((wf_modules_needing_render, prev_result))
 

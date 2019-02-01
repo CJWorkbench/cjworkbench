@@ -151,17 +151,19 @@ class WfModule(models.Model):
         'unreachable': a previous module had 'error' so we will not run this
         'ok': render produced a table
         """
-        if not self.get_cached_render_result(only_fresh=True):
+        crr = self.cached_render_result
+        if crr is None:
             return 'busy'
         else:
-            return self.cached_render_result_status
+            return crr.status
 
     @property
     def output_error(self):
-        if not self.get_cached_render_result(only_fresh=True):
+        crr = self.cached_render_result
+        if crr is None:
             return ''
         else:
-            return self.cached_render_result_error
+            return crr.error
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
@@ -285,11 +287,8 @@ class WfModule(models.Model):
         # not have any useful data. But that's okay: just kick off a new
         # render. The common case (all-rendered Workflow) will produce a
         # fully-rendered duplicate Workflow.
-        #
-        # get_cached_render_result() does not check for the existence of
-        # Parquet files. But it does let us access `.parquet_key`.
-        cached_result = self.get_cached_render_result(only_fresh=True)
-        if cached_result:
+        cached_result = self.cached_render_result
+        if cached_result is not None:
             # assuming file-copy succeeds, copy cached results.
             # Not using `new_wfm.cache_render_result(cached_result.result)`
             # because that would involve reading the whole thing.
@@ -302,7 +301,11 @@ class WfModule(models.Model):
 
             new_wfm.save()  # so there is a new_wfm.id for parquet_key
 
-            parquet_key = new_wfm.get_cached_render_result().parquet_key
+            # Now new_wfm.cached_render_result will return a
+            # CachedRenderResult, because all the DB values are set. It'll have
+            # a .parquet_key ... but there won't be a file there (because we
+            # never wrote it).
+            parquet_key = new_wfm.cached_render_result.parquet_key
 
             try:
                 minio.minio_client.copy_object(
@@ -328,23 +331,74 @@ class WfModule(models.Model):
 
         return new_wfm
 
-    def get_cached_render_result(self, only_fresh=False) -> CachedRenderResult:
-        """Load this WfModule's CachedRenderResult from disk."""
+    @property
+    def cached_render_result(self) -> CachedRenderResult:
+        """
+        Build a CachedRenderResult with this WfModule's rendered output.
+
+        Return `None` if there is a cached result but it is not fresh.
+
+        Beware we build a CachedRenderResult without reading the actual Parquet
+        file from disk. The _correct_ way of reading the Parquet file is:
+
+            with wf_module.workflow.cooperative_lock():
+                wf_module.refresh_from_db()  # re-read DB data
+                crr = wf_module.cached_render_result  # uses DB columns
+                dataframe = crr.read_dataframe()
+
+        Without a lock and the refresh_from_db() within it, a
+        CachedRenderResult's `.read_dataframe()` function will typically raise
+        FileNotFoundError if called while a render is happening.
+        """
         result = CachedRenderResult.from_wf_module(self)
-
-        if not result:
+        if result and result.delta_id != self.last_relevant_delta_id:
             return None
-
-        if only_fresh and result.delta_id != self.last_relevant_delta_id:
-            return None
-
         return result
 
-    def cache_render_result(self, delta_id: Optional[int],
+    def get_stale_cached_render_result(self):
+        """
+        Build a CachedRenderResult with this WfModule's stale rendered output.
+
+        Return `None` if there is a cached result but it is fresh.
+        """
+        result = CachedRenderResult.from_wf_module(self)
+        if result and result.delta_id == self.last_relevant_delta_id:
+            return None
+        return result
+
+    def cache_render_result(self, delta_id: int,
                             result: ProcessResult) -> CachedRenderResult:
-        """Save the given ProcessResult (or None) for later viewing."""
+        """
+        Save the given ProcessResult for later viewing.
+
+        Raise AssertionError if `delta_id` is not what we expect.
+
+        Since this alters data, be sure to call it within a lock:
+
+            with wf_module.workflow.cooperative_lock():
+                wf_module.refresh_from_db()
+                wf_module.cache_render_result(delta_id, result)
+        """
+        assert delta_id == self.last_relevant_delta_id
+        assert result is not None
+
         return CachedRenderResult.assign_wf_module(self, delta_id, result)
 
+    def clear_cached_render_result(self) -> None:
+        """
+        Delete our CachedRenderResult, if it exists.
+
+        This deletes the Parquet file from disk, _then_ empties relevant
+        database fields and saves them (and only them).
+
+        Since this alters data, be sure to call it within a lock:
+
+            with wf_module.workflow.cooperative_lock():
+                wf_module.refresh_from_db()
+                wf_module.clear_cached_render_result()
+        """
+        CachedRenderResult.clear_wf_module(self)
+
     def delete(self, *args, **kwargs):
-        self.cache_render_result(None, None)
+        CachedRenderResult.clear_wf_module(self)
         super().delete(*args, **kwargs)

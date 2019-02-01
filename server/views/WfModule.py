@@ -191,8 +191,9 @@ def wfmodule_render(request, pk, format=None):
                         status=status.HTTP_400_BAD_REQUEST)
 
     with wf_module.workflow.cooperative_lock():
-        cached_result = wf_module.get_cached_render_result()
-        if not cached_result:
+        wf_module.refresh_from_db()
+        cached_result = wf_module.cached_render_result
+        if cached_result is None:
             # assume we'll get another request after execute finishes
             return JsonResponse({'start_row': 0, 'end_row': 0, 'rows': []})
 
@@ -253,8 +254,9 @@ def wfmodule_value_counts(request, pk):
         return JsonResponse({'values': {}})
 
     with wf_module.workflow.cooperative_lock():
-        cached_result = wf_module.get_cached_render_result()
-        if not cached_result:
+        wf_module.refresh_from_db()
+        cached_result = wf_module.cached_render_result
+        if cached_result is None:
             # assume we'll get another request after execute finishes
             return JsonResponse({'values': {}})
 
@@ -305,9 +307,11 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
             'we only render "ok" modules'
         )
 
-    cached_result = wf_module.get_cached_render_result()
+    # Don't bother with workflow lock. Instead, handle FileNotFoundError if it
+    # comes up.
+    cached_result = wf_module.cached_render_result
 
-    if not cached_result:
+    if cached_result is None:
         return HttpResponseNotFound(f'This module has no cached result')
 
     if str(cached_result.delta_id) != delta_id:
@@ -344,8 +348,9 @@ def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     with wf_module.workflow.cooperative_lock():
-        cached_result = wf_module.get_cached_render_result()
-        if not cached_result:
+        wf_module.refresh_from_db()
+        cached_result = wf_module.cached_render_result
+        if cached_result is None:
             # assume we'll get another request after execute finishes
             return JsonResponse({})
         result = cached_result.result  # slow

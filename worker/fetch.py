@@ -38,8 +38,8 @@ def _get_input_dataframe(workflow_id: int, wf_module_position: int):
     except WfModule.DoesNotExist:
         return None
 
-    crr = wf_module.get_cached_render_result(only_fresh=True)
-    if not crr:
+    crr = wf_module.cached_render_result
+    if crr is None:
         return None
     else:
         return crr.result.dataframe

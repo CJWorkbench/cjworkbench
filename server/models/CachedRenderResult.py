@@ -6,6 +6,17 @@ from server.types import TableShape
 from server import minio, parquet
 
 
+WfModuleFields = [
+    'cached_render_result_delta_id',
+    'cached_render_result_error',
+    'cached_render_result_json',
+    'cached_render_result_quick_fixes',
+    'cached_render_result_columns',
+    'cached_render_result_status',
+    'cached_render_result_nrows',
+]
+
+
 def parquet_prefix(workflow_id: int, wf_module_id: int) -> str:
     """
     "Directory" name in the `minio.CachedRenderResultsBucket` bucket.
@@ -175,73 +186,69 @@ class CachedRenderResult:
         return ret
 
     @staticmethod
-    def _clear_wf_module(wf_module: 'WfModule') -> None:
-        if wf_module.cached_render_result_delta_id is None:
-            return  # it's already cleared
+    def delete_parquet_files_for_wf_module(wf_module: 'WfModule') -> None:
+        """
+        Ensures there are no Parquet files cached for `wf_module`.
 
-        wf_module.cached_render_result_delta_id = None
-        wf_module.cached_render_result_error = ''
-        wf_module.cached_render_result_json = b'null'
-        wf_module.cached_render_result_quick_fixes = []
-        wf_module.cached_render_result_columns = None
-        wf_module.cached_render_result_nrows = None
+        Different deltas on the same module produce different Parquet
+        filenames. This function removes all of them.
 
+        This leaves `wf_module.cached_render_result` invalid: it will continue
+        to exist in the database, but callers who try to read from it will
+        see `FileNotFoundError.
+        """
         minio.remove_recursive(minio.CachedRenderResultsBucket,
                                parquet_prefix(wf_module.workflow_id,
                                               wf_module.id))
 
     @staticmethod
-    def assign_wf_module(wf_module: 'WfModule',
-                         delta_id: Optional[int],
-                         result: Optional[ProcessResult]
-                         ) -> Optional['CachedRenderResult']:
+    def clear_wf_module(wf_module: 'WfModule') -> None:
+        """
+        Delete our CachedRenderResult, if it exists.
+
+        This deletes the Parquet file from disk, _then_ empties relevant
+        database fields and saves them (and only them).
+        """
+        CachedRenderResult.delete_parquet_files_for_wf_module(wf_module)
+
+        wf_module.cached_render_result_delta_id = None
+        wf_module.cached_render_result_error = ''
+        wf_module.cached_render_result_json = b'null'
+        wf_module.cached_render_result_quick_fixes = []
+        wf_module.cached_render_result_status = None
+        wf_module.cached_render_result_columns = None
+        wf_module.cached_render_result_nrows = None
+
+        wf_module.save(update_fields=WfModuleFields)
+
+    @staticmethod
+    def assign_wf_module(wf_module: 'WfModule', delta_id: int,
+                         result: ProcessResult) -> 'CachedRenderResult':
         """
         Write `result` to `wf_module`'s fields and to disk.
-
-        If either argument is None, clear the fields.
         """
-        if delta_id is None or result is None:
-            return CachedRenderResult._clear_wf_module(wf_module)
+        assert delta_id == wf_module.last_relevant_delta_id
+        assert result is not None
 
-        if result:
-            error = result.error
-            status = result.status
-            json_dict = result.json
-            json_bytes = json.dumps(result.json).encode('utf-8')
-            quick_fixes = result.quick_fixes
-            columns = result.columns
-            nrows = len(result.dataframe)
-        else:
-            error = ''
-            status = None
-            json_dict = None
-            json_bytes = ''
-            quick_fixes = []
-            columns = None
-            nrows = None
+        json_bytes = json.dumps(result.json).encode('utf-8')
+        quick_fixes = result.quick_fixes
 
         wf_module.cached_render_result_delta_id = delta_id
-        wf_module.cached_render_result_error = error
-        wf_module.cached_render_result_status = status
+        wf_module.cached_render_result_error = result.error
+        wf_module.cached_render_result_status = result.status
         wf_module.cached_render_result_json = json_bytes
         wf_module.cached_render_result_quick_fixes = [qf.to_dict()
                                                       for qf in quick_fixes]
-        wf_module.cached_render_result_columns = columns
-        wf_module.cached_render_result_nrows = nrows
+        wf_module.cached_render_result_columns = result.columns
+        wf_module.cached_render_result_nrows = len(result.dataframe)
 
-        minio.remove_recursive(minio.CachedRenderResultsBucket,
-                               parquet_prefix(wf_module.workflow_id,
-                                              wf_module.id))
+        CachedRenderResult.delete_parquet_files_for_wf_module(wf_module)
 
-        if result is not None:
-            ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
-                                     wf_module_id=wf_module.id,
-                                     delta_id=delta_id, status=status,
-                                     error=error, json=json_dict,
-                                     quick_fixes=quick_fixes,
-                                     table_shape=TableShape(nrows, columns))
-            ret._result = result
-            parquet.write(minio.CachedRenderResultsBucket, ret.parquet_key,
-                          result.dataframe)
-            ret._result = result  # no need to read from disk
-            return ret
+        ret = CachedRenderResult.from_wf_module(wf_module)
+        ret._result = result  # no need to read from disk
+        parquet.write(minio.CachedRenderResultsBucket, ret.parquet_key,
+                      result.dataframe)
+
+        wf_module.save(update_fields=WfModuleFields)
+
+        return ret

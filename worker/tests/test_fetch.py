@@ -221,10 +221,14 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
-        delta2 = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta2.id)
+        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta1.id)
         wfm1.cache_render_result(delta1.id, ProcessResult(table))
-        wfm1.save()
+
+        # Now make wfm1's output stale
+        delta2 = InitWorkflowCommand.create(workflow)
+        wfm1.last_relevant_delta_id = delta2.id
+        wfm1.save(update_fields=['last_relevant_delta_id'])
+
         wfm2 = tab.wf_modules.create(order=1)
 
         async def fetch(params, *, get_input_dataframe, **kwargs):

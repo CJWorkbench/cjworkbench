@@ -110,7 +110,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
         return wfm.module_id_name
 
     def get_cached_render_result_data(self, wfm):
-        cached_result = wfm.get_cached_render_result(only_fresh=True)
+        cached_result = wfm.cached_render_result
         data = {
             'cached_render_result_delta_id': None,
             'output_columns': None,
