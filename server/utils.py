@@ -10,6 +10,7 @@ from django.contrib.sites.models import Site
 from django.http.request import HttpRequest
 from intercom.client import Client
 import intercom.errors
+import requests.exceptions  # we don't depend on `requests`, but intercom does
 
 
 logger = logging.getLogger(__name__)
@@ -198,8 +199,9 @@ def _log_user_event(user: User, headers: Headers, event: str,
         )
     except (
         intercom.errors.ServiceUnavailableError,
-        intercom.errors.ResourceNotFound
-    ):
+        intercom.errors.ResourceNotFound,
+        requests.exceptions.RequestException,
+    ) as err:
         # on production, these happen every day or two:
         #
         # intercom.errors.ServiceUnavailableError: Sorry, the API service is
@@ -207,9 +209,13 @@ def _log_user_event(user: User, headers: Headers, event: str,
         #
         # intercom.errors.ResourceNotFound: User Not Found
         #
+        # requests.exceptions.ConnectionError: ('Connection aborted.',
+        # RemoteDisconnected('Remote end closed connection without response',))
+        #
         # _log_ the problem, but don't logger.exception(): we don't want to
         # receive an email about it.
-        logger.info("(known) error logging Intercom event '%s'", event)
+        logger.info("(known) error logging Intercom event '%s': %r", event,
+                    err)
         pass
     except Exception:
         logger.exception("Error logging Intercom event '%s'", event)
