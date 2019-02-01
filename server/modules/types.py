@@ -79,8 +79,8 @@ class ProcessResult:
 
     A ProcessResult object may be pickled.
     """
-    def __init__(self, dataframe: DataFrame=None, error: str='', *,
-                 json: Dict[str, Any]={}, quick_fixes: List[QuickFix]=[]):
+    def __init__(self, dataframe: DataFrame = None, error: str = '', *,
+                 json: Dict[str, Any] = {}, quick_fixes: List[QuickFix] = []):
         if dataframe is None:
             dataframe = DataFrame()
         if not isinstance(dataframe, DataFrame):

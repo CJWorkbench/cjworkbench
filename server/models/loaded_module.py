@@ -1,5 +1,4 @@
 import asyncio
-from collections import namedtuple
 import datetime
 from functools import partial
 import importlib
@@ -44,9 +43,6 @@ from server import minio
 
 
 logger = logging.getLogger(__name__)
-
-
-MockModule = namedtuple('MockModule', ['render'])
 
 
 StaticModules = {
