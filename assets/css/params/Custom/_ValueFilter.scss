@@ -1,13 +1,50 @@
 .param-valueselect {
+
+  .all-none-buttons {
+
+    button {
+      font-weight: normal;
+      @extend %content-2;
+      color: $brand-text--dark;
+      background-color: transparent;
+      cursor: pointer;
+      border: 0;
+      text-transform: uppercase;
+
+      &:not(:last-child) {
+        border-right: 1px solid $dark-accent--strong;
+        padding: 0 .6rem 0 0;
+      }
+
+      &:last-child {
+        padding: 0 0 0 .6rem;
+      }
+
+      &:hover {
+        color:$brand-orange;
+      }
+
+      &:disabled {
+        cursor: default;
+        color: $text-muted;
+      }
+    }
+  }
+
   .value-list {
     margin-top: 1rem;
     padding: 0;
     list-style: none;
     max-height: 30rem;
 
-    .ReactVirtualized__Grid:focus {
-      outline: none;
+    .ReactVirtualized__Grid.ReactVirtualized__List.react-list {
+      width: 25.5rem!important; // FIXME no !important
+
+      .ReactVirtualized__Grid__innerScrollContainer {
+      max-width: 100%!important; // // FIXME no !important 
+      }
     }
+
 
     .value {
       display: flex;
