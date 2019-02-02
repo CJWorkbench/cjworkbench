@@ -1,13 +1,12 @@
 <header>
-  <h1>Extreme and average values<h1>
-  <p>Clean a messy dataset and format it in order to build a chart series</p>
+  <h1>Column and line charts<h1>
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
-  <p>Many stories are based on minimum or maximum values. This is the idea behind questions such as: What is the most expensive item in the budget? Which city is the safest? Which school has the best test scores?
-The average is one way of calculating a "typical" value that is useful to summarize data. How much CO2 emissions does a country produce in a year?
-In this lesson we will work with international data on CO2 emissions from 2000 to 2016.
+  <p>Not all data stories need a data visualization. If you have only one or two numbers, they can probably just appear as text in the final story.<br>But with more data, charts are essential to quickly convey large amounts of information.
+In this lesson we will work with a prepared version of the same dataset, containing the 10 largest C02 emitters since 2010.
+
 </p>
 </section>
 
@@ -22,7 +21,7 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
           {
             "module":"loadurl",
             "params": {
-              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/international_CO2_emission.csv"
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/largest-C02-producers-since-2010.csv"
             }
           }
         ]
@@ -32,26 +31,26 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
 </script>
 
 <section>
-  <h2>Data</h2>
-  <p> In this lesson we will use data by the U.S. Energy Information Administration, published and documented <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1">here</a>.
+  <h2>Column chart</h2>
+  <p> Let’s first compare how much C02 has been produced by each country in 2016, using a column chart.
+
 </p>
   <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">Take a look at this dataset and answer these questions for yourself</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What does each row represent?
+      >Add the step Column Chart in step 2.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What's in each column?
+      >Select  the column <kbd>Country</kbd> as the horizontal axis (X axis).
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there any columns, values or codes you don't understand?
+      >Select the column <kbd>Average 2000/16</kbd> as the vertical axis (Y axis)
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
