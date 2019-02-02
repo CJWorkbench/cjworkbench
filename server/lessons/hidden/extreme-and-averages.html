@@ -27,53 +27,42 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
             }
           }
         ]
-      },
-      {
-        "name": "Data dictionary",
-        "wfModules": [
-          {
-            "module":"pastecsv",
-            "params": {
-              "csv":"hi,there"
-            }
-          }
-        ]
       }
     ]
   }
 </script>
 
 <section>
-  <h2>1. Dropping empty rows and columns</h2>
-  <p> For the purpose of this lesson, the dataset is hosted on Workbench.</p>
+  <h2>Data</h2>
+  <p> In this lesson we will use data by the U.S. Energy Information Administration, published and documented <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1">here</a>.
+</p>
   <h3 class="instructions">Instructions</h3>
+  <p class="instruction-detail">Take a look at this dataset and answer these questions for yourself</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the data source 'Add from URL'.
+      >What does each row represent?
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'http://production-static.workbenchdata.com/data/population_growth_data.csv' && wfModule.selectedVersion"
-      >Paste in the following URL and click <kbd>Update</kbd> to load the data.
-      <div class="copy-txt content-1 t-white">http://production-static.workbenchdata.com/data/population_growth_data.csv</div>
-      <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
     </li>
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Drop empty columns"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Drop empty columns'"
-      >Add the step 'Drop empty columns.'
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
     </li>
     <li
-      data-highlight='[{"type":"Module","index":2,"name":"Drop empty rows"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[2] === 'Drop empty rows'"
-      >Add the step 'Drop empty rows'.
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
-      data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames; return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
-      >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
     </li>
   </ol>
 </section>
