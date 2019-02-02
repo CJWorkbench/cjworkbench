@@ -1,0 +1,98 @@
+<header>
+  <h1>Extreme and average values<h1>
+  <p>Clean a messy dataset and format it in order to build a chart series</p>
+</header>
+
+<!-- INTRO -->
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>Many stories are based on minimum or maximum values. This is the idea behind questions such as: What is the most expensive item in the budget? Which city is the safest? Which school has the best test scores?
+The average is one way of calculating a "typical" value that is useful to summarize data. How much CO2 emissions does a country produce in a year?
+In this lesson we will work with international data on CO2 emissions from 2000 to 2016.
+</p>
+</section>
+
+<!-- Section 1 -->
+
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/international_CO2_emission.csv"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data dictionary",
+        "wfModules": [
+          {
+            "module":"pastecsv",
+            "params": {
+              "csv":"hi,there"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section>
+  <h2>1. Dropping empty rows and columns</h2>
+  <p> For the purpose of this lesson, the dataset is hosted on Workbench.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Add the data source 'Add from URL'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'http://production-static.workbenchdata.com/data/population_growth_data.csv' && wfModule.selectedVersion"
+      >Paste in the following URL and click <kbd>Update</kbd> to load the data.
+      <div class="copy-txt content-1 t-white">http://production-static.workbenchdata.com/data/population_growth_data.csv</div>
+      <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":1,"name":"Drop empty columns"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Drop empty columns'"
+      >Add the step 'Drop empty columns.'
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":2,"name":"Drop empty rows"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[2] === 'Drop empty rows'"
+      >Add the step 'Drop empty rows'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
+      data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames; return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
+      >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
+    </li>
+  </ol>
+</section>
+
+<footer>
+  <h2>Lesson Complete</h2>
+  <div class="completed">
+    <h2>Congratulations!</h2>
+    <p class="summary"> Your data is clean and ready for analysis.</p>
+  </div>
+  <div class="next">
+    <h2>Continue learning:</h4>
+    <ol>
+      <li>
+        <a href="/lessons/scrape-using-xpath/">Scrape and monitor content on a web page</a>
+      </li>
+      <li>
+        <a href="/lessons/custom-alerts/">Monitor data and set custom alerts</a>
+      </li>
+    </ol>
+  </div>
+</footer>

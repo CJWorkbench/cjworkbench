@@ -289,9 +289,15 @@ article.fullscreen {
 
   }
 
+
   section.current {
     width: 100%;
     height: calc(100vh - 12rem); // accounts for both nav and footer
+
+    a.backToLessons {
+      display: none;
+    }
+
   }
 
   .content {
