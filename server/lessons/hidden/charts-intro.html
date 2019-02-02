@@ -1,0 +1,162 @@
+<header>
+  <h1>Column and line charts<h1>
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>Not all data stories need a data visualization. If you have only one or two numbers, they can probably just appear as text in the final story.<br>But with more data, charts are essential to quickly convey large amounts of information.
+In this lesson we will work with a prepared version of the same dataset, containing the 10 largest C02 emitters since 2010.
+
+</p>
+</section>
+
+<!-- Section 1 -->
+
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/largest-C02-producers-since-2010.csv"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section>
+  <h2>Column chart</h2>
+  <p> Let’s first compare how much C02 has been produced by each country in 2016, using a column chart.
+
+</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Add the step Column Chart in step 2.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select  the column <kbd>Country</kbd> as the horizontal axis (X axis).
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the column <kbd>Average 2000/16</kbd> as the vertical axis (Y axis)
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Label the Y and X axis and give the chart a title.
+      <p class="instruction-detail">
+        Next, let’s visualize how the production of China has changed through this period.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Tranposing</h2>
+  <p> Let’s look closely at our table.<br>
+    We cannot select <kbd>China</kbd>, because it is displayed as a row. We need it to be a column.
+    Likewise, there is no column <kbd>Year</kbd> to select. Instead, each year is its own column.
+    <br />
+  </p>
+  <p class="instruction-detail"> If we want to access variables that are displayed as rows, we must turn them into columns, which is called transposing.
+  </p>
+</section>
+<section class="fullscreen">
+  <h2>Transposing</h2>
+  <p>
+    Transposing turns rows into columns and columns into rows. Doing so, it swaps the header with the left-most column.
+    Since the header does not have a name, we must name it when it becomes the new left-most column.  Likewise, after transposing, the name of the left-most column will not be displayed anymore.
+  </p>
+  <figure class="full">
+    <img class="clear" alt="Inspect element" src="images/course-1/transpose-fig-1.png">
+  </figure>
+</section>
+<section>
+  <h2>Transposing</h2>
+  <p>Let’s transpose the table and compare the amount of C02 emitted by China through the years.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      > In step 2, insert the step 'Select column' and delete <kbd>Continent</kbd>, <kbd>Average</kbd> and <kbd>Maximum</kbd> so they do not get transposed.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Still in step 4, click <kbd>+ADD</kbd> to add a new sort. This time, sort by <kbd>Country</kbd> in descending order.Keep top ‘1 row’, under the second sort.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, insert the step 'Transpose' before the Column chart.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, name the new leftmost column <kbd>Year</kbd>.
+    </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>When to use a line chart</h2>
+  <p>
+    If column charts are a good choice to visually compare how much individual teams each spend in one season, a line chart is more adapted to visually express trends through time.
+    The reason is that continuity can be established between points in time, and so a line can be drawn to help viewers grasp the direction of the change.
+    <br>
+    Line charts, however, should not be used with anything else than a horizontal axis representing time. Drawing a line between ’China’ and ‘Russia’, would make no sense: There is no in-between value, and the chart would show something that doesn’t exist!
+  </p>
+  <figure class="full">
+    <img class="clear" alt="Inspect element" src="images/course-1/when-to-use-line-chart.png">
+  </figure>
+</section>
+<section>
+  <h2>Line chart and series</h2>
+  <p>Let’s visualize the same data, but in a line chart.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      > In step 4, Replace the column chart with a line chart.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the variable <kbd>Year</kbd> as the X axis and  <kbd>China</kbd> on the Y axis.
+      <p class="instruction-detail">Now let’s compare China’s production of CO2 to that of other countries.</p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In Line chart, select 4 additional countries of your choice on the Y axis.
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Lesson Complete!</h2>
+  <div class="completed">
+    <p class="summary"> Next, we'll learn about filtering.</p>
+  </div>
+  <div class="next">
+    <h2>Next lesson</h2>
+    <ol>
+      <li>
+        <a href="/lessons/filtering/">Filtering</a>
+      </li>
+    </ol>
+  </div>
+</footer>

@@ -286,7 +286,15 @@ article.fullscreen {
   .sections {
     display: flex;
     justify-content: center;
+  }
 
+  figure.full img {
+    padding: 0;
+    margin-top: 2rem;
+    width: 100%;
+    &.clear {
+      background-color: transparent;
+    }  
   }
 
 
