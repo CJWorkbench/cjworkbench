@@ -5,11 +5,10 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Grouping rows together is one of the most powerful ways of understanding data. This operation is sometimes called “pivot tables” or “Group by”. Its purpose is to summarize large amounts of data quickly.
+    Grouping by date.. granularity, time scales.. also intro to data type!
   </p>
   <p>
-    In this lesson we will analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York to find out the largest donors to his campaign, outside of the State of New York.
-    Out of state campaign contributions could reveal previously hidden business or political connections.
+    In this lesson we will analyse police incident data from the city of New York, and build a line chart to track the volume of reported incidents in each borrow of city.
   </p>
 </section>
 
@@ -24,7 +23,18 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/cuomo-campaign-contributions.csv"
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/NYC-incidents-Jan-feb-2018.csv"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data dictionary",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/NYPD_Complaint_YTD_DataDictionary.csv"
             }
           }
         ]
@@ -36,13 +46,16 @@
 <section>
   <h2>Data</h2>
   <p>
-    The table we’re using in this lesson has been prepared from data published and documented by the  Board of Election of the State of New York, here.
-  <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
+    The dataset we’re using in this lesson is published and documented by the  City of New York, <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>. <br />
+    It contains all reported police incidents from January and February 2018.
   </p>
   <p>
     As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
   </p>
   <h3 class="instructions">Instructions</h3>
+  <p class="instruction-detail">
+    Using the data dictionary, answer the following questions for yourself:
+  </p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -69,12 +82,11 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Does the data need to be cleaned?
     </li>
-  </ol>
 </section>
 <section>
-  <h2>Cleaning - Splitting columns</h2>
+  <h2>Cleaning</h2>
   <p>
-    We want to group donations by state, so we must extract the 2 letters state abbreviations from <kbd>Contributor</kbd> and store them into its own column so we can access it.
+    There is a lot of interesting data in this table but as usual, let’s narrow it down to the columns we need to answer a precise question.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -82,30 +94,15 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >In step 2, add Select columns and keep:<br />
-      <kbd>Contributor</kbd><br>
-      <kbd>Amt</kbd><br>
-      <kbd>State</kbd>
+      <kbd>BORO_NM</kbd><br>
+      <kbd>COMPL_FR_DT</kbd><br>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the Split column in step 3 and select the column <kbd>Contributor</kbd>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose the method <kbd>Extract first x characters from right</kbd>Set X to ‘8’, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between — spaces are characters!
-
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set X to <kbd>8</kbd>, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between — spaces are characters!
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new column <kbd>State</kbd>
+      >In step 3, rename those columns, respectively to:
+      <kbd>Borough</kbd><br>
+      <kbd>Complaint date</kbd><br>
     </li>
   </ol>
 </section>
