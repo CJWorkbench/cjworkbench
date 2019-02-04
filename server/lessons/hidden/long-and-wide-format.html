@@ -1,19 +1,17 @@
 <header>
-  <h1>Group by date and introduction to data types<h1>
+  <h1>Long and wide format<h1>
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Grouping by date.. granularity, time scales.. also intro to data type!
+    Data can be organized in tables in a multitude of ways. Depending on the analysis you are running, you will want to set up your data accordingly.
+    In this lesson we will continue  working with the same NYC police incident report as is lesson  5 and 6.
   </p>
   <p>
-    In this lesson we will analyse police incident data from the city of New York, and build a line chart to track the volume of reported incidents in each borrow of city.
+    In the previous lesson, we learned how to group a table by several columns, which resulted in our table being formatted in a ‘long format’. In this lesson, we will learn how to  convert long to wide format in order to visualize it.
   </p>
 </section>
-
-<!-- Section 1 -->
-
 <script id="initialWorkflow" type="application/json">
   {
     "tabs": [
@@ -23,7 +21,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/NYC-incidents-Jan-feb-2018.csv"
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/NYC-DATA-long format.csv"
             }
           }
         ]
@@ -43,173 +41,88 @@
   }
 </script>
 
-<section>
-  <h2>Data</h2>
+<section class="fullscreen">
+  <h2>Long format</h2>
   <p>
-    The dataset we’re using in this lesson is published and documented by the  City of New York, <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>. <br />
-    It contains all reported police incidents from January and February 2018.
+    In the table below the columns A and B are variables, and each row is a now unique combination of those variables: Each date is combined with each available borough. The third column displays values (how many incidents) associated with each combination.
   </p>
-  <p>
-    As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">
-    Using the data dictionary, answer the following questions for yourself:
-  </p>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What does each row represent?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What's in each column?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there any columns, values or codes you don't understand?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there missing or obviously wrong values?
-    </li>
-    <li
-      data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Does the data need to be cleaned?
-    </li>
-</section>
-<section>
-  <h2>Cleaning</h2>
-  <p>
-    There is a lot of interesting data in this table but as usual, let’s narrow it down to the columns we need to answer a precise question.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 2, add Select columns and keep:<br />
-      <kbd>BORO_NM</kbd><br>
-      <kbd>COMPL_FR_DT</kbd><br>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, rename those columns, respectively to:
-      <kbd>Borough</kbd><br>
-      <kbd>Complaint date</kbd><br>
-    </li>
-  </ol>
+  <figure class="full">
+    <img class="clear" alt="Inspect element" src="images/course-1/long-table.png">
+  </figure>
 </section>
 <section class="fullscreen">
-  <h2>Intro to data types</h2>
+  <h2>Converting to wide format</h2>
   <p>
-    You may have noted that each column in any data table contains a ‘type’ of data. Data types are used to tell computer how to interpret and use values.
-    Workbench supports 3 types:
+    In a wide format. A variable is used as a 'Row variable', and another variable as the 'Column variable'. All remaining cells are populated  with values corresponding to each combination of row and column variable.
   </p>
-  <p>
-    Text <br>
-    (also known as alphanumeric strings).
-  </p>
-  <p>
-    Number <br>
-    Integers are whole numbers, such as 8,22 or 268.
-    Floating point values are fractional values (such as 1/3). They are represented in a decimal number format: 1/3=3.333
-  </p>
-  <p>
-    Dates & times <br>
-    Is used to to interpreted as a reference in time, which can vary depending on location. It can be displayed in many formats, such as YYYY-MM-DD (2019–01-23), 23 January 2019.
-  </p>
+  <figure class="full">
+    <img class="clear" alt="Inspect element" src="images/course-1/long-to-wide.png">
+  </figure>
 </section>
 <section>
-  <h2>Cleaning: Data types</h2>
+  <h2>Converting to wide format</h2>
   <p>
-    Let’s finish cleaning our data by converting column types where needed.
+    Our goal is to  to visualize the volume of incidents reported in each borough, for each months. We want each row to be a borough, and each column to be a Legal Category.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 4, click open the menu of the <kbd>Complaint ID column</kbd>, and select <kbd>convert to number</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 5, add the step <kbd>Convert to Date & time<kbd>. Select <kbd>Complaint date</kbd> and choose <kbd>YYYY-MM-DD</kbd> as display format.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Group by date</h2>
-  <p>
-    Our first question is ‘How many incident were reported each month, in the entire city?
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 6, add <kbd>Group</kbd> and select the column <kbd>Complaint date</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the output column<kbd>Count of incidents</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add one more operation, and this time calculate the average donation per state. Name the new column <kbd>Average amount</kbd>.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Date granularity</h2>
-  <p>
-    Let’s visualize this data in a line chart to look at granularity visually.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 7, add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count</kbd> on the Y-axis.
-      <p class="instruction-detail">
-        To visualize the same data but for each day, we can change the granularity of the group.
+      >In step 6, add ‘Reshape’, and select <kbd>Long to wide</kbd>.
+      <p class ="instruction-detail">
+        We need to select all dates at once as our X axis.
       </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 6, edit the granularity to <kbd>by day</kbd>. Validate your edit and select the Line Chart step to view the result on your chart.
+      >Select <kbd>date</kbd> as the Row variable.
+      <p class ="instruction-detail">
+        We need each borough to be its own column, so that we can select them independently and compare them.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select <kbd>Borough</kbd>as the column variable.
     </li>
   </ol>
+</section>
+<section>
+  <h2>Visualizing</h2>
+  <p>
+    Let’s visually compare the volume of   reported police incidents  in each borough, for each month,  using a column chart.
+  </p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 8, add a Column chart.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose to display <kbd>Borough</kbd> on the horizontal axis.
+      Plot <kbd>January</kbd> and <kbd>February</kbd> on the Y axis.
+    </li>
+  </ol>
+
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <h3>Investigate</h3>
-  <p>Now that we have a good summary of the provenance of money, we could for example ask ‘Who are the largest donors in California?’.
-    Duplicate this tab and edit the new one to find out.
+  <p>In this chart we’re comparing volumes of incidents between boroughs with very different population size.
+
   </p>
   <div class="completed">
-    <p class="summary"> Next, we’ll learn about the powerful Group step.</p>
+    <p class="summary"> In the next lesson, we’ll look at how to compare ‘per capita'.</p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
     <ol>
       <li>
-        <a href="/lessons/long-and-wide-format/">Long and wide format</a>
+        <a href="/lessons/per-capita/">Per capita</a>
       </li>
     </ol>
   </div>
