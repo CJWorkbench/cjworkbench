@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
-from server import rabbitmq, handlers
+from server import handlers, rabbitmq
 from server.models import WfModule, Workflow
 from server.serializers import WorkflowSerializer, TabSerializer, \
         WfModuleSerializer

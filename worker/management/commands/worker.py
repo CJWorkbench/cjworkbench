@@ -27,8 +27,8 @@ def exit_on_exception(loop, context):
         logger.warn('Ignoring warning from aiohttp: %s', context['message'])
         return
 
-    logger.error('Exiting because of unhandled error: %s',
-                 context['message'])
+    logger.error('Exiting because of unhandled error: %s\nContext: %r',
+                 context['message'], context, context.get('exception'))
     os._exit(1)
 
 

@@ -6,11 +6,11 @@ from django.http.response import HttpResponseServerError
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
+from server import rabbitmq
 from server.models.commands import InitWorkflowCommand
 from server.models import Lesson, Workflow, ModuleVersion
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
-from server import rabbitmq
 
 
 # because get_object_or_404() is for _true_ django.db.models.Manager

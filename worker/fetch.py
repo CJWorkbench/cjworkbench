@@ -7,7 +7,6 @@ from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-import msgpack
 from server.models import LoadedModule, Params, WfModule
 from worker import save
 from .util import benchmark
@@ -151,9 +150,7 @@ async def fetch(*, wf_module_id: int) -> None:
 
 
 async def handle_fetch(message):
-    with message.process():
-        kwargs = msgpack.unpackb(message.body, raw=False)
-        try:
-            await fetch(**kwargs)
-        except Exception:
-            logger.exception('Error during fetch')
+    try:
+        await fetch(**message)
+    except Exception:
+        logger.exception('Error during fetch')

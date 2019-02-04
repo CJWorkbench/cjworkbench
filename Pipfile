@@ -40,6 +40,11 @@ oauthlib = "*"
 hext = "==0.2.0"
 jsonschema = "*"
 rfc3987 = "*"  # for jsonschema 'uri' format
+aioamqp = "*"
+# TODO nix these next two. They're because numba/llvmlite have half-released versions
+# today, 2019-02-04.
+numba = "==0.42.0"
+llvmlite = "==0.27.0"
 
 [dev-packages]
 watchdog = "*"

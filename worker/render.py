@@ -1,12 +1,10 @@
 import asyncio
 import logging
 import os
-from typing import Awaitable, Callable
+from typing import Any, Awaitable, Callable, Dict
 import aio_pika
 from channels.db import database_sync_to_async
 from django.db import DatabaseError, InterfaceError
-import msgpack
-from server import rabbitmq
 from server.models import Workflow
 from .pg_locker import PgLocker, WorkflowAlreadyLocked
 from .util import benchmark
@@ -31,24 +29,15 @@ logger = logging.getLogger(__name__)
 DupRenderWait = 0.05  # s
 
 
-async def send_render(workflow_id: int, delta_id: int) -> None:
-    # We use asyncio.sleep() to avoid spinning. During the sleep, we are not
-    # rendering! It would be nice to use a RabbitMQ delayed exchange instead;
-    # that would involve a custom RabbitMQ image, and as of 2018-10-30 the cost
-    # (new Docker image) seems to outweigh the benefit (simpler client code).
-    await asyncio.sleep(DupRenderWait)
-    await rabbitmq.queue_render(workflow_id, delta_id)
-
-
 @database_sync_to_async
 def _lookup_workflow(workflow_id: int) -> Workflow:
     """Lookup workflow, or raise Workflow.DoesNotExist."""
     return Workflow.objects.get(id=workflow_id)
 
 
-async def render_or_reschedule(
+async def render_or_requeue(
     pg_locker: PgLocker,
-    reschedule: Callable[[int, int], Awaitable[None]],
+    requeue: Callable[[int], Awaitable[None]],
     workflow_id: int,
     delta_id: int
 ) -> None:
@@ -90,14 +79,13 @@ async def render_or_reschedule(
     except WorkflowAlreadyLocked:
         logger.info('Workflow %d is being rendered elsewhere; rescheduling',
                     workflow_id)
-        await reschedule(workflow_id, delta_id)
+        await requeue(DupRenderWait)
 
     except execute.UnneededExecution:
-        logger.info('UnneededExecution in execute_workflow(%d)',
-                    workflow_id)
-        # Don't reschedule. Assume the process that modified the
-        # Workflow has also scheduled a render. Indeed, that new render
-        # request may already have hit WorkflowAlreadyLocked.
+        logger.info('UnneededExecution in execute_workflow(%d)', workflow_id)
+        # Don't requeue. Assume the process that modified the Workflow has also
+        # scheduled a render. Indeed, that new render request may already have
+        # hit WorkflowAlreadyLocked.
         return
 
     except DatabaseError:
@@ -129,26 +117,22 @@ async def render_or_reschedule(
         os._exit(1)
 
 
-async def handle_render(pg_locker: PgLocker,
-                        reschedule: Callable[[int, int], Awaitable[None]],
-                        message: aio_pika.IncomingMessage) -> None:
-    with message.process():
-        body = msgpack.unpackb(message.body, raw=False)
+async def handle_render(pg_locker: PgLocker, message: Dict[str, Any],
+                        requeue: Callable[[int], Awaitable[None]]) -> None:
         try:
-            workflow_id = int(body['workflow_id'])
-            delta_id = int(body['delta_id'])
+            workflow_id = int(message['workflow_id'])
+            delta_id = int(message['delta_id'])
         except Exception:
             logger.info(
                 ('Ignoring invalid render request. '
                  'Expected {workflow_id:int, delta_id:int}; got %r'),
-                body
+                message
             )
             return
 
         try:
-            task = render_or_reschedule(pg_locker, reschedule, workflow_id,
-                                        delta_id)
-            await benchmark(logger, task, 'render_or_reschedule(%d, %d)',
+            task = render_or_requeue(pg_locker, requeue, workflow_id, delta_id)
+            await benchmark(logger, task, 'render_or_requeue(%d, %d)',
                             workflow_id, delta_id)
         except Exception:
             logger.exception('Error during render')
