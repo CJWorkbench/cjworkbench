@@ -5,7 +5,9 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Is $100,000 large or small? It could be a big number in a city budget, or it could be a tiny number in a national budget. Most numbers don’t mean very much without some sort of comparison. The simplest types of comparisons are subtraction and division.
+    Historical dollar amounts cannot be directly compared with dollars today, because all prices slowly change over time, due to inflation.
+    Inflation is the rate of increase in prices over a given period of time.
+    In this lesson you'll learn how to compare amounts from different years using data from the bureau of labor statistics.
   </p>
   <p>
     In this lesson ..
@@ -23,7 +25,18 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/US-census-counties.csv"
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/Estimated-teacher-salaries-1969-2016.csv"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data dictionary",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/dataDictionary-affordable-housing-pipeline.csv"
             }
           }
         ]
@@ -35,8 +48,10 @@
 <section>
   <h2>Data</h2>
   <p>
-    In this lesson we’ll use data from the United States Census bureau, published and documented <a class="highlight" href='https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml' target="_blank" className="info-1">here</a>. <br />
-    The census is being conducted every 10 years. The last one was in 2010, so every year since then is an estimate.
+    The table in the first tab has been prepared using data published and documented by the National Center for Education Statistics, <a class="highlight" href='https://nces.ed.gov/' target="_blank" className="info-1">here</a>. <br />
+    It shows the average annual salaries of teachers in public elementary and secondary schools, in the U.S, for selected year from 1969-70 through 2016-17.
+    Those numbers are in ‘Current dollars’, which means not adjusted for inflation.
+    Let’s convert them in today’s dollar.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -65,90 +80,122 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Does the data need to be cleaned?
     </li>
+  </ol>
 </section>
 <section>
-  <h2>Cleanging: Facets</h2>
+  <h2>Data</h2>
   <p>
-    Scrolling through the table reveals misspelled values in the column ‘State’. To review and edit all of our 3142 rows, we will use algorithms using the step ‘Refine’.
+    The table in the first tab has been prepared using data published and documented by the National Center for Education Statistics, <a class="highlight" href='https://nces.ed.gov/' target="_blank" className="info-1">here</a>. <br />
+    It shows the average annual salaries of teachers in public elementary and secondary schools, in the U.S, for selected year from 1969-70 through 2016-17.
+    Those numbers are in ‘Current dollars’, which means not adjusted for inflation.
+    Let’s convert them in today’s dollar.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 2, add <kbd>Refine</kbd>.
+      >What does each row represent?
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Launch the auto-cluster function.
-      <p class="instruction-detail">
-        The Fingertip method ....
+      >What's in each column?
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Review clusters. If some values should not be merged, unselect them. After reviewing all clusters, click <kbd>merge</kbd>.
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
     </li>
   </ol>
 </section>
 <section>
-  <h2>Difference</h2>
+  <h2>CPI data</h2>
   <p>
-    Let’s ask: How many people arrived or left each county between 2010 and 2017?
-    We need to calculate the difference in population, which is a subtraction.
+    SIn the second tab, the Bureau of Labor statistics surveys the prices of hundreds of consumer items every month to produce a number known as the *Consumer Price Index* or CPI, published and documented <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0here' target="_blank" className="info-1">here</a>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, add <kbd>Formula</kbd>.
+      >What does each row represent?
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Subtract 2017 to 2010 by typing in the formula
-      <div class="copy-txt content-1 t-white">=(A7-A1)</div>
-      and name the new column <kbd>pop difference</kbd>.
+      >What's in each column?
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new column <kbd>population difference</kbd>.
-      <p class="instruction-detail">
-        A positive numbers means that the population increased, while a negative number means that the county’s population decreased.
-      </p>
+      >Are there any columns, values or codes you don't understand?
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Sort the resulting column in increasing order.
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
     </li>
   </ol>
 </section>
 <section>
-  <h2>Ratio</h2>
+  <h2>Cleaning CPI data</h2>
   <p>
-    Let’s ask: Relative to its size, which county has lost or gained the most population? In other word: How many habitant in 2017 compared to the number of inhabitants in in 2010?
-    The formula to calculate ‘How many (X) per (Y)’ is:
-    <div class="copy-txt content-1 t-white">=(X/Y)</div>
+    This file contains several rows of notes, and then the actual data.
+    The table also contains monthly and yearly figures, but we are only going to use the yearly averages.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 8, add a new Formula and type in
-      <div class="copy-txt content-1 t-white">=(D1/C1)</div>
-      <p class=instruction-detail>
-        Numbers greater than 1 mean the population increased. Less than 1 means that the population decreased. A ratio of 2 would mean that the population doubled.
-      </p>
+      >In step 2, select row 11. This row contains the actual column names in it.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose <kbd>Move rows to table header</kbd> from the actions menu, where it says "1 row selected" above the table.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, add <kbd>Select Columns</kbd> and only keep <kbd>Year</kbd> and <kbd>Annual</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose "Convert to Numbers" from the <kbd>Annual</kbd>column menu as a step 4.
     </li>
   </ol>
 </section>
+<section class="fullscreen">
+  <h2>Using CPI</h2>
+  <p>
+    In order to convert an old dollar amount into a current dollar amount, we need to:<br>
+    First, divide the old dollar amount by the CPI for that year<br>
+    Then, multiply it by the CPI for the current year.<br>
+    To do this, we need first to join our two tables.<br>
+  </p>
+  <p> Since both tables have a year variable, we’ll join using the Year.
+  </p>
+</section>
 <section>
-  <h2>Ratio</h2>
+  <h2>Joining tables</h2>
   <p>
     There is a close relationship between ratios and percentages. A percentage is simply a fraction (a ratio) multiplied by 100:
     <div class="copy-txt content-1 t-white">=(X/Y)*100</div>
@@ -158,38 +205,39 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 10, add a Calculate step. Chose <kbd>X is what percent of Y</kbd>, and select <kbd>Pop estimate 2017</kbd> as X, and <kbd>Pop estimate 2010</kbd> as Y.
+      >Switch back to the `Teachers salaries` tab and add a Join module in step 2.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the CPI tab to join with, and the `year` column to match.
       <p class=instruction-detail>
-        One advantage of percentages is to allow us to better grasp numbers: In 2017, the population of Concho county was 66.6% the size it was in 2010.
+        The Join module takes each available value in the ‘Year’ column of the Teacher salaries’ table and finds the corresponding row in the CPI table.
       </p>
       <p class=instruction-detail>
-        The numbers in this new column  are similar, just multiplied by 100. So 0.56 becomes 56% and so on.
+        Joining is a powerful step that you can use to build datasets using tables from various sources, each containing different information.
+        By bringing them together, the value of that information increases significantly.
       </p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>Calculating Percentage Change</h2>
+  <h2>Adjusting for inflation</h2>
   <p>
-    Percentage change is the difference between old and new numbers, expressed as a percentage of the old number. The formula to calculate the percentage change between Old and New is:
-    <div class="copy-txt content-1 t-white">=((New - Old) / Old)* 100</div>
+    The formula for converting an old dollar amount (Amt1) into an equivalent current dollar amount (Amt2) is:
+    <div class="copy-txt content-1 t-white">Amt2=(Amt1/CPI1)*CPI2</div>
+    In other words: <br>
+    First, divide the old dollar amount by the CPI for that year. Then, multiply it by the CPI for the current year.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 12, add another Calculate step and choose <kbd>Percentage change<kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Compare 2017 to 2010.
-      <p class=instruction-detail>
-        100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half of the old one.
-      </p>
-      <p class=instruction-detail>
-        Percentage change allows us to editorialize our numbers in yet a new way: ‘From 2010 to 2017, Concho county lost 33.7% of its population’.
+      >In step 3, Add Formula and type in:
+      <div class="copy-txt content-1 t-white">=(Amt1/CPI1)*240.007</div>
+      <p class="instruction-detail">
+        Once adjusted for inflation, we can see that the salaries of teachers in public elementary and secondary schools, in the U.S, had decreased from 2009 to 2016, which was not apparent in the original table.
       </p>
     </li>
   </ol>
@@ -205,10 +253,10 @@
     </p>
   </div>
   <div class="next">
-    <h2>Next lesson</h2>
+    <h2>Next</h2>
     <ol>
       <li>
-        <a href="/lessons/adjusting-for-inflation">Adjusting for inflation</a>
+        <a href="/lessons/conclusion-course-1">Wrap up</a>
       </li>
     </ol>
   </div>
