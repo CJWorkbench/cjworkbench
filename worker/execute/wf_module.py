@@ -64,17 +64,12 @@ def _execute_wfmodule_pre(workflow: Workflow, wf_module: WfModule,
     a context that doesn't use a database thread.)
     """
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
-        if input_crr is not None:
-            if input_crr.delta_id != safe_wf_module.last_relevant_delta_id:
-                # Is this even reachable?
-                raise UnneededExecution
-
-        cached_render_result = wf_module.cached_render_result
+        cached_render_result = safe_wf_module.cached_render_result
         if cached_render_result is not None:
             # If the cache is good, skip everything.
             return (cached_render_result, None, None, None, None)
 
-        module_version = wf_module.module_version
+        module_version = safe_wf_module.module_version
 
         # Read the entire input Parquet file.
         #
