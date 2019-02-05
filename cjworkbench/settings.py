@@ -351,7 +351,6 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
             'scope': ' '.join([
                 'https://www.googleapis.com/auth/drive.readonly',
                 'https://www.googleapis.com/auth/userinfo.email',
-                'https://www.googleapis.com/auth/plus.me',
             ])
         }
 
