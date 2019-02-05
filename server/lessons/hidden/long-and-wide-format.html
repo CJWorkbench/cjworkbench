@@ -1,0 +1,129 @@
+<header>
+  <h1>Long and wide format<h1>
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>
+    Data can be organized in tables in a multitude of ways. Depending on the analysis you are running, you will want to set up your data accordingly.
+    In this lesson we will continue  working with the same NYC police incident report as is lesson  5 and 6.
+  </p>
+  <p>
+    In the previous lesson, we learned how to group a table by several columns, which resulted in our table being formatted in a ‘long format’. In this lesson, we will learn how to  convert long to wide format in order to visualize it.
+  </p>
+</section>
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/NYC-DATA-long format.csv"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data dictionary",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/NYPD_Complaint_YTD_DataDictionary.csv"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section class="fullscreen">
+  <h2>Long format</h2>
+  <p>
+    In the table below the columns A and B are variables, and each row is a now unique combination of those variables: Each date is combined with each available borough. The third column displays values (how many incidents) associated with each combination.
+  </p>
+  <figure class="full">
+    <img class="clear" alt="Inspect element" src="images/course-1/long-table.png">
+  </figure>
+</section>
+<section class="fullscreen">
+  <h2>Converting to wide format</h2>
+  <p>
+    In a wide format. A variable is used as a 'Row variable', and another variable as the 'Column variable'. All remaining cells are populated  with values corresponding to each combination of row and column variable.
+  </p>
+  <figure class="full">
+    <img class="clear" alt="Inspect element" src="images/course-1/long-to-wide.png">
+  </figure>
+</section>
+<section>
+  <h2>Converting to wide format</h2>
+  <p>
+    Our goal is to  to visualize the volume of incidents reported in each borough, for each months. We want each row to be a borough, and each column to be a Legal Category.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 6, add ‘Reshape’, and select <kbd>Long to wide</kbd>.
+      <p class ="instruction-detail">
+        We need to select all dates at once as our X axis.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select <kbd>date</kbd> as the Row variable.
+      <p class ="instruction-detail">
+        We need each borough to be its own column, so that we can select them independently and compare them.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select <kbd>Borough</kbd>as the column variable.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Visualizing</h2>
+  <p>
+    Let’s visually compare the volume of   reported police incidents  in each borough, for each month,  using a column chart.
+  </p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 8, add a Column chart.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose to display <kbd>Borough</kbd> on the horizontal axis.
+      Plot <kbd>January</kbd> and <kbd>February</kbd> on the Y axis.
+    </li>
+  </ol>
+
+</section>
+<footer>
+  <h2>Lesson Complete!</h2>
+  <h3>Investigate</h3>
+  <p>In this chart we’re comparing volumes of incidents between boroughs with very different population size.
+
+  </p>
+  <div class="completed">
+    <p class="summary"> In the next lesson, we’ll look at how to compare ‘per capita'.</p>
+  </div>
+  <div class="next">
+    <h2>Next lesson</h2>
+    <ol>
+      <li>
+        <a href="/lessons/per-capita/">Per capita</a>
+      </li>
+    </ol>
+  </div>
+</footer>

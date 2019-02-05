@@ -1,0 +1,169 @@
+<header>
+  <h1>Per capita<h1>
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>
+    Which city has more coffee shops: Seattle or New York? New York is a lot larger, so it almost certainly has more coffee establishments, but Seattle’s coffee culture means that there are more establishments per habitant.<br>
+    Many numbers are best interpreted by comparing them to the overall population, giving a per-person rate. This is known as a per capita number (“capita” is Latin for “head”.)
+  </p>
+  <p>
+    In this lesson ..
+  </p>
+</section>
+
+<!-- Section 1 -->
+
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/FBI-uniform-crime-data-2017.csv"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section>
+  <h2>Data</h2>
+  <p>
+    This table is derived from the FBI Uniform Crime Report data for 2017, published and documented <a class="highlight" href='https://https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">here</a>. <br />
+    The original table published by the FBI shows crime rates per habitant. For the purpose of this exercise we removed those numbers.
+  </p>
+  <p>
+    As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <p class="instruction-detail">
+    Using the data dictionary, answer the following questions for yourself:
+  </p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What does each row represent?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
+    </li>
+</section>
+<section>
+  <h2>Absolute crime numbers</h2>
+  <p>
+    Let’s start with an obvious question: Which state had the highest number of violent crimes in 2017’?
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Sort <kbd>Violent crime<kbd> in descending order.
+      <p class="instruction-detail">
+        California is on top, with 177,627 violent crimes in 2017.
+        But California is also the largest state, so this result isn’t much of an insight.<br>
+        Next, let’s compare state using per capita numbers.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Crime per capita</h2>
+  <p>
+    Let’s reframe our question: ‘Which state has the most violent crimes per habitant?’
+    The formula to calculate ‘How many (X) per (Y)’ is:
+    <div class="copy-txt content-1 t-white">=(X/Y)</div>
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, add Formula.
+      <p class="instruction-detail">
+        Formulas must be written using reference cells - Column letters and rows.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Type in: <kbd>=(C1/B1)</kbd>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Name the output of the formula <kbd>Violent crime per capita</kbd>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 4, sort this new column in decreasing order.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Relative crime rates</h2>
+  <p>
+    These per capita crime rates are quite small: Alaska has only 0.008 violent crimes per person. Because of this, crime rates are often reported as ‘crimes per 100,000 people’.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, Edit your formula to <kbd>=(D1/B1)*100000</kbd>
+      <p class="instruction-detail">
+        This final number is often just called the “crime rate.” If you look at the FBI source, you’ll see this number reported in the table.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, Rename the output of Formula to ‘Crime rate’.
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Lesson Complete!</h2>
+  <h3>Investigate</h3>
+  <p>Now that we ...
+    Duplicate this tab and edit the new one to find out.
+  </p>
+  <div class="completed">
+    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare    numbers
+    </p>
+  </div>
+  <div class="next">
+    <h2>Next lesson</h2>
+    <ol>
+      <li>
+        <a href="/lessons/adjusting-for-inflation">Adjusting for inflation</a>
+      </li>
+    </ol>
+  </div>
+</footer>

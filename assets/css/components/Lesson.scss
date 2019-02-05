@@ -286,12 +286,26 @@ article.fullscreen {
   .sections {
     display: flex;
     justify-content: center;
-
   }
+
+  figure.full img {
+    padding: 0;
+    margin-top: 2rem;
+    width: 100%;
+    &.clear {
+      background-color: transparent;
+    }  
+  }
+
 
   section.current {
     width: 100%;
     height: calc(100vh - 12rem); // accounts for both nav and footer
+
+    a.backToLessons {
+      display: none;
+    }
+
   }
 
   .content {

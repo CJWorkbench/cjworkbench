@@ -1,0 +1,263 @@
+<header>
+  <h1>Comparing numbers<h1>
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>
+    Historical dollar amounts cannot be directly compared with dollars today, because all prices slowly change over time, due to inflation.
+    Inflation is the rate of increase in prices over a given period of time.
+    In this lesson you'll learn how to compare amounts from different years using data from the bureau of labor statistics.
+  </p>
+  <p>
+    In this lesson ..
+  </p>
+</section>
+
+<!-- Section 1 -->
+
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/Estimated-teacher-salaries-1969-2016.csv"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data dictionary",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/dataDictionary-affordable-housing-pipeline.csv"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section>
+  <h2>Data</h2>
+  <p>
+    The table in the first tab has been prepared using data published and documented by the National Center for Education Statistics, <a class="highlight" href='https://nces.ed.gov/' target="_blank" className="info-1">here</a>. <br />
+    It shows the average annual salaries of teachers in public elementary and secondary schools, in the U.S, for selected year from 1969-70 through 2016-17.
+    Those numbers are in ‘Current dollars’, which means not adjusted for inflation.
+    Let’s convert them in today’s dollar.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What does each row represent?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Data</h2>
+  <p>
+    The table in the first tab has been prepared using data published and documented by the National Center for Education Statistics, <a class="highlight" href='https://nces.ed.gov/' target="_blank" className="info-1">here</a>. <br />
+    It shows the average annual salaries of teachers in public elementary and secondary schools, in the U.S, for selected year from 1969-70 through 2016-17.
+    Those numbers are in ‘Current dollars’, which means not adjusted for inflation.
+    Let’s convert them in today’s dollar.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What does each row represent?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>CPI data</h2>
+  <p>
+    SIn the second tab, the Bureau of Labor statistics surveys the prices of hundreds of consumer items every month to produce a number known as the *Consumer Price Index* or CPI, published and documented <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0here' target="_blank" className="info-1">here</a>.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What does each row represent?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Cleaning CPI data</h2>
+  <p>
+    This file contains several rows of notes, and then the actual data.
+    The table also contains monthly and yearly figures, but we are only going to use the yearly averages.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 2, select row 11. This row contains the actual column names in it.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose <kbd>Move rows to table header</kbd> from the actions menu, where it says "1 row selected" above the table.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, add <kbd>Select Columns</kbd> and only keep <kbd>Year</kbd> and <kbd>Annual</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose "Convert to Numbers" from the <kbd>Annual</kbd>column menu as a step 4.
+    </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Using CPI</h2>
+  <p>
+    In order to convert an old dollar amount into a current dollar amount, we need to:<br>
+    First, divide the old dollar amount by the CPI for that year<br>
+    Then, multiply it by the CPI for the current year.<br>
+    To do this, we need first to join our two tables.<br>
+  </p>
+  <p> Since both tables have a year variable, we’ll join using the Year.
+  </p>
+</section>
+<section>
+  <h2>Joining tables</h2>
+  <p>
+    There is a close relationship between ratios and percentages. A percentage is simply a fraction (a ratio) multiplied by 100:
+    <div class="copy-txt content-1 t-white">=(X/Y)*100</div>
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Switch back to the `Teachers salaries` tab and add a Join module in step 2.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the CPI tab to join with, and the `year` column to match.
+      <p class=instruction-detail>
+        The Join module takes each available value in the ‘Year’ column of the Teacher salaries’ table and finds the corresponding row in the CPI table.
+      </p>
+      <p class=instruction-detail>
+        Joining is a powerful step that you can use to build datasets using tables from various sources, each containing different information.
+        By bringing them together, the value of that information increases significantly.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Adjusting for inflation</h2>
+  <p>
+    The formula for converting an old dollar amount (Amt1) into an equivalent current dollar amount (Amt2) is:
+    <div class="copy-txt content-1 t-white">Amt2=(Amt1/CPI1)*CPI2</div>
+    In other words: <br>
+    First, divide the old dollar amount by the CPI for that year. Then, multiply it by the CPI for the current year.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, Add Formula and type in:
+      <div class="copy-txt content-1 t-white">=(Amt1/CPI1)*240.007</div>
+      <p class="instruction-detail">
+        Once adjusted for inflation, we can see that the salaries of teachers in public elementary and secondary schools, in the U.S, had decreased from 2009 to 2016, which was not apparent in the original table.
+      </p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Lesson Complete!</h2>
+  <h3>Investigate</h3>
+  <p>Now that we ...
+    Duplicate this tab and edit the new one to find out.
+  </p>
+  <div class="completed">
+    <p class="summary"> Next, we’ll look at another..
+    </p>
+  </div>
+  <div class="next">
+    <h2>Next</h2>
+    <ol>
+      <li>
+        <a href="/lessons/conclusion-course-1">Wrap up</a>
+      </li>
+    </ol>
+  </div>
+</footer>

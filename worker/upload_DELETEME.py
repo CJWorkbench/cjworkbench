@@ -1,5 +1,4 @@
 import logging
-import msgpack
 from typing import Optional, Tuple
 from channels.db import database_sync_to_async
 from server.models import WfModule, UploadedFile
@@ -67,9 +66,7 @@ async def handle_upload_DELETEME(message):
     """
     DELETEME: see https://www.pivotaltracker.com/story/show/161509317
     """
-    with message.process():
-        kwargs = msgpack.unpackb(message.body, raw=False)
-        try:
-            await upload_DELETEME(**kwargs)
-        except Exception:
-            logger.exception('Error during fetch')
+    try:
+        await upload_DELETEME(**message)
+    except Exception:
+        logger.exception('Error during fetch')

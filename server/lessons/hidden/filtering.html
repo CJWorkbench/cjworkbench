@@ -1,0 +1,205 @@
+<header>
+  <h1>Filtering<h1>
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>Filtering data is a common, yet powerful analysis techniques. You can use it to answer questions such as “which cities spent more than a million dollars on snow removal last year?”
+Filtering is also a key intermediate step in many analysis, or to explore and understand data you are starting to work with.
+<br>
+In this lesson we will work with open data from the City of San Francisco on the amount of affordable housing planned to be built.
+
+</p>
+</section>
+
+<!-- Section 1 -->
+
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/affordable-housing-pipeline.csv"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data dictionary",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/dataDictionary-affordable-housing-pipeline.csv"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section>
+  <h2>Data</h2>
+  <p>The data in this lesson is a quarterly snapshot of all the housing projects in construction in San Francisco.
+    It is published and documented by the City of San Francisco <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">here</a>.
+  </p>
+  <p>As often with specialized datasets, a Data Dictionary is provided by the publisher to explain the meaning of columns. We loaded the data dictionary in a separate tab.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <p class="instruction-detail">Take a look at this dataset and answer these questions for yourself</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What does each row represent?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Cleaning</h2>
+  <p>This table contains a lot of columns which makes it difficult to navigate.
+    Let’s narrow it down to data we’re interested in.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      > In step 1, add the provenance of the data using a note.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 2, select and keep the following columns:<br>
+      <kbd>Planning neighborhood</kbd><br>
+      <kbd>Project status</kbd><br>
+      <kbd>Project Units</kbd><br>
+      <kbd>% affordable</kbd><br>
+      <kbd>Affordable units</kbd><br>
+      <p class ="instruction-detail">
+        If we need to get back to the raw data, we can access it by clicking on step 1.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Filter rows by condition</h2>
+  <p>Let’s ask our data “How many projects include more than 50% affordable units?”<br>
+    Instead of sorting the column ‘% Affordable’, we’ll only keep projects that meet our condition, so that we can count them, and continue working with that subset.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Add the step ‘Filter’ in step 3.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the column <kbd>% Affordable</kbd> to filter by.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Set the condition to <kbd>greater than</kbd> and set the value to <kbd>50</kbd>.
+      <p class ="instruction-detail">
+        The output is a table of all project including more than 50% affordable units.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Multiple conditions</h2>
+  <p>Let’s continue our exploration with the question: ‘How many of those projects contain at least 20 affordable units’?
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 3, click <kbd>OR</kbd> to add a new condition to the filter.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Filter by <kbd>Affordable_units</kbd>, and set the new condition to <kbd>is greater than or equal</kbd> to <kbd>20</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Apply the new settings.
+      <p class ="instruction-detail">
+        Our output table now displays all projects containing more than 50% affordable units AND at least 20 affordable units.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Filtering rows by values</h2>
+  <p>Let’s now filter projects to keep those who have high likelihood to be completed by keeping the one who reached stage <kbd>(3) Design with entitlement Approved</kbd>.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 4, add the step Filter value.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the column <kbd>Neighborhood</kbd> to filter by.
+      <p class ="instruction-detail">
+        All unique values in the column ‘Neighborhood’ are listed within the module, as well as how many rows use each value.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select the values corresponding to stages 3 to 6.
+      <p class ="instruction-detail">
+        By changing selected values in ‘Filter by value’ you can quickly get insight into any development stage in the pipeline.
+      </p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Lesson Complete!</h2>
+  <div class="completed">
+    <p class="summary"> Next, we’ll learn about the powerful Group step.</p>
+  </div>
+  <div class="next">
+    <h2>Next lesson</h2>
+    <ol>
+      <li>
+        <a href="/lessons/group/">Summarizing data by grouping</a>
+      </li>
+    </ol>
+  </div>
+</footer>

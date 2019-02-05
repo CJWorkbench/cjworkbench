@@ -1,105 +1,23 @@
 import asyncio
-import logging
-import threading
-import types
-import aio_pika
-from django.conf import settings
-import msgpack
-
-# Support multiple event loops. This only makes sense during unit tests:
-# async_to_sync() creates and destroys an event loop with each invocation.
-_connect_lock = threading.Lock()  # only connect in one event loop at a time
-_loop_to_connection = {}  # loop => (connection, channel)
+from cjworkbench import rabbitmq
 
 
-logger = logging.getLogger(__name__)
+async def get_connection():
+    """
+    Ensure rabbitmq is initialized.
 
+    This is pretty janky.
+    """
+    ret = rabbitmq.get_connection()
 
-class Connection:
-    def __init__(self, connection, channel):
-        self.connection = connection
-        self.channel = channel
-        self.lock = asyncio.Lock()
+    # Now, ret is returned but ret.connect() hasn't been called -- meaning we
+    # can't call any other functions on it.
+    #
+    # Tell asyncio to start that `.connect()` (which has already been
+    # scheduled)  _before_ doing anything else. sleep(0) does the trick.
+    await asyncio.sleep(0)
 
-    async def close(self) -> None:
-        await self.channel.close()
-        await self.connection.close()
-
-    async def queue_render(self, workflow_id: int, delta_id: int) -> None:
-        async with self.lock:
-            await self.channel.default_exchange.publish(
-                aio_pika.Message(msgpack.packb({
-                    'workflow_id': workflow_id,
-                    'delta_id': delta_id,
-                })),
-                routing_key='render'
-            )
-
-    async def queue_fetch(self, wf_module_id: int) -> None:
-        async with self.lock:
-            await self.channel.default_exchange.publish(
-                aio_pika.Message(msgpack.packb({
-                    'wf_module_id': wf_module_id,
-                })),
-                routing_key='fetch'
-            )
-
-    async def queue_handle_upload_DELETEME(self, wf_module_id: int,
-                                           uploaded_file_id: int) -> None:
-        """
-        DELETEME: see https://www.pivotaltracker.com/story/show/161509317
-        """
-        async with self.lock:
-            await self.channel.default_exchange.publish(
-                aio_pika.Message(msgpack.packb({
-                    'wf_module_id': wf_module_id,
-                    'uploaded_file_id': uploaded_file_id,
-                })),
-                routing_key='DELETEME-upload'
-            )
-
-
-async def get_connection(loop=None):
-    if not loop:
-        loop = asyncio.get_event_loop()
-
-    global _loop_to_connection
-    try:
-        return _loop_to_connection[loop]
-    except KeyError:
-        global _connect_lock
-
-        with _connect_lock:
-            host = settings.RABBITMQ_HOST
-            logger.info('Connecting to %s', host)
-            connection = await aio_pika.connect_robust(url=host,
-                                                       connection_attempts=100)
-            channel = await connection.channel()
-            await channel.declare_queue('render', durable=True)
-            await channel.declare_queue('fetch', durable=True)
-            await channel.declare_queue('DELETEME-upload', durable=True)
-
-            def _wrap_event_loop(self, *args, **kwargs):  # self = loop
-                global _loop_to_connection
-
-                # If the event loop was closed, there's nothing we can do
-                if not self.is_closed():
-                    try:
-                        conn = _loop_to_connection[loop]
-                        del _loop_to_connection[self]
-                        self.run_until_complete(conn.close())
-                    except KeyError:
-                        pass
-
-                # Restore and call the original close()
-                self.close = original_impl
-                return self.close(*args, **kwargs)
-
-            original_impl = loop.close
-            loop.close = types.MethodType(_wrap_event_loop, loop)
-
-            _loop_to_connection[loop] = Connection(connection, channel)
-            return _loop_to_connection[loop]
+    return ret
 
 
 async def queue_render(workflow_id: int, delta_id: int):
