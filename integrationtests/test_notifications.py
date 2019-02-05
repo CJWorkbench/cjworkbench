@@ -56,4 +56,4 @@ class TestNotifications(LoggedInIntegrationTest):
             return path in body and 'has been updated with new data' in body
 
         timeout = b.default_wait_timeout
-        WebDriverWait(None, 10000*timeout).until(got_notification_email)
+        WebDriverWait(None, 10 + timeout).until(got_notification_email)
