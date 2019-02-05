@@ -84,7 +84,7 @@ class WorkbenchBase(unittest.TestCase):
         b.click_whatever('li.module-search-result', text=name)
 
         b.assert_element(
-            f'.wf-module[data-module-name="{name}"].status-ready',
+            f'.wf-module[data-module-name="{name}"]:not(.status-busy)',
             wait=True
         )
 
