@@ -67,9 +67,7 @@ def acking_callback_with_requeue(fn):
     """
     @functools.wraps(fn)
     async def inner(channel, body, envelope, properties):
-        called_requeue = False
         async def requeue(delay: float):
-            called_requeue = True
             # We use asyncio.sleep() to avoid spinning. During the sleep, we
             # are not rendering! It would be nice to use a RabbitMQ delayed
             # exchange instead; that would involve a custom RabbitMQ image, and
@@ -210,7 +208,7 @@ class RetryingConnection:
                 # Don't actually _consume_ the queue: just declare it.
                 continue
 
-            # RabbitMQ's 'basic_qos()' applies to "the next consumer", not to the
+            # RabbitMQ's 'basic_qos()' applies to "the next consumer", not the
             # actual channel. https://www.rabbitmq.com/consumer-prefetch.html
             #
             # leave prefetch_size at its default, 0: "no octet-size limit"
@@ -232,7 +230,7 @@ class RetryingConnection:
             # Someone else called .close(). Return when that one finishes.
             await self._closed_event
 
-        self.is_closed = True # speed up self.connect() if we're waiting for it
+        self.is_closed = True  # speed up self.connect() if it's waiting
 
         await self._connected
         await self._protocol.close()
