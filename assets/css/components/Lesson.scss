@@ -294,7 +294,7 @@ article.fullscreen {
     width: 100%;
     &.clear {
       background-color: transparent;
-    }  
+    }
   }
 
 
@@ -325,6 +325,13 @@ article.fullscreen {
         margin-right: 5rem;
       }
     }
+  }
+
+  // start button in fullsceen lesson page, for lesson start
+  a.start {
+    margin-top: 3rem;
+    @extend %action-button;
+    @extend %button-pink-fill;
   }
 }
 

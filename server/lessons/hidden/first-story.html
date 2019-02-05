@@ -1,13 +1,11 @@
 <header>
-  <h1>Extreme and average values<h1>
+  <h1>Your first story<h1>
 </header>
 
 <section class="fullscreen">
-  <h2>Introduction</h2>
-  <p>Many stories are based on minimum or maximum values. This is the idea behind questions such as: What is the most expensive item in the budget? Which city is the safest? Which school has the best test scores?
-The average is one way of calculating a "typical" value that is useful to summarize data. How much CO2 emissions does a country produce in a year?
-In this lesson we will work with international data on CO2 emissions from 2000 to 2016.
-</p>
+  <h2>Welcome!</h2>
+  <p>Welcome! In this lesson you'll learn the first questions you should ask about every data set, and do a complete story including analysis and visualization.
+  </p>
 </section>
 
 <!-- Section 1 -->
@@ -31,8 +29,8 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
 </script>
 
 <section>
-  <h2>Data</h2>
-  <p> In this lesson we will use data by the U.S. Energy Information Administration, published and documented <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1">here</a>.
+  <h2>Interviewing the Data</h2>
+  <p>In this lesson we'll use data on international C02 emmissions, published by the <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1">U.S. Energy Information Administration</a>.
 </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Take a look at this dataset and answer these questions for yourself</p>
@@ -66,9 +64,11 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
 </section>
 <section>
   <h2>Averages</h2>
-  <p> Let's start by asking our data: What is the average emission per country, across all available years? <br>
-    The average of a number (n) of values (v) is the sum of all values divided by the number of values:
-    <div class="copy-txt content-1 t-white">=(Value1+Value2+Vn) / n</div>
+  <p> One of the most basic things you can do with data is describe or summarize it. Country CO2 emissions fluctuate, so instead of looking at just the last year,  let’s take the average of the last five years.
+  </p>
+  <p> The average is one way of computing a "typical" value. It’s the sum of all the values divided by the number of values N:
+    <div class="copy-txt content-1 t-white">=(Value 1+Value 2+...+Value N) / N</div>
+    In this lesson we will use a ‘Calculate’ step  to apply this formula automatically.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -85,7 +85,7 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select all available years columns
+      >Select columns 2012 to 2016
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -96,84 +96,48 @@ In this lesson we will work with international data on CO2 emissions from 2000 t
   </ol>
 </section>
 <section>
-  <h2>Extreme values</h2>
+  <h2>First chart</h2>
   <p>
-    Let's now ask: What is the most each country has emitted in any given year?
+    Many data-driven stories involve a visualization. You can add a visualization step at any point to view the contents of the table as a chart.
+  </p>
+  <p>
+    Let’s visualize the averages we’ve just calculated.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, add another Calculate.
+      >Click <kbd>Add Step</kbd> and type <kbd>chart</kbd> into the search box.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set the operation to ‘Maximum’.
+      >Choose <kbd>Column Chart</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select available years columns and name the output <kbd>Maximum 2000/16</kbd>.
+      >Select the <kbd>Country</kbd> column for the X axis.
       <p class="instruction-detail">The new column is displayed at the far right of the table.</p>
     </li>
-  </ol>
-</section>
-<section>
-  <h2>Sorting</h2>
-  <p>Another way to find extreme values is simply to sort the table.
-    Let's ask our data: Which country has emitted the most C02 on average, across all available years?
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">First, let's make our table easier to navigate</p>
-  <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      > In step 4, add 'Select columns', and keep columns <kbd>Country</kbd>,<kbd>Continent</kbd> and <kbd>Average 2000/16</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Using the column menu, sort <kbd>Average 2000/16</kbd> in descending order.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Sorting by multiple columns</h2>
-  <p>Which country is the largest CO2 emitter per continent?
-    To find out, we need to sort first by Continent, then by Country.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      > Edit the existing step 4 to sort by <kbd>Continent</kbd>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Still in step 4, click <kbd>+ADD</kbd> to add a new sort. This time, sort by <kbd>Country</kbd> in descending order.Keep top ‘1 row’, under the second sort.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Keep the top ‘1 row’.
+      >Select the <kbd>Average emission per year</kbd> column for the Y axis
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, let's visualize this data.</p>
+    <p class="summary"> Congratulations, you have completed your first data-driven story! In future lessons, you’ll learn how to export live charts and create much more sophisticated visualizations.</p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
     <ol>
       <li>
-        <a href="/lessons/charts-intro/">Columns and line charts</a>
+        <a href="/lessons/extreme-values/">Extreme values</a>
       </li>
     </ol>
   </div>
