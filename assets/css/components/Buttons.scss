@@ -322,6 +322,26 @@ button:focus { outline:0 !important; }
   @extend %button-red;
 }
 
+%button-pink-fill {
+  color: white;
+  background-color: $brand-learn;
+  display: inline-flex;
+  border:1px solid $brand-learn;
+  &:hover {
+    background-color: $light-accent--strong;
+    border: 1px solid $brand-learn;
+  }
+  &:active {
+    background-color: $brand-learn;
+  }
+}
+
+.button-pink-fill {
+  @extend %button-pink-fill;
+}
+
+
+
 .button-blue--fill {
   background-color: $brand-workspace;
   color: white;
@@ -336,6 +356,9 @@ button:focus { outline:0 !important; }
     color: white;
   }
 }
+
+
+
 
 
 %button-orange {
