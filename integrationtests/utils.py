@@ -83,7 +83,10 @@ class WorkbenchBase(unittest.TestCase):
 
         b.click_whatever('li.module-search-result', text=name)
 
-        b.assert_element(f'.wf-module[data-module-name="{name}"]', wait=True)
+        b.assert_element(
+            f'.wf-module[data-module-name="{name}"].status-ready',
+            wait=True
+        )
 
     # TODO move to a helper .py file
     def delete_wf_module(self, position: int) -> None:
