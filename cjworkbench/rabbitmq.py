@@ -106,6 +106,11 @@ class RetryingConnection:
         self._declared_queues = []
         self._closed_event = asyncio.Event()
 
+        # processing_messages: a set of running tasks, _outside_ of aioamqp.
+        #
+        # See _make_callback_not_block().
+        self._processing_messages = []
+
     async def connect(self) -> None:
         """
         Ensure we are connected, setting `self._connection` to a value.
@@ -177,6 +182,34 @@ class RetryingConnection:
                 logger.exception('Unhandled exception from _attempt_connect()')
                 raise
 
+    def _make_callback_not_block(self, callback) -> Callable:
+        """
+        Make `callback` return right away and manage it in the event loop.
+
+        This is complex, so hold on.
+
+        aioamqp will "await" its callbacks when handling messages, meaning
+        it won't handle network traffic until that callback returns. But
+        the callback needs to ack its message -- which takes network traffic.
+
+        We need to kick off "background" tasks -- using
+        event_loop.create_task(). We need to manage those background tasks,
+        so we can clean them up when we close.
+
+        That's self._processing_messages: tasks running in the background. Each
+        such task finishes by acking its message and deleting itself from the
+        list.
+        """
+        loop = asyncio.get_event_loop()
+
+        @functools.wraps(callback)
+        async def inner(*args):
+            task = loop.create_task(callback(*args))
+            self._processing_messages.append(task)
+            task.add_done_callback(self._processing_messages.remove)
+
+        return inner
+
     async def _attempt_connect(self) -> None:
         """
         Set self._channel, self._transport and self._protocol, or raise.
@@ -215,8 +248,10 @@ class RetryingConnection:
             await self._channel.basic_qos(prefetch_count=queue.prefetch_count)
 
             # call (and await) `callback` for every message.
-            await self._channel.basic_consume(queue.callback,
-                                              queue_name=queue.name)
+            await self._channel.basic_consume(
+                self._make_callback_not_block(queue.callback),
+                queue_name=queue.name
+            )
 
         logger.info('Connected to RabbitMQ')
 
@@ -235,6 +270,8 @@ class RetryingConnection:
         await self._connected
         await self._protocol.close()
         await self._protocol.worker  # wait for connection to close entirely
+        await asyncio.gather(self._processing_messages,
+                             return_exceptions=True)  # wait for _all_ of them
         self._closed_event.set()  # we're finished closing.
 
     def declare_queue_consume(self, queue: str, prefetch_count: int,
