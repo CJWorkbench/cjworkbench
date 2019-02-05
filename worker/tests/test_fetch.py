@@ -203,6 +203,26 @@ class FetchTests(DbTestCase):
 
         self._test_fetch(fetch, wfm2)
 
+    def test_fetch_get_input_dataframe_two_tabs(self):
+        table = pd.DataFrame({'A': [1]})
+        wrong_table = pd.DataFrame({'B': [1]})
+
+        workflow = Workflow.create_and_init()
+        delta_id = workflow.last_delta_id
+        tab = workflow.tabs.first()
+        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta_id)
+        wfm1.cache_render_result(delta_id, ProcessResult(table))
+        wfm2 = tab.wf_modules.create(order=1)
+
+        tab2 = workflow.tabs.create(position=1)
+        wfm3 = tab2.wf_modules.create(order=0, last_relevant_delta_id=delta_id)
+        wfm3.cache_render_result(delta_id, ProcessResult(wrong_table))
+
+        async def fetch(params, *, get_input_dataframe, **kwargs):
+            assert_frame_equal(await get_input_dataframe(), table)
+
+        self._test_fetch(fetch, wfm2)
+
     def test_fetch_get_input_dataframe_empty_cache(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
