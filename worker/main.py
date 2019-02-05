@@ -1,8 +1,6 @@
 import asyncio
-from functools import partial
 import logging
 import os
-import aio_pika
 from cjworkbench import rabbitmq
 from .pg_locker import PgLocker
 from .fetch import handle_fetch

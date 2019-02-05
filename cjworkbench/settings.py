@@ -290,7 +290,7 @@ LOGGING = {
         },
         # It's nice to have level=DEBUG, but we have experience with lots of
         # modules that we think are now better off as INFO.
-        'aio_pika': {'level': 'INFO'},
+        'aioamqp': {'level': 'INFO'},
         'asyncio': {'level': 'INFO'},
         'daphne': {'level': 'INFO'},
         'oauthlib': {'level': 'INFO'},
