@@ -117,14 +117,10 @@ async def _render_wfmodule(
     The actual render runs in a background thread so the event loop can process
     other events.
     """
-    if input_result is None:
-        # We're the first module in the tab
-        input_table = pd.DataFrame()
-    else:
-        if input_result.status != 'ok':
-            return ProcessResult()  # 'unreachable'
+    if wf_module.order > 0 and input_result.status != 'ok':
+        return ProcessResult()  # 'unreachable'
 
-        input_table = input_result.dataframe
+    input_table = input_result.dataframe
 
     loaded_module, fetch_result = await _execute_wfmodule_pre(workflow,
                                                               wf_module)

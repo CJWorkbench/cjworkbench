@@ -66,3 +66,13 @@ class TableShape:
             isinstance(rhs, TableShape)
             and (self.nrows, self.columns) == (rhs.nrows, rhs.columns)
         )
+
+
+class StepResultShape:
+    """
+    Low-RAM metadata about a ProcessResult.
+    """
+
+    def __init__(self, status: str, table_shape: TableShape):
+        self.status = status
+        self.table_shape = table_shape

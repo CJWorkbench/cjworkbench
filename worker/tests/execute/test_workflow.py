@@ -1,11 +1,15 @@
 import asyncio
+from collections import namedtuple
+import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
 from server.tests.utils import DbTestCase
 from server.models import LoadedModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.types import ProcessResult
-from worker.execute import execute_workflow, UnneededExecution
+from worker.execute.types import UnneededExecution
+from worker.execute.workflow import execute_workflow, \
+        partition_ready_and_dependent
 
 
 table_csv = 'A,B\n1,2\n3,4'
@@ -27,7 +31,7 @@ def cached_render_result_revision_list(workflow):
     ))
 
 
-class ExecuteTests(DbTestCase):
+class WorkflowTests(DbTestCase):
     def _execute(self, workflow):
         self.run_with_async_db(execute_workflow(workflow,
                                                 workflow.last_delta_id))
@@ -39,7 +43,7 @@ class ExecuteTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         wf_module = tab.wf_modules.create(
-            order=1,
+            order=0,
             last_relevant_delta_id=delta1.id
         )
 
@@ -260,3 +264,50 @@ class ExecuteTests(DbTestCase):
         self._execute(workflow)
 
         email.assert_not_called()
+
+
+class PartitionReadyAndDependentTests(unittest.TestCase):
+    MockTabFlow = namedtuple('MockTabFlow', ('tab_slug', 'input_tab_slugs'))
+
+    def test_empty_list(self):
+        self.assertEqual(([], []), partition_ready_and_dependent([]))
+
+    def test_no_tab_params(self):
+        flows = [
+            self.MockTabFlow('t1', set()),
+            self.MockTabFlow('t2', set()),
+            self.MockTabFlow('t3', set()),
+        ]
+        self.assertEqual((flows, []), partition_ready_and_dependent(flows))
+
+    def test_tab_chain(self):
+        flows = [
+            self.MockTabFlow('t1', {'t2'}),
+            self.MockTabFlow('t2', {'t3'}),
+            self.MockTabFlow('t3', set()),
+        ]
+        self.assertEqual((flows[2:], flows[:2]),
+                         partition_ready_and_dependent(flows))
+
+    def test_missing_tabs(self):
+        flows = [
+            self.MockTabFlow('t1', {'t4'}),
+            self.MockTabFlow('t2', {'t4'}),
+            self.MockTabFlow('t3', set()),
+        ]
+        self.assertEqual((flows, []), partition_ready_and_dependent(flows))
+
+    def test_cycle(self):
+        flows = [
+            self.MockTabFlow('t1', {'t2'}),
+            self.MockTabFlow('t2', {'t1'}),
+            self.MockTabFlow('t3', set()),
+        ]
+        self.assertEqual((flows[2:], flows[:2]),
+                         partition_ready_and_dependent(flows))
+
+    def test_tab_self_reference(self):
+        flows = [
+            self.MockTabFlow('t1', {'t1'})
+        ]
+        self.assertEqual(([], flows), partition_ready_and_dependent(flows))

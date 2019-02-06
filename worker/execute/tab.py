@@ -1,9 +1,10 @@
 from functools import lru_cache
-from typing import List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from channels.db import database_sync_to_async
 from server.models import Params, WfModule, Workflow, Tab
 from server.models.param_field import ParamDTypeTab
 from server.modules.types import ProcessResult
+from server.types import StepResultShape
 from .wf_module import execute_wfmodule, locked_wf_module
 
 
@@ -81,11 +82,11 @@ class TabFlow:
         Slugs of tabs that are used as _input_ into this tab's steps.
         """
         ret = set()
-        for step in self.steps:
-            if step.module_version is None:
+        for wf_module, _ in self.steps:
+            if wf_module.module_version is None:
                 continue
 
-            schema = step.module_version.param_schema
+            schema = wf_module.module_version.param_schema
             slugs = set(schema.find_leaf_values_with_dtype(ParamDTypeTab))
             ret.update(slugs)
         return ret
@@ -96,7 +97,7 @@ def _load_input_from_cache(workflow: Workflow,
                            flow: TabFlow) -> ProcessResult:
     last_fresh_wfm = flow.last_fresh_wf_module
     if last_fresh_wfm is None:
-        return None
+        return ProcessResult()
     else:
         # raises UnneededExecution
         with locked_wf_module(workflow, last_fresh_wfm) as safe_wfm:
@@ -107,7 +108,11 @@ def _load_input_from_cache(workflow: Workflow,
             return crr.result
 
 
-async def execute_tab_flow(workflow: Workflow, flow: TabFlow) -> None:
+async def execute_tab_flow(
+    workflow: Workflow,
+    flow: TabFlow,
+    tab_shapes: Dict[str, Optional[StepResultShape]]
+) -> ProcessResult:
     """
     Ensure `flow.tab.live_wf_modules` all cache fresh render results.
 
@@ -127,3 +132,4 @@ async def execute_tab_flow(workflow: Workflow, flow: TabFlow) -> None:
     for wf_module, params in flow.stale_steps:
         last_result = await execute_wfmodule(workflow, wf_module, params,
                                              last_result)
+    return last_result
