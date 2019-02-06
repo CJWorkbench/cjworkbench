@@ -28,7 +28,8 @@ def exit_on_exception(loop, context):
         return
 
     logger.error('Exiting because of unhandled error: %s\nContext: %r',
-                 context['message'], context, context.get('exception'))
+                 context['message'], context,
+                 exc_info=context.get('exception'))
     os._exit(1)
 
 
