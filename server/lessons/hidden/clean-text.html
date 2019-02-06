@@ -1,0 +1,212 @@
+<header>
+  <h1>Summarizing data by grouping<h1>
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>
+    Grouping rows together is one of the most powerful ways of understanding data. This operation is sometimes called “pivot tables” or “Group by”. Its purpose is to summarize large amounts of data quickly.
+  </p>
+  <p>
+    In this lesson we will analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York to find out the largest donors to his campaign, outside of the State of New York.
+    Out of state campaign contributions could reveal previously hidden business or political connections.
+  </p>
+</section>
+
+<!-- Section 1 -->
+
+<script id="initialWorkflow" type="application/json">
+  {
+    "tabs": [
+      {
+        "name": "Lesson",
+        "wfModules": [
+          {
+            "module":"loadurl",
+            "params": {
+              "url":"https://raw.githubusercontent.com/pierreconti/Data/master/cuomo-campaign-contributions.csv"
+            }
+          }
+        ]
+      }
+    ]
+  }
+</script>
+
+<section>
+  <h2>Data</h2>
+  <p>
+    The table we’re using in this lesson has been prepared from data published and documented by the  Board of Election of the State of New York, here.
+  <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
+  </p>
+  <p>
+    As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What does each row represent?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >What's in each column?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there any columns, values or codes you don't understand?
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Are there missing or obviously wrong values?
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Does the data need to be cleaned?
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Cleaning - Splitting columns</h2>
+  <p>
+    We want to group donations by state, so we must extract the 2 letters state abbreviations from <kbd>Contributor</kbd> and store them into its own column so we can access it.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 2, add Select columns and keep:<br />
+      <kbd>Contributor</kbd><br>
+      <kbd>Amt</kbd><br>
+      <kbd>State</kbd>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Add the Split column in step 3 and select the column <kbd>Contributor</kbd>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose the method <kbd>Extract first x characters from right</kbd>Set X to ‘8’, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between — spaces are characters!
+
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Set X to <kbd>8</kbd>, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between — spaces are characters!
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Name the new column <kbd>State</kbd>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Cleaning text</h2>
+  <p>
+    We now need to clean the new State column, so it only contains two letters abbreviations.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 4, add <kbd>Clean text</kbd>, and apply it to <kbd>State</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In the 'Characters' section, set the step to delete numbers.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >With step 4 selected, rename <kbd>amt</kbd> to <kbd>Amount</kbd> by editing the column name in the table. This will create a step 5, and log your edit.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Grouping and counting</h2>
+  <p>Which is the state with the most contributions?
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 5, add 'Group' and select the column <kbd>State</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Keep the first operation set to <kbd>count</kbd>. It will count all rows within each group.
+      <p class ="instruction-detail">
+        Since one row is a donation and each group is a state, it will count the number of donations in each state.
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Name the new  column to <kbd>Number of donations</kbd>.
+      <p class ="instruction-detail">
+        Next, let’s find out how much was donated in each State.
+      </p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Operations in groups</h2>
+  <p>What is the total amount that has been donated in each state? What is the average donation per state?
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In step 5 Click <kbd>+ADD</kbd> to add a new operation.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Set it to <kbd>SUM</kbd>, and choose the column <kbd>Amt</kbd> as the target.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Name the new column <kbd>Total amount</kbd>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Add one more operation, and this time calculate the average donation per state. Name the new column <kbd>Average amount</kbd>.
+    </li>
+  </ol>
+</section
+<section>
+  <h2>Investigate</h2>
+  <p>Now that we have a good summary of the provenance of money, we could for example ask ‘Who are the largest donors in California?’.
+    Duplicate this tab and edit the new one to find out.
+  </p>
+</section>
+<footer>
+  <h2>Lesson Complete!</h2>
+  <div class="completed">
+    <p class="summary"> Next, we’ll learn about the powerful Group step.</p>
+  </div>
+  <div class="next">
+    <h2>Next lesson</h2>
+    <ol>
+      <li>
+        <a href="/lessons/group-by-date/">Group by date and introduction to data type</a>
+      </li>
+    </ol>
+  </div>
+</footer>
