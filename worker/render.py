@@ -72,7 +72,8 @@ async def render_or_requeue(
             # `execute_workflow()` _anticipates_ that `workflow` data may be
             # stale.
             task = execute.execute_workflow(workflow)
-            await benchmark(logger, task, 'execute_workflow(%d)', workflow_id)
+            await benchmark(logger, task, 'execute_workflow(%d, %d)',
+                            workflow_id, delta_id)
 
     except WorkflowAlreadyLocked:
         logger.info('Workflow %d is being rendered elsewhere; rescheduling',
