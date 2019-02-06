@@ -290,8 +290,9 @@ LOGGING = {
         },
         # It's nice to have level=DEBUG, but we have experience with lots of
         # modules that we think are now better off as INFO.
-        'aioamqp': {'level': 'INFO'},
+        'aioamqp': {'level': 'DEBUG'},
         'asyncio': {'level': 'INFO'},
+        'channels_rabbitmq': {'level': 'DEBUG'},
         'daphne': {'level': 'INFO'},
         'oauthlib': {'level': 'INFO'},
         'urllib3': {'level': 'INFO'},
