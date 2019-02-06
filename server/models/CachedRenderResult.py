@@ -37,6 +37,11 @@ class CachedRenderResult:
     has no pros, only cons.)
 
     Part of this result is also stored on disk. Read it with read_dataframe().
+
+    Use this heuristic to decide when to use CachedRenderResult:
+
+        * CachedRenderResult is cheap: low RAM, low CPU, low I/O.
+        * CachedRenderResult.result and .read_dataframe() are expensive.
     """
 
     def __init__(self, workflow_id: int, wf_module_id: int, delta_id: int,

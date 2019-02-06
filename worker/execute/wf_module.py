@@ -1,11 +1,13 @@
 import asyncio
 import contextlib
 import datetime
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 from channels.db import database_sync_to_async
+import pandas as pd
 from server import notifications
-from server.models import CachedRenderResult, LoadedModule, WfModule, Workflow
+from server.models import LoadedModule, Params, WfModule, Workflow
 from server.modules.types import ProcessResult
+from server.notifications import OutputDelta
 from server import websockets
 from .types import UnneededExecution
 
@@ -46,129 +48,100 @@ def locked_wf_module(workflow, wf_module):
 
 
 @database_sync_to_async
-def _execute_wfmodule_pre(workflow: Workflow, wf_module: WfModule,
-                          input_crr: CachedRenderResult) -> Tuple:
+def _execute_wfmodule_pre(workflow: Workflow,
+                          wf_module: WfModule) -> Tuple:
     """
     First step of execute_wfmodule().
 
     Returns a Tuple in this order:
-        * cached_render_result: if non-None, the quick return value of
-          execute_wfmodule().
         * loaded_module: a ModuleVersion for dispatching render
-        * input_result: Result from previous module
-        * params: Params for dispatching render
         * fetch_result: optional ProcessResult for dispatching render
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
     a context that doesn't use a database thread.)
     """
+    # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
-        cached_render_result = safe_wf_module.cached_render_result
-        if cached_render_result is not None:
-            # If the cache is good, skip everything.
-            return (cached_render_result, None, None, None, None)
-
         module_version = safe_wf_module.module_version
-
-        # Read the entire input Parquet file.
-        #
-        # Usually, this will return a fetched result from memory.
-        # (input_crr.result is a cached value, and it's set during creation; so
-        # if we created input_crr while executing the previous module, this
-        # won't read from S3.)
-        if input_crr is not None:
-            input_result = input_crr.result
-        else:
-            input_result = ProcessResult()
-
-        params = safe_wf_module.get_params()
         fetch_result = safe_wf_module.get_fetch_result()
-
         loaded_module = LoadedModule.for_module_version_sync(module_version)
 
-        return (None, loaded_module, input_result, params, fetch_result)
+        return (loaded_module, fetch_result)
 
 
 @database_sync_to_async
 def _execute_wfmodule_save(workflow: Workflow, wf_module: WfModule,
-                           result: ProcessResult) -> Tuple:
+                           result: ProcessResult) -> OutputDelta:
     """
-    Second database step of execute_wfmodule().
-
-    Writes result (and maybe has_unseen_notification) to the WfModule in the
-    database and returns a Tuple in this order:
-        * cached_render_result: the return value of execute_wfmodule().
-        * output_delta: if non-None, an OutputDelta to email to the Workflow
-          owner.
+    Call wf_module.cache_render_result() and build OutputDelta.
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
     a context that doesn't use a database thread.)
 
-    Raises UnneededExecution if the WfModule has changed in the interim.
+    Raise UnneededExecution if the WfModule has changed in the interim.
     """
+    # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
         if safe_wf_module.notifications:
             stale_crr = safe_wf_module.get_stale_cached_render_result()
             # Read entire old Parquet file, blocking
-            old_result = stale_crr.result
+            stale_result = stale_crr.result
         else:
-            old_result = None
+            stale_result = None
 
-        cached_render_result = safe_wf_module.cache_render_result(
+        safe_wf_module.cache_render_result(
             safe_wf_module.last_relevant_delta_id,
             result
         )
 
-        if safe_wf_module.notifications and result != old_result:
+        if safe_wf_module.notifications and result != stale_result:
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=['has_unseen_notification'])
-            output_delta = notifications.OutputDelta(safe_wf_module,
-                                                     old_result, result)
+            return notifications.OutputDelta(safe_wf_module,
+                                             stale_result, result)
         else:
-            output_delta = None
-
-        return (cached_render_result, output_delta)
+            return None  # nothing to email
 
 
-async def _render_wfmodule(workflow: Workflow, wf_module: WfModule,
-                           input_crr: CachedRenderResult
-                           ) -> Tuple[ProcessResult, ProcessResult,
-                                      CachedRenderResult]:
+async def _render_wfmodule(
+    workflow: Workflow,
+    wf_module: WfModule,
+    params: Params,
+    input_result: Optional[ProcessResult]  # None for first module in tab
+) -> ProcessResult:
     """
-    Prepare and call `wf_module`'s `render()`.
+    Prepare and call `wf_module`'s `render()`; return a ProcessResult.
 
-    Return (None, cached_render_result) if the render is spurious.
-
-    Return (result, None) otherwise.
+    The actual render runs in a background thread so the event loop can process
+    other events.
     """
-    if input_crr is not None and input_crr.status != 'ok':
-        # The previous module is errored or unreachable. That means _this_
-        # module is unreachable.
-        result = ProcessResult()  # 'unreachable'
-        return (result, None)
+    if input_result is None:
+        # We're the first module in the tab
+        input_table = pd.DataFrame()
     else:
-        (cached_render_result, loaded_module, input_result, params,
-         fetch_result) = await _execute_wfmodule_pre(workflow, wf_module,
-                                                     input_crr)
+        if input_result.status != 'ok':
+            return ProcessResult()  # 'unreachable'
 
-        # If the cached render result is valid, we're done!
-        if cached_render_result is not None:
-            return (None, cached_render_result)
+        input_table = input_result.dataframe
 
-        table = input_result.dataframe
-        loop = asyncio.get_event_loop()
-        # Render may take a while. run_in_executor to push that slowdown to a
-        # thread and keep our event loop responsive.
-        result = await loop.run_in_executor(None, loaded_module.render, table,
-                                            params, fetch_result)
-        return (result, None)
+    loaded_module, fetch_result = await _execute_wfmodule_pre(workflow,
+                                                              wf_module)
+
+    # Render may take a while. run_in_executor to push that slowdown to a
+    # thread and keep our event loop responsive.
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, loaded_module.render,
+                                      input_table, params, fetch_result)
 
 
-async def execute_wfmodule(workflow: Workflow, wf_module: WfModule,
-                           input_crr: CachedRenderResult
-                           ) -> CachedRenderResult:
+async def execute_wfmodule(
+    workflow: Workflow,
+    wf_module: WfModule,
+    params: Params,
+    input_result: ProcessResult
+) -> ProcessResult:
     """
     Render a single WfModule; cache, broadcast and return output.
 
@@ -197,20 +170,18 @@ async def execute_wfmodule(workflow: Workflow, wf_module: WfModule,
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    # may raise UnneededExecution
-    result, cached_render_result = await _render_wfmodule(workflow, wf_module,
-                                                          input_crr)
+    # delta_id won't change throughout this function
+    delta_id = wf_module.last_relevant_delta_id
 
-    if cached_render_result is None:
-        # may raise UnneededExecution
-        cached_render_result, output_delta = \
-            await _execute_wfmodule_save(workflow, wf_module, result)
-    else:
-        output_delta = None
+    # may raise UnneededExecution
+    result = await _render_wfmodule(workflow, wf_module, params, input_result)
+
+    # may raise UnneededExecution
+    output_delta = await _execute_wfmodule_save(workflow, wf_module, result)
 
     await websockets.ws_client_send_delta_async(workflow.id, {
         'updateWfModules': {
-            str(wf_module.id): build_status_dict(cached_render_result)
+            str(wf_module.id): build_status_dict(result, delta_id)
         }
     })
 
@@ -225,23 +196,19 @@ async def execute_wfmodule(workflow: Workflow, wf_module: WfModule,
     # TODO if there's no change, is it possible for us to skip the render
     # of future modules, setting their cached_render_result_delta_id =
     # last_relevant_delta_id?  Investigate whether this is worthwhile.
+    return result
 
-    return cached_render_result
 
-
-def build_status_dict(cached_result: CachedRenderResult) -> Dict[str, Any]:
-    quick_fixes = [qf.to_dict()
-                   for qf in cached_result.quick_fixes]
-
+def build_status_dict(result: ProcessResult, delta_id: int) -> Dict[str, Any]:
+    quick_fixes = [qf.to_dict() for qf in result.quick_fixes]
     output_columns = [{'name': c.name, 'type': c.type.value}
-                      for c in cached_result.columns]
+                      for c in result.columns]
 
     return {
         'quick_fixes': quick_fixes,
         'output_columns': output_columns,
-        'output_error': cached_result.error,
-        'output_status': cached_result.status,
-        'output_n_rows': len(cached_result),
-        'last_relevant_delta_id': cached_result.delta_id,
-        'cached_render_result_delta_id': cached_result.delta_id,
+        'output_error': result.error,
+        'output_status': result.status,
+        'output_n_rows': len(result.dataframe),
+        'cached_render_result_delta_id': delta_id,
     }

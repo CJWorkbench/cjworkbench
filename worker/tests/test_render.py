@@ -72,7 +72,7 @@ class RenderTest(DbTestCase):
                 delta.id
             ))
 
-        execute.assert_called_with(workflow)
+        execute.assert_called_with(workflow, delta.id)
         requeue.assert_not_called()
 
     @patch('worker.execute.execute_workflow')

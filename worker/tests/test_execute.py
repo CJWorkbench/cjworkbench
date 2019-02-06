@@ -29,7 +29,8 @@ def cached_render_result_revision_list(workflow):
 
 class ExecuteTests(DbTestCase):
     def _execute(self, workflow):
-        self.run_with_async_db(execute_workflow(workflow))
+        self.run_with_async_db(execute_workflow(workflow,
+                                                workflow.last_delta_id))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
@@ -137,7 +138,6 @@ class ExecuteTests(DbTestCase):
                     'output_error': '',
                     'output_columns': [],
                     'output_n_rows': 0,
-                    'last_relevant_delta_id': delta.id,
                     'cached_render_result_delta_id': delta.id,
                 }
             }
@@ -167,22 +167,22 @@ class ExecuteTests(DbTestCase):
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)
     def test_resume_without_rerunning_unneeded_renders(self, fake_load_module):
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        delta = InitWorkflowCommand.create(workflow)
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        delta_id = workflow.last_delta_id
 
         # wf_module1: has a valid, cached result
         wf_module1 = tab.wf_modules.create(
             order=0,
-            last_relevant_delta_id=delta.id
+            last_relevant_delta_id=delta_id
         )
         result1 = ProcessResult(pd.DataFrame({'A': [1]}))
-        wf_module1.cache_render_result(delta.id, result1)
+        wf_module1.cache_render_result(delta_id, result1)
 
         # wf_module2: has no cached result (must be rendered)
         wf_module2 = tab.wf_modules.create(
             order=1,
-            last_relevant_delta_id=delta.id
+            last_relevant_delta_id=delta_id
         )
 
         fake_loaded_module = Mock(LoadedModule)

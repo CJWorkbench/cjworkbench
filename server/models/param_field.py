@@ -29,6 +29,39 @@ class ParamDType:
         """
         raise NotImplementedError
 
+    def iter_dfs_dtype_values(self, value: Any):
+        """
+        Depth-first search to yield (dtype, value) pairs.
+
+        By default, this yields `(self, value)`. "Container"-style dtypes
+        should override this method to yield `(self, value)` and then yield
+        each "child" `(dtype, value)`.
+
+        Be sure to coerce() or validate() `value` before passing it here.
+        """
+        yield (self, value)
+
+    def find_leaf_values_with_dtype(self, dtype: type, value: Any) -> Set[Any]:
+        """
+        Recurse through `value`, finding sub-values of type `dtype`.
+
+        The set of output values is coerced.
+
+        "Container"-style dtypes should override this method to walk their
+        children.
+
+        Example:
+
+        >>> schema = ParamDTypeList(inner_dtype=ParamDTypeTab())
+        >>> tab_slugs = schema.find_leaf_values_with_dtype(
+        ...     ParamDTypeTab,
+        ...     ['tab-123', 'tab-234']
+        ... })
+        {'tab-123', 'tab-234'}
+        """
+        return set(v for dt, v in self.iter_dfs_dtype_values(value)
+                   if dt == dtype)
+
     def omit_missing_table_columns(self, value: Any, columns: Set[str]) -> Any:
         """
         Recursively nix `value`'s column references that aren't in `columns`.
@@ -163,6 +196,11 @@ class ParamDTypeMulticolumn(ParamDTypeString):
         return ','.join(valid)
 
 
+class ParamDTypeTab(ParamDTypeString):
+    def __repr__(self):
+        return 'ParamDTypeTab()'
+
+
 class ParamDTypeEnum(ParamDType):
     def __init__(self, choices: Set[Any], default: Any):
         super().__init__()
@@ -216,6 +254,12 @@ class ParamDTypeList(ParamDType):
         for v in value:
             self.inner_dtype.validate(v)
 
+    # override
+    def iter_dfs_dtype_values(self, value):
+        yield from super().iter_dfs_dtype_values(value)
+        for v in value:
+            yield from self.inner_dtype.iter_dfs_dtype_values(v)
+
     def omit_missing_table_columns(self, value, columns):
         return [self.inner_dtype.omit_missing_table_columns(v, columns)
                 for v in value]
@@ -266,6 +310,12 @@ class ParamDTypeDict(ParamDType):
         for name, dtype in self.properties.items():
             dtype.validate(value[name])
 
+    # override
+    def iter_dfs_dtype_values(self, value):
+        yield from super().iter_dfs_dtype_values(value)
+        for name, dtype in self.properties.items():
+            yield from dtype.iter_dfs_dtype_values(value[name])
+
     def omit_missing_table_columns(self, value, columns):
         return dict(
             (k, self.properties[k].omit_missing_table_columns(v, columns))
@@ -306,6 +356,12 @@ class ParamDTypeMap(ParamDType):
         for _, v in value.items():
             self.value_dtype.validate(v)
 
+    # override
+    def iter_dfs_dtype_values(self, value):
+        yield from super().iter_dfs_dtype_values(value)
+        for v in value.values():
+            yield from self.value_dtype.iter_dfs_dtype_values(v)
+
     def omit_missing_table_columns(self, value, columns):
         return dict(
             (k, self.value_dtype.omit_missing_table_columns(v, columns))
@@ -331,6 +387,7 @@ ParamDType.Dict = ParamDTypeDict
 ParamDType.Map = ParamDTypeMap
 ParamDType.Column = ParamDTypeColumn
 ParamDType.Multicolumn = ParamDTypeMulticolumn
+ParamDType.Tab = ParamDTypeTab
 
 ParamDType.JsonTypeToDType = {
     'string': ParamDTypeString,
@@ -341,6 +398,7 @@ ParamDType.JsonTypeToDType = {
     'list': ParamDTypeList,
     'dict': ParamDTypeDict,
     'map': ParamDTypeMap,
+    'tab': ParamDTypeTab,
     'column': ParamDTypeColumn,
     'multicolumn': ParamDTypeMulticolumn,
 }
@@ -364,6 +422,7 @@ class ParamField:
         COLUMN = 'column'
         RADIO = 'radio'
         MULTICOLUMN = 'multicolumn'
+        TAB = 'tab'
         SECRET = 'secret'
         CUSTOM = 'custom'           # rendered in front end
 
@@ -429,6 +488,8 @@ class ParamField:
             return ParamDTypeColumn()
         elif self.ftype == T.MULTICOLUMN:
             return ParamDTypeMulticolumn()
+        elif self.ftype == T.TAB:
+            return ParamDTypeTab()
         elif self.ftype == T.INTEGER:
             kwargs = {}
             if self.default is not None:
