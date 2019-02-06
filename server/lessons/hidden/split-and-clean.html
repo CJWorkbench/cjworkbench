@@ -8,8 +8,8 @@
     Grouping rows together is one of the most powerful ways of understanding data. This operation is sometimes called “pivot tables” or “Group by”. Its purpose is to summarize large amounts of data quickly.
   </p>
   <p>
-    In this lesson we will analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York to find out the largest donors to his campaign, outside of the State of New York.
-    Out of state campaign contributions could reveal previously hidden business or political connections.
+    In this lesson we will focus on the classic case where one column contains multiple values that could be useful to access separately - for example in order to group.
+    We will  analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York to find out which other state donated the most to his campaign.
   </p>
 </section>
 
@@ -135,7 +135,7 @@
 </section>
 <section>
   <h2>Grouping and counting</h2>
-  <p>Which is the state with the most contributions?
+  <p>We can now calculate the amount that has been donated in each state, using groups.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -147,36 +147,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Keep the first operation set to <kbd>count</kbd>. It will count all rows within each group.
-      <p class ="instruction-detail">
-        Since one row is a donation and each group is a state, it will count the number of donations in each state.
-      </p>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new  column to <kbd>Number of donations</kbd>.
-      <p class ="instruction-detail">
-        Next, let’s find out how much was donated in each State.
-      </p>
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Operations in groups</h2>
-  <p>What is the total amount that has been donated in each state? What is the average donation per state?
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 5 Click <kbd>+ADD</kbd> to add a new operation.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set it to <kbd>SUM</kbd>, and choose the column <kbd>Amt</kbd> as the target.
+      >Set the operation set to <kbd>SUM</kbd>, and choose the column <kbd>Amt</kbd> as the target.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -189,23 +160,23 @@
       >Add one more operation, and this time calculate the average donation per state. Name the new column <kbd>Average amount</kbd>.
     </li>
   </ol>
-</section
+</section>
 <section>
   <h2>Investigate</h2>
-  <p>Now that we have a good summary of the provenance of money, we could for example ask ‘Who are the largest donors in California?’.
-    Duplicate this tab and edit the new one to find out.
+  <p>
+    Out of state campaign contributions could reveal previously hidden business or political connections. Now that we have a good summary of the provenance of money, we could for example investiguate who are the largest donors in California.
   </p>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll learn about the powerful Group step.</p>
+    <p class="summary">Next, we’ll learn about data types.</p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
     <ol>
       <li>
-        <a href="/lessons/group-by-date/">Group by date and introduction to data type</a>
+        <a href="/lessons/intro-to-data-types/">Introduction to data types.</a>
       </li>
     </ol>
   </div>
