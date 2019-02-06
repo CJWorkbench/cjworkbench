@@ -1,3 +1,8 @@
 class UnneededExecution(Exception):
-    """Indicates that a render would produce useless results."""
+    """A render would produce useless results."""
+    pass
+
+
+class TabCycleError(Exception):
+    """The chosen tab exists, and it depends on the output of this tab."""
     pass

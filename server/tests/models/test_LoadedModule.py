@@ -112,8 +112,7 @@ class LoadedModuleTest(unittest.TestCase):
         #
         # This ends up being kinda an integration test.
         with self.assertLogs('server.models.loaded_module'):
-            result = lm.render(pd.DataFrame({'A': [1, 2]}),
-                               MockParams(col='A'),
+            result = lm.render(pd.DataFrame({'A': [1, 2]}), {'col': 'A'},
                                fetch_result=ProcessResult())
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
@@ -142,8 +141,7 @@ class LoadedModuleTest(unittest.TestCase):
         #
         # This ends up being kinda an integration test.
         with self.assertLogs('server.models.loaded_module'):
-            result = lm.render(pd.DataFrame({'A': [1, 2]}),
-                               MockParams(col='A'),
+            result = lm.render(pd.DataFrame({'A': [1, 2]}), {'col': 'A'},
                                fetch_result=ProcessResult())
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
@@ -170,7 +168,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule.for_module_version_sync(None)
 
         with self.assertLogs('server.models.loaded_module'):
-            result = lm.render(pd.DataFrame({'A': [1]}), MockParams(),
+            result = lm.render(pd.DataFrame({'A': [1]}), {},
                                fetch_result=ProcessResult())
         self.assertEqual(result, ProcessResult(
             error='Cannot render: module was deleted'
@@ -191,7 +189,7 @@ class LoadedModuleTest(unittest.TestCase):
             return ProcessResult(pd.DataFrame({'A': [2]}))
 
         in_table = pd.DataFrame({'A': [0]})
-        params = MockParams(foo='bar')
+        params = {'foo': 'bar'}
         fetch_result = ProcessResult(pd.DataFrame({'A': [1]}))
         expected = ProcessResult(pd.DataFrame({'A': [2]}))
 
@@ -199,7 +197,7 @@ class LoadedModuleTest(unittest.TestCase):
         with self.assertLogs():
             result = lm.render(in_table, params, fetch_result=fetch_result)
         self.assertIs(args[0], in_table)
-        self.assertEqual(args[1], {'foo': 'bar'})
+        self.assertIs(args[1], params)
         self.assertIs(args[2], fetch_result)
         self.assertEqual(args[3], {})
         self.assertEqual(result, expected)
@@ -213,14 +211,14 @@ class LoadedModuleTest(unittest.TestCase):
             return ProcessResult(pd.DataFrame({'A': [1]}))
 
         in_table = pd.DataFrame({'A': [0]})
-        params = MockParams(foo='bar')
+        params = {'foo': 'bar'}
         expected = ProcessResult(pd.DataFrame({'A': [1]}))
 
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs():
             result = lm.render(in_table, params, fetch_result=None)
         self.assertIs(args[0], in_table)
-        self.assertEqual(args[1], {'foo': 'bar'})
+        self.assertIs(args[1], params)
         self.assertEqual(len(args), 2)
         self.assertEqual(result, expected)
 
@@ -233,7 +231,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs(level=logging.ERROR):
-            result = lm.render(pd.DataFrame(), MockParams(), fetch_result=None)
+            result = lm.render(pd.DataFrame(), {}, fetch_result=None)
 
         _, lineno = inspect.getsourcelines(render)
 
@@ -244,8 +242,7 @@ class LoadedModuleTest(unittest.TestCase):
     def test_render_static_default(self):
         lm = LoadedModule('int', '1')
         with self.assertLogs():
-            result = lm.render(pd.DataFrame({'A': [1]}), MockParams(),
-                               fetch_result=None)
+            result = lm.render(pd.DataFrame({'A': [1]}), {}, fetch_result=None)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 
@@ -258,7 +255,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule('int', '1', render_impl=lambda _a, _b: retval)
         with self.assertLogs():
-            lm.render(pd.DataFrame(), MockParams(), fetch_result=None)
+            lm.render(pd.DataFrame(), {}, fetch_result=None)
         self.assertEqual(calls, ['truncate', 'sanitize'])
 
     def test_render_cannot_coerce_output(self):
@@ -268,7 +265,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs(level=logging.ERROR):
-            result = lm.render(pd.DataFrame(), MockParams(), fetch_result=None)
+            result = lm.render(pd.DataFrame(), {}, fetch_result=None)
 
         _, lineno = inspect.getsourcelines(render)
         self.assertRegex(result.error, (
@@ -279,8 +276,7 @@ class LoadedModuleTest(unittest.TestCase):
     def test_render_dynamic_default(self):
         lm = LoadedModule('int', '1')
         with self.assertLogs():
-            result = lm.render(pd.DataFrame({'A': [1]}), MockParams(),
-                               fetch_result=None)
+            result = lm.render(pd.DataFrame({'A': [1]}), {}, fetch_result=None)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 

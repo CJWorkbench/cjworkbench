@@ -132,5 +132,5 @@ async def execute_tab_flow(
     last_result = await _load_input_from_cache(workflow, flow)
     for wf_module, params in flow.stale_steps:
         last_result = await execute_wfmodule(workflow, wf_module, params,
-                                             last_result)
+                                             last_result, tab_shapes)
     return last_result

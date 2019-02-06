@@ -3,13 +3,14 @@ import contextlib
 import datetime
 from typing import Any, Dict, Optional, Tuple
 from channels.db import database_sync_to_async
-import pandas as pd
 from server import notifications
 from server.models import LoadedModule, Params, WfModule, Workflow
 from server.modules.types import ProcessResult
 from server.notifications import OutputDelta
 from server import websockets
+from server.types import TableShape, StepResultShape
 from .types import UnneededExecution
+from . import renderprep
 
 
 @contextlib.contextmanager
@@ -48,14 +49,20 @@ def locked_wf_module(workflow, wf_module):
 
 
 @database_sync_to_async
-def _execute_wfmodule_pre(workflow: Workflow,
-                          wf_module: WfModule) -> Tuple:
+def _execute_wfmodule_pre(
+    workflow: Workflow,
+    wf_module: WfModule,
+    params: Params,
+    input_table_shape: TableShape,
+    tab_shapes: Dict[str, Optional[StepResultShape]]
+) -> Tuple:
     """
     First step of execute_wfmodule().
 
     Returns a Tuple in this order:
         * loaded_module: a ModuleVersion for dispatching render
         * fetch_result: optional ProcessResult for dispatching render
+        * param_values: a dict for dispatching render
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -65,9 +72,15 @@ def _execute_wfmodule_pre(workflow: Workflow,
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
         module_version = safe_wf_module.module_version
         fetch_result = safe_wf_module.get_fetch_result()
+        render_context = renderprep.RenderContext(
+            workflow.id,
+            input_table_shape,
+            tab_shapes
+        )
+        param_values = renderprep.get_param_values(params, render_context)
         loaded_module = LoadedModule.for_module_version_sync(module_version)
 
-        return (loaded_module, fetch_result)
+        return (loaded_module, fetch_result, param_values)
 
 
 @database_sync_to_async
@@ -109,7 +122,8 @@ async def _render_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
     params: Params,
-    input_result: Optional[ProcessResult]  # None for first module in tab
+    input_result: Optional[ProcessResult],  # None for first module in tab
+    tab_shapes: Dict[str, Optional[StepResultShape]]
 ) -> ProcessResult:
     """
     Prepare and call `wf_module`'s `render()`; return a ProcessResult.
@@ -122,21 +136,27 @@ async def _render_wfmodule(
 
     input_table = input_result.dataframe
 
-    loaded_module, fetch_result = await _execute_wfmodule_pre(workflow,
-                                                              wf_module)
+    loaded_module, fetch_result, param_values = await _execute_wfmodule_pre(
+        workflow,
+        wf_module,
+        params,
+        input_result.table_shape,
+        tab_shapes
+    )
 
     # Render may take a while. run_in_executor to push that slowdown to a
     # thread and keep our event loop responsive.
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, loaded_module.render,
-                                      input_table, params, fetch_result)
+                                      input_table, param_values, fetch_result)
 
 
 async def execute_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
     params: Params,
-    input_result: ProcessResult
+    input_result: ProcessResult,
+    tab_shapes: Dict[str, Optional[StepResultShape]]
 ) -> ProcessResult:
     """
     Render a single WfModule; cache, broadcast and return output.
@@ -170,7 +190,8 @@ async def execute_wfmodule(
     delta_id = wf_module.last_relevant_delta_id
 
     # may raise UnneededExecution
-    result = await _render_wfmodule(workflow, wf_module, params, input_result)
+    result = await _render_wfmodule(workflow, wf_module, params, input_result,
+                                    tab_shapes)
 
     # may raise UnneededExecution
     output_delta = await _execute_wfmodule_save(workflow, wf_module, result)

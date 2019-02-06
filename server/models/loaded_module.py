@@ -143,8 +143,6 @@ class LoadedModule:
         This synchronous method can be slow for complex modules or large
         datasets. Consider calling it from an executor.
         """
-        params = params.to_painful_dict(table)
-
         kwargs = {}
         spec = inspect.getfullargspec(self.render_impl)
         varkw = bool(spec.varkw)  # if True, function accepts **kwargs
