@@ -4,10 +4,12 @@
 
 <section class="fullscreen">
   <h2>Introduction</h2>
-  <p>Not all data stories need a data visualization. If you have only one or two numbers, they can probably just appear as text in the final story.<br>But with more data, charts are essential to quickly convey large amounts of information.
-In this lesson we will work with a prepared version of the same dataset, containing the 10 largest C02 emitters since 2010.
-
-</p>
+  <p>
+    Not all data stories need a data visualization. If you have only one or two numbers, they can probably just appear as text in the final story.<br>But with more data, charts are essential to quickly convey large amounts of information.
+  </p>
+  <p>
+    In this lesson we will work with a prepared version of the same dataset, containing the 10 largest C02 emitters since 2010.
+  </p>
 </section>
 
 <!-- Section 1 -->
@@ -31,82 +33,54 @@ In this lesson we will work with a prepared version of the same dataset, contain
 </script>
 
 <section>
-  <h2>Column chart</h2>
-  <p> Let’s first compare how much C02 has been produced by each country in 2016, using a column chart.
-
-</p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the step Column Chart in step 2.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select  the column <kbd>Country</kbd> as the horizontal axis (X axis).
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select the column <kbd>Average 2000/16</kbd> as the vertical axis (Y axis)
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Label the Y and X axis and give the chart a title.
-      <p class="instruction-detail">
-        Next, let’s visualize how the production of China has changed through this period.
-      </p>
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Tranposing</h2>
+  <h2>Tranpose 1</h2>
   <p> Let’s look closely at our table.<br>
-    We cannot select <kbd>China</kbd>, because it is displayed as a row. We need it to be a column.
+    In Workbench charts are plotted by selecting data in columns. We cannot select <kbd>China</kbd>, because it is displayed as a row.<br>
     Likewise, there is no column <kbd>Year</kbd> to select. Instead, each year is its own column.
     <br />
   </p>
-  <p class="instruction-detail"> If we want to access variables that are displayed as rows, we must turn them into columns, which is called transposing.
+  <p class="instruction-detail"> If we want to select variables that are displayed as rows, we must turn them into columns. This is called transposing.
   </p>
 </section>
 <section class="fullscreen">
-  <h2>Transposing</h2>
+  <h2>Tranpose 2</h2>
   <p>
     Transposing turns rows into columns and columns into rows. Doing so, it swaps the header with the left-most column.
-    Since the header does not have a name, we must name it when it becomes the new left-most column.  Likewise, after transposing, the name of the left-most column will not be displayed anymore.
+  </p>
+  <p>
+    Since the header does not have a name, we can name it when it becomes the new left-most column.  Likewise, after transposing, the name of the left-most column will not be displayed anymore.
   </p>
   <figure class="full">
     <img class="clear" alt="Inspect element" src="images/course-1/transpose-fig-1.png">
   </figure>
 </section>
 <section>
-  <h2>Transposing</h2>
-  <p>Let’s transpose the table and compare the amount of C02 emitted by China through the years.
+  <h2>Transpose 3</h2>
+  <p>
+    Let’s transpose the table and compare the amount of C02 emitted by China through the years.
+  </p>
+  <p>
+    First, we need remove the <kbd>Continent</kbd>. If we transpose this column (you should try!), it will appear as an extra non-numeric row in each column, and it will cause an error when we try to plot.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      > In step 2, insert the step 'Select column' and delete <kbd>Continent</kbd>, <kbd>Average</kbd> and <kbd>Maximum</kbd> so they do not get transposed.
+      >Click the <kbd>Continent</kbd> column menu and choose <kbd>Delete column</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Still in step 4, click <kbd>+ADD</kbd> to add a new sort. This time, sort by <kbd>Country</kbd> in descending order.Keep top ‘1 row’, under the second sort.
+      >Add a Transpose step and name the new leftmost column <kbd>Year</kbd>.
+      <p class="instruction-detail">
+        Now we can plot China’s output.
+      </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, insert the step 'Transpose' before the Column chart.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, name the new leftmost column <kbd>Year</kbd>.
+      >Add a Column Chart, select <kbd>Year</kbd> as the X axis, and <kbd>China</kbd> as the Y axis.
     </li>
   </ol>
 </section>
@@ -118,7 +92,7 @@ In this lesson we will work with a prepared version of the same dataset, contain
     <br>
     Line charts, however, should not be used with anything else than a horizontal axis representing time. Drawing a line between ’China’ and ‘Russia’, would make no sense: There is no in-between value, and the chart would show something that doesn’t exist!
   </p>
-  <figure class="full">
+  <figure class="fullscreen">
     <img class="clear" alt="Inspect element" src="images/course-1/when-to-use-line-chart.png">
   </figure>
 </section>
@@ -149,7 +123,7 @@ In this lesson we will work with a prepared version of the same dataset, contain
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we'll learn about filtering.</p>
+    <p class="summary">Next, you’ll learn about filtering.</p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
