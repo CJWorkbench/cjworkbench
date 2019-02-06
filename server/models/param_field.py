@@ -45,7 +45,7 @@ class ParamDType:
         """
         Recurse through `value`, finding sub-values of type `dtype`.
 
-        The set of output values is coerced.
+        Be sure to coerce() or validate() `value` before passing it here.
 
         "Container"-style dtypes should override this method to walk their
         children.
