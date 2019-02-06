@@ -82,12 +82,13 @@ class TabFlow:
         Slugs of tabs that are used as _input_ into this tab's steps.
         """
         ret = set()
-        for wf_module, _ in self.steps:
+        for wf_module, params in self.steps:
             if wf_module.module_version is None:
                 continue
 
             schema = wf_module.module_version.param_schema
-            slugs = set(schema.find_leaf_values_with_dtype(ParamDTypeTab))
+            slugs = set(schema.find_leaf_values_with_dtype(ParamDTypeTab,
+                                                           params.values))
             ret.update(slugs)
         return ret
 
