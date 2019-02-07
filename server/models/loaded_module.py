@@ -24,6 +24,7 @@ from ..modules.countbydate import CountByDate
 from ..modules.formula import Formula
 from ..modules.loadurl import LoadURL
 from ..modules.pastecsv import PasteCSV
+import server.modules.jointab
 import server.modules.pythoncode
 import server.modules.refine
 import server.modules.startfromtab
@@ -40,6 +41,7 @@ from ..modules.renamecolumns import RenameFromTable
 from ..modules.duplicatecolumn import DuplicateColumn
 from ..modules.joinurl import JoinURL
 from ..modules.concaturl import ConcatURL
+from ..modules.types import RenderColumn
 from server import minio
 
 
@@ -53,6 +55,7 @@ StaticModules = {
     'editcells': EditCells,
     'formula': Formula,
     'googlesheets': GoogleSheets,
+    'jointab': server.modules.jointab,
     'joinurl': JoinURL,
     'loadurl': LoadURL,
     'pastecsv': PasteCSV,
@@ -131,7 +134,7 @@ class LoadedModule:
         error = f'{exc_name}: {str(err)} at line {lineno} of {fname}'
         return ProcessResult(error=error)
 
-    def render(self, table: Optional[pd.DataFrame], params: Params,
+    def render(self, input_result: Optional[ProcessResult], params: Params,
                fetch_result: Optional[ProcessResult]) -> ProcessResult:
         """
         Process `table` with module `render` method, for a ProcessResult.
@@ -151,6 +154,13 @@ class LoadedModule:
         kwonlyargs = spec.kwonlyargs
         if varkw or 'fetch_result' in kwonlyargs:
             kwargs['fetch_result'] = fetch_result
+        if varkw or 'input_columns' in kwonlyargs:
+            kwargs['input_columns'] = dict(
+                (c.name, RenderColumn(c.name, c.type.value))
+                for c in input_result.table_shape.columns
+            )
+
+        table = input_result.dataframe
 
         time1 = time.time()
 

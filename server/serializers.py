@@ -120,18 +120,11 @@ class WfModuleSerializer(serializers.ModelSerializer):
         if not cached_result:
             return data
 
-        try:
-            columns = [{'name': c.name, 'type': c.type.value}
-                       for c in cached_result.columns]
-        except FileNotFoundError:
-            # We're serializing without locking the workflow, and we're in a
-            # race. No biggie: the caller is probably going to request more
-            # up-to-date data soon anyway.
-            return data
-
-        data['cached_render_result_delta_id']: cached_result.delta_id
+        columns = [{'name': c.name, 'type': c.type.value}
+                   for c in cached_result.columns]
+        data['cached_render_result_delta_id'] = cached_result.delta_id
         data['output_columns'] = columns
-        data['output_n_rows'] = len(cached_result)
+        data['output_n_rows'] = cached_result.nrows
 
         return data
 
@@ -145,6 +138,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     def get_params(self, wfm):
         """WfModule.params, _plus secret metadata_"""
+        wfm.get_params()
         return wfm.get_params().as_dict()
 
     class Meta:

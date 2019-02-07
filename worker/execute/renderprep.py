@@ -1,19 +1,10 @@
 from functools import partial, singledispatch
 from typing import Any, Dict, List, Optional
-import pandas as pd
 from server.models import Params, Tab
 from server.models.param_field import ParamDType
-from server.types import Column, StepResultShape
+from server.modules.types import RenderColumn, TabOutput
+from server.types import StepResultShape
 from .types import TabCycleError, TabOutputUnreachableError, UnneededExecution
-
-
-class TabOutput:
-    def __init__(self, slug: str, name: str, columns: List[Column],
-                 dataframe: pd.DataFrame):
-        self.slug = slug
-        self.name = name
-        self.columns = columns
-        self.dataframe = dataframe
 
 
 class RenderContext:
@@ -58,6 +49,7 @@ class RenderContext:
             return ''
 
         return set(c.name for c in tab.table_shape.columns)
+
 
 def get_param_values(
     params: Params,
@@ -142,7 +134,13 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
         raise UnneededExecution
 
     result = crr.result  # read Parquet file from disk (slow)
-    return TabOutput(tab_slug, tab.name, result.columns, result.dataframe)
+    return TabOutput(
+        tab_slug,
+        tab.name,
+        dict((c.name, RenderColumn(c.name, c.type.value))
+             for c in result.columns),
+        result.dataframe
+    )
 
 
 @clean_value.register(ParamDType.Column)

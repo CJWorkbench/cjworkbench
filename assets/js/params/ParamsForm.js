@@ -187,6 +187,9 @@ export default class ParamsForm extends React.PureComponent {
     // components so they can load data.
     const columnParam = fields.find(f => f.type === 'column')
     const selectedColumn = columnParam && value && value[columnParam.id_name] || null
+    // TODO ditto JoinColumns
+    const tabParam = fields.find(f => f.type === 'tab')
+    const selectedTab = tabParam && value && value[tabParam.id_name] || null
 
     let className = 'module-card-params'
     if (isEditing) className += ' editing'
@@ -232,6 +235,7 @@ export default class ParamsForm extends React.PureComponent {
               startCreateSecret={startCreateSecret}
               deleteSecret={deleteSecret}
               selectedColumn={selectedColumn}
+              selectedTab={selectedTab}
               onChange={this.onChange}
               onSubmit={this.onSubmit}
             />

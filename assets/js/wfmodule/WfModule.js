@@ -508,9 +508,13 @@ const getTabs = createSelector([ getWorkflow, getReadyAndPendingTabs, getWfModul
     const tab = tabs[slug]
     let outputColumns = null
     if (tab.wf_module_ids.length > 0) {
-      const lastWfModule = wfModules[tab.wf_module_ids[tab.wf_module_ids.length - 1]]
-      if (lastWfModule && lastWfModule.last_relevant_delta_id == lastWfModule.cached_render_result_delta_id) {
-        outputColumns = lastWfModule.output_columns
+      const lastIndex = tab.wf_module_ids.length - 1
+      if (lastIndex >= 0) {
+        const lastWfModuleId = tab.wf_module_ids[lastIndex]
+        const lastWfModule = wfModules[lastWfModuleId]
+        if (lastWfModule.last_relevant_delta_id === lastWfModule.cached_render_result_delta_id) {
+          outputColumns = lastWfModule.output_columns
+        }
       }
     }
     return {

@@ -1,8 +1,29 @@
+from collections import namedtuple
 from typing import Any, Dict, List
 from pandas import DataFrame
 from server import sanitizedataframe
 from server.types import Column, ColumnType, TableShape
 from django.utils.translation import gettext as _
+
+
+RenderColumn = namedtuple('RenderColumn', ('name', 'type'))
+"""
+Column presented to a render() function in its `input_columns` argument.
+
+A column has a `name` and a `type`. The `type` is one of "number", "text" or
+"datetime".
+"""
+
+TabOutput = namedtuple('TabOutput', ('slug', 'name', 'columns', 'dataframe'))
+"""
+Tab data presented to a render() function.
+
+A tab has `slug` (JS-side ID), `name` (user-assigned tab name), `dataframe`
+(pandas.DataFrame), and `columns` (dict of `RenderColumn`, keyed by each column
+in `dataframe.columns`.)
+
+The `columns` is designed to mirror the `input_columns` argument to render().
+"""
 
 
 class QuickFix:

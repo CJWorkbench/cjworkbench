@@ -1,0 +1,38 @@
+{
+  "name": "Join",
+  "id_name": "jointab",
+  "category": "Add data",
+  "icon": "join",
+  "help_url": "modules/add-data/join",
+  "description": "Match rows and add columns from another tab",
+  "param_schema": {
+    "right_tab": { "type": "tab" },
+    "join_columns": {
+      "type": "dict",
+      "properties": {
+        "on": { "type": "multicolumn" },
+        "right": { "type": "multicolumn", "tab_parameter": "right_tab" }
+      }
+    },
+    "type": { "type": "integer" }
+  },
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "right_tab",
+      "type": "tab",
+      "placeholder": "Right-side tab"
+    },
+    {
+      "name": "",
+      "id_name": "join_columns",
+      "type": "custom"
+    },
+    {
+      "name": "Join type",
+      "id_name": "type",
+      "type": "menu",
+      "menu_items": "Left|Inner|Right"
+    }
+  ]
+}

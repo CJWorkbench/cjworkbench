@@ -88,7 +88,7 @@ export default class Multicolumn extends React.PureComponent {
   }
 
   render() {
-    const { inputColumns, isReadOnly, name, value } = this.props
+    const { inputColumns, isReadOnly, name, value, label } = this.props
 
     if (inputColumns === null) {
       return (
@@ -111,21 +111,26 @@ export default class Multicolumn extends React.PureComponent {
     ))
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
-      <Select
-        isMulti
-        isDisabled={isReadOnly}
-        name={name}
-        options={columnOptions}
-        menuPortalTarget={document.body}
-        className='react-select multicolumn'
-        classNamePrefix='react-select'
-        styles={ReactSelectStyles}
-        onChange={this.onSelectColumn}
-        components={Components}
-        value={selectedColumns}
-        isClearable={false}
-        placeholder='Select columns'
-      />
+      <React.Fragment>
+        {label ? (
+          <label>{label}</label>
+        ) : null}
+        <Select
+          isMulti
+          isDisabled={isReadOnly}
+          name={name}
+          options={columnOptions}
+          menuPortalTarget={document.body}
+          className='react-select multicolumn'
+          classNamePrefix='react-select'
+          styles={ReactSelectStyles}
+          onChange={this.onSelectColumn}
+          components={Components}
+          value={selectedColumns}
+          isClearable={false}
+          placeholder='Select columns'
+        />
+      </React.Fragment>
     )
   }
 }

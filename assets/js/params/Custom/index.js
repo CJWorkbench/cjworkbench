@@ -9,6 +9,7 @@ import File from './File'
 import Filters from './Filters'
 import GoogleFileSelect from './GoogleFileSelect'
 import Groups from './Groups'
+import JoinColumns from './JoinColumns'
 import Refine from './Refine'
 import RenameEntries from './RenameEntries'
 import ReorderHistory from './ReorderHistory'
@@ -23,6 +24,7 @@ const Components = {
   filters: Filters,
   googlefileselect: GoogleFileSelect,
   groups: Groups,
+  join_columns: JoinColumns,
   refine: Refine,
   'rename-entries': RenameEntries,
   'reorder-history': ReorderHistory,

@@ -138,8 +138,6 @@ async def _render_wfmodule(
     if wf_module.order > 0 and input_result.status != 'ok':
         return ProcessResult()  # 'unreachable'
 
-    input_table = input_result.dataframe
-
     try:
         loaded_module, fetch_result, param_values = (
             await _execute_wfmodule_pre(workflow, wf_module, params,
@@ -159,7 +157,7 @@ async def _render_wfmodule(
     # thread and keep our event loop responsive.
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, loaded_module.render,
-                                      input_table, param_values, fetch_result)
+                                      input_result, param_values, fetch_result)
 
 
 async def execute_wfmodule(

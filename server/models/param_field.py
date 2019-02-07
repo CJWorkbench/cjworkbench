@@ -188,8 +188,8 @@ class ParamDTypeBoolean(ParamDType):
 
 class ParamDTypeColumn(ParamDTypeString):
     def __init__(self, tab_parameter: Optional[str] = None):
-        self.tab_parameter = tab_parameter
         super().__init__()
+        self.tab_parameter = tab_parameter
 
     def __repr__(self):
         return 'ParamDTypeColumn' + repr((self.tab_parameter,))
@@ -203,8 +203,8 @@ class ParamDTypeColumn(ParamDTypeString):
 
 class ParamDTypeMulticolumn(ParamDTypeString):
     def __init__(self, tab_parameter: Optional[str] = None):
-        self.tab_parameter = tab_parameter
         super().__init__()
+        self.tab_parameter = tab_parameter
 
     def __repr__(self):
         return 'ParamDTypeMulticolumn' + repr((self.tab_parameter,))

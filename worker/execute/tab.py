@@ -88,8 +88,6 @@ class TabFlow:
             schema = params.schema
             slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab,
                                                            params.values))
-            print(repr(('params', params.schema, params.values)))
-            print(repr(('dtypes', slugs)))
             ret.update(slugs)
         return ret
 
