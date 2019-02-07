@@ -356,142 +356,142 @@
       max-height: calc(100vh - 25rem);
     }
   }
+}
 
-  .refine-modal {
-    font-size: 1.3rem;
+.refine-modal {
+  font-size: 1.3rem;
 
-    .refine-clusterer {
-      .method {
-        display: flex;
+  .refine-clusterer {
+    .method {
+      display: flex;
 
-        .method-select {
-          flex: 0 0 auto;
-          margin-right: 1.6rem;
+      .method-select {
+        flex: 0 0 auto;
+        margin-right: 1.6rem;
 
-          .custom-select {
-            width: 13rem;
-          }
+        .custom-select {
+          @extend %custom-select;
+          width: 13rem;
+        }
+      }
+
+      .method-form {
+        padding:0 2rem;
+
+        .method-description {
+          @extend .content-1;
+          flex: 1 1 auto;
+          color:$brand-text--medium;
         }
 
-        .method-form {
-          padding:0 2rem;
+        input[id=refine-clusterer-max-distance] {
+          background-color: $Vlight-gray;
+          font-size: 1.4rem;
+          height: 3.5rem;
+          border: 2px solid $Vlight-gray;
 
-          .method-description {
-            @extend .content-1;
-            flex: 1 1 auto;
-            color:$brand-text--medium;
+          &:hover {
+            border: 2px solid $dark-accent--medium;
           }
-
-          input[id=refine-clusterer-max-distance] {
-            background-color: $Vlight-gray;
-            font-size: 1.4rem;
-            height: 3.5rem;
-            border: 2px solid $Vlight-gray;
-
-            &:hover {
-              border: 2px solid $dark-accent--medium;
-            }
-            &:focus {
-              outline: none;
-              border:2px solid $brand-orange;
-            }
-          }
-        }
-
-        .form-group {
-          margin-top: 1.6rem;
-          width: 100%;
-          display: flex;
-
-          label {
-            margin-right: 1.6rem;
+          &:focus {
+            outline: none;
+            border:2px solid $brand-orange;
           }
         }
       }
-    }
 
-    .refine-bins {
-      margin-top: 2rem;
-
-      .no-bins {
-        @extend .title-2;
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        color:$brand-orange;
-        margin-left: 16.5rem;
-      }
-
-      table {
+      .form-group {
+        margin-top: 1.6rem;
         width: 100%;
-        border-collapse: collapse;
-      }
-
-      th {
-        @extend .title-2;
-        font-size: 1.5rem;
-        white-space: nowrap;
-        padding-right: 4.2rem;
-      }
-
-      td {
-        vertical-align: top;
-        padding: .8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
-      }
-
-      .value, .new-value {
-        // Give these two _all_ the space
-        width: 9999rem;
-      }
-
-      tr.bin {
-        border-top: 1px solid $dark-accent--medium;
-      }
-
-      tr.value td {
-        padding-top: 0;
-      }
-    }
-
-    .autosize-cluster-input {
-      width: 100%;
-      margin: 0;
-      position: relative;
-      // TODO @extend .single-line-text-field;
-
-      span, textarea {
-        // Exact same font for invisible text and visible textarea
-        font: inherit;
-        word-break: break-all;
-        padding: 0;
-        border: 0;
-      }
-
-      span {
-        visibility: hidden; // invisible text, sets the height of the div
-      }
-
-      textarea {
-        position: absolute;
-        top: .5rem;
-        left: 1rem;
-        width: 93%;
-        height: 100%; // grow to the same size as the div
-        resize: none;
-        overflow: hidden;
-      }
-    }
-
-    .modal-footer {
-      .actions {
         display: flex;
-      }
-    }
 
-    .refine-status {
-      flex-grow: 1; // left-align in modal footer
-      text-transform: uppercase;
-      color: $brand-orange;
+        label {
+          margin-right: 1.6rem;
+        }
+      }
     }
   }
 
+  .refine-bins {
+    margin-top: 2rem;
+
+    .no-bins {
+      @extend .title-2;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color:$brand-orange;
+      margin-left: 16.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      @extend .title-2;
+      font-size: 1.5rem;
+      white-space: nowrap;
+      padding-right: 4.2rem;
+    }
+
+    td {
+      vertical-align: top;
+      padding: .8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
+    }
+
+    .value, .new-value {
+      // Give these two _all_ the space
+      width: 9999rem;
+    }
+
+    tr.bin {
+      border-top: 1px solid $dark-accent--medium;
+    }
+
+    tr.value td {
+      padding-top: 0;
+    }
+  }
+
+  .autosize-cluster-input {
+    width: 100%;
+    margin: 0;
+    position: relative;
+    // TODO @extend .single-line-text-field;
+
+    span, textarea {
+      // Exact same font for invisible text and visible textarea
+      font: inherit;
+      word-break: break-all;
+      padding: 0;
+      border: 0;
+    }
+
+    span {
+      visibility: hidden; // invisible text, sets the height of the div
+    }
+
+    textarea {
+      position: absolute;
+      top: .5rem;
+      left: 1rem;
+      width: 93%;
+      height: 100%; // grow to the same size as the div
+      resize: none;
+      overflow: hidden;
+    }
+  }
+
+  .modal-footer {
+    .actions {
+      display: flex;
+    }
+  }
+
+  .refine-status {
+    flex-grow: 1; // left-align in modal footer
+    text-transform: uppercase;
+    color: $brand-orange;
+  }
 }
