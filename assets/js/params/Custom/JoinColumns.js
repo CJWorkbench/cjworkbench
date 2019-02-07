@@ -56,7 +56,7 @@ export default class JoinColumns extends React.PureComponent {
           isReadOnly={isReadOnly}
           name={`${name}[on]`}
           onChange={this.onChangeOn}
-          label='On columns (from both tables)'
+          label='On columns (from both tabs)'
           inputColumns={bothColumns}
           value={value.on}
         />
