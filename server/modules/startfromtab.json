@@ -1,0 +1,16 @@
+{
+  "name": "Start from tab",
+  "id_name": "startfromtab",
+  "category": "Add data",
+  "icon": "join",
+  "help_url": "modules/add-data/startfromtab",
+  "description": "Use the final table from another Tab in this Workflow.",
+  "loads_data": false,
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "tab",
+      "type": "tab"
+    }
+  ]
+}

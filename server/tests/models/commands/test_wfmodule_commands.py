@@ -1,6 +1,7 @@
 import asyncio
 from unittest.mock import patch
-from server.models import Delta, ModuleVersion, Workflow, WfModule
+from server.models import Delta, LoadedModule, ModuleVersion, Workflow, \
+        WfModule
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         InitWorkflowCommand
 from server.tests.utils import DbTestCase
@@ -364,6 +365,44 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_wf_module_position, 0)
+
+    @patch.object(LoadedModule, 'for_module_version_sync')
+    def test_add_to_empty_tab_affects_dependent_tab_wf_modules(self,
+                                                               load_module):
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'tabby', 'name': 'Tabby', 'category': 'Clean',
+            'parameters': [
+                {'id_name': 'tab', 'type': 'tab'}
+            ]
+        })
+        # This module doesn't exist, so we'll need to return something from it.
+        # It only needs a no-op migrate_params().
+        load_module.return_value = LoadedModule('x', 1)
+
+        wfm1 = self.workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='tabby',
+            last_relevant_delta_id=self.workflow.last_delta_id,
+            params={'tab': 'tab-2'}
+        )
+
+        tab2 = self.workflow.tabs.create(
+            position=1,
+            slug='tab-2'
+        )
+
+        # Now add a module to tab2.
+        cmd = self.run_with_async_db(AddModuleCommand.create(
+            workflow=self.workflow,
+            tab=tab2,
+            module_id_name=self.module_version.id_name,
+            position=0,
+            param_values={'url': 'https://x.com'}
+        ))
+
+        # Tab1's "tabby" module depends on tab2, so it should update.
+        wfm1.refresh_from_db()
+        self.assertEqual(wfm1.last_relevant_delta_id, cmd.id)
 
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule

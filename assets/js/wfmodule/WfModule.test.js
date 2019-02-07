@@ -73,6 +73,7 @@ describe('WfModule, not read-only mode', () => {
         isSelected
         isAfterSelected={false}
         api={mockApi}
+        tabs={[]}
         index={2}
         onDragStart={jest.fn()}
         onDragEnd={jest.fn()}
@@ -287,8 +288,8 @@ describe('WfModule, not read-only mode', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-11': { slug: 'tab-11', wf_module_ids: [ 10, 20 ] },
-        'tab-12': { slug: 'tab-12', wf_module_ids: [] }
+        'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [ 10, 20 ] },
+        'tab-12': { slug: 'tab-12', name: 'Tab 2', wf_module_ids: [] }
       },
       wfModules: {
         10: { id: 10, tab_slug: 'tab-11' },
@@ -361,7 +362,7 @@ describe('WfModule, not read-only mode', () => {
           selected_tab_position: 0
         },
         tabs: {
-          'tab-11': { wf_module_ids: [1, 2, 999] }
+          'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [1, 2, 999] }
         },
         wfModules: {
           999: { module: 'loadurl', params: {} }

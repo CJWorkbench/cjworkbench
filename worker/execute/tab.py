@@ -1,14 +1,16 @@
 from functools import lru_cache
+import logging
 from typing import Dict, List, Optional, Set, Tuple
 from channels.db import database_sync_to_async
 from server.models import Params, WfModule, Workflow, Tab
-from server.models.param_field import ParamDTypeTab
+from server.models.param_field import ParamDType
 from server.modules.types import ProcessResult
 from server.types import StepResultShape
 from .wf_module import execute_wfmodule, locked_wf_module
 
 
 _memoize = lru_cache(maxsize=1)
+logger = logging.getLogger(__name__)
 
 
 ExecuteStep = Tuple[WfModule, Params]
@@ -83,12 +85,11 @@ class TabFlow:
         """
         ret = set()
         for wf_module, params in self.steps:
-            if wf_module.module_version is None:
-                continue
-
-            schema = wf_module.module_version.param_schema
-            slugs = set(schema.find_leaf_values_with_dtype(ParamDTypeTab,
+            schema = params.schema
+            slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab,
                                                            params.values))
+            print(repr(('params', params.schema, params.values)))
+            print(repr(('dtypes', slugs)))
             ret.update(slugs)
         return ret
 
@@ -124,6 +125,9 @@ async def execute_tab_flow(
     WEBSOCKET NOTES: each wf_module is executed in turn. After each execution,
     we notify clients of its new columns and status.
     """
+    logger.debug('Rendering Tab(%d, %s - %s)', workflow.id, flow.tab_slug,
+                 flow.tab.name)
+
     # Execute one module at a time.
     #
     # We don't hold any lock throughout the loop: the loop can take a long

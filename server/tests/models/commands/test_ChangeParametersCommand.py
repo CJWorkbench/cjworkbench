@@ -231,3 +231,47 @@ class ChangeParametersCommandTest(DbTestCase):
                 wf_module=wf_module,
                 new_values={'x': 'Threeve'}
             ))
+
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    def test_change_parameters_update_tab_delta_ids(self, load_module):
+        workflow = Workflow.create_and_init()
+        # tab1's wfm1 depends on tab2's wfm2
+        wfm1 = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='tabby',
+            last_relevant_delta_id=workflow.last_delta_id,
+            params={'tab': 'tab-2'}
+        )
+        tab2 = workflow.tabs.create(position=1, slug='tab-2')
+        wfm2 = tab2.wf_modules.create(
+            order=0,
+            module_id_name='x',
+            last_relevant_delta_id=workflow.last_delta_id,
+            params={'x': 1}
+        )
+
+        # Build the modules
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
+            'parameters': [
+                {'id_name': 'x', 'type': 'integer'},
+            ]
+        })
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'tabby', 'name': 'tabby', 'category': 'Clean',
+            'parameters': [
+                {'id_name': 'tab', 'type': 'tab'},
+            ]
+        })
+        load_module.return_value = LoadedModule('x', '1')
+
+        cmd = self.run_with_async_db(ChangeParametersCommand.create(
+            workflow=workflow,
+            wf_module=wfm2,
+            new_values={'x': 2}
+        ))
+
+        wfm1.refresh_from_db()
+        wfm2.refresh_from_db()
+        self.assertEqual(wfm1.last_relevant_delta_id, cmd.id)
+        self.assertEqual(wfm2.last_relevant_delta_id, cmd.id)

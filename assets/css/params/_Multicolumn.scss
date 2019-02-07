@@ -1,0 +1,79 @@
+.param-multicolumn .react-select {
+  .react-select__control {
+    min-height: 3.5rem;
+    height: auto;
+    cursor: text;
+  }
+
+  // Style for selected values within multi select
+  .react-select__multi-value {
+    border-radius: 3px;
+    border: 1px solid $brand-orange;
+    background-color: $brand-orange--light;
+    margin-left: 0;
+    margin-right: .4rem;
+    height: 2.7rem;
+
+    .react-select__multi-value__label {
+      @extend .content-1;
+      color:$brand-orange;
+    }
+  }
+
+  .react-select__multi-value__remove {
+    cursor: pointer;
+    border-radius: 0 3px 3px 0;
+    color:$brand-orange;
+    padding: 0;
+    width: 2rem;
+    justify-content: center;
+
+    &:hover {
+      color: white;
+      background-color: $brand-orange--medium-dark;
+    }
+  }
+
+  .react-select__value-container.react-select__value-container--is-multi.react-select__value-container--has-value {
+    padding: 0 2.5rem 0 .2rem;
+    max-height: 20rem;
+    overflow-y: scroll;
+  }
+}
+
+div>.react-select__menu {
+  .multicolumn-select-all-none {
+    border-bottom: 1px solid $Vlight-gray;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    padding: 8px 12px;
+
+    button {
+      display: inline-block;
+      font: inherit;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      background: inherit;
+      color: inherit;
+      cursor: pointer;
+
+      &:first-child {
+        padding-right: 1rem;
+      }
+
+      &:hover {
+        color: $brand-text--medium;
+      }
+
+      &:not(:first-child)::before {
+        content: '';
+        display: inline-block;
+        width: 1rem;
+        height: 2rem;
+        border-left: 1px solid $table-border;
+        vertical-align: middle;
+      }
+    }
+  }
+}

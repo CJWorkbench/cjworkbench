@@ -1,0 +1,109 @@
+.react-select {
+  .react-select__control {
+    @extend %module-parameter;
+    padding: 0; // override %module-parameter: react-select padding is _inside_
+    display: flex; // override %module-parameter: react-select CSS is built around flex
+    cursor: text; // because when you click inside, react-select lets you type
+    position: relative;
+  }
+
+  .react-select__indicators {
+    position: absolute;
+    right: 0;
+    align-self: center;
+    height: 100%;
+
+    // separator with carret
+    .react-select__indicator-separator {
+      margin: 1rem 0;
+      display: none;
+    }
+
+    .react-select__indicator.react-select__dropdown-indicator {
+      padding: 0 .5rem 0 0;
+      cursor: pointer;
+    }
+  }
+
+  //carret container
+  .react-select__value-container {
+    padding: 0 .8rem;
+
+    // Carret to open menu
+    .react-select__indicator,
+    .react-select__indicator {
+      cursor: pointer;
+      opacity: .6;
+      padding: 0 .8rem;
+
+      svg {
+        color: $brand-text--dark;
+      }
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  // value selected
+  .react-select__single-value {
+    color: $brand-text--darker;
+    padding-right: 2rem;
+  }
+
+  .react-select__control.react-select__control--is-focused { // extra specificity above .react-select__control, to trump .react-select__control:hover
+    box-shadow: none;
+    border-color: $data-action--border;
+  }
+
+  // placeholder when empty
+  .react-select__placeholder {
+    color: $placeholder;
+    white-space: nowrap;
+
+    & + div {
+      margin: 0;
+    }
+  }
+}
+
+// Menu when open (it's attached to <body>, not in the spot of the DOM where the <Select> is)
+div>.react-select__menu {
+  z-index: 2;
+  border-radius: 0 0 5px 5px;
+  margin-top: -.2rem; // overlap the border of the .react-select__control
+  background-color: white;
+  border: 2px solid $data-action--border;
+  box-shadow: $menu-shadow;
+  outline: none;
+
+  // See also .multicolumn-select-all-none, in _Multicolumn.scss
+
+  .react-select__option {
+    height: 3.5rem;
+    background-color: $white;
+    color: $brand-text--dark;
+    @extend .content-1;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+  .react-select__option--is-focused {
+    background-color: $dark-accent--soft;
+    color:$brand-text--darker;
+  }
+  // notice when no selection found
+  .react-select__menu-notice {
+    @extend .info-1;
+    color: $brand-text--dark;
+  }
+}
+
+// Hide the reset (which did not work?)
+.react-select__indicator.react-select__clear-indicator,
+.react-select__indicator.react-select__clear-indicator {
+  display: none;
+}

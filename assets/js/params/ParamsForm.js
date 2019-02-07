@@ -36,6 +36,14 @@ export default class ParamsForm extends React.PureComponent {
       name: PropTypes.string.isRequired,
       type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
     }).isRequired),
+    tabs: PropTypes.arrayOf(PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      outputColumns: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+      }).isRequired) // null while rendering
+    }).isRequired).isRequired,
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
@@ -157,7 +165,7 @@ export default class ParamsForm extends React.PureComponent {
 
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
-            inputWfModuleId, inputDeltaId, inputColumns, applyQuickFix,
+            inputWfModuleId, inputDeltaId, inputColumns, tabs, applyQuickFix,
             startCreateSecret, deleteSecret, fields } = this.props
     const isEditing = this.isEditing
 
@@ -217,6 +225,7 @@ export default class ParamsForm extends React.PureComponent {
               inputWfModuleId={inputWfModuleId}
               inputDeltaId={inputDeltaId}
               inputColumns={inputColumns}
+              tabs={tabs}
               applyQuickFix={applyQuickFix}
               secretName={secretName}
               secretParamName={secretParamName}

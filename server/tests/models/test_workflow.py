@@ -1,7 +1,9 @@
+import unittest
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
-from server.models import ModuleVersion, Workflow
+from server.models import ModuleVersion
+from server.models.workflow import Workflow, DependencyGraph
 from server.models.commands import InitWorkflowCommand, AddModuleCommand, \
         ChangeWorkflowTitleCommand
 from server.models.loaded_module import LoadedModule
@@ -134,3 +136,160 @@ class WorkflowTests(DbTestCase):
         )
         workflow.delete()
         self.assertTrue(True)  # no crash
+
+
+class SimpleDependencyGraphTests(unittest.TestCase):
+    Graph = DependencyGraph
+    Tab = Graph.Tab
+    Step = Graph.Step
+
+    def test_recursing_tab_finds_earlier_ids(self):
+        graph = self.Graph(
+            [
+                self.Tab('tab-1', [1, 2, 3]),
+            ],
+            {
+                1: self.Step(set()),
+                2: self.Step(set(['tab-1'])),
+                3: self.Step(set()),
+            }
+        )
+        result = graph.get_step_ids_depending_on_tab_slug('tab-1')
+        self.assertEqual(result, [2, 3])
+
+    def test_no_tab_dependencies(self):
+        graph = self.Graph(
+            [
+                self.Tab('tab-1', [1]),
+                self.Tab('tab-2', [2]),
+            ],
+            {
+                1: self.Step(set()),
+                2: self.Step(set()),
+            }
+        )
+        result = graph.get_step_ids_depending_on_tab_slug('tab-1')
+        self.assertEqual(result, [])
+
+    def test_recurse(self):
+        graph = self.Graph(
+            [
+                self.Tab('tab-1', [1]),
+                self.Tab('tab-2', [2]),
+                self.Tab('tab-3', [3]),
+            ],
+            {
+                1: self.Step(set(['tab-2'])),
+                2: self.Step(set(['tab-3'])),
+                3: self.Step(set()),
+            }
+        )
+        result = graph.get_step_ids_depending_on_tab_slug('tab-3')
+        self.assertEqual(result, [1, 2])
+
+    def test_recurse_cycle(self):
+        graph = self.Graph(
+            [
+                self.Tab('tab-1', [1]),
+                self.Tab('tab-2', [2]),
+                self.Tab('tab-3', [3]),
+            ],
+            {
+                1: self.Step(set(['tab-2'])),
+                2: self.Step(set(['tab-3'])),
+                3: self.Step(set(['tab-1'])),
+            }
+        )
+        result = graph.get_step_ids_depending_on_tab_slug('tab-3')
+        self.assertEqual(result, [1, 2, 3])
+
+    def test_exclude_steps_before_dependent_one(self):
+        graph = self.Graph(
+            [
+                self.Tab('tab-1', [1]),
+                self.Tab('tab-2', [2, 3]),
+            ],
+            {
+                1: self.Step(set()),
+                2: self.Step(set()),
+                3: self.Step(set(['tab-1'])),
+            }
+        )
+        result = graph.get_step_ids_depending_on_tab_slug('tab-1')
+        self.assertEqual(result, [3])
+
+    def test_include_steps_after_dependent_one(self):
+        graph = self.Graph(
+            [
+                self.Tab('tab-1', [1]),
+                self.Tab('tab-2', [2, 3]),
+            ],
+            {
+                1: self.Step(set()),
+                2: self.Step(set(['tab-1'])),
+                3: self.Step(set()),
+            }
+        )
+        result = graph.get_step_ids_depending_on_tab_slug('tab-1')
+        self.assertEqual(result, [2, 3])
+
+
+class DependencyGraphTests(DbTestCase):
+    @patch.object(LoadedModule, 'for_module_version_sync')
+    def test_read_graph_happy_path(self, load_module):
+        workflow = Workflow.objects.create()
+        tab1 = workflow.tabs.create(position=0, slug='tab-1')
+        tab2 = workflow.tabs.create(position=1, slug='tab-2')
+
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'simple',
+            'name': 'Simple',
+            'category': 'Add data',
+            'parameters': [
+                {'id_name': 'str', 'type': 'string'}
+            ]
+        })
+
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'tabby',
+            'name': 'Tabby',
+            'category': 'Add data',
+            'parameters': [
+                {'id_name': 'tab', 'type': 'tab'}
+            ]
+        })
+
+        wfm1 = tab1.wf_modules.create(
+            order=0,
+            module_id_name='simple',
+            params={'str': 'A'}
+        )
+        wfm2 = tab1.wf_modules.create(
+            order=1,
+            module_id_name='tabby',
+            params={'tab': 'tab-2'}
+        )
+        wfm3 = tab2.wf_modules.create(
+            order=0,
+            module_id_name='simple',
+            params={'str': 'B'}
+        )
+
+        # DependencyGraph.load_from_workflow needs to call migrate_params() so
+        # it can check for tab values. That means it needs to load the 'tabby'
+        # module.
+        class MockLoadedModule:
+            def migrate_params(self, schema, values):
+                return values
+        load_module.return_value = MockLoadedModule()
+
+        graph = DependencyGraph.load_from_workflow(workflow)
+        self.assertEqual(graph.tabs, [
+            DependencyGraph.Tab('tab-1', [wfm1.id, wfm2.id]),
+            DependencyGraph.Tab('tab-2', [wfm3.id]),
+        ])
+        self.assertEqual(graph.steps, {
+            wfm1.id: DependencyGraph.Step(set()),
+            wfm2.id: DependencyGraph.Step(set(['tab-2'])),
+            wfm3.id: DependencyGraph.Step(set()),
+        })

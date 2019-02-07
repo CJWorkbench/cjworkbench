@@ -12,6 +12,7 @@ import Radio from './Radio'
 import Secret from './Secret'
 import StaticText from './StaticText'
 import String_ from './String'
+import Tab from './Tab'
 
 export default class Param extends React.PureComponent {
   static propTypes = {
@@ -41,7 +42,15 @@ export default class Param extends React.PureComponent {
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
       type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
-    }).isRequired),
+    }).isRequired), // null while rendering
+    tabs: PropTypes.arrayOf(PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      outputColumns: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+      }).isRequired) // null while rendering
+    }).isRequired).isRequired,
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
@@ -63,6 +72,7 @@ export default class Param extends React.PureComponent {
       case 'secret': return Secret
       case 'statictext': return StaticText
       case 'string': return String_
+      case 'tab': return Tab
     }
   }
 

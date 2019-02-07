@@ -26,6 +26,7 @@ from ..modules.loadurl import LoadURL
 from ..modules.pastecsv import PasteCSV
 import server.modules.pythoncode
 import server.modules.refine
+import server.modules.startfromtab
 from ..modules.selectcolumns import SelectColumns
 from ..modules.twitter import Twitter
 from ..modules.uploadfile import UploadFile
@@ -62,6 +63,7 @@ StaticModules = {
     'scrapetable': ScrapeTable,
     'selectcolumns': SelectColumns,
     'sort-from-table': SortFromTable,
+    'startfromtab': server.modules.startfromtab,
     'twitter': Twitter,
     'uploadfile': UploadFile,
     'urlscraper': URLScraper,

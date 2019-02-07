@@ -1,5 +1,6 @@
+from collections import namedtuple
 from contextlib import contextmanager
-from typing import Optional
+from typing import List, Optional, Set, Tuple
 import warnings
 from django.db import models, transaction
 from django.contrib.auth.models import User
@@ -343,3 +344,115 @@ class Workflow(models.Model):
         self.clear_deltas()
 
         super().delete(*args, **kwargs)
+
+
+class DependencyGraph:
+    """
+    A graph illustrating which WfModules depend on which WfModules' output.
+
+    Here are the rules:
+
+        * In a Tab, WfModule with order=N+1 depends on WfModule with order=N
+        * A WfModule with a `tab` param depends on that tab's last WfModule
+
+    Here are the data structures:
+
+        * `.tabs` List of (slug, [WfModuleIds])
+        * `.steps` Dict (keyed by id) of (depends_on_tab_slugs:Set(...))
+
+    We strive for consistent output order given the same inputs. WfModule IDs
+    are always ordered first by tab, then by order within the tab. This makes
+    code easier to test and debug.
+    """
+
+    Tab = namedtuple('DependencyGraphTab', ('slug', 'wf_module_ids'))
+    Step = namedtuple('DependencyGraphStep', ('depends_on_tab_slugs',))
+
+    def __init__(self, tabs, steps):
+        self.tabs = tabs
+        self.steps = steps
+
+    @classmethod
+    def load_from_workflow(cls, workflow: Workflow) -> 'DependencyGraph':
+        from server.models.param_field import ParamDType
+
+        tabs = []
+        steps = {}
+
+        for tab in workflow.live_tabs:
+            tab_wf_module_ids = []
+
+            for wf_module in tab.live_wf_modules:
+                tab_wf_module_ids.append(wf_module.id)
+                module_version = wf_module.module_version
+                if module_version is None:
+                    steps[wf_module.id] = cls.Step(set())
+                    continue
+
+                schema = module_version.param_schema
+                if all(
+                    (not isinstance(dtype, ParamDType.Tab)
+                     for dtype in schema.iter_dfs_dtypes())
+                ):
+                    # There are no tab params.
+                    steps[wf_module.id] = cls.Step(set())
+                    continue
+
+                # raises ValueError (and we don't handle that right now)
+                param_values = wf_module.get_params().values
+                tab_slugs = set(
+                    v
+                    for dtype, v in schema.iter_dfs_dtype_values(param_values)
+                    if isinstance(dtype, ParamDType.Tab)
+                )
+                steps[wf_module.id] = cls.Step(tab_slugs)
+
+            tabs.append(cls.Tab(tab.slug, tab_wf_module_ids))
+
+        return cls(tabs, steps)
+
+    def _get_dependent_ids_step(
+        self,
+        tab_slugs: Set[str]
+    ) -> Tuple[Set[int], Set[str]]:
+        """
+        Find `(set(new_wf_module_ids), set(tab_slugs_of_new_wf_module_ids))`.
+        """
+        wf_module_ids = set()
+        new_tab_slugs = set()
+        for tab in self.tabs:
+            dependent = False
+            for wf_module_id in tab.wf_module_ids:
+                step = self.steps[wf_module_id]
+                if not dependent:
+                    step = self.steps[wf_module_id]
+                    if step.depends_on_tab_slugs & tab_slugs:
+                        dependent = True
+                        if tab.slug not in tab_slugs:
+                            new_tab_slugs.add(tab.slug)
+                if dependent:
+                    wf_module_ids.add(wf_module_id)
+        return (wf_module_ids, new_tab_slugs)
+
+    def get_step_ids_depending_on_tab_slug(self, tab_slug: str) -> List[int]:
+        wf_module_ids = set()
+        tab_slugs = set([tab_slug])
+
+        while True:
+            new_wf_module_ids, new_tab_slugs = self._get_dependent_ids_step(
+                tab_slugs
+            )
+            wf_module_ids = wf_module_ids | new_wf_module_ids
+            # Every step, we must add new tabs to inspect. If we don't have any
+            # new tabs to inspect, that's because we've inspected all the tabs;
+            # we're done.
+            if not (new_tab_slugs - tab_slugs):
+                break
+            tab_slugs.update(new_tab_slugs)
+
+        ret = []  # sort wf_module_ids
+        for tab in self.tabs:
+            for wf_module_id in tab.wf_module_ids:
+                if wf_module_id in wf_module_ids:
+                    ret.append(wf_module_id)
+        return ret

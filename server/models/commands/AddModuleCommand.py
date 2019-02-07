@@ -41,7 +41,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         return data
 
     @classmethod
-    def affected_wf_modules(cls, wf_module) -> models.QuerySet:
+    def affected_wf_modules_in_tab(cls, wf_module) -> models.QuerySet:
         # We don't need to change self.wf_module's delta_id: just the others.
         #
         # At the time this method is called, `wf_module` is "deleted" (well,

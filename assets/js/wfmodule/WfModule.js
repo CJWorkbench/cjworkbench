@@ -302,7 +302,7 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, index, wfModule, module, inputWfModule } = this.props
+    const { isReadOnly, index, wfModule, module, inputWfModule, tabs } = this.props
     const { edits } = this.state
 
     const moduleName = module ? module.name : '_undefined'
@@ -452,6 +452,7 @@ export class WfModule extends React.PureComponent {
                   inputWfModuleId={inputWfModule ? inputWfModule.id : null}
                   inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}
                   inputColumns={inputWfModule ? inputWfModule.output_columns : null}
+                  tabs={tabs}
                   applyQuickFix={this.applyQuickFix}
                   startCreateSecret={this.startCreateSecret}
                   deleteSecret={this.deleteSecret}
@@ -493,9 +494,33 @@ class WfModuleCollapseButton extends React.PureComponent {
 }
 
 const getWorkflow = ({ workflow }) => workflow
-const getTabs = ({ tabs }) => tabs
+const getReadyTabs = ({ tabs }) => tabs
+const getPendingTabs = ({ pendingTabs }) => pendingTabs || {}
+const getReadyAndPendingTabs = createSelector([ getReadyTabs, getPendingTabs ], (readyTabs, pendingTabs) => {
+  return {
+    ...pendingTabs,
+    ...readyTabs
+  }
+})
 const getWfModules = ({ wfModules }) => wfModules
-const getSelectedTab = createSelector([ getWorkflow, getTabs ], (workflow, tabs) => {
+const getTabs = createSelector([ getWorkflow, getReadyAndPendingTabs, getWfModules ], (workflow, tabs, wfModules) => {
+  return workflow.tab_slugs.map(slug => {
+    const tab = tabs[slug]
+    let outputColumns = null
+    if (tab.wf_module_ids.length > 0) {
+      const lastWfModule = wfModules[tab.wf_module_ids[tab.wf_module_ids.length - 1]]
+      if (lastWfModule && lastWfModule.last_relevant_delta_id == lastWfModule.cached_render_result_delta_id) {
+        outputColumns = lastWfModule.output_columns
+      }
+    }
+    return {
+      slug,
+      name: tab.name,
+      outputColumns
+    }
+  })
+})
+const getSelectedTab = createSelector([ getWorkflow, getReadyAndPendingTabs ], (workflow, tabs) => {
   const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
   return tabs[tabSlug]
 })
@@ -524,6 +549,7 @@ function mapStateToProps (state, ownProps) {
 
   return {
     module,
+    tabs: getTabs(state),
     isZenModeAllowed: module ? !!module.has_zen_mode : false,
     isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),

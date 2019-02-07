@@ -29,6 +29,16 @@ class ParamDType:
         """
         raise NotImplementedError
 
+    def iter_dfs_dtypes(self):
+        """
+        Depth-first search to yield dtypes.
+
+        By default, this yields `self`. "Container"-style dtypes should
+        override this method to yield `self` and then yield each "child"
+        `dtype`.
+        """
+        yield self
+
     def iter_dfs_dtype_values(self, value: Any):
         """
         Depth-first search to yield (dtype, value) pairs.
@@ -60,7 +70,7 @@ class ParamDType:
         {'tab-123', 'tab-234'}
         """
         return set(v for dt, v in self.iter_dfs_dtype_values(value)
-                   if dt == dtype)
+                   if isinstance(dt, dtype))
 
     def omit_missing_table_columns(self, value: Any, columns: Set[str]) -> Any:
         """
@@ -255,6 +265,11 @@ class ParamDTypeList(ParamDType):
             self.inner_dtype.validate(v)
 
     # override
+    def iter_dfs_dtypes(self):
+        yield from super().iter_dfs_dtypes()
+        yield self.inner_dtype
+
+    # override
     def iter_dfs_dtype_values(self, value):
         yield from super().iter_dfs_dtype_values(value)
         for v in value:
@@ -311,6 +326,11 @@ class ParamDTypeDict(ParamDType):
             dtype.validate(value[name])
 
     # override
+    def iter_dfs_dtypes(self):
+        yield from super().iter_dfs_dtypes()
+        yield from self.properties.values()
+
+    # override
     def iter_dfs_dtype_values(self, value):
         yield from super().iter_dfs_dtype_values(value)
         for name, dtype in self.properties.items():
@@ -355,6 +375,11 @@ class ParamDTypeMap(ParamDType):
 
         for _, v in value.items():
             self.value_dtype.validate(v)
+
+    # override
+    def iter_dfs_dtypes(self):
+        yield from super().iter_dfs_dtypes()
+        yield self.value_dtype
 
     # override
     def iter_dfs_dtype_values(self, value):

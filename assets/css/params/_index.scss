@@ -1,14 +1,18 @@
 @import 'ParamsForm'; // Param
 @import 'Param'; // before others, so they can override its defaults
 
+@import 'react-select'; // used by several
+
 @import 'CellEdits';
 @import 'Checkbox';
 @import 'Column';
 @import 'Custom/index';
 @import 'Number';
 @import 'Menu';
+@import 'Multicolumn';
 @import 'Radio';
 @import 'Secret';
 @import 'StaticText';
 @import 'String';
 @import 'SubmitButton';
+@import 'Tab';

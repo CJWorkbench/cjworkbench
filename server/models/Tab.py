@@ -1,5 +1,5 @@
 from django.db import models
-from .Workflow import Workflow
+from .workflow import Workflow
 
 
 class Tab(models.Model):

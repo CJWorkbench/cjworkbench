@@ -155,10 +155,39 @@ class WorkbenchBase(unittest.TestCase):
 
         self.browser.click_whatever('.react-select__option', text=text)
 
-    def submit_wf_module(self):
-        """Clicks the submit button of the active WfModule."""
+    # TODO move to a helper .py file
+    def select_tab_param(self, module_name: str, name: str, text: str,
+                         **kwargs) -> None:
+        """
+        Select 'text' in the TabParam box with name 'name'.
+
+        Note: unlike browser.select(), this does _not_ handle id or
+        label locators.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        with self.browser.scope(
+            (
+                f'.wf-module[data-module-name="{module_name}"] '
+                f'.param[data-name="{name}"]'
+            ),
+            **kwargs
+        ):
+            self.browser.click_whatever('.react-select__dropdown-indicator')
+
+        self.browser.click_whatever('.react-select__option', text=text)
+
+    def submit_wf_module(self, **kwargs):
+        """
+        Click the submit button of the active WfModule.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element is ready
+        """
         self.browser.click_whatever(
-            'form.module-card-params button[name=submit]:not(:disabled)'
+            'form.module-card-params button[name=submit]:not(:disabled)',
+            **kwargs
         )
 
 

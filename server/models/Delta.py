@@ -312,7 +312,8 @@ class Delta(PolymorphicModel):
 
     @property
     def command_description(self):
-        return "Base Delta object"  # can be called from Django admin when deleting a wf
+        # can be called from Django admin when deleting a wf
+        return "Base Delta object"
 
     def __str__(self):
         return str(self.datetime) + ' ' + self.command_description

@@ -11,7 +11,7 @@ from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .StoredObject import StoredObject
 from .Tab import Tab
-from .Workflow import Workflow
+from .workflow import Workflow
 
 
 class WfModule(models.Model):

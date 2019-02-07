@@ -9,7 +9,7 @@ from server.modules.types import ProcessResult
 from server.notifications import OutputDelta
 from server import websockets
 from server.types import TableShape, StepResultShape
-from .types import UnneededExecution
+from .types import UnneededExecution, TabCycleError, TabOutputUnreachableError
 from . import renderprep
 
 
@@ -59,10 +59,13 @@ def _execute_wfmodule_pre(
     """
     First step of execute_wfmodule().
 
-    Returns a Tuple in this order:
+    Return a Tuple in this order:
         * loaded_module: a ModuleVersion for dispatching render
         * fetch_result: optional ProcessResult for dispatching render
         * param_values: a dict for dispatching render
+
+    Raise TabCycleError or TabOutputUnreachableError if the module depends on
+    tabs with errors. (We won't call the render() method in that case.)
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -136,13 +139,20 @@ async def _render_wfmodule(
 
     input_table = input_result.dataframe
 
-    loaded_module, fetch_result, param_values = await _execute_wfmodule_pre(
-        workflow,
-        wf_module,
-        params,
-        input_result.table_shape,
-        tab_shapes
-    )
+    try:
+        loaded_module, fetch_result, param_values = (
+            await _execute_wfmodule_pre(workflow, wf_module, params,
+                                        input_result.table_shape, tab_shapes)
+        )
+    except TabCycleError:
+        return ProcessResult(error=(
+            'The chosen tab depends on this one. Please choose another tab.'
+        ))
+    except TabOutputUnreachableError:
+        return ProcessResult(error=(
+            'The chosen tab has no output. '
+            'Please change that tab or choose another.'
+        ))
 
     # Render may take a while. run_in_executor to push that slowdown to a
     # thread and keep our event loop responsive.

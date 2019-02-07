@@ -27,6 +27,7 @@ describe('ParamsForm', () => {
       inputWfModuleId={null}
       inputDeltaId={null}
       inputColumns={[]}
+      tabs={[]}
       applyQuickFix={jest.fn()}
       startCreateSecret={jest.fn()}
       deleteSecret={jest.fn()}

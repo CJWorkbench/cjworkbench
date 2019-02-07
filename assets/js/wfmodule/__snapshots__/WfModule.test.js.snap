@@ -131,6 +131,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           onChange={[Function]}
           onSubmit={[Function]}
           startCreateSecret={[Function]}
+          tabs={Array []}
           value={
             Object {
               "menu_select": 1,
