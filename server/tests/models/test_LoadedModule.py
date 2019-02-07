@@ -219,8 +219,8 @@ class LoadedModuleTest(unittest.TestCase):
             lm.render(in_result, params, fetch_result=fetch_result)
 
         self.assertEqual(len(passed_columns), 1)
-        self.assertEqual(passed_columns[0].name, 'A')
-        self.assertEqual(passed_columns[0].type, 'number')
+        self.assertEqual(passed_columns['A'].name, 'A')
+        self.assertEqual(passed_columns['A'].type, 'number')
 
     def test_render_with_no_kwargs(self):
         args = None
