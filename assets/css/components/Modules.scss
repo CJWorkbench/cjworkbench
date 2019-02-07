@@ -63,8 +63,8 @@
     // if they are non-empty. But we cannot set display:none, because the user
     // may call notesInputRef.current.focus() before they become visible.
     position: relative; // so we can position `.wf-module .module-notes::before`
-    margin-bottom: .5rem;
-    
+    margin-bottom: 1rem;
+
     &:not(.visible) {
       overflow: hidden;
       margin: 0;
@@ -470,7 +470,7 @@
 .workflow-root.read-only {
 
   .module-notes {
-      margin-top: 2rem;
+      margin-top: 1.5rem;
   }
 }
 

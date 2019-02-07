@@ -102,7 +102,7 @@ def render_workflows(request):
 def workflow_list(request, format=None):
     """Create a new workflow."""
     workflow = Workflow.create_and_init(
-        name='New Workflow',
+        name='Untitled Workflow',
         owner=request.user,
         selected_tab_position=0
     )

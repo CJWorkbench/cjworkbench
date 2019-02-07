@@ -52,6 +52,7 @@
   // value selected
   .react-select__single-value {
     color: $brand-text--darker;
+    padding-right: 2rem;
   }
 
   .react-select__control.react-select__control--is-focused { // extra specificity above .react-select__control, to trump .react-select__control:hover

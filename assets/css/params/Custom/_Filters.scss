@@ -3,11 +3,12 @@
   line-height: 1.5rem; //FIXME fix class of text that does not wrap
 
   h5 {
-    @extend .content-1;
-    color: $brand-orange;
+    @extend .content-2;
+    color: $brand-orange--darker;
     text-transform: uppercase;
     line-height: 1.6rem;
     margin-bottom: 0;
+    font-weight: bold;
   }
 
   .filter {
@@ -196,5 +197,22 @@
 
   select {
     @extend %custom-select;
+  }
+}
+
+//read-only edits
+.workflow-root.read-only {
+
+  span.selected-operator {
+    border-left: 0;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  label.case-sensitive {
+    display: none;
+  }
+  .subfilter button.delete{
+    display: none;
   }
 }

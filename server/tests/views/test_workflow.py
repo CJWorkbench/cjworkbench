@@ -174,7 +174,7 @@ class WorkflowViewTests(LoggedInTestCase):
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Workflow.objects.count(), start_count+1)
-        self.assertEqual(Workflow.objects.filter(name='New Workflow').count(), 1)
+        self.assertEqual(Workflow.objects.filter(name='Untitled Workflow').count(), 1)
 
     # --- Workflow ---
     # This is the HTTP response, as opposed to the API

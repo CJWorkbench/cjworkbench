@@ -10,7 +10,7 @@ class TestEmbed(LoggedInIntegrationTest):
         b.click_button('Create Workflow') # navigate to a workflow page
 
         # wait for page load
-        b.assert_element('input[name="name"][value="New Workflow"]', wait=True)
+        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 
 
     def test_embed(self):
