@@ -187,8 +187,12 @@ class ParamDTypeBoolean(ParamDType):
 
 
 class ParamDTypeColumn(ParamDTypeString):
+    def __init__(self, tab_parameter: Optional[str] = None):
+        self.tab_parameter = tab_parameter
+        super().__init__()
+
     def __repr__(self):
-        return 'ParamDTypeColumn()'
+        return 'ParamDTypeColumn' + repr((self.tab_parameter,))
 
     def omit_missing_table_columns(self, value, columns):
         if value not in columns:
@@ -198,8 +202,12 @@ class ParamDTypeColumn(ParamDTypeString):
 
 
 class ParamDTypeMulticolumn(ParamDTypeString):
+    def __init__(self, tab_parameter: Optional[str] = None):
+        self.tab_parameter = tab_parameter
+        super().__init__()
+
     def __repr__(self):
-        return 'ParamDTypeMulticolumn()'
+        return 'ParamDTypeMulticolumn' + repr((self.tab_parameter,))
 
     def omit_missing_table_columns(self, value, columns):
         valid = [c for c in value.split(',') if c in columns]
@@ -456,7 +464,7 @@ class ParamField:
 
     def __init__(self, *, id_name: str, ftype: 'ParamField.FType',
                  name: str = '', items: str = '', multiline: bool = False,
-                 placeholder: str = '',
+                 placeholder: str = '', tab_parameter: str = '',
                  visible_if: Optional[Dict[str, Dict[str, Any]]] = None,
                  default: Any = None):
         self.id_name = id_name
@@ -465,6 +473,7 @@ class ParamField:
         self.items = items
         self.multiline = multiline
         self.placeholder = placeholder
+        self.tab_parameter = tab_parameter
         self.visible_if = visible_if
         self.default = default
 
@@ -485,6 +494,7 @@ class ParamField:
             items=d.get('menu_items', d.get('radio_items', '')),
             multiline=d.get('multiline', False),
             placeholder=d.get('placeholder', ''),
+            tab_parameter=d.get('tab_parameter', ''),
             visible_if=d.get('visible_if'),
             default=d.get('default')
         )
@@ -510,9 +520,11 @@ class ParamField:
                 kwargs['default'] = str(self.default)
             return ParamDTypeString(**kwargs)
         elif self.ftype == T.COLUMN:
-            return ParamDTypeColumn()
+            return ParamDTypeColumn(tab_parameter=self.tab_parameter or None)
         elif self.ftype == T.MULTICOLUMN:
-            return ParamDTypeMulticolumn()
+            return ParamDTypeMulticolumn(
+                tab_parameter=self.tab_parameter or None
+            )
         elif self.ftype == T.TAB:
             return ParamDTypeTab()
         elif self.ftype == T.INTEGER:

@@ -1,6 +1,6 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.models import Workflow
+from server.models import Params, Workflow
 from server.models.param_field import ParamDType
 from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
@@ -12,7 +12,7 @@ from worker.execute.types import TabCycleError, TabOutputUnreachableError, \
 
 class CleanValueTests(DbTestCase):
     def test_clean_normal_dict(self):
-        context = RenderContext(None, None, None)
+        context = RenderContext(None, None, None, None)
         schema = ParamDType.Dict({
             'str': ParamDType.String(),
             'int': ParamDType.Integer(),
@@ -25,7 +25,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_column_valid(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER),
-        ]), None)
+        ]), None, None)
         schema = ParamDType.Dict({
             'column': ParamDType.Column(),
         })
@@ -36,7 +36,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_column_missing_becomes_empty_string(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER),
-        ]), None)
+        ]), None, None)
         schema = ParamDType.Dict({
             'column': ParamDType.Column(),
         })
@@ -48,7 +48,7 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER),
             Column('B', ColumnType.NUMBER),
-        ]), None)
+        ]), None, None)
         schema = ParamDType.Dict({
             'columns': ParamDType.Multicolumn(),
         })
@@ -60,7 +60,7 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER),
             Column('B', ColumnType.NUMBER),
-        ]), None)
+        ]), None, None)
         schema = ParamDType.Dict({
             'columns': ParamDType.Multicolumn(),
         })
@@ -80,7 +80,7 @@ class CleanValueTests(DbTestCase):
 
         context = RenderContext(workflow.id, None, {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
-        })
+        }, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
 
         result = clean_value(schema, {'tab': tab.slug}, context)
@@ -92,8 +92,34 @@ class CleanValueTests(DbTestCase):
         assert_frame_equal(result['tab'].dataframe,
                            pd.DataFrame({'A': [1, 2]}))
 
+    def test_clean_multicolumn_from_other_tab(self):
+        tab_output = ProcessResult(pd.DataFrame({'A-from-tab-2': [1, 2]}))
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wfm = tab.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=workflow.last_delta_id
+        )
+        wfm.cache_render_result(workflow.last_delta_id, tab_output)
+
+        schema = ParamDType.Dict({
+            'tab': ParamDType.Tab(),
+            'columns': ParamDType.Multicolumn(tab_parameter='tab'),
+        })
+        param_values = {'tab': tab.slug,
+                        'columns': 'A-from-tab-1,A-from-tab-2'}
+        params = Params(schema, param_values, {})
+        context = RenderContext(workflow.id, TableShape(3, [
+            Column('A-from-tab-1', ColumnType.NUMBER),
+        ]), {
+            tab.slug: StepResultShape('ok', tab_output.table_shape),
+        }, params)
+        result = clean_value(schema, param_values, context)
+        # result['tab'] is not what we're testing here
+        self.assertEqual(result['columns'], 'A-from-tab-2')
+
     def test_clean_tab_no_tab_selected_gives_none(self):
-        context = RenderContext(None, None, {})
+        context = RenderContext(None, None, {}, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
         result = clean_value(schema, {'tab': ''}, context)
         self.assertEqual(result, {'tab': None})
@@ -104,20 +130,20 @@ class CleanValueTests(DbTestCase):
 
         The JS side of things will see the nonexistent tab, but not render().
         """
-        context = RenderContext(None, None, {})
+        context = RenderContext(None, None, {}, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
         result = clean_value(schema, {'tab': 'tab-XXX'}, context)
         self.assertEqual(result, {'tab': None})
 
     def test_clean_tab_no_tab_output_raises_cycle(self):
-        context = RenderContext(None, None, {'tab-1': None})
+        context = RenderContext(None, None, {'tab-1': None}, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
         with self.assertRaises(TabCycleError):
             clean_value(schema, {'tab': 'tab-1'}, context)
 
     def test_clean_tab_tab_error_raises_cycle(self):
-        shape = StepResultShape('error', ProcessResult())
-        context = RenderContext(None, None, {'tab-1': shape})
+        shape = StepResultShape('error', TableShape(0, []))
+        context = RenderContext(None, None, {'tab-1': shape}, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
         with self.assertRaises(TabOutputUnreachableError):
             clean_value(schema, {'tab': 'tab-1'}, context)
@@ -150,7 +176,7 @@ class CleanValueTests(DbTestCase):
 
         context = RenderContext(workflow.id, None, {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
-        })
+        }, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
 
         with self.assertRaises(UnneededExecution):
@@ -180,7 +206,7 @@ class CleanValueTests(DbTestCase):
 
         context = RenderContext(workflow.id, None, {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
-        })
+        }, None)
         schema = ParamDType.Dict({'tab': ParamDType.Tab()})
 
         with self.assertRaises(UnneededExecution):

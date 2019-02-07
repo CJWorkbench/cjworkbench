@@ -21,12 +21,43 @@ class RenderContext:
         self,
         workflow_id: int,
         input_table_shape: StepResultShape,
-        tab_shapes: Dict[str, Optional[StepResultShape]]
+        tab_shapes: Dict[str, Optional[StepResultShape]],
+        # params is a HACK to let column selectors rely on a tab_parameter,
+        # which is a _root-level_ parameter. So when we're walking the tree of
+        # params, we need to keep a handle on the root ...  which is ugly and
+        # [2019-02-07, adamhooper] I'm on a deadline today to publish join
+        # okthxbye.
+        #
+        # This is especially ugly because RenderContext only exists for
+        # get_param_values(), and get_param_values() also takes `params`. Ugh.
+        params: Params
     ):
         self.workflow_id = workflow_id
         self.input_table_shape = input_table_shape
         self.tab_shapes = tab_shapes
+        self.params = params
 
+    def output_colnames_for_tab_parameter(self, tab_parameter):
+        if tab_parameter is None:
+            # Common case: param selects from the input table
+            return set(c.name for c in self.input_table_shape.columns)
+
+        # Rare case: there's a "tab" parameter, and the column selector is
+        # selecting from _that_ tab's output columns.
+
+        # valid schema means no KeyError
+        tab_slug = self.params.values[tab_parameter]
+
+        try:
+            tab = self.tab_shapes[tab_slug]
+        except KeyError:
+            # Tab does not exist
+            return ''
+        if tab is None or tab.status != 'ok':
+            # Tab has a cycle or other error
+            return ''
+
+        return set(c.name for c in tab.table_shape.columns)
 
 def get_param_values(
     params: Params,
@@ -116,8 +147,13 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
 
 @clean_value.register(ParamDType.Column)
 def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
-    input_colnames = set(c.name for c in context.input_table_shape.columns)
-    return dtype.omit_missing_table_columns(value, input_colnames)
+    valid_colnames = context.output_colnames_for_tab_parameter(
+        dtype.tab_parameter
+    )
+    if value in valid_colnames:
+        return value
+    else:
+        return ''
 
 
 @clean_value.register(ParamDType.Multicolumn)
@@ -126,8 +162,14 @@ def _(
     value: str,
     context: RenderContext
 ) -> str:
-    input_colnames = set(c.name for c in context.input_table_shape.columns)
-    return dtype.omit_missing_table_columns(value, input_colnames)
+    valid_colnames = context.output_colnames_for_tab_parameter(
+        dtype.tab_parameter
+    )
+    # `value` is a comma-separated list
+    #
+    # Don't worry about split-empty-string generating an empty-string colname:
+    # it isn't in `valid_colnames` so it'll get filtered out.
+    return ','.join(c for c in value.split(',') if c in valid_colnames)
 
 
 # ... and then the methods for recursing

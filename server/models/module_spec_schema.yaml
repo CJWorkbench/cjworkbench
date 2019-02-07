@@ -176,6 +176,7 @@ definitions:
                 type: { const: column }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                tab_parameter: { type: string }  # optional
         multicolumn:
             <<: *common_ftype
             properties:

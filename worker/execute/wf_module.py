@@ -78,7 +78,8 @@ def _execute_wfmodule_pre(
         render_context = renderprep.RenderContext(
             workflow.id,
             input_table_shape,
-            tab_shapes
+            tab_shapes,
+            params  # ugh
         )
         param_values = renderprep.get_param_values(params, render_context)
         loaded_module = LoadedModule.for_module_version_sync(module_version)
