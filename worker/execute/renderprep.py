@@ -4,7 +4,7 @@ import pandas as pd
 from server.models import Params, Tab
 from server.models.param_field import ParamDType
 from server.types import Column, StepResultShape
-from .types import TabCycleError, UnneededExecution
+from .types import TabCycleError, TabOutputUnreachableError, UnneededExecution
 
 
 class TabOutput:
@@ -83,6 +83,8 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
         raise TabCycleError
+    if shape.status != 'ok':
+        raise TabOutputUnreachableError
 
     # Load Tab output from database. Assumes we've locked the workflow.
     try:
@@ -100,7 +102,7 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     wf_module = tab.live_wf_modules.last()
     if wf_module is None:
         # empty tab -> empty output
-        return TabOutput(tab_slug, tab.name, [], pd.DataFrame())
+        raise TabOutputUnreachableError
 
     crr = wf_module.cached_render_result
     if crr is None:

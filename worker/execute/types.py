@@ -6,3 +6,8 @@ class UnneededExecution(Exception):
 class TabCycleError(Exception):
     """The chosen tab exists, and it depends on the output of this tab."""
     pass
+
+
+class TabOutputUnreachableError(Exception):
+    """The chosen tab exists, and it is empty or has an error."""
+    pass
