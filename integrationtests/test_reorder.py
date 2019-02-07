@@ -12,7 +12,7 @@
 #        b.click_button('Create Workflow') # navigate to a workflow page
 #
 #        # wait for page load
-#        b.assert_element('input[name="name"][value="New Workflow"]', wait=True)
+#        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 #
 #        self.browser.click_button('ADD STEP')
 #        self.browser.fill_in('moduleQ', 'Paste data')

@@ -64,7 +64,7 @@ describe('Workflow list page', () => {
 
   const addResponse = {
     id: 543,
-    name: 'New Workflow',
+    name: 'Untitled Workflow',
     owner_name: 'Sally Sallerson',
     public: false,
   }
