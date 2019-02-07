@@ -96,7 +96,7 @@ exports[`AceEditor matches snapshot 1`] = `
         showPrintMargin={true}
         style={Object {}}
         tabSize={4}
-        theme="tomorrow"
+        theme="xcode"
         value="def process(table)
     return table"
         width="100%"
