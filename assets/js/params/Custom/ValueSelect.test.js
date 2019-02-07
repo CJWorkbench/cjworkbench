@@ -141,7 +141,7 @@ describe('ValueSelect', () => {
   it('should render without error when valueCounts = null', () => {
     const w = wrapper({
       valueCounts: null,
-      value: null
+      value: []
     })
     // Used to throw TypeError
     w.setProps({value: ['a']})
