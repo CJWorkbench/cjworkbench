@@ -9,6 +9,11 @@
       border: 0;
       padding: 0;
       margin: 0;
+      background-color: $dark-accent--soft;
+      color:$brand-text--dark;
+    }
+    a {
+      color: $brand-workspace;
     }
   }
 
@@ -26,15 +31,56 @@
       width: 100%;
       height: 100%;
     }
+
+    #code-editor {
+      border-radius: .3rem;
+      background-color: $Vlight-gray;
+
+      .ace_content {
+        padding: .5rem;
+
+        .ace_layer {
+          left: 0;
+        }
+
+        .ace_layer.ace_cursor-layer { // cursor
+          .ace_cursor {
+            color: $brand-workspace;
+          }
+          &.ace_hidden-cursors {
+            opacity: 0;
+          }
+        }
+
+        .ace_layer.ace_marker-layer {
+          .ace_active-line {
+            background-color: $dark-accent--soft;
+          }
+        }
+      }
+
+      //Gutter is only visible in zen mode
+      .ace_layer.ace_gutter-layer {
+        padding-top: .5rem;
+      }
+
+      .ace_gutter-active-line {
+        margin-top: .5rem;
+      }
+
+    }
+
+    .ace-tomorrow .ace_gutter {
+      background: $heading-bg !important;
+      color:#fff!important;
+    }
+
+    .ace-tomorrow .ace_gutter-active-line {
+      background-color: #fff!important;
+      opacity: 1!important;
+    }
+
   }
 
-  .ace-tomorrow .ace_gutter {
-    background: $heading-bg !important;
-    color:#fff!important;
-  }
 
-  .ace-tomorrow .ace_gutter-active-line {
-    background-color: #fff!important;
-    opacity: 0.2!important;
-  }
 }

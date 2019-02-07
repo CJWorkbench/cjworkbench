@@ -4,7 +4,7 @@ import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
 
 import 'brace/mode/python'
-import 'brace/theme/tomorrow'
+import 'brace/theme/xcode'
 
 // Globals -- so each render(), they're equal according to ===
 const EditorProps = {
@@ -89,7 +89,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               width={this.state.width}
               height={this.state.height}
               mode='python'
-              theme='tomorrow'
+              theme='xcode'
               wrapEnabled={true}
               annotations={this.getAnnotations(wfModuleError)}
               showGutter={isZenMode}
