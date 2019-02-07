@@ -407,6 +407,7 @@
 
         label {
           margin-right: 1.6rem;
+          @extend %content-1;
         }
       }
     }
