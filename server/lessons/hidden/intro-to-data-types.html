@@ -5,10 +5,13 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Data types are..[one liner]
+    Data types are used to tell the computer how to interpret and use values.
   </p>
   <p>
-    In this lesson we will prepare police incident data from the city of New York on reported police incidents in each borough of the city.
+    Different columns have different types: text, numbers, dates, locations, and so on. Some operations only work on specific types. For example, you can’t subtract one text value from another.
+  </p>
+  <p>
+    In this lesson we will use data on reported police incidents in New York to learn how Workbench guesses the types of incoming columns, and how to convert columns between types.
   </p>
 </section>
 
@@ -46,64 +49,43 @@
 <section>
   <h2>Data</h2>
   <p>
-    The dataset we’re using is a prepared version of the data published and documented by the  City of New York <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>. <br />
-  It contains all police incidents in January and February 2018 in NYC. For the purpose of this lesson narrowed it down to a few select columns.
+    This data is published by the City of New York, <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>. It contains all reported police incidents in January and February 2018.
   </p>
   <p>
-    As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">
-    Using the data dictionary, answer the following questions for yourself:
-  </p>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What does each row represent?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What's in each column?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there any columns, values or codes you don't understand?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there missing or obviously wrong values?
-    </li>
-    <li
-      data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Does the data need to be cleaned?
-    </li>
-</section>
-<section>
-  <h2>Cleaning: Data types</h2>
-  <p>
-    Let’s finish cleaning our data by converting column types where needed.
+    In the next lesson, we will answer the question: How many incidents were reported each month in each borough? For now, let’s narrow it down to the columns we need, and get them correctly typed.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 4, click open the menu of the <kbd>Complaint ID column</kbd>, and select <kbd>convert to number</kbd>.
+      >Add Select Columns, and keep only <kbd>BORO_NM</kbd> and <kbd>COMPL_FR_DT</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 5, add the step <kbd>Convert to Date & time<kbd>. Select <kbd>Complaint date</kbd> and choose <kbd>YYYY-MM-DD</kbd> as display format.
+      >You can rename columns by clicking on any column name. Rename these columns respectively to <kbd>Borough</kbd> and <kbd>Complaint date</kbd>
     </li>
-  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Data types</h2>
+  <p>
+    You may have noticed that Workbench shows the type of each column below the column name. Workbench supports 3 types:
+  </p>
+  <h3>Text</h3>
+  <p>
+    Also known as “string”, this type can contain any character and be of any length. Mixed numbers and letters are interpreted as text.</p>
+  <h3>Number</h3>
+  <p>
+    This type is used for both whole numbers (such as 8, 22 or 268) and numbers which values have digits after the decimal point (such as 1.5 or 3.14).
+  </p>
+  <h3>Date & times</h3>
+  <p>
+    A date and a time together. In can be written in many formats, such as “23 January 2019 11:42”. Right now date & time in Workbench is shown as “2019–01-23 11:42:00”
+  </p>
 </section>
 <section>
-  <h2>Group by date</h2>
+  <h2>Converting dates</h2>
   <p>
     Our first question is ‘How many incident were reported each month, in the entire city?
   </p>

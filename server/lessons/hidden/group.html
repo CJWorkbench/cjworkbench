@@ -7,7 +7,7 @@
   <p>
     Grouping rows together is one of the most powerful ways of understanding data. This operation is sometimes called “pivot tables” or “Group by”. Its purpose is to summarize large amounts of data quickly.
   <p>
-    In this lesson we will continue working with San Francisco Housing data to analyse how many affordable units are planned to be built in each neighborhood of the city.
+    In this lesson we will continue working with San Francisco Housing data to analyze how many affordable units are planned to be built in each neighborhood of the city.
   </p>
 </section>
 
@@ -33,59 +33,49 @@
 
 <section>
   <h2>Grouping and counting</h2>
-  <p>In the previous lesson, we filtered <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">San Francisco Housing data</a> to reveal sizable new constructions containing a majority of affordable units. Let’s now ask our data: ‘How many of those new constructions are in each neighborhood?’
+  <p>In the previous lesson, we filtered <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">San Francisco Housing data</a> to reveal sizable new constructions containing a majority of affordable units. Let’s now find out how many of these projects are in each neighborhood.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 5, add 'Group' and select the column <kbd>State</kbd>.
+      >Add 'Group' and select the column <kbd>Neighborhood</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Keep the first operation set to <kbd>count</kbd>. It will count all rows within each group.
       <p class ="instruction-detail">
-        Since one row is a project and each group is neighborhood, the output table is a count of project per neighborhood.
+        Since each row is one project and rows are grouped by neighborhood, the output table is a count of projects per neighborhood.
       </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Name the new  column to <kbd>Number of projects</kbd>.
-      <p class ="instruction-detail">
-        Next, let’s find out how much units are built in each neighborhood.
-      </p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>Operations in groups</h2>
+  <h2>Operations within groups</h2>
   <p>
-    Just counting projects gives us little information about the number of new housing units. Let’s now find out how many affordable units are planned to be built in each number.
+    Just counting projects gives us little information about the number of new housing units. Instead let’s sum the number of affordable units are planned to be built in each neighborhood.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 5 Click <kbd>+ADD</kbd> to add a new operation.
+      >Change <kbd>Count</kbd> to <kbd>Sum</kbd> and choose the column <kbd>affordable units</kbd> as the target.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set it to <kbd>SUM</kbd>, and choose the column <kbd>affordable units</kbd> as the target.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new column <kbd>Sum of affordable units</kbd>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add one more operation and this time calculate the sum of <kbd>market rate</kbd> units, which are the one not subsidized by the city. Name the new column <kbd>Sum of market-rate units</kbd>
+      >Name the new column ‘Sum of affordable units’
+      <p class="instruction-detail">
+        We are still grouping by “Neighborhood”, but now we are calculating the sum of the values of the “Affordable_units” within each neighborhood group.
+      </p>
     </li>
   </ol>
 </section
@@ -93,13 +83,13 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll learn common splitting and text cleaning tasks, to make it possible to access specific variables.</p>
+    <p class="summary"> Next, we’ll look at using Group to report on campaign finance data.</p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
     <ol>
       <li>
-        <a href="/lessons/split-and-clean/">Cleaning text - part 1</a>
+        <a href="/lessons/cleaning-campaign-finance-data/">Cleaning and grouping campaign finance data</a>
       </li>
     </ol>
   </div>

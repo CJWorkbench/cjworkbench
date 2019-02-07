@@ -5,11 +5,10 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Grouping rows together is one of the most powerful ways of understanding data. This operation is sometimes called “pivot tables” or “Group by”. Its purpose is to summarize large amounts of data quickly.
+    Campaign finance is one of the classic topics for data journalism. Unfortunately, campaign finance data often requires a cleaning before you can answer basic questions, such as “who donated the most money?”
   </p>
   <p>
-    In this lesson we will focus on the classic case where one column contains multiple values that could be useful to access separately - for example in order to group.
-    We will  analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York to find out which other state donated the most to his campaign.
+    In this lesson we will extract the state from donor addresses, so that we can group donations by state. This requires splitting a column of text and removing unwanted information, which are basic cleaning skills you will use many times.
   </p>
 </section>
 
@@ -36,11 +35,14 @@
 <section>
   <h2>Data</h2>
   <p>
-    The table we’re using in this lesson has been prepared from data published and documented by the  Board of Election of the State of New York, here.
+    We will  analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York to find which state donated the most to his campaign. Out of state campaign contributions could reveal previously hidden business or political connections.
+  </p>
+  <p>
+    This data is published by the Board of Election of the State of New York,
   <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
   </p>
   <p>
-    As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
+    As usual, go through your list of questions and make sure you understand each column. Where can the donor’s state be found?
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -72,35 +74,32 @@
   </ol>
 </section>
 <section>
-  <h2>Cleaning - Splitting columns</h2>
+  <h2>Splitting columns</h2>
   <p>
-    We want to group donations by state, so we must extract the 2 letters state abbreviations from <kbd>Contributor</kbd> and store them into its own column so we can access it.
+    Our first task is to extract the 2 letter state abbreviations in the <kbd>Contributor</kbd> column. The goal is to store the state by itself in the a new column, so that we can apply a Group step.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 2, add Select columns and keep:<br />
-      <kbd>Contributor</kbd><br>
-      <kbd>Amt</kbd><br>
-      <kbd>State</kbd>
+      >Select and keep the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the Split column in step 3 and select the column <kbd>Contributor</kbd>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose the method <kbd>Extract first x characters from right</kbd>Set X to ‘8’, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between — spaces are characters!
+      >Add <kbd>Split column</kbd> and select the column <kbd>Contributor</kbd>
 
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set X to <kbd>8</kbd>, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between — spaces are characters!
+      >Choose the method <kbd>Extract x characters from right</kbd>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Set <kbd>X</kbd> to <kbd>8</kbd>, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between them.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -112,19 +111,21 @@
 <section>
   <h2>Cleaning text</h2>
   <p>
-    We now need to clean the new State column, so it only contains two letters abbreviations.
+    We now have the zip code plus the state in <kbd>State</kbd>. There are different ways to remove the extra information, but one of the simplest is to keep only letters.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 4, add <kbd>Clean text</kbd>, and apply it to <kbd>State</kbd>.
+      >Add <kbd>Clean text</kbd>, and apply it to the <kbd>State</kbd> column.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the 'Characters' section, set the step to delete numbers.
+      >In the 'Characters' section, keep only letters.
+      <p class="instruction-detail">Note that deleting numbers will not work because it will leave the spaces.</p>
+      <p class="instruction-detail">Now we have a clean “State” column. Our table is ready to be analyzed!</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -134,38 +135,53 @@
   </ol>
 </section>
 <section>
-  <h2>Grouping and counting</h2>
-  <p>We can now calculate the amount that has been donated in each state, using groups.
+  <h2>Grouping</h2>
+  <p>We can now calculate the amount that has been donated in each state, using Group.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 5, add 'Group' and select the column <kbd>State</kbd>.
+      >Add the step <kbd>Group</kbd> and select the <kbd>State</kbd> column.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set the operation set to <kbd>SUM</kbd>, and choose the column <kbd>Amt</kbd> as the target.
+      >Set the operation to <kbd>SUM</kbd>, and choose the <kbd>Amt</kbd> column as the target.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Name the new column <kbd>Total amount</kbd>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add one more operation, and this time calculate the average donation per state. Name the new column <kbd>Average amount</kbd>.
+      <p class="instruction-detail">You can now see the total contributions from donors in each state.</p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>Investigate</h2>
+  <h2>Sort and chart</h2>
   <p>
-    Out of state campaign contributions could reveal previously hidden business or political connections. Now that we have a good summary of the provenance of money, we could for example investiguate who are the largest donors in California.
+    Let’s visualize these results.
   </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select <kbd>Sort descending</kbd> from the <kbd>Total amount</kbd> column menu
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Add a Column Chart
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Set the X Axis to <kbd>State,</kbd> and the Y axis to <kbd>Total amount</kbd>
+      <p class="instruction-detail">Which state, other than New York, contributed the most money to Cuomo’s 2014 campaign?</p>
+    </li>
+  </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
