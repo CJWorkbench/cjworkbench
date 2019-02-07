@@ -87,68 +87,33 @@
 <section>
   <h2>Converting dates</h2>
   <p>
-    Our first question is ‘How many incident were reported each month, in the entire city?
+    Although the “Complaint date” column looks like a date, you can see that it was loaded as text. Workbench tries to guess when a column is dates, but if there are any rows which are blank, not a date, or the date is in a format Workbench doesn’t recognize, the column will be loaded as text.
   </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 6, add <kbd>Group</kbd> and select the column <kbd>Complaint date</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the output column<kbd>Count of incidents</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add one more operation, and this time calculate the average donation per state. Name the new column <kbd>Average amount</kbd>.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Date granularity</h2>
   <p>
-    Let’s visualize this data in a line chart to look at granularity visually.
+    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date & time.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 7, add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count</kbd> on the Y-axis.
-      <p class="instruction-detail">
-        To visualize the same data but for each day, we can change the granularity of the group.
+      >In the column menu for the <kbd>Complaint date</kbd> column, select convert to <kbd>date & time</kbd>. This will add a conversion step.
+      <p>
+        Now this column has “Date & Time” type. You’ll use this cleaned column in the next lesson.
       </p>
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 6, edit the granularity to <kbd>by day</kbd>. Validate your edit and select the Line Chart step to view the result on your chart.
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
-  <h3>Investigate</h3>
-  <p>Now that we have a good summary of the provenance of money, we could for example ask ‘Who are the largest donors in California?’.
-    Duplicate this tab and edit the new one to find out.
-  </p>
   <div class="completed">
-    <p class="summary"> Next, we’ll learn about the powerful Group step.</p>
+    <p class="summary">Next, we’ll learn about grouping by dates, and multiple columns.</p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
     <ol>
       <li>
-        <a href="/lessons/long-and-wide-format">Long and wide format</a>
+        <a href="/lessons/group-by-date">Advanced grouping</a>
       </li>
     </ol>
   </div>
