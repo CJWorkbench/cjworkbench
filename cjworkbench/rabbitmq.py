@@ -4,6 +4,7 @@ import logging
 import types
 from typing import Any, Callable, Dict
 import aioamqp
+from aioamqp.exceptions import AmqpClosedConnection
 from django.conf import settings
 import msgpack
 
@@ -155,7 +156,7 @@ class RetryingConnection:
             # In cases 2 and 3, `self._protocol.run()` will raise
             # AmqpClosedConnection, close connections, and bail. In case 1, we
             # need to force the close ourselves.
-            await self._channel.closed_event  # case 1, 2, 3
+            await self._channel.close_event.wait()  # case 1, 2, 3
 
             # case 1 only: if the channel was closed and the connection wasn't,
             # wipe out the connection. (Otherwise, this is a no-op.)
@@ -169,7 +170,11 @@ class RetryingConnection:
         for attempt in range(self.attempts):
             try:
                 return await self._attempt_connect()
-            except ConnectionError as err:
+            except (
+                AmqpClosedConnection,
+                ConnectionError,
+                OSError,
+            ) as err:
                 if self.is_closed or attempt >= self.attempts - 1:
                     raise
                 else:
@@ -301,7 +306,7 @@ class RetryingConnection:
         """
         Publish `message` onto `queue`, reconnecting if needed.
         """
-        packed_message = msgpack.packb(message)
+        packed_message = msgpack.packb(message, use_bin_type=True)
 
         await self._connected
         await self._channel.publish(packed_message, '', routing_key=queue)
