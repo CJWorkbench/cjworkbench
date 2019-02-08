@@ -2,10 +2,9 @@ from functools import lru_cache
 import logging
 from typing import Dict, List, Optional, Set, Tuple
 from channels.db import database_sync_to_async
+from cjworkbench.types import ProcessResult, StepResultShape
 from server.models import Params, WfModule, Workflow, Tab
 from server.models.param_field import ParamDType
-from server.modules.types import ProcessResult
-from server.types import StepResultShape
 from .wf_module import execute_wfmodule, locked_wf_module
 
 

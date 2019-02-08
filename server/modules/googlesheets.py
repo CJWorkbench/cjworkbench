@@ -1,10 +1,9 @@
 import io
 from typing import Any, Dict, Optional, Union
 import requests
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
-from .utils import parse_bytesio, turn_header_into_first_row, parse_json_param
+from cjworkbench.types import ProcessResult
 from server import oauth
+from .utils import parse_bytesio, turn_header_into_first_row, parse_json_param
 
 
 _Secret = Dict[str, Any]
@@ -103,43 +102,41 @@ def download_data_frame(sheet_id: str, sheet_mime_type: str,
     return parse_bytesio(io.BytesIO(blob), sheet_mime_type)
 
 
-class GoogleSheets(ModuleImpl):
-    @staticmethod
-    def render(_unused_table, params, *, fetch_result, **kwargs):
-        # Must perform header operation here in the event the header checkbox
-        # state changes
-        if not fetch_result:
-            return ProcessResult()  # user hasn't fetched yet
+def render(_unused_table, params, *, fetch_result, **kwargs):
+    # Must perform header operation here in the event the header checkbox
+    # state changes
+    if not fetch_result:
+        return ProcessResult()  # user hasn't fetched yet
 
-        table = fetch_result.dataframe
+    table = fetch_result.dataframe
 
-        has_header: bool = params['has_header']
-        if not has_header:
-            table = turn_header_into_first_row(table)
+    has_header: bool = params['has_header']
+    if not has_header:
+        table = turn_header_into_first_row(table)
 
-        return ProcessResult(table, fetch_result.error)
+    return ProcessResult(table, fetch_result.error)
 
-    @staticmethod
-    def fetch(params, **kwargs):  # TODO make async
-        file_meta = parse_json_param(params['googlefileselect'])
-        if not file_meta:
-            return ProcessResult()
 
-        sheet_id = file_meta['id']
-        # backwards-compat for old entries without 'mimeType', 2018-06-13
-        sheet_mime_type = file_meta.get(
-            'mimeType',
-            'application/vnd.google-apps.spreadsheet'
-        )
+def fetch(params, **kwargs):  # TODO make async
+    file_meta = parse_json_param(params['googlefileselect'])
+    if not file_meta:
+        return ProcessResult()
 
-        # Ignore file_meta['url']. That's for the client's web browser, not for
-        # an API request.
+    sheet_id = file_meta['id']
+    # backwards-compat for old entries without 'mimeType', 2018-06-13
+    sheet_mime_type = file_meta.get(
+        'mimeType',
+        'application/vnd.google-apps.spreadsheet'
+    )
 
-        if sheet_id:
-            secret = (params['google_credentials'] or {}).get('secret')
-            result = download_data_frame(sheet_id, sheet_mime_type, secret)
-            result.truncate_in_place_if_too_big()
-            result.sanitize_in_place()
-            return result
-        else:
-            return ProcessResult()
+    # Ignore file_meta['url']. That's for the client's web browser, not for
+    # an API request.
+
+    if sheet_id:
+        secret = (params['google_credentials'] or {}).get('secret')
+        result = download_data_frame(sheet_id, sheet_mime_type, secret)
+        result.truncate_in_place_if_too_big()
+        result.sanitize_in_place()
+        return result
+    else:
+        return ProcessResult()

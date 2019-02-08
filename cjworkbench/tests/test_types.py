@@ -2,7 +2,7 @@ import datetime
 import unittest
 from unittest import mock
 from pandas import DataFrame, Series
-from server.modules.types import Column, ColumnType, ProcessResult, QuickFix, \
+from cjworkbench.types import Column, ColumnType, ProcessResult, QuickFix, \
         TableShape
 
 

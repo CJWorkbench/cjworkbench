@@ -8,12 +8,12 @@ import pandas as pd
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
+from cjworkbench.types import ProcessResult
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
-from server.modules.types import ProcessResult
-from server.tests.utils import DbTestCase
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, workflow_url_to_id, fetch_external_workflow
+from server.tests.utils import DbTestCase
 
 
 class SafeExecTest(unittest.TestCase):

@@ -8,8 +8,8 @@ from django.test import override_settings, SimpleTestCase
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.types import ProcessResult
-from server.modules.urlscraper import scrape_urls, URLScraper
+from cjworkbench.types import ProcessResult
+from server.modules import urlscraper
 from .util import MockParams
 
 # --- Some test data ----
@@ -82,7 +82,7 @@ def fetch(params, input_dataframe):
     async def get_input_dataframe():
         return input_dataframe
 
-    return async_to_sync(URLScraper.fetch)(
+    return async_to_sync(urlscraper.fetch)(
         params,
         get_input_dataframe=get_input_dataframe
     )
@@ -128,7 +128,8 @@ class ScrapeUrlsTest(SimpleTestCase):
             )
 
             event_loop = asyncio.get_event_loop()
-            event_loop.run_until_complete(scrape_urls(urls, out_table))
+            event_loop.run_until_complete(urlscraper.scrape_urls(urls,
+                                                                 out_table))
 
             assert_frame_equal(
                 out_table[['url', 'status', 'html']],
@@ -198,14 +199,14 @@ class ScrapeUrlsTest(SimpleTestCase):
 
     def test_module_initial_nop(self):
         table = pd.DataFrame({'A': [1]})
-        result = URLScraper.render(table.copy(), P(urlsource=0, urllist=''),
+        result = urlscraper.render(table.copy(), P(urlsource=0, urllist=''),
                                    fetch_result=None)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, table)
 
     def test_module_nop_with_initial_col_selection(self):
         table = pd.DataFrame({'A': [1]})
-        result = URLScraper.render(table.copy(), P(urlsource=1, urlcol=''),
+        result = urlscraper.render(table.copy(), P(urlsource=1, urlcol=''),
                                    fetch_result=None)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, table)

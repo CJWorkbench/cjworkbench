@@ -8,10 +8,10 @@ from unittest.mock import Mock, patch
 from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import LoadedModule
 import server.models.loaded_module
-from server.modules.types import ProcessResult
 import server.modules.pastecsv
 from server.tests.utils import clear_minio
 from server.models.param_field import ParamDTypeDict, ParamDTypeString, \
@@ -92,7 +92,7 @@ class LoadedModuleTest(unittest.TestCase):
         )
         self.assertEqual(lm.name, 'pastecsv:internal')
         self.assertEqual(lm.render_impl,
-                         server.modules.pastecsv.PasteCSV.render)
+                         server.modules.pastecsv.render)
 
     def test_load_dynamic(self):
         code = b'def render(table, params):\n    return table * 2'

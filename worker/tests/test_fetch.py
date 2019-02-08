@@ -6,9 +6,9 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjworkbench.types import ProcessResult
 from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
-from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
 from worker import fetch
 

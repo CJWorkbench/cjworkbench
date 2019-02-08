@@ -1,9 +1,9 @@
-from .moduleimpl import ModuleImpl
-from .utils import parse_multicolumn_param
-from server.modules.types import ProcessResult
-from pandas import IntervalIndex
-from typing import Tuple
 import re
+from typing import Tuple
+from pandas import IntervalIndex
+from cjworkbench.types import ProcessResult
+from .utils import parse_multicolumn_param
+
 
 commas = re.compile('\\s*,\\s*')
 numbers = re.compile(r'(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
@@ -11,20 +11,6 @@ numbers = re.compile(r'(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
 
 Drop = 0
 Keep = 1
-
-
-class SelectColumns(ModuleImpl):
-    def render(table, params, **kwargs):
-        drop_or_keep: int = params['drop_or_keep']
-        select_range: bool = params['select_range']
-
-        if not select_range:
-            cols, _ = parse_multicolumn_param(params['colnames'], table)
-            return select_columns_by_name(table, cols, drop_or_keep)
-
-        else:
-            str_col_nums: str = params['column_numbers']
-            return select_columns_by_number(table, str_col_nums, drop_or_keep)
 
 
 def select_columns_by_name(table, cols, drop_or_keep):
@@ -97,7 +83,7 @@ def parse_interval(s: str) -> Tuple[int, int]:
     return (first - 1, last - 1)
 
 
-# Copied from droprowsbypoition.py and modified for columns
+# Copied from droprowsbyposition.py and modified for columns
 class Form:
     def __init__(self, index: IntervalIndex):
         self.index = index
@@ -117,3 +103,16 @@ class Form:
             return Form.parse_v1(str_col_nums)
         except KeyError:
             return None
+
+
+def render(table, params, **kwargs):
+    drop_or_keep: int = params['drop_or_keep']
+    select_range: bool = params['select_range']
+
+    if not select_range:
+        cols, _ = parse_multicolumn_param(params['colnames'], table)
+        return select_columns_by_name(table, cols, drop_or_keep)
+
+    else:
+        str_col_nums: str = params['column_numbers']
+        return select_columns_by_number(table, str_col_nums, drop_or_keep)

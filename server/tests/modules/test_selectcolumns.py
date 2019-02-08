@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from server.modules.selectcolumns import SelectColumns
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import selectcolumns
 
 KEEP = 1
 DROP = 0
@@ -19,7 +19,7 @@ def P(colnames, drop_or_keep, select_range, column_numbers):
 def render(table, colnames, drop_or_keep, select_range,
            column_numbers) -> ProcessResult:
     params = P(colnames, drop_or_keep, select_range, column_numbers)
-    result = SelectColumns.render(table, params)
+    result = selectcolumns.render(table, params)
     return result
 
 

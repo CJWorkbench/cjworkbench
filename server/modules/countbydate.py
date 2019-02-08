@@ -4,7 +4,6 @@ from django.conf import settings
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from .moduleimpl import ModuleImpl
 
 # ---- CountByDate ----
 # group column by unique value, discard all other columns
@@ -313,30 +312,28 @@ class Form:
                              output_value_column, self.include_missing_dates)
 
 
-class CountByDate(ModuleImpl):
-    @staticmethod
-    def render(table, params, **kwargs):
-        if table is None or table.empty:
-            return table
+def render(table, params, **kwargs):
+    if table is None or table.empty:
+        return table
 
-        try:
-            form = Form.parse(params)
-        except ValueError as err:
-            return (table, str(err))
-        if form is None:
-            return table
+    try:
+        form = Form.parse(params)
+    except ValueError as err:
+        return (table, str(err))
+    if form is None:
+        return table
 
-        try:
-            validated_form = form.validate(table)
-        except QuickFixableError as err:
-            return {
-                'error': str(err),
-                'quick_fixes': err.quick_fixes
-            }
-        except ValueError as err:
-            return (table, str(err))
+    try:
+        validated_form = form.validate(table)
+    except QuickFixableError as err:
+        return {
+            'error': str(err),
+            'quick_fixes': err.quick_fixes
+        }
+    except ValueError as err:
+        return (table, str(err))
 
-        try:
-            return validated_form.run()
-        except ValueError as err:
-            return (table, str(err))
+    try:
+        return validated_form.run()
+    except ValueError as err:
+        return (table, str(err))

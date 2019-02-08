@@ -21,10 +21,10 @@ from pandas import DataFrame
 import pandas.errors
 import xlrd
 import yarl  # aiohttp innards -- yuck!
+from cjworkbench.types import ProcessResult
 from server import rabbitmq
 from server.models import Workflow
 from server.sanitizedataframe import autocast_dtypes_in_place
-from .types import ProcessResult
 
 
 _TextEncoding = Optional[str]

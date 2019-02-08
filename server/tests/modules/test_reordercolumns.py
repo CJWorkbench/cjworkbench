@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from server.modules.reordercolumns import ReorderFromTable
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import reordercolumns
 
 
 a_table = pd.DataFrame({
@@ -18,7 +18,7 @@ def fake_result(colnames):
 
 def render(table, reorder_history):
     params = {'reorder-history': reorder_history}
-    result = ReorderFromTable.render(table.copy(), params)
+    result = reordercolumns.render(table.copy(), params)
     return ProcessResult.coerce(result)
 
 

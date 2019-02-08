@@ -1,10 +1,10 @@
 import datetime
 import pandas
-from server.tests.utils import DbTestCase
+from cjworkbench.types import Column, ProcessResult, QuickFix
+from server import minio
 from server.models import Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
-from server.modules.types import Column, ProcessResult, QuickFix
-from server import minio
+from server.tests.utils import DbTestCase
 
 
 class CachedRenderResultTests(DbTestCase):

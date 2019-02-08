@@ -5,8 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 import pandas as pd
 import yarl  # aiohttp innards -- yuck!
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
+from cjworkbench.types import ProcessResult
 
 
 async def async_get_url(row, url):
@@ -86,71 +85,69 @@ def are_params_empty(params, input_table):
         return urlcol is None
 
 
-class URLScraper(ModuleImpl):
-    @staticmethod
-    def render(table, params, *, fetch_result, **kwargs):
-        if are_params_empty(params, table):
-            return ProcessResult(table)
+def render(table, params, *, fetch_result):
+    # TODO nix this method? It looks like the default implementation should do.
+    if are_params_empty(params, table):
+        return ProcessResult(table)
 
-        if fetch_result is None:
-            return ProcessResult(table)
+    if fetch_result is None:
+        return ProcessResult(table)
 
-        else:
-            return fetch_result
+    else:
+        return fetch_result
 
-    # Scrapy scrapy scrapy
-    @staticmethod
-    async def fetch(params, *, get_input_dataframe, **kwargs):
-        urls = []
-        urlsource: int = params['urlsource']
 
-        if urlsource == 0:
-            if are_params_empty(params, None):
-                return None
-            urllist_text: str = params['urllist']
-            urllist_raw = urllist_text.split('\n')
-            for url in urllist_raw:
-                s_url = url.strip()
-                if len(s_url) == 0:
-                    continue
-                # Fix in case user adds an URL without http(s) prefix
-                if not re.match('^https?://.*', s_url):
-                    urls.append('http://{}'.format(s_url))
-                else:
-                    urls.append(s_url)
-        elif urlsource == 1:
-            # We won't execute here -- there's no need: the user clicked a
-            # button so should be pretty clear on what the input is.
-            prev_table = await get_input_dataframe()
-            if prev_table is None:
-                prev_table = pd.DataFrame()
+async def fetch(params, *, get_input_dataframe):
+    urls = []
+    urlsource: int = params['urlsource']
 
-            if are_params_empty(params, prev_table):
-                return None
-
-            # get our list of URLs from a column in the input table
-            urlcol: str = params['urlcol']
-            if urlcol in prev_table.columns:
-                urls = prev_table[urlcol].tolist()
+    if urlsource == 0:
+        if are_params_empty(params, None):
+            return None
+        urllist_text: str = params['urllist']
+        urllist_raw = urllist_text.split('\n')
+        for url in urllist_raw:
+            s_url = url.strip()
+            if len(s_url) == 0:
+                continue
+            # Fix in case user adds an URL without http(s) prefix
+            if not re.match('^https?://.*', s_url):
+                urls.append('http://{}'.format(s_url))
             else:
-                urls = []
+                urls.append(s_url)
+    elif urlsource == 1:
+        # We won't execute here -- there's no need: the user clicked a
+        # button so should be pretty clear on what the input is.
+        prev_table = await get_input_dataframe()
+        if prev_table is None:
+            prev_table = pd.DataFrame()
 
-        if len(urls) > 0:
-            table = pd.DataFrame(
-                {'url': urls, 'status': ''},
-                columns=['url', 'date', 'status', 'html']
-            )
+        if are_params_empty(params, prev_table):
+            return None
 
-            await scrape_urls(urls, table)
-
+        # get our list of URLs from a column in the input table
+        urlcol: str = params['urlcol']
+        if urlcol in prev_table.columns:
+            urls = prev_table[urlcol].tolist()
         else:
-            table = pd.DataFrame()
+            urls = []
 
-        # TODO make `date` datetime
-        table['date'] = timezone.now().isoformat(timespec='seconds') \
-            .replace('+00:00', 'Z')
+    if len(urls) > 0:
+        table = pd.DataFrame(
+            {'url': urls, 'status': ''},
+            columns=['url', 'date', 'status', 'html']
+        )
 
-        result = ProcessResult(dataframe=table)
-        # No need to truncate: input is already truncated
-        # No need to sanitize: we only added text+date+status
-        return result
+        await scrape_urls(urls, table)
+
+    else:
+        table = pd.DataFrame()
+
+    # TODO make `date` datetime
+    table['date'] = timezone.now().isoformat(timespec='seconds') \
+        .replace('+00:00', 'Z')
+
+    result = ProcessResult(dataframe=table)
+    # No need to truncate: input is already truncated
+    # No need to sanitize: we only added text+date+status
+    return result

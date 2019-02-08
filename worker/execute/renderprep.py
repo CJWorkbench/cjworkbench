@@ -1,9 +1,8 @@
 from functools import partial, singledispatch
 from typing import Any, Dict, List, Optional
+from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
 from server.models import Params, Tab
 from server.models.param_field import ParamDType
-from server.modules.types import RenderColumn, TabOutput
-from server.types import StepResultShape
 from .types import TabCycleError, TabOutputUnreachableError, UnneededExecution
 
 

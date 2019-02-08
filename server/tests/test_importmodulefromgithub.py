@@ -3,12 +3,12 @@ import os
 import shutil
 import tempfile
 import pandas as pd
+from cjworkbench.types import ProcessResult
 from server.importmodulefromgithub import validate_module_structure, \
         validate_python_functions, import_module_from_directory, \
         ValidationError
 from server.models import LoadedModule, ModuleVersion, Workflow
 import server.models.loaded_module
-from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
 
 

@@ -3,8 +3,8 @@ from typing import Any, Dict
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.formula import Formula
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import formula
 from .util import MockParams
 
 
@@ -16,7 +16,7 @@ class FormulaTests(unittest.TestCase):
     def _test(self, table: pd.DataFrame, params: Dict[str, Any]={},
               expected_table: pd.DataFrame=pd.DataFrame(),
               expected_error: str=''):
-        result = ProcessResult.coerce(Formula.render(table, P(**params)))
+        result = ProcessResult.coerce(formula.render(table, P(**params)))
         result.sanitize_in_place()
 
         expected = ProcessResult(expected_table, expected_error)

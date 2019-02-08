@@ -1,10 +1,10 @@
 import dateutil
+from django.test import override_settings, SimpleTestCase
 import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
-from django.test import override_settings, SimpleTestCase
-from server.modules.countbydate import CountByDate
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import countbydate
 from .util import MockParams
 
 
@@ -13,7 +13,7 @@ P = MockParams.factory(column='', groupby=0, operation=0, targetcolumn='',
 
 
 def render(table, params):
-    return ProcessResult.coerce(CountByDate.render(table, params))
+    return ProcessResult.coerce(countbydate.render(table, params))
 
 
 def dt(s):

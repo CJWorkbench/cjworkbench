@@ -5,8 +5,8 @@ from unittest.mock import patch
 import pandas as pd
 from asgiref.sync import async_to_sync
 from pandas.testing import assert_frame_equal
-from server.modules.joinurl import JoinURL, _join_type_map
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import joinurl
 
 
 def P(url='https://app.workbenchdata.com/workflows/2/', colnames='',
@@ -24,7 +24,7 @@ async def get_workflow_owner():
     return 'owner'  # no need for a User: we mock fetch_external_workflow()
 
 
-fetch = JoinURL.fetch
+fetch = joinurl.fetch
 
 
 def PR(error, *args, **kwargs):
@@ -33,7 +33,7 @@ def PR(error, *args, **kwargs):
 
 
 def render(table, params, fetch_result):
-    return JoinURL.render(table, params, fetch_result=fetch_result)
+    return joinurl.render(table, params, fetch_result=fetch_result)
 
 
 table = pd.DataFrame([['a', 'b'], ['a', 'c']], columns=['col1', 'key'])
@@ -67,8 +67,7 @@ class JoinURLTests(unittest.TestCase):
     def test_join(self):
         # Nothing too technical, do not need to test pandas functions
         result = render(pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
-                        P(type=_join_type_map.index('inner'),
-                          colnames='key'),
+                        P(type=1, colnames='key'),
                         PR('', {
                             'key': ['b', 'd'],
                             'col2': ['c', 'a'],
@@ -83,8 +82,7 @@ class JoinURLTests(unittest.TestCase):
 
     def test_importcols(self):
         result = render(pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
-                        P(type=_join_type_map.index('inner'),
-                          colnames='key', select_columns=True,
+                        P(type=1, colnames='key', select_columns=True,
                           importcols='col2'),
                         PR('', {
                             'key': ['b', 'd'],
@@ -105,16 +103,14 @@ class JoinURLTests(unittest.TestCase):
 
     def test_cast_int_to_float(self):
         result = render(pd.DataFrame({'A': [1, 2, 3]}),
-                        P(type=_join_type_map.index('inner'),
-                          colnames='A'),
+                        P(type=1, colnames='A'),
                         PR('', {'A': [1.0, 2.0, 4.0]}))
         expected = pd.DataFrame({'A': [1.0, 2.0]})
         assert_frame_equal(result.dataframe, expected)
 
     def test_type_mismatch(self):
         result = render(pd.DataFrame({'A': [1, 2, 3]}),
-                        P(type=_join_type_map.index('inner'),
-                          colnames='A'),
+                        P(type=1, colnames='A'),
                         PR('', {'A': ['1', '2', '3']}))
         self.assertEqual(result, ProcessResult(error=(
             'Types do not match for key column "A" (number and text). '

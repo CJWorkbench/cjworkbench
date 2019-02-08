@@ -1,7 +1,7 @@
 import pandas as pd
 import unittest
-from server.modules.renamecolumns import RenameFromTable
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import renamecolumns
 
 
 def P(custom_list=False, rename_entries={}, list_string=''):
@@ -20,7 +20,7 @@ a_table = pd.DataFrame({
 
 
 def render(table, params):
-    result = RenameFromTable.render(table, params)
+    result = renamecolumns.render(table, params)
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()
     return result

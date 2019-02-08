@@ -2,7 +2,6 @@ import itertools
 from formulas import Parser
 import pandas as pd
 import numpy as np
-from .moduleimpl import ModuleImpl
 from .utils import build_globals_for_eval
 from server.sanitizedataframe import sanitize_series, autocast_series_dtype
 from django.utils.translation import gettext as _
@@ -142,41 +141,39 @@ def excel_formula(table, formula, all_rows):
     return newcol
 
 
-class Formula(ModuleImpl):
-    @staticmethod
-    def render(table, params, **kwargs):
-        if table is None:
-            return None     # no rows to process
+def render(table, params, **kwargs):
+    if table is None:
+        return None     # no rows to process
 
-        syntax: int = params['syntax']
-        if syntax == 0:
-            formula: str = params['formula_excel'].strip()
-            if formula == '':
-                return table
-            all_rows: bool = params['all_rows']
-            try:
-                newcol = excel_formula(table, formula, all_rows)
-            except Exception as e:
-                return str(e)
+    syntax: int = params['syntax']
+    if syntax == 0:
+        formula: str = params['formula_excel'].strip()
+        if formula == '':
+            return table
+        all_rows: bool = params['all_rows']
+        try:
+            newcol = excel_formula(table, formula, all_rows)
+        except Exception as e:
+            return str(e)
+    else:
+        formula: str = params['formula_python'].strip()
+        if formula == '':
+            return table
+        try:
+            newcol = python_formula(table, formula)
+        except Exception as e:
+            return str(e)
+
+    # if no output column supplied, use result0, result1, etc.
+    out_column: str = params['out_column']
+    if out_column == '':
+        if 'result' not in table.columns:
+            out_column = 'result'
         else:
-            formula: str = params['formula_python'].strip()
-            if formula == '':
-                return table
-            try:
-                newcol = python_formula(table, formula)
-            except Exception as e:
-                return str(e)
+            n = 0
+            while f'result{n}' in table.columns:
+                n += 1
+            out_column = f'result{n}'
+    table[out_column] = newcol
 
-        # if no output column supplied, use result0, result1, etc.
-        out_column: str = params['out_column']
-        if out_column == '':
-            if 'result' not in table.columns:
-                out_column = 'result'
-            else:
-                n = 0
-                while f'result{n}' in table.columns:
-                    n += 1
-                out_column = f'result{n}'
-        table[out_column] = newcol
-
-        return table
+    return table

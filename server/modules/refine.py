@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict
 import numpy as np
 import pandas as pd
-from .types import ProcessResult
+from cjworkbench.types import ProcessResult
 
 
 def _str_categories(series):

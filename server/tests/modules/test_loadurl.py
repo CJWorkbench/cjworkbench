@@ -9,8 +9,8 @@ from asgiref.sync import async_to_sync
 from django.conf import settings
 import pandas as pd
 import requests
-from server.modules.loadurl import LoadURL
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import loadurl
 from server.tests.utils import mock_xlsx_path
 from .util import MockParams
 
@@ -94,7 +94,7 @@ P = MockParams.factory(url='', has_header=True)
 
 def fetch(**kwargs):
     params = P(**kwargs)
-    return async_to_sync(LoadURL.fetch)(params)
+    return async_to_sync(loadurl.fetch)(params)
 
 
 class LoadUrlTests(unittest.TestCase):

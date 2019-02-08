@@ -1,8 +1,8 @@
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.pastecsv import PasteCSV
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import pastecsv
 from .util import MockParams
 
 
@@ -10,7 +10,7 @@ P = MockParams.factory(csv='', has_header_row=True)
 
 
 def render(params):
-    result = PasteCSV.render(pd.DataFrame(), params)
+    result = pastecsv.render(pd.DataFrame(), params)
     result = ProcessResult.coerce(result)
     return result
 

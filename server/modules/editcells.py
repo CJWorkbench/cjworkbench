@@ -1,11 +1,10 @@
 from itertools import groupby
 import logging
 from typing import Any, Dict, List, Union
+import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-import numpy as np
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
+from cjworkbench.types import ProcessResult
 from .utils import parse_json_param
 
 logger = logging.getLogger(__name__)
@@ -75,30 +74,28 @@ def parse_json(edits_arr: List[Dict[str, Any]]) -> Union[List[Edit], str]:
     return edits
 
 
-class EditCells(ModuleImpl):
-    # Execute our edits. Stored in parameter as a json serialized array that
-    # looks like this:
-    #  [
-    #    { 'row': 3, 'col': 'foo', 'value':'bar' },
-    #    { 'row': 6, 'col': 'food', 'value':'sandwich' },
-    #    ...
-    #  ]
-    @staticmethod
-    def render(table, params, **kwargs):
-        edits = parse_json(parse_json_param(params['celledits']))
-        if isinstance(edits, str):
-            # [adamhooper, 2019-01-31] Huh? How does this happen?
-            return ProcessResult(error=edits)
+# Execute our edits. Stored in parameter as a json serialized array that
+# looks like this:
+#  [
+#    { 'row': 3, 'col': 'foo', 'value':'bar' },
+#    { 'row': 6, 'col': 'food', 'value':'sandwich' },
+#    ...
+#  ]
+def render(table, params, **kwargs):
+    edits = parse_json(parse_json_param(params['celledits']))
+    if isinstance(edits, str):
+        # [adamhooper, 2019-01-31] Huh? How does this happen?
+        return ProcessResult(error=edits)
 
-        # Ignore missing columns and rows: delete them from the Array of edits
-        edits = [edit for edit in edits
-                 if edit.col in table.columns
-                 and edit.row >= 0 and edit.row < len(table)]
+    # Ignore missing columns and rows: delete them from the Array of edits
+    edits = [edit for edit in edits
+             if edit.col in table.columns
+             and edit.row >= 0 and edit.row < len(table)]
 
-        for column, column_edits in groupby(edits, lambda e: e.col):
-            series = table[column]
-            series2 = apply_edits(series, list(column_edits))
-            if series2 is not series:
-                table[column] = series2
+    for column, column_edits in groupby(edits, lambda e: e.col):
+        series = table[column]
+        series2 = apply_edits(series, list(column_edits))
+        if series2 is not series:
+            table[column] = series2
 
-        return table
+    return table

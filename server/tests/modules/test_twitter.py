@@ -1,13 +1,13 @@
 from collections import namedtuple
 import json
 import unittest
+from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import dateutil
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from unittest.mock import patch
-from server.modules.twitter import Twitter
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import twitter
 from .util import MockParams
 
 
@@ -335,7 +335,7 @@ def fetch(params, stored_dataframe=None):
     async def get_stored_dataframe():
         return stored_dataframe
 
-    return async_to_sync(Twitter.fetch)(
+    return async_to_sync(twitter.fetch)(
         params,
         get_stored_dataframe=get_stored_dataframe
     )
@@ -578,7 +578,7 @@ class TwitterTests(unittest.TestCase):
     def test_render_empty_no_query(self):
         # When we haven't fetched, we shouldn't show any columns (for
         # consistency with other modules)
-        result = Twitter.render(pd.DataFrame(), P(querytype=1, query=''),
+        result = twitter.render(pd.DataFrame(), P(querytype=1, query=''),
                                 fetch_result=None)
         assert_frame_equal(result.dataframe, pd.DataFrame())
 
@@ -586,7 +586,7 @@ class TwitterTests(unittest.TestCase):
         # An empty table might be stored as zero-column. This is a bug, but we
         # must handle it because we have actual data like this. We want to
         # output all the same columns as a tweet table.
-        result = Twitter.render(pd.DataFrame(), P(querytype=1, query='cat'),
+        result = twitter.render(pd.DataFrame(), P(querytype=1, query='cat'),
                                 fetch_result=ProcessResult(pd.DataFrame()))
         assert_frame_equal(result.dataframe, mock_tweet_table[0:0])
 

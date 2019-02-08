@@ -1,5 +1,4 @@
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
+from cjworkbench.types import ProcessResult
 from .utils import parse_multicolumn_param
 
 
@@ -25,8 +24,7 @@ def _do_render(table, dup_columns):
     return ProcessResult(table)
 
 
-class DuplicateColumn(ModuleImpl):
-    def render(table, params, **kwargs):
-        columns, _ = parse_multicolumn_param(params['colnames'], table)
+def render(table, params, **kwargs):
+    columns, _ = parse_multicolumn_param(params['colnames'], table)
 
-        return _do_render(table, columns)
+    return _do_render(table, columns)

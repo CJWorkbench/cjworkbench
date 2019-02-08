@@ -3,12 +3,11 @@ import contextlib
 import datetime
 from typing import Any, Dict, Optional, Tuple
 from channels.db import database_sync_to_async
+from cjworkbench.types import ProcessResult, StepResultShape, TableShape
 from server import notifications
 from server.models import LoadedModule, Params, WfModule, Workflow
-from server.modules.types import ProcessResult
 from server.notifications import OutputDelta
 from server import websockets
-from server.types import TableShape, StepResultShape
 from .types import UnneededExecution, TabCycleError, TabOutputUnreachableError
 from . import renderprep
 

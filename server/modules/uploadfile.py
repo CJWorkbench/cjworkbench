@@ -1,10 +1,9 @@
 import asyncio
 from io import BufferedReader
+from cjworkbench.types import ProcessResult
 from server.minio import open_for_read, ResponseError
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
-from .utils import parse_bytesio, turn_header_into_first_row
 from server.utils import TempfileBackedReader
+from .utils import parse_bytesio, turn_header_into_first_row
 
 
 _ExtensionMimeTypes = {
@@ -62,15 +61,13 @@ async def parse_uploaded_file(uploaded_file) -> ProcessResult:
     return result
 
 
-class UploadFile(ModuleImpl):
-    @staticmethod
-    def render(table, params, *, fetch_result, **kwargs):
-        if not fetch_result or fetch_result.status == 'error':
-            return fetch_result
+def render(table, params, *, fetch_result):
+    if not fetch_result or fetch_result.status == 'error':
+        return fetch_result
 
-        table = fetch_result.dataframe
-        has_header: bool = params['has_header']
-        if not has_header:
-            table = turn_header_into_first_row(table)
+    table = fetch_result.dataframe
+    has_header: bool = params['has_header']
+    if not has_header:
+        table = turn_header_into_first_row(table)
 
-        return ProcessResult(table, fetch_result.error)
+    return ProcessResult(table, fetch_result.error)

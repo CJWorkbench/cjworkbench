@@ -8,9 +8,8 @@ from oauthlib import oauth1
 from oauthlib.common import urlencode
 import pandas as pd
 import yarl  # expose aiohttp's innards -- ick.
+from cjworkbench.types import ProcessResult
 from server import oauth
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
 
 # Must match order of items in twitter.json module def
 QUERY_TYPE_USER = 0
@@ -270,78 +269,75 @@ def merge_tweets(old_table, new_table):
         return new_table.append(old_table, ignore_index=True, sort=False)
 
 
-class Twitter(ModuleImpl):
-    # Render just returns previously retrieved tweets
-    @staticmethod
-    def render(table, params, *, fetch_result, **kwargs):
-        if fetch_result is None:
-            return ProcessResult()
+# Render just returns previously retrieved tweets
+def render(table, params, *, fetch_result):
+    if fetch_result is None:
+        return ProcessResult()
 
-        if fetch_result.status == 'error':
-            return fetch_result
-
-        if fetch_result.dataframe.empty:
-            # Previously, we saved empty tables improperly
-            return ProcessResult(create_empty_table())
-
-        _recover_from_160258591(fetch_result.dataframe)
-
+    if fetch_result.status == 'error':
         return fetch_result
 
-    # Load specified user's timeline
-    @staticmethod
-    async def fetch(params, *, get_stored_dataframe, **kwargs):
-        param_names = {
-            QUERY_TYPE_USER: 'username',
-            QUERY_TYPE_SEARCH: 'query',
-            QUERY_TYPE_LIST: 'listurl'
-        }
+    if fetch_result.dataframe.empty:
+        # Previously, we saved empty tables improperly
+        return ProcessResult(create_empty_table())
 
-        querytype: int = params['querytype']
-        query: str = params[param_names[querytype]]
-        access_token = (params['twitter_credentials'] or {}).get('secret')
+    _recover_from_160258591(fetch_result.dataframe)
 
-        if not query.strip() and not access_token:
-            return None  # Don't create a version
+    return fetch_result
 
-        if not query.strip():
-            return Err('Please enter a query')
 
-        if not access_token:
-            return Err('Please sign in to Twitter')
+async def fetch(params, *, get_stored_dataframe):
+    param_names = {
+        QUERY_TYPE_USER: 'username',
+        QUERY_TYPE_SEARCH: 'query',
+        QUERY_TYPE_LIST: 'listurl'
+    }
 
-        try:
-            if params['accumulate']:
-                old_tweets = await get_stored_tweets(get_stored_dataframe)
-                tweets = await get_new_tweets(access_token, querytype, query,
-                                              old_tweets)
-                tweets = merge_tweets(old_tweets, tweets)
+    querytype: int = params['querytype']
+    query: str = params[param_names[querytype]]
+    access_token = (params['twitter_credentials'] or {}).get('secret')
+
+    if not query.strip() and not access_token:
+        return None  # Don't create a version
+
+    if not query.strip():
+        return Err('Please enter a query')
+
+    if not access_token:
+        return Err('Please sign in to Twitter')
+
+    try:
+        if params['accumulate']:
+            old_tweets = await get_stored_tweets(get_stored_dataframe)
+            tweets = await get_new_tweets(access_token, querytype, query,
+                                          old_tweets)
+            tweets = merge_tweets(old_tweets, tweets)
+        else:
+            tweets = await get_new_tweets(access_token, querytype,
+                                          query, None)
+
+    except ValueError as err:
+        return Err(str(err))
+
+    except ClientResponseError as err:
+        if err.status:
+            if querytype == QUERY_TYPE_USER and err.status == 401:
+                return Err("User %s's tweets are private" % query)
+            elif querytype == QUERY_TYPE_USER and err.status == 404:
+                return Err('User %s does not exist' % query)
+            elif err.status == 429:
+                return Err(
+                    'Twitter API rate limit exceeded. '
+                    'Please wait a few minutes and try again.'
+                )
             else:
-                tweets = await get_new_tweets(access_token, querytype,
-                                              query, None)
+                return Err('Error from Twitter: %d %s'
+                           % (err.status, err.message))
+        else:
+            return Err('Error fetching tweets: %s' % str(err))
 
-        except ValueError as err:
-            return Err(str(err))
+    result = ProcessResult(dataframe=tweets)
+    result.truncate_in_place_if_too_big()
+    result.sanitize_in_place()
 
-        except ClientResponseError as err:
-            if err.status:
-                if querytype == QUERY_TYPE_USER and err.status == 401:
-                    return Err("User %s's tweets are private" % query)
-                elif querytype == QUERY_TYPE_USER and err.status == 404:
-                    return Err('User %s does not exist' % query)
-                elif err.status == 429:
-                    return Err(
-                        'Twitter API rate limit exceeded. '
-                        'Please wait a few minutes and try again.'
-                    )
-                else:
-                    return Err('Error from Twitter: %d %s'
-                               % (err.status, err.message))
-            else:
-                return Err('Error fetching tweets: %s' % str(err))
-
-        result = ProcessResult(dataframe=tweets)
-        result.truncate_in_place_if_too_big()
-        result.sanitize_in_place()
-
-        return result
+    return result

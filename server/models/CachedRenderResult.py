@@ -1,8 +1,7 @@
 import json
 from typing import Any, Dict, List, Optional
 import pandas as pd
-from server.modules.types import ProcessResult, QuickFix
-from server.types import TableShape
+from cjworkbench.types import ProcessResult, QuickFix, TableShape
 from server import minio, parquet
 
 
@@ -29,7 +28,7 @@ def parquet_prefix(workflow_id: int, wf_module_id: int) -> str:
 
 class CachedRenderResult:
     """
-    Result of a ModuleImpl.render() call.
+    Result of a module render() call.
 
     This is stored in the database as `wf_module.cached_render_result_*`,
     and you select it by selecting `wf_module.get_cached_render_result()`.

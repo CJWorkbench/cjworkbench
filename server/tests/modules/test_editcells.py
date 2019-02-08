@@ -1,8 +1,8 @@
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.editcells import EditCells
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import editcells
 from server.sanitizedataframe import sanitize_dataframe
 
 
@@ -16,7 +16,7 @@ def test_render(in_table, patch_json, out_table=pd.DataFrame(),
                 out_error=''):
     sanitize_dataframe(in_table)
 
-    result = EditCells.render(in_table, P(celledits=patch_json))
+    result = editcells.render(in_table, P(celledits=patch_json))
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()
 

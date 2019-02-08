@@ -1,11 +1,11 @@
 import unittest
 import pandas as pd
-from server.modules.duplicatecolumn import DuplicateColumn
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import duplicatecolumn
 
 
 def render(colnames, table):
-    result = DuplicateColumn.render(table, {'colnames': colnames})
+    result = duplicatecolumn.render(table, {'colnames': colnames})
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()  # important: duplicate makes colname conflicts
     return result

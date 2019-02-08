@@ -1,10 +1,10 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjworkbench.types import Column, ColumnType, ProcessResult, TableShape, \
+        StepResultShape
 from server.models import Params, Workflow
 from server.models.param_field import ParamDType
-from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase
-from server.types import Column, ColumnType, TableShape, StepResultShape
 from worker.execute.renderprep import clean_value, RenderContext
 from worker.execute.types import TabCycleError, TabOutputUnreachableError, \
         UnneededExecution

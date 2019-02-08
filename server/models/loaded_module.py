@@ -16,61 +16,15 @@ from typing import Any, Awaitable, Callable, Dict, Optional
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 import pandas as pd
+from cjworkbench.types import ProcessResult, RenderColumn
 from .module_version import ModuleVersion
 from .Params import Params
 from .param_field import ParamDTypeDict
-from ..modules.types import ProcessResult
-from ..modules.countbydate import CountByDate
-from ..modules.formula import Formula
-from ..modules.loadurl import LoadURL
-from ..modules.pastecsv import PasteCSV
-import server.modules.jointab
-import server.modules.pythoncode
-import server.modules.refine
-import server.modules.startfromtab
-from ..modules.selectcolumns import SelectColumns
-from ..modules.twitter import Twitter
-from ..modules.uploadfile import UploadFile
-from ..modules.googlesheets import GoogleSheets
-from ..modules.editcells import EditCells
-from ..modules.urlscraper import URLScraper
-from ..modules.scrapetable import ScrapeTable
-from ..modules.sortfromtable import SortFromTable
-from ..modules.reordercolumns import ReorderFromTable
-from ..modules.renamecolumns import RenameFromTable
-from ..modules.duplicatecolumn import DuplicateColumn
-from ..modules.joinurl import JoinURL
-from ..modules.concaturl import ConcatURL
-from ..modules.types import RenderColumn
+from ..modules import Lookup as InternalModules
 from server import minio
 
 
 logger = logging.getLogger(__name__)
-
-
-StaticModules = {
-    'concaturl': ConcatURL,
-    'countbydate': CountByDate,
-    'duplicate-column': DuplicateColumn,
-    'editcells': EditCells,
-    'formula': Formula,
-    'googlesheets': GoogleSheets,
-    'jointab': server.modules.jointab,
-    'joinurl': JoinURL,
-    'loadurl': LoadURL,
-    'pastecsv': PasteCSV,
-    'pythoncode': server.modules.pythoncode,
-    'refine': server.modules.refine,
-    'rename-columns': RenameFromTable,
-    'reorder-columns': ReorderFromTable,
-    'scrapetable': ScrapeTable,
-    'selectcolumns': SelectColumns,
-    'sort-from-table': SortFromTable,
-    'startfromtab': server.modules.startfromtab,
-    'twitter': Twitter,
-    'uploadfile': UploadFile,
-    'urlscraper': URLScraper,
-}
 
 
 def _default_render(table, params,
@@ -337,7 +291,7 @@ class LoadedModule:
         version_sha1 = module_version.source_version_hash
 
         try:
-            module = StaticModules[module_id_name]
+            module = InternalModules[module_id_name]
             version_sha1 = 'internal'
         except KeyError:
             module = load_external_module(module_id_name, version_sha1,
@@ -448,7 +402,7 @@ load_external_module.cache_clear = load_external_module._cache.clear
 
 
 def module_get_html_bytes(module_version: ModuleVersion) -> Optional[bytes]:
-    if module_version.id_name in StaticModules:
+    if module_version.id_name in InternalModules:
         return _internal_module_get_html_bytes(module_version.id_name)
     else:
         return _external_module_get_html_bytes(

@@ -5,8 +5,8 @@ from asgiref.sync import async_to_sync
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.concaturl import ConcatURL
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import concaturl
 from .util import MockParams
 
 
@@ -20,7 +20,7 @@ def PR(error, *args, **kwargs):
 
 
 def render(table, params, fetch_result):
-    result = ConcatURL.render(table, params, fetch_result=fetch_result)
+    result = concaturl.render(table, params, fetch_result=fetch_result)
     result.sanitize_in_place()
     return result
 
@@ -29,7 +29,7 @@ async def get_workflow_owner():
     return 'owner'  # no need for a User: we mock fetch_external_workflow()
 
 
-fetch = ConcatURL.fetch
+fetch = concaturl.fetch
 
 
 table = pd.DataFrame({

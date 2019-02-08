@@ -1,5 +1,4 @@
-from .moduleimpl import ModuleImpl
-from .types import ProcessResult
+from cjworkbench.types import ProcessResult
 
 
 def _do_render(table, column, is_ascending):
@@ -34,11 +33,10 @@ _SortAscendings = {
 }
 
 
-class SortFromTable(ModuleImpl):
-    def render(table, params, **kwargs):
-        column: str = params['column']
+def render(table, params):
+    column: str = params['column']
 
-        is_ascending_int: int = params['direction']
-        is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
+    is_ascending_int: int = params['direction']
+    is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
 
-        return _do_render(table, column, is_ascending)
+    return _do_render(table, column, is_ascending)

@@ -3,10 +3,10 @@ from typing import Any, Dict, Optional
 from channels.db import database_sync_to_async
 from django.conf import settings
 from django.utils import timezone
+from cjworkbench.types import ProcessResult
 from server import websockets
 from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand
-from server.modules.types import ProcessResult
 
 
 @database_sync_to_async

@@ -5,8 +5,8 @@ from unittest.mock import patch
 import aiohttp
 from asgiref.sync import async_to_sync
 import pandas as pd
-from server.modules.scrapetable import ScrapeTable
-from server.modules.types import ProcessResult
+from cjworkbench.types import ProcessResult
+from server.modules import scrapetable
 from .util import MockParams
 
 
@@ -15,7 +15,7 @@ P = MockParams.factory(url='', tablenum=1, first_row_is_header=False)
 
 def fetch(**kwargs):
     params = P(**kwargs)
-    return async_to_sync(ScrapeTable.fetch)(params)
+    return async_to_sync(scrapetable.fetch)(params)
 
 
 class fake_spooled_data_from_url:
@@ -74,7 +74,7 @@ class ScrapeTableTest(unittest.TestCase):
         # TODO make fetch_result _not_ a pd.DataFrame, so we don't lose info
         # when converting types here
         fetch_result = ProcessResult(pd.DataFrame(a_table.copy()))
-        result = ScrapeTable.render(pd.DataFrame(),
+        result = scrapetable.render(pd.DataFrame(),
                                     P(first_row_is_header=True),
                                     fetch_result=fetch_result)
         result = ProcessResult.coerce(result)

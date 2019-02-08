@@ -8,9 +8,9 @@ import pandas as pd
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
+from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import Workflow
-from server.modules.types import ProcessResult
 from server.views.WfModule import wfmodule_detail
 from server.tests.utils import LoggedInTestCase
 

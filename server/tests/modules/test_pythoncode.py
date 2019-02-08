@@ -1,8 +1,8 @@
+import unittest
 import numpy
 import pandas
+from cjworkbench.types import ProcessResult
 from server.modules.pythoncode import safe_eval_process
-from server.modules.types import ProcessResult
-import unittest
 
 
 EMPTY_DATAFRAME = pandas.DataFrame()

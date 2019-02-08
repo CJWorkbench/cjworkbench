@@ -2,15 +2,15 @@ import builtins
 import importlib
 from inspect import signature
 import io
+import math
 import multiprocessing
 import os.path
 import sys
 import traceback
-import math
+from typing import Any, Dict
 import numpy
 import pandas
-from server.models import Params
-from .types import ProcessResult
+from cjworkbench.types import ProcessResult
 from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
 
@@ -197,7 +197,7 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
     return result
 
 
-def render(table: pandas.DataFrame, params: Params, **kwargs) -> ProcessResult:
+def render(table: pandas.DataFrame, params: Dict[str, Any]) -> ProcessResult:
     code: str = params['code']
 
     if not code.strip():

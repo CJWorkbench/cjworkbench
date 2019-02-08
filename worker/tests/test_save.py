@@ -2,8 +2,8 @@ from unittest.mock import patch
 from django.conf import settings
 from django.test import override_settings
 import pandas as pd
+from cjworkbench.types import ProcessResult
 from server.models import StoredObject, Workflow
-from server.modules.types import ProcessResult
 from server.tests.utils import DbTestCase, mock_csv_table
 from worker.save import save_result_if_changed
 

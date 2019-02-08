@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple
 from channels.db import database_sync_to_async
+from cjworkbench.types import StepResultShape
 from server.models import Workflow
-from server.types import StepResultShape
 from .tab import TabFlow, execute_tab_flow
 from .types import UnneededExecution
 

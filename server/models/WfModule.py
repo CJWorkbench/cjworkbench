@@ -1,9 +1,9 @@
 from typing import Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import loaded_module
-from server.modules.types import ProcessResult
 from .fields import ColumnsField
 from .Params import Params
 from .param_field import ParamDTypeDict, ParamField

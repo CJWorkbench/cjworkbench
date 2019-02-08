@@ -8,25 +8,15 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjworkbench.types import ProcessResult
 from server.models import UploadedFile
-from server.modules.uploadfile import UploadFile, parse_uploaded_file
-from server.modules.types import ProcessResult
+from server.modules import uploadfile
 from server.tests.utils import mock_xlsx_path
-from .util import MockParams
-
-
-P = MockParams.factory(has_header=False)
 
 
 class FakeMinioObject(io.BytesIO):
     def release_conn(self):
         pass
-
-
-@contextmanager
-def mock_file(b):
-    with io.BytesIO(b) as bio:
-        yield bio
 
 
 FakeMinioStat = namedtuple('FakeMinioStat', ['size'])
@@ -43,7 +33,7 @@ Csv = """A,B
 
 
 def render(has_header, fetch_result):
-    x = UploadFile.render(pd.DataFrame(), P(has_header=has_header),
+    x = uploadfile.render(pd.DataFrame(), {'has_header': has_header},
                           fetch_result=fetch_result)
     result = ProcessResult.coerce(x)
     result.sanitize_in_place()
@@ -79,7 +69,7 @@ class UploadFileTests(unittest.TestCase):
             size=size,
         )
 
-        result = async_to_sync(parse_uploaded_file)(uploaded_file)
+        result = async_to_sync(uploadfile.parse_uploaded_file)(uploaded_file)
         # Assert frames are equal. Empty frames might differ in shape; ignore
         # that.
         self.assertEqual(result.dataframe.empty,

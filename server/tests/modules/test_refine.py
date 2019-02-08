@@ -4,8 +4,8 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjworkbench.types import ProcessResult
 from server.modules.refine import render, migrate_params, RefineSpec
-from server.modules.types import ProcessResult
 
 
 def P(column: str, refine: Dict[str, Any]) -> Dict[str, Any]:

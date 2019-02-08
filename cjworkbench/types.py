@@ -1,9 +1,84 @@
 from collections import namedtuple
+from enum import Enum
 from typing import Any, Dict, List
 from pandas import DataFrame
-from server import sanitizedataframe
-from server.types import Column, ColumnType, TableShape
-from django.utils.translation import gettext as _
+from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
+from server import sanitizedataframe  # TODO nix this dependency
+
+
+class ColumnType(Enum):
+    """
+    Data type of a column.
+
+    This describes how it is presented -- not how its bytes are arranged. We
+    can map from pandas/numpy `dtype` to `ColumnType`, but not vice versa.
+    """
+
+    TEXT = 'text'
+    NUMBER = 'number'
+    DATETIME = 'datetime'
+
+    @classmethod
+    def from_dtype(cls, dtype) -> 'ColumnType':
+        """
+        Determine ColumnType based on pandas/numpy `dtype`.
+        """
+        if is_numeric_dtype(dtype):
+            return ColumnType.NUMBER
+        elif is_datetime64_dtype(dtype):
+            return ColumnType.DATETIME
+        elif dtype == object or dtype == 'category':
+            return ColumnType.TEXT
+        else:
+            raise ValueError(f'Unknown dtype: {dtype}')
+
+
+class Column:
+    """
+    A column definition.
+    """
+    def __init__(self, name: str, type: ColumnType):
+        self.name = name
+        if not isinstance(type, ColumnType):
+            type = ColumnType(type)  # or ValueError
+        self.type = type
+
+    def __repr__(self):
+        return 'Column' + repr((self.name, self.type))
+
+    def __eq__(self, rhs):
+        return (
+            isinstance(rhs, Column)
+            and (self.name, self.type) == (rhs.name, rhs.type)
+        )
+
+
+class TableShape:
+    """
+    The rows and columns of a table -- devoid of data.
+    """
+    def __init__(self, nrows: int, columns: List[Column]):
+        self.nrows = nrows
+        self.columns = columns
+
+    def __repr__(self):
+        return 'TableShape' + repr((self.nrows, self.columns))
+
+    def __eq__(self, rhs):
+        return (
+            isinstance(rhs, TableShape)
+            and (self.nrows, self.columns) == (rhs.nrows, rhs.columns)
+        )
+
+
+class StepResultShape:
+    """
+    Low-RAM metadata about a ProcessResult.
+    """
+
+    def __init__(self, status: str, table_shape: TableShape):
+        self.status = status
+        self.table_shape = table_shape
 
 
 RenderColumn = namedtuple('RenderColumn', ('name', 'type'))
@@ -142,7 +217,7 @@ class ProcessResult:
         """Truncate dataframe in-place and add to self.error if truncated."""
         len_before = len(self.dataframe)
         if sanitizedataframe.truncate_table_if_too_big(self.dataframe):
-            warning = (_('Truncated output from %d rows to %d')
+            warning = ('Truncated output from %d rows to %d'
                        % (len_before, len(self.dataframe)))
             if self.error:
                 self.error = f'{self.error}\n{warning}'
@@ -237,8 +312,8 @@ class ProcessResult:
                 if not isinstance(dataframe, DataFrame) \
                    or not isinstance(error, str):
                     return ProcessResult(error=(
-                        _('There is a bug in this module: expected '
-                          '(DataFrame, str) return type, got (%s,%s)') %
+                        ('There is a bug in this module: expected '
+                         '(DataFrame, str) return type, got (%s,%s)') %
                         (type(dataframe).__name__, type(error).__name__)
                     ))
                 return ProcessResult(dataframe=dataframe, error=error)
@@ -254,20 +329,20 @@ class ProcessResult:
                    or not isinstance(error, str) \
                    or not isinstance(json, dict):
                     return ProcessResult(error=(
-                        _('There is a bug in this module: expected '
-                          '(DataFrame, str, dict) return value, got '
-                          '(%s, %s, %s)') %
+                        ('There is a bug in this module: expected '
+                         '(DataFrame, str, dict) return value, got '
+                         '(%s, %s, %s)') %
                         (type(dataframe).__name__, type(error).__name__,
                          type(json).__name__)
                     ))
                 return ProcessResult(dataframe=dataframe, error=error,
                                      json=json)
             return ProcessResult(error=(
-                _('There is a bug in this module: expected 2-tuple or 3-tuple '
-                  'return value; got %d-tuple ') % len(value)
+                ('There is a bug in this module: expected 2-tuple or 3-tuple '
+                 'return value; got %d-tuple ') % len(value)
             ))
 
         return ProcessResult(
-            error=(_('There is a bug in this module: invalid return type %s')
+            error=('There is a bug in this module: invalid return type %s'
                    % type(value).__name__)
         )

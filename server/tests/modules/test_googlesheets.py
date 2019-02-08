@@ -4,9 +4,9 @@ from unittest.mock import patch, Mock
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
+from cjworkbench.types import ProcessResult
 from server import oauth
-from server.modules.googlesheets import GoogleSheets
-from server.modules.types import ProcessResult
+from server.modules import googlesheets
 from .util import MockParams
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
@@ -58,7 +58,7 @@ P = MockParams.factory(google_credentials=default_secret,
 
 def fetch(**kwargs):
     params = P(**kwargs)
-    return GoogleSheets.fetch(params)
+    return googlesheets.fetch(params)
 
 
 class GoogleSheetsTests(unittest.TestCase):
@@ -141,7 +141,7 @@ class GoogleSheetsTests(unittest.TestCase):
             'has_header': False,
         }
         fetch_result = fetch(**kwargs)
-        result = GoogleSheets.render(pd.DataFrame(), P(**kwargs),
+        result = googlesheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
         result.sanitize_in_place()  # TODO fix header-shift code; nix this
         assert_frame_equal(result.dataframe, pd.DataFrame({
@@ -178,6 +178,6 @@ class GoogleSheetsTests(unittest.TestCase):
             }
         }
         fetch_result = fetch(**kwargs)
-        result = GoogleSheets.render(pd.DataFrame(), P(**kwargs),
+        result = googlesheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
         self.assertEqual(result, ProcessResult(expected_table))

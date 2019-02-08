@@ -1,4 +1,3 @@
-from .moduleimpl import ModuleImpl
 from .utils import parse_json_param
 
 s_map = [',', ';', '\t', '\n']
@@ -51,19 +50,17 @@ def fill_column_names(column_names, expected_length):
     return column_names
 
 
-class RenameFromTable(ModuleImpl):
-    # Rename entry structure: Dictionary of {old_name: new_name}
-    @staticmethod
-    def render(table, params, **kwargs):
-        custom_list: bool = params['custom_list']
-        if not custom_list:
-            entries = parse_json_param(params['rename-entries'])
+# Rename entry structure: Dictionary of {old_name: new_name}
+def render(table, params):
+    custom_list: bool = params['custom_list']
+    if not custom_list:
+        entries = parse_json_param(params['rename-entries'])
 
-            og_columns = table.columns.tolist()
-            new_columns = [entries.get(col, col) for col in og_columns]
-            table.columns = new_columns
-            return table
-        else:
-            # XXX [adamhooper, 2019-01-31] rename this function. What does it
-            # do?
-            return parse_list(params, table)
+        og_columns = table.columns.tolist()
+        new_columns = [entries.get(col, col) for col in og_columns]
+        table.columns = new_columns
+        return table
+    else:
+        # XXX [adamhooper, 2019-01-31] rename this function. What does it
+        # do?
+        return parse_list(params, table)
