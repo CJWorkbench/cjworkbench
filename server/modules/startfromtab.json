@@ -2,7 +2,7 @@
   "name": "Start from tab",
   "id_name": "startfromtab",
   "category": "Add data",
-  "icon": "join",
+  "icon": "import-tab",
   "help_url": "modules/add-data/startfromtab",
   "description": "Use the final table from another Tab in this Workflow.",
   "loads_data": false,
