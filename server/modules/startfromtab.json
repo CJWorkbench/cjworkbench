@@ -4,7 +4,7 @@
   "category": "Add data",
   "icon": "import-tab",
   "help_url": "modules/add-data/startfromtab",
-  "description": "Use the final table from another Tab in this Workflow.",
+  "description": "Use the output of another tab in this workflow as the data source for this tab.",
   "loads_data": false,
   "parameters": [
     {
