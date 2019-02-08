@@ -13,7 +13,7 @@ class OauthTest(DbTestCase):
             oauth.TokenRequestDenied('no!', {})
 
         ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'twitter',
+            'id_name': 'ext',
             'name': '',
             'category': 'Clean',
             'parameters': [
@@ -26,7 +26,7 @@ class OauthTest(DbTestCase):
         self.client.force_login(user)
         workflow = Workflow.objects.create(owner=user)
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(module_id_name='twitter', order=0)
+        wf_module = tab.wf_modules.create(module_id_name='ext', order=0)
 
         response = self.client.get(
             f'/oauth/create-secret/{workflow.id}/{wf_module.id}/auth/'

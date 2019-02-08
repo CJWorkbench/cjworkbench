@@ -141,14 +141,15 @@ def _get_anonymous_workflow_for(workflow: Workflow,
 
 
 def visible_modules(request):
-    """Build a QuerySet of all ModuleVersions the user may use."""
-    queryset = ModuleVersion.objects.all_latest()
+    """
+    Load all ModuleVersions the user may use.
+    """
+    ret = ModuleVersion.objects.get_all_latest()
 
     if not request.user.is_authenticated:
-        # pythoncode is too obviously insecure
-        queryset = queryset.exclude(id_name='pythoncode')
+        ret = [mv for mv in ret if mv.id_name != 'pythoncode']
 
-    return queryset
+    return ret
 
 
 # no login_required as logged out users can view example/public workflows

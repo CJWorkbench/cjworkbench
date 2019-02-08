@@ -1,4 +1,5 @@
 import os
+import json
 import jsonschema
 import yaml
 from django.contrib.postgres.fields import JSONField
@@ -7,8 +8,10 @@ from django.db import models
 from django.db.models import F, OuterRef, Subquery
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils import timezone
 from .param_field import ParamField, ParamDType
 from server import minio
+from server.modules import SpecPaths as InternalModuleSpecPaths
 
 
 _SpecPath = os.path.join(os.path.dirname(__file__), 'module_spec_schema.yaml')
@@ -93,7 +96,52 @@ def validate_module_spec(spec):
 
 
 class ModuleVersionManager(models.Manager):
-    def all_latest(self):
+    """
+    Juggle internal and external modules.
+
+    _Internal_ modules are defined by source code: they do not change while the
+    program is running. Edit them in `server/modules/` and load the new
+    versions by restarting Workbench.
+
+    _External_ modules are in the database. Upload a directory to S3 and create
+    a matching ModuleVersion database object to create them; then they can be
+    queried through the Django object manager.
+
+    `.get_all_latest()` and `.latest(id_name)` are the shortcuts to list and
+    get modules, regardless of whether they're internal or external. (Internal
+    modules take precedence.)
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        # We can't load self.internal right here, because we're called before
+        # ModuleVersion is defined and self.internal is a dict from id_name to
+        # ModuleVersion.
+        self.internal = None
+
+    def _ensure_internal_loaded(self):
+        # Pre-load all internal modules on first access. Raise error if a
+        # module is buggy.
+        if self.internal is not None:
+            return
+
+        self.internal = {}
+        for spec_path in InternalModuleSpecPaths:
+            with spec_path.open('rb') as spec_file:
+                spec = json.load(spec_file)  # raises ValueError
+            validate_module_spec(spec)
+            module_version = ModuleVersion(
+                id_name=spec['id_name'],
+                source_version_hash='internal',
+                spec=spec,
+                last_update_time=timezone.now()
+            )
+            self.internal[module_version.id_name] = module_version
+
+    def get_all_latest(self):
+        self._ensure_internal_loaded()
+
         # https://docs.djangoproject.com/en/1.11/ref/models/expressions/#subquery-expressions
         latest = (
             self.get_queryset()
@@ -101,13 +149,24 @@ class ModuleVersionManager(models.Manager):
             .order_by('-last_update_time')
             .values('id')
         )[:1]
-        return (
+        all_external = list(
             self.get_queryset()
             .annotate(_latest=Subquery(latest))
             .filter(id=F('_latest'))
+            .exclude(id_name__in=self.internal.keys())
         )
+        all_internal = list(self.internal.values())
+        both = all_internal + all_external
+        return sorted(both, key=lambda mv: mv.last_update_time, reverse=True)
 
     def latest(self, id_name):
+        self._ensure_internal_loaded()
+
+        try:
+            return self.internal[id_name]
+        except KeyError:
+            pass
+
         try:
             return (
                 self.get_queryset()
@@ -129,7 +188,6 @@ class ModuleVersion(models.Model):
 
     class Meta:
         ordering = ['last_update_time']
-
         unique_together = ('id_name', 'last_update_time')
 
     objects = ModuleVersionManager()

@@ -51,8 +51,8 @@ import pathlib
 
 Lookup = {}
 
-
-for spec_path in pathlib.Path(__file__).parent.glob('*.json'):
+SpecPaths = list(pathlib.Path(__file__).parent.glob('*.json'))
+for spec_path in SpecPaths:
     id_name = spec_path.stem
     module = importlib.import_module('.' + id_name, __package__)
     Lookup[id_name] = module

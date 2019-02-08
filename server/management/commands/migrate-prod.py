@@ -62,8 +62,3 @@ class Command(BaseCommand):
         # _after_ this, because that will increase our downtime if we're
         # unfortunate enough to cause downtime.
         management.call_command('migrate')
-
-        # FIXME revamp modules so we use their actual sources of truth, instead
-        # of preprocessing and storing derived data in the database. Will
-        # relate to #156939415 among others
-        management.call_command('reload-internal-modules')
