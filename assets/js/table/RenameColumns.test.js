@@ -1,6 +1,6 @@
 import { moduleParamsBuilders } from './UpdateTableAction'
 
-const func = moduleParamsBuilders['rename-columns']
+const func = moduleParamsBuilders['renamecolumns']
 
 describe('RenameColumns actions', () => {
   it('adds a new rename module', () => {

@@ -1,8 +1,8 @@
 import { moduleParamsBuilders } from './UpdateTableAction'
 
-const func = moduleParamsBuilders['sort-from-table']
+const func = moduleParamsBuilders['sort']
 
-describe("SortFromTable actions", () => {
+describe("Sort actions", () => {
   it('adds new sort module', () => {
     const ret = func(null, { columnKey: 'A', direction: 1 })
     expect(ret).toEqual({ column: 'A', direction: 1 })

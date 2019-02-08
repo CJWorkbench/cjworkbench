@@ -51,32 +51,6 @@ function generateNonce (invalidValues, prefix) {
 
 // -- Workflow actions --
 
-/**
- * Given a Workflow from the server, modify it in-place, cancelling out any
- * server state that we're overwriting on the client.
- *
- * Currently, the only state we prevent the server from writing is
- * WfModule.is_collapsed.
- *
- * TODO get more formal about this; nix this method when we are.
- */
-function omitWfModuleClientOnlyStateInPlace (wfModules, prevWfModules) {
-  for (const key in wfModules) {
-    const wfModule = wfModules[key]
-    const prevWfModule = prevWfModules[key]
-    if (!prevWfModule) continue
-    wfModule.is_collapsed = prevWfModule.is_collapsed
-  }
-}
-
-function moduleIdNameToModuleId (modules, idName) {
-  const key = Object.keys(modules).find(m => modules[m].id_name === idName)
-  if (!key) {
-    alert(`Cannot find module "${idName}"`)
-  }
-  return Number(key)
-}
-
 // 'data' is { updateWorkflow, updateWfModules, updateTabs, clearTabSlugs, clearWfModuleIds }, all
 // optional
 export function applyDeltaAction (data) {

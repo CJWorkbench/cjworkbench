@@ -38,9 +38,9 @@ export default class ColumnContextMenu extends React.Component {
     this.setState({ isOpen: false })
   }
 
-  duplicateColumn = () => this.createOrUpdate('duplicate-column')
-  sortAscending = () => this.createOrUpdate('sort-from-table', { direction: 1 })
-  sortDescending = () => this.createOrUpdate('sort-from-table', { direction: 2 })
+  duplicateColumn = () => this.createOrUpdate('duplicatecolumns')
+  sortAscending = () => this.createOrUpdate('sort', { direction: 1 })
+  sortDescending = () => this.createOrUpdate('sort', { direction: 2 })
   addNewFilter = () => this.create('filter')
   extractNumbers = () => this.createOrUpdate('extract-numbers')
   cleanText = () => this.createOrUpdate('clean-text')
@@ -85,7 +85,7 @@ export default class ColumnContextMenu extends React.Component {
                 <i className="icon-edit"></i>
                 <span>Rename</span>
               </DropdownItem>
-              <DropdownItem onClick={this.duplicateColumn} className='duplicate-column' toggle={false}>
+              <DropdownItem onClick={this.duplicateColumn} className='duplicatecolumns' toggle={false}>
                 <i className="icon-duplicate"></i>
                 <span>Duplicate</span>
               </DropdownItem>

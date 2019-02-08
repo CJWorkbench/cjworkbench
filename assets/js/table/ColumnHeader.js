@@ -211,7 +211,7 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   completeRename = ({ prevName, newName }) => {
-    this.props.dispatchTableAction(this.props.wfModuleId, 'rename-columns', false, { prevName, newName })
+    this.props.dispatchTableAction(this.props.wfModuleId, 'renamecolumns', false, { prevName, newName })
   }
 
   onMouseEnter = () => {

@@ -95,7 +95,7 @@ describe('TableView', () => {
         3: {}
       },
       modules: {
-        'reorder-columns': {}
+        'reordercolumns': {}
       }
     }, api)
 
@@ -104,7 +104,7 @@ describe('TableView', () => {
 
     await tick()
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'reorder-columns', 1, {
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'reordercolumns', 1, {
       'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
     })
 

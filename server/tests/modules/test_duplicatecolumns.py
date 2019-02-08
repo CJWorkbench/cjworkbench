@@ -1,17 +1,17 @@
 import unittest
 import pandas as pd
 from cjworkbench.types import ProcessResult
-from server.modules import duplicatecolumn
+from server.modules import duplicatecolumns
 
 
 def render(colnames, table):
-    result = duplicatecolumn.render(table, {'colnames': colnames})
+    result = duplicatecolumns.render(table, {'colnames': colnames})
     result = ProcessResult.coerce(result)
     result.sanitize_in_place()  # important: duplicate makes colname conflicts
     return result
 
 
-class DuplicateColumnTests(unittest.TestCase):
+class DuplicateColumnsTests(unittest.TestCase):
     def test_duplicate_column(self):
         table = pd.DataFrame({
             'A': [1, 2],

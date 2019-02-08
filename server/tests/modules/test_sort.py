@@ -3,7 +3,7 @@ import unittest
 import pandas as pd
 import numpy as np
 from cjworkbench.types import ProcessResult
-from server.modules.sortfromtable import render
+from server.modules.sort import render
 from .util import MockParams
 
 

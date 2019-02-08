@@ -1,6 +1,6 @@
 {
   "name": "Rename columns",
-  "id_name": "rename-columns",
+  "id_name": "renamecolumns",
   "category": "Clean",
   "icon": "edit",
   "description": "Rename columns and log all edits.",

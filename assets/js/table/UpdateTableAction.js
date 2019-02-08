@@ -17,12 +17,12 @@ import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } f
  */
 export const moduleParamsBuilders = {
   'selectcolumns': buildSelectColumnsParams,
-  'duplicate-column': genericAddColumn('colnames'),
+  'duplicatecolumns': genericAddColumn('colnames'),
   'filter': buildFilterParams,
   'editcells': buildEditCellsParams,
-  'rename-columns': buildRenameColumnsParams,
-  'reorder-columns': buildReorderColumnsParams,
-  'sort-from-table': genericSetColumn('column'),
+  'renamecolumns': buildRenameColumnsParams,
+  'reordercolumns': buildReorderColumnsParams,
+  'sort': genericSetColumn('column'),
   'extract-numbers': genericAddColumn('colnames'),
   'clean-text': genericAddColumn('colnames'),
   'convert-date': genericAddColumn('colnames'),

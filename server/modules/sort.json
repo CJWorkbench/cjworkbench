@@ -1,6 +1,6 @@
 {
   "name": "Sort",
-  "id_name": "sort-from-table",
+  "id_name": "sort",
   "category" : "Analyze",
   "icon" : "transform-v",
   "description": "Sort rows by column",

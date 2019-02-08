@@ -1,6 +1,6 @@
 {
   "name": "Reorder columns",
-  "id_name": "reorder-columns",
+  "id_name": "reordercolumns",
   "category": "Clean",
   "icon": "transform",
   "description": "Change the order of columns in the table, and log all changes.",

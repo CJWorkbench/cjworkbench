@@ -113,7 +113,7 @@ function mapDispatchToProps (dispatch) {
       dispatch(updateTableAction(wfModuleId, 'selectcolumns', false, {}))
     },
     reorderColumn: (wfModuleId, colname, fromIndex, toIndex) => {
-      dispatch(updateTableAction(wfModuleId, 'reorder-columns', false, {
+      dispatch(updateTableAction(wfModuleId, 'reordercolumns', false, {
         column: colname,
         from: fromIndex,
         to: toIndex

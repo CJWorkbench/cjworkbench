@@ -36,8 +36,8 @@ describe('ColumnContextMenu', () => {
     expect(renameColumn).toHaveBeenCalled()
 
     wrapper.find('button').simulate('click') // open dropdown
-    wrapper.find('DropdownItem.duplicate-column').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('duplicate-column', false, {})
+    wrapper.find('DropdownItem.duplicatecolumns').simulate('click')
+    expect(onClickAction).toHaveBeenCalledWith('duplicatecolumns', false, {})
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.filter-column').simulate('click')
@@ -45,10 +45,10 @@ describe('ColumnContextMenu', () => {
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-ascending').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('sort-from-table', false, { direction: 1 })
+    expect(onClickAction).toHaveBeenCalledWith('sort', false, { direction: 1 })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-descending').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('sort-from-table', false, { direction: 2 })
+    expect(onClickAction).toHaveBeenCalledWith('sort', false, { direction: 2 })
   })
 })
