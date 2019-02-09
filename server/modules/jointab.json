@@ -4,7 +4,7 @@
   "category": "Add data",
   "icon": "join",
   "help_url": "modules/add-data/join",
-  "description": "Match rows and add columns from another tab",
+  "description": "Join data using shared columns between two tabs",
   "param_schema": {
     "right_tab": { "type": "tab" },
     "join_columns": {
@@ -21,7 +21,7 @@
       "name": "",
       "id_name": "right_tab",
       "type": "tab",
-      "placeholder": "Right-side tab"
+      "placeholder": "select tab to join"
     },
     {
       "name": "",

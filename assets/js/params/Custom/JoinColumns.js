@@ -56,7 +56,7 @@ export default class JoinColumns extends React.PureComponent {
           isReadOnly={isReadOnly}
           name={`${name}[on]`}
           onChange={this.onChangeOn}
-          label='On columns (from both tabs)'
+          label='Join on'
           inputColumns={bothColumns}
           value={value.on}
         />
@@ -64,7 +64,7 @@ export default class JoinColumns extends React.PureComponent {
           isReadOnly={isReadOnly}
           name={`${name}[right]`}
           onChange={this.onChangeRight}
-          label='Add columns (from other tab)'
+          label='Add columns'
           inputColumns={rightColumns}
           value={value.right}
         />
