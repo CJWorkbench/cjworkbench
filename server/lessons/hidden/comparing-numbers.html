@@ -5,10 +5,11 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Is $100,000 large or small? It could be a big number in a city budget, or it could be a tiny number in a national budget. Most numbers don’t mean very much without some sort of comparison. The simplest types of comparisons are subtraction and division.
+    Is $100,000 large or small? It could be a big number in a city budget, or it could be a tiny number in a national budget. Most numbers don’t mean very much without some sort of comparison.
   </p>
   <p>
-    In this lesson ..
+    In this lesson we will use data from the United States Census bureau to learn three common types of comparisons: subtraction, division, and percentage change.
+
   </p>
 </section>
 
@@ -35,8 +36,8 @@
 <section>
   <h2>Data</h2>
   <p>
-    In this lesson we’ll use data from the United States Census bureau, published and documented <a class="highlight" href='https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml' target="_blank" className="info-1">here</a>. <br />
-    The census is being conducted every 10 years. The last one was in 2010, so every year since then is an estimate.
+    This data is published by the United States Census bureau <a class="highlight" href='https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml' target="_blank" className="info-1">here</a>. <br />
+    The census happens every 10 years. The last one was in 2010, so every year since then is an estimate based on more recent surveys.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -67,35 +68,9 @@
     </li>
 </section>
 <section>
-  <h2>Cleanging: Facets</h2>
-  <p>
-    Scrolling through the table reveals misspelled values in the column ‘State’. To review and edit all of our 3142 rows, we will use algorithms using the step ‘Refine’.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 2, add <kbd>Refine</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Launch the auto-cluster function.
-      <p class="instruction-detail">
-        The Fingertip method ....
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Review clusters. If some values should not be merged, unselect them. After reviewing all clusters, click <kbd>merge</kbd>.
-    </li>
-  </ol>
-</section>
-<section>
   <h2>Difference</h2>
   <p>
-    Let’s ask: How many people arrived or left each county between 2010 and 2017?
+    Let’s ask: Which county had the greatest population decrease from 2010 to  2017?
     We need to calculate the difference in population, which is a subtraction.
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -103,14 +78,14 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, add <kbd>Formula</kbd>.
+      >Add <kbd>Formula</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Subtract 2017 to 2010 by typing in the formula
-      <div class="copy-txt">=(A7-A1)</div>
-      and name the new column <kbd>pop difference</kbd>.
+      >Enter the formula
+      <div class="copy-txt">=D1-C1</div>
+      and name the new column <kbd>Pop difference</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -124,14 +99,19 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Sort the resulting column in increasing order.
+      <p class="instruction-detail">
+        The first row will have the most negative number, meaning the county with greatest population loss.
+      </p>
     </li>
   </ol>
 </section>
 <section>
   <h2>Ratio</h2>
   <p>
-    Let’s ask: Relative to its size, which county has lost or gained the most population? In other word: How many habitant in 2017 compared to the number of inhabitants in in 2010?
-    The formula to calculate ‘How many (X) per (Y)’ is:
+    Larger counties are likely to have a greater population change. So let’s ask the question a different way:  Relative to its size, which county has lost or gained the most population? In other words: How many people in 2017 compared to the number of people in 2010? We can accomplish this with a simple division, producing a ratio.
+  </p>
+  <p>
+    As we saw before, the formula to calculate ‘How many (X) per (Y)’ is:
     <div class="copy-txt">=(X/Y)</div>
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -139,18 +119,26 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 8, add a new Formula and type in
+      >Add Formula and type in:
       <div class="copy-txt">=(D1/C1)</div>
       <p class=instruction-detail>
         Numbers greater than 1 mean the population increased. Less than 1 means that the population decreased. A ratio of 2 would mean that the population doubled.
       </p>
+      <p class=instruction-detail>
+        The county that lost the most population between 2010 and 2017, relative to its size is:
+      </p>
     </li>
+    <div class="copy-txt">Type your answer here</div>
   </ol>
 </section>
 <section>
-  <h2>Ratio</h2>
+  <h2>Percentage</h2>
   <p>
     There is a close relationship between ratios and percentages. A percentage is simply a fraction (a ratio) multiplied by 100:
+    <div class="copy-txt">=(X/Y)*100</div>
+  </p>
+  <p>
+    Workbench includes an easy way to calculate percentages: the Calculate step.
     <div class="copy-txt">=(X/Y)*100</div>
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -158,12 +146,12 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 10, add a Calculate step. Chose <kbd>X is what percent of Y</kbd>, and select <kbd>Pop estimate 2017</kbd> as X, and <kbd>Pop estimate 2010</kbd> as Y.
+      >Add a Calculate step. Chose <kbd>X is what percent of Y</kbd>, and select <kbd>Pop estimate 2017</kbd> as X, and <kbd>Pop estimate 2010</kbd> as Y.
       <p class=instruction-detail>
         One advantage of percentages is to allow us to better grasp numbers: In 2017, the population of Concho county was 66.6% the size it was in 2010.
       </p>
       <p class=instruction-detail>
-        The numbers in this new column  are similar, just multiplied by 100. So 0.56 becomes 56% and so on.
+        The numbers in this new column  are similar, just multiplied by 100. So <kbd>0.56</kbd> becomes <kbd>56%</kbd> and so on.
       </p>
     </li>
   </ol>
@@ -174,12 +162,15 @@
     Percentage change is the difference between old and new numbers, expressed as a percentage of the old number. The formula to calculate the percentage change between Old and New is:
     <div class="copy-txt">=((New - Old) / Old)* 100</div>
   </p>
+  <p>
+    You can enter this into a Formula step, or Calculate can compute this directly.
+  </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 12, add another Calculate step and choose <kbd>Percentage change<kbd>.
+      >Add another Calculate step and choose <kbd>Percentage change<kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -189,17 +180,13 @@
         100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half of the old one.
       </p>
       <p class=instruction-detail>
-        Percentage change allows us to editorialize our numbers in yet a new way: ‘From 2010 to 2017, Concho county lost 33.7% of its population’.
+        Percentage change allows us to describe our numbers in a new way: ‘From 2010 to 2017, Concho county lost 33.7% of its population’.
       </p>
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
-  <h3>Investigate</h3>
-  <p>Now that we ...
-    Duplicate this tab and edit the new one to find out.
-  </p>
   <div class="completed">
     <p class="summary"> Next, we’ll look at other useful formulas and standards to compare    numbers
     </p>
