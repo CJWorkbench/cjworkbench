@@ -5,12 +5,15 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Which city has more coffee shops: Seattle or New York? New York is a lot larger, so it almost certainly has more coffee establishments, but Seattle’s coffee culture means that there are more establishments per habitant.<br>
+    Which city has more coffee shops: Seattle or New York? New York is a lot larger, so it almost certainly has more coffee establishments, but Seattle’s coffee culture means that there may be  more establishments per person.
+  </p>
+  <p>
     Many numbers are best interpreted by comparing them to the overall population, giving a per-person rate. This is known as a per capita number (“capita” is Latin for “head”.)
   </p>
   <p>
-    In this lesson ..
+    In this lesson you’ll learn how to calculate per capita numbers, using FBI crime data.
   </p>
+
 </section>
 
 <!-- Section 1 -->
@@ -37,10 +40,6 @@
   <h2>Data</h2>
   <p>
     This table is derived from the FBI Uniform Crime Report data for 2017, published and documented <a class="highlight" href='https://https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">here</a>. <br />
-    The original table published by the FBI shows crime rates per habitant. For the purpose of this exercise we removed those numbers.
-  </p>
-  <p>
-    As usual, go through your list of questions to make sure you understand the data, and decide if it needs cleaning.
   </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">
@@ -87,7 +86,9 @@
       <p class="instruction-detail">
         California is on top, with 177,627 violent crimes in 2017.
         But California is also the largest state, so this result isn’t much of an insight.<br>
-        Next, let’s compare state using per capita numbers.
+      </p>
+      <p class="instruction-detail">
+        Let’s compare state using per capita numbers.
       </p>
     </li>
   </ol>
@@ -95,7 +96,7 @@
 <section>
   <h2>Crime per capita</h2>
   <p>
-    Let’s reframe our question: ‘Which state has the most violent crimes per habitant?’
+    Let’s reframe our question: ‘Which state has the most violent crimes per inhabitant?’
     The formula to calculate ‘How many (X) per (Y)’ is:
     <div class="copy-txt">=(X/Y)</div>
   </p>
@@ -104,7 +105,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, add Formula.
+      >Add Formula.
       <p class="instruction-detail">
         Formulas must be written using reference cells - Column letters and rows.
       </p>
@@ -112,17 +113,21 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Type in: <kbd>=(C1/B1)</kbd>
+      >Type in: <div class="copy-txt">=(C1/B1)</div>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the output of the formula <kbd>Violent crime per capita</kbd>
+      >Name the output of the formula <kbd>Violent crimes per capita</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 4, sort this new column in decreasing order.
+      >Sort the column <kbd>Violent crimes per capita</kbd> in decreasing order.
+      <p class="instruction-detail">
+        The state with the highest crime rate per capita is:
+      </p>
+      <div class="copy-txt">Type your answer here</div>
     </li>
   </ol>
 </section>
@@ -136,7 +141,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, Edit your formula to <kbd>=(D1/B1)*100000</kbd>
+      >In step 3, Edit your formula to <div class="copy-txt">=(D1/B1)*100000</div>
       <p class="instruction-detail">
         This final number is often just called the “crime rate.” If you look at the FBI source, you’ll see this number reported in the table.
       </p>
@@ -150,19 +155,15 @@
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
-  <h3>Investigate</h3>
-  <p>Now that we ...
-    Duplicate this tab and edit the new one to find out.
-  </p>
   <div class="completed">
-    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare    numbers
+    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare numbers
     </p>
   </div>
   <div class="next">
     <h2>Next lesson</h2>
     <ol>
       <li>
-        <a href="/lessons/adjusting-for-inflation">Adjusting for inflation</a>
+        <a href="/lessons/comparing-numbers">Comparing numbers</a>
       </li>
     </ol>
   </div>
