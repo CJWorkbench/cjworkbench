@@ -350,6 +350,7 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
             'refresh_url': d['web']['token_uri'],
             'redirect_url': d['web']['redirect_uris'][0],
             'scope': ' '.join([
+                'openid',
                 'https://www.googleapis.com/auth/drive.readonly',
                 'https://www.googleapis.com/auth/userinfo.email',
             ])
