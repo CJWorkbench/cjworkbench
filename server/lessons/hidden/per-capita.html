@@ -1,5 +1,5 @@
 <header>
-  <h1>Per capita<h1>
+  <h1>Per capita and crime rates<h1>
 </header>
 
 <section class="fullscreen">
@@ -11,7 +11,7 @@
     Many numbers are best interpreted by comparing them to the overall population, giving a per-person rate. This is known as a per capita number (“capita” is Latin for “head”.)
   </p>
   <p>
-    In this lesson you’ll learn how to calculate per capita numbers, using FBI crime data.
+     In this lesson you’ll learn how to calculate per capita numbers using a simple spreadsheet formula on FBI crime data.
   </p>
 
 </section>
@@ -82,13 +82,13 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Sort <kbd>Violent crime<kbd> in descending order.
+      >Sort the <kbd>Violent crime<kbd> column, in descending order.
       <p class="instruction-detail">
         California is on top, with 177,627 violent crimes in 2017.
         But California is also the largest state, so this result isn’t much of an insight.<br>
       </p>
       <p class="instruction-detail">
-        Let’s compare state using per capita numbers.
+        Let’s compare states using per capita numbers.
       </p>
     </li>
   </ol>
@@ -97,7 +97,7 @@
   <h2>Crime per capita</h2>
   <p>
     Let’s reframe our question: ‘Which state has the most violent crimes per inhabitant?’
-    The formula to calculate ‘How many (X) per (Y)’ is:
+    The formula to calculate ‘How many X per Y’ is X divided by Y, or:
     <div class="copy-txt">=(X/Y)</div>
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -107,7 +107,7 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add Formula.
       <p class="instruction-detail">
-        Formulas must be written using reference cells - Column letters and rows.
+        As in spreadsheets, formulas must be written by referencing cells using column letters and rows. To apply a formula to all rows, only cells in the first row must be used.
       </p>
     </li>
     <li
@@ -123,7 +123,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Sort the column <kbd>Violent crimes per capita</kbd> in decreasing order.
+      >Sort this new column in decreasing order.
       <p class="instruction-detail">
         The state with the highest crime rate per capita is:
       </p>
@@ -143,20 +143,20 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >In step 3, Edit your formula to <div class="copy-txt">=(D1/B1)*100000</div>
       <p class="instruction-detail">
-        This final number is often just called the “crime rate.” If you look at the FBI source, you’ll see this number reported in the table.
+        If you look at the FBI source, you’ll see this number reported in the table.
       </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, Rename the output of Formula to ‘Crime rate’.
+      >In step 3, Rename the output of Formula to <kbd>Crimes per 100,000</kbd>.
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare numbers
+    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare numbers.
     </p>
   </div>
   <div class="next">
