@@ -3,72 +3,19 @@
 # You can also think of this as a "command." Contains a specification of what
 # actually happened.
 import json
-from typing import Any
+from typing import Any, Optional
 from channels.db import database_sync_to_async
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
 from server import rabbitmq, websockets
-from server.models import Tab, WfModule
 from server.serializers import WfModuleSerializer
 
 
 def _prepare_json(data: Any) -> Any:
     """Convert `data` into a simple, JSON-ready dict."""
     return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
-
-
-def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
-    # all Delta subclasses that have a tab_id
-    relations = [
-        f
-        for f in Tab._meta.get_fields()
-        if f.is_relation and issubclass(f.related_model, Delta)
-    ]
-
-    tab_table_alias = Tab._meta.db_table  # Django auto-name
-
-    conditions = [
-        f"""
-        NOT EXISTS (
-            SELECT TRUE
-            FROM {r.related_model._meta.db_table}
-            WHERE {r.get_joining_columns()[0][1]} = {tab_table_alias}.id
-        )
-        """
-        for r in relations
-    ]
-
-    return Tab.objects \
-        .filter(workflow_id=workflow_id, is_deleted=True) \
-        .extra(where=conditions)
-
-
-def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
-    # all Delta subclasses that have a wf_module_id
-    relations = [
-        f
-        for f in WfModule._meta.get_fields()
-        if f.is_relation and issubclass(f.related_model, Delta)
-    ]
-
-    wf_module_table_alias = WfModule._meta.db_table  # Django auto-name
-
-    conditions = [
-        f"""
-        NOT EXISTS (
-            SELECT TRUE
-            FROM {r.related_model._meta.db_table}
-            WHERE {r.get_joining_columns()[0][1]} = {wf_module_table_alias}.id
-        )
-        """
-        for r in relations
-    ]
-
-    return WfModule.objects \
-        .filter(tab__workflow_id=workflow_id, is_deleted=True) \
-        .extra(where=conditions)
 
 
 # Base class of a single undoable/redoable action
@@ -251,9 +198,9 @@ class Delta(PolymorphicModel):
             if not create_kwargs:
                 return (None, None)
 
-            # Delete unapplied deltas. We identify these by looking for the
-            # head of the linked list that comes _after_ workflow.last_delta.
-            orphan_delta = Delta.objects \
+            # Lookup unapplied deltas to delete. That's the head of the linked
+            # list that comes _after_ `workflow.last_delta`.
+            orphan_delta: Optional[Delta] = Delta.objects \
                 .filter(prev_delta_id=workflow.last_delta_id) \
                 .first()
             if orphan_delta:
@@ -263,6 +210,13 @@ class Delta(PolymorphicModel):
                                        **create_kwargs)
             delta.forward_impl()
 
+            if orphan_delta:
+                # We just deleted deltas; now we can garbage-collect Tabs and
+                # WfModules that are soft-deleted and have no deltas referring
+                # to them.
+                workflow.delete_orphan_soft_deleted_models()
+                pass
+
             # Point workflow to us
             workflow.last_delta = delta
             workflow.save(update_fields=['last_delta_id'])
@@ -270,11 +224,19 @@ class Delta(PolymorphicModel):
             return (delta, delta.load_ws_data())
 
     def delete_with_successors(self):
-        # Delete all the deltas. Do it in SQL, not code -- there can be
-        # thousands.
-        #
-        # Assumes a delta with a higher ID is a successor.
-        #
+        """
+        Delete all Deltas starting with this one.
+
+        Do it in SQL, not code: there can be thousands, and Django's models are
+        resource-intensive. (Also, recursion is out of the question, in these
+        quantities.)
+
+        Assumes a Delta with a higher ID is a successor.
+
+        Consider calling `workflow.delete_orphan_soft_deleted_models()` after
+        calling this method: it may leave behind Tab and WfModule objects that
+        nothing refers to, if they previously had `.is_deleted == True`.
+        """
         # Oh, Did You Know: django-polymorphic does not have a "delete"
         # feature?
         command_relations = [
@@ -306,9 +268,6 @@ class Delta(PolymorphicModel):
             DELETE FROM {Delta._meta.db_table}
             WHERE id IN (SELECT id FROM to_delete)
             """)
-
-        _find_orphan_soft_deleted_tabs(self.workflow_id).delete()
-        _find_orphan_soft_deleted_wf_modules(self.workflow_id).delete()
 
     @property
     def command_description(self):

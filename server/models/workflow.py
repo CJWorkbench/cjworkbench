@@ -9,6 +9,62 @@ from django.urls import reverse
 from .Lesson import Lesson
 
 
+def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
+    from server.models import Delta, Tab
+
+    # all Delta subclasses that have a tab_id
+    relations = [
+        f
+        for f in Tab._meta.get_fields()
+        if f.is_relation and issubclass(f.related_model, Delta)
+    ]
+
+    tab_table_alias = Tab._meta.db_table  # Django auto-name
+
+    conditions = [
+        f"""
+        NOT EXISTS (
+            SELECT TRUE
+            FROM {r.related_model._meta.db_table}
+            WHERE {r.get_joining_columns()[0][1]} = {tab_table_alias}.id
+        )
+        """
+        for r in relations
+    ]
+
+    return Tab.objects \
+        .filter(workflow_id=workflow_id, is_deleted=True) \
+        .extra(where=conditions)
+
+
+def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
+    from server.models import Delta, WfModule
+
+    # all Delta subclasses that have a wf_module_id
+    relations = [
+        f
+        for f in WfModule._meta.get_fields()
+        if f.is_relation and issubclass(f.related_model, Delta)
+    ]
+
+    wf_module_table_alias = WfModule._meta.db_table  # Django auto-name
+
+    conditions = [
+        f"""
+        NOT EXISTS (
+            SELECT TRUE
+            FROM {r.related_model._meta.db_table}
+            WHERE {r.get_joining_columns()[0][1]} = {wf_module_table_alias}.id
+        )
+        """
+        for r in relations
+    ]
+
+    return WfModule.objects \
+        .filter(tab__workflow_id=workflow_id, is_deleted=True) \
+        .extra(where=conditions)
+
+
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
     name = models.CharField('name', max_length=200)
@@ -336,6 +392,22 @@ class Workflow(models.Model):
             return
 
         second_delta.delete_with_successors()
+        self.delete_orphan_soft_deleted_models()
+
+    def delete_orphan_soft_deleted_tabs(self):
+        _find_orphan_soft_deleted_tabs(self.id).delete()
+
+    def delete_orphan_soft_deleted_wf_modules(self):
+        _find_orphan_soft_deleted_wf_modules(self.id).delete()
+
+    def delete_orphan_soft_deleted_models(self):
+        """
+        Delete soft-deleted Tabs and WfModules that have no Delta.
+
+        (The tests for this are in test_Delta.py, for legacy reasons.)
+        """
+        self.delete_orphan_soft_deleted_tabs()
+        self.delete_orphan_soft_deleted_wf_modules()
 
     def delete(self, *args, **kwargs):
         # Clear delta history. Deltas can reference WfModules: if we don't
