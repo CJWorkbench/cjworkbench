@@ -4,7 +4,7 @@
 
 <section class="fullscreen">
   <h2>Welcome!</h2>
-  <p>Welcome! In this lesson you'll learn the first questions you should ask about every data set, and do a complete story including analysis and visualization.
+  <p>In this first lesson you'll learn the first questions you should ask about every data set, and use international C02 emmissions data to do a complete story including analysis and visualization.
   </p>
 </section>
 
@@ -19,7 +19,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/international-CO2-emission.csv"
+              "url":"http://production-static.workbenchdata.com/data/intro-data-j/largest-C02-producers-since-2010.csv"
             }
           }
         ]
@@ -30,7 +30,7 @@
 
 <section>
   <h2>Interviewing the Data</h2>
-  <p>In this lesson we'll use data on international C02 emmissions, published by the <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1">U.S. Energy Information Administration</a>.
+  <p>We pre-loaded data on international C02 emmissions, published by the U.S. Energy Information Administration <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1">here</a>.
 </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Take a look at this dataset and answer these questions for yourself</p>
@@ -64,13 +64,18 @@
 </section>
 <section>
   <h2>Averages</h2>
-  <p> One of the most basic things you can do with data is describe or summarize it. Country CO2 emissions fluctuate, so instead of looking at just the last year,  let’s take the average of the last five years.
+  <p>
+    One of the most basic things you can do with data is to describe or summarize it. The average is one way of computing a "typical" value.
   </p>
-  <p> The average is one way of computing a "typical" value. It’s the sum of all the values divided by the number of values N:
+  <p>
+    Let's ask our data "What is the volume of C02 emitted by each country in a year?".<br>
+    Country CO2 emissions fluctuate, so instead of looking at just the last year, we will calculate the average of the last five years.
+  </p>
+  <p>The average is the sum of all the values divided by the number of values N:
     <div class="copy-txt">=(Value 1+Value 2+...+Value N) / N</div>
-    In this lesson we will use a ‘Calculate’ step  to apply this formula automatically.
   </p>
   <h3 class="instructions">Instructions</h3>
+  <p class="instruction-detail">In this lesson we will use the step ‘Calculate’ to apply this formula automatically.</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -80,7 +85,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set the operation to Average
+      >Set the operation to <kbd>Average</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -91,12 +96,11 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Name the output column <kbd>Average emission per year</kbd>.
-      <p class="instruction-detail">The new column is displayed at the far right of the table.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Click (play button) to apply your settings.
+      >Click the orange play button to apply your settings.
       <p class="instruction-detail">The new column is displayed at the far right of the table.</p>
     </li>
   </ol>
