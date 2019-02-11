@@ -1,5 +1,6 @@
 import asyncio
 from collections import namedtuple
+import logging
 import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
@@ -33,8 +34,9 @@ def cached_render_result_revision_list(workflow):
 
 class WorkflowTests(DbTestCase):
     def _execute(self, workflow):
-        self.run_with_async_db(execute_workflow(workflow,
-                                                workflow.last_delta_id))
+        with self.assertLogs(level=logging.DEBUG):
+            self.run_with_async_db(execute_workflow(workflow,
+                                                    workflow.last_delta_id))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('server.websockets.ws_client_send_delta_async', fake_send)

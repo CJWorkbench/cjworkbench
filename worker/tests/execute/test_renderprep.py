@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.types import Column, ColumnType, ProcessResult, TableShape, \
-        StepResultShape
+        RenderColumn, StepResultShape
 from server.models import Params, Workflow
 from server.models.param_field import ParamDType
 from server.tests.utils import DbTestCase
@@ -86,9 +86,9 @@ class CleanValueTests(DbTestCase):
         result = clean_value(schema, {'tab': tab.slug}, context)
         self.assertEqual(result['tab'].slug, tab.slug)
         self.assertEqual(result['tab'].name, tab.name)
-        self.assertEqual(result['tab'].columns, [
-            Column('A', ColumnType.NUMBER),
-        ])
+        self.assertEqual(result['tab'].columns, {
+            'A': RenderColumn('A', 'number'),
+        })
         assert_frame_equal(result['tab'].dataframe,
                            pd.DataFrame({'A': [1, 2]}))
 
