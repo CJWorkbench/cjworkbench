@@ -107,6 +107,7 @@ article.lesson {
       position: relative;
       font-weight:400;
       margin-top: 2rem;
+      margin-bottom: 2rem;
       color: $white;
     }
 
@@ -190,7 +191,7 @@ article.lesson {
 
     // Completion message at end ot lesson
     .completed {
-      margin-top: 10rem;
+      margin-top: 2rem;
       margin-bottom: 1rem;
       .summary {
         @extend h4;
@@ -199,25 +200,26 @@ article.lesson {
     }
     // Suggestions to continue learning
     .next {
-      margin-top: 4rem;
+      margin-top: 3rem;
 
       h2 {
         margin-top: 2rem;
       }
 
       ol {
-        margin-left: -2rem;
+        margin-left: -4rem;
 
         li {
           list-style-type: none;
 
           &::before {
-            content: "\e938";
-            color: $white;
-            font-size: .8rem;
-            font-family: Workbench;
-            position: absolute;
-            margin-left: -2rem;
+            display: none;
+            // content: "\e938";
+            // color: $white;
+            // font-size: .8rem;
+            // font-family: Workbench;
+            // position: absolute;
+            // margin-left: -2rem;
           }
 
           a {
@@ -243,7 +245,7 @@ article.lesson {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 3rem;
+      padding: 1.2rem 3rem;
       flex: 0 0 auto;
 
       .action-button {
@@ -295,11 +297,6 @@ article.fullscreen {
     &.no-border {
       background-color: transparent;
     }
-  }
-
-  p {
-    font-size: 1.8rem;
-    line-height: 2.6rem;
   }
 
 

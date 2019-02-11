@@ -33,8 +33,11 @@
 </script>
 
 <section>
-  <h2>Tranpose 1</h2>
-  <p> Let’s look closely at our table.<br>
+  <h2>When to transpose</h2>
+  <p>
+    Let’s look closely at our table.
+  </p>
+  <p>
     In Workbench charts are plotted by selecting data in columns. We cannot select <kbd>China</kbd>, because it is displayed as a row.<br>
     Likewise, there is no column <kbd>Year</kbd> to select. Instead, each year is its own column.
     <br />
@@ -43,24 +46,24 @@
   </p>
 </section>
 <section class="fullscreen">
-  <h2>Tranpose 2</h2>
+  <h2>How Transpose works</h2>
   <p>
     Transposing turns rows into columns and columns into rows. Doing so, it swaps the header with the left-most column.
   </p>
   <p>
-    Since the header does not have a name, we can name it when it becomes the new left-most column. Likewise, after transposing, the name of the left-most column will not be displayed anymore.
+    Since the header in fig.1 does not have a name, we have to name it when it becomes the new left-most column in fig.2. Likewise, after transposing, the name of the left-most column in fig.1 will not be displayed anymore in fig.2.
   </p>
   <figure class="full">
     <img class="no-border" alt="Inspect element" src="images/course-1/transpose-fig-1.png">
   </figure>
 </section>
 <section>
-  <h2>Transpose 3</h2>
+  <h2>Transpose in action</h2>
   <p>
     Let’s transpose the table and compare the amount of C02 emitted by China through the years.
   </p>
   <p>
-    First, we need remove the <kbd>Continent</kbd>. If we transpose this column (you should try!), it will appear as an extra non-numeric row in each column, and it will cause an error when we try to plot.
+    First, we need remove the <kbd>Continent</kbd> column. If we transpose this column (you should try!), it will appear as an extra non-numeric row, and it will cause an error when we try to plot.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -89,7 +92,8 @@
   <p>
     If column charts are a good choice to visually compare how much individual teams each spend in one season, a line chart is more adapted to visually express trends through time.
     The reason is that continuity can be established between points in time, and so a line can be drawn to help viewers grasp the direction of the change.
-    <br>
+  </p>
+  <p>
     Line charts, however, should not be used with anything else than a horizontal axis representing time. Drawing a line between ’China’ and ‘Russia’, would make no sense: There is no in-between value, and the chart would show something that doesn’t exist!
   </p>
   <figure class="full">
