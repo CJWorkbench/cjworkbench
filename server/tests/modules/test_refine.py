@@ -157,11 +157,24 @@ class MigrateParamsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             migrate_params({'column': 'A', 'refine': json.dumps('A')})
 
+    def test_parse_v1(self):
+        result = migrate_params({
+            'column': 'A',
+            'refine': '{"renames": {"a": "b"}, "blacklist": []}',
+        })
+        self.assertEqual(result, {
+            'column': 'A',
+            'refine': {
+                'renames': {'a': 'b'},
+            },
+        })
+
+    def test_parse_v1_empty_refine(self):
+        result = migrate_params({'column': 'A', 'refine': ''})
+        self.assertEqual(result, {'column': 'A', 'refine': {'renames': {}}})
+
     def _test_parse_v2(self, column: str, arr: Dict[str, Any],
-                           expected: RefineSpec) -> None:
-            """
-            Test that deprecated input is transformed into what the user expects.
-            """
+                       expected: RefineSpec) -> None:
             result = migrate_params({
                 'column': column,
                 'refine': arr,

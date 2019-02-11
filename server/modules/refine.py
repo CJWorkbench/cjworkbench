@@ -31,7 +31,7 @@ class RefineSpec:
        blacklisted values are missing.
     """
 
-    def __init__(self, renames: Dict[str, str]={}):
+    def __init__(self, renames: Dict[str, str] = {}):
         self.renames = renames
 
     def apply_renames(self, series: pd.Series) -> pd.Series:
@@ -81,6 +81,7 @@ class RefineSpec:
         table[column] = series
 
         return table
+
 
 def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
     """
@@ -200,6 +201,7 @@ def migrate_params_v1_to_v2(column: str,
         'refine': refine,
     }
 
+
 def migrate_params_v2_to_v3(column: str,
                             refine: Dict[str, Any]) -> Dict[str, Any]:
     """v3 of `refine` does not filter, so blacklist can be ignored"""
@@ -232,7 +234,10 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     try:
         column = params['column']
         refine = params['refine']
-        refine_decoded = json.loads(refine)
+        if refine == '':
+            refine_decoded = {'renames': {}, 'blacklist': []}
+        else:
+            refine_decoded = json.loads(refine)
         refine_decoded['renames']
         refine_decoded['blacklist']
         is_v1 = True
