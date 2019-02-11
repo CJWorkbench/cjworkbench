@@ -102,8 +102,11 @@ def _execute_wfmodule_save(workflow: Workflow, wf_module: WfModule,
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
         if safe_wf_module.notifications:
             stale_crr = safe_wf_module.get_stale_cached_render_result()
-            # Read entire old Parquet file, blocking
-            stale_result = stale_crr.result
+            if stale_crr is None:
+                stale_result = None
+            else:
+                # Read entire old Parquet file, blocking
+                stale_result = stale_crr.result
         else:
             stale_result = None
 
