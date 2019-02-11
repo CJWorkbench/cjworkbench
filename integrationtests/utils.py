@@ -196,6 +196,8 @@ class LoggedInIntegrationTest(WorkbenchBase):
     def setUp(self):
         super().setUp()
 
-        self.user = self.account_admin.create_user('user@example.org')
+        # is_staff=True so user can import modules to use in e.g. lesson tests
+        self.user = self.account_admin.create_user('user@example.org',
+                                                   is_staff=True)
 
         accounts.login(self.browser, self.user.email, self.user.email)
