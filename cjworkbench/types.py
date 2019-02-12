@@ -98,6 +98,7 @@ A tab has `slug` (JS-side ID), `name` (user-assigned tab name), `dataframe`
 in `dataframe.columns`.)
 
 The `columns` is designed to mirror the `input_columns` argument to render().
+It's a Dict[str, RenderColumn].
 """
 
 

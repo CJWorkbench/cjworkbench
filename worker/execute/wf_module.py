@@ -69,6 +69,8 @@ def _execute_wfmodule_pre(
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
     a context that doesn't use a database thread.)
+
+    `tab_shapes.keys()` must be ordered as the Workflow's tabs are.
     """
     # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
@@ -168,6 +170,7 @@ async def execute_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
     params: Params,
+    tab_name: str,
     input_result: ProcessResult,
     tab_shapes: Dict[str, Optional[StepResultShape]]
 ) -> ProcessResult:
@@ -203,8 +206,8 @@ async def execute_wfmodule(
     delta_id = wf_module.last_relevant_delta_id
 
     # may raise UnneededExecution
-    result = await _render_wfmodule(workflow, wf_module, params, input_result,
-                                    tab_shapes)
+    result = await _render_wfmodule(workflow, wf_module, params, tab_name,
+                                    input_result, tab_shapes)
 
     # may raise UnneededExecution
     output_delta = await _execute_wfmodule_save(workflow, wf_module, result)

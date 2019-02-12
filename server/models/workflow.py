@@ -463,7 +463,8 @@ class DependencyGraph:
 
                 schema = module_version.param_schema
                 if all(
-                    (not isinstance(dtype, ParamDType.Tab)
+                    ((not isinstance(dtype, ParamDType.Tab)
+                      and not isinstance(dtype, ParamDType.Multitab))
                      for dtype in schema.iter_dfs_dtypes())
                 ):
                     # There are no tab params.
@@ -507,8 +508,11 @@ class DependencyGraph:
         return (wf_module_ids, new_tab_slugs)
 
     def get_step_ids_depending_on_tab_slug(self, tab_slug: str) -> List[int]:
+        return self.get_step_ids_depending_on_tab_slugs(set([tab_slug]))
+
+    def get_step_ids_depending_on_tab_slugs(self, tab_slugs: Set[str]) -> List[int]:
         wf_module_ids = set()
-        tab_slugs = set([tab_slug])
+        tab_slugs = set(tab_slugs)  # don't mutate input
 
         while True:
             new_wf_module_ids, new_tab_slugs = self._get_dependent_ids_step(

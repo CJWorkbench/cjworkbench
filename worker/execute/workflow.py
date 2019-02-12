@@ -9,7 +9,7 @@ from .types import UnneededExecution
 @database_sync_to_async
 def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
     """
-    Query `workflow` each tab's `TabFlow`.
+    Query `workflow` for each tab's `TabFlow` (ordered by tab position).
     """
     ret = []
     with workflow.cooperative_lock():  # reloads workflow
@@ -64,15 +64,24 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # raises UnneededExecution
     pending_tab_flows = await _load_tab_flows(workflow, delta_id)
 
+    # tab_shapes: keep track of outputs of each tab. (Outputs are used as
+    # inputs into other tabs.) Before render begins, all outputs are `None`.
+    # We'll execute tabs dependencies-first; if a WfModule depends on a
+    # `tab_shape` we haven't rendered yet, that's because it _couldn't_ be
+    # rendered first -- prompting a `TabCycleError`.
+    #
+    # `tab_shapes.keys()` returns tab slugs in the Workflow's tab order -- that
+    # is, the order the user determines.
+    tab_shapes: Dict[str, Optional[StepResultShape]] = dict(
+        (flow.tab_slug, None)
+        for flow in pending_tab_flows
+    )
+
     # Execute one tab_flow at a time.
     #
     # We don't hold a DB lock throughout the loop: the loop can take a long
     # time; it might be run multiple times simultaneously (even on different
     # computers); and `await` doesn't work with locks.
-
-    tab_shapes: Dict[str, Optional[StepResultShape]] = {}
-    for flow in pending_tab_flows:
-        tab_shapes[flow.tab_slug] = None
 
     while pending_tab_flows:
         ready_flows, dependent_flows = partition_ready_and_dependent(

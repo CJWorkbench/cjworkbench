@@ -192,6 +192,13 @@ definitions:
                 type: { const: tab }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+        multitab:
+            <<: *common_ftype
+            properties:
+                <<: *common_ftype_properties
+                type: { const: multitab }
+                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
         secret:
             <<: *common_ftype
             required: [ id_name, type, name ]
@@ -221,6 +228,7 @@ definitions:
                 { $ref: '#/definitions/ftypes/column' },
                 { $ref: '#/definitions/ftypes/multicolumn' },
                 { $ref: '#/definitions/ftypes/tab' },
+                { $ref: '#/definitions/ftypes/multitab' },
                 { $ref: '#/definitions/ftypes/secret' },
                 { $ref: '#/definitions/ftypes/custom' },
             ]
@@ -275,6 +283,11 @@ definitions:
             required: [ type ]
             properties:
                 type: { const: tab }
+        multitab:
+            type: object
+            required: [ type ]
+            properties:
+                type: { const: multitab }
         list:
             type: object
             requred: [ type, inner_dtype ]
@@ -304,6 +317,7 @@ definitions:
                 { $ref: '#/definitions/dtypes/column' },
                 { $ref: '#/definitions/dtypes/multicolumn' },
                 { $ref: '#/definitions/dtypes/tab' },
+                { $ref: '#/definitions/dtypes/multitab' },
                 { $ref: '#/definitions/dtypes/enum' },
                 { $ref: '#/definitions/dtypes/list' },
                 { $ref: '#/definitions/dtypes/dict' },

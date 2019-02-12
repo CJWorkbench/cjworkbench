@@ -7,6 +7,7 @@ import Custom from './Custom'
 import deepEqual from 'fast-deep-equal'
 import Menu from './Menu'
 import Multicolumn from './Multicolumn'
+import Multitab from './Multitab'
 import Number_ from './Number'
 import Radio from './Radio'
 import Secret from './Secret'
@@ -68,6 +69,7 @@ export default class Param extends React.PureComponent {
       case 'integer': return Number_
       case 'menu': return Menu
       case 'multicolumn': return Multicolumn
+      case 'multitab': return Multitab
       case 'radio': return Radio
       case 'secret': return Secret
       case 'statictext': return StaticText

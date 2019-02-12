@@ -211,3 +211,84 @@ class CleanValueTests(DbTestCase):
 
         with self.assertRaises(UnneededExecution):
             clean_value(schema, {'tab': tab.slug}, context)
+
+    def test_clean_tabs_happy_path(self):
+        tab1_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
+        workflow = Workflow.create_and_init()
+        tab1 = workflow.tabs.first()
+        wfm = tab1.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=workflow.last_delta_id
+        )
+        wfm.cache_render_result(workflow.last_delta_id, tab1_output)
+
+        context = RenderContext(workflow.id, None, {
+            tab1.slug: StepResultShape('ok', tab1_output.table_shape),
+        }, None)
+        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
+
+        result = clean_value(schema, {'tabs': [tab1.slug]}, context)
+        self.assertEqual(result['tabs'][0].slug, tab1.slug)
+        self.assertEqual(result['tabs'][0].name, tab1.name)
+        self.assertEqual(result['tabs'][0].columns, {
+            'A': RenderColumn('A', 'number'),
+        })
+        assert_frame_equal(result['tabs'][0].dataframe,
+                           pd.DataFrame({'A': [1, 2]}))
+
+    def test_clean_tabs_preserve_ordering(self):
+        tab2_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
+        tab3_output = ProcessResult(pd.DataFrame({'B': [2, 3]}))
+        workflow = Workflow.create_and_init()
+        tab1 = workflow.tabs.first()
+        tab2 = workflow.tabs.create(position=1, slug='tab-2', name='Tab 2')
+        tab3 = workflow.tabs.create(position=1, slug='tab-3', name='Tab 3')
+        wfm2 = tab2.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=workflow.last_delta_id
+        )
+        wfm2.cache_render_result(workflow.last_delta_id, tab2_output)
+        wfm3 = tab3.wf_modules.create(
+            order=0,
+            last_relevant_delta_id=workflow.last_delta_id
+        )
+        wfm3.cache_render_result(workflow.last_delta_id, tab3_output)
+
+        # RenderContext's dict ordering determines desired tab order. (Python
+        # 3.7 spec: dict is ordered in insertion order. CPython 3.6 and PyPy 7
+        # do this, too.)
+        context = RenderContext(workflow.id, None, {
+            tab1.slug: None,
+            tab2.slug: StepResultShape('ok', tab2_output.table_shape),
+            tab3.slug: StepResultShape('ok', tab3_output.table_shape),
+        }, None)
+        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
+
+        # Supply wrongly-ordered tabs. Cleaned, they should be in order.
+        result = clean_value(schema, {'tabs': [tab3.slug, tab2.slug]}, context)
+        self.assertEqual(result['tabs'][0].slug, tab2.slug)
+        self.assertEqual(result['tabs'][0].name, tab2.name)
+        self.assertEqual(result['tabs'][0].columns, {
+            'A': RenderColumn('A', 'number'),
+        })
+        assert_frame_equal(result['tabs'][0].dataframe,
+                           pd.DataFrame({'A': [1, 2]}))
+        self.assertEqual(result['tabs'][1].slug, tab3.slug)
+        self.assertEqual(result['tabs'][1].name, tab3.name)
+        self.assertEqual(result['tabs'][1].columns, {
+            'B': RenderColumn('B', 'number'),
+        })
+        assert_frame_equal(result['tabs'][1].dataframe,
+                           pd.DataFrame({'B': [2, 3]}))
+
+    def test_clean_tabs_nix_missing_tab(self):
+        context = RenderContext(None, None, {}, None)
+        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
+        result = clean_value(schema, {'tabs': ['tab-missing']}, context)
+        self.assertEqual(result['tabs'], [])
+
+    def test_clean_tabs_tab_error_raises_cycle(self):
+        context = RenderContext(None, None, {'tab-1': None}, None)
+        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
+        with self.assertRaises(TabCycleError):
+            clean_value(schema, {'tabs': ['tab-1']}, context)

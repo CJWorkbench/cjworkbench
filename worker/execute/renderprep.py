@@ -11,6 +11,7 @@ class RenderContext:
         self,
         workflow_id: int,
         input_table_shape: StepResultShape,
+        # assume tab_shapes keys are ordered the way the user ordered the tabs.
         tab_shapes: Dict[str, Optional[StepResultShape]],
         # params is a HACK to let column selectors rely on a tab_parameter,
         # which is a _root-level_ parameter. So when we're walking the tree of
@@ -171,7 +172,7 @@ def _(
 
 # ... and then the methods for recursing
 @clean_value.register(ParamDType.List)
-def _(
+def clean_value_list(
     dtype: ParamDType.List,
     value: List[Any],
     context: RenderContext
@@ -179,6 +180,28 @@ def _(
     inner_dtype = dtype.inner_dtype
     inner_clean = partial(clean_value, inner_dtype)
     return [inner_clean(v, context) for v in value]
+
+
+@clean_value.register(ParamDType.Multitab)
+def _(
+    dtype: ParamDType.Multitab,
+    value: List[str],
+    context: RenderContext
+) -> List[Any]:
+    # First, recurse -- the same way we clean a list.
+    unordered = clean_value_list(dtype, value, context)
+
+    # Next, order outputs the way they're ordered in `context.tab_shapes`.
+    # Ignore all `None` values -- those are nonexistent tabs, and we should
+    # omit nonexistent tabs.
+    lookup = dict(
+        (tab_output.slug, tab_output)
+        for tab_output in unordered
+        if tab_output is not None
+    )
+    return [lookup[slug]
+            for slug in context.tab_shapes.keys()
+            if slug in lookup]
 
 
 @clean_value.register(ParamDType.Dict)

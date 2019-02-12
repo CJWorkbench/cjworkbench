@@ -214,11 +214,6 @@ class ParamDTypeMulticolumn(ParamDTypeString):
         return ','.join(valid)
 
 
-class ParamDTypeTab(ParamDTypeString):
-    def __repr__(self):
-        return 'ParamDTypeTab()'
-
-
 class ParamDTypeEnum(ParamDType):
     def __init__(self, choices: Set[Any], default: Any):
         super().__init__()
@@ -407,6 +402,36 @@ class ParamDTypeMap(ParamDType):
         return cls(value_dtype=value_dtype, **kwargs)
 
 
+class ParamDTypeTab(ParamDTypeString):
+    def __repr__(self):
+        return 'ParamDTypeTab()'
+
+
+class ParamDTypeMultitab(ParamDTypeList):
+    """
+    A 'tabs' parameter: a value is a list of tab slugs.
+
+    This dtype behaves like a ParamDTypeList full of ParamDTypeTab values.
+    We'll visit all child ParamDTypeTab values when walking a `value`.
+    """
+
+    def __init__(self, default=[]):
+        super().__init__(inner_dtype=ParamDTypeTab(), default=default)
+
+    def __repr__(self):
+        return 'ParamDTypeMultitab()'
+
+    # coerce(): ParamDTypeList will do what we want
+    # validate(): ParamDTypeList will do what we want
+    # iter_dfs_dtypes(): ParamDTypeList will do what we want
+    # iter_dfs_dtype_values(): ParamDTypeList will do what we want
+
+    @classmethod
+    def _from_plain_data(cls, **kwargs):
+        # don't require inner_dtype like ParamDTypeList does
+        return cls(**kwargs)
+
+
 # Aliases to help with import. e.g.:
 # from server.models.param_field import ParamDType
 # dtype = ParamDType.String()
@@ -421,6 +446,7 @@ ParamDType.Map = ParamDTypeMap
 ParamDType.Column = ParamDTypeColumn
 ParamDType.Multicolumn = ParamDTypeMulticolumn
 ParamDType.Tab = ParamDTypeTab
+ParamDType.Multitab = ParamDTypeMultitab
 
 ParamDType.JsonTypeToDType = {
     'string': ParamDTypeString,
@@ -432,6 +458,7 @@ ParamDType.JsonTypeToDType = {
     'dict': ParamDTypeDict,
     'map': ParamDTypeMap,
     'tab': ParamDTypeTab,
+    'tabs': ParamDTypeMultitab,
     'column': ParamDTypeColumn,
     'multicolumn': ParamDTypeMulticolumn,
 }
@@ -456,6 +483,7 @@ class ParamField:
         RADIO = 'radio'
         MULTICOLUMN = 'multicolumn'
         TAB = 'tab'
+        MULTITAB = 'multitab'
         SECRET = 'secret'
         CUSTOM = 'custom'           # rendered in front end
 
@@ -527,6 +555,8 @@ class ParamField:
             )
         elif self.ftype == T.TAB:
             return ParamDTypeTab()
+        elif self.ftype == T.MULTITAB:
+            return ParamDTypeMultitab()
         elif self.ftype == T.INTEGER:
             kwargs = {}
             if self.default is not None:

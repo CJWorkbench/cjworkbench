@@ -33,6 +33,10 @@ class TabFlow:
         return self.tab.slug
 
     @property
+    def tab_name(self) -> str:
+        return self.tab.name
+
+    @property
     @_memoize
     def first_stale_index(self) -> int:
         """
@@ -115,6 +119,8 @@ async def execute_tab_flow(
     """
     Ensure `flow.tab.live_wf_modules` all cache fresh render results.
 
+    `tab_shapes.keys()` must be ordered as the Workflow's tabs are.
+
     Raise `UnneededExecution` if something changes underneath us such that we
     can't guarantee all render results will be fresh. (The remaining execution
     is "unneeded" because we assume another render has been queued.)
@@ -133,5 +139,6 @@ async def execute_tab_flow(
     last_result = await _load_input_from_cache(workflow, flow)
     for wf_module, params in flow.stale_steps:
         last_result = await execute_wfmodule(workflow, wf_module, params,
-                                             last_result, tab_shapes)
+                                             flow.tab_name, last_result,
+                                             tab_shapes)
     return last_result
