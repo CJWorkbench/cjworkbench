@@ -75,7 +75,7 @@ article.lesson {
       }
     }
 
-    .copy-txt {
+    .copy-txt, .answer {
       position: relative;
       width: 32rem;
       margin: 1rem 0 2rem 0;
@@ -110,13 +110,27 @@ article.lesson {
       }
     }
 
-    .instruction-detail {
+    .instruction-detail, .question {
       position: relative;
       font-weight:400;
       margin-top: 2rem;
       margin-bottom: 2rem;
       color: $white;
+      width: 32rem;
     }
+
+    //Q&A in lessons
+    .question {
+      margin-left: -2rem;
+      margin-bottom: 1rem;
+    }
+
+    .answer {
+      font-weight: 200;
+      margin: 0rem 0 2rem -2rem;
+    }
+
+
 
     code {
       @extend .code-1;
@@ -133,8 +147,13 @@ article.lesson {
     }
 
     .icon-insert {
+      @extend .content-1;
       margin: 0 .5rem;
+      padding: .5rem;
       width:2.7rem;
+      border-radius: 3px;
+      background-color: $light-accent--soft;
+
     }
 
     h3.instructions { // Instructions title

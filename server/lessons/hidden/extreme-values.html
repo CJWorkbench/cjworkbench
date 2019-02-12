@@ -3,7 +3,7 @@
 </header>
 
 <section class="fullscreen">
-  <h2>Welcome!</h2>
+  <h2> </h2>
   <p>Many stories are based on minimum or maximum values. This is the idea behind questions such as: What is the most expensive item in the budget? Which city is the safest? Which school has the best test scores?
   </p>
   <p>In this lesson you’ll learn how to use Calculate and sorting to find the largest and smallest values in your data.
@@ -32,9 +32,10 @@
 
 <section>
   <h2>Data</h2>
-  <p>Let’s ask our<a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1"> international C02 data </a>a different question: <br>
-    What is the most each country has emitted in any year?.
-</p>
+  <p>We loaded a larger sample of the same<a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&ct=0&tl_id=40-A&vs=INTL.4008-8-AFG-MMTCD.A&cy=2014&vo=0&v=C&end=2016' target="_blank" className="info-1"> international C02 data</a> we used in the previous lesson.</p>
+  <p>Let's ask a different question: <br>
+     What is the most each country has emitted in any year?
+  </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -50,9 +51,9 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select all available years column (click 'all' when selecting, then unselect unwanted columns) and name the output ‘Maximum 2000/16'
+      >Select all available years column
       <p class="instruction-detail">
-        This calculates the maximum across rows, so that you can read off the maximum for each country.
+        This calculates the maximum within rows, so that you can read off the maximum for each country.
       </p>
     </li>
 
@@ -73,19 +74,19 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 4, add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000/16</kbd>.
+      >Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000/16</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Using the column menu, sort <kbd>Maximum 2000/16</kbd> in descending order.
-      <p class="instruction-detail">Note that a <kbd>Sort</kbd> step has been added to the workflow. Every operation in Workbench adds a step, records your work, lets you change setting, and keeps everything reproducible.</p>
-      <p class="instruction-detail">
+      <p class="instruction-detail">Note that a new step has been added to the workflow. Every operation in Workbench is recorded, to keep your work reproducible.</p>
+      <!-- <p class="question">
         The country who has emitted the most C02 on average since 2000 is:
       </p>
-      <div class="copy-txt">
-        =(Value 1+Value 2+...+Value N) / N
-      </div>
+      <div class="answer">
+        Your answer
+      </div> -->
     </li>
   </ol>
 </section>
@@ -104,19 +105,19 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a secondary sort by clicking +ADD, and this time sort by Country, in descending order.
+      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Country</kbd>, in descending order.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Keep top ‘1 row’, under the second sort.
+      >Keep <kbd>top 1 row</kbd> under the second sort.
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, let's visualize this data.</p>
+    <p class="summary"> Next, let's look at a couple of chart type and visualize this data.</p>
   </div>
   <div class="next">
     <h2>Next</h2>
