@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from server.models import Workflow
+from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.commands import SetTabNameCommand
 from server.tests.utils import DbTestCase
 
@@ -10,6 +10,7 @@ async def async_noop(*args, **kwargs):
 
 class SetTabNameCommandTest(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
     def test_set_name(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -32,7 +33,35 @@ class SetTabNameCommandTest(DbTestCase):
         tab.refresh_from_db()
         self.assertEqual(tab.name, 'bar')
 
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    @patch.object(LoadedModule, 'for_module_version_sync',
+                  lambda module_version: LoadedModule('x', '1'))
+    def test_change_last_relevant_delta_ids_of_dependent_wf_modules(self):
+        workflow = Workflow.create_and_init()
+        delta_id = workflow.last_delta_id
+        tab1 = workflow.tabs.first()
+        tab2 = workflow.tabs.create(position=1, slug='tab-2', name='Tab 2')
+
+        # Add a WfModule that depends on tab1
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'Clean', 'parameters': [
+                {'id_name': 'tab', 'type': 'tab'}
+            ]
+        })
+        wf_module = tab2.wf_modules.create(order=0, module_id_name='x',
+                                           params={'tab': tab1.slug},
+                                           last_relevant_delta_id=delta_id)
+
+        cmd = self.run_with_async_db(
+            SetTabNameCommand.create(workflow=workflow, tab=tab1,
+                                     new_name=tab1.name + 'X')
+        )
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
+
     @patch('server.websockets.ws_client_send_delta_async')
+    @patch('server.rabbitmq.queue_render', async_noop)
     def test_ws_data(self, send_delta):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

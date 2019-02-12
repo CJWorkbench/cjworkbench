@@ -26,11 +26,10 @@ class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
         return data
 
     @classmethod
-    def affected_wf_modules_in_tab(cls, wf_module) -> models.QuerySet:
+    def affected_wf_modules_in_tab(cls, wf_module) -> models.Q:
         # We don't need to change self.wf_module's delta_id: just the others.
-        return WfModule.objects.filter(tab_id=wf_module.tab_id,
-                                       order__gt=wf_module.order,
-                                       is_deleted=False)
+        return models.Q(tab_id=wf_module.tab_id, order__gt=wf_module.order,
+                        is_deleted=False)
 
     def forward_impl(self):
         # If we are deleting the selected module, then set the previous module

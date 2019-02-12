@@ -1,7 +1,8 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from server.models import WfModule
+from django.db.models import Q
+from server.models import Tab, WfModule
 from server.models.workflow import DependencyGraph
 
 
@@ -47,18 +48,55 @@ class ChangesWfModuleOutputs:
     )
 
     @classmethod
-    def affected_wf_modules_in_tab(cls, wf_module) -> models.QuerySet:
+    def affected_wf_modules_in_tab(cls, wf_module) -> Q:
         """
-        QuerySet of WfModules _in this Tab_ that this Delta may change.
+        Filter for WfModules _in this Tab_ that this Delta may change.
 
         The default implementation _includes_ the passed `wf_module`.
         """
-        return WfModule.objects.filter(tab_id=wf_module.tab_id,
-                                       order__gte=wf_module.order,
-                                       is_deleted=False)
+        return Q(tab_id=wf_module.tab_id, order__gte=wf_module.order,
+                 is_deleted=False)
 
     @classmethod
-    def affected_wf_module_delta_ids(cls, wf_module) -> List[Tuple[int, int]]:
+    def affected_wf_modules_from_tab(cls, tab: Tab) -> Q:
+        """
+        QuerySet of WfModules depending on `tab`.
+
+        In other words: all WfModules that use `tab` in a 'tab' parameter, plus
+        all WfModules that depend on them.
+
+        This uses the tab's workflow's `DependencyGraph`.
+        """
+        graph = DependencyGraph.load_from_workflow(tab.workflow)
+        tab_slug = tab.slug
+        wf_module_ids = graph.get_step_ids_depending_on_tab_slug(tab_slug)
+
+        # You'd _think_ a Delta could change the dependency graph in a way we
+        # can't detect. But [adamhooper, 2019-02-07] I don't think it can. In
+        # particular, if this Delta is about to create or fix a cycle, then all
+        # the nodes in the cycle are there both before _and_ after the change.
+        #
+        # So assume `wf_module_ids` is complete here. If we notice some modules
+        # not updating correctly, we'll have to revisit this. I haven't proved
+        # anything, and I don't know whether future Deltas might break this
+        # assumption.
+
+        return Q(id__in=wf_module_ids)
+
+    @classmethod
+    def _q_to_wf_module_delta_ids(cls, q: Q) -> List[Tuple[int, int]]:
+        return list(
+            WfModule.objects
+            .filter(q)
+            .values_list('id', 'last_relevant_delta_id')
+        )
+
+
+    @classmethod
+    def affected_wf_module_delta_ids(
+        cls,
+        wf_module: WfModule
+    ) -> List[Tuple[int, int]]:
         """
         List [(wf_module_id, previous_delta_id)] for `wf_module` and deps.
 
@@ -78,37 +116,32 @@ class ChangesWfModuleOutputs:
         set all those steps to the new Delta, so they all get re-rendered. When
         we backward() the Delta, we'll revert to the IDs we save here.
         """
-        tab_wf_module_ids = list(
-            cls.affected_wf_modules_in_tab(wf_module)
-            .values_list('id', flat=True)
-        )
+        this_tab_filter = cls.affected_wf_modules_in_tab(wf_module)
+        all_tabs_filter = cls.affected_wf_modules_from_tab(wf_module.tab)
 
-        graph = DependencyGraph.load_from_workflow(wf_module.tab.workflow)
-        tab_slug = wf_module.tab.slug
-        wf_module_ids = graph.get_step_ids_depending_on_tab_slug(tab_slug)
+        q = this_tab_filter | all_tabs_filter
+        return cls._q_to_wf_module_delta_ids(q)
 
-        # You'd _think_ a Delta could change the dependency graph in a way we
-        # can't detect. But [adamhooper, 2019-02-07] I don't think it can. In
-        # particular, if this Delta is about to create or fix a cycle, then all
-        # the nodes in the cycle are there both before _and_ after the change.
-        #
-        # So assume `wf_module_ids` is complete here. If we notice some modules
-        # not updating correctly, we'll have to revisit this. I haven't proved
-        # anything, and I don't know whether future Deltas might break this
-        # assumption.
+    @classmethod
+    def affected_wf_module_delta_ids_from_tab(
+        cls,
+        tab: Tab
+    ) -> List[Tuple[int, int]]:
+        """
+        List [(wf_module_id, previous_delta_id)] that `tab` may change.
 
-        all_wf_module_ids = [
-            *tab_wf_module_ids,
-            *(id for id in wf_module_ids if id not in tab_wf_module_ids)
-        ]
+        This is calculated during Delta creation, before it's applied.
 
-        old_delta_ids = dict(
-            WfModule.objects
-            .filter(id__in=all_wf_module_ids)
-            .values_list('id', 'last_relevant_delta_id')
-        )
+        This uses the entire Workflow's `DependencyGraph` to find modules that
+        rely on `tab` (recursively).
 
-        return [(id, old_delta_ids[id]) for id in all_wf_module_ids]
+        Then we query the `last_relevant_delta_id` from all those affected
+        steps and store them with the Delta. When we forward() the Delta, we'll
+        set all those steps to the new Delta, so they all get re-rendered. When
+        we backward() the Delta, we'll revert to the IDs we save here.
+        """
+        q = cls.affected_wf_modules_from_tab(tab)
+        return cls._q_to_wf_module_delta_ids(q)
 
     def forward_affected_delta_ids(self):
         """
