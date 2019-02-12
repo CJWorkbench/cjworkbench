@@ -22,10 +22,13 @@ article.lesson {
     width: 32rem;
     padding: 1rem;
     background-color: $dark-accent--medium;
-    &.icon-insert {
-      padding:0;
-      background-color: transparent;
-    }
+  }
+
+  .icon-insert {
+    padding:0;
+    background-color: transparent;
+    padding: .5rem;
+    width:3rem;
   }
 
   section {
@@ -144,15 +147,10 @@ article.lesson {
       font-weight: normal;
       color: $brand-text--learn;
       background-color: transparent;
+      margin: 0 .2rem;
     }
 
     .icon-insert {
-      @extend .content-1;
-      margin: 0 .5rem;
-      padding: .5rem;
-      width:2.7rem;
-      border-radius: 3px;
-      background-color: $light-accent--soft;
 
     }
 
@@ -311,7 +309,7 @@ article.fullscreen {
   }
 
   figure.full img {
-    padding: 0;
+    padding: 1rem;
     margin-top: 2rem;
     width: 100%;
     &.no-border {
