@@ -113,7 +113,8 @@ class LoadedModuleTest(unittest.TestCase):
         # This ends up being kinda an integration test.
         with self.assertLogs('server.models.loaded_module'):
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1, 2]})),
-                               {'col': 'A'}, fetch_result=ProcessResult())
+                               {'col': 'A'}, tab_name='x',
+                               fetch_result=ProcessResult())
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
 
@@ -142,7 +143,8 @@ class LoadedModuleTest(unittest.TestCase):
         # This ends up being kinda an integration test.
         with self.assertLogs('server.models.loaded_module'):
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1, 2]})),
-                               {'col': 'A'}, fetch_result=ProcessResult())
+                               {'col': 'A'}, tab_name='x',
+                               fetch_result=ProcessResult())
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({'A': [2, 4]}))
 
@@ -169,7 +171,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1]})), {},
-                               fetch_result=ProcessResult())
+                               tab_name='x', fetch_result=ProcessResult())
         self.assertEqual(result, ProcessResult(
             error='Cannot render: module was deleted'
         ))
@@ -196,7 +198,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs():
             result = lm.render(ProcessResult(in_table), params,
-                               fetch_result=fetch_result)
+                               tab_name='x', fetch_result=fetch_result)
         self.assertIs(args[0], in_table)
         self.assertIs(args[1], params)
         self.assertIs(args[2], fetch_result)
@@ -212,15 +214,30 @@ class LoadedModuleTest(unittest.TestCase):
 
         in_result = ProcessResult(pd.DataFrame({'A': [0]}))
         params = {'foo': 'bar'}
-        fetch_result = ProcessResult(pd.DataFrame({'A': [1]}))
 
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs():
-            lm.render(in_result, params, fetch_result=fetch_result)
+            lm.render(in_result, params, tab_name='x', fetch_result=None)
 
         self.assertEqual(len(passed_columns), 1)
         self.assertEqual(passed_columns['A'].name, 'A')
         self.assertEqual(passed_columns['A'].type, 'number')
+
+    def test_render_with_tab_name(self):
+        passed_tab_name = None
+
+        def render(table, params, *, tab_name):
+            nonlocal passed_tab_name
+            passed_tab_name = tab_name
+            return ProcessResult()
+
+        in_result = ProcessResult(pd.DataFrame({'A': [0]}))
+
+        lm = LoadedModule('int', '1', render_impl=render)
+        with self.assertLogs():
+            lm.render(in_result, {}, 'Tab X', None)
+
+        self.assertEqual(passed_tab_name, 'Tab X')
 
     def test_render_with_no_kwargs(self):
         args = None
@@ -237,7 +254,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs():
             result = lm.render(ProcessResult(in_table), params,
-                               fetch_result=None)
+                               tab_name='x', fetch_result=None)
         self.assertIs(args[0], in_table)
         self.assertIs(args[1], params)
         self.assertEqual(len(args), 2)
@@ -252,7 +269,8 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs(level=logging.ERROR):
-            result = lm.render(ProcessResult(), {}, fetch_result=None)
+            result = lm.render(ProcessResult(), {}, tab_name='x',
+                               fetch_result=None)
 
         _, lineno = inspect.getsourcelines(render)
 
@@ -264,7 +282,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('int', '1')
         with self.assertLogs():
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1]})), {},
-                               fetch_result=None)
+                               tab_name='x', fetch_result=None)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 
@@ -277,7 +295,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule('int', '1', render_impl=lambda _a, _b: retval)
         with self.assertLogs():
-            lm.render(ProcessResult(), {}, fetch_result=None)
+            lm.render(ProcessResult(), {}, tab_name='x', fetch_result=None)
         self.assertEqual(calls, ['truncate', 'sanitize'])
 
     def test_render_cannot_coerce_output(self):
@@ -287,7 +305,8 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule('int', '1', render_impl=render)
         with self.assertLogs(level=logging.ERROR):
-            result = lm.render(ProcessResult(), {}, fetch_result=None)
+            result = lm.render(ProcessResult(), {}, tab_name='x',
+                               fetch_result=None)
 
         _, lineno = inspect.getsourcelines(render)
         self.assertRegex(result.error, (
@@ -299,7 +318,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('int', '1')
         with self.assertLogs():
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1]})), {},
-                               fetch_result=None)
+                               tab_name='x', fetch_result=None)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 

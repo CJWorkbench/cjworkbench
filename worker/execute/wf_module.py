@@ -128,6 +128,7 @@ async def _render_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
     params: Params,
+    tab_name: str,
     input_result: Optional[ProcessResult],  # None for first module in tab
     tab_shapes: Dict[str, Optional[StepResultShape]]
 ) -> ProcessResult:
@@ -159,7 +160,8 @@ async def _render_wfmodule(
     # thread and keep our event loop responsive.
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, loaded_module.render,
-                                      input_result, param_values, fetch_result)
+                                      input_result, param_values, tab_name,
+                                      fetch_result)
 
 
 async def execute_wfmodule(

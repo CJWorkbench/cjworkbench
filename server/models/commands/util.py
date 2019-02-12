@@ -60,7 +60,7 @@ class ChangesWfModuleOutputs:
     @classmethod
     def affected_wf_modules_from_tab(cls, tab: Tab) -> Q:
         """
-        QuerySet of WfModules depending on `tab`.
+        Filter for WfModules depending on `tab`.
 
         In other words: all WfModules that use `tab` in a 'tab' parameter, plus
         all WfModules that depend on them.
@@ -84,7 +84,7 @@ class ChangesWfModuleOutputs:
         return Q(id__in=wf_module_ids)
 
     @classmethod
-    def _q_to_wf_module_delta_ids(cls, q: Q) -> List[Tuple[int, int]]:
+    def q_to_wf_module_delta_ids(cls, q: Q) -> List[Tuple[int, int]]:
         return list(
             WfModule.objects
             .filter(q)
@@ -120,28 +120,7 @@ class ChangesWfModuleOutputs:
         all_tabs_filter = cls.affected_wf_modules_from_tab(wf_module.tab)
 
         q = this_tab_filter | all_tabs_filter
-        return cls._q_to_wf_module_delta_ids(q)
-
-    @classmethod
-    def affected_wf_module_delta_ids_from_tab(
-        cls,
-        tab: Tab
-    ) -> List[Tuple[int, int]]:
-        """
-        List [(wf_module_id, previous_delta_id)] that `tab` may change.
-
-        This is calculated during Delta creation, before it's applied.
-
-        This uses the entire Workflow's `DependencyGraph` to find modules that
-        rely on `tab` (recursively).
-
-        Then we query the `last_relevant_delta_id` from all those affected
-        steps and store them with the Delta. When we forward() the Delta, we'll
-        set all those steps to the new Delta, so they all get re-rendered. When
-        we backward() the Delta, we'll revert to the IDs we save here.
-        """
-        q = cls.affected_wf_modules_from_tab(tab)
-        return cls._q_to_wf_module_delta_ids(q)
+        return cls.q_to_wf_module_delta_ids(q)
 
     def forward_affected_delta_ids(self):
         """

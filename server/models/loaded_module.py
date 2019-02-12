@@ -43,6 +43,7 @@ async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
 
 class DeletedModule:
     def render(self, table: Optional[pd.DataFrame], params: Params,
+               tab_name: str,
                fetch_result: Optional[ProcessResult]) -> ProcessResult:
         logger.info('render() deleted module')
         return ProcessResult(error='Cannot render: module was deleted')
@@ -88,7 +89,8 @@ class LoadedModule:
         error = f'{exc_name}: {str(err)} at line {lineno} of {fname}'
         return ProcessResult(error=error)
 
-    def render(self, input_result: Optional[ProcessResult], params: Params,
+    def render(self, input_result: Optional[ProcessResult],
+               params: Dict[str, Any], tab_name: str,
                fetch_result: Optional[ProcessResult]) -> ProcessResult:
         """
         Process `table` with module `render` method, for a ProcessResult.
@@ -108,6 +110,8 @@ class LoadedModule:
         kwonlyargs = spec.kwonlyargs
         if varkw or 'fetch_result' in kwonlyargs:
             kwargs['fetch_result'] = fetch_result
+        if varkw or 'tab_name' in kwonlyargs:
+            kwargs['tab_name'] = tab_name
         if varkw or 'input_columns' in kwonlyargs:
             kwargs['input_columns'] = dict(
                 (c.name, RenderColumn(c.name, c.type.value))

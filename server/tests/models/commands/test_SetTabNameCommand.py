@@ -60,6 +60,33 @@ class SetTabNameCommandTest(DbTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
 
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    @patch.object(LoadedModule, 'for_module_version_sync',
+                  lambda module_version: LoadedModule('x', '1'))
+    def test_change_last_relevant_delta_ids_of_self_wf_modules(self):
+        """
+        Module render() accepts a `tab_name` argument: test it sees a new one.
+        """
+        workflow = Workflow.create_and_init()
+        delta_id = workflow.last_delta_id
+        tab = workflow.tabs.first()
+
+        # Add a WfModule that relies on `tab.name` through its 'render' method.
+        ModuleVersion.create_or_replace_from_spec(
+            {'id_name': 'x', 'name': 'x', 'category': 'Clean',
+             'parameters': []}
+        )
+        wf_module = tab.wf_modules.create(order=0, module_id_name='x',
+                                          last_relevant_delta_id=delta_id)
+
+        cmd = self.run_with_async_db(
+            SetTabNameCommand.create(workflow=workflow, tab=tab,
+                                     new_name=tab.name + 'X')
+        )
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
+
     @patch('server.websockets.ws_client_send_delta_async')
     @patch('server.rabbitmq.queue_render', async_noop)
     def test_ws_data(self, send_delta):

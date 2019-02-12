@@ -38,7 +38,14 @@ class SetTabNameCommand(Delta, ChangesWfModuleOutputs):
         if tab.name == new_name:
             return None
 
-        wf_module_delta_ids = cls.affected_wf_module_delta_ids_from_tab(tab)
+        # wf_module_delta_ids includes:
+        #
+        # * All modules in this tab (because render() may have tab_name arg)
+        # * All modules in dependent tabs (because 'tab' param value changes)
+        in_tab_q = models.Q(tab_id=tab.id, is_deleted=False)
+        from_tab_q = cls.affected_wf_modules_from_tab(tab)
+        q = in_tab_q | from_tab_q
+        wf_module_delta_ids = cls.q_to_wf_module_delta_ids(q)
 
         return {
             'workflow': workflow,

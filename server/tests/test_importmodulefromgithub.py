@@ -187,7 +187,7 @@ class ImportFromGitHubTest(DbTestCase):
             with self.assertLogs():
                 lm = LoadedModule.for_module_version_sync(module_version)
                 result = lm.render(ProcessResult(test_table), wfm.get_params(),
-                                   None)
+                                   'x', None)
             self.assertEqual(result, ProcessResult(test_table_out))
         finally:
             server.models.loaded_module.load_external_module.cache_clear()
