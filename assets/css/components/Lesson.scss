@@ -198,7 +198,7 @@ article.lesson {
 
     // Completion message at end ot lesson
     .completed {
-      margin-top: 2rem;
+      margin-top: 0;
       margin-bottom: 1rem;
       .summary {
         @extend h4;
@@ -221,18 +221,12 @@ article.lesson {
 
           &::before {
             display: none;
-            // content: "\e938";
-            // color: $white;
-            // font-size: .8rem;
-            // font-family: Workbench;
-            // position: absolute;
-            // margin-left: -2rem;
           }
 
           a {
             @extend .highlight;
             @extend .description;
-            text-decoration: none;
+            text-decoration: underline;
             &:hover {
               text-decoration: underline;
             }
