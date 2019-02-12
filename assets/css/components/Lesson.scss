@@ -4,7 +4,12 @@ article.lesson {
   flex: 0 0 auto;
   min-width: 20rem;
 
+  .description, ol.steps {
+    @extend .content-3;
+  }
+
   h1 { display: none; }
+
   &>.description { display: none; }
 
   .sections {
@@ -57,15 +62,17 @@ article.lesson {
     h2 {
       color:#fff;
       line-height: 3rem;
+      margin-bottom: 0;
     }
 
+    // Top part of section, outlining goals
     &>.description {
-      margin-top: 1rem;
+      margin-top: 2rem;
       color:#fff;
-    }
 
-    .description, ol.steps {
-      @extend .content-3;
+      p {
+        margin-bottom: 2rem;
+      }
     }
 
     .copy-txt {
@@ -130,9 +137,9 @@ article.lesson {
       width:2.7rem;
     }
 
-    h3.instructions {
+    h3.instructions { // Instructions title
       color: $white;
-      margin-top: 3rem;
+      margin-top: 2rem;
       margin-bottom: 2rem;
     }
 
