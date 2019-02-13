@@ -22,7 +22,7 @@ describe('Multicolumn', () => {
         isReadOnly: true,
         value: 'A,C'
       })
-      expect(w.text()).toMatch(/A.*C/)
+      expect(w.find('.react-select__control').text()).toMatch(/A.*C/)
     })
   })
 
