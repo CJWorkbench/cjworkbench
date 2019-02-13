@@ -74,6 +74,7 @@ describe('WfModule, not read-only mode', () => {
         isAfterSelected={false}
         api={mockApi}
         tabs={[]}
+        currentTab='tab-1'
         index={2}
         onDragStart={jest.fn()}
         onDragEnd={jest.fn()}

@@ -99,6 +99,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             }
           }
           applyQuickFix={[Function]}
+          currentTab="tab-1"
           deleteSecret={[Function]}
           edits={Object {}}
           fields={
