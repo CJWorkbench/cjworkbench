@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Images-for-lessons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="menu-copy" transform="translate(-10.000000, -15.000000)">
+            <g id="Group-2" transform="translate(10.000000, 15.000000)">
+                <circle id="Oval" fill="#D8D8D8" opacity="0.241001674" cx="16" cy="16" r="16"></circle>
+                <rect id="Rectangle" fill="#F5F7F8" x="15" y="8" width="2" height="16"></rect>
+                <rect id="Rectangle-Copy" fill="#F5F7F8" transform="translate(16.000000, 16.000000) rotate(-90.000000) translate(-16.000000, -16.000000) " x="15" y="8" width="2" height="16"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

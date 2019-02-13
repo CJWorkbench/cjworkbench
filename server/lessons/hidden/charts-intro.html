@@ -35,26 +35,26 @@
 <section>
   <h2>When to transpose</h2>
   <p>
-    Let’s look closely at our table.
+    Let’s look closely at our table.</br>
+    In Workbench charts are plotted by selecting data in columns.
   </p>
-  <p>
-    In Workbench charts are plotted by selecting data in columns. We cannot select <kbd>China</kbd>, because it is displayed as a row.<br>
+    We cannot select <kbd>China</kbd>, because it is displayed as a row.<br>
     Likewise, there is no column <kbd>Year</kbd> to select. Instead, each year is its own column.
-    <br />
   </p>
-  <p class="instruction-detail"> If we want to select variables that are displayed as rows, we must turn them into columns. This is called transposing.
+  <p class="instruction-detail">
+    If we want to select variables that are displayed as rows, we must turn them into columns. This is called transposing.
   </p>
 </section>
 <section class="fullscreen">
   <h2>How Transpose works</h2>
   <p>
-    Transposing turns rows into columns and columns into rows. Doing so, it swaps the header with the left-most column.
+    Transposing swaps the header with the left-most column. Doing so, it turns rows into columns and columns into rows.
   </p>
   <p>
-    Since the header in fig.1 does not have a name, we have to name it when it becomes the new left-most column in fig.2. Likewise, after transposing, the name of the left-most column in fig.1 will not be displayed anymore in fig.2.
+    Since the left-most column in fig.1 becomes a header in fig.2, you will often have to rename the name of the new left-most column in fig.2.
   </p>
   <figure class="full">
-    <img class="no-border" alt="Inspect element" src="images/course-1/transpose-fig-1.png">
+    <img class="no-border" alt="Inspect element" src="images/course-1/transpose.png">
   </figure>
 </section>
 <section>
@@ -70,12 +70,16 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Click the <kbd>Continent</kbd> column menu and choose <kbd>Delete column</kbd>.
+      >Click the<kbd>Continent</kbd>column menu
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span>
+      and choose<kbd>Delete column</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a Transpose step and name the new leftmost column <kbd>Year</kbd>.
+      >Add a Transpose step and name the new leftmost column<kbd>Year</kbd>.
       <p class="instruction-detail">
         Now we can plot China’s output.
       </p>
@@ -83,7 +87,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a Column Chart, select <kbd>Year</kbd> as the X axis, and <kbd>China</kbd> as the Y axis.
+      >Add a Column Chart, select<kbd>Year</kbd> as the X axis, and<kbd>China</kbd>as the Y axis.
     </li>
   </ol>
 </section>
@@ -97,7 +101,7 @@
     Line charts, however, should not be used with anything else than a horizontal axis representing time. Drawing a line between ’China’ and ‘Russia’, would make no sense: There is no in-between value, and the chart would show something that doesn’t exist!
   </p>
   <figure class="full">
-    <img class="no-border" alt="Inspect element" src="images/course-1/when-to-use-line-chart.png">
+    <img alt="Inspect element" src="images/course-1/when-to-use-line-chart.png">
   </figure>
 </section>
 <section>
@@ -109,28 +113,31 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      > In step 4, Replace the column chart with a line chart.
+      > After the Column chart, add a Line chart step.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select the variable <kbd>Year</kbd> as the X axis and  <kbd>China</kbd> on the Y axis.
+      >Select the variable<kbd>Year</kbd>as the X axis and<kbd>China</kbd>on the Y axis.
       <p class="instruction-detail">Now let’s compare China’s production of CO2 to that of other countries.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In Line chart, select 4 additional countries of your choice on the Y axis.
+      >In Line chart, select 4 additional countries of your choice on the Y axis by clicking the add button
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/add.svg">
+      </span>.
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary">Next, you’ll learn about filtering.</p>
+    <p class="summary">Next, let's learn how to work with subsets of rows, using filtering.</p>
   </div>
   <div class="next">
-    <h2>Next lesson</h2>
+    <h2>Next</h2>
     <ol>
       <li>
         <a href="/lessons/filtering/">Filtering</a>
