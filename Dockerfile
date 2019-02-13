@@ -113,7 +113,7 @@ RUN python -m nltk.downloader -d /usr/share/nltk_data vader_lexicon stopwords
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
-FROM node:10.13.0-slim as jsbase
+FROM node:11.9.0-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app
