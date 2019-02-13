@@ -109,7 +109,7 @@
   </p>
   <h3>Text</h3>
   <p>
-    Also known as “string”, this type can contain any character and be of any length. Mixed numbers and letters are interpreted as text.</p>
+    Also known as “string”, this type can contain any character and can be of any length. Mixed numbers and letters are interpreted as text.</p>
   <h3>Number</h3>
   <p>
     This type is used for both whole numbers (such as 8, 22 or 268) and numbers which values have digits after the decimal point (such as 1.5 or 3.14).
@@ -122,7 +122,10 @@
 <section>
   <h2>Converting dates</h2>
   <p>
-    Although the “Complaint date” column looks like a date, you can see that it was loaded as text. Workbench tries to guess when a column is dates, but if there are any rows which are blank, not a date, or the date is in a format Workbench doesn’t recognize, the column will be loaded as text.
+    Although the <kbd>Complaint date</kbd> column looks like a date, you can see that it was loaded as text.
+  </p>
+  <p>
+    Workbench tries to guess when a column is dates, but if there are any rows blank values, values that are not a date, or the date is in a format Workbench doesn’t recognize, the column will be loaded as text.
   </p>
   <p>
     Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date & time.
@@ -133,8 +136,8 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >In the column menu for the <kbd>Complaint date</kbd> column, select convert to <kbd>date & time</kbd>. This will add a conversion step.
-      <p>
-        Now this column has “Date & Time” type. You’ll use this cleaned column in the next lesson.
+      <p class="instruction-detail">
+        Now this column has “Date & Time” type. We will use this cleaned column in the next lesson.
       </p>
     </li>
   </ol>
