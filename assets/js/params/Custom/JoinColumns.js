@@ -53,6 +53,7 @@ export default class JoinColumns extends React.PureComponent {
     // Empty/rendering tab? Empty options
     const rightColumns = rightTab && rightTab.outputColumns || []
     const bothColumns = rightColumns.filter(({ name }) => inputColnames.includes(name))
+    const rightColumnsNotInOn = rightColumns.filter(({ name }) => !value.on.includes(name))
 
     return (
       <React.Fragment>
@@ -71,7 +72,7 @@ export default class JoinColumns extends React.PureComponent {
           fieldId={`${fieldId}_right`}
           onChange={this.onChangeRight}
           label='Add columns'
-          inputColumns={rightColumns}
+          inputColumns={rightColumnsNotInOn}
           value={value.right}
         />
       </React.Fragment>
