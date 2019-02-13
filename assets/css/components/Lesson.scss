@@ -82,12 +82,12 @@ article.lesson {
       position: relative;
       width: 32rem;
       margin: 1rem 0 2rem 0;
-      padding:1rem;
+      padding:1rem 1.5rem;
       background-color: $dark-accent--medium;
       word-break: break-all;
       border-radius: .3rem;
       cursor: text;
-      @extend .content-1;
+      @extend %content-3;
     }
 
     .code-block {
@@ -147,7 +147,7 @@ article.lesson {
       font-weight: normal;
       color: $brand-text--learn;
       background-color: transparent;
-      margin: 0 .2rem;
+      margin: 0;
     }
 
     .icon-insert {
