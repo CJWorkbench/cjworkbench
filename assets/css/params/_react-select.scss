@@ -1,7 +1,5 @@
 .react-select {
-  @extend %content-1;
-  $multi-value-x-margin: .4rem;
-  $multi-value-y-margin: .4rem;
+  @include content-1;
 
   .react-select__control {
     @include module-parameter;
@@ -39,8 +37,36 @@
         text-overflow: ellipsis;
 
         border: 1px solid transparent;
-        margin: 2px 2px 2px $multi-value-x-margin; // 2px was a react-select default, before we stopped using defaults
+        margin: 2px; // 2px was a react-select default, before we stopped using defaults
         height: 2.7rem;
+      }
+
+      // Style for selected values within multi select
+      .react-select__multi-value {
+        // positioning is done in .react-select__value-container--is-multi, not here
+        color: $brand-orange;
+        border-color: $brand-orange;
+        background-color: $brand-orange--light;
+        border-radius: 3px;
+
+        .react-select__multi-value__label {
+          max-width: 28rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding: 3px 3px 3px 6px; // react-select default
+        }
+
+        .react-select__multi-value__remove {
+          cursor: pointer;
+          width: 2rem;
+          text-align: center;
+          line-height: 2.3rem; // center vertically -- eyeballing it for pixel perfection
+
+          &:hover {
+            color: white;
+            background-color: $brand-orange--medium-dark;
+          }
+        }
       }
 
       .react-select__placeholder {
@@ -84,31 +110,6 @@
 
       &:hover svg {
         color: $brand-text--dark;
-      }
-    }
-  }
-
-  // Style for selected values within multi select
-  .react-select__multi-value {
-    // positioning is done in .react-select__value-container--is-multi, not here
-    color: $brand-orange;
-    border-color: $brand-orange;
-    background-color: $brand-orange--light;
-    border-radius: 3px;
-
-    .react-select__multi-value__label {
-      padding: 3px 3px 3px 6px; // react-select default
-    }
-
-    .react-select__multi-value__remove {
-      cursor: pointer;
-      width: 2rem;
-      text-align: center;
-      line-height: 2.3rem; // center vertically -- eyeballing it for pixel perfection
-
-      &:hover {
-        color: white;
-        background-color: $brand-orange--medium-dark;
       }
     }
   }
