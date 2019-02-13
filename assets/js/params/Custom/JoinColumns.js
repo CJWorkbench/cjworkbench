@@ -6,9 +6,13 @@ export default class JoinColumns extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func({ on: '...', right: '...' }) => undefined
+    fieldId: PropTypes.string.isRequired, // <input id=...>
     name: PropTypes.string.isRequired, // <input name=...>
     label: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired, // { on: '...', right: '...' } (both column lists)
+    value: PropTypes.shape({
+      on: PropTypes.string.isRequired, // column list
+      right: PropTypes.string.isRequired // column list
+    }).isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
       type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
@@ -41,7 +45,7 @@ export default class JoinColumns extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, label, value, inputColumns, tabs, selectedTab } = this.props
+    const { isReadOnly, name, label, value, inputColumns, fieldId, tabs, selectedTab } = this.props
     const rightTab = tabs.find(({ slug }) => selectedTab === slug)
 
     const inputColnames = (inputColumns || []).map(({ name }) => name)
@@ -55,6 +59,7 @@ export default class JoinColumns extends React.PureComponent {
         <Multicolumn
           isReadOnly={isReadOnly}
           name={`${name}[on]`}
+          fieldId={`${fieldId}_on`}
           onChange={this.onChangeOn}
           label='Join on'
           inputColumns={bothColumns}
@@ -63,6 +68,7 @@ export default class JoinColumns extends React.PureComponent {
         <Multicolumn
           isReadOnly={isReadOnly}
           name={`${name}[right]`}
+          fieldId={`${fieldId}_right`}
           onChange={this.onChangeRight}
           label='Add columns'
           inputColumns={rightColumns}

@@ -1,9 +1,8 @@
 .share-modal {
-
   cursor: default;
 
   h6 {
-    @extend %font-nunito-regular;
+    @include font-nunito-regular;
     font-weight: normal;
     font-size: 1.6rem;
     margin-bottom: 1rem;
@@ -24,7 +23,7 @@
 
   .public-private {
     span {
-      @extend %content-1;
+      @include content-1;
       cursor: pointer;
     }
 
@@ -62,7 +61,7 @@
         height: 2.6rem;
         color: $brand-text--dark;
         border: 2px solid transparent;
-        @extend .info-1;
+        @include info-1;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -85,7 +84,7 @@
         border: 0;
         height: 2.6rem;
         width: 2.6rem;
-        @extend .content-1;
+        @include content-1;
         font-size: 1.3rem;
         border-radius: 0 3px 3px 0;
         margin: 0;
@@ -105,7 +104,7 @@
       display: flex;
 
       input {
-        @extend %module-parameter;
+        @include module-parameter;
         z-index: 1;
         cursor: text;
 
@@ -141,7 +140,7 @@
   .copy-url {
     display: block;
     margin-left: 2rem;
-    @extend .content-1;
+    @include content-1;
     @extend .url-link;
     color: $brand-orange;
     position: relative; // to position copied-flash
@@ -161,7 +160,7 @@
       padding: 0;
       display: block;
       color: $brand-workspace;
-      @extend .content-1;
+      @include content-1;
       background-color: white;
       &:hover {
         color: $link-hover-success;

@@ -4,7 +4,7 @@
   // numbers at the left-hand side
   h3 {
     position: absolute;
-    @extend %font-nunito-regular;
+    @include font-nunito-regular;
     font-size: 2.25rem;
     width: 4rem;
     text-align: center;
@@ -16,7 +16,7 @@
 
   // notes above module
   textarea[name="notes"], .editable-notes-read-only {
-    @extend %content-1;
+    @include content-1;
     display: block;
     position: relative;
     border: 0;
@@ -166,14 +166,6 @@
   .module-card-params {
     padding: 0 $module-padding $module-padding $module-padding;
 
-    .react-select__value-container {
-      width:50%;
-    }
-
-    .react-select__menu-list {
-      z-index: 5 !important;
-    }
-
     .label {
       cursor: default;
     }
@@ -191,7 +183,7 @@
         display: block;
         width: 100%;
         color: $brand-text--dark;
-        @extend .content-1;
+        @include content-1;
         background: $Vlight-gray;
         border-radius: 2.5rem;
         border: 2px solid transparent;
@@ -415,7 +407,7 @@
     padding: 1.5rem;
     background-color: $error-prompt--Vlight;
     color: $brand-red;
-    @extend .content-1;
+    @include content-1;
     text-align: left;
     word-wrap: break-word;
     margin-bottom: 1rem;

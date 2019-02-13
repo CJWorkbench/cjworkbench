@@ -1,21 +1,20 @@
 .font404 {
-	@extend %font-nunito-bold;
+	@include font-nunito-bold;
 	font-size: 14rem;
 	line-height: 14rem;
   letter-spacing: -0.3px;
 	margin-bottom: 0.1rem;
-	font-weight: bold;
 }
 
 .title-1 { // Used in text..
-	@extend %font-nunito-regular;
+	@include font-nunito-regular;
 	font-size: 2.5rem;
 	line-height: 2.5rem;
 	font-weight: normal;
 }
 
 .title-2 { // Used to top a page, a list, a window..
-	@extend %font-nunito-regular;
+	@include font-nunito-regular;
 	font-size: 1.8rem;
 	line-height: 2.2rem;
 	letter-spacing: 0.2px;
@@ -23,7 +22,7 @@
 }
 
 .title-3 { // used in lists - of modules (stack), wf list
-	@extend %font-nunito-regular;
+	@include font-nunito-regular;
 	font-size: 1.3rem;
 	line-height: 1.4rem;
 	font-weight: normal;
@@ -31,28 +30,37 @@
 
 // main fonts for content
 
-%content-1 { // Main font for parameter's data, metadata, labels...
-	@extend %font-nunito-regular;
+@mixin content-1 {
+	@include font-nunito-regular;
 	font-size: 1.4rem;
 	line-height: 2rem;
 	font-weight: normal;
 }
+%content-1 { // Main font for parameter's data, metadata, labels...
+  @include content-1;
+}
 
-%content-2 { // option or detail
-	@extend %font-nunito-regular;
+@mixin content-2 { // option or detail
+	@include font-nunito-regular;
 	font-size: 1.1rem;
 	line-height: 1.1rem;
 }
+%content-2 {
+  @include content-2;
+}
 
-%content-3 {
-	@extend %font-nunito-extra-light;
+@mixin content-3 {
+	@include font-nunito-extra-light;
 	font-size: 1.6rem;
 	line-height: 2.3rem;
 }
+%content-3 {
+  @include content-3;
+}
 
-.content-1 { @extend %content-1; }
-.content-2 { @extend %content-2; }
-.content-3 { @extend %content-3; }
+.content-1 { @include content-1; }
+.content-2 { @include content-2; }
+.content-3 { @include content-3; }
 
 .table-content { // Only for content in the table -- do not use anywhere else
 	font-size: 1.4rem;
@@ -61,30 +69,39 @@
 }
 
 .code-1 { // used in code snipets
-	@extend .content-1;
+	@include content-1;
   font-family: "PT Mono";
 	line-height: 2.4rem;
 }
 
-%info-1 {
+@mixin info-1 {
+  @include font-nunito-extra-light;
 	font-size: 1.2rem;
 	line-height: 1.2rem;
-  @extend %font-nunito-extra-light;
+}
+%info-1 {
+  @include info-1;
 }
 
-%info-2 {
+@mixin info-2 {
+  @include font-nunito-extra-light;
 	font-size: 1.4rem;
 	line-height: 1.4rem;
 	letter-spacing: .3px;
-  @extend %font-nunito-extra-light;
+}
+%info-2 {
+  @include info-2;
 }
 
-%info-3 { // use in blocks of texts such as prompts or info popups
+@mixin info-3 { // use in blocks of texts such as prompts or info popups
 	font-size: 1.4rem;
 	line-height: 2rem;
-  @extend %font-nunito-extra-light;
+  @include font-nunito-extra-light;
+}
+%info-3 {
+  @include info-3;
 }
 
-.info-1 { @extend %info-1; }
-.info-2 { @extend %info-2; }
-.info-3 { @extend %info-3; }
+.info-1 { @include info-1; }
+.info-2 { @include info-2; }
+.info-3 { @include info-3; }

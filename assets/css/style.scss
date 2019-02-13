@@ -1,6 +1,7 @@
 @import './variables';
-@import './mixins';
 @import './fonts';
+@import 'components/Fonts.scss';
+@import './mixins';
 @import './Icons.scss';
 
 // Bootstrap
@@ -34,7 +35,6 @@
 @import 'components/Embed.scss';
 @import 'components/data_version.scss';
 @import 'components/dropdown-menu.scss';
-@import 'components/Fonts.scss';
 @import 'components/Buttons.scss';
 @import 'components/Accounts.scss';
 @import 'components/Spinner.scss';

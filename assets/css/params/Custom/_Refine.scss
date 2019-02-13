@@ -72,7 +72,7 @@
   .all-none-buttons {
     button {
       font-weight: normal;
-      @extend %content-2;
+      @include content-2;
       color: $brand-text--dark;
       background-color: transparent;
       cursor: pointer;
@@ -261,7 +261,7 @@
         }
 
         span {
-          @extend %font-nunito-extra-light;
+          @include font-nunito-extra-light;
           font-size: 1.3rem;
         }
 
@@ -335,7 +335,7 @@
           }
 
           span {
-            @extend %font-nunito-extra-light;
+            @include font-nunito-extra-light;
           }
 
           button {
@@ -379,7 +379,7 @@
         padding:0 2rem;
 
         .method-description {
-          @extend .content-1;
+          @include content-1;
           flex: 1 1 auto;
           color:$brand-text--medium;
         }
@@ -407,7 +407,7 @@
 
         label {
           margin-right: 1.6rem;
-          @extend %content-1;
+          @include content-1;
         }
       }
     }

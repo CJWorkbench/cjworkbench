@@ -1,12 +1,8 @@
 // Pick a single column
 import React from 'react'
 import PropTypes from 'prop-types'
-import Select from 'react-select'
+import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
-
-export const ReactSelectStyles = {
-  control: () => ({})
-}
 
 export default class ColumnParam extends React.PureComponent {
   static propTypes = {
@@ -20,12 +16,8 @@ export default class ColumnParam extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func(colnameOrNull) => undefined
   }
 
-  onChange = (ev) => {
-    this.props.onChange(ev.value || null)
-  }
-
   render() {
-    const { inputColumns, isReadOnly, placeholder, fieldId, label, name, value } = this.props
+    const { inputColumns, isReadOnly, placeholder, fieldId, label, name, value, onChange } = this.props
     const isLoading = (inputColumns === null)
 
     // Set dropdown list to 1 option of 'loading' as we wait. When clicked, onChange passes null to callback
@@ -35,26 +27,20 @@ export default class ColumnParam extends React.PureComponent {
         value: column.name
       }
     ))
-    const selectedOption = columnOptions.find(c => c.value === value)
 
     // Keeping classNamePrefix since CSS definitions already exist
     return (
       <React.Fragment>
         <MaybeLabel fieldId={fieldId} label={label} />
-        <Select
+        <ReactSelect
           name={name}
           key={value}
           inputId={fieldId}
           options={columnOptions}
-          value={selectedOption}
+          value={value}
           isLoading={isLoading}
-          className='react-select column'
-          classNamePrefix='react-select'
-          styles={ReactSelectStyles}
-          menuPortalTarget={document.body}
-          onChange={this.onChange}
-          isClearable={false}
-          isDisabled={this.props.isReadOnly}
+          onChange={onChange}
+          isReadOnly={isReadOnly}
           placeholder={placeholder || 'Select'}
         />
       </React.Fragment>

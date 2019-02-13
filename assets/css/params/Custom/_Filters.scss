@@ -136,7 +136,7 @@
     }
   }
 
-  .column:not(:last-child):not(:last-of-type) .react-select__control { // #1, column always there - keep round border at bottom if the last of list within filter of type (buttons are in the subfilter)
+  .react-select:not(:last-child):not(:last-of-type) .react-select__control { // #1, column always there - keep round border at bottom if the last of list within filter of type (buttons are in the subfilter)
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }

@@ -1,9 +1,9 @@
 // Choose some columns
 import React from 'react'
 import PropTypes from 'prop-types'
-import Select, { components } from 'react-select'
-import { ReactSelectStyles } from './Column'
-
+import ReactSelect from './common/react-select'
+import { components } from 'react-select'
+import { MaybeLabel } from './util'
 
 class MenuList extends React.PureComponent {
   onClickSelectAll = () => {
@@ -76,8 +76,7 @@ export default class Multicolumn extends React.PureComponent {
     this.props.onChange('')
   }
 
-  onSelectColumn = (ev) => {
-    const columns = ev.map(column => column.value)
+  onChangeColumns = (columns) => {
     this.props.onChange(columns.join(','))
   }
 
@@ -88,47 +87,30 @@ export default class Multicolumn extends React.PureComponent {
   }
 
   render() {
-    const { inputColumns, isReadOnly, name, value, label } = this.props
+    const { inputColumns, isReadOnly, fieldId, name, placeholder, label } = this.props
 
-    if (inputColumns === null) {
-      return (
-        <div className='column-selector loading'></div>
-      )
-    }
-
-    const columnOptions = inputColumns.map(column => (
+    const columnOptions = (inputColumns || []).map(column => (
       {
         label: column.name,
         value: column.name
       }
     ))
 
-    const selectedColumns = this.selectedColumns.sort(this.compareSelected).map(column => (
-      {
-        label: column,
-        value: column
-      }
-    ))
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
       <React.Fragment>
-        {label ? (
-          <label>{label}</label>
-        ) : null}
-        <Select
+        <MaybeLabel fieldId={fieldId} label={label} />
+        <ReactSelect
           isMulti
-          isDisabled={isReadOnly}
+          isReadOnly={isReadOnly}
           name={name}
+          inputId={fieldId}
           options={columnOptions}
-          menuPortalTarget={document.body}
-          className='react-select multicolumn'
-          classNamePrefix='react-select'
-          styles={ReactSelectStyles}
-          onChange={this.onSelectColumn}
+          isLoading={inputColumns === null}
+          onChange={this.onChangeColumns}
           components={Components}
-          value={selectedColumns}
-          isClearable={false}
-          placeholder='Select columns'
+          value={this.selectedColumns}
+          placeholder={placeholder || 'Select columns'}
         />
       </React.Fragment>
     )

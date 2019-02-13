@@ -15,7 +15,7 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  @extend %font-nunito-regular;
+  @include font-nunito-regular;
   background-color: $page-background;
   color: $brand-text--dark;
 }

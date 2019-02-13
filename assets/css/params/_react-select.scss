@@ -1,55 +1,116 @@
 .react-select {
+  @extend %content-1;
+  $multi-value-x-margin: .4rem;
+  $multi-value-y-margin: .4rem;
+
   .react-select__control {
-    @extend %module-parameter;
+    @include module-parameter;
     padding: 0; // override %module-parameter: react-select padding is _inside_
     display: flex; // override %module-parameter: react-select CSS is built around flex
     cursor: text; // because when you click inside, react-select lets you type
     position: relative;
+    min-height: 3.5rem; // for multi-select -- it grows
+    height: auto; // for multi-select -- it grows
+    max-height: 20rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .react-select__value-container {
+    flex: 1 1 auto;
+    max-width: 100%;
+    overflow-x: hidden;
+
+    &.react-select__value-container--is-multi {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      // There are a bunch of .react-select__multi-values, and then there's a
+      // no-class div. We can't _hide_ the no-class div: it needs to be present
+      // for the click-to-type stuff to work. (_inside_ it is a .react-select__input.)
+      //
+      // There's also .react-select__placeholder.
+      &>* {
+        display: inline-flex;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        border: 1px solid transparent;
+        margin: 2px 2px 2px $multi-value-x-margin; // 2px was a react-select default, before we stopped using defaults
+        height: 2.7rem;
+      }
+
+      .react-select__placeholder {
+        padding: 3px; // react-select default from .react-select__multi-value__label
+      }
+
+      .react-select__input {
+        display: flex;
+        max-width: 100%;
+        overflow: hidden;
+        padding: 3px; // react-select default from .react-select__multi-value__label
+
+        input {
+          display: block;
+          max-width: 100%;
+        }
+      }
+    }
   }
 
   .react-select__indicators {
-    position: absolute;
-    right: 0;
+    flex: 0 0 auto;
+    display: flex;
     align-self: center;
     height: 100%;
 
-    // separator with carret
     .react-select__indicator-separator {
-      margin: 1rem 0;
       display: none;
     }
 
-    .react-select__indicator.react-select__dropdown-indicator {
-      padding: 0 .5rem 0 0;
-      cursor: pointer;
-    }
-  }
-
-  //carret container
-  .react-select__value-container {
-    padding: 0 .8rem;
-
-    // Carret to open menu
-    .react-select__indicator,
     .react-select__indicator {
+      // Carret to open menu
+      flex: 0 0 auto;
       cursor: pointer;
       opacity: .6;
-      padding: 0 .8rem;
+      padding: 0 .5rem 0 0;
 
       svg {
-        color: $brand-text--dark;
+        color: $brand-text--medium;
       }
 
-      &:hover {
-        opacity: 1;
+      &:hover svg {
+        color: $brand-text--dark;
       }
     }
   }
 
-  // value selected
-  .react-select__single-value {
-    color: $brand-text--darker;
-    padding-right: 2rem;
+  // Style for selected values within multi select
+  .react-select__multi-value {
+    // positioning is done in .react-select__value-container--is-multi, not here
+    color: $brand-orange;
+    border-color: $brand-orange;
+    background-color: $brand-orange--light;
+    border-radius: 3px;
+
+    .react-select__multi-value__label {
+      padding: 3px 3px 3px 6px; // react-select default
+    }
+
+    .react-select__multi-value__remove {
+      cursor: pointer;
+      width: 2rem;
+      text-align: center;
+      line-height: 2.3rem; // center vertically -- eyeballing it for pixel perfection
+
+      &:hover {
+        color: white;
+        background-color: $brand-orange--medium-dark;
+      }
+    }
   }
 
   .react-select__control.react-select__control--is-focused { // extra specificity above .react-select__control, to trump .react-select__control:hover
@@ -66,10 +127,23 @@
       margin: 0;
     }
   }
+
+  &.single {
+    .react-select__value-container {
+      padding: $module-parameter-padding;
+      display: flex; // show placeholder to left of value field
+    }
+  }
+
+  &.multiple {
+  }
 }
 
 // Menu when open (it's attached to <body>, not in the spot of the DOM where the <Select> is)
 div>.react-select__menu {
+  position: absolute;
+  @extend %content-1;
+  width: 100%;
   z-index: 2;
   border-radius: 0 0 5px 5px;
   margin-top: -.2rem; // overlap the border of the .react-select__control
@@ -81,10 +155,13 @@ div>.react-select__menu {
   // See also .multicolumn-select-all-none, in _Multicolumn.scss
 
   .react-select__option {
+    // Give each option the same height as a module-parameter, for even spacing
     height: 3.5rem;
+    padding: $module-parameter-padding;
+    border: 2px solid transparent; // mimix module-parameter border
+
     background-color: $white;
     color: $brand-text--dark;
-    @extend .content-1;
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
@@ -97,13 +174,42 @@ div>.react-select__menu {
   }
   // notice when no selection found
   .react-select__menu-notice {
-    @extend .info-1;
+    @include info-1;
     color: $brand-text--dark;
+    text-align: center;
+    padding: 1.4rem;
   }
-}
 
-// Hide the reset (which did not work?)
-.react-select__indicator.react-select__clear-indicator,
-.react-select__indicator.react-select__clear-indicator {
-  display: none;
+  .multicolumn-select-all-none {
+    border-bottom: 1px solid $Vlight-gray;
+    padding: .8rem 1.2rem;
+
+    button {
+      display: inline-block;
+      font: inherit;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      background: inherit;
+      color: inherit;
+      cursor: pointer;
+
+      &:first-child {
+        padding-right: 1rem;
+      }
+
+      &:hover {
+        color: $brand-text--medium;
+      }
+
+      &:not(:first-child)::before {
+        content: '';
+        display: inline-block;
+        width: 1rem;
+        height: 2rem;
+        border-left: 1px solid $table-border;
+        vertical-align: middle;
+      }
+    }
+  }
 }

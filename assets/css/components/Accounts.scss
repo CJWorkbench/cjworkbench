@@ -54,7 +54,7 @@
       }
 
       .remove-account {
-        @extend .content-1;
+        @include content-1;
         @extend .action-button;
         @extend .button-white;
         margin:auto;
@@ -110,7 +110,7 @@
 
         .consent {
           width: 100%;
-          @extend .content-1;
+          @include content-1;
           color:$brand-text--dark;
           margin-top: 1rem;
           margin-bottom: 2rem;
@@ -129,7 +129,7 @@
     }
 
     a {
-      @extend .content-1;
+      @include content-1;
       color:$white;
     }
 
@@ -199,7 +199,7 @@
 
     .message-body {
       color: $brand-text--dark;
-      @extend .content-1;
+      @include content-1;
       text-align: center;
       margin-bottom: 3rem;
       width: 100%;
@@ -223,7 +223,7 @@
     // padding: 0;
     // list-style: none;
     // text-align: center;
-    // @extend %font-nunito-regular;
+    // @include font-nunito-regular;
     // font-size: 1.4rem;
     //
     // li {
