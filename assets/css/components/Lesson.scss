@@ -39,7 +39,7 @@ article.lesson {
     height: calc(100vh - 6rem);
     width: 36rem;
     padding:2rem;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 
     a {
