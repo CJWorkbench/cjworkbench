@@ -52,6 +52,8 @@ export default class Param extends React.PureComponent {
         type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
       }).isRequired) // null while rendering
     }).isRequired).isRequired,
+    currentTab: PropTypes.string.isRequired, // "tab-slug" this form appears in
+    selectedTab: PropTypes.string, // "tab-slug" of one "tab" param elsewhere in this form
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined

@@ -44,6 +44,7 @@ export default class ParamsForm extends React.PureComponent {
         type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
       }).isRequired) // null while rendering
     }).isRequired).isRequired,
+    currentTab: PropTypes.string.isRequired, // "tab-slug", never null
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
@@ -165,7 +166,7 @@ export default class ParamsForm extends React.PureComponent {
 
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
-            inputWfModuleId, inputDeltaId, inputColumns, tabs, applyQuickFix,
+            inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
             startCreateSecret, deleteSecret, fields } = this.props
     const isEditing = this.isEditing
 
@@ -229,6 +230,7 @@ export default class ParamsForm extends React.PureComponent {
               inputDeltaId={inputDeltaId}
               inputColumns={inputColumns}
               tabs={tabs}
+              currentTab={currentTab}
               applyQuickFix={applyQuickFix}
               secretName={secretName}
               secretParamName={secretParamName}

@@ -7,6 +7,7 @@ export default class Groups extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input> names
+    fieldId: PropTypes.string.isRequired, // <input id="...">
     value: PropTypes.shape({
       colnames: PropTypes.string.isRequired,
       group_dates: PropTypes.bool.isRequired,
@@ -40,7 +41,7 @@ export default class Groups extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, value, inputColumns } = this.props
+    const { isReadOnly, name, fieldId, value, inputColumns } = this.props
     const dateColnames = inputColumns ? inputColumns.filter(c => c.type === 'datetime').map(c => c.name) : null
 
     return (
@@ -48,6 +49,7 @@ export default class Groups extends React.PureComponent {
         <Multicolumn
           isReadOnly={isReadOnly}
           name={`${name}[colnames]`}
+          fieldId={`${fieldId}_colnames`}
           upstreamValue={value.colnames}
           value={value.colnames}
           inputColumns={inputColumns}
@@ -69,6 +71,7 @@ export default class Groups extends React.PureComponent {
           <DateGranularities
             isReadOnly={isReadOnly}
             name={`${name}[date_granularities]`}
+            fieldId={`${fieldId}_date_granularities`}
             value={value.date_granularities}
             colnames={value.colnames.split(',').filter(s => !!s)}
             dateColnames={dateColnames}

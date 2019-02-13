@@ -57,12 +57,12 @@ function PopperMenuPortal (props) {
       target={props.controlElement}
       modifiers={PopperModifiers}
     >
-      {({ popperProps, restProps, scheduleUpdate }) => { console.log(popperProps, restProps, scheduleUpdate); window.scheduleUpdate =scheduleUpdate; return (
+      {({ popperProps, restProps, scheduleUpdate }) => (
         <div
           {...popperProps}
           children={props.children}
         />
-      )}}
+      )}
     </Popper>
   ), props.appendTo)
 }
@@ -117,12 +117,12 @@ export default class ReactSelect extends React.PureComponent {
 
     let reactSelectValue
     if (isMulti) {
-      reactSelectValue = options.filter(option => value.includes(option.value))
+      reactSelectValue = options ? options.filter(option => value.includes(option.value)) : []
     } else {
-      reactSelectValue = options.find(option => value.includes(option.value)) || null
+      reactSelectValue = options ? (options.find(option => value === option.value) || null) : null
     }
 
-    const className = `react-select ${isMulti ? 'multiple' : 'single'}`
+    const className = `react-select ${isMulti ? 'multiple' : 'single'}${isLoading ? ' loading' : ''}`
 
     return (
       <Select

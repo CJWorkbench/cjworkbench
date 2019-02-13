@@ -28,6 +28,7 @@ describe('ParamsForm', () => {
       inputDeltaId={null}
       inputColumns={[]}
       tabs={[]}
+      currentTab='tab-1'
       applyQuickFix={jest.fn()}
       startCreateSecret={jest.fn()}
       deleteSecret={jest.fn()}

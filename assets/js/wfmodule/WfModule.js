@@ -302,7 +302,7 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, index, wfModule, module, inputWfModule, tabs } = this.props
+    const { isReadOnly, index, wfModule, module, inputWfModule, tabs, currentTab } = this.props
     const { edits } = this.state
 
     const moduleName = module ? module.name : '_undefined'
@@ -453,6 +453,7 @@ export class WfModule extends React.PureComponent {
                   inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}
                   inputColumns={inputWfModule ? inputWfModule.output_columns : null}
                   tabs={tabs}
+                  currentTab={currentTab}
                   applyQuickFix={this.applyQuickFix}
                   startCreateSecret={this.startCreateSecret}
                   deleteSecret={this.deleteSecret}
@@ -524,7 +525,7 @@ const getTabs = createSelector([ getWorkflow, getReadyAndPendingTabs, getWfModul
     }
   })
 })
-const getSelectedTab = createSelector([ getWorkflow, getReadyAndPendingTabs ], (workflow, tabs) => {
+const getCurrentTab = createSelector([ getWorkflow, getReadyAndPendingTabs ], (workflow, tabs) => {
   const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
   return tabs[tabSlug]
 })
@@ -533,7 +534,7 @@ const getModules = ({ modules }) => modules
 /**
  * Find first WfModule index that has a `.loads_data` ModuleVersion, or `null`
  */
-const firstFetchIndex = createSelector([ getSelectedTab, getWfModules, getModules ], (tab, wfModules, modules) => {
+const firstFetchIndex = createSelector([ getCurrentTab, getWfModules, getModules ], (tab, wfModules, modules) => {
   const index = tab.wf_module_ids.findIndex(id => {
     const wfModule = wfModules[String(id)]
     if (!wfModule) return false // add-module not yet loaded
@@ -554,6 +555,7 @@ function mapStateToProps (state, ownProps) {
   return {
     module,
     tabs: getTabs(state),
+    currentTab: getCurrentTab(state).slug,
     isZenModeAllowed: module ? !!module.has_zen_mode : false,
     isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),

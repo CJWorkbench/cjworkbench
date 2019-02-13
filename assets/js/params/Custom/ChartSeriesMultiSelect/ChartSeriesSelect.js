@@ -12,6 +12,8 @@ export default class ChartSeriesSelect extends React.PureComponent {
     index: PropTypes.number.isRequired,
     column: PropTypes.string, // null if not selected
     color: PropTypes.string, // null for auto-chosen based on idx
+    name: PropTypes.string.isRequired, // <input name="...">
+    fieldId: PropTypes.string.isRequired, // <input id="...">
     placeholder: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     availableColumns: PropTypes.arrayOf(PropTypes.shape({
@@ -50,19 +52,21 @@ export default class ChartSeriesSelect extends React.PureComponent {
   }
 
   render() {
-    const { availableColumns, column, color, index, placeholder, isReadOnly } = this.props
+    const { availableColumns, column, color, index, placeholder, isReadOnly, name, fieldId } = this.props
     const safeColor = color || this.state.color || getColor(index)
 
     return (
       <div className='chart-series-select'>
         <ColorPicker
-          name='color'
+          name={`${name}[color]`}
+          fieldId={`${fieldId}_color`}
           value={safeColor}
           choices={defaultColors}
           onChange={this.onPickColor}
         />
         <Column
-          name='column'
+          name={`${name}[column]`}
+          fieldId={`${fieldId}_column`}
           value={column}
           placeholder={placeholder}
           isReadOnly={isReadOnly}

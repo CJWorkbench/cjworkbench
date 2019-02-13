@@ -7,6 +7,8 @@ describe('ChartSeriesMultiSelect', () => {
   function wrapper (props = {}) {
     return mount(
       <ChartSeriesMultiSelect
+        name='multiseries'
+        fieldId='multiseries'
         value={[
           { column: 'A', color: '#aaaaaa' },
           { column: 'B', color: '#bbbbbb' }

@@ -9,6 +9,7 @@ describe('Column', () => {
     <Column
       value={null}
       name='col'
+      fieldId='col'
       placeholder='SelectACol'
       isReadOnly={false}
       inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}

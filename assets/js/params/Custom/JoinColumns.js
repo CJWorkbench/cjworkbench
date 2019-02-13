@@ -25,7 +25,7 @@ export default class JoinColumns extends React.PureComponent {
         type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
       }).isRequired) // null while rendering
     }).isRequired).isRequired,
-    selectedTab: PropTypes.string.isRequired // slug, may be ''
+    selectedTab: PropTypes.string // slug, may be null
   }
 
   onChangeOn = (colnames) => {

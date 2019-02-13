@@ -7,6 +7,7 @@ describe('Multicolumn', () => {
     <Multicolumn
       onChange={jest.fn()}
       name='columns'
+      fieldId='columns'
       isReadOnly={false}
       upstreamValue={'A,C'}
       value='A,C'
@@ -52,7 +53,7 @@ describe('Multicolumn', () => {
 
     it('renders loading when no columns', () => {
       const w = wrapper({ inputColumns: null })
-      expect(w.find('.loading')).toHaveLength(1)
+      expect(w.find('ReactSelect').prop('isLoading')).toBe(true)
     })
 
     it('should sort the selected columns in order', () => {
@@ -60,6 +61,7 @@ describe('Multicolumn', () => {
         <Multicolumn
           onChange={jest.fn()}
           name='column'
+          fieldId='column'
           isReadOnly={false}
           value='C,A,D'
           upstreamValue={'C,A,D'}

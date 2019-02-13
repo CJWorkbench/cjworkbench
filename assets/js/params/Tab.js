@@ -1,11 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Select from 'react-select'
+import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
-
-export const ReactSelectStyles = {
-  control: () => ({})
-}
 
 export default class TabParam extends React.PureComponent {
   static propTypes = {
@@ -20,35 +16,32 @@ export default class TabParam extends React.PureComponent {
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired
-    }).isRequired).isRequired
+    }).isRequired).isRequired,
+    currentTab: PropTypes.string.isRequired // 'tab-slug'
   }
 
-  onChange = (ev) => {
-    this.props.onChange(ev.value || '')
+  onChange = (value) => {
+    this.props.onChange(value || '')
   }
 
   render () {
-    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs } = this.props
+    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange } = this.props
 
-    const tabOptions = tabs.map(({ slug, name }) => ({ label: name, value: slug }))
-    const selectedOption = tabOptions.find(t => t.value === value)
+    const tabOptions = tabs
+      .filter(({ slug }) => slug !== currentTab)
+      .map(({ slug, name }) => ({ label: name, value: slug }))
 
     return (
       <React.Fragment>
         <MaybeLabel fieldId={fieldId} label={label} />
-        <Select
+        <ReactSelect
           name={name}
           key={upstreamValue}
           inputId={fieldId}
           options={tabOptions}
-          value={selectedOption}
-          className='react-select tab'
-          classNamePrefix='react-select'
-          styles={ReactSelectStyles}
-          menuPortalTarget={document.body}
-          onChange={this.onChange}
-          isClearable={false}
-          isDisabled={isReadOnly}
+          value={value || ''}
+          onChange={onChange}
+          isReadOnly={isReadOnly}
           placeholder={placeholder || 'Select Tab'}
         />
       </React.Fragment>

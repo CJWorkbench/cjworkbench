@@ -8,6 +8,8 @@ describe('ChartSeriesSelect', () => {
     return mount(
       <ChartSeriesSelect
         index={2}
+        name='series[2]'
+        fieldId='series_2'
         column='foo'
         color='#abcdef'
         isReadOnly={false}
@@ -45,7 +47,7 @@ describe('ChartSeriesSelect', () => {
     w.find('button[title="Pick color"]').simulate('click')
     w.find('button[name="color-fbaa6d"]').simulate('click')
     expect(w.prop('onChange')).not.toHaveBeenCalled()
-    w.find('ColumnParam[name="column"]').at(0).prop('onChange')('bar')
+    w.find('ColumnParam[fieldId="series_2_column"]').at(0).prop('onChange')('bar')
     expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'bar', color: '#fbaa6d' })
   })
 })

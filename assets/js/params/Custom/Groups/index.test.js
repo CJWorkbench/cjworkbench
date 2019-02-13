@@ -7,6 +7,7 @@ describe('Groups', () => {
     <Groups
       isReadOnly={false}
       name='groups'
+      fieldId='groups'
       value={{colnames: '', group_dates: false, date_granularities: {}}}
       inputColumns={[{name: 'A', type: 'text'}, {name: 'B', type: 'datetime'}]}
       onChange={jest.fn()}

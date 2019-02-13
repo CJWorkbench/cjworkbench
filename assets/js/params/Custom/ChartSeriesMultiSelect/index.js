@@ -10,6 +10,7 @@ export class ChartSeriesMultiSelect extends React.PureComponent {
       color: PropTypes.string.isRequired
     })).isRequired,
     placeholder: PropTypes.string.isRequired,
+    fieldId: PropTypes.string.isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     })), // or null if not loaded
@@ -80,7 +81,7 @@ export class ChartSeriesMultiSelect extends React.PureComponent {
   }
 
   render () {
-    const { inputColumns, value, placeholder, isReadOnly, name } = this.props
+    const { inputColumns, value, placeholder, isReadOnly, name, fieldId } = this.props
 
     if (inputColumns === null) {
       return <p className="loading">Loading…</p>
@@ -96,6 +97,8 @@ export class ChartSeriesMultiSelect extends React.PureComponent {
         <ChartSeriesSelect
           key={index}
           index={index}
+          name={`${name}[${index}]`}
+          fieldId={`${fieldId}_${index}`}
           placeholder={placeholder}
           isReadOnly={isReadOnly}
           column={column}
@@ -114,6 +117,8 @@ export class ChartSeriesMultiSelect extends React.PureComponent {
         <ChartSeriesSelect
           key={value.length}
           index={value.length}
+          name={`${name}[${value.length}]`}
+          fieldId={`${fieldId}_${value.length}`}
           placeholder={placeholder}
           isReadOnly={isReadOnly}
           column={null}
