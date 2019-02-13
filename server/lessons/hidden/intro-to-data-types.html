@@ -49,7 +49,7 @@
 <section>
   <h2>Data</h2>
   <p>
-    The we will be working with contains all reported police incidents in January and February 2018 in the city of New York, and is published with its data dictionary <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>.
+    This data contains all reported police incidents in January and February 2018 in the city of New York, and is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>, with its data dictionary.
   </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Again, let’s ask the basic questions:</p>
@@ -87,7 +87,7 @@
     In the next lesson, we will answer the question: How many incidents were reported each month in each borough?
   </p>
   <p>
-    For now, let’s narrow it down to the columns we need, and get them correctly typed.
+    For now, let’s narrow it down to the columns we need, and set column types correctly.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -95,11 +95,12 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add Select Columns, and keep only <kbd>BORO_NM</kbd> and <kbd>COMPL_FR_DT</kbd>
+      <p class="instruction-detail">You can rename columns by clicking on any column name in the table.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >You can rename columns by clicking on any column name. Rename these columns respectively to <kbd>Borough</kbd> and <kbd>Complaint date</kbd>
+      >Rename these two columns respectively to <kbd>Borough</kbd> and <kbd>Complaint date</kbd>
     </li>
 </section>
 <section class="fullscreen">
@@ -135,9 +136,11 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the column menu for the <kbd>Complaint date</kbd> column, select convert to <kbd>date & time</kbd>. This will add a conversion step.
+      >In the column menu<span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to date & time</kbd>. This will add a conversion step.
       <p class="instruction-detail">
-        Now this column has “Date & Time” type. We will use this cleaned column in the next lesson.
+        Now this column has a “Date & Time” type. We will use this cleaned column in the next lesson.
       </p>
     </li>
   </ol>
@@ -145,7 +148,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary">Next, we’ll learn about grouping by dates, and multiple columns.</p>
+    <p class="summary">Next, we’ll learn about grouping by dates, and grouping by multiple columns.</p>
   </div>
   <div class="next">
     <h2>Next</h2>
