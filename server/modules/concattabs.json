@@ -2,7 +2,7 @@
   "name": "Concatenate tabs",
   "id_name": "concattabs",
   "category": "Add data",
-  "icon": "join",
+  "icon": "concatenate",
   "help_url": "modules/add-data/concattabs",
   "description": "Append rows from other tabs to this tab.",
   "parameters": [
