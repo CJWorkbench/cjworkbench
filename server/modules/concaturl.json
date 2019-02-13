@@ -1,5 +1,5 @@
 {
-  "name": "Concatenate",
+  "name": "Concatenate workflow",
   "id_name": "concaturl" ,
   "category" : "Add data",
   "icon" : "concatenate",

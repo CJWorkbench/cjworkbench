@@ -1,5 +1,5 @@
 {
-  "name": "Join external workflow",
+  "name": "Join workflow",
   "id_name": "joinurl" ,
   "category" : "Add data",
   "icon" : "join",
