@@ -47,18 +47,18 @@
 </section>
 <section>
   <h2>Convert types</h2>
-  <p>Data types are used to tell computers how to interpret and use values. The columns <kbd>Date</kbd> and <kbd>Population</kbd> currently have the wrong type. They should respectively be set to <kbd>Date & Time</kbd> and <kbd>Number</kbd>.</p>
+  <p>Data types are used to tell computers how to interpret and use values. The columns <kbd>Date</kbd> and <kbd>Population</kbd> are text, so Workbench can't do math with them. They should be <kbd>Date &amp; Time</kbd> and <kbd>Number</kbd>, respectively.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":4,"name":"Convert to date & time"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[4] === 'Convert to date & time'"
+      data-highlight='[{"type": "WfModule","moduleName": "Convert to date & time"},{"type":"Module","index":3,"name":"Convert to date & time"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}; return wfModule.moduleSlug === 'convert-date' && wfModule.params['colnames'] === 'Date'"
       > Add the step 'Convert to date & time' and select the column <kbd>Date</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":5,"name":"Convert to number"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[5] === 'Convert to number'"
-      >Add the step 'Convert to Number' and select the column <kbd>Population</kbd>.
+      data-highlight='[{"type": "WfModule", "moduleName": "Convert to numbers"},{"type":"Module","index":4,"name":"Convert to numbers"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[4] || {}; return wfModule.moduleSlug === 'extract-numbers' && wfModule.params['colnames'] === 'Population'"
+      >Add the step 'Convert to numbers' and select the column <kbd>Population</kbd>.
     </li>
   </ol>
 </section>
@@ -68,12 +68,12 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":6,"name":"Refine"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[6] === 'Refine'"
+      data-highlight='[{"type":"Module","index":5,"name":"Refine"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[5] === 'Refine'"
       >Add the step 'Refine' using the search.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.tabs[0].wfModules[6].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
+      data-test="const params = workflow.tabs[0].wfModules[5].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five left.
       <figure>
         <img alt="Inspect element" src="images/clean_standardize_lesson/1_refine_row.png">
@@ -98,22 +98,22 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":7,"name":"Reshape" }]'
-      data-test="return workflow.tabs[0].wfModuleNames[7] === 'Reshape'"
+      data-highlight='[{"type":"Module","index":6,"name":"Reshape" }]'
+      data-test="return workflow.tabs[0].wfModuleNames[6] === 'Reshape'"
       >Add the step ‘Reshape’.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[7].params.direction === 1"
+      data-test="return workflow.tabs[0].wfModules[6].params.direction === 1"
       >Select <kbd>Long to wide</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[7].params.colnames == 'Date'"
+      data-test="return workflow.tabs[0].wfModules[6].params.colnames == 'Date'"
       >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[7].params.varcol == 'MetroArea'"
+      data-test="return workflow.tabs[0].wfModules[6].params.varcol == 'MetroArea'"
       >Choose <kbd>MetroArea</kbd> as the Column variable. Those values will be used in the column header in the wide table.
     </li>
   </ol>

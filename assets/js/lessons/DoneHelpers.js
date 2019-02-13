@@ -108,6 +108,11 @@ export class WorkflowModuleWithHelpers {
     return module ? module.name : null
   }
 
+  get moduleSlug () {
+    const module = this.module
+    return module ? module.id_name : null
+  }
+
   get note () {
     if (!this.wfModule) return null
     return this.wfModule.notes

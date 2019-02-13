@@ -2,7 +2,8 @@ from integrationtests.lessons import LessonTest
 
 
 DataUrl = (
-    'http://production-static.workbenchdata.com/data/population_growth_data.csv'
+    'http://production-static.workbenchdata.com/'
+    'data/population_growth_data.csv'
 )
 
 
@@ -30,12 +31,14 @@ class TestLesson(LessonTest):
         self.import_module('dropna')
         self.import_module('nulldropper')
         self.import_module('reshape')
+        self.import_module('converttodate')
+        self.import_module('extractnumbers')
 
         # 1. Introduction
         self.expect_highlight_next()
         self.click_next()
 
-        # 2. 1. Dropping empty rows and columns
+        # 2. Drop empty rows and columns
         self.expect_highlight(0, '.add-module-search')
         self.add_wf_module('Add from URL')
 
@@ -81,7 +84,28 @@ class TestLesson(LessonTest):
         self.expect_highlight_next()
         self.click_next()
 
-        # 3. 2. Standardize column values
+        # 3. Convert types
+        self.expect_highlight(
+            0,
+            '.in-between-modules:last-child .add-module-search'
+        )
+        self.add_wf_module('Convert to date & time')
+        self.select_column('Convert to date & time', 'colnames', 'Date')
+        self.submit_wf_module()
+
+        self.expect_highlight(
+            1,
+            '.in-between-modules:last-child .add-module-search',
+            wait=True  # wait for last exec to happen?
+        )
+        self.add_wf_module('Convert to numbers')
+        self.select_column('Convert to numbers', 'colnames', 'Population')
+        self.submit_wf_module()
+
+        self.expect_highlight_next()
+        self.click_next()
+
+        # 4. Standardize column values
         self.expect_highlight(
             0,
             '.in-between-modules:last-child .add-module-search'
@@ -106,9 +130,7 @@ class TestLesson(LessonTest):
         )
 
         b.assert_element('input[name="rename[Seattle - Tacoma]"]', wait=True)
-        self._rename_column(
-            'Austin', 'Austin - Round Rock'
-        )
+        self._rename_column('Austin', 'Austin - Round Rock')
         self.expect_highlight(1)  # not done this step
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
         self.submit_wf_module()
