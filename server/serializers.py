@@ -75,7 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'display_name', 'id')
+        fields = ('email', 'display_name', 'id', 'is_staff')
 
 
 class WfModuleSerializer(serializers.ModelSerializer):

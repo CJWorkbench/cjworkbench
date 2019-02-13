@@ -7,7 +7,8 @@ import ModalFooter from 'reactstrap/lib/ModalFooter'
 import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 
-export class ImportModuleFromGitHub extends React.Component {
+
+class StaffImportModuleFromGitHub extends React.PureComponent {
   static propTypes = {
     closeModal: PropTypes.func.isRequired,
     api: PropTypes.shape({
@@ -75,7 +76,7 @@ export class ImportModuleFromGitHub extends React.Component {
               <div className='import-github-error'>{status.error}</div>
             ) : null}
             <div className='label-margin t-m-gray info-1'>
-              Learn more about how to build your own module
+              Learn about how to build your own module
               {' '}<a target='_blank' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>here</a>
             </div>
           </form>
@@ -88,11 +89,47 @@ export class ImportModuleFromGitHub extends React.Component {
   }
 }
 
+
+function PublicImportModuleFromGitHub ({ closeModal }) {
+  return (
+    <Modal isOpen={true} toggle={closeModal}>
+      <ModalHeader toggle={closeModal}>Import Custom Module</ModalHeader>
+      <ModalBody>
+        <div className='label-margin t-m-gray info-1'>
+          Learn about how to build your own module
+          {' '}<a target='_blank' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>here</a>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <button type='button' className='action-button button-blue' name='close' onClick={closeModal}>Close</button>
+      </ModalFooter>
+    </Modal>
+  )
+}
+
+
+export function ImportModuleFromGitHub ({ isStaff, ...innerProps }) {
+  const Component = isStaff ? StaffImportModuleFromGitHub : PublicImportModuleFromGitHub;
+  return <Component {...innerProps} />
+}
+ImportModuleFromGitHub.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  isStaff: PropTypes.bool.isRequired,
+  api: PropTypes.shape({
+    importModuleFromGitHub: PropTypes.func.isRequired // func(url) => Promise[moduleObject or Error]
+  }).isRequired,
+  addModuleToState: PropTypes.func.isRequired, // func(moduleObject) => undefined
+}
+
+const mapStateToProps = (state) => ({
+  isStaff: state.loggedInUser.is_staff
+})
+
 const mapDispatchToProps = {
   addModuleToState: updateModuleAction
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ImportModuleFromGitHub)
