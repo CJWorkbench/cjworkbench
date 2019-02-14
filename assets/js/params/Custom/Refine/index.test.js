@@ -279,7 +279,7 @@ describe('Refine', () => {
 
   it('should merge values into one group when checked and merge button pressed', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1},
+      valueCounts: { a: 1, b: 1, c: 1, bb: 2, d: 1},
       value: { renames: { } }
     })
     w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
@@ -287,44 +287,45 @@ describe('Refine', () => {
     w.find('button[name="merge"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].renames).toEqual({"b": "bb", "bb": "bb"})
+    expect(changeCalls[0][0].renames).toEqual({ b: 'bb' })
   })
 
-  /*
-      Default value order rules:
-      1. Group 'values' count
-      2. Group 'count'
-      3. Alphabetical
-   */
-  it('should merge values to default value based on rules', () => {
+  it('should choose group name by count when merging', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},
-      value: { renames: { 'bb': 'a' } }
+      valueCounts: { a: 4, b: 1, c: 2 },
+      value: { renames: { b: 'c' } }  // a: 4, c: 3 (in 2 groups)
     })
     // Group 'value' count
     w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="include[c]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].renames).toEqual({"a": "a", "b": "a", "bb": "a"})
+    expect(changeCalls[0][0].renames).toEqual({ b: 'a', c: 'a' })
+  })
 
-    // Group count
-    w.setProps({value: { renames: {} }})
+  it('should choose group name by nValues when merging and count is equal', () => {
+    const w = wrapper({
+      valueCounts: { a: 2, b: 1, c: 1 },
+      value: { renames: { b: 'c' } } // a: 2, c: 2 (from 2 groups)
+    })
+    w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
     w.find('input[name="include[c]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="include[e]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
-    expect(changeCalls).toHaveLength(2)
-    expect(changeCalls[1][0].renames).toEqual({"e": "e", "c": "e"})
+    expect(w.prop('onChange')).toHaveBeenCalledWith({ renames: { a: 'c', b: 'c' } })
+  })
 
-    // Alphabetical
-    w.setProps({value: { renames: {} }})
-    w.find('input[name="include[f]"]').simulate('change', { target: { checked: true } })
+  it('should choose group name alphabetically when merging and count+nValues are equal', () => {
+    const w = wrapper({
+      valueCounts: { a: 1, b: 1, c: 1, d: 1 },
+      value: { renames: { b: 'a', c: 'd' } } // a: 2, d: 2
+    })
+    w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
     w.find('input[name="include[d]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
-    expect(changeCalls).toHaveLength(3)
-    expect(changeCalls[2][0].renames).toEqual({"f": "d", "d": "d"})
+    expect(w.prop('onChange')).toHaveBeenCalledWith({ renames: { b: 'a', c: 'a', d: 'a' } })
   })
+
   it('should focus the new group text for editing after merge', () => {
     const w = wrapper({
       valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},

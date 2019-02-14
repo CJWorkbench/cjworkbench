@@ -81,6 +81,13 @@ export class RefineSpec {
       }
     }
 
+    // And delete duplicates
+    for (const fromGroup in groupMap) {
+      if (newRenames[fromGroup] === fromGroup) {
+        delete newRenames[fromGroup]
+      }
+    }
+
     return new RefineSpec(newRenames)
   }
 
@@ -535,23 +542,11 @@ export class Refine extends React.PureComponent {
     const selectedValuesList = Object.keys(this.state.selectedValues)
     const selectedGroups = this.groups.filter(obj => selectedValuesList.indexOf(obj.name) > -1)
 
-    selectedGroups.sort(function (a, b) {
-        // Compare length of values
-        if (a.values.length > b.values.length) return -1
-        if (b.values.length > a.values.length) return 1
-        // Compare count
-        if (a.count > b.count) return -1
-        if (b.count < a.count) return 1
-        // Alphabetical
-        if (a.name < b.name) return -1
-        return 1
-    })
+    selectedGroups.sort((a, b) => (b.count - a.count) || (b.values.length - a.values.length) || a.name.localeCompare(b.name))
 
     const toGroup = selectedGroups[0].name
     const groupMap = {}
-    selectedValuesList.forEach(function (fromGroup) {
-      groupMap[fromGroup] = toGroup
-    })
+    selectedValuesList.forEach((fromGroup)  => groupMap[fromGroup] = toGroup)
     this.massRename(groupMap)
     this.setState({ selectedValues: [], focusedValue: toGroup })
   }
