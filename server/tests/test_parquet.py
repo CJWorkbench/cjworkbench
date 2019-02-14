@@ -21,14 +21,18 @@ class ParquetTest(unittest.TestCase):
             minio.minio_client.remove_object(bucket, key)
 
     def test_read_header_issue_361(self):
+        # https://github.com/dask/fastparquet/issues/361
         with self._file_on_s3('fastparquet-issue-361.par'):
-            with self.assertRaises(parquet.FastparquetIssue361):
-                parquet.read_header(bucket, key)
+            header = parquet.read_header(bucket, key)
+            self.assertEqual(header.columns, [])
+            self.assertEqual(header.count, 3)
 
     def test_read_issue_361(self):
+        # https://github.com/dask/fastparquet/issues/361
         with self._file_on_s3('fastparquet-issue-361.par'):
-            with self.assertRaises(parquet.FastparquetIssue361):
-                parquet.read(bucket, key)
+            dataframe = parquet.read(bucket, key)
+            self.assertEqual(list(dataframe.columns), [])
+            self.assertEqual(len(dataframe), 3)
 
     def test_read_issue_375_uncompressed(self):
         with self._file_on_s3('fastparquet-issue-375.par'):

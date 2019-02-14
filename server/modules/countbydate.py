@@ -144,8 +144,8 @@ class ValidatedForm:
                         f'but the maximum allowed is '
                         f'{settings.MAX_ROWS_PER_TABLE}'
                     )
-                new_index = pd.PeriodIndex(start=start, end=end,
-                                           freq=period_index.freq)
+                new_index = pd.period_range(start=start, end=end,
+                                            freq=period_index.freq)
                 grouped_series = grouped_series.reindex(
                     new_index,
                     fill_value=self.operation.zero_value

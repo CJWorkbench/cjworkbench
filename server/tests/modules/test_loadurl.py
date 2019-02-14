@@ -110,7 +110,7 @@ class LoadUrlTests(unittest.TestCase):
         fetch_result = fetch(url='http://test.com/the.csv')
         self.assertEqual(fetch_result, ProcessResult(error=(
             'Error tokenizing data. C error: EOF inside string '
-            'starting at line 1'
+            'starting at row 1'
         )))
 
     @patch('server.modules.utils.spooled_data_from_url',

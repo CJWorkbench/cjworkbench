@@ -82,8 +82,11 @@ def sanitize_series(series: pd.Series) -> pd.Series:
         if pd.api.types.is_numeric_dtype(categories.values):
             # Un-categorize: make array of int/float
             return pd.to_numeric(series)
-        elif categories.dtype != object \
-                or pd.api.types.infer_dtype(categories.values) != 'string':
+        elif (
+            categories.dtype != object
+            or pd.api.types.infer_dtype(categories.values,
+                                        skipna=True) != 'string'
+        ):
             # Map from non-Strings to Strings
             #
             # 1. map the _codes_ to unique _codes_
@@ -179,6 +182,7 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
     # otherwise sets column to null
     else:
         return series
+
 
 def autocast_dtypes_in_place(table: pd.DataFrame) -> None:
     """

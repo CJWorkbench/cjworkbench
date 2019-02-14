@@ -11,6 +11,12 @@ import warnings
 from server import minio
 
 
+# Workaround for https://github.com/dask/fastparquet/issues/394
+# When we upgrade to fastparquet >= 0.2.2, nix this!
+warnings.filterwarnings("ignore", category=FutureWarning,
+                        module='fastparquet.util', lineno=221)
+
+
 def _minio_open_random(bucket, key):
     if key.endswith('/_metadata'):
         # fastparquet insists upon trying for the 'hive' storage schema before
@@ -68,15 +74,6 @@ class FastparquetCouldNotHandleFile(Exception):
     pass
 
 
-class FastparquetIssue361(FastparquetCouldNotHandleFile):
-    """
-    The file has zero columns and Fastparquet has a bug.
-
-    https://github.com/dask/fastparquet/issues/361 -- TODO upgrade
-    fastparquet and nix this error.
-    """
-    pass
-
 
 class FastparquetIssue375(FastparquetCouldNotHandleFile):
     """
@@ -101,19 +98,7 @@ def read_header(bucket: str, key: str,
     the entire file.
     """
     filelike = open_with(bucket, key)  # raises FileNotFoundError
-    try:
-        # file_scheme='simple' saves us a test for the '_metadata' key
-        return fastparquet.ParquetFile(filelike)
-    except IndexError:
-        # TODO nix this when fastparquet resolves
-        # https://github.com/dask/fastparquet/issues/361
-        #
-        # The file has a zero-length column list, and fastparquet can't
-        # handle that.
-        #
-        # Our cached DataFrame should be "empty". No columns means no
-        # rows.
-        raise FastparquetIssue361
+    return fastparquet.ParquetFile(filelike)
 
 
 def _retry_on_transient_error(n_attempts: int):

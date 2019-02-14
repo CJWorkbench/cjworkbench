@@ -26,10 +26,10 @@ nltk = "*"
 requests = "*"
 requests-oauthlib = "*"
 pyjwt = "*"
-workbenchdata-pandas = "==0.24.0a3"
+pandas = "==0.24.1"
 cchardet = "*"
 python-snappy = "*"
-workbenchdata-fastparquet = "==0.1.6a2"
+fastparquet = "==0.2.1"
 minio = "*"
 async-generator = "*"
 aiodns = "*"
@@ -41,10 +41,6 @@ hext = "==0.2.0"
 jsonschema = "*"
 rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
-# TODO nix these next two. They're because numba/llvmlite have half-released versions
-# today, 2019-02-04.
-numba = "==0.42.0"
-llvmlite = "==0.27.0"
 
 [dev-packages]
 watchdog = "*"

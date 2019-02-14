@@ -23,9 +23,9 @@ def render(table, params):
         sep = '\t'
 
     try:
-        table = pd.read_table(io.StringIO(tablestr), header=header_row,
-                              skipinitialspace=True, sep=sep,
-                              na_filter=False, dtype='category')
+        table = pd.read_csv(io.StringIO(tablestr), header=header_row,
+                            skipinitialspace=True, sep=sep,
+                            na_filter=False, dtype='category')
         autocast_dtypes_in_place(table)
     except EmptyDataError:
         return ProcessResult(pd.DataFrame())

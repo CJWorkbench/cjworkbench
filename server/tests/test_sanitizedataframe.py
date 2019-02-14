@@ -18,19 +18,15 @@ class SanitizeDataFrameTest(TestCase):
         sfpd_dict = json.load(open(fname))
         sfpd = pd.DataFrame(sfpd_dict)
 
-        sfpd_types = sfpd.apply(pd.api.types.infer_dtype)
+        sfpd_types = sfpd.apply(pd.api.types.infer_dtype, skipna=True)
         self.assertEqual(sfpd.columns[6], 'location')
         self.assertEqual(sfpd_types[6], 'mixed')
 
         sanitize_dataframe(sfpd)
 
         # should have converted mixed types (and other complex types) to string
-        sfpd_types = sfpd.apply(pd.api.types.infer_dtype)
+        sfpd_types = sfpd.apply(pd.api.types.infer_dtype, skipna=True)
         self.assertEqual(sfpd_types[6], 'string')
-
-        # used by StoredObject, will crash on complex types, which we should
-        # not have
-        hash_pandas_object(sfpd)
 
     def test_mixed_to_string_keeps_nan(self):
         # check that sanitizing a non-string column with missing data produces
