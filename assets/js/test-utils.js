@@ -46,7 +46,7 @@ export function sleep (ms) {
  *     expect(store.getState().workflow).toEqual(...)
  */
 export function mockStore (initialState, api={}) {
-  const middlewares = [ promiseMiddleware(), thunk.withExtraArgument(api) ]
+  const middlewares = [ promiseMiddleware, thunk.withExtraArgument(api) ]
   const store = createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
   return store
 }

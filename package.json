@@ -15,7 +15,7 @@
     "react-ace": "^6.4.0",
     "react-copy-to-clipboard": "^5.0.0",
     "react-data-grid": "^4.0.8",
-    "react-dom-confetti": "0.0.10",
+    "react-dom-confetti": "^0.1.0",
     "react-fine-uploader": "^1.1.1",
     "react-redux": "^6.0.0",
     "react-select": "^2.3.0",
@@ -23,7 +23,7 @@
     "react-virtualized": "^9.21.0",
     "reactstrap": "^6.5.0",
     "redux": "^4.0.1",
-    "redux-promise-middleware": "^5.1.1",
+    "redux-promise-middleware": "^6.1.0",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0"
   },

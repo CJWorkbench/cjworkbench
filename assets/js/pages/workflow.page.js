@@ -23,7 +23,7 @@ const api = new WorkbenchAPI(websocket)
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-const middlewares = [ promiseMiddleware(), thunk.withExtraArgument(api) ]
+const middlewares = [ promiseMiddleware, thunk.withExtraArgument(api) ]
 
 const store = createStore(
   workflowReducer,
