@@ -165,22 +165,15 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
             return series
     elif hasattr(series, 'cat'):
         # Categorical series. Try to infer type of series.
+        #
+        # Assume categories are all str: after all, we're assuming the input is
+        # "sane" and "sane" means only str categories are valid.
         try:
-            # Replace empty str with nan -- will help to_numeric
-            if '' in series.cat.categories:
-                series = series.cat.remove_categories([''])
-            categories = pd.to_numeric(series.cat.categories)
-            series.cat.rename_categories(categories, inplace=True)
-            # Expand categories. This will likely save space for int8 and cost
-            # space for float64. [2018-07-3] The only strong rationale at the
-            # moment (either for or against this approach) is simplifying unit
-            # tests.
-            return series.astype(series.cat.categories.dtype)
-        except ValueError as err:
+            return pd.to_numeric(series)
+        except (ValueError, TypeError):
             return series
-    # Setting dtype=None in read_csv infers types, must account for numerical series
-    # otherwise sets column to null
     else:
+        # We should never get here
         return series
 
 
@@ -191,6 +184,8 @@ def autocast_dtypes_in_place(table: pd.DataFrame) -> None:
     This is appropriate when parsing CSV data, or maybe Excel data. It is
     probably not appropriate to call this method elsewhere, since it destroys
     data types all over the table.
+
+    The input must be _sane_ data only!
 
     TODO handle dates and maybe booleans.
     """

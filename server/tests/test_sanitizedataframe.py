@@ -184,29 +184,41 @@ class AutocastDtypesTest(TestCase):
 
     def test_autocast_int_from_str_categories(self):
         # example: used read_csv(dtype='category'), now want ints
-        table = pd.DataFrame({'A': ['1', '2']}).astype('category')
+        table = pd.DataFrame({'A': ['1', '2']}, dtype='category')
         autocast_dtypes_in_place(table)
         expected = pd.DataFrame({'A': [1, 2]})
         assert_frame_equal(table, expected)
 
     def test_autocast_float_from_str_categories(self):
         # example: used read_csv(dtype='category'), now want floats
-        table = pd.DataFrame({'A': ['1', '2.1']}).astype('category')
+        table = pd.DataFrame({'A': ['1', '2.1']}, dtype='category')
         autocast_dtypes_in_place(table)
         expected = pd.DataFrame({'A': [1.0, 2.1]}, dtype=np.float64)
         assert_frame_equal(table, expected)
 
     def test_autocast_float_from_str_categories_with_empty_str(self):
         # example: used read_csv(dtype='category'), now want floats
-        table = pd.DataFrame({'A': ['1', '2.1', '']}).astype('category')
+        table = pd.DataFrame({'A': ['1', '2.1', '']}, dtype='category')
         autocast_dtypes_in_place(table)
         expected = pd.DataFrame({'A': [1.0, 2.1, np.nan]}, dtype=np.float64)
         assert_frame_equal(table, expected)
 
+    def test_autocast_float_from_str_categories_with_dup_floats(self):
+        table = pd.DataFrame({'A': ['1', '1.0']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1.0, 1.0]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_int_from_str_categories_with_empty_str(self):
+        table = pd.DataFrame({'A': ['', '', '1']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [np.nan, np.nan, 1.0]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
     def test_autocast_str_categories_from_str_categories(self):
-        table = pd.DataFrame({'A': ['1', '2.1', 'Yay']}).astype('category')
+        table = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
         autocast_dtypes_in_place(table)  # should be no-op
-        expected = pd.DataFrame({'A': ['1', '2.1', 'Yay']}).astype('category')
+        expected = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
         assert_frame_equal(table, expected)
 
     def test_autocast_allow_crazy_types(self):
