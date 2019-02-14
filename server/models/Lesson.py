@@ -4,10 +4,10 @@ import os.path
 import pathlib
 from typing import List
 from xml.etree import ElementTree
+import yaml
 from django.conf import settings
 import html5lib
 import jsonschema
-import yaml
 
 
 # Load and parse the spec that defines the format of the initial workflow JSON, once
@@ -192,16 +192,16 @@ class LessonInitialWorkflow:
     def _from_etree(el):
         text = el.text
         try:
-            jsondict = json.loads(text)
-        except ValueError as e:
+            jsondict = yaml.safe_load(text)
+        except yaml.YAMLError as err:
             raise LessonParseError(
-                'Initial workflow json parse error: ' + str(e)
+                'Initial-workflow YAML parse error: ' + str(err)
             )
         try:
             _initial_workflow_validator.validate(jsondict)
-        except jsonschema.ValidationError as e:
+        except jsonschema.ValidationError as err:
             raise LessonParseError(
-                'Initial workflow json validation error: ' + str(e)
+                'Initial-workflow structure is invalid: ' + str(err)
             )
         return LessonInitialWorkflow(jsondict['tabs'])
 

@@ -76,38 +76,64 @@ class LessonTests(SimpleTestCase):
         self.assertEquals(out.footer, LessonFooter('Foot', '<p>My foot</p>'))
 
     def test_parse_initial_workflow(self):
-        initial_workflow_json = """
-            {
-              "tabs": [
+        initial_workflow = {
+            'tabs': [
                 {
-                  "name": "Tab 1",
-                  "wfModules": [
-                    {
-                      "module": "loadurl",
-                      "params": {
-                        "url": "http://foo.com",
-                        "has_header": true
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-        """
+                    'name': 'Tab 1',
+                    'wfModules': [
+                        {
+                            'module': 'loadurl',
+                            'params': {
+                                'url': 'http://foo.com',
+                                'has_header': True,
+                            },
+                        },
+                    ],
+                },
+            ],
+        }
+        initial_workflow_json = json.dumps(initial_workflow)
         out = Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
-
-        self.assertIsNotNone(out.initial_workflow)
         self.assertEquals(
             out.initial_workflow,
-            LessonInitialWorkflow(json.loads(initial_workflow_json)['tabs'])
+            LessonInitialWorkflow(initial_workflow['tabs'])
         )
 
-
     def test_parse_initial_workflow_bad_json(self):
-        initial_workflow_json = "{ not valid json }"
+        initial_workflow_json = "{ not valid json"
 
-        with self.assertRaisesMessage(LessonParseError, "Initial workflow json parse error"):
+        with self.assertRaisesMessage(LessonParseError, "Initial-workflow YAML parse error"):
             Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
+
+    def test_parse_initial_workflow_yaml(self):
+        initial_workflow_json = """
+        tabs:
+          - name: Tab 1
+            wfModules:
+              - module: loadurl
+                params:
+                    url: 'http://foo.com'
+                    has_header: true
+        """
+
+        out = Lesson.parse('a-slug', lesson_text_with_initial_workflow(initial_workflow_json))
+        self.assertEquals(
+            out.initial_workflow,
+            LessonInitialWorkflow([
+                {
+                    'name': 'Tab 1',
+                    'wfModules': [
+                        {
+                            'module': 'loadurl',
+                            'params': {
+                                'url': 'http://foo.com',
+                                'has_header': True,
+                            },
+                        },
+                    ],
+                },
+            ])
+        )
 
 class LessonManagerTests(SimpleTestCase):
     def build_manager(self, path=None):
