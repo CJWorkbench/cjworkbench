@@ -198,6 +198,7 @@ exports[`Workflow list page renders correctly 1`] = `
                             className="dropdown-item"
                             href="/account/logout"
                             onClick={[Function]}
+                            role="menuitem"
                             tabIndex="0"
                           >
                             <span>
@@ -422,6 +423,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 className="test-sort-date-ascending dropdown-item"
                                 onClick={[Function]}
+                                role="menuitem"
                                 tabIndex="0"
                                 type="button"
                               >
@@ -439,6 +441,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 className="test-sort-date-descending dropdown-item"
                                 onClick={[Function]}
+                                role="menuitem"
                                 tabIndex="0"
                                 type="button"
                               >
@@ -467,6 +470,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 className="test-sort-name-ascending dropdown-item"
                                 onClick={[Function]}
+                                role="menuitem"
                                 tabIndex="0"
                                 type="button"
                               >
@@ -484,6 +488,7 @@ exports[`Workflow list page renders correctly 1`] = `
                               <button
                                 className="test-sort-name-descending dropdown-item"
                                 onClick={[Function]}
+                                role="menuitem"
                                 tabIndex="0"
                                 type="button"
                               >
@@ -676,6 +681,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-duplicate-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -696,6 +702,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-delete-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -873,6 +880,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-duplicate-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -893,6 +901,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-delete-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -1070,6 +1079,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-duplicate-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -1090,6 +1100,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-delete-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -1280,6 +1291,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-duplicate-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -1457,6 +1469,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-duplicate-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >
@@ -1647,6 +1660,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <button
                                         className="test-duplicate-button dropdown-item"
                                         onClick={[Function]}
+                                        role="menuitem"
                                         tabIndex="0"
                                         type="button"
                                       >

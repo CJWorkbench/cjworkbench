@@ -79,7 +79,7 @@ export default class ColumnContextMenu extends React.Component {
           <i className='icon-caret-down'></i>
         </button>
         {isOpen ? (
-          <Popover className='dropdown-popover' target={this.dropdownRef} isOpen toggle={this.toggle} hideArrow placement='bottom-end' boundariesElement={document.body}>
+          <Popover className='dropdown-popover' target={this.dropdownRef} isOpen trigger='legacy' toggle={this.toggle} hideArrow placement='bottom-end' boundariesElement={document.body}>
             <div className='dropdown-menu show'>
               <DropdownItem onClick={this.renameColumn} className='rename-column-header' toggle={false}>
                 <i className="icon-edit"></i>

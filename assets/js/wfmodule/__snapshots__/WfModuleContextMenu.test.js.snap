@@ -95,6 +95,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 <button
                   className="test-export-button dropdown-item"
                   onClick={[Function]}
+                  role="menuitem"
                   tabIndex="0"
                   type="button"
                 >
@@ -121,6 +122,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 <button
                   className="test-delete-button dropdown-item"
                   onClick={[Function]}
+                  role="menuitem"
                   tabIndex="0"
                   type="button"
                 >

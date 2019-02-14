@@ -94,6 +94,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                   className="dropdown-item"
                   href="/workflows"
                   onClick={[Function]}
+                  role="menuitem"
                   tabIndex="0"
                 >
                   <span>
@@ -109,6 +110,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                 <button
                   className="dropdown-item"
                   onClick={[Function]}
+                  role="menuitem"
                   tabIndex="0"
                   type="button"
                 >
@@ -126,6 +128,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                   className="dropdown-item"
                   href="/account/logout"
                   onClick={[Function]}
+                  role="menuitem"
                   tabIndex="0"
                 >
                   <span>
