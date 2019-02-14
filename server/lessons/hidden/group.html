@@ -32,9 +32,30 @@
             }
           },
           {
-            "module":"selectcolumns",
+            "module":"filter",
             "params": {
-              "colnames":"Project Status,Planning Neighborhood,Project Units,Affordable Units,% Affordable"
+              "filters": {
+                "filters": [
+                  {
+                    "operator": "and",
+                    "subfilters": [
+                      {
+                        "value": "50",
+                        "colname": "% Affordable",
+                        "condition": "number_is_greater_than",
+                        "case_sensitive": false
+                      },
+                      {
+                        "value": "100",
+                        "colname": "Project Units",
+                        "condition": "number_is_greater_than",
+                        "case_sensitive": false
+                      }
+                    ]
+                  }
+                ],
+                "operator": "and"
+              }
             }
           }
         ]
