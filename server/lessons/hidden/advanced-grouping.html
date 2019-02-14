@@ -26,6 +26,18 @@
             "params": {
               "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYC-incidents-Jan-feb-2018.csv"
             }
+          },
+          {
+            "module":"selectcolumns",
+            "params": {
+              "colnames":"boro_nm,cmplnt_fr_dt"
+            }
+          },
+          {
+            "module":"renamecolumns",
+            "params": {
+              "rename-entries":"{\"boro_nm\":\"Borough\", \"cmplnt_fr_dt\":\"Complaint date\"}"
+            }
           }
         ]
       },
@@ -46,7 +58,7 @@
 <section>
   <h2>Grouping by date</h2>
   <p>
-    Our first question is ‘how many incidents were reported each month, in the entire city?’
+    Our first question is ‘How many incidents were reported each month, in the entire city?’
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -58,7 +70,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity
+      >Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
