@@ -153,7 +153,7 @@ div>.react-select__menu {
   box-shadow: $menu-shadow;
   outline: none;
   max-height: 30rem;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   // See also .multicolumn-select-all-none, in _Multicolumn.scss
 
