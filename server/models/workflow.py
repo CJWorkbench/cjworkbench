@@ -6,7 +6,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
-from .Lesson import Lesson
+from .lesson import Lesson
 
 
 def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:

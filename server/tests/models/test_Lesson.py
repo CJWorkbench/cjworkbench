@@ -1,6 +1,6 @@
 import os.path
 from django.test import SimpleTestCase
-from server.models.Lesson import *
+from server.models.lesson import *
 
 
 # Small helper to avoid repeated code. Lesson HTML includes passed json, is otherwise valid.

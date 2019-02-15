@@ -8,7 +8,8 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from server import rabbitmq
 from server.models.commands import InitWorkflowCommand
-from server.models import Lesson, Workflow, ModuleVersion
+from server.models import Workflow, ModuleVersion
+from server.models.lesson import Lesson
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
 

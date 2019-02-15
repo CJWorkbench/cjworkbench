@@ -1,8 +1,9 @@
 import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
-from server.models import Lesson, LessonHeader, LessonFooter, \
-    LessonInitialWorkflow, Workflow, ModuleVersion, LoadedModule
+from server.models import Workflow, ModuleVersion, LoadedModule
+from server.models.lesson import Lesson, LessonHeader, LessonFooter, \
+        LessonInitialWorkflow
 from server.tests.utils import DbTestCase, create_test_user
 
 

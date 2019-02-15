@@ -5,6 +5,7 @@ from typing import Iterable, List, Tuple
 import unittest
 from server.models.module_loader import validate_module_spec, ModuleFiles, \
         ModuleSpec, validate_python_functions
+from server.tests.utils import MockDir, MockPath
 
 
 class ValidateModuleSpecTest(unittest.TestCase):
@@ -158,85 +159,38 @@ class ValidateModuleSpecTest(unittest.TestCase):
         })
 
 
-class MockPath(pathlib.PurePosixPath):
-    def __new__(cls, parts: List[str], data: bytes):
-        ret = super().__new__(cls, *parts)
-        ret.data = data
-        return ret
-
-    # Path interface
-    def read_bytes(self):
-        return self.data
-
-    # Path interface
-    def read_text(self, encoding='utf-8', errors='strict'):
-        return self.data.decode(encoding, errors)
-
-
-class MockDir(pathlib.PurePosixPath):
-    """
-    Mock filesystem directory using pathlib.Path interface.
-
-    Usage:
-
-        dirpath: PurePath = MockDir({
-            'xxx.yaml': b'id_name: xxx...'
-            'xxx.py': b'def render(
-        })
-
-        yaml_text = (dirpath / 'xxx.yaml').read_text()
-    """
-
-    def __new__(cls, files: List[Tuple[str, bytes]]):  # filename => bytes
-        ret = super().__new__(cls, pathlib.PurePath('root'))
-        filedata = {}
-        for filename, data in files:
-            filedata[filename] = MockPath(['root', filename], data)
-        ret.files = filedata
-        return ret
-
-    # override
-    def joinpath(self, filename: str) -> MockPath:
-        # raises KeyError ... but no worries yet: this is a mock, and we aren't
-        # testing what happens if users try to open nonexistent files.
-        return self.files[filename]
-
-    def glob(self, pattern: str) -> Iterable[MockPath]:
-        return (path for path in self.files.values() if path.match(pattern))
-
-
 class ModuleFilesTest(unittest.TestCase):
     def test_validate_extra_json(self):
-        dirpath = MockDir([
-            ('module.json', b'{}'),
-            ('extra.json', b'{}'),
-            ('module.py', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'{}',
+            'extra.json': b'{}',
+            'module.py': b'',
+        })
         with self.assertRaisesRegex(ValueError, 'Multiple.*json.*files'):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_validate_extra_json_or_yaml(self):
-        dirpath = MockDir([
-            ('module.json', b'{}'),
-            ('extra.yaml', b'{}'),
-            ('module.py', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'{}',
+            'extra.yaml': b'{}',
+            'module.py': b'',
+        })
         with self.assertRaisesRegex(ValueError, 'Multiple.*json.*files'):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_validate_extra_py(self):
-        dirpath = MockDir([
-            ('module.json', b'{}'),
-            ('module.py', b''),
-            ('module2.py', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'{}',
+            'module.py': b'',
+            'module2.py': b'',
+        })
         with self.assertRaisesRegex(ValueError, 'Multiple.*py.*files'):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_validate_missing_json(self):
-        dirpath = MockDir([
-            ('module.py', b''),
-        ])
+        dirpath = MockDir({
+            'module.py': b'',
+        })
         with self.assertRaisesRegex(
             ValueError,
             'Missing ".json" or ".yaml" module-spec file'
@@ -244,68 +198,68 @@ class ModuleFilesTest(unittest.TestCase):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_validate_missing_py(self):
-        dirpath = MockDir([
-            ('module.json', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'',
+        })
         with self.assertRaisesRegex(ValueError,
                                     'Missing ".py" module-code file'):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_ignore_setup_py(self):
-        dirpath = MockDir([
-            ('setup.py', b''),
-            ('module.json', b''),
-            ('module.py', b''),
-        ])
+        dirpath = MockDir({
+            'setup.py': b'',
+            'module.json': b'',
+            'module.py': b'',
+        })
         module_files = ModuleFiles.load_from_dirpath(dirpath)
         self.assertEqual(module_files.code.name, 'module.py')
 
     def test_ignore_test_py(self):
-        dirpath = MockDir([
-            ('module.json', b''),
-            ('module.py', b''),
-            ('test_module.py', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'',
+            'module.py': b'',
+            'test_module.py': b'',
+        })
         module_files = ModuleFiles.load_from_dirpath(dirpath)
         self.assertEqual(module_files.code.name, 'module.py')
 
     def test_ignore_package_json(self):
-        dirpath = MockDir([
-            ('module.json', b''),
-            ('module.py', b''),
-            ('package.json', b''),
-            ('package-lock.json', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'',
+            'module.py': b'',
+            'package.json': b'',
+            'package-lock.json': b'',
+        })
         module_files = ModuleFiles.load_from_dirpath(dirpath)
         self.assertEqual(module_files.spec.name, 'module.json')
 
     def test_validate_max_1_html(self):
-        dirpath = MockDir([
-            ('module.json', b''),
-            ('module.py', b''),
-            ('module.html', b''),
-            ('extra.html', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'',
+            'module.py': b'',
+            'module.html': b'',
+            'extra.html': b'',
+        })
         with self.assertRaisesRegex(ValueError, 'Multiple.*html.*files'):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_validate_max_1_js(self):
-        dirpath = MockDir([
-            ('module.json', b''),
-            ('module.py', b''),
-            ('module.js', b''),
-            ('extra.js', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'',
+            'module.py': b'',
+            'module.js': b'',
+            'extra.js': b'',
+        })
         with self.assertRaisesRegex(ValueError, 'Multiple.*js.*files'):
             ModuleFiles.load_from_dirpath(dirpath)
 
     def test_happy_path(self):
-        dirpath = MockDir([
-            ('module.json', b''),
-            ('module.py', b''),
-            ('module.html', b''),
-            ('module.js', b''),
-        ])
+        dirpath = MockDir({
+            'module.json': b'',
+            'module.py': b'',
+            'module.html': b'',
+            'module.js': b'',
+        })
         module_files = ModuleFiles.load_from_dirpath(dirpath)
         self.assertEqual(module_files.spec.name, 'module.json')
         self.assertEqual(module_files.code.name, 'module.py')

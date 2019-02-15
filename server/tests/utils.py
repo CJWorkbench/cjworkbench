@@ -1,5 +1,7 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+import pathlib
+from typing import Dict, Iterable, List, Optional
 from django.db import connection, connections
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -148,3 +150,69 @@ def clear_minio():
         if keys:
             for err in minio.minio_client.remove_objects(bucket, keys):
                 raise err
+
+
+class MockPath(pathlib.PurePosixPath):
+    """
+    Simulate pathlib.Path
+
+    Features:
+
+        * read_bytes()
+        * read_text(), including encoding and errors
+        * when `data` is None, raise `FileNotFoundError` when expecting a file
+    """
+
+    def __new__(cls, parts: List[str], data: Optional[bytes]):
+        ret = super().__new__(cls, *parts)
+        ret.data = data
+        return ret
+
+    # Path interface
+    def read_bytes(self):
+        if self.data is None:
+            raise FileNotFoundError(self.name)
+
+        return self.data
+
+    # Path interface
+    def read_text(self, encoding='utf-8', errors='strict'):
+        if self.data is None:
+            raise FileNotFoundError(self.name)
+
+        return self.data.decode(encoding, errors)
+
+
+class MockDir(pathlib.PurePosixPath):
+    """
+    Mock filesystem directory using pathlib.Path interface.
+
+    Usage:
+
+        dirpath: PurePath = MockDir({
+            'xxx.yaml': b'id_name: xxx...'
+            'xxx.py': b'def render(
+        })
+
+        yaml_text = (dirpath / 'xxx.yaml').read_text()
+    """
+
+    def __new__(cls, filedata: Dict[str, bytes]):  # filename => bytes
+        ret = super().__new__(cls, pathlib.PurePath('root'))
+        ret.filedata = filedata
+        return ret
+
+    # override
+    def __truediv__(self, filename: str) -> MockPath:
+        data = self.filedata.get(filename)  # None if file does not exist
+        return MockPath(['root', filename], data)
+        try:
+            return self.files[filename]
+        except KeyError:
+            return MockPath(['root', filename], None)
+
+    def glob(self, pattern: str) -> Iterable[MockPath]:
+        for key in self.filedata.keys():
+            path = self / key
+            if path.match(pattern):
+                yield path
