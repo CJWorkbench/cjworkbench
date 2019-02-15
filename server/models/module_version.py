@@ -1,7 +1,5 @@
-import os
 import json
-import jsonschema
-import yaml
+from typing import Any
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -9,90 +7,17 @@ from django.db.models import F, OuterRef, Subquery
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
-from .param_field import ParamField, ParamDType
 from server import minio
-from server.modules import SpecPaths as InternalModuleSpecPaths
+from server.modules import Specs as InternalModuleSpecs
+from .module_loader import validate_module_spec
+from .param_field import ParamField, ParamDType
 
 
-_SpecPath = os.path.join(os.path.dirname(__file__), 'module_spec_schema.yaml')
-with open(_SpecPath, 'rt') as spec_file:
-    _SpecSchema = yaml.load(spec_file)
-_validator = jsonschema.Draft7Validator(
-    _SpecSchema,
-    format_checker=jsonschema.FormatChecker()
-)
-
-
-def validate_module_spec(spec):
-    """
-    Validate that the spec is valid.
-
-    Raise ValidationError otherwise.
-
-    "Valid" means:
-
-    * `spec` adheres to `server/models/module_spec_schema.yaml`
-    * `spec.parameters[*].id_name` are unique
-    * `spec.parameters[*].menu_items` or `.radio_items` are present if needed
-    * `spec.parameters[*].visible_if[*].id_name` are valid
-    """
-    # No need to do i18n on these errors: they're only for admins. Good thing,
-    # too -- most of the error messages come from jsonschema, and there are
-    # _plenty_ of potential messages there.
-    messages = []
-
-    for err in _validator.iter_errors(spec):
-        messages.append(err.message)
-    if messages:
-        # Don't bother validating the rest. The rest of this method assumes
-        # the schema is valid.
-        raise ValidationError(messages)
-
-    param_id_types = {}
-    for param in spec['parameters']:
-        id_name = param['id_name']
-
-        if id_name in param_id_types:
-            messages.append(f"Param '{id_name}' appears twice")
-        else:
-            param_id_types[id_name] = param['type']
-
-    # Now that param_id_types is full, loop again to check visible_if refs
-    for param in spec['parameters']:
-        try:
-            visible_if = param['visible_if']
-        except KeyError:
-            continue
-
-        if visible_if['id_name'] not in param_id_types:
-            param_id_name = param['id_name']
-            ref_id_name = visible_if['id_name']
-            messages.append(
-                f"Param '{param_id_name}' has visible_if "
-                f"id_name '{ref_id_name}', which does not exist",
-            )
-
-    # Now that param_id_types is full, loop again to check tab_parameter refs
-    for param in spec['parameters']:
-        try:
-            tab_parameter = param['tab_parameter']
-        except KeyError:
-            continue  # we aren't referencing a "tab" parameter
-
-        param_id_name = param['id_name']
-        if tab_parameter not in param_id_types:
-            messages.append(
-                f"Param '{param_id_name}' has a 'tab_parameter' "
-                "that is not in 'parameters'"
-            )
-        elif param_id_types[tab_parameter] != 'tab':
-            messages.append(
-                f"Param '{param_id_name}' has a 'tab_parameter' "
-                "that is not a 'tab'"
-            )
-
-    if messages:
-        raise ValidationError(messages)
+def _django_validate_module_spec(spec: Any) -> None:
+    try:
+        validate_module_spec(spec)
+    except ValueError as err:
+        raise ValidationError(str(err))
 
 
 class ModuleVersionManager(models.Manager):
@@ -127,17 +52,14 @@ class ModuleVersionManager(models.Manager):
             return
 
         self.internal = {}
-        for spec_path in InternalModuleSpecPaths:
-            with spec_path.open('rb') as spec_file:
-                spec = json.load(spec_file)  # raises ValueError
-            validate_module_spec(spec)
+        for spec in InternalModuleSpecs.values():
             module_version = ModuleVersion(
-                id_name=spec['id_name'],
+                id_name=spec.id_name,
                 source_version_hash='internal',
                 spec=spec,
                 last_update_time=timezone.now()
             )
-            self.internal[module_version.id_name] = module_version
+            self.internal[spec.id_name] = module_version
 
     def get_all_latest(self):
         self._ensure_internal_loaded()
@@ -200,20 +122,20 @@ class ModuleVersion(models.Model):
     # time this module was last updated
     last_update_time = models.DateTimeField(auto_now=True)
 
-    spec = JSONField('spec', validators=[validate_module_spec])
+    spec = JSONField('spec', validators=[_django_validate_module_spec])
 
     js_module = models.TextField('js_module', default='')
 
     @staticmethod
     def create_or_replace_from_spec(spec, *, source_version_hash='',
                                     js_module='') -> 'ModuleVersion':
-        validate_module_spec(spec)  # raises ValidationError
+        validate_module_spec(dict(spec))  # raises ValueError
 
         module_version, _ = ModuleVersion.objects.update_or_create(
             id_name=spec['id_name'],
             source_version_hash=source_version_hash,
             defaults={
-                'spec': spec,
+                'spec': dict(spec),
                 'js_module': js_module,
             }
         )
