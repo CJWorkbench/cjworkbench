@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 import importlib.util
 import json
 import logging
@@ -5,8 +8,10 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
+from typing import List, Optional, Set
 import git
 from git.exc import GitCommandError
+import yaml
 from server import minio
 from server.models import ModuleVersion
 from server.models.module_version import validate_module_spec
@@ -19,48 +24,69 @@ class ValidationError(Exception):
     pass
 
 
-# Check that we have one .py and one .json file in the repo root dir
-def validate_module_structure(directory):
-    files = os.listdir(directory)
-    extension_file_mapping = {}
-    for item in files:
-        # check file extension and ensure that we have one python, one JSON,
-        # and optionally one HTML file.
+@dataclass(frozen=True)
+class IgnorePatterns:
+    patterns: List[str]
 
-        # Skip directories (__pycache__ etc.) and test_*
-        if not os.path.isdir(item) and not item.startswith('test'):
-            if item in ['__init__.py', 'setup.py', 'package.json',
-                        'package-lock.json']:
-                continue
+    def match(self, path):
+        return any(path.match(pattern) for pattern in self.patterns)
 
-            extension = item.rsplit('.', 1)
-            if len(extension) > 1:
-                extension = extension[1]
-            else:
-                continue
-            if extension in ["py", "json", "html", "js"]:
-                if extension not in extension_file_mapping:
-                    extension_file_mapping[extension] = item
-                else:
-                    raise ValidationError(
-                        f'Multiple files exist with extension {extension}.'
-                        f" This isn't currently supported."
-                    )
 
-    if 'json' not in extension_file_mapping:
-        raise ValidationError('Missing ".json" module-spec file')
-    if 'py' not in extension_file_mapping:
-        raise ValidationError('Missing ".py" module-code file')
+def _find_file(dirpath: Path, extensions: Set[str],
+               ignore_patterns: IgnorePatterns) -> Optional[Path]:
+    # ext = "py" or "{json|yaml}"
+    globbed = []
+    for extension in extensions:
+        globbed.extend(dirpath.glob('*.' + extension))
 
-    return extension_file_mapping
+    paths = [p for p in globbed if not ignore_patterns.match(p)]
+    if len(paths) > 1:
+        raise ValidationError(f'Multiple ".{extensions}" files detected. '
+                              'Please delete the wrong one(s).')
+    if len(paths) == 1:
+        return paths[0]
+    else:
+        return None
+
+
+@dataclass(frozen=True)
+class ModuleFiles:
+    spec: Path
+    code: Path
+    html: Optional[Path] = None
+    javascript: Optional[Path] = None
+
+    @classmethod
+    def load_from_dirpath(cls, dirpath: Path) -> ModuleFiles:
+        IgnoreCodePatterns = IgnorePatterns(['__init__.py', 'setup.py',
+                                             'test_*.py'])
+        IgnoreSpecPatterns = IgnorePatterns(['package.json',
+                                             'package-lock.json'])
+        IgnoreHtmlPatterns = IgnorePatterns([])
+        IgnoreJavascriptPatterns = IgnorePatterns(['*.config.js'])
+
+        # these throw ValidationError
+        code = _find_file(dirpath, {'py'}, IgnoreCodePatterns)
+        spec = _find_file(dirpath, {'json', 'yaml', 'yml'}, IgnoreSpecPatterns)
+        html = _find_file(dirpath, {'html'}, IgnoreHtmlPatterns)
+        javascript = _find_file(dirpath, {'js'}, IgnoreJavascriptPatterns)
+
+        if not spec:
+            raise ValidationError('Missing ".json" or ".yaml" module-spec '
+                                  'file. Please write one.')
+
+        if not code:
+            raise ValidationError('Missing ".py" module-code file. '
+                                  'Please write one.')
+
+        return cls(spec, code, html, javascript)
 
 
 # Now check if the module is importable and defines the render function
-def validate_python_functions(destination_directory, python_file):
+def validate_python_functions(code_path: Path):
     # execute the module, as a test
-    path = os.path.join(destination_directory, python_file)
     try:
-        spec = importlib.util.spec_from_file_location('test', path)
+        spec = importlib.util.spec_from_file_location('test', str(code_path))
         test_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(test_module)
     except Exception:  # TODO what exception?
@@ -84,23 +110,28 @@ def validate_python_functions(destination_directory, python_file):
 # This is the guts of our module import, also a good place to hook into for
 # tests (bypassing github access). Returns a dictionary of info to display to
 # user (category, repo name, author, id_name)
-def import_module_from_directory(version, importdir, force_reload=False):
+def import_module_from_directory(version: str, importdir: Path, force_reload=False):
     # check that right files exist
-    extension_file_mapping = validate_module_structure(importdir)
-    python_file = extension_file_mapping['py']
-    json_file = extension_file_mapping['json']
-    js_file = extension_file_mapping.get('js')
+    module_files = ModuleFiles.load_from_dirpath(importdir)
 
-    # load json file
-    with open(os.path.join(importdir, json_file)) as f:
+    # load spec
+    module_spec_text = module_files.spec.read_text(encoding='utf-8')
+    if module_files.spec.suffix == '.json':
         try:
-            module_config = json.load(f)
-        except ValueError:
-            raise ValidationError('Invalid JSON file')
-    validate_module_spec(module_config)  # raises ValidationError
-    validate_python_functions(importdir, python_file)
+            module_spec = json.loads(module_spec_text)
+        except ValueError as err:
+            raise ValidationError('JSON syntax error in %s: %s' %
+                                  (module_files.spec.name, str(err)))
+    else:
+        try:
+            module_spec = yaml.safe_load(module_spec_text)
+        except yaml.YAMLError as err:
+            raise ValidationError('YAML syntax error in %s: %s' %
+                                  (module_files.spec.name, str(err)))
+    validate_module_spec(module_spec)  # raises ValidationError
+    validate_python_functions(module_files.code)
 
-    id_name = module_config['id_name']
+    id_name = module_spec['id_name']
 
     if not force_reload:
         # Don't allow importing the same version twice
@@ -115,9 +146,8 @@ def import_module_from_directory(version, importdir, force_reload=False):
             # this is what we want
             pass
 
-    if js_file:
-        with open(os.path.join(importdir, js_file), 'rt') as f:
-            js_module = f.read()
+    if module_files.javascript:
+        js_module = module_files.javascript.read_text(encoding='utf-8')
     else:
         js_module = ''
 
@@ -143,7 +173,7 @@ def import_module_from_directory(version, importdir, force_reload=False):
 
     # If that succeeds, initialise module in our database
     module_version = ModuleVersion.create_or_replace_from_spec(
-        module_config,
+        module_spec,
         source_version_hash=version,
         js_module=js_module
     )
@@ -185,4 +215,4 @@ def import_module_from_github(url, force_reload=False):
         # Nix ".git" subdir: not a Git repo any more, just a dir
         shutil.rmtree(os.path.join(importdir, '.git'))
 
-        return import_module_from_directory(version, importdir, force_reload)
+        return import_module_from_directory(version, Path(importdir), force_reload)
