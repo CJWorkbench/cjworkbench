@@ -53,22 +53,19 @@ def _ensure_workflow(request, lesson):
 def _init_workflow_for_lesson(workflow, lesson):
     InitWorkflowCommand.create(workflow)
 
-    if lesson.initial_workflow is None:
-        workflow.tabs.create(position=0, slug='tab-1', name='Tab 1')
-    else:
-        # Create each wfModule of each tab
-        tab_dicts = lesson.initial_workflow.tabs
-        for position, tab_dict in enumerate(tab_dicts):
-            # Set selected module to last wfmodule in stack
-            tab = workflow.tabs.create(
-                position=position,
-                slug=f'tab-{position + 1}',
-                name=tab_dict['name'],
-                selected_wf_module_position=len(tab_dict['wfModules']) - 1
-            )
+    # Create each wfModule of each tab
+    tab_dicts = lesson.initial_workflow.tabs
+    for position, tab_dict in enumerate(tab_dicts):
+        # Set selected module to last wfmodule in stack
+        tab = workflow.tabs.create(
+            position=position,
+            slug=f'tab-{position + 1}',
+            name=tab_dict['name'],
+            selected_wf_module_position=len(tab_dict['wfModules']) - 1
+        )
 
-            for order, wfm in enumerate(tab_dict['wfModules']):
-                _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id)
+        for order, wfm in enumerate(tab_dict['wfModules']):
+            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id)
 
 
 def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id):

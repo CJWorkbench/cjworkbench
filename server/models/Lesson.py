@@ -1,8 +1,9 @@
+from dataclasses import dataclass, field
 from io import StringIO
 import json
 import os.path
 import pathlib
-from typing import List
+from typing import Any, Dict, List
 from xml.etree import ElementTree
 import yaml
 from django.conf import settings
@@ -36,6 +37,152 @@ def _build_inner_html(el):
     inner_html = inner_html.replace('src="', 'src="' + settings.STATIC_URL)
 
     return inner_html
+
+
+@dataclass(frozen=True)
+class LessonHeader:
+    title: str = ''
+    html: str = ''
+
+    @classmethod
+    def _from_etree(cls, el):
+        title_el = el.find('./h1')
+        if title_el is None or not title_el.text:
+            raise LessonParseError(
+                'Lesson <header> needs a non-empty <h1> title'
+            )
+        title = title_el.text
+
+        # Now get the rest of the HTML, minus the <h1>
+        el.remove(title_el)  # hacky mutation
+        html = _build_inner_html(el)
+
+        return cls(title, html)
+
+
+@dataclass(frozen=True)
+class LessonInitialWorkflow:
+    """
+    The workflow a user should see the first time he/she opens a lesson.
+    """
+
+    tabs: List[Dict[str, Any]] = field(
+        default_factory=lambda: [
+            {'name': 'Tab 1', 'wfModules': []}
+        ]
+    )
+
+    @classmethod
+    def _from_etree(cls, el):
+        text = el.text
+        try:
+            jsondict = yaml.safe_load(text)
+        except yaml.YAMLError as err:
+            raise LessonParseError(
+                'Initial-workflow YAML parse error: ' + str(err)
+            )
+        try:
+            _initial_workflow_validator.validate(jsondict)
+        except jsonschema.ValidationError as err:
+            raise LessonParseError(
+                'Initial-workflow structure is invalid: ' + str(err)
+            )
+        return cls(jsondict['tabs'])
+
+
+@dataclass(frozen=True)
+class LessonSectionStep:
+    html: str = ''
+    highlight: str = ''
+    test_js: str = ''
+
+    @classmethod
+    def _from_etree(cls, el):
+        html = _build_inner_html(el)
+
+        highlight_s = el.get('data-highlight')
+        if not highlight_s:
+            highlight_s = '[]'
+        try:
+            highlight = json.loads(highlight_s)
+        except json.decoder.JSONDecodeError:
+            raise LessonParseError('data-highlight contains invalid JSON')
+
+        test_js = el.get('data-test')
+        if not test_js:
+            raise LessonParseError(
+                'missing data-test attribute, which must be JavaScript'
+            )
+
+        return cls(html, highlight, test_js)
+
+
+@dataclass(frozen=True)
+class LessonSection:
+    title: str = ''
+    html: str = ''
+    steps: List[LessonSectionStep] = field(default_factory=list)
+    is_full_screen: bool = False
+
+    @classmethod
+    def _from_etree(cls, el):
+        title_el = el.find('./h2')
+        if title_el is None or not title_el.text:
+            raise LessonParseError(
+                'Lesson <section> needs a non-empty <h2> title'
+            )
+        title = title_el.text
+
+        steps_el = el.find('./ol[@class="steps"]')
+        if steps_el is None or not steps_el:
+            steps = list()
+        else:
+            steps = list(LessonSectionStep._from_etree(el) for el in steps_el)
+
+        # Now get the rest of the HTML, minus the <h1> and <ol>
+        el.remove(title_el)  # hacky mutation
+        if steps_el is not None:
+            el.remove(steps_el)  # hacky mutation
+        html = _build_inner_html(el)
+
+        # Look for "fullscreen" class on section, set fullscreen flag if so
+        full_screen_el = el.find('[@class="fullscreen"]')
+        is_full_screen = full_screen_el is not None
+
+        return cls(title, html, steps, is_full_screen=is_full_screen)
+
+
+@dataclass(frozen=True)
+class LessonFooter:
+    """
+    The last "section" of a lesson: appears after all LessonSections.
+
+    It's not included in the "page 1 of 4" count.
+
+    It has confetti!
+    """
+
+    title: str = ''
+    html: str = ''
+
+    @classmethod
+    def _from_etree(cls, el):
+        title_el = el.find('./h2')
+        if title_el is None or not title_el.text:
+            raise LessonParseError(
+                'Lesson <footer> needs a non-empty <h2> title'
+            )
+        title = title_el.text
+
+        # Now get the rest of the HTML, minus the <h2>
+        el.remove(title_el)  # hacky mutation
+        html = _build_inner_html(el)
+
+        return cls(title, html)
+
+
+class LessonParseError(Exception):
+    pass
 
 
 # a fake django.db.models.Manager that reads from the filesystem
@@ -88,20 +235,13 @@ class LessonManager:
 #
 # We implement Lessons in HTML, so they're stored as code, not in the database.
 # This interface mimics django.db.models.Model.
+@dataclass(frozen=True)
 class Lesson:
-    def __init__(self, slug, header, sections, footer, initial_workflow=None):
-        self.slug = slug
-        self.header = header
-        self.sections = sections
-        self.footer = footer
-        self.initial_workflow = initial_workflow
-
-    def __eq__(self, other):
-        return (self.slug, self.header, self.sections) == \
-                (other.slug, other.header, other.sections)
-
-    def __repr__(self):
-        return 'Lesson' + repr((self.slug, self.header, self.sections))
+    slug: str
+    header: LessonHeader = LessonHeader()
+    sections: List[LessonSection] = field(default_factory=list)
+    footer: LessonFooter = LessonFooter()
+    initial_workflow: LessonInitialWorkflow = LessonInitialWorkflow()
 
     def get_absolute_url(self):
         return '/lessons/%s/' % self.slug
@@ -110,8 +250,8 @@ class Lesson:
     def title(self):
         return self.header.title
 
-    @staticmethod
-    def parse(slug, html):
+    @classmethod
+    def parse(cls, slug, html):
         parser = html5lib.HTMLParser(strict=False, namespaceHTMLElements=False)
         root = parser.parse(StringIO(html))  # this is an xml.etree.ElementTree
 
@@ -137,11 +277,11 @@ class Lesson:
 
         initial_workflow_el = root.find('./script[@id="initialWorkflow"]')
         if initial_workflow_el is None:
-            lesson_initial_workflow = None  # initial workflow is optional, blank wf if missing
+            lesson_initial_workflow = LessonInitialWorkflow()  # initial workflow is optional, blank wf if missing
         else:
             lesson_initial_workflow = LessonInitialWorkflow._from_etree(initial_workflow_el)
 
-        return Lesson(slug, lesson_header, lesson_sections, lesson_footer, lesson_initial_workflow)
+        return cls(slug, lesson_header, lesson_sections, lesson_footer, lesson_initial_workflow)
 
     class DoesNotExist(Exception):
         pass
@@ -149,169 +289,3 @@ class Lesson:
     # fake django.db.models.Manager
     objects = LessonManager(os.path.join(settings.BASE_DIR, 'server',
                                          'lessons'))
-
-
-class LessonHeader:
-    def __init__(self, title, html):
-        self.title = title
-        self.html = html
-
-    def __eq__(self, other):
-        return (self.title, self.html) == (other.title, other.html)
-
-    def __repr__(self):
-        return 'LessonHeader' + repr((self.title, self.html))
-
-    @staticmethod
-    def _from_etree(el):
-        title_el = el.find('./h1')
-        if title_el is None or not title_el.text:
-            raise LessonParseError(
-                'Lesson <header> needs a non-empty <h1> title'
-            )
-        title = title_el.text
-
-        # Now get the rest of the HTML, minus the <h1>
-        el.remove(title_el)  # hacky mutation
-        html = _build_inner_html(el)
-
-        return LessonHeader(title, html)
-
-
-class LessonInitialWorkflow:
-    def __init__(self, initial_tabs):
-        self.tabs = initial_tabs  # a list of dicts, each describing a tab
-
-    def __eq__(self, other):
-        return self.tabs == other.tabs
-
-    def __repr__(self):
-        return 'LessonInitialWorkflow' + repr((self.initial_workflow,))
-
-    @staticmethod
-    def _from_etree(el):
-        text = el.text
-        try:
-            jsondict = yaml.safe_load(text)
-        except yaml.YAMLError as err:
-            raise LessonParseError(
-                'Initial-workflow YAML parse error: ' + str(err)
-            )
-        try:
-            _initial_workflow_validator.validate(jsondict)
-        except jsonschema.ValidationError as err:
-            raise LessonParseError(
-                'Initial-workflow structure is invalid: ' + str(err)
-            )
-        return LessonInitialWorkflow(jsondict['tabs'])
-
-
-class LessonSection:
-    def __init__(self, title, html, steps, is_full_screen=False):
-        self.title = title
-        self.html = html
-        self.steps = steps
-        self.is_full_screen = is_full_screen
-
-    def __eq__(self, other):
-        return (self.title, self.html, self.steps, self.is_full_screen) == \
-                (other.title, other.html, other.steps, other.is_full_screen)
-
-    def __repr__(self):
-        return 'LessonSection' + repr((self.title, self.html, self.steps, self.is_full_screen))
-
-    @staticmethod
-    def _from_etree(el):
-        title_el = el.find('./h2')
-        if title_el is None or not title_el.text:
-            raise LessonParseError(
-                'Lesson <section> needs a non-empty <h2> title'
-            )
-        title = title_el.text
-
-        steps_el = el.find('./ol[@class="steps"]')
-        if steps_el is None or not steps_el:
-            steps = list()
-        else:
-            steps = list(LessonSectionStep._from_etree(el) for el in steps_el)
-
-        # Now get the rest of the HTML, minus the <h1> and <ol>
-        el.remove(title_el)  # hacky mutation
-        if steps_el is not None:
-            el.remove(steps_el)  # hacky mutation
-        html = _build_inner_html(el)
-
-        # Look for "fullscreen" class on section, set fullscreen flag if so
-        full_screen_el = el.find('[@class="fullscreen"]')
-        is_full_screen = full_screen_el is not None
-
-        return LessonSection(title, html, steps, is_full_screen=is_full_screen)
-
-
-class LessonSectionStep:
-    def __init__(self, html, highlight, test_js):
-        self.html = html
-        self.highlight = highlight
-        self.test_js = test_js
-
-    def __eq__(self, other):
-        return (self.html, self.highlight, self.test_js) == \
-                (other.html, other.highlight, other.test_js)
-
-    def __repr__(self):
-        return ('LessonSectionStep'
-                + repr((self.html, self.highlight, self.test_js)))
-
-    @staticmethod
-    def _from_etree(el):
-        html = _build_inner_html(el)
-
-        highlight_s = el.get('data-highlight')
-        if not highlight_s:
-            highlight_s = '[]'
-        try:
-            highlight = json.loads(highlight_s)
-        except json.decoder.JSONDecodeError:
-            raise LessonParseError('data-highlight contains invalid JSON')
-
-        test_js = el.get('data-test')
-        if not test_js:
-            raise LessonParseError(
-                'missing data-test attribute, which must be JavaScript'
-            )
-
-        return LessonSectionStep(html, highlight, test_js)
-
-
-# The Footer is the last "section" which usually says "you finished the lesson" or something
-# It is not included in the page count displayed in the nav bar, and it has confetti!
-class LessonFooter:
-    def __init__(self, title, html):
-        self.title = title
-        self.html = html
-
-    def __eq__(self, other):
-        return (self.title, self.html) == (other.title, other.html)
-
-    def __repr__(self):
-        return 'LessonFooter' + repr((self.title, self.html))
-
-    @staticmethod
-    def _from_etree(el):
-        title_el = el.find('./h2')
-        if title_el is None or not title_el.text:
-            raise LessonParseError(
-                'Lesson <footer> needs a non-empty <h2> title'
-            )
-        title = title_el.text
-
-        # Now get the rest of the HTML, minus the <h2>
-        el.remove(title_el)  # hacky mutation
-        html = _build_inner_html(el)
-
-        return LessonFooter(title, html)
-
-
-class LessonParseError(Exception):
-    def __init__(self, message):
-        self.message = message
