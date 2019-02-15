@@ -36,7 +36,9 @@
 <section>
   <h2>Data</h2>
   <p>
-    This data is published by the United States Census bureau <a class="highlight" href='https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml' target="_blank" className="info-1">here</a>. <br />
+    This data is published by the United States Census bureau <a class="highlight" href='https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml' target="_blank" className="info-1">here</a>.
+  </p>
+  <p>
     The census happens every 10 years. The last one was in 2010, so every year since then is an estimate based on more recent surveys.
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -62,7 +64,7 @@
       >Are there missing or obviously wrong values?
     </li>
     <li
-      data-highlight='[]'
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Does the data need to be cleaned?
     </li>
@@ -71,26 +73,25 @@
   <h2>Difference</h2>
   <p>
     Let’s ask: Which county had the greatest population decrease from 2010 to  2017?
-    We need to calculate the difference in population, which is a subtraction.
+    We need to calculate the difference in population, which is a simple subtraction.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add <kbd>Formula</kbd>.
+      >Add <kbd>Formula</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Enter the formula
+      >Type in the following formula:
       <div class="copy-txt">=D1-C1</div>
-      and name the new column <kbd>Pop difference</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new column <kbd>population difference</kbd>.
+      >Name the new column <kbd>Difference</kbd>.
       <p class="instruction-detail">
         A positive numbers means that the population increased, while a negative number means that the county’s population decreased.
       </p>
@@ -100,7 +101,7 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Sort the resulting column in increasing order.
       <p class="instruction-detail">
-        The first row will have the most negative number, meaning the county with greatest population loss.
+        The first row will display the largest negative number, meaning the county with greatest population loss.
       </p>
     </li>
   </ol>
@@ -108,10 +109,11 @@
 <section>
   <h2>Ratio</h2>
   <p>
-    Larger counties are likely to have a greater population change. So let’s ask the question a different way:  Relative to its size, which county has lost or gained the most population? In other words: How many people in 2017 compared to the number of people in 2010? We can accomplish this with a simple division, producing a ratio.
+    Larger counties are likely to have a greater population change. Let’s ask instead:<br>
+    Relative to its size, which county has lost or gained the most population? In other words- How many people in 2017 per people in 2010?
   </p>
   <p>
-    As we saw before, the formula to calculate ‘How many (X) per (Y)’ is:
+    The formula to calculate ‘How many (X) per (Y)’ is a simple division, also called a ratio:
     <div class="copy-txt">=(X/Y)</div>
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -119,39 +121,51 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add Formula and type in:
+      >Insert a new Formula in step 4 (keep the previous one) and type in:
       <div class="copy-txt">=(D1/C1)</div>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Name the new column <kbd>Ratio</kbd>
       <p class=instruction-detail>
-        Numbers greater than 1 mean the population increased. Less than 1 means that the population decreased. A ratio of 2 would mean that the population doubled.
-      </p>
-      <p class=instruction-detail>
-        The county that lost the most population between 2010 and 2017, relative to its size is:
+        A ratio of 1 means that for every person in 2010 is 1 person in 2017. Numbers greater than 1 mean the population increased. Less than 1 means the population decreased.<br>
+        A ratio of 2 would mean that the population doubled.
       </p>
     </li>
-    <div class="copy-txt">Type your answer here</div>
   </ol>
 </section>
 <section>
   <h2>Percentage</h2>
   <p>
-    There is a close relationship between ratios and percentages. A percentage is simply a fraction (a ratio) multiplied by 100:
+    There is a close relationship between ratios and percentages.
+    A percentage is simply a fraction (a ratio) multiplied by 100:
     <div class="copy-txt">=(X/Y)*100</div>
   </p>
   <p>
-    Workbench includes an easy way to calculate percentages: the Calculate step.
-    <div class="copy-txt">=(X/Y)*100</div>
+    In Workbench the Calculate step lets you apply percentage formulas easily.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a Calculate step. Chose <kbd>X is what percent of Y</kbd>, and select <kbd>Pop estimate 2017</kbd> as X, and <kbd>Pop estimate 2010</kbd> as Y.
+      >Add a Calculate step.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose <kbd>X is what percent of Y</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select <kbd>Pop estimate 2017</kbd> as X, and <kbd>Pop estimate 2010</kbd> as Y.
       <p class=instruction-detail>
-        One advantage of percentages is to allow us to better grasp numbers: In 2017, the population of Concho county was 66.6% the size it was in 2010.
+        The numbers in this new column  are similar to the <kbd>Ratio</kbd> column - just multiplied by 100: 0.56 becomes 56% and so on.
       </p>
       <p class=instruction-detail>
-        The numbers in this new column  are similar, just multiplied by 100. So <kbd>0.56</kbd> becomes <kbd>56%</kbd> and so on.
+        One advantage of percentages is to allow us to better grasp numbers: In 2017, the population of Concho county was 66.6% the size it was in 2010.
       </p>
     </li>
   </ol>
@@ -159,11 +173,14 @@
 <section>
   <h2>Calculating Percentage Change</h2>
   <p>
-    Percentage change is the difference between old and new numbers, expressed as a percentage of the old number. The formula to calculate the percentage change between Old and New is:
+    Percentage change is the difference between old and new numbers, expressed as a percentage of the old number.
+  </p>
+  <p>
+    The formula to calculate the percentage change between Old and New is:
     <div class="copy-txt">=((New - Old) / Old)* 100</div>
   </p>
   <p>
-    You can enter this into a Formula step, or Calculate can compute this directly.
+    We'll use Calculate can compute this easily.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -177,10 +194,11 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Compare 2017 to 2010.
       <p class=instruction-detail>
-        100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half of the old one.
+        100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half the old one.
       </p>
       <p class=instruction-detail>
-        Percentage change allows us to describe our numbers in a new way: ‘From 2010 to 2017, Concho county lost 33.7% of its population’.
+        Percentage change allows us to describe our numbers in yet a new way:<br>
+        ‘From 2010 to 2017, Concho county lost 33.7% of its population’.
       </p>
     </li>
   </ol>
@@ -188,14 +206,14 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare    numbers
+    <p class="summary"> Next, we’ll learn how to clean open data, join, and adjust salaries for inflation
     </p>
   </div>
   <div class="next">
     <h2>Next</h2>
     <ol>
       <li>
-        <a href="/lessons/long-and-wide-format">Long and wide format</a>
+        <a href="/lessons/adjusting-for-inflation">Story example: Adjusting teacher salaries for inflation</a>
       </li>
     </ol>
   </div>
