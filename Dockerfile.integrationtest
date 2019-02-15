@@ -1,7 +1,7 @@
 # 1.1 integration-test deps
 # Depends on pybuild because integration tests run Django shell to fiddle
 # with database.
-FROM python:3.6.6-slim-stretch AS deps
+FROM python:3.7.2-slim-stretch AS deps
 
 # Install Firefox deps (and curl, xvfb, vnc). Debian Stretch has Firefox v52,
 # which is way too old; but we'll install 52's dependencies and hope they
