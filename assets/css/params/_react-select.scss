@@ -77,7 +77,7 @@
         display: flex;
         max-width: 100%;
         overflow: hidden;
-        padding: 3px; // react-select default from .react-select__multi-value__label
+        padding: 3px 0; // react-select default from .react-select__multi-value__label
 
         input {
           display: block;
@@ -123,6 +123,7 @@
   .react-select__placeholder {
     color: $placeholder;
     white-space: nowrap;
+    position: absolute;
 
     & + div {
       margin: 0;
