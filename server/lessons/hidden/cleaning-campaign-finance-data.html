@@ -33,17 +33,18 @@
 <section>
   <h2>Data</h2>
   <p>
-    Let's analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New, published by the Board of Election of the State of New York,
+    Let's analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New.<br>
+    This data is published by the Board of Election of the State of New York,
   <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
   </p>
   <p>
     Our goal is to find which state donated the most to his campaign. Out of state campaign contributions could reveal previously hidden business or political connections.
   </p>
-  <p class="instruction-detail">
-    Where can the donor’s state be found?
-  </p>
   <p>
     As usual, go through your list of questions and make sure you understand each column.
+  </p>
+  <p>
+    Where can the donor’s state be found?
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -77,7 +78,9 @@
 <section>
   <h2>Splitting columns</h2>
   <p>
-    Our first task is to extract the two letter state abbreviations in the <kbd>Contributor</kbd> column.<br>
+    Our first task is to extract the two letter state abbreviations in the <kbd>Contributor</kbd> column.
+  </p>
+  <p>
     We need to store the state by itself in a new column, so that we can apply Group to it.
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -96,24 +99,25 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose the method <kbd>Extract x characters from right</kbd>.
+      >Choose the method <kbd>Extract characters from right</kbd>.
+      <p class="instruction-detail">
+        The total number of characters used by the post code (5), the state abbreviation (2) and the space in between them (1) is <kbd>8</kbd>.
+      </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set <kbd>X</kbd> to <kbd>8</kbd>, which is the total number of characters used by the post code (5) the state abbreviation (2) and the space in between them.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new column <kbd>State</kbd>.
+      >Set <kbd>Numbers of characters</kbd> to <kbd>8</kbd>
     </li>
   </ol>
 </section>
 <section>
   <h2>Cleaning text</h2>
   <p>
-    We now have the zip code plus the state in <kbd>State</kbd>. There are different ways to remove the extra information, but one of the simplest is to keep only letters.
+    We now have the zip code plus the state in the column <kbd>Contributor 2</kbd>.
+  </p>
+  <p>
+    There are different ways to remove the zip code, but the simplest here is to keep only letters.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -125,12 +129,12 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the 'Characters' section of the step, keep only letters (Deleting numbers would leave the space).
+      >In the 'Characters' section of Clean text, keep only letters. Deleting numbers would leave the space!
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >With step 4 selected, rename <kbd>amt</kbd> to <kbd>Amount</kbd> by editing the column name in the table. This will create a step amd log your edit.
+      >Rename the columns <kbd>amt</kbd> and <kbd>Contributor 2</kbd> respectively to <kbd>Amount</kbd> and <kbd>State</kbd> by editing the column name in the table.
       <p class="instruction-detail">Now we have a clean “State” column. Our table is ready to be analyzed!</p>
     </li>
   </ol>

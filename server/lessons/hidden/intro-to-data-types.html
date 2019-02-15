@@ -49,7 +49,7 @@
 <section>
   <h2>Data</h2>
   <p>
-    This data contains all reported police incidents in January and February 2018 in the city of New York, and is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>, with its data dictionary.
+    This data contains all reported police incidents in January and February 2018 in the city of New York. It is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
   </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Again, let’s ask the basic questions:</p>
@@ -94,7 +94,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add Select Columns, and keep only <kbd>BORO_NM</kbd> and <kbd>COMPL_FR_DT</kbd>
+      >Add Select Columns, and keep only <kbd>boro_nm</kbd> and <kbd>compl_fr_dt</kbd>
       <p class="instruction-detail">You can rename columns by clicking on any column name in the table.</p>
     </li>
     <li
@@ -126,7 +126,7 @@
     Although the <kbd>Complaint date</kbd> column looks like a date, you can see that it was loaded as text.
   </p>
   <p>
-    Workbench tries to guess when a column is dates, but if there are any rows blank values, values that are not a date, or the date is in a format Workbench doesn’t recognize, the column will be loaded as text.
+    If any values in a column are blank, if values that are not dates, or if the date is in a format Workbench doesn’t recognize, the column will be loaded as text.
   </p>
   <p>
     Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date & time.

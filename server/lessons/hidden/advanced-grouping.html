@@ -38,6 +38,12 @@
             "params": {
               "rename-entries":"{\"boro_nm\":\"Borough\", \"cmplnt_fr_dt\":\"Complaint date\"}"
             }
+          },
+          {
+            "module":"convert-date",
+            "params": {
+              "colnames":"Complaint date"
+            }
           }
         ]
       },
@@ -75,7 +81,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the output column 'Count of incidents'.
+      >Name the output column <kbd>Count of incidents</kbd>.
     </li>
   </ol>
 </section>
@@ -90,12 +96,16 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count</kbd> on the Y-axis.
-      <p class="intstruction-detail">To visualize the same data but for each day, we can change the granularity of the group.</p>
+      <p class="instruction-detail">Charts with two data points are not very useful. To visualize the same data but for each day, we can change the granularity of the group.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 6, change the granularity to <kbd>by day</kbd>
+      >In step 6, change the granularity to <kbd>by day</kbd>.
+      <p class="instruction-detail">
+        Select step 6 to display your new chart.
+      </p>
+    </li>
     </li>
   </ol>
 </section>
@@ -109,20 +119,12 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the Group step, press <kbd>+Add</kbd> to add another column to group by
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the <kbd>Borough</kbd> column using the same column selector as <kbd>Complaint date</kbd>
+      >In the Group step, add the <kbd>Borough</kbd> column next to <kbd>Complaint date</kbd> using the same column selector.
       <p class="instruction-detail">
-        By looking at this table we can rapidly see if different parts of town have different patterns of crime -- or at least reported incidents. It’s important to remember that data only exists when someone types it in.
+        By looking at this table we can rapidly see if different parts of town have different patterns of crime - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
       </p>
       <p class="instruction-detail">
-        However, after being grouped by more than one column the table cannot be visualized with one line per borough, because that would require the data for each borough in its own column.
-      </p>
-      <p class="instruction-detail">
-        In the next lesson, we’ll learn how to change table formats from Long to Wide to solve this.
+        However, after being grouped by more than one column the table cannot be visualized with one line per borough, because that would require the data for each borough to be displayed in its own column.
       </p>
     </li>
   </ol>
@@ -130,7 +132,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll learn about long and wide format.</p>
+    <p class="summary"> Next lesson, we’ll learn how to change table formats from Long to Wide to be able to access any variable we need.</p>
   </div>
   <div class="next">
     <h2>Next</h2>
