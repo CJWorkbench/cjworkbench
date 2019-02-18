@@ -1,5 +1,6 @@
 import logging
 import os.path
+import pathlib
 import shutil
 import tempfile
 import time
@@ -22,7 +23,8 @@ def main(directory, pretend_git_url):
             shutil.rmtree(os.path.join(importdir, '.git'), ignore_errors=True)
 
             try:
-                import_module_from_directory('develop', importdir,
+                import_module_from_directory('develop',
+                                             pathlib.Path(importdir),
                                              force_reload=True)
             except Exception:
                 logger.exception('Error loading module')
