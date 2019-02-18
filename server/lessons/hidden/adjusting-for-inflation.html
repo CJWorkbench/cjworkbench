@@ -86,31 +86,44 @@
   </ol>
 </section>
 <section>
-  <h2>Cleaning CPI data</h2>
+  <h2>Cleaning</h2>
   <p>
-    The original CPI spreadsheet contains several rows of notes before the actual data, which means we don’t get proper column names.<br>
-  </p>
-    Let’s fix column names, types, and remove anything we don’t need.
+    Both original spreadsheets contain one or several rows of notes before the actual data, which means we don’t get proper column names.<br>
+    Let’s also fix types, and remove anything we don’t need.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>CPI data</kbd> tab, select row 11 of the table which contains the column names, by clicking on the row number.
+      >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Choose <kbd>Move rows to table header</kbd> from the action menu above the table, where it says "1 row selected".
+      <p class='instruction-detail'>
+        Because it contained both text and numeric data, the column <kbd>Average salary</kbd> was loaded as text. We need to convert it to numbers to use it in calculations.
+      </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add <kbd>Select Columns</kbd> and keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
-      <p class='instruction-detail'>
-        Because it contained both text and numeric data, the column <kbd>Annual</kbd> was loaded as text. We need to convert it to numbers to it in calculations.
-      </p>
+      >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Average salary</kbd> column menu.
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Still in that tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
+
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -139,11 +152,11 @@
     <figure class="three-quarter-width">
       <img alt="Inspect element" src="images/course-1/join-example-1.png">
     </figure>
-    When joinning Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding additional values are appended. 
+    When joinning Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding values from the other tab are appended.
     <figure class="half-width">
       <img alt="Inspect element" src="images/course-1/join-example-2.png">
     </figure>
-    Joins typically helps uncover insight by bringing two set of information together, and it is instrumental to many stories. One famous example story joins school bus drivers with convicted felons.
+    Joins typically helps uncover insight by bringing two sources of information together, and is essential to many stories. A famous one joins school bus drivers with convicted felons.
   </p>
 </section>
 <section>
@@ -156,7 +169,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Switch back to the <kbd>Salaries<kbd> tab and add a Join.
+      >Switch back to the <kbd>Salaries</kbd> tab and add a <kbd>Join tab</kbd> step.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -184,7 +197,7 @@
       >Add Formula and type in:
       <div class="copy-txt">=(C1/D1)*240.007</div>
       <p class="instruction-detail">
-        Dollar values which are adjusted for inflation are called “real” dollars, while non-adjusted amounts are called “nominal.” We can see that the salaries of teachers in U.S. public elementary and secondary schools decreased from 2009 to 2016, in real dollar terms. This was not apparent in the original table, which shows a nominal increase.
+        Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal.” We can see that the salaries of teachers in U.S. public elementary and secondary schools decreased from 2009 to 2016, in real dollar terms.
       </p>
     </li>
   </ol>
@@ -199,7 +212,7 @@
     <h2>Next</h2>
     <ol>
       <li>
-        <a href="/lessons/resouces-intro-data-j">Resources</a></a>
+        <a href="/lessons/resources-intro-data-j">Resources and inspiration to do more</a></a>
       </li>
     </ol>
   </div>
