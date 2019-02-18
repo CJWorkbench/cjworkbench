@@ -86,11 +86,9 @@
   </ol>
 </section>
 <section>
-  <h2>Cleaning files with comments</h2>
+  <h2>Cleaning</h2>
   <p>
-    The original CPI spreadsheet contains several rows of notes before the actual data, which means we don’t get proper column names.<br>
-    Likewise, the original <kbd>teacher salary</kbd> contains a title that needs to be removed.
-  </p>
+    Both original spreadsheets contain one or several rows of notes before the actual data, which means we don’t get proper column names.<br>
     Let’s also fix types, and remove anything we don’t need.
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -98,25 +96,34 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>Salaries</kbd> tab, select row 1 of the table which - contains the column names, by clicking on the row number.
+      >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Choose <kbd>Move rows to table header</kbd> from the action menu above the table, where it says "1 row selected".
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>CPI data</kbd> tab, select row 11 of the table which contains the column names, by clicking on the row number. Move that row the header as well.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add <kbd>Select Columns</kbd> and keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
       <p class='instruction-detail'>
-        Because it contained both text and numeric data, the column <kbd>Annual</kbd> was loaded as text. We need to convert it to numbers to it in calculations.
+        Because it contained both text and numeric data, the column <kbd>Average salary</kbd> was loaded as text. We need to convert it to numbers to it in calculations.
       </p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Average salary</kbd> column menu.
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Still in the <Kbd>CPI data</kbd> tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
+
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
