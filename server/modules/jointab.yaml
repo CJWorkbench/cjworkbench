@@ -9,7 +9,7 @@ param_schema:
   join_columns:
     type: dict
     properties:
-      on: { type: multicolumn }
+      'on': { type: multicolumn }
       right: { type: multicolumn, tab_parameter: right_tab }
 parameters:
   - id_name: right_tab
