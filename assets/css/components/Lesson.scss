@@ -308,14 +308,22 @@ article.fullscreen {
     justify-content: center;
   }
 
-  figure.full img {
-    padding-left: 0rem;
-    width: 100%;
-    &.no-border {
-      background-color: transparent;
+  figure {
+
+    &.full img {
+      width: 100%;
+      &.no-border {
+        background-color: transparent;
+        padding-left: 0rem;
+      }
     }
-    &.half-width {
+
+    &.half-width img {
       width: 50%;
+    }
+
+    &.three-quarter-width img{
+      width: 75%;
     }
   }
 

@@ -5,10 +5,11 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Inflation is the rate of increase in prices over a given period of time. Historical dollar amounts cannot be directly compared with dollars today, because all prices slowly change over time. In this lesson, we’ll learn how to compare amounts from different years using Consumer Price Index (CPI) data from the Bureau of Labor Statistics.
+    Inflation is the rate of increase in prices over a given period of time. Historical dollar amounts cannot be directly compared with dollars today, because all prices slowly change over time.
   </p>
   <p>
-    In this lesson we’ll plot teacher salaries since 2009. We will need to adjust our data for inflation in order to get a good appreciation of salary trends.
+    In this lesson, we’ll learn how to compare amounts from different years using Consumer Price Index (CPI) data from the Bureau of Labor Statistics.
+    We will adjust teacher salaries dating back from 1969 in order to get a good appreciation of salary trends.
   </p>
 </section>
 
@@ -23,7 +24,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/teacher-salaries.csv"
+              "url":"http://production-static.workbenchdata.com/data/intro-data-j/teacher-salaries.xlsx"
             }
           }
         ]
@@ -46,14 +47,14 @@
 <section>
   <h2>Data</h2>
   <p>
-    The table in the first tab has been prepared using data published by the National Center for Education Statistics, <a class="highlight" href='https://nces.ed.gov/' target="_blank" className="info-1">here</a>.
+    The table in the tab <kbd>Salaries</kbd> was prepared using data published by the National Center for Education Statistics, <a class="highlight" href='https://nces.ed.gov/' target="_blank" className="info-1">here</a>.
   </p>
   <p>
     It shows the average annual salaries of teachers in U.S. public elementary and secondary schools between 1969 and 2016.
-    Those numbers are in ‘Current dollars’, which means not adjusted for inflation. Let’s convert them in today’s dollar.
+    Those numbers are in ‘Current dollars’, which means not adjusted for inflation. Let’s convert them in today’s dollars.
   </p>
   <p>
-    To do this we need a measure of inflation. Every month the Bureau of Labor statistics surveys the prices of hundreds of consumer items to produce a number known as the 'Consumer Price Index' or CPI. The second tab of this workflow contains this data, published <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0/' target="_blank" className="info-1">here</a>.
+    To do this we need a measure of inflation. Every month the Bureau of Labor statistics surveys the prices of hundreds of consumer items to produce a number known as the 'Consumer Price Index' or CPI. The tab <kbd>CPI data</kbd> contains this data, published <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0/' target="_blank" className="info-1">here</a>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -88,53 +89,61 @@
   <h2>Cleaning CPI data</h2>
   <p>
     The original CPI spreadsheet contains several rows of notes before the actual data, which means we don’t get proper column names.<br>
-    The table also contains monthly and yearly figures, but we are only going to use the yearly averages.
   </p>
-    Let’s fix column names and remove everything we don’t need.
+    Let’s fix column names, types, and remove anything we don’t need.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>CPI data</kbd> tab, Select row 11 of the table which contains the column names, by clicking on the row number.
+      >In the <Kbd>CPI data</kbd> tab, select row 11 of the table which contains the column names, by clicking on the row number.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>Move rows to table header</kbd> from the actions menu above the table, where it says "1 row selected".
+      >Choose <kbd>Move rows to table header</kbd> from the action menu above the table, where it says "1 row selected".
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add <kbd>Select Columns</kbd> and keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
+      <p class='instruction-detail'>
+        Because it contained both text and numeric data, the column <kbd>Annual</kbd> was loaded as text. We need to convert it to numbers to it in calculations.
+      </p>
     </li>
-  </ol>
-</section>
-<section>
-  <h2>Fixing types</h2>
-  <p>
-    The <kbd>Annual</kbd> column was loaded as text, because that column originally contained both a column name and numeric data. We need to convert the column to numbers before we can use them in calculations.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Annual<kbd> column menu.
+      >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Annual</kbd> column menu
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span>.
     </li>
   </ol>
 </section>
 <section class="fullscreen">
   <h2>Using CPI</h2>
   <p>
-    In order to convert an current dollar amount into an adjusted dollar amount, we need to divide the old dollar amount by the CPI for that year (CPI1), then multiply it by the CPI (CPI2) for the current year.<br>
+     In order to convert a current dollar amount (old) into an adjusted dollar amount (present), we need to divide the current dollar amount by the CPI for that year (CPI1), then multiply it by the CPI for the present year (CPI2).<br>
     <div class="copy-txt">adjusted=(current/CPI1)*CPI2</div>
-    To do this, we need to get the CPI data into the same tab as the teacher salary data. We can do this by “joining” these tabs.
+    To do this, we need to get the CPI index into the same tab as the teacher salary data. We can do this by “joining” these tabs.
   </p>
+</section>
+<section class="fullscreen">
+  <h2>Introduction to joinning tables</h2>
   <p>
-    A join is a powerful operation that combines tables from multiple sources, each containing different information. Two tables can be joined when they both have one (or more) columns with the same values.<br>
-    Many stories have been based on joins. One famous story joined school bus drivers with convicted felons.
+    Joins are used to augment the information contained in one table with the data contained in another table.<br>
+    Two tables can be joined when they both have at least one column sharing identical values.<br>
+    Tab 1 and 2 below share the column <kbd>First name</kbd>. Each table contain one other column of data associated with the values in <kbd>First name</kbd>.
+    <figure class="three-quarter-width">
+      <img alt="Inspect element" src="images/course-1/join-example-1.png">
+    </figure>
+    When joinning Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding additional values are appended. 
+    <figure class="half-width">
+      <img alt="Inspect element" src="images/course-1/join-example-2.png">
+    </figure>
+    Joins typically helps uncover insight by bringing two set of information together, and it is instrumental to many stories. One famous example story joins school bus drivers with convicted felons.
   </p>
 </section>
 <section>
@@ -147,7 +156,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Switch back to the <kbd>Teachers salaries<kbd> tab and add a Join.
+      >Switch back to the <kbd>Salaries<kbd> tab and add a Join.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
