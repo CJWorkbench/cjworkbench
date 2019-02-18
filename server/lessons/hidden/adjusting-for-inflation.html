@@ -86,23 +86,29 @@
   </ol>
 </section>
 <section>
-  <h2>Cleaning CPI data</h2>
+  <h2>Cleaning files with comments</h2>
   <p>
     The original CPI spreadsheet contains several rows of notes before the actual data, which means we don’t get proper column names.<br>
+    Likewise, the original <kbd>teacher salary</kbd> contains a title that needs to be removed.
   </p>
-    Let’s fix column names, types, and remove anything we don’t need.
+    Let’s also fix types, and remove anything we don’t need.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>CPI data</kbd> tab, select row 11 of the table which contains the column names, by clicking on the row number.
+      >In the <Kbd>Salaries</kbd> tab, select row 1 of the table which - contains the column names, by clicking on the row number.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Choose <kbd>Move rows to table header</kbd> from the action menu above the table, where it says "1 row selected".
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In the <Kbd>CPI data</kbd> tab, select row 11 of the table which contains the column names, by clicking on the row number. Move that row the header as well.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -139,7 +145,7 @@
     <figure class="three-quarter-width">
       <img alt="Inspect element" src="images/course-1/join-example-1.png">
     </figure>
-    When joinning Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding additional values are appended. 
+    When joinning Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding additional values are appended.
     <figure class="half-width">
       <img alt="Inspect element" src="images/course-1/join-example-2.png">
     </figure>
