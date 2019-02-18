@@ -21,6 +21,7 @@ def main(directory, pretend_git_url):
             importdir = os.path.join(tmpdir, 'importme')
             shutil.copytree(directory, importdir)
             shutil.rmtree(os.path.join(importdir, '.git'), ignore_errors=True)
+            shutil.rmtree(os.path.join(importdir, '.eggs'), ignore_errors=True)
 
             try:
                 import_module_from_directory('develop',
