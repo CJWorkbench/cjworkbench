@@ -81,8 +81,8 @@ article.lesson {
     .copy-txt, .answer {
       position: relative;
       width: 32rem;
-      margin: 1rem 0 2rem 0;
-      padding:1rem 1.5rem;
+      margin: -1rem 0 2rem 0;
+      padding:.5rem 1.5rem;
       background-color: $dark-accent--medium;
       word-break: break-all;
       border-radius: .3rem;
@@ -184,7 +184,7 @@ article.lesson {
 
         .copy-txt {
           left: -2rem;
-          width: 30.5rem;
+          margin-top: 1rem;
         }
 
         &::before {
@@ -309,11 +309,13 @@ article.fullscreen {
   }
 
   figure.full img {
-    padding: 1rem;
-    margin-top: 2rem;
+    padding-left: 0rem;
     width: 100%;
     &.no-border {
       background-color: transparent;
+    }
+    &.half-width {
+      width: 50%;
     }
   }
 

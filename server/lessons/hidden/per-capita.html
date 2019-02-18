@@ -42,9 +42,6 @@
     This table is derived from the FBI Uniform Crime Report data for 2017, published and documented <a class="highlight" href='https://https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">here</a>. <br />
   </p>
   <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">
-    Using the data dictionary, answer the following questions for yourself:
-  </p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -82,13 +79,13 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Sort the <kbd>Violent crime<kbd> column, in descending order.
+      >Sort the <kbd>Violent crime</kbd> column, in descending order.
       <p class="instruction-detail">
-        California is on top, with 177,627 violent crimes in 2017.
+        California is on top, with 177,627 violent crimes in 2017.<br>
         But California is also the largest state, so this result isn’t much of an insight.<br>
       </p>
       <p class="instruction-detail">
-        Let’s compare states using per capita numbers.
+        Instead, let’s compare states using per capita numbers.
       </p>
     </li>
   </ol>
@@ -96,7 +93,10 @@
 <section>
   <h2>Crime per capita</h2>
   <p>
-    Let’s reframe our question: ‘Which state has the most violent crimes per inhabitant?’
+    Let’s reframe our question:<br>
+    ‘Which state has the most violent crimes per inhabitant?’
+  </p>
+  <p>
     The formula to calculate ‘How many X per Y’ is X divided by Y, or:
     <div class="copy-txt">=(X/Y)</div>
   </p>
@@ -107,7 +107,7 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Add Formula.
       <p class="instruction-detail">
-        As in spreadsheets, formulas must be written by referencing cells using column letters and rows. To apply a formula to all rows, only cells in the first row must be used.
+        Formulas must be written by referencing cells using column letters and rows.
       </p>
     </li>
     <li
@@ -124,24 +124,25 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Sort this new column in decreasing order.
-      <p class="instruction-detail">
+      <!-- <p class="instruction-detail">
         The state with the highest crime rate per capita is:
       </p>
-      <div class="copy-txt">Type your answer here</div>
+      <div class="copy-txt">Type your answer here</div> -->
     </li>
   </ol>
 </section>
 <section>
   <h2>Relative crime rates</h2>
   <p>
-    These per capita crime rates are quite small: Alaska has only 0.008 violent crimes per person. Because of this, crime rates are often reported as ‘crimes per 100,000 people’.
+    These per capita crime rates are quite small: Alaska has only 0.008 violent crimes per person.<br>
+    Because of this, crime rates are often reported as ‘crimes per 100,000 people’.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, Edit your formula to <div class="copy-txt">=(D1/B1)*100000</div>
+      >Edit your formula in step 3 to <div class="copy-txt">=(D1/B1)*100000</div>
       <p class="instruction-detail">
         If you look at the FBI source, you’ll see this number reported in the table.
       </p>
@@ -149,7 +150,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 3, Rename the output of Formula to <kbd>Crimes per 100,000</kbd>.
+      >Rename the output of your Formula <kbd>Crimes per 100,000</kbd>.
     </li>
   </ol>
 </section>
