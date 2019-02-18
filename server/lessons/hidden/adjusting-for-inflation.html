@@ -97,7 +97,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>CPI data</kbd> tab, Select row 11 of the table (with the column names in it) by clicking on the row number.
+      >In the <Kbd>CPI data</kbd> tab, Select row 11 of the table which contains the column names, by clicking on the row number.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -107,7 +107,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add <kbd>Select Columns</kbd> and only keep <kbd>Year</kbd> and <kbd>Annual</kbd>.
+      >Add <kbd>Select Columns</kbd> and keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
     </li>
   </ol>
 </section>
@@ -128,7 +128,8 @@
 <section class="fullscreen">
   <h2>Using CPI</h2>
   <p>
-    In order to convert an old dollar amount into a current dollar amount, we need to divide the old dollar amount by the CPI for that year, then multiply it by the CPI for the current year.<br>
+    In order to convert an current dollar amount into an adjusted dollar amount, we need to divide the old dollar amount by the CPI for that year (CPI1), then multiply it by the CPI (CPI2) for the current year.<br>
+    <div class="copy-txt">adjusted=(current/CPI1)*CPI2</div>
     To do this, we need to get the CPI data into the same tab as the teacher salary data. We can do this by “joining” these tabs.
   </p>
   <p>
