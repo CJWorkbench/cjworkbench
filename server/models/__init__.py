@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from .AclEntry import AclEntry
 from .CachedRenderResult import CachedRenderResult
 from .workflow import Workflow
-from .Lesson import Lesson, LessonHeader, LessonFooter, LessonInitialWorkflow
 from .WfModule import WfModule
 from .Tab import Tab
 from .Params import Params

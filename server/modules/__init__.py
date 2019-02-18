@@ -47,12 +47,19 @@ their ``.json`` spec files.
 """
 import importlib
 import pathlib
+from server.models.module_loader import ModuleFiles, ModuleSpec
 
 
 Lookup = {}
+Specs = {}
 
-SpecPaths = list(pathlib.Path(__file__).parent.glob('*.json'))
+SpecPaths = (
+    list(pathlib.Path(__file__).parent.glob('*.json'))
+    + list(pathlib.Path(__file__).parent.glob('*.yaml'))
+)
 for spec_path in SpecPaths:
+    spec = ModuleSpec.load_from_path(spec_path)
     id_name = spec_path.stem
     module = importlib.import_module('.' + id_name, __package__)
     Lookup[id_name] = module
+    Specs[id_name] = spec

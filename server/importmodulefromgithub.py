@@ -1,4 +1,3 @@
-import importlib.util
 import json
 import logging
 import os
@@ -7,122 +6,46 @@ import shutil
 import tempfile
 import git
 from git.exc import GitCommandError
+import yaml
 from server import minio
 from server.models import ModuleVersion
-from server.models.module_version import validate_module_spec
+from server.models.module_loader import ModuleFiles, ModuleSpec, \
+        validate_python_functions
 
 
 logger = logging.getLogger(__name__)
 
-
-class ValidationError(Exception):
-    pass
-
-
-# Check that we have one .py and one .json file in the repo root dir
-def validate_module_structure(directory):
-    files = os.listdir(directory)
-    extension_file_mapping = {}
-    for item in files:
-        # check file extension and ensure that we have one python, one JSON,
-        # and optionally one HTML file.
-
-        # Skip directories (__pycache__ etc.) and test_*
-        if not os.path.isdir(item) and not item.startswith('test'):
-            if item in ['__init__.py', 'setup.py', 'package.json',
-                        'package-lock.json']:
-                continue
-
-            extension = item.rsplit('.', 1)
-            if len(extension) > 1:
-                extension = extension[1]
-            else:
-                continue
-            if extension in ["py", "json", "html", "js"]:
-                if extension not in extension_file_mapping:
-                    extension_file_mapping[extension] = item
-                else:
-                    raise ValidationError(
-                        f'Multiple files exist with extension {extension}.'
-                        f" This isn't currently supported."
-                    )
-
-    if 'json' not in extension_file_mapping:
-        raise ValidationError('Missing ".json" module-spec file')
-    if 'py' not in extension_file_mapping:
-        raise ValidationError('Missing ".py" module-code file')
-
-    return extension_file_mapping
-
-
-# Now check if the module is importable and defines the render function
-def validate_python_functions(destination_directory, python_file):
-    # execute the module, as a test
-    path = os.path.join(destination_directory, python_file)
-    try:
-        spec = importlib.util.spec_from_file_location('test', path)
-        test_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(test_module)
-    except Exception:  # TODO what exception?
-        raise ValidationError('Cannot load module')
-
-    if hasattr(test_module, 'render'):
-        if callable(test_module.render):
-            return
-        else:
-            raise ValidationError("Module render() function isn't callable.")
-    elif hasattr(test_module, 'fetch'):
-        if callable(test_module.fetch):
-            return
-        else:
-            raise ValidationError("Module fetch() function isn't callable.")
-    else:
-        raise ValidationError("Module render() function is missing.")
 
 
 # Load a module after cloning from github
 # This is the guts of our module import, also a good place to hook into for
 # tests (bypassing github access). Returns a dictionary of info to display to
 # user (category, repo name, author, id_name)
-def import_module_from_directory(version, importdir, force_reload=False):
-    # check that right files exist
-    extension_file_mapping = validate_module_structure(importdir)
-    python_file = extension_file_mapping['py']
-    json_file = extension_file_mapping['json']
-    js_file = extension_file_mapping.get('js')
-
-    # load json file
-    with open(os.path.join(importdir, json_file)) as f:
-        try:
-            module_config = json.load(f)
-        except ValueError:
-            raise ValidationError('Invalid JSON file')
-    validate_module_spec(module_config)  # raises ValidationError
-    validate_python_functions(importdir, python_file)
-
-    id_name = module_config['id_name']
+def import_module_from_directory(version: str, importdir: Path, force_reload=False):
+    module_files = ModuleFiles.load_from_dirpath(importdir)  # raise ValueError
+    spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
+    validate_python_functions(module_files.code)  # raise ValueError
 
     if not force_reload:
         # Don't allow importing the same version twice
         try:
-            ModuleVersion.objects.get(id_name=id_name,
+            ModuleVersion.objects.get(id_name=spec.id_name,
                                       source_version_hash=version)
-            raise ValidationError(
-                f'Version {version} of module {id_name}'
+            raise ValueError(
+                f'Version {version} of module {spec.id_name}'
                 ' has already been imported'
             )
         except ModuleVersion.DoesNotExist:
             # this is what we want
             pass
 
-    if js_file:
-        with open(os.path.join(importdir, js_file), 'rt') as f:
-            js_module = f.read()
+    if module_files.javascript:
+        js_module = module_files.javascript.read_text(encoding='utf-8')
     else:
         js_module = ''
 
-    # Copy code to S3
-    prefix = '%s/%s/' % (id_name, version)
+    # Copy whole directory to S3
+    prefix = '%s/%s/' % (spec.id_name, version)
 
     try:
         # If files already exist, delete them so we can overwrite them.
@@ -143,12 +66,12 @@ def import_module_from_directory(version, importdir, force_reload=False):
 
     # If that succeeds, initialise module in our database
     module_version = ModuleVersion.create_or_replace_from_spec(
-        module_config,
+        spec,
         source_version_hash=version,
         js_module=js_module
     )
 
-    logger.info('Imported module %s' % id_name)
+    logger.info('Imported module %s' % spec.id_name)
 
     return module_version
 
@@ -176,13 +99,11 @@ def import_module_from_github(url, force_reload=False):
         try:
             repo = git.Repo.clone_from(url, importdir, **clone_kwargs)
         except GitCommandError as err:
-            raise ValidationError(
-                f'Unable to clone {url}: {str(err)}'
-            )
+            raise RuntimeError(f'Unable to clone {url}: {str(err)}')
 
         version = repo.head.commit.hexsha[:7]
 
         # Nix ".git" subdir: not a Git repo any more, just a dir
         shutil.rmtree(os.path.join(importdir, '.git'))
 
-        return import_module_from_directory(version, importdir, force_reload)
+        return import_module_from_directory(version, Path(importdir), force_reload)

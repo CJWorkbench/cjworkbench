@@ -1,6 +1,6 @@
 import os.path
 from django.test import SimpleTestCase
-from server.models.Lesson import *
+from server.models.lesson import *
 
 
 # Small helper to avoid repeated code. Lesson HTML includes passed json, is otherwise valid.
@@ -54,13 +54,16 @@ class LessonTests(SimpleTestCase):
         )
 
     def test_parse_fullscreen_section(self):
-        lesson_html = '<header><h1>x</h1></header><section class="fullscreen"><h2>title</h2><p>content</p></section><footer><h2>z</h2></footer>'
+        lesson_html = """
+            <header><h1>x</h1></header>
+            <section class="fullscreen"><h2>title</h2><p>content</p></section>
+            <section><h2>title</h2><p>content</p></section>
+            <footer><h2>z</h2></footer>
+            """
         out = Lesson.parse('a-slug', lesson_html)
 
-        self.assertEqual(
-            out.sections[0],
-            LessonSection('title', '<p>content</p>', [], is_full_screen=True)
-        )
+        self.assertTrue(out.sections[0].is_full_screen)
+        self.assertFalse(out.sections[1].is_full_screen)
 
 
     def test_parse_no_footer(self):

@@ -1,8 +1,9 @@
 import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
-from server.models import Lesson, LessonHeader, LessonFooter, \
-    LessonInitialWorkflow, Workflow, ModuleVersion, LoadedModule
+from server.models import Workflow, ModuleVersion, LoadedModule
+from server.models.lesson import Lesson, LessonHeader, LessonFooter, \
+        LessonInitialWorkflow
 from server.tests.utils import DbTestCase, create_test_user
 
 
@@ -18,16 +19,6 @@ class MockLoadedModule():
     """Make a valid migrate_params()"""
     def migrate_params(self, schema, params):
         return params
-
-
-def lesson_with_initial_workflow(initial_workflow):
-    return Lesson(
-        'slug',
-        LessonHeader('', ''),
-        [],
-        LessonFooter('', ''),
-        LessonInitialWorkflow(initial_workflow),
-    )
 
 
 def create_module_version(id_name: str, parameters: List[Dict[str, Any]],
@@ -164,7 +155,8 @@ class LessonDetailTests(DbTestCase):
     @patch('server.rabbitmq.queue_render')
     @patch.object(Lesson.objects, 'get')
     def test_create_initial_workflow(self, get, render):
-        get.return_value = lesson_with_initial_workflow([
+        get.return_value = Lesson('slug',
+                                  initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -174,7 +166,7 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ])
+        ]))
 
         render.return_value = future_none
 
@@ -203,7 +195,8 @@ class LessonDetailTests(DbTestCase):
     @patch('server.rabbitmq.queue_render')
     @patch.object(Lesson.objects, 'get')
     def test_fetch_initial_workflow(self, get, render, fetch):
-        get.return_value = lesson_with_initial_workflow([
+        get.return_value = Lesson('slug',
+                                  initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -213,7 +206,7 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ])
+        ]))
 
         fetch.return_value = future_none
 
@@ -235,7 +228,8 @@ class LessonDetailTests(DbTestCase):
 
     @patch.object(Lesson.objects, 'get')
     def test_fetch_initial_workflow_with_missing_module_throws_500(self, get):
-        get.return_value = lesson_with_initial_workflow([
+        get.return_value = Lesson('slug',
+                                  initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -245,7 +239,7 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ])
+        ]))
 
         self.log_in()
         response = self.client.get('/lessons/whatever')
@@ -253,7 +247,8 @@ class LessonDetailTests(DbTestCase):
 
     @patch.object(Lesson.objects, 'get')
     def test_fetch_initial_workflow_with_invalid_params_throws_500(self, get):
-        get.return_value = lesson_with_initial_workflow([
+        get.return_value = Lesson('slug',
+                                  initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -263,7 +258,7 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ])
+        ]))
 
         create_module_version('amodule', [
             {'id_name': 'foo', 'type': 'string'},

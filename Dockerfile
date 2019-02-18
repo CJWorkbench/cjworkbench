@@ -1,5 +1,5 @@
 # 0. The barest Python: used in dev and prod
-FROM python:3.6.6-slim-stretch AS pybase
+FROM python:3.7.2-slim-stretch AS pybase
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
@@ -105,10 +105,6 @@ RUN true \
       libre2-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
-
-# vader_lexicon: for sentiment analysis
-# stopwords: for wordcloud
-RUN python -m nltk.downloader -d /usr/share/nltk_data vader_lexicon stopwords
 
 
 # 2. Node deps -- completely independent
