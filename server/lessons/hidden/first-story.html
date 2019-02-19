@@ -4,7 +4,7 @@
 
 <section class="fullscreen">
   <h2>Welcome!</h2>
-  <p>In this first lesson you'll learn the first questions you should ask about every data set, and use international C02 emmissions data to do a complete story including analysis and visualization.
+  <p>In this first lesson we will go over the first questions you should ask about every data before starting your analysis. Then we will use international C02 emmissions data to do a complete story, including analysis and visualization.
   </p>
 </section>
 
@@ -68,21 +68,20 @@
     One of the first things you can do with data is describe or summarize it. The average is one way of computing a "typical" value.
   </p>
   <p>
-    Let's find out what volume of C02 is emitted by each country in a year.
+    Let's ask "What volume of C02 is emitted by each country in a year?".
+    CO2 emissions fluctuate, so instead of only using the last year of data, we will calculate the average of the last five years.
   </p>
-  <p>
-    Country CO2 emissions fluctuate, so instead of looking at just the last year, we will calculate the average of the last five years.
-  </p>
-  <p>The average is the sum of all the values divided by the number of values N:
+  <p>The average is the sum of all the values divided by the number of values:
     <div class="copy-txt">=(Value 1+Value 2+...+Value N) / N</div>
+    <p class="instruction-detail">In this lesson we will use the step Calculate to apply this formula automatically.</p>
   </p>
   <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">In this lesson we will use the step ‘Calculate’ to apply this formula automatically.</p>
+
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 2, add Calculate
+      >Add the step Calculate
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -110,7 +109,7 @@
 <section>
   <h2>First chart</h2>
   <p>
-    Many data-driven stories involve a visualization. You can add a visualization step at any point to view the contents of the table as a chart.
+    Many data-driven stories involve a visualization. You can add a visualization step at any point to view the content of a table as a chart.
   </p>
   <p>
     Let’s visualize the averages we’ve just calculated.
@@ -131,7 +130,6 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Select the <kbd>Country</kbd> column for the X axis.
-      <p class="instruction-detail">The new column is displayed at the far right of the table.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -144,7 +142,7 @@
   <h2>Lesson Complete!</h2>
   <div class="completed">
     <p class="summary"> Congratulations, you have completed your first data-driven story! <br><br>
-      In future lessons, you’ll learn how to export live charts and create much more sophisticated visualizations.<br><br>
+      In future lessons, you’ll learn how to export live charts and create more sophisticated visualizations.<br><br>
       Next, let's learn about extreme values.
     </p>
   </div>
