@@ -7,13 +7,24 @@ FROM python:3.7.2-slim-stretch AS pybase
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
 # git: because sometimes we throw git revisions in the Pipfile -- which is always lazy
+# curl+unzip: for NLTK downloads
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
         git \
         nano \
         postgresql-client \
+        unzip \
+        curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Download NLTK stuff
+RUN mkdir -p /usr/share/nltk_data \
+    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > /stopwords.zip \
+    && unzip -d/usr/share/nltk_data/corpora /stopwords.zip \
+    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > /vader.zip \
+    && unzip -d/usr/share/nltk_data/sentiment /vader.zip \
+    && rm -f /stopwords.zip /vader.zip
 
 RUN pip install pipenv==2018.11.26
 
@@ -30,25 +41,13 @@ FROM pybase AS pydev
 # * fastparquet
 # * python-snappy
 # * fb-re2
-#
-# Need curl+unzip for NLTK downloads
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
       libsnappy-dev \
       libre2-dev \
-      unzip \
-      curl \
     && rm -rf /var/lib/apt/lists/*
-
-# Download NLTK stuff
-RUN mkdir -p /usr/share/nltk_data \
-    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > /stopwords.zip \
-    && unzip -d/usr/share/nltk_data/corpora /stopwords.zip \
-    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > /vader.zip \
-    && unzip -d/usr/share/nltk_data/sentiment /vader.zip \
-    && rm -f /stopwords.zip /vader.zip
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
 # See https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/ for
