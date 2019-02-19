@@ -79,14 +79,14 @@
   <h2>Grouping and counting</h2>
   <p>In the previous lesson, we filtered <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">San Francisco Housing data</a> to reveal sizable new constructions containing a majority of affordable units. </p>
   </p>
-    Let’s now find out how many of these projects are in each neighborhood.
+    Let’s take it from there and find out how many of these projects are in each neighborhood.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add 'Group' and select the column <kbd>Planning neighborhood</kbd>.
+      >Add 'Group' in position 4 and select the column <kbd>Planning neighborhood</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -109,7 +109,7 @@
     Just counting projects gives us little information about the number of new housing units.
   </p>
   <p>
-    Instead let’s sum the number of affordable units are planned to be built in each neighborhood.
+    Instead let’s sum the number of affordable units that are planned to be built in each neighborhood.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -128,7 +128,7 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Name the new column <kbd>Sum of affordable units</kbd>
       <p class="instruction-detail">
-        In addition to counting projects per neighborhood, we are now calculating the sum of the values of <kbd>Affordable Units</kbd> for each rows within each neighborhood group.
+        In addition to counting projects per neighborhood, we are now calculating the sum of all <kbd>Affordable Units</kbd> within each neighborhood group.
       </p>
     </li>
   </ol>
@@ -137,7 +137,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll look at using Group to report on campaign finance data.</p>
+    <p class="summary"> Next, we’ll apply what we have learned so far to report on campaign finance data.</p>
   </div>
   <div class="next">
     <h2>Next</h2>
