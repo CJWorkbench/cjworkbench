@@ -3,7 +3,7 @@
   "id_name": "concattabs",
   "category": "Add data",
   "icon": "concatenate",
-  "help_url": "modules/add-data/concattabs",
+  "help_url": "modules/add-data/concatenate-tabs",
   "description": "Append rows from other tabs to this tab.",
   "parameters": [
     {

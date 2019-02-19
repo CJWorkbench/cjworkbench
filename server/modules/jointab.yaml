@@ -2,7 +2,7 @@ id_name: jointab
 name: Join tab
 category: Add data
 icon: join
-help_url: modules/add-data/join
+help_url: modules/add-data/join-tabs
 description: Join data using shared columns between two tabs.
 param_schema:
   right_tab: { type: tab }
