@@ -40,7 +40,6 @@ hext = "==0.2.0"
 jsonschema = "==3.0.0b3"
 rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
-psycopg2-binary = "*"
 pyyaml = "*"
 
 [dev-packages]
