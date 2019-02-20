@@ -5,10 +5,10 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Campaign finance is one of the classic topics for data journalism. Unfortunately, campaign finance data often requires a lot of cleaning before you can answer basic questions, such as “Who donated the most money?”
+    Campaign finance is a classic topic in data journalism. Unfortunately, campaign finance data often requires a lot of cleaning before you can answer basic questions, such as “Who donated the most money?”
   </p>
   <p>
-    In this lesson we will use data on contributions to a political campaign in the state of New York. We will extract the state from donor addresses, so that we can group donations by state. This requires splitting a column of text and removing unwanted information, which are basic cleaning skills you will use many times.
+    In this lesson we will use data on contributions to a political campaign in the state of New York. We will extract the state from donor addresses, so that we can group donations by state. This requires splitting a column of text and removing unwanted information, which is a skill you will use many times.
   </p>
 </section>
 
@@ -33,7 +33,7 @@
 <section>
   <h2>Data</h2>
   <p>
-    Let's analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New.<br>
+    Let's analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York.
     This data is published by the Board of Election of the State of New York,
   <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
   </p>
@@ -81,7 +81,7 @@
     Our first task is to extract the two letter state abbreviations in the <kbd>Contributor</kbd> column.
   </p>
   <p>
-    We need to store the state by itself in a new column, so that we can apply Group to it.
+    We need to store the state by itself in a new column, so that we can apply Group to it, and get a breakdown of donations by state.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -107,7 +107,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set <kbd>Numbers of characters</kbd> to <kbd>8</kbd>
+      >Set <kbd>Numbers of characters</kbd> to <kbd>8</kbd>.
     </li>
   </ol>
 </section>
@@ -124,7 +124,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add <kbd>Clean text</kbd>, and apply it to the <kbd>State</kbd> column.
+      >Add <kbd>Clean text</kbd>, and apply it to the <kbd>Contributor 2</kbd> column.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -153,7 +153,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set the operation to <kbd>SUM</kbd>, and choose the <kbd>Amt</kbd> column as the target.
+      >Set the operation to <kbd>SUM</kbd>, and choose the <kbd>Amount</kbd> column as the target.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -166,10 +166,18 @@
 <section>
   <h2>Sort and chart</h2>
   <p>
-    Let’s visualize these results.
+    Let’s visualize these results. First, lets delete donations from New York since they are not the object of our investigation.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Select row 1 and choose <kbd>Delete selected rows</kbd> in the table header's action menu.
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span>.
+    </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
@@ -187,13 +195,24 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Set the X Axis to <kbd>State,</kbd> and the Y axis to <kbd>Total amount</kbd>.
+      <p class="instruction-detail">
+
+      </p>
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary">Next, we’ll learn about data types.</p>
+    <p>
+       California is the first out-of-state contributor to Governor Cuomo's election's campaign. Who are these connections, and why are they interested in election in the state of New York?
+    </p>
+    <p>
+      This may only be the beginning of your investigation.
+    </p>
+    <p>
+      Next, we’ll learn about data types.
+    </p>
   </div>
   <div class="next">
     <h2>Next</h2>
