@@ -6,10 +6,10 @@
   <h2>Introduction</h2>
   <p>
     In the last lesson we learned how to ensure that a column of dates has the correct “Date” type.
-    Now we’re ready to group by date, using the same police incident data from the City of New York, <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a>.
+    Now we’re ready to group by date, using the same police incident data from the City of New York we used in the previous lesson.
   </p>
   <p>
-    We’ll answer the question: how many incidents happened each month in each borough of the city?
+    We’ll answer the question: how many incidents were reported each month in each borough of the city?
   </p>
 </section>
 
@@ -24,7 +24,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYC-incidents-Jan-feb-2018.csv"
+              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYC-incidents-2018.csv"
             }
           },
           {
@@ -101,7 +101,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In step 6, change the granularity to <kbd>by day</kbd>.
+      >In the Group in step 5, change the granularity to <kbd>by day</kbd>.
       <p class="instruction-detail">
         Select step 6 to display your new chart.
       </p>
