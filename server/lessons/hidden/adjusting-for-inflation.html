@@ -5,10 +5,10 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Inflation is the rate of increase in prices over a given period of time. Historical dollar amounts cannot be directly compared with dollars today, because all prices slowly change over time.
+    Inflation is the rate of increase in prices over a given period of time. Historical dollar amounts cannot be directly compared with today's dollars, because all prices slowly change over time.
   </p>
   <p>
-    In this lesson, we’ll learn how to compare amounts from different years using Consumer Price Index (CPI) data from the Bureau of Labor Statistics.
+    In this lesson, we’ll learn how to compare dollar amounts from different years using Consumer Price Index (CPI) data from the Bureau of Labor Statistics.
     We will adjust teacher salaries dating back from 1969 in order to get a good appreciation of salary trends.
   </p>
 </section>
@@ -101,7 +101,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>Move rows to table header</kbd> from the action menu above the table, where it says "1 row selected".
+      >Choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says "1 row selected".
       <p class='instruction-detail'>
         Because it contained both text and numeric data, the column <kbd>Average salary</kbd> was loaded as text. We need to convert it to numbers to use it in calculations.
       </p>
@@ -109,10 +109,13 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Average salary</kbd> column menu.
+      >Choose <kbd>Convert to Numbers</kbd> in the <kbd>Average salary</kbd> column menu.
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span>.
+      <p class='instruction-detail'>
+        The CPI data, in the other tab, has similar issues.
+      </p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -122,8 +125,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Still in that tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>.
-
+      >Still in that tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -144,25 +146,25 @@
   </p>
 </section>
 <section class="fullscreen">
-  <h2>Introduction to joining tables</h2>
+  <h2>How join works</h2>
   <p>
-    Joins are used to augment the information contained in one table with the data contained in another table.<br>
+    Joins are used to augment the information contained in one table with the information contained in another table.<br>
     Two tables can be joined when they both have at least one column sharing identical values.<br>
-    Tab 1 and 2 below share the column <kbd>First name</kbd>. Each table contain one other column of data associated with the values in <kbd>First name</kbd>.
-    <figure class="three-quarter-width">
-      <img alt="Inspect element" src="images/course-1/join-example-1.png">
+    Tab 1 and 2 below share the column <kbd>First name</kbd>. Each table contains one other column of data associated with the values in <kbd>First name</kbd>.
+    <figure>
+      <img alt="Inspect element" class="three-quarter-width" src="images/course-1/join-example-1.png">
     </figure>
-    When joining Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding values from the other tab are appended.
-    <figure class="half-width">
-      <img alt="Inspect element" src="images/course-1/join-example-2.png">
+    When joining Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding values from the other tab are appended (Tab 3).
+    <figure >
+      <img alt="Inspect element" class="half-width" src="images/course-1/join-example-2.png">
     </figure>
-    Joins typically helps uncover insight by bringing two sources of information together, and is essential to many stories. A famous one joins school bus drivers with convicted felons.
+    Joins typically helps uncover insight by bringing two sources of information together that may not mean much independently. Joins are instrumental to many stories. A famous (and recurring) story joins school bus drivers with convicted felons.
   </p>
 </section>
 <section>
   <h2>Joining tables</h2>
   <p>
-    Since both tables have a year variable, we’ll join using the Year.
+    Since both tables have a year variable, we’ll join them on the column <kbd>Year</kbd>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -186,8 +188,8 @@
   <p>
     The formula for converting a current dollar amount into an adjusted dollar amount is:
     <div class="copy-txt">adjusted=(current/CPI1)*CPI2</div>
-    In other words: <br>
-    In other words, we want to divide each row by its joined CPI value, then multiply all values by the CPI for reference year (the year adjusted for), sometimes called the “reference” year. In this case the reference is 2016, which has as a CPI of <kbd>240.007</kbd>.
+    We need to divide each yearly salary by its associated CPI value, then multiply the result by the CPI for the reference year (the year adjusted for).
+    <br>In this case the reference is 2016, which has as a CPI of <kbd>240.007</kbd>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -197,7 +199,10 @@
       >Add Formula and type in:
       <div class="copy-txt">=(C1/D1)*240.007</div>
       <p class="instruction-detail">
-        Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal.” We can see that the salaries of teachers in U.S. public elementary and secondary schools decreased from 2009 to 2016, in real dollar terms.
+        Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal”.
+      </p>
+      <p class="instruction-detail">
+        We can see that the salaries of teachers in U.S. public elementary and secondary schools decreased from 2009 to 2016, in real dollar terms, which is not apparent in the non-adjusted data.
       </p>
     </li>
   </ol>
@@ -205,7 +210,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll look at resources and wrap up this first course!
+    <p class="summary"> Congratulations! You completed the first course. Next, we’ll look at resources and wrap up this introduction to data journalism!
     </p>
   </div>
   <div class="next">
