@@ -134,25 +134,12 @@ class LoadUrlTests(unittest.TestCase):
         self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
 
     def test_load_json(self):
-        with open(os.path.join(settings.BASE_DIR,
-                               'server/tests/test_data/sfpd.json'), 'rb') as f:
-            # TODO nix this big file and use a sensible unit test. This extra
-            # computation merely tests that the code uses the same JSON-parsing
-            # logic as the test.
-            sfpd_json = f.read()
-            # OrderedDict otherwise cols get sorted
-            sfpd_table = pd.DataFrame(
-                json.loads(sfpd_json, object_pairs_hook=OrderedDict)
-            )
-            expected = ProcessResult(sfpd_table)
-            expected.sanitize_in_place()
-
         with patch('server.modules.utils.spooled_data_from_url',
-                   fake_spooled_data_from_url(sfpd_json, 'application/json',
+                   fake_spooled_data_from_url(b'[{"A":1}]', 'application/json',
                                               'utf-8')):
             fetch_result = fetch(url='http://test.com/the.json')
 
-        self.assertEqual(fetch_result, expected)
+        self.assertEqual(fetch_result, ProcessResult(pd.DataFrame({'A': [1]})))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(b'not json', 'application/json'))
@@ -160,9 +147,9 @@ class LoadUrlTests(unittest.TestCase):
         # malformed json should put module in error state
         fetch_result = fetch(url='http://test.com/the.json')
 
-        self.assertEqual(fetch_result, ProcessResult(
-            error='Expecting value: line 1 column 1 (char 0)'
-        ))
+        self.assertEqual(fetch_result, ProcessResult(error=(
+            'Invalid JSON (Unexpected character found when decoding \'null\')'
+        )))
 
     def test_load_xlsx(self):
         with open(mock_xlsx_path, 'rb') as f:

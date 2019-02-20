@@ -81,29 +81,108 @@ class ParseBytesIoTest(SimpleTestCase):
     def test_autodetect_charset_chunked(self):
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
                                'text/csv', None)
-        expected = ProcessResult(
-            pd.DataFrame({'A': ['café']}).astype('category')
-        )
-        self.assertEqual(result, expected)
+        expected = pd.DataFrame({'A': ['café']}).astype('category')
+        assert_frame_equal(result.dataframe, expected)
 
     def test_json_with_nulls(self):
         result = parse_bytesio(io.BytesIO("""[
             {"A": "a"},
             {"A": null}
         ]""".encode('utf-8')), 'application/json')
-        expected = ProcessResult(
-            pd.DataFrame({'A': ['a', None]}, dtype=str)
-        )
-        self.assertEqual(result, expected)
+        expected = pd.DataFrame({'A': ['a', None]}, dtype=str)
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_with_int_nulls(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": 1},
+            {"A": null}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': [1.0, numpy.nan]})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_str_numbers_are_str(self):
+        """JSON input data speficies whether we're String and Number."""
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": "1"},
+            {"A": "2"}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': ['1', '2']})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_int64(self):
+        """Support int64 -- like Twitter IDs."""
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": 1093943422262697985}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': [1093943422262697985]})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_mixed_types_are_str(self):
+        """Support int64 -- like Twitter IDs."""
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": 1},
+            {"A": "2"}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': ['1', '2']})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_str_dates_are_str(self):
+        """JSON does not support dates."""
+        result = parse_bytesio(io.BytesIO("""[
+            {"date": "2019-02-20"},
+            {"date": "2019-02-21"}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'date': ['2019-02-20', '2019-02-21']})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_bools_become_str(self):
+        """Workbench does not support booleans; use True/False."""
+        # Support null, too -- don't overwrite it.
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": true},
+            {"A": false},
+            {"A": null}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': ['True', 'False', numpy.nan]})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_object_becomes_str(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": {"foo":"bar"}}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': ["{'foo': 'bar'}"]})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_array_becomes_str(self):
+        result = parse_bytesio(io.BytesIO("""[
+            {"A": ["foo", "bar"]}
+        ]""".encode('utf-8')), 'application/json')
+        expected = pd.DataFrame({'A': ["['foo', 'bar']"]})
+        assert_frame_equal(result.dataframe, expected)
 
     def test_json_with_undefined(self):
         result = parse_bytesio(io.BytesIO("""[
             {"A": "a"},
             {"A": "aa", "B": "b"}
         ]""".encode('utf-8')), 'application/json')
-        expected = ProcessResult(
-            pd.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']}, dtype=str)
-        )
+        expected = pd.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']})
+        assert_frame_equal(result.dataframe, expected)
+
+    def test_json_not_records(self):
+        result = parse_bytesio(io.BytesIO(b'{"meta":{"foo":"bar"},"data":[]}'),
+                               'application/json')
+        expected = ProcessResult(error=(
+            'Workbench cannot import this JSON file. The JSON file must '
+            'be an Array of Objects for Workbench to import it.'
+        ))
+        self.assertEqual(result, expected)
+
+    def test_json_syntax_error(self):
+        result = parse_bytesio(io.BytesIO(b'{not JSON'), 'application/json')
+        expected = ProcessResult(error=(
+            'Invalid JSON (Unexpected character found when '
+            "decoding 'null')"
+        ))
         self.assertEqual(result, expected)
 
     def test_txt_detect_separator_semicolon(self):

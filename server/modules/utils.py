@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.fields.files import FieldFile
 from django.db import transaction
+import numpy as np
 import pandas
 from pandas import DataFrame
 import pandas.errors
@@ -29,6 +30,12 @@ from server.sanitizedataframe import autocast_dtypes_in_place
 
 _TextEncoding = Optional[str]
 _ChunkSize = 1024 * 1024
+
+
+class BadInput(ValueError):
+    """
+    Workbench cannot transform the given data into a DataFrame.
+    """
 
 
 def parse_multicolumn_param(value, table):
@@ -143,6 +150,8 @@ def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], DataFrame],
     """
     try:
         return ProcessResult.coerce(parser(bytesio, text_encoding))
+    except BadInput as err:
+        return ProcessResult(error=str(err))
     except json.decoder.JSONDecodeError as err:
         return ProcessResult(error=str(err))
     except pandas.errors.EmptyDataError:
@@ -245,8 +254,30 @@ def _parse_json(bytesio: io.BytesIO,
     * We may raise json.decoder.JSONDecodeError or pandas.errors.ParserError.
     """
     with _wrap_text(bytesio, text_encoding) as textio:
-        data = json.load(textio, object_pairs_hook=OrderedDict)
-        return pandas.DataFrame.from_records(data)
+        try:
+            data = pandas.read_json(textio, orient='records', dtype=False,
+                                    convert_dates=False)
+        except ValueError as err:
+            if 'Mixing dicts with non-Series' in str(err):
+                raise BadInput(
+                    'Workbench cannot import this JSON file. The JSON file '
+                    'must be an Array of Objects for Workbench to import it.'
+                )
+            else:
+                raise BadInput('Invalid JSON (%s)' % str(err))
+
+        # do not autocast_dtypes_in_place(): we want an str of ints to stay
+        # str. But _do_ make sure all the types are valid.
+        #
+        # We allow str and numbers.
+        colnames = [colname
+                    for colname, dtype in zip(data.columns, data.dtypes)
+                    if dtype == object]
+        strs = data[colnames].astype(str)
+        strs[data[colnames].isna()] = np.nan
+        data[colnames] = strs
+
+        return data
 
 
 def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
