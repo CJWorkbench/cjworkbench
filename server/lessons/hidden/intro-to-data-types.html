@@ -5,7 +5,7 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Data types are used to tell the computer how to interpret and use values.
+    Data types are used to tell computers how to interpret and use values.
   </p>
   <p>
     Different columns have different types: text, numbers, dates, locations, and so on. Some operations only work on specific types. For example, you can’t subtract one text value from another.
@@ -84,7 +84,7 @@
 <section>
   <h2>Cleaning</h2>
   <p>
-    In the next lesson, we will answer the question: How many incidents were reported each month in each borough?
+    There's a lot of interesting data points you may want to explore in this data. In the next lesson, we will answer the question: "How many incidents were reported each month in each borough?"
   </p>
   <p>
     For now, let’s narrow it down to the columns we need, and set column types correctly.
@@ -101,12 +101,13 @@
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Rename these two columns respectively to <kbd>Borough</kbd> and <kbd>Complaint date</kbd>.
+      <p class="instruction-detail">Before going further, let's learn a little more about data types.</p>
     </li>
 </section>
 <section class="fullscreen">
   <h2>Data types</h2>
   <p>
-    You may have noticed that Workbench shows the type of each column below the column name. Workbench supports 3 types:
+    You may have noticed that the type of each column is displayed below each column name. Workbench supports 3 types:
   </p>
   <h3>Text</h3>
   <p>
@@ -117,13 +118,16 @@
   </p>
   <h3>Date & times</h3>
   <p>
-    A date and a time together. In can be written in many formats, such as “23 January 2019 11:42”. Right now date & time in Workbench is shown as “2019–01-23 11:42:00”
+    A date and a time together. In can be written in many formats, such as “23 January 2019 11:42”. Right now date & time in Workbench is shown as “2019–01-23 11:42:00”.
   </p>
 </section>
 <section>
   <h2>Converting dates</h2>
   <p>
     Although the <kbd>Complaint date</kbd> column looks like a date, you can see that it was loaded as text.
+    <figure class="half-width">
+      <img alt="Inspect element" src="images/course-1/type.png">
+    </figure>
   </p>
   <p>
     If any values in a column are blank, if values that are not dates, or if the date is in a format Workbench doesn’t recognize, the column will be loaded as text.

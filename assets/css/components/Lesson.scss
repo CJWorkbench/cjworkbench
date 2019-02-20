@@ -104,6 +104,9 @@ article.lesson {
       margin: 1rem 0 2rem 0!important;
       max-width: 100%;
       margin: 0 auto; // in case image is too small
+      &.half-width img {
+        width: 50%;
+      }
 
       figcaption {
         @extend .info-1;
