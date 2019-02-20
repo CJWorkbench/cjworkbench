@@ -36,7 +36,7 @@ services:
       MINIO_SECRET_KEY: minio_secret
     volumes:
       - minio_data:/data
-    command: server /data
+    command: [ 'server', '/data' ]
 
   webpack:
     build:
@@ -48,7 +48,7 @@ services:
       - node_modules:/app/node_modules:rw
       - jest_cache:/tmp/jest_0:rw
     networks: [ 'dev' ]
-    command: node_modules/.bin/webpack --mode development --watch
+    command: [ 'node_modules/.bin/webpack', '--mode', 'development', '--watch' ]
 
   frontend:
     build:
@@ -69,10 +69,19 @@ services:
       MINIO_URL: http://minio:9000
       MINIO_EXTERNAL_URL: http://localhost:8001
       MINIO_BUCKET_PREFIX: dev
-    ports: [ '8000:8080' ]
+    ports: [ '8000:8000', '35729:35729' ]
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
-    command: [ 'pipenv', 'run', 'python', './manage.py', 'runserver', '--insecure', '0.0.0.0:8080' ]
+    command: [
+      # Use http-process-proxy, not Django reload. Django reload crashes
+      # when there's a syntax error.
+      'pipenv', 'run',
+      'python', '-m', 'httpprocessproxy', '0.0.0.0:8000', '0.0.0.0:8080',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'server/**/*.py', 'server/**/*.json', 'server/**/*.yaml', 'server/lessons/**/*.html', 'server/courses/**/*.html', 'cjworkbench/**/*.py',
+      '--exec',
+      'python', './manage.py', 'runserver', '--noreload', '--insecure', '0.0.0.0:8080'
+    ]
 
   worker:
     # It'd be nice to use YAML anchors to copy these parameters ... but
@@ -96,7 +105,15 @@ services:
       MINIO_BUCKET_PREFIX: dev
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
-    command: [ 'pipenv', 'run', 'python', './manage.py', 'worker' ]
+    command: [
+      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # syntax error.
+      'pipenv', 'run',
+      'bin/watchman-monitor',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'cjworkbench/**/*.py', 'worker/**/*.py', 'server/modules/**/*.py', 'server/modules/**/*.json', 'server/modules/**/*.yaml',
+      '--exec', 'python', './manage.py', 'worker'
+    ]
 
 
   cron:
@@ -121,7 +138,15 @@ services:
       MINIO_BUCKET_PREFIX: dev
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
-    command: [ 'pipenv', 'run', 'python', './manage.py', 'cron' ]
+    command: [
+      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # syntax error.
+      'pipenv', 'run',
+      'bin/watchman-monitor',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'cjworkbench/**/*.py', 'server/cron/**/*.py', 'server/management/commands/cron.py',
+      '--exec', 'python', './manage.py', 'cron'
+    ]
 
   testdatabase:
     image: postgres:10.4

@@ -41,12 +41,43 @@ FROM pybase AS pydev
 # * fastparquet
 # * python-snappy
 # * fb-re2
+# * watchman (until someone packages binaries)
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
       libsnappy-dev \
       libre2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# build watchman. Someday let's hope someone publishes binaries
+# https://facebook.github.io/watchman/docs/install.html
+RUN cd /tmp \
+    && curl -L https://github.com/facebook/watchman/archive/v4.9.0.zip > watchman-4.9.0.zip \
+    && unzip watchman-4.9.0.zip \
+    && cd watchman-4.9.0 \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y \
+      libssl-dev \
+      autoconf \
+      automake \
+      libtool \
+      libpcre3-dev \
+      pkg-config \
+    && ./autogen.sh \
+    && ./configure --prefix=/usr \
+    && make -j4 \
+    && make install \
+    && cd /tmp \
+    && rm -rf /tmp/watchman-4.9.0* \
+    && apt-get remove --purge -y \
+      libssl-dev \
+      autoconf \
+      automake \
+      libtool \
+      libpcre3-dev \
+      pkg-config \
+    && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv

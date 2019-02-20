@@ -1,0 +1,3 @@
+{
+  "ignore_dirs": ["__mocks__", "assets", "bin", "deploy", "doc", "docker", "integrationtests", "local_mail", "node_modules", "stresstest"]
+}

@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+
+import argparse
+import asyncio
+import os
+import subprocess
+import sys
+
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
+from typing import List
+
+from httpprocessproxy.watcher import Watcher
+
+
+@asynccontextmanager
+async def monitor_command(command: List[str]) -> None:
+    """
+    Runs `command`, restarting when callback is called.
+
+    stdout and stderr are inherited.
+
+    If the command dies, this process stays running; the callback will still
+    restart the command.
+
+    Usage:
+
+        async with monitor_command(['tail', '-f', '/dev/null']) as restart:
+            # the process has started
+            await restart()  # kill and restart
+            await restart()  # kill and restart
+            # when we exit, the process will be killed
+    """
+    lock = asyncio.Lock()
+
+    async def start():
+        return await asyncio.create_subprocess_exec(
+            *command,
+            stdin=subprocess.DEVNULL,
+            stdout=sys.stdout,
+            stderr=sys.stderr
+        )
+
+    process = await start()
+
+    async def restart_async():
+        nonlocal lock, process
+
+        async with lock:
+            process.kill()
+            await process.wait()
+            process = await start()
+
+    def restart():
+        asyncio.create_task(restart_async())
+
+    yield restart
+
+    process.kill()
+    await process.wait()
+
+
+@dataclass(frozen=True)
+class Monitor:
+    watch_path: str
+    command: List[str]
+    watch_patterns: List[str]  # empty means '**/*'
+    watch_exclude_patterns: List[str]  # empty means '**/*'
+
+    async def run_forever(self):
+        killed = asyncio.Event()  # never set
+
+        async with monitor_command(self.command) as reload:
+            watcher = Watcher(
+                self.watch_path,
+                self.watch_patterns,
+                self.watch_exclude_patterns,
+                reload,
+            )
+            watcher.watch_forever_in_background()
+            await killed.wait()
+
+
+def _patterns_to_expression(include, exclude):
+    # convert a list of globs into the equivalent watchman expression term
+    # copy/paste from
+    # https://github.com/facebook/watchman/blob/master/python/bin/watchman-make
+    include_any = ["anyof", *[["match", p, "wholename", MatchOptions] for p in include]]
+    exclude_any = ["anyof", *[["match", p, "wholename", MatchOptions] for p in exclude]]
+
+    if include:
+        if exclude:
+            return ["allof", ["not", exclude_any], include_any]
+        else:
+            return include_any
+    else:
+        if exclude:
+            return ["not", exclude_any]
+        else:
+            return ["true"]
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Run the given command and restart it when files change"
+    )
+    parser.add_argument(
+        "-p",
+        "--pattern",
+        type=str,
+        nargs="+",
+        help="pattern(s) to watch, e.g. 'src/**/*.html' (default '**/*')",
+    )
+    parser.add_argument(
+        "-x",
+        "--exclude",
+        type=str,
+        nargs="+",
+        help="pattern(s) to NOT watch, e.g. 'src/**/test_*' (overrides -p)",
+    )
+    parser.add_argument(
+        "--exec",
+        required=True,
+        metavar="BACKENDCOMMAND",
+        dest="command",
+        nargs=argparse.REMAINDER,
+        help="Backend server command (must listen at BACKEND:PORT)",
+    )
+
+    args = parser.parse_args()
+
+    monitor = Monitor(
+        os.getcwd(),
+        args.command,
+        args.pattern or [],
+        args.exclude or [],
+    )
+    asyncio.run(monitor.run_forever())
+
+
+if __name__ == "__main__":
+    main()

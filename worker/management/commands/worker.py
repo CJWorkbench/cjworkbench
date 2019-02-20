@@ -2,7 +2,6 @@ import asyncio
 import logging
 import os
 from django.core.management.base import BaseCommand
-from django.utils import autoreload
 from worker.main import main_loop
 
 
@@ -33,16 +32,14 @@ def exit_on_exception(loop, context):
     os._exit(1)
 
 
-def main():
-    loop = asyncio.new_event_loop()
+async def main():
+    loop = asyncio.get_running_loop()
     loop.set_exception_handler(exit_on_exception)
-    loop.create_task(main_loop())
-    loop.run_forever()
-    loop.close()
+    await main_loop()
 
 
 class Command(BaseCommand):
     help = 'Continually delete expired anonymous workflows and fetch wfmodules'
 
     def handle(self, *args, **options):
-        autoreload.main(main)
+        asyncio.run(main())
