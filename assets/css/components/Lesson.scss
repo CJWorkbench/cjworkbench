@@ -313,20 +313,18 @@ article.fullscreen {
 
   figure {
 
-    &.full img {
+    img.full-width { // 3 sizes of content to play with
       width: 100%;
-      &.no-border {
-        background-color: transparent;
-        padding-left: 0rem;
-      }
     }
-
-    &.half-width img {
+    img.half-width {
       width: 50%;
     }
-
-    &.three-quarter-width img{
+    img.three-quarter-width{
       width: 75%;
+    }
+    .no-border { // Sometimes, border are not wanted
+      background-color: transparent;
+      padding-left: 0rem;
     }
   }
 

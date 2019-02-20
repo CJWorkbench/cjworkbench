@@ -7,6 +7,8 @@
   <p>
     Data can be organized into tables in different ways. In this lesson, you will learn to recognize “long” and “wide” formats and convert between them, which is called reshaping.
   </p>
+  <p>
+    In this lesson we will work with a month of the same data we used in the previous lesson, on police incident reported in the City of New York.
 </section>
 <script id="initialWorkflow" type="application/json">
   {
@@ -28,27 +30,29 @@
 
 <section class="fullscreen">
   <h2> </h2>
-  <p><b>Long format</b> have two properties:<br><br>
-    There is only one column with measured values.<br>In this case, “Count of incidents”. All other columns are variables that describe what is measured.
+  <p><b>Long format</b> tables contain only one column with measured values.<br>In this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured.
   </p>
   <p>
-    Each row is a now unique combination of those variables.<br> In this case, each available "Complaint date" is combined with each unique borough.
+    Each row is a unique combination of those variables.<br> In this case, each available <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
   </p>
-  <figure class="full">
+  <figure>
     <img class="no-border half-width" alt="Inspect element" src="images/course-1/long-table.png">
   </figure>
   <p>
-    <b>Wide formats</b> are the commonly found table format. In a wide format, there are one or more columns that identify what each row of data refers to, in this case “Complaint date.” These columns are called “row variables.”<br>
-    All remaining columns contain measurements. The column names of those columns are the "column variable", in this case each borough.
+    <b>Wide formats</b> are the most common table format. In a wide format. there are one or more columns that describe what is measured, in this case <kbd>Complaint date</kbd>. These columns are called “Row variables".<br>
+    All other column names are called "Column variables", as they also describe what is measured - in this case each <kbd>Borough</kbd>. All remaining cells contain the actual measurements.
   </p>
-  <figure class="full">
-    <img class="no-border" alt="Inspect element" src="images/course-1/wide-table.png">
+  <figure>
+    <img class="no-border full-width" alt="Inspect element" src="images/course-1/wide-table.png">
   </figure>
 </section>
 <section>
   <h2>Converting to wide format</h2>
   <p>
-    For this data, our goal is to  to visualize the volume of incidents reported in each borough, for each week. Because Workbench charts plot columns, each borough must be in its own column, with the rows corresponding to dates.
+    Our goal is to visualize the volume of incidents reported in each borough, for each day.
+  </p>
+  <p>
+    All dates must be in one column so that we can select it as the X axis, and each borough must be in its own column, so that we can pick and choose which we want to compare.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -60,7 +64,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select <kbd>date</kbd> as the <kbd>Row variable</kbd>.
+      >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -75,7 +79,7 @@
     Finally, we’re ready to visualize our grouped police incident data.
   </p>
   <p>
-    Let’s visually compare the volume of  reported police incidents  in each borough, for each week, using a line chart.
+    Let’s visually compare the volume of reported police incidents in each borough, using a line chart.
   </p>
   <ol class="steps">
     <li
@@ -100,7 +104,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary">In this chart we’re comparing volumes of incidents between boroughs with very different population size.In the next lesson, we’ll look at how to compare ‘per capita'.</p>
+    <p class="summary">In this chart we’re comparing volumes of incidents between boroughs with very different population size. In the next lesson, we’ll look at how to compare ‘per capita'.</p>
   </div>
   <div class="next">
     <h2>Next</h2>
