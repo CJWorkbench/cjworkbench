@@ -28,7 +28,7 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   minio:
-    image: minio/minio:RELEASE.2019-01-16T21-44-08Z
+    image: minio/minio:RELEASE.2019-02-14T00-21-45Z
     networks: [ 'dev' ]
     ports: [ '8001:9000' ]
     environment:
@@ -171,7 +171,7 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   testminio:
-    image: minio/minio:RELEASE.2019-01-16T21-44-08Z
+    image: minio/minio:RELEASE.2019-02-14T00-21-45Z
     networks: [ 'test' ]
     environment:
       MINIO_ACCESS_KEY: minio_access
