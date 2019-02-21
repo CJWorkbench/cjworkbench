@@ -190,10 +190,8 @@ function mapStateToProps(state, ownProps) {
     }
   }
 
-  const selectedModule = (wfModule ? modules[wfModule.module] : null) || null
-  const id_name = selectedModule ? selectedModule.id_name : null
-
-  const showColumnLetter = id_name === 'formula' || id_name === 'reordercolumns'
+  // Always show column letters #163530958
+  const showColumnLetter = true
 
   return {
     workflowId: workflow.id,
