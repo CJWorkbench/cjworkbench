@@ -1,9 +1,9 @@
+from dataclasses import dataclass
 from typing import Any, Dict, Optional
-from django.contrib.auth.models import User
-from django.contrib.sessions.models import Session
 from server.models import Workflow
 
 
+@dataclass(frozen=True)
 class HandlerRequest:
     """
     A WebSockets request to the server.
@@ -11,13 +11,11 @@ class HandlerRequest:
     This is akin to an HTTP request: a `request_id` ties a response to the
     request. The server must respond to every request.
     """
-    def __init__(self, request_id: int, scope: Dict[str, Any],
-                 workflow: Workflow, path: str, arguments: Dict[str, Any]):
-        self.request_id = request_id
-        self.scope = scope
-        self.workflow = workflow
-        self.path = path
-        self.arguments = arguments
+    request_id: int
+    scope: Dict[str, Any]
+    workflow: Workflow
+    path: str
+    arguments: Dict[str, Any]
 
     @classmethod
     def parse_json_data(cls, scope: Dict[str, Any], workflow: Workflow,
@@ -56,15 +54,15 @@ class HandlerRequest:
         return cls(request_id, scope, workflow, path, arguments)
 
 
+@dataclass(frozen=True)
 class HandlerResponse:
     """
     A response destined for the WebSockets client that sent a HandlerRequest.
     """
-    def __init__(self, request_id: int, data: Optional[Dict[str, Any]]=None,
-                 error: str=''):
-        self.request_id = request_id
-        self.data = data
-        self.error = error
+
+    request_id: int
+    data: Optional[Dict[str, Any]] = None
+    error: str = ''
 
     def to_dict(self):
         if self.error:

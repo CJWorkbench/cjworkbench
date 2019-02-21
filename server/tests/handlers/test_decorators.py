@@ -1,11 +1,9 @@
 import logging
-import unittest
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
 from server import handlers
-from server.handlers import decorators, HandlerRequest, HandlerResponse, \
-        HandlerError
+from server.handlers import decorators, HandlerResponse, HandlerError
 from server.models import Workflow
 from .util import HandlerTestCase
 
@@ -69,6 +67,21 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
         user = User()
         ret = self.run_handler(x, user=user, workflow=Workflow(owner=user))
         self.assertHandlerResponse(ret, {'x': 'y'})
+
+    def test_log_requests(self):
+        @decorators.websockets_handler(role='read')
+        async def x(scope, workflow):
+            return {'x': 'y'}
+
+        user = User()
+        workflow = Workflow(id=1, owner=user)
+        request = self.build_request(path='a.path', user=user,
+                                     workflow=workflow)
+        with self.assertLogs(decorators.logger, level=logging.INFO) as cm:
+            self.run_with_async_db(x(request))
+            self.assertEqual(cm.output, [
+                'INFO:server.handlers.decorators:a.path(workflow=1)'
+            ])
 
     def test_all_arguments_optional(self):
         @decorators.websockets_handler(role='read')

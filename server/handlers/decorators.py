@@ -1,8 +1,7 @@
 import functools
 import logging
 from channels.db import database_sync_to_async
-from server.handlers import AuthError, HandlerRequest, HandlerResponse, \
-        HandlerError
+from .types import AuthError, HandlerRequest, HandlerResponse, HandlerError
 
 
 Handlers = {}
@@ -38,9 +37,9 @@ def _authorize(user, session, workflow, role):
             raise AuthError('no owner access to workflow')
 
 
-def websockets_handler(role: str='read'):
+def websockets_handler(role: str = 'read'):
     """
-    Augment a function with auth and error handling.
+    Augment a function with auth, logging and error handling.
 
     Usage:
 
@@ -82,6 +81,9 @@ def websockets_handler(role: str='read'):
     def decorator_websockets_handler(func):
         @functools.wraps(func)
         async def inner(request: HandlerRequest) -> HandlerResponse:
+            logger.info('%s(workflow=%d)', request.path,
+                        request.workflow.id)
+
             try:
                 await _authorize(request.scope['user'],
                                  request.scope['session'],

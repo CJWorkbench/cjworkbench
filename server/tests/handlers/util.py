@@ -1,6 +1,8 @@
+from unittest.mock import Mock, patch
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.models import Session
 from server.models import Workflow
+from server.handlers import decorators
 from server.handlers.types import HandlerRequest
 from server.tests.utils import DbTestCase
 
@@ -35,7 +37,15 @@ class HandlerTestCase(DbTestCase):
 
     def run_handler(self, handler, **kwargs):
         request = self.build_request(**kwargs)
-        return self.run_with_async_db(handler(request))
+        # The "handler" decorator also logs messages. Mock out the logging for
+        # this test.
+        #
+        # This allays an error: the log message includes a "%d" for the
+        # workflow.id, but many tests use workflows that haven't been saved to
+        # the database (id=None). Mocking out the message means mocking out
+        # that string-format call -- nixing a TypeError.
+        with patch.object(decorators.logger, 'info', Mock()):
+            return self.run_with_async_db(handler(request))
 
     def assertResponse(self, actual, data=None, error=''):
         self.assertEqual({'data': actual.data, 'error': actual.error},
