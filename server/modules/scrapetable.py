@@ -53,6 +53,7 @@ def render(table, params, *, fetch_result):
 
     return (table, fetch_result.error)
 
+
 async def fetch(params):
     table = None
     url: str = params['url'].strip()
@@ -78,7 +79,7 @@ async def fetch(params):
                                       err.status, err.message)))
     except aiohttp.ClientError as err:
         return ProcessResult(error=str(err))
-    except ValueError as e:
+    except ValueError:
         return ProcessResult(
             error='Did not find any <table> tags on that page'
         )

@@ -519,21 +519,23 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
 
     Raise asyncio.TimeoutError when `timeout` seconds have expired.
     """
+
+    # aiohttp internally performs URL canonization before sending
+    # request. DISABLE THIS: it breaks oauth and user's expectations.
+    #
+    # https://github.com/aio-libs/aiohttp/issues/3424
+    url = yarl.URL(url, encoded=True)  # prevent magic
+    if url.scheme not in ('http', 'https'):
+        raise aiohttp.InvalidURL('URL must start with http:// or https://')
+
     with tempfile.TemporaryFile(prefix='loadurl') as spool:
         async with aiohttp.ClientSession() as session:
-            # aiohttp internally performs URL canonization before sending
-            # request. DISABLE THIS: it breaks oauth and user's expectations.
-            #
-            # https://github.com/aio-libs/aiohttp/issues/3424
-            url = yarl.URL(url, encoded=True)  # prevent magic
-
             async with session.get(url, headers=headers,
                                    timeout=timeout,
                                    raise_for_status=True) as response:
                 response.raise_for_status()
 
-                async for blob in \
-                        response.content.iter_chunked(_ChunkSize):
+                async for blob in response.content.iter_chunked(_ChunkSize):
                     spool.write(blob)
 
                 headers = response.headers

@@ -1,3 +1,4 @@
+import aiohttp
 import asyncio
 import io
 import os.path
@@ -12,7 +13,8 @@ from cjworkbench.types import ProcessResult
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
-        turn_header_into_first_row, workflow_url_to_id, fetch_external_workflow
+        turn_header_into_first_row, workflow_url_to_id, \
+        fetch_external_workflow, spooled_data_from_url
 from server.tests.utils import DbTestCase
 
 
@@ -251,6 +253,32 @@ class OtherUtilsTests(SimpleTestCase):
                     workflow_url_to_id(url)
             else:
                 self.assertEqual(workflow_url_to_id(url), expected_result)
+
+
+class SpooledDataFromUrlTest(DbTestCase):
+    def test_relative_url_raises_invalid_url(self):
+        async def inner():
+            async with spooled_data_from_url('/foo'):
+                pass
+
+        with self.assertRaises(aiohttp.InvalidURL):
+            self.run_with_async_db(inner())
+
+    def test_schemaless_url_raises_invalid_url(self):
+        async def inner():
+            async with spooled_data_from_url('//a/b'):
+                pass
+
+        with self.assertRaises(aiohttp.InvalidURL):
+            self.run_with_async_db(inner())
+
+    def test_mailto_url_raises_invalid_url(self):
+        async def inner():
+            async with spooled_data_from_url('mailto:user@example.org'):
+                pass
+
+        with self.assertRaises(aiohttp.InvalidURL):
+            self.run_with_async_db(inner())
 
 
 class FetchExternalWorkflowTest(DbTestCase):
