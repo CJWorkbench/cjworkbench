@@ -47,7 +47,6 @@ services:
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
-    command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   unittest:
     # It'd be nice to use YAML anchors to copy these parameters ... but
