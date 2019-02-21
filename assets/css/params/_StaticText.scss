@@ -1,4 +1,6 @@
 .param-statictext {
   @extend %content-1;
   color: $labels;
+  margin-bottom: -.7rem;
+  line-height: 1.8rem;
 }
