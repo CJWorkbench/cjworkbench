@@ -50,7 +50,6 @@ describe('TableView', () => {
     return mount(
       <ConnectedTableView
         store={store}
-        showColumnLetter={false}
         isReadOnly={false}
         wfModuleId={100}
         deltaId={1}
@@ -175,26 +174,6 @@ describe('TableView', () => {
   //  tree.update()
   //  expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
   //})
-
-  it('passes the the right showLetter prop to DataGrid', async () => {
-    const testData = {
-      start_row: 0,
-      end_row: 2,
-      rows: [
-        { a: 1, b: 2, c: 3 },
-        { a: 4, b: 5, c: 6 }
-      ]
-    }
-
-    const api = { render: jest.fn(() => Promise.resolve(testData)) }
-    const tree = wrapper(null, api, { showColumnLetter: true })
-
-    await tick() // wait for rows to load
-    tree.update()
-    const dataGrid = tree.find(DataGrid)
-    expect(dataGrid).toHaveLength(1)
-    expect(dataGrid.prop('showLetter')).toBe(true)
-  })
 
   it('renders a message (and no table) when >100 columns', async () => {
     // This is because react-data-grid is so darned slow to render columns

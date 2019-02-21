@@ -23,7 +23,6 @@ export class TableView extends React.PureComponent {
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
-    showColumnLetter: PropTypes.bool.isRequired,
     ensureSelectColumnsModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
     reorderColumn: PropTypes.func.isRequired, // func(wfModuleId, colname, fromIndex, toIndex) => undefined
   }
@@ -53,7 +52,7 @@ export class TableView extends React.PureComponent {
   render() {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
-    const { api, wfModuleId, deltaId, isReadOnly, columns, nRows, showColumnLetter, onLoadPage } = this.props
+    const { api, wfModuleId, deltaId, isReadOnly, columns, nRows, onLoadPage } = this.props
     const tooWide = columns.length > NMaxColumns
 
     let gridView
@@ -78,7 +77,6 @@ export class TableView extends React.PureComponent {
           deltaId={deltaId}
           columns={columns}
           nRows={nRows}
-          showLetter={showColumnLetter}
           editCell={this.editCell}
           reorderColumn={this.reorderColumn}
           isReadOnly={isReadOnly}

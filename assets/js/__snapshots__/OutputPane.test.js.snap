@@ -17,7 +17,6 @@ exports[`OutputPane matches snapshot 1`] = `
     deltaId={1}
     isReadOnly={false}
     key="table"
-    showColumnLetter={false}
     wfModuleId={987}
   />
 </div>
@@ -42,7 +41,6 @@ exports[`OutputPane renders when no module id 1`] = `
     isReadOnly={false}
     key="table"
     nRows={null}
-    showColumnLetter={false}
     wfModuleId={null}
   />
 </div>

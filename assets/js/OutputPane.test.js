@@ -13,7 +13,6 @@ describe('OutputPane', () => {
         wfModule={{id: 987, deltaId: 1, status: 'ok', htmlOutput: false}}
         isPublic={false}
         isReadOnly={false}
-        showColumnLetter={false}
         {...extraProps}
       />
     )
