@@ -179,6 +179,15 @@ class ParseBytesIoTest(SimpleTestCase):
         ))
         self.assertEqual(result, expected)
 
+    def test_json_not_array(self):
+        """Workbench requires Array of Object"""
+        result = parse_bytesio(io.BytesIO(b'{"last_updated":"02/21/2019"}'),
+                               'application/json')
+        self.assertEqual(result, ProcessResult(error=(
+            'Workbench cannot import this JSON file. The JSON file '
+            'must be an Array of Objects for Workbench to import it.'
+        )))
+
     def test_json_syntax_error(self):
         result = parse_bytesio(io.BytesIO(b'{not JSON'), 'application/json')
         expected = ProcessResult(error=(
