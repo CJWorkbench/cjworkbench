@@ -13,7 +13,7 @@ from server.importmodulefromgithub import import_module_from_directory
 logger = logging.getLogger(__name__)
 
 
-def main(directory, pretend_git_url):
+def main(directory):
     def reload():
         logger.info(f'Reloading...')
 
@@ -34,7 +34,7 @@ def main(directory, pretend_git_url):
         def on_any_event(self, ev):
             reload()
 
-    regexes = ['.*\\.(py|json|html)']
+    regexes = ['.*\\.(py|json|yaml|html)']
 
     event_handler = ReloadEventHandler(regexes=regexes)
     observer = Observer()
@@ -56,7 +56,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('directory')
-        parser.add_argument('pretend_git_url')
 
     def handle(self, *args, **options):
-        main(options['directory'], options['pretend_git_url'])
+        main(options['directory'])
