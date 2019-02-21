@@ -10,4 +10,8 @@
       resize: none;
     }
   }
+  //CSV textare are resizable
+  .param-string textarea[name="csv"] {
+    resize: vertical;
+  }
 }
