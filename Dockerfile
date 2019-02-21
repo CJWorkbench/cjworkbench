@@ -6,8 +6,10 @@ FROM python:3.7.2-slim-stretch AS pybase
 # postgresql-client: because we poll the DB:
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
-# git: because sometimes we throw git revisions in the Pipfile -- which is always lazy
-# curl+unzip: for NLTK downloads
+# git: used for importmodulefromgithub
+# curl: handy for testing, NLTK download, Watchman download; not worth uninstalling each time
+# unzip: to build Watchman ... and [adamhooper, 2019-02-21] I'm afraid
+#        to uninstall it after build, in case one of our Python deps shells to it
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -19,12 +21,13 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && rm -rf /var/lib/apt/lists/*
 
 # Download NLTK stuff
+#
+# NLTK expects its data to stay zipped
 RUN mkdir -p /usr/share/nltk_data \
-    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > /stopwords.zip \
-    && unzip -d/usr/share/nltk_data/corpora /stopwords.zip \
-    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > /vader.zip \
-    && unzip -d/usr/share/nltk_data/sentiment /vader.zip \
-    && rm -f /stopwords.zip /vader.zip
+    && cd /usr/share/nltk_data \
+    && mkdir -p sentiment corpora \
+    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > corpora/stopwords.zip \
+    && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > sentiment/vader_lexicon.zip
 
 RUN pip install pipenv==2018.11.26
 
