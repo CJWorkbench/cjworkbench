@@ -90,57 +90,59 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           quickFixes={Array []}
           status="ok"
         />
-        <ParamsForm
-          api={
-            Object {
-              "_fetch": [MockFunction],
-              "createOauthAccessToken": [MockFunction],
-              "valueCounts": [MockFunction],
-            }
-          }
-          applyQuickFix={[Function]}
-          currentTab="tab-1"
-          deleteSecret={[Function]}
-          edits={Object {}}
-          fields={
-            Array [
+        <ErrorBoundary>
+          <ParamsForm
+            api={
               Object {
-                "id_name": "url",
-                "multiline": false,
-                "name": "",
-                "placeholder": "",
-                "type": "string",
-                "visible_if": null,
-              },
-              Object {
-                "id_name": "menu_select",
-                "items": "Mango|Banana",
-                "multiline": false,
-                "name": "",
-                "placeholder": "",
-                "type": "menu",
-                "visible_if": null,
-              },
-            ]
-          }
-          getParamText={[Function]}
-          inputDeltaId={null}
-          inputWfModuleId={123}
-          isReadOnly={false}
-          isWfModuleBusy={false}
-          isZenMode={false}
-          onChange={[Function]}
-          onSubmit={[Function]}
-          startCreateSecret={[Function]}
-          tabs={Array []}
-          value={
-            Object {
-              "menu_select": 1,
-              "url": "http://some.URL.me",
+                "_fetch": [MockFunction],
+                "createOauthAccessToken": [MockFunction],
+                "valueCounts": [MockFunction],
+              }
             }
-          }
-          wfModuleId={999}
-        />
+            applyQuickFix={[Function]}
+            currentTab="tab-1"
+            deleteSecret={[Function]}
+            edits={Object {}}
+            fields={
+              Array [
+                Object {
+                  "id_name": "url",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "string",
+                  "visible_if": null,
+                },
+                Object {
+                  "id_name": "menu_select",
+                  "items": "Mango|Banana",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "menu",
+                  "visible_if": null,
+                },
+              ]
+            }
+            getParamText={[Function]}
+            inputDeltaId={null}
+            inputWfModuleId={123}
+            isReadOnly={false}
+            isWfModuleBusy={false}
+            isZenMode={false}
+            onChange={[Function]}
+            onSubmit={[Function]}
+            startCreateSecret={[Function]}
+            tabs={Array []}
+            value={
+              Object {
+                "menu_select": 1,
+                "url": "http://some.URL.me",
+              }
+            }
+            wfModuleId={999}
+          />
+        </ErrorBoundary>
       </div>
     </div>
   </div>

@@ -23,11 +23,7 @@
     color: $error-prompt;
     @extend %content-1;
     padding: 1rem;
-    border-radius: 5px;
-    border: 2px solid $error-prompt;
     background-color: white;
-    margin: 0 $module-margin-right 0 $module-margin-left;
-    width: 28rem;
   }
 
   // Big button to call the module search at the bottom of stack

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import DataVersionModal from '../DataVersionModal'
+import ErrorBoundary from '../ErrorBoundary'
 import WfModuleContextMenu from './WfModuleContextMenu'
 import ParamsForm from '../params/ParamsForm'
 import EditableNotes from '../EditableNotes'
@@ -439,28 +440,30 @@ export class WfModule extends React.PureComponent {
                 applyQuickFix={this.applyQuickFix}
               />
               {this.props.module ? (
-                <ParamsForm
-                  isReadOnly={this.props.isReadOnly}
-                  isZenMode={this.props.isZenMode}
-                  api={this.props.api}
-                  fields={this.props.module.param_fields}
-                  value={this.props.wfModule ? this.props.wfModule.params : null}
-                  edits={this.state.edits}
-                  wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
-                  wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}
-                  isWfModuleBusy={this.wfModuleStatus === 'busy'}
-                  inputWfModuleId={inputWfModule ? inputWfModule.id : null}
-                  inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}
-                  inputColumns={inputWfModule ? inputWfModule.output_columns : null}
-                  tabs={tabs}
-                  currentTab={currentTab}
-                  applyQuickFix={this.applyQuickFix}
-                  startCreateSecret={this.startCreateSecret}
-                  deleteSecret={this.deleteSecret}
-                  getParamText={this.getParamText}
-                  onChange={this.onChange}
-                  onSubmit={this.onSubmit}
-                />
+                <ErrorBoundary>
+                  <ParamsForm
+                    isReadOnly={this.props.isReadOnly}
+                    isZenMode={this.props.isZenMode}
+                    api={this.props.api}
+                    fields={this.props.module.param_fields}
+                    value={this.props.wfModule ? this.props.wfModule.params : null}
+                    edits={this.state.edits}
+                    wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
+                    wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}
+                    isWfModuleBusy={this.wfModuleStatus === 'busy'}
+                    inputWfModuleId={inputWfModule ? inputWfModule.id : null}
+                    inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}
+                    inputColumns={inputWfModule ? inputWfModule.output_columns : null}
+                    tabs={tabs}
+                    currentTab={currentTab}
+                    applyQuickFix={this.applyQuickFix}
+                    startCreateSecret={this.startCreateSecret}
+                    deleteSecret={this.deleteSecret}
+                    getParamText={this.getParamText}
+                    onChange={this.onChange}
+                    onSubmit={this.onSubmit}
+                  />
+                </ErrorBoundary>
               ) : null}
             </div>
           </div>
