@@ -243,9 +243,6 @@ class Lesson:
     footer: LessonFooter = LessonFooter()
     initial_workflow: LessonInitialWorkflow = LessonInitialWorkflow()
 
-    def get_absolute_url(self):
-        return '/lessons/%s/' % self.slug
-
     @property
     def title(self):
         return self.header.title

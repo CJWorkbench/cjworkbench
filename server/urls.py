@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views import acl, oauth, uploads, workflows
+from .views import acl, lessons, oauth, uploads, workflows
 from .views.UploadedFileView import get_uploadedfile
 
 urlpatterns = [
@@ -18,8 +18,10 @@ urlpatterns = [
     url(r'^workflows/$', views.render_workflows, name='workflows'),
     url(r'^api/workflows/?$', views.workflow_list),
 
-    url(r'^lessons/$', views.render_lesson_list),
-    url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', views.render_lesson_detail),
+    url(r'^lessons/$', lessons.render_lesson_list),
+    url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', lessons.render_lesson_detail),
+    url(r'^courses/(?P<course_slug>[-a-z0-9]+)/(?P<lesson_slug>[-a-z0-9]+)$',
+        lessons.render_course_lesson_detail),
 
     # workflows
     # TODO: Name the rest of the urls or implement some kind of naming scheme

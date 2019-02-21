@@ -74,7 +74,7 @@ class LessonDetailTests(DbTestCase):
         self.assertTemplateUsed('workflow.html')
         self.assertEqual(Workflow.objects.count(), 4)
 
-    def test_get_with_workflow(self):
+    def test_get_lesson_with_workflow(self):
         self.log_in()
 
         Workflow.objects.create(owner=self.user,
@@ -83,20 +83,29 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
 
-    def test_post_without_login(self):
-        response = self.client.post('/lessons/load-public-data/', follow=True)
-        self.assertRedirects(response, '/lessons/load-public-data/')
+    def test_get_course_lesson_with_workflow(self):
+        self.log_in()
+
+        Workflow.objects.create(
+            owner=self.user,
+            lesson_slug='intro-to-data-journalism/filter'
+        )
+        response = self.client.get('/courses/intro-to-data-journalism/filter')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('workflow.html')
+
+    def test_get_without_login(self):
+        response = self.client.get('/lessons/load-public-data/')
         self.assertEqual(Workflow.objects.count(), 1)
 
-    def test_post_with_existing(self):
+    def test_get_with_existing(self):
         self.log_in()
         Workflow.objects.create(owner=self.user,
                                 lesson_slug='load-public-data')
-        response = self.client.post('/lessons/load-public-data/')
-        self.assertRedirects(response, '/lessons/load-public-data/')
+        response = self.client.get('/lessons/load-public-data/')
         self.assertEqual(Workflow.objects.count(), 1)  # don't create duplicate
 
-    def test_post_without_existing(self):
+    def test_get_without_existing(self):
         self.log_in()
 
         # Add non-matching Workflows -- to test we ignore them
@@ -106,10 +115,11 @@ class LessonDetailTests(DbTestCase):
                                 lesson_slug='load-public-data', public=True)
 
         response = self.client.post('/lessons/load-public-data/')
-        self.assertRedirects(response, '/lessons/load-public-data/')
         self.assertEqual(Workflow.objects.count(), 4)  # create Workflow
-        self.assertEqual(Workflow.objects
-                         .filter(lesson_slug='load-public-data').count(), 2)
+        self.assertEqual(
+            Workflow.objects.filter(lesson_slug='load-public-data').count(),
+            2
+        )
         workflow = Workflow.objects.get(lesson_slug='load-public-data',
                                         owner=self.user)
         # Assert the workflow is created with a valid Tab
@@ -143,14 +153,35 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
 
-    def test_get_workflow_with_invalid_lesson_slug(self):
+    def test_get_workflow_with_missing_lesson_slug(self):
         self.log_in()
 
         workflow = Workflow.objects.create(owner=self.user,
-                                           lesson_slug='missing-lesson-slug')
+                                           lesson_slug='missing-lesson')
         response = self.client.get(workflow.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
+
+    def test_get_workflow_with_missing_course_lesson_slug(self):
+        self.log_in()
+
+        workflow = Workflow.objects.create(owner=self.user,
+                                           lesson_slug='course/missing-lesson')
+        response = self.client.get(workflow.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('workflow.html')
+
+    def test_get_workflow_with_course_slug(self):
+        self.log_in()
+        workflow = Workflow.objects.create(
+            owner=self.user,
+            lesson_slug='intro-to-data-journalism/filter'
+        )
+        response = self.client.get(workflow.get_absolute_url())
+        self.assertRedirects(
+            response,
+            '/courses/intro-to-data-journalism/filter'
+        )
 
     @patch('server.rabbitmq.queue_render')
     @patch.object(Lesson.objects, 'get')

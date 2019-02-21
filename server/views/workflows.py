@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import ModuleVersion, Workflow, WfModule
+from server.models.course import CourseLookup
+from server.models.lesson import Lesson
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
@@ -152,11 +154,38 @@ def visible_modules(request):
     return ret
 
 
+def _lesson_exists(slug):
+    if '/' in slug:
+        course_slug, lesson_slug = slug.split('/')
+        try:
+            course = CourseLookup[course_slug]
+        except KeyError:
+            return False
+        lesson = course.find_lesson_by_slug(lesson_slug)
+        return lesson is not None
+    else:
+        try:
+            Lesson.objects.get(slug)
+            return True
+        except Lesson.DoesNotExist:
+            return False
+
+
 # no login_required as logged out users can view example/public workflows
 @loads_workflow_for_read
 def render_workflow(request: HttpRequest, workflow: Workflow):
-    if workflow.lesson and workflow.owner == request.user:
-        return redirect(workflow.lesson)
+    if (
+        workflow.lesson_slug
+        and _lesson_exists(workflow.lesson_slug)
+        and workflow.owner == request.user
+    ):
+        if '/' in workflow.lesson_slug:
+            # /courses/a-course/a-lesson -- no trailing '/' because courses use
+            # relative URLs
+            return redirect('/courses/' + workflow.lesson_slug)
+        else:
+            # /lessons/a-lesson/
+            return redirect('/lessons/' + workflow.lesson_slug + '/')
     else:
         if workflow.example and workflow.owner != request.user:
             workflow = _get_anonymous_workflow_for(workflow, request)
