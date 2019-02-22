@@ -167,11 +167,12 @@ class SortFromTableTests(unittest.TestCase):
 
     def test_keep_top(self):
         d1 = datetime.datetime(2018, 8, 15, 1, 23, 45)
-        table = pd.DataFrame({'A': ['b', 'b', 'b', 'a', 'a'], 'B': [d1, d1, d1, d1, d1]})
-        params = P1(sort_columns=[{'colname': 'A', 'is_ascending': True}], keep_top='1')
+        d2 = datetime.datetime(2018, 8, 15, 1, 34, 56)
+        table = pd.DataFrame({'A': ['b', 'b', 'b', 'a', 'a'], 'B': [d1, d2, d1, d1, d1]})
+        params = P1(sort_columns=[{'colname': 'A', 'is_ascending': True}, {'colname': 'B', 'is_ascending': True}], keep_top='1')
         result = render(table, params)
         expected = ProcessResult(
-            pd.DataFrame({'A': ['a', 'b'], 'B': [d1, d1]})
+            pd.DataFrame({'A': ['a', 'b', 'b'], 'B': [d1, d1, d2]})
         )
         result.dataframe.reset_index(drop=True, inplace=True)
         self.assertEqual(result, expected)

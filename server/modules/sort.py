@@ -6,10 +6,6 @@ def _do_render(table, sort_params, keep_top):
     if not sort_params:
         return ProcessResult(table)
 
-    # when user has yet to choose the first column
-    if len(sort_params) == 1 and sort_params[0]['colname'] == '':
-        return ProcessResult(dataframe=table, error='Please select a column.')
-
     columns = [x['colname'] for x in sort_params]
     directions = [x['is_ascending'] for x in sort_params]
 
@@ -55,14 +51,12 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     _SortAscendings.
 
     v0:
-
     params: {
         column: 'A',
         direction: 1
     }
 
     v1:
-
     params: {
         sort_columns: [
             { colname: 'A', is_ascending: True },
