@@ -28,6 +28,8 @@
     color: $brand-text--dark;
     background-color: transparent;
     margin: auto;
+    word-break: break-all;
+    overflow: hidden;
   }
 
   // Show a vertical line to the left of the module stack
