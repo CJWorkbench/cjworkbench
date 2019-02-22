@@ -61,7 +61,7 @@ urlpatterns = [
                                     'long-and-wide-format'),
     _DELETEME_intro_course_redirect('per-capita', 'per-capita'),
     _DELETEME_intro_course_redirect('comparing-numbers', 'compare-numbers'),
-    _DELETEME_intro_course_redirect('inflation', 'inflation'),
+    _DELETEME_intro_course_redirect('adjusting-for-inflation', 'inflation'),
 
     url(r'^lessons/$', lessons.render_lesson_list),
     url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', lessons.render_lesson_detail),
