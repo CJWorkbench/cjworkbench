@@ -20,19 +20,12 @@
           }
         }
       }
-    },
-    "keep_top": { "type": "string" }
+    }
   },
   "parameters": [
     {
       "id_name": "sort_columns",
       "type": "custom"
-    },
-    {
-      "name": "Keep top",
-      "id_name" : "keep_top",
-      "type": "string",
-      "placeholder": "all"
     }
   ]
 }
