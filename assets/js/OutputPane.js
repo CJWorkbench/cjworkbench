@@ -32,11 +32,10 @@ export class OutputPane extends React.Component {
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    showColumnLetter: PropTypes.bool.isRequired
   }
 
   renderTable() {
-    const { api, isReadOnly, showColumnLetter, wfModuleBeforeError, wfModule } = this.props
+    const { api, isReadOnly, wfModuleBeforeError, wfModule } = this.props
 
     let wfm
     let wfModuleId
@@ -71,7 +70,6 @@ export class OutputPane extends React.Component {
         nRows={wfm ? wfm.nRows : null}
         api={api}
         isReadOnly={isReadOnly}
-        showColumnLetter={showColumnLetter}
       />
     )
   }
@@ -190,11 +188,6 @@ function mapStateToProps(state, ownProps) {
     }
   }
 
-  const selectedModule = (wfModule ? modules[wfModule.module] : null) || null
-  const id_name = selectedModule ? selectedModule.id_name : null
-
-  const showColumnLetter = id_name === 'formula' || id_name === 'reordercolumns'
-
   return {
     workflowId: workflow.id,
     wfModule: wfModule ? {
@@ -209,7 +202,6 @@ function mapStateToProps(state, ownProps) {
     wfModuleBeforeError: wfModuleBeforeError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
-    showColumnLetter
   }
 }
 

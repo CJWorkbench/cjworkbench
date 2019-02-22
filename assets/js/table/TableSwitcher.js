@@ -16,7 +16,7 @@ function areSameTable(props1, props2) {
  */
 function tableProps (props) {
   const ret = {}
-  for (const key of [ 'wfModuleId', 'deltaId', 'columns', 'nRows', 'showColumnLetter', 'sortColumn', 'sortDirection' ]) {
+  for (const key of [ 'wfModuleId', 'deltaId', 'columns', 'nRows', 'sortColumn', 'sortDirection' ]) {
     ret[key] = props[key]
   }
   return ret
@@ -54,7 +54,6 @@ export default class TableSwitcher extends React.PureComponent {
       type: PropTypes.oneOf([ 'text', 'datetime', 'number' ]).isRequired
     }).isRequired), // or null, if status!=ok
     nRows: PropTypes.number, // or null, if status!=ok
-    showColumnLetter: PropTypes.bool.isRequired,
     sortColumn: PropTypes.string,
     sortDirection: PropTypes.number
   }
@@ -102,7 +101,6 @@ export default class TableSwitcher extends React.PureComponent {
         { name: '    ', type: 'text' }
       ],
       nRows: 10,
-      showColumnLetter: false
     }, 'placeholder-table')
   }
 

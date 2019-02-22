@@ -146,19 +146,14 @@ describe('DataGrid', () => {
     expect(tree.find('DataGrid').prop('onLoadPage')).toHaveBeenCalledWith(1, 2)
   })
 
-  it('should show letters in the header according to props', async () => {
-    const tree = await wrapper({ showLetter: true })
+  it('should show letters in the header', async () => {
+    const tree = await wrapper({})
     expect(tree.find('.column-letter')).toHaveLength(4)
     expect(tree.find('.column-letter').at(0).text()).toEqual('A')
     expect(tree.find('.column-letter').at(1).text()).toEqual('B')
     expect(tree.find('.column-letter').at(2).text()).toEqual('C')
     expect(tree.find('.column-letter').at(3).text()).toEqual('D')
 	})
-
-  it('should hide letters in the header according to props', async () => {
-    const tree = await wrapper({ showLetter: false })
-    expect(tree.find('.column-letter')).toHaveLength(0)
-  })
 
   it('should respect isReadOnly for rename columns', async () => {
     const tree = await wrapper({ isReadOnly: true })

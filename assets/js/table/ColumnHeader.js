@@ -182,7 +182,6 @@ export class ColumnHeader extends React.PureComponent {
     columnType: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
-    showLetter: PropTypes.bool.isRequired,
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
@@ -259,16 +258,12 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   renderLetter() {
-    if (this.props.showLetter) {
-      return (
-          // The 'column-letter' class name is used in the test so please be careful with it
-          <div className='column-letter'>
-            {idxToLetter(this.props.index)}
-          </div>
-      );
-    } else {
-      return null
-    }
+    return (
+      // The 'column-letter' class name is used in the test so please be careful with it
+      <div className='column-letter'>
+        {idxToLetter(this.props.index)}
+      </div>
+    );
   }
 
   render() {

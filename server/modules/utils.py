@@ -1,5 +1,4 @@
 import builtins
-from collections import OrderedDict
 from contextlib import contextmanager
 import io
 import json
@@ -258,7 +257,10 @@ def _parse_json(bytesio: io.BytesIO,
             data = pandas.read_json(textio, orient='records', dtype=False,
                                     convert_dates=False)
         except ValueError as err:
-            if 'Mixing dicts with non-Series' in str(err):
+            if (
+                'Mixing dicts with non-Series' in str(err)
+                or 'If using all scalar values' in str(err)
+            ):
                 raise BadInput(
                     'Workbench cannot import this JSON file. The JSON file '
                     'must be an Array of Objects for Workbench to import it.'

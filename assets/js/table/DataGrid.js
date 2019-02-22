@@ -103,7 +103,6 @@ export default class DataGrid extends React.PureComponent {
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     }).isRequired), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
-    showLetter: PropTypes.bool,
     onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
     editCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
     reorderColumn: PropTypes.func.isRequired, // func(colname, fromIndex, toIndex) => undefined
@@ -316,7 +315,7 @@ export default class DataGrid extends React.PureComponent {
   // Add row number col and make all cols resizeable
   makeFormattedCols = memoize(draggingColumnIndex => {
     // immutable props
-    const { isReadOnly, columns, wfModuleId, showLetter } = this.props
+    const { isReadOnly, columns, wfModuleId } = this.props
 
     return columns.map(({ name, type }, index) => ({
       key: name,
@@ -334,7 +333,6 @@ export default class DataGrid extends React.PureComponent {
           columnKey={name}
           columnType={type}
           index={index}
-          showLetter={showLetter || false}
           onDragStartColumnIndex={this.onDragStartColumnIndex}
           onDragEnd={this.onDragEnd}
           draggingColumnIndex={draggingColumnIndex}
@@ -347,7 +345,7 @@ export default class DataGrid extends React.PureComponent {
 
   renderGrid () {
     const { gridWidth, gridHeight } = this.state
-    const { selectedRowIndexes, columns, nRows, showLetter } = this.props
+    const { selectedRowIndexes, columns, nRows } = this.props
 
     const formattedColumns = this.makeFormattedCols(this.state.draggingColumnIndex)
     const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
@@ -360,7 +358,7 @@ export default class DataGrid extends React.PureComponent {
         rowsCount={nRows}
         minWidth={gridWidth}
         minHeight={gridHeight}
-        headerRowHeight={showLetter ? 68 : 50}
+        headerRowHeight={68}
         enableCellAutoFocus={false}
         enableCellSelect={true}
         selectAllRenderer={renderNull}
