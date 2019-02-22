@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from server import rabbitmq
 from server.models.commands import InitWorkflowCommand
 from server.models import Workflow, ModuleVersion
-from server.models.course import Course, CourseLookup
+from server.models.course import Course, CourseLookup, AllCourses
 from server.models.lesson import Lesson
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
@@ -22,19 +22,24 @@ def _get_lesson_or_404(slug):
         raise Http404(_('Lesson does not exist'))
 
 
+# because get_object_or_404() is for _true_ django.db.models.Manager
+def _get_course_or_404(slug):
+    try:
+        return CourseLookup[slug]
+    except Course.DoesNotExist:
+        raise Http404('Course does not exist')
+
+
 def _get_course_and_lesson_or_404(course_slug, lesson_slug) -> Course:
     """
     Return (Course, Lesson) or raise Http404.
     """
-
+    course = _get_course_or_404(course_slug)
     try:
-        course = CourseLookup[course_slug]
+        lesson = course.lessons[lesson_slug]
     except KeyError:
-        raise Http404('Course does not exist')
-
-    lesson = course.find_lesson_by_slug(lesson_slug)
-    if not lesson:
         raise Http404('Course does not contain lesson')
+
     return course, lesson
 
 
@@ -188,3 +193,35 @@ def render_lesson_list(request):
         }),
         'lessons': lessons,
     })
+
+def _render_course(request, course, lesson_url_prefix):
+    logged_in_user = None
+    if request.user and request.user.is_authenticated:
+        logged_in_user = UserSerializer(request.user).data
+
+    # We render using HTML, not React, to make this page SEO-friendly.
+    return TemplateResponse(request, 'course.html', {
+        'initState': json.dumps({
+            'loggedInUser': logged_in_user,
+        }),
+        'course': course,
+        'courses': AllCourses,
+        'lessons': list(course.lessons.values()),
+        'lesson_url_prefix': lesson_url_prefix,
+
+    })
+
+
+# Even allowed for logged-out users
+def render_lesson_list2(request):
+    # Make a "fake" Course to encompass Lessons
+    course = Course(
+        title='Lessons',
+        lessons=dict((lesson.slug, lesson) for lesson in Lesson.objects.all()),
+    )
+    return _render_course(request, course, '/lessons')
+
+# Even allowed for logged-out users
+def render_course(request, course_slug):
+    course = _get_course_or_404(course_slug)
+    return _render_course(request, course, '/courses/' + course.slug)

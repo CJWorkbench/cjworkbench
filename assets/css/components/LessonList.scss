@@ -1,6 +1,6 @@
 .lessons-page {
   background-color: $page-background;
-  height:100vh;
+  height: 100vh;
 
   nav.navbar {
     background-color: $brand-learn;
@@ -8,31 +8,121 @@
 
 
     a {
-      color:$white;
-      decoration:none;
+      color: $white;
+      decoration: none;
     }
-    .dropdown-item{color:$brand-text--dark;}
+    .dropdown-item {
+      color: $brand-text--dark;
+    }
   }
 
-  .lessons-list--title {
+  div.courses-nav {
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      @include make-row();
+    }
+
+    li {
+      @include title-2;
+      @include make-col-ready();
+      width: auto;
+
+      a {
+        border-bottom: 3px solid transparent;
+      }
+
+      &:not(.active) { // we're linking to this course
+        a {
+          color: $brand-text--medium;
+        }
+      }
+
+      &.active { // we're viewing this course
+        a {
+          color: $brand-text--dark;
+          text-decoration: none;
+          border-color: $brand-workspace;
+        }
+      }
+    }
+  }
+
+  div.course {
+    margin-bottom: 8rem;
+
+    ul.lessons {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      @include make-row();
+
+      // each lesson card
+      li.lesson {
+        @include make-col-ready;
+        @include make-col(6);
+        margin-top: $grid-gutter-width; // we're wrapping: next row should have spacing above it
+
+        a {
+          display: flex;
+          flex-direction: column; // so <img> sticks to bottom
+          padding: 2rem;
+          height: 24rem;
+          width: 100%;
+          box-shadow: $button-area;
+          background: white;
+          color: $brand-text--dark;
+          border-radius: 5px;
+          text-decoration: none;
+
+          &:hover {
+            box-shadow: $button-area--hover;
+          }
+
+          h2 {
+            color: $brand-text--dark;
+          }
+
+          .description {
+            @include font-nunito-regular;
+            flex: 1 1 auto;
+            color: $brand-text--medium;
+            font-size: 1.6rem;
+            margin-top: .5rem;
+            line-height: 2.4rem;
+          }
+
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+          }
+        }
+      }
+    }
+  }
+
+  // DELETEME -- everything in here -- after we deploy courses
+  .lessons-list--title { // DELETEME
     @extend .title-2;
-    color:$light-gray;
+    color: $light-gray;
     margin-left: 3.5rem;
   }
 
-  .container {
+  // DELETEME -- everything in here -- after we deploy courses
+  .container { // DELETEME
 
-
-    ul {
+    ul { // DELETEME
       padding: 0;
     }
 
-    .lessons-list {
+    .lessons-list { // DELETEME
       width: 91%;
       margin-bottom:8rem;
 
 
-      .lessons {
+      .lessons { // DELETEME
         list-style: none;
         margin:0;
         margin: auto;
@@ -42,7 +132,7 @@
 
 
         // each lesson card
-        .lesson {
+        .lesson { // DELETEME
         width: 46%;
         height: 24rem;
         display: block;
@@ -53,22 +143,22 @@
         color: $brand-text--dark;
         border-radius: 5px;
         box-shadow: $button-area;
-        &:hover {
+        &:hover { // DELETEME
           box-shadow: $button-area--hover;
         }
 
-          .container {
+          .container { // DELETEME
             height:100%;
             padding:0;
 
-            .lesson-button {
+            .lesson-button { // DELETEME
               height: 100%;
               text-decoration: none;
               display: flex;
               flex-direction: column;
               justify-content: space-between;
 
-              .description {
+              .description { // DELETEME
                 @extend .content-1;
                 color:$brand-text--medium;
                 height: 100%;
@@ -79,14 +169,14 @@
                 margin-top: .5rem;
                 line-height: 2.4rem;
               }
-              img {
+              img { // DELETEME
                 position: relative;
                 width: 100%;
               }
             }
 
             h2,
-            .description {
+            .description { // DELETEME
 
               color: $brand-text--dark;
             }

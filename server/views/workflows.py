@@ -161,8 +161,7 @@ def _lesson_exists(slug):
             course = CourseLookup[course_slug]
         except KeyError:
             return False
-        lesson = course.find_lesson_by_slug(lesson_slug)
-        return lesson is not None
+        return lesson_slug in course.lessons
     else:
         try:
             Lesson.objects.get(slug)
