@@ -52,6 +52,12 @@
   div.course {
     margin-bottom: 8rem;
 
+    .introduction {
+      &:empty { display: none; }
+      margin-top: $grid-gutter-width; // because that's the space between lessons
+      @include content-1;
+    }
+
     ul.lessons {
       list-style: none;
       padding: 0;
