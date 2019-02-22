@@ -28,7 +28,7 @@ class CourseTests(unittest.TestCase):
             ),
         })
         assert dirpath.name == 'root'  # we define this in 'utils'
-        course = Course.load_from_path(dirpath)
+        course = Course.load_from_path(dirpath / 'index.yaml')
         self.assertEqual(course, Course(
             slug='root',
             title='Title',
@@ -53,7 +53,7 @@ class CourseTests(unittest.TestCase):
                 ''').encode('utf-8'),
         })
         with self.assertRaisesRegex(FileNotFoundError, 'lesson-x.html'):
-            Course.load_from_path(dirpath)
+            Course.load_from_path(dirpath / 'index.yaml')
 
     def test_lesson_missing_title(self):
         dirpath = MockDir({
@@ -63,16 +63,16 @@ class CourseTests(unittest.TestCase):
                 ''').encode('utf-8')
         })
         with self.assertRaisesRegex(KeyError, 'title'):
-            Course.load_from_path(dirpath)
+            Course.load_from_path(dirpath / 'index.yaml')
 
     def test_lesson_invalid_yaml(self):
         dirpath = MockDir({
             'index.yaml': b'{',
         })
         with self.assertRaises(yaml.YAMLError):
-            Course.load_from_path(dirpath)
+            Course.load_from_path(dirpath / 'index.yaml')
 
     def test_lesson_missing_index(self):
         dirpath = MockDir({})
         with self.assertRaisesRegex(FileNotFoundError, 'index.yaml'):
-            Course.load_from_path(dirpath)
+            Course.load_from_path(dirpath / 'index.yaml')

@@ -106,6 +106,12 @@ class Workflow(models.Model):
     in_all_users_workflow_lists = models.BooleanField(default=False)
     lesson_slug = models.CharField('lesson_slug', max_length=100,
                                    null=True, blank=True)
+    """
+    A string like 'a-lesson' or 'a-course/a-lesson', or NULL.
+
+    If set, this Workflow is the user's journey through a lesson in
+    `server/lessons/` or `server/courses/`.
+    """
 
     # there is always a tab
     selected_tab_position = models.IntegerField(default=0)
@@ -352,16 +358,6 @@ class Workflow(models.Model):
             if wf_module.cached_render_result is None:
                 return False
         return True
-
-    @property
-    def lesson(self):
-        if self.lesson_slug is None:
-            return None
-        else:
-            try:
-                return Lesson.objects.get(self.lesson_slug)
-            except Lesson.DoesNotExist:
-                return None
 
     def clear_deltas(self):
         """Become a single-Delta Workflow."""

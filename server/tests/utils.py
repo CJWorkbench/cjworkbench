@@ -163,10 +163,17 @@ class MockPath(pathlib.PurePosixPath):
         * when `data` is None, raise `FileNotFoundError` when expecting a file
     """
 
-    def __new__(cls, parts: List[str], data: Optional[bytes]):
+    def __new__(cls, parts: List[str], data: Optional[bytes],
+                parent: Optional[pathlib.PurePosixPath] = None):
         ret = super().__new__(cls, *parts)
         ret.data = data
+        ret._parent = parent
         return ret
+
+    #override
+    @property
+    def parent(self):
+        return self._parent
 
     # Path interface
     def read_bytes(self):
@@ -205,7 +212,7 @@ class MockDir(pathlib.PurePosixPath):
     # override
     def __truediv__(self, filename: str) -> MockPath:
         data = self.filedata.get(filename)  # None if file does not exist
-        return MockPath(['root', filename], data)
+        return MockPath(['root', filename], data, parent=self)
         try:
             return self.files[filename]
         except KeyError:

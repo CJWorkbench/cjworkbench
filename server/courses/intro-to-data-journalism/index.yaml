@@ -1,0 +1,18 @@
+title: Introduction to Data Journalism
+introduction_html: |-
+    <p>Learn how to do data journalism</p>
+lessons:
+    - welcome
+    - first-story
+    - extreme-values
+    - charts-intro
+    - filter
+    - group
+    - clean-campaign-finance-data
+    - data-types
+    - group-advanced
+    - long-and-wide-format
+    - per-capita
+    - compare-numbers
+    - inflation
+    - resources

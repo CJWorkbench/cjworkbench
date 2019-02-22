@@ -13,12 +13,12 @@
           <ul class="lessons">
             {% for lesson in lessons %}
               <li class='lesson'>
-                <form class='container' method="post" action="{{lesson.get_absolute_url}}">{% csrf_token %}
-                  <a class='lesson-button' onclick="this.parentElement.submit()">
+                <div class='container'>
+                  <a class='lesson-button' href="/lessons/{{lesson.slug}}/">
                     <h2>{{lesson.title}}</h2>
                     <div class="description">{{lesson.header.html|safe}}</div>
                   </a>
-                </form>
+                </div>
               </li>
             {% endfor %}
           </ul>

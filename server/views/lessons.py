@@ -3,12 +3,12 @@ from asgiref.sync import async_to_sync
 from django.db import transaction
 from django.http import Http404
 from django.http.response import HttpResponseServerError
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from server import rabbitmq
 from server.models.commands import InitWorkflowCommand
 from server.models import Workflow, ModuleVersion
+from server.models.course import Course, CourseLookup
 from server.models.lesson import Lesson
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
@@ -22,7 +22,23 @@ def _get_lesson_or_404(slug):
         raise Http404(_('Lesson does not exist'))
 
 
-def _ensure_workflow(request, lesson):
+def _get_course_and_lesson_or_404(course_slug, lesson_slug) -> Course:
+    """
+    Return (Course, Lesson) or raise Http404.
+    """
+
+    try:
+        course = CourseLookup[course_slug]
+    except KeyError:
+        raise Http404('Course does not exist')
+
+    lesson = course.find_lesson_by_slug(lesson_slug)
+    if not lesson:
+        raise Http404('Course does not contain lesson')
+    return course, lesson
+
+
+def _ensure_workflow(request, course: Course, lesson: Lesson):
     if request.user.is_authenticated:
         owner = request.user
         session_key = None
@@ -31,6 +47,13 @@ def _ensure_workflow(request, lesson):
         if not request.session.session_key:
             request.session.create()
         session_key = request.session.session_key
+
+    # full_slug: 'intro-to-data-journalism/group' (it's in a course) or
+    # 'scrape-table' (course=None)
+    if course is None:
+        full_slug = lesson.slug
+    else:
+        full_slug = '/'.join((course.slug, lesson.slug))
 
     with transaction.atomic():
         workflow, created = Workflow.objects.get_or_create(
@@ -43,7 +66,7 @@ def _ensure_workflow(request, lesson):
             },
             owner=owner,
             anonymous_owner_session_key=session_key,
-            lesson_slug=lesson.slug
+            lesson_slug=full_slug
         )
 
         if created:
@@ -118,9 +141,9 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
                                              workflow.last_delta_id)
 
 
-def _render_get_lesson_detail(request, lesson):
+def _render_get_lesson_detail(request, course, lesson):
     try:
-        workflow, created = _ensure_workflow(request, lesson)
+        workflow, created = _ensure_workflow(request, course, lesson)
     except ModuleVersion.DoesNotExist:
         return HttpResponseServerError('initial_json asks for missing module')
     except ValueError as err:
@@ -141,16 +164,15 @@ def _render_get_lesson_detail(request, lesson):
 
 
 # Even allowed for logged-out users
+def render_course_lesson_detail(request, course_slug, lesson_slug):
+    course, lesson = _get_course_and_lesson_or_404(course_slug, lesson_slug)
+    return _render_get_lesson_detail(request, course, lesson)
+
+
+# Even allowed for logged-out users
 def render_lesson_detail(request, slug):
     lesson = _get_lesson_or_404(slug)
-
-    if request.method == 'POST':
-        # GET already creates the workflow (#160041704), so let's just
-        # redirect to it.
-        return redirect(lesson)
-    else:
-        # Display the Workflow
-        return _render_get_lesson_detail(request, lesson)
+    return _render_get_lesson_detail(request, None, lesson)
 
 
 # Even allowed for logged-out users

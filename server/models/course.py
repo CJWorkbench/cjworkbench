@@ -19,12 +19,19 @@ class Course:
     introduction_html: str = ''
     lessons: List[Lesson] = field(default_factory=list)
 
+    def find_lesson_by_slug(self, slug: str) -> Optional[Lesson]:
+        """
+        Return the matching Lesson, or `None` if it does not exist.
+        """
+        return next((l for l in self.lessons if l.slug == slug), None)
+
     @classmethod
     def load_from_path(cls, path: Path) -> Course:
         """
         Read a Course from the filesystem.
 
-        `path` is a directory. It must contain a `index.yaml` that looks like:
+        `path` is a `index.yaml` file in a directory full of Lesson `.html`
+        files. `index.yaml` looks like:
 
         title: [title]
         introduction_html: |-
@@ -37,7 +44,7 @@ class Course:
 
         May raise:
 
-            * `FileNotFoundError` if `path` or `path/'index.yaml'` is missing.
+            * `FileNotFoundError` if `path` is missing.
             * `yaml.YAMLError` if index.yaml has the wrong syntax.
             * `KeyError` if `title`, `introduction_html` or `lessons` is
               missing.
@@ -45,12 +52,24 @@ class Course:
             * `LessonParseError` if any lesson is invalid.
             * `FileNotFoundError` if a referenced lesson does not exist.
         """
-        slug = path.name
-        # raises YAMLError
-        data = yaml.safe_load((path / 'index.yaml').read_text())
+        dirpath = path.parent
+        slug = dirpath.name
+        data = yaml.safe_load(path.read_text())  # raises YAMLError
         title = str(data['title'])  # raises KeyError
-        introduction_html = str(data['introduction_html'])
-        lesson_slugs = list(data['lessons'])
-        lessons = [_load_lesson(path / (str(slug) + '.html'))
+        introduction_html = str(data['introduction_html'])  # raises KeyError
+        lesson_slugs = list(data['lessons'])  # raises KeyError
+        # raises FileNotFoundError, LessonParseError
+        lessons = [_load_lesson(dirpath / (str(slug) + '.html'))
                    for slug in lesson_slugs]
         return cls(slug, title, introduction_html, lessons)
+
+
+CourseLookup = dict(
+    (course.slug, course)
+    for course in [
+        Course.load_from_path(path)
+        for path in (
+            (Path(__file__).parent.parent).glob('courses/**/index.yaml')
+        )
+    ]
+)
