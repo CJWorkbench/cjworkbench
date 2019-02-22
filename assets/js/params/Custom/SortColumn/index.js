@@ -1,7 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ColumnParam from '../../Column'
-import RadioParam from '../../Radio.js'
 import SortColumn from './SortColumn.js'
 
 const DefaultValue = [{ colname: '', is_ascending: true }]
@@ -45,17 +43,13 @@ export default class SortColumns extends React.PureComponent {
   }
 
   /**
- * Migrate v0 params, given value, or default of {operation:size} if empty.
+ * Given value, or default of {operation:size} if empty.
  *
  * groupby.py uses this default. Read comments there to see why.
  */
   get value () {
     const actual = this.props.value
-    if ('column' in actual) {
-
-
-      return
-    } else if (actual.length === 0) {
+    if (actual.length === 0) {
       return DefaultValue
     } else {
       return actual
@@ -72,6 +66,7 @@ export default class SortColumns extends React.PureComponent {
         <ul>
           {value.map((sortColumn, index) => (
             <SortColumn
+              key={index}
               isReadOnly={isReadOnly}
               index={index}
               inputColumns={inputColumns}

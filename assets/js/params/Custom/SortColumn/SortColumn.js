@@ -50,7 +50,6 @@ export default class SortColumn extends React.PureComponent {
             inputColumns={inputColumns}
             onChange={this.onChangeColname}
           />
-          )}
           <RadioParam
             name={`${name}[radio]`}
             items={'Ascending|Descending'}
