@@ -5,11 +5,35 @@ from . import views
 from .views import acl, lessons, oauth, uploads, workflows
 from .views.UploadedFileView import get_uploadedfile
 
+
+def redirect(url: str):
+    return RedirectView.as_view(url=url)
+
+
+def _DELETEME_intro_course_redirect(lesson_slug: str, good_slug: str):
+    """
+    DELETEME on or after 2019-03-01
+
+    We published some temporary URLs accidentally, in emails. Redirect
+    until we send out corrected URLs.
+
+    Erroneous URLs looked like ("grouping" is `lesson_slug`):
+
+        /lessons/grouping/
+
+    Corrected URL looks like ("group" is `good_slug`):
+
+        /courses/intro-to-data-journalism/group/
+    """
+    return url('lessons/' + lesson_slug + '/?$',
+               redirect('/courses/intro-to-data-journalism/' + good_slug))
+
+
 urlpatterns = [
     # ex: /
     #    url(r'^$', views.index, name='index'),
 
-    url(r'^$', RedirectView.as_view(url='/workflows')),
+    url(r'^$', redirect('/workflows')),
 
     url(r'^api/uploadfile/?$', uploads.handle_s3),
     url(r'^api/uploadfile/([0-9]+)$', get_uploadedfile),
@@ -17,6 +41,27 @@ urlpatterns = [
     # list all workflows
     url(r'^workflows/$', views.render_workflows, name='workflows'),
     url(r'^api/workflows/?$', views.workflow_list),
+
+    # DELETEME on or after 2019-03-01
+    #
+    # We published some temporary URLs accidentally, in emails. Redirect
+    # until we send out corrected URLs.
+    #
+    # Some were shared with a trailing "/"; others were not
+    _DELETEME_intro_course_redirect('first-story', 'first-story'),
+    _DELETEME_intro_course_redirect('extreme-values', 'extreme-values'),
+    _DELETEME_intro_course_redirect('charts-intro', 'charts-intro'),
+    _DELETEME_intro_course_redirect('filtering', 'filter'),
+    _DELETEME_intro_course_redirect('group', 'group'),
+    _DELETEME_intro_course_redirect('cleaning-campaign-finance-data',
+                                    'clean-campaign-finance-data'),
+    _DELETEME_intro_course_redirect('intro-to-data-types', 'data-types'),
+    _DELETEME_intro_course_redirect('advanced-grouping', 'group-advanced'),
+    _DELETEME_intro_course_redirect('long-and-wide-format',
+                                    'long-and-wide-format'),
+    _DELETEME_intro_course_redirect('per-capita', 'per-capita'),
+    _DELETEME_intro_course_redirect('comparing-numbers', 'compare-numbers'),
+    _DELETEME_intro_course_redirect('adjusting-for-inflation', 'inflation'),
 
     url(r'^lessons/$', lessons.render_lesson_list),
     url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', lessons.render_lesson_detail),
