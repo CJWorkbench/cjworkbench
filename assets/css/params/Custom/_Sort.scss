@@ -1,0 +1,94 @@
+.param-sort_columns {
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    label {
+      @include content-1;
+      margin-bottom: 0;
+      color: $labels;
+    }
+    .button-group { //FIXME all radio button groups should be calling the same code - Sort does not have the class Param-radio as a parent to .button-group in its HTML - code pasted from _radio.scss
+      display: flex;
+      align-items: center;
+      margin-top: $param-group-margin;
+      margin-bottom: $param-margin;
+
+      // each radio group
+      label{
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        margin-right: 1.5rem;
+        margin-bottom: 0;
+        line-height: 1.3rem;
+
+
+        .button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 1.8rem;
+          width: 1.8rem;
+          background-color: $light-gray;
+          border-radius: 1.5rem;
+          margin-right: .5rem;
+
+          &:after {  // the circle checkmark
+            content: '';
+            height: 1.2rem;
+            width: 1.2rem;
+            border-radius: 1rem;
+            background-color: $white;
+          }
+        }
+      }
+
+      input[type=radio] {
+        display: none;
+        position: absolute;
+
+        &:checked + .button {
+          background-color: $brand-orange;
+        }
+      }
+    }
+  }
+  button.add { //FIXME other button +ADD in other modules should call the same code. this is a copy and paste from _Aggregation
+    cursor: pointer;
+    @extend %content-2;
+    text-transform: uppercase;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
+    background: inherit;
+    color: $brand-text--dark;
+    &:hover {
+      color: $brand-orange;
+    }
+  }
+  .delete {
+    margin-top: $param-group-margin;
+    position: relative;
+
+    button {
+      position: absolute;
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+      padding-left: 1rem;
+      right: 0;
+      top: -2.5rem;
+      border: 0;
+      font: inherit;
+      font-size: 1.1rem;
+      background: inherit;
+      color: $medium-gray;
+      opacity: .5;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
