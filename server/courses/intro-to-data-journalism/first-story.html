@@ -19,7 +19,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/largest-C02-producers-since-2010.csv"
+              "url":"http://production-static.workbenchdata.com/data/intro-data-j/largest-C02-producers-since-2010-intro.csv"
             }
           }
         ]
@@ -59,6 +59,26 @@
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Does the data need to be cleaned?
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Cleaning</h2>
+  <p>
+    In the column <kbd>Country</kbd>, some values are formatted differently than others, which could lead to confusion. Let's use the same format for all values.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >In the table, double click cells to rename <kbd>U.S.</kbd> and <kbd>S.K.</kbd> respectively to <kbd>United States</kbd> and <kbd>South Korea</kbd>.
+    <p class="instruction-detail">
+      Note that a new step has been added to your workflow in position 2, loging your edits.
+    </p>
+    <p class="instruction-detail">
+      Every data manipulation in Workbench is recorded to keep your work reproducible. To view the data before this edit, simply click on step 1.
+    </p>
     </li>
   </ol>
 </section>
