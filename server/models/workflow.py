@@ -64,7 +64,6 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
         .extra(where=conditions)
 
 
-# A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
     name = models.CharField('name', max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
