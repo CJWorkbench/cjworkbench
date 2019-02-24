@@ -20,8 +20,7 @@ from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
 import server.utils
-from .auth import lookup_workflow_for_write, \
-        loads_workflow_for_read, lookup_workflow_for_owner
+from .auth import lookup_workflow_for_write, loads_workflow_for_read
 
 
 def make_init_state(request, workflow=None, modules=None):
@@ -232,8 +231,13 @@ def workflow_detail(request, workflow_id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        workflow = lookup_workflow_for_owner(workflow_id, request)
-        workflow.delete()
+        with Workflow.authorized_lookup_and_cooperative_lock(
+            'owner',
+            request.user,
+            request.session,
+            pk=workflow_id
+        ) as workflow:
+            workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
