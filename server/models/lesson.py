@@ -11,14 +11,15 @@ import html5lib
 import jsonschema
 
 
-# Load and parse the spec that defines the format of the initial workflow JSON, once
-_SpecPath = os.path.join(os.path.dirname(__file__), 'lesson_initial_workflow_schema.yaml')
-with open(_SpecPath, 'rt') as spec_file:
-    _SpecSchema = yaml.load(spec_file)
+# Load and parse the spec that defines the format of the initial workflow JSON
 _initial_workflow_validator = jsonschema.Draft7Validator(
-    _SpecSchema,
+    yaml.safe_load(
+        (pathlib.Path(__file__).parent / 'lesson_initial_workflow_schema.yaml')
+        .read_text()
+    ),
     format_checker=jsonschema.FormatChecker()
 )
+
 
 def _build_inner_html(el):
     """Extract HTML text from a xml.etree.ElementTree."""
@@ -274,11 +275,15 @@ class Lesson:
 
         initial_workflow_el = root.find('./script[@id="initialWorkflow"]')
         if initial_workflow_el is None:
-            lesson_initial_workflow = LessonInitialWorkflow()  # initial workflow is optional, blank wf if missing
+            # initial workflow is optional, blank wf if missing
+            lesson_initial_workflow = LessonInitialWorkflow()
         else:
-            lesson_initial_workflow = LessonInitialWorkflow._from_etree(initial_workflow_el)
+            lesson_initial_workflow = LessonInitialWorkflow._from_etree(
+                initial_workflow_el
+            )
 
-        return cls(slug, lesson_header, lesson_sections, lesson_footer, lesson_initial_workflow)
+        return cls(slug, lesson_header, lesson_sections, lesson_footer,
+                   lesson_initial_workflow)
 
     class DoesNotExist(Exception):
         pass
