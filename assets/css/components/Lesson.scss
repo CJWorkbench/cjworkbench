@@ -364,6 +364,11 @@ article.fullscreen {
     @extend %action-button;
     @extend %button-pink-fill;
   }
+
+  section.lesson-footer.current {
+    position: absolute;
+    width: 80rem;
+  }
 }
 
 // hide both navbar menu  and undo redo when fullscreen
