@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import F
 from server.models import Delta, ModuleVersion, WfModule
+from server import rabbitmq
 from .util import ChangesWfModuleOutputs
 
 
@@ -96,6 +97,22 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
             tab.save(update_fields=['selected_wf_module_position'])
 
         self.backward_affected_delta_ids()
+
+    # override
+    async def schedule_execute_if_needed(self) -> None:
+        """
+        Force a render.
+
+        Adding a module to an empty workflow, self._changed_wf_module_versions
+        will be None -- and yet we need a render!
+
+        TODO brainstorm other solutions to the original race -- that we can't
+        know this delta's ID until after we save it to the database, yet we
+        need to save its own ID in self._changed_wf_module_versions.
+        """
+        await rabbitmq.queue_render(self.workflow.id,
+                                    self.workflow.last_delta_id)
+
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, module_id_name,
