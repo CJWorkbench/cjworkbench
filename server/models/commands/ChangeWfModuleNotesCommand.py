@@ -30,9 +30,6 @@ class ChangeWfModuleNotesCommand(Delta):
             'new_value': new_value,
         }
 
-    async def schedule_execute(self):
-        pass
-
     @property
     def command_description(self):
         return f'Change WfModule note to {self.new_value}'

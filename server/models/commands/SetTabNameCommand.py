@@ -54,6 +54,3 @@ class SetTabNameCommand(Delta, ChangesWfModuleOutputs):
             'old_name': tab.name,
             'wf_module_delta_ids': wf_module_delta_ids,
         }
-
-    async def schedule_execute(self):
-        pass

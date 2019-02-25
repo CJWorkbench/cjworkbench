@@ -22,7 +22,7 @@ class FakeSession:
         self.session_key = None
 
 
-@patch('server.models.Delta.schedule_execute', future_none)
+@patch('server.rabbitmq.queue_render', future_none)
 @patch('server.models.Delta.ws_notify', future_none)
 class UploadFileViewTests(LoggedInTestCase):
     def setUp(self):

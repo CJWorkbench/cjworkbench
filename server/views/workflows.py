@@ -136,7 +136,8 @@ def _get_anonymous_workflow_for(workflow: Workflow,
                                                      {'name': workflow.name})
         new_workflow = workflow.duplicate_anonymous(session_key)
 
-        async_to_sync(new_workflow.last_delta.schedule_execute)()
+        async_to_sync(rabbitmq.queue_render)(new_workflow.id,
+                                             new_workflow.last_delta_id)
 
         return new_workflow
 
@@ -253,6 +254,7 @@ class Duplicate(View):
                                                  'Duplicate Workflow',
                                                  {'name': workflow.name})
 
-        async_to_sync(workflow2.last_delta.schedule_execute)()
+        async_to_sync(rabbitmq.queue_render)(workflow2.id,
+                                             workflow2.last_delta_id)
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)

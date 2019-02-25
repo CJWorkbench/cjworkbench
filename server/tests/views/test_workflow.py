@@ -6,6 +6,7 @@ from allauth.account.utils import user_display
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
+from server import rabbitmq
 from server.models import ModuleVersion, User, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase
@@ -24,11 +25,14 @@ future_none = asyncio.Future()
 future_none.set_result(None)
 
 
-@patch('server.models.Delta.schedule_execute', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
         super().setUp()  # log in
+
+        self.queue_render_patcher = patch.object(rabbitmq, 'queue_render')
+        self.queue_render = self.queue_render_patcher.start()
+        self.queue_render.return_value = future_none
 
         self.log_patcher = patch('server.utils.log_user_event_from_request')
         self.log_patch = self.log_patcher.start()
@@ -61,6 +65,7 @@ class WorkflowViewTests(LoggedInTestCase):
 
     def tearDown(self):
         self.log_patcher.stop()
+        self.queue_render_patcher.stop()
         super().tearDown()
 
     def _augment_request(self, request, user: User, session_key: str) -> None:
@@ -174,19 +179,20 @@ class WorkflowViewTests(LoggedInTestCase):
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Workflow.objects.count(), start_count+1)
-        self.assertEqual(Workflow.objects.filter(name='Untitled Workflow').count(), 1)
+        self.assertEqual(
+            Workflow.objects.filter(name='Untitled Workflow').count(),
+            1
+        )
 
     # --- Workflow ---
     # This is the HTTP response, as opposed to the API
     def test_workflow_view(self):
         # View own non-public workflow
         self.client.force_login(self.user)
-        response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @patch('server.rabbitmq.queue_render')
-    def test_workflow_view_triggers_render(self, queue_render):
-        queue_render.return_value = future_none
+    def test_workflow_view_triggers_render_if_stale_cache(self):
         self.tab1.wf_modules.create(
             order=0,
             last_relevant_delta_id=self.delta.id,
@@ -194,11 +200,9 @@ class WorkflowViewTests(LoggedInTestCase):
         )
         self.client.force_login(self.user)
         self.client.get('/workflows/%d/' % self.workflow1.id)
-        queue_render.assert_called_with(self.workflow1.id, self.delta.id)
+        self.queue_render.assert_called_with(self.workflow1.id, self.delta.id)
 
-    @patch('server.rabbitmq.queue_render')
-    def test_workflow_view_triggers_render_if_no_cache(self, queue_render):
-        queue_render.return_value = future_none
+    def test_workflow_view_triggers_render_if_no_cache(self):
         self.tab1.wf_modules.create(
             order=0,
             last_relevant_delta_id=self.delta.id,
@@ -206,7 +210,7 @@ class WorkflowViewTests(LoggedInTestCase):
         )
         self.client.force_login(self.user)
         self.client.get('/workflows/%d/' % self.workflow1.id)
-        queue_render.assert_called_with(self.workflow1.id, self.delta.id)
+        self.queue_render.assert_called_with(self.workflow1.id, self.delta.id)
 
     def test_workflow_view_missing_404(self):
         # 404 with bad id

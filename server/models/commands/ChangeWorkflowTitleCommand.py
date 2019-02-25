@@ -14,9 +14,6 @@ class ChangeWorkflowTitleCommand(Delta):
         self.workflow.name = self.old_value
         self.workflow.save(update_fields=['name'])
 
-    async def schedule_execute(self):
-        pass
-
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_value, **kwargs):
         return {

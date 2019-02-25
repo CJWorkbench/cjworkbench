@@ -1,6 +1,5 @@
 from collections import namedtuple
 import json
-import os
 from unittest.mock import patch
 from django.contrib.auth.models import User
 import numpy as np
@@ -50,7 +49,7 @@ empty_data_json = {
 }
 
 
-@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.rabbitmq.queue_render', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class WfModuleTests(LoggedInTestCase):
     # Test workflow with modules that implement a simple pipeline on test data

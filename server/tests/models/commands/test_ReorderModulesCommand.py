@@ -8,7 +8,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.rabbitmq.queue_render', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class ReorderModulesCommandTest(DbTestCase):
     def setUp(self):
@@ -74,7 +74,6 @@ class ReorderModulesCommandTest(DbTestCase):
         workflow. There's nothing in the architecture that could lead us there,
         but let's be absolutely sure by testing.)
         """
-        all_modules = self.tab.live_wf_modules
         v1 = self.delta.id
         wfm1 = self.tab.wf_modules.create(last_relevant_delta_id=v1, order=0)
         wfm2 = self.tab.wf_modules.create(last_relevant_delta_id=v1, order=1)
@@ -112,7 +111,7 @@ class ReorderModulesCommandTest(DbTestCase):
             order=0,
             last_relevant_delta_id=self.delta.id
         )
-        wfm2 = self.tab.wf_modules.create(
+        self.tab.wf_modules.create(
             order=1,
             last_relevant_delta_id=self.delta.id
         )
