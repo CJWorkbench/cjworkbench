@@ -2,6 +2,10 @@
   background-color: $page-background;
   height: 100vh;
 
+  .container {
+    max-width: 100rem;
+  }
+
   nav.navbar {
     background-color: $brand-learn;
     margin-bottom: 5rem;
@@ -17,6 +21,9 @@
   }
 
   div.courses-nav {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+
     ul {
       list-style: none;
       margin: 0;
@@ -31,11 +38,15 @@
 
       a {
         border-bottom: 3px solid transparent;
+        padding-bottom: .5rem;
       }
 
       &:not(.active) { // we're linking to this course
         a {
           color: $brand-text--medium;
+          &:hover {
+            text-decoration: none;
+          }
         }
       }
 
@@ -43,7 +54,7 @@
         a {
           color: $brand-text--dark;
           text-decoration: none;
-          border-color: $brand-workspace;
+          border-color: $brand-learn;
         }
       }
     }
@@ -51,11 +62,20 @@
 
   div.course {
     margin-bottom: 8rem;
+    background-color: white;
+    padding: 2rem;
+    border-radius: .5rem;
 
     .introduction {
+      background-color: white;
+      margin-top: 0;
       &:empty { display: none; }
-      margin-top: $grid-gutter-width; // because that's the space between lessons
-      @include content-1;
+      @include content-3;
+
+      //Line of text to describe the list
+      p {
+        margin: 0 0 2rem 0;
+      }
     }
 
     ul.lessons {
@@ -69,6 +89,10 @@
         @include make-col-ready;
         @include make-col(6);
         margin-top: $grid-gutter-width; // we're wrapping: next row should have spacing above it
+
+        &:first-child, &:nth-child(2) { // no margin at top of first line;
+          margin-top: 0;
+        }
 
         a {
           display: flex;
