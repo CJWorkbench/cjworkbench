@@ -118,6 +118,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
           isMulti={false}
           menuPortalTarget={<body />}
           name="series[2][column]"
+          noOptionsMessage={[Function]}
           onChange={[Function]}
           options={
             Array [
@@ -295,6 +296,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
               selectOption={[Function]}
               selectProps={
                 Object {
+                  "addMenuListClassName": undefined,
                   "backspaceRemovesValue": true,
                   "blurInputOnSelect": true,
                   "captureMenuScroll": false,
@@ -453,6 +455,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                   selectOption={[Function]}
                   selectProps={
                     Object {
+                      "addMenuListClassName": undefined,
                       "backspaceRemovesValue": true,
                       "blurInputOnSelect": true,
                       "captureMenuScroll": false,
@@ -603,6 +606,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "addMenuListClassName": undefined,
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
@@ -757,6 +761,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           selectOption={[Function]}
                           selectProps={
                             Object {
+                              "addMenuListClassName": undefined,
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
@@ -900,6 +905,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           onFocus={[Function]}
                           selectProps={
                             Object {
+                              "addMenuListClassName": undefined,
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
@@ -1136,6 +1142,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "addMenuListClassName": undefined,
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
@@ -1285,6 +1292,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           selectOption={[Function]}
                           selectProps={
                             Object {
+                              "addMenuListClassName": undefined,
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,
@@ -1442,6 +1450,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                           selectOption={[Function]}
                           selectProps={
                             Object {
+                              "addMenuListClassName": undefined,
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "captureMenuScroll": false,

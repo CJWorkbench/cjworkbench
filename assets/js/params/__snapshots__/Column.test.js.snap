@@ -69,6 +69,7 @@ exports[`Column matches snapshot 1`] = `
       isMulti={false}
       menuPortalTarget={<body />}
       name="col"
+      noOptionsMessage={[Function]}
       onChange={[Function]}
       options={
         Array [
@@ -248,6 +249,7 @@ exports[`Column matches snapshot 1`] = `
           selectOption={[Function]}
           selectProps={
             Object {
+              "addMenuListClassName": undefined,
               "backspaceRemovesValue": true,
               "blurInputOnSelect": true,
               "captureMenuScroll": false,
@@ -411,6 +413,7 @@ exports[`Column matches snapshot 1`] = `
               selectOption={[Function]}
               selectProps={
                 Object {
+                  "addMenuListClassName": undefined,
                   "backspaceRemovesValue": true,
                   "blurInputOnSelect": true,
                   "captureMenuScroll": false,
@@ -566,6 +569,7 @@ exports[`Column matches snapshot 1`] = `
                   selectOption={[Function]}
                   selectProps={
                     Object {
+                      "addMenuListClassName": undefined,
                       "backspaceRemovesValue": true,
                       "blurInputOnSelect": true,
                       "captureMenuScroll": false,
@@ -721,6 +725,7 @@ exports[`Column matches snapshot 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "addMenuListClassName": undefined,
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
@@ -865,6 +870,7 @@ exports[`Column matches snapshot 1`] = `
                       onFocus={[Function]}
                       selectProps={
                         Object {
+                          "addMenuListClassName": undefined,
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
@@ -1106,6 +1112,7 @@ exports[`Column matches snapshot 1`] = `
                   selectOption={[Function]}
                   selectProps={
                     Object {
+                      "addMenuListClassName": undefined,
                       "backspaceRemovesValue": true,
                       "blurInputOnSelect": true,
                       "captureMenuScroll": false,
@@ -1260,6 +1267,7 @@ exports[`Column matches snapshot 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "addMenuListClassName": undefined,
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
@@ -1422,6 +1430,7 @@ exports[`Column matches snapshot 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "addMenuListClassName": undefined,
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "captureMenuScroll": false,
