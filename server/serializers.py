@@ -215,6 +215,7 @@ class LessonSerializer(serializers.BaseSerializer):
             'footer': {
                 'title': obj.footer.title,
                 'html': obj.footer.html,
+                'isFullScreen': obj.footer.is_full_screen,
             }
         }
 

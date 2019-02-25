@@ -147,10 +147,9 @@ class LessonSection:
         html = _build_inner_html(el)
 
         # Look for "fullscreen" class on section, set fullscreen flag if so
-        full_screen_el = el.find('[@class="fullscreen"]')
-        is_full_screen = full_screen_el is not None
+        is_full_screen = el.find('[@class="fullscreen"]') is not None
 
-        return cls(title, html, steps, is_full_screen=is_full_screen)
+        return cls(title, html, steps, is_full_screen)
 
 
 @dataclass(frozen=True)
@@ -165,6 +164,7 @@ class LessonFooter:
 
     title: str = ''
     html: str = ''
+    is_full_screen: bool = False
 
     @classmethod
     def _from_etree(cls, el):
@@ -174,12 +174,13 @@ class LessonFooter:
                 'Lesson <footer> needs a non-empty <h2> title'
             )
         title = title_el.text
+        is_full_screen = el.find('[@class="fullscreen"]') is not None
 
         # Now get the rest of the HTML, minus the <h2>
         el.remove(title_el)  # hacky mutation
         html = _build_inner_html(el)
 
-        return cls(title, html)
+        return cls(title, html, is_full_screen)
 
 
 class LessonParseError(Exception):

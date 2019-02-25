@@ -117,17 +117,38 @@ class LessonTests(SimpleTestCase):
                           [], is_full_screen=False)
         )
 
+    def test_parse_no_sections(self):
+        """A lesson may be footer-only."""
+        result = Lesson.parse('a-slug', """
+            <header><h1>x</h1><p>y</p></header>
+            <footer><h2>Foot</h2></footer>
+        """)
+        self.assertEquals(result.sections, [])
+
     def test_parse_fullscreen_section(self):
-        lesson_html = """
+        result = Lesson.parse('a-slug', """
             <header><h1>x</h1></header>
             <section class="fullscreen"><h2>title</h2><p>content</p></section>
             <section><h2>title</h2><p>content</p></section>
             <footer><h2>z</h2></footer>
-            """
-        out = Lesson.parse('a-slug', lesson_html)
+        """)
+        self.assertTrue(result.sections[0].is_full_screen)
+        self.assertFalse(result.sections[1].is_full_screen)
 
-        self.assertTrue(out.sections[0].is_full_screen)
-        self.assertFalse(out.sections[1].is_full_screen)
+    def test_parse_nested_fullscreen_does_not_count(self):
+        result = Lesson.parse('a-slug', """
+            <header><h1>x</h1></header>
+            <section><h2>T</h2><p class="fullscreen"></p></section>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertFalse(result.sections[0].is_full_screen)
+
+    def test_parse_fullscreen_footer(self):
+        result = Lesson.parse('a-slug', """
+            <header><h1>x</h1></header>
+            <footer class="fullscreen"><h2>z</h2></footer>
+        """)
+        self.assertTrue(result.footer.is_full_screen)
 
     def test_parse_no_footer(self):
         with self.assertRaisesMessage(

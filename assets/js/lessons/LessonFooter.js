@@ -17,7 +17,7 @@ export default class LessonFooter extends React.PureComponent {
     title: PropTypes.string.isRequired,
     html: PropTypes.string,
     isCurrent: PropTypes.bool.isRequired, // did the user navigate here?
-    isFinished: PropTypes.bool.isRequired, // did the user complete everything?
+    isFinished: PropTypes.bool.isRequired // did the user complete everything?
   }
 
   state = {
@@ -34,6 +34,11 @@ export default class LessonFooter extends React.PureComponent {
   render () {
     const { isCurrent, title, html } = this.props
     const { isFinished } = this.state
+
+    const classNames = [
+      'lesson-footer',
+      isCurrent ? 'current' : 'not-current',
+    ]
 
     return (
       <section className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}>
