@@ -32,7 +32,8 @@ describe('Lesson', () => {
     ],
     footer: {
       title: 'Lesson Footer',
-      html: '<p>Lesson Footer hTML</p>'
+      html: '<p>Lesson Footer hTML</p>',
+      isFullScreen: false
     }
   }
 
@@ -73,6 +74,36 @@ describe('Lesson', () => {
 
     it('defaults to currentSectionIndex=0', () => {
       expect(wrapper().find('LessonNav').prop('currentSectionIndex')).toBe(0)
+    })
+
+    it('does not set .fullscreen when not fullscreen', () => {
+      const w = wrapper({ activeSectionIndex: 0, activeStepIndex: 0 })
+      expect(w.prop('className')).not.toMatch(/\bfullscreen\b/)
+    })
+
+    it('does not set .fullscreen when active footer is not fullscreen', () => {
+      const w = wrapper({
+        sections: [],
+        footer: { title: 'X', html: 'X', isFullScreen: false }
+      })
+      expect(w.prop('className')).not.toMatch(/\bfullscreen\b/)
+    })
+
+    it('sets .fullscreen when active step is fullscreen', () => {
+      const w = wrapper({
+        activeSectionIndex: 0,
+        activeStepIndex: 0,
+        sections: [{ title: 'X', html: 'X', steps: [], isFullScreen: true }]
+      })
+      expect(w.prop('className')).toMatch(/\bfullscreen\b/)
+    })
+
+    it('sets .fullscreen when active footer is fullscreen', () => {
+      const w = wrapper({
+        sections: [],
+        footer: { title: 'X', html: 'X', isFullScreen: true }
+      })
+      expect(w.prop('className')).toMatch(/\bfullscreen\b/)
     })
   })
 
