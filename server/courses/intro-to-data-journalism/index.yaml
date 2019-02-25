@@ -2,7 +2,6 @@ title: Introduction to Data Journalism
 introduction_html: |-
     <p>Learn how to do data journalism</p>
 lessons:
-    - welcome
     - first-story
     - extreme-values
     - charts-intro
