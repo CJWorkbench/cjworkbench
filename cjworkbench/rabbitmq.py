@@ -110,7 +110,7 @@ class RetryingConnection:
         # processing_messages: a set of running tasks, _outside_ of aioamqp.
         #
         # See _make_callback_not_block().
-        self._processing_messages = []
+        self._processing_messages = set()
 
     async def connect(self) -> None:
         """
@@ -160,7 +160,10 @@ class RetryingConnection:
 
             # case 1 only: if the channel was closed and the connection wasn't,
             # wipe out the connection. (Otherwise, this is a no-op.)
-            await self._protocol.close()
+            try:
+                await self._protocol.close()
+            except aioamqp.exceptions.AmqpClosedConnection:
+                pass
 
             # await self._protocol.worker so that every Future that's been
             # created gets awaited.
@@ -210,7 +213,7 @@ class RetryingConnection:
         @functools.wraps(callback)
         async def inner(*args):
             task = loop.create_task(callback(*args))
-            self._processing_messages.append(task)
+            self._processing_messages.add(task)
             task.add_done_callback(self._processing_messages.remove)
 
         return inner
@@ -268,15 +271,18 @@ class RetryingConnection:
         """
         if self.is_closed:
             # Someone else called .close(). Return when that one finishes.
-            await self._closed_event
+            await self._closed_event.wait()
 
         self.is_closed = True  # speed up self.connect() if it's waiting
 
         await self._connected
-        await self._protocol.close()
+        try:
+            await self._protocol.close()
+        except aioamqp.exceptions.AmqpClosedConnection:
+            pass
         await self._protocol.worker  # wait for connection to close entirely
-        await asyncio.gather(self._processing_messages,
-                             return_exceptions=True)  # wait for _all_ of them
+        if self._processing_messages:
+            await asyncio.wait(self._processing_messages)
         self._closed_event.set()  # we're finished closing.
 
     def declare_queue_consume(self, queue: str, prefetch_count: int,
