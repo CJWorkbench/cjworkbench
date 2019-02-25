@@ -31,7 +31,7 @@ def _lesson_html_with_initial_workflow(initial_workflow_json):
 
 class LessonTests(SimpleTestCase):
     def test_parse_header_in_html_body(self):
-        out = Lesson.parse('a-slug', """
+        out = Lesson.parse(None, 'a-slug', """
             <html><body>
                 <header><h1>Lesson</h1><p>p1</p><p>p2</p></header>
                 <footer><h2>Foot</h2></footer>
@@ -41,7 +41,7 @@ class LessonTests(SimpleTestCase):
                           LessonHeader('Lesson', '<p>p1</p><p>p2</p>'))
 
     def test_parse_step(self):
-        out = Lesson.parse('a-slug', """
+        out = Lesson.parse(None, 'a-slug', """
             <header><h1>Lesson</h1><p>Contents</p></header>
             <section><h2>Foo</h2><p>bar</p><ol class="steps">
                 <li data-highlight=\'[{"type":"Foo"}]\' data-test="true">1</li>
@@ -60,7 +60,7 @@ class LessonTests(SimpleTestCase):
     def test_parse_invalid_step_highlight_json(self):
         with self.assertRaisesMessage(LessonParseError,
                                       'data-highlight contains invalid JSON'):
-            Lesson.parse('a-slug', """
+            Lesson.parse(None, 'a-slug', """
                 <header><h1>X</h1><p>X</p></header>
                 <section><h2>X</h2><p>bar</p><ol class="steps">
                     <li data-highlight=\'[{]\' data-test="true">1</li>
@@ -72,7 +72,7 @@ class LessonTests(SimpleTestCase):
             LessonParseError,
             'missing data-test attribute, which must be JavaScript'
         ):
-            Lesson.parse('a-slug', """
+            Lesson.parse(None, 'a-slug', """
                 <header><h1>Lesson</h1><p>Contents</p></header>
                 <section><h2>Foo</h2><p>bar</p><ol class="steps">
                     <li data-highlight="[]">1</li>
@@ -84,21 +84,21 @@ class LessonTests(SimpleTestCase):
             LessonParseError,
             'Lesson HTML needs a top-level <header>'
         ):
-            Lesson.parse('a-slug', '<h1>Foo</h1><p>body</p>')
+            Lesson.parse(None, 'a-slug', '<h1>Foo</h1><p>body</p>')
 
     def test_parse_no_header_title(self):
         with self.assertRaisesMessage(
             LessonParseError,
             'Lesson <header> needs a non-empty <h1> title'
         ):
-            Lesson.parse('a-slug', '<header><p>Contents</p></header>')
+            Lesson.parse(None, 'a-slug', '<header><p>Contents</p></header>')
 
     def test_parse_no_section_title(self):
         with self.assertRaisesMessage(
             LessonParseError,
             'Lesson <section> needs a non-empty <h2> title'
         ):
-            Lesson.parse('a-slug', """
+            Lesson.parse(None, 'a-slug', """
                 <header><h1>x</h1><p>y</p></header>
                 <section><ol class="steps">
                     <li data-test="true">foo</li>
@@ -106,7 +106,7 @@ class LessonTests(SimpleTestCase):
             """)
 
     def test_parse_no_section_steps(self):
-        out = Lesson.parse('a-slug', """
+        out = Lesson.parse(None, 'a-slug', """
             <header><h1>x</h1><p>y</p></header>
             <section><h2>T</h2><ol class="not-steps"><li>L</li></ol></section>
             <footer><h2>Foot</h2></footer>
@@ -119,14 +119,14 @@ class LessonTests(SimpleTestCase):
 
     def test_parse_no_sections(self):
         """A lesson may be footer-only."""
-        result = Lesson.parse('a-slug', """
+        result = Lesson.parse(None, 'a-slug', """
             <header><h1>x</h1><p>y</p></header>
             <footer><h2>Foot</h2></footer>
         """)
         self.assertEquals(result.sections, [])
 
     def test_parse_fullscreen_section(self):
-        result = Lesson.parse('a-slug', """
+        result = Lesson.parse(None, 'a-slug', """
             <header><h1>x</h1></header>
             <section class="fullscreen"><h2>title</h2><p>content</p></section>
             <section><h2>title</h2><p>content</p></section>
@@ -136,7 +136,7 @@ class LessonTests(SimpleTestCase):
         self.assertFalse(result.sections[1].is_full_screen)
 
     def test_parse_nested_fullscreen_does_not_count(self):
-        result = Lesson.parse('a-slug', """
+        result = Lesson.parse(None, 'a-slug', """
             <header><h1>x</h1></header>
             <section><h2>T</h2><p class="fullscreen"></p></section>
             <footer><h2>z</h2></footer>
@@ -144,7 +144,7 @@ class LessonTests(SimpleTestCase):
         self.assertFalse(result.sections[0].is_full_screen)
 
     def test_parse_fullscreen_footer(self):
-        result = Lesson.parse('a-slug', """
+        result = Lesson.parse(None, 'a-slug', """
             <header><h1>x</h1></header>
             <footer class="fullscreen"><h2>z</h2></footer>
         """)
@@ -155,7 +155,7 @@ class LessonTests(SimpleTestCase):
             LessonParseError,
             'Lesson HTML needs a top-level <footer>'
         ):
-            Lesson.parse('a-slug', """
+            Lesson.parse(None, 'a-slug', """
                 <header><h1>x</h1><p>y</p></header>
             """)
 
@@ -164,13 +164,13 @@ class LessonTests(SimpleTestCase):
             LessonParseError,
             'Lesson <footer> needs a non-empty <h2> title'
         ):
-            Lesson.parse('a-slug', """
+            Lesson.parse(None, 'a-slug', """
                 <header><h1>x</h1><p>y</p></header>
                 <footer>Hi</footer>
             """)
 
     def test_parse_footer(self):
-        out = Lesson.parse('a-slug', """
+        out = Lesson.parse(None, 'a-slug', """
             <header><h1>x</h1><p>y</p></header>
             <footer><h2>Foot</h2><p>My foot</p></footer>
         """)
@@ -193,7 +193,7 @@ class LessonTests(SimpleTestCase):
                 },
             ],
         }
-        out = Lesson.parse('a-slug', _lesson_html_with_initial_workflow(
+        out = Lesson.parse(None, 'a-slug', _lesson_html_with_initial_workflow(
             json.dumps(initial_workflow)
         ))
         self.assertEquals(
@@ -206,18 +206,23 @@ class LessonTests(SimpleTestCase):
             LessonParseError,
             'Initial-workflow YAML parse error'
         ):
-            Lesson.parse('a-slug', _lesson_html_with_initial_workflow('{bad'))
+            Lesson.parse(None, 'a-slug',
+                         _lesson_html_with_initial_workflow('{bad'))
 
     def test_parse_initial_workflow_yaml(self):
-        out = Lesson.parse('a-slug', _lesson_html_with_initial_workflow("""
-            tabs:
-              - name: Tab 1
-                wfModules:
-                  - module: loadurl
-                    params:
-                        url: 'http://foo.com'
-                        has_header: true
-        """))
+        out = Lesson.parse(
+            None,
+            'a-slug',
+            _lesson_html_with_initial_workflow("""
+                tabs:
+                  - name: Tab 1
+                    wfModules:
+                      - module: loadurl
+                        params:
+                            url: 'http://foo.com'
+                            has_header: true
+            """)
+        )
         self.assertEquals(
             out.initial_workflow,
             LessonInitialWorkflow([
@@ -249,6 +254,7 @@ class LessonManagerTests(SimpleTestCase):
         self.assertEquals(
             out,
             Lesson(
+                None,
                 'slug-1',
                 LessonHeader('Lesson', '<p>Contents</p>'),
                 [
@@ -283,6 +289,7 @@ class LessonManagerTests(SimpleTestCase):
         out = self.build_manager().all()
         self.assertEquals(out, [
             Lesson(
+                None,
                 'slug-2',
                 LessonHeader('Earlier Lesson (alphabetically)',
                              '<p>Contents</p>'),
@@ -295,6 +302,7 @@ class LessonManagerTests(SimpleTestCase):
                 LessonFooter('Foot', '<p>Footer</p>')
             ),
             Lesson(
+                None,
                 'slug-1',
                 LessonHeader('Lesson', '<p>Contents</p>'),
                 [

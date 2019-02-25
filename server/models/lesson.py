@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from io import StringIO
 import json
 import os.path
 import pathlib
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from xml.etree import ElementTree
 import yaml
 from django.conf import settings
@@ -197,7 +199,7 @@ class LessonManager:
         Parse the lesson at `path` or raises FileNotFoundError.
         """
         with open(path, 'r', encoding='utf-8') as f:
-            return Lesson.parse(slug, f.read())
+            return Lesson.parse(None, slug, f.read())
 
     def get(self, slug) -> 'Lesson':
         """
@@ -239,6 +241,7 @@ class LessonManager:
 # This interface mimics django.db.models.Model.
 @dataclass(frozen=True)
 class Lesson:
+    course: Optional['Course']
     slug: str
     header: LessonHeader = LessonHeader()
     sections: List[LessonSection] = field(default_factory=list)
@@ -250,7 +253,7 @@ class Lesson:
         return self.header.title
 
     @classmethod
-    def parse(cls, slug, html):
+    def parse(cls, course: 'Course', slug: str, html: str) -> Lesson:
         parser = html5lib.HTMLParser(strict=False, namespaceHTMLElements=False)
         root = parser.parse(StringIO(html))  # this is an xml.etree.ElementTree
 
@@ -283,7 +286,7 @@ class Lesson:
                 initial_workflow_el
             )
 
-        return cls(slug, lesson_header, lesson_sections, lesson_footer,
+        return cls(course, slug, lesson_header, lesson_sections, lesson_footer,
                    lesson_initial_workflow)
 
     class DoesNotExist(Exception):

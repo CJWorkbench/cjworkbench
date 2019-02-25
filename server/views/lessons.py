@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 from asgiref.sync import async_to_sync
 from django.db import transaction
 from django.http import Http404
@@ -14,15 +15,6 @@ from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
 
 
-# because get_object_or_404() is for _true_ django.db.models.Manager
-def _get_lesson_or_404(slug):
-    try:
-        return Lesson.objects.get(slug)
-    except Lesson.DoesNotExist:
-        raise Http404(_('Lesson does not exist'))
-
-
-# because get_object_or_404() is for _true_ django.db.models.Manager
 def _get_course_or_404(slug):
     try:
         return CourseLookup[slug]
@@ -30,20 +22,24 @@ def _get_course_or_404(slug):
         raise Http404('Course does not exist')
 
 
-def _get_course_and_lesson_or_404(course_slug, lesson_slug) -> Course:
+def _get_lesson_or_404(course_slug: Optional[str], lesson_slug: str):
     """
-    Return (Course, Lesson) or raise Http404.
+    Return Lesson or raise Http404.
     """
-    course = _get_course_or_404(course_slug)
-    try:
-        lesson = course.lessons[lesson_slug]
-    except KeyError:
-        raise Http404('Course does not contain lesson')
+    if course_slug is None:
+        try:
+            return Lesson.objects.get(lesson_slug)
+        except Lesson.DoesNotExist:
+            raise Http404(_('Lesson does not exist'))
+    else:
+        course = _get_course_or_404(course_slug)
+        try:
+            return course.lessons[lesson_slug]
+        except KeyError:
+            raise Http404('Course does not contain lesson')
 
-    return course, lesson
 
-
-def _ensure_workflow(request, course: Course, lesson: Lesson):
+def _ensure_workflow(request, lesson: Lesson):
     if request.user.is_authenticated:
         owner = request.user
         session_key = None
@@ -55,10 +51,10 @@ def _ensure_workflow(request, course: Course, lesson: Lesson):
 
     # full_slug: 'intro-to-data-journalism/group' (it's in a course) or
     # 'scrape-table' (course=None)
-    if course is None:
+    if lesson.course is None:
         full_slug = lesson.slug
     else:
-        full_slug = '/'.join((course.slug, lesson.slug))
+        full_slug = '/'.join((lesson.course.slug, lesson.slug))
 
     with transaction.atomic():
         workflow, created = Workflow.objects.get_or_create(
@@ -146,9 +142,9 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
                                              workflow.last_delta_id)
 
 
-def _render_get_lesson_detail(request, course, lesson):
+def _render_get_lesson_detail(request, lesson):
     try:
-        workflow, created = _ensure_workflow(request, course, lesson)
+        workflow, created = _ensure_workflow(request, lesson)
     except ModuleVersion.DoesNotExist:
         return HttpResponseServerError('initial_json asks for missing module')
     except ValueError as err:
@@ -170,14 +166,14 @@ def _render_get_lesson_detail(request, course, lesson):
 
 # Even allowed for logged-out users
 def render_course_lesson_detail(request, course_slug, lesson_slug):
-    course, lesson = _get_course_and_lesson_or_404(course_slug, lesson_slug)
-    return _render_get_lesson_detail(request, course, lesson)
+    lesson = _get_lesson_or_404(course_slug, lesson_slug)
+    return _render_get_lesson_detail(request, lesson)
 
 
 # Even allowed for logged-out users
 def render_lesson_detail(request, slug):
-    lesson = _get_lesson_or_404(slug)
-    return _render_get_lesson_detail(request, None, lesson)
+    lesson = _get_lesson_or_404(None, slug)
+    return _render_get_lesson_detail(request, lesson)
 
 
 # Even allowed for logged-out users
@@ -193,6 +189,7 @@ def render_lesson_list(request):
         }),
         'lessons': lessons,
     })
+
 
 def _render_course(request, course, lesson_url_prefix):
     logged_in_user = None
@@ -220,6 +217,7 @@ def render_lesson_list2(request):
         lessons=dict((lesson.slug, lesson) for lesson in Lesson.objects.all()),
     )
     return _render_course(request, course, '/lessons')
+
 
 # Even allowed for logged-out users
 def render_course(request, course_slug):

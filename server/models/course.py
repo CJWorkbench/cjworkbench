@@ -1,15 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 import yaml
 from .lesson import Lesson
-
-
-def _load_lesson(path: Path) -> Lesson:
-    slug = path.stem
-    text = path.read_text()
-    return Lesson.parse(slug, text)
 
 
 @dataclass(frozen=True)
@@ -57,10 +51,13 @@ class Course:
         title = str(data['title'])  # raises KeyError
         introduction_html = str(data['introduction_html'])  # raises KeyError
         lesson_slugs = list(data['lessons'])  # raises KeyError
-        # raises FileNotFoundError, LessonParseError
-        lessons = dict((slug, _load_lesson(dirpath / (str(slug) + '.html')))
-                        for slug in lesson_slugs)
-        return cls(slug, title, introduction_html, lessons)
+
+        course = cls(slug, title, introduction_html, {})
+        for slug in lesson_slugs:
+            lesson_html = (dirpath / (str(slug) + '.html')).read_text()
+            course.lessons[slug] = Lesson.parse(course, slug, lesson_html)
+
+        return course
 
 
 AllCourses = [

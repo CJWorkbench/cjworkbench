@@ -186,18 +186,21 @@ class LessonDetailTests(DbTestCase):
     @patch('server.rabbitmq.queue_render')
     @patch.object(Lesson.objects, 'get')
     def test_create_initial_workflow(self, get, render):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
-            {
-                'name': 'Tab X',
-                'wfModules': [
-                    {
-                        'module': 'amodule',
-                        'params': {'foo': 'bar'},
-                    },
-                ],
-            },
-        ]))
+        get.return_value = Lesson(
+            None,
+            'slug',
+            initial_workflow=LessonInitialWorkflow([
+                {
+                    'name': 'Tab X',
+                    'wfModules': [
+                        {
+                            'module': 'amodule',
+                            'params': {'foo': 'bar'},
+                        },
+                    ],
+                },
+            ])
+        )
 
         render.return_value = future_none
 
@@ -226,18 +229,21 @@ class LessonDetailTests(DbTestCase):
     @patch('server.rabbitmq.queue_render')
     @patch.object(Lesson.objects, 'get')
     def test_fetch_initial_workflow(self, get, render, fetch):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
-            {
-                'name': 'Tab X',
-                'wfModules': [
-                    {
-                        'module': 'amodule',
-                        'params': {'foo': 'bar'},
-                    },
-                ],
-            },
-        ]))
+        get.return_value = Lesson(
+            None,
+            'slug',
+            initial_workflow=LessonInitialWorkflow([
+                {
+                    'name': 'Tab X',
+                    'wfModules': [
+                        {
+                            'module': 'amodule',
+                            'params': {'foo': 'bar'},
+                        },
+                    ],
+                },
+            ])
+        )
 
         fetch.return_value = future_none
 
@@ -259,18 +265,21 @@ class LessonDetailTests(DbTestCase):
 
     @patch.object(Lesson.objects, 'get')
     def test_fetch_initial_workflow_with_missing_module_throws_500(self, get):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
-            {
-                'name': 'Tab X',
-                'wfModules': [
-                    {
-                        'module': 'amodule',  # does not exist
-                        'params': {'foo': 'bar'},
-                    },
-                ],
-            },
-        ]))
+        get.return_value = Lesson(
+            None,
+            'slug',
+            initial_workflow=LessonInitialWorkflow([
+                {
+                    'name': 'Tab X',
+                    'wfModules': [
+                        {
+                            'module': 'amodule',  # does not exist
+                            'params': {'foo': 'bar'},
+                        },
+                    ],
+                },
+            ])
+        )
 
         self.log_in()
         response = self.client.get('/lessons/whatever')
@@ -278,18 +287,21 @@ class LessonDetailTests(DbTestCase):
 
     @patch.object(Lesson.objects, 'get')
     def test_fetch_initial_workflow_with_invalid_params_throws_500(self, get):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
-            {
-                'name': 'Tab X',
-                'wfModules': [
-                    {
-                        'module': 'amodule',
-                        'params': {'fooTYPO': 'bar'},  # typo
-                    },
-                ],
-            },
-        ]))
+        get.return_value = Lesson(
+            None,
+            'slug',
+            initial_workflow=LessonInitialWorkflow([
+                {
+                    'name': 'Tab X',
+                    'wfModules': [
+                        {
+                            'module': 'amodule',
+                            'params': {'fooTYPO': 'bar'},  # typo
+                        },
+                    ],
+                },
+            ])
+        )
 
         create_module_version('amodule', [
             {'id_name': 'foo', 'type': 'string'},
