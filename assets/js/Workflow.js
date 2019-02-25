@@ -58,10 +58,13 @@ export class Workflow extends React.PureComponent {
     isReadOnly:         PropTypes.bool.isRequired,
     isAnonymous:        PropTypes.bool.isRequired,
     workflow:           PropTypes.object.isRequired,
+    lesson:             PropTypes.object, // or undefined
     loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
   }
 
   render() {
+    const { lesson } = this.props
+
     let className = 'workflow-root'
     if (this.props.lesson) {
       className += ' in-lesson'
@@ -75,11 +78,12 @@ export class Workflow extends React.PureComponent {
 
     return (
       <div className={className}>
-        { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEventEvenInLesson} /> : null }
+        { lesson ? <Lesson {...lesson} logUserEvent={logUserEventEvenInLesson} /> : null }
 
         <div className="workflow-container">
           <WorkflowNavBar
             workflow={this.props.workflow}
+            lesson={lesson}
             api={this.props.api}
             isReadOnly={this.props.workflow.read_only}
             loggedInUser={this.props.loggedInUser}

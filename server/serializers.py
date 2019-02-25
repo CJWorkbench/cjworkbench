@@ -1,10 +1,12 @@
 import re
+from typing import Optional
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
 from server.models import AclEntry, Workflow, WfModule, \
         ModuleVersion, StoredObject, Tab
+from server.models.course import Course
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
 
@@ -205,6 +207,7 @@ class WorkflowSerializer(WorkflowSerializerLite):
 class LessonSerializer(serializers.BaseSerializer):
     def to_representation(self, obj):
         return {
+            'course': self._course_to_representation(obj.course),
             'slug': obj.slug,
             'header': {
                 'title': obj.header.title,
@@ -218,6 +221,15 @@ class LessonSerializer(serializers.BaseSerializer):
                 'isFullScreen': obj.footer.is_full_screen,
             }
         }
+
+    def _course_to_representation(self, obj: Optional[Course]):
+        if obj is None:
+            return None
+        else:
+            return {
+                'slug': obj.slug,
+                'title': obj.title,
+            }
 
     def _section_to_representation(self, obj):
         return {

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
+exports[`WorkflowNavBar should duplicate the workflow when user is logged in and clicks the button 1`] = `
 <Fragment>
   <nav
     className="navbar"
@@ -17,90 +17,18 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
           src="undefinedimages/logo.svg"
         />
       </a>
-      <div
-        className="title-metadata-stack"
-      >
-        <Connect(EditableWorkflowName)
-          isReadOnly={false}
-        />
-        <WorkflowMetadata
-          openShareModal={[Function]}
-          workflow={
-            Object {
-              "id": 303,
-              "name": "Original Version",
-              "owner_name": "Not LogggedIn",
-              "public": true,
-            }
+      <WorkflowTitleAndMetadata
+        isReadOnly={false}
+        openShareModal={[Function]}
+        workflow={
+          Object {
+            "id": 12,
+            "name": "Original Version",
+            "owner_name": "John Johnson",
+            "public": true,
           }
-        />
-      </div>
-      <div
-        className="nav-buttons"
-      >
-        <UndoRedoButtons
-          redo={[Function]}
-          undo={[Function]}
-        />
-        <button
-          name="duplicate"
-          onClick={[Function]}
-        >
-          Duplicate
-        </button>
-        <button
-          name="share"
-          onClick={[Function]}
-        >
-          Share
-        </button>
-        <a
-          className="nav--link"
-          href="/account/login"
-        >
-          Sign in
-        </a>
-      </div>
-    </div>
-  </nav>
-</Fragment>
-`;
-
-exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new copy 1`] = `
-<Fragment>
-  <nav
-    className="navbar"
-  >
-    <div
-      className="navbar-elements"
-    >
-      <a
-        className="logo-navbar"
-        href="/workflows/"
-      >
-        <img
-          className="image"
-          src="undefinedimages/logo.svg"
-        />
-      </a>
-      <div
-        className="title-metadata-stack"
-      >
-        <Connect(EditableWorkflowName)
-          isReadOnly={false}
-        />
-        <WorkflowMetadata
-          openShareModal={[Function]}
-          workflow={
-            Object {
-              "id": 12,
-              "name": "Original Version",
-              "owner_name": "John Johnson",
-              "public": true,
-            }
-          }
-        />
-      </div>
+        }
+      />
       <div
         className="nav-buttons"
       >
@@ -129,11 +57,71 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
           isReadOnly={false}
           user={
             Object {
-              "id": 8,
+              "id": 1,
             }
           }
           workflowId={12}
         />
+      </div>
+    </div>
+  </nav>
+</Fragment>
+`;
+
+exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplicate button while not logged in 1`] = `
+<Fragment>
+  <nav
+    className="navbar"
+  >
+    <div
+      className="navbar-elements"
+    >
+      <a
+        className="logo-navbar"
+        href="/workflows/"
+      >
+        <img
+          className="image"
+          src="undefinedimages/logo.svg"
+        />
+      </a>
+      <WorkflowTitleAndMetadata
+        isReadOnly={false}
+        openShareModal={[Function]}
+        workflow={
+          Object {
+            "id": 303,
+            "name": "Original Version",
+            "owner_name": "Not LogggedIn",
+            "public": true,
+          }
+        }
+      />
+      <div
+        className="nav-buttons"
+      >
+        <UndoRedoButtons
+          redo={[Function]}
+          undo={[Function]}
+        />
+        <button
+          name="duplicate"
+          onClick={[Function]}
+        >
+          Duplicate
+        </button>
+        <button
+          name="share"
+          onClick={[Function]}
+        >
+          Share
+        </button>
+        <a
+          className="nav--link"
+          href="/account/login"
+        >
+          Sign in
+        </a>
       </div>
     </div>
   </nav>
