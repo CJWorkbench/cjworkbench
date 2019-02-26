@@ -37,7 +37,7 @@
       width: auto;
 
       a {
-        border-bottom: 3px solid transparent;
+        border-bottom: 4px solid transparent;
         padding-bottom: .5rem;
       }
 
@@ -114,7 +114,7 @@
             color: $brand-text--dark;
           }
 
-          .description {
+          .description p {
             @include font-nunito-regular;
             flex: 1 1 auto;
             color: $brand-text--medium;

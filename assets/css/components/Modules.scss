@@ -15,21 +15,36 @@
   }
 
   // notes above module
-  textarea[name="notes"], .editable-notes-read-only {
-    @include content-1;
-    display: block;
-    position: relative;
-    border: 0;
-    outline: none;
-    width: $module-width;
-    left: 1rem;
-    min-height: 3rem;
-    resize: none;
-    color: $brand-text--dark;
-    background-color: transparent;
-    margin: auto;
-    word-break: break-all;
-    overflow: hidden;
+  .module-notes {
+    // By default, notes aren't shown. We only show them if they are in focused or
+    // if they are non-empty. But we cannot set display:none, because the user
+    // may call notesInputRef.current.focus() before they become visible.
+    position: relative; // so we can position `.wf-module .module-notes::before`
+    margin-bottom: 1rem;
+
+    &:not(.visible) {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      height: 0;
+    }
+
+    textarea[name="notes"], .editable-notes-read-only {
+      @include content-1;
+      display: block;
+      position: relative;
+      border: 0;
+      outline: none;
+      width: $module-width;
+      left: 1rem;
+      min-height: 3rem;
+      resize: none;
+      color: $brand-text--dark;
+      background-color: transparent;
+      margin: auto;
+      word-break: break-word;
+      overflow: hidden;
+    }
   }
 
   // Show a vertical line to the left of the module stack
@@ -60,20 +75,6 @@
     background: $WF-background;
   }
 
-  .module-notes {
-    // By default, notes aren't shown. We only show them if they are in focused or
-    // if they are non-empty. But we cannot set display:none, because the user
-    // may call notesInputRef.current.focus() before they become visible.
-    position: relative; // so we can position `.wf-module .module-notes::before`
-    margin-bottom: 1rem;
-
-    &:not(.visible) {
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-      height: 0;
-    }
-  }
 
   .module-card-and-link {
     margin: 0 $module-margin-right 0 $module-margin-left; // most of the in-between margin comes from .add-module-in-between-search
