@@ -13,6 +13,7 @@ export const NMaxColumns = 100
 
 export class TableView extends React.PureComponent {
   static propTypes = {
+    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     wfModuleId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(PropTypes.shape({
@@ -20,9 +21,7 @@ export class TableView extends React.PureComponent {
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     }).isRequired), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
-    api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
     ensureSelectColumnsModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
     reorderColumn: PropTypes.func.isRequired, // func(wfModuleId, colname, fromIndex, toIndex) => undefined
   }
@@ -52,7 +51,7 @@ export class TableView extends React.PureComponent {
   render() {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
-    const { api, wfModuleId, deltaId, isReadOnly, columns, nRows, onLoadPage } = this.props
+    const { loadRows, wfModuleId, deltaId, isReadOnly, columns, nRows } = this.props
     const tooWide = columns.length > NMaxColumns
 
     let gridView
@@ -71,7 +70,7 @@ export class TableView extends React.PureComponent {
     } else {
       gridView = (
         <DataGrid
-          api={api}
+          loadRows={loadRows}
           isReadOnly={isReadOnly}
           wfModuleId={wfModuleId}
           deltaId={deltaId}
@@ -81,7 +80,6 @@ export class TableView extends React.PureComponent {
           reorderColumn={this.reorderColumn}
           isReadOnly={isReadOnly}
           selectedRowIndexes={selectedRowIndexes}
-          onLoadPage={onLoadPage}
           onSetSelectedRowIndexes={this.setSelectedRowIndexes}
           key={wfModuleId + '-' + deltaId}
         />

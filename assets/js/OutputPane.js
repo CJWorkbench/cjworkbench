@@ -2,17 +2,18 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import TableSwitcher from './table/TableSwitcher'
+import DelayedTableSwitcher from './table/DelayedTableSwitcher'
 import OutputIframe from './OutputIframe'
 import { connect } from 'react-redux'
 
 export class OutputPane extends React.Component {
   static propTypes = {
-    api: PropTypes.object.isRequired,
+    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowId: PropTypes.number.isRequired,
     wfModuleBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
       deltaId: PropTypes.number, // or null -- it may not be rendered
+      status: PropTypes.oneOf(['ok', 'busy', 'unreachable']).isRequired, // can't be 'error'
       columns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
         type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
@@ -34,44 +35,28 @@ export class OutputPane extends React.Component {
     isReadOnly: PropTypes.bool.isRequired,
   }
 
-  renderTable() {
-    const { api, isReadOnly, wfModuleBeforeError, wfModule } = this.props
+  /**
+   * Return the WfModule we want to render for the user.
+   *
+   * This will _never_ be an "error"-status WfModule. If there's an error, we
+   * want the user to see the input. (This component will also render a notice
+   * saying it's showing the input.)
+   */
+  get wfModuleForTable () {
+    const { wfModuleBeforeError, wfModule } = this.props
 
-    let wfm
-    let wfModuleId
     if (wfModuleBeforeError) {
-      wfm = wfModuleBeforeError
-      wfModuleId = wfModuleBeforeError.id
-    } else if (wfModule && wfModule.status === 'ok') {
-      wfm = wfModule
-      wfModuleId = wfm.id
+      // We're focused on an error module. The user wants to see its _input_ to
+      // debug it.
+      return wfModuleBeforeError
+    } else if (wfModule && wfModule.status !== 'error') {
+      return wfModule
     } else {
-      // We're focused on a module that is not ok. It is one of:
-      // * 'busy': no results to show (we want to see the previous table, whatever it is)
-      // * 'unreachable': no results to show (we want to see the previous table, whatever it is)
-      // * 'error': no results to show (assuming wfModuleBeforeError is set, we want to see the previous table)
-      //
-      // "see the previous table" is TableSwitcher's domain. Our job is to tell
-      // TableSwitcher we don't want to render this wfModule's data.
-      wfm = null
-      // TableSwitcher clears the table when you switch WfModules. (Otherwise
-      // it shows the last-good table.) We want the last-good table here, so
-      // we should pass wfModuleId even though we don't want to render the table
-      wfModuleId = wfModule ? wfModule.id : null
+      // Either there's no selected WfModule, or the selected WfModule has
+      // status === 'error' and it's the first in the tab. Either way, we want
+      // to render a "placeholder" table.
+      return null
     }
-
-    // Make a table component even if no module ID (should still show an empty table)
-    return (
-      <TableSwitcher
-        key='table'
-        wfModuleId={wfModuleId}
-        deltaId={wfm ? wfm.deltaId : null}
-        columns={wfm ? wfm.columns : null}
-        nRows={wfm ? wfm.nRows : null}
-        api={api}
-        isReadOnly={isReadOnly}
-      />
-    )
   }
 
   renderOutputIFrame () {
@@ -119,24 +104,24 @@ export class OutputPane extends React.Component {
   }
 
   render () {
-    const { wfModule } = this.props
-    const status = wfModule ? wfModule.status : 'unreachable'
-    const className = 'outputpane module-' + status
+    const { isReadOnly, loadRows, wfModule } = this.props
+    const wfm = this.wfModuleForTable
+    const className = 'outputpane module-' + (wfModule ? wfModule.status : 'unreachable')
 
     return (
       <div className={className}>
         {this.renderOutputIFrame()}
         {this.renderShowingInput()}
-        {this.renderTable()}
-        {status === 'busy' ? (
-          <div key='spinner' className="spinner-container-transparent">
-            <div className="spinner-l1">
-              <div className="spinner-l2">
-                <div className="spinner-l3"></div>
-              </div>
-            </div>
-          </div>
-        ) : null}
+        <DelayedTableSwitcher
+          key='table'
+          wfModuleId={wfm ? wfm.id : null}
+          status={wfm ? wfm.status : null}
+          deltaId={wfm ? wfm.deltaId : null}
+          columns={wfm ? wfm.columns : null}
+          nRows={wfm ? wfm.nRows : null}
+          isReadOnly={isReadOnly}
+          loadRows={loadRows}
+        />
       </div>
     )
   }
@@ -164,7 +149,7 @@ function wfModuleStatus(wfModule) {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps (state) {
   const { workflow, wfModules, tabs, modules } = state
   const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
   const tab = tabs[tabSlug]
@@ -183,6 +168,7 @@ function mapStateToProps(state, ownProps) {
     wfModuleBeforeError = {
       id: lastGood.id,
       deltaId: lastGood.cached_render_result_delta_id,
+      status: lastGood.status,
       columns: lastGood.output_columns,
       nRows: lastGood.output_n_rows
     }
@@ -205,6 +191,17 @@ function mapStateToProps(state, ownProps) {
   }
 }
 
+function mapDispatchToProps (dispatch) {
+  return {
+    loadRows: (wfModuleId, deltaId, startRow, endRow) => {
+      return dispatch((_, __, api) => {
+        return api.render(wfModuleId, startRow, endRow) // ignore deltaId -- for now
+      })
+    }
+  }
+}
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(OutputPane)

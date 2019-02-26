@@ -38,21 +38,20 @@ describe('DataGrid', () => {
 
   // mount() so we get componentDidMount, componentWillUnmount()
   const wrapper = async (extraProps={}, httpResponses=[ testRows ]) => {
-    const apiRender = jest.fn()
+    const defaultLoadRows = jest.fn()
     for (const httpResponse of httpResponses) {
-      apiRender.mockReturnValueOnce(Promise.resolve(httpResponse))
+      defaultLoadRows.mockReturnValueOnce(Promise.resolve(httpResponse))
     }
 
-    const api = { render: apiRender }
     // mock store for <ColumnHeader>, a descendent
-    const store = mockStore({ modules: {} }, api)
+    const store = mockStore({ modules: {} })
 
     const nRows = httpResponses.reduce(((s, j) => s + j.rows.length), 0)
 
     const ret = mount(
       <Provider store={store}>
         <DataGrid
-          api={api}
+          loadRows={defaultLoadRows}
           isReadOnly={false}
           wfModuleId={1}
           deltaId={2}
@@ -64,8 +63,7 @@ describe('DataGrid', () => {
           setDropdownAction={jest.fn()}
           onSetSelectedRowIndexes={jest.fn()}
           reorderColumn={jest.fn()}
-          onLoadPage={jest.fn()}
-          {...extraProps}
+          {...extraProps /* may include new loadRows */}
         />
       </Provider>
     )
@@ -77,13 +75,11 @@ describe('DataGrid', () => {
   }
 
   it('Renders the grid', async () => {
-    const apiRender = jest.fn()
-
+    const loadRows = jest.fn()
     let resolveHttpRequest
-    apiRender.mockReturnValueOnce(new Promise(resolve => resolveHttpRequest = resolve))
+    loadRows.mockReturnValueOnce(new Promise(resolve => resolveHttpRequest = resolve))
 
-    const api = { render: apiRender }
-    const tree = await wrapper({ api, nRows: 2 })
+    const tree = await wrapper({ loadRows, nRows: 2 })
 
     // Check that we ended up with five columns (first is row number), with the right names
     // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
@@ -96,17 +92,14 @@ describe('DataGrid', () => {
     expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('getCell')
     expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('select-row')
 
-    // show spinner at first
-    expect(tree.find('.spinner-container-transparent')).toHaveLength(1)
+    // no spinner at first
+    expect(tree.find('.spinner-container-transparent')).toHaveLength(0)
     // No content except row numbers
     expect(tree.find('.react-grid-Viewport').text()).toMatch(/12/)
 
-    expect(tree.find('DataGrid').prop('api').render).toHaveBeenCalledWith(1, 0, 200)
+    expect(loadRows).toHaveBeenCalledWith(1, 2, 0, 200)
 
     resolveHttpRequest(testRows); await tick(); tree.update()
-
-    // hide spinner
-    expect(tree.find('.spinner-container-transparent')).toHaveLength(0)
 
     // Match all cell values -- including row numbers 1 and 2.
     expect(tree.find('.react-grid-Viewport').text()).toMatch(/.*9.*foo.*9.*someval.*1.*9.*baz.*someotherval.*2/)
@@ -142,8 +135,7 @@ describe('DataGrid', () => {
     expect(tree.text()).not.toMatch(/null/) // show blank cells, not "null" placeholders
 
     await tick(); tree.update() // ensure nothing happens
-    expect(tree.find('DataGrid').prop('api').render).not.toHaveBeenCalled()
-    expect(tree.find('DataGrid').prop('onLoadPage')).toHaveBeenCalledWith(1, 2)
+    expect(tree.find('DataGrid').prop('loadRows')).not.toHaveBeenCalled()
   })
 
   it('should show letters in the header', async () => {
@@ -221,10 +213,10 @@ describe('DataGrid', () => {
     }
 
     const tree = await wrapper({ nRows: 801 }, [ result(0), result(200), result(600) ])
-    const api = tree.find('DataGrid').prop('api')
+    const loadRows = tree.find('DataGrid').prop('loadRows')
 
     // Should load 0..initialRows at first
-    expect(api.render).toHaveBeenCalledWith(1, 0, 200)
+    expect(loadRows).toHaveBeenCalledWith(1, 2, 0, 200)
     await tick(); tree.update() // let rows load
 
     // force load by reading a missing row
@@ -232,19 +224,19 @@ describe('DataGrid', () => {
     tree.find('DataGrid').instance().getRow(201) // spurious getRow() -- there are lots
     expect(missingRowForNow).not.toBe(null)
     await tick() // begin load
-    expect(api.render).toHaveBeenCalledWith(1, 200, 400)
-    expect(api.render).not.toHaveBeenCalledWith(1, 201, 401)
+    expect(loadRows).toHaveBeenCalledWith(1, 2, 200, 400)
+    expect(loadRows).not.toHaveBeenCalledWith(1, 2, 201, 401)
     await tick(); tree.update() // let load finish
 
     // read a row, _not_ forcing a load
     const nonMissingRow = tree.find('DataGrid').instance().getRow(201)
     expect(nonMissingRow.bbbb).toEqual('201')
-    expect(api.render).not.toHaveBeenCalledWith(1, 201, 401)
+    expect(loadRows).not.toHaveBeenCalledWith(1, 2, 201, 401)
 
     // force another load (to test we keep loading)
     tree.find('DataGrid').instance().getRow(600)
     await tick() // begin load
-    expect(api.render).toHaveBeenCalledWith(1, 600, 800)
+    expect(loadRows).toHaveBeenCalledWith(1, 2, 600, 800)
     await tick(); tree.update() // let load finish
   })
 })
