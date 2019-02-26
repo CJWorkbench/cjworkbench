@@ -17,7 +17,8 @@ const CaseSensitiveOperations = [
 export default class Subfilter extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired, // <input name=...>
+    fieldId: PropTypes.string.isRequired, // <input id=...>
     index: PropTypes.number.isRequired,
     value: SubfilterPropType.isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
@@ -55,7 +56,7 @@ export default class Subfilter extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, inputColumns, name, index, value, onDelete, onSubmit } = this.props
+    const { isReadOnly, inputColumns, name, fieldId, index, value, onDelete, onSubmit } = this.props
     const column = (inputColumns || []).find(c => c.name === value.colname) || null
     const needValue = column !== null && (
       value.condition !== 'cell_is_empty' && value.condition !== 'cell_is_not_empty'
@@ -66,6 +67,7 @@ export default class Subfilter extends React.PureComponent {
         <Column
           isReadOnly={isReadOnly}
           name={`${name}[colname]`}
+          fieldId={`${fieldId}_colname`}
           value={value.colname}
           placeholder='Select column'
           inputColumns={inputColumns}
@@ -75,6 +77,7 @@ export default class Subfilter extends React.PureComponent {
           <Condition
             isReadOnly={isReadOnly}
             name={`${name}[condition]`}
+            fieldId={`${fieldId}_condition`}
             value={value.condition}
             dtype={column.type}
             onChange={this.onChangeCondition}
@@ -85,8 +88,8 @@ export default class Subfilter extends React.PureComponent {
             <SingleLineString
               isReadOnly={isReadOnly}
               label=''
-              fieldId=''
               name={`${name}[value]`}
+              fieldId={`${fieldId}_value`}
               placeholder='Value'
               value={value.value}
               upstreamValue={value.value}
@@ -103,6 +106,7 @@ export default class Subfilter extends React.PureComponent {
               type='checkbox'
               readOnly={isReadOnly}
               name={`${name}[case_sensitive]`}
+              id={`${fieldId}_case_sensitive`}
               checked={value.case_sensitive}
               onChange={this.onChangeCaseSensitive}
             />

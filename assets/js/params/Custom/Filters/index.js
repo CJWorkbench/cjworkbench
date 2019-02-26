@@ -20,7 +20,8 @@ const DefaultFilters = {
 export default class Filters extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired, // <input name=...>
+    fieldId: PropTypes.string.isRequired, // <input id=...>
     value: FiltersPropType.isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -84,7 +85,7 @@ export default class Filters extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, inputColumns, onSubmit } = this.props
+    const { isReadOnly, name, fieldId, inputColumns, onSubmit } = this.props
     const { operator, filters } = this.value
 
     return (
@@ -94,6 +95,7 @@ export default class Filters extends React.PureComponent {
             <Filter
               isReadOnly={isReadOnly}
               name={`${name}[${index}]`}
+              fieldId={`${fieldId}_${index}`}
               index={index}
               value={filter}
               inputColumns={inputColumns}
@@ -105,6 +107,7 @@ export default class Filters extends React.PureComponent {
               <FilterOperator
                 isReadOnly={isReadOnly}
                 name={`${name}[${index}][operator]`}
+                fieldId={`${fieldId}_${index}_operator`}
                 value={operator}
                 onChange={this.onChangeOperator}
               />
@@ -112,6 +115,7 @@ export default class Filters extends React.PureComponent {
               <AddFilter
                 isReadOnly={isReadOnly}
                 name={`${name}[operator]`}
+                fieldId={`${fieldId}_operator`}
                 operator={operator}
                 nFilters={filters.length}
                 onClickAddAnd={this.onClickAddAnd}
