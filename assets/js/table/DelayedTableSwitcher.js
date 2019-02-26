@@ -152,11 +152,16 @@ export default class DelayedTableSwitcher extends React.PureComponent {
     // Notice the nifty optimization: we make sure React will not redraw a
     // table when switching from "loading" to "loaded": its `key` will remain
     // the same.
+    //
+    // TODO when we switch off react-data-grid, the "loading" table should be
+    // read-only no matter what. Currently we can't do that, because
+    // react-data-grid won't notice the change if we start with isReadOnly=true
+    // and later set isReadOnly=false
     return (
       <div className={className}>
         {loaded ? (
           <TableSwitcher
-            isReadOnly={isReadOnly || !!loading}
+            isReadOnly={isReadOnly}
             isLoaded
             key={tableKey(loaded)}
             loadRows={this.loadRows}
@@ -165,7 +170,7 @@ export default class DelayedTableSwitcher extends React.PureComponent {
         ) : null}
         {loading ? (
           <TableSwitcher
-            isReadOnly={isReadOnly || !!loading}
+            isReadOnly={isReadOnly}
             isLoaded={false}
             key={tableKey(this.props)}
             loadRows={this.loadRows}
