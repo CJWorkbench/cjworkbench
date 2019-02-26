@@ -67,6 +67,7 @@ export default class TabList extends React.PureComponent {
     const { fromIndex, toIndex } = dragging
     if (fromIndex !== toIndex) {
       const tabSlugs = tabs.map(t => t.slug)
+      const fromId = tabSlugs[fromIndex]
       tabSlugs.splice(fromIndex, 1)
       tabSlugs.splice(toIndex > fromIndex ? toIndex - 1 : toIndex, 0, fromId)
       this.props.setOrder(tabSlugs)
