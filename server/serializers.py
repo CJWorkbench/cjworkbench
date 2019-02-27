@@ -32,6 +32,7 @@ class ParamFieldSerializer(serializers.Serializer):
     multiline = serializers.BooleanField()
     placeholder = serializers.CharField()
     items = serializers.CharField()
+    menuOptions = serializers.JSONField(source='options')
     visible_if = serializers.JSONField()
     # So far, no one actually wants to see the default value.
 

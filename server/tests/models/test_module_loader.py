@@ -1,7 +1,4 @@
-import pathlib
-import tempfile
 import textwrap
-from typing import Iterable, List, Tuple
 import unittest
 from server.models.module_loader import validate_module_spec, ModuleFiles, \
         ModuleSpec, validate_python_functions
@@ -157,6 +154,65 @@ class ValidateModuleSpecTest(unittest.TestCase):
                 },
             ],
         })
+
+    def test_validate_deprecated_menu(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'menu',
+                    'menu_items': 'x||y|z',
+                    'default': 0,
+                },
+            ],
+        })
+
+    def test_validate_menu_with_default(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'menu',
+                    'placeholder': 'Select something',
+                    'options': [
+                        {'value': 'x', 'label': 'X'},
+                        'separator',
+                        {'value': 'y', 'label': 'Y'},
+                        {'value': 'z', 'label': 'Z'},
+                    ],
+                    'default': 'y',
+                },
+            ],
+        })
+
+    def test_validate_menu_invalid_default(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'a' has a 'default' that is not in its 'options'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'menu',
+                        'options': [
+                            {'value': 'x', 'label': 'X'},
+                        ],
+                        'default': 'y',
+                    },
+                ],
+            })
 
 
 class ModuleFilesTest(unittest.TestCase):

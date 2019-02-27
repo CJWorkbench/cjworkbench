@@ -133,7 +133,15 @@ definitions:
                 default:
                     type: boolean
                     description: "Value to set on the user's behalf (default False)"
-        menu:
+        deprecated_menu:
+            # Old-school "menu": its values are integers, which causes hassle.
+            #
+            # Deprecated in favor of the _real_ "menu" because:
+            #
+            # * "menu" makes module code more legible
+            # * "menu" lets us reorder values
+            #
+            # Nix this when no more modules use it. (grep for `menu_items` to find it.)
             <<: *common_ftype
             required: [ id_name, type, menu_items ]
             properties:
@@ -147,6 +155,34 @@ definitions:
                 default:
                     type: integer
                     description: "Value to set on the user's behalf (default 0)"
+        menu:
+            <<: *common_ftype
+            required: [ id_name, type, options ]
+            properties:
+                <<: *common_ftype_properties
+                type: { const: menu }
+                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                options:
+                    type: array
+                    description: Menu options
+                    items:
+                        oneOf:
+                          - const: separator
+                          - type: object
+                            description: One menu option (value and label)
+                            required: [ value, label ]
+                            properties:
+                                value:
+                                    type: string
+                                    description: Value the module code uses
+                                    pattern: "^[a-z_][a-z0-9_]*$"
+                                label:
+                                    type: string
+                                    description: Text the user sees
+                default:
+                    type: string
+                    description: "Value to set on the user's behalf (default items[0].value)"
         radio:
             <<: *common_ftype
             required: [ id_name, type, radio_items ]
@@ -222,6 +258,7 @@ definitions:
                 { $ref: '#/definitions/ftypes/integer' },
                 { $ref: '#/definitions/ftypes/float' },
                 { $ref: '#/definitions/ftypes/checkbox' },
+                { $ref: '#/definitions/ftypes/deprecated_menu' },
                 { $ref: '#/definitions/ftypes/menu' },
                 { $ref: '#/definitions/ftypes/radio' },
                 { $ref: '#/definitions/ftypes/button' },

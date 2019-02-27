@@ -16,8 +16,12 @@
       "name" : "Search for",
       "id_name" : "querytype",
       "type" : "menu",
-      "menu_items" : "User tweets|Any tweet|Twitter list",
-      "default": 0
+      "options": [
+        { "value": "user_timeline", "label": "User tweets" },
+        { "value": "search", "label": "Any tweet" },
+        { "value": "lists_statuses", "label": "Twitter list" }
+      ],
+      "default": "user_timeline"
     },
     {
       "name": "",
@@ -26,7 +30,7 @@
       "placeholder":"Keywords to match",
       "visible_if": {
         "id_name": "querytype",
-        "value": "Any tweet"
+        "value": "search"
       }
     },
     {
@@ -36,7 +40,7 @@
       "placeholder":"@UserName",
       "visible_if": {
         "id_name": "querytype",
-        "value": "User tweets"
+        "value": "user_timeline"
       }
     },
     {
@@ -46,7 +50,7 @@
       "placeholder":"https://twitter.com/someuser/lists/somelist",
       "visible_if": {
         "id_name": "querytype",
-        "value": "Twitter list"
+        "value": "lists_statuses"
       }
     },
     {

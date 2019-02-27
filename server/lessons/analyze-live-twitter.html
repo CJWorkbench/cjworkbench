@@ -16,12 +16,12 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
-    data-test="return workflow.tabs[0].wfModuleNames[0] === 'Twitter'"
+    data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'twitter'"
     >Add the data source 'Twitter'.
   </li>
   <li
     data-highlight='[{"type":"WfModule","name":"Twitter"}]'
-    data-test="const json = workflow.tabs[0].wfModules[0].params.twitter_credentials; return json && json.name && json.name.indexOf('@') !== -1;"
+    data-test="const cred = workflow.tabs[0].wfModules[0].params.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
     >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app</kbd>.
   </li>
 
@@ -34,7 +34,7 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 0 && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
+    data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 'user_timeline' && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
     >Select 'User tweets' in the first drop down, and paste in the following user name.
     <div class="copy-txt">neiltyson</div>
   </li>

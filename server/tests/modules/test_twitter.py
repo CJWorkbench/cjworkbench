@@ -321,8 +321,8 @@ user_timeline2_json = """[
 ]"""
 
 
-P = MockParams.factory(querytype=0, username='username', query='query',
-                       listurl='listurl', twitter_credentials={
+P = MockParams.factory(querytype='user_timeline', username='username',
+                       query='query', listurl='listurl', twitter_credentials={
                            'name': 'x',
                            'secret': {
                                'oauth_token': 'a-token',
@@ -386,13 +386,46 @@ def Err(error):
     return ProcessResult(error=error)
 
 
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0_to_v1(self):
+        result = twitter.migrate_params({
+            'querytype': 1,
+            'query': 'foo',
+            'username': '',
+            'listurl': '',
+            'update': '',
+            'accumulate': False,
+        })
+        self.assertEqual(result, {
+            'querytype': 'search',
+            'query': 'foo',
+            'username': '',
+            'listurl': '',
+            'update': '',
+            'accumulate': False,
+        })
+
+    def test_v1(self):
+        expected = {
+            'querytype': 'lists_statuses',
+            'query': 'foo',
+            'username': '',
+            'listurl': 'http://foo',
+            'update': '',
+            'accumulate': False,
+        }
+        result = twitter.migrate_params(dict(expected))  # copy
+        self.assertEqual(result, expected)
+
+
 class TwitterTests(unittest.TestCase):
     def test_fetch_empty_query_and_secret(self):
-        result = fetch(P(querytype=1, query='', twitter_credentials=None))
+        result = fetch(P(querytype='search', query='',
+                         twitter_credentials=None))
         self.assertIsNone(result)
 
     def test_fetch_empty_query(self):
-        result = fetch(P(querytype=1, query=''))
+        result = fetch(P(querytype='search', query=''))
         self.assertEqual(result, Err('Please enter a query'))
 
     def test_fetch_empty_secret(self):
@@ -400,11 +433,11 @@ class TwitterTests(unittest.TestCase):
         self.assertEqual(result, Err('Please sign in to Twitter'))
 
     def test_fetch_invalid_username(self):
-        result = fetch(P(querytype=0, username='@@batman'))
+        result = fetch(P(querytype='user_timeline', username='@@batman'))
         self.assertEqual(result, Err('Not a valid Twitter username'))
 
     def test_invalid_list(self):
-        result = fetch(P(querytype=2,
+        result = fetch(P(querytype='lists_statuses',
                          listurl='https://twitter.com/a/lists/@b'))
         self.assertEqual(result, Err('Not a valid Twitter list URL'))
 
@@ -416,7 +449,8 @@ class TwitterTests(unittest.TestCase):
             []
         ])
 
-        params = P(querytype=0, username='foouser', accumulate=True)
+        params = P(querytype='user_timeline', username='foouser',
+                   accumulate=True)
 
         result = fetch(params, mock_tweet_table)
         expected = pd.concat([mock_tweet_table2, mock_tweet_table],
@@ -528,7 +562,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         # Actually fetch!
-        result = fetch(P(querytype=1, query='cat'))
+        result = fetch(P(querytype='search', query='cat'))
         self.assertEqual(result.error, '')
         self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
@@ -555,7 +589,7 @@ class TwitterTests(unittest.TestCase):
 
         # Actually fetch!
         result = fetch(
-            P(querytype=2,
+            P(querytype='lists_statuses',
               listurl='https://twitter.com/thatuser/lists/theirlist')
         )
         self.assertEqual([str(req.url) for req in mock_session.requests], [
@@ -578,7 +612,8 @@ class TwitterTests(unittest.TestCase):
     def test_render_empty_no_query(self):
         # When we haven't fetched, we shouldn't show any columns (for
         # consistency with other modules)
-        result = twitter.render(pd.DataFrame(), P(querytype=1, query=''),
+        result = twitter.render(pd.DataFrame(),
+                                P(querytype='search', query=''),
                                 fetch_result=None)
         assert_frame_equal(result.dataframe, pd.DataFrame())
 
@@ -586,7 +621,8 @@ class TwitterTests(unittest.TestCase):
         # An empty table might be stored as zero-column. This is a bug, but we
         # must handle it because we have actual data like this. We want to
         # output all the same columns as a tweet table.
-        result = twitter.render(pd.DataFrame(), P(querytype=1, query='cat'),
+        result = twitter.render(pd.DataFrame(),
+                                P(querytype='search', query='cat'),
                                 fetch_result=ProcessResult(pd.DataFrame()))
         assert_frame_equal(result.dataframe, mock_tweet_table[0:0])
 

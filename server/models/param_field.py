@@ -1,5 +1,7 @@
+from __future__ import annotations
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Union
 
 
 class ParamDType:
@@ -464,6 +466,7 @@ ParamDType.JsonTypeToDType = {
 }
 
 
+@dataclass(frozen=True)
 class ParamField:
     """
     A form field for entering a param.
@@ -490,20 +493,16 @@ class ParamField:
         def __str__(self):
             return self.value
 
-    def __init__(self, *, id_name: str, ftype: 'ParamField.FType',
-                 name: str = '', items: str = '', multiline: bool = False,
-                 placeholder: str = '', tab_parameter: str = '',
-                 visible_if: Optional[Dict[str, Dict[str, Any]]] = None,
-                 default: Any = None):
-        self.id_name = id_name
-        self.ftype = ftype
-        self.name = name
-        self.items = items
-        self.multiline = multiline
-        self.placeholder = placeholder
-        self.tab_parameter = tab_parameter
-        self.visible_if = visible_if
-        self.default = default
+    id_name: str
+    ftype: ParamField.FType
+    name: str = ''
+    items: str = ''  # deprecated menu/radio items
+    options: Optional[List[Union[str, Dict[str, str]]]] = None  # menu/radio
+    multiline: bool = False  # for strings
+    placeholder: str = ''
+    tab_parameter: str = ''
+    default: Any = None
+    visible_if: Optional[Dict[str, Dict[str, Any]]] = None
 
     def __repr__(self):
         return ''.join((
@@ -520,6 +519,7 @@ class ParamField:
             ftype=ParamField.FType(d['type']),
             name=d.get('name', ''),
             items=d.get('menu_items', d.get('radio_items', '')),
+            options=d.get('options'),
             multiline=d.get('multiline', False),
             placeholder=d.get('placeholder', ''),
             tab_parameter=d.get('tab_parameter', ''),
@@ -579,16 +579,18 @@ class ParamField:
             self.ftype == T.MENU
             or self.ftype == T.RADIO
         ):
-            kwargs = {}
-            if self.default is not None:
-                kwargs['default'] = int(self.default)
-            else:
-                kwargs['default'] = 0
-
-            return ParamDTypeEnum(
+            if self.items:
+                # deprecated menu/radio
                 # Menu values are integers. Ick, eh?
-                choices=set(range(len(self.items.split('|')))),
-                **kwargs
-            )
+                choices = set(range(len(self.items.split('|'))))
+                default = self.default or 0
+            else:
+                # normal menu/radio
+                choices = set(o['value']
+                              for o in self.options
+                              if isinstance(o, dict))  # skip separators
+                default = self.default or None
+
+            return ParamDTypeEnum(choices, default)
         else:
             raise ValueError('Unknown ftype %r' % self.ftype)

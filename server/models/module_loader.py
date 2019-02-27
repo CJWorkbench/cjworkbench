@@ -39,8 +39,9 @@ def validate_module_spec(spec):
 
     * `spec` adheres to `server/models/module_spec_schema.yaml`
     * `spec.parameters[*].id_name` are unique
-    * `spec.parameters[*].menu_items` or `.radio_items` are present if needed
     * `spec.parameters[*].visible_if[*].id_name` are valid
+    * If `spec.parameters[*].options` and `default` exist, `default` is valid
+    * `spec.parameters[*].tab_parameter` point to valid params
     """
     # No need to do i18n on these errors: they're only for admins. Good thing,
     # too -- most of the error messages come from jsonschema, and there are
@@ -62,6 +63,16 @@ def validate_module_spec(spec):
             messages.append(f"Param '{id_name}' appears twice")
         else:
             param_id_types[id_name] = param['type']
+
+        # check 'default' is valid in menu/radio
+        if 'default' in param and 'options' in param:
+            options = [o['value'] for o in param['options']
+                       if isinstance(o, dict)]  # skip 'separator'
+            if param['default'] not in options:
+                messages.append(
+                    f"Param '{id_name}' has a 'default' that is not in its "
+                    "'options'"
+                )
 
     # Now that param_id_types is full, loop again to check visible_if refs
     for param in spec['parameters']:
