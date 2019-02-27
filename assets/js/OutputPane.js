@@ -168,7 +168,7 @@ function mapStateToProps (state) {
     wfModuleBeforeError = {
       id: lastGood.id,
       deltaId: lastGood.cached_render_result_delta_id,
-      status: lastGood.status,
+      status: wfModuleStatus(lastGood),
       columns: lastGood.output_columns,
       nRows: lastGood.output_n_rows
     }
@@ -185,7 +185,7 @@ function mapStateToProps (state) {
       columns: wfModule.output_columns,
       nRows: wfModule.output_n_rows
     } : null,
-    wfModuleBeforeError: wfModuleBeforeError,
+    wfModuleBeforeError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only,
   }
