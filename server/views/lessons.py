@@ -1,6 +1,7 @@
 import json
 from typing import Optional
 from asgiref.sync import async_to_sync
+from django.conf import settings
 from django.db import transaction
 from django.http import Http404
 from django.http.response import HttpResponseServerError
@@ -90,10 +91,11 @@ def _init_workflow_for_lesson(workflow, lesson):
         )
 
         for order, wfm in enumerate(tab_dict['wfModules']):
-            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id)
+            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id,
+                                  lesson)
 
 
-def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id):
+def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
     """
     Deserialize a WfModule from lesson initial_workflow
     """
@@ -109,6 +111,22 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id):
         **module_version.default_params,
         **wfm_dict['params'],
     }
+
+    # Rewrite 'url' params: if the spec has them as relative, make them the
+    # absolute path -- relative to the lesson URL.
+    if 'url' in params:
+        if params['url'].startswith('./'):
+            params['url'] = ''.join([
+                settings.STATIC_URL,
+                (
+                    'lessons/' if lesson.course is None else 'courses/'
+                ),
+                (
+                    lesson.slug if lesson.course is None
+                    else f'{lesson.course.slug}/{lesson.slug}'
+                ),
+                params['url'][1:],  # include the '/'
+            ])
 
     # 500 error if params are invalid
     # TODO testme

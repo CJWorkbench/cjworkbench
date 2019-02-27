@@ -2,8 +2,7 @@ import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
 from server.models import Workflow, ModuleVersion, LoadedModule
-from server.models.lesson import Lesson, LessonHeader, LessonFooter, \
-        LessonInitialWorkflow
+from server.models.lesson import Lesson, LessonInitialWorkflow
 from server.tests.utils import DbTestCase, create_test_user
 
 
@@ -224,6 +223,39 @@ class LessonDetailTests(DbTestCase):
         # We should be rendering the modules
         render.assert_called_with(state['workflow']['id'],
                                   wfm1['last_relevant_delta_id'])
+
+    @patch('server.rabbitmq.queue_render')
+    @patch.object(Lesson.objects, 'get')
+    def test_replace_static_url_in_initial_workflow(self, get, render):
+        get.return_value = Lesson(
+            None,
+            'a-lesson',
+            initial_workflow=LessonInitialWorkflow([
+                {
+                    'name': 'Tab X',
+                    'wfModules': [
+                        {
+                            'module': 'amodule',
+                            'params': {'url': './foo.txt'},
+                        },
+                    ],
+                },
+            ])
+        )
+
+        render.return_value = future_none
+
+        create_module_version('amodule', [
+            {'id_name': 'url', 'type': 'string'},
+        ], loads_data=False)
+
+        self.log_in()
+        response = self.client.get('/lessons/whatever')
+        state = response.context_data['initState']
+        wf_module = next(iter(state['wfModules'].values()))
+        self.assertEqual(wf_module['params'], {
+            'url': 'http://localhost:8000/static/lessons/a-lesson/foo.txt',
+        })
 
     @patch('server.rabbitmq.queue_fetch')
     @patch('server.rabbitmq.queue_render')

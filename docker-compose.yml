@@ -112,7 +112,9 @@ services:
       'bin/watchman-monitor',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'worker/**/*.py', 'server/modules/**/*.py', 'server/modules/**/*.json', 'server/modules/**/*.yaml',
-      '--exec', 'python', './manage.py', 'worker'
+      '--exec', 'bash', '-c',
+      # Use socat so worker can fetch URLs like http://localhost:8000/static/lessons/a-lesson/file.csv
+      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & SOCAT_PID="$$!"; python ./manage.py worker; kill -9 "$$SOCAT_PID"'
     ]
 
 
