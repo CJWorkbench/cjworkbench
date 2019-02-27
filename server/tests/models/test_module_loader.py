@@ -96,6 +96,78 @@ class ValidateModuleSpecTest(unittest.TestCase):
             ],
         })
 
+    def test_valid_visible_if_menu_options(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'string',
+                    'visible_if': {'id_name': 'b', 'value': ['a', 'b']},
+                },
+                {
+                    'id_name': 'b',
+                    'type': 'menu',
+                    'options': [
+                        {'value': 'a', 'label': 'A'},
+                        'separator',
+                        {'value': 'b', 'label': 'B'},
+                        {'value': 'c', 'label': 'C'},
+                    ],
+                }
+            ],
+        })
+
+    def test_valid_deprecated_visible_if_menu_options(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'string',
+                    # deprecated: use '|' to show valid options
+                    'visible_if': {'id_name': 'b', 'value': 'a|b'},
+                },
+                {
+                    'id_name': 'b',
+                    'type': 'menu',
+                    'menu_items': 'a||b|c',
+                }
+            ],
+        })
+
+    def test_invalid_visible_if_menu_options(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'a' has visible_if values \\{'x'\\} not in 'b' options"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'string',
+                        'visible_if': {'id_name': 'b', 'value': ['a', 'x']},
+                    },
+                    {
+                        'id_name': 'b',
+                        'type': 'menu',
+                        'options': [
+                            {'value': 'a', 'label': 'A'},
+                            {'value': 'c', 'label': 'C'},
+                        ],
+                    }
+                ],
+            })
+
     def test_multicolumn_missing_tab_parameter(self):
         with self.assertRaisesRegex(
             ValueError,

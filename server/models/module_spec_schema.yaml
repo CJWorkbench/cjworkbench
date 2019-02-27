@@ -79,7 +79,7 @@ definitions:
                             type: string
                             description: id_name of the param we will investigate
                         value:
-                            description: "Value we expect (there are so many unique cases, it's not worth documenting them all)"
+                            description: "Value we expect, or Array of values we expect (there are so many unique cases, it's not worth documenting them all)"
                         invert:
                             type: boolean
                             description: "If true, do the opposite"

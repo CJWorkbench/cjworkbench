@@ -41,6 +41,7 @@ def validate_module_spec(spec):
     * `spec.parameters[*].id_name` are unique
     * `spec.parameters[*].visible_if[*].id_name` are valid
     * If `spec.parameters[*].options` and `default` exist, `default` is valid
+    * `spec.parameters[*].visible_if[*].value` is/are valid if it's a menu
     * `spec.parameters[*].tab_parameter` point to valid params
     """
     # No need to do i18n on these errors: they're only for admins. Good thing,
@@ -55,16 +56,17 @@ def validate_module_spec(spec):
         # the schema is valid.
         raise ValueError('; '.join(messages))
 
-    param_id_types = {}
+    param_lookup = {}
     for param in spec['parameters']:
         id_name = param['id_name']
 
-        if id_name in param_id_types:
+        if id_name in param_lookup:
             messages.append(f"Param '{id_name}' appears twice")
         else:
-            param_id_types[id_name] = param['type']
+            param_lookup[id_name] = param
 
-        # check 'default' is valid in menu/radio
+    # check 'default' is valid in menu/radio
+    for param in spec['parameters']:
         if 'default' in param and 'options' in param:
             options = [o['value'] for o in param['options']
                        if isinstance(o, dict)]  # skip 'separator'
@@ -74,22 +76,65 @@ def validate_module_spec(spec):
                     "'options'"
                 )
 
-    # Now that param_id_types is full, loop again to check visible_if refs
+    # Now that check visible_if refs
     for param in spec['parameters']:
         try:
             visible_if = param['visible_if']
         except KeyError:
             continue
 
-        if visible_if['id_name'] not in param_id_types:
-            param_id_name = param['id_name']
-            ref_id_name = visible_if['id_name']
+        try:
+            ref_param = param_lookup[visible_if['id_name']]
+        except KeyError:
             messages.append(
-                f"Param '{param_id_name}' has visible_if "
-                f"id_name '{ref_id_name}', which does not exist",
+                f"Param '{param['id_name']}' has visible_if "
+                f"id_name '{visible_if['id_name']}', which does not exist",
+            )
+            continue
+
+        if (
+            'options' in ref_param
+            and not isinstance(visible_if['value'], list)
+        ):
+            messages.append(
+                f"Param '{param['id_name']}' needs its visible_if.value "
+                f"to be an Array of Strings, since '{visible_if['id_name']}' "
+                "has options."
             )
 
-    # Now that param_id_types is full, loop again to check tab_parameter refs
+        if (
+            'options' in ref_param
+            or 'menu_items' in ref_param
+            or 'radio_items' in ref_param
+        ):
+            if_values = visible_if['value']
+            if isinstance(if_values, list):
+                if_values = set(if_values)
+            else:
+                if_values = set(if_values.split('|'))
+
+            if 'options' in ref_param:
+                options = set(o['value'] for o in ref_param['options']
+                              if isinstance(o, dict))  # skip 'separator'
+            elif 'menu_items' in ref_param:
+                options = (  # deprecated: allow indexes and labels
+                    set(range(len(ref_param['menu_items'].split('|'))))
+                    | set(ref_param['menu_items'].split('|'))
+                )
+            elif 'radio_items' in ref_param:
+                options = (  # deprecated: allow indexes and labels
+                    set(range(len(ref_param['radio_items'].split('|'))))
+                    | set(ref_param['radio_items'].split('|'))
+                )
+
+            missing = if_values - options
+            if missing:
+                messages.append(
+                    f"Param '{param['id_name']}' has visible_if values "
+                    f"{repr(missing)} not in '{ref_param['id_name']}' options"
+                )
+
+    # Check tab_parameter refs
     for param in spec['parameters']:
         try:
             tab_parameter = param['tab_parameter']
@@ -97,12 +142,12 @@ def validate_module_spec(spec):
             continue  # we aren't referencing a "tab" parameter
 
         param_id_name = param['id_name']
-        if tab_parameter not in param_id_types:
+        if tab_parameter not in param_lookup:
             messages.append(
                 f"Param '{param_id_name}' has a 'tab_parameter' "
                 "that is not in 'parameters'"
             )
-        elif param_id_types[tab_parameter] != 'tab':
+        elif param_lookup[tab_parameter]['type'] != 'tab':
             messages.append(
                 f"Param '{param_id_name}' has a 'tab_parameter' "
                 "that is not a 'tab'"

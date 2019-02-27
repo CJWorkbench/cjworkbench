@@ -30,7 +30,7 @@
       "placeholder":"Keywords to match",
       "visible_if": {
         "id_name": "querytype",
-        "value": "search"
+        "value": [ "search" ]
       }
     },
     {
@@ -40,7 +40,7 @@
       "placeholder":"@UserName",
       "visible_if": {
         "id_name": "querytype",
-        "value": "user_timeline"
+        "value": [ "user_timeline" ]
       }
     },
     {
@@ -50,7 +50,7 @@
       "placeholder":"https://twitter.com/someuser/lists/somelist",
       "visible_if": {
         "id_name": "querytype",
-        "value": "lists_statuses"
+        "value": [ "lists_statuses" ]
       }
     },
     {

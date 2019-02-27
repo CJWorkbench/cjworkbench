@@ -171,6 +171,11 @@ export default class ParamsForm extends React.PureComponent {
         }
       }
 
+      // If it's a menu entry...
+      if (Array.isArray(condition.value)) {
+        return invert !== condition.value.includes(value)
+      }
+
       // Menu entry (_not_ deprecated_menu), String...
       // ... the ideal is for this to be the _only_ code path. But there are
       // exceptions because the feature was implemented piecemeal

@@ -107,7 +107,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana' } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange' } })
         ],
         value: {
           menu_select: 1,
@@ -125,7 +125,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ]}),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'banana' } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
           menu_select: 'banana',
@@ -139,7 +139,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana' } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange' } })
         ],
         value: {
           menu_select: 0,
@@ -157,7 +157,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ]}),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'banana' } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
           menu_select: 'mango',
@@ -171,7 +171,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana', invert: true } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange', invert: true } })
         ],
         value: {
           menu_select: 1,
@@ -185,7 +185,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana', invert: true } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange', invert: true } })
         ],
         value: {
           menu_select: 0,
@@ -203,7 +203,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ]}),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'banana', invert: true } })
+          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: [ 'banana', 'orange' ], invert: true } })
         ],
         value: {
           menu_select: 'banana',
@@ -241,7 +241,7 @@ describe('ParamsForm', () => {
       expect(w.find('Param[name="testme"]')).toHaveLength(0)
     })
 
-    it('should show conditional parameter that depends on an invertd checkbox', () => {
+    it('should show conditional parameter that depends on an inverted checkbox', () => {
       const w = wrapper({
         fields: [
           field('hide', 'checkbox'),
