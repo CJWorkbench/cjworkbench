@@ -177,7 +177,7 @@ function buildSelectColumnsParams (oldParams, params) {
 }
 
 function buildEditCellsParams (oldParams, params) {
-  const edits = (oldParams && oldParams.celledits) ? JSON.parse(oldParams.celledits) : []
+  const edits = (oldParams && oldParams.celledits) ? oldParams.celledits : []
   const edit = params
 
   // Remove the previous edit to the same cell
@@ -185,10 +185,10 @@ function buildEditCellsParams (oldParams, params) {
 
   if (idx === -1) {
     edits.push(edit)
-    return { celledits: JSON.stringify(edits) }
+    return { celledits: edits }
   } else if (edits[idx].value !== edit.value) {
     edits.splice(idx, 1, edit)
-    return { celledits: JSON.stringify(edits) }
+    return { celledits: edits }
   } else {
     return null
   }

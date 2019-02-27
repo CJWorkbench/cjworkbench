@@ -1,20 +1,20 @@
+from dataclasses import dataclass
 from itertools import groupby
 import logging
-from typing import Any, Dict, List, Union
+from typing import List
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from cjworkbench.types import ProcessResult
 from .utils import parse_json_param
 
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class Edit:
-    def __init__(self, *, row, col, value):
-        self.row = int(row)
-        self.col = str(col)
-        self.value = str(value)
+    row: int
+    col: str
+    value: str
 
 
 def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
@@ -53,44 +53,43 @@ def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
     return series
 
 
-def parse_json(edits_arr: List[Dict[str, Any]]) -> Union[List[Edit], str]:
-    """Parse a list of Edits from a str, or return an error string."""
-    if not edits_arr:  # "empty JSON" is {}, which matches
-        return []
+def migrate_params_v0_to_v1(params):
+    """
+    v0: celledits is a string of JSON
 
-    if not isinstance(edits_arr, list):
-        return 'Internal error: invalid JSON: not an Array'
+    v1: celledits is an Array of { row, col, value }
+    """
+    if not params['celledits']:  # empty str
+        celledits = []
+    else:
+        celledits = parse_json_param(params['celledits'])
 
-    try:
-        edits = [Edit(**item) for item in edits_arr]
-    except TypeError:
-        return (
-            'Internal error: invalid JSON: '
-            'Objects must all have row, col and value'
-        )
-    except ValueError:
-        return 'Internal error: invalid JSON: "row" must be a Number'
-
-    return edits
+    return {
+        'celledits': celledits
+    }
 
 
-# Execute our edits. Stored in parameter as a json serialized array that
-# looks like this:
+def migrate_params(params):
+    if isinstance(params['celledits'], str):
+        params = migrate_params_v0_to_v1(params)
+
+    return params
+
+
+# Execute our edits. Stored in parameter as an array like this:
 #  [
 #    { 'row': 3, 'col': 'foo', 'value':'bar' },
 #    { 'row': 6, 'col': 'food', 'value':'sandwich' },
 #    ...
 #  ]
 def render(table, params, **kwargs):
-    edits = parse_json(parse_json_param(params['celledits']))
-    if isinstance(edits, str):
-        # [adamhooper, 2019-01-31] Huh? How does this happen?
-        return ProcessResult(error=edits)
+    edits = [Edit(**item) for item in params['celledits']]
 
     # Ignore missing columns and rows: delete them from the Array of edits
+    colnames = set(table.columns)
+    nrows = len(table)
     edits = [edit for edit in edits
-             if edit.col in table.columns
-             and edit.row >= 0 and edit.row < len(table)]
+             if edit.col in colnames and edit.row >= 0 and edit.row < nrows]
 
     for column, column_edits in groupby(edits, lambda e: e.col):
         series = table[column]

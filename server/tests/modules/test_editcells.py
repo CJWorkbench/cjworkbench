@@ -27,6 +27,25 @@ def test_render(in_table, patch_json, out_table=pd.DataFrame(),
     assert_frame_equal(result.dataframe, expected.dataframe)
 
 
+class MigrateParamsTests(unittest.TestCase):
+    def test_v0_to_v1_empty(self):
+        result = editcells.migrate_params({'celledits': ''})
+        self.assertEqual(result, {'celledits': []})
+
+    def test_v0_to_v1_happy(self):
+        result = editcells.migrate_params({
+            'celledits': '[{"row": 1, "col": "A", "value": "V"}]',
+        })
+        self.assertEqual(result, {'celledits': [
+            {'row': 1, 'col': 'A', 'value': 'V'},
+        ]})
+
+    def test_v1_no_op(self):
+        expected = {'celledits': [{'row': 1, 'col': 'A', 'value': 'V'}]}
+        result = editcells.migrate_params(expected)
+        self.assertEqual(result, expected)
+
+
 class EditCellsTests(unittest.TestCase):
     def test_edit_int_to_int(self):
         test_render(

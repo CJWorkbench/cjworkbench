@@ -138,7 +138,7 @@ describe('TableView', () => {
     })
 
     expect(api.addModule).toHaveBeenCalledWith('tab-1', 'editcells', 1, {
-      'celledits': JSON.stringify([{ row: 0, col: 'b', value: 'b2' }])
+      'celledits': [{ row: 0, col: 'b', value: 'b2' }]
     })
 
     await tick() // let things settle

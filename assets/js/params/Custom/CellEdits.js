@@ -2,14 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withJsonStringValues } from '../util'
 
-export class CellEdits extends React.Component {
+export default class CellEdits extends React.Component {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
+      row: PropTypes.number.isRequired,
       col: PropTypes.string.isRequired,
-      edits: PropTypes.arrayOf(PropTypes.shape({
-        row: PropTypes.number.isRequired,
-        value: PropTypes.string.isRequired
-      }).isRequired)
+      value: PropTypes.string.isRequired
     }).isRequired).isRequired,
   }
 
@@ -39,9 +37,10 @@ export class CellEdits extends React.Component {
     const colNames = Object.keys(edits)
     colNames.sort()
 
-    const editsArray = colNames.map(colName => {
-      return { col: colName, edits: edits[colName] }
-    })
+    const editsArray = colNames.map(colName => ({
+      col: colName,
+      edits: edits[colName].sort((a, b) => a.row - b.row)
+    }))
 
     return editsArray
   }
@@ -67,5 +66,3 @@ export class CellEdits extends React.Component {
     )
   }
 }
-
-export default withJsonStringValues(CellEdits, [])

@@ -1,5 +1,5 @@
 import React from 'react'
-import { CellEdits } from './CellEdits'
+import CellEdits from './CellEdits'
 import { mount } from 'enzyme'
 
 describe('CellEdits', () => {
@@ -18,8 +18,8 @@ describe('CellEdits', () => {
     expect(wrapper.find('.cell-edits--column')).toHaveLength(2)
     expect(wrapper.find('.cell-edits--row')).toHaveLength(4)
 
-    expect(wrapper).toMatchSnapshot();
-  });
+    expect(wrapper).toMatchSnapshot()
+  })
 
   it('renders empty data', () => {
      const wrapper = mount(
@@ -29,7 +29,7 @@ describe('CellEdits', () => {
     expect(wrapper.find('.cell-edits--column')).toHaveLength(0)
     expect(wrapper.find('.cell-edits--row')).toHaveLength(0)
 
-    expect(wrapper).toMatchSnapshot();
-  });
+    expect(wrapper).toMatchSnapshot()
+  })
 
-});
+})
