@@ -504,14 +504,6 @@ class ParamField:
     default: Any = None
     visible_if: Optional[Dict[str, Dict[str, Any]]] = None
 
-    def __repr__(self):
-        return ''.join((
-            'ParamField(',
-            'id_name=', repr(self.id_name),
-            'ftype=', repr(self.ftype),
-            'default=', repr(self.default),
-        ))
-
     @classmethod
     def from_dict(self, d: Dict[str, Any]) -> 'ParamField':
         return ParamField(
@@ -586,10 +578,11 @@ class ParamField:
                 default = self.default or 0
             else:
                 # normal menu/radio
-                choices = set(o['value']
+                values = list(o['value']
                               for o in self.options
                               if isinstance(o, dict))  # skip separators
-                default = self.default or None
+                choices = set(values)
+                default = self.default or values[0]  # TODO allow None
 
             return ParamDTypeEnum(choices, default)
         else:
