@@ -7,6 +7,7 @@ export default class Aggregation extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
+    fieldId: PropTypes.string.isRequired, // for <input id=...>
     index: PropTypes.number.isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
@@ -61,19 +62,21 @@ export default class Aggregation extends React.PureComponent {
   }
 
   render () {
-    const { name, index, onDelete, operation, colname, outname, inputColumns, isReadOnly } = this.props
+    const { name, fieldId, index, onDelete, operation, colname, outname, inputColumns, isReadOnly } = this.props
 
     return (
       <li className='aggregation'>
         <Operation
           isReadOnly={isReadOnly}
           name={`${name}[operation]`}
+          fieldId={`${fieldId}_operation`}
           value={operation}
           onChange={this.onChangeOperation}
         />
         {operation === 'size' ? null : (
           <ColumnParam
             name={`${name}[colname]`}
+            fieldId={`${fieldId}_colname`}
             value={colname}
             prompt='Select a column'
             isReadOnly={isReadOnly}
@@ -86,6 +89,7 @@ export default class Aggregation extends React.PureComponent {
           <input
             className='outname' 
             name={`${name}[outname]`}
+            id={`${fieldId}_outname`}
             value={outname}
             onChange={this.onChangeOutname}
             placeholder={this.placeholder}
