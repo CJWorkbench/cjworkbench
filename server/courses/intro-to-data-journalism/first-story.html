@@ -114,7 +114,7 @@ tabs:
     </li>
     <li
       data-highlight='[]'
-      data-test="return (JSON.parse(workflow.tabs[0].wfModules[3].params.y_columns || '[]')[0] || {column:''}).column.toLowerCase() === '2012-2016 average'"
+      data-test="return (workflow.tabs[0].wfModules[3].params.y_columns[0] || {column:''}).column.toLowerCase() === '2012-2016 average'"
       >Select the <kbd>2012-2016 average</kbd> column for the Y axis
     </li>
   </ol>
