@@ -428,6 +428,42 @@ class ParamDTypeMultitab(ParamDTypeList):
     # iter_dfs_dtypes(): ParamDTypeList will do what we want
     # iter_dfs_dtype_values(): ParamDTypeList will do what we want
 
+    # override
+    @classmethod
+    def _from_plain_data(cls, **kwargs):
+        # don't require inner_dtype like ParamDTypeList does
+        return cls(**kwargs)
+
+
+class ParamDTypeMultichartseries(ParamDTypeList):
+    """
+    A 'y_series' parameter: array of columns+colors.
+
+    This is like a List[Dict], except when omitting table columns we omit the
+    entire Dict if its Column is missing.
+    """
+
+    def __init__(self, default=[]):
+        super().__init__(inner_dtype=ParamDTypeDict({
+            'column': ParamDTypeColumn(),
+            'color': ParamDTypeString(),  # TODO enforce '#abc123' pattern
+        }), default=default)
+
+    def __repr__(self):
+        return 'ParamDTypeMultichartseries()'
+
+    # coerce(): ParamDTypeList will do what we want
+    # validate(): ParamDTypeList will do what we want
+    # iter_dfs_dtypes(): ParamDTypeList will do what we want
+    # iter_dfs_dtype_values(): ParamDTypeList will do what we want
+
+    # override
+    def omit_missing_table_columns(self, value, columns):
+        series = super().omit_missing_table_columns(value, columns)
+        # Omit each dict that has a missing column
+        return [s for s in series if s['column']]
+
+    # override
     @classmethod
     def _from_plain_data(cls, **kwargs):
         # don't require inner_dtype like ParamDTypeList does
@@ -449,6 +485,7 @@ ParamDType.Column = ParamDTypeColumn
 ParamDType.Multicolumn = ParamDTypeMulticolumn
 ParamDType.Tab = ParamDTypeTab
 ParamDType.Multitab = ParamDTypeMultitab
+ParamDType.Multichartseries = ParamDTypeMultichartseries
 
 ParamDType.JsonTypeToDType = {
     'string': ParamDTypeString,
@@ -463,6 +500,7 @@ ParamDType.JsonTypeToDType = {
     'tabs': ParamDTypeMultitab,
     'column': ParamDTypeColumn,
     'multicolumn': ParamDTypeMulticolumn,
+    'multichartseries': ParamDTypeMultichartseries,
 }
 
 
@@ -485,6 +523,7 @@ class ParamField:
         COLUMN = 'column'
         RADIO = 'radio'
         MULTICOLUMN = 'multicolumn'
+        MULTICHARTSERIES = 'multichartseries'
         TAB = 'tab'
         MULTITAB = 'multitab'
         SECRET = 'secret'
@@ -545,6 +584,8 @@ class ParamField:
             return ParamDTypeMulticolumn(
                 tab_parameter=self.tab_parameter or None
             )
+        elif self.ftype == T.MULTICHARTSERIES:
+            return ParamDTypeMultichartseries()
         elif self.ftype == T.TAB:
             return ParamDTypeTab()
         elif self.ftype == T.MULTITAB:

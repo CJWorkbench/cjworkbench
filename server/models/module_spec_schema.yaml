@@ -235,6 +235,12 @@ definitions:
                 type: { const: multitab }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+        multichartseries:
+            <<: *common_ftype
+            properties:
+                <<: *common_ftype_properties
+                type: { const: multichartseries }
+                name: { $ref: '#/definitions/ftypes/_lib/name' }
         secret:
             <<: *common_ftype
             required: [ id_name, type, name ]
@@ -266,6 +272,7 @@ definitions:
                 { $ref: '#/definitions/ftypes/multicolumn' },
                 { $ref: '#/definitions/ftypes/tab' },
                 { $ref: '#/definitions/ftypes/multitab' },
+                { $ref: '#/definitions/ftypes/multichartseries' },
                 { $ref: '#/definitions/ftypes/secret' },
                 { $ref: '#/definitions/ftypes/custom' },
             ]
@@ -325,6 +332,11 @@ definitions:
             required: [ type ]
             properties:
                 type: { const: multitab }
+        multichartseries:
+            type: object
+            required: [ type ]
+            properties:
+                type: { const: multichartseries }
         list:
             type: object
             requred: [ type, inner_dtype ]
@@ -355,6 +367,7 @@ definitions:
                 { $ref: '#/definitions/dtypes/multicolumn' },
                 { $ref: '#/definitions/dtypes/tab' },
                 { $ref: '#/definitions/dtypes/multitab' },
+                { $ref: '#/definitions/dtypes/multichartseries' },
                 { $ref: '#/definitions/dtypes/enum' },
                 { $ref: '#/definitions/dtypes/list' },
                 { $ref: '#/definitions/dtypes/dict' },

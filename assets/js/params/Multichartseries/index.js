@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ChartSeriesSelect from './ChartSeriesSelect'
-import { withJsonStringValues } from '../../util'
 
-export class ChartSeriesMultiSelect extends React.PureComponent {
+export default class Multichartseries extends React.PureComponent {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
       column: PropTypes.string.isRequired,
@@ -139,5 +138,3 @@ export class ChartSeriesMultiSelect extends React.PureComponent {
     )
   }
 }
-
-export default withJsonStringValues(ChartSeriesMultiSelect, [])

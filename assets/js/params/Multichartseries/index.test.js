@@ -1,12 +1,12 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import { ChartSeriesMultiSelect } from './index'
+import Multichartseries from './index'
 import { mount } from 'enzyme'
 
-describe('ChartSeriesMultiSelect', () => {
+describe('Multichartseries', () => {
   function wrapper (props = {}) {
     return mount(
-      <ChartSeriesMultiSelect
+      <Multichartseries
         name='multiseries'
         fieldId='multiseries'
         value={[
