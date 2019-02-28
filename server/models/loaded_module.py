@@ -1,9 +1,6 @@
 import asyncio
 import datetime
 from functools import partial
-import importlib
-import importlib.abc
-import importlib.util
 import inspect
 import logging
 import os
@@ -17,6 +14,7 @@ from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 import pandas as pd
 from cjworkbench.types import ProcessResult, RenderColumn
+from . import module_loader
 from .module_version import ModuleVersion
 from .Params import Params
 from .param_field import ParamDTypeDict
@@ -259,8 +257,8 @@ class LoadedModule:
             try:
                 schema.validate(values)
             except ValueError as err:
-                raise ValueError('migrate_params() gave bad output: %s',
-                                 str(err))
+                raise ValueError('migrate_params() gave bad output: %s'
+                                 % str(err))
 
             return values
         else:
@@ -330,19 +328,6 @@ def _is_basename_python_code(key: str) -> bool:
     return key.endswith('.py')
 
 
-class TempfileLoader(importlib.abc.SourceLoader):
-    def __init__(self, tf):
-        with open(tf.name, 'rb') as f:
-            self._data = f.read()
-        self._name = tf.name
-
-    def get_data(self, *args):
-        return self._data
-
-    def get_filename(self, *args):
-        return self._name
-
-
 def _load_external_module_uncached(module_id_name: str,
                                    version_sha1: str) -> ModuleType:
     """
@@ -358,15 +343,7 @@ def _load_external_module_uncached(module_id_name: str,
         # Now we can load the code into memory.
         name = '%s.%s' % (module_id_name, version_sha1)
         logger.info(f'Loading {name} from {tf.name}')
-        spec = importlib.util.spec_from_file_location(
-            name,
-            tf.name,
-            loader=TempfileLoader(tf)
-        )
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-
-    return module
+        return module_loader.load_python_module(name, Path(tf.name))
 
 
 def load_external_module(module_id_name: str, version_sha1: str,

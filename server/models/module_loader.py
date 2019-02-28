@@ -231,34 +231,46 @@ class PathLoader(importlib.abc.SourceLoader):
         return self.path.as_posix()
 
 
-# Now check if the module is importable and defines the render function
-def validate_python_functions(code_path: Path):
+def load_python_module(name: str, code_path: Path):
+    """
+    Convert from `pathlib.Path` to Python module.
+
+    Raise `ValueError` if Path isn't executable Python code.
+    """
     # execute the module, as a test
     loader = PathLoader(code_path)
     spec = importlib.util.spec_from_loader(
         (
+            # generate unique package name -- no conflicts, please!
+            #
+            # (We temporarily inject this into sys.modules below.)
             f'{__package__}._dynamic_{threading.get_ident()}'
-            f'.{code_path.parent.name}.{code_path.stem}'
+            f'.{name}.{code_path.stem}'
         ),
         loader
     )
 
     try:
-        test_module = importlib.util.module_from_spec(spec)
+        module = importlib.util.module_from_spec(spec)
     except SyntaxError as err:
-        raise ValueError('Syntax error in %s: %s'
-                         % (code_path.name, str(err)))
+        raise ValueError('Syntax error in %s: %s' % (name, str(err)))
 
     try:
         # add to sys.modules, so "@dataclass()" can read the module data
         # Needed when `from __future__ import annotations` in Python 3.7.
-        sys.modules[spec.name] = test_module
-        spec.loader.exec_module(test_module)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
     except Exception as err:  # really, code can raise _any_ error
-        raise ValueError('%s could not execute: %s'
-                         % (code_path.name, str(err)))
+        raise ValueError('%s could not execute: %s' % (name, str(err)))
     finally:
         del sys.modules[spec.name]
+
+    return module
+
+
+# Now check if the module is importable and defines the render function
+def validate_python_functions(code_path: Path):
+    test_module = load_python_module(code_path.stem, code_path)
 
     if hasattr(test_module, 'render'):
         if callable(test_module.render):
