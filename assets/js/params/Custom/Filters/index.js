@@ -8,7 +8,7 @@ import AddFilter from './AddFilter'
 const DefaultFilter = {
   operator: 'and',
   subfilters: [
-    { colname: '', condition: null, value: '', case_sensitive: false }
+    { colname: '', condition: '', value: '', case_sensitive: false }
   ]
 }
 
