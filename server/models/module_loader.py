@@ -16,6 +16,8 @@ import importlib.util
 import json
 from pathlib import Path
 import jsonschema
+import sys
+import threading
 from typing import List, Optional, Set
 import yaml
 
@@ -222,12 +224,10 @@ class PathLoader(importlib.abc.SourceLoader):
 
     # override ResourceLoader
     def get_data(self, path):
-        assert Path(path).name == self.path.name
         return self.path.read_bytes()
 
     # override ExecutionLoader
     def get_filename(self, path):
-        assert Path(path).name == self.path.name
         return self.path.as_posix()
 
 
@@ -235,7 +235,13 @@ class PathLoader(importlib.abc.SourceLoader):
 def validate_python_functions(code_path: Path):
     # execute the module, as a test
     loader = PathLoader(code_path)
-    spec = importlib.util.spec_from_loader(code_path.name, loader)
+    spec = importlib.util.spec_from_loader(
+        (
+            f'{__package__}._dynamic_{threading.get_ident()}'
+            f'.{code_path.parent.name}.{code_path.stem}'
+        ),
+        loader
+    )
 
     try:
         test_module = importlib.util.module_from_spec(spec)
@@ -244,11 +250,15 @@ def validate_python_functions(code_path: Path):
                          % (code_path.name, str(err)))
 
     try:
+        # add to sys.modules, so "@dataclass()" can read the module data
+        # Needed when `from __future__ import annotations` in Python 3.7.
+        sys.modules[spec.name] = test_module
         spec.loader.exec_module(test_module)
     except Exception as err:  # really, code can raise _any_ error
         raise ValueError('%s could not execute: %s'
                          % (code_path.name, str(err)))
-
+    finally:
+        del sys.modules[spec.name]
 
     if hasattr(test_module, 'render'):
         if callable(test_module.render):

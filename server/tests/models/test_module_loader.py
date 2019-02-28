@@ -397,7 +397,10 @@ class ModuleFilesTest(unittest.TestCase):
 
 class ValidatePythonFunctionsTest(unittest.TestCase):
     def _validate(self, data):
-        path = MockPath(['root', 'module.py'], data)
+        dirpath = MockDir({
+            'module.py': data.encode('utf-8'),
+        })
+        path = dirpath / 'module.py'
         validate_python_functions(path)
 
     def test_valid_render_function(self):
@@ -405,6 +408,25 @@ class ValidatePythonFunctionsTest(unittest.TestCase):
 
     def test_valid_fetch_function(self):
         self._validate('async def fetch(params):\n    return "error"')
+
+    def test_dataclass_works(self):
+        """
+        Test we can compile @dataclass
+
+        @dataclass inspects `sys.modules`, so the module needs to be in
+        `sys.modules` when @dataclass is run.
+        """
+        self._validate(textwrap.dedent('''\
+            from __future__ import annotations
+            from dataclasses import dataclass
+
+            def render(table, params):
+                return table
+
+            @dataclass
+            class A:
+                y: int
+            '''))
 
     def test_syntax_error(self):
         with self.assertRaises(ValueError):

@@ -170,7 +170,7 @@ class MockPath(pathlib.PurePosixPath):
         ret._parent = parent
         return ret
 
-    #override
+    # override
     @property
     def parent(self):
         return self._parent
