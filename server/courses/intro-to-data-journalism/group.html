@@ -15,66 +15,36 @@
 
 <!-- Section 1 -->
 
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Lesson",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/affordable-housing-pipeline.csv"
-            }
-          },
-          {
-            "module":"selectcolumns",
-            "params": {
-              "colnames":"Project Status,Planning Neighborhood,Project Units,Affordable Units,% Affordable"
-            }
-          },
-          {
-            "module":"filter",
-            "params": {
-              "filters": {
-                "filters": [
-                  {
-                    "operator": "and",
-                    "subfilters": [
-                      {
-                        "value": "50",
-                        "colname": "% Affordable",
-                        "condition": "number_is_greater_than",
-                        "case_sensitive": false
-                      },
-                      {
-                        "value": "100",
-                        "colname": "Project Units",
-                        "condition": "number_is_greater_than",
-                        "case_sensitive": false
-                      }
-                    ]
-                  }
-                ],
-                "operator": "and"
-              }
-            }
-          }
-        ]
-      },
-      {
-        "name": "Data dictionary",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/dataDictionary-affordable-housing-pipeline.csv"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./affordable-housing-pipeline.csv
+  - module: selectcolumns
+    params:
+      colnames: "Project Status,Planning Neighborhood,Project Units,Affordable Units,% Affordable"
+  - module: filter
+    params:
+      filters:
+        operator: 'and'
+        filters:
+        - operator: 'and'
+          subfilters:
+          - colname: '% Affordable'
+            condition: number_is_greater_than
+            value: '50'
+            case_sensitive: false
+          - colname: 'Project Units'
+            condition: number_is_greater_than
+            value: '100'
+            case_sensitive: false
+- name: Column descriptions
+  wfModules:
+  - module: loadurl
+    params:
+      url: './column-descriptions.csv'
 </script>
 
 <section>
@@ -86,21 +56,18 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add 'Group' in position 4 and select the column <kbd>Planning neighborhood</kbd>.
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'groupby' && workflow.tabs[0].wfModules[3].params.groups.colnames === 'Planning Neighborhood'"
+      >Add 'Group' in position 4 and select the column <kbd>Planning Neighborhood</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length === 0 /* no aggregations means 'count' */ || aggs[0].operation === 'size'"
       >Keep the first operation set to <kbd>count</kbd>. It will count all rows within each group.
       <p class ="instruction-detail">
         Since each row is one project and rows are grouped by neighborhood, the output table is a count of projects per neighborhood.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length > 0 && aggs[0].outname === 'Number of projects'"
       >Name the new  column to <kbd>Number of projects</kbd>.
     </li>
   </ol>
@@ -116,28 +83,22 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the existing Group step, add another operation below <kbd>Count</kbd>.
+      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length > 1 && aggs[1].operation === 'sum' && aggs[1].colname === 'Affordable Units'"
+      >
+      <p>In the existing Group step, add another operation below <kbd>Count</kbd>.</p>
+      <p>As a new operation, select <kbd>Sum</kbd> and choose the column <kbd>Affordable Units</kbd> as the target.</p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >As a new operation, select <kbd>Sum</kbd> and choose the column <kbd>affordable units</kbd> as the target.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the new column <kbd>Sum of affordable units</kbd>
+      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length > 1 && aggs[1].outname === 'Number of affordable units'"
+      >Name the new column <kbd>Number of affordable units</kbd>
       <p class="instruction-detail">
-        In addition to counting projects per neighborhood, we are now calculating the sum of all <kbd>Affordable Units</kbd> within each neighborhood group. Let's visualize this data.
+        In addition to counting projects per neighborhood, we are now calculating the total number of affordable units for all projects in each neighborhood. Let's visualize this data.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a Column chart step. Select the variable <kbd>Planning Neighborhood</kbd>as the X axis and<kbd>Sum of affordable units</kbd>on the Y axis.
-      <p class="instruction-detail">Now let’s compare China’s production of CO2 to that of other countries.</p>
+      data-test="const wfm = workflow.tabs[0].wfModules[4]; if (!wfm || wfm.moduleSlug !== 'columnchart') return false; const p = wfm.params; return p.x_column === 'Planning Neighborhood' && p.y_columns[0] && p.y_columns[0].column === 'Number of affordable units'"
+      >Add a Column chart step. Select <kbd>Planning Neighborhood</kbd>as the X axis and <kbd>Number of affordable units</kbd>on the Y axis.
+      <p class="instruction-detail">Now let’s compare China’s production of CO₂ to that of other countries.</p>
     </li>
   </ol>
 </section>
@@ -145,7 +106,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, go through more advanced data cleaning techniques and apply what we have learned so far to report on campaign finance data.</p>
+    <p class="summary">Next, go through more advanced data cleaning techniques and apply what we have learned so far to report on campaign finance data.</p>
   </div>
   <div class="next">
     <h2>Next</h2>
