@@ -226,7 +226,11 @@ def _render_course(request, course, lesson_url_prefix):
 # Even allowed for logged-out users
 def render_lesson_list2(request):
     # Make a "fake" Course to encompass Lessons
-    course = Course(title='Lessons', lessons=LessonLookup)
+    #
+    # Do not build this Course using LessonLookup: LessonLookup contains
+    # "hidden" lessons; AllLessons does not.
+    course = Course(title='Lessons',
+                    lessons=dict((l.slug, l) for l in AllLessons))
     return _render_course(request, course, '/lessons')
 
 
