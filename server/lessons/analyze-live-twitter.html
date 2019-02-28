@@ -55,13 +55,13 @@
 </p>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
-    data-test="return workflow.tabs[0].wfModuleNames[1] === 'Filter'"
-    >Add the step 'Filter'.
+    data-highlight='[{"type":"Module","index":1,"name":"Filter by condition"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
+    >Add the step 'Filter by condition'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Filter"}]',
-    data-test="const params = workflow.tabs[0].wfModules[1].params; return params.column === 'text' && params.condition === 2 && (params.value || '').toLowerCase() === 'science'"
+    data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]',
+    data-test="const subfilter = workflow.tabs[0].wfModules[1].params.filters.filters[0].subfilters[0]; return subfilter.colname === 'text' && subfilter.condition === 'text_contains' && subfilter.value.toLowerCase() === 'science'"
     >Select the column <kbd>text</kbd> to filter by. Choose <kbd>Text contains</kbd> as a condition, and search for 'science'.
     <p class="instruction-detail">
       Now let's group the resulting tweets by date.
@@ -91,7 +91,7 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
-    data-test="const p = workflow.tabs[0].wfModules[3].params; const yColumns = JSON.parse(p.y_columns || '[]'); return p.x_column === 'created_at' && yColumns[0].column === 'count'"
+    data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] ? p.y_columns[0].column : null) === 'count'"
     >Select <kbd>created_at</kbd> for the X axis and <kbd>count</kbd> for the Y axis.
   </li>
   <li

@@ -3,13 +3,13 @@
 from setuptools import setup
 
 setup(
-    name='histogram',
+    name='columnchart',
     version='0.0.1',
-    description='Present a columnful of numbers as a histogram',
+    description='Present a column chart from numeric data',
     author='Adam Hooper',
     author_email='adam@adamhooper.com',
     url='https://github.com/CJWorkbench/histogram',
     packages=[''],
     py_modules=['columnchart'],
-    install_requires=['pandas==0.23.1']
+    install_requires=['pandas==0.24.1']
 )
