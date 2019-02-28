@@ -6,14 +6,64 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from linechart import render, Form, YColumn, GentleValueError
+from linechart import render, Form, YColumn, GentleValueError, migrate_params
 
 
 # Minimum valid table
 min_table = pd.DataFrame({'A': [1, 2], 'B': [3, 4]}, dtype=np.number)
 
 
-class ConfigTest(unittest.TestCase):
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0_empty_y_columns(self):
+        result = migrate_params({
+            'title': 'Title',
+            'x_axis_label': 'X axis',
+            'y_axis_label': 'Y axis',
+            'x_column': 'X',
+            'y_columns': '',
+        })
+        self.assertEqual(result, {
+            'title': 'Title',
+            'x_axis_label': 'X axis',
+            'y_axis_label': 'Y axis',
+            'x_column': 'X',
+            'y_columns': [],
+        })
+
+    def test_v0_json_parse(self):
+        result = migrate_params({
+            'title': 'Title',
+            'x_axis_label': 'X axis',
+            'y_axis_label': 'Y axis',
+            'x_column': 'X',
+            'y_columns': '[{"column": "X", "color": "#111111"}]',
+        })
+        self.assertEqual(result, {
+            'title': 'Title',
+            'x_axis_label': 'X axis',
+            'y_axis_label': 'Y axis',
+            'x_column': 'X',
+            'y_columns': [{'column': 'X', 'color': '#111111'}],
+        })
+
+    def test_v1_no_op(self):
+        result = migrate_params({
+            'title': 'Title',
+            'x_axis_label': 'X axis',
+            'y_axis_label': 'Y axis',
+            'x_column': 'X',
+            'y_columns': [{'column': 'X', 'color': '#111111'}],
+        })
+        self.assertEqual(result, {
+            'title': 'Title',
+            'x_axis_label': 'X axis',
+            'y_axis_label': 'Y axis',
+            'x_column': 'X',
+            'y_columns': [{'column': 'X', 'color': '#111111'}],
+        })
+
+
+class FormTest(unittest.TestCase):
     def assertResult(self, result, expected):
         assert_frame_equal(result[0], expected[0])
         self.assertEqual(result[1], expected[1])
@@ -49,6 +99,16 @@ class ConfigTest(unittest.TestCase):
         ):
             form.make_chart(table)
 
+    def test_only_one_x_value_not_at_index_0(self):
+        form = self.build_form(x_column='A')
+        table = pd.DataFrame({'A': [np.nan, 1], 'B': [2, 3]})
+        with self.assertRaisesRegex(
+            ValueError,
+            'Column "A" has only 1 value. '
+            'Please select a column with 2 or more values.'
+        ):
+            form.make_chart(table)
+
     def test_no_x_values(self):
         form = self.build_form(x_column='A')
         table = pd.DataFrame({'A': [np.nan, np.nan], 'B': [2, 3]},
@@ -63,7 +123,7 @@ class ConfigTest(unittest.TestCase):
     def test_x_numeric(self):
         form = self.build_form(x_column='A')
         chart = form.make_chart(min_table)
-        assert np.array_equal(chart.x_series.values, [1, 2])
+        assert np.array_equal(chart.x_series.series, [1, 2])
 
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'quantitative')
@@ -87,7 +147,7 @@ class ConfigTest(unittest.TestCase):
     def test_x_text(self):
         form = self.build_form(x_column='A')
         chart = form.make_chart(pd.DataFrame({'A': ['a', 'b'], 'B': [1, 2]}))
-        assert np.array_equal(chart.x_series.values, ['a', 'b'])
+        assert np.array_equal(chart.x_series.series, ['a', 'b'])
 
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'ordinal')
@@ -100,7 +160,7 @@ class ConfigTest(unittest.TestCase):
         form = self.build_form(x_column='A')
         table = pd.DataFrame({'A': ['a', None, 'c'], 'B': [1, 2, 3]})
         chart = form.make_chart(table)
-        assert np.array_equal(chart.x_series.values, ['a', None, 'c'])
+        assert np.array_equal(chart.x_series.series, ['a', None, 'c'])
 
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'ordinal')
@@ -127,7 +187,7 @@ class ConfigTest(unittest.TestCase):
         table = pd.DataFrame({'A': [t1, t2], 'B': [3, 4]})
         chart = form.make_chart(table)
         assert np.array_equal(
-            chart.x_series.values,
+            chart.x_series.series,
             np.array([t1, t2], dtype='datetime64[ms]')
         )
 
@@ -178,14 +238,6 @@ class ConfigTest(unittest.TestCase):
         ):
             form.make_chart(min_table)
 
-    def test_invalid_y_missing_column(self):
-        form = self.build_form(y_columns=[YColumn('C', '#ababab')])
-        with self.assertRaisesRegex(
-            ValueError,
-            'Cannot plot Y-axis column "C" because it does not exist'
-        ):
-            form.make_chart(min_table)
-
     def test_invalid_y_same_as_x(self):
         form = self.build_form(y_columns=[YColumn('A', '#ababab')])
         with self.assertRaisesRegex(
@@ -231,8 +283,15 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(vega['encoding']['y']['axis']['title'], 'B')
 
     def test_integration_empty_params(self):
+        DefaultParams = {
+            'title': '',
+            'x_axis_label': '',
+            'y_axis_label': '',
+            'x_column': '',
+            'y_columns': [],
+        }
         table = pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
-        result = render(table, {})
+        result = render(table, DefaultParams)
         self.assertResult(result, (
             table,
             '',
@@ -244,8 +303,7 @@ class ConfigTest(unittest.TestCase):
         result = render(table, {
             'title': 'TITLE',
             'x_column': 'A',
-            'x_data_type': '0',
-            'y_columns': '[{"column":"B","color":"#123456"}]',
+            'y_columns': [{'column': 'B', 'color': '#123456'}],
             'x_axis_label': 'X LABEL',
             'y_axis_label': 'Y LABEL'
         })
@@ -259,4 +317,4 @@ class ConfigTest(unittest.TestCase):
         self.assertIn('"X LABEL"', text)
         self.assertIn('"Y LABEL"', text)
         self.assertIn('"#123456"', text)
-        self.assertRegex(text, '.*:\s*3[,}]')
+        self.assertRegex(text, r'.*:\s*3[,}]')

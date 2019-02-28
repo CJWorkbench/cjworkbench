@@ -36,4 +36,3 @@ class TestEmbed(LoggedInIntegrationTest):
         # Vist URL and ensure it loads the embedded content correctly
         b.visit(url)
         b.assert_element('iframe', wait=True)
-

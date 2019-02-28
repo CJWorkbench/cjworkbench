@@ -11,5 +11,5 @@ setup(
     url='https://github.com/CJWorkbench/linechart',
     packages=[''],
     py_modules=['linechart'],
-    install_requires=['pandas==0.23.1']
+    install_requires=['pandas==0.24.1']
 )
