@@ -98,6 +98,7 @@ export default class Aggregation extends React.PureComponent {
         {(onDelete && !isReadOnly) ? (
           <div className='delete'>
             <button
+              type='button'
               className='delete'
               name={`${name}[delete]`}
               onClick={this.onClickDelete}
