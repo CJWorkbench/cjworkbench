@@ -11,7 +11,7 @@ from server import rabbitmq
 from server.models.commands import InitWorkflowCommand
 from server.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCourses
-from server.models.lesson import Lesson
+from server.models.lesson import Lesson, AllLessons, LessonLookup
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
 
@@ -19,7 +19,7 @@ from server.views.workflows import visible_modules, make_init_state
 def _get_course_or_404(slug):
     try:
         return CourseLookup[slug]
-    except Course.DoesNotExist:
+    except KeyError:
         raise Http404('Course does not exist')
 
 
@@ -27,17 +27,14 @@ def _get_lesson_or_404(course_slug: Optional[str], lesson_slug: str):
     """
     Return Lesson or raise Http404.
     """
-    if course_slug is None:
-        try:
-            return Lesson.objects.get(lesson_slug)
-        except Lesson.DoesNotExist:
-            raise Http404(_('Lesson does not exist'))
-    else:
-        course = _get_course_or_404(course_slug)
-        try:
+    try:
+        if course_slug is None:
+            return LessonLookup[lesson_slug]
+        else:
+            course = _get_course_or_404(course_slug)  # raises Http404
             return course.lessons[lesson_slug]
-        except KeyError:
-            raise Http404('Course does not contain lesson')
+    except KeyError:
+        raise Http404('Course does not contain lesson')
 
 
 def _ensure_workflow(request, lesson: Lesson):
@@ -196,7 +193,6 @@ def render_lesson_detail(request, slug):
 
 # Even allowed for logged-out users
 def render_lesson_list(request):
-    lessons = Lesson.objects.all()
     logged_in_user = None
     if request.user and request.user.is_authenticated:
         logged_in_user = UserSerializer(request.user).data
@@ -205,7 +201,7 @@ def render_lesson_list(request):
         'initState': json.dumps({
             'loggedInUser': logged_in_user,
         }),
-        'lessons': lessons,
+        'lessons': AllLessons,
     })
 
 
@@ -230,10 +226,7 @@ def _render_course(request, course, lesson_url_prefix):
 # Even allowed for logged-out users
 def render_lesson_list2(request):
     # Make a "fake" Course to encompass Lessons
-    course = Course(
-        title='Lessons',
-        lessons=dict((lesson.slug, lesson) for lesson in Lesson.objects.all()),
-    )
+    course = Course(title='Lessons', lessons=LessonLookup)
     return _render_course(request, course, '/lessons')
 
 

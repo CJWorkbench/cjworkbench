@@ -40,20 +40,20 @@
       data-highlight='[]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.selector) && wfModule.selectedVersion"
       >Open the page in a new browser tab, <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
-    <p class="instruction-detail">
-      In that tab, scroll down to the “list of all publications released by the City Auditor's Office”. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
-    </p>
-    <figure>
-      <img alt="Inspect element" src="images/xpath_list_lesson/inspect_list.svg">
-      <figcaption>Right click to inspect a link in the inspector</figcaption>
-    </figure>
-    <p class="instruction-detail">
-      In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted. Right-click that element and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
-    </p>
-    <figure>
-      <img alt="Copy XPath" src="images/xpath_list_lesson/copy_xpath.svg">
-      <figcaption>Right click an element to copy its XPath selector</figcaption>
-    </figure>
+      <p class="instruction-detail">
+        In that tab, scroll down to the “list of all publications released by the City Auditor's Office”. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
+      </p>
+      <figure>
+        <img alt="Inspect element" src="images/xpath_list_lesson/inspect_list.svg">
+        <figcaption>Right click to inspect a link in the inspector</figcaption>
+      </figure>
+      <p class="instruction-detail">
+        In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted. Right-click that element and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
+      </p>
+      <figure>
+        <img alt="Copy XPath" src="images/xpath_list_lesson/copy_xpath.svg">
+        <figcaption>Right click an element to copy its XPath selector</figcaption>
+      </figure>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
@@ -100,7 +100,7 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
       >In the scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd> and check “Email me when data changes”. Click <kbd>Apply</kbd>.
     </li>
@@ -112,7 +112,7 @@
     <p class="summary">Your scraper is set. If the list changes, the workflow update and and you will receive an email.</p>
   </div>
   <div class="next">
-    <h2>Continue learning:</h4>
+    <h4>Continue learning:</h4>
       <ol>
         <li>
           <a href="/lessons/clean-and-standardize/">Clean and standardize data</a>

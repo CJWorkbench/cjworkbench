@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from io import StringIO
 import json
-import os.path
 import pathlib
 from typing import Any, Dict, List, Optional
 from xml.etree import ElementTree
@@ -189,52 +187,6 @@ class LessonParseError(Exception):
     pass
 
 
-# a fake django.db.models.Manager that reads from the filesystem
-class LessonManager:
-    def __init__(self, path):
-        self.path = path
-
-    def _get(self, slug, path) -> 'Lesson':
-        """
-        Parse the lesson at `path` or raises FileNotFoundError.
-        """
-        with open(path, 'r', encoding='utf-8') as f:
-            return Lesson.parse(None, slug, f.read())
-
-    def get(self, slug) -> 'Lesson':
-        """
-        Find and load the lesson `slug`.
-
-        Raise Lesson.DoesNotExist() on invalid slug.
-        """
-        path = os.path.join(self.path, slug + '.html')
-        try:
-            return self._get(slug, path)
-        except FileNotFoundError:
-            # Maybe it's in the hidden/ directory? That's where we put lessons
-            # that we won't list in self.all().
-            hidden_path = os.path.join(self.path, 'hidden', slug + '.html')
-            try:
-                return self._get(slug, hidden_path)
-            except FileNotFoundError:
-                raise Lesson.DoesNotExist()
-
-    def all(self) -> List['Lesson']:
-        """
-        List non-hidden lessons, sorted alphabetically.
-        """
-        ret = []
-
-        for html_path in pathlib.Path(self.path).glob('*.html'):
-            slug = html_path.stem
-            if slug[0] != '_':
-                ret.append(self.get(slug))
-
-        ret.sort(key=lambda lesson: lesson.header.title)
-
-        return ret
-
-
 # A Lesson is a guide that helps the user build a Workflow we recommend.
 #
 # We implement Lessons in HTML, so they're stored as code, not in the database.
@@ -253,15 +205,26 @@ class Lesson:
         return self.header.title
 
     @classmethod
-    def parse(cls, course: 'Course', slug: str, html: str) -> Lesson:
-        parser = html5lib.HTMLParser(strict=False, namespaceHTMLElements=False)
-        root = parser.parse(StringIO(html))  # this is an xml.etree.ElementTree
+    def load_from_path(cls, course: 'Course', path: Path) -> Lesson:
+        slug = path.stem
+        html = path.read_text()
+        try:
+            return cls.parse(course, slug, html)
+        except LessonParseError as err:
+            raise LessonParseError('In %s: %s' % (str(path), str(err)))
 
-        # HTML may have <html> and <body> tags. If so, navigate within. We only
-        # care about the body.
-        body = root.find('.//body')
-        if body:
-            root = body
+    @classmethod
+    def parse(cls, course: 'Course', slug: str, html: str) -> Lesson:
+        parser = html5lib.HTMLParser(strict=True, namespaceHTMLElements=False)
+        try:
+            root: ElementTree = parser.parseFragment(html)
+        except html5lib.html5parser.ParseError as err:
+            raise LessonParseError('HTML error on line %d, column %d: %s'
+                                   % (
+                                       parser.errors[0][0][0],
+                                       parser.errors[0][0][1],
+                                       str(err)
+                                   ))
 
         header_el = root.find('./header')
         if header_el is None:
@@ -292,6 +255,18 @@ class Lesson:
     class DoesNotExist(Exception):
         pass
 
-    # fake django.db.models.Manager
-    objects = LessonManager(os.path.join(settings.BASE_DIR, 'server',
-                                         'lessons'))
+
+AllLessons = [
+    Lesson.load_from_path(None, path)
+    for path in ((pathlib.Path(__file__).parent.parent).glob('lessons/*.html'))
+]
+AllLessons.sort(key=lambda lesson: lesson.header.title)
+
+
+LessonLookup = dict((lesson.slug, lesson) for lesson in AllLessons)
+# add "hidden" lessons to LessonLookup. They do not appear in AllLessons.
+for _path in (
+    (pathlib.Path(__file__).parent.parent)
+    .glob('lessons/hidden/*.html')
+):
+    LessonLookup[_path.stem] = Lesson.load_from_path(None, _path)

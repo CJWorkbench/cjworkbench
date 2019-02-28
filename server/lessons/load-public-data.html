@@ -24,7 +24,7 @@
       <div class="copy-txt">http://production-static.workbenchdata.com/data/affordable_housing_1.csv</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',
+      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]'
       data-test="return !!workflow.tabs[0].wfModules[0].note"
       >Add a note
       <span>
@@ -75,7 +75,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
       data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep === 0"
-      >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd></br> and enter the value <kbd>200</kbd>.</li>
+      >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd><br/> and enter the value <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule && state.selectedWfModule.moduleName === 'Column Chart'"
@@ -89,13 +89,13 @@
     <p class="summary"> You created your first chart and learned workflow basics.</p>
   </div>
   <div class="next">
-    <h2>Next</h4>
+    <h4>Next</h4>
     <p>
       Get the embed code to publish the chart by clicking on the
       <img class="icon-insert" src="images/url_chart_lesson/embbed_button.svg" />
       button at the top right of the chart panel.
     </p>
-    <h2>Continue learning:</h4>
+    <h4>Continue learning:</h4>
     <ol>
       <li><a href="/lessons/clean-and-standardize/">Clean and standardize data</a></li>
       <li><a href="/lessons/clean-and-standardize/">Scrape to monitor content on a webpage</a></li>

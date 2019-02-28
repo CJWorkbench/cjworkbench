@@ -6,7 +6,6 @@ from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
 from server.models import AclEntry, Workflow, WfModule, \
         ModuleVersion, StoredObject, Tab
-from server.models.course import Course
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
 
@@ -223,7 +222,7 @@ class LessonSerializer(serializers.BaseSerializer):
             }
         }
 
-    def _course_to_representation(self, obj: Optional[Course]):
+    def _course_to_representation(self, obj: Optional['Course']):
         if obj is None:
             return None
         else:

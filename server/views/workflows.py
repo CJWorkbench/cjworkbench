@@ -15,7 +15,7 @@ from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import ModuleVersion, Workflow, WfModule
 from server.models.course import CourseLookup
-from server.models.lesson import Lesson
+from server.models.lesson import LessonLookup
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
@@ -163,11 +163,7 @@ def _lesson_exists(slug):
             return False
         return lesson_slug in course.lessons
     else:
-        try:
-            Lesson.objects.get(slug)
-            return True
-        except Lesson.DoesNotExist:
-            return False
+        return slug in LessonLookup
 
 
 # no login_required as logged out users can view example/public workflows

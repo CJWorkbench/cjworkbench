@@ -21,12 +21,12 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000' && wfModule.selectedVersion"
-      >Paste in the following URL and click <kbd>Update</kbd> to load the data.
-      <div class="copy-txt">https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000</div>
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&amp;$limit=50000' && wfModule.selectedVersion"
+    >Paste in the following URL and click <kbd>Update</kbd> to load the data.
+      <div class="copy-txt">https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&amp;$limit=50000</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]',
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
       >Click <kbd>manual</kbd> to open the Workflow Update dialog. Set the feature to <kbd>Auto</kbd>, set the frequency to 5 hours, and click <kbd>Apply.</kbd>
     </li>
@@ -93,11 +93,10 @@
 <footer>
   <h2>Lesson complete!</h2>
   <div class="completed">
-    </div>
     <p class="summary"> Your worfklow is live! It will automatically update to reflect changes in the data and send you an email if the output of the filter changes.</p>
   </div>
   <div class="next">
-    <h2>Continue learning:</h4>
+    <h4>Continue learning:</h4>
     <ol>
       <li>
         <a href="/lessons/scrape-table/">Scrape and monitor a table from a web page.</a>

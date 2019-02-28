@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict
 import yaml
-from .lesson import Lesson
+from .lesson import Lesson, LessonParseError
 
 
 @dataclass(frozen=True)
@@ -54,9 +54,13 @@ class Course:
 
         course = cls(slug, title, introduction_html, {})
         for slug in lesson_slugs:
-            lesson_html = (dirpath / (str(slug) + '.html')).read_text()
-            course.lessons[slug] = Lesson.parse(course, slug, lesson_html)
-
+            lesson_path = dirpath / (str(slug) + '.html')
+            lesson_html = lesson_path.read_text()
+            try:
+                course.lessons[slug] = Lesson.parse(course, slug, lesson_html)
+            except LessonParseError as err:
+                raise RuntimeError('Lesson parse error in %s: %s'
+                                   % (str(lesson_path), str(err)))
         return course
 
 

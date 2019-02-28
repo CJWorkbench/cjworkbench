@@ -1,12 +1,12 @@
 import json
-import os.path
-from django.test import SimpleTestCase
+import unittest
 from server.models.lesson import (
+    AllLessons,
     Lesson,
     LessonFooter,
     LessonHeader,
     LessonInitialWorkflow,
-    LessonManager,
+    LessonLookup,
     LessonParseError,
     LessonSection,
     LessonSectionStep,
@@ -29,17 +29,7 @@ def _lesson_html_with_initial_workflow(initial_workflow_json):
     ])
 
 
-class LessonTests(SimpleTestCase):
-    def test_parse_header_in_html_body(self):
-        out = Lesson.parse(None, 'a-slug', """
-            <html><body>
-                <header><h1>Lesson</h1><p>p1</p><p>p2</p></header>
-                <footer><h2>Foot</h2></footer>
-            </body></html>
-        """)
-        self.assertEquals(out.header,
-                          LessonHeader('Lesson', '<p>p1</p><p>p2</p>'))
-
+class LessonTests(unittest.TestCase):
     def test_parse_step(self):
         out = Lesson.parse(None, 'a-slug', """
             <header><h1>Lesson</h1><p>Contents</p></header>
@@ -58,8 +48,8 @@ class LessonTests(SimpleTestCase):
         )
 
     def test_parse_invalid_step_highlight_json(self):
-        with self.assertRaisesMessage(LessonParseError,
-                                      'data-highlight contains invalid JSON'):
+        with self.assertRaisesRegex(LessonParseError,
+                                    'data-highlight contains invalid JSON'):
             Lesson.parse(None, 'a-slug', """
                 <header><h1>X</h1><p>X</p></header>
                 <section><h2>X</h2><p>bar</p><ol class="steps">
@@ -68,7 +58,7 @@ class LessonTests(SimpleTestCase):
             """)
 
     def test_parse_missing_step_test(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'missing data-test attribute, which must be JavaScript'
         ):
@@ -79,22 +69,31 @@ class LessonTests(SimpleTestCase):
                 </ol></section>
             """)
 
+    def test_parse_invalid_html(self):
+        with self.assertRaisesRegex(
+            LessonParseError,
+            'HTML error on line 2, column 38: Unexpected end tag'
+        ):
+            Lesson.parse(None, 'a-slug', """
+                <header><h1>Lesson</p></header>
+            """)
+
     def test_parse_no_header(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'Lesson HTML needs a top-level <header>'
         ):
             Lesson.parse(None, 'a-slug', '<h1>Foo</h1><p>body</p>')
 
     def test_parse_no_header_title(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'Lesson <header> needs a non-empty <h1> title'
         ):
             Lesson.parse(None, 'a-slug', '<header><p>Contents</p></header>')
 
     def test_parse_no_section_title(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'Lesson <section> needs a non-empty <h2> title'
         ):
@@ -151,7 +150,7 @@ class LessonTests(SimpleTestCase):
         self.assertTrue(result.footer.is_full_screen)
 
     def test_parse_no_footer(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'Lesson HTML needs a top-level <footer>'
         ):
@@ -160,7 +159,7 @@ class LessonTests(SimpleTestCase):
             """)
 
     def test_parse_no_footer_title(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'Lesson <footer> needs a non-empty <h2> title'
         ):
@@ -202,7 +201,7 @@ class LessonTests(SimpleTestCase):
         )
 
     def test_parse_initial_workflow_bad_json(self):
-        with self.assertRaisesMessage(
+        with self.assertRaisesRegex(
             LessonParseError,
             'Initial-workflow YAML parse error'
         ):
@@ -242,85 +241,15 @@ class LessonTests(SimpleTestCase):
         )
 
 
-class LessonManagerTests(SimpleTestCase):
-    def build_manager(self, path=None):
-        if path is None:
-            path = os.path.join(os.path.dirname(__file__), 'lessons')
+class LessonGlobalsTests(unittest.TestCase):
+    # These tests rely on the existence of a "hidden" lesson. Its existence
+    # is pretty hairy; but [2019-02-28] it seems likely the "hidden" feature
+    # will fall by the wayside if we don't keep an example in that directory
+    # and test the "hidden lessons" feature with every deploy.
+    HiddenSlug = '_hidden-example'
 
-        return LessonManager(path)
+    def test_hidden_lessons_not_in_AllLessons(self):
+        self.assertFalse(any(l.slug == self.HiddenSlug for l in AllLessons))
 
-    def test_get(self):
-        out = self.build_manager().get('slug-1')
-        self.assertEquals(
-            out,
-            Lesson(
-                None,
-                'slug-1',
-                LessonHeader('Lesson', '<p>Contents</p>'),
-                [
-                    LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One', [], 'true'),
-                        LessonSectionStep('Step Two', [], 'false'),
-                    ])
-                ],
-                LessonFooter('Foot', '<p>Footer</p>')
-            )
-        )
-
-    def test_get_parse_error(self):
-        manager = self.build_manager(
-            path=os.path.join(os.path.dirname(__file__), 'broken-lesson')
-        )
-        with self.assertRaisesMessage(
-            LessonParseError,
-            'Lesson HTML needs a top-level <header>'
-        ):
-            manager.get('slug-1')
-
-    def test_get_does_not_exist(self):
-        with self.assertRaises(Lesson.DoesNotExist):
-            self.build_manager().get('nonexistent-slug')
-
-    def test_get_hidden(self):
-        result = self.build_manager().get('hidden-slug')
-        self.assertEquals(result.title, 'Hidden Lesson')
-
-    def test_all(self):
-        out = self.build_manager().all()
-        self.assertEquals(out, [
-            Lesson(
-                None,
-                'slug-2',
-                LessonHeader('Earlier Lesson (alphabetically)',
-                             '<p>Contents</p>'),
-                [
-                    LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One', [], 'true'),
-                        LessonSectionStep('Step Two', [], 'false'),
-                    ])
-                ],
-                LessonFooter('Foot', '<p>Footer</p>')
-            ),
-            Lesson(
-                None,
-                'slug-1',
-                LessonHeader('Lesson', '<p>Contents</p>'),
-                [
-                    LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One', [], 'true'),
-                        LessonSectionStep('Step Two', [], 'false'),
-                    ])
-                ],
-                LessonFooter('Foot', '<p>Footer</p>')
-            )
-        ])
-
-    def test_all_parse_error(self):
-        manager = self.build_manager(
-            path=os.path.join(os.path.dirname(__file__), 'broken-lesson')
-        )
-        with self.assertRaisesMessage(
-            LessonParseError,
-            'Lesson HTML needs a top-level <header>'
-        ):
-            manager.all()
+    def test_hidden_lessons_appear_in_LessonLookup(self):
+        self.assertIn(self.HiddenSlug, LessonLookup)
