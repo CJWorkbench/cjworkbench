@@ -181,26 +181,26 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the step <kbd>Filter value</kbd>.
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'valuefilter'"
+      >Add the step <kbd>Filter by Value</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[3].params.column === 'Project Status'"
       >Select the column <kbd>Project status</kbd>
       <p class ="instruction-detail">
         All unique values in the column <kbd>Project Status</kbd> are listed in the step, as well as how many rows use each value.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        val_list = JSON.parse(workflow.tabs[0].wfModules[3].params.valueselect)
+        return val_list.indexOf('(3) Design with Entitlements Approved')>=0"
       >In ‘Filter by value’, select <kbd>(3) Design with entitlement Approved</kbd> to see only projects that are approved for construction, but not yet started.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        val_list = JSON.parse(workflow.tabs[0].wfModules[3].params.valueselect)
+        return val_list.indexOf('(4) Site Work Permit Issued')>=0"
       >Also select <kbd>(4) Site Work Permit</kbd> to add in projects at this later stage.
       <p class ="instruction-detail">
         By changing the selected values in <kbd>Filter by value</kbd> you can quickly get insight into the projects at any combination of development stages.
