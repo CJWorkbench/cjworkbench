@@ -1,6 +1,6 @@
 import asyncio
 import asyncpg
-from async_generator import asynccontextmanager  # TODO python 3.7 native
+from contextlib import asynccontextmanager
 from django.conf import settings
 
 
@@ -20,13 +20,14 @@ class PgLocker:
                     ...  # do stuff
             except WorkflowAlreadyLocked:
                 ...  # do something else
+
+    This client is re-entrant: it can lock multiple workflows at once.
+    Double-locking a workflow will always raise WorkflowAlreadyLocked.
     """
 
     def __init__(self):
-        # Use a lock, so heartbeat queries won't interfere with advisory-lock
-        # queries.
         self.pg_connection = None
-        self.lock = asyncio.Lock()
+        self.local_held_locks = set()
 
     async def __aenter__(self) -> 'PgLocker':
         # pg_connection: asyncpg, not Django database, because we use its
@@ -67,11 +68,31 @@ class PgLocker:
         # want races.
         while True:
             await asyncio.sleep(interval)
-            async with self.lock:
-                await self.pg_connection.fetch(
-                    "SELECT 'worker_heartbeat'",
-                    timeout=interval
-                )
+            await self.pg_connection.fetch(
+                "SELECT 'worker_heartbeat'",
+                timeout=interval
+            )
+
+    @asynccontextmanager
+    async def _local_lock(self, workflow_id: int) -> None:
+        """
+        Local lock manager, ensuring only one render per Workflow.
+
+        pg_try_advisory_lock() docs say "Multiple lock requests stack" (on a
+        single connection). For us, that means multiple local callers can lock
+        the same workflow. ("local" here means, "on this connection".)
+
+        The solution: wrap Postgres locks with a local locking system.
+        """
+        if workflow_id in self.local_held_locks:
+            raise WorkflowAlreadyLocked
+
+        self.local_held_locks.add(workflow_id)
+
+        try:
+            yield
+        finally:
+            self.local_held_locks.remove(workflow_id)
 
     @asynccontextmanager
     async def render_lock(self, workflow_id: int) -> None:
@@ -84,24 +105,29 @@ class PgLocker:
         something Worker A is already rendering, then Worker A should postpone
         the render and pick some other task instead.
 
-        Implementation: try to acquire a Postgres advisory lock from within a
-        transaction and hold it for the duration of the render. Raise
-        WorkflowAlreadyLocked if we cannot acquire the lock immediately.
+        Implementation: try to acquire a Postgres advisory lock and hold it
+        during render. Raise WorkflowAlreadyLocked if we cannot acquire the
+        lock immediately.
 
-        pg_advisory_lock() takes two int parameters (to make a 64-bit int).
+        pg_try_advisory_lock() takes two int parameters (to make a 64-bit int).
         Give 0 as the first int (let's call 0 "category of lock") and workflow
         ID as the second int. (Workflow IDs are 32-bit.) We use
-        pg_try_advisory_xact_lock(0, workflow_id): `try` is non-blocking and
-        `xact` means the lock will be released as soon as the transaction ends
-        -- for instance, if a worker exits unexpectedly.
+        pg_try_advisory_xact_lock(0, workflow_id): `try` is non-blocking.
+        Postgres will release the lock if the session ends (e.g., the worker
+        disconnects).
         """
-        async with self.lock:
-            async with self.pg_connection.transaction():
-                success = await self.pg_connection.fetchval(
-                    'SELECT pg_try_advisory_xact_lock(0, $1)',
+        # raises WorkflowAlreadyLocked
+        async with self._local_lock(workflow_id):
+            if not await self.pg_connection.fetchval(
+                'SELECT pg_try_advisory_lock(0, $1)',
+                workflow_id
+            ):
+                raise WorkflowAlreadyLocked
+
+            try:
+                yield
+            finally:
+                await self.pg_connection.fetchval(
+                    'SELECT pg_advisory_unlock(0, $1)',
                     workflow_id
                 )
-                if success:
-                    yield
-                else:
-                    raise WorkflowAlreadyLocked
