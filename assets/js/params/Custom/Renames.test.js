@@ -1,8 +1,8 @@
 import React from 'react'
-import { RenameEntries, RenameEntry } from './RenameEntries'
+import Renames, { RenameEntry } from './Renames'
 import { mount } from 'enzyme'
 
-describe('RenameEntries', () => {
+describe('Renames', () => {
   const testEntries = {
     'name': 'host_name',
     'narrative': 'nrtv'
@@ -12,7 +12,7 @@ describe('RenameEntries', () => {
   const inputColumns = columnNames.map(name => ({ name }))
 
   const wrapper = (extraProps={}) => mount(
-    <RenameEntries
+    <Renames
       inputColumns={inputColumns}
       wfModuleId={1}
       onChange={jest.fn()}

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { generateFieldId, withJsonStringValues } from '../util'
+import { generateFieldId } from '../util'
 
 export class RenameEntry extends React.PureComponent {
   static propTypes = {
@@ -58,7 +58,7 @@ export class RenameEntry extends React.PureComponent {
   }
 }
 
-export class RenameEntries extends React.PureComponent {
+export default class RenameEntries extends React.PureComponent {
   static propTypes = {
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
@@ -137,5 +137,3 @@ export class RenameEntries extends React.PureComponent {
     )
   }
 }
-
-export default withJsonStringValues(RenameEntries, {})

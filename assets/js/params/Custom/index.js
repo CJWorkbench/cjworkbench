@@ -11,7 +11,7 @@ import GoogleFileSelect from './GoogleFileSelect'
 import Groups from './Groups'
 import JoinColumns from './JoinColumns'
 import Refine from './Refine'
-import RenameEntries from './RenameEntries'
+import Renames from './Renames'
 import ReorderHistory from './ReorderHistory'
 import ValueSelect from './ValueSelect'
 import VersionSelect, { VersionSelectSimpler } from './VersionSelect'
@@ -26,7 +26,7 @@ const Components = {
   groups: Groups,
   join_columns: JoinColumns,
   refine: Refine,
-  'rename-entries': RenameEntries,
+  renames: Renames,
   'reorder-history': ReorderHistory,
   valueselect: ValueSelect,
   version_select_simpler: VersionSelectSimpler,

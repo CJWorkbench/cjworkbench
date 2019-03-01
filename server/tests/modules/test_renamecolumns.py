@@ -4,10 +4,10 @@ from cjworkbench.types import ProcessResult
 from server.modules import renamecolumns
 
 
-def P(custom_list=False, rename_entries={}, list_string=''):
+def P(custom_list=False, renames={}, list_string=''):
     return {
         'custom_list': custom_list,
-        'rename-entries': rename_entries,
+        'renames': renames,
         'list_string': list_string,
     }
 
@@ -21,20 +21,56 @@ a_table = pd.DataFrame({
 
 def render(table, params):
     result = renamecolumns.render(table, params)
-    result = ProcessResult.coerce(result)
-    result.sanitize_in_place()
-    return result
+    return ProcessResult.coerce(result)
+
+
+class MigrateParamsTests(unittest.TestCase):
+    def test_v0_empty_rename_entries(self):
+        result = renamecolumns.migrate_params({
+            'custom_list': False,
+            'list_string': 'A\nB\nC',
+            'rename-entries': '',
+        })
+        self.assertEqual(result, {
+            'custom_list': False,
+            'list_string': 'A\nB\nC',
+            'renames': {},
+        })
+
+    def test_v0(self):
+        result = renamecolumns.migrate_params({
+            'custom_list': False,
+            'list_string': 'A\nB\nC',
+            'rename-entries': '{"A":"B","B":"C"}',
+        })
+        self.assertEqual(result, {
+            'custom_list': False,
+            'list_string': 'A\nB\nC',
+            'renames': {'A': 'B', 'B': 'C'},
+        })
+
+    def test_v1(self):
+        result = renamecolumns.migrate_params({
+            'custom_list': False,
+            'list_string': 'A\nB\nC',
+            'renames': {'A': 'B', 'B': 'C'},
+        })
+        self.assertEqual(result, {
+            'custom_list': False,
+            'list_string': 'A\nB\nC',
+            'renames': {'A': 'B', 'B': 'C'},
+        })
 
 
 class RenameFromTableTests(unittest.TestCase):
     def test_rename_empty(self):
         # If there are no entries, return table
-        params = P(custom_list=False, rename_entries={})
+        params = P(custom_list=False, renames={})
         result = render(a_table.copy(), params)
         self.assertEqual(result, ProcessResult(a_table))
 
     def test_rename_from_table(self):
-        params = P(custom_list=False, rename_entries={"A": "D", "B": "A"})
+        params = P(custom_list=False, renames={"A": "D", "B": "A"})
         result = render(a_table.copy(), params)
         expected = ProcessResult(pd.DataFrame({
             'D': [1, 2],
