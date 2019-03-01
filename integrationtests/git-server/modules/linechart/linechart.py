@@ -1,6 +1,7 @@
-import datetime
+from __future__ import annotations
+from dataclasses import dataclass
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 import pandas
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 
@@ -8,15 +9,33 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 MaxNAxisLabels = 300
 
 
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: params['y_columns'] is JSON-encoded.
+
+    v1: params['y_columns'] is List[Dict[{ name, color }, str]].
+    """
+    json_y_columns = params['y_columns']
+    if not json_y_columns:
+        # empty str => no columns
+        y_columns = []
+    else:
+        y_columns = json.loads(json_y_columns)
+    return {
+        **params,
+        'y_columns': y_columns
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['y_columns'], str):
+        params = _migrate_params_v0_to_v1(params)
+
+    return params
+
+
 def _is_text(series):
     return hasattr(series, 'cat') or series.dtype == object
-
-
-def _format_datetime(dt: Optional[datetime.datetime]) -> Optional[str]:
-    if dt is pandas.NaT:
-        return None
-    else:
-        return dt.isoformat() + 'Z'
 
 
 class GentleValueError(ValueError):
@@ -27,20 +46,21 @@ class GentleValueError(ValueError):
     hasn't selected what to chart. So we'll display the error in the iframe:
     we'll be gentle with the user.
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
 
+@dataclass
 class XSeries:
-    def __init__(self, values: pandas.Series, name: str):
-        self.values = values
-        self.name = name
+    series: pandas.Series
+
+    @property
+    def name(self):
+        return self.series.name
 
     @property
     def vega_data_type(self) -> str:
-        if is_datetime64_dtype(self.values.dtype):
+        if is_datetime64_dtype(self.series.dtype):
             return 'temporal'
-        elif is_numeric_dtype(self.values.dtype):
+        elif is_numeric_dtype(self.series.dtype):
             return 'quantitative'
         else:
             return 'ordinal'
@@ -52,31 +72,39 @@ class XSeries:
 
         In particular: datetime64 values will be converted to str.
         """
-        if is_datetime64_dtype(self.values.dtype):
-            return self.values \
-                    .astype(datetime.datetime) \
-                    .apply(_format_datetime) \
-                    .values
+        if is_datetime64_dtype(self.series.dtype):
+            try:
+                utc_series = self.series.dt.tz_convert(None).to_series()
+            except TypeError:
+                utc_series = self.series
+
+            str_series = utc_series.dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+            str_series = str_series.mask(self.series.isna())  # 'NaT' => np.nan
+
+            return str_series.values
         else:
-            return self.values
+            return self.series
 
 
+@dataclass
 class YSeries:
-    def __init__(self, series: pandas.Series, name: str, color: str):
-        self.series = series
-        self.name = name
-        self.color = color
+    series: pandas.Series
+    color: str
+
+    @property
+    def name(self):
+        return self.series.name
 
 
+@dataclass
 class Chart:
     """Fully-sane parameters. Columns are series."""
-    def __init__(self, *, title: str, x_axis_label: str, y_axis_label: str,
-                 x_series: XSeries, y_columns: List[YSeries]):
-        self.title = title
-        self.x_axis_label = x_axis_label
-        self.y_axis_label = y_axis_label
-        self.x_series = x_series
-        self.y_columns = y_columns
+
+    title: str
+    x_axis_label: str
+    y_axis_label: str
+    x_series: XSeries
+    y_columns: List[YSeries]
 
     def to_vega_data_values(self) -> List[Dict[str, Any]]:
         """
@@ -193,50 +221,41 @@ class Chart:
         return ret
 
 
+@dataclass
 class YColumn:
-    def __init__(self, column: str, color: str):
-        self.column = column
-        self.color = color
+    column: str
+    color: str
 
 
+@dataclass
 class Form:
     """
     Parameter dict specified by the user: valid types, unchecked values.
     """
-    def __init__(self, *, title: str, x_axis_label: str, y_axis_label: str,
-                 x_column: str, y_columns: List[YColumn]):
-        self.title = title
-        self.x_axis_label = x_axis_label
-        self.y_axis_label = y_axis_label
-        self.x_column = x_column
-        self.y_columns = y_columns
 
-    @staticmethod
-    def from_dict(params: Dict[str, Any]) -> 'Form':
-        title = str(params.get('title', ''))
-        x_axis_label = str(params.get('x_axis_label', ''))
-        y_axis_label = str(params.get('y_axis_label', ''))
-        x_column = str(params.get('x_column', ''))
-        y_columns = Form.parse_y_columns(
-            params.get('y_columns', 'null')
-        )
-        return Form(title=title, x_axis_label=x_axis_label,
-                    y_axis_label=y_axis_label, x_column=x_column,
-                    y_columns=y_columns)
+    title: str
+    x_axis_label: str
+    y_axis_label: str
+    x_column: str
+    y_columns: List[YColumn]
+
+    @classmethod
+    def from_params(cls, *, y_columns: List[Dict[str, str]], **kwargs):
+        return cls(**kwargs, y_columns=[YColumn(**d) for d in y_columns])
 
     def _make_x_series(self, table: pandas.DataFrame) -> XSeries:
         """
         Create an XSeries ready for charting, or raise ValueError.
         """
-        if self.x_column not in table.columns:
+        if not self.x_column:
             raise GentleValueError('Please choose an X-axis column')
 
         series = table[self.x_column]
-        nulls = series.isna().values
-        x_values = table[self.x_column]
-        safe_x_values = x_values[~nulls]  # so we can min(), len(), etc
+        nulls = series.isna()
+        safe_x_values = series[~nulls]  # so we can min(), len(), etc
+        safe_x_values.reset_index(drop=True, inplace=True)
 
-        if _is_text(x_values) and len(safe_x_values) > MaxNAxisLabels:
+        if _is_text(series) and len(safe_x_values) > MaxNAxisLabels:
             raise ValueError(
                 f'Column "{self.x_column}" has {len(safe_x_values)} '
                 'text values. We cannot fit them all on the X axis. '
@@ -256,8 +275,7 @@ class Form:
                 'Please select a column with 2 or more values.'
             )
 
-        x_series = XSeries(x_values, self.x_column)
-        return x_series
+        return XSeries(series)
 
     def make_chart(self, table: pandas.DataFrame) -> Chart:
         """
@@ -273,24 +291,17 @@ class Form:
         * Missing X floats lead to missing records
         * Missing Y values are omitted
         * Error if no Y columns chosen
-        * Error if a Y column is missing
         * Error if a Y column is the X column
         * Error if a Y column has fewer than 1 non-missing value
         * Default title, X and Y axis labels
         """
         x_series = self._make_x_series(table)
-        x_values = x_series.values
         if not self.y_columns:
             raise GentleValueError('Please choose a Y-axis column')
 
         y_columns = []
         for ycolumn in self.y_columns:
-            if ycolumn.column not in table.columns:
-                raise ValueError(
-                    f'Cannot plot Y-axis column "{ycolumn.column}" '
-                    'because it does not exist'
-                )
-            elif ycolumn.column == self.x_column:
+            if ycolumn.column == self.x_column:
                 raise ValueError(
                     f'Cannot plot Y-axis column "{ycolumn.column}" '
                     'because it is the X-axis column'
@@ -308,14 +319,15 @@ class Form:
             # Find how many Y values can actually be plotted on the X axis. If
             # there aren't going to be any Y values on the chart, raise an
             # error.
-            matches = pandas.DataFrame({'X': x_values, 'Y': series}).dropna()
+            matches = pandas.DataFrame({'X': x_series.series,
+                                        'Y': series}).dropna()
             if not matches['X'].count():
                 raise ValueError(
                     f'Cannot plot Y-axis column "{ycolumn.column}" '
                     'because it has no values'
                 )
 
-            y_columns.append(YSeries(series, ycolumn.column, ycolumn.color))
+            y_columns.append(YSeries(series, ycolumn.color))
 
         title = self.title or 'Line Chart'
         x_axis_label = self.x_axis_label or x_series.name
@@ -344,7 +356,7 @@ class Form:
 
 
 def render(table, params):
-    form = Form.from_dict(params)
+    form = Form.from_params(**params)
     try:
         chart = form.make_chart(table)
     except GentleValueError as err:

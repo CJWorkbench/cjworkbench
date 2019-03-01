@@ -1,7 +1,4 @@
-import pathlib
-import tempfile
 import textwrap
-from typing import Iterable, List, Tuple
 import unittest
 from server.models.module_loader import validate_module_spec, ModuleFiles, \
         ModuleSpec, validate_python_functions
@@ -99,6 +96,78 @@ class ValidateModuleSpecTest(unittest.TestCase):
             ],
         })
 
+    def test_valid_visible_if_menu_options(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'string',
+                    'visible_if': {'id_name': 'b', 'value': ['a', 'b']},
+                },
+                {
+                    'id_name': 'b',
+                    'type': 'menu',
+                    'options': [
+                        {'value': 'a', 'label': 'A'},
+                        'separator',
+                        {'value': 'b', 'label': 'B'},
+                        {'value': 'c', 'label': 'C'},
+                    ],
+                }
+            ],
+        })
+
+    def test_valid_deprecated_visible_if_menu_options(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'string',
+                    # deprecated: use '|' to show valid options
+                    'visible_if': {'id_name': 'b', 'value': 'a|b'},
+                },
+                {
+                    'id_name': 'b',
+                    'type': 'menu',
+                    'menu_items': 'a||b|c',
+                }
+            ],
+        })
+
+    def test_invalid_visible_if_menu_options(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'a' has visible_if values \\{'x'\\} not in 'b' options"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'string',
+                        'visible_if': {'id_name': 'b', 'value': ['a', 'x']},
+                    },
+                    {
+                        'id_name': 'b',
+                        'type': 'menu',
+                        'options': [
+                            {'value': 'a', 'label': 'A'},
+                            {'value': 'c', 'label': 'C'},
+                        ],
+                    }
+                ],
+            })
+
     def test_multicolumn_missing_tab_parameter(self):
         with self.assertRaisesRegex(
             ValueError,
@@ -157,6 +226,70 @@ class ValidateModuleSpecTest(unittest.TestCase):
                 },
             ],
         })
+
+    def test_validate_deprecated_menu(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'menu',
+                    'menu_items': 'x||y|z',
+                    'default': 0,
+                },
+            ],
+        })
+
+    def test_validate_menu_with_default(self):
+        # does not raise
+        validate_module_spec({
+            'id_name': 'id',
+            'name': 'Name',
+            'category': 'Clean',
+            'parameters': [
+                {
+                    'id_name': 'a',
+                    'type': 'menu',
+                    'placeholder': 'Select something',
+                    'options': [
+                        {'value': 'x', 'label': 'X'},
+                        'separator',
+                        {'value': 'y', 'label': 'Y'},
+                        {'value': 'z', 'label': 'Z'},
+                    ],
+                    'default': 'y',
+                },
+            ],
+        })
+
+    def test_validate_menu_invalid_default(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'a' has a 'default' that is not in its 'options'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'menu',
+                        'options': [
+                            {'value': 'x', 'label': 'X'},
+                        ],
+                        'default': 'y',
+                    },
+                    {
+                        # Previously, we gave the wrong id_name
+                        'id_name': 'not-a',
+                        'type': 'string'
+                    },
+                ],
+            })
 
 
 class ModuleFilesTest(unittest.TestCase):
@@ -269,7 +402,10 @@ class ModuleFilesTest(unittest.TestCase):
 
 class ValidatePythonFunctionsTest(unittest.TestCase):
     def _validate(self, data):
-        path = MockPath(['root', 'module.py'], data)
+        dirpath = MockDir({
+            'module.py': data.encode('utf-8'),
+        })
+        path = dirpath / 'module.py'
         validate_python_functions(path)
 
     def test_valid_render_function(self):
@@ -277,6 +413,25 @@ class ValidatePythonFunctionsTest(unittest.TestCase):
 
     def test_valid_fetch_function(self):
         self._validate('async def fetch(params):\n    return "error"')
+
+    def test_dataclass_works(self):
+        """
+        Test we can compile @dataclass
+
+        @dataclass inspects `sys.modules`, so the module needs to be in
+        `sys.modules` when @dataclass is run.
+        """
+        self._validate(textwrap.dedent('''\
+            from __future__ import annotations
+            from dataclasses import dataclass
+
+            def render(table, params):
+                return table
+
+            @dataclass
+            class A:
+                y: int
+            '''))
 
     def test_syntax_error(self):
         with self.assertRaises(ValueError):

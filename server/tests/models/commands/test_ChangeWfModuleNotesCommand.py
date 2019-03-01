@@ -8,7 +8,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.rabbitmq.queue_render', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class ChangeWfModuleNotesCommandTests(DbTestCase):
     def test_change_notes(self):

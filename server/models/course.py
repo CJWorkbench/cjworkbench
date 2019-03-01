@@ -1,15 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
+from typing import Dict
 import yaml
-from .lesson import Lesson
-
-
-def _load_lesson(path: Path) -> Lesson:
-    slug = path.stem
-    text = path.read_text()
-    return Lesson.parse(slug, text)
+from .lesson import Lesson, LessonParseError
 
 
 @dataclass(frozen=True)
@@ -17,13 +11,12 @@ class Course:
     slug: str = ''
     title: str = ''
     introduction_html: str = ''
-    lessons: List[Lesson] = field(default_factory=list)
+    lessons: Dict[str, Lesson] = field(default_factory=list)
+    """
+    All lessons in the course, keyed by slug, _ordered_.
 
-    def find_lesson_by_slug(self, slug: str) -> Optional[Lesson]:
-        """
-        Return the matching Lesson, or `None` if it does not exist.
-        """
-        return next((l for l in self.lessons if l.slug == slug), None)
+    Ordering means `lessons.values()` returns values in order.
+    """
 
     @classmethod
     def load_from_path(cls, path: Path) -> Course:
@@ -58,18 +51,23 @@ class Course:
         title = str(data['title'])  # raises KeyError
         introduction_html = str(data['introduction_html'])  # raises KeyError
         lesson_slugs = list(data['lessons'])  # raises KeyError
-        # raises FileNotFoundError, LessonParseError
-        lessons = [_load_lesson(dirpath / (str(slug) + '.html'))
-                   for slug in lesson_slugs]
-        return cls(slug, title, introduction_html, lessons)
+
+        course = cls(slug, title, introduction_html, {})
+        for slug in lesson_slugs:
+            lesson_path = dirpath / (str(slug) + '.html')
+            lesson_html = lesson_path.read_text()
+            try:
+                course.lessons[slug] = Lesson.parse(course, slug, lesson_html)
+            except LessonParseError as err:
+                raise RuntimeError('Lesson parse error in %s: %s'
+                                   % (str(lesson_path), str(err)))
+        return course
 
 
-CourseLookup = dict(
-    (course.slug, course)
-    for course in [
-        Course.load_from_path(path)
-        for path in (
-            (Path(__file__).parent.parent).glob('courses/**/index.yaml')
-        )
-    ]
-)
+AllCourses = [
+    Course.load_from_path(path)
+    for path in ((Path(__file__).parent.parent).glob('courses/**/index.yaml'))
+]
+
+
+CourseLookup = dict((course.slug, course) for course in AllCourses)

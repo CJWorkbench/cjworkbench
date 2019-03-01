@@ -1,0 +1,10 @@
+.param-join_columns {
+}
+
+.react-select__menu-list.join-on {
+  .react-select__menu-notice--no-options {
+    @include content-1;
+    color: $brand-text--dark;
+    text-align: left; // react-select default is center, but this text is long so center is hard to read
+  }
+}

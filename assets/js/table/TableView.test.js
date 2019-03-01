@@ -32,7 +32,7 @@ function ConnectedTableView (props) {
 }
 
 describe('TableView', () => {
-  const wrapper = (store, api, extraProps={}) => {
+  const wrapper = (store, extraProps={}) => {
     // mock store for <SelectedRowsActions>, a descendent
     if (store === null) {
       store = mockStore({
@@ -40,11 +40,7 @@ describe('TableView', () => {
         workflow: {
           wf_modules: [ 99, 100, 101 ]
         }
-      }, api)
-    }
-
-    if (!api.render) {
-      api.render = makeRenderResponse(0, 3, 5)
+      })
     }
 
     return mount(
@@ -53,14 +49,14 @@ describe('TableView', () => {
         isReadOnly={false}
         wfModuleId={100}
         deltaId={1}
-        onLoadPage={jest.fn()}
+        status='ok'
+        loadRows={makeRenderResponse(0, 3, 5)}
         columns={[
           { name: 'a', type: 'number' },
           { name: 'b', type: 'number' },
           { name: 'c', type: 'number' }
         ]}
         nRows={2}
-        api={api}
         {...extraProps}
       />
     )
@@ -98,7 +94,7 @@ describe('TableView', () => {
       }
     }, api)
 
-    const tree = wrapper(store, api, { wfModuleId: 2 })
+    const tree = wrapper(store, { wfModuleId: 2 })
     tree.find('DataGrid').instance().onDropColumnIndexAtIndex(0, 2)
 
     await tick()
@@ -131,7 +127,7 @@ describe('TableView', () => {
       }
     }, api)
 
-    const tree = wrapper(store, api, { wfModuleId: 2 })
+    const tree = wrapper(store, { wfModuleId: 2 })
     await tick() // load data
     tree.find('DataGrid').instance().onGridRowsUpdated({
       fromRow: 0,
@@ -142,7 +138,7 @@ describe('TableView', () => {
     })
 
     expect(api.addModule).toHaveBeenCalledWith('tab-1', 'editcells', 1, {
-      'celledits': JSON.stringify([{ row: 0, col: 'b', value: 'b2' }])
+      'celledits': [{ row: 0, col: 'b', value: 'b2' }]
     })
 
     await tick() // let things settle
@@ -155,7 +151,7 @@ describe('TableView', () => {
     // And we can see it did not call api.render, because that does not exist
   })
 
-  // TODO move this to DataGrid.js:
+  // TODO move this to TableSwitcher.js/DelayedTableSwitcher.js:
   //it('shows a spinner on initial load', async () => {
   //  const testData = {
   //    start_row: 0,
@@ -166,8 +162,7 @@ describe('TableView', () => {
   //    ]
   //  }
 
-  //  const api = { render: jest.fn(() => Promise.resolve(testData)) }
-  //  const tree = wrapper(null, api)
+  //  const tree = wrapper(null, { loadData: jest.fn(() => Promise.resolve(testData)) })
 
   //  expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
   //  await tick()
@@ -182,10 +177,11 @@ describe('TableView', () => {
       columns[i] = { name: String(i), type: 'number' }
     }
 
-    const api = { render: jest.fn() }
-    const tree = wrapper(null, api, { columns })
+    const loadData = jest.fn()
+    const tree = wrapper(null, { loadData, columns })
 
     const overlay = tree.find('.overlay')
     expect(overlay).toHaveLength(1)
+    expect(loadData).not.toHaveBeenCalled()
   })
 })

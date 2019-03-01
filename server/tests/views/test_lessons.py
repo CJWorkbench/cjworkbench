@@ -2,8 +2,7 @@ import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
 from server.models import Workflow, ModuleVersion, LoadedModule
-from server.models.lesson import Lesson, LessonHeader, LessonFooter, \
-        LessonInitialWorkflow
+from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
 from server.tests.utils import DbTestCase, create_test_user
 
 
@@ -184,10 +183,10 @@ class LessonDetailTests(DbTestCase):
         )
 
     @patch('server.rabbitmq.queue_render')
-    @patch.object(Lesson.objects, 'get')
-    def test_create_initial_workflow(self, get, render):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
+    @patch.dict(LessonLookup, {'a-lesson': Lesson(
+        None,
+        'slug',
+        initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -197,8 +196,9 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ]))
-
+        ])
+    )})
+    def test_create_initial_workflow(self, render):
         render.return_value = future_none
 
         create_module_version('amodule', [
@@ -206,7 +206,7 @@ class LessonDetailTests(DbTestCase):
         ], loads_data=False)
 
         self.log_in()
-        response = self.client.get('/lessons/whatever')
+        response = self.client.get('/lessons/a-lesson')
         state = response.context_data['initState']
         tabs = state['tabs']
         tab1 = list(tabs.values())[0]
@@ -222,12 +222,43 @@ class LessonDetailTests(DbTestCase):
         render.assert_called_with(state['workflow']['id'],
                                   wfm1['last_relevant_delta_id'])
 
+    @patch('server.rabbitmq.queue_render')
+    @patch.dict(LessonLookup, {'a-lesson': Lesson(
+        None,
+        'a-lesson',
+        initial_workflow=LessonInitialWorkflow([
+            {
+                'name': 'Tab X',
+                'wfModules': [
+                    {
+                        'module': 'amodule',
+                        'params': {'url': './foo.txt'},
+                    },
+                ],
+            },
+        ])
+    )})
+    def test_replace_static_url_in_initial_workflow(self, render):
+        render.return_value = future_none
+
+        create_module_version('amodule', [
+            {'id_name': 'url', 'type': 'string'},
+        ], loads_data=False)
+
+        self.log_in()
+        response = self.client.get('/lessons/a-lesson')
+        state = response.context_data['initState']
+        wf_module = next(iter(state['wfModules'].values()))
+        self.assertEqual(wf_module['params'], {
+            'url': 'http://localhost:8000/static/lessons/a-lesson/foo.txt',
+        })
+
     @patch('server.rabbitmq.queue_fetch')
     @patch('server.rabbitmq.queue_render')
-    @patch.object(Lesson.objects, 'get')
-    def test_fetch_initial_workflow(self, get, render, fetch):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
+    @patch.dict(LessonLookup, {'a-lesson': Lesson(
+        None,
+        'slug',
+        initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -237,8 +268,9 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ]))
-
+        ])
+    )})
+    def test_fetch_initial_workflow(self, render, fetch):
         fetch.return_value = future_none
 
         create_module_version('amodule', [
@@ -246,7 +278,7 @@ class LessonDetailTests(DbTestCase):
         ], loads_data=True)
 
         self.log_in()
-        response = self.client.get('/lessons/whatever')
+        response = self.client.get('/lessons/a-lesson')
         state = response.context_data['initState']
         wf_modules = state['wfModules']
         wfm1 = list(wf_modules.values())[0]
@@ -257,10 +289,10 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(fetch.call_args[0][0].id, wfm1['id'])
         render.assert_not_called()
 
-    @patch.object(Lesson.objects, 'get')
-    def test_fetch_initial_workflow_with_missing_module_throws_500(self, get):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
+    @patch.dict(LessonLookup, {'a-lesson': Lesson(
+        None,
+        'slug',
+        initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -270,16 +302,17 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ]))
-
+        ])
+    )})
+    def test_fetch_initial_workflow_with_missing_module_throws_500(self):
         self.log_in()
-        response = self.client.get('/lessons/whatever')
+        response = self.client.get('/lessons/a-lesson')
         self.assertEqual(response.status_code, 500)
 
-    @patch.object(Lesson.objects, 'get')
-    def test_fetch_initial_workflow_with_invalid_params_throws_500(self, get):
-        get.return_value = Lesson('slug',
-                                  initial_workflow=LessonInitialWorkflow([
+    @patch.dict(LessonLookup, {'a-lesson': Lesson(
+        None,
+        'slug',
+        initial_workflow=LessonInitialWorkflow([
             {
                 'name': 'Tab X',
                 'wfModules': [
@@ -289,12 +322,13 @@ class LessonDetailTests(DbTestCase):
                     },
                 ],
             },
-        ]))
-
+        ])
+    )})
+    def test_fetch_initial_workflow_with_invalid_params_throws_500(self):
         create_module_version('amodule', [
             {'id_name': 'foo', 'type': 'string'},
         ])
 
         self.log_in()
-        response = self.client.get('/lessons/whatever')
+        response = self.client.get('/lessons/a-lesson')
         self.assertEqual(response.status_code, 500)

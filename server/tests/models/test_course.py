@@ -1,7 +1,7 @@
 import textwrap
 import unittest
 import yaml
-from ..utils import MockPath, MockDir
+from ..utils import MockDir
 from server.models.course import Course
 from server.models.lesson import Lesson, LessonHeader, LessonFooter
 
@@ -33,14 +33,14 @@ class CourseTests(unittest.TestCase):
             slug='root',
             title='Title',
             introduction_html='<p>Hi</p>\n<p>Bye</p>',
-            lessons=[
-                Lesson('lesson-1',
-                       header=LessonHeader('L1', '<p>HP1</p>'),
-                       footer=LessonFooter('F1', '<p>foot</p>')),
-                Lesson('lesson-2',
-                       header=LessonHeader('L2', '<p>HP2</p>'),
-                       footer=LessonFooter('F2', '<p>foot</p>')),
-            ]
+            lessons={
+                'lesson-1': Lesson(course, 'lesson-1',
+                                   header=LessonHeader('L1', '<p>HP1</p>'),
+                                   footer=LessonFooter('F1', '<p>foot</p>')),
+                'lesson-2': Lesson(course, 'lesson-2',
+                                   header=LessonHeader('L2', '<p>HP2</p>'),
+                                   footer=LessonFooter('F2', '<p>foot</p>')),
+            },
         ))
 
     def test_lesson_file_not_found(self):

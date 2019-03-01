@@ -45,12 +45,16 @@ FROM pybase AS pydev
 # * python-snappy
 # * fb-re2
 # * watchman (until someone packages binaries)
+#
+# Also:
+# * socat: for our dev environment: worker uses http://localhost:8000 for in-lesson files
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
       libsnappy-dev \
       libre2-dev \
+      socat \
     && rm -rf /var/lib/apt/lists/*
 
 # build watchman. Someday let's hope someone publishes binaries

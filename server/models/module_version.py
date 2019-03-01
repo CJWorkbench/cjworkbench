@@ -1,4 +1,3 @@
-import json
 from typing import Any
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError

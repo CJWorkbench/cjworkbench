@@ -71,6 +71,10 @@ export class TabWithHelpers {
     return this.wfModules.map(wfm => wfm.moduleName)
   }
 
+  get wfModuleSlugs () {
+    return this.wfModules.map(wfm => wfm.moduleSlug)
+  }
+
   get selectedWfModule () {
     const { wfModules } = this.state
     const position = this.tab.selected_wf_module_position
@@ -109,8 +113,8 @@ export class WorkflowModuleWithHelpers {
   }
 
   get moduleSlug () {
-    const module = this.module
-    return module ? module.id_name : null
+    if (!this.wfModule) return null
+    return this.wfModule.module || null
   }
 
   get note () {

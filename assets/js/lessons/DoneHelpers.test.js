@@ -47,6 +47,28 @@ describe('DoneHelpers', () => {
       expect(workflow.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
     })
 
+    it('should give wfModuleSlugs', () => {
+      const workflow = new WorkflowWithHelpers({
+        tab_slugs: [ 'tab-21', 'tab-22' ],
+        selected_tab_position: 0
+      }, {
+        tabs: {
+          'tab-21': { wf_module_ids: [ 1, 2 ] },
+          'tab-22': { wf_module_ids: [] }
+        },
+        wfModules: {
+          1: { module: 'foo' },
+          2: { module: 'bar' }
+        },
+        modules: {
+          foo: { name: 'Foo' },
+          bar: { name: 'Bar' }
+        }
+      })
+
+      expect(workflow.selectedTab.wfModuleSlugs).toEqual([ 'foo', 'bar' ])
+    })
+
     it('should give wfModuleName=null when there is no module', () => {
       const workflow = new WorkflowWithHelpers({
         tab_slugs: [ 'tab-21', 'tab-22' ],

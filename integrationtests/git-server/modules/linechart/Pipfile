@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pandas = "*"
+pandas = "==0.24.1"
 numpy = "*"
 
 [dev-packages]

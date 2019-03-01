@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -30,6 +31,7 @@ class ParamFieldSerializer(serializers.Serializer):
     multiline = serializers.BooleanField()
     placeholder = serializers.CharField()
     items = serializers.CharField()
+    menuOptions = serializers.JSONField(source='options')
     visible_if = serializers.JSONField()
     # So far, no one actually wants to see the default value.
 
@@ -205,6 +207,7 @@ class WorkflowSerializer(WorkflowSerializerLite):
 class LessonSerializer(serializers.BaseSerializer):
     def to_representation(self, obj):
         return {
+            'course': self._course_to_representation(obj.course),
             'slug': obj.slug,
             'header': {
                 'title': obj.header.title,
@@ -215,8 +218,18 @@ class LessonSerializer(serializers.BaseSerializer):
             'footer': {
                 'title': obj.footer.title,
                 'html': obj.footer.html,
+                'isFullScreen': obj.footer.is_full_screen,
             }
         }
+
+    def _course_to_representation(self, obj: Optional['Course']):
+        if obj is None:
+            return None
+        else:
+            return {
+                'slug': obj.slug,
+                'title': obj.title,
+            }
 
     def _section_to_representation(self, obj):
         return {

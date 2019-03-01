@@ -16,6 +16,8 @@ import importlib.util
 import json
 from pathlib import Path
 import jsonschema
+import sys
+import threading
 from typing import List, Optional, Set
 import yaml
 
@@ -39,8 +41,10 @@ def validate_module_spec(spec):
 
     * `spec` adheres to `server/models/module_spec_schema.yaml`
     * `spec.parameters[*].id_name` are unique
-    * `spec.parameters[*].menu_items` or `.radio_items` are present if needed
     * `spec.parameters[*].visible_if[*].id_name` are valid
+    * If `spec.parameters[*].options` and `default` exist, `default` is valid
+    * `spec.parameters[*].visible_if[*].value` is/are valid if it's a menu
+    * `spec.parameters[*].tab_parameter` point to valid params
     """
     # No need to do i18n on these errors: they're only for admins. Good thing,
     # too -- most of the error messages come from jsonschema, and there are
@@ -54,46 +58,99 @@ def validate_module_spec(spec):
         # the schema is valid.
         raise ValueError('; '.join(messages))
 
-    param_id_types = {}
+    param_lookup = {}
     for param in spec['parameters']:
         id_name = param['id_name']
 
-        if id_name in param_id_types:
+        if id_name in param_lookup:
             messages.append(f"Param '{id_name}' appears twice")
         else:
-            param_id_types[id_name] = param['type']
+            param_lookup[id_name] = param
 
-    # Now that param_id_types is full, loop again to check visible_if refs
+    # check 'default' is valid in menu/radio
+    for param in spec['parameters']:
+        if 'default' in param and 'options' in param:
+            options = [o['value'] for o in param['options']
+                       if isinstance(o, dict)]  # skip 'separator'
+            if param['default'] not in options:
+                messages.append(
+                    f"Param '{param['id_name']}' has a 'default' that is not "
+                    "in its 'options'"
+                )
+
+    # Now that check visible_if refs
     for param in spec['parameters']:
         try:
             visible_if = param['visible_if']
         except KeyError:
             continue
 
-        if visible_if['id_name'] not in param_id_types:
-            param_id_name = param['id_name']
-            ref_id_name = visible_if['id_name']
+        try:
+            ref_param = param_lookup[visible_if['id_name']]
+        except KeyError:
             messages.append(
-                f"Param '{param_id_name}' has visible_if "
-                f"id_name '{ref_id_name}', which does not exist",
+                f"Param '{param['id_name']}' has visible_if "
+                f"id_name '{visible_if['id_name']}', which does not exist",
+            )
+            continue
+
+        if (
+            'options' in ref_param
+            and not isinstance(visible_if['value'], list)
+        ):
+            messages.append(
+                f"Param '{param['id_name']}' needs its visible_if.value "
+                f"to be an Array of Strings, since '{visible_if['id_name']}' "
+                "has options."
             )
 
-    # Now that param_id_types is full, loop again to check tab_parameter refs
+        if (
+            'options' in ref_param
+            or 'menu_items' in ref_param
+            or 'radio_items' in ref_param
+        ):
+            if_values = visible_if['value']
+            if isinstance(if_values, list):
+                if_values = set(if_values)
+            else:
+                if_values = set(if_values.split('|'))
+
+            if 'options' in ref_param:
+                options = set(o['value'] for o in ref_param['options']
+                              if isinstance(o, dict))  # skip 'separator'
+            elif 'menu_items' in ref_param:
+                options = (  # deprecated: allow indexes and labels
+                    set(range(len(ref_param['menu_items'].split('|'))))
+                    | set(ref_param['menu_items'].split('|'))
+                )
+            elif 'radio_items' in ref_param:
+                options = (  # deprecated: allow indexes and labels
+                    set(range(len(ref_param['radio_items'].split('|'))))
+                    | set(ref_param['radio_items'].split('|'))
+                )
+
+            missing = if_values - options
+            if missing:
+                messages.append(
+                    f"Param '{param['id_name']}' has visible_if values "
+                    f"{repr(missing)} not in '{ref_param['id_name']}' options"
+                )
+
+    # Check tab_parameter refs
     for param in spec['parameters']:
         try:
             tab_parameter = param['tab_parameter']
         except KeyError:
             continue  # we aren't referencing a "tab" parameter
 
-        param_id_name = param['id_name']
-        if tab_parameter not in param_id_types:
+        if tab_parameter not in param_lookup:
             messages.append(
-                f"Param '{param_id_name}' has a 'tab_parameter' "
+                f"Param '{param['id_name']}' has a 'tab_parameter' "
                 "that is not in 'parameters'"
             )
-        elif param_id_types[tab_parameter] != 'tab':
+        elif param_lookup[tab_parameter]['type'] != 'tab':
             messages.append(
-                f"Param '{param_id_name}' has a 'tab_parameter' "
+                f"Param '{param['id_name']}' has a 'tab_parameter' "
                 "that is not a 'tab'"
             )
 
@@ -166,33 +223,53 @@ class PathLoader(importlib.abc.SourceLoader):
 
     # override ResourceLoader
     def get_data(self, path):
-        assert Path(path).name == self.path.name
         return self.path.read_bytes()
 
     # override ExecutionLoader
     def get_filename(self, path):
-        assert Path(path).name == self.path.name
         return self.path.as_posix()
+
+
+def load_python_module(name: str, code_path: Path):
+    """
+    Convert from `pathlib.Path` to Python module.
+
+    Raise `ValueError` if Path isn't executable Python code.
+    """
+    # execute the module, as a test
+    loader = PathLoader(code_path)
+    spec = importlib.util.spec_from_loader(
+        (
+            # generate unique package name -- no conflicts, please!
+            #
+            # (We temporarily inject this into sys.modules below.)
+            f'{__package__}._dynamic_{threading.get_ident()}'
+            f'.{name}.{code_path.stem}'
+        ),
+        loader
+    )
+
+    try:
+        module = importlib.util.module_from_spec(spec)
+    except SyntaxError as err:
+        raise ValueError('Syntax error in %s: %s' % (name, str(err)))
+
+    try:
+        # add to sys.modules, so "@dataclass()" can read the module data
+        # Needed when `from __future__ import annotations` in Python 3.7.
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+    except Exception as err:  # really, code can raise _any_ error
+        raise ValueError('%s could not execute: %s' % (name, str(err)))
+    finally:
+        del sys.modules[spec.name]
+
+    return module
 
 
 # Now check if the module is importable and defines the render function
 def validate_python_functions(code_path: Path):
-    # execute the module, as a test
-    loader = PathLoader(code_path)
-    spec = importlib.util.spec_from_loader(code_path.name, loader)
-
-    try:
-        test_module = importlib.util.module_from_spec(spec)
-    except SyntaxError as err:
-        raise ValueError('Syntax error in %s: %s'
-                         % (code_path.name, str(err)))
-
-    try:
-        spec.loader.exec_module(test_module)
-    except Exception as err:  # really, code can raise _any_ error
-        raise ValueError('%s could not execute: %s'
-                         % (code_path.name, str(err)))
-
+    test_module = load_python_module(code_path.stem, code_path)
 
     if hasattr(test_module, 'render'):
         if callable(test_module.render):

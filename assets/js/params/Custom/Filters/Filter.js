@@ -15,7 +15,8 @@ const DefaultSubfilter = {
 export default class Filter extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired, // <input name=...>
+    fieldId: PropTypes.string.isRequired, // <input id=...>
     index: PropTypes.number.isRequired,
     value: FilterPropType.isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
@@ -64,7 +65,7 @@ export default class Filter extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, inputColumns, onSubmit, name, value, onDelete } = this.props
+    const { isReadOnly, inputColumns, onSubmit, name, fieldId, value, onDelete } = this.props
     const { operator, subfilters } = value
 
     return (
@@ -86,6 +87,7 @@ export default class Filter extends React.PureComponent {
             <Subfilter
               isReadOnly={isReadOnly}
               name={`${name}[${index}]`}
+              fieldId={`${fieldId}_${index}`}
               index={index}
               value={subfilter}
               inputColumns={inputColumns}
@@ -97,6 +99,7 @@ export default class Filter extends React.PureComponent {
               <FilterOperator
                 isReadOnly={isReadOnly}
                 name={`${name}[${index}][operator]`}
+                fieldId={`${fieldId}_${index}_operator`}
                 value={operator}
                 onChange={this.onChangeOperator}
               />
@@ -104,6 +107,7 @@ export default class Filter extends React.PureComponent {
               <AddFilter
                 isReadOnly={isReadOnly}
                 name={`${name}[operator]`}
+                fieldId={`${fieldId}_operator`}
                 operator={operator}
                 nFilters={subfilters.length}
                 onClickAddAnd={this.onClickAddAnd}

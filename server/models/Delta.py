@@ -74,13 +74,13 @@ class Delta(PolymorphicModel):
         """Call forward_impl() with workflow.cooperative_lock()."""
         ws_data = await self._call_forward_and_load_ws_data()
         await self.ws_notify(ws_data)
-        await self.schedule_execute()
+        await self.schedule_execute_if_needed()
 
     async def backward(self):
         """Call backward_impl() with workflow.cooperative_lock()."""
         ws_data = await self._call_backward_and_load_ws_data()
         await self.ws_notify(ws_data)
-        await self.schedule_execute()
+        await self.schedule_execute_if_needed()
 
     async def ws_notify(self, ws_data):
         """
@@ -131,10 +131,14 @@ class Delta(PolymorphicModel):
 
         return data
 
-    async def schedule_execute(self) -> None:
-        """Tell renderers to render the new workflow."""
-        await rabbitmq.queue_render(self.workflow.id,
-                                    self.workflow.last_delta_id)
+    async def schedule_execute_if_needed(self) -> None:
+        """
+        If any WfModule output may change, schedule a render over RabbitMQ.
+        """
+        if hasattr(self, '_changed_wf_module_versions'):
+            if len(self._changed_wf_module_versions):
+                await rabbitmq.queue_render(self.workflow.id,
+                                            self.workflow.last_delta_id)
 
     @classmethod
     async def create(cls, *, workflow, **kwargs) -> None:
@@ -160,7 +164,7 @@ class Delta(PolymorphicModel):
 
         if delta:
             await delta.ws_notify(ws_data)
-            await delta.schedule_execute()
+            await delta.schedule_execute_if_needed()
 
         return delta
 

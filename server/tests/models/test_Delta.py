@@ -5,6 +5,7 @@ from server.models import Delta, Tab, Workflow, WfModule
 # deltas -- one requiring WfModule, one not.
 from server.models.commands import ChangeWorkflowTitleCommand, \
         ChangeWfModuleNotesCommand, AddTabCommand
+from server import rabbitmq
 from ..utils import DbTestCase
 
 
@@ -12,7 +13,7 @@ future_none = asyncio.Future()
 future_none.set_result(None)
 
 
-@patch.object(Delta, 'schedule_execute', lambda *x: future_none)
+@patch.object(rabbitmq, 'queue_render', lambda *x: future_none)
 @patch.object(Delta, 'ws_notify', lambda *x: future_none)
 class DeltaTest(DbTestCase):
     def test_delete_orphans(self):

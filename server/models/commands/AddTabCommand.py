@@ -69,9 +69,6 @@ class AddTabCommand(Delta):
         self.workflow.selected_tab_position = self.old_selected_tab_position
         self.workflow.save(update_fields=['selected_tab_position'])
 
-    async def schedule_execute(self):
-        pass
-
     @classmethod
     def amend_create_kwargs(cls, *, workflow: Workflow, slug: str, name: str):
         # tab starts off "deleted" and appears at end of tabs list; we

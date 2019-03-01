@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
 import debounce from 'debounce'
 import memoize from 'memoize-one'
+import Spinner from '../Spinner'
 import ColumnHeader from './ColumnHeader'
 import Row from './Row'
 import RowActionsCell from './RowActionsCell'
@@ -94,7 +95,7 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
 
 export default class DataGrid extends React.PureComponent {
   static propTypes = {
-    api: PropTypes.object.isRequired,
+    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
     wfModuleId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
@@ -103,7 +104,6 @@ export default class DataGrid extends React.PureComponent {
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     }).isRequired), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
-    onLoadPage: PropTypes.func.isRequired, // func(wfModuleId, deltaId) => undefined
     editCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
     reorderColumn: PropTypes.func.isRequired, // func(colname, fromIndex, toIndex) => undefined
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired, // may be empty
@@ -161,7 +161,7 @@ export default class DataGrid extends React.PureComponent {
   load () {
     const min = this.firstMissingRowIndex
     const max = min + NRowsPerPage
-    const { api, deltaId, wfModuleId, onLoadPage } = this.props
+    const { loadRows, deltaId, wfModuleId } = this.props
     const { loadedRows } = this.state
 
     if (this.unmounted) return
@@ -174,10 +174,14 @@ export default class DataGrid extends React.PureComponent {
       }
     }
     if (areAllValuesMissing) {
-      this.setState({ spinning: true })
+      // If we're loading a _subsequent_ page (not the first page), show a
+      // spinner.
+      if (min > 0) {
+        this.setState({ spinning: true })
+      }
     }
 
-    api.render(wfModuleId, min, max) // +1: of-by-one oddness in API
+    loadRows(wfModuleId, deltaId, min, max)
       .then(json => {
         if (this.unmounted) return
 
@@ -197,19 +201,12 @@ export default class DataGrid extends React.PureComponent {
             spinning: false
           }
         })
-
-        onLoadPage(wfModuleId, deltaId)
       })
   }
 
   componentDidMount () {
-    if (this.props.wfModuleId) {
-      if (this.props.nRows) {
-        this.load()
-      } else {
-        // Indicate to caller that we're loaded
-        this.props.onLoadPage(this.props.wfModuleId, this.props.deltaId)
-      }
+    if (this.props.wfModuleId && this.props.nRows > 0) {
+      this.load()
     }
 
     this._resizeListener = debounce(this.updateSize, 50)
@@ -373,16 +370,6 @@ export default class DataGrid extends React.PureComponent {
   render () {
     const { spinning, gridWidth, gridHeight } = this.state
 
-    const maybeSpinner = !spinning ? null : (
-      <div className="spinner-container-transparent">
-        <div className="spinner-l1">
-          <div className="spinner-l2">
-            <div className="spinner-l3"></div>
-          </div>
-        </div>
-      </div>
-    )
-
     // Don't render when gridWidth===null. We only render after a setTimeout
     // in updateSize(). That way, React can handle the rest of the DOM updates
     // that a click event entails without spending entire seconds on
@@ -395,7 +382,7 @@ export default class DataGrid extends React.PureComponent {
     return (
       <div className='data-grid-sizer' ref={this.sizerRef}>
         {(gridWidth !== null && gridHeight !== null) ? this.renderGrid() : null}
-        {maybeSpinner}
+        {spinning ? <Spinner /> : null}
       </div>
     )
   }

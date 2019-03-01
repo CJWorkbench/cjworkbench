@@ -8,6 +8,7 @@ import deepEqual from 'fast-deep-equal'
 import Menu from './Menu'
 import Multicolumn from './Multicolumn'
 import Multitab from './Multitab'
+import Multichartseries from './Multichartseries'
 import Number_ from './Number'
 import Radio from './Radio'
 import Secret from './Secret'
@@ -30,6 +31,15 @@ export default class Param extends React.PureComponent {
     label: PropTypes.string.isRequired, // or ''
     type: PropTypes.string.isRequired,
     items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
+    menuOptions: PropTypes.arrayOf(
+      PropTypes.oneOfType([
+        PropTypes.oneOf([ 'separator' ]),
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+          label: PropTypes.string.isRequired
+        }).isRequired
+      ]).isRequired
+    ), // new-style menu -- once we nix "items" ("menu_items" in spec), add .isRequired here
     isMultiline: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired, // may be ''
     visibleIf: PropTypes.object, // JSON spec or null
@@ -72,6 +82,7 @@ export default class Param extends React.PureComponent {
       case 'menu': return Menu
       case 'multicolumn': return Multicolumn
       case 'multitab': return Multitab
+      case 'multichartseries': return Multichartseries
       case 'radio': return Radio
       case 'secret': return Secret
       case 'statictext': return StaticText

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.files.storage import Storage
 from server.minio import ensure_bucket_exists, minio_client, StaticFilesBucket
 
+
 class MinioStorage(Storage):
     def __init__(self, *args, **kwargs):
         Storage.__init__(self, *args, **kwargs)

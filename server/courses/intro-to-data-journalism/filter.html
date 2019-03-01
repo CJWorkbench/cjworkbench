@@ -1,5 +1,6 @@
 <header>
-  <h1>Filtering data<h1>
+  <h1>Filtering data</h1>
+  <p>Filtering data is a common, yet powerful analysis technique. Learn how to use Conditional and value filters to explore your data.</p>
 </header>
 
 <section class="fullscreen">
@@ -8,7 +9,7 @@
     Filtering data is a common, yet powerful analysis technique. You can use it to answer questions such as “Which cities spent more than a million dollars on snow removal last year?”
   </p>
   <p>
-    Filtering is also a key intermediate step in many analysis, or to explore data you are starting to work with.
+    Filtering is also a key intermediate step in many analysis, or to explore data you are just starting to work with.
   </p>
   <p>
     In this lesson we will work with open data from the City of San Francisco, on the amount of affordable housing planned to be built.
@@ -57,33 +58,23 @@
   </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Again, let’s ask the basic questions:</p>
-  <ol class="steps">
+  <ul>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >What does each row represent?
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >What's in each column?
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Are there any columns, values or codes you don't understand?
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Are there missing or obviously wrong values?
     </li>
     <li
-      data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Does the data need to be cleaned?
     </li>
-  </ol>
+  </ul>
 </section>
 <section>
   <h2>Cleaning</h2>
@@ -96,21 +87,29 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the provenance of the data using a note:
+      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"}]'
+      data-test="return !!workflow.tabs[0].wfModules[0].note"
+      >Add the provenance of the data using a note <span>
+        <img class="icon-insert" src="images/lesson-icons/note.svg">
+      </span>
       <div class="copy-txt">Source: City of San Francisco</div>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0))
+          return false
+
+        want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
+        have_cols = workflow.tabs[0].wfModules[1].params.colnames
+
+        return have_cols.split(',').sort().join(',') === want_cols"
       >Add a Select column step and keep the following columns (Start typing column names in the selector to go faster)
       <p>
-        <kbd>Planning neighborhood</kbd><br>
-        <kbd>Project status</kbd><br>
+        <kbd>Planning Neighborhood</kbd><br>
+        <kbd>Project Status</kbd><br>
         <kbd>Project Units</kbd><br>
-        <kbd>% affordable</kbd><br>
-        <kbd>Affordable units</kbd><br>
+        <kbd>Affordable Units</kbd><br>
+        <kbd>% Affordable</kbd><br>
       </p>
     </li>
   </ol>
@@ -124,19 +123,17 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'filter'"
       >Add <kbd>Filter by condition</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].colname === '% Affordable'"
       >Select the column <kbd>% Affordable</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set the condition to <kbd>greater than</kbd> and set the value to <kbd>50</kbd>.
+      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].condition === 'number_is_greater_than' &&
+                        workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].value === '50'"
+      >Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>.
       <p class ="instruction-detail">
         At the top left of the table, we see that 119 rows are left. This means that 119 projects include more than 50% affordable units.
       </p>
@@ -163,19 +160,14 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters.length > 1"
       >In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Set the new condition to 'If <kbd>Affordable_units</kbd> is <kbd>is greater than or equal</kbd> to <kbd>100</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Apply the new settings.
+      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].colname === 'Affordable Units' &&
+                        workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].condition === 'number_is_greater_than_or_equals' &&
+                        workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].value === '100'"
+      >Set this new condition to `If <kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>`.
       <p class ="instruction-detail">
         The table now displays all projects containing "more than 50% affordable units AND at least 100 affordable units".
       </p>
@@ -184,33 +176,33 @@
 </section>
 <section>
   <h2>Filtering rows by values</h2>
-  <p>We can also filter rows by selecting which values to include and exclude in a specific column.</p>
+  <p>We can also filter rows by selecting which values to include or exclude in a specific column.</p>
   <p>
     Let’s find projects that are likely to be completed by looking at the <kbd>Project Status</kbd> column.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add the step <kbd>Filter value</kbd>.
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'valuefilter'"
+      >Add the step <kbd>Filter by Value</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[3].params.column === 'Project Status'"
       >Select the column <kbd>Project status</kbd>
       <p class ="instruction-detail">
         All unique values in the column <kbd>Project Status</kbd> are listed in the step, as well as how many rows use each value.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        val_list = JSON.parse(workflow.tabs[0].wfModules[3].params.valueselect)
+        return val_list.indexOf('(3) Design with Entitlements Approved')>=0"
       >In ‘Filter by value’, select <kbd>(3) Design with entitlement Approved</kbd> to see only projects that are approved for construction, but not yet started.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        val_list = JSON.parse(workflow.tabs[0].wfModules[3].params.valueselect)
+        return val_list.indexOf('(4) Site Work Permit Issued')>=0"
       >Also select <kbd>(4) Site Work Permit</kbd> to add in projects at this later stage.
       <p class ="instruction-detail">
         By changing the selected values in <kbd>Filter by value</kbd> you can quickly get insight into the projects at any combination of development stages.

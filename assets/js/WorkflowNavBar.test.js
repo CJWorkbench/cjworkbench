@@ -1,105 +1,147 @@
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
-import { shallow } from 'enzyme'
-const Utils = require('./utils');
+import { shallow, mount } from 'enzyme'
+import { tick } from './test-utils'
+import Utils from './utils'
 import { jsonResponseMock } from './test-utils'
+
+jest.mock('./utils', () => ({
+  goToUrl: jest.fn(),
+}))
 
 
 describe('WorkflowNavBar', () => {
-  let wrapper;
-  let user;
-  let workflow;
-  const mockWorkflowCopy = {
-    id: 77,
-    name: 'Copy of Original Version',
-    owner_name: 'Paula Plagarizer',
-    public: false
-  };
-  let api;
-
-  let globalGoToUrl;
   beforeEach(() => {
-    wrapper = null
-    globalGoToUrl = Utils.goToUrl;
-    Utils.goToUrl = jest.fn();
-    api = {
-      duplicateWorkflow: jsonResponseMock(mockWorkflowCopy),
-    };
-  })
-  afterEach(() => {
-    Utils.goToUrl = globalGoToUrl
+    Utils.goToUrl.mockReset()
   })
 
-  it('With user logged in, Duplicate button sends user to new copy', (done) => {
-    user = {
-      id: 8
-    };
-    workflow = {
+  it('should link back to /lessons when viewing a lesson', () => {
+    const workflow = {
       id: 12,
       name: 'Original Version',
       owner_name: 'John Johnson',
       public: true
-    };
+    }
 
-    Utils.goToUrl = jest.fn();
+    const lesson = {
+      course: null,
+      header: { title: 'A Lesson' }
+    }
 
-    wrapper = shallow(
+    const api = { duplicateWorkflow: jest.fn() }
+
+    const wrapper = mount(
+      <WorkflowNavBar
+        workflow={workflow}
+        api={api}
+        lesson={lesson}
+        isReadOnly={false}
+      /> // no loggedInUser prop
+    )
+
+    const a = wrapper.find('.course a')
+    expect(a.prop('href')).toEqual('/lessons')
+    expect(a.text()).toEqual('Tutorials') // hard-coded
+  })
+
+  it('should link back to /courses/slug when viewing a lesson in a course', () => {
+    const workflow = {
+      id: 12,
+      name: 'Original Version',
+      owner_name: 'John Johnson',
+      public: true
+    }
+
+    const lesson = {
+      course: {
+        title: 'A Course',
+        slug: 'a-course'
+      },
+      header: { title: 'A Lesson' }
+    }
+
+    const api = { duplicateWorkflow: jest.fn() }
+
+    const wrapper = mount(
+      <WorkflowNavBar
+        workflow={workflow}
+        api={api}
+        lesson={lesson}
+        isReadOnly={false}
+      /> // no loggedInUser prop
+    )
+
+    const a = wrapper.find('.course a')
+    expect(a.prop('href')).toEqual('/courses/a-course')
+    expect(a.text()).toEqual('A Course')
+  })
+
+  it('should duplicate the workflow when user is logged in and clicks the button', async () => {
+    const workflow = {
+      id: 12,
+      name: 'Original Version',
+      owner_name: 'John Johnson',
+      public: true
+    }
+
+    const api = {
+      duplicateWorkflow: jest.fn(() => Promise.resolve({
+        id: 77,
+        name: 'Copy of Original Version',
+        owner_name: 'Paula Plagarizer',
+        public: false
+      }))
+    }
+
+    const wrapper = shallow(
       <WorkflowNavBar
         workflow={workflow}
         api={api}
         isReadOnly={false}
-        loggedInUser={user}
-        onChangeIsPublic={jest.fn()}
+        loggedInUser={{ id: 1 }}
       />
-    );
+    )
 
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.state().spinnerVisible).toBe(false);
+    expect(wrapper).toMatchSnapshot()
 
-    let button = wrapper.find('button[name="duplicate"]')
-    expect(button).toHaveLength(1);
-    button.first().simulate('click');
+    expect(wrapper.state().spinnerVisible).toBe(false)
 
+    wrapper.find('button[name="duplicate"]').simulate('click')
+
+    expect(api.duplicateWorkflow).toHaveBeenCalledWith(12)
     // spinner starts immediately
-    expect(wrapper.state().spinnerVisible).toBe(true);
+    expect(wrapper.state().spinnerVisible).toBe(true)
+    // user isn't redirected yet
+    expect(Utils.goToUrl).not.toHaveBeenCalled()
 
-    // then we wait for promise to resolve
-    setImmediate( () => {
-      expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/77');
-      expect(api.duplicateWorkflow).toHaveBeenCalled();
-      done();
-    });
-  });
+    await tick(); // wait for promise to resolve
 
-  it('With user NOT logged in, Duplicate button sends user to sign-in page', (done) => {
-    workflow = {
+    expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/77')
+  })
+
+  it('should redirect to sign-in page when user clicks duplicate button while not logged in', () => {
+    const workflow = {
       id: 303,
       name: 'Original Version',
       owner_name: 'Not LogggedIn',
       public: true
-    };
+    }
 
-    wrapper = shallow(
+    const api = { duplicateWorkflow: jest.fn() }
+
+    const wrapper = shallow(
       <WorkflowNavBar
         workflow={workflow}
         api={api}
-        isReadOnly={false}      // no loggedInUser prop
-        onChangeIsPublic={jest.fn()}
-      />
-    );
+        isReadOnly={false}
+      /> // no loggedInUser prop
+    )
 
-    expect(wrapper).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot()
 
-    let button = wrapper.find('button[name="duplicate"]')
-    expect(button).toHaveLength(1);
-    button.simulate('click');
+    wrapper.find('button[name="duplicate"]').simulate('click')
 
-    // wait for promise to resolve
-    setImmediate( () => {
-      expect(Utils.goToUrl).toHaveBeenCalledWith('/account/login');
-      expect(api.duplicateWorkflow.mock.calls.length).toBe(0);
-      done();
-    });
-
-  });
-});
+    expect(api.duplicateWorkflow).not.toHaveBeenCalled()
+    expect(Utils.goToUrl).toHaveBeenCalledWith('/account/login')
+  })
+})

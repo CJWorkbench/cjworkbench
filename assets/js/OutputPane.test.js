@@ -3,12 +3,13 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { OutputPane } from './OutputPane'
 import OutputIframe from './OutputIframe'
+import DelayedTableSwitcher from './table/DelayedTableSwitcher'
 
 describe('OutputPane', () => {
   const wrapper = function (extraProps = {}) {
     return shallow(
       <OutputPane
-        api={{}}
+        loadRows={jest.fn()}
         workflowId={123}
         wfModule={{id: 987, deltaId: 1, status: 'ok', htmlOutput: false}}
         isPublic={false}
@@ -23,15 +24,15 @@ describe('OutputPane', () => {
     expect(w).toMatchSnapshot()
   })
 
-  it('renders a TableSwitcher', () => {
+  it('renders a DelayedTableSwitcher', () => {
     const w = wrapper()
-    expect(w.find('TableSwitcher')).toHaveLength(1)
+    expect(w.find(DelayedTableSwitcher)).toHaveLength(1)
   })
 
   it('renders when no module id', () => {
     const w = wrapper({ wfModule: null })
     expect(w).toMatchSnapshot()
-    expect(w.find('TableSwitcher')).toHaveLength(1)
+    expect(w.find(DelayedTableSwitcher)).toHaveLength(1)
   })
 
   it('renders an iframe when htmlOutput', () => {
@@ -44,19 +45,14 @@ describe('OutputPane', () => {
     expect(w2.find(OutputIframe).prop('visible')).toBe(false)
   })
 
-  it('renders a spinner when busy', () => {
-    const w = wrapper({ wfModule: { id: 1, deltaId: 2, htmlOutput: true, status: 'busy' }})
-    expect(w.find('.spinner-container-transparent')).toHaveLength(1)
-  })
-
   it('renders different table than iframe when desired', () => {
     const w = wrapper({
       // even if before-error has htmlOutput, we won't display that one
       wfModuleBeforeError: { id: 1, deltaId: 2, status: 'ok', htmlOutput: true },
       wfModule: { id: 3, deltaId: 4, status: 'error', htmlOutput: true }
     })
-    expect(w.find('TableSwitcher').prop('wfModuleId')).toEqual(1)
-    expect(w.find('TableSwitcher').prop('deltaId')).toEqual(2)
+    expect(w.find(DelayedTableSwitcher).prop('wfModuleId')).toEqual(1)
+    expect(w.find(DelayedTableSwitcher).prop('deltaId')).toEqual(2)
     expect(w.text()).toMatch(/This was the data that led to an error./)
     expect(w.find(OutputIframe).prop('wfModuleId')).toEqual(3)
     expect(w.find(OutputIframe).prop('deltaId')).toEqual(4)

@@ -64,6 +64,8 @@ export default class JoinColumns extends React.PureComponent {
           onChange={this.onChangeOn}
           label='Join on'
           inputColumns={bothColumns}
+          addMenuListClassName='join-on'
+          noOptionsMessage={rightTab ? `There is no column to join on in "${rightTab.name}". Columns in both tabs must have identical names and capitalization. Please edit column names.` : undefined}
           value={value.on}
         />
         <Multicolumn

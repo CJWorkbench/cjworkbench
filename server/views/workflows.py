@@ -15,13 +15,12 @@ from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
 from server.models import ModuleVersion, Workflow, WfModule
 from server.models.course import CourseLookup
-from server.models.lesson import Lesson
+from server.models.lesson import LessonLookup
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
 import server.utils
-from .auth import lookup_workflow_for_write, \
-        loads_workflow_for_read, lookup_workflow_for_owner
+from .auth import lookup_workflow_for_write, loads_workflow_for_read
 
 
 def make_init_state(request, workflow=None, modules=None):
@@ -137,7 +136,8 @@ def _get_anonymous_workflow_for(workflow: Workflow,
                                                      {'name': workflow.name})
         new_workflow = workflow.duplicate_anonymous(session_key)
 
-        async_to_sync(new_workflow.last_delta.schedule_execute)()
+        async_to_sync(rabbitmq.queue_render)(new_workflow.id,
+                                             new_workflow.last_delta_id)
 
         return new_workflow
 
@@ -161,14 +161,9 @@ def _lesson_exists(slug):
             course = CourseLookup[course_slug]
         except KeyError:
             return False
-        lesson = course.find_lesson_by_slug(lesson_slug)
-        return lesson is not None
+        return lesson_slug in course.lessons
     else:
-        try:
-            Lesson.objects.get(slug)
-            return True
-        except Lesson.DoesNotExist:
-            return False
+        return slug in LessonLookup
 
 
 # no login_required as logged out users can view example/public workflows
@@ -233,8 +228,13 @@ def workflow_detail(request, workflow_id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        workflow = lookup_workflow_for_owner(workflow_id, request)
-        workflow.delete()
+        with Workflow.authorized_lookup_and_cooperative_lock(
+            'owner',
+            request.user,
+            request.session,
+            pk=workflow_id
+        ) as workflow:
+            workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -250,6 +250,7 @@ class Duplicate(View):
                                                  'Duplicate Workflow',
                                                  {'name': workflow.name})
 
-        async_to_sync(workflow2.last_delta.schedule_execute)()
+        async_to_sync(rabbitmq.queue_render)(workflow2.id,
+                                             workflow2.last_delta_id)
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)

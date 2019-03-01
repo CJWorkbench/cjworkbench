@@ -177,7 +177,7 @@ function buildSelectColumnsParams (oldParams, params) {
 }
 
 function buildEditCellsParams (oldParams, params) {
-  const edits = (oldParams && oldParams.celledits) ? JSON.parse(oldParams.celledits) : []
+  const edits = (oldParams && oldParams.celledits) ? oldParams.celledits : []
   const edit = params
 
   // Remove the previous edit to the same cell
@@ -185,10 +185,10 @@ function buildEditCellsParams (oldParams, params) {
 
   if (idx === -1) {
     edits.push(edit)
-    return { celledits: JSON.stringify(edits) }
+    return { celledits: edits }
   } else if (edits[idx].value !== edit.value) {
     edits.splice(idx, 1, edit)
-    return { celledits: JSON.stringify(edits) }
+    return { celledits: edits }
   } else {
     return null
   }
@@ -260,14 +260,18 @@ function genericAddColumn (key) {
 
 function buildRenameColumnsParams (oldParams, params) {
   // renameInfo format: {prevName: <current column name in table>, newName: <new name>}
-  const entries = (oldParams && oldParams['rename-entries']) ? JSON.parse(oldParams['rename-entries']) : {}
+  const renames = oldParams && oldParams.renames || {}
   const { prevName, newName } = params
 
-  if (entries[prevName] === newName) {
+  if (renames[prevName] === newName) {
     return null
   } else {
-    entries[prevName] = newName
-    return { 'rename-entries': JSON.stringify(entries) }
+    return {
+      renames: {
+        ...renames,
+        [prevName]: newName
+      }
+    }
   }
 }
 

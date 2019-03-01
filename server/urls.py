@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
+from django.contrib.staticfiles import views as staticfiles_views
 from .views import acl, lessons, oauth, uploads, workflows
 from .views.UploadedFileView import get_uploadedfile
 
@@ -64,7 +66,9 @@ urlpatterns = [
     _DELETEME_intro_course_redirect('adjusting-for-inflation', 'inflation'),
 
     url(r'^lessons/$', lessons.render_lesson_list),
+    url(r'^lessons2/$', lessons.render_lesson_list2),
     url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', lessons.render_lesson_detail),
+    url(r'^courses/(?P<course_slug>[-a-z0-9]+)$', lessons.render_course),
     url(r'^courses/(?P<course_slug>[-a-z0-9]+)/(?P<lesson_slug>[-a-z0-9]+)$',
         lessons.render_course_lesson_detail),
 
@@ -109,3 +113,6 @@ urlpatterns = [
     # 403
     url(r'^403/$', TemplateView.as_view(template_name='403.html')),
 ]
+
+if settings.DEBUG:
+    urlpatterns.append(url(r'^static/(?P<path>.*)$', staticfiles_views.serve))

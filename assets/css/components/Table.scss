@@ -86,11 +86,6 @@
       // Subtly fade out old data. The user doesn't want it.
       opacity: .9;
     }
-
-    .loading-table .spinner-container-transparent {
-      // .loading-table gets its own spinner; we don't need a second.
-      display: none;
-    }
   }
 
   .outputpane-table {

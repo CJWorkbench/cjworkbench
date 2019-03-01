@@ -54,9 +54,6 @@ class ReorderTabsCommand(Delta, ChangesWfModuleOutputs):
         self._write_order(self.old_order)
         self._update_selected_position(self.new_order, self.old_order)
 
-    async def schedule_execute(self):
-        pass
-
     @classmethod
     def affected_wf_module_delta_ids(
         cls,

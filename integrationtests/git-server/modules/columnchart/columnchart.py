@@ -1,6 +1,10 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 import json
 from typing import Any, Dict, List
 import pandas
+from pandas.api.types import is_numeric_dtype
 
 
 MaxNBars = 500
@@ -14,34 +18,38 @@ class GentleValueError(ValueError):
     hasn't selected what to chart. So we'll display the error in the iframe:
     we'll be gentle with the user.
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
 
+@dataclass(frozen=True)
 class XSeries:
-    def __init__(self, series: pandas.Series, name: str):
-        self.series = series
-        self.name = name
+    series: pandas.Series
+
+    @property
+    def name(self):
+        return self.series.name
 
 
+@dataclass(frozen=True)
 class YSeries:
-    def __init__(self, series: pandas.Series, name: str, color: str):
-        self.series = series
-        self.name = name
-        self.color = color
+    series: pandas.Series
+    color: str
+
+    @property
+    def name(self):
+        return self.series.name
 
 
+@dataclass(frozen=True)
 class SeriesParams:
     """
     Fully-sane parameters. Columns are series.
     """
-    def __init__(self, *, title: str, x_axis_label: str, y_axis_label: str,
-                 x_series: XSeries, y_columns: List[YSeries]):
-        self.title = title
-        self.x_axis_label = x_axis_label
-        self.y_axis_label = y_axis_label
-        self.x_series = x_series
-        self.y_columns = y_columns
+
+    title: str
+    x_axis_label: str
+    y_axis_label: str
+    x_series: XSeries
+    y_columns: List[YSeries]
 
     def to_vega_data_values(self) -> List[Dict[str, Any]]:
         """
@@ -246,36 +254,27 @@ class SeriesParams:
         return ret
 
 
+@dataclass(frozen=True)
 class YColumn:
-    def __init__(self, column: str, color: str):
-        self.column = column
-        self.color = color
+    column: str
+    color: str
 
 
+@dataclass(frozen=True)
 class Form:
     """
     Parameter dict specified by the user: valid types, unchecked values.
     """
-    def __init__(self, *, title: str, x_axis_label: str, y_axis_label: str,
-                 x_column: str, y_columns: List[YColumn]):
-        self.title = title
-        self.x_axis_label = x_axis_label
-        self.y_axis_label = y_axis_label
-        self.x_column = x_column
-        self.y_columns = y_columns
 
-    @staticmethod
-    def from_params(params: Dict[str, Any]) -> 'Form':
-        title = str(params.get('title', ''))
-        x_axis_label = str(params.get('x_axis_label', ''))
-        y_axis_label = str(params.get('y_axis_label', ''))
-        x_column = str(params.get('x_column', ''))
-        y_columns = Form.parse_y_columns(
-            params.get('y_columns', 'null')
-        )
-        return Form(title=title, x_axis_label=x_axis_label,
-                          y_axis_label=y_axis_label, x_column=x_column,
-                          y_columns=y_columns)
+    title: str
+    x_axis_label: str
+    y_axis_label: str
+    x_column: str
+    y_columns: List[YColumn]
+
+    @classmethod
+    def from_params(cls, *, y_columns: List[Dict[str, str]], **kwargs) -> Form:
+        return Form(**kwargs, y_columns=[YColumn(**y) for y in y_columns])
 
     def validate_with_table(self, table: pandas.DataFrame) -> SeriesParams:
         """
@@ -288,6 +287,7 @@ class Form:
         [ ] Error if too many bars
         [ ] Error if a Y column is missing
         [ ] Error if a Y column is the X column
+        [ ] Error if a Y column is not numeric
         [ ] Default title, X and Y axis labels
         [ ] DOES NOT WORK - nix NA X values
         """
@@ -297,30 +297,31 @@ class Form:
                 f'a maximum of {MaxNBars} bars'
             )
 
-        if self.x_column not in table.columns:
+        if not self.x_column:
             raise GentleValueError('Please choose an X-axis column')
         if not self.y_columns:
             raise GentleValueError('Please choose a Y-axis column')
 
-        x_series = XSeries(table[self.x_column].astype(str), self.x_column)
+        x_series = XSeries(table[self.x_column].astype(str))
 
         y_columns = []
-        for ycolumn in self.y_columns:
-            if ycolumn.column not in table.columns:
+        for y_column in self.y_columns:
+            if y_column.column == self.x_column:
                 raise ValueError(
-                    f'Cannot plot Y-axis column {ycolumn.column} '
-                    'because it does not exist'
-                )
-            elif ycolumn.column == self.x_column:
-                raise ValueError(
-                    f'You cannot plot Y-axis column {ycolumn.column} '
+                    f'You cannot plot Y-axis column {y_column.column} '
                     'because it is the X-axis column'
                 )
 
-            series = table[ycolumn.column]
-            floats = pandas.to_numeric(series, errors='coerce')
-            floats.fillna(0.0, inplace=True)
-            y_columns.append(YSeries(floats, ycolumn.column, ycolumn.color))
+            series = table[y_column.column]
+
+            if not is_numeric_dtype(series.dtype):
+                raise ValueError(
+                    f'Cannot plot Y-axis column "{y_column.column}" '
+                    'because it is not numeric. '
+                    'Convert it to a number before plotting it.'
+                )
+
+            y_columns.append(YSeries(series, y_column.color))
 
         if not len(table):
             raise GentleValueError('no records to plot')
@@ -333,26 +334,34 @@ class Form:
                             y_axis_label=y_axis_label, x_series=x_series,
                             y_columns=y_columns)
 
-    @staticmethod
-    def parse_y_columns(s):
-        try:
-            arr = json.loads(s)
-            return [YColumn(str(o.get('column', '')),
-                            str(o.get('color', '#000000')))
-                    for o in arr]
-        except json.decoder.JSONDecodeError:
-            # Not valid JSON
-            return []
-        except TypeError:
-            # arr is not iterable
-            return []
-        except AttributeError:
-            # an element of arr is not a dict
-            return []
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: params['y_columns'] is JSON-encoded.
+
+    v1: params['y_columns'] is List[Dict[{ name, color }, str]].
+    """
+    json_y_columns = params['y_columns']
+    if not json_y_columns:
+        # empty str => no columns
+        y_columns = []
+    else:
+        y_columns = json.loads(json_y_columns)
+    return {
+        **params,
+        'y_columns': y_columns
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['y_columns'], str):
+        params = _migrate_params_v0_to_v1(params)
+
+    return params
 
 
 def render(table, params):
-    form = Form.from_params(params)
+    form = Form.from_params(**params)
     try:
         valid_params = form.validate_with_table(table)
     except GentleValueError as err:

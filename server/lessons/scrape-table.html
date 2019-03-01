@@ -33,17 +33,20 @@
 </section>
 <section>
   <h2>2. Clean double header rows</h2>
-  <p>The <a href="https://en.wikipedia.org/wiki/Global_Gender_Gap_Report" class="highlight" target="_blank">original table</a> has two header rows nested in each other:
-    <figure>
-      <img alt="Inspect element" src="images/scrape_table/double_header.png">
-    </figure>When scraping, Workbench collapses all header rows into a single header by concatenating content in each column.</p>
+  <p>The <a href="https://en.wikipedia.org/wiki/Global_Gender_Gap_Report" class="highlight" target="_blank">original table</a> has two header rows nested in each other:</p>
+  <figure>
+    <img alt="Inspect element" src="images/scrape_table/double_header.png">
+  </figure>
+  <p>When scraping, Workbench collapses all header rows into a single header by concatenating content in each column.</p>
   <h3 class="instructions">Instructions</h3>
   <p>Rename the column's header</p>
   <ol class="steps">
     <li
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModuleNames[1] === 'Rename columns'"
-      >Click column names in the header of the table to rename them and only keep the year, for example:</br>Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.
+      >Click column names in the header of the table to rename them and only
+      keep the year.
+      <p>For example: Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.</p>
     </li>
   </ol>
 </section>
@@ -63,8 +66,8 @@
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
       data-test="return workflow.tabs[0].wfModules[0].params.tablenum === 4"
       >Set the table's position on the page to <code>4</code>
-      <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.
-      </br>Try scraping positions <code>1</code> to <code>5</code>, and check the original page to understand where other HTML tables are located.</p>
+      <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.</p>
+      <p class="instruction-detail">Try scraping positions <code>1</code> to <code>5</code>, and check the original page to understand where other HTML tables are located.</p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
@@ -80,10 +83,10 @@
     <p class="summary"> You scraped an HTML table and loaded it into Workbench.</p>
   </div>
   <div class="next">
-    <h2>Continue learning:</h4>
-      <ol>
-        <li><a href="/lessons/clean-and-standardize/">Clean and standardize data</a></li>
-        <li><a href="/lessons/clean-and-standardize/">Scrape to monitor content on a webpage</a></li>
-      </ol>
+    <h4>Continue learning:</h4>
+    <ol>
+      <li><a href="/lessons/clean-and-standardize/">Clean and standardize data</a></li>
+      <li><a href="/lessons/clean-and-standardize/">Scrape to monitor content on a webpage</a></li>
+    </ol>
   </div>
 </footer>

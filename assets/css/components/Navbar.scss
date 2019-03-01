@@ -198,22 +198,18 @@
   .title-metadata-stack {
     flex-grow: 1;
 
-    .WF-meta {
-      position: relative;
-      top:-.1rem;
+    .course {
+      @include title-3;
+      margin-top: .2rem;
+      margin-bottom: .4rem;
 
-      li, span {
-        line-height: 1.3rem;
-        height: 1rem;
+      a {
+        color: white;
       }
-
-    .publicPrivate:hover {text-decoration: underline;}
-
-
     }
 
     .editable-title--field {
-      @extend .title-2;
+      @include title-2;
       position: relative;
       top:.1rem;
       min-width: 100%;
@@ -229,6 +225,20 @@
 
       &:hover {
         background-color: $light-accent--strong;
+      }
+    }
+
+    .WF-meta {
+      position: relative;
+      top: -.1rem;
+
+      li, span {
+        line-height: 1.3rem;
+        height: 1rem;
+      }
+
+      .publicPrivate:hover {
+        text-decoration: underline;
       }
     }
   }

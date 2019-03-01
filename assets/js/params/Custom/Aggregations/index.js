@@ -8,7 +8,8 @@ const DefaultAddValue = { operation: 'sum', colname: '', outname: '' }
 export default class Aggregations extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired, // for <input> names
+    name: PropTypes.string.isRequired, // <input name=...>
+    fieldId: PropTypes.string.isRequired, // <input id=...>
     value: PropTypes.arrayOf(PropTypes.shape({
       operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'min', 'max', 'first']).isRequired,
       colname: PropTypes.string.isRequired,
@@ -59,7 +60,7 @@ export default class Aggregations extends React.PureComponent {
   }
 
   render () {
-    const { name, inputColumns, isReadOnly } = this.props
+    const { name, fieldId, inputColumns, isReadOnly } = this.props
     const value = this.value
     const onDelete = value.length <= 1 ? null : this.onDeleteAggregation
 
@@ -72,6 +73,7 @@ export default class Aggregations extends React.PureComponent {
               key={index}
               isReadOnly={isReadOnly}
               name={`${name}[${index}]`}
+              fieldId={`${fieldId}_${index}`}
               index={index}
               inputColumns={inputColumns}
               {...aggregation}

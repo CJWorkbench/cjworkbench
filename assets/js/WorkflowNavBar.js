@@ -2,15 +2,91 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import UndoRedoButtons from './UndoRedoButtons'
-import EditableWorkflowName from './EditableWorkflowName'
+import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
 import { goToUrl, logUserEvent } from './utils'
 import ShareModal from './ShareModal'
+
+
+function NoOp () {}
+
+
+function LessonCourse ({ course }) {
+  let path
+  let title
+
+  if (course) {
+    path = '/courses/' + course.slug
+    title = course.title
+  } else {
+    path = '/lessons'
+    title = 'Tutorials'
+  }
+
+  return (
+    <div className='course'>
+      <a href={path}>{title}</a>
+    </div>
+  )
+}
+
+
+function LessonWorkflowTitle ({ lesson }) {
+  return (
+    <div className='title-metadata-stack'>
+      <LessonCourse course={lesson.course} />
+      <EditableWorkflowName
+        value={lesson.header.title}
+        setWorkflowName={NoOp}
+        isReadOnly
+      />
+    </div>
+  )
+}
+
+
+function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow, openShareModal }) {
+  return (
+    <div className='title-metadata-stack'>
+      <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
+      <WorkflowMetadata workflow={workflow} openShareModal={openShareModal} />
+    </div>
+  )
+}
+
+
+function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow, openShareModal }) {
+  if (lesson) {
+    return (
+      <LessonWorkflowTitle
+        lesson={lesson}
+      />
+    )
+  } else {
+    return (
+      <OwnedWorkflowTitleAndMetadata
+        isReadOnly={isReadOnly}
+        workflow={workflow}
+        openShareModal={openShareModal}
+      />
+    )
+  }
+}
+
 
 export default class WorkflowNavBar extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
+    lesson: PropTypes.shape({
+      course: PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+      }), // optional -- no course means plain lesson
+      header: PropTypes.shape({
+        title: PropTypes.string.isRequired
+      }).isRequired
+    }), // optional -- no lesson means we're not in the "lessons" interface
     isReadOnly: PropTypes.bool.isRequired,
     loggedInUser: PropTypes.object // undefined if no user logged in
   }
@@ -75,7 +151,7 @@ export default class WorkflowNavBar extends React.Component {
   }
 
   render() {
-    const { api, isReadOnly, loggedInUser, workflow } = this.props
+    const { api, isReadOnly, loggedInUser, lesson, workflow } = this.props
 
     // menu only if there is a logged-in user
     let contextMenu
@@ -120,16 +196,20 @@ export default class WorkflowNavBar extends React.Component {
             <a href='/workflows/' className='logo-navbar'>
               <img className='image' src={`${window.STATIC_URL}images/logo.svg`}/>
             </a>
-            <div className='title-metadata-stack'>
-              <EditableWorkflowName isReadOnly={isReadOnly} />
-              <WorkflowMetadata workflow={this.props.workflow} openShareModal={this.openShareModal} />
-            </div>
+            <WorkflowTitleAndMetadata
+              lesson={lesson}
+              isReadOnly={isReadOnly}
+              workflow={workflow}
+              openShareModal={this.openShareModal}
+            />
             <div className='nav-buttons'>
               {isReadOnly ? null : (
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
               <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
-              <button name='share' onClick={this.openShareModal}>Share</button>
+              {lesson ? null : ( /* We haven't yet designed what it means to share a lesson workflow. */
+                <button name='share' onClick={this.openShareModal}>Share</button>
+              )}
               {contextMenu}
             </div>
           </div>

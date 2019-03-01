@@ -1,5 +1,7 @@
 import json
+from typing import Optional
 from asgiref.sync import async_to_sync
+from django.conf import settings
 from django.db import transaction
 from django.http import Http404
 from django.http.response import HttpResponseServerError
@@ -8,37 +10,34 @@ from django.utils.translation import gettext as _
 from server import rabbitmq
 from server.models.commands import InitWorkflowCommand
 from server.models import Workflow, ModuleVersion
-from server.models.course import Course, CourseLookup
-from server.models.lesson import Lesson
+from server.models.course import Course, CourseLookup, AllCourses
+from server.models.lesson import Lesson, AllLessons, LessonLookup
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
 
 
-# because get_object_or_404() is for _true_ django.db.models.Manager
-def _get_lesson_or_404(slug):
+def _get_course_or_404(slug):
     try:
-        return Lesson.objects.get(slug)
-    except Lesson.DoesNotExist:
-        raise Http404(_('Lesson does not exist'))
-
-
-def _get_course_and_lesson_or_404(course_slug, lesson_slug) -> Course:
-    """
-    Return (Course, Lesson) or raise Http404.
-    """
-
-    try:
-        course = CourseLookup[course_slug]
+        return CourseLookup[slug]
     except KeyError:
         raise Http404('Course does not exist')
 
-    lesson = course.find_lesson_by_slug(lesson_slug)
-    if not lesson:
+
+def _get_lesson_or_404(course_slug: Optional[str], lesson_slug: str):
+    """
+    Return Lesson or raise Http404.
+    """
+    try:
+        if course_slug is None:
+            return LessonLookup[lesson_slug]
+        else:
+            course = _get_course_or_404(course_slug)  # raises Http404
+            return course.lessons[lesson_slug]
+    except KeyError:
         raise Http404('Course does not contain lesson')
-    return course, lesson
 
 
-def _ensure_workflow(request, course: Course, lesson: Lesson):
+def _ensure_workflow(request, lesson: Lesson):
     if request.user.is_authenticated:
         owner = request.user
         session_key = None
@@ -50,10 +49,10 @@ def _ensure_workflow(request, course: Course, lesson: Lesson):
 
     # full_slug: 'intro-to-data-journalism/group' (it's in a course) or
     # 'scrape-table' (course=None)
-    if course is None:
+    if lesson.course is None:
         full_slug = lesson.slug
     else:
-        full_slug = '/'.join((course.slug, lesson.slug))
+        full_slug = '/'.join((lesson.course.slug, lesson.slug))
 
     with transaction.atomic():
         workflow, created = Workflow.objects.get_or_create(
@@ -89,10 +88,11 @@ def _init_workflow_for_lesson(workflow, lesson):
         )
 
         for order, wfm in enumerate(tab_dict['wfModules']):
-            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id)
+            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id,
+                                  lesson)
 
 
-def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id):
+def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
     """
     Deserialize a WfModule from lesson initial_workflow
     """
@@ -108,6 +108,22 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id):
         **module_version.default_params,
         **wfm_dict['params'],
     }
+
+    # Rewrite 'url' params: if the spec has them as relative, make them the
+    # absolute path -- relative to the lesson URL.
+    if 'url' in params:
+        if params['url'].startswith('./'):
+            params['url'] = ''.join([
+                settings.STATIC_URL,
+                (
+                    'lessons/' if lesson.course is None else 'courses/'
+                ),
+                (
+                    lesson.slug if lesson.course is None
+                    else f'{lesson.course.slug}/{lesson.slug}'
+                ),
+                params['url'][1:],  # include the '/'
+            ])
 
     # 500 error if params are invalid
     # TODO testme
@@ -141,9 +157,9 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
                                              workflow.last_delta_id)
 
 
-def _render_get_lesson_detail(request, course, lesson):
+def _render_get_lesson_detail(request, lesson):
     try:
-        workflow, created = _ensure_workflow(request, course, lesson)
+        workflow, created = _ensure_workflow(request, lesson)
     except ModuleVersion.DoesNotExist:
         return HttpResponseServerError('initial_json asks for missing module')
     except ValueError as err:
@@ -165,19 +181,18 @@ def _render_get_lesson_detail(request, course, lesson):
 
 # Even allowed for logged-out users
 def render_course_lesson_detail(request, course_slug, lesson_slug):
-    course, lesson = _get_course_and_lesson_or_404(course_slug, lesson_slug)
-    return _render_get_lesson_detail(request, course, lesson)
+    lesson = _get_lesson_or_404(course_slug, lesson_slug)
+    return _render_get_lesson_detail(request, lesson)
 
 
 # Even allowed for logged-out users
 def render_lesson_detail(request, slug):
-    lesson = _get_lesson_or_404(slug)
-    return _render_get_lesson_detail(request, None, lesson)
+    lesson = _get_lesson_or_404(None, slug)
+    return _render_get_lesson_detail(request, lesson)
 
 
 # Even allowed for logged-out users
 def render_lesson_list(request):
-    lessons = Lesson.objects.all()
     logged_in_user = None
     if request.user and request.user.is_authenticated:
         logged_in_user = UserSerializer(request.user).data
@@ -186,5 +201,40 @@ def render_lesson_list(request):
         'initState': json.dumps({
             'loggedInUser': logged_in_user,
         }),
-        'lessons': lessons,
+        'lessons': AllLessons,
     })
+
+
+def _render_course(request, course, lesson_url_prefix):
+    logged_in_user = None
+    if request.user and request.user.is_authenticated:
+        logged_in_user = UserSerializer(request.user).data
+
+    # We render using HTML, not React, to make this page SEO-friendly.
+    return TemplateResponse(request, 'course.html', {
+        'initState': json.dumps({
+            'loggedInUser': logged_in_user,
+        }),
+        'course': course,
+        'courses': AllCourses,
+        'lessons': list(course.lessons.values()),
+        'lesson_url_prefix': lesson_url_prefix,
+
+    })
+
+
+# Even allowed for logged-out users
+def render_lesson_list2(request):
+    # Make a "fake" Course to encompass Lessons
+    #
+    # Do not build this Course using LessonLookup: LessonLookup contains
+    # "hidden" lessons; AllLessons does not.
+    course = Course(title='Lessons',
+                    lessons=dict((l.slug, l) for l in AllLessons))
+    return _render_course(request, course, '/lessons')
+
+
+# Even allowed for logged-out users
+def render_course(request, course_slug):
+    course = _get_course_or_404(course_slug)
+    return _render_course(request, course, '/courses/' + course.slug)

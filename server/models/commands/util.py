@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Q

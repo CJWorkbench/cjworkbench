@@ -51,9 +51,6 @@ class DeleteTabCommand(Delta):
         self.workflow.selected_tab_position = self.tab.position
         self.workflow.save(update_fields=['selected_tab_position'])
 
-    async def schedule_execute(self):
-        pass
-
     @classmethod
     def amend_create_kwargs(cls, *, workflow: Workflow, tab: Tab):
         if tab.is_deleted:

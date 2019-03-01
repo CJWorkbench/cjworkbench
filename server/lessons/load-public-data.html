@@ -24,7 +24,7 @@
       <div class="copy-txt">http://production-static.workbenchdata.com/data/affordable_housing_1.csv</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',
+      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]'
       data-test="return !!workflow.tabs[0].wfModules[0].note"
       >Add a note
       <span>
@@ -54,7 +54,7 @@
       >Add the step ‘Column Chart’ using the search</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; if (p.x_column !== 'city_neighborhood') return false; const yColumns = JSON.parse(p.y_columns || '[]'); return yColumns.length === 1 && yColumns[0].column === 'affordable_units';"
+      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; if (p.x_column !== 'city_neighborhood') return false; return p.y_columns.length === 1 && p.y_columns[0].column === 'affordable_units'"
       >
       Select <kbd>city_neighborhood</kbd> for the X axis and <kbd>affordable_units</kbd> for the Y axis.</li>
     <li
@@ -74,8 +74,8 @@
       >Add the step ‘Filter by condition’ between 'Add from URL' and 'Column Chart'.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
-      data-test="const p = workflow.tabs[0].wfModules[1].params; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep === 0"
-      >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd></br> and enter the value <kbd>200</kbd>.</li>
+      data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep === 0"
+      >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd><br/> and enter the value <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule && state.selectedWfModule.moduleName === 'Column Chart'"
@@ -89,13 +89,13 @@
     <p class="summary"> You created your first chart and learned workflow basics.</p>
   </div>
   <div class="next">
-    <h2>Next</h4>
+    <h4>Next</h4>
     <p>
       Get the embed code to publish the chart by clicking on the
       <img class="icon-insert" src="images/url_chart_lesson/embbed_button.svg" />
       button at the top right of the chart panel.
     </p>
-    <h2>Continue learning:</h4>
+    <h4>Continue learning:</h4>
     <ol>
       <li><a href="/lessons/clean-and-standardize/">Clean and standardize data</a></li>
       <li><a href="/lessons/clean-and-standardize/">Scrape to monitor content on a webpage</a></li>

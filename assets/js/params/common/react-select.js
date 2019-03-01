@@ -90,6 +90,8 @@ export default class ReactSelect extends React.PureComponent {
     ]), // or null|undefined
     isLoading: PropTypes.bool, // default null
     isMulti: PropTypes.bool, // default false
+    addMenuListClassName: PropTypes.string, // default undefined. Queried by MenuList in Multicolumn.js
+    noOptionsMessage: PropTypes.string, // default 'No options'
     components: PropTypes.object, // or undefined -- overrides react-select components
     onChange: PropTypes.func.isRequired // func(value|null or [values]) => undefined
   }
@@ -98,6 +100,8 @@ export default class ReactSelect extends React.PureComponent {
     ...DefaultOverrideComponents,
     ...(this.props.components || {})
   }
+
+  noOptionsMessage = () => this.props.noOptionsMessage || 'No options'
 
   onChange = (reactSelectValue) => {
     const { isMulti, onChange } = this.props
@@ -113,7 +117,7 @@ export default class ReactSelect extends React.PureComponent {
   }
 
   render () {
-    const { name, inputId, placeholder, options, selected, isLoading, isMulti, isReadOnly, value } = this.props
+    const { name, inputId, placeholder, options, selected, isLoading, isMulti, isReadOnly, addMenuListClassName, value } = this.props
 
     let reactSelectValue
     if (isMulti) {
@@ -122,7 +126,11 @@ export default class ReactSelect extends React.PureComponent {
       reactSelectValue = options ? (options.find(option => value === option.value) || null) : null
     }
 
-    const className = `react-select ${isMulti ? 'multiple' : 'single'}${isLoading ? ' loading' : ''}`
+    const classNames = ['react-select']
+    classNames.push(isMulti ? 'multiple' : 'single')
+    if (isLoading) classNames.push('loading')
+
+    // addMenuListClassName prop will be read by <MenuList> in Multicolumn
 
     return (
       <Select
@@ -132,11 +140,13 @@ export default class ReactSelect extends React.PureComponent {
         value={reactSelectValue}
         isLoading={isLoading}
         isMulti={isMulti || false}
-        className={className}
+        className={classNames.join(' ')}
         classNamePrefix='react-select'
+        addMenuListClassName={addMenuListClassName}
         menuPortalTarget={document.body /* passed as props.appendTo to PopperMenuPortal */}
         styles={NoStyles}
         components={this.components}
+        noOptionsMessage={this.noOptionsMessage}
         onChange={this.onChange}
         isClearable={false}
         isDisabled={isReadOnly}

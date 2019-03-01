@@ -24,7 +24,8 @@ export class Lesson extends React.PureComponent {
     })).isRequired,
     footer: PropTypes.shape({
       title: PropTypes.string.isRequired,
-      html: PropTypes.string.isRequired
+      html: PropTypes.string.isRequired,
+      isFullScreen: PropTypes.bool.isRequired
     }).isRequired,
 
     /*
@@ -70,6 +71,7 @@ export class Lesson extends React.PureComponent {
 
   render() {
     const { slug, header, footer, sections, activeSectionIndex, activeStepIndex } = this.props
+    const { currentSectionIndex } = this.state
 
     const sectionComponents = sections.map((s, i) => {
       return <LessonSection
@@ -82,13 +84,13 @@ export class Lesson extends React.PureComponent {
       />
     })
 
-    const isFullScreen = this.props.sections[this.state.currentSectionIndex]  ?
-      this.props.sections[this.state.currentSectionIndex].isFullScreen :
-      null
-    const articleClass = isFullScreen ? "lesson fullscreen" : "lesson"
+    const currentSectionOrFooter = sections[currentSectionIndex] || footer
+    const isFullScreen = currentSectionOrFooter.isFullScreen
+    const classNames = [ 'lesson' ]
+    if (isFullScreen) classNames.push('fullscreen')
 
     return (
-      <article className={articleClass}>
+      <article className={classNames.join(' ')}>
         <LessonAnalyticsTracker
           slug={slug}
           sections={sections}
@@ -106,6 +108,7 @@ export class Lesson extends React.PureComponent {
             key='footer'
             isCurrent={this.state.currentSectionIndex === sections.length}
             isFinished={this.props.activeSectionIndex === null}
+            isFullScreen={footer.is_full_screen}
             {...footer}
           />
         </div>
@@ -114,7 +117,7 @@ export class Lesson extends React.PureComponent {
           activeSectionIndex={activeSectionIndex}
           currentSectionIndex={this.state.currentSectionIndex}
           setCurrentSectionIndex={this.setCurrentSectionIndex}
-          />
+        />
       </article>
     )
   }

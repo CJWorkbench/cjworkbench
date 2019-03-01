@@ -1,5 +1,7 @@
+from __future__ import annotations
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Union
 
 
 class ParamDType:
@@ -426,6 +428,42 @@ class ParamDTypeMultitab(ParamDTypeList):
     # iter_dfs_dtypes(): ParamDTypeList will do what we want
     # iter_dfs_dtype_values(): ParamDTypeList will do what we want
 
+    # override
+    @classmethod
+    def _from_plain_data(cls, **kwargs):
+        # don't require inner_dtype like ParamDTypeList does
+        return cls(**kwargs)
+
+
+class ParamDTypeMultichartseries(ParamDTypeList):
+    """
+    A 'y_series' parameter: array of columns+colors.
+
+    This is like a List[Dict], except when omitting table columns we omit the
+    entire Dict if its Column is missing.
+    """
+
+    def __init__(self, default=[]):
+        super().__init__(inner_dtype=ParamDTypeDict({
+            'column': ParamDTypeColumn(),
+            'color': ParamDTypeString(),  # TODO enforce '#abc123' pattern
+        }), default=default)
+
+    def __repr__(self):
+        return 'ParamDTypeMultichartseries()'
+
+    # coerce(): ParamDTypeList will do what we want
+    # validate(): ParamDTypeList will do what we want
+    # iter_dfs_dtypes(): ParamDTypeList will do what we want
+    # iter_dfs_dtype_values(): ParamDTypeList will do what we want
+
+    # override
+    def omit_missing_table_columns(self, value, columns):
+        series = super().omit_missing_table_columns(value, columns)
+        # Omit each dict that has a missing column
+        return [s for s in series if s['column']]
+
+    # override
     @classmethod
     def _from_plain_data(cls, **kwargs):
         # don't require inner_dtype like ParamDTypeList does
@@ -447,6 +485,7 @@ ParamDType.Column = ParamDTypeColumn
 ParamDType.Multicolumn = ParamDTypeMulticolumn
 ParamDType.Tab = ParamDTypeTab
 ParamDType.Multitab = ParamDTypeMultitab
+ParamDType.Multichartseries = ParamDTypeMultichartseries
 
 ParamDType.JsonTypeToDType = {
     'string': ParamDTypeString,
@@ -461,9 +500,11 @@ ParamDType.JsonTypeToDType = {
     'tabs': ParamDTypeMultitab,
     'column': ParamDTypeColumn,
     'multicolumn': ParamDTypeMulticolumn,
+    'multichartseries': ParamDTypeMultichartseries,
 }
 
 
+@dataclass(frozen=True)
 class ParamField:
     """
     A form field for entering a param.
@@ -482,6 +523,7 @@ class ParamField:
         COLUMN = 'column'
         RADIO = 'radio'
         MULTICOLUMN = 'multicolumn'
+        MULTICHARTSERIES = 'multichartseries'
         TAB = 'tab'
         MULTITAB = 'multitab'
         SECRET = 'secret'
@@ -490,28 +532,16 @@ class ParamField:
         def __str__(self):
             return self.value
 
-    def __init__(self, *, id_name: str, ftype: 'ParamField.FType',
-                 name: str = '', items: str = '', multiline: bool = False,
-                 placeholder: str = '', tab_parameter: str = '',
-                 visible_if: Optional[Dict[str, Dict[str, Any]]] = None,
-                 default: Any = None):
-        self.id_name = id_name
-        self.ftype = ftype
-        self.name = name
-        self.items = items
-        self.multiline = multiline
-        self.placeholder = placeholder
-        self.tab_parameter = tab_parameter
-        self.visible_if = visible_if
-        self.default = default
-
-    def __repr__(self):
-        return ''.join((
-            'ParamField(',
-            'id_name=', repr(self.id_name),
-            'ftype=', repr(self.ftype),
-            'default=', repr(self.default),
-        ))
+    id_name: str
+    ftype: ParamField.FType
+    name: str = ''
+    items: str = ''  # deprecated menu/radio items
+    options: Optional[List[Union[str, Dict[str, str]]]] = None  # menu/radio
+    multiline: bool = False  # for strings
+    placeholder: str = ''
+    tab_parameter: str = ''
+    default: Any = None
+    visible_if: Optional[Dict[str, Dict[str, Any]]] = None
 
     @classmethod
     def from_dict(self, d: Dict[str, Any]) -> 'ParamField':
@@ -520,6 +550,7 @@ class ParamField:
             ftype=ParamField.FType(d['type']),
             name=d.get('name', ''),
             items=d.get('menu_items', d.get('radio_items', '')),
+            options=d.get('options'),
             multiline=d.get('multiline', False),
             placeholder=d.get('placeholder', ''),
             tab_parameter=d.get('tab_parameter', ''),
@@ -553,6 +584,8 @@ class ParamField:
             return ParamDTypeMulticolumn(
                 tab_parameter=self.tab_parameter or None
             )
+        elif self.ftype == T.MULTICHARTSERIES:
+            return ParamDTypeMultichartseries()
         elif self.ftype == T.TAB:
             return ParamDTypeTab()
         elif self.ftype == T.MULTITAB:
@@ -579,16 +612,19 @@ class ParamField:
             self.ftype == T.MENU
             or self.ftype == T.RADIO
         ):
-            kwargs = {}
-            if self.default is not None:
-                kwargs['default'] = int(self.default)
-            else:
-                kwargs['default'] = 0
-
-            return ParamDTypeEnum(
+            if self.items:
+                # deprecated menu/radio
                 # Menu values are integers. Ick, eh?
-                choices=set(range(len(self.items.split('|')))),
-                **kwargs
-            )
+                choices = set(range(len(self.items.split('|'))))
+                default = int(self.default or 0) or 0
+            else:
+                # normal menu/radio
+                values = list(o['value']
+                              for o in self.options
+                              if isinstance(o, dict))  # skip separators
+                choices = set(values)
+                default = self.default or values[0]  # TODO allow None
+
+            return ParamDTypeEnum(choices, default)
         else:
             raise ValueError('Unknown ftype %r' % self.ftype)

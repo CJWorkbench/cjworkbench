@@ -97,5 +97,7 @@ WfHamburgerMenu.propTypes = {
   api: PropTypes.object,
   workflowId: PropTypes.number,
   isReadOnly: PropTypes.bool,
-  user: PropTypes.object
+  user: PropTypes.shape({
+    id: PropTypes.number.isRequire,
+  }) // if null/undefined, user is not logged in
 }

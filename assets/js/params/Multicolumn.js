@@ -18,10 +18,13 @@ class MenuList extends React.PureComponent {
   }
 
   render () {
-    const { name } = this.props.selectProps
+    const { name, addMenuListClassName } = this.props.selectProps
+
+    const className = ['react-select__menu-list', 'react-select__menu-list--is-multi']
+    if (addMenuListClassName) className.push(addMenuListClassName)
 
     return (
-      <components.MenuList {...this.props}>
+      <components.MenuList {...this.props} className={className.join(' ')}>
         <div className='multicolumn-select-all-none'>
           <button
             name={`${name}-select-all`}
@@ -55,6 +58,8 @@ export default class Multicolumn extends React.PureComponent {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // onChange('A,B') => undefined
+    addMenuListClassName: PropTypes.string, // default undefined
+    noOptionsMessage: PropTypes.string, // default 'No options'
     value: PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
@@ -87,7 +92,7 @@ export default class Multicolumn extends React.PureComponent {
   }
 
   render() {
-    const { inputColumns, isReadOnly, fieldId, name, placeholder, label } = this.props
+    const { inputColumns, isReadOnly, fieldId, name, placeholder, label, addMenuListClassName, noOptionsMessage } = this.props
 
     const columnOptions = (inputColumns || []).map(column => (
       {
@@ -108,6 +113,8 @@ export default class Multicolumn extends React.PureComponent {
           options={columnOptions}
           isLoading={inputColumns === null}
           onChange={this.onChangeColumns}
+          addMenuListClassName={addMenuListClassName}
+          noOptionsMessage={noOptionsMessage}
           components={Components}
           value={this.selectedColumns}
           placeholder={placeholder || 'Select columns'}

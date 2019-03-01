@@ -6,7 +6,6 @@ from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
-from .lesson import Lesson
 
 
 def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
@@ -65,7 +64,6 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
         .extra(where=conditions)
 
 
-# A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
     name = models.CharField('name', max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -102,8 +100,13 @@ class Workflow(models.Model):
     """
 
     public = models.BooleanField(default=False)
-    example = models.BooleanField(default=False)    # if set, will be duplicated for new users
+
+    example = models.BooleanField(default=False)
+    """If true, users opening this Workflow will just see a duplicate of it."""
+
     in_all_users_workflow_lists = models.BooleanField(default=False)
+    """If true, all users will see this (you may also want example=True)."""
+
     lesson_slug = models.CharField('lesson_slug', max_length=100,
                                    null=True, blank=True)
     """
@@ -116,12 +119,14 @@ class Workflow(models.Model):
     # there is always a tab
     selected_tab_position = models.IntegerField(default=0)
 
-    last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import
-                                   related_name='+',              # + means no backward link
-				                   blank=True,
-                                   null=True,   # if null, no Commands applied yet
-                                   default=None,
-                                   on_delete=models.SET_DEFAULT)
+    last_delta = models.ForeignKey(
+        'server.Delta',  # string, not model -- avoids circular import
+        related_name='+',  # + means no backward link
+        blank=True,
+        null=True,  # if null, no Commands applied yet
+        default=None,
+        on_delete=models.SET_DEFAULT
+    )
 
     @contextmanager
     def cooperative_lock(self):
@@ -506,7 +511,8 @@ class DependencyGraph:
     def get_step_ids_depending_on_tab_slug(self, tab_slug: str) -> List[int]:
         return self.get_step_ids_depending_on_tab_slugs(set([tab_slug]))
 
-    def get_step_ids_depending_on_tab_slugs(self, tab_slugs: Set[str]) -> List[int]:
+    def get_step_ids_depending_on_tab_slugs(self,
+                                            tab_slugs: Set[str]) -> List[int]:
         wf_module_ids = set()
         tab_slugs = set(tab_slugs)  # don't mutate input
 

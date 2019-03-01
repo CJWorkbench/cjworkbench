@@ -23,7 +23,7 @@ class MockLoadedModule:
         return values
 
 
-@patch('server.models.Delta.schedule_execute', async_noop)
+@patch('server.rabbitmq.queue_render', async_noop)
 @patch('server.models.Delta.ws_notify', async_noop)
 class AddDeleteModuleCommandTests(DbTestCase):
     def assertWfModuleVersions(self, expected_versions):

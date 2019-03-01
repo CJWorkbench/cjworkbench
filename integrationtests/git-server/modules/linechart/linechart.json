@@ -34,7 +34,7 @@
     {
       "name": "Column",
       "id_name": "y_columns",
-      "type": "custom",
+      "type": "multichartseries",
       "placeholder": "Select column"
     }
   ]

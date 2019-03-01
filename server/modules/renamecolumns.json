@@ -5,6 +5,11 @@
   "icon": "edit",
   "description": "Rename columns and log all edits.",
   "help_url":"modules/clean/rename-columns",
+  "param_schema": {
+    "custom_list": { "type": "boolean" },
+    "list_string": { "type": "string" },
+    "renames": { "type": "map", "value_dtype": { "type": "string" } }
+  },
   "parameters": [
     {
       "name": "Paste list of new names",
@@ -25,7 +30,7 @@
     },
     {
       "name": "",
-      "id_name": "rename-entries",
+      "id_name": "renames",
       "type": "custom",
       "visible_if": {
         "id_name": "custom_list",

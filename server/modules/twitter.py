@@ -1,4 +1,5 @@
 from collections import namedtuple
+from enum import Enum
 import re
 from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
@@ -11,10 +12,65 @@ import yarl  # expose aiohttp's innards -- ick.
 from cjworkbench.types import ProcessResult
 from server import oauth
 
-# Must match order of items in twitter.json module def
-QUERY_TYPE_USER = 0
-QUERY_TYPE_SEARCH = 1
-QUERY_TYPE_LIST = 2
+
+class QueryType(Enum):
+    # Named after Twitter API endpoints
+    USER_TIMELINE = 'user_timeline'
+    """
+    List a user's tweets.
+
+    https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
+    """
+
+    SEARCH = 'search'
+    """
+    Search all tweets.
+
+    https://developer.twitter.com/en/docs/tweets/search/overview/standard
+    """
+
+    LISTS_STATUSES = 'lists_statuses'
+    """
+    List the tweets of all members of a list.
+
+    https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-statuses
+    """
+
+    @property
+    def query_param_name(self):
+        """
+        Name of the single param we use as argument for this query.
+
+        For instance: 'search' has param_name 'query'
+        """
+        return {
+            self.USER_TIMELINE: 'username',
+            self.SEARCH: 'query',
+            self.LISTS_STATUSES: 'listurl',
+        }[self]
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: 'querytype' is 0, 1 or 2
+
+    v1: 'querytype' is 'user_timeline', 'search', 'lists_statuses'
+    """
+    params = dict(params)  # copy
+    params['querytype'] = [
+        'user_timeline',
+        'search',
+        'lists_statuses',
+    ][params['querytype']]
+
+    return params
+
+
+def migrate_params(params):
+    if isinstance(params['querytype'], int):
+        params = _migrate_params_v0_to_v1(params)
+
+    return params
 
 
 Column = namedtuple('Column', ['name', 'path', 'dtype', 'parse'])
@@ -227,7 +283,7 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
     else:
         last_id = None
 
-    if querytype == QUERY_TYPE_USER:
+    if querytype == QueryType.USER_TIMELINE:
         match = USERNAME_REGEX.match(query)
         if not match:
             raise ValueError('Not a valid Twitter username')
@@ -236,10 +292,10 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
         # 16 pages of 200 each is Twitter's current maximum archived
         return await twitter_user_timeline(access_token, username, last_id)
 
-    elif querytype == QUERY_TYPE_SEARCH:
+    elif querytype == QueryType.SEARCH:
         return await twitter_search(access_token, query, last_id)
 
-    else:  # querytype == QUERY_TYPE_LIST
+    else:  # querytype == QueryType.LISTS_STATUSES
         match = LIST_URL_REGEX.match(query)
         if not match:
             match = LIST_REGEX.match(query)
@@ -287,14 +343,8 @@ def render(table, params, *, fetch_result):
 
 
 async def fetch(params, *, get_stored_dataframe):
-    param_names = {
-        QUERY_TYPE_USER: 'username',
-        QUERY_TYPE_SEARCH: 'query',
-        QUERY_TYPE_LIST: 'listurl'
-    }
-
-    querytype: int = params['querytype']
-    query: str = params[param_names[querytype]]
+    querytype = QueryType(params['querytype'])
+    query: str = params[querytype.query_param_name]
     access_token = (params['twitter_credentials'] or {}).get('secret')
 
     if not query.strip() and not access_token:
@@ -321,9 +371,9 @@ async def fetch(params, *, get_stored_dataframe):
 
     except ClientResponseError as err:
         if err.status:
-            if querytype == QUERY_TYPE_USER and err.status == 401:
+            if querytype == QueryType.USER_TIMELINE and err.status == 401:
                 return Err("User %s's tweets are private" % query)
-            elif querytype == QUERY_TYPE_USER and err.status == 404:
+            elif querytype == QueryType.USER_TIMELINE and err.status == 404:
                 return Err('User %s does not exist' % query)
             elif err.status == 429:
                 return Err(

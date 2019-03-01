@@ -1,5 +1,6 @@
 <header>
-  <h1>Comparing numbers<h1>
+  <h1>Comparing numbers</h1>
+  <p>Learn three common types of comparisons: difference, ratio, and percentage change.</p>
 </header>
 
 <section class="fullscreen">
@@ -68,7 +69,9 @@
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
       >Does the data need to be cleaned?
     </li>
+  </ol>
 </section>
+
 <section>
   <h2>Difference</h2>
   <p>
@@ -106,16 +109,18 @@
     </li>
   </ol>
 </section>
+
 <section>
   <h2>Ratio</h2>
   <p>
-    Larger counties are likely to have a greater population change. Let’s reframe:<br>
-    'Relative to its size, which county has lost or gained the most population?</br> In other words: 'How many people in 2017 compared to the number of people in 2010?'
+    Larger counties are likely to have a greater population change. Let’s reframe:<br/>
+    'Relative to its size, which county has lost or gained the most population?<br/>
+    In other words: 'How many people in 2017 compared to the number of people in 2010?'
   </p>
   <p>
     The formula to calculate ‘How many (X) per (Y)’ is a simple division, also called a ratio:
-    <div class="copy-txt">=(X/Y)</div>
   </p>
+  <div class="copy-txt">=(X/Y)</div>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -143,32 +148,23 @@
   <p>
     There is a close relationship between ratios and percentages.
     A percentage is simply a fraction (a ratio) multiplied by 100:
-    <div class="copy-txt">=(X/Y)*100</div>
   </p>
-  <p>
-    In Workbench the Calculate step lets you apply percentage formulas easily.
-  </p>
+  <div class="copy-txt">=(X/Y)*100</div>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a Calculate step.
+      >Add another Formula and type in:
+      <div class="copy-txt">=(D1/C1)*100</div>
     </li>
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>X is what percent of Y</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select <kbd>Population estimate 2017</kbd> as X, <kbd>2010 Census</kbd> as Y, and name the output column <kbd>percentage</kbd>
+      >Name the new column <kbd>Percentage</kbd>
       <p class=instruction-detail>
-        The numbers in this new column are similar to the <kbd>Ratio</kbd> column - just multiplied by 100: 0.56 becomes 56% and so on. They express the size of populations in 2017 relative to population in 2010.
-      </p>
-      <p class=instruction-detail>
-        One advantage of percentages is to allow us to better grasp numbers: 'In 2017, the population of Concho county was 66.6% the size it was in 2010.'
+        The numbers in this new column are obviously similar to the <kbd>Ratio</kbd> column - just multiplied by 100.<br>
+        The advantage of percentages is to allow us to better grasp numbers: 'In 2017, the population of Concho county was 66.6% the size it was in 2010.'
       </p>
     </li>
   </ol>
@@ -180,24 +176,20 @@
   </p>
   <p>
     The formula to calculate the percentage change between and Old and New numbers is:
-    <div class="copy-txt">=((New - Old) / Old)* 100</div>
   </p>
-  <p>
-    We'll use Calculate to compute this easily.
-  </p>
+  <div class="copy-txt">=((New - Old) / Old)* 100</div>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add another Calculate step and choose <kbd>Percentage change<kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select <kbd>Census 2010</kbd> as the old value and <kbd>Population estimate 2017</kbd> as the new value. Name the output column <kbd>Percentage change</kbd>
+      >Add another Formula step and this time apply the percentage formula:
+      <div class="copy-txt">=((D1 - C1) / D1)* 100</div>
       <p class=instruction-detail>
-        100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half the old one.
+        Name this new column <kbd>Percentage change</kbd>
+      </p>
+      <p class=instruction-detail>
+        A result of 100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half the old one.
       </p>
       <p class=instruction-detail>
         Percentage change allows us to describe our numbers in yet a new way:<br>
