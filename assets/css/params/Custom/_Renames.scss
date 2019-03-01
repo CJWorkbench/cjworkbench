@@ -1,4 +1,4 @@
-.param-rename-entries {
+.param-renames {
   padding-top: .5rem;
   max-height: 25rem;
   overflow-y: auto;
@@ -8,7 +8,7 @@
   }
 
   label {
-    @extend %content-1;
+    @include content-1;
     color: $labels;
     display: block;
     overflow-x: hidden;
@@ -20,7 +20,7 @@
     position: relative; // to absolutely position button
 
     .rename-input {
-      @extend %module-parameter;
+      @include module-parameter;
       flex: 1 1 auto;
       padding: 0 1rem;
       white-space: nowrap;

@@ -1,4 +1,4 @@
-from .utils import parse_json_param
+import json
 
 s_map = [',', ';', '\t', '\n']
 
@@ -54,13 +54,34 @@ def fill_column_names(column_names, expected_length):
 def render(table, params):
     custom_list: bool = params['custom_list']
     if not custom_list:
-        entries = parse_json_param(params['rename-entries'])
-
         og_columns = table.columns.tolist()
-        new_columns = [entries.get(col, col) for col in og_columns]
+        renames = params['renames']
+        new_columns = [renames.get(col, col) for col in og_columns]
         table.columns = new_columns
         return table
     else:
         # XXX [adamhooper, 2019-01-31] rename this function. What does it
         # do?
         return parse_list(params, table)
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: params['rename-entries'] is JSON-encoded dict of {old: new}
+
+    v1: params['renames'] is dict of {old: new}
+    """
+    ret = dict(params)  # copy
+    try:
+        ret['renames'] = json.loads(ret['rename-entries'])
+    except ValueError:
+        ret['renames'] = {}
+    del ret['rename-entries']
+    return ret
+
+
+def migrate_params(params):
+    if 'rename-entries' in params:
+        params = _migrate_params_v0_to_v1(params)
+
+    return params

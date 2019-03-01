@@ -260,14 +260,18 @@ function genericAddColumn (key) {
 
 function buildRenameColumnsParams (oldParams, params) {
   // renameInfo format: {prevName: <current column name in table>, newName: <new name>}
-  const entries = (oldParams && oldParams['rename-entries']) ? JSON.parse(oldParams['rename-entries']) : {}
+  const renames = oldParams && oldParams.renames || {}
   const { prevName, newName } = params
 
-  if (entries[prevName] === newName) {
+  if (renames[prevName] === newName) {
     return null
   } else {
-    entries[prevName] = newName
-    return { 'rename-entries': JSON.stringify(entries) }
+    return {
+      renames: {
+        ...renames,
+        [prevName]: newName
+      }
+    }
   }
 }
 
