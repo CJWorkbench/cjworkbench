@@ -616,7 +616,7 @@ class ParamField:
                 # deprecated menu/radio
                 # Menu values are integers. Ick, eh?
                 choices = set(range(len(self.items.split('|'))))
-                default = self.default or 0
+                default = int(self.default or 0) or 0
             else:
                 # normal menu/radio
                 values = list(o['value']
