@@ -18,69 +18,33 @@
 
 <!-- Section 1 -->
 
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Lesson",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYC-incidents-2018.csv"
-            }
-          }
-        ]
-      },
-      {
-        "name": "Data dictionary",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYPD_Complaint_YTD_DataDictionary.csv"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: './nyc-incidents-2018.csv'
+- name: Data dictionary
+  wfModules:
+  - module: loadurl
+    params:
+      url: './nypd-complaint-ytd-data-dictionary.csv'
 </script>
 
 <section>
   <h2>Data</h2>
   <p>
-    This data contains all reported police incidents in January and February 2018 in the city of New York. It is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
+    This table describes reported police incidents in January and February 2018 in the city of New York. It is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary. (For this lesson, it's truncated to 500 records.)
   </p>
-  <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Again, let’s ask the basic questions:</p>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What does each row represent?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What's in each column?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there any columns, values or codes you don't understand?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there missing or obviously wrong values?
-    </li>
-    <li
-      data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Does the data need to be cleaned?
-    </li>
-  </ol>
+  <ul>
+    <li>What does each row represent?</li>
+    <li>What's in each column?</li>
+    <li>Are there any columns, values or codes you don't understand?</li>
+    <li>Are there missing or obviously wrong values?</li>
+    <li>Does the data need to be cleaned?</li>
+  </ul>
 </section>
 <section>
   <h2>Cleaning</h2>
@@ -88,19 +52,17 @@
     There's a lot of interesting data points you may want to explore in this data. In the next lesson, we will answer the question: "How many incidents were reported each month in each borough?"
   </p>
   <p>
-    For now, let’s narrow it down to the columns we need, and set column types correctly.
+    For now, let’s narrow it down to the columns we need and set column types correctly.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add Select Columns, and keep only <kbd>boro_nm</kbd> and <kbd>compl_fr_dt</kbd>
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns' && workflow.tabs[0].wfModules[1].params.colnames === 'boro_nm,cmplnt_fr_dt'"
+      >Add Select columns, and keep only <kbd>boro_nm</kbd> and <kbd>cmplnt_fr_dt</kbd>
       <p class="instruction-detail">You can rename columns by clicking on any column name in the table.</p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const wfm = workflow.tabs[0].wfModules[2]; return wfm && !wfm.params.custom_list && wfm.params.renames.boro_nm === 'Borough' && wfm.params.renames.cmplnt_fr_dt === 'Complaint date'"
       >Rename these two columns respectively to <kbd>Borough</kbd> and <kbd>Complaint date</kbd>.
       <p class="instruction-detail">Before going further, let's learn a little more about data types.</p>
     </li>
@@ -109,18 +71,28 @@
 <section class="fullscreen">
   <h2>Data types</h2>
   <p>
-    You may have noticed that the type of each column is displayed below each column name. Workbench supports 3 types:
+    You may have noticed that the type of each column is displayed below each column name. Workbench supports three column types:
   </p>
   <h3>Text</h3>
   <p>
-    Also known as “string”, this type can contain any character and can be of any length. Mixed numbers and letters are interpreted as text.</p>
+    Also known as “string”, this type can contain any character and can be of any length. Text is great for names, descriptions, notes and categories.
+  </p>
+  <p>
+    When Workbench imports data, it often finds a "Text" column when you might prefer "Number" or "Date &amp; time."
+  </p>
   <h3>Number</h3>
   <p>
-    This type is used for both whole numbers (such as 8, 22 or 268) and numbers which values have digits after the decimal point (such as 1.5 or 3.14).
+    This type is used for whole numbers (such as 8, 22 or 268) and decimals (such as 1.5 or 3.14). Numbers are great for sorting and math.
   </p>
-  <h3>Date & times</h3>
+  <h3>Date &amp; time</h3>
   <p>
-    A date and a time together. In can be written in many formats, such as “23 January 2019 11:42”. Right now date & time in Workbench is shown as “2019–01-23 11:42:00”.
+    This type stores points in time, with nanosecond precision. Dates &amp; times are great for sorting and grouping records.
+  </p>
+  <p>
+    A "Date &amp; time" value can be written in many formats, such as “23 January 2019 11:42.” Right now, date &amp; time in Workbench is shown as “2019–01-23 11:42:00”.
+  </p>
+  <p>
+    Workbench does not currently support time zones.
   </p>
 </section>
 <section>
@@ -132,21 +104,17 @@
     <img alt="Inspect element" src="images/course-1/type.png">
   </figure>
   <p>
-    If any values in a column are blank, if values that are not dates, or if the date is in a format Workbench doesn’t recognize, the column will be loaded as text.
-  </p>
-  <p>
-    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date & time.
+    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date &amp; time.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const wfm = workflow.tabs[0].wfModules[3]; return wfm && wfm.moduleSlug === 'convert-date' && wfm.params.colnames === 'Complaint date' && wfm.params.input_format === 'auto'"
       >In the column menu<span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to date & time</kbd>. This will add a conversion step.
+      </span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to date &amp; time</kbd>. This will add a conversion step.
       <p class="instruction-detail">
-        Now this column has a “Date & Time” type. We will use this cleaned column in the next lesson.
+        Now this column has a “Date &amp; Time” type. We will use this cleaned column in the next lesson.
       </p>
     </li>
   </ol>
