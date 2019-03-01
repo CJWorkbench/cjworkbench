@@ -74,7 +74,7 @@ def validate_module_spec(spec):
                        if isinstance(o, dict)]  # skip 'separator'
             if param['default'] not in options:
                 messages.append(
-                    f"Param '{id_name}' has a 'default' that is not in its "
+                    f"Param '{param['id_name']}' has a 'default' that is not in its "
                     "'options'"
                 )
 
