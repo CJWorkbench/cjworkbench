@@ -283,6 +283,11 @@ class ValidateModuleSpecTest(unittest.TestCase):
                         ],
                         'default': 'y',
                     },
+                    {
+                        # Previously, we gave the wrong id_name
+                        'id_name': 'not-a',
+                        'type': 'string'
+                    },
                 ],
             })
 

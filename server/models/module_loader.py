@@ -74,8 +74,8 @@ def validate_module_spec(spec):
                        if isinstance(o, dict)]  # skip 'separator'
             if param['default'] not in options:
                 messages.append(
-                    f"Param '{param['id_name']}' has a 'default' that is not in its "
-                    "'options'"
+                    f"Param '{param['id_name']}' has a 'default' that is not "
+                    "in its 'options'"
                 )
 
     # Now that check visible_if refs
@@ -143,15 +143,14 @@ def validate_module_spec(spec):
         except KeyError:
             continue  # we aren't referencing a "tab" parameter
 
-        param_id_name = param['id_name']
         if tab_parameter not in param_lookup:
             messages.append(
-                f"Param '{param_id_name}' has a 'tab_parameter' "
+                f"Param '{param['id_name']}' has a 'tab_parameter' "
                 "that is not in 'parameters'"
             )
         elif param_lookup[tab_parameter]['type'] != 'tab':
             messages.append(
-                f"Param '{param_id_name}' has a 'tab_parameter' "
+                f"Param '{param['id_name']}' has a 'tab_parameter' "
                 "that is not a 'tab'"
             )
 
