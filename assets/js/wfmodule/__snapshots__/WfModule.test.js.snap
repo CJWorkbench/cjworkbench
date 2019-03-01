@@ -4,6 +4,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
 <div
   className="wf-module status-ok selected"
   data-module-name="Load from URL"
+  data-module-slug="loadurl"
   onMouseDown={[Function]}
 >
   <div
