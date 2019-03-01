@@ -306,6 +306,7 @@ export class WfModule extends React.PureComponent {
     const { isReadOnly, index, wfModule, module, inputWfModule, tabs, currentTab } = this.props
     const { edits } = this.state
 
+    const moduleSlug = module ? module.id_name : '_undefined'
     const moduleName = module ? module.name : '_undefined'
     const moduleIcon = module ? module.icon : '_undefined'
     const moduleHelpUrl = module ? module.help_url : ''
@@ -412,6 +413,7 @@ export class WfModule extends React.PureComponent {
     return (
       <div
         className={className}
+        data-module-slug={moduleSlug}
         data-module-name={moduleName}
         onMouseDown={this.onMouseDown}
       >
