@@ -1,6 +1,6 @@
 <header>
   <h1>Filtering data</h1>
-  <p>Filtering data is a common, yet powerful analysis technique. Learn how to use Conditional and value filters to explore your data.</p> 
+  <p>Filtering data is a common, yet powerful analysis technique. Learn how to use Conditional and value filters to explore your data.</p>
 </header>
 
 <section class="fullscreen">
@@ -89,7 +89,9 @@
     <li
       data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"}]'
       data-test="return !!workflow.tabs[0].wfModules[0].note"
-      >Add the provenance of the data using a note:
+      >Add the provenance of the data using a note <span>
+        <img class="icon-insert" src="images/lesson-icons/note.svg">
+      </span>
       <div class="copy-txt">Source: City of San Francisco</div>
     </li>
     <li
@@ -131,7 +133,7 @@
     <li
       data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].condition === 'number_is_greater_than' &&
                         workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].value === '50'"
-      >Set the condition to <kbd>greater than</kbd> and set the value to <kbd>50</kbd>.
+      >Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>.
       <p class ="instruction-detail">
         At the top left of the table, we see that 119 rows are left. This means that 119 projects include more than 50% affordable units.
       </p>
@@ -165,7 +167,7 @@
       data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].colname === 'Affordable Units' &&
                         workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].condition === 'number_is_greater_than_or_equals' &&
                         workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].value === '100'"
-      >Set the new condition to 'If <kbd>Affordable Units</kbd> is <kbd>is greater than or equals</kbd> <kbd>100</kbd>.
+      >Set this new condition to `If <kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>`.
       <p class ="instruction-detail">
         The table now displays all projects containing "more than 50% affordable units AND at least 100 affordable units".
       </p>
