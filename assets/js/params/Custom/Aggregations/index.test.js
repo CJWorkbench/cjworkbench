@@ -7,6 +7,7 @@ describe('Aggregations', () => {
     <Aggregations
       isReadOnly={false}
       name='aggregations'
+      fieldId='aggregations'
       value={[]}
       allColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}]}
       onChange={jest.fn()}
