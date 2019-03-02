@@ -35,12 +35,18 @@ def _do_render(table, sort_params, keep_top):
             na_position='last'
         )
 
+        # Keep top for first column works differently, keeps top within that column
+        if len(columns) < 2:
+            columns_to_group = columns
+        else:
+            columns_to_group = columns[:-1]
+
         mask = table[columns].isnull().any(axis=1)
         rows_with_na_idx = mask[mask].index
         rows_with_na = table.loc[rows_with_na_idx]
         rows_without_na = table.drop(rows_with_na_idx)
 
-        table = rows_without_na.groupby(columns[:-1]).head(top)
+        table = rows_without_na.groupby(columns_to_group).head(top)
         table = pd.concat([table, rows_with_na])
 
     # sort again with null columns, if any
