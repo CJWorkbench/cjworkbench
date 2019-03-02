@@ -96,10 +96,13 @@
     </li>
     <li
       data-test="
-        y_col = JSON.parse(workflow.tabs[0].wfModules[3].params.y_columns)[0].column
-        return (workflow.tabs[0].wfModuleNames[3] === 'Column Chart') &&
-               (workflow.tabs[0].wfModules[3].params.x_column.toLowerCase()==='year') &&
-               (y_col === 'China')"
+        if (workflow.tabs[0].wfModuleSlugs[3] !== 'columnchart')
+          return false
+          
+        params = workflow.tabs[0].wfModules[3].params
+        return params.x_column.toLowerCase() == 'year' &&
+               params.y_columns.length >= 1 &&
+               params.y_columns[0].column == 'China'"
       >Add a Column Chart, select<kbd>Year</kbd> as the X axis, and<kbd>China</kbd>as the Y axis.
     </li>
   </ol>
