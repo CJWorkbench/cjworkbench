@@ -45,10 +45,10 @@ describe('ColumnContextMenu', () => {
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-ascending').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('sort', false, { direction: 1 })
+    expect(onClickAction).toHaveBeenCalledWith('sort', false, { is_ascending: true })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-descending').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('sort', false, { direction: 2 })
+    expect(onClickAction).toHaveBeenCalledWith('sort', false, { is_ascending: false })
   })
 })

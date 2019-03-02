@@ -39,8 +39,8 @@ export default class ColumnContextMenu extends React.Component {
   }
 
   duplicateColumn = () => this.createOrUpdate('duplicatecolumns')
-  sortAscending = () => this.createOrUpdate('sort', { direction: 1 })
-  sortDescending = () => this.createOrUpdate('sort', { direction: 2 })
+  sortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
+  sortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
   addNewFilter = () => this.create('filter')
   extractNumbers = () => this.createOrUpdate('extract-numbers')
   cleanText = () => this.createOrUpdate('clean-text')
