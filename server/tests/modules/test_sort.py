@@ -182,3 +182,12 @@ class SortFromTableTests(unittest.TestCase):
             pd.DataFrame({'A': ['a', 'a', 'b', np.nan], 'B': ['b', np.nan, 'b', 'a'], 'C': [3, 4, 5, 1]})
         )
         self.assertEqual(result, expected)
+
+    def test_keep_top_with_one_column(self):
+        table = pd.DataFrame({'A': [np.nan, 'a', 'a', 'a', 'b'], 'B': ['a', 'a', 'b', np.nan, 'b'], 'C': [1, 2, 3, 4, 5]})
+        params = P2(sort_columns=[{'colname': 'A', 'is_ascending': False}], keep_top= '1')
+        result = render(table, params)
+        expected = ProcessResult(
+            pd.DataFrame({'A': ['b', 'a', np.nan], 'B': ['b', 'a', 'a'], 'C': [5, 2, 1]})
+        )
+        self.assertEqual(result, expected)
