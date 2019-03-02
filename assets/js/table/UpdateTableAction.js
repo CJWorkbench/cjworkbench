@@ -22,7 +22,7 @@ export const moduleParamsBuilders = {
   'editcells': buildEditCellsParams,
   'renamecolumns': buildRenameColumnsParams,
   'reordercolumns': buildReorderColumnsParams,
-  'sort': genericSetColumn('column'),
+  'sort': buildSortColumnsParams,
   'extract-numbers': genericAddColumn('colnames'),
   'clean-text': genericAddColumn('colnames'),
   'convert-date': genericAddColumn('colnames'),
@@ -289,4 +289,28 @@ function buildReorderColumnsParams (oldParams, params) {
 
   historyEntries.push({ column, to, from })
   return { 'reorder-history': JSON.stringify(historyEntries) }
+}
+
+function buildSortColumnsParams (oldParams, params) {
+  // 1. If the column is already the first param and directions the same, return null
+  // 2. Remove existing column from param list, if it exists
+  // 3. Prepend list with new column
+  const newColumn = { colname: params.columnKey, is_ascending: params.is_ascending }
+
+  if (oldParams == null) {
+    return { sort_columns: [newColumn], keep_top: '' }
+  }
+
+  const columns = oldParams.sort_columns
+
+  if (columns[0].colname === newColumn.colname && columns[0].is_ascending === newColumn.is_ascending) {
+    return null
+  }
+
+  const sort_columns = columns.filter( column => column.colname !== params.columnKey)
+  sort_columns.unshift(newColumn)
+
+  const newParams = { sort_columns: sort_columns, keep_top: oldParams.keep_top }
+
+  return newParams
 }
