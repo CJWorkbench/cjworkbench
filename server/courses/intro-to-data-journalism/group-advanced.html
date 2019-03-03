@@ -70,18 +70,34 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[4] !== 'groupby')
+          return false
+
+        // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
+        // the 'add Borough' step in the last section doesn't undo this test.
+        // (Every test for the entire lesson is evaluated in order)
+        colnames = workflow.tabs[0].wfModules[4].params.groups.colnames.split(',')
+        return colnames.indexOf('Complaint date')>=0"
       >Add <kbd>Group</kbd>, and select the column <kbd>Complaint date</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        const params = workflow.tabs[0].wfModules[4].params
+        return params.groups.group_dates &&
+               params.groups.date_granularities['Complaint date']
+
+        // You would think we'd want to check for month granularity here, but we can't
+        // because it will break in the next section where we ask user to switch to day granularity.
+        // (Every test for the entire lesson is evaluated in order)
+        // params.groups.date_granularities['Complaint date'] === 'M'"
       >Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        const agg = workflow.tabs[0].wfModules[4].params.aggregations
+        return agg.length==1 &&
+               agg[0].outname.toLowerCase() === 'count of incidents'"
       >Name the output column <kbd>Count of incidents</kbd>.
     </li>
   </ol>
@@ -94,14 +110,22 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[5] !== 'linechart')
+          return false
+
+        const params = workflow.tabs[0].wfModules[5].params
+        return params.x_column === 'Complaint date' &&
+               params.y_columns.length >= 1 &&
+               params.y_columns[0].column.toLowerCase() === 'count of incidents'"
       >Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count</kbd> on the Y-axis.
       <p class="instruction-detail">Charts with two data points are not very useful. To visualize the same data but for each day, we can change the granularity of the group.</p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        // Don't test for day granularity, because it will break in the next section
+        // when we ask the user to switch back to month
+        return true"
       >In the Group in step 5, change the granularity to <kbd>by day</kbd>.
       <p class="instruction-detail">
         Select step 6 to display your new chart.
@@ -117,13 +141,16 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        want_cols = 'Borough,Complaint date'
+        have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
+        return have_cols.split(',').sort().join(',') === want_cols"
       >In the Group step, add the <kbd>Borough</kbd> column next to <kbd>Complaint date</kbd> using the same column selector.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        const params = workflow.tabs[0].wfModules[4].params
+        return params.groups.date_granularities['Complaint date'] === 'M'"
       >Switch back the granularity to <kbd>by month</kbd> for now.
       <p class="instruction-detail">
         By looking at this table we can rapidly see if different parts of town have different patterns of crime - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
