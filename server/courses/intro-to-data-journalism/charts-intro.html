@@ -100,9 +100,9 @@
           return false
           
         params = workflow.tabs[0].wfModules[3].params
-        return params.x_column.toLowerCase() == 'year' &&
+        return params.x_column.toLowerCase() === 'year' &&
                params.y_columns.length >= 1 &&
-               params.y_columns[0].column == 'China'"
+               params.y_columns[0].column === 'China'"
       >Add a Column Chart, select<kbd>Year</kbd> as the X axis, and<kbd>China</kbd>as the Y axis.
     </li>
   </ol>
