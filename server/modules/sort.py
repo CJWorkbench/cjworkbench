@@ -42,38 +42,39 @@ def _do_render(
     if len(columns) != len(set(columns)):
         return ProcessResult(error='Duplicate columns.')
 
-    if keep_top_int:
-        # sort accordingly
+    if keep_top_int and len(sort_columns) > 1:
+        # sort by _last_ column: that's the sorting we'll use within each group
         table.sort_values(
-            by=columns,
-            ascending=directions,
+            by=sort_columns[-1].colname,
+            ascending=sort_columns[-1].is_ascending,
             inplace=True,
             na_position='last'
         )
 
-        # Keep top for first column works differently, keeps top within that
-        # column
-        if len(columns) < 2:
-            columns_to_group = columns
-        else:
-            columns_to_group = columns[:-1]
+        columns_to_group = columns[:-1]
+        rows_with_na_index = table[columns_to_group].isnull().any(axis=1)
+        rows_with_na = table[rows_with_na_index]
+        rows_without_na = table[~rows_with_na_index]
 
-        mask = table[columns].isnull().any(axis=1)
-        rows_with_na_idx = mask[mask].index
-        rows_with_na = table.loc[rows_with_na_idx]
-        rows_without_na = table.drop(rows_with_na_idx)
+        keep_grouped_rows = (
+            rows_without_na
+            .groupby(columns_to_group, sort=False)
+            .head(keep_top_int)
+        )
+        table = pd.concat([keep_grouped_rows, rows_with_na], ignore_index=True)
 
-        table = rows_without_na.groupby(columns_to_group,
-                                        sort=False).head(keep_top_int)
-        table = pd.concat([table, rows_with_na])
-
-    # sort again with null columns, if any
+    # sort values
     table.sort_values(
         by=columns,
         ascending=directions,
         inplace=True,
         na_position='last'
     )
+
+    if keep_top_int and len(sort_columns) == 1:
+        # The whole result is one big group, and we want to keep the elements
+        # within it.
+        table = table.head(keep_top_int)
 
     table.reset_index(drop=True, inplace=True)
 

@@ -230,35 +230,38 @@ class SortTests(unittest.TestCase):
             'D': [4, 3, 5, 6, 2],
         }))
 
-    def test_keep_top_with_na(self):
+    def test_keep_top_na_is_sorted_last(self):
+        nan = np.nan  # to make the table line up -- ASCII art FTW
         table = pd.DataFrame({
-            'A': [np.nan, 'a', 'a', 'a', 'b'],
-            'B': ['a', 'a', 'b', np.nan, 'b'],
+            # groups:
+            # nan -- not a real group
+            # 'a' -- 3 rows
+            # 'b' -- 1 group
+            'A': [nan, 'a', 'a', 'a', 'b'],
+            'B': ['c', 'c', 'd', nan, nan],
             'C': [1, 2, 3, 4, 5],
         })
         params = P([
             {'colname': 'A', 'is_ascending': True},
             {'colname': 'B', 'is_ascending': False},
-        ], keep_top='1')
+        ], keep_top='2')
         result = render(table, params)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({
-            'A': ['a', 'a', 'b', np.nan],
-            'B': ['b', np.nan, 'b', 'a'],
-            'C': [3, 4, 5, 1],
+            'A': ['a', 'a', 'b', nan],
+            'B': ['d', 'c', nan, 'c'],
+            'C': [3, 2, 5, 1],
         }))
 
     def test_keep_top_with_one_column(self):
         table = pd.DataFrame({
             'A': [np.nan, 'a', 'a', 'a', 'b'],
-            'B': ['a', 'a', 'b', np.nan, 'b'],
-            'C': [1, 2, 3, 4, 5],
+            'B': [1, 2, 3, 4, 5],
         })
-        params = P([{'colname': 'A', 'is_ascending': False}], keep_top='1')
+        params = P([{'colname': 'A', 'is_ascending': True}], keep_top='2')
         result = render(table, params)
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, pd.DataFrame({
-            'A': ['b', 'a', np.nan],
-            'B': ['b', 'a', 'a'],
-            'C': [5, 2, 1],
+            'A': ['a', 'a'],
+            'B': [2, 3],
         }))
