@@ -2,8 +2,8 @@ from cjworkbench.types import ProcessResult
 from typing import Any, Dict
 import pandas as pd
 
-def _do_render(table, sort_params, keep_top):
 
+def _do_render(table, sort_params, keep_top):
     if not sort_params:
         return ProcessResult(table)
 
@@ -24,8 +24,13 @@ def _do_render(table, sort_params, keep_top):
     if keep_top != '':
         try:
             top = int(keep_top)
-        except:
-            return ProcessResult(dataframe=table, error='Please enter an integer in "Keep top" or leave it blank.')
+        except ValueError:
+            return ProcessResult(
+                dataframe=table,
+                error=(
+                    'Please enter an integer in "Keep top" or leave it blank.'
+                )
+            )
 
         # sort accordingly
         table.sort_values(
@@ -35,7 +40,8 @@ def _do_render(table, sort_params, keep_top):
             na_position='last'
         )
 
-        # Keep top for first column works differently, keeps top within that column
+        # Keep top for first column works differently, keeps top within that
+        # column
         if len(columns) < 2:
             columns_to_group = columns
         else:
@@ -62,18 +68,12 @@ def _do_render(table, sort_params, keep_top):
     return ProcessResult(table)
 
 
-_SortAscendings = {
-    0: None,
-    1: True,
-    2: False
-}
-
-def _migrate_params_v0_to_v1(column: str, direction: int) -> Dict[str, Any]:
+def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
     """
     v0:
     params: {
         column: 'A',
-        direction: 1
+        direction: 1  # 0: 'None' [sic], 1: 'Ascending', 2: 'Descending'
     }
 
     v1:
@@ -85,12 +85,16 @@ def _migrate_params_v0_to_v1(column: str, direction: int) -> Dict[str, Any]:
         keep_top: '2'
     }
     """
-    # Reduce sort options from 2 to 3, anything but 1 is ascending
-    is_ascending = direction != 2
     return {
-        'sort_columns':
-            [{'colname': column, 'is_ascending': is_ascending}]
+        'sort_columns': [
+            {
+                'colname': params['column'],
+                # Reduce sort options from 2 to 3, anything but 1 is ascending
+                'is_ascending': params['direction'] != 2,
+            },
+        ],
     }
+
 
 def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -118,40 +122,16 @@ def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Parse deprecated sort parameters. Previously sorted 1 column,
-    with sort direction as an integrer of either 0, 1, 2 as mapped in
-    _SortAscendings.
-    """
-
     if 'sort_columns' not in params:
-        try:
-            column = params['column']
-        except KeyError:
-            raise ValueError('Sort is missing "column" key')
-        try:
-            direction = params['direction']
-        except KeyError:
-            raise ValueError('Sort is missing "direction" key')
-        is_v0 = True
-    else:
-        is_v0 = False
-
-    if is_v0:
-        params = _migrate_params_v0_to_v1(column, direction)
+        params = _migrate_params_v0_to_v1(params)
 
     if 'keep_top' not in params.keys():
-        is_v1 = True
-    else:
-        is_v1 = False
-
-    if is_v1:
         params = _migrate_params_v1_to_v2(params)
 
     return params
 
 
-def render(table, params):    #column: str = params['column']
+def render(table, params):
     sort_params: list = params['sort_columns']
     keep_top: str = params['keep_top']
 
