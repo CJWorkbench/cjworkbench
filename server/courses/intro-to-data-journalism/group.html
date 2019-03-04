@@ -92,13 +92,12 @@ tabs:
       data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length > 1 && aggs[1].outname === 'Number of affordable units'"
       >Name the new column <kbd>Number of affordable units</kbd>
       <p class="instruction-detail">
-        In addition to counting projects per neighborhood, we are now calculating the total number of affordable units for all projects in each neighborhood. Let's visualize this data.
+        In addition to counting projects per neighborhood, we are now calculating the total amount of affordable units in each of them. Let's visualize this data.
       </p>
     </li>
     <li
       data-test="const wfm = workflow.tabs[0].wfModules[4]; if (!wfm || wfm.moduleSlug !== 'columnchart') return false; const p = wfm.params; return p.x_column === 'Planning Neighborhood' && p.y_columns[0] && p.y_columns[0].column === 'Number of affordable units'"
       >Add a Column chart step. Select <kbd>Planning Neighborhood</kbd>as the X axis and <kbd>Number of affordable units</kbd>on the Y axis.
-      <p class="instruction-detail">Now let’s compare China’s production of CO₂ to that of other countries.</p>
     </li>
   </ol>
 </section>
