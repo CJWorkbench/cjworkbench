@@ -1,12 +1,12 @@
 <header>
-  <h1>Story: Cleaning campaign finance data and analyzing out-of-state contributions</h1>
+  <h1>Story: Cleaning and analysing campaign finance data</h1>
   <p>analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York.</p>
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Campaign finance is a classic topic in data journalism. Unfortunately, campaign finance data often requires a lot of cleaning before you can answer basic questions, such as “Who donated the most money?”
+    Campaign finance is a classic topic in data journalism. Unfortunately, campaign finance data often requires a lot of cleaning before you can answer basic questions, such as “Who donated the most money?”.
   </p>
   <p>
     In this lesson we will use data on contributions to a political campaign in the state of New York. We will extract the state from donor addresses, so that we can group donations by state. This requires splitting a column of text and removing unwanted information, which is a skill you will use many times.
@@ -69,11 +69,12 @@
 <section>
   <h2>Splitting columns</h2>
   <p>
-    Our first task is to extract the two letter state abbreviations in the <kbd>Contributor</kbd> column.
-  </p>
-  <p>
     We need to store the state by itself in a new column, so that we can apply Group to it, and get a breakdown of donations by state.
   </p>
+  <p>
+    Our first task is to extract the two letter state abbreviations in the <kbd>Contributor</kbd> column. For example we want to extract <kbd>NC</kbd> from:
+  </p>
+  <div class="copy-txt">FELL, STEPHEN MPO BOX 56POLLOCKSVILLE, NC 28573</div>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -95,7 +96,7 @@
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[2].params.method === 'right'"
-      >Choose the method <kbd>Extract characters from right</kbd>.
+      >Choose to split on <kbd>X characters from right</kbd>.
       <p class="instruction-detail">
         The total number of characters used by the post code (5), the state abbreviation (2) and the space in between them (1) is <kbd>8</kbd>.
       </p>
@@ -126,13 +127,13 @@
         const params = workflow.tabs[0].wfModules[3].params
         return  params.type_char === 'keep' && params.letter &&
                 !params.number && !params.punc && !params.custom"
-      >In the 'Characters' section of Clean text, keep only letters. Deleting numbers would leave the space!
+      >In the 'Characters' section of Clean text, choose to <kbd>keep</kbd> only <kbd>letters</kbd>. Deleting numbers would leave the space!
     </li>
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'renamecolumns' &&
                         (workflow.tabs[0].wfModules[4].params.renames['Contributor 2'] || '').toLowerCase() === 'state' &&
                         (workflow.tabs[0].wfModules[4].params.renames['Amt'] || '').toLowerCase() === 'amount'"
-      >Rename the columns <kbd>Amt</kbd> and <kbd>Contributor 2</kbd> respectively to <kbd>Amount</kbd> and <kbd>State</kbd> by editing the column name in the table.
+      >Rename the columns <kbd>Contributor 2</kbd> and <kbd>Amt</kbd> respectively to <kbd>State</kbd> and <kbd>Amount</kbd> by editing column names in the table header.
       <p class="instruction-detail">Now we have a clean “State” column. Our table is ready to be analyzed!</p>
     </li>
   </ol>
@@ -207,7 +208,7 @@
   <h2>Lesson Complete!</h2>
   <div class="completed">
     <p>
-       California is the first out-of-state contributor to Governor Cuomo's election's campaign. Who are these connections, and why are they interested in election in the state of New York?
+       California is the first out-of-state contributor to Governor Cuomo's election's campaign. Who are these people and what interest do they have interested in an election in the state of New York?
     </p>
     <p>
       This may only be the beginning of your investigation.
