@@ -1,6 +1,6 @@
 <header>
   <h1>Grouping by dates, and multiple columns</h1>
-  <p>Learn advanced grouping techniques to summarize data fast and efficiently</p> 
+  <p>Learn advanced grouping techniques to summarize data fast and efficiently</p>
 </header>
 
 <section class="fullscreen">
@@ -65,6 +65,9 @@
 <section>
   <h2>Grouping by date</h2>
   <p>
+    The table now contains all NYC police incident reports for the month of January and February.
+  </p>
+  <p>
     Our first question is ‘How many incidents were reported each month, in the entire city?’
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -118,7 +121,7 @@
         return params.x_column === 'Complaint date' &&
                params.y_columns.length >= 1 &&
                params.y_columns[0].column.toLowerCase() === 'count of incidents'"
-      >Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count</kbd> on the Y-axis.
+      >Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count of incidents</kbd> on the Y-axis.
       <p class="instruction-detail">Charts with two data points are not very useful. To visualize the same data but for each day, we can change the granularity of the group.</p>
     </li>
     <li
@@ -136,7 +139,7 @@
 <section>
   <h2>Grouping by multiple columns</h2>
   <p>
-    Now let’s break this data down further, by borough.
+    Now let’s break down this data further, by borough.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -153,6 +156,9 @@
         return params.groups.date_granularities['Complaint date'] === 'M'"
       >Switch back the granularity to <kbd>by month</kbd> for now.
       <p class="instruction-detail">
+        The table now displays a count of incidents per Month and per Neighborhood.
+      </p>
+      <p class="instruction-detail">
         By looking at this table we can rapidly see if different parts of town have different patterns of crime - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
       </p>
     </li>
@@ -161,7 +167,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> After being grouped by more than one column the table cannot be visualized with one line per borough, because that would require the data for each borough to be displayed in its own column.
+    <p class="summary"> After being grouped by more than one column the number of incidents per borough cannot be directly visualized, as it would require the data for each borough to be in its own column.
     </p>
     <p class="summary">
       Next lesson, we’ll learn how to change table formats from Long to Wide to be able to access any variable we need.
