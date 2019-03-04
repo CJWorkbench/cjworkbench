@@ -1,6 +1,6 @@
 <header>
   <h1>Grouping by dates, and multiple columns</h1>
-  <p>Learn advanced grouping techniques to summarize data fast and efficiently</p>
+  <p>Learn advanced grouping techniques to summarize data fast and efficiently.</p>
 </header>
 
 <section class="fullscreen">
@@ -149,17 +149,11 @@
         have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
         return have_cols.split(',').sort().join(',') === want_cols"
       >In the Group step, add the <kbd>Borough</kbd> column next to <kbd>Complaint date</kbd> using the same column selector.
-    </li>
-    <li
-      data-test="
-        const params = workflow.tabs[0].wfModules[4].params
-        return params.groups.date_granularities['Complaint date'] === 'M'"
-      >Switch back the granularity to <kbd>by month</kbd> for now.
       <p class="instruction-detail">
-        The table now displays a count of incidents per Month and per Neighborhood.
+        The table now displays a more detailed count of incidents. It shows how many felonies were reported in each Neighborhood, within each day.
       </p>
       <p class="instruction-detail">
-        By looking at this table we can rapidly see if different parts of town have different patterns of crime - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
+        By looking at this table we can rapidly see if different parts of town have different patterns of crime on any given day - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
       </p>
     </li>
   </ol>
@@ -170,7 +164,7 @@
     <p class="summary"> After being grouped by more than one column the number of incidents per borough cannot be directly visualized, as it would require the data for each borough to be in its own column.
     </p>
     <p class="summary">
-      Next lesson, we’ll learn how to change table formats from Long to Wide to be able to access any variable we need.
+      In the next lesson, we’ll learn how to change table formats from Long to Wide to be able to access any variable we need.
     </p>
   </div>
   <div class="next">
