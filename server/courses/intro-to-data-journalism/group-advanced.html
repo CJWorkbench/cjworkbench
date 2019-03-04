@@ -10,7 +10,7 @@
     Now we’re ready to group by date, using the same police incident data from the City of New York we used in the previous lesson.
   </p>
   <p>
-    We’ll answer the question: how many incidents were reported each month in each borough of the city?
+    We’ll answer the question: how many felonies were reported each month in each borough of the city?
   </p>
 </section>
 
@@ -25,7 +25,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYC-incidents-2018.csv"
+              "url":"./NYC-incidents-2018.csv"
             }
           },
           {
@@ -54,7 +54,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYPD_Complaint_YTD_DataDictionary.csv"
+              "url":"./NYPD_Complaint_YTD_DataDictionary.csv"
             }
           }
         ]
@@ -65,7 +65,7 @@
 <section>
   <h2>Grouping by date</h2>
   <p>
-    This table contains all NYC police incidents reported in January and February 2018.
+    This table was describes all felonies reported by the police of New York City for the months of January and February 2018. The original is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
   </p>
   <p>
     Our first question is ‘How many incidents were reported each month, in the entire city?’
