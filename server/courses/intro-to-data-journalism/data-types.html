@@ -35,7 +35,7 @@ tabs:
 <section>
   <h2>Data</h2>
   <p>
-    This table describes reported police incidents in January and February 2018 in the city of New York. It is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary. (For this lesson, it's truncated to 500 records.)
+    This table describes 500 police incidents that were reported in February 2018 in the city of New York. It is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
   </p>
   <p class="instruction-detail">Again, let’s ask the basic questions:</p>
   <ul>
@@ -49,7 +49,7 @@ tabs:
 <section>
   <h2>Cleaning</h2>
   <p>
-    There's a lot of interesting data points you may want to explore in this data. In the next lesson, we will answer the question: "How many incidents were reported each month in each borough?"
+    There's a lot of interesting data points you may want to explore in this data. In the next lesson, we will look at a larger sample and answer the question: "How many incidents were reported each month in each borough?"
   </p>
   <p>
     For now, let’s narrow it down to the columns we need and set column types correctly.
@@ -58,8 +58,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns' && workflow.tabs[0].wfModules[1].params.colnames === 'boro_nm,cmplnt_fr_dt'"
-      >Add Select columns, and keep only <kbd>boro_nm</kbd> and <kbd>cmplnt_fr_dt</kbd>
-      <p class="instruction-detail">You can rename columns by clicking on any column name in the table.</p>
+      >Add Select columns, and keep only <kbd>boro_nm</kbd> and <kbd>cmplnt_fr_dt</kbd>.
     </li>
     <li
       data-test="const wfm = workflow.tabs[0].wfModules[2]; return wfm && !wfm.params.custom_list && wfm.params.renames.boro_nm === 'Borough' && wfm.params.renames.cmplnt_fr_dt === 'Complaint date'"
@@ -71,14 +70,14 @@ tabs:
 <section class="fullscreen">
   <h2>Data types</h2>
   <p>
-    You may have noticed that the type of each column is displayed below each column name. Workbench supports three column types:
+     Workbench supports three column types. The type of each column is displayed below each column name:
   </p>
+  <figure>
+    <img class="half-width" alt="Inspect element" src="images/course-1/type-header.png">
+  </figure>
   <h3>Text</h3>
   <p>
     Also known as “string”, this type can contain any character and can be of any length. Text is great for names, descriptions, notes and categories.
-  </p>
-  <p>
-    When Workbench imports data, it often finds a "Text" column when you might prefer "Number" or "Date &amp; time."
   </p>
   <h3>Number</h3>
   <p>
