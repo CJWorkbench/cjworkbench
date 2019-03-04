@@ -52,9 +52,9 @@ def _do_render(
         )
 
         columns_to_group = columns[:-1]
-        rows_with_na_index = table[columns_to_group].isnull().any(axis=1)
-        rows_with_na = table[rows_with_na_index]
-        rows_without_na = table[~rows_with_na_index]
+        rows_with_na_mask = table[columns_to_group].isnull().any(axis=1)
+        rows_with_na = table[rows_with_na_mask]
+        rows_without_na = table[~rows_with_na_mask]
 
         keep_grouped_rows = (
             rows_without_na
