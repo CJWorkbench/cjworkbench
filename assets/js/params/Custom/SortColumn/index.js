@@ -8,13 +8,14 @@ export default class SortColumns extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
+    fieldId: PropTypes.string.isRequired, // for <input id=...>
     onChange: PropTypes.func.isRequired, // func(index, value) => undefined
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     })), // or null if unknown
     value: PropTypes.arrayOf(PropTypes.shape({
-      column: PropTypes.string.isRequired, // column string
-      is_ascending: PropTypes.bool.isRequired // bool indicating sort direction
+      colname: PropTypes.string.isRequired, // column string
+      is_ascending: PropTypes.bool.isRequired // sort direction
     }).isRequired).isRequired
   }
 
@@ -43,10 +44,10 @@ export default class SortColumns extends React.PureComponent {
   }
 
   /**
- * Given value, or default of {operation:size} if empty.
- *
- * groupby.py uses this default. Read comments there to see why.
- */
+   * Given value, or default of {operation:size} if empty.
+   *
+   * groupby.py uses this default. Read comments there to see why.
+   */
   get value () {
     const actual = this.props.value
     if (actual.length === 0) {
@@ -57,22 +58,23 @@ export default class SortColumns extends React.PureComponent {
   }
 
   render () {
-    const { name, isReadOnly, inputColumns } = this.props
+    const { name, fieldId, isReadOnly, inputColumns } = this.props
     const value = this.value
     const onDelete = value.length <= 1 ? null : this.onDeleteSortColumn
 
     return (
       <React.Fragment>
         <ul>
-          {value.map((sortColumn, index) => (
+          {value.map((itemValue, index) => (
             <SortColumn
               key={index}
               isReadOnly={isReadOnly}
               index={index}
               inputColumns={inputColumns}
+              value={itemValue}
               name={`${name}[${index}]`}
+              fieldId={`${fieldId}_${index}`}
               onChange={this.onChangeSortColumn}
-              {...sortColumn}
               onDelete={onDelete}
             />
           ))}

@@ -3,27 +3,53 @@ import PropTypes from 'prop-types'
 import ColumnParam from '../../Column'
 import RadioParam from '../../Radio.js'
 
+
+const AscendingParamOptions = [
+  { value: true, label: 'Ascending' },
+  { value: false, label: 'Descending' }
+]
+function AscendingParam (props) {
+  return (
+    <RadioParam
+      options={AscendingParamOptions}
+      {...props}
+    />
+  )
+}
+AscendingParam.propTypes = {
+  isReadOnly: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired, // for <input name=...>
+  fieldId: PropTypes.string.isRequired, // <input id=...>
+  onChange: PropTypes.func.isRequired, // func(index, value) => undefined
+  value: PropTypes.bool.isRequired
+}
+
+
+
 export default class SortColumn extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
+    fieldId: PropTypes.string.isRequired, // <input id=...>
     onChange: PropTypes.func.isRequired, // func(index, value) => undefined
     onDelete: PropTypes.func, // func(index) => undefined, or null if delete not allowed
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     })), // or null if unknown
-    colname: PropTypes.string.isRequired, // column string
-    is_ascending: PropTypes.bool.isRequired // bool indicating sort direction
+    value: PropTypes.shape({
+      colname: PropTypes.string.isRequired, // column string
+      is_ascending: PropTypes.bool.isRequired // sort direction
+    }).isRequired
   }
 
-  onChangeDirection = (direction) => {
-    const { index, colname, onChange } = this.props
-    onChange(index, { colname, is_ascending: (direction === 0) })
+  onChangeIsAscending = (isAscending) => {
+    const { index, value: { colname }, onChange } = this.props
+    onChange(index, { colname, is_ascending: isAscending })
   }
 
   onChangeColname = (colnameOrNull) => {
-    const { index, is_ascending, onChange } = this.props
+    const { index, value: { is_ascending }, onChange } = this.props
     onChange(index, { is_ascending, colname: (colnameOrNull || '') })
   }
 
@@ -33,8 +59,7 @@ export default class SortColumn extends React.PureComponent {
   }
 
   render () {
-    const { index, name, onDelete, colname, is_ascending, isReadOnly, inputColumns } = this.props
-    const sortDirection = is_ascending ? 0 : 1
+    const { index, value, name, fieldId, onDelete, isReadOnly, inputColumns } = this.props
     const label = index === 0 ? 'By' : 'Then by'
 
     return (
@@ -44,18 +69,19 @@ export default class SortColumn extends React.PureComponent {
           <ColumnParam
             key={index}
             name={`${name}[colname]`}
-            value={colname}
+            fieldId={`${name}_colname`}
+            value={value.colname}
             prompt='Select a column'
             isReadOnly={isReadOnly}
             inputColumns={inputColumns}
             onChange={this.onChangeColname}
           />
-          <RadioParam
-            name={`${name}[radio]`}
-            items={'Ascending|Descending'}
-            value={sortDirection}
+          <AscendingParam
+            name={`${name}[is_ascending]`}
+            fieldId={`${name}_is_ascending`}
+            value={value.is_ascending}
             isReadOnly={isReadOnly}
-            onChange={this.onChangeDirection}
+            onChange={this.onChangeIsAscending}
           />
           {(onDelete && !isReadOnly) ? (
             <div className='delete'>

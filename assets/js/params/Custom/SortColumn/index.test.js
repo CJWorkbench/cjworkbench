@@ -7,6 +7,7 @@ describe('SortColumns', () => {
     <SortColumns
       isReadOnly={false}
       name='sort_columns'
+      fieldId='sort_columns'
       value={[]}
       inputColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}]}
       onChange={jest.fn()}
