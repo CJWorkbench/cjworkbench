@@ -125,8 +125,12 @@
 
           img {
             display: block;
-            width: 100%;
             height: auto;
+            position: absolute;
+            width: calc(100% - 3rem);
+            border-radius: 0 0 .6rem .6rem;
+            left: 1.5rem;
+            bottom: 0;
           }
         }
       }
