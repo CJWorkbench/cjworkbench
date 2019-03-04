@@ -1,37 +1,48 @@
+from dataclasses import dataclass
 from cjworkbench.types import ProcessResult
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 import pandas as pd
 
 
-def _do_render(table, sort_params, keep_top):
-    if not sort_params:
+@dataclass
+class SortColumn:
+    """Entry in the `sort_columns` (List) param."""
+    colname: str
+    is_ascending: bool
+
+
+def _do_render(
+    table, *,
+    sort_columns: List[Dict[str, Union[str, bool]]],
+    keep_top: str
+):
+    # Filter out empty columns (don't raise an error)
+    sort_columns = [SortColumn(**sc) for sc in sort_columns if sc['colname']]
+
+    if keep_top:
+        try:
+            keep_top_int = int(keep_top)
+            if keep_top_int <= 0:
+                raise ValueError
+        except ValueError:
+            return ProcessResult(error=(
+                'Please enter a positive integer in "Keep top" '
+                'or leave it blank.'
+            ))
+    else:
+        keep_top_int = None
+
+    if not sort_columns:
         return ProcessResult(table)
 
-    columns = [x['colname'] for x in sort_params]
-    directions = [x['is_ascending'] for x in sort_params]
-
-    # check if any column is empty, throw error
-    try:
-        columns.index('')
-        return ProcessResult(dataframe=table, error='Please select a column.')
-    except ValueError:
-        pass
+    columns = [sc.colname for sc in sort_columns]
+    directions = [sc.is_ascending for sc in sort_columns]
 
     # check for duplicate columns
     if len(columns) != len(set(columns)):
-        return ProcessResult(dataframe=table, error='Duplicate columns.')
+        return ProcessResult(error='Duplicate columns.')
 
-    if keep_top != '':
-        try:
-            top = int(keep_top)
-        except ValueError:
-            return ProcessResult(
-                dataframe=table,
-                error=(
-                    'Please enter an integer in "Keep top" or leave it blank.'
-                )
-            )
-
+    if keep_top_int:
         # sort accordingly
         table.sort_values(
             by=columns,
@@ -52,7 +63,8 @@ def _do_render(table, sort_params, keep_top):
         rows_with_na = table.loc[rows_with_na_idx]
         rows_without_na = table.drop(rows_with_na_idx)
 
-        table = rows_without_na.groupby(columns_to_group).head(top)
+        table = rows_without_na.groupby(columns_to_group,
+                                        sort=False).head(keep_top_int)
         table = pd.concat([table, rows_with_na])
 
     # sort again with null columns, if any
@@ -132,7 +144,4 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def render(table, params):
-    sort_params: list = params['sort_columns']
-    keep_top: str = params['keep_top']
-
-    return _do_render(table, sort_params, keep_top)
+    return _do_render(table, **params)
