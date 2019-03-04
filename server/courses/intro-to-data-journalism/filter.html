@@ -27,7 +27,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/affordable-housing-pipeline.csv"
+              "url":"./affordable-housing-pipeline.csv"
             }
           }
         ]
@@ -38,7 +38,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/dataDictionary-affordable-housing-pipeline.csv"
+              "url":"./column-descriptions.csv"
             }
           }
         ]
@@ -157,13 +157,33 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters.length > 1"
+      data-test="
+        filters = workflow.tabs[0].wfModules[2].params.filters
+
+        // true if user added AND inside the first subfilter
+        if (filters.filters[0].subfilters &&
+            filters.filters[0].subfilters.length > 1 &&
+            filters.filters[0].operator == 'and')
+          return true
+
+        // or user could add AND at the outer level
+        return filters.filters.length == 2 &&
+               filters.operator === 'and'"
       >In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].colname === 'Affordable Units' &&
-                        workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].condition === 'number_is_greater_than_or_equals' &&
-                        workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[1].value === '100'"
+      data-test="
+      filters = workflow.tabs[0].wfModules[2].params.filters.filters
+
+      function gotCondition(subfilter) {
+       return subfilter.colname === 'Affordable Units' &&
+              subfilter.condition === 'number_is_greater_than_or_equals' &&
+              subfilter.value === '100'
+      }
+
+      // Accept condition either at subfilter or main filter level
+      return (filters[0].subfilters.length > 1 && gotCondition(filters[0].subfilters[1])) ||
+             (filters.length > 1 && gotCondition(filters[1].subfilters[0]))"
       >Set this new condition to `If <kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>`.
       <p class ="instruction-detail">
         The table now displays all projects containing "more than 50% affordable units AND at least 100 affordable units".
