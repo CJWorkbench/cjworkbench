@@ -1,42 +1,148 @@
+from dataclasses import dataclass
 from cjworkbench.types import ProcessResult
+from typing import Any, Dict, List, Union
+import pandas as pd
 
 
-def _do_render(table, column, is_ascending):
-    if not column or column not in table.columns:
+@dataclass
+class SortColumn:
+    """Entry in the `sort_columns` (List) param."""
+    colname: str
+    is_ascending: bool
+
+
+def _do_render(
+    table, *,
+    sort_columns: List[Dict[str, Union[str, bool]]],
+    keep_top: str
+):
+    # Filter out empty columns (don't raise an error)
+    sort_columns = [SortColumn(**sc) for sc in sort_columns if sc['colname']]
+
+    if keep_top:
+        try:
+            keep_top_int = int(keep_top)
+            if keep_top_int <= 0:
+                raise ValueError
+        except ValueError:
+            return ProcessResult(error=(
+                'Please enter a positive integer in "Keep top" '
+                'or leave it blank.'
+            ))
+    else:
+        keep_top_int = None
+
+    if not sort_columns:
         return ProcessResult(table)
 
-    if is_ascending is None:  # Why do we even _have_ that lever?
-        return ProcessResult(table)
+    columns = [sc.colname for sc in sort_columns]
+    directions = [sc.is_ascending for sc in sort_columns]
 
-    values = table[column]
+    # check for duplicate columns
+    if len(columns) != len(set(columns)):
+        return ProcessResult(error='Duplicate columns.')
 
-    # Add temporary column for sorting. Pick unique name: just take the last
-    # name and add a letter.
-    tmp_sort_col = max(table.columns) + 'ZZZ'
-    table[tmp_sort_col] = values
+    if keep_top_int and len(sort_columns) > 1:
+        # sort by _last_ column: that's the sorting we'll use within each group
+        table.sort_values(
+            by=sort_columns[-1].colname,
+            ascending=sort_columns[-1].is_ascending,
+            inplace=True,
+            na_position='last'
+        )
+
+        columns_to_group = columns[:-1]
+        rows_with_na_mask = table[columns_to_group].isnull().any(axis=1)
+        rows_with_na = table[rows_with_na_mask]
+        rows_without_na = table[~rows_with_na_mask]
+
+        keep_grouped_rows = (
+            rows_without_na
+            .groupby(columns_to_group, sort=False)
+            .head(keep_top_int)
+        )
+        table = pd.concat([keep_grouped_rows, rows_with_na], ignore_index=True)
+
+    # sort values
     table.sort_values(
-        by=tmp_sort_col,
-        ascending=is_ascending,
+        by=columns,
+        ascending=directions,
         inplace=True,
         na_position='last'
     )
-    table.drop(columns=[tmp_sort_col], inplace=True)
-    table.reset_index(inplace=True, drop=True)
+
+    if keep_top_int and len(sort_columns) == 1:
+        # The whole result is one big group, and we want to keep the elements
+        # within it.
+        table = table.head(keep_top_int)
+
+    table.reset_index(drop=True, inplace=True)
 
     return ProcessResult(table)
 
 
-_SortAscendings = {
-    0: None,
-    1: True,
-    2: False
-}
+def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    v0:
+    params: {
+        column: 'A',
+        direction: 1  # 0: 'None' [sic], 1: 'Ascending', 2: 'Descending'
+    }
+
+    v1:
+    params: {
+        sort_columns: [
+            {colname: 'A', is_ascending: True},
+            {colname: 'B', is_ascending: False}
+        ],
+        keep_top: '2'
+    }
+    """
+    return {
+        'sort_columns': [
+            {
+                'colname': params['column'],
+                # Reduce sort options from 2 to 3, anything but 1 is ascending
+                'is_ascending': params['direction'] != 2,
+            },
+        ],
+    }
+
+
+def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Add the 'keep_top' param
+
+    v1:
+    params: {
+        sort_columns: [
+            {colname: 'A', is_ascending: True},
+            {colname: 'B', is_ascending: False}
+        ]
+    }
+
+    v2:
+    params: {
+        sort_columns: [
+            {colname: 'A', is_ascending: True},
+            {colname: 'B', is_ascending: False}
+        ],
+        keep_top: '2'
+    }
+    """
+    params['keep_top'] = ''
+    return params
+
+
+def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
+    if 'sort_columns' not in params:
+        params = _migrate_params_v0_to_v1(params)
+
+    if 'keep_top' not in params.keys():
+        params = _migrate_params_v1_to_v2(params)
+
+    return params
 
 
 def render(table, params):
-    column: str = params['column']
-
-    is_ascending_int: int = params['direction']
-    is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
-
-    return _do_render(table, column, is_ascending)
+    return _do_render(table, **params)

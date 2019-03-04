@@ -13,6 +13,7 @@ import JoinColumns from './JoinColumns'
 import Refine from './Refine'
 import Renames from './Renames'
 import ReorderHistory from './ReorderHistory'
+import SortColumns from './SortColumn'
 import ValueSelect from './ValueSelect'
 import VersionSelect, { VersionSelectSimpler } from './VersionSelect'
 
@@ -28,6 +29,7 @@ const Components = {
   refine: Refine,
   renames: Renames,
   'reorder-history': ReorderHistory,
+  sort_columns: SortColumns,
   valueselect: ValueSelect,
   version_select_simpler: VersionSelectSimpler,
   version_select: VersionSelect,
