@@ -32,7 +32,7 @@
       "name": "Keep top",
       "id_name": "keep_top",
       "type": "string",
-      "placeholder": "Enter how many values to keep"
+      "placeholder": "Enter how many rows to keep"
     }
   ]
 }
