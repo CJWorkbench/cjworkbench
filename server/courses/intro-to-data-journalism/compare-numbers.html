@@ -1,7 +1,7 @@
 <header>
   <h1>Comparing numbers</h1>
   <p>Learn three common types of comparisons: difference, ratio, and percentage change.</p>
-  <img src="./banner.svg">
+  <img src="./banner.svg" alt="">
 </header>
 
 <section class="fullscreen">
@@ -11,28 +11,16 @@
   </p>
   <p>
     In this lesson we will use data from the United States Census bureau to learn three common types of comparisons: difference, ratio, and percentage change.
-
   </p>
 </section>
 
-<!-- Section 1 -->
-
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Lesson",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/US-census-counties.csv"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./us-census-counties.csv
 </script>
 
 <section>
@@ -44,33 +32,14 @@
     The census happens every 10 years. The last one was in 2010, so every year since then is an estimate based on more recent surveys.
   </p>
   <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What does each row represent?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What's in each column?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there any columns, values or codes you don't understand?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there missing or obviously wrong values?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Does the data need to be cleaned?
-    </li>
-  </ol>
+  <p class="instruction-detail">Look at this table and answer these questions for yourself:</p>
+  <ul>
+    <li>What does each row represent?</li>
+    <li>What's in each column?</li>
+    <li>Are there any columns, values or codes you don't understand?</li>
+    <li>Are there missing or obviously wrong values?</li>
+    <li>Does the data need to be cleaned?</li>
+  </ul>
 </section>
 
 <section>
@@ -82,27 +51,23 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'formula'"
       >Add <kbd>Formula</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const wfm = workflow.tabs[0].wfModules[1]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=D1-C1' || f === '=(D1-C1)'"
       >Type in the following formula:
-      <div class="copy-txt">=(D1-C1)</div>
+      <div class="copy-txt">=D1-C1</div>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[1].params.out_column === 'Difference'"
       >Name the new column <kbd>Difference</kbd>.
       <p class="instruction-detail">
         A positive numbers means that the population increased, while a negative number means that the county’s population decreased.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const wfm = workflow.tabs[0].wfModules[2]; if (!wfm || wfm.moduleSlug !== 'sort') return false; const p = wfm.params; return p.keep_top === '' && p.sort_columns[0] && p.sort_columns[0].colname === 'Difference' && p.sort_columns[0].is_ascending"
       >Sort the resulting column in ascending order.
       <p class="instruction-detail">
         The first row will display the largest negative number, meaning the county with the greatest population loss.
@@ -114,32 +79,31 @@
 <section>
   <h2>Ratio</h2>
   <p>
-    Larger counties are likely to have a greater population change. Let’s reframe:<br/>
-    'Relative to its size, which county has lost or gained the most population?<br/>
-    In other words: 'How many people in 2017 compared to the number of people in 2010?'
+    Larger counties are likely to have a greater population change. Let’s reframe:
+  </p>
+  <p>
+    "Relative to its size, which county has lost or gained the most population?"
   </p>
   <p>
     The formula to calculate ‘How many (X) per (Y)’ is a simple division, also called a ratio:
   </p>
-  <div class="copy-txt">=(X/Y)</div>
+  <div class="copy-txt">=X/Y</div>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Insert a new Formula in step 4 (keep the previous one) and type in:
-      <div class="copy-txt">=(D1/C1)</div>
+      data-test="const wfm = workflow.tabs[0].wfModules[3]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=D1/C1' || f === '=(D1/C1)'"
+      >Add a new Formula as step 4 (keep the previous one) and type in:
+      <div class="copy-txt">=D1/C1</div>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[3].params.out_column === 'Ratio'"
       >Name the new column <kbd>Ratio</kbd>
       <p class=instruction-detail>
         A ratio of 1 means that for every person in 2010, there is exactly 1 person in 2017.
       </p>
       <p class=instruction-detail>
         Numbers greater than 1 mean the population increased. Less than 1 means the population decreased.
-        A ratio of 2 would mean that the population doubled.
+        A ratio of 2 would mean that the population doubled; 0.5 would mean that the population halved.
       </p>
     </li>
   </ol>
@@ -154,18 +118,18 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const wfm = workflow.tabs[0].wfModules[4]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=D1/C1*100' || f === '=(D1/C1)*100' || f === '=F1*100'"
       >Add another Formula and type in:
       <div class="copy-txt">=(D1/C1)*100</div>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[4].params.out_column === 'Percentage'"
       >Name the new column <kbd>Percentage</kbd>
-      <p class=instruction-detail>
-        The numbers in this new column are obviously similar to the <kbd>Ratio</kbd> column - just multiplied by 100.<br>
-        The advantage of percentages is to allow us to better grasp numbers: 'In 2017, the population of Concho county was 66.6% the size it was in 2010.'
+      <p class="instruction-detail">
+        The numbers in this new column are obviously similar to the <kbd>Ratio</kbd> column - just multiplied by 100.<!-- The formula <kbd>=F1*100</kbd> is equivalent. -->
+      </p>
+      <p class="instruction-detail">
+        Percentages allow us to better grasp numbers. For instance: "In 2017, the population of Concho county was 66.6% the size it was in 2010."
       </p>
     </li>
   </ol>
@@ -182,20 +146,24 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="const wfm = workflow.tabs[0].wfModules[5]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=((D1-C1)/C1)*100' || f === '=(D1-C1)/C1*100' || f === '=(E1-C1)*100' || f === '=((D1/C1)-1)*100' || f === '=(D1/C1*100)-100' || f === '=D1/C1*100-100' || f === '=(F1-1)*100' || f === '=G1-100' || f === '(G1-100)'"
       >Add another Formula step and this time apply the percentage formula:
-      <div class="copy-txt">=((D1 - C1) / D1)* 100</div>
-      <p class=instruction-detail>
-        Name this new column <kbd>Percentage change</kbd>
+      <div class="copy-txt">=((D1 - C1) / C1) * 100</div>
+    </li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[5].params.out_column === 'Percentage change'"
+      >Name the new column <kbd>Percentage change</kbd>
+      <p class="instruction-detail">
+        A result of 100% means the value doubled; 0% means it stayed the same; and -50% means the new number is half the old one.
       </p>
-      <p class=instruction-detail>
-        A result of 100% means the value doubled, 0% means it stayed the same, and a -50% change means the new number is half the old one.
+      <p class="instruction-detail">
+        Percentage change allows us to describe our numbers in yet a new way: "From 2010 to 2017, Concho county lost 33.7% of its population."
       </p>
-      <p class=instruction-detail>
-        Percentage change allows us to describe our numbers in yet a new way:<br>
-        ‘From 2010 to 2017, Concho county lost 33.7% of its population’.
+      <!--
+      <p class="instruction-detail">
+        There are other formulas for percentage change. A popular one is <kbd>=((New / Old) - 1) * 100</kbd>. In this workflow, <kbd>=G1-100</kbd> works, too.
       </p>
+      -->
     </li>
   </ol>
 </section>
