@@ -8,7 +8,7 @@ services:
       context: .
       target: pydev
     volumes:
-      - ./:/app/:rw
+      - ./:/app/:cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
@@ -31,9 +31,16 @@ services:
       context: .
       target: pydev
     volumes:
-      - ./:/app/:rw
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
+      - type: bind
+        source: ./${MODULE:-x}/
+        target: /${MODULE:-x}/
+        consistency: cached
+        read_only: true
       - virtualenvs:/root/.local/share/virtualenvs/:rw
-      - ../${MODULE:-x}:/${MODULE:-x}:ro
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '5'
@@ -55,7 +62,10 @@ services:
       context: .
       target: pydev
     volumes:
-      - ./:/app/:rw
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'

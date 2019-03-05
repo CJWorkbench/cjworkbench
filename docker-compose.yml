@@ -44,7 +44,10 @@ services:
       target: jsbase
     volumes:
       # Migrate 
-      - ./:/app/:rw
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
       - node_modules:/app/node_modules:rw
       - jest_cache:/tmp/jest_0:rw
     networks: [ 'dev' ]
@@ -55,7 +58,10 @@ services:
       context: .
       target: pydev
     volumes:
-      - ./:/app/:rw
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
@@ -90,7 +96,10 @@ services:
       context: .
       target: pydev
     volumes:
-      - ./:/app/:rw
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
@@ -125,7 +134,10 @@ services:
       context: .
       target: pydev
     volumes:
-      - ./:/app/:rw
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
