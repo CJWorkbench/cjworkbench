@@ -8,8 +8,58 @@ from server.modules import formula
 from .util import MockParams
 
 
-P = MockParams.factory(syntax=0, out_column='R', formula_excel='',
+P = MockParams.factory(syntax='excel', out_column='R', formula_excel='',
                        all_rows=False, formula_python='')
+
+
+class MigrateParamsTests(unittest.TestCase):
+    def test_v0_excel(self):
+        result = formula.migrate_params({
+            'syntax': 0,
+            'out_column': 'R',
+            'formula_excel': '=A1',
+            'formula_python': 'A',
+            'all_rows': True,
+        })
+        self.assertEqual(result, {
+            'syntax': 'excel',
+            'out_column': 'R',
+            'formula_excel': '=A1',
+            'formula_python': 'A',
+            'all_rows': True,
+        })
+
+    def test_v0_python(self):
+        result = formula.migrate_params({
+            'syntax': 1,
+            'out_column': 'R',
+            'formula_excel': '=A1',
+            'formula_python': 'A',
+            'all_rows': True,
+        })
+        self.assertEqual(result, {
+            'syntax': 'python',
+            'out_column': 'R',
+            'formula_excel': '=A1',
+            'formula_python': 'A',
+            'all_rows': True,
+        })
+
+    def test_v1(self):
+        result = formula.migrate_params({
+            'syntax': 'python',
+            'out_column': 'R',
+            'formula_excel': '=A1',
+            'formula_python': 'A',
+            'all_rows': True,
+        })
+        self.assertEqual(result, {
+            'syntax': 'python',
+            'out_column': 'R',
+            'formula_excel': '=A1',
+            'formula_python': 'A',
+            'all_rows': True,
+        })
 
 
 class FormulaTests(unittest.TestCase):
@@ -28,14 +78,14 @@ class FormulaTests(unittest.TestCase):
     def test_python_formula_int_output(self):
         self._test(
             pd.DataFrame({'A': [10, 20]}),
-            {'syntax': 1, 'formula_python': 'A*2'},
+            {'syntax': 'python', 'formula_python': 'A*2'},
             pd.DataFrame({'A': [10, 20], 'R': [20, 40]})
         )
 
     def test_python_formula_str_output(self):
         self._test(
             pd.DataFrame({'A': [10, 20]}),
-            {'syntax': 1, 'formula_python': 'str(A) + "x"'},
+            {'syntax': 'python', 'formula_python': 'str(A) + "x"'},
             pd.DataFrame({'A': [10, 20], 'R': ['10x', '20x']})
         )
 
@@ -43,7 +93,7 @@ class FormulaTests(unittest.TestCase):
         # empty out_column defaults to 'result'
         self._test(
             pd.DataFrame({'A': [1]}),
-            {'syntax': 1, 'formula_python': 'A*2', 'out_column': ''},
+            {'syntax': 'python', 'formula_python': 'A*2', 'out_column': ''},
             pd.DataFrame({'A': [1], 'result': [2]})
         )
 
@@ -51,14 +101,14 @@ class FormulaTests(unittest.TestCase):
         # formula with missing column name should error
         self._test(
             pd.DataFrame({'A': [1]}),
-            {'syntax': 1, 'formula_python': 'B*2'},
+            {'syntax': 'python', 'formula_python': 'B*2'},
             expected_error="name 'B' is not defined"
         )
 
     def test_python_formula_cast_nonsane_output(self):
         self._test(
             pd.DataFrame({'A': [1, 2]}),
-            {'syntax': 1, 'formula_python': '[A]'},
+            {'syntax': 'python', 'formula_python': '[A]'},
             pd.DataFrame({'A': [1, 2], 'R': ['[1]', '[2]']})
         )
 
@@ -67,7 +117,7 @@ class FormulaTests(unittest.TestCase):
         # formula
         self._test(
             pd.DataFrame({'A b': [1, 2]}),
-            {'syntax': 1, 'formula_python': 'A_b*2'},
+            {'syntax': 'python', 'formula_python': 'A_b*2'},
             pd.DataFrame({'A b': [1, 2], 'R': [2, 4]})
         )
 

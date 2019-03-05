@@ -141,14 +141,28 @@ def excel_formula(table, formula, all_rows):
     return newcol
 
 
+def _get_output_column(table, out_column: str) -> str:
+    # if no output column supplied, use result0, result1, etc.
+    if not out_column:
+        out_column = 'result'
+
+    # make sure the colname is unique
+    if out_column in table.columns:
+        n = 0
+        while f'{out_column}{n}' in table.columns:
+            n += 1
+    else:
+        n = ''
+    return f'{out_column}{n}'
+
+
 def render(table, params, **kwargs):
     if table is None:
         return None     # no rows to process
 
-    syntax: int = params['syntax']
-    if syntax == 0:
+    if params['syntax'] == 'excel':
         formula: str = params['formula_excel'].strip()
-        if formula == '':
+        if not formula:
             return table
         all_rows: bool = params['all_rows']
         try:
@@ -157,23 +171,32 @@ def render(table, params, **kwargs):
             return str(e)
     else:
         formula: str = params['formula_python'].strip()
-        if formula == '':
+        if not formula:
             return table
         try:
             newcol = python_formula(table, formula)
         except Exception as e:
             return str(e)
 
-    # if no output column supplied, use result0, result1, etc.
-    out_column: str = params['out_column']
-    if out_column == '':
-        if 'result' not in table.columns:
-            out_column = 'result'
-        else:
-            n = 0
-            while f'result{n}' in table.columns:
-                n += 1
-            out_column = f'result{n}'
+    out_column = _get_output_column(table, params['out_column'])
     table[out_column] = newcol
 
     return table
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: syntax is int, 0 means excel, 1 means python
+
+    v1: syntax is 'excel' or 'python'
+    """
+    return {
+        **params,
+        'syntax': ['excel', 'python'][params['syntax']]
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['syntax'], int):
+        params = _migrate_params_v0_to_v1(params)
+    return params
