@@ -36,7 +36,7 @@ services:
         target: /app/
         consistency: cached
       - type: bind
-        source: ./${MODULE:-x}/
+        source: ../${MODULE:-x}/
         target: /${MODULE:-x}/
         consistency: cached
         read_only: true
