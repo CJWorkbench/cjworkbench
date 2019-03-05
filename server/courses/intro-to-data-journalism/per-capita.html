@@ -83,7 +83,7 @@ tabs:
       </p>
     </li>
     <li
-      data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && (p.formula_excel.replace(' ', '') === '=C1/B1' || p.formula_excel.replace(' ', '') === '=C1/B1*100000')"
+      data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && (p.formula_excel.replace(/ /g, '') === '=C1/B1' || p.formula_excel.replace(/ /g, '') === '=C1/B1*100000')"
       >Type in: <div class="copy-txt">=C1/B1</div>
     </li>
     <li
@@ -110,7 +110,7 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && p.formula_excel.replace(' ', '') === '=C1/B1*100000'"
+      data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && p.formula_excel.replace(/ /g, '') === '=C1/B1*100000'"
       >Edit your formula in step 3 to <div class="copy-txt">=C1/B1*100000</div>
       <p class="instruction-detail">
         You don't need to sort these numbers again: "crimes per 100,000 people" sorts exactly the same way as "crimes per capita". Click the "Sort" step to see the sorted output and confirm that Alaska is still on top.
