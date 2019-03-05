@@ -1,5 +1,7 @@
 import json
+from django.test import SimpleTestCase, override_settings
 import unittest
+from server.models.course import Course
 from server.models.lesson import (
     AllLessons,
     Lesson,
@@ -29,7 +31,7 @@ def _lesson_html_with_initial_workflow(initial_workflow_json):
     ])
 
 
-class LessonTests(unittest.TestCase):
+class LessonTests(SimpleTestCase):
     def test_parse_step(self):
         out = Lesson.parse(None, 'a-slug', """
             <header><h1>Lesson</h1><p>Contents</p></header>
@@ -174,6 +176,63 @@ class LessonTests(unittest.TestCase):
             <footer><h2>Foot</h2><p>My foot</p></footer>
         """)
         self.assertEquals(out.footer, LessonFooter('Foot', '<p>My foot</p>'))
+
+    @override_settings(STATIC_URL='//static/')
+    def test_parse_header_relative_img_src_without_course(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1><p><img src="./foo.png"/></p></header>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(result.header.html,
+                          '<p><img src="//static/lessons/a-slug/foo.png"></p>')
+
+    @override_settings(STATIC_URL='//static/')
+    def test_parse_header_relative_img_src_with_course(self):
+        result = Lesson.parse(Course('a-course'), 'a-slug', """
+            <header><h1>x</h1><p><img src="./foo.png"/></p></header>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(
+            result.header.html,
+            '<p><img src="//static/courses/a-course/a-slug/foo.png"></p>'
+        )
+
+    @override_settings(STATIC_URL='//static/')
+    def test_parse_header_absolute_img_src(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1><p><img src="images/foo.png"/></p></header>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(result.header.html,
+                          '<p><img src="//static/images/foo.png"></p>')
+
+    @override_settings(STATIC_URL='//static/')
+    def test_parse_header_full_url_img_src(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1><img src="https://x/images/foo.png"/></header>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(result.header.html,
+                          '<img src="https://x/images/foo.png">')
+
+    @override_settings(STATIC_URL='//static/')
+    def test_parse_section_relative_img_src(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1></header>
+            '<section><h2>title</h2><p><img src="./foo.png"></p></section>',
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(result.sections[0].html,
+                          '<p><img src="//static/lessons/a-slug/foo.png"></p>')
+
+    @override_settings(STATIC_URL='//static/')
+    def test_parse_footer_relative_img_src(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1></header>
+            <footer><h2>z</h2><p><img src="./foo.png"></p></footer>
+        """)
+        self.assertEquals(result.footer.html,
+                          '<p><img src="//static/lessons/a-slug/foo.png"></p>')
 
     def test_parse_initial_workflow(self):
         initial_workflow = {

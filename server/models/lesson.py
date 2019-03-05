@@ -21,21 +21,33 @@ _initial_workflow_validator = jsonschema.Draft7Validator(
 )
 
 
-def _build_inner_html(el):
-    """Extract HTML text from a xml.etree.ElementTree."""
+def _build_inner_html(el: ElementTree, base_href: str) -> str:
+    """
+    Extract HTML text from a xml.etree.ElementTree.
+
+    Beware: this mutates `el`:
+
+        * It modifies img src starting with `./` to start with `{base_href}/`
+        * It prepends STATIC_URL to img src
+
+    Params:
+
+        el: the `xml.etree.ElementTree` we want to dump
+        base_href: if image URLs begin with './', what text to prepend
+    """
+    for img in el.findall('.//img'):
+        src = img.get('src')
+        if src.startswith('./'):
+            src = f'{base_href}{src[1:]}'  # include the '/'
+        if '//' not in src:
+            src = f'{settings.STATIC_URL}{src}'
+        img.set('src', src)
+
     outer_html = ElementTree.tostring(el, encoding='unicode', method='html',
                                       short_empty_elements=True)
     open_tag_end = outer_html.index('>')
     close_tag_begin = outer_html.rindex('<')
     inner_html = outer_html[(open_tag_end + 1):close_tag_begin]
-
-    # HACK: lessons can have <img> tags, which are always relative. Make them
-    # point to staticfiles. This hack will bite us sometime, but [2018-10-02]
-    # things are hectic today and future pain costs less than today's pain.
-    #
-    # Of course, the _correct_ way to do this would be through the element tree
-    # -- which we already have. TODO rewrite to use the element tree.
-    inner_html = inner_html.replace('src="', 'src="' + settings.STATIC_URL)
 
     return inner_html
 
@@ -46,7 +58,7 @@ class LessonHeader:
     html: str = ''
 
     @classmethod
-    def _from_etree(cls, el):
+    def _from_etree(cls, el: ElementTree, base_href: str) -> LessonHeader:
         title_el = el.find('./h1')
         if title_el is None or not title_el.text:
             raise LessonParseError(
@@ -56,7 +68,7 @@ class LessonHeader:
 
         # Now get the rest of the HTML, minus the <h1>
         el.remove(title_el)  # hacky mutation
-        html = _build_inner_html(el)
+        html = _build_inner_html(el, base_href)
 
         return cls(title, html)
 
@@ -74,7 +86,7 @@ class LessonInitialWorkflow:
     )
 
     @classmethod
-    def _from_etree(cls, el):
+    def _from_etree(cls, el: ElementTree):
         text = el.text
         try:
             jsondict = yaml.safe_load(text)
@@ -98,8 +110,8 @@ class LessonSectionStep:
     test_js: str = ''
 
     @classmethod
-    def _from_etree(cls, el):
-        html = _build_inner_html(el)
+    def _from_etree(cls, el: ElementTree, base_href: str) -> LessonSectionStep:
+        html = _build_inner_html(el, base_href)
 
         highlight_s = el.get('data-highlight')
         if not highlight_s:
@@ -126,7 +138,7 @@ class LessonSection:
     is_full_screen: bool = False
 
     @classmethod
-    def _from_etree(cls, el):
+    def _from_etree(cls, el: ElementTree, base_href: str) -> LessonSection:
         title_el = el.find('./h2')
         if title_el is None or not title_el.text:
             raise LessonParseError(
@@ -138,13 +150,14 @@ class LessonSection:
         if steps_el is None or not steps_el:
             steps = list()
         else:
-            steps = list(LessonSectionStep._from_etree(el) for el in steps_el)
+            steps = [LessonSectionStep._from_etree(el, base_href)
+                     for el in steps_el]
 
         # Now get the rest of the HTML, minus the <h1> and <ol>
         el.remove(title_el)  # hacky mutation
         if steps_el is not None:
             el.remove(steps_el)  # hacky mutation
-        html = _build_inner_html(el)
+        html = _build_inner_html(el, base_href)
 
         # Look for "fullscreen" class on section, set fullscreen flag if so
         is_full_screen = el.find('[@class="fullscreen"]') is not None
@@ -167,7 +180,7 @@ class LessonFooter:
     is_full_screen: bool = False
 
     @classmethod
-    def _from_etree(cls, el):
+    def _from_etree(cls, el: ElementTree, base_href: str) -> LessonFooter:
         title_el = el.find('./h2')
         if title_el is None or not title_el.text:
             raise LessonParseError(
@@ -178,7 +191,7 @@ class LessonFooter:
 
         # Now get the rest of the HTML, minus the <h2>
         el.remove(title_el)  # hacky mutation
-        html = _build_inner_html(el)
+        html = _build_inner_html(el, base_href)
 
         return cls(title, html, is_full_screen)
 
@@ -205,7 +218,7 @@ class Lesson:
         return self.header.title
 
     @classmethod
-    def load_from_path(cls, course: 'Course', path: Path) -> Lesson:
+    def load_from_path(cls, course: Optional['Course'], path: Path) -> Lesson:
         slug = path.stem
         html = path.read_text()
         try:
@@ -214,7 +227,12 @@ class Lesson:
             raise LessonParseError('In %s: %s' % (str(path), str(err)))
 
     @classmethod
-    def parse(cls, course: 'Course', slug: str, html: str) -> Lesson:
+    def parse(cls, course: Optional['Course'], slug: str, html: str) -> Lesson:
+        if course:
+            base_href = f'courses/{course.slug}/{slug}'
+        else:
+            base_href = f'lessons/{slug}'
+
         parser = html5lib.HTMLParser(strict=True, namespaceHTMLElements=False)
         try:
             root: ElementTree = parser.parseFragment(html)
@@ -229,16 +247,16 @@ class Lesson:
         header_el = root.find('./header')
         if header_el is None:
             raise LessonParseError('Lesson HTML needs a top-level <header>')
-        lesson_header = LessonHeader._from_etree(header_el)
+        lesson_header = LessonHeader._from_etree(header_el, base_href)
 
         section_els = root.findall('./section')
-        lesson_sections = list(LessonSection._from_etree(el)
+        lesson_sections = list(LessonSection._from_etree(el, base_href)
                                for el in section_els)
 
         footer_el = root.find('./footer')
         if footer_el is None:
             raise LessonParseError('Lesson HTML needs a top-level <footer>')
-        lesson_footer = LessonFooter._from_etree(footer_el)
+        lesson_footer = LessonFooter._from_etree(footer_el, base_href)
 
         initial_workflow_el = root.find('./script[@id="initialWorkflow"]')
         if initial_workflow_el is None:
