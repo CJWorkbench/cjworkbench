@@ -115,15 +115,11 @@ services:
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [
+      # Use socat so worker can fetch URLs like http://localhost:8000/static/lessons/a-lesson/file.csv
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'pipenv', 'run',
-      'bin/watchman-monitor',
-      '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'cjworkbench/**/*.py', 'worker/**/*.py', 'server/modules/**/*.py', 'server/modules/**/*.json', 'server/modules/**/*.yaml',
-      '--exec', 'bash', '-c',
-      # Use socat so worker can fetch URLs like http://localhost:8000/static/lessons/a-lesson/file.csv
-      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & SOCAT_PID="$$!"; python ./manage.py worker; kill -9 "$$SOCAT_PID"'
+      'sh', '-c',
+      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "worker/**/*.py" "server/modules/**/*.*" --exec python ./manage.py worker'
     ]
 
 
