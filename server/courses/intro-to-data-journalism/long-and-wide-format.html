@@ -10,7 +10,7 @@
     Data can be organized into tables in different ways. In this lesson, you will learn to recognize “long” and “wide” formats and convert from one to another, which is called reshaping.
   </p>
   <p>
-    In this lesson we will work with a month of the same data we used in the previous lesson, on police incident reported in the City of New York.
+    In this lesson we will work with a month of the same data we used in the previous lesson, on police incidents reported in the City of New York.
 </section>
 <script id="initialWorkflow" type="application/json">
   {
@@ -21,7 +21,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/NYC-data-long-format.csv"
+              "url":"./NYC-data-long-format.csv"
             }
           }
         ]
@@ -32,14 +32,27 @@
 
 <section class="fullscreen">
   <h2> </h2>
+  <p>
+    <b>Wide format</b> is the most common table format. Each different type of measurement is in its own column. In this case there is one column per borough.<br>
+  </p>
+  <figure>
+    <img class="no-border full-width" alt="Inspect element" src="./wide-table.png">
+  </figure>
+
+  <p><b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>.
+    All other columns that describe what is measured in that row. In this case, each available <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
+  </p>
+<!--
   <p><b>Long format</b> tables contain only one column with measured values.<br>In this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured.
   </p>
   <p>
     Each row is a unique combination of those variables.<br> In this case, each available <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
   </p>
+-->
   <figure>
     <img class="no-border half-width" alt="Inspect element" src="./long-table.png">
   </figure>
+<!--
   <p>
     <b>Wide formats</b> are the most common table format. In a wide format. there are one or more columns that describe what is measured, in this case <kbd>Complaint date</kbd>. These columns are called “Row variables".<br>
     All other column names are called "Column variables", as they also describe what is measured - in this case each <kbd>Borough</kbd>. All remaining cells contain the actual measurements.
@@ -47,6 +60,7 @@
   <figure>
     <img class="no-border full-width" alt="Inspect element" src="./wide-table.png">
   </figure>
+-->
 </section>
 <section>
   <h2>Converting to wide format</h2>
@@ -59,18 +73,19 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        return workflow.tabs[0].wfModuleSlugs[1] === 'reshape' &&
+               workflow.tabs[0].wfModules[1].params.direction== 'longtowide'"
       >Add ‘Reshape’, and select <kbd>Long to wide</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        return workflow.tabs[0].wfModules[1].params.colnames == 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        return workflow.tabs[0].wfModules[1].params.varcol == 'Borough'"
       >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>.
     </li>
   </ol>
@@ -81,25 +96,24 @@
     Finally, we’re ready to visualize our grouped police incident data.
   </p>
   <p>
-    Let’s visually compare the volume of reported police incidents in each borough, using a line chart.
+    Let’s visually compare the volume of reported police incidents in different boroughs, using a line chart.
   </p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add a line chart.
+      data-test="
+      return workflow.tabs[0].wfModuleSlugs[2] === 'linechart' &&
+             workflow.tabs[0].wfModules[2].params.x_column === 'Complaint date'"
+      >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>Complaint date</kbd> for the X axis.
+      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 1"
+      >Add any borough for the Y axis, to create the first line on the chart.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 2"
       >Add <span>
         <img class="icon-insert" src="images/lesson-icons/add.svg">
-      </span>one column on the Y axis for each <kbd>Borough</kbd> you want to compare.
+      </span>one column on the Y axis for each additional <kbd>Borough</kbd> you want to compare.
     </li>
   </ol>
 </section>
