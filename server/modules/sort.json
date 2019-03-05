@@ -31,7 +31,8 @@
     {
       "name": "Keep top",
       "id_name": "keep_top",
-      "type": "string"
+      "type": "string",
+      "placeholder": "Enter how many values to keep"
     }
   ]
 }
