@@ -176,8 +176,14 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'sort' &&
-                        workflow.tabs[0].wfModules[6].params.column.toLowerCase() === 'total amount'"
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[6] !== 'sort')
+          return false
+
+        sort_columns = workflow.tabs[0].wfModules[6].params.sort_columns
+        return sort_columns.length == 1 &&
+               sort_columns[0].colname.toLowerCase() === 'total amount' &&
+               !sort_columns[0].is_ascending"
       >Select <kbd>Sort descending</kbd> from the <kbd>Total amount</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
