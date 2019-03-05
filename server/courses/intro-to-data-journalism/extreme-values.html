@@ -8,7 +8,7 @@
   <h2> </h2>
   <p>Many stories are based on minimum or maximum values. This is the idea behind questions such as: What is the most expensive item in the budget? Which city is the safest? Which school has the best test scores?
   </p>
-  <p>In this lesson we’ll contiue working with international CO2 emission data and learn how to find the largest and smallest values in your data.
+  <p>In this lesson we’ll contiue working with international CO<sub>2</sub> emission data and learn how to find the largest and smallest values in your data.
   </p>
 </section>
 
@@ -23,7 +23,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/international-CO2-emission.csv"
+              "url":"./international-CO2-emission.csv"
             }
           }
         ]
@@ -41,24 +41,24 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'calculate'"
       >Add the step <kbd>Calculate</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[1].params.operation === 'maximum'"
       >Set the operation to <kbd>Maximum</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        const want_cols = '2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016'
+        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
+
+        return have_cols.split(',').sort().join(',') === want_cols"
       >Select all available year columns
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Name the output column name <kbd>Maximum 2000/16</kbd>
+      data-test="return workflow.tabs[0].wfModules[1].params.outcolname.toLowerCase() === 'maximum 2000-2016'"
+      >Name the output column name <kbd>Maximum 2000-2016</kbd>
       <p class="instruction-detail">
         This calculates the maximum within rows, so that you can read off the maximum for each country.
       </p>
@@ -78,47 +78,55 @@
   <p class="instruction-detail">First, let's make our table easier to navigate.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000/16</kbd>.
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[2] !== 'selectcolumns')
+         return false
+
+        const want_cols = 'continent,country,maximum 2000-2016'
+        const have_cols = workflow.tabs[0].wfModules[2].params.colnames.toLowerCase()
+
+        return have_cols.split(',').sort().join(',') === want_cols"
+      >Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000-2016</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[3] !== 'sort')
+          return false
+
+        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        return sort_columns.length >= 1 &&
+               !sort_columns[0].is_ascending"
       >Using the column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span>, sort <kbd>Maximum 2000/16</kbd> in descending order.
+      </span>, sort <kbd>Maximum 2000-2016</kbd> in descending order.
       <p class="instruction-detail">Note that a new step has been added to your workflow in position 4. Every operation in Workbench is recorded, to keep your work reproducible.</p>
-      <!-- <p class="question">
-        The country who has emitted the most C02 on average since 2000 is:
-      </p>
-      <div class="answer">
-        Your answer
-      </div> -->
     </li>
   </ol>
 </section>
 <section>
   <h2>Sorting by multiple columns</h2>
   <p>
-    On each continent, which country is the largest CO2 emitter? To find out, we need to sort first by Continent, then by Country.
+    On each continent, which country is the largest CO<sub>2</sub> emitter? To find out, we need to sort first by Continent, then by Country.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        return sort_columns[0].colname === 'Continent'"
       >In the existing Sort in step 4, edit the existing setting to sort by <kbd>Continent</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        return sort_columns.length > 1 &&
+               sort_columns[1].colname === 'Country' &&
+               !sort_columns[1].is_ascending"
       >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Country</kbd>, in descending order --- WORK IN PROGRESS
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModules[3].params.keep_top === '1'"
       >Keep <kbd>top 1 row</kbd> under the second sort in order to keep the country per continent.--- WORK IN PROGRESS
     </li>
   </ol>
