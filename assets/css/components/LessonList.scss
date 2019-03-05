@@ -12,7 +12,7 @@
 
 
     a {
-      color: $white;
+      color: white;
       decoration: none;
     }
     .dropdown-item {
@@ -43,9 +43,12 @@
 
       &:not(.active) { // we're linking to this course
         a {
-          color: $brand-text--medium;
+          color: $light-gray;
           &:hover {
             text-decoration: none;
+            color: $brand-text--dark;
+            border-color: $brand-learn--medium;
+            opacity: .8;
           }
         }
       }
