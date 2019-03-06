@@ -114,7 +114,7 @@
     <li
       data-test="
         const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
-        return sort_columns[0].colname === 'Continent'"
+        return sort_columns[0] && sort_columns[0].colname === 'Continent'"
       >In the existing Sort in step 4, edit the existing setting to sort by <kbd>Continent</kbd>
     </li>
     <li
@@ -123,11 +123,11 @@
         return sort_columns.length > 1 &&
                sort_columns[1].colname === 'Country' &&
                !sort_columns[1].is_ascending"
-      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Country</kbd>, in descending order --- WORK IN PROGRESS
+      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Country</kbd>, in descending order.
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.keep_top === '1'"
-      >Keep <kbd>top 1 row</kbd> under the second sort in order to keep the country per continent.--- WORK IN PROGRESS
+      >Keep <kbd>top 1 row</kbd> under the second sort in order to keep the country per continent.
     </li>
   </ol>
 </section>
