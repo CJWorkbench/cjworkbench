@@ -68,7 +68,7 @@
 <section>
   <h2>Sorting</h2>
   <p>
-    Calculate finds extreme values in rows. To find extreme values in a column, you can simply sort the table.
+    With the step Calculate we can finds extreme values in rows. To find extreme values in a column, you can simply sort the table.
   </p>
   <p>
     Let's ask our data: Which country emitted the most ever in a single year?
@@ -115,7 +115,7 @@
       data-test="
         const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
         return sort_columns[0] && sort_columns[0].colname === 'Continent'"
-      >In the existing Sort in step 4, edit the existing setting to sort by <kbd>Continent</kbd>
+      >In the existing Sort in step 4, edit your setting to sort by <kbd>Continent</kbd>
     </li>
     <li
       data-test="
@@ -123,7 +123,7 @@
         return sort_columns.length > 1 &&
                sort_columns[1].colname === 'Country' &&
                !sort_columns[1].is_ascending"
-      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Country</kbd>, in descending order.
+      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Maximum 2000-2016</kbd>, in descending order.
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.keep_top === '1'"
