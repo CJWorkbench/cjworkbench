@@ -1,8 +1,11 @@
 article.lesson {
+  $lesson-sidebar-width: 36rem;
+
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  min-width: 20rem;
+  width: $lesson-sidebar-width;
+  overflow-x: hidden; // be _strict_ about width: we assume later it's exactly what we set it to
 
   .description, ol.steps {
     @extend .content-3;
@@ -18,17 +21,17 @@ article.lesson {
   }
 
   img {
-    position:relative;
+    position: relative;
     width: 32rem;
     padding: 1rem;
     background-color: $dark-accent--medium;
   }
 
   .icon-insert {
-    padding:0;
+    padding: 0;
     background-color: transparent;
     padding: .5rem;
-    width:3rem;
+    width: 3rem;
   }
 
   section {
@@ -36,33 +39,35 @@ article.lesson {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 6rem);
-    width: 36rem;
-    padding:2rem;
+    width: 100%;
+    padding: 2rem;
     overflow-y: auto;
     overflow-x: hidden;
 
     a {
-      color:$white;
+      color: white;
       text-decoration: underline;
     }
 
-    &.not-current { display: none; }
+    &.not-current {
+      display: none;
+    }
 
     .backToLessons {
       @extend .info-1;
       font-size: 1.3rem;
-      color:$white;
+      color: white;
       text-transform: uppercase;
       text-decoration: none;
       margin-bottom: 1rem;
-      &:hover{
+      &:hover {
         opacity: 1;
         text-decoration: underline;
       }
     }
 
     h2 {
-      color:#fff;
+      color: white;
       line-height: 3rem;
       margin-bottom: 0;
     }
@@ -70,7 +75,7 @@ article.lesson {
     // Top part of section, outlining goals
     &>.description {
       margin-top: 2rem;
-      color:#fff;
+      color: white;
 
       p {
         margin-bottom: 2rem;
@@ -81,7 +86,7 @@ article.lesson {
       position: relative;
       width: 32rem;
       margin: -1rem 0 2rem 0;
-      padding:.5rem 1.5rem;
+      padding: .5rem 1.5rem;
       background-color: $dark-accent--medium;
       word-break: break-all;
       border-radius: .3rem;
@@ -117,7 +122,7 @@ article.lesson {
 
     .instruction-detail, .question {
       position: relative;
-      font-weight:400;
+      font-weight: normal;
       margin-top: 1.5rem;
       margin-bottom: 1.5rem;
       color: $white;
@@ -140,9 +145,9 @@ article.lesson {
     code {
       @extend .code-1;
       background-color: $dark-accent--medium;
-      color:white;
+      color: white;
       padding: 0.5rem;
-      border-radius:.3rem;
+      border-radius: .3rem;
     }
 
     kbd {
@@ -163,12 +168,12 @@ article.lesson {
     }
 
     &>.instructions {
-      color:$white;
+      color: white;
 
       .steps {
-        list-style-position:inside;
-        margin:0;
-        padding:0;
+        list-style-position: inside;
+        margin: 0;
+        padding: 0;
       }
       ol {
         position: relative
@@ -181,7 +186,7 @@ article.lesson {
 
         // off setting those elements to make them larger
         figure img, figcaption, .instruction-detail, .image {
-          left:-2rem;
+          left: -2rem;
         }
 
         .copy-txt {
@@ -203,7 +208,7 @@ article.lesson {
         }
         &.done::before {
           content: "\e904"; // icon-check
-          color:$brand-learn;
+          color: $brand-learn;
           font-size: 1rem;
         }
       }
@@ -294,9 +299,9 @@ article.lesson {
   }
 
   &.fullscreen {
+    display: block;
     position: absolute;
-    top: 0;
-    bottom: 0;
+    left: 0;
     width: 100%;
     top: 6rem;
     bottom: 0; // and no height
@@ -368,21 +373,26 @@ article.lesson {
     }
   }
 
-  // hide both navbar menu  and undo redo when fullscreen
-  &.fullscreen ~ .workflow-container .navbar {
-    display: flex;
-    justify-content: center;
+  &.fullscreen + .workflow-container {
+    // make sure .workflow-columns stays in the same place it would if the
+    // lesson were visible. This assumes the sidebar is always exactly
+    // $lesson-sidebar-width, regardless of its content.
+    .workflow-columns {
+      margin-left: $lesson-sidebar-width;
+    }
 
-    .navbar-elements {
-      width: 80rem;
-      padding:0 2rem;
+    // hide both navbar menu  and undo redo when fullscreen
+    nav {
+      display: flex;
+      justify-content: center;
 
-      .dropdown, .group--undo-redo {
-        display: none;
-      }
+      .navbar-elements {
+        width: 80rem;
+        padding: 0 2rem;
 
-      button[name="share"] {
-        margin-right: 0;
+        .dropdown, .group--undo-redo {
+          display: none;
+        }
       }
     }
   }
