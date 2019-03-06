@@ -30,7 +30,7 @@ tabs:
 <section>
   <h2>Data</h2>
   <p>
-    This table is derived from the FBI Uniform Crime Report data for 2017, published and documented <a class="highlight" href='https://https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">here</a>.
+    This table is derived from the FBI Uniform Crime Report data for 2017, published and documented <a class="highlight" href='https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">here</a>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Look at this table and answer these questions for yourself:</p>
@@ -46,7 +46,7 @@ tabs:
 <section>
   <h2>Absolute crime numbers</h2>
   <p>
-    Let’s start with an obvious question: Which state had the highest number of violent crimes in 2017’?
+    Let’s start with a simple question: "Which state had the highest number of violent crimes in 2017"?
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -92,7 +92,7 @@ tabs:
     </li>
     <li
       data-test="const wfm = workflow.tabs[0].wfModules[3]; return wfm && wfm.moduleSlug === 'sort' && wfm.params.keep_top === '' && wfm.params.sort_columns[0] && wfm.params.sort_columns[0].colname === 'Violent crime rate' && !wfm.params.sort_columns[0].is_ascending"
-      >Sort this new column in decreasing order.
+      >Sort this new column in descending order.
       <p class="instruction-detail">
         Alaska now comes on top. It has seen 6,133 violent crimes for a total population of 739,795 - or 0.008 violent crimes per inhabitant. That is twice as much as California, which now ranks #15.
       </p>
@@ -113,10 +113,10 @@ tabs:
       data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && p.formula_excel.replace(/ /g, '') === '=C1/B1*100000'"
       >Edit your formula in step 3 to <div class="copy-txt">=C1/B1*100000</div>
       <p class="instruction-detail">
-        You don't need to sort these numbers again: "crimes per 100,000 people" sorts exactly the same way as "crimes per capita". Click the "Sort" step to see the sorted output and confirm that Alaska is still on top.
+        Click the "Sort" step to see the new numbers, sorted. The order has not change since we multiplied all numbers by the same amount.
       </p>
       <p class="instruction-detail">
-        FBI's own publications cite these numbers.
+        FBI's own publications cite these numbers. You will find these numbers in the <a class="highlight" href='https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">source data</a>.
       </p>
     </li>
   </ol>
