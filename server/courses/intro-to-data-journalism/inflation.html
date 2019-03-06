@@ -197,13 +197,16 @@
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula')
-         return false
-
+        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula') return false
         const params = workflow.tabs[0].wfModules[4].params
-        return params.syntax === 'excel' &&
-               params.formula_excel.trim() === '=(B1/C1)*240.007'"
-      >Add a Formula step and enter the following for the formula:
+        if (params.syntax !== 'excel' || !params.all_rows) return false
+        const f = params.formula_excel.replace(/ /g, '')
+        return (
+          f === '=(B1/C1)*240.007'
+          || f === '=B1/C1*240.007'
+          || f === '=B1*240.007/C1'
+        )
+      ">Add a Formula step and enter the following for the formula:
       <div class="copy-txt">=(B1/C1)*240.007</div>
       <p class="instruction-detail">
         Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal”.
