@@ -188,8 +188,6 @@ class TextIsNotDatetime(QuickFixableError):
                     'action': 'prependModule',
                     'args': ['convert-date', {
                         'colnames': column,  # TODO make 'colnames' an Array
-                        'input_format': 'auto',  # AUTO
-                        'error_means_null': False,
                     }]
                 }
             ]
