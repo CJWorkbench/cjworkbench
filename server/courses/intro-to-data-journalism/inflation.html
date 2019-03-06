@@ -202,17 +202,8 @@
       <div class="copy-txt">=(B1/C1)*240.007</div>
     </li>
     <li
-      data-test="
-        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula') return false
-        const params = workflow.tabs[0].wfModules[4].params
-        if (params.syntax !== 'excel' || !params.all_rows) return false
-        const f = params.formula_excel.replace(/ /g, '')
-        return (
-          f === '=(B1/C1)*240.007'
-          || f === '=B1/C1*240.007'
-          || f === '=B1*240.007/C1'
-        )
-      ">Name this new column <kbd>Adjusted salaries</kbd>
+      data-test="return workflow.tabs[0].wfModules[4].params.out_column.toLowerCase() === 'adjusted salaries'"
+      >Name this new column <kbd>Adjusted salaries</kbd>
       <p class="instruction-detail">
         Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal”.
       </p>
