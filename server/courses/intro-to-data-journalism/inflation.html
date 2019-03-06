@@ -120,19 +120,11 @@
   <h2>Using CPI</h2>
   <p>
      In order to convert a current dollar amount (old) into an adjusted dollar
-     amount (present), we need to divide the current dollar amount by the CPI
+     amount (new), we need to divide the current dollar amount by the CPI
      for that year, then multiply it by the CPI for the present year.
   </p>
   <div class="copy-txt">adjusted=(current/old CPI)*new CPI</div>
-<!--
-  <p>
-     In order to convert a current dollar amount (old) into an adjusted dollar
-     amount (present), we need to divide the current dollar amount by the CPI
-     for that year (CPI1), then multiply it by the CPI for the present year
-     (CPI2).
-  </p>
-  <div class="copy-txt">adjusted=(current/CPI1)*CPI2</div>
--->
+
   <p>
     To do this, we need to get the CPI index into the same tab as the teacher salary data. We can do this by “joining” these tabs.
   </p>
@@ -174,9 +166,9 @@
       >Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on.
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right === 'Annual'"
-      >The final step is to choose which columns to bring in from the other tab. In this case, choose <kbd>Annual</kbd>.
+      >The final step is to choose which columns to bring in from the CPI tab. Select <kbd>Annual</kbd>.
       <p class=instruction-detail>
-        The Join module takes each value in the <kbd>Year</kbd> column of the Teacher salaries’ table and finds the corresponding row in the CPI table.
+        We now have one table containing all the information we for our analysis.
       </p>
     </li>
   </ol>
@@ -191,7 +183,7 @@
     We need to divide each yearly salary by its associated CPI value, then multiply the result by the CPI for the reference year (the year adjusted for).
   </p>
   <p>
-    In this case the reference is 2016, which has as a CPI of <kbd>240.007</kbd>.
+    In this case the reference year is 2016, which has as a CPI of <kbd>240.007</kbd>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -208,6 +200,19 @@
         )
       ">Add a Formula step and enter the following for the formula:
       <div class="copy-txt">=(B1/C1)*240.007</div>
+    </li>
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula') return false
+        const params = workflow.tabs[0].wfModules[4].params
+        if (params.syntax !== 'excel' || !params.all_rows) return false
+        const f = params.formula_excel.replace(/ /g, '')
+        return (
+          f === '=(B1/C1)*240.007'
+          || f === '=B1/C1*240.007'
+          || f === '=B1*240.007/C1'
+        )
+      ">Name this new column <kbd>Adjusted salaries</kbd>
       <p class="instruction-detail">
         Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal”.
       </p>
