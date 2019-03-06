@@ -12,22 +12,16 @@
   <p>
     In this lesson we will work with a month of the same data we used in the previous lesson, on police incidents reported in the City of New York.
 </section>
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Lesson",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"./NYC-data-long-format.csv"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: './NYC-data-long-format.csv'
+  - module: convert-date
+    params:
+      colnames: Complaint date
 </script>
 
 <section class="fullscreen">
@@ -74,18 +68,18 @@
   <ol class="steps">
     <li
       data-test="
-        return workflow.tabs[0].wfModuleSlugs[1] === 'reshape' &&
-               workflow.tabs[0].wfModules[1].params.direction== 'longtowide'"
+        return workflow.tabs[0].wfModuleSlugs[2] === 'reshape' &&
+               workflow.tabs[0].wfModules[2].params.direction== 'longtowide'"
       >Add ‘Reshape’, and select <kbd>Long to wide</kbd>.
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[1].params.colnames == 'Complaint date'"
+        return workflow.tabs[0].wfModules[2].params.colnames == 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>.
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[1].params.varcol == 'Borough'"
+        return workflow.tabs[0].wfModules[2].params.varcol == 'Borough'"
       >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>.
     </li>
   </ol>
@@ -101,16 +95,16 @@
   <ol class="steps">
     <li
       data-test="
-      return workflow.tabs[0].wfModuleSlugs[2] === 'linechart' &&
-             workflow.tabs[0].wfModules[2].params.x_column === 'Complaint date'"
+      return workflow.tabs[0].wfModuleSlugs[3] === 'linechart' &&
+             workflow.tabs[0].wfModules[3].params.x_column === 'Complaint date'"
       >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 1"
+      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 1"
       >Add any borough for the Y axis, to create the first line on the chart.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 2"
+      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 2"
       >Add <span>
         <img class="icon-insert" src="images/lesson-icons/add.svg">
       </span>one column on the Y axis for each additional <kbd>Borough</kbd> you want to compare.
