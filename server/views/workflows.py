@@ -180,7 +180,7 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
             return redirect('/courses/' + workflow.lesson_slug)
         else:
             # /lessons/a-lesson/
-            return redirect('/lessons/' + workflow.lesson_slug + '/')
+            return redirect('/lessons/' + workflow.lesson_slug)
     else:
         if workflow.example and workflow.owner != request.user:
             workflow = _get_anonymous_workflow_for(workflow, request)

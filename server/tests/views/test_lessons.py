@@ -47,14 +47,14 @@ class LessonDetailTests(DbTestCase):
         return self._other_user
 
     def test_get_anonymous(self):
-        response = self.client.get('/lessons/load-public-data/')
+        response = self.client.get('/lessons/load-public-data')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
         self.assertEqual(Workflow.objects.count(), 1)
 
     def test_get_invalid_slug(self):
         self.log_in()
-        response = self.client.get('/lessons/load-public-dat-whoops-a-typooo/')
+        response = self.client.get('/lessons/load-public-dat-whoops-a-typooo')
         self.assertEqual(response.status_code, 404)
 
     def test_get_missing_workflow(self):
@@ -68,7 +68,7 @@ class LessonDetailTests(DbTestCase):
                                 lesson_slug='load-public-data', public=True)
 
         # This should create the workflow
-        response = self.client.get('/lessons/load-public-data/')
+        response = self.client.get('/lessons/load-public-data')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
         self.assertEqual(Workflow.objects.count(), 4)
@@ -78,7 +78,7 @@ class LessonDetailTests(DbTestCase):
 
         Workflow.objects.create(owner=self.user,
                                 lesson_slug='load-public-data')
-        response = self.client.get('/lessons/load-public-data/')
+        response = self.client.get('/lessons/load-public-data')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
 
@@ -94,14 +94,14 @@ class LessonDetailTests(DbTestCase):
         self.assertTemplateUsed('workflow.html')
 
     def test_get_without_login(self):
-        response = self.client.get('/lessons/load-public-data/')
+        response = self.client.get('/lessons/load-public-data')
         self.assertEqual(Workflow.objects.count(), 1)
 
     def test_get_with_existing(self):
         self.log_in()
         Workflow.objects.create(owner=self.user,
                                 lesson_slug='load-public-data')
-        response = self.client.get('/lessons/load-public-data/')
+        response = self.client.get('/lessons/load-public-data')
         self.assertEqual(Workflow.objects.count(), 1)  # don't create duplicate
 
     def test_get_without_existing(self):
@@ -113,7 +113,7 @@ class LessonDetailTests(DbTestCase):
         Workflow.objects.create(owner=self.other_user,
                                 lesson_slug='load-public-data', public=True)
 
-        response = self.client.post('/lessons/load-public-data/')
+        response = self.client.post('/lessons/load-public-data')
         self.assertEqual(Workflow.objects.count(), 4)  # create Workflow
         self.assertEqual(
             Workflow.objects.filter(lesson_slug='load-public-data').count(),
@@ -139,7 +139,7 @@ class LessonDetailTests(DbTestCase):
         workflow = Workflow.objects.create(owner=self.user,
                                            lesson_slug='load-public-data')
         response = self.client.get(workflow.get_absolute_url())
-        self.assertRedirects(response, '/lessons/load-public-data/')
+        self.assertRedirects(response, '/lessons/load-public-data')
 
     def test_get_public_workflow_with_lesson_slug(self):
         self.log_in()
