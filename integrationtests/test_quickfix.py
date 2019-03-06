@@ -1,4 +1,3 @@
-import re
 from integrationtests.utils import LoggedInIntegrationTest
 
 
@@ -10,13 +9,14 @@ class TestQuickFix(LoggedInIntegrationTest):
         b = self.browser
 
         b.click_button('Create Workflow')
-        # Wait for page to load
-        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
+        b.assert_element('input[name="name"][value="Untitled Workflow"]',
+                         wait=True)  # Wait for page to load
 
         b.fill_in('name', 'Example Workflow')
 
         self.add_wf_module('Paste data')
-        b.fill_in('csv', 'A,B\n2012-01-01,1\n2012-02-03,3\n2012-01-01,2', wait=True)
+        b.fill_in('csv', 'A,B\n2012-01-01,1\n2012-02-03,3\n2012-01-01,2',
+                  wait=True)
         self.submit_wf_module()
 
         # Wait for table to load
