@@ -67,8 +67,6 @@ urlpatterns = [
 
     url(r'^lessons$', lessons.render_lesson_list),
     url(r'^lessons/$', redirect('/lessons')),
-    url(r'^lessons2$', lessons.render_lesson_list2),
-    url(r'^lessons2/$', redirect('/lessons2')),
     url(r'^lessons/(?P<slug>[-a-z0-9]+)$', lessons.render_lesson_detail),
     url(r'^lessons/(?P<slug>[-a-z0-9]+)/$', redirect('/lessons/%(slug)s')),
     url(r'^courses/?$', redirect('/lessons')),
