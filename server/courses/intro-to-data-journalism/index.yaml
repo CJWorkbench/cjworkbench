@@ -2,10 +2,16 @@ title: Introduction to Data Journalism
 introduction_html: |-
     <h3>Welcome!</h3>
     <p>
-    This entry level course will teach you essential techniques to answer questions with data in a transparent and reproducible manner, without the need to code.
-    <br>
-    You will learn how to filter, group, create charts, fix classic data formatting issues, and use standard calculation to better describe and compare numbers such as ‘per capita’ rates, percentage changes, or adjusting for inflation.
-    </p>
+    This entry level course will teach you how to answer questions with data in a transparent
+    and reproducible manner, without the need to code.
+    </br></br>
+    You will learn how to filter, group, create charts, fix common data formatting issues, and combine different
+    data sets. You’ll also learn about useful calculations like per capita rates, percentage change, and adjusting
+    for inflation.
+    </br></br>
+    Along the way, you'll work with data that journalists commonly use, including campaign finance, crime,
+    housing, and environmental data.
+    <p>
 lessons:
     - first-story
     - extreme-values
