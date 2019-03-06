@@ -37,7 +37,7 @@
   <p>
     Let's analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York.
     This data is published by the Board of Election of the State of New York,
-  <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
+    <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">here</a>.
   </p>
   <p>
     Our goal is to find which state donated the most to his campaign. Out of state campaign contributions could reveal previously hidden business or political connections.
@@ -80,11 +80,10 @@
   <ol class="steps">
     <li
       data-test="
-      if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0))
-          return false
+        if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0)) return false
 
-        want_cols = 'Amt,Contributor'
-        have_cols = workflow.tabs[0].wfModules[1].params.colnames
+        const want_cols = 'Amt,Contributor'
+        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
 
         return have_cols.split(',').sort().join(',') === want_cols"
       >Select and keep the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>.
@@ -178,14 +177,15 @@
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[6] !== 'sort')
-          return false
+        if (workflow.tabs[0].wfModuleSlugs[6] !== 'sort') return false
 
-        sort_columns = workflow.tabs[0].wfModules[6].params.sort_columns
-        return sort_columns.length == 1 &&
-               sort_columns[0].colname.toLowerCase() === 'total amount' &&
-               !sort_columns[0].is_ascending"
-      >Select <kbd>Sort descending</kbd> from the <kbd>Total amount</kbd> column menu
+        const sort_columns = workflow.tabs[0].wfModules[6].params.sort_columns
+        return (
+          sort_columns.length >= 1
+          && sort_columns[0].colname.toLowerCase() === 'total amount'
+          && !sort_columns[0].is_ascending
+        )
+      ">Select <kbd>Sort descending</kbd> from the <kbd>Total amount</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span>.
@@ -201,11 +201,13 @@
     </li>
     <li
       data-test="
-        params = workflow.tabs[0].wfModules[8].params
-        return params.x_column.toLowerCase() == 'state' &&
-               params.y_columns.length >= 1 &&
-               params.y_columns[0].column.toLowerCase() == 'total amount'"
-      >Set the X Axis to <kbd>State,</kbd> and the Y axis to <kbd>Total amount</kbd>.
+        const params = workflow.tabs[0].wfModules[8].params
+        return (
+          params.x_column.toLowerCase() == 'state'
+          && params.y_columns.length >= 1
+          && params.y_columns[0].column.toLowerCase() == 'total amount'
+        )
+      ">Set the X Axis to <kbd>State,</kbd> and the Y axis to <kbd>Total amount</kbd>.
       <p class="instruction-detail">
 
       </p>

@@ -94,11 +94,10 @@
     </li>
     <li
       data-test="
-        if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0))
-          return false
+        if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0)) return false
 
-        want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
-        have_cols = workflow.tabs[0].wfModules[1].params.colnames
+        const want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
+        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
 
         return have_cols.split(',').sort().join(',') === want_cols"
       >Add a Select column step and keep the following columns (Start typing column names in the selector to go faster)
@@ -125,13 +124,24 @@
       >Add <kbd>Filter by condition</kbd>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].colname === '% Affordable'"
-      >Select the column <kbd>% Affordable</kbd>
+      data-test="
+        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        return (
+          filter
+          && filter.subfilters[0]
+          && filter.subfilters[0].colname === '% Affordable'
+        )
+      ">Select the column <kbd>% Affordable</kbd>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].condition === 'number_is_greater_than' &&
-                        workflow.tabs[0].wfModules[2].params.filters.filters[0].subfilters[0].value === '50'"
-      >Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>.
+      data-test="
+        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        const subfilter = filter.subfilters[0]
+        return (
+          subfilter.condition === 'number_is_greater_than'
+          && subfilter.value === '50'
+        )
+      ">Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>.
       <p class ="instruction-detail">
         At the top left of the table, we see that 119 rows are left. This means that 119 projects include more than 50% affordable units.
       </p>
@@ -159,33 +169,35 @@
   <ol class="steps">
     <li
       data-test="
-        filters = workflow.tabs[0].wfModules[2].params.filters
+        const filters = workflow.tabs[0].wfModules[2].params.filters
 
         // true if user added AND inside the first subfilter
-        if (filters.filters[0].subfilters &&
-            filters.filters[0].subfilters.length > 1 &&
-            filters.filters[0].operator == 'and')
-          return true
-
-        // or user could add AND at the outer level
-        return filters.filters.length == 2 &&
-               filters.operator === 'and'"
-      >In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter.
+        return (
+          (
+            filters.filters.length === 1
+            && filters.filters[0].subfilters.length === 2
+            && filters.filters[0].operator == 'and'
+          )
+          || (
+            filters.operator === 'and'
+            && filters.filters.length === 2
+            && filters.filters[0].subfilters.length === 1
+            && filters.filters[1].subfilters.length === 1
+          )
+        )
+      ">In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter.
     </li>
     <li
       data-test="
-      filters = workflow.tabs[0].wfModules[2].params.filters.filters
-
-      function gotCondition(subfilter) {
-       return subfilter.colname === 'Affordable Units' &&
-              subfilter.condition === 'number_is_greater_than_or_equals' &&
-              subfilter.value === '100'
-      }
-
-      // Accept condition either at subfilter or main filter level
-      return (filters[0].subfilters.length > 1 && gotCondition(filters[0].subfilters[1])) ||
-             (filters.length > 1 && gotCondition(filters[1].subfilters[0]))"
-      >Set this new condition to `If <kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>`.
+        const filters = workflow.tabs[0].wfModules[2].params.filters.filters
+        // Accept condition either at subfilter or main filter level
+        const subfilter = filters[1] ? filters[1].subfilters[0] : filters[0].subfilters[1]
+        return (
+          subfilter.colname === 'Affordable Units'
+          && subfilter.condition === 'number_is_greater_than_or_equals'
+          && subfilter.value === '100'
+        )
+      ">Set this new condition to `If <kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>`.
       <p class ="instruction-detail">
         The table now displays all projects containing "more than 50% affordable units AND at least 100 affordable units".
       </p>
@@ -212,16 +224,12 @@
       </p>
     </li>
     <li
-      data-test="
-        val_list = JSON.parse(workflow.tabs[0].wfModules[3].params.valueselect)
-        return val_list.indexOf('(3) Design with Entitlements Approved')>=0"
+      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
       >In ‘Filter by value’, select <kbd>(3) Design with entitlement Approved</kbd> to see only projects that are approved for construction, but not yet started.
     </li>
     <li
-      data-test="
-        val_list = JSON.parse(workflow.tabs[0].wfModules[3].params.valueselect)
-        return val_list.indexOf('(4) Site Work Permit Issued')>=0"
-      >Also select <kbd>(4) Site Work Permit</kbd> to add in projects at this later stage.
+      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(4) Site Work Permit Issued')"
+      >Also select <kbd>(4) Site Work Permit Issued</kbd> to add in projects at this later stage.
       <p class ="instruction-detail">
         By changing the selected values in <kbd>Filter by value</kbd> you can quickly get insight into the projects at any combination of development stages.
       </p>

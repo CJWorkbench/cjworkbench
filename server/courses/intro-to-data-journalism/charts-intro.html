@@ -103,11 +103,13 @@
         if (workflow.tabs[0].wfModuleSlugs[3] !== 'columnchart')
           return false
 
-        params = workflow.tabs[0].wfModules[3].params
-        return params.x_column.toLowerCase() === 'year' &&
-               params.y_columns.length >= 1 &&
-               params.y_columns[0].column === 'China'"
-      >Add a Column Chart, select<kbd>Year</kbd> as the X axis, and<kbd>China</kbd>as the Y axis.
+        const params = workflow.tabs[0].wfModules[3].params
+        return (
+          params.x_column.toLowerCase() === 'year'
+          && params.y_columns.length >= 1
+          && params.y_columns[0].column === 'China'
+        )
+      ">Add a Column Chart, select<kbd>Year</kbd> as the X axis, and<kbd>China</kbd>as the Y axis.
     </li>
   </ol>
 </section>
@@ -131,19 +133,22 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return (workflow.tabs[0].wfModuleNames[4] === 'Line Chart')"
+      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'linechart'"
       > After the Column chart, add a Line chart step.
     </li>
     <li
       data-test="
-        y_col = JSON.parse(workflow.tabs[0].wfModules[4].params.y_columns)[0].column
-        return (workflow.tabs[0].wfModules[3].params.x_column.toLowerCase()==='year') &&
-               (y_col === 'China')"
-      >Select the variable<kbd>Year</kbd>as the X axis and<kbd>China</kbd>on the Y axis.
+        const params = workflow.tabs[0].wfModules[4].params
+        return (
+          params.x_column.toLowerCase() === 'year'
+          && params.y_columns[0]
+          && params.y_columns[0].column === 'China'
+        )
+      ">Select the variable<kbd>Year</kbd>as the X axis and<kbd>China</kbd>on the Y axis.
       <p class="instruction-detail">Now let’s compare China’s production of CO<sub>2</sub> to that of other countries.</p>
     </li>
     <li
-      data-test="return JSON.parse(workflow.tabs[0].wfModules[4].params.y_columns).length > 1"
+      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length > 1"
       >In Line chart, select  additional countries of your choice on the Y axis by clicking the add button
       <span>
         <img class="icon-insert" src="images/lesson-icons/add.svg">

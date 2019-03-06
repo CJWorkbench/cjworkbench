@@ -75,34 +75,35 @@
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[4] !== 'groupby')
-          return false
+        if (workflow.tabs[0].wfModuleSlugs[4] !== 'groupby') return false
 
         // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
         // the 'add Borough' step in the last section doesn't undo this test.
         // (Every test for the entire lesson is evaluated in order)
-        colnames = workflow.tabs[0].wfModules[4].params.groups.colnames.split(',')
-        return colnames.indexOf('Complaint date')>=0"
-      >Add <kbd>Group</kbd>, and select the column <kbd>Complaint date</kbd>.
+        return workflow.tabs[0].wfModules[4].params.groups.colnames.split(',').includes('Complaint date')
+      ">Add <kbd>Group</kbd>, and select the column <kbd>Complaint date</kbd>.
     </li>
     <li
       data-test="
-        const params = workflow.tabs[0].wfModules[4].params
-        return params.groups.group_dates &&
-               params.groups.date_granularities['Complaint date']
-
+        const groups = workflow.tabs[0].wfModules[4].params.groups
         // You would think we'd want to check for month granularity here, but we can't
         // because it will break in the next section where we ask user to switch to day granularity.
         // (Every test for the entire lesson is evaluated in order)
-        // params.groups.date_granularities['Complaint date'] === 'M'"
-      >Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
+        return (
+          groups.group_dates
+          && ['M', 'D'].includes(groups.date_granularities['Complaint date'])
+        )
+      ">Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
     </li>
     <li
       data-test="
         const agg = workflow.tabs[0].wfModules[4].params.aggregations
-        return agg.length==1 &&
-               agg[0].outname.toLowerCase() === 'count of incidents'"
-      >Name the output column <kbd>Count of incidents</kbd>.
+        return (
+          agg[0]
+          && agg[0].operation === 'size'
+          && agg[0].outname.toLowerCase() === 'count of incidents'
+        )
+      ">Name the output column <kbd>Count of incidents</kbd>.
     </li>
   </ol>
 </section>
@@ -115,22 +116,28 @@
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[5] !== 'linechart')
-          return false
+        if (workflow.tabs[0].wfModuleSlugs[5] !== 'linechart') return false
 
         const params = workflow.tabs[0].wfModules[5].params
-        return params.x_column === 'Complaint date' &&
-               params.y_columns.length >= 1 &&
-               params.y_columns[0].column.toLowerCase() === 'count of incidents'"
-      >Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count of incidents</kbd> on the Y-axis.
+        return (
+          params.x_column === 'Complaint date'
+          && params.y_columns[0]
+          && params.y_columns[0].column.toLowerCase() === 'count of incidents'
+        )
+      ">Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count of incidents</kbd> on the Y-axis.
       <p class="instruction-detail">Charts with two data points are not very informative. To visualize the same data but for each day, we can change the granularity of the group.</p>
     </li>
     <li
       data-test="
-        // Don't test for day granularity, because it will break in the next section
-        // when we ask the user to switch back to month
-        return true"
-      >In the Group in step 5, change the granularity to <kbd>by day</kbd>.
+        const params = workflow.tabs[0].wfModules[4].params
+        return (
+          params.groups.date_granularities['Complaint date'] === 'D'
+          // We test for day granularity ... _BUT_ later in the lesson we'll ask the
+          // user to switch back to month; so we'll need to test: either the user
+          // chose 'D', or the user is further along in the lesson
+          || params.groups.colnames.split(',').includes('Borough')
+        )
+      ">In the Group in step 5, change the granularity to <kbd>by day</kbd>.
       <p class="instruction-detail">
         Select step 6 to display your new chart.
       </p>
@@ -146,8 +153,8 @@
   <ol class="steps">
     <li
       data-test="
-        want_cols = 'Borough,Complaint date'
-        have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
+        const want_cols = 'Borough,Complaint date'
+        const have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
         return have_cols.split(',').sort().join(',') === want_cols"
       >In the Group in step 5, add the column <kbd>Borough</kbd> next to <kbd>Complaint date</kbd> using the same column selector.
       <p class="instruction-detail">

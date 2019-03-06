@@ -62,7 +62,7 @@ tabs:
       >Add Select columns, and keep only <kbd>boro_nm</kbd> and <kbd>cmplnt_fr_dt</kbd>.
     </li>
     <li
-      data-test="const wfm = workflow.tabs[0].wfModules[2]; return wfm && !wfm.params.custom_list && wfm.params.renames.boro_nm === 'Borough' && wfm.params.renames.cmplnt_fr_dt === 'Complaint date'"
+      data-test="const wfm = workflow.tabs[0].wfModules[2]; return wfm && wfm.moduleSlug === 'renamecolumns' && !wfm.params.custom_list && wfm.params.renames.boro_nm === 'Borough' && wfm.params.renames.cmplnt_fr_dt === 'Complaint date'"
       >Rename these two columns respectively to <kbd>Borough</kbd> and <kbd>Complaint date</kbd>.
       <p class="instruction-detail">Before going further, let's learn a little more about data types.</p>
     </li>
