@@ -66,7 +66,7 @@
 <section>
   <h2>Grouping by date</h2>
   <p>
-    This table was describes all felonies reported by the police of New York City for the months of January and February 2018. The original is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
+    This table describes all felonies reported by the police of New York City for the months of January and February 2018. The original is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
   </p>
   <p>
     Our first question is ‘How many incidents were reported each month, in the entire city?’
@@ -123,7 +123,7 @@
                params.y_columns.length >= 1 &&
                params.y_columns[0].column.toLowerCase() === 'count of incidents'"
       >Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count of incidents</kbd> on the Y-axis.
-      <p class="instruction-detail">Charts with two data points are not very useful. To visualize the same data but for each day, we can change the granularity of the group.</p>
+      <p class="instruction-detail">Charts with two data points are not very informative. To visualize the same data but for each day, we can change the granularity of the group.</p>
     </li>
     <li
       data-test="
@@ -149,7 +149,7 @@
         want_cols = 'Borough,Complaint date'
         have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
         return have_cols.split(',').sort().join(',') === want_cols"
-      >In the Group step, add the <kbd>Borough</kbd> column next to <kbd>Complaint date</kbd> using the same column selector.
+      >In the Group in step 5, add the column <kbd>Borough</kbd> next to <kbd>Complaint date</kbd> using the same column selector.
       <p class="instruction-detail">
         The table now displays a more detailed count of incidents. It shows how many felonies were reported in each Neighborhood, within each day.
       </p>
@@ -162,7 +162,10 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> After being grouped by more than one column the number of incidents per borough cannot be directly visualized, as it would require the data for each borough to be in its own column.
+    <p> After being grouped by more than one column the table contains a lot of repeated values in both <kbd>Complaint date</kbd> and <kbd>Borough</kbd>.
+    </p>
+    <p>
+      We also can't visualize data from a specific borough. To do that would require all values for that borough to be contained in its own column.
     </p>
     <p class="summary">
       In the next lesson, we’ll learn how to change table formats from Long to Wide to be able to access any variable we need.
