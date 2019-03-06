@@ -292,99 +292,98 @@ article.lesson {
       }
     }
   }
-}
 
-article.fullscreen {
-  position: relative;
-  top:0px;
-  bottom:0px;
-  width: 100%;
-  position: absolute;
-  top: 6rem;
-  bottom: 0; // and no height
-  z-index: 2;
-  width: 100%;
-
-  .sections {
-    display: flex;
-    justify-content: center;
-  }
-
-  figure {
-
-    img.full-width { // 3 sizes of content to play with
-      width: 100%;
-    }
-    img.half-width {
-      width: 50%;
-    }
-    img.three-quarter-width{
-      width: 75%;
-    }
-    .no-border { // Sometimes, border are not wanted
-      background-color: transparent;
-      padding-left: 0rem;
-    }
-  }
-
-
-  section.current {
+  &.fullscreen {
+    position: absolute;
+    top: 0;
+    bottom: 0;
     width: 100%;
-    height: calc(100vh - 12rem); // accounts for both nav and footer
+    top: 6rem;
+    bottom: 0; // and no height
+    z-index: 2;
+    width: 100%;
 
-    a.backToLessons {
-      display: none;
+    .sections {
+      display: flex;
+      justify-content: center;
     }
 
-  }
+    figure {
 
-  .content {
-    width: 80rem;
-  }
-
-  footer {
-    display: flex;
-    justify-content: center;
-
-    .buttons-container {
-      width: 80rem;
-      justify-content: flex-start;
-      padding-left: 2rem;
-
-      button, div {
-        margin-right: 5rem;
+      img.full-width { // 3 sizes of content to play with
+        width: 100%;
+      }
+      img.half-width {
+        width: 50%;
+      }
+      img.three-quarter-width{
+        width: 75%;
+      }
+      .no-border { // Sometimes, border are not wanted
+        background-color: transparent;
+        padding-left: 0rem;
       }
     }
-  }
 
-  // start button in fullsceen lesson page, for lesson start
-  a.start {
-    margin-top: 3rem;
-    @extend %action-button;
-    @extend %button-pink-fill;
-  }
 
-  section.lesson-footer.current {
-    position: absolute;
-    width: 80rem;
-  }
-}
+    section.current {
+      width: 100%;
+      height: calc(100vh - 12rem); // accounts for both nav and footer
 
-// hide both navbar menu  and undo redo when fullscreen
-article.fullscreen ~ .workflow-container .navbar {
-  display: flex;
-  justify-content: center;
+      a.backToLessons {
+        display: none;
+      }
 
-  .navbar-elements {
-    width: 80rem;
-    padding:0 2rem;
-
-    .dropdown, .group--undo-redo {
-      display: none;
     }
 
-    button[name="share"] {
-      margin-right: 0;
+    .content {
+      width: 80rem;
+    }
+
+    footer {
+      display: flex;
+      justify-content: center;
+
+      .buttons-container {
+        width: 80rem;
+        justify-content: flex-start;
+        padding-left: 2rem;
+
+        button, div {
+          margin-right: 5rem;
+        }
+      }
+    }
+
+    // start button in fullsceen lesson page, for lesson start
+    a.start {
+      margin-top: 3rem;
+      @extend %action-button;
+      @extend %button-pink-fill;
+    }
+
+    section.lesson-footer.current {
+      position: absolute;
+      width: 80rem;
+    }
+  }
+
+  // hide both navbar menu  and undo redo when fullscreen
+  &.fullscreen ~ .workflow-container .navbar {
+    display: flex;
+    justify-content: center;
+
+    .navbar-elements {
+      width: 80rem;
+      padding:0 2rem;
+
+      .dropdown, .group--undo-redo {
+        display: none;
+      }
+
+      button[name="share"] {
+        margin-right: 0;
+      }
     }
   }
 }
