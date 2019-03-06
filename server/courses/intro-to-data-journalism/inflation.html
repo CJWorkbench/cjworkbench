@@ -26,7 +26,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/teacher-salaries.xlsx"
+              "url":"./teacher-salaries.xlsx"
             }
           }
         ]
@@ -37,7 +37,7 @@
           {
             "module":"loadurl",
             "params": {
-              "url":"http://production-static.workbenchdata.com/data/intro-data-j/CPI-bureau-of-labor-statistic.xlsx"
+              "url":"./CPI-bureau-of-labor-statistic.xlsx"
             }
           }
         ]
@@ -59,33 +59,13 @@
     To do this we need a measure of inflation. Every month the Bureau of Labor statistics surveys the prices of hundreds of consumer items to produce a number known as the 'Consumer Price Index' or CPI. The tab <kbd>CPI data</kbd> contains this data, published <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0/' target="_blank" className="info-1">here</a>.
   </p>
   <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What does each row represent?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >What's in each column?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there any columns, values or codes you don't understand?
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Are there missing or obviously wrong values?
-    </li>
-    <li
-      data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Does the data need to be cleaned?
-    </li>
-  </ol>
+  <ul>
+    <li>What does each row represent?</li>
+    <li>What's in each column?</li>
+    <li>Are there any columns, values or codes you don't understand?</li>
+    <li>Are there missing or obviously wrong values?</li>
+    <li>Does the data need to be cleaned?</li>
+  </ul>
 </section>
 <section>
   <h2>Cleaning</h2>
@@ -96,21 +76,15 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number.
-    </li>
-    <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says "1 row selected".
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'rowstoheader' &&
+                        workflow.tabs[0].wfModules[1].params.rows === '1'"
+      >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number. Then choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says "1 row selected".
       <p class='instruction-detail'>
         Because it contained both text and numeric data, the column <kbd>Average salary</kbd> was loaded as text. We need to convert it to numbers to use it in calculations.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'extract-numbers'"
       >Choose <kbd>Convert to Numbers</kbd> in the <kbd>Average salary</kbd> column menu.
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
@@ -120,18 +94,21 @@
       </p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well.
-    </li>
+      data-test="return workflow.tabs[1].wfModuleSlugs[1] === 'rowstoheader' &&
+                        workflow.tabs[1].wfModules[1].params.rows === '11'"
+      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well.</li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="
+        if (workflow.tabs[1].wfModuleSlugs[2] !== 'selectcolumns')
+         return false
+
+        const want_cols = 'Annual,Year'
+        const have_cols = workflow.tabs[1].wfModules[2].params.colnames
+        return have_cols.split(',').sort().join(',') === want_cols"
       >Still in that tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[1].wfModuleSlugs[3] === 'extract-numbers'"
       >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Annual</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
@@ -144,10 +121,18 @@
   <p>
      In order to convert a current dollar amount (old) into an adjusted dollar
      amount (present), we need to divide the current dollar amount by the CPI
+     for that year, then multiply it by the CPI for the present year.
+  </p>
+  <div class="copy-txt">adjusted=(current/old CPI)*new CPI</div>
+<!--
+  <p>
+     In order to convert a current dollar amount (old) into an adjusted dollar
+     amount (present), we need to divide the current dollar amount by the CPI
      for that year (CPI1), then multiply it by the CPI for the present year
      (CPI2).
   </p>
   <div class="copy-txt">adjusted=(current/CPI1)*CPI2</div>
+-->
   <p>
     To do this, we need to get the CPI index into the same tab as the teacher salary data. We can do this by “joining” these tabs.
   </p>
@@ -156,7 +141,7 @@
   <h2>How join works</h2>
   <p>
     Joins are used to augment the information contained in one table with the information contained in another table.<br>
-    Two tables can be joined when they both have at least one column sharing identical values.<br>
+    Two tables can be joined when they have at least one column with identical values.<br>
     Tab 1 and 2 below share the column <kbd>First name</kbd>. Each table contains one other column of data associated with the values in <kbd>First name</kbd>.
   </p>
   <figure>
@@ -169,7 +154,7 @@
     <img alt="Inspect element" class="half-width" src="./join-example-2.png">
   </figure>
   <p>
-    Joins typically helps uncover insight by bringing two sources of information together that may not mean much independently. Joins are instrumental to many stories. A famous (and recurring) story joins school bus drivers with convicted felons.
+    Joins can reveal new insights by bringing two sources of information together that may not mean much independently. A famous (and recurring) story joins school bus drivers with convicted felons.
   </p>
 </section>
 <section>
@@ -180,14 +165,16 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'jointab'"
       >Switch back to the <kbd>Salaries</kbd> tab and add a <kbd>Join tab</kbd> step.
     </li>
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Select the <kbd>CPI tab</kbd> to join with, and the <kbd>year</kbd> column to join on.
+      data-test="return workflow.tabs[0].wfModules[3].params.right_tab === 'tab-2' &&
+                        workflow.tabs[0].wfModules[3].params.join_columns.on === 'Year'"
+      >Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on.
+    <li
+      data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right === 'Annual'"
+      >The final step is to choose which columns to bring in from the other tab. In this case, choose <kbd>Annual</kbd>.
       <p class=instruction-detail>
         The Join module takes each value in the <kbd>Year</kbd> column of the Teacher salaries’ table and finds the corresponding row in the CPI table.
       </p>
@@ -199,7 +186,7 @@
   <p>
     The formula for converting a current dollar amount into an adjusted dollar amount is:
   </p>
-  <div class="copy-txt">adjusted=(current/CPI1)*CPI2</div>
+  <div class="copy-txt">adjusted=(current/old CPI)*new CPI</div>
   <p>
     We need to divide each yearly salary by its associated CPI value, then multiply the result by the CPI for the reference year (the year adjusted for).
   </p>
@@ -209,10 +196,15 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
-      >Add Formula and type in:
-      <div class="copy-txt">=(C1/D1)*240.007</div>
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula')
+         return false
+
+        const params = workflow.tabs[0].wfModules[4].params
+        return params.syntax === 'excel' &&
+               params.formula_excel.trim() === '=(B1/C1)*240.007'"
+      >Add a Formula step and enter the following for the formula:
+      <div class="copy-txt">=(B1/C1)*240.007</div>
       <p class="instruction-detail">
         Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal”.
       </p>
