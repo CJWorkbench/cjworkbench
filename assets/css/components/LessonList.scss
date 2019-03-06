@@ -75,9 +75,14 @@
       &:empty { display: none; }
       @include content-3;
 
+      h3 {
+        margin-left: 2rem;
+        margin-top: 1rem;
+      }
       //Line of text to describe the list
       p {
-        margin: 0 0 2rem 0;
+        margin: 0 0 3rem 0;
+        padding: 0 2rem;
       }
     }
 
