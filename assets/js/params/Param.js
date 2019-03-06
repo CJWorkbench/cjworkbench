@@ -31,11 +31,11 @@ export default class Param extends React.PureComponent {
     label: PropTypes.string.isRequired, // or ''
     type: PropTypes.string.isRequired,
     items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
-    menuOptions: PropTypes.arrayOf(
+    enumOptions: PropTypes.arrayOf(
       PropTypes.oneOfType([
         PropTypes.oneOf([ 'separator' ]),
         PropTypes.shape({
-          value: PropTypes.string.isRequired,
+          value: PropTypes.any.isRequired,
           label: PropTypes.string.isRequired
         }).isRequired
       ]).isRequired

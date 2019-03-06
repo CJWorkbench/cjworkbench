@@ -120,7 +120,7 @@ describe('ParamsForm', () => {
     it('should show conditional parameter matching menu value', () => {
       const w = wrapper({
         fields: [
-          field('menu_select', 'menu', { menuOptions: [
+          field('menu_select', 'menu', { enumOptions: [
             { value: 'mango', label: 'Mango' },
             'separator',
             { value: 'banana', label: 'Banana' }
@@ -152,7 +152,7 @@ describe('ParamsForm', () => {
     it('should hide conditional parameter not-matching menu value', () => {
       const w = wrapper({
         fields: [
-          field('menu_select', 'menu', { menuOptions: [
+          field('menu_select', 'menu', { enumOptions: [
             { value: 'mango', label: 'Mango' },
             'separator',
             { value: 'banana', label: 'Banana' }
@@ -198,7 +198,7 @@ describe('ParamsForm', () => {
     it('should hide conditional parameter matching inverted menu value', () => {
       const w = wrapper({
         fields: [
-          field('menu_select', 'menu', { menuOptions: [
+          field('menu_select', 'menu', { enumOptions: [
             { value: 'mango', label: 'Mango' },
             'separator',
             { value: 'banana', label: 'Banana' }

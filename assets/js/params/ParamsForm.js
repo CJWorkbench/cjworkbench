@@ -21,15 +21,15 @@ export default class ParamsForm extends React.PureComponent {
       name: PropTypes.string.isRequired, // or null or ''
       type: PropTypes.string.isRequired,
       items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
-      menuOptions: PropTypes.arrayOf(
+      enumOptions: PropTypes.arrayOf(
         PropTypes.oneOfType([
           PropTypes.oneOf([ 'separator' ]),
           PropTypes.shape({
-            value: PropTypes.string.isRequired,
+            value: PropTypes.any.isRequired,
             label: PropTypes.string.isRequired
           }).isRequired
         ]).isRequired
-      ), // new-style menu -- once we nix "items" ("menu_items" in spec), add .isRequired here
+      ), // new-style menu/radio -- once we nix "items" ("menu_items" in spec), add .isRequired here
       multiline: PropTypes.bool.isRequired,
       placeholder: PropTypes.string.isRequired, // may be ''
       visible_if: PropTypes.object // JSON spec or null
@@ -240,7 +240,7 @@ export default class ParamsForm extends React.PureComponent {
               label={field.name}
               type={field.type}
               items={field.items}
-              menuOptions={field.menuOptions}
+              enumOptions={field.enumOptions}
               isMultiline={field.multiline || false}
               placeholder={field.placeholder || ''}
               visibleIf={field.visible_if || null}

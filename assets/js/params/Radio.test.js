@@ -16,12 +16,12 @@ describe('Radio', () => {
   )
 
   it('renders correctly', () => {
-    const w = wrapper({ options: [ { value: 'x', label: 'X' } ] })
+    const w = wrapper({ enumOptions: [ { value: 'x', label: 'X' } ] })
     expect(wrapper).toMatchSnapshot()
   })
 
   it('renders number of buttons correctly', () => {
-    const w = wrapper({ options: [
+    const w = wrapper({ enumOptions: [
       { value: 'x', label: 'X' },
       { value: 'y', label: 'Y' },
       { value: 'z', label: 'Z' }
@@ -29,7 +29,7 @@ describe('Radio', () => {
     expect(w.find('input[type="radio"]')).toHaveLength(3)
   })
 
-  it('render and handle click of deprecated "items" (as opposed to "options")', () => {
+  it('render and handle click of deprecated "items" (as opposed to "enumOptions")', () => {
     const w = wrapper({ items: 'first|second' })
     w.find('input[value="1"]').simulate('change', { target: { value: '1' } })
     expect(w.prop('onChange')).toHaveBeenCalledWith(1)
@@ -37,7 +37,7 @@ describe('Radio', () => {
 
   it('render and handle click of non-String values', () => {
     const w = wrapper({
-      options: [
+      enumOptions: [
         { value: 0, label: 'first' },
         { value: 1, label: 'second' }
       ]
@@ -51,7 +51,7 @@ describe('Radio', () => {
     const w = wrapper({
       isReadOnly: true,
       name: 'foo',
-      options: [
+      enumOptions: [
         { value: 'x', label: 'off' },
         { value: 'y', label: 'on' },
       ]

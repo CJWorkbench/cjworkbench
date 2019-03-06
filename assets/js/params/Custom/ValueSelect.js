@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withFetchedData } from './FetchedData'
-import { withJsonStringValues } from '../util'
 import { List } from 'react-virtualized'
 import memoize from 'memoize-one'
 
@@ -130,12 +129,12 @@ export class ValueSelect extends React.PureComponent {
     return Object.keys(valueCounts).sort((a, b) => a.localeCompare(b))
   })
 
-  onReset = () => {
+  onResetSearch = () => {
     this.setState({ searchInput: '' })
   }
 
   onKeyDown = (ev) => {
-    if (ev.keyCode === 27) this.onReset() // Esc => reset
+    if (ev.keyCode === 27) this.onResetSearch() // Esc => reset
   }
 
   onInputChange = (ev) => {
@@ -234,7 +233,7 @@ export class ValueSelect extends React.PureComponent {
       <div className='value-parameter'>
         { !canSearch ? null : (
           <React.Fragment>
-            <form className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
+            <div className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
               <input
                 type='search'
                 placeholder='Search values...'
@@ -243,8 +242,8 @@ export class ValueSelect extends React.PureComponent {
                 onChange={this.onInputChange}
                 onKeyDown={this.onKeyDown}
               />
-              <button type="reset" className="close" title="Clear Search"><i className="icon-close"></i></button>
-            </form>
+              <button type="button" onClick={this.onResetSearch} className="close" title="Clear Search"><i className="icon-close"></i></button>
+            </div>
             <AllNoneButtons
               isReadOnly={isSearching}
               clearSelectedValues={this.clearSelectedValues}
@@ -264,7 +263,7 @@ export class ValueSelect extends React.PureComponent {
 }
 
 export default withFetchedData(
-  withJsonStringValues(ValueSelect, []),
+  ValueSelect,
   'valueCounts',
   ({ api, inputWfModuleId, selectedColumn }) => api.valueCounts(inputWfModuleId, selectedColumn),
   ({ inputDeltaId, selectedColumn }) => `${inputDeltaId}-${selectedColumn}`

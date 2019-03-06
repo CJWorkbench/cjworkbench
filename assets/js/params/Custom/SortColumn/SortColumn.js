@@ -11,7 +11,7 @@ const AscendingParamOptions = [
 function AscendingParam (props) {
   return (
     <RadioParam
-      options={AscendingParamOptions}
+      enumOptions={AscendingParamOptions}
       {...props}
     />
   )

@@ -6,8 +6,8 @@ export default class RadioParam extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired, // <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>
-    items: PropTypes.string,  // like 'Apple|Banana|Kitten' ... DEPRECATED: prefer `options`
-    options: PropTypes.arrayOf(PropTypes.shape({
+    items: PropTypes.string,  // like 'Apple|Banana|Kitten' ... DEPRECATED: prefer `enumOptions`
+    enumOptions: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any.isRequired,
       label: PropTypes.string.isRequired,
     }).isRequired), // should be .isRequired).isRequired, but for now we accept .items instead
@@ -20,13 +20,13 @@ export default class RadioParam extends React.PureComponent {
     // <input value=...> is always a String. Our <option> values aren't.
     // Find the option matching the string, and return it.
     const strValue = ev.target.value
-    const option = this.options.find(({ value }) => String(value) === strValue)
+    const option = this.enumOptions.find(({ value }) => String(value) === strValue)
     this.props.onChange(option.value)
   }
 
-  get options () {
-    const { options, items } = this.props
-    if (options) return options
+  get enumOptions () {
+    const { enumOptions, items } = this.props
+    if (enumOptions) return enumOptions
 
     // Handle deprecated `this.props.items`
     return items.split('|').map((label, value) => ({ label, value })) // `value` is int array index
@@ -35,7 +35,7 @@ export default class RadioParam extends React.PureComponent {
   render() {
     const { items, name, fieldId, isReadOnly, value } = this.props
     const selectedValue = value
-    const optionComponents = this.options.map(({ value, label }, i) => (
+    const optionComponents = this.enumOptions.map(({ value, label }, i) => (
       <label key={i} className='t-d-gray content-1'>
         <input
           type='radio'

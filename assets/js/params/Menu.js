@@ -6,11 +6,11 @@ export default class MenuParam extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     items: PropTypes.string, // like 'Apple|Banana|Kitten' -- DEPRECATED
-    menuOptions: PropTypes.arrayOf(
+    enumOptions: PropTypes.arrayOf(
       PropTypes.oneOfType([
         PropTypes.oneOf([ 'separator' ]),
         PropTypes.shape({
-          value: PropTypes.string.isRequired,
+          value: PropTypes.any.isRequired,
           label: PropTypes.string.isRequired
         }).isRequired
       ]).isRequired
@@ -31,8 +31,8 @@ export default class MenuParam extends React.PureComponent {
     onChange(value)
   }
 
-  get menuOptions () {
-    const { items, menuOptions } = this.props
+  get enumOptions () {
+    const { items, enumOptions } = this.props
 
     if (items) {
       return items.split('|').map((label, value) => { // value is the index
@@ -40,14 +40,14 @@ export default class MenuParam extends React.PureComponent {
         return { label, value }
       })
     } else {
-      return menuOptions
+      return enumOptions
     }
   }
 
   render() {
     const { items, name, fieldId, label, isReadOnly, value } = this.props
 
-    const options = this.menuOptions.map((option, i) => {
+    const options = this.enumOptions.map((option, i) => {
       if (option === 'separator') {
         return <option disabled key={i} className='separator' />
       } else {

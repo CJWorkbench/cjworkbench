@@ -183,7 +183,7 @@ definitions:
                 default:
                     type: string
                     description: "Value to set on the user's behalf (default items[0].value)"
-        radio:
+        deprecated_radio:
             <<: *common_ftype
             required: [ id_name, type, radio_items ]
             properties:
@@ -196,6 +196,36 @@ definitions:
                 default:
                     type: integer
                     description: "Value to set on the user's behalf (default 0)"
+        radio:
+            <<: *common_ftype
+            required: [ id_name, type, options ]
+            properties:
+                <<: *common_ftype_properties
+                type: { const: radio }
+                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                options:
+                    type: array
+                    description: Radio options
+                    items:
+                      - type: object
+                        description: One radio option (value and label)
+                        required: [ value, label ]
+                        properties:
+                            value:
+                                oneOf:
+                                  - type: string
+                                    description: Value the module code uses
+                                    pattern: "^[a-z_][a-z0-9_]*$"
+                                  - type: boolean
+                                    description: Value the module code uses
+                            label:
+                                type: string
+                                description: Text the user sees
+                default:
+                    oneOf:
+                      - type: string
+                        description: "Value to set on the user's behalf (default items[0].value)"
+                      - type: boolean
         button:
             <<: *common_ftype
             required: [ id_name, type, name ]
@@ -266,6 +296,7 @@ definitions:
                 { $ref: '#/definitions/ftypes/checkbox' },
                 { $ref: '#/definitions/ftypes/deprecated_menu' },
                 { $ref: '#/definitions/ftypes/menu' },
+                { $ref: '#/definitions/ftypes/deprecated_radio' },
                 { $ref: '#/definitions/ftypes/radio' },
                 { $ref: '#/definitions/ftypes/button' },
                 { $ref: '#/definitions/ftypes/column' },
