@@ -216,7 +216,7 @@ MaskFunctions = {
 }
 
 
-def migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
+def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
     is_regex = params['regex']
     condition = params['condition']
 
@@ -249,7 +249,7 @@ def migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
     return ret
 
 
-def migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
+def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
     # v1 condition _was_ number pointing into menu:
     # Select|| (0,1)
     # Text contains|Text does not contain|Text is exactly|| (2, 3, 4, 5)
@@ -309,14 +309,27 @@ def migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _migrate_params_v2_to_v3(params):
+    # v2: params['keep'] is 0 (True) or 1 (False)
+    #
+    # v3: params['keep'] is bool
+    return {
+        **params,
+        'keep': params['keep'] == 0,
+    }
+
+
 def migrate_params(params: Dict[str, Any]):
     # v0: 'regex' is a checkbox. Migrate it to a menu entry.
     if 'regex' in params:
-        params = migrate_params_v0_to_v1(params)
+        params = _migrate_params_v0_to_v1(params)
 
     # v1: just one condition. v2: op+filters, each containing op+subfilters
     if 'column' in params:
-        params = migrate_params_v1_to_v2(params)
+        params = _migrate_params_v1_to_v2(params)
+
+    if isinstance(params['keep'], int):
+        params = _migrate_params_v2_to_v3(params)
 
     return params
 
@@ -426,7 +439,6 @@ def _mask_subfilter(table: pd.DataFrame, subfilter: Subfilter) -> np.array:
 
 
 def render(table, params):
-    keep = params['keep'] == 0  # boolean from input radio: 0=Keep, 1=Drop
     filters = parse_filters(**params['filters'])
 
     if filters is None:
@@ -437,7 +449,7 @@ def render(table, params):
     except UserVisibleError as err:
         return str(err)
 
-    if not keep:
+    if not params['keep']:
         mask = ~mask
 
     ret = table[mask]

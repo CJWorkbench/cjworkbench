@@ -74,7 +74,7 @@
       >Add the step ‘Filter by condition’ between 'Add from URL' and 'Column Chart'.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
-      data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep === 0"
+      data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep"
       >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd><br/> and enter the value <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'

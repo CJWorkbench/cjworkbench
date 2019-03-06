@@ -3,7 +3,7 @@
   "id_name": "linechart",
   "category" : "Visualize",
   "icon" : "linechart",
-  "description" : "Create a line chart.",
+  "description" : "Visualize data in a line chart.",
   "html_output": true,
   "help_url":"modules/visualize/line-chart",
   "parameters": [

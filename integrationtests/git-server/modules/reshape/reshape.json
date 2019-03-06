@@ -10,8 +10,12 @@
       "name": "",
       "id_name" : "direction",
       "type" : "menu",
-      "menu_items" : "Wide to long|Long to wide|Transpose",
-      "default": 0
+      "options": [
+        { "value": "widetolong", "label": "Wide to long" },
+        { "value": "longtowide", "label": "Long to wide" },
+        { "value": "transpose", "label": "Transpose" }
+      ],
+      "default": "widetolong"
     },
     {
       "name": "Row variable",
@@ -19,7 +23,7 @@
       "type": "column",
       "visible_if": {
         "id_name": "direction",
-        "value": "Transpose",
+        "value": ["transpose"],
         "invert": true
       }
     },
@@ -38,7 +42,7 @@
       "type": "checkbox",
       "visible_if": {
           "id_name": "direction",
-          "value": "Long to wide"
+          "value": ["longtowide"]
       }
     },
     {
@@ -47,7 +51,7 @@
       "type": "column",
       "visible_if": {
         "id_name": "direction",
-        "value": "Long to wide"
+        "value": ["longtowide"]
       }
     }
   ]

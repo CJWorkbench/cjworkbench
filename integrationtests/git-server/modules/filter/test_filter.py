@@ -7,10 +7,10 @@ from filter import render, migrate_params
 
 
 def simple_params(colname: str, condition: str, value: str,
-                  case_sensitive: bool=False,
-                  keep: bool=True) -> Dict[str, Any]:
+                  case_sensitive: bool = False,
+                  keep: bool = True) -> Dict[str, Any]:
     return {
-        'keep': 0 if keep else 1,
+        'keep': keep,
         'filters': {
             'operator': 'and',
             'filters': [
@@ -89,6 +89,28 @@ class TestMigrateParams(unittest.TestCase):
                 'column': 'A',
             }),
             simple_params('A', '', '')
+        )
+
+    def test_v2_keep_0_means_true(self):
+        self.assertEqual(
+            migrate_params({
+                'keep': 0,
+                'filters': {'operator': 'and', 'filters': []},
+            }), {
+                'keep': True,
+                'filters': {'operator': 'and', 'filters': []},
+            }
+        )
+
+    def test_v2_keep_1_means_false(self):
+        self.assertEqual(
+            migrate_params({
+                'keep': 1,
+                'filters': {'operator': 'and', 'filters': []},
+            }), {
+                'keep': False,
+                'filters': {'operator': 'and', 'filters': []},
+            }
         )
 
 
@@ -349,7 +371,7 @@ class TestRender(unittest.TestCase):
     def test_two_filters_and(self):
         table = pd.DataFrame({'A': [1, 2, 3], 'B': [2, 3, 4]})
         params = {
-            'keep': 0,
+            'keep': True,
             'filters': {
                 'operator': 'and',
                 'filters': [
@@ -384,7 +406,7 @@ class TestRender(unittest.TestCase):
     def test_two_filters_or(self):
         table = pd.DataFrame({'A': [1, 2, 3], 'B': [2, 3, 4]})
         params = {
-            'keep': 0,
+            'keep': True,
             'filters': {
                 'operator': 'or',
                 'filters': [
@@ -419,7 +441,7 @@ class TestRender(unittest.TestCase):
     def test_two_subfilters_and(self):
         table = pd.DataFrame({'A': [1, 2, 3], 'B': [2, 3, 4]})
         params = {
-            'keep': 0,
+            'keep': True,
             'filters': {
                 'operator': 'or',
                 'filters': [
@@ -449,7 +471,7 @@ class TestRender(unittest.TestCase):
     def test_two_subfilters_or(self):
         table = pd.DataFrame({'A': [1, 2, 3], 'B': [2, 3, 4]})
         params = {
-            'keep': 0,
+            'keep': True,
             'filters': {
                 'operator': 'and',
                 'filters': [

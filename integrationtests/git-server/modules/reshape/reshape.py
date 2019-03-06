@@ -3,18 +3,14 @@ import pandas as pd
 
 
 def render(table, params):
-    diridx = params['direction']
+    dir = params['direction']
     cols = params.get('colnames', '')
     varcol = params.get('varcol', '')
 
     # no columns selected and not transpose, NOP
-    if not cols and diridx != 2:
+    if not cols and dir != 'transpose':
         return table
     cols = cols.split(',')
-
-    # must match reshape.json
-    dirmap = ['widetolong', 'longtowide', 'transpose']
-    dir = dirmap[diridx]
 
     if dir == 'widetolong':
         table = pd.melt(table, id_vars=cols)
@@ -34,6 +30,9 @@ def render(table, params):
             second_key = params.get('second_key', '')
             if second_key in table.columns:
                 keys.append(second_key)
+
+        if varcol in keys:
+            return 'Cannot reshape: column and row variables must be different'
 
         table.set_index(keys + [varcol], inplace=True, drop=True)
 
@@ -71,3 +70,19 @@ def render(table, params):
         table.columns = new_columns
 
     return table
+
+
+def _migrate_params_v0_to_v1(params):
+    # v0: menu item indices. v1: menu item labels
+    v1_dir_items = ['widetolong', 'longtowide', 'transpose']
+    params['direction'] = v1_dir_items[params['direction']]
+    return params
+
+
+def migrate_params(params):
+    # Convert numeric direction parameter to string labels, if needed
+    if isinstance(params['direction'], int):
+        params = _migrate_params_v0_to_v1(params)
+
+    return params
+

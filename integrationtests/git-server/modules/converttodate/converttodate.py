@@ -1,14 +1,14 @@
+from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
-import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 
 
 class InputFormat(Enum):
-    AUTO = 0
-    US = 1
-    EU = 2
+    AUTO = 'auto'
+    US = 'us'
+    EU = 'eu'
 
     @property
     def kwargs(self):
@@ -28,6 +28,7 @@ class InputFormat(Enum):
         }[self]
 
 
+@dataclass
 class ErrorCount:
     """
     Tally of errors in all rows.
@@ -36,13 +37,11 @@ class ErrorCount:
     if there aren't any errors.
     """
 
-    def __init__(self, a_column: Optional[str]=None, a_row: Optional[int]=None,
-                 a_value: Optional[str]=None, total: int=0, n_columns: int=0):
-        self.a_column = a_column
-        self.a_row = a_row
-        self.a_value = a_value
-        self.total = total
-        self.n_columns = n_columns
+    a_column: Optional[str] = None
+    a_row: Optional[int] = None
+    a_value: Optional[str] = None
+    total: int = 0
+    n_columns: int = 0
 
     def __add__(self, rhs: 'ErrorCount') -> 'ErrorCount':
         """Add more errors to this ErrorCount."""
@@ -96,9 +95,8 @@ def render(table, params):
     if not params['colnames']:
         return table
 
-    columns = [c.strip() for c in params['colnames'].split(',')]
-    input_format = InputFormat(params['type_date'])
-    type_null = params['type_null']
+    columns = list(params['colnames'].split(','))
+    input_format = InputFormat(params['input_format'])
 
     error_count = ErrorCount()
 
@@ -114,12 +112,32 @@ def render(table, params):
         out_series = pd.to_datetime(in_series, errors='coerce', exact=False,
                                     cache=True, **kwargs)
 
-        if not type_null:
+        if not params['error_means_null']:
             error_count += ErrorCount.from_diff(in_series, out_series)
 
         table[column] = out_series
 
     if error_count:
-        return (None, str(error_count))
+        return str(error_count)
 
     return table
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: 'type_null' (bool), 'type_date' (input format AUTO|US|EU index)
+
+    v1: 'error_means_null' (bool), 'input_format' (enum 'auto'|'us'|'eu')
+    """
+    return {
+        'colnames': params['colnames'],
+        'error_means_null': params['type_null'],
+        'input_format': ['auto', 'us', 'eu'][params['type_date']]
+    }
+
+
+def migrate_params(params):
+    if 'type_date' in params:
+        params = _migrate_params_v0_to_v1(params)
+
+    return params

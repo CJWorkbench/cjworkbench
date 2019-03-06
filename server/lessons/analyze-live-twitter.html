@@ -61,21 +61,30 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
-    data-test="const subfilter = workflow.tabs[0].wfModules[1].params.filters.filters[0].subfilters[0]; return subfilter.colname === 'text' && subfilter.condition === 'text_contains' && subfilter.value.toLowerCase() === 'science'"
+    data-test="
+      const filters = workflow.tabs[0].wfModules[1].params.filters.filters
+      if (filters.length !== 1 || filters[0].subfilters.length !== 1) return false
+      const subfilter = filters[0].subfilters[0]
+      return (
+        subfilter.colname === 'text'
+        && subfilter.condition === 'text_contains'
+        && subfilter.value.toLowerCase() === 'science'
+      )
+    "
     >Select the column <kbd>text</kbd> to filter by. Choose <kbd>Text contains</kbd> as a condition, and search for 'science'.
     <p class="instruction-detail">
       Now let's group the resulting tweets by date.
     </p>
   </li>
   <li
-    data-highlight='[{"type":"Module","index":2,"name":"Group by date"}]'
-    data-test="return workflow.tabs[0].wfModuleNames[2] === 'Group by date'"
-    >Add the step 'Group by date'.
+    data-highlight='[{"type":"Module","index":2,"name":"Group"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'groupby'"
+    >Add the step 'Group'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Group by date"}]'
-    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.column === 'created_at' && params.groupby === 5"
-    >Choose <kbd>created_at</kbd> as the date column, and group rows by <kbd>Quarter</kbd>.
+    data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
+    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    >Choose <kbd>created_at</kbd> as the date column. Check <kbd>Group dates</kbd> and group rows <kbd>by year</kbd>. Set the "Count" output column name to <kbd>Number of tweets</kbd>
   </li>
 </ol>
 </section>
@@ -85,17 +94,17 @@
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"Module","index":3,"name":"Column Chart"}]'
-    data-test="return workflow.tabs[0].wfModuleNames[3] === 'Column Chart'"
-    >Add the step 'Column Chart'.
+    data-highlight='[{"type":"Module","index":3,"name":"Line Chart"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'linechart'"
+    >Add the step 'Line Chart'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-    data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] ? p.y_columns[0].column : null) === 'count'"
-    >Select <kbd>created_at</kbd> for the X axis and <kbd>count</kbd> for the Y axis.
+    data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+    data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
+    >Select <kbd>created_at</kbd> for the X axis and <kbd>Number of tweets</kbd> for the Y axis.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+    data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
     >Add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail">

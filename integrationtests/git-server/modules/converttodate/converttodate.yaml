@@ -1,0 +1,21 @@
+id_name: 'convert-date'
+name: 'Convert to date & time'
+category: Clean
+help_url: modules/convert-to-date-time
+icon: calendar
+description: 'Convert Text columns to Date & time.'
+parameters:
+- id_name: colnames
+  name: ''
+  type: multicolumn
+- id_name: input_format
+  name: 'Input format'
+  type: menu
+  options:
+  - { value: 'auto', label: 'AUTO' }
+  - { value: 'us', label: 'Date (U.S.) MM/DD/YYYY' }
+  - { value: 'eu', label: 'Date (E.U.) DD/MM/YYYY' }
+- id_name: error_means_null
+  name: 'Convert non-dates to null'
+  type: checkbox
+  default: true

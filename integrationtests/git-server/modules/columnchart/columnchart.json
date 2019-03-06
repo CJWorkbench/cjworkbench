@@ -3,7 +3,7 @@
   "id_name": "columnchart",
   "category" : "Visualize",
   "icon" : "chart",
-  "description" : "Create a column chart.",
+  "description" : "Visualize data in a column chart.",
   "html_output": true,
   "help_url":"modules/visualize/column-chart",
   "parameters": [
