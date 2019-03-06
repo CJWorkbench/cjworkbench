@@ -100,7 +100,7 @@ tabs:
       >Name the new column <kbd>Ratio</kbd>
     </li>
     <li
-      data-test="const wfm = workflow.tabs[0].wfModules[2]; if (!wfm || wfm.moduleSlug !== 'sort') return false; const p = wfm.params; return p.keep_top === '' && p.sort_columns[0] && p.sort_columns[0].colname === 'Difference' && p.sort_columns[0].is_ascending"
+      data-test="const wfm = workflow.tabs[0].wfModules[4]; if (!wfm || wfm.moduleSlug !== 'sort') return false; const p = wfm.params; return p.keep_top === '' && p.sort_columns[0] && p.sort_columns[0].colname === 'Ratio' && p.sort_columns[0].is_ascending"
       >Sort this new column in ascending order.
       <p class=instruction-detail>
         A ratio of 1 means that for every person in 2010, there is exactly 1 person in 2017.
@@ -122,12 +122,12 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="const wfm = workflow.tabs[0].wfModules[4]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=D1/C1*100' || f === '=(D1/C1)*100' || f === '=F1*100'"
+      data-test="const wfm = workflow.tabs[0].wfModules[5]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=D1/C1*100' || f === '=(D1/C1)*100' || f === '=F1*100'"
       >Add another Formula and type in:
       <div class="copy-txt">=(D1/C1)*100</div>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[4].params.out_column === 'Percentage'"
+      data-test="return workflow.tabs[0].wfModules[5].params.out_column === 'Percentage'"
       >Name the new column <kbd>Percentage</kbd>
       <p class="instruction-detail">
         The numbers in this new column are obviously similar to the <kbd>Ratio</kbd> column - just multiplied by 100.<!-- The formula <kbd>=F1*100</kbd> is equivalent. -->
@@ -150,17 +150,13 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="const wfm = workflow.tabs[0].wfModules[5]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=((D1-C1)/C1)*100' || f === '=(D1-C1)/C1*100' || f === '=(E1-C1)*100' || f === '=((D1/C1)-1)*100' || f === '=(D1/C1*100)-100' || f === '=D1/C1*100-100' || f === '=(F1-1)*100' || f === '=G1-100' || f === '(G1-100)'"
+      data-test="const wfm = workflow.tabs[0].wfModules[6]; if (!wfm || wfm.moduleSlug !== 'formula' || wfm.params.syntax !== 'excel' || !wfm.params.all_rows) return false; const f = wfm.params.formula_excel.replace(/ /g, ''); return f === '=((D1-C1)/C1)*100' || f === '=(D1-C1)/C1*100' || f === '=(E1-C1)*100' || f === '=((D1/C1)-1)*100' || f === '=(D1/C1*100)-100' || f === '=D1/C1*100-100' || f === '=(F1-1)*100' || f === '=G1-100' || f === '(G1-100)'"
       >Add another Formula step and this time apply the percentage formula:
       <div class="copy-txt">=((D1 - C1) / C1) * 100</div>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[5].params.out_column === 'Percentage change'"
+      data-test="return workflow.tabs[0].wfModules[6].params.out_column === 'Percentage change'"
       >Name the new column <kbd>Percentage change</kbd>
-    </li>
-    <li
-      data-test="const wfm = workflow.tabs[0].wfModules[2]; if (!wfm || wfm.moduleSlug !== 'sort') return false; const p = wfm.params; return p.keep_top === '' && p.sort_columns[0] && p.sort_columns[0].colname === 'Difference' && p.sort_columns[0].is_ascending"
-      >Sort the resulting column in ascending order.
       <p class="instruction-detail">
         A result of 100% means the value doubled; 0% means it stayed the same; and -50% means the new number is half the old one.
       </p>
