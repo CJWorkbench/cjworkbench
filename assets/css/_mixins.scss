@@ -1,5 +1,5 @@
-
 $module-parameter-padding: .5rem 1rem;
+
 @mixin module-parameter {
   @include content-1;
   display: block;
@@ -24,7 +24,7 @@ $module-parameter-padding: .5rem 1rem;
   @include module-parameter;
 }
 
-%autosize-with-textarea {
+@mixin autosize-with-textarea {
   // HTML <div> with the following structure:
   // <div class="this-div">
   //   <div class="invisible-size-setter">Value value value</div>
@@ -37,11 +37,15 @@ $module-parameter-padding: .5rem 1rem;
   position: relative;
   word-break: break-all;
 
+  .invisible-size-setter, textarea {
+    white-space: pre-wrap;
+  }
+
   .invisible-size-setter {
     visibility: hidden;
 
     &:empty::before {
-      content: 'X';
+      content: ' ';
       display: inline;
     }
   }
@@ -54,4 +58,7 @@ $module-parameter-padding: .5rem 1rem;
     height: 100%;
     resize: none;
   }
+}
+%autosize-with-textarea {
+  @include autosize-with-textarea;
 }
