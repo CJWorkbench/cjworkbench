@@ -27,6 +27,7 @@ tabs:
 
 <section class="fullscreen">
   <h2> </h2>
+  <!--
   <p>
     <b>Wide format</b> is the most common table format. Each different type of measurement is in its own column. In this case there is one column per borough.<br>
   </p>
@@ -37,25 +38,25 @@ tabs:
   <p><b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>.
     All other columns describe what is measured in that row. In this case, each <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
   </p>
-<!--
-  <p><b>Long format</b> tables contain only one column with measured values.<br>In this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured.
-  </p>
-  <p>
-    Each row is a unique combination of those variables.<br> In this case, each available <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
-  </p>
--->
   <figure>
     <img class="no-border half-width" alt="Inspect element" src="./long-table.png">
   </figure>
-<!--
+  -->
   <p>
-    <b>Wide formats</b> are the most common table format. In a wide format. there are one or more columns that describe what is measured, in this case <kbd>Complaint date</kbd>. These columns are called “Row variables".<br>
-    All other column names are called "Column variables", as they also describe what is measured - in this case each <kbd>Borough</kbd>. All remaining cells contain the actual measurements.
+    <b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured. <br>
+    Each row is a unique measurement. In this case, each unique of <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
+  </p>
+  <figure>
+    <img class="no-border half-width" alt="Inspect element" src="./long-table.png">
+  </figure>
+  <p>
+    In a <b>wide format</b> table, the same data is organized differently, but easier to read. There can be one or more columns of variables, in this case <kbd>Complaint date</kbd>. These columns are called “Row variables".<br>
+    Other variables can be located in the header, and are not labelled. In this case the variable <kbd>Borough</kbd>: each of its value exists as a column name. Those variables are called "Column variables". All remaining cells are the actual measurements.
   </p>
   <figure>
     <img class="no-border full-width" alt="Inspect element" src="./wide-table.png">
   </figure>
--->
+
 </section>
 <section>
   <h2>Converting to wide format</h2>
