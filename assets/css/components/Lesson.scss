@@ -1,5 +1,6 @@
 article.lesson {
   $lesson-sidebar-width: 36rem;
+  $lesson-fullscreen-width: 80rem;
 
   display: flex;
   flex-direction: column;
@@ -299,7 +300,6 @@ article.lesson {
   }
 
   &.fullscreen {
-    display: block;
     position: absolute;
     left: 0;
     width: 100%;
@@ -308,13 +308,7 @@ article.lesson {
     z-index: 2;
     width: 100%;
 
-    .sections {
-      display: flex;
-      justify-content: center;
-    }
-
     figure {
-
       img.full-width { // 3 sizes of content to play with
         width: 100%;
       }
@@ -330,10 +324,19 @@ article.lesson {
       }
     }
 
+    .content {
+      // Put vertical scrollbar on the _full-width_ <div class="content">, not the <section>
+      // That way it appears at the total right side of the page, not the middle
+      overflow-y: auto;
+    }
 
     section.current {
       width: 100%;
+      max-width: $lesson-fullscreen-width;
+      margin: 0 auto;
       height: calc(100vh - 12rem); // accounts for both nav and footer
+      // No vertical scrollbar in the <section>: we use <div class="content">'s scrollbar instead.
+      overflow: visible;
 
       a.backToLessons {
         display: none;
@@ -341,16 +344,12 @@ article.lesson {
 
     }
 
-    .content {
-      width: 80rem;
-    }
-
     footer {
       display: flex;
       justify-content: center;
 
       .buttons-container {
-        width: 80rem;
+        width: $lesson-fullscreen-width;
         justify-content: flex-start;
         padding-left: 2rem;
 
@@ -369,7 +368,7 @@ article.lesson {
 
     section.lesson-footer.current {
       position: absolute;
-      width: 80rem;
+      width: $lesson-fullscreen-width;
     }
   }
 
@@ -387,7 +386,7 @@ article.lesson {
       justify-content: center;
 
       .navbar-elements {
-        width: 80rem;
+        width: $lesson-fullscreen-width;
         padding: 0 2rem;
 
         .dropdown, .group--undo-redo {
