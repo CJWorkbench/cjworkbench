@@ -62,3 +62,21 @@ class PgLockerTest(unittest.TestCase):
                             pass
 
         asyncio.run(inner())
+
+    def test_concurrent_locks_on_one_connection(self):
+        """
+        Avoid InterfaceError: "another operation is in progress"
+        """
+        async def use_lock(locker, workflow_id):
+            async with locker.render_lock(workflow_id):
+                pass
+
+        async def inner():
+            async with PgLocker() as locker:
+                done, _ = await asyncio.wait(
+                    {use_lock(locker, i) for i in range(3)}
+                )
+                for task in done:
+                    task.result()  # throw error, if any
+
+        asyncio.run(inner())

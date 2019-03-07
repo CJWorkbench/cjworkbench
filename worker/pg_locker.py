@@ -27,6 +27,7 @@ class PgLocker:
 
     def __init__(self):
         self.pg_connection = None
+        self._pg_lock = asyncio.Lock()
         self.local_held_locks = set()
 
     async def __aenter__(self) -> 'PgLocker':
@@ -59,19 +60,19 @@ class PgLocker:
 
         await self.pg_connection.close()
 
+    async def _pg_fetchval(self, sql, *args, **kwargs):
+        async with self._pg_lock:
+            return await self.pg_connection.fetchval(sql, *args, **kwargs)
+
+
     async def send_pg_heartbeats_forever(self, interval: float) -> None:
         """
         Keep Postgres connection alive.
         """
-        # Use connection_lock to make sure we don't send heartbeat queries at
-        # the same time as we're sending BEGIN and COMMIT queries: we don't
-        # want races.
         while True:
             await asyncio.sleep(interval)
-            await self.pg_connection.fetch(
-                "SELECT 'worker_heartbeat'",
-                timeout=interval
-            )
+            await self._pg_fetchval("SELECT 'worker_heartbeat'",
+                                    timeout=interval)
 
     @asynccontextmanager
     async def _local_lock(self, workflow_id: int) -> None:
@@ -118,7 +119,7 @@ class PgLocker:
         """
         # raises WorkflowAlreadyLocked
         async with self._local_lock(workflow_id):
-            if not await self.pg_connection.fetchval(
+            if not await self._pg_fetchval(
                 'SELECT pg_try_advisory_lock(0, $1)',
                 workflow_id
             ):
@@ -127,7 +128,5 @@ class PgLocker:
             try:
                 yield
             finally:
-                await self.pg_connection.fetchval(
-                    'SELECT pg_advisory_unlock(0, $1)',
-                    workflow_id
-                )
+                await self._pg_fetchval('SELECT pg_advisory_unlock(0, $1)',
+                                        workflow_id)
