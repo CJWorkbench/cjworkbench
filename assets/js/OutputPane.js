@@ -161,6 +161,20 @@ function mapStateToProps (state) {
 
   const status = wfModule ? wfModuleStatus(wfModule) : 'busy'
 
+  if (wfModule === null && tab.wf_module_ids[wfModuleIndex]) {
+    // We're pointing at a "placeholder" module: its id isn't in wfModules.
+    // HACK: for now, we want OutputPane to render something different (it needs
+    // to give TableSwitcher a "busy"-status WfModule).
+    wfModule = {
+      id: -1,
+      html_output: false,
+      status: 'busy',
+      cached_render_result_delta_id: null,
+      columns: null,
+      nRows: null
+    }
+  }
+
   // If we're pointing at a module that output an error, we'll want to display
   // its _input_ (the previous module's output) to help the user fix things.
   if (status === 'error' && tab.selected_wf_module_position > 0) {
@@ -178,7 +192,6 @@ function mapStateToProps (state) {
     workflowId: workflow.id,
     wfModule: wfModule ? {
       id: wfModule.id,
-      module: wfModule.module,
       htmlOutput: wfModule.html_output,
       status,
       deltaId: wfModule.cached_render_result_delta_id,
