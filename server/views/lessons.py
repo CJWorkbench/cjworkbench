@@ -191,20 +191,6 @@ def render_lesson_detail(request, slug):
     return _render_get_lesson_detail(request, lesson)
 
 
-# Even allowed for logged-out users
-def render_lesson_list(request):
-    logged_in_user = None
-    if request.user and request.user.is_authenticated:
-        logged_in_user = UserSerializer(request.user).data
-
-    return TemplateResponse(request, 'lessons.html', {
-        'initState': json.dumps({
-            'loggedInUser': logged_in_user,
-        }),
-        'lessons': AllLessons,
-    })
-
-
 def _render_course(request, course, lesson_url_prefix):
     logged_in_user = None
     if request.user and request.user.is_authenticated:
@@ -224,7 +210,7 @@ def _render_course(request, course, lesson_url_prefix):
 
 
 # Even allowed for logged-out users
-def render_lesson_list2(request):
+def render_lesson_list(request):
     # Make a "fake" Course to encompass Lessons
     #
     # Do not build this Course using LessonLookup: LessonLookup contains
