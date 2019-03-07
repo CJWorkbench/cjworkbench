@@ -98,8 +98,8 @@
   color:white;
 }
 
-.links {
-  @extend .title-3;
+.navbar .links {
+  @include title-3;
   display: flex;
   align-items: center;
   font-weight: bold;
@@ -107,73 +107,42 @@
   font-size: 1.5rem;
   position: relative;
   left: -7.7rem;
-  height:100%;
+  height: 100%;
   top: .8rem;
   cursor: pointer;
 
   a {
-    color: $white;
-    &:hover {
-      text-decoration: none;
-    }
-  }
-
-  .LS-toggle--link, .WF-toggle--link {
-    text-transform: uppercase;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
+    position: relative; // for '::after' positioning
+    color: white;
+    text-decoration: none;
     margin: 0 2rem;
     padding-top: .9rem;
     height: 4.5rem;
-    -webkit-transition: $buttons-anim;
 
-    .WF-link--under, .LS-link--under {
-      height:.4rem;
-      background-color: $white;
-      position: relative ;
-      top:1.7rem;
-      -webkit-transition: $buttons-anim;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: 2px;
+      right: 2px;
+      height: 4px;
+      background-color: white;
     }
 
-    .WF-link--under {
-      width: 10.2rem;
+    &.inactive {
+      opacity: .7;
+      &::after {
+        opacity: 0;
+      }
+
+      &:hover {
+        opacity: 1;
+        &::after {
+          opacity: .7;
+        }
+      }
     }
-
-    .LS-link--under {
-      width: 8.5rem;
-    }
-  }
-}
-
-
-.workflows-page {
-
-  .WF-link--under {opacity: 1;}
-  .LS-link--under {opacity: 0;}
-  .LS-toggle--link {
-    opacity:0.7;
-    &:hover{
-      opacity: 1}
-  }
-
-  .LS-toggle--link:hover .LS-link--under  {
-    opacity: 0.5;
-  }
-}
-
-.lessons-page {
-
-  .LS-link--under {opacity: 1;}
-  .WF-link--under {opacity: 0;}
-  .WF-toggle--link {
-    opacity:0.7;
-    &:hover{
-      opacity: 1}
-  }
-
-  .WF-toggle--link:hover .WF-link--under  {
-    opacity: 0.5;
   }
 }
 
