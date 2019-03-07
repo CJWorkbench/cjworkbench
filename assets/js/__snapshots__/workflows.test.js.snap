@@ -92,26 +92,16 @@ exports[`Workflow list page renders correctly 1`] = `
             className="links"
           >
             <a
-              className="WF-toggle--link"
-              href={null}
+              className="inactive"
+              href="/workflows"
             >
-              <div>
-                WORKFLOWS
-              </div>
-              <div
-                className="WF-link--under"
-              />
+              WORKFLOWS
             </a>
             <a
-              className="LS-toggle--link"
-              href="/lessons/"
+              className="active"
+              href={null}
             >
-              <div>
-                Tutorials
-              </div>
-              <div
-                className="LS-link--under"
-              />
+              TUTORIALS
             </a>
           </div>
           <WfHamburgerMenu>
