@@ -51,7 +51,7 @@ tabs:
         const edits = wfm.params.celledits;
         return edits.find((e) => e.row === 3 && e.col === 'Continent' && e.value === 'AS')"
       >In the table, double click on the empty cell next to <kbd>India</kbd> enter the code for "Asia", which is
-      <kbd>AS</kbd> in this data set.
+      <kbd>AS</kbd> in this data set
     <p class="instruction-detail">
       Note that a new step has been added to your workflow in position 2, logging your edits.
     </p>
@@ -79,7 +79,7 @@ tabs:
     <li
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'calculate'"
-      >Click <kbd>Add Step</kbd>, type <kbd>Calculate</kbd> into the search box, and select the step.
+      >Click <kbd>Add Step</kbd>, type <kbd>Calculate</kbd> into the search box, and select the step
     </li>
     <li
       data-highlight='[]'
@@ -98,7 +98,7 @@ tabs:
     <li
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModules[2].params.outcolname.toLowerCase() === '2012-2016 average'"
-      >Name the output column <kbd>2012-2016 average</kbd>.
+      >Name the output column <kbd>2012-2016 average</kbd>
       <p class="instruction-detail">The new column will appear at the far right of the table.</p>
     </li>
   </ol>
@@ -116,12 +116,12 @@ tabs:
     <li
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'columnchart'"
-      >Click <kbd>Add Step</kbd> and choose <kbd>Column Chart</kbd>.
+      >Click <kbd>Add Step</kbd> and choose <kbd>Column Chart</kbd>
     </li>
     <li
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModules[3].params.x_column === 'Country'"
-      >Select the <kbd>Country</kbd> column for the X axis.
+      >Select the <kbd>Country</kbd> column for the X axis
     </li>
     <li
       data-highlight='[]'

@@ -1,6 +1,6 @@
 <header>
   <h1>Story: Adjusting teacher salaries for inflation</h1>
-  <p>Learn how to join data to compare dollar amounts from different years.</p>
+  <p>Learn how to join tables and use the Consumer Price Index to compare dollar amounts from different years.</p>
   <img src="./banner.svg">
 </header>
 
@@ -11,7 +11,8 @@
   </p>
   <p>
     In this lesson, we’ll learn how to compare dollar amounts from different years using Consumer Price Index (CPI) data from the Bureau of Labor Statistics.
-    We will adjust teacher salaries dating back from 1969 in order to get a good appreciation of salary trends.
+    We'll adjust teacher salaries dating back from 1969 in order to get an accurate picture of how much teachers have
+    been paid over time.
   </p>
 </section>
 
@@ -53,42 +54,37 @@
   </p>
   <p>
     It shows the average annual salaries of teachers in U.S. public elementary and secondary schools between 1969 and 2016.
-    Those numbers are in ‘Current dollars’, which means not adjusted for inflation. Let’s convert them in today’s dollars.
+    Those numbers are in “Current dollars”, which means not adjusted for inflation. Let's convert them into today’s dollars.
   </p>
   <p>
-    To do this we need a measure of inflation. Every month the Bureau of Labor statistics surveys the prices of hundreds of consumer items to produce a number known as the 'Consumer Price Index' or CPI. The tab <kbd>CPI data</kbd> contains this data, published <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0/' target="_blank" className="info-1">here</a>.
+    To do this we need a measure of inflation. Every month the Bureau of Labor statistics surveys the prices of
+    hundreds of consumer items to produce a number known as the “Consumer Price Index” or CPI. The
+    <kbd>CPI data</kbd> tab contains this data, published <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0/' target="_blank" className="info-1">here</a>.
   </p>
-  <h3 class="instructions">Instructions</h3>
-  <ul>
-    <li>What does each row represent?</li>
-    <li>What's in each column?</li>
-    <li>Are there any columns, values or codes you don't understand?</li>
-    <li>Are there missing or obviously wrong values?</li>
-    <li>Does the data need to be cleaned?</li>
-  </ul>
 </section>
 <section>
   <h2>Cleaning</h2>
   <p>
     Both original spreadsheets contain one or several rows of notes before the actual data, which means we don’t get proper column names.<br>
-    Let’s also fix types, and remove anything we don’t need.
+    Let’s also fix the types, and remove anything we don’t need.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'rowstoheader' &&
                         workflow.tabs[0].wfModules[1].params.rows === '1'"
-      >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number. Then choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says "1 row selected".
+      >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number.
+      Then choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says “1 row selected”.
       <p class='instruction-detail'>
         Because it contained both text and numeric data, the column <kbd>Average salary</kbd> was loaded as text. We need to convert it to numbers to use it in calculations.
       </p>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'extract-numbers'"
-      >Choose <kbd>Convert to Numbers</kbd> in the <kbd>Average salary</kbd> column menu.
+      >Choose <kbd>Convert to Numbers</kbd> in the <kbd>Average salary</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span>.
+      </span>
       <p class='instruction-detail'>
         The CPI data, in the other tab, has similar issues.
       </p>
@@ -96,7 +92,8 @@
     <li
       data-test="return workflow.tabs[1].wfModuleSlugs[1] === 'rowstoheader' &&
                         workflow.tabs[1].wfModules[1].params.rows === '11'"
-      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well.</li>
+      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well
+    </li>
     <li
       data-test="
         if (workflow.tabs[1].wfModuleSlugs[2] !== 'selectcolumns')
@@ -112,7 +109,7 @@
       >Choose <kbd>Convert to Numbers</kbd> from the <kbd>Annual</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span>.
+      </span>
     </li>
   </ol>
 </section>
@@ -126,13 +123,13 @@
   <div class="copy-txt">adjusted=(current/old CPI)*new CPI</div>
 
   <p>
-    To do this, we need to get the CPI index into the same tab as the teacher salary data. We can do this by “joining” these tabs.
+    To do this, we need to get the CPI numbers into the same tab as the teacher salary data. We can do this by “joining” these tabs.
   </p>
 </section>
 <section class="fullscreen">
   <h2>How join works</h2>
   <p>
-    Joins are used to augment the information contained in one table with the information contained in another table.<br>
+    Joins are used to augment the information contained in one table with the information contained in another table.
     Two tables can be joined when they have at least one column with identical values.<br>
     Tab 1 and 2 below share the column <kbd>First name</kbd>. Each table contains one other column of data associated with the values in <kbd>First name</kbd>.
   </p>
@@ -140,7 +137,7 @@
     <img alt="Inspect element" class="three-quarter-width" src="./join-example-1.png">
   </figure>
   <p>
-    When joining Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding values from the other tab are appended (Tab 3).
+    When joining Tab 1 and Tab 2 on <kbd>First name</kbd>, values in that column are matched, and corresponding values from the other tab are appended.
   </p>
   <figure >
     <img alt="Inspect element" class="half-width" src="./join-example-2.png">
@@ -158,17 +155,17 @@
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'jointab'"
-      >Switch back to the <kbd>Salaries</kbd> tab and add a <kbd>Join tab</kbd> step.
+      >Switch back to the <kbd>Salaries</kbd> tab and add a <kbd>Join tab</kbd> step
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.right_tab === 'tab-2' &&
                         workflow.tabs[0].wfModules[3].params.join_columns.on === 'Year'"
-      >Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on.
+      >Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right === 'Annual'"
-      >The final step is to choose which columns to bring in from the CPI tab. Select <kbd>Annual</kbd>.
+      >The final step is to choose which columns to bring in from the CPI tab. Select <kbd>Annual</kbd>
       <p class=instruction-detail>
-        We now have one table containing all the information we for our analysis.
+        We now have one table containing all the information we for our analysis
       </p>
     </li>
   </ol>
@@ -180,7 +177,8 @@
   </p>
   <div class="copy-txt">adjusted=(current/old CPI)*new CPI</div>
   <p>
-    We need to divide each yearly salary by its associated CPI value, then multiply the result by the CPI for the reference year (the year adjusted for).
+    We need to divide each yearly salary by its associated CPI value, then multiply the result by the CPI for the
+    reference year (the year we are adjusting all the dollar values to match.)
   </p>
   <p>
     In this case the reference year is 2016, which has as a CPI of <kbd>240.007</kbd>.
@@ -205,7 +203,8 @@
       data-test="return workflow.tabs[0].wfModules[4].params.out_column.toLowerCase() === 'adjusted salaries'"
       >Name this new column <kbd>Adjusted salaries</kbd>
       <p class="instruction-detail">
-        Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted one are sometime called “nominal”.
+        Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted amounts
+        are sometimes called “nominal” dollars.
       </p>
       <p class="instruction-detail">
         We can see that the salaries of teachers in U.S. public elementary and secondary schools decreased from 2009 to 2016, in real dollar terms, which is not apparent in the non-adjusted data.
@@ -216,7 +215,8 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Congratulations! You completed the first course. Next, we’ll look at resources and wrap up this introduction to data journalism!
+    <p class="summary"> Congratulations! You completed the first course. Next, we’ll look at resources to learn
+      further, and wrap up this introduction to data journalism!
     </p>
   </div>
   <div class="next">

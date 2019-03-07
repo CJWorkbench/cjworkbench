@@ -7,13 +7,15 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Which U.S. state has the highest crime rate? California has the largerst population, so it probably has the highest total number of crimes. But smaller states may have more crimes committed per person.
+    Which U.S. state has the highest crime rate? California has the largest population, so it probably has the
+    highest total number of crimes. But smaller states may have more crimes committed per person.
   </p>
   <p>
-    Many numbers are best interpreted by comparing them to the overall population, giving a per-person rate. This is known as a per capita number. (“Capita” is Latin for “head”.)
+    Many numbers are best interpreted by comparing them to the overall population, giving a per-person rate.
+    This is known as a per capita number. (“Capita” is Latin for “head”.)
   </p>
   <p>
-     In this lesson, you’ll learn how to calculate per capita numbers using a simple formula on FBI crime data.
+     In this lesson, you’ll learn to use a simple formula to calculate per capita rates from FBI crime data.
   </p>
 
 </section>
@@ -46,13 +48,13 @@ tabs:
 <section>
   <h2>Absolute crime numbers</h2>
   <p>
-    Let’s start with a simple question: "Which state had the highest number of violent crimes in 2017"?
+    Let’s start with a simple question: “Which state had the highest number of violent crimes in 2017?”
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="const wfm = workflow.tabs[0].wfModules[1]; return wfm && wfm.moduleSlug === 'sort' && wfm.params.keep_top === '' && wfm.params.sort_columns[0] && wfm.params.sort_columns[0].colname === 'Violent crime' && !wfm.params.sort_columns[0].is_ascending"
-      >Sort the <kbd>Violent crime</kbd> column, in descending order.
+      >Sort the <kbd>Violent crime</kbd> column, in descending order
       <p class="instruction-detail">
         California is on top, with 177,627 violent crimes in 2017.
         But California is also the most populous state, so this result isn’t much of an insight.<br>
@@ -67,45 +69,56 @@ tabs:
 <section>
   <h2>Crime per capita</h2>
   <p>
-    Let’s reframe our question: ‘Which state has the most violent crimes per inhabitant?’
+    Let’s reframe our question: “Which state has the most violent crimes per inhabitant?”
   </p>
   <p>
-    The formula to calculate ‘How many X per Y’ is X divided by Y, or:
+    The formula to calculate “How many X per Y” is X divided by Y, or
   </p>
   <div class="copy-txt">=(X/Y)</div>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'formula'"
-      >Add a Formula step.
+      >Add a Formula step
       <p class="instruction-detail">
         Formulas must be written by referencing cells using column letters and rows.
       </p>
     </li>
     <li
-      data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && (p.formula_excel.replace(/ /g, '') === '=C1/B1' || p.formula_excel.replace(/ /g, '') === '=C1/B1*100000')"
+      data-test="
+        const p = workflow.tabs[0].wfModules[2].params
+        return p.syntax === 'excel' &&
+               p.all_rows &&
+               (p.formula_excel.replace(/ /g, '') === '=C1/B1' || p.formula_excel.replace(/ /g, '') === '=C1/B1*100000')"
       >Type in: <div class="copy-txt">=C1/B1</div>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.out_column === 'Violent crime rate'"
+      data-test="return workflow.tabs[0].wfModules[2].params.out_column.toLowerCase() === 'violent crime rate'"
       >Name the output of the formula <kbd>Violent crime rate</kbd>
     </li>
     <li
-      data-test="const wfm = workflow.tabs[0].wfModules[3]; return wfm && wfm.moduleSlug === 'sort' && wfm.params.keep_top === '' && wfm.params.sort_columns[0] && wfm.params.sort_columns[0].colname === 'Violent crime rate' && !wfm.params.sort_columns[0].is_ascending"
-      >Sort this new column in descending order.
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[3]
+        return wfm && wfm.moduleSlug === 'sort' &&
+               wfm.params.keep_top === '' &&
+               wfm.params.sort_columns[0] &&
+               wfm.params.sort_columns[0].colname.toLowerCase() === 'violent crime rate' &&
+               !wfm.params.sort_columns[0].is_ascending"
+      >Sort this new column in descending order
       <p class="instruction-detail">
-        Alaska now comes on top. It has seen 6,133 violent crimes for a total population of 739,795 - or 0.008 violent crimes per inhabitant. That is twice as much as California, which now ranks #15.
+        Alaska is now on top, with 6,133 violent crimes within a total population of 739,795 — or 0.008 violent
+        crimes per inhabitant. That's twice as much as California, which now ranks #15.
       </p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>Relative crime rates</h2>
+  <h2>Reported crime rates</h2>
   <p>
     Per capita crime rates are small: Alaska has only 0.008 violent crimes per person. It's difficult to reason about such small numbers.
   </p>
   <p>
-    Because of this, crime rates are often reported as ‘crimes per 100,000 people’.
+    Because of this, crime rates are often reported as “crimes per 100,000 people.”
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -113,10 +126,10 @@ tabs:
       data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && p.formula_excel.replace(/ /g, '') === '=C1/B1*100000'"
       >Edit your formula in step 3 to <div class="copy-txt">=C1/B1*100000</div>
       <p class="instruction-detail">
-        Click the "Sort" step to see the new numbers, sorted. The order has not change since we multiplied all numbers by the same amount.
+        Click the <kbd>Sort</kbd> step to see the new numbers sorted again. The order has not changed since we multiplied all numbers by the same amount.
       </p>
       <p class="instruction-detail">
-        FBI's own publications cite these numbers. You will find these numbers in the <a class="highlight" href='https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">source data</a>.
+        The FBI's own publications report these numbers, which you will find in the <a class="highlight" href='https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">source data</a>.
       </p>
     </li>
   </ol>
@@ -124,7 +137,7 @@ tabs:
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary"> Next, we’ll look at other useful formulas and standards to compare numbers.
+    <p class="summary"> Next, we’ll look at other useful ways to compare numbers.
     </p>
   </div>
   <div class="next">

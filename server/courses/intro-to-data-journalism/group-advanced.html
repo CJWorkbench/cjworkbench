@@ -1,14 +1,14 @@
 <header>
-  <h1>Grouping by dates, and multiple columns</h1>
-  <p>Learn advanced grouping techniques to summarize data fast and efficiently.</p>
+  <h1>Grouping by dates and multiple columns</h1>
+  <p>Advanced grouping techniques to summarize data in different ways.</p>
   <img src="./banner.svg">
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    In the last lesson we learned how to ensure that a column of dates has the correct “Date” type.
-    Now we’re ready to group by date, using the same police incident data from the City of New York we used in the previous lesson.
+    In the last lesson we learned how to ensure that a column of dates has the correct “Date & Time” type.
+    Now we’re ready to group by date, using the same police incident data from the City of New York.
   </p>
   <p>
     We’ll answer the question: how many felonies were reported each month in each borough of the city?
@@ -66,10 +66,10 @@
 <section>
   <h2>Grouping by date</h2>
   <p>
-    This table describes all felonies reported by the police of New York City for the months of January and February 2018. The original is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
+    This table describes all felonies reported by the New York City police for the months of January and February 2018. The original is published <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">here</a> with a data dictionary.
   </p>
   <p>
-    Our first question is ‘How many incidents were reported each month, in the entire city?’
+    Our first question is “How many incidents were reported each month, in the entire city?”
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -81,7 +81,7 @@
         // the 'add Borough' step in the last section doesn't undo this test.
         // (Every test for the entire lesson is evaluated in order)
         return workflow.tabs[0].wfModules[4].params.groups.colnames.split(',').includes('Complaint date')
-      ">Add <kbd>Group</kbd>, and select the column <kbd>Complaint date</kbd>.
+      ">Add <kbd>Group</kbd> and select the column <kbd>Complaint date</kbd>
     </li>
     <li
       data-test="
@@ -93,7 +93,7 @@
           groups.group_dates
           && ['M', 'D'].includes(groups.date_granularities['Complaint date'])
         )
-      ">Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity.
+      ">Check <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity
     </li>
     <li
       data-test="
@@ -103,7 +103,7 @@
           && agg[0].operation === 'size'
           && agg[0].outname.toLowerCase() === 'count of incidents'
         )
-      ">Name the output column <kbd>Count of incidents</kbd>.
+      ">Name the output column <kbd>Count of incidents</kbd>
     </li>
   </ol>
 </section>
@@ -137,7 +137,7 @@
           // chose 'D', or the user is further along in the lesson
           || params.groups.colnames.split(',').includes('Borough')
         )
-      ">In the Group in step 5, change the granularity to <kbd>by day</kbd>.
+      ">In the Group in step 5, change the granularity to <kbd>by day</kbd>
       <p class="instruction-detail">
         Select step 6 to display your new chart.
       </p>
@@ -158,7 +158,7 @@
         return have_cols.split(',').sort().join(',') === want_cols"
       >In the Group in step 5, add the column <kbd>Borough</kbd> next to <kbd>Complaint date</kbd> using the same column selector.
       <p class="instruction-detail">
-        The table now displays a more detailed count of incidents. It shows how many felonies were reported in each Neighborhood, within each day.
+        The table now displays a more detailed count of incidents. It shows how many felonies were reported in each Neighborhood on each day.
       </p>
       <p class="instruction-detail">
         By looking at this table we can rapidly see if different parts of town have different patterns of crime on any given day - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
@@ -172,10 +172,11 @@
     <p> After being grouped by more than one column the table contains a lot of repeated values in both <kbd>Complaint date</kbd> and <kbd>Borough</kbd>.
     </p>
     <p>
-      We also can't visualize data from a specific borough. To do that would require all values for that borough to be contained in its own column.
+      We also can't visualize data from a specific borough. That would require all the values for that borough to be
+      in their own column.
     </p>
     <p class="summary">
-      In the next lesson, we’ll learn how to change table formats from Long to Wide to be able to access any variable we need.
+      In the next lesson, we’ll learn how to change tables between “long” and “wide” formats so that we can access any variable we need.
     </p>
   </div>
   <div class="next">

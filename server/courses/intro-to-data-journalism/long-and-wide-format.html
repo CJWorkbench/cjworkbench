@@ -1,16 +1,17 @@
 <header>
   <h1>Long and wide format</h1>
-  <p>Learn the difference between “long” and “wide” table formats</p>
+  <p>Learn the difference between “long” and “wide” table formats and how to convert between them.</p>
   <img src="./banner.svg">
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Data can be organized into tables in different ways. In this lesson, you will learn to recognize “long” and “wide” formats and convert from one to another, which is called reshaping.
+    Data can be organized into tables in different ways. In this lesson, you will learn to recognize “long” and “wide”
+    formats and convert from one to the other, which is called reshaping.
   </p>
   <p>
-    In this lesson we will work with a month of the same data we used in the previous lesson, on police incidents reported in the City of New York.
+    We'll work with a month of the same data we used in the previous lesson, on police incidents in New York City.
 </section>
 <script id="initialWorkflow">
 tabs:
@@ -34,7 +35,7 @@ tabs:
   </figure>
 
   <p><b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>.
-    All other columns that describe what is measured in that row. In this case, each available <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
+    All other columns describe what is measured in that row. In this case, each <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
   </p>
 <!--
   <p><b>Long format</b> tables contain only one column with measured values.<br>In this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured.
@@ -62,25 +63,25 @@ tabs:
     Our goal is to visualize the volume of incidents reported in each borough, for each day.
   </p>
   <p>
-    All dates must be in one column so that we can select them all at once and display them on X axis, and each borough must be in its own column, so that we plot any of them on the Y axis.
+    All dates must be in one column so that we can select them all at once and display them on X axis, and each borough must be in its own column, so that we can plot any of them on the Y axis.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="
-        return workflow.tabs[0].wfModuleSlugs[2] === 'reshape' &&
-               workflow.tabs[0].wfModules[2].params.direction== 'longtowide'"
-      >Add ‘Reshape’, and select <kbd>Long to wide</kbd>.
+        return workflow.tabs[0].wfModuleSlugs[1] === 'reshape' &&
+               workflow.tabs[0].wfModules[1].params.direction== 'longtowide'"
+      >Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[2].params.colnames == 'Complaint date'"
-      >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>.
+        return workflow.tabs[0].wfModules[1].params.colnames == 'Complaint date'"
+      >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[2].params.varcol == 'Borough'"
-      >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>.
+        return workflow.tabs[0].wfModules[1].params.varcol == 'Borough'"
+      >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>
     </li>
   </ol>
 </section>
@@ -95,26 +96,28 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-      return workflow.tabs[0].wfModuleSlugs[3] === 'linechart' &&
-             workflow.tabs[0].wfModules[3].params.x_column === 'Complaint date'"
-      >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis.
+      return workflow.tabs[0].wfModuleSlugs[2] === 'linechart' &&
+             workflow.tabs[0].wfModules[2].params.x_column === 'Complaint date'"
+      >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 1"
-      >Add any borough for the Y axis, to create the first line on the chart.
+      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 1"
+      >Add any borough for the Y axis, to create the first line on the chart
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 2"
-      >Add <span>
+      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 2"
+      >Click <span>
         <img class="icon-insert" src="images/lesson-icons/add.svg">
-      </span>one column on the Y axis for each additional <kbd>Borough</kbd> you want to compare.
+      </span>to add one column on the Y axis for each additional borough you want to compare
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary">In this chart we’re comparing volumes of incidents between boroughs with very different population size. In the next lesson, we’ll look at how to compare ‘per capita'.</p>
+    <p class="summary">
+      In this chart we’re comparing volumes of incidents between boroughs with very different populations.
+      In the next lesson, we’ll look at how to compare data “per capita.”</p>
   </div>
   <div class="next">
     <h2>Next</h2>

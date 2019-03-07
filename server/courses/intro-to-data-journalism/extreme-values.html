@@ -1,5 +1,5 @@
 <header>
-  <h1>Extreme and average values</h1>
+  <h1>Extreme values</h1>
   <p>Work with international CO<sub>2</sub> emission data and learn how to find the largest and smallest values in your data.</p>
   <img src="./banner.svg">
 </header>
@@ -34,15 +34,14 @@
 
 <section>
   <h2>Data</h2>
-  <p>We loaded a larger sample of the same international CO<sub>2</sub> <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&amp;c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&amp;ct=0&amp;tl_id=40-A&amp;vs=INTL.4008-8-AFG-MMTCD.A&amp;cy=2014&amp;vo=0&amp;v=C&amp;end=2016' target="_blank" className="info-1">data</a> we used in the previous lesson.</p>
-  <p>Let's ask a different question: <br>
-     What is the most CO<sub>2</sub> each country has emitted in any year?
+  <p>This ia a larger sample of the same international CO<sub>2</sub> <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&amp;c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&amp;ct=0&amp;tl_id=40-A&amp;vs=INTL.4008-8-AFG-MMTCD.A&amp;cy=2014&amp;vo=0&amp;v=C&amp;end=2016' target="_blank" className="info-1">data</a> we used in the previous lesson.</p>
+  <p>What is the most CO<sub>2</sub> each country has emitted, in any year?
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'calculate'"
-      >Add the step <kbd>Calculate</kbd>
+      >Add a <kbd>Calculate</kbd>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[1].params.operation === 'maximum'"
@@ -58,9 +57,9 @@
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[1].params.outcolname.toLowerCase() === 'maximum 2000-2016'"
-      >Name the output column name <kbd>Maximum 2000-2016</kbd>
+      >Set the output column name to <kbd>Maximum 2000-2016</kbd>
       <p class="instruction-detail">
-        This calculates the maximum within rows, so that you can read off the maximum for each country.
+        A new column appears at the far right of the table. It shows the maximum within each row, so that you can read off the maximum for each country.
       </p>
     </li>
   </ol>
@@ -68,10 +67,10 @@
 <section>
   <h2>Sorting</h2>
   <p>
-    With the step Calculate we can finds extreme values in rows. To find extreme values in a column, you can simply sort the table.
+    With the Calculate step we can find extreme values in rows. To find extreme values in a column, you can simply sort the table.
   </p>
   <p>
-    Let's ask our data: Which country emitted the most ever in a single year?
+    Which country emitted the most ever in a single year?
   </p>
 
   <h3 class="instructions">Instructions</h3>
@@ -86,7 +85,7 @@
         const have_cols = workflow.tabs[0].wfModules[2].params.colnames.toLowerCase()
 
         return have_cols.split(',').sort().join(',') === want_cols"
-      >Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000-2016</kbd>.
+      >Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000-2016</kbd>
     </li>
     <li
       data-test="
@@ -99,8 +98,8 @@
       >Using the column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span>, sort <kbd>Maximum 2000-2016</kbd> in descending order.
-      <p class="instruction-detail">Note that a new step has been added to your workflow in position 4. Every operation in Workbench is recorded, to keep your work reproducible.</p>
+      </span>, sort <kbd>Maximum 2000-2016</kbd> in descending order
+      <p class="instruction-detail">Note that a new step has been added to your workflow. Every operation in Workbench is recorded, to keep your work reproducible.</p>
     </li>
   </ol>
 </section>
@@ -121,13 +120,13 @@
       data-test="
         const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
         return sort_columns.length > 1 &&
-               sort_columns[1].colname === 'Maximum 2000-2016' &&
-               !sort_columns[1].is_descending"
-      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Maximum 2000-2016</kbd>, in descending order.
+               sort_columns[1].colname.toLowerCase() === 'maximum 2000-2016' &&
+               !sort_columns[1].is_ascending"
+      >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Maximum 2000-2016</kbd> in descending order
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.keep_top === '1'"
-      >Keep <kbd>top 1 row</kbd> under the second sort in order to keep the country per continent.
+      >Keep <kbd>top 1 row</kbd> under the second sort in order to keep one country per continent
     </li>
   </ol>
 </section>

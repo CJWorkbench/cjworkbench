@@ -1,16 +1,19 @@
 <header>
-  <h1>Story: Cleaning and analysing campaign finance data</h1>
-  <p>analyze campaign contributions to Andrew Cuomo’s 2014 re-election campaign in the State of New York.</p>
+  <h1>Story: Cleaning and analyzing campaign finance data</h1>
+  <p>How much money came from out of state in New York governor Andrew Cuomo’s 2014 re-election campaign?</p>
   <img src="./banner.svg">
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    Campaign finance is a classic topic in data journalism. Unfortunately, campaign finance data often requires a lot of cleaning before you can answer such basic questions as “Who donated the most money?”.
+    Campaign finance is a classic topic in data journalism. Unfortunately, it often requires a lot of cleaning before you can answer such basic questions as “Who donated the most money?”
   </p>
   <p>
-    In this lesson we will use data on political campaign contributions in the state of New York. We will extract the state from donor addresses, so that we can group donations by state. This requires splitting a column of text and removing specific characters from values, which is a skill you will need many times.
+    In this lesson we will use data on campaign contributions in the state of New York. We will extract the state
+    from donor addresses, so that we can figure out how much money came from out of state and where it came from.
+    This requires splitting  a column of text and removing certain characters, which is a cleaning skill you will
+    use many times.
   </p>
 </section>
 
@@ -46,7 +49,7 @@
     As usual, go through your list of questions and make sure you understand each column.
   </p>
   <p>
-    Where can the donor’s state be found?
+    For exaple, where can the donor’s state be found?
   </p>
   <h3 class="instructions">Instructions</h3>
   <ul>
@@ -70,7 +73,7 @@
 <section>
   <h2>Splitting columns</h2>
   <p>
-    We need to store the state by itself in a new column, so that we can apply Group to it, and get a breakdown of donations by state.
+    We need to store the state by itself in a new column, so that we can apply Group to it and get a breakdown of donations by state.
   </p>
   <p>
     Our first task is to extract the two letter state abbreviations in the <kbd>Contributor</kbd> column. For example we want to extract <kbd>NC</kbd> from:
@@ -86,24 +89,24 @@
         const have_cols = workflow.tabs[0].wfModules[1].params.colnames
 
         return have_cols.split(',').sort().join(',') === want_cols"
-      >Select and keep the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>.
+    >Add a <kbd>Select columns</kbd> step and keep only the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'splitcolumn' &&
                         workflow.tabs[0].wfModules[2].params.column === 'Contributor'"
-      >Add <kbd>Split column</kbd> and select the column <kbd>Contributor</kbd>.
+      >Add <kbd>Split column</kbd> and select the column <kbd>Contributor</kbd>
 
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[2].params.method === 'right'"
-      >Choose to split on <kbd>X characters from right</kbd>.
+      >Choose to split on <kbd>X characters from right</kbd>
       <p class="instruction-detail">
         The total number of characters used by the post code (5), the state abbreviation (2) and the space in between them (1) is <kbd>8</kbd>.
       </p>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[2].params.numchars == 8"
-      >Set <kbd>Numbers of characters</kbd> to <kbd>8</kbd>.
+      >Set <kbd>Numbers of characters</kbd> to <kbd>8</kbd>
     </li>
   </ol>
 </section>
@@ -120,7 +123,7 @@
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'clean-text' &&
                         workflow.tabs[0].wfModules[3].params.colnames === 'Contributor 2'"
-      >Add <kbd>Clean text</kbd>, and apply it to the <kbd>Contributor 2</kbd> column.
+      >Add <kbd>Clean text</kbd>, and apply it to the <kbd>Contributor 2</kbd> column
     </li>
     <li
       data-test="
@@ -141,14 +144,14 @@
 </section>
 <section>
   <h2>Grouping</h2>
-  <p>Next let's calculate the amount that has been donated in each state, using Group.
+  <p>Next let's calculate the amount that has been donated from each state, using Group.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby' &&
                         workflow.tabs[0].wfModules[5].params.groups.colnames.toLowerCase() === 'state'"
-      >Add the step <kbd>Group</kbd> and apply it to <kbd>State</kbd>.
+      >Add a <kbd>Group</kbd> step and apply it to <kbd>State</kbd>
     </li>
     <li
       data-test="
@@ -156,15 +159,15 @@
         return agg.length==1 &&
                agg[0].colname.toLowerCase()==='amount' &&
                agg[0].operation==='sum'"
-      >Set the operation to <kbd>SUM</kbd>, and choose the column <kbd>Amount</kbd> as the target.
+      >Set the operation to <kbd>SUM</kbd>, and choose the column <kbd>Amount</kbd> as the target
     </li>
     <li
       data-test="
         const agg = workflow.tabs[0].wfModules[5].params.aggregations
         return agg.length==1 &&
                agg[0].outname.toLowerCase() === 'total amount'"
-      >Name the new column <kbd>Total amount</kbd>.
-      <p class="instruction-detail">We can now see the total amount of contributions from donors in each state.</p>
+      >Name the new column <kbd>Total amount</kbd>
+      <p class="instruction-detail">We can now see the total amount contributed by donors from each state.</p>
     </li>
   </ol>
 </section>
@@ -188,16 +191,16 @@
       ">Select <kbd>Sort descending</kbd> from the <kbd>Total amount</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span>.
+      </span>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[7] === 'droprowsbyposition' &&
                         workflow.tabs[0].wfModules[7].params.rows === '1'"
-      >Select row 1 and choose <kbd>Delete selected rows</kbd> in the table header's action menu, where it says "1 row selected".
+      >Select row 1 and choose <kbd>Delete selected rows</kbd> in the table header's action menu, where it says “1 row selected”
     </li>
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[8] === 'columnchart'"
-      >Add a Column Chart.
+    >Add a <kbd>Column Chart</kbd>
     </li>
     <li
       data-test="
@@ -207,7 +210,7 @@
           && params.y_columns.length >= 1
           && params.y_columns[0].column.toLowerCase() == 'total amount'
         )
-      ">Set the X Axis to <kbd>State,</kbd> and the Y axis to <kbd>Total amount</kbd>.
+      ">Set the X Axis to <kbd>State,</kbd> and the Y axis to <kbd>Total amount</kbd>
       <p class="instruction-detail">
 
       </p>
@@ -218,7 +221,8 @@
   <h2>Lesson Complete!</h2>
   <div class="completed">
     <p>
-       California is the first out-of-state contributor to Governor Cuomo's election's campaign. Who are these donors? Why are they so actively interested in an election in the state of New York?
+       California was the biggest out-of-state contributor to Governor Cuomo's election's campaign.
+      Who are these donors? Why are they so interested in an election in the state of New York?
     </p>
     <p>
       This may only be the beginning of your investigation.

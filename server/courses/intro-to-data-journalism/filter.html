@@ -1,6 +1,6 @@
 <header>
   <h1>Filtering data</h1>
-  <p>Filtering data is a common, yet powerful analysis technique. Learn how to use Conditional and value filters to explore your data.</p>
+  <p>Filtering data is a common, yet powerful analysis technique. Learn how to filter by condition and by value to explore your data.</p>
   <img src="./banner.svg">
 </header>
 
@@ -10,10 +10,10 @@
     Filtering data is a common, yet powerful analysis technique. You can use it to answer questions such as “Which cities spent more than 5 million dollars on public transit infrastructure last year?”
   </p>
   <p>
-    Filtering is also a key intermediate step in many analysis, or to explore data you are just starting to work with.
+    Filtering is also a key intermediate step in many analyses, or for exploring data you are just starting to work with.
   </p>
   <p>
-    In this lesson we will work with open data from the City of San Francisco, on the amount of affordable housing planned to be built.
+    In this lesson we will work with open data from the City of San Francisco, on planned affordable housing.
   </p>
 </section>
 
@@ -50,9 +50,9 @@
 
 <section>
   <h2>Data</h2>
-  <p>The data we're using in this lesson is a quarterly snapshot of every housing projects in construction in San Francisco. Each row is project in development.</p>
+  <p>The data we're using in this lesson is a quarterly snapshot of every housing project under construction in San Francisco. Each row is a project in development.</p>
   <p>
-    This data is published and documented by the City of San Francisco <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">here</a>, together with a data dictionary that explains the meaning of columns, and which we’ve loaded in the tab <kbd>Data dictionary</kbd>.
+    This data is published by the City of San Francisco <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">here</a>, together with a data dictionary that explains the meaning of each column, which we’ve loaded in the <kbd>Data dictionary</kbd> tab.
   </p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">Again, let’s ask the basic questions:</p>
@@ -100,7 +100,7 @@
         const have_cols = workflow.tabs[0].wfModules[1].params.colnames
 
         return have_cols.split(',').sort().join(',') === want_cols"
-      >Add a Select column step and keep the following columns (Start typing column names in the selector to go faster)
+    >Add a <kbd>Select columns</kbd> step and keep the following columns (Start typing column names to pick them faster)
       <p>
         <kbd>Planning Neighborhood</kbd><br>
         <kbd>Project Status</kbd><br>
@@ -141,9 +141,9 @@
           subfilter.condition === 'number_is_greater_than'
           && subfilter.value === '50'
         )
-      ">Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>.
+      ">Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>
       <p class ="instruction-detail">
-        At the top left of the table, we see that 119 rows are left. This means that 119 projects include more than 50% affordable units.
+        At the top left of the table, it shows that 119 rows are left. This means that 119 projects include more than 50% affordable units.
       </p>
       <!-- <p class ="instruction-detail">
         How many projects include more than 50% affordable units?
@@ -157,10 +157,8 @@
 <section>
   <h2>Multiple conditions</h2>
   <p>
-    Now we can see the projects that have a majority of affordable housing. How many of these are large?
-  </p>
-  <p>
-    Let’s continue our exploration with the question: ‘How many of those projects contain at least 100 affordable units’?
+    Now we can see the projects that have a majority of affordable housing. Let’s continue our exploration with the
+    question: “How many of those projects contain at least 100 affordable units”?
   </p>
   <p>
     We can add another condition to keep only projects containing a minimum number affordable units.
@@ -185,7 +183,7 @@
             && filters.filters[1].subfilters.length === 1
           )
         )
-      ">In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter.
+      ">In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter
     </li>
     <li
       data-test="
@@ -197,9 +195,9 @@
           && subfilter.condition === 'number_is_greater_than_or_equals'
           && subfilter.value === '100'
         )
-      ">Set this new condition to `If <kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>`.
+      ">Set this new condition to “<kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>”
       <p class ="instruction-detail">
-        The table now displays all projects containing "more than 50% affordable units AND at least 100 affordable units".
+        The table now displays all projects containing more than 50% affordable units and at least 100 affordable units.
       </p>
     </li>
   </ol>
@@ -214,7 +212,7 @@
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'valuefilter'"
-      >Add the step <kbd>Filter by Value</kbd>.
+      >Add the step <kbd>Filter by Value</kbd>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.column === 'Project Status'"
@@ -225,11 +223,11 @@
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
-      >In ‘Filter by value’, select <kbd>(3) Design with entitlement Approved</kbd> to see only projects that are approved for construction, but not yet started.
+      >In ‘Filter by value’, select <kbd>(3) Design with entitlement Approved</kbd> to see only projects that are approved for construction, but not yet started
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(4) Site Work Permit Issued')"
-      >Also select <kbd>(4) Site Work Permit Issued</kbd> to add in projects at this later stage.
+      >Also select <kbd>(4) Site Work Permit Issued</kbd> to add in projects at this later stage
       <p class ="instruction-detail">
         By changing the selected values in <kbd>Filter by value</kbd> you can quickly get insight into the projects at any combination of development stages.
       </p>
