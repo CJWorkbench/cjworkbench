@@ -623,7 +623,8 @@ class ParamField:
                               for o in self.options
                               if isinstance(o, dict))  # skip separators
                 choices = set(values)
-                default = self.default or values[0]  # TODO allow None
+                # This won't support value=None
+                default = values[0] if self.default is None else self.default
 
             return ParamDTypeEnum(choices, default)
         else:
