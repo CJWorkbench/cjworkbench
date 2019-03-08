@@ -50,8 +50,8 @@ tabs:
     <img class="no-border half-width" alt="Inspect element" src="./long-table.png">
   </figure>
   <p>
-    In a <b>wide format</b> table, the same data is less organized, but easier to read. There can be one or more columns of variables, in this case <kbd>Complaint date</kbd>.
-    Other variables can be located in the header, and are not labelled. In this case the variable <kbd>Borough</kbd>: each of its values (Bronx, Brooklyn) exists as a column name. All remaining cells are the actual measurements.
+    In a <b>wide format</b> table, the same data is organized differently. There can be one or more columns
+    of measurements, and what is being measured is described by the column names.
   </p>
   <figure>
     <img class="no-border full-width" alt="Inspect element" src="./wide-table.png">
@@ -70,18 +70,18 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        return workflow.tabs[0].wfModuleSlugs[1] === 'reshape' &&
-               workflow.tabs[0].wfModules[1].params.direction== 'longtowide'"
+        return workflow.tabs[0].wfModuleSlugs[2] === 'reshape' &&
+               workflow.tabs[0].wfModules[2].params.direction== 'longtowide'"
       >Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[1].params.colnames == 'Complaint date'"
+        return workflow.tabs[0].wfModules[2].params.colnames == 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[1].params.varcol == 'Borough'"
+        return workflow.tabs[0].wfModules[2].params.varcol == 'Borough'"
       >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>
     </li>
   </ol>
@@ -97,16 +97,16 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-      return workflow.tabs[0].wfModuleSlugs[2] === 'linechart' &&
-             workflow.tabs[0].wfModules[2].params.x_column === 'Complaint date'"
+      return workflow.tabs[0].wfModuleSlugs[3] === 'linechart' &&
+             workflow.tabs[0].wfModules[3].params.x_column === 'Complaint date'"
       >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 1"
+      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 1"
       >Add any borough for the Y axis, to create the first line on the chart
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[2].params.y_columns.length >= 2"
+      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 2"
       >Click <span>
         <img class="icon-insert" src="images/lesson-icons/add.svg">
       </span>to add one column on the Y axis for each additional borough you want to compare
