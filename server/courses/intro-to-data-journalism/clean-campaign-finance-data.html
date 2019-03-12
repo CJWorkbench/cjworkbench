@@ -128,7 +128,7 @@
     <li
       data-test="
         const params = workflow.tabs[0].wfModules[3].params
-        return  params.type_char === 'keep' && params.letter &&
+        return  params.type_char && params.letter &&
                 !params.number && !params.punc && !params.custom"
       >In the 'Characters' section of Clean text, choose to <kbd>keep</kbd> only <kbd>letters</kbd>. Deleting numbers would leave the space!
     </li>
