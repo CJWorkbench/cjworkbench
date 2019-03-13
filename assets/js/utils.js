@@ -26,17 +26,8 @@ export function idxToLetter(idx) {
 export function logUserEvent(name, metadata) {
   if (!window.APP_ID) return
 
-  // If we're in a lesson, drop the event. (Use logUserEventEvenInLesson
-  // to override.)
-  //
-  // https://www.pivotaltracker.com/story/show/160041803
+  // If we're in a lesson, drop the event.
   if (window.initState && window.initState.lessonData) return
-
-  window.Intercom('trackEvent', name, metadata)
-}
-
-export function logUserEventEvenInLesson(name, metadata) {
-  if (!window.APP_ID) return
 
   window.Intercom('trackEvent', name, metadata)
 }

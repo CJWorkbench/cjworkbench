@@ -8,6 +8,7 @@ from django.http.response import HttpResponseServerError
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from server import rabbitmq
+import server.utils
 from server.models.commands import InitWorkflowCommand
 from server.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCourses
@@ -174,6 +175,14 @@ def _render_get_lesson_detail(request, lesson):
     # If we just initialized this workflow, start fetches and render
     if created:
         _queue_workflow_updates(workflow)
+        if lesson.course:
+            course_slug = lesson.course.slug
+        else:
+            course_slug = 'None'
+        server.utils.log_user_event_from_request(
+            request,
+            'Start lesson in course %s' % (course_slug)
+        )
 
     return TemplateResponse(request, 'workflow.html',
                             {'initState': init_state})
