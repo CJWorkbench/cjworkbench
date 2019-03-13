@@ -170,6 +170,20 @@ def _(
     return ','.join(c for c in value.split(',') if c in valid_colnames)
 
 
+@clean_value.register(ParamDType.Multichartseries)
+def _(
+    dtype: ParamDType.Multichartseries,
+    value: List[Dict[str, str]],
+    context: RenderContext
+) -> List[Dict[str, str]]:
+    # Recurse to clean_value(ParamDType.Column) to clear missing columns
+    inner_clean = partial(clean_value, dtype.inner_dtype)
+    ret = [inner_clean(v, context) for v in value]
+    # Filter out any list item that has a cleared (missing) column
+    ret = [s for s in ret if s['column']]
+    return ret
+
+
 # ... and then the methods for recursing
 @clean_value.register(ParamDType.List)
 def clean_value_list(
@@ -177,8 +191,7 @@ def clean_value_list(
     value: List[Any],
     context: RenderContext
 ) -> List[Any]:
-    inner_dtype = dtype.inner_dtype
-    inner_clean = partial(clean_value, inner_dtype)
+    inner_clean = partial(clean_value, dtype.inner_dtype)
     return [inner_clean(v, context) for v in value]
 
 

@@ -68,6 +68,23 @@ class CleanValueTests(DbTestCase):
         result = clean_value(schema, value, context)
         self.assertEqual(result, {'columns': 'A,B'})
 
+    def test_clean_multichartseries_missing_is_removed(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.NUMBER),
+            Column('B', ColumnType.NUMBER),
+        ]), None, None)
+        schema = ParamDType.Dict({
+            'y': ParamDType.Multichartseries(),
+        })
+        value = {
+            'y': [
+                {'column': 'A', 'color': '#aaaaaa'},
+                {'column': 'C', 'color': '#cccccc'},
+            ],
+        }
+        result = clean_value(schema, value, context)
+        self.assertEqual(result, {'y': [{'column': 'A', 'color': '#aaaaaa'}]})
+
     def test_clean_tab_happy_path(self):
         tab_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
         workflow = Workflow.create_and_init()

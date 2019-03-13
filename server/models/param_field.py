@@ -82,6 +82,13 @@ class ParamDType:
         `ParamDTypeList` if that column value isn't in `columns`.
 
         Assumes `value` is valid.
+
+        This is almost DEPRECATED because it's a visitor and the visitor
+        pattern is a better fit. We only use it in Params.to_painful_dict(),
+        which itself is almost DEPRECATED. When Params.to_painful_dict() is
+        finally nixed, nix this method. In the meantime, prefer
+        renderprep.clean_value(): the logic is better there because there's
+        clear intent.
         """
         # default implementation: no-op. Most dtypes aren't nested or columnar
         return value
