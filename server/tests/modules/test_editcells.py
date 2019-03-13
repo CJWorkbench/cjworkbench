@@ -28,16 +28,30 @@ def test_render(in_table, patch_json, out_table=pd.DataFrame(),
 
 
 class MigrateParamsTests(unittest.TestCase):
-    def test_v0_to_v1_empty(self):
+    def test_v0_empty(self):
         result = editcells.migrate_params({'celledits': ''})
         self.assertEqual(result, {'celledits': []})
 
-    def test_v0_to_v1_happy(self):
+    def test_v0_happy(self):
         result = editcells.migrate_params({
             'celledits': '[{"row": 1, "col": "A", "value": "V"}]',
         })
         self.assertEqual(result, {'celledits': [
             {'row': 1, 'col': 'A', 'value': 'V'},
+        ]})
+
+    def test_v0_int_value(self):
+        # [adamhooper, 2019-03-13] I scoured our git logs for any hint of
+        # String-to-Number conversions when setting value; I found nothing. Yet
+        # there are surely v0 params in the database that have numeric "value".
+        # So let's just convert them all to String here.
+        #
+        # We assume v1 has no Number values.
+        result = editcells.migrate_params({
+            'celledits': '[{"row": 1, "col": "A", "value": 20}]',
+        })
+        self.assertEqual(result, {'celledits': [
+            {'row': 1, 'col': 'A', 'value': '20'},
         ]})
 
     def test_v1_no_op(self):

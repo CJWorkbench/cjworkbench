@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from itertools import groupby
+import json
 import logging
 from typing import List
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from .utils import parse_json_param
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,11 @@ def migrate_params_v0_to_v1(params):
     if not params['celledits']:  # empty str
         celledits = []
     else:
-        celledits = parse_json_param(params['celledits'])
+        celledits = json.loads(params['celledits'])
+        # [adamhooper, 2019-03-13] seen on production: Numeric values. No idea
+        # how they got there. v1 is str-only.
+        for celledit in celledits:
+            celledit['value'] = str(celledit['value'])
 
     return {
         'celledits': celledits
