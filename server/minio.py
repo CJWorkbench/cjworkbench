@@ -10,19 +10,14 @@ from django.conf import settings
 from minio import Minio
 from minio import error  # noqa: F401 -- users may import it
 from minio.error import ResponseError  # noqa: F401 -- users may import it
-import urllib3
 from urllib3.response import HTTPResponse
 
 # https://localhost:9000/ => [ https:, localhost:9000 ]
 _protocol, _unused, _endpoint = settings.MINIO_URL.split('/')
 
-# optimize for multiple connections; block so we always reuse keepalive
-# connection when there is one.
-http_client = urllib3.PoolManager(maxsize=5, block=True)
 minio_client = Minio(_endpoint, access_key=settings.MINIO_ACCESS_KEY,
                      secret_key=settings.MINIO_SECRET_KEY,
-                     secure=(_protocol == 'https:'),
-                     http_client=http_client)
+                     secure=(_protocol == 'https:'))
 
 
 def _build_bucket_name(key: str) -> str:
