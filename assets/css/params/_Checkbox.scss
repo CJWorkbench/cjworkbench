@@ -25,3 +25,7 @@
     margin-right: 1.5rem;
   }
 }
+
+.param.param-statictext + .param-checkbox { // checkbox following Static text get its own margin-top.
+  margin-top: 1.5rem;
+}
