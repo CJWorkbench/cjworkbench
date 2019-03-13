@@ -1,29 +1,25 @@
 #!/bin/bash
 
+set -e
+
 ENV=${1:?"Usage: $0 ENVIRONMENT SHA"}
 SHA=${2:?"Usage: $0 ENVIRONMENT SHA"}
 
-find_sha1_on_env() {
-  env="$1"
-  kubectl -n "$env" get deployment frontend-deployment \
-      -o custom-columns=x:'{.spec.template.spec.containers[0].image}' \
-    | tail -n1 \
-    | cut -d: -f2
+run_migrations() {
+  echo -n "Running migrations for $SHA on $ENV..." >&2
+  kubectl -n $ENV delete pod migrate-$SHA 2>/dev/null || true # delete if already running
+  overrides=$(cat "$(dirname "$0")"/kubernetes/migrate.json | sed -e "s/\\\$SHA/$SHA/")
+  kubectl \
+    -n $ENV \
+    run migrate-$SHA \
+    --image="gcr.io/cj-workbench/migrate:$SHA" \
+    -i --rm --wait --quiet \
+    --restart=Never \
+    --overrides="$overrides"
+  echo ' done' >&2
 }
 
-LAST_SHA=$(find_sha1_on_env "$ENV")
-echo -n "Running migrations for $SHA on $ENV..." >&2
-kubectl -n "$ENV" delete job migrate-job >/dev/null || true
-kubectl -n "$ENV" delete pod -lapp=migrate-job >/dev/null || true
-cat "$(dirname "$0")"/kubernetes/migrate.yaml \
-      | sed -e "s/:latest/:$SHA/" \
-      | kubectl -n $ENV apply -f - \
-      >/dev/null
-until [ "$(kubectl -n $ENV get jobs migrate-job --no-headers -o custom-columns=status:status.succeeded)" = "1" ]; do
-  echo -n '.' >&2
-  sleep 1
-done
-echo ' done' >&2
+run_migrations >&2
 
 echo -n "Setting frontend, worker and cron images to $SHA on $ENV..." >&2
 kubectl -n $ENV set image deployment/worker-deployment worker=gcr.io/cj-workbench/worker:$SHA >/dev/null
