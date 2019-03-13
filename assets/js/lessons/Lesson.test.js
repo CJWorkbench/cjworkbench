@@ -45,7 +45,7 @@ describe('Lesson', () => {
   describe('shallow', () => {
     function wrapper(extraProps) {
       return shallow(
-        <Lesson {...lesson} logUserEvent={jest.fn()} {...navProps} {...(extraProps || {})} />
+        <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
       )
     }
 
@@ -111,7 +111,7 @@ describe('Lesson', () => {
     // integration-test-y: this tests that Lesson and LessonNav play nice
     function wrapper(extraProps) {
       return mount(
-        <Lesson {...lesson} logUserEvent={jest.fn()} {...navProps} {...(extraProps || {})} />
+        <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
       )
     }
 

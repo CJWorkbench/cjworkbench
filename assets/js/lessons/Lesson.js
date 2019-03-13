@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import LessonFooter from './LessonFooter'
 import LessonSection from './LessonSection'
 import LessonNav from './LessonNav'
-import LessonAnalyticsTracker from './LessonAnalyticsTracker'
 import lessonSelector from './lessonSelector'
 import { connect } from 'react-redux'
 import { LessonHighlightsType } from '../util/LessonHighlight'
@@ -41,8 +40,6 @@ export class Lesson extends React.PureComponent {
      */
     activeSectionIndex: PropTypes.number, // or null
     activeStepIndex: PropTypes.number, // or null
-
-    logUserEvent: PropTypes.func.isRequired, // for tracking progress
   }
 
   state = {
@@ -52,21 +49,6 @@ export class Lesson extends React.PureComponent {
 
   setCurrentSectionIndex = (index) => {
     this.setState({ currentSectionIndex: index })
-  }
-
-  trackMaxProgress = (slug, sectionIndex, sectionTitle, stepIndex) => {
-    const log = this.props.logUserEvent
-    if (sectionIndex === null) {
-      log(`Lesson ${slug}: done`, {
-        help: 'The user has completed this Lesson'
-      })
-    } else {
-      log(`Lesson ${slug}: section ${sectionIndex + 1}`, {
-        help: 'The user has opened this Lesson section and not completed it',
-        sectionTitle,
-        atStep: stepIndex + 1
-      })
-    }
   }
 
   render() {
@@ -91,13 +73,6 @@ export class Lesson extends React.PureComponent {
 
     return (
       <article className={classNames.join(' ')}>
-        <LessonAnalyticsTracker
-          slug={slug}
-          sections={sections}
-          activeSectionIndex={activeSectionIndex}
-          activeStepIndex={activeStepIndex}
-          trackMaxProgress={this.trackMaxProgress}
-          />
         <h1>{header.title}</h1>
         <div className="description" dangerouslySetInnerHTML={({__html: header.html})}></div>
         <div className="sections">
