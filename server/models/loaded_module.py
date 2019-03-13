@@ -252,13 +252,14 @@ class LoadedModule:
             try:
                 values = self.migrate_params_impl(values)
             except Exception as err:
-                raise ValueError('migrate_params() raised %r' % err)
+                raise ValueError('%s.migrate_params() raised %r'
+                                 % (self.module_id_name, err))
 
             try:
                 schema.validate(values)
             except ValueError as err:
-                raise ValueError('migrate_params() gave bad output: %s'
-                                 % str(err))
+                raise ValueError('%s.migrate_params() gave bad output: %s'
+                                 % (self.module_id_name, str(err)))
 
             return values
         else:
