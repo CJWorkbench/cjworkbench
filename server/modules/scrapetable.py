@@ -46,7 +46,7 @@ def render(table, params, *, fetch_result):
     table = fetch_result.dataframe
 
     has_header: bool = params['first_row_is_header']
-    if has_header:
+    if has_header and len(table) >= 1:  # if len == 0, no-op
         table.columns = [str(c) for c in list(table.iloc[0, :])]
         table = table[1:]
         table.reset_index(drop=True, inplace=True)

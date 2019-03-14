@@ -4,7 +4,9 @@ from unittest import mock
 from unittest.mock import patch
 import aiohttp
 from asgiref.sync import async_to_sync
+import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from cjworkbench.types import ProcessResult
 from server.modules import scrapetable
 from .util import MockParams
@@ -80,6 +82,15 @@ class ScrapeTableTest(unittest.TestCase):
         result = ProcessResult.coerce(result)
         expected = pd.DataFrame({'1': [2], '2': [3]})
         self.assertEqual(result, ProcessResult(pd.DataFrame(expected)))
+
+    def test_first_row_is_header_zero_rows(self):
+        # TODO make fetch_result _not_ a pd.DataFrame
+        fetch_result = ProcessResult(pd.DataFrame({'A': [], 'B': []}))
+        result, error = scrapetable.render(pd.DataFrame(),
+                                           P(first_row_is_header=True),
+                                           fetch_result=fetch_result)
+        assert_frame_equal(result, pd.DataFrame({'A': [], 'B': []}))
+        self.assertEqual(error, '')
 
     def test_table_index_under(self):
         url = 'http:INVALID:URL'  # we should never even validate the URL
