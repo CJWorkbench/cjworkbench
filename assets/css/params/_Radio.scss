@@ -1,8 +1,10 @@
 .param-radio {
 
   &:last-child {
-    margin-bottom: -3.2rem;
+    margin-bottom: -3rem;
     margin-top: 1.5rem;
+    z-index: 1; // needs z-index in order to be on top of submit button
+    position: relative;
   }
 
   .button-group {
