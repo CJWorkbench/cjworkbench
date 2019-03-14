@@ -40,10 +40,10 @@
       border-radius: .3rem;
       -webkit-appearance: none;
       -moz-appearance: none;
-      background-image: url("../images/caret-down.png");
+      background-image: url("../images/caret-down-white.png");
       background-repeat: no-repeat;
       background-size: 1.3rem;
-      background-position: 95% 51%;
+      background-position: 95% 47%;
       padding:0 2rem 0 0;
 
       &:active {
@@ -58,10 +58,14 @@
 
       &.disabled {
         pointer-events: none; // REACT not taking care of it
-        @extend .button-dark-blue;
+        background-color: $dark-accent--soft;
+        color: $placeholder;
         opacity: .9;
         min-width: 16.5rem;
         cursor: default;
+        background-image: url("../images/caret-down.png");
+        background-position: 95% 52%;
+        border-color: transparent;
 
         &:hover {
           background-color: transparent;
