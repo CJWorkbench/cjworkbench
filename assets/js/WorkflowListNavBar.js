@@ -26,7 +26,7 @@ export default class WorkflowListNavBar extends React.Component {
           </div>
           <div className="links">
             <a {...propsForLink(activeSection, 'workflows')}>WORKFLOWS</a>
-            <a {...propsForLink(activeSection, 'lessons')}>TUTORIALS</a>
+            <a {...propsForLink(activeSection, 'lessons')}>TRAINING</a>
           </div>
           <WfHamburgerMenu />
         </nav>

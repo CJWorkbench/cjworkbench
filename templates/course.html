@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load render_bundle from webpack_loader %}
 
-{% block title %}Workbench Tutorials{% endblock %}
+{% block title %}Workbench Training{% endblock %}
 
 {% block body %}
   <div id="root">
@@ -10,7 +10,7 @@
       <div class="container">
         <div class="courses-nav">
           <ul>
-            <!-- "Tutorials" has a special URL -->
+            <!-- "Training" has a special URL -->
             <li class="{% if not course.slug %}active{% endif %}">
               <a href="/lessons/">TUTORIALS</a>
             </li>

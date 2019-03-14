@@ -20,7 +20,7 @@ function LessonCourse ({ course }) {
     title = course.title
   } else {
     path = '/lessons'
-    title = 'Tutorials'
+    title = 'Training'
   }
 
   return (

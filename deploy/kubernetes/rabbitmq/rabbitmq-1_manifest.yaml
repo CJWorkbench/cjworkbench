@@ -28,7 +28,7 @@ spec:
       url: https://github.com/GoogleCloudPlatform/click-to-deploy/blob/master/k8s/rabbitmq/README.md
     - description: 'RabbitMQ documentation'
       url: https://www.rabbitmq.com/documentation.html
-    - description: 'RabbitMQ Getting Started Tutorials'
+    - description: 'RabbitMQ Getting Started Training'
       url: https://www.rabbitmq.com/getstarted.html
     notes: |-
       # Get authentication credentials for the cluster
