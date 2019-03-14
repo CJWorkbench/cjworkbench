@@ -30,7 +30,7 @@ exports[`WorkflowListNavBar Renders correctly 1`] = `
         className="active"
         href={null}
       >
-        TUTORIALS
+        TRAINING
       </a>
     </div>
     <WfHamburgerMenu />

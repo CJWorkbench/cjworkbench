@@ -101,7 +101,7 @@ exports[`Workflow list page renders correctly 1`] = `
               className="active"
               href={null}
             >
-              TUTORIALS
+              TRAINING
             </a>
           </div>
           <WfHamburgerMenu>
@@ -228,7 +228,7 @@ exports[`Workflow list page renders correctly 1`] = `
             <div
               className=" title-1 "
             >
-              TUTORIALS
+              TRAINING
             </div>
           </div>
         </div>
