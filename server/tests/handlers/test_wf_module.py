@@ -85,6 +85,32 @@ class WfModuleTest(HandlerTestCase):
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
+    def test_set_params_null_byte_in_json(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='x'
+        )
+
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'x', 'name': 'x', 'category': 'Clean',
+            'parameters': [
+                {'id_name': 'foo', 'type': 'string'},
+            ],
+        })
+
+        response = self.run_handler(set_params, user=user, workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    values={'foo': 'b\x00\x00r'})
+        self.assertResponse(response, data=None)
+        command = ChangeParametersCommand.objects.first()
+        self.assertEquals(command.new_values, {'foo': 'br'})
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
     def test_set_params_no_module(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)

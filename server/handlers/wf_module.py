@@ -1,17 +1,66 @@
 import asyncio
 import datetime
 import functools
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
 from django.conf import settings
 from server import oauth, rabbitmq, websockets
-from server.models import Params, Workflow, WfModule
+from server.models import Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
+
+
+def _postgresize_dict_in_place(d: Dict[str, Any]) -> None:
+    """
+    Modify `d` so it's ready to be inserted in a Postgres JSONB column.
+
+    Modifications:
+        * `"\u0000"` is replaced with `""`
+    """
+    # modify in iterator -- scary, but not wrong since order is guaranteed and
+    # we aren't inserting or deleting items. ref:
+    # https://docs.python.org/3/library/stdtypes.html#dictionary-view-objects
+    for key, value in d.items():
+        if isinstance(value, list):
+            _postgresize_list_in_place(value)
+        elif isinstance(value, dict):
+            _postgresize_dict_in_place(value)
+        elif isinstance(value, str):
+            d[key] = _postgresize_str(value)
+        # else don't modify it
+
+
+def _postgresize_list_in_place(l: List[Any]) -> None:
+    """
+    Modify `l` so it's ready to be inserted in a Postgres JSONB column.
+
+    Modifications:
+        * `"\u0000"` is replaced with `""`
+    """
+    # modify in iterator -- scary, but not wrong since order is guaranteed and
+    # we aren't inserting or deleting items.
+    for i, value in enumerate(l):
+        if isinstance(value, list):
+            _postgresize_list_in_place(value)
+        elif isinstance(value, dict):
+            _postgresize_dict_in_place(value)
+        elif isinstance(value, str):
+            l[i] = _postgresize_str(value)
+        # else don't modify it
+
+
+def _postgresize_str(s: str) -> str:
+    """
+    Modify `l` so it's ready to be inserted in a Postgres JSONB column.
+
+    Modifications:
+        * `"\u0000"` is replaced with `""`
+    """
+    return s.replace('\x00', '')
 
 
 @database_sync_to_async
@@ -38,6 +87,11 @@ async def set_params(workflow: Workflow, wf_module: WfModule,
                      values: Dict[str, Any], **kwargs):
     if not isinstance(values, dict):
         raise HandlerError('BadRequest: values must be an Object')
+
+    # Mangle user data by removing '\u0000' recursively: Postgres `JSONB`
+    # doesn't support \u0000, and it's too expensive (and questionable) to move
+    # to `JSON`. https://www.pivotaltracker.com/story/show/164634811
+    _postgresize_dict_in_place(values)
 
     try:
         await ChangeParametersCommand.create(workflow=workflow,
