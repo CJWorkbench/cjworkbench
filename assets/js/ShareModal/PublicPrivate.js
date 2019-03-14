@@ -14,7 +14,7 @@ const Description = ({ isPublic }) => {
 const DescriptionWithToggle = ({ isPublic, onChange }) => (
   <label className='checkbox'>
     <input type='checkbox' checked={isPublic} onChange={onChange} />
-    <span>Anyone on the internet can view and duplicate this workflow.</span>
+    <span>Anyone can view and duplicate this workflow, and see your email.</span>
   </label>
 )
 
