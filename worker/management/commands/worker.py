@@ -9,7 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
-    if 'client_session' in context or 'connector' in context:
+    if (
+        'client_session' in context
+        or 'connector' in context
+        or 'transport' in context
+    ):
         # [2018-11-07] aiohttp raises spurious exceptions.
         # https://github.com/aio-libs/aiohttp/issues/2039
         #
@@ -23,6 +27,8 @@ def exit_on_exception(loop, context):
         #             'message': 'Unclosed connector'}
         # * context: {'client_session': <...>,
         #             'message': 'Unclosed client session'}
+        # * context: {'transport': <...>,
+        #             'message': 'SSL handshake failed...'}
         logger.warn('Ignoring warning from aiohttp: %s', context['message'])
         return
 
