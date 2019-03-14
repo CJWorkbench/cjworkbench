@@ -35,9 +35,16 @@
     // Row Action buton and menu
     .dropdown .table-action {
       @extend .action-button;
-      @extend .button-orange;
-      background-color: lighten($brand-orange,27%);
-      min-width: 15rem;
+      @extend .button-orange--fill;
+      min-width: 16.5rem;
+      border-radius: .3rem;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("../images/caret-down.png");
+      background-repeat: no-repeat;
+      background-size: 1.3rem;
+      background-position: 95% 51%;
+      padding:0 2rem 0 0;
 
       &:active {
         background-color: lighten($brand-orange,18%);
@@ -53,7 +60,7 @@
         pointer-events: none; // REACT not taking care of it
         @extend .button-dark-blue;
         opacity: .9;
-        min-width: 15rem;
+        min-width: 16.5rem;
         cursor: default;
 
         &:hover {
