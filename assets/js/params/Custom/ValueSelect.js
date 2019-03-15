@@ -271,7 +271,6 @@ export class ValueSelect extends React.PureComponent {
               height={
                 rowHeight * matchingSortedValues.length > 300 ? 300 : rowHeight * matchingSortedValues.length
               }
-              width={246}
               itemCount={matchingSortedValues.length}
               itemSize={rowHeight}
               itemData={this.listRowData}
