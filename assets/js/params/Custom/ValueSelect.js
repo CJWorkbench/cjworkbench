@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withFetchedData } from './FetchedData'
-import { List } from 'react-virtualized'
+import { FixedSizeList } from 'react-window'
 import memoize from 'memoize-one'
 
 const NumberFormatter = new Intl.NumberFormat()
@@ -9,36 +9,70 @@ const NumberFormatter = new Intl.NumberFormat()
 // TODO: Change class names to move away from Refine and update CSS
 
 /**
- * Displays a list item of check box, name (of value), and count
+ * Displays a list item of check box, name (of item), and count
  */
 class ValueItem extends React.PureComponent {
   static propTypes = {
-    name: PropTypes.string, // new value -- may be empty string
+    item: PropTypes.string, // new value -- may be empty string
     count: PropTypes.number.isRequired, // number, strictly greater than 0
     isSelected: PropTypes.bool.isRequired,
-    onChangeIsSelected: PropTypes.func.isRequired // func(name, isSelected) => undefined
+    onChangeIsSelected: PropTypes.func.isRequired // func(item, isSelected) => undefined
   }
 
   onChangeIsSelected = (ev) => {
-    this.props.onChangeIsSelected(this.props.name, ev.target.checked)
+    this.props.onChangeIsSelected(this.props.item, ev.target.checked)
   }
 
   render () {
-    const { count, name } = this.props
+    const { count, item } = this.props
 
     return (
       <div className="value">
         <label>
           <input
-            name={`include[${name}]`}
+            name={`include[${item}]`}
             type='checkbox'
             title='Include these rows'
             checked={this.props.isSelected}
             onChange={this.onChangeIsSelected}
           />
-          <div className='text'>{name}</div>
+          <div className='text'>{item}</div>
         </label>
         <div className='count'>{NumberFormatter.format(count)}</div>
+      </div>
+    )
+  }
+}
+
+class ListRow extends React.PureComponent {
+  // extend PureComponent so we get a shouldComponentUpdate() function
+
+  // PropTypes all supplied by FixedSizeList
+  static propTypes = {
+    data: PropTypes.shape({
+      valueCounts: PropTypes.object.isRequired, // { 'item': <Number> count, ... }
+      items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+      selection: PropTypes.instanceOf(Set).isRequired,
+      onChangeIsSelected: PropTypes.func.isRequired, // func(item, isSelected) => undefined
+    }),
+    style: PropTypes.object.isRequired,
+    index: PropTypes.number.isRequired
+  }
+
+  render () {
+    const { data: { valueCounts, items, selection, onChangeIsSelected }, style, index } = this.props
+    const item = items[index]
+    const count = valueCounts[item]
+    const isSelected = selection.has(item)
+
+    return (
+      <div style={style}>
+        <ValueItem
+          item={item}
+          count={count}
+          isSelected={isSelected}
+          onChangeIsSelected={onChangeIsSelected}
+        />
       </div>
     )
   }
@@ -101,9 +135,6 @@ export class ValueSelect extends React.PureComponent {
     searchInput: ''
   }
 
-  /** references virtualized valueList to force re-render in 'onChange()' when an item is checked/unchecked **/
-  valueListRef = React.createRef()
-
   /**
    * Return "selectedValues", a Set[String].
    *
@@ -121,6 +152,10 @@ export class ValueSelect extends React.PureComponent {
     return this._buildMatchingSortedValues(this.sortedValues, this.state.searchInput)
   }
 
+  get listRowData () {
+    return this._buildListRowData(this.props.valueCounts, this.selectedValues, this.matchingSortedValues)
+  }
+
   _buildSelectedValues = memoize(values => new Set(values))
 
   _buildSortedValues = memoize(valueCounts => {
@@ -136,6 +171,13 @@ export class ValueSelect extends React.PureComponent {
       return sortedValues
     }
   })
+
+  _buildListRowData = memoize((valueCounts, selectedValues, matchingSortedValues) => ({
+    valueCounts: valueCounts || {},
+    selection: selectedValues,
+    items: matchingSortedValues,
+    onChangeIsSelected: this.onChangeIsSelected
+  }))
 
   onResetSearch = () => {
     this.setState({ searchInput: '' })
@@ -182,37 +224,6 @@ export class ValueSelect extends React.PureComponent {
     onChange([ ...Object.keys(valueCounts) ])
   }
 
-  /** Used by react-virtualized to only render rows in module viewport **/
-  renderRow = ({ key, index, style }) => {
-    const item = this.matchingSortedValues[index]
-    return (
-      <div key={key} style={style}>
-        <ValueItem
-          key={item}
-          name={item}
-          count={this.props.valueCounts[item]}
-          onChangeIsSelected={this.onChangeIsSelected}
-          isSelected={this.selectedValues.has(item)}
-        />
-      </div>
-    )
-  }
-
-  /** Force react-virtualized render when props change **/
-  componentDidUpdate (prevProps) {
-    if (this.props.valueCounts !== null) {
-      if (
-        (
-          this.props.valueCounts !== prevProps.valueCounts
-          || this.props.value !== prevProps.value
-        )
-        && Object.keys(this.props.valueCounts).length > 0
-      ) {
-        this.valueListRef.current.forceUpdateGrid()
-      }
-    }
-  }
-
   render () {
     const { searchInput } = this.state
     const canSearch = this.sortedValues.length > 1
@@ -255,17 +266,18 @@ export class ValueSelect extends React.PureComponent {
         )}
         <div className='value-list'>
           { matchingSortedValues.length > 0 ? (
-            <List
+            <FixedSizeList
               className='react-list'
               height={
                 rowHeight * matchingSortedValues.length > 300 ? 300 : rowHeight * matchingSortedValues.length
               }
               width={246}
-              rowCount={matchingSortedValues.length}
-              rowHeight={rowHeight}
-              rowRenderer={this.renderRow}
-              ref={this.valueListRef}
-            />
+              itemCount={matchingSortedValues.length}
+              itemSize={rowHeight}
+              itemData={this.listRowData}
+            >
+              {ListRow}
+            </FixedSizeList>
           ) : null}
         </div>
         { (isSearching && canSearch && matchingSortedValues.length === 0) ? (
