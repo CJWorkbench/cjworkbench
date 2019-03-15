@@ -1,17 +1,14 @@
 .param-valueselect {
-
   .all-none-buttons {
-
     button {
-      font-weight: normal;
-      @extend %content-2;
+      @include content-2;
       color: $brand-text--dark;
       background-color: transparent;
       cursor: pointer;
       border: 0;
       text-transform: uppercase;
 
-      &:not(:last-child) {
+      &:first-child {
         border-right: 1px solid $dark-accent--strong;
         padding: 0 .6rem 0 0;
       }
@@ -21,7 +18,7 @@
       }
 
       &:hover {
-        color:$brand-orange;
+        color: $brand-orange;
       }
 
       &:disabled {
@@ -38,10 +35,10 @@
     max-height: 30rem;
 
     .ReactVirtualized__Grid.ReactVirtualized__List.react-list {
-      width: 25.5rem!important; // FIXME no !important
+      width: 25.5rem !important; // FIXME no !important
 
       .ReactVirtualized__Grid__innerScrollContainer {
-      max-width: 100%!important; // // FIXME no !important 
+        max-width: 100% !important; // // FIXME no !important 
       }
     }
 
@@ -68,8 +65,8 @@
             top: 2px;
           }
         }
-        .text {
 
+        .text {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;

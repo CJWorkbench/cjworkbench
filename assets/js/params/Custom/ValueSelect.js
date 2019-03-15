@@ -81,6 +81,8 @@ export class AllNoneButtons extends React.PureComponent {
   }
 }
 
+const ItemCollator = new Intl.Collator() // in the user's locale
+
 /**
  * The "value" here is an Array: `["value1", "value2"]`
  *
@@ -91,42 +93,48 @@ export class ValueSelect extends React.PureComponent {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
     loading: PropTypes.bool.isRequired, // true iff loading from server
     value: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // `["value1", "value2"]}`
-    onChange: PropTypes.func.isRequired // fn(JSON.stringify(['value1', 'value2', 'value5']))
+    onChange: PropTypes.func.isRequired // fn(['value1', 'value2', 'value5'])
   }
-  /** searchInput is the textbox string input from the user **/
+
   state = {
+    // searchInput is the textbox string input from the user
     searchInput: ''
   }
+
   /** references virtualized valueList to force re-render in 'onChange()' when an item is checked/unchecked **/
   valueListRef = React.createRef()
-  matchingValuesRef = React.createRef()
 
   /**
-   * Return "selectedValues" in object form for fast lookup:
+   * Return "selectedValues", a Set[String].
    *
-   * {value1: null, value2: null, value5: null}
+   * this.selectedValues.has('A') => true|false
    */
   get selectedValues () {
-    if (this.props.value) return this.selectedValuesObject(this.props.value)
-    return {}
+    return this._buildSelectedValues(this.props.value)
   }
 
   get sortedValues () {
-    if (this.props.valueCounts) return this.getSortedValues(this.props.valueCounts)
-    return []
+    return this._buildSortedValues(this.props.valueCounts)
   }
 
-  /** takes JSON encoded `[value1, value2]` and maps to {value1: null, value2: null} **/
-  selectedValuesObject = memoize(values => {
-    const selectedValues = {}
-    for (const index in values) {
-      selectedValues[values[index]] = null
-    }
-    return selectedValues
+  get matchingSortedValues () {
+    return this._buildMatchingSortedValues(this.sortedValues, this.state.searchInput)
+  }
+
+  _buildSelectedValues = memoize(values => new Set(values))
+
+  _buildSortedValues = memoize(valueCounts => {
+    if (!valueCounts) return []
+    return [ ...Object.keys(valueCounts).sort(ItemCollator.compare) ]
   })
 
-  getSortedValues = memoize(valueCounts => {
-    return Object.keys(valueCounts).sort((a, b) => a.localeCompare(b))
+  _buildMatchingSortedValues = memoize((sortedValues, searchInput) => {
+    if (searchInput) {
+      const searchKey = searchInput.toLowerCase()
+      return sortedValues.filter(v => v.toLowerCase().includes(searchKey))
+    } else {
+      return sortedValues
+    }
   })
 
   onResetSearch = () => {
@@ -142,73 +150,74 @@ export class ValueSelect extends React.PureComponent {
     this.setState({ searchInput })
   }
 
-  /** convert {value1: null, value2: null} to JSON encoded ['value1', 'value2'] to return **/
-  onChange = (selectedValues) => {
-    this.props.onChange(Object.keys(selectedValues))
-  }
-
-  valueMatching = (searchInput) => {
-    const searchKey = searchInput.toLowerCase()
-    return this.sortedValues.filter(v => v.toLowerCase().includes(searchKey))
-  }
-
   /** Add/Remove from selectedValues and return when checked/unchecked **/
-  onChangeIsSelected = (value, isSelected) => {
-    let selectedValues = this.selectedValues
+  onChangeIsSelected = (item, isSelected) => {
+    const { value, onChange } = this.props
     if (isSelected) {
-      selectedValues[value] = null
+      if (!value.includes(item)) {
+        onChange([ ...value, item ])
+      } else {
+        // no-op: adding an already-present element
+      }
     } else {
-      delete selectedValues[value] // FIXME [adamhooper, 2018-11-22] this modifies an immutable variable
-    }
-    this.onChange(selectedValues)
-  }
-
-  clearSelectedValues = () => {
-    this.onChange({})
-  }
-
-  fillSelectedValues = () => {
-    const valueCounts = this.props.valueCounts || {}
-    let selectedValues = {}
-    for (const value in valueCounts) {
-      selectedValues[value] = null
-    }
-    this.onChange(selectedValues)
-  }
-
-  /** Used by react-virtualized to only render rows in module viewport **/
-  renderRow = ({ key, index, isScrolling, isVisible, style }) => {
-    const value = this.matchingValuesRef[index]
-    const item = (
-      <div key={key} style={style}>
-        <ValueItem
-          key={value}
-          name={value}
-          count={this.props.valueCounts[value]}
-          onChangeIsSelected={this.onChangeIsSelected}
-          isSelected={(value in this.selectedValues)}
-        />
-      </div>
-    )
-    return item
-  }
-  /** Force react-virtualized render when props change **/
-  componentDidUpdate (prevProps) {
-    if (this.props.valueCounts !== null) {
-      if ((this.props.valueCounts !== prevProps.valueCounts || this.props.value !== prevProps.value) &&
-        (Object.keys(this.props.valueCounts).length > 0)) {
-        this.valueListRef.forceUpdateGrid()
+      const index = value.indexOf(item)
+      if (index !== -1) {
+        onChange([
+          ...(value.slice(0, index)),
+          ...(value.slice(index + 1))
+        ])
+      } else {
+        // no-op: deleting an already-missing element
       }
     }
   }
+
+  clearSelectedValues = () => {
+    this.props.onChange([])
+  }
+
+  fillSelectedValues = () => {
+    const { onChange, valueCounts } = this.props
+    if (!valueCounts) return // surely the user didn't mean to clear selection?
+    onChange([ ...Object.keys(valueCounts) ])
+  }
+
+  /** Used by react-virtualized to only render rows in module viewport **/
+  renderRow = ({ key, index, style }) => {
+    const item = this.matchingSortedValues[index]
+    return (
+      <div key={key} style={style}>
+        <ValueItem
+          key={item}
+          name={item}
+          count={this.props.valueCounts[item]}
+          onChangeIsSelected={this.onChangeIsSelected}
+          isSelected={this.selectedValues.has(item)}
+        />
+      </div>
+    )
+  }
+
+  /** Force react-virtualized render when props change **/
+  componentDidUpdate (prevProps) {
+    if (this.props.valueCounts !== null) {
+      if (
+        (
+          this.props.valueCounts !== prevProps.valueCounts
+          || this.props.value !== prevProps.value
+        )
+        && Object.keys(this.props.valueCounts).length > 0
+      ) {
+        this.valueListRef.current.forceUpdateGrid()
+      }
+    }
+  }
+
   render () {
     const { searchInput } = this.state
-    const { valueCounts } = this.props
     const canSearch = this.sortedValues.length > 1
     const isSearching = (searchInput !== '')
-    const matchingValues = isSearching ? this.valueMatching(searchInput) : this.sortedValues
-
-    this.matchingValuesRef = matchingValues
+    const matchingSortedValues = this.matchingSortedValues
 
     /** TODO: Hardcoded row heights and width for now for simplicity, in the future we'll need to implement:
      *  https://github.com/bvaughn/react-virtualized/blob/master/docs/CellMeasurer.md
@@ -216,23 +225,11 @@ export class ValueSelect extends React.PureComponent {
      *  Viewport capped at 10 items, if less than 10 height is adjusted accordingly
      */
     const rowHeight = 27.78
-    const valueList = matchingValues.length > 0 ? (
-      <List
-        className={'react-list'}
-        height={
-          rowHeight * matchingValues.length > 300 ? 300 : rowHeight * matchingValues.length
-        }
-        width={246}
-        rowCount={matchingValues.length}
-        rowHeight={rowHeight}
-        rowRenderer={this.renderRow}
-        ref={(ref) => { this.valueListRef = ref }}
-      />) : null
 
     return (
-      <div className='value-parameter'>
+      <>
         { !canSearch ? null : (
-          <React.Fragment>
+          <>
             <div className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
               <input
                 type='search'
@@ -242,22 +239,39 @@ export class ValueSelect extends React.PureComponent {
                 onChange={this.onInputChange}
                 onKeyDown={this.onKeyDown}
               />
-              <button type="button" onClick={this.onResetSearch} className="close" title="Clear Search"><i className="icon-close"></i></button>
+              <button
+                type="button"
+                onClick={this.onResetSearch}
+                className="close"
+                title="Clear Search"
+              ><i className="icon-close" /></button>
             </div>
             <AllNoneButtons
               isReadOnly={isSearching}
               clearSelectedValues={this.clearSelectedValues}
               fillSelectedValues={this.fillSelectedValues}
             />
-          </React.Fragment>
+          </>
         )}
         <div className='value-list'>
-          {valueList}
+          { matchingSortedValues.length > 0 ? (
+            <List
+              className='react-list'
+              height={
+                rowHeight * matchingSortedValues.length > 300 ? 300 : rowHeight * matchingSortedValues.length
+              }
+              width={246}
+              rowCount={matchingSortedValues.length}
+              rowHeight={rowHeight}
+              rowRenderer={this.renderRow}
+              ref={this.valueListRef}
+            />
+          ) : null}
         </div>
-        { (isSearching && canSearch && matchingValues.length === 0) ? (
+        { (isSearching && canSearch && matchingSortedValues.length === 0) ? (
           <div className='wf-module-error-msg'>No values</div>
         ) : null}
-      </div>
+      </>
     )
   }
 }
