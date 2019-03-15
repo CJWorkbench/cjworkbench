@@ -29,55 +29,41 @@
   }
 
   .value-list {
+    @include font-nunito-regular;
+    font-size: 1.3rem;
     margin-top: 1rem;
     padding: 0;
     list-style: none;
     max-height: 30rem;
+    overflow: hidden; // react-window will put a scrollbar
 
-    .ReactVirtualized__Grid.ReactVirtualized__List.react-list {
-      width: 25.5rem !important; // FIXME no !important
-
-      .ReactVirtualized__Grid__innerScrollContainer {
-        max-width: 100% !important; // // FIXME no !important 
-      }
-    }
-
-
-    .value {
+    label.value {
       display: flex;
-      font-size: 1.3rem;
       vertical-align: middle;
       position: relative;
-      justify-content: space-between;
+      cursor: pointer;
+      overflow: hidden;
+      margin: 0; // Bootstrap margin messes with autosizing
+      padding: 4px 0;
 
-      label {
-        flex: 0 1 auto;
-        display: flex;
-        cursor: pointer;
+      input[type=checkbox] {
+        flex: 0 0 auto;
+        vertical-align: middle;
+        height: 1.6rem;
+      }
+
+      .text {
+        flex: 1 1 auto;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         overflow: hidden;
-
-        input[type="checkbox"] {
-          flex: 0 0 auto;
-          vertical-align: middle;
-          height: 1.6rem;
-          height: 1.6rem;
-          &::after {
-            top: 2px;
-          }
-        }
-
-        .text {
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-        }
       }
 
       .count {
+        flex: 0 0 auto;
         margin-left: 1rem;
-        text-align: right;
-        float: right;
-        font-weight: 200;
+        margin-right: .5rem;
+        @include font-nunito-extra-light;
       }
     }
   }
