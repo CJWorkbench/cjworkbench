@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withFetchedData } from './FetchedData'
-import { List } from 'react-virtualized'
+import { FixedSizeList } from 'react-window'
 import memoize from 'memoize-one'
 
 const NumberFormatter = new Intl.NumberFormat()
@@ -9,36 +9,68 @@ const NumberFormatter = new Intl.NumberFormat()
 // TODO: Change class names to move away from Refine and update CSS
 
 /**
- * Displays a list item of check box, name (of value), and count
+ * Displays a list item of check box, name (of item), and count
  */
 class ValueItem extends React.PureComponent {
   static propTypes = {
-    name: PropTypes.string, // new value -- may be empty string
+    item: PropTypes.string, // new value -- may be empty string
     count: PropTypes.number.isRequired, // number, strictly greater than 0
     isSelected: PropTypes.bool.isRequired,
-    onChangeIsSelected: PropTypes.func.isRequired // func(name, isSelected) => undefined
+    onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined
   }
 
-  onChangeIsSelected = (ev) => {
-    this.props.onChangeIsSelected(this.props.name, ev.target.checked)
+  onChangeItem = (ev) => {
+    this.props.onChangeItem(this.props.item, ev.target.checked)
   }
 
   render () {
-    const { count, name } = this.props
+    const { count, item, isSelected } = this.props
 
     return (
-      <div className="value">
-        <label>
-          <input
-            name={`include[${name}]`}
-            type='checkbox'
-            title='Include these rows'
-            checked={this.props.isSelected}
-            onChange={this.onChangeIsSelected}
-          />
-          <div className='text'>{name}</div>
-        </label>
+      <label className='value'>
+        <input
+          name={`include[${item}]`}
+          type='checkbox'
+          title='Include these rows'
+          checked={isSelected}
+          onChange={this.onChangeItem}
+        />
+        <div className='text'>{item}</div>
         <div className='count'>{NumberFormatter.format(count)}</div>
+      </label>
+    )
+  }
+}
+
+class ListRow extends React.PureComponent {
+  // extend PureComponent so we get a shouldComponentUpdate() function
+
+  // PropTypes all supplied by FixedSizeList
+  static propTypes = {
+    data: PropTypes.shape({
+      valueCounts: PropTypes.object.isRequired, // { 'item': <Number> count, ... }
+      items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+      selection: PropTypes.instanceOf(Set).isRequired,
+      onChangeItem: PropTypes.func.isRequired, // func(item, isSelected) => undefined
+    }),
+    style: PropTypes.object.isRequired,
+    index: PropTypes.number.isRequired
+  }
+
+  render () {
+    const { data: { valueCounts, items, selection, onChangeItem }, style, index } = this.props
+    const item = items[index]
+    const count = valueCounts[item]
+    const isSelected = selection.has(item)
+
+    return (
+      <div style={style}>
+        <ValueItem
+          item={item}
+          count={count}
+          isSelected={isSelected}
+          onChangeItem={onChangeItem}
+        />
       </div>
     )
   }
@@ -81,6 +113,134 @@ export class AllNoneButtons extends React.PureComponent {
   }
 }
 
+class ValueList extends React.PureComponent {
+  static propTypes = {
+    valueCounts: PropTypes.object, // or null if loading or no column selected -- passed to <ListRow>
+    loading: PropTypes.bool.isRequired,
+    selection: PropTypes.instanceOf(Set).isRequired, // selected values -- passed to <ListRow>
+    items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // filtered search results -- passed to <ListRow>
+    nItemsTotal: PropTypes.number.isRequired, // even when not searching
+    itemHeight: PropTypes.number.isRequired, // height of a single value, in px
+    maxHeight: PropTypes.number.isRequired, // max height of whole div
+    onChangeItem: PropTypes.func.isRequired, // func(item, isSelected) => undefined -- passed to <ListRow>
+  }
+
+  _itemKey = (index, data) => data.items[index]
+
+  innerRender () {
+    const { valueCounts, loading, selection, items, nItemsTotal, itemHeight, maxHeight } = this.props
+
+    if (!valueCounts && !loading) {
+      // Waiting for user to select a column
+      return null
+    } else if (loading) {
+      return 'Loading values…'
+    } else if (nItemsTotal === 0) {
+      return 'Column does not have any values'
+    } else if (items.length === 0) {
+      return 'No values'
+    } else {
+      const height = Math.min(maxHeight, items.length * itemHeight)
+      return (
+        <FixedSizeList
+          className='react-list'
+          height={height}
+          itemSize={itemHeight}
+          itemCount={items.length}
+          itemData={this.props /* a bit more than we want, but not _much_ more than we want */}
+          itemKey={this._itemKey}
+        >
+          {ListRow}
+        </FixedSizeList>
+      )
+    }
+  }
+
+  render () {
+    const { outerRef } = this.props
+
+    return (
+      <div className='value-list' ref={outerRef}>{this.innerRender()}</div>
+    )
+  }
+}
+
+/**
+ * ValueList, with itemHeight and maxHeight calculated automatically.
+ *
+ * The trick is: first we render a dummy list and calculate those styles.
+ * Then we delete the dummy list and use the calculated heights.
+ */
+class DynamicallySizedValueList extends React.PureComponent {
+  static propTypes = {
+    valueCounts: PropTypes.object, // or null if loading or no column selected -- passed to <ListRow>
+    loading: PropTypes.bool.isRequired,
+    selection: PropTypes.instanceOf(Set).isRequired, // selected values -- passed to <ListRow>
+    items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // filtered search results -- passed to <ListRow>
+    nItemsTotal: PropTypes.number.isRequired, // even when not searching
+    onChangeItem: PropTypes.func.isRequired, // func(item, isSelected) => undefined -- passed to <ListRow>
+  }
+
+  sizerRef = React.createRef()
+
+  state = {
+    itemHeight: null,
+    maxHeight: null
+  }
+
+  componentDidMount () {
+    const sizer = this.sizerRef.current
+
+    const sizerStyle = window.getComputedStyle(sizer)
+    let maxHeight
+    if (!sizerStyle.maxHeight || sizerStyle.maxHeight === 'none') {
+      maxHeight = Infinity
+    } else {
+      maxHeight = parseFloat(sizerStyle.maxHeight) // parseFloat: convert e.g. "300px" to 300
+    }
+
+    const item = sizer.querySelector('.value')
+    window.x = item
+    const itemHeight = item.clientHeight || 1
+
+    this.setState({ maxHeight, itemHeight })
+  }
+
+  render () {
+    const { itemHeight, maxHeight } = this.state
+
+    if (itemHeight && maxHeight) {
+      return (
+        <ValueList
+          itemHeight={itemHeight}
+          maxHeight={maxHeight}
+          {...this.props}
+        />
+      )
+    } else {
+      // This will only be rendered once, on initial render.
+      // Draw a single-element list with a dummy height. That'll paint enough
+      // to the DOM that we can calculate the _correct_ heights.
+      return (
+        <ValueList
+          valueCounts={{'A': 1}}
+          loading={false}
+          selection={new Set()}
+          items={['A']}
+          nItemsTotal={1}
+          itemHeight={1}
+          maxHeight={1}
+          onChangeItem={this.props.onChangeItem}
+          outerRef={this.sizerRef}
+        />
+      )
+    }
+  }
+}
+
+
+const ItemCollator = new Intl.Collator() // in the user's locale
+
 /**
  * The "value" here is an Array: `["value1", "value2"]`
  *
@@ -88,45 +248,47 @@ export class AllNoneButtons extends React.PureComponent {
  */
 export class ValueSelect extends React.PureComponent {
   static propTypes = {
-    valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
-    loading: PropTypes.bool.isRequired, // true iff loading from server
+    valueCounts: PropTypes.object, // null (when loading or waiting for user input) or { value1: n, value2: n, ... }
+    loading: PropTypes.bool.isRequired,
     value: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // `["value1", "value2"]}`
-    onChange: PropTypes.func.isRequired // fn(JSON.stringify(['value1', 'value2', 'value5']))
+    onChange: PropTypes.func.isRequired // fn(['value1', 'value2', 'value5'])
   }
-  /** searchInput is the textbox string input from the user **/
+
   state = {
-    searchInput: ''
+    searchInput: '', // <input type="search"> string input from the user
   }
-  /** references virtualized valueList to force re-render in 'onChange()' when an item is checked/unchecked **/
-  valueListRef = React.createRef()
-  matchingValuesRef = React.createRef()
 
   /**
-   * Return "selectedValues" in object form for fast lookup:
+   * Return a Set[String] derived from `value`.
    *
-   * {value1: null, value2: null, value5: null}
+   * this.selection.has('A') => true|false
    */
-  get selectedValues () {
-    if (this.props.value) return this.selectedValuesObject(this.props.value)
-    return {}
+  get selection () {
+    return this._buildSelectedValues(this.props.value)
   }
 
-  get sortedValues () {
-    if (this.props.valueCounts) return this.getSortedValues(this.props.valueCounts)
-    return []
+  get sortedItems () {
+    return this._buildSortedValues(this.props.valueCounts)
   }
 
-  /** takes JSON encoded `[value1, value2]` and maps to {value1: null, value2: null} **/
-  selectedValuesObject = memoize(values => {
-    const selectedValues = {}
-    for (const index in values) {
-      selectedValues[values[index]] = null
-    }
-    return selectedValues
+  get matchingSortedItems () {
+    return this._buildMatchingSortedItems(this.sortedItems, this.state.searchInput)
+  }
+
+  _buildSelectedValues = memoize(values => new Set(values))
+
+  _buildSortedValues = memoize(valueCounts => {
+    if (!valueCounts) return []
+    return [ ...Object.keys(valueCounts).sort(ItemCollator.compare) ]
   })
 
-  getSortedValues = memoize(valueCounts => {
-    return Object.keys(valueCounts).sort((a, b) => a.localeCompare(b))
+  _buildMatchingSortedItems = memoize((sortedItems, searchInput) => {
+    if (searchInput) {
+      const searchKey = searchInput.toLowerCase()
+      return sortedItems.filter(v => v.toLowerCase().includes(searchKey))
+    } else {
+      return sortedItems
+    }
   })
 
   onResetSearch = () => {
@@ -142,97 +304,47 @@ export class ValueSelect extends React.PureComponent {
     this.setState({ searchInput })
   }
 
-  /** convert {value1: null, value2: null} to JSON encoded ['value1', 'value2'] to return **/
-  onChange = (selectedValues) => {
-    this.props.onChange(Object.keys(selectedValues))
-  }
-
-  valueMatching = (searchInput) => {
-    const searchKey = searchInput.toLowerCase()
-    return this.sortedValues.filter(v => v.toLowerCase().includes(searchKey))
-  }
-
-  /** Add/Remove from selectedValues and return when checked/unchecked **/
-  onChangeIsSelected = (value, isSelected) => {
-    let selectedValues = this.selectedValues
+  onChangeItem = (item, isSelected) => {
+    const { value, onChange } = this.props
     if (isSelected) {
-      selectedValues[value] = null
+      if (!value.includes(item)) {
+        onChange([ ...value, item ])
+      } else {
+        // no-op: adding an already-present element
+      }
     } else {
-      delete selectedValues[value] // FIXME [adamhooper, 2018-11-22] this modifies an immutable variable
-    }
-    this.onChange(selectedValues)
-  }
-
-  clearSelectedValues = () => {
-    this.onChange({})
-  }
-
-  fillSelectedValues = () => {
-    const valueCounts = this.props.valueCounts || {}
-    let selectedValues = {}
-    for (const value in valueCounts) {
-      selectedValues[value] = null
-    }
-    this.onChange(selectedValues)
-  }
-
-  /** Used by react-virtualized to only render rows in module viewport **/
-  renderRow = ({ key, index, isScrolling, isVisible, style }) => {
-    const value = this.matchingValuesRef[index]
-    const item = (
-      <div key={key} style={style}>
-        <ValueItem
-          key={value}
-          name={value}
-          count={this.props.valueCounts[value]}
-          onChangeIsSelected={this.onChangeIsSelected}
-          isSelected={(value in this.selectedValues)}
-        />
-      </div>
-    )
-    return item
-  }
-  /** Force react-virtualized render when props change **/
-  componentDidUpdate (prevProps) {
-    if (this.props.valueCounts !== null) {
-      if ((this.props.valueCounts !== prevProps.valueCounts || this.props.value !== prevProps.value) &&
-        (Object.keys(this.props.valueCounts).length > 0)) {
-        this.valueListRef.forceUpdateGrid()
+      const index = value.indexOf(item)
+      if (index !== -1) {
+        onChange([
+          ...(value.slice(0, index)),
+          ...(value.slice(index + 1))
+        ])
+      } else {
+        // no-op: deleting an already-missing element
       }
     }
   }
+
+  clearSelectedValues = () => {
+    this.props.onChange([])
+  }
+
+  fillSelectedValues = () => {
+    const { onChange, valueCounts } = this.props
+    if (!valueCounts) return // surely the user didn't mean to clear selection?
+    onChange([ ...Object.keys(valueCounts) ])
+  }
+
   render () {
+    const { itemHeight, loading } = this.props
     const { searchInput } = this.state
-    const { valueCounts } = this.props
-    const canSearch = this.sortedValues.length > 1
+    const canSearch = this.sortedItems.length > 1
     const isSearching = (searchInput !== '')
-    const matchingValues = isSearching ? this.valueMatching(searchInput) : this.sortedValues
-
-    this.matchingValuesRef = matchingValues
-
-    /** TODO: Hardcoded row heights and width for now for simplicity, in the future we'll need to implement:
-     *  https://github.com/bvaughn/react-virtualized/blob/master/docs/CellMeasurer.md
-     *
-     *  Viewport capped at 10 items, if less than 10 height is adjusted accordingly
-     */
-    const rowHeight = 27.78
-    const valueList = matchingValues.length > 0 ? (
-      <List
-        className={'react-list'}
-        height={
-          rowHeight * matchingValues.length > 300 ? 300 : rowHeight * matchingValues.length
-        }
-        width={246}
-        rowCount={matchingValues.length}
-        rowHeight={rowHeight}
-        rowRenderer={this.renderRow}
-        ref={(ref) => { this.valueListRef = ref }}
-      />) : null
 
     return (
-      <div className='value-parameter'>
+      <>
         { !canSearch ? null : (
-          <React.Fragment>
+          <>
             <div className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
               <input
                 type='search'
@@ -242,22 +354,29 @@ export class ValueSelect extends React.PureComponent {
                 onChange={this.onInputChange}
                 onKeyDown={this.onKeyDown}
               />
-              <button type="button" onClick={this.onResetSearch} className="close" title="Clear Search"><i className="icon-close"></i></button>
+              <button
+                type="button"
+                onClick={this.onResetSearch}
+                className="close"
+                title="Clear Search"
+              ><i className="icon-close" /></button>
             </div>
             <AllNoneButtons
               isReadOnly={isSearching}
               clearSelectedValues={this.clearSelectedValues}
               fillSelectedValues={this.fillSelectedValues}
             />
-          </React.Fragment>
+          </>
         )}
-        <div className='value-list'>
-          {valueList}
-        </div>
-        { (isSearching && canSearch && matchingValues.length === 0) ? (
-          <div className='wf-module-error-msg'>No values</div>
-        ) : null}
-      </div>
+        <DynamicallySizedValueList
+          valueCounts={this.props.valueCounts}
+          loading={loading}
+          selection={this.selection}
+          nItemsTotal={this.sortedItems.length}
+          items={this.matchingSortedItems}
+          onChangeItem={this.onChangeItem}
+        />
+      </>
     )
   }
 }

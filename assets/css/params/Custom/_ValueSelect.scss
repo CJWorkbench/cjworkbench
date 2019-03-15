@@ -1,0 +1,70 @@
+.param-valueselect {
+  .all-none-buttons {
+    button {
+      @include content-2;
+      color: $brand-text--dark;
+      background-color: transparent;
+      cursor: pointer;
+      border: 0;
+      text-transform: uppercase;
+
+      &:first-child {
+        border-right: 1px solid $dark-accent--strong;
+        padding: 0 .6rem 0 0;
+      }
+
+      &:last-child {
+        padding: 0 0 0 .6rem;
+      }
+
+      &:hover {
+        color: $brand-orange;
+      }
+
+      &:disabled {
+        cursor: default;
+        color: $text-muted;
+      }
+    }
+  }
+
+  .value-list {
+    @include font-nunito-regular;
+    font-size: 1.3rem;
+    margin-top: 1rem;
+    padding: 0;
+    list-style: none;
+    max-height: 30rem;
+    overflow: hidden; // react-window will put a scrollbar
+
+    label.value {
+      display: flex;
+      vertical-align: middle;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      margin: 0; // Bootstrap margin messes with autosizing
+      padding: 4px 0;
+
+      input[type=checkbox] {
+        flex: 0 0 auto;
+        vertical-align: middle;
+        height: 1.6rem;
+      }
+
+      .text {
+        flex: 1 1 auto;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .count {
+        flex: 0 0 auto;
+        margin-left: 1rem;
+        margin-right: .5rem;
+        @include font-nunito-extra-light;
+      }
+    }
+  }
+}

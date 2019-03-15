@@ -2,18 +2,21 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { ValueSelect } from './ValueSelect'
-import { tick } from '../../test-utils'
 
 describe('ValueSelect', () => {
-  const wrapper = (props={}) => mount(
-    <ValueSelect
-      valueCounts={{}}
-      loading={false}
-      value={[]}
-      onChange={jest.fn()}
-      {...props}
-    />
-  )
+  const wrapper = (props={}) => {
+    const ret = mount(
+      <ValueSelect
+        valueCounts={{}}
+        loading={false}
+        value={[]}
+        onChange={jest.fn()}
+        {...props}
+      />
+    )
+    ret.update() // after componentDidMount()
+    return ret
+  }
 
   it('should render value texts in order', () => {
     const w = wrapper({
