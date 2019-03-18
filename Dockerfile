@@ -161,7 +161,8 @@ COPY webpack.config.js setupJest.js /app/
 COPY __mocks__/ /app/__mocks__/
 COPY assets/ /app/assets/
 # Inject unit tests into our continuous integration
-# This is how Travis tests
+# This catches mistakes that would otherwise foil us in bin/integration-test;
+# and currently we rely on this line in our CI scripts (cloudbuild.yaml).
 RUN npm test
 RUN node_modules/.bin/webpack -p
 
@@ -169,19 +170,23 @@ RUN node_modules/.bin/webpack -p
 # 3. Three prod servers will all be based on the same stuff:
 FROM pybuild AS base
 
-# assets/ is static files. TODO nix them here; host them elsewhere
-COPY assets/ /app/assets/
-COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
-COPY --from=jsbuild /app/webpack-stats.json /app/
 COPY cjworkbench/ /app/cjworkbench/
+# TODO make server/ frontend-specific
 COPY server/ /app/server/
+# worker/ is imported in worker+cron; also, it's referenced in settings.py
+# so let's copy it everywhere
 COPY worker/ /app/worker/
 COPY bin/ /app/bin/
-COPY templates/ /app/templates/
 COPY manage.py /app/
+# templates are used in worker for notifications emails, and in frontend for
+# views. TODO move worker templates elsewhere.
+COPY templates/ /app/templates/
 
 # 3.1. migrate: runs ./manage.py migrate
 FROM base AS migrate
+# assets/ is static files. migrate will upload them to minio.
+COPY assets/ /app/assets/
+COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
 CMD [ "bin/migrate-prod" ]
 
 # 3.2. worker: runs render+fetch
@@ -194,6 +199,7 @@ CMD [ "./manage.py", "cron" ]
 
 # 3.3. frontend: serves website
 FROM base AS frontend
+COPY --from=jsbuild /app/webpack-stats.json /app/
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
 # TODO serve static files elsewhere
