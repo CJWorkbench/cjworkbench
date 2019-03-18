@@ -39,6 +39,24 @@ describe('RefineClusterer', () => {
     ])
   })
 
+  it('sort elements by count before clustering', async () => {
+    // JS Object elements are ordered  in insertion order
+    const w = wrapper({ bucket: { x: 1, yy: 1, xxx: 2 } })
+    w.find('select').simulate('change', { target: { value: 'levenshtein' } })
+    w.find('input#refine-clusterer-max-distance').simulate(
+      'change',
+      { target: { name: 'maxDistance', value: '2' } }
+    )
+    await tick() // let the algorithm run and let its complete handler run
+    expect(w.prop('onComplete')).toHaveBeenCalledWith([
+      {
+        name: 'xxx',
+        count: 3,
+        bucket: { xxx: 2, x: 1 } // _not_ { x: 1, yy: 1, xxx: 2 } -- we should choose xxx as center
+      }
+    ])
+  })
+
   it('should render and handle levenshtein options', async () => {
     const w = wrapper()
     w.find('select').simulate('change', { target: { value: 'levenshtein' } })

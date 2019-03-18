@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import memoize from 'memoize-one'
 import { clusterByKey, clusterByKnn } from 'clustring'
 import FormGroup from 'reactstrap/lib/FormGroup'
 import Input from 'reactstrap/lib/Input'
@@ -38,14 +39,37 @@ export default class RefineClusterer extends React.PureComponent {
     onComplete: PropTypes.func.isRequired, // onComplete(bins) => undefined (bins is [ { name, count, bucket }, ... ])
   }
 
+  // define _buildSortedBucket before using it in `state = { ... }`
+  _buildSortedBucket = memoize(bucket => {
+    // Turn Object into an Array, so we can sort it
+    const arr = []
+    for (const name in bucket) {
+      arr.push({ name, count: bucket[name] })
+    }
+
+    // Sort the array
+    arr.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+
+    // Now rebuild an Object -- but with a sorted insertion order
+    const ret = {}
+    for (const item of arr) {
+      ret[item.name] = item.count
+    }
+    return ret
+  })
+
   state = {
     clusterer: this._startClusterer(Algorithms[0], Algorithms[0].defaultOptions),
     algorithm: Algorithms[0],
     clustererOptions: Algorithms[0].defaultOptions
   }
 
+  get sortedBucket () {
+    return this._buildSortedBucket(this.props.bucket)
+  }
+
   _startClusterer (algorithm, options) {
-    const clusterer = algorithm.buildClusterer(this.props.bucket, options)
+    const clusterer = algorithm.buildClusterer(this.sortedBucket, options)
 
     const reportProgressUntilDoneOrCanceled = () => {
       if (clusterer.canceled) return
