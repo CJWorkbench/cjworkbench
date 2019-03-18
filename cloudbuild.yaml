@@ -4,64 +4,50 @@ timeout: 2400s
 options:
   machineType: N1_HIGHCPU_8
 steps:
-# cache-from doesn't work well with multi-stage builds yet: see
-# https://github.com/moby/moby/issues/32612. We don't win if we pull down
-# migrate/worker/cron/frontend and try to build using their caches.
-#
-# One alternative win for build speed: author pull requests for each Python
-# library that uses C, so they push bdist with manylinux. That way our
-# Dockerfile won't need apt-get or gcc calls, saving oodles of time.
-#
-# We can at least pull the latest integration test: our integration tests
-# don't use multi-stage build so they play nice with cache. (That's a great
-# win because installing Firefox deps is particularly slow.)
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
+
 # Build new Docker images
 - name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          '--target', 'frontend',
-          '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/frontend:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          '--target', 'migrate',
-          '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          '--target', 'worker',
-          '-t', 'gcr.io/$PROJECT_ID/worker:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/worker:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          '--target', 'cron',
-          '-t', 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/cron:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          '--file', 'Dockerfile.integrationtest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
-          '--target', 'cloudbuild',
-          '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
-          '-t', 'gcr.io/$PROJECT_ID/integration-test:latest',
-          '.'
-        ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build',
-          '-t', 'gcr.io/$PROJECT_ID/git-server:$COMMIT_SHA',
-          './integrationtests/git-server'
-        ]
+  entrypoint: sh
+  args:
+    - -e
+    - -c
+    - |
+      # --cache-from doesn't work well with multi-stage builds yet: see
+      # https://github.com/moby/moby/issues/32612. We don't win if we pull down
+      # migrate/worker/cron/frontend and try to build using their caches.
+      #
+      # One alternative win for build speed: author pull requests for each Python
+      # library that uses C, so they push bdist with manylinux. That way our
+      # Dockerfile won't need apt-get or gcc calls, saving oodles of time.
+      #
+      # We can at least pull the latest integration test: our integration tests
+      # don't use multi-stage build so they play nice with cache. (That's a great
+      # win because installing Firefox deps is particularly slow.)
+
+      # Images for production -- build without cache
+      for target in migrate worker cron frontend; do
+        docker build \
+          --target $$target \
+          --tag gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA \
+          --tag gcr.io/$PROJECT_ID/$$target:$BRANCH_NAME \
+          --tag gcr.io/$PROJECT_ID/$$target:latest \
+          .
+      done
+
+      # Build integration-test images -- first pulling from cache if it can be used
+      docker pull gcr.io/$PROJECT_ID/integration-test:latest || true
+      docker build --pull \
+        --file Dockerfile.integrationtest \
+        --target cloudbuild \
+        --tag gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA \
+        --tag gcr.io/$PROJECT_ID/integration-test:latest \
+        .
+      docker build \
+        --tag gcr.io/$PROJECT_ID/git-server:$COMMIT_SHA \
+        ./integrationtests/git-server
+
 # Unit-test
-- name: 'docker/compose:1.21.2'
+- name: 'docker/compose:1.23.2'
   args: [ '-f', 'server/tests/docker-compose.yml',
           'run',
           'unittest'
@@ -70,7 +56,7 @@ steps:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
 # Integration-test: migrate, then run the integration-test image
-- name: 'docker/compose:1.21.2'
+- name: 'docker/compose:1.23.2'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
@@ -79,7 +65,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-- name: 'docker/compose:1.21.2'
+- name: 'docker/compose:1.23.2'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
@@ -88,13 +74,41 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
+
+# Push images (so we can deploy)
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: sh
+  args:
+    - -e
+    - -c
+    - |
+      for target in migrate worker cron frontend; do
+        docker push gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA
+        # Push a couple of aliases. We don't strictly need these, but they
+        # shouldn't cost much time or disk because the layers are already up.
+        docker push gcr.io/$PROJECT_ID/$$target:$BRANCH_NAME
+        docker push gcr.io/$PROJECT_ID/$$target:latest
+      done
+
+# Deploy! (to staging server)
+- name: 'gcr.io/cloud-builders/kubectl'
+  entrypoint: sh
+  args:
+    - -e
+    - -c
+    - |
+      if [ "$BRANCH_NAME" = "master" ]; then
+        deploy/advanced-deploy staging "$COMMIT_SHA"
+        echo 'Deployed to staging. Run `deploy/update-production-to-staging` to deploy to production.' >&2
+      else
+        echo 'Skipped deploy to staging: branch "$BRANCH_NAME" is not master' >&2
+      fi
+
+# Display images in Google Cloud Build status pages. (We pushed them
+# manually, so this doesn't actually do anything new.)
 images:
 - 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/migrate:latest'
 - 'gcr.io/$PROJECT_ID/worker:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/worker:latest'
 - 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/cron:latest'
 - 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/frontend:latest'
-- 'gcr.io/$PROJECT_ID/integration-test:latest'
+- 'gcr.io/$PROJECT_ID/integration-test:latest' # cache this layer -- we can pull it to speed up future builds
