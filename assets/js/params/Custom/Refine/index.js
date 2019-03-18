@@ -247,9 +247,19 @@ class RefineGroup extends React.PureComponent {
   onKeyDown = (ev) => {
     switch (ev.keyCode) {
       case 27: // Escape
-        return this.setState({ value: this.props.name })
+        // We need to do two things: blur the <input> and reset self.state.
+        // Beware: if we naively call this.textInput.current.blur(), we'll
+        // submit the edit in our blur handler.
+        this.setState(
+          { name: this.props.name },
+          () => this.textInput.current ? this.textInput.current.blur() : null
+        )
+        return
       case 13: // Enter
-        return this.props.onChangeName(this.props.name, this.state.name)
+        // We need to do two things: blur the <input> and submit the change.
+        // DOM blur event does both.
+        this.textInput.current.blur()
+        return
       // else do nothing special
     }
   }
