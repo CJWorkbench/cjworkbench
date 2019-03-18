@@ -33,6 +33,12 @@ CLUSTER_NAME="workbench"
 #  --clusterrole cluster-admin \
 #  --user $(gcloud config get-value account)
 
+# Grant Cloud Build the permissions to call kubectl:
+# In GCP Console, visit the IAM menu.
+# From the list of service accounts, click the Roles drop-down menu beside the Cloud Build [YOUR-PROJECT-ID]@cloudbuild.gserviceaccount.com service account.
+# Click Kubernetes Engine, then click Kubernetes Engine Admin.
+# Click Save.
+
 # Enable "Application" resources (we use one for RabbitMQ)
 kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
 

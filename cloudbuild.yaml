@@ -103,6 +103,9 @@ steps:
       else
         echo 'Skipped deploy to staging: branch "$BRANCH_NAME" is not master' >&2
       fi
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-b'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=workbench'
 
 # Display images in Google Cloud Build status pages. (We pushed them
 # manually, so this doesn't actually do anything new.)
