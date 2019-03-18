@@ -111,7 +111,7 @@ steps:
       No cluster is set. To set the cluster (and the zone where it is found), set the environment variables
         CLOUDSDK_COMPUTE_ZONE=<cluster zone>
         CLOUDSDK_CONTAINER_CLUSTER=<cluster name>
-          EOF
+      EOF
           exit 1
         }
 
