@@ -97,6 +97,33 @@ steps:
     - -e
     - -c
     - |
+      # We overrode entrypoint; so we copy/paste its original stuff from
+      # https://github.com/GoogleCloudPlatform/cloud-builders/blob/master/kubectl/kubectl.bash
+      # BEGIN COPY/PASTE (doubling up '$$' for cloudbuild escape syntax)
+      # If there is no current context, get one.
+      if [[ $$(kubectl config current-context 2> /dev/null) == "" ]]; then
+        cluster=$$(gcloud config get-value container/cluster 2> /dev/null)
+        zone=$$(gcloud config get-value compute/zone 2> /dev/null)
+        project=$$(gcloud config get-value core/project 2> /dev/null)
+
+        function var_usage() {
+          cat <<EOF
+      No cluster is set. To set the cluster (and the zone where it is found), set the environment variables
+        CLOUDSDK_COMPUTE_ZONE=<cluster zone>
+        CLOUDSDK_CONTAINER_CLUSTER=<cluster name>
+          EOF
+          exit 1
+        }
+
+        [[ -z "$$cluster" ]] && var_usage
+        [[ -z "$$zone" ]] && var_usage
+
+        echo "Running: gcloud container clusters get-credentials --project=\"$$project\" --zone=\"$$zone\" \"$$cluster\""  >&2
+        gcloud container clusters get-credentials --project="$$project" --zone="$$zone" "$$cluster" || exit
+      fi
+      # END COPY/PASTE
+      # ... now we can get on with our actual script
+
       if [ "$BRANCH_NAME" = "master" ]; then
         deploy/advanced-deploy staging "$COMMIT_SHA"
         echo 'Deployed to staging. Run `deploy/update-production-to-staging` to deploy to production.' >&2
