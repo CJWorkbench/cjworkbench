@@ -70,19 +70,19 @@ describe('Refine', () => {
     })
   })
 
-  it('should render value counts in order', () => {
+  it('should render groups counts in order', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 2 },
+      valueCounts: { 'b': 2, 'a': 1 },
       value: DefaultValue
     })
 
     const dt1 = w.find('.summary').at(0)
-    expect(dt1.find('input[type="text"]').prop('value')).toEqual('b')
-    expect(dt1.find('.count').text()).toEqual('2')
+    expect(dt1.find('input[type="text"]').prop('value')).toEqual('a')
+    expect(dt1.find('.count').text()).toEqual('1')
 
     const dt2 = w.find('.summary').at(1)
-    expect(dt2.find('input[type="text"]').prop('value')).toEqual('a')
-    expect(dt2.find('.count').text()).toEqual('1')
+    expect(dt2.find('input[type="text"]').prop('value')).toEqual('b')
+    expect(dt2.find('.count').text()).toEqual('2')
   })
 
   it('should render commas in value counts', () => {
@@ -328,12 +328,13 @@ describe('Refine', () => {
 
   it('should focus the new group text for editing after merge', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 2, 'd': 1, 'e': 2, 'f': 1},
-      value: { renames: { 'bb': 'a' } }
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
+      value: { renames: { 'b': 'a' } }
     })
 
     w.find('input[name="include[a]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="include[b]"]').simulate('change', { target: { checked: true } })
+    // focus 'c'
+    w.find('input[name="include[c]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
     expect(document.activeElement['value']).toBe('a')
   })

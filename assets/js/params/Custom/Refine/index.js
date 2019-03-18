@@ -4,6 +4,7 @@ import RefineModal from './RefineModal'
 import { withFetchedData } from '../FetchedData'
 
 const NumberFormatter = new Intl.NumberFormat()
+const ValueCollator = new Intl.Collator() // in the user's locale
 
 export class RefineSpec {
   constructor (renames) {
@@ -49,8 +50,7 @@ export class RefineSpec {
     }
 
     // Sort groups, highest count to lowest
-    groupNames.sort((a, b) => (groupsByName[b].count - groupsByName[a].count) || a.localeCompare(b))
-
+    groupNames.sort(ValueCollator.compare)
     const groups = groupNames.map(g => groupsByName[g])
 
     return groups
@@ -185,9 +185,9 @@ class RefineModalPrompt extends React.PureComponent {
 class RefineGroup extends React.PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
-    isFocused: PropTypes.bool,  // focus text area immediately after group merged
     isVisible: PropTypes.bool.isRequired,
-    name: PropTypes.string, // new value -- may be empty string
+    isFocused: PropTypes.bool.isRequired, // update from false=>true will cause DOM focus+select()
+    name: PropTypes.string, // new value -- may be empty string because a '' group is valid
     values: PropTypes.arrayOf(PropTypes.string).isRequired, // sorted by count, descending -- may be empty
     count: PropTypes.number.isRequired, // number, strictly greater than 0
     isSelected: PropTypes.bool.isRequired,
@@ -214,13 +214,25 @@ class RefineGroup extends React.PureComponent {
     }
   }
 
-  // Set focus when group finishes merging
-  componentDidUpdate(oldProps, newProps) {
-    if (this.props.isFocused) {
+  getSnapshotBeforeUpdate (prevProps) {
+    if (!prevProps.isFocused && this.props.isFocused) {
+      // From the user's point of view, the user clicking "Merge facets" is an
+      // event that should cause focus to happen. We don't want to call focus()
+      // after _any_ render(): only after the first render() that happens after
+      // "Merge facets" is clicked. getSnapshotBeforeUpdate() helps here.
+      //
+      // Set snapshot.needFocus === true; we'll focus in componentDidUpdate().
+      return { needFocus: true }
+    } else {
+      return null
+    }
+  }
+
+  // Set focus ... only after clicking the "Merge facets" button.
+  componentDidUpdate (_, __, snapshot) {
+    if (snapshot !== null && snapshot.needFocus) {
       this.textInput.current.focus()
-      if (this.textInput.current.value === this.props.name) {
-        this.textInput.current.select()
-      }
+      this.textInput.current.select()
     }
   }
 
@@ -285,7 +297,7 @@ class RefineGroup extends React.PureComponent {
 
     const maybeValues = (isOriginal || !isExpanded) ? null : (
       <ul className='values'>
-        {values.sort((a, b) => a.localeCompare(b)).map(value => (
+        {values.sort(ValueCollator.compare).map(value => (
           <li key={value}>
             <span className='value'>{value}</span>
             <span className='count-and-remove'>
@@ -412,8 +424,8 @@ export class Refine extends React.PureComponent {
 
   state = {
     searchInput: '',
-    selectedValues: {}, // object for quick lookup
-    focusedValue: ''
+    selectedGroupNames: new Set(), // object for quick lookup
+    lastMergedGroupName: null
   }
 
   get parsedSpec () {
@@ -454,7 +466,7 @@ export class Refine extends React.PureComponent {
   }
 
   onReset = () => {
-    this.setState({ searchInput: '' })
+    this.setState({ searchInput: '', lastMergedGroupName: null })
   }
 
   onKeyDown = (ev) => {
@@ -468,47 +480,52 @@ export class Refine extends React.PureComponent {
 
   onInputChange = (ev) => {
     const searchInput = ev.target.value
-    this.setState({ searchInput })
+    this.setState({ searchInput, lastMergedGroupName: null })
   }
 
-  setIsSelected = (value, isChecked) => {
-    isChecked ? this.addSelectedValues([value]) : this.removeSelectedValues([value])
-  }
+  setIsGroupSelected = (group, isChecked) => {
+    const { selectedGroupNames } = this.state
+    if (isChecked === selectedGroupNames.has(group)) return
 
-  // ADD values to selectedValues. "All" button will not overwrite previously selected values.
-  addSelectedValues = (values) => {
-    let selectedValues = Object.assign({}, this.state.selectedValues)
-    for (var idx in values){
-      selectedValues[values[idx]] = null
+    const newSelectedGroups = new Set(selectedGroupNames)
+    if (isChecked) {
+      newSelectedGroups.add(group)
+    } else {
+      newSelectedGroups.delete(group)
     }
-    this.setState({ selectedValues: selectedValues })
-  }
 
-  removeSelectedValues = (values) => {
-    let selectedValues = Object.assign({}, this.state.selectedValues)
-    for (var idx in values){
-      if (values[idx] in selectedValues) {
-        delete selectedValues[values[idx]]
-      }
-    }
-    this.setState({ selectedValues: selectedValues })
+    this.setState({ selectedGroupNames: newSelectedGroups, lastMergedGroupName: null })
   }
 
   clearSelectedSearchValues = () => {
-    const matchingGroupsList = Object.keys(this.groupNamesMatching(this.state.searchInput))
-    this.removeSelectedValues(matchingGroupsList)
+    const selectedGroupNames = new Set(this.state.selectedGroupNames)
+
+    for (const groupName of this.groupNamesMatching(this.state.searchInput)) {
+      selectedGroupNames.delete(groupName)
+    }
+
+    if (selectedGroupNames.size !== this.state.selectedGroupNames.size) {
+      this.setState({ selectedGroupNames, lastMergedGroupName: null })
+    }
   }
 
   fillSelectedSearchValues = () => {
-    const matchingGroupsList = Object.keys(this.groupNamesMatching(this.state.searchInput))
-    this.addSelectedValues(matchingGroupsList)
+    const selectedGroupNames = new Set(this.state.selectedGroupNames)
+
+    for (const groupName of this.groupNamesMatching(this.state.searchInput)) {
+      selectedGroupNames.add(groupName)
+    }
+
+    if (selectedGroupNames.size !== this.state.selectedGroupNames.size) {
+      this.setState({ selectedGroupNames, lastMergedGroupName: null })
+    }
   }
 
   /**
-   * Find { name: null } Object enumerating matching group names
+   * Find Set enumerating matching group names
    */
   groupNamesMatching (searchInput) {
-    const groupNames = {} // { name: null } of matches
+    const groupNames = new Set()
 
     const valueCounts = this.props.valueCounts || {}
     const renames = this.parsedSpec.renames
@@ -517,9 +534,9 @@ export class Refine extends React.PureComponent {
     for (const value in valueCounts) {
       if (value.toLowerCase().includes(searchKey)) {
         if (value in renames) {
-          groupNames[renames[value]] = null
+          groupNames.add(renames[value])
         } else {
-          groupNames[value] = null
+          groupNames.add(value)
         }
       }
     }
@@ -527,28 +544,29 @@ export class Refine extends React.PureComponent {
     return groupNames
   }
 
-  clearFocus() {
-    this.setState({ focusedValue: '' })
-  }
-
-  /*
-    Determines the name value to default to for new group.
-    Order:
-      1. Group 'values' count
-      2. Group 'count'
-      3. Alphabetical
-  */
   mergeSelectedValues = () => {
-    const selectedValuesList = Object.keys(this.state.selectedValues)
-    const selectedGroups = this.groups.filter(obj => selectedValuesList.indexOf(obj.name) > -1)
+    const { selectedGroupNames } = this.state
+    const selectedGroups = this.groups.filter(g => selectedGroupNames.has(g.name))
 
-    selectedGroups.sort((a, b) => (b.count - a.count) || (b.values.length - a.values.length) || a.name.localeCompare(b.name))
+    // Determine the name value to default to for new group.
+    //
+    // Preference:
+    //
+    // 1. Group with largest 'values' count (number of records)
+    // 2. if tied, Group with largest 'count' (number of unique values)
+    // 3. if tied, Group with earliest alphabetical name
+    function comparePriority(a, b) {
+      if (b.count !== a.count) return b.count - a.count
+      if (b.values.length !== a.values.length) return b.values.length - a.values.length
+      return a.name.localeCompare(b.name)
+    }
+    selectedGroups.sort(comparePriority)
 
-    const toGroup = selectedGroups[0].name
+    const toGroup = selectedGroups[0]
     const groupMap = {}
-    selectedValuesList.forEach((fromGroup)  => groupMap[fromGroup] = toGroup)
+    selectedGroups.slice(1).forEach((fromGroup) => groupMap[fromGroup.name] = toGroup.name)
     this.massRename(groupMap)
-    this.setState({ selectedValues: [], focusedValue: toGroup })
+    this.setState({ selectedGroupNames: new Set(), lastMergedGroupName: toGroup.name })
   }
 
   rename = buildSpecModifier(this, 'rename')
@@ -558,20 +576,20 @@ export class Refine extends React.PureComponent {
 
   render () {
     const { valueCounts } = this.props
-    const { searchInput, selectedValues, focusedValue } = this.state
+    const { searchInput, selectedGroupNames, lastMergedGroupName } = this.state
     const groups = this.groups
     const isSearching = (searchInput !== '')
-    const matchingGroups = isSearching ? this.groupNamesMatching(searchInput) : null
+    const matchingGroupNames = isSearching ? this.groupNamesMatching(searchInput) : null
 
     const groupComponents = groups.map(group => (
       <RefineGroup
         key={group.name}
-        isFocused={group.name === this.state.focusedValue}
-        isSelected={group.name in selectedValues}
-        isVisible={(matchingGroups === null) || (group.name in matchingGroups)}
+        isFocused={group.name === this.state.lastMergedGroupName}
+        isSelected={selectedGroupNames.has(group.name)}
+        isVisible={matchingGroupNames === null || matchingGroupNames.has(group.name)}
         valueCounts={valueCounts}
         onChangeName={this.rename}
-        setIsSelected={this.setIsSelected}
+        setIsSelected={this.setIsGroupSelected}
         onResetGroup={this.resetGroup}
         onResetValue={this.resetValue}
         {...group}
@@ -581,8 +599,8 @@ export class Refine extends React.PureComponent {
     const canSearch = this.groups.length > 1
 
     const maybeMergeButton = groups.length > 0 ? (
-      <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={Object.keys(selectedValues).length < 2}>Merge facets</button>)
-      : null
+      <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={selectedGroupNames.size < 2}>Merge facets</button>
+    ) : null
 
     return (
       <div className='refine-parameter'>
@@ -612,7 +630,7 @@ export class Refine extends React.PureComponent {
         <div className="refine-actions">
           {maybeMergeButton}
           <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
-          { (isSearching && matchingGroups !== null && matchingGroups.length === 0) ? (
+          { (isSearching && matchingGroupNames !== null && matchingGroupNames.size === 0) ? (
             <div className='wf-module-error-msg'>No values</div>
           ) : null}
         </div>
