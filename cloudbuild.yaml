@@ -92,7 +92,7 @@ steps:
 
 # Deploy! (to staging server)
 - name: 'gcr.io/cloud-builders/kubectl'
-  entrypoint: sh
+  entrypoint: bash
   args:
     - -e
     - -c
