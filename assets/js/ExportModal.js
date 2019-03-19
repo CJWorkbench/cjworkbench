@@ -3,10 +3,7 @@ import PropTypes from 'prop-types'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { logUserEvent } from './utils'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
-import FormGroup from 'reactstrap/lib/FormGroup'
-import Label from 'reactstrap/lib/Label'
-import Input from 'reactstrap/lib/Input'
-
+import { FormGroup, Label, Input } from './components/Form'
 
 export default class ExportModal extends React.Component {
   static propTypes = {

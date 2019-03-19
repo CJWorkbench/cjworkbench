@@ -1,9 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
-import FormGroup from 'reactstrap/lib/FormGroup'
-import Label from 'reactstrap/lib/Label'
-import Input from 'reactstrap/lib/Input'
+import { FormGroup, Label, Input } from '../../../components/Form'
 
 export default class UpdateFrequencySelectModal extends React.PureComponent {
   constructor(props) {

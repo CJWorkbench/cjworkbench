@@ -2,9 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Column from '../Column'
 import ColorPicker from './ColorPicker'
-import InputGroup from 'reactstrap/lib/InputGroup'
-import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
-import Input from 'reactstrap/lib/Input'
+import { InputGroup, InputGroupAddon, Input } from '../../components/Form'
 import { defaultColors, getColor } from './ChartColors'
 
 export default class ChartSeriesSelect extends React.PureComponent {

@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { idxToLetter } from '../../utils'
 import { withJsonStringValues } from '../util'
-import Table from 'reactstrap/lib/Table'
 
 export class ReorderHistory extends React.Component {
   static propTypes = {
@@ -17,7 +16,7 @@ export class ReorderHistory extends React.Component {
     const { value } = this.props
 
     return (
-      <Table>
+      <table className='table'>
         <thead>
           <tr>
             <td className='reorder-info'>#</td>
@@ -36,7 +35,7 @@ export class ReorderHistory extends React.Component {
             </tr>
           ))}
         </tbody>
-      </Table>
+      </table>
     )
   }
 }
