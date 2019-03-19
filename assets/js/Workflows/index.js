@@ -2,12 +2,11 @@
 
 import React from 'react'
 import Navbar from './Navbar'
-import WorkflowContextMenu from './WorkflowContextMenu'
-import WorkflowMetadata from '../WorkflowMetadata'
 import PropTypes from 'prop-types'
 import ShareModal from '../ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
 import { goToUrl, logUserEvent } from '../utils'
 import SortMenu from './SortMenu'
+import Workflow from './Workflow'
 import TabContent from 'reactstrap/lib/TabContent'
 import TabPane from 'reactstrap/lib/TabPane'
 import Nav from 'reactstrap/lib/Nav'
@@ -177,24 +176,13 @@ export default class Workflows extends React.Component {
         <TabPane tabId={tab}>
           <div className='workflows-item--wrap'>
             {workflows.slice().sort(this.propComparator()).map(workflow => (
-              <a href={'/workflows/' + workflow.id} className='workflow-item' key={workflow.id}>
-                <div className='mt-1'>
-                  <div className='workflow-title'>{workflow.name}</div>
-                  <div className='wf-meta--id'>
-                    <WorkflowMetadata
-                      workflow={workflow}
-                      openShareModal={this.openShareModal}
-                    />
-                  </div>
-                </div>
-                <div onClick={this.preventDefault} className='menu-test-class'>
-                  <WorkflowContextMenu
-                    duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
-                    deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
-                    canDelete={tab === 'owned'}
-                  />
-                </div>
-              </a>
+              <Workflow
+                workflow={workflow}
+                key={workflow.id}
+                duplicateWorkflow={this.duplicateWorkflow}
+                deleteWorkflow={tab === 'owned' ? this.deleteWorkflow : null}
+                openShareModal={this.openShareModal}
+              />
             ))}
           </div>
         </TabPane>

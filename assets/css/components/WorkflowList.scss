@@ -35,11 +35,9 @@
     }
 
     p {
-      @extend .content-1;
+      @include content-1;
       margin-top: .5rem;
     }
-
-
   }
 
   .button-blue:hover {
@@ -58,7 +56,6 @@
       color:$brand-workspace;
     }
   }
-
 
   .workflows-list {
     border: 0;
@@ -253,13 +250,14 @@
         }
       }
     }
+
     // background of list
     .workflows-item--wrap {
-      padding:1px 1px 1px 1px;
+      padding: 1px;
       background-color: $page-background;
 
       // WF list
-      .workflow-item {
+      .workflow {
         height: 7rem;
         margin-bottom: 1px;
         border: 0;
@@ -272,15 +270,13 @@
         z-index: 3;
 
         &:first-child {
-          border-radius: .5rem .5rem 0 0;
+          border-radius-top-left: .5rem;
+          border-radius-top-right: .5rem;
         }
         &:last-child {
-          border-radius: 0 0 .5rem .5rem;
+          border-radius-bottom-left: .5rem;
+          border-radius-bottom-right: .5rem;
           margin-bottom: 0px;
-          // when there is only one WF in the list
-          &:first-child {
-            border-radius: .5rem;
-          }
         }
 
         .metadata-container {
@@ -292,10 +288,17 @@
           text-decoration: none;
         }
 
+        a {
+          // Make most of the list item clickable to open the link.
+          // The only part that isn't <a> is the context menu
+          display: block;
+          flex: 1 1 auto;
+        }
+
         .workflow-title {
-          @extend .content-1;
+          @include content-1;
           margin-bottom: .5rem;
-          color:$brand-text--dark;
+          color: $brand-text--dark;
         }
 
         .context-button {

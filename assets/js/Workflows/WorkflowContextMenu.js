@@ -7,20 +7,19 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 
 export default class WorkflowContextMenu extends React.Component {
   static propTypes = {
-    deleteWorkflow: PropTypes.func.isRequired,
-    duplicateWorkflow: PropTypes.func.isRequired,
-    canDelete: PropTypes.bool.isRequired
+    workflowId: PropTypes.number.isRequired,
+    deleteWorkflow: PropTypes.func, // func(id) ... or null if cannot delete
+    duplicateWorkflow: PropTypes.func.isRequired
   }
 
-  renderDelete = () => {
-    if (this.props.canDelete) {
-      return (
-        <DropdownItem onClick={this.props.deleteWorkflow} className='test-delete-button'>
-          <i className="icon-bin"></i>
-          <span>Delete</span>
-        </DropdownItem>
-      )
-    }
+  onClickDelete = () => {
+    const { workflowId, deleteWorkflow } = this.props
+    if (deleteWorkflow) deleteWorkflow(workflowId)
+  }
+
+  onClickDuplicate = () => {
+    const { workflowId, duplicateWorkflow } = this.props
+    duplicateWorkflow(workflowId)
   }
 
   render() {
@@ -30,11 +29,16 @@ export default class WorkflowContextMenu extends React.Component {
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
         <DropdownMenu positionFixed right>
-          <DropdownItem onClick={this.props.duplicateWorkflow} className='test-duplicate-button'>
+          <DropdownItem onClick={this.onClickDuplicate} className='duplicate-workflow'>
             <i className="icon-duplicate"></i>
             <span>Duplicate</span>
           </DropdownItem>
-          {this.renderDelete()}
+          {this.props.deleteWorkflow ? (
+            <DropdownItem onClick={this.onClickDelete} className='delete-workflow'>
+              <i className="icon-bin"></i>
+              <span>Delete</span>
+            </DropdownItem>
+          ) : null}
         </DropdownMenu>
       </UncontrolledDropdown>
     );
