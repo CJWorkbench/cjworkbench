@@ -4,7 +4,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Popover from 'reactstrap/lib/Popover'
-import DropdownItem from 'reactstrap/lib/DropdownItem'
+import { DropdownItem } from '../components/Dropdown'
 
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {

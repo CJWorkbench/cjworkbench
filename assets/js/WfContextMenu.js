@@ -3,10 +3,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
-import DropdownToggle from 'reactstrap/lib/DropdownToggle'
-import DropdownMenu from 'reactstrap/lib/DropdownMenu'
-import DropdownItem from 'reactstrap/lib/DropdownItem'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 
 export default class WfContextMenu extends React.Component {
   constructor(props) {

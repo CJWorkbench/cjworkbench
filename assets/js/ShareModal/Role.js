@@ -1,9 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DropdownToggle from 'reactstrap/lib/DropdownToggle'
-import DropdownMenu from 'reactstrap/lib/DropdownMenu'
-import DropdownItem from 'reactstrap/lib/DropdownItem'
-import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 
 const ReadOnlyRole = ({ canEdit }) => (
   <p className="role">
