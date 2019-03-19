@@ -128,7 +128,7 @@ class ValueList extends React.PureComponent {
   _itemKey = (index, data) => data.items[index]
 
   innerRender () {
-    const { valueCounts, loading, selection, items, nItemsTotal, itemHeight, maxHeight } = this.props
+    const { valueCounts, loading, items, nItemsTotal, maxHeight, itemHeight } = this.props
 
     if (!valueCounts && !loading) {
       // Waiting for user to select a column
@@ -138,7 +138,7 @@ class ValueList extends React.PureComponent {
     } else if (nItemsTotal === 0) {
       return 'Column does not have any values'
     } else if (items.length === 0) {
-      return 'No values'
+      return 'No values match your search'
     } else {
       const height = Math.min(maxHeight, items.length * itemHeight)
       return (
@@ -173,7 +173,7 @@ class ValueList extends React.PureComponent {
  */
 class DynamicallySizedValueList extends React.PureComponent {
   static propTypes = {
-    valueCounts: PropTypes.object, // or null if loading or no column selected -- passed to <ListRow>
+    valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
     selection: PropTypes.instanceOf(Set).isRequired, // selected values -- passed to <ListRow>
     items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // filtered search results -- passed to <ListRow>

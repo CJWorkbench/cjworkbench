@@ -1,5 +1,4 @@
 .param-refine {
-
   .in-module--search {
     color: $input-alt;
     position: relative;
@@ -35,10 +34,7 @@
         color: $brand-text--dark;
         opacity: .9;
       }
-
     }
-
-
 
     &::before {
       // "search" icon
@@ -48,7 +44,7 @@
       left: 1.3rem;
       font-size: 1.4rem;
       font-family: 'Workbench';
-      content: "\e91a "; // .icon-search
+      content: "\e91a"; // .icon-search
       color: $brand-text--dark;
     }
 
@@ -99,7 +95,6 @@
     }
   }
 
-
   .refine-actions {
     display: flex;
     align-items: center;
@@ -107,7 +102,7 @@
     margin-top: $param-margin;
 
     // Merge button changes color when at least 2 checkboxes have been selected
-    button[name='merge'] {
+    button[name=merge] {
       @extend %action-button;
       @extend %button-orange--fill;
       &:disabled {
@@ -126,9 +121,7 @@
     }
   }
 
-
-
-  ul.refine-groups { // contains the list of values
+  .refine-groups { // list of "groups" (each group is a set of renames)
     display: block;
     max-height: 30rem;
     overflow-y: auto;
@@ -138,8 +131,7 @@
     list-style: none;
     margin-top: $param-group-margin;
 
-    // Throughout Refine, any <button> should appear as inline text
-    button {
+    button { // "clear group" or "remove rename from group" button -- appear as inline text
       border: 0;
       margin: 0;
       padding: 0;
@@ -153,7 +145,7 @@
       }
     }
 
-    &>li { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
+    .refine-group { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
       display: block;
       width: 100%;
       max-width: 100%;
@@ -161,10 +153,6 @@
 
       & + li {
         //border-top: 1px solid $Vlight-gray;
-      }
-
-      &.not-visible {
-        display: none; // omitted by search
       }
     }
 

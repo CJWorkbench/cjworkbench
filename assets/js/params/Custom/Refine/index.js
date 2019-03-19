@@ -1,10 +1,86 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { VariableSizeList, shouldComponentUpdate } from 'react-window'
+import memoize from 'memoize-one'
 import RefineModal from './RefineModal'
 import { withFetchedData } from '../FetchedData'
 
 const NumberFormatter = new Intl.NumberFormat()
 const ValueCollator = new Intl.Collator() // in the user's locale
+
+function isObjectEmpty (obj) {
+  for (const v in obj) return false
+  return true
+}
+
+function immutableToggleInSet(set, value, isSet) {
+  const ret = new Set(set)
+  if (isSet) {
+    ret.add(value)
+  } else {
+    ret.delete(value)
+  }
+  return ret
+}
+
+/**
+ * A collection of values the user can see and manipulate.
+ *
+ * It has the following properties:
+ *
+ * * `name`: (string) the value the Refine module will output
+ * * `values`: (Array[string]) input values to rename (length >= 1)
+ * * `count`: number of records with a value in `values`
+ */
+export class Group {
+  constructor (name, values, count) {
+    this.name = name
+    this.values = values
+    this.count = count
+  }
+
+  get isEdited () {
+    if (!this.values) return undefined // React dev tools
+    return this.values.length > 1 || this.values[0] !== this.name
+  }
+}
+
+/**
+ * A Group, plus how the user wants it to appear in a list.
+ *
+ * Properties:
+ *
+ * * `group`: the Group
+ * * `isSelected`: if the "Merge" button action will include this Group
+ * * `isFocused`: if we want to focus this Group's text input as we render it
+ * * `wantExpand`: if the user expanded this Group. (It's `wantExpand`, not
+ *                 `isExpanded`, because the user can expand a group and then
+ *                 delete all edits from it, and it won't appear expanded in
+ *                 that case.)
+ */
+export class GroupForRender {
+  constructor (group, isSelected, isFocused, wantExpand) {
+    this.group = group
+    this.isSelected = isSelected
+    this.isFocused = isFocused
+    this.wantExpand = wantExpand
+  }
+
+  get name () { return this.group ? this.group.name : undefined }
+  get values () { return this.group ? this.group.values : undefined }
+  get count () { return this.group ? this.group.count : undefined }
+  get isEdited () { return this.group ? this.group.isEdited : undefined }
+
+  /**
+   * Should this Group appear expanded?
+   *
+   * It should be expanded if the user expanded it _and_ it's edited. (A
+   * Group without edits can't expand.)
+   */
+  get isExpanded () {
+    return this.wantExpand && this.isEdited
+  }
+}
 
 export class RefineSpec {
   constructor (renames) {
@@ -18,20 +94,16 @@ export class RefineSpec {
   }
 
   /**
-   * Return "groups": outputs, and their input
-   *
-   * Each "group" has the following properties:
-   *
-   * * `name`: a string describing the desired output
-   * * `values`: strings describing the desired input; empty if no edits
+   * Return `Group`s: outputs, and their input
    */
   buildGroupsForValueCounts (valueCounts) {
+    if (!valueCounts) return []
+
     const { renames } = this
 
-    const groupNames = []
+    const groups = []
     const groupsByName = {}
-    const allValues = Object.keys(valueCounts || {})
-    for (const value of allValues) {
+    for (const value in valueCounts) {
       const count = valueCounts[value]
       const groupName = value in renames ? renames[value] : value
 
@@ -40,18 +112,14 @@ export class RefineSpec {
         group.values.push(value)
         group.count += count
       } else {
-        groupNames.push(groupName)
-        groupsByName[groupName] = {
-          name: groupName,
-          values: [ value ],
-          count: count
-        }
+        const group = new Group(groupName, [ value ], count)
+        groups.push(group)
+        groupsByName[groupName] = group
       }
     }
 
-    // Sort groups, highest count to lowest
-    groupNames.sort(ValueCollator.compare)
-    const groups = groupNames.map(g => groupsByName[g])
+    // Sort groups alphabetically
+    groups.sort((a, b) => ValueCollator.compare(a.name, b.name))
 
     return groups
   }
@@ -94,7 +162,7 @@ export class RefineSpec {
   resetGroup (group) {
     const { renames } = this
 
-    const newRenames = Object.assign({}, renames)
+    const newRenames = { ...renames }
 
     for (const key in renames) {
       if (renames[key] === group) {
@@ -106,17 +174,8 @@ export class RefineSpec {
   }
 
   resetValue (value) {
-    const { renames } = this
-
-    const newRenames = Object.assign({}, renames)
+    const newRenames = { ...this.renames }
     delete newRenames[value]
-
-    // This _might_ remove a group. If it does, we need to remove that from
-    const newGroups = {}
-    for (const key in newRenames) {
-      newGroups[newRenames[key]] = null
-    }
-
     return new RefineSpec(newRenames)
   }
 }
@@ -126,10 +185,7 @@ export class RefineSpec {
  */
 class RefineModalPrompt extends React.PureComponent {
   static propTypes = {
-    groups: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      count: PropTypes.number.isRequired
-    }).isRequired).isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(Group).isRequired).isRequired,
     massRename: PropTypes.func.isRequired, // func({ oldGroup: newGroup, ... }) => undefined
   }
 
@@ -182,26 +238,26 @@ class RefineModalPrompt extends React.PureComponent {
   }
 }
 
-class RefineGroup extends React.PureComponent {
+class RefineGroup extends React.Component { // uses react-window's shouldComponentUpdate, not PureComponent
   static propTypes = {
+    style: PropTypes.object.isRequired, // CSS styles
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
-    isVisible: PropTypes.bool.isRequired,
-    isFocused: PropTypes.bool.isRequired, // update from false=>true will cause DOM focus+select()
-    name: PropTypes.string, // new value -- may be empty string because a '' group is valid
-    values: PropTypes.arrayOf(PropTypes.string).isRequired, // sorted by count, descending -- may be empty
-    count: PropTypes.number.isRequired, // number, strictly greater than 0
-    isSelected: PropTypes.bool.isRequired,
-    onChangeName: PropTypes.func.isRequired, // func(oldName, newName) => undefined
-    setIsSelected: PropTypes.func.isRequired, // func(value, isChecked) => undefined
-    onResetGroup: PropTypes.func.isRequired, // func(name) => undefined
-    onResetValue: PropTypes.func.isRequired // func(value) => undefined
+    group: PropTypes.instanceOf(GroupForRender).isRequired,
+    changeGroupName: PropTypes.func.isRequired, // func(oldName, newName) => undefined
+    setIsGroupSelected: PropTypes.func.isRequired, // func(value, isSelected) => undefined
+    setIsGroupExpanded: PropTypes.func.isRequired, // func(value, isExpanded) => undefined
+    resetGroup: PropTypes.func.isRequired, // func(name) => undefined
+    resetValue: PropTypes.func.isRequired // func(value) => undefined
   }
+
+  // https://react-window.now.sh/#/api/shouldComponentUpdate -- big speedup
+  // over React.PureComponent because we don't re-render when scrolling
+  shouldComponentUpdate = shouldComponentUpdate.bind(this)
 
   textInput = React.createRef()
 
   state = {
-    name: this.props.name,
-    isExpanded: false
+    name: this.props.group.name
   }
 
   onChangeName = (ev) => {
@@ -209,13 +265,15 @@ class RefineGroup extends React.PureComponent {
   }
 
   onBlurName = () => {
-    if (this.props.name !== this.state.name) {
-      this.props.onChangeName(this.props.name, this.state.name)
+    const { group, changeGroupName } = this.props
+
+    if (group.name !== this.state.name) {
+      changeGroupName(group.name, this.state.name)
     }
   }
 
   getSnapshotBeforeUpdate (prevProps) {
-    if (!prevProps.isFocused && this.props.isFocused) {
+    if (!prevProps.group.isFocused && this.props.group.isFocused) {
       // From the user's point of view, the user clicking "Merge facets" is an
       // event that should cause focus to happen. We don't want to call focus()
       // after _any_ render(): only after the first render() that happens after
@@ -236,12 +294,26 @@ class RefineGroup extends React.PureComponent {
     }
   }
 
+  // Set focus ... after newly rendering
+  //
+  // This handles the case:
+  //
+  // 1. Load lots and lots of data
+  // 2. Rename an item ... changing its position in the list by lots and lots
+  // 3. Scroll to render that item (previously it wasn't rendered)
+  componentDidMount () {
+    if (this.props.group.isFocused) {
+      this.textInput.current.focus()
+      this.textInput.current.select()
+    }
+  }
+
   onChangeIsSelected = (ev) => {
-    this.props.setIsSelected(this.props.name, ev.target.checked)
+    this.props.setIsGroupSelected(this.props.group.name, ev.target.checked)
   }
 
   onChangeIsExpanded = (ev) => {
-    this.setState({ isExpanded: ev.target.checked })
+    this.props.setIsGroupExpanded(this.props.group.name, ev.target.checked)
   }
 
   onKeyDown = (ev) => {
@@ -251,7 +323,7 @@ class RefineGroup extends React.PureComponent {
         // Beware: if we naively call this.textInput.current.blur(), we'll
         // submit the edit in our blur handler.
         this.setState(
-          { name: this.props.name },
+          { name: this.props.group.name },
           () => this.textInput.current ? this.textInput.current.blur() : null
         )
         return
@@ -265,36 +337,34 @@ class RefineGroup extends React.PureComponent {
   }
 
   onClickRemove = (ev) => {
-    this.props.onResetValue(ev.target.getAttribute('data-value'))
+    this.props.resetValue(ev.target.getAttribute('data-value'))
   }
 
   onClickReset = (ev) => {
-    this.props.onResetGroup(this.props.name)
+    this.props.resetGroup(this.props.group.name)
   }
 
   render () {
-    const { name, isExpanded } = this.state
-    const { count, values, valueCounts, isVisible } = this.props
+    const { name } = this.state
+    const { style, group, valueCounts } = this.props
+    // isEdited is from _props_, not state.
+    // If user is _editing_, that doesn't mean the group is _edited_.
+    const className=`refine-group ${group.isEdited ? 'edited' : 'original'}`
 
-    // isOriginal uses this._props_.name, not this._state_. The group the
-    // buttons would modify is this.props.name.
-    const isOriginal = values.length === 1 && values[0] === this.props.name
-    const className=`${isVisible ? 'visible' : 'not-visible'} ${isOriginal ? 'original' : 'edited'}`
-
-    const maybeExpandCheckbox = isOriginal ? null : (
+    const maybeExpandCheckbox = group.isEdited ? (
       <label className='expand'>
         <input
           type='checkbox'
           name='expand'
-          title={isExpanded ? 'Hide original values' : 'Show original values'}
-          checked={isExpanded}
+          title={group.isExpanded ? 'Hide original values' : 'Show original values'}
+          checked={group.isExpanded}
           onChange={this.onChangeIsExpanded}
         />
-        <i className={isExpanded ? 'icon-caret-down' : 'icon-caret-right'} />
+        <i className={group.isExpanded ? 'icon-caret-down' : 'icon-caret-right'} />
       </label>
-    )
+    ) : null
 
-    const maybeResetButton = isOriginal ? null : (
+    const maybeResetButton = group.isEdited ? (
       <button
         name='reset'
         type='button'
@@ -303,18 +373,18 @@ class RefineGroup extends React.PureComponent {
       >
         <i className='icon-undo' />
       </button>
-    )
+    ) : null
 
-    const maybeValues = (isOriginal || !isExpanded) ? null : (
+    const maybeValues = group.isExpanded ? (
       <ul className='values'>
-        {values.sort(ValueCollator.compare).map(value => (
+        {group.values.sort(ValueCollator.compare).map(value => (
           <li key={value}>
             <span className='value'>{value}</span>
             <span className='count-and-remove'>
-              { this.props.name === value ? null : (
+              { group.name === value ? null : (
                 <button
                   type='button'
-                  name={`remove[${this.props.name}]`}
+                  name={`remove[${group.name}]`}
                   data-value={value}
                   onClick={this.onClickRemove}
                   className='icon-close'
@@ -326,27 +396,27 @@ class RefineGroup extends React.PureComponent {
           </li>
         ))}
       </ul>
-    )
+    ) : null
 
     return (
-      <li className={className}>
+      <div className={className} style={style}>
         <div className='summary'>
           <input
-            name={`include[${this.props.name}]`}
+            name={`select[${group.name}]`}
             type='checkbox'
-            title='Include these rows'
-            checked={this.props.isSelected}
+            title='Select these rows'
+            checked={group.isSelected}
             onChange={this.onChangeIsSelected}
           />
           {maybeExpandCheckbox}
           <span className='count-and-reset'>
             {maybeResetButton}
-            <span className='count'>{NumberFormatter.format(count)}</span>
+            <span className='count'>{NumberFormatter.format(group.count)}</span>
           </span>
           <div className='growing'>
             <input
               type='text'
-              name={`rename[${this.props.name}]`}
+              name={`rename[${group.name}]`}
               value={this.state.name}
               ref={this.textInput}
               onChange={this.onChangeName}
@@ -356,7 +426,7 @@ class RefineGroup extends React.PureComponent {
           </div>
         </div>
         {maybeValues}
-      </li>
+      </div>
     )
   }
 }
@@ -365,7 +435,7 @@ const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
   const func = RefineSpec.prototype[helperName]
 
   return (...args) => {
-    const oldSpec = _this.parsedSpec
+    const oldSpec = new RefineSpec(_this.props.value.renames)
     const newSpec = func.apply(oldSpec, args)
     _this.props.onChange(newSpec.toJsonObject())
     if (shouldSubmit) _this.props.onSubmit()
@@ -375,21 +445,21 @@ const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
 export class AllNoneButtons extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
-    clearSelectedSearchValues: PropTypes.func.isRequired, // func() => undefined
-    fillSelectedSearchValues: PropTypes.func.isRequired // func() => undefined
+    deselectMatchingGroups: PropTypes.func.isRequired, // func() => undefined
+    selectMatchingGroups: PropTypes.func.isRequired // func() => undefined
   }
 
   render() {
-    const { isReadOnly, clearSelectedSearchValues, fillSelectedSearchValues } = this.props
+    const { isReadOnly, deselectMatchingGroups, selectMatchingGroups } = this.props
 
     return (
-      <div className="all-none-buttons">
+      <div className='all-none-buttons'>
         <button
           disabled={isReadOnly}
           type='button'
           name='refine-select-all'
           title='Select All'
-          onClick={fillSelectedSearchValues}
+          onClick={selectMatchingGroups}
         >
           All
         </button>
@@ -398,12 +468,250 @@ export class AllNoneButtons extends React.PureComponent {
           type='button'
           name='refine-select-none'
           title='Select None'
-          onClick={clearSelectedSearchValues}
+          onClick={deselectMatchingGroups}
         >
           None
         </button>
       </div>
     )
+  }
+}
+
+class GroupList extends React.PureComponent {
+  static propTypes = {
+    valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
+    loading: PropTypes.bool.isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(GroupForRender).isRequired).isRequired,
+    changeGroupName: PropTypes.func.isRequired, // func(groupName, newGroupName) => undefined
+    setIsGroupSelected: PropTypes.func.isRequired, // func(groupName, isSelected) => undefined
+    setIsGroupExpanded: PropTypes.func.isRequired, // func(groupName, isExpanded) => undefined
+    resetGroup: PropTypes.func.isRequired, // func(groupName) => undefined
+    resetValue: PropTypes.func.isRequired, // func(value) => undefined
+    groupHeight: PropTypes.number.isRequired, // height of a closed group
+    valueHeight: PropTypes.number.isRequired, // height of a single value within an open group
+    expandedGroupHeight: PropTypes.number.isRequired, // height of an open group (minus all its values)
+    maxHeight: PropTypes.number.isRequired
+  }
+
+  listRef = React.createRef()
+
+  groupHeight (group) {
+    const { groupHeight, valueHeight, expandedGroupHeight } = this.props
+    if (group.isExpanded) {
+      return expandedGroupHeight + valueHeight * group.values.length
+    } else {
+      return groupHeight
+    }
+  }
+
+  _itemKey = (index, data) => data.groups[index].name
+
+  _itemSize = (index) => {
+    const { groups, groupHeight, valueHeight, expandedGroupHeight } = this.props
+    const group = groups[index]
+    return this.groupHeight(group)
+  }
+
+  /**
+   * Return data that requires re-render on change.
+   */
+  get _itemData () {
+    return this._buildItemData(this.props.valueCounts, this.props.groups)
+  }
+
+  _buildItemData = memoize((valueCounts, groups) => {
+    return { valueCounts, groups }
+  })
+
+  _renderRow = ({ index, style, data }) => {
+    const { valueCounts, groups } = data
+    const { changeGroupName, setIsGroupSelected, setIsGroupExpanded, resetGroup, resetValue } = this.props
+
+    return (
+      <RefineGroup
+        style={style}
+        valueCounts={valueCounts}
+        group={groups[index]}
+        changeGroupName={changeGroupName}
+        setIsGroupSelected={setIsGroupSelected}
+        setIsGroupExpanded={setIsGroupExpanded}
+        resetGroup={resetGroup}
+        resetValue={resetValue}
+      />
+    )
+  }
+
+  get height () {
+    const { maxHeight, groups } = this.props
+
+    let height = 0
+    for (const group of groups) {
+      height += this.groupHeight(group)
+      if (height >= maxHeight) return maxHeight
+    }
+
+    return height
+  }
+
+  getSnapshotBeforeUpdate (prevProps) {
+    return { focusIndex: prevProps.groups.findIndex(g => g.isFocused) }
+  }
+
+  componentDidUpdate (_, __, snapshot) {
+    const focusIndex = this.props.groups.findIndex(g => g.isFocused)
+    if (focusIndex !== -1 && snapshot && focusIndex !== snapshot.focusIndex && this.listRef.current) {
+      // From the user's point of view, the user clicking "Merge facets" is an
+      // event that should scroll to the new group. We don't want to scroll
+      // after _any_ render(): only after the first render() that happens after
+      // "Merge facets" is clicked. getSnapshotBeforeUpdate() helps here.
+      //
+      // See also RefineGroup.componentDidMount() and componentDidUpdate():
+      // they'll focus the element after we scroll to it (and in the case of
+      // scrolling, after we mount it for the first time).
+      this.listRef.current.scrollToItem(focusIndex)
+    }
+  }
+
+  innerRender () {
+    const { valueCounts, loading, groups, groupHeight, changeGroupName, setIsGroupSelected, resetGroup, resetValue } = this.props
+
+    if (!valueCounts && !loading) {
+      // Waiting for user to select a column
+      return null
+    } else if (loading) {
+      return 'Loading values…'
+    } else if (isObjectEmpty(valueCounts)) {
+      return 'Column does not have any values'
+    } else if (groups.length === 0) {
+      return 'No values match your search'
+    } else {
+      if (this.listRef.current) {
+        // If we're re-rendering this component, then it's likely a list item
+        // has changed height. Clear react-window's style cache.
+        //
+        // [adamhooper, 2019-03-19] I haven't found a tidier way to do this.
+        // We can't merely clear the cache when handling user events, because
+        // groups can change without any user events occurring.
+        this.listRef.current.resetAfterIndex(0, false)
+      }
+
+      return (
+        <VariableSizeList
+          ref={this.listRef}
+          className='react-list'
+          height={this.height}
+          estimatedItemSize={groupHeight /* most items aren't expanded */}
+          itemSize={this._itemSize}
+          itemKey={this._itemKey}
+          itemCount={groups.length}
+          itemData={this._itemData}
+        >
+          {this._renderRow}
+        </VariableSizeList>
+      )
+    }
+  }
+
+  render () {
+    const { outerRef } = this.props
+
+    return (
+      <div className='refine-groups' ref={outerRef}>{this.innerRender()}</div>
+    )
+  }
+}
+
+/**
+ * GroupList, with maxHeight, groupHeight, valueHeight and expandedGroupHeight calculated automatically.
+ *
+ * The trick is: first we render a dummy list and calculate heights using  that.
+ * Then we delete the dummy list and use the calculated heights in an _actual_ list.
+ * This lets us read data from CSS.
+ */
+class DynamicallySizedGroupList extends React.PureComponent {
+  static propTypes = {
+    valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
+    loading: PropTypes.bool.isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(GroupForRender)),
+    changeGroupName: PropTypes.func.isRequired, // func(groupName, newGroupName) => undefined
+    setIsGroupSelected: PropTypes.func.isRequired, // func(groupName, isSelected) => undefined
+    setIsGroupExpanded: PropTypes.func.isRequired, // func(groupName, isExpanded) => undefined
+    resetGroup: PropTypes.func.isRequired, // func(groupName) => undefined
+    resetValue: PropTypes.func.isRequired // func(value) => undefined
+  }
+
+  sizerRef = React.createRef()
+
+  state = {
+    groupHeight: null,
+    valueHeight: null,
+    expandedGroupHeight: null,
+    maxHeight: null
+  }
+
+  componentDidMount () {
+    // This is _always_ called with phony, measurement-only data.
+    const sizer = this.sizerRef.current
+
+    const sizerStyle = window.getComputedStyle(sizer)
+    let maxHeight
+    if (!sizerStyle.maxHeight || sizerStyle.maxHeight === 'none') {
+      maxHeight = Infinity
+    } else {
+      maxHeight = parseFloat(sizerStyle.maxHeight) // parseFloat: convert e.g. "300px" to 300
+    }
+
+    const closedGroup = sizer.querySelector('.refine-group:nth-child(1)')
+    const expandedGroup1Value = sizer.querySelector('.refine-group:nth-child(2)')
+    const expandedGroup2Values = sizer.querySelector('.refine-group:nth-child(3)')
+
+    const groupHeight = closedGroup.scrollHeight
+    const valueHeight = expandedGroup2Values.scrollHeight - expandedGroup1Value.scrollHeight
+    const expandedGroupHeight = expandedGroup1Value.scrollHeight - valueHeight
+
+    this.setState({
+      maxHeight,
+      // Set default heights for unit tests, where scrollHeight is always 0
+      groupHeight: groupHeight || 1,
+      valueHeight: valueHeight || 1,
+      expandedGroupHeight: expandedGroupHeight || 1
+    })
+  }
+
+  render () {
+    if (this.state.maxHeight === null) {
+      // Render placeholder list; we'll use it for measuring in this.componentDidMount()
+      return (
+        <GroupList
+          key='placeholder'
+          valueCounts={{a: 1, b1: 1, c: 1, c2: 1}}
+          loading={false}
+          groups={[
+            new GroupForRender(new Group('a', ['a'], 1), false, false, false),
+            new GroupForRender(new Group('b', ['b1'], 1), false, false, true),
+            new GroupForRender(new Group('c', ['c', 'c2'], 1), false, false, true)
+          ]}
+          changeGroupName={() => {}}
+          setIsGroupSelected={() => {}}
+          setIsGroupExpanded={() => {}}
+          resetGroup={() => {}}
+          resetValue={() => {}}
+          maxHeight={99}
+          groupHeight={1}
+          valueHeight={1}
+          expandedGroupHeight={1}
+          outerRef={this.sizerRef}
+        />
+      )
+    } else {
+      return (
+        <GroupList
+          key='sized'
+          {...this.state}
+          {...this.props}
+        />
+      )
+    }
   }
 }
 
@@ -434,22 +742,9 @@ export class Refine extends React.PureComponent {
 
   state = {
     searchInput: '',
-    selectedGroupNames: new Set(), // object for quick lookup
-    lastMergedGroupName: null
-  }
-
-  get parsedSpec () {
-    const { value } = this.props
-
-    if (this._parsedSpec && this._parsedSpec.value === value) {
-      // Memoized
-      return this._parsedSpec.retval
-    } else {
-      const { renames } = value
-      const retval = new RefineSpec(renames)
-      this._parsedSpec = { value, retval }
-      return retval
-    }
+    selectedGroupNames: new Set(),
+    expandedGroupNames: new Set(),
+    focusGroupName: null
   }
 
   /**
@@ -461,22 +756,17 @@ export class Refine extends React.PureComponent {
    * * `values`: strings describing the desired input; empty if no edits
    */
   get groups () {
-    const valueCounts = this.props.valueCounts
-    const parsedSpec = this.parsedSpec
-
-    if (this._groups && this._groups.valueCounts === valueCounts && this._groups.parsedSpec === parsedSpec) {
-      // memoize retval
-      return this._groups.retval
-    } else {
-      if (valueCounts === null) return []
-      const retval = parsedSpec.buildGroupsForValueCounts(valueCounts)
-      this._groups = { valueCounts, parsedSpec, retval }
-      return retval
-    }
+    const { valueCounts, value: { renames } } = this.props
+    return this._buildGroups(valueCounts, renames)
   }
 
+  _buildGroups = memoize((valueCounts, renames) => {
+    if (!valueCounts) return []
+    return new RefineSpec(renames).buildGroupsForValueCounts(valueCounts)
+  })
+
   onReset = () => {
-    this.setState({ searchInput: '', lastMergedGroupName: null })
+    this.setState({ searchInput: '', focusGroupName: null })
   }
 
   onKeyDown = (ev) => {
@@ -490,69 +780,70 @@ export class Refine extends React.PureComponent {
 
   onInputChange = (ev) => {
     const searchInput = ev.target.value
-    this.setState({ searchInput, lastMergedGroupName: null })
+    this.setState({ searchInput, focusGroupName: null })
   }
 
-  setIsGroupSelected = (group, isChecked) => {
+  setIsGroupExpanded = (groupName, isExpanded) => {
+    const { expandedGroupNames } = this.state
+    if (isExpanded === expandedGroupNames.has(groupName)) return
+    const newExpandedGroupNames = immutableToggleInSet(expandedGroupNames, groupName, isExpanded)
+    this.setState({ expandedGroupNames: newExpandedGroupNames, focusGroupName: null })
+  }
+
+  setIsGroupSelected = (groupName, isSelected) => {
     const { selectedGroupNames } = this.state
-    if (isChecked === selectedGroupNames.has(group)) return
-
-    const newSelectedGroups = new Set(selectedGroupNames)
-    if (isChecked) {
-      newSelectedGroups.add(group)
-    } else {
-      newSelectedGroups.delete(group)
-    }
-
-    this.setState({ selectedGroupNames: newSelectedGroups, lastMergedGroupName: null })
+    if (isSelected === selectedGroupNames.has(groupName)) return
+    const newSelectedGroupNames = immutableToggleInSet(selectedGroupNames, groupName, isSelected)
+    this.setState({ selectedGroupNames: newSelectedGroupNames, focusGroupName: null })
   }
 
-  clearSelectedSearchValues = () => {
+  deselectMatchingGroups = () => {
     const selectedGroupNames = new Set(this.state.selectedGroupNames)
 
-    for (const groupName of this.groupNamesMatching(this.state.searchInput)) {
-      selectedGroupNames.delete(groupName)
+    for (const group of this.matchingGroups) {
+      selectedGroupNames.delete(group.name)
     }
 
     if (selectedGroupNames.size !== this.state.selectedGroupNames.size) {
-      this.setState({ selectedGroupNames, lastMergedGroupName: null })
+      this.setState({ selectedGroupNames, focusGroupName: null })
     }
   }
 
-  fillSelectedSearchValues = () => {
+  selectMatchingGroups = () => {
     const selectedGroupNames = new Set(this.state.selectedGroupNames)
 
-    for (const groupName of this.groupNamesMatching(this.state.searchInput)) {
-      selectedGroupNames.add(groupName)
+    for (const group of this.matchingGroups) {
+      selectedGroupNames.add(group.name)
     }
 
     if (selectedGroupNames.size !== this.state.selectedGroupNames.size) {
-      this.setState({ selectedGroupNames, lastMergedGroupName: null })
+      this.setState({ selectedGroupNames, focusGroupName: null })
     }
   }
 
   /**
-   * Find Set enumerating matching group names
+   * Iterate over search results.
+   *
+   * If this.state.searchInput === null, return `this.groups`.
    */
-  groupNamesMatching (searchInput) {
-    const groupNames = new Set()
+  get matchingGroups () {
+    const { searchInput } = this.state
+    return this._buildMatchingGroups(this.groups, searchInput)
+  }
 
-    const valueCounts = this.props.valueCounts || {}
-    const renames = this.parsedSpec.renames
+  _buildMatchingGroups = memoize((groups, searchInput) => {
+    if (!searchInput) return groups
 
     const searchKey = searchInput.toLowerCase()
-    for (const value in valueCounts) {
-      if (value.toLowerCase().includes(searchKey)) {
-        if (value in renames) {
-          groupNames.add(renames[value])
-        } else {
-          groupNames.add(value)
-        }
-      }
-    }
 
-    return groupNames
-  }
+    return groups.filter(group => {
+      if (group.name.toLowerCase().includes(searchKey)) return true
+      for (const value of group.values) {
+        if (value.toLowerCase().includes(searchKey)) return true
+      }
+      return false
+    })
+  })
 
   mergeSelectedValues = () => {
     const { selectedGroupNames } = this.state
@@ -576,35 +867,41 @@ export class Refine extends React.PureComponent {
     const groupMap = {}
     selectedGroups.slice(1).forEach((fromGroup) => groupMap[fromGroup.name] = toGroup.name)
     this.massRename(groupMap)
-    this.setState({ selectedGroupNames: new Set(), lastMergedGroupName: toGroup.name })
+    this.setState({ selectedGroupNames: new Set(), focusGroupName: toGroup.name })
   }
 
-  rename = buildSpecModifier(this, 'rename')
+  setGroupName = (groupName, newGroupName) => {
+    buildSpecModifier(this, 'rename')(groupName, newGroupName)
+    // The user just renamed a group or value. Scroll+focus the new group.
+    //
+    // This handles the case:
+    //
+    // 1. User opens big list
+    // 2. User edits "aaa"
+    // 3. User sets value to "zzz"
+    //
+    // Expected results: "zzz" is in view
+    // ... a side-effect is that we select() the "zzz" so user's keypresses
+    // overwrite it. Workaround: the user can hit Escape to undo those
+    // keypresses or Tab to unfocus the "zzz".
+    this.setState({ focusGroupName: newGroupName })
+  }
+
   massRename = buildSpecModifier(this, 'massRename')
   resetGroup = buildSpecModifier(this, 'resetGroup')
   resetValue = buildSpecModifier(this, 'resetValue')
 
   render () {
-    const { valueCounts } = this.props
-    const { searchInput, selectedGroupNames, lastMergedGroupName } = this.state
-    const groups = this.groups
+    const { valueCounts, loading } = this.props
+    const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName } = this.state
     const isSearching = (searchInput !== '')
-    const matchingGroupNames = isSearching ? this.groupNamesMatching(searchInput) : null
-
-    const groupComponents = groups.map(group => (
-      <RefineGroup
-        key={group.name}
-        isFocused={group.name === this.state.lastMergedGroupName}
-        isSelected={selectedGroupNames.has(group.name)}
-        isVisible={matchingGroupNames === null || matchingGroupNames.has(group.name)}
-        valueCounts={valueCounts}
-        onChangeName={this.rename}
-        setIsSelected={this.setIsGroupSelected}
-        onResetGroup={this.resetGroup}
-        onResetValue={this.resetValue}
-        {...group}
-      />
-    ))
+    const groups = this.matchingGroups
+      .map(g => new GroupForRender(
+        g,
+        selectedGroupNames.has(g.name),
+        focusGroupName === g.name,
+        expandedGroupNames.has(g.name)
+      ))
 
     const canSearch = this.groups.length > 1
 
@@ -616,7 +913,7 @@ export class Refine extends React.PureComponent {
       <div className='refine-parameter'>
         { !canSearch ? null : (
           <React.Fragment>
-            <fieldset className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
+            <fieldset className='in-module--search' onSubmit={this.onSubmit} onReset={this.onReset}>
               <input
                 type='search'
                 placeholder='Search facets...'
@@ -625,24 +922,35 @@ export class Refine extends React.PureComponent {
                 onChange={this.onInputChange}
                 onKeyDown={this.onKeyDown}
               />
-              <button type="button" onClick={this.onReset} className="close" title="Clear Search"><i className="icon-close"></i></button>
+              <button
+                type='button'
+                onClick={this.onReset}
+                className='close'
+                title='Clear Search'
+              >
+                <i className='icon-close'></i>
+              </button>
             </fieldset>
             <AllNoneButtons
               isReadOnly={false}
-              clearSelectedSearchValues={this.clearSelectedSearchValues}
-              fillSelectedSearchValues={this.fillSelectedSearchValues}
+              deselectMatchingGroups={this.deselectMatchingGroups}
+              selectMatchingGroups={this.selectMatchingGroups}
             />
           </React.Fragment>
         )}
-        <ul className='refine-groups'>
-          {groupComponents}
-        </ul>
-        <div className="refine-actions">
+        <DynamicallySizedGroupList
+          valueCounts={valueCounts}
+          loading={loading}
+          groups={groups}
+          changeGroupName={this.setGroupName}
+          setIsGroupSelected={this.setIsGroupSelected}
+          setIsGroupExpanded={this.setIsGroupExpanded}
+          resetGroup={this.resetGroup}
+          resetValue={this.resetValue}
+        />
+        <div className='refine-actions'>
           {maybeMergeButton}
           <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
-          { (isSearching && matchingGroupNames !== null && matchingGroupNames.size === 0) ? (
-            <div className='wf-module-error-msg'>No values</div>
-          ) : null}
         </div>
       </div>
     )

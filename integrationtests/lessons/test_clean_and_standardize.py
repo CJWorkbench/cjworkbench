@@ -135,14 +135,6 @@ class TestLesson(LessonTest):
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
         self.submit_wf_module()
 
-        """Refine module no longer filters values"""
-        """
-        # Okay, we're done now
-        self.expect_highlight(2, '.wf-module[data-module-name="Refine"]')
-        b.uncheck('include[Denver - Aurora]')
-        self.submit_wf_module()
-        """
-
         self.expect_highlight_next()
         self.click_next()
 
