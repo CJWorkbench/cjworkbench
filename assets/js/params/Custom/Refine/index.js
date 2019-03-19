@@ -402,6 +402,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
       <div className={className} style={style}>
         <div className='summary'>
           <input
+            className='select'
             name={`select[${group.name}]`}
             type='checkbox'
             title='Select these rows'
@@ -409,12 +410,9 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
             onChange={this.onChangeIsSelected}
           />
           {maybeExpandCheckbox}
-          <span className='count-and-reset'>
-            {maybeResetButton}
-            <span className='count'>{NumberFormatter.format(group.count)}</span>
-          </span>
-          <div className='growing'>
+          <div className='rename-sizer'>
             <input
+              className='rename'
               type='text'
               name={`rename[${group.name}]`}
               value={this.state.name}
@@ -424,6 +422,10 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
               onKeyDown={this.onKeyDown}
             />
           </div>
+          <span className='count-and-reset'>
+            {maybeResetButton}
+            <span className='count'>{NumberFormatter.format(group.count)}</span>
+          </span>
         </div>
         {maybeValues}
       </div>

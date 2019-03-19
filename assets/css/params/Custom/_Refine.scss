@@ -122,13 +122,7 @@
   }
 
   .refine-groups { // list of "groups" (each group is a set of renames)
-    display: block;
     max-height: 30rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-    list-style: none;
     margin-top: $param-group-margin;
 
     button { // "clear group" or "remove rename from group" button -- appear as inline text
@@ -146,56 +140,47 @@
     }
 
     .refine-group { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      padding: .3rem 0 0;
-
-      & + li {
-        //border-top: 1px solid $Vlight-gray;
-      }
+      overflow: hidden;
+      // padding-right so span.count isn't flush with the scrollbar when there's a scrollbar
+      padding: 0 .5rem 0 0;
     }
 
     div.summary {
-      // Use float instead of flexbox for speedier rendering.
-      // see https://www.pivotaltracker.com/story/show/160173068
+      display: flex;
+      align-items: center;
 
-      &>input {// "filter" checkbox
-        float: left;
-        position: relative;
-        top: .5rem;
+      input.select {
         cursor: pointer;
       }
 
       label.expand {
-        // "expand" checkbox -- renders as an icon
-        float: left;
-
+        // "expand" checkbox -- renders as an icon, not the checkbox
+        input { display: none; }
+        cursor: pointer;
         margin: 0;
-        width: 1rem;
+        padding: 0 .5rem 0 0;
+        line-height: 0; // give <label> the height of its <i class="icon">
 
-        // Line up with the rest
-        position: relative;
-        top: .2rem;
-
-        input {
-          display: none;
+        i.icon-caret-right {
+          margin-left: .3rem;
+          font-size: 1.1rem;
+        }
+        i.icon-caret-down {
+          margin-top: .1rem;
+          font-size: .7rem;
         }
       }
 
-      &>.growing {
-        // The name and "expand" icon appear together. They take all available
-        // space, so the count is right-aligned.
-        display: block;
-        white-space: nowrap;
-        margin-left: .2rem;
-        max-width: 100%;
-        overflow-x: hidden;
+      .rename-sizer {
+        flex: 1 1 auto;
+        position: relative;
+        height: 2.7rem; // highest item in the flexbox -- sets height for alignment
 
-        input { // Click to rename value
+        input.rename { // Click to rename value
           display: block;
-          top: 0;
+          position: absolute;
           left: 0;
+          top: 0;
           width: 100%;
           height: 100%;
           border: 0;
@@ -206,76 +191,38 @@
           color: $brand-text--dark;
           text-overflow: ellipsis;
 
-
           &:hover {
             background-color: $dark-accent--soft;
           }
-
-        }
-      }
-
-      label.expand {
-        // Display the icon, not the checkbox
-        input { display: none; }
-        cursor: pointer;
-        margin: 0;
-        margin-right: .5rem;
-
-        i.icon-caret-right {
-          margin-left: .3rem;
-          font-size: 1.1rem;
-          line-height: 1em;
-          vertical-align: -.5em; // work around broken font
-        }
-        i.icon-caret-down {
-          margin-top: .1rem;
-          font-size: .7rem;
-          line-height: 1em;
-          vertical-align: -.5em; // work around broken font
         }
       }
 
       .count-and-reset {
-        float: right;
-        min-width: 1.5rem;
         margin-left: .8rem;
-        text-align: right;
-        line-height: 2.7rem; // center vertically
+        @include font-nunito-extra-light;
+        font-size: 1.3rem;
+        line-height: 1;
 
         // Display the count normally. If there are edits, display a reset
         // button instead, only when the user hovers.
-        button, span {
-          text-align: right;
-        }
-
-        span {
-          @include font-nunito-extra-light;
-          font-size: 1.3rem;
-        }
-
         button {
           display: none;
-          font-size: 1rem;
+          font: inherit;
+          color: $brand-text--dark;
+          &:hover {color: $brand-text--darker; }
         }
-
       }
-      &:hover {
+      &:hover .count-and-reset {
         button {
           display: block;
-
-          i {
-            position: relative;
-            top: .2rem;
-            font-size: 1.3rem;
-            color: $brand-text--dark;
-            &:hover {color: $brand-text--darker; }
+          & + span { // only if there's a "reset" button, hide span.count
+            display: none;
           }
         }
-        button + span { display: none; }
       }
     }
 
-    li.edited .summary .growing input {
+    .refine-group.edited .summary input.rename {
       // Show edited values as bold
       font-weight: bold;
       color: $brand-text--darker;
@@ -291,49 +238,37 @@
         display: flex;
         width: 100%;
         overflow: hidden;
+        @include font-nunito-extra-light;
         font-size: 1.3rem;
-        padding-top: .5rem;
-        padding-left: 2.5rem;
-        font-weight: 200;
+        padding: .5rem 0 0 2.5rem;
 
         .value {
           flex: 1 1 auto;
           overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
 
         .count-and-remove {
-          min-width: 1.5rem;
           margin-left: .8rem;
-          text-align: right;
 
           // Display the count normally. If the user hovers, display a remove
           // button instead -- but only if the button exists. (One can't remove
           // the value "A" from the group "A".)
-          button, span {
-            min-width: 3rem;
-            text-align: right;
-          }
-
-          // button
-          .icon-close {
-            font-size: 1.2rem;
-            line-height: 1.4em;
-            color: $brand-text--dark;
-            &:hover {color: $brand-text--darker; }
-          }
-
-          span {
-            @include font-nunito-extra-light;
-          }
-
           button {
             display: none;
-            font-size: .9rem;
+            font-size: 1.2rem;
+            line-height: 1.4;
+            color: $brand-text--dark;
+            &:hover {
+              color: $brand-text--darker;
+            }
           }
         }
       }
       li:hover {
         button { display: block; }
+        // only if there's a "reset" button, hide span.count
         button + span { display: none; }
       }
     }
