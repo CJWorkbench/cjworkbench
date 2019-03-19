@@ -1,54 +1,35 @@
 import React from 'react'
 import WorkflowContextMenu  from './WorkflowContextMenu'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 describe('WorkflowContextMenu', () => {
-
-  var api, wrapper;
-
-  beforeEach( () => {
-    api = {
-      deleteWorkflow: jest.fn(),
-      duplicateWorkflow: jest.fn()
-    };
-
-    wrapper = shallow(
-      <WorkflowContextMenu
-        deleteWorkflow={api.deleteWorkflow}
-        duplicateWorkflow={api.duplicateWorkflow}
-        canDelete={true}
-      />
-    );
-  });
+  const wrapper = (extraProps={}) => mount(
+    <WorkflowContextMenu
+      workflowId={3}
+      deleteWorkflow={jest.fn()}
+      duplicateWorkflow={jest.fn()}
+      {...extraProps}
+    />
+  )
 
   it('renders correctly', () => {
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  it('deletes workflow', () => {
-    let deleteLink = wrapper.find('.test-delete-button');
-    deleteLink.simulate('click');
-
-    expect(api.deleteWorkflow.mock.calls.length).toBe(1);
-  });
-
-  it('duplicates workflow', () => {
-    let dupLink = wrapper.find('.test-duplicate-button');
-    dupLink.simulate('click');
-
-    expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
-  });
-
-  it('should not render a delete button', () => {
-    const w = shallow(
-      <WorkflowContextMenu
-        deleteWorkflow={api.deleteWorkflow}
-        duplicateWorkflow={api.duplicateWorkflow}
-        canDelete={false}
-      />
-    )
-
-    expect(w.find('.test-delete-button')).toHaveLength(0)
+    expect(wrapper()).toMatchSnapshot()
   })
 
-});
+  it('deletes workflow', () => {
+    const w = wrapper()
+    w.find('button.delete-workflow').simulate('click')
+    expect(w.prop('deleteWorkflow')).toHaveBeenCalledWith(3)
+  })
+
+  it('duplicates workflow', () => {
+    const w = wrapper()
+    w.find('button.duplicate-workflow').simulate('click')
+    expect(w.prop('duplicateWorkflow')).toHaveBeenCalledWith(3)
+  })
+
+  it('should not render a delete button', () => {
+    const w = wrapper({ deleteWorkflow: null })
+    expect(w.find('button.delete-workflow')).toHaveLength(0)
+  })
+})

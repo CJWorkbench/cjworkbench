@@ -1,48 +1,128 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowContextMenu renders correctly 1`] = `
-<UncontrolledDropdown>
-  <DropdownToggle
-    aria-haspopup={true}
-    className="context-button"
-    color="secondary"
-  >
-    <i
-      className="context-button--icon icon-more"
-    />
-  </DropdownToggle>
-  <DropdownMenu
-    flip={true}
-    positionFixed={true}
-    right={true}
-    tag="div"
-  >
-    <DropdownItem
-      className="test-duplicate-button"
-      onClick={[MockFunction]}
-      tag="button"
-      toggle={true}
+<WorkflowContextMenu
+  deleteWorkflow={[MockFunction]}
+  duplicateWorkflow={[MockFunction]}
+  workflowId={3}
+>
+  <UncontrolledDropdown>
+    <Dropdown
+      active={false}
+      addonType={false}
+      direction="down"
+      inNavbar={false}
+      isOpen={false}
+      nav={false}
+      setActiveFromChild={false}
+      toggle={[Function]}
     >
-      <i
-        className="icon-duplicate"
-      />
-      <span>
-        Duplicate
-      </span>
-    </DropdownItem>
-    <DropdownItem
-      className="test-delete-button"
-      onClick={[MockFunction]}
-      tag="button"
-      toggle={true}
-    >
-      <i
-        className="icon-bin"
-      />
-      <span>
-        Delete
-      </span>
-    </DropdownItem>
-  </DropdownMenu>
-</UncontrolledDropdown>
+      <Manager
+        className="dropdown"
+        onKeyDown={[Function]}
+        tag="div"
+      >
+        <div
+          className="dropdown"
+          onKeyDown={[Function]}
+        >
+          <DropdownToggle
+            aria-haspopup={true}
+            className="context-button"
+            color="secondary"
+          >
+            <Target
+              aria-expanded={false}
+              aria-haspopup={true}
+              className="context-button"
+              color="secondary"
+              component={[Function]}
+              onClick={[Function]}
+            >
+              <Button
+                aria-expanded={false}
+                aria-haspopup={true}
+                className="context-button"
+                color="secondary"
+                innerRef={[Function]}
+                onClick={[Function]}
+                tag="button"
+              >
+                <button
+                  aria-expanded={false}
+                  aria-haspopup={true}
+                  aria-label={null}
+                  className="context-button btn btn-secondary"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  <i
+                    className="context-button--icon icon-more"
+                  />
+                </button>
+              </Button>
+            </Target>
+          </DropdownToggle>
+          <DropdownMenu
+            flip={true}
+            positionFixed={true}
+            right={true}
+            tag="div"
+          >
+            <div
+              aria-hidden={true}
+              className="dropdown-menu dropdown-menu-right"
+              positionFixed={true}
+              role="menu"
+              tabIndex="-1"
+            >
+              <DropdownItem
+                className="duplicate-workflow"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
+              >
+                <button
+                  className="duplicate-workflow dropdown-item"
+                  onClick={[Function]}
+                  role="menuitem"
+                  tabIndex="0"
+                  type="button"
+                >
+                  <i
+                    className="icon-duplicate"
+                  />
+                  <span>
+                    Duplicate
+                  </span>
+                </button>
+              </DropdownItem>
+              <DropdownItem
+                className="delete-workflow"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
+              >
+                <button
+                  className="delete-workflow dropdown-item"
+                  onClick={[Function]}
+                  role="menuitem"
+                  tabIndex="0"
+                  type="button"
+                >
+                  <i
+                    className="icon-bin"
+                  />
+                  <span>
+                    Delete
+                  </span>
+                </button>
+              </DropdownItem>
+            </div>
+          </DropdownMenu>
+        </div>
+      </Manager>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WorkflowContextMenu>
 `;

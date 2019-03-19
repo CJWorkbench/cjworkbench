@@ -174,7 +174,7 @@
       .sort-group {
         display: flex;
         align-items: center;
-        @extend .content-1;
+        @include content-1;
 
         span {
           position: relative;
@@ -185,17 +185,13 @@
         .dropdown {
           position: relative;
           bottom: -.2rem;
-          margin-right: 2.6rem;
+          margin-right: 1.6rem;
           cursor: pointer;
 
           .context-button {
-            padding: 0;
+            padding: 0 1rem;
             height: 3rem;
-            width: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: .5rem;
+            width: auto;
 
             &:hover {
               background-color: $dark-accent--soft;
@@ -207,7 +203,7 @@
 
             i {
               font-size: .8rem;
-              margin-left: .1rem;
+              margin-left: .5rem;
             }
           }
           .dropdown-menu {

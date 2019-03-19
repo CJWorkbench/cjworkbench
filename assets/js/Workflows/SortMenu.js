@@ -5,45 +5,44 @@ import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 
 export default class WfSortMenu extends React.Component {
-  constructor(props) {
-    super(props)
+  static propTypes = {
+    comparator: PropTypes.oneOf([ 'last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending' ]),
+    setComparator: PropTypes.func.isRequired // func(comparator) => undefined
   }
-  sortNameAsc = () => this.props.setSortType({type: 'name', direction: 'ascending'})
-  sortNameDesc = () => this.props.setSortType({type: 'name', direction: 'descending'})
-  sortDateAsc = () => this.props.setSortType({type: 'last_update', direction: 'ascending'})
-  sortDateDesc = () => this.props.setSortType({type: 'last_update', direction: 'descending'})
-  setSortIcon = () => {
-    if (this.props.sortDirection === 'ascending') return 'icon-caret-up'
-    else return 'icon-caret-down'
+
+  onClickComparator = (ev) => {
+    const comparator = ev.target.getAttribute('data-comparator')
+    this.props.setComparator(comparator)
+  }
+
+  get icon () {
+    return this.props.sortDirection === 'ascending' ? 'icon-caret-up' : 'icon-caret-down'
   }
 
   render () {
     return (
-      <UncontrolledDropdown>
-        <DropdownToggle className='btn btn-secondary context-button'>
-          <i className={this.setSortIcon()}></i>
-        </DropdownToggle>
-        <DropdownMenu positionFixed right>
-          <DropdownItem onClick={this.sortDateAsc} className='test-sort-date-ascending'>
-            <span>Last modified</span>
-          </DropdownItem>
-          <DropdownItem onClick={this.sortDateDesc} className='test-sort-date-descending'>
-            <span>Oldest modified</span>
-          </DropdownItem>
-          <DropdownItem divider />
-          <DropdownItem onClick={this.sortNameAsc} className='test-sort-name-ascending'>
-            <span>Alphabetical</span>
-          </DropdownItem>
-          <DropdownItem onClick={this.sortNameDesc} className='test-sort-name-descending'>
-            <span>Reverse alphabetical</span>
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
+      <div className='sort-group'>
+        <UncontrolledDropdown>
+          <DropdownToggle className='btn btn-secondary context-button'>
+            Sort <i className={this.icon}></i>
+          </DropdownToggle>
+          <DropdownMenu positionFixed right>
+            <DropdownItem data-comparator='last_update|descending' onClick={this.onClickComparator}>
+              Last modified
+            </DropdownItem>
+            <DropdownItem data-comparator='last_update|ascending' onClick={this.onClickComparator}>
+              Oldest modified
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem data-comparator='name|ascending' onClick={this.onClickComparator}>
+              Alphabetical
+            </DropdownItem>
+            <DropdownItem data-comparator='name|descending' onClick={this.onClickComparator}>
+              Reverse alphabetical
+            </DropdownItem>
+          </DropdownMenu>
+        </UncontrolledDropdown>
+      </div>
     )
   }
-}
-
-WfSortMenu.propTypes = {
-  setSortType: PropTypes.func.isRequired,
-  sortDirection: PropTypes.string.isRequired
 }

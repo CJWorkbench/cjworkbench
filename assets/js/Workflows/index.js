@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import ShareModal from '../ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
 import { goToUrl, logUserEvent } from '../utils'
 import SortMenu from './SortMenu'
-import Workflow from './Workflow'
+import WorkflowList from './WorkflowList'
 import TabContent from 'reactstrap/lib/TabContent'
 import TabPane from 'reactstrap/lib/TabPane'
 import Nav from 'reactstrap/lib/Nav'
@@ -23,7 +23,7 @@ export default class Workflows extends React.Component {
     workflows: this.props.workflows,
     activeTab: this.props.workflows.owned.length === 0 ? 'templates' : 'owned',
     shareModalWorkflowId: null,
-    sortMethod: {type: 'last_update', direction: 'descending'}
+    comparator: 'last_update|descending'
   }
 
   get allWorkflows () {
@@ -131,8 +131,8 @@ export default class Workflows extends React.Component {
     }
   }
 
-  setSortType = (sortType) => {
-    this.setState({sortMethod: sortType})
+  setComparator = (comparator) => {
+    this.setState({ comparator })
   }
 
   // sorting comparator
@@ -174,17 +174,13 @@ export default class Workflows extends React.Component {
       // Sort based on state, can only delete your own WFs
       return (
         <TabPane tabId={tab}>
-          <div className='workflows-item--wrap'>
-            {workflows.slice().sort(this.propComparator()).map(workflow => (
-              <Workflow
-                workflow={workflow}
-                key={workflow.id}
-                duplicateWorkflow={this.duplicateWorkflow}
-                deleteWorkflow={tab === 'owned' ? this.deleteWorkflow : null}
-                openShareModal={this.openShareModal}
-              />
-            ))}
-          </div>
+          <WorkflowList
+            workflows={workflows}
+            comparator={this.state.comparator}
+            duplicateWorkflow={this.duplicateWorkflow}
+            deleteWorkflow={tab === 'owned' ? this.deleteWorkflow : null}
+            openShareModal={this.openShareModal}
+          />
         </TabPane>
       )
     } else if (tab === 'owned'){
@@ -217,6 +213,8 @@ export default class Workflows extends React.Component {
   setTabTemplates = () => this.setState({ activeTab: 'templates' })
 
   render () {
+    const { activeTab, comparator, workflows } = this.state
+
     return (
       <div className='workflows-page'>
         <Navbar />
@@ -237,31 +235,28 @@ export default class Workflows extends React.Component {
           <div className='mx-auto workflows-list'>
             <Nav tabs>
               <div className="tab-group">
-                <NavItem active={this.state.activeTab === 'owned'} onClick={this.setTabOwned}>
+                <NavItem active={activeTab === 'owned'} onClick={this.setTabOwned}>
                   <NavLink>
                     My workflows
                   </NavLink>
                 </NavItem>
-                <NavItem active={this.state.activeTab === 'shared'} onClick={this.setTabShared}>
+                <NavItem active={activeTab === 'shared'} onClick={this.setTabShared}>
                   <NavLink>
                     Shared with me
                   </NavLink>
                 </NavItem>
-                <NavItem active={this.state.activeTab === 'templates'} onClick={this.setTabTemplates}>
+                <NavItem active={activeTab === 'templates'} onClick={this.setTabTemplates}>
                   <NavLink>
                     Recipes
                   </NavLink>
                 </NavItem>
               </div>
-              <div className="sort-group">
-                <span>Sort</span>
-                <SortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
-              </div>
+              <SortMenu comparator={comparator} setComparator={this.setComparator} />
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
-              { this.renderWorkflowPane(this.state.workflows.owned, 'owned') }
-              { this.renderWorkflowPane(this.state.workflows.shared, 'shared') }
-              { this.renderWorkflowPane(this.state.workflows.templates, 'templates') }
+              { activeTab === 'owned' ? this.renderWorkflowPane(workflows.owned, 'owned') : null }
+              { activeTab === 'shared' ? this.renderWorkflowPane(workflows.shared, 'shared') : null }
+              { activeTab === 'templates' ? this.renderWorkflowPane(workflows.templates, 'templates') : null }
             </TabContent>
           </div>
         </div>

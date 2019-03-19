@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import WorkflowContextMenu from './WorkflowContextMenu'
 import WorkflowMetadata from '../WorkflowMetadata'
 
-export default function Workflow ({ workflow, deleteWorkflow, duplicateWorkflow, openShareModal }) {
+function Workflow ({ workflow, deleteWorkflow, duplicateWorkflow, openShareModal }) {
   return (
     <div className='workflow'>
       <a href={`/workflows/${workflow.id}`}>
@@ -30,3 +30,4 @@ Workflow.propTypes = {
   duplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
   openShareModal: PropTypes.func, // func(id) => undefined
 }
+export default React.memo(Workflow)
