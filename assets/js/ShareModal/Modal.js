@@ -1,14 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactstrapModal from 'reactstrap/lib/Modal'
-import ModalHeader from 'reactstrap/lib/ModalHeader'
-import ModalBody from 'reactstrap/lib/ModalBody'
-import ModalFooter from 'reactstrap/lib/ModalFooter'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import PublicPrivate from './PublicPrivate'
 import Acl from './Acl'
 import Url from './Url'
 
-export default class Modal extends React.PureComponent {
+export default class _Modal extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     url: PropTypes.string.isRequired,
@@ -31,7 +28,7 @@ export default class Modal extends React.PureComponent {
       onChangeAclEntry, onCreateAclEntry, onClickDeleteAclEntry, onClickClose } = this.props
 
     return (
-      <ReactstrapModal className='share-modal' isOpen={true} toggle={onClickClose}>
+      <Modal className='share-modal' isOpen={true} toggle={onClickClose}>
         <ModalHeader toggle={onClickClose}>SHARING SETTINGS</ModalHeader>
         <ModalBody>
           <h6>Share with the world</h6>
@@ -70,7 +67,7 @@ export default class Modal extends React.PureComponent {
               >Close</button>
           </div>
         </ModalFooter>
-      </ReactstrapModal>
+      </Modal>
     )
   }
 }

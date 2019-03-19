@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Modal from 'reactstrap/lib/Modal'
-import ModalHeader from 'reactstrap/lib/ModalHeader'
-import ModalBody from 'reactstrap/lib/ModalBody'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import {
   setWorkflowPublicAction,
   setWfModuleParamsAction
@@ -118,10 +116,10 @@ export class OutputIframe extends React.PureComponent {
           <div className='title-3 mb-3'>This workflow is currently private</div>
           <div className='info-2 t-d-gray'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
         </ModalBody>
-        <div className='modal-footer'>
+        <ModalFooter>
           <div onClick={this.closeModal} className='button-gray action-button mr-4'>Cancel</div>
           <div onClick={this.props.setWorkflowPublic} className='button-blue action-button test-public-button'>Set Public</div>
-        </div>
+        </ModalFooter>
       </Modal>
     )
   }

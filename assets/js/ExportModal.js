@@ -1,11 +1,8 @@
-import React from "react";
+import React from 'react'
 import PropTypes from 'prop-types'
-import CopyToClipboard from 'react-copy-to-clipboard';
-import {logUserEvent} from "./utils";
-import Modal from 'reactstrap/lib/Modal'
-import ModalHeader from 'reactstrap/lib/ModalHeader'
-import ModalBody from 'reactstrap/lib/ModalBody'
-import ModalFooter from 'reactstrap/lib/ModalFooter'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import { logUserEvent } from './utils'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import FormGroup from 'reactstrap/lib/FormGroup'
 import Label from 'reactstrap/lib/Label'
 import Input from 'reactstrap/lib/Input'

@@ -4,10 +4,7 @@ import RefineBins from './RefineBins'
 import RefineClusterer from './RefineClusterer'
 import RefineClustererProgress from './RefineClustererProgress'
 import RefineStatus from './RefineStatus'
-import Modal from 'reactstrap/lib/Modal'
-import ModalHeader from 'reactstrap/lib/ModalHeader'
-import ModalBody from 'reactstrap/lib/ModalBody'
-import ModalFooter from 'reactstrap/lib/ModalFooter'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
 
 export default class RefineModal extends React.PureComponent {
   static propTypes = {
