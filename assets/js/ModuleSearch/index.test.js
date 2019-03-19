@@ -25,7 +25,7 @@ jest.mock('popper.js', () => {
 
 import React from 'react'
 import ConnectedModuleSearch, { ModuleSearch } from './index'
-import Popover from 'reactstrap/lib/Popover'
+import { Popover } from '../components/Popover'
 import { mount, shallow } from 'enzyme'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'

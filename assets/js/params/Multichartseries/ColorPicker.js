@@ -4,8 +4,7 @@ import Button from 'reactstrap/lib/Button'
 import InputGroup from 'reactstrap/lib/InputGroup'
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
 import Input from 'reactstrap/lib/Input'
-import Popover from 'reactstrap/lib/Popover'
-import PopoverBody from 'reactstrap/lib/PopoverBody'
+import { Popover, PopoverBody } from '../../components/Popover'
 
 class ColorChoice extends React.PureComponent {
   static propTypes = {

@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Popover from 'reactstrap/lib/Popover'
-import PopoverHeader from 'reactstrap/lib/PopoverHeader'
-import PopoverBody from 'reactstrap/lib/PopoverBody'
+import { Popover, PopoverHeader, PopoverBody } from '../components/Popover'
 
 export default class SearchResult extends React.PureComponent {
   static propTypes = {

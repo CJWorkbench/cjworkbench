@@ -3,7 +3,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import Popover from 'reactstrap/lib/Popover'
+import { Popover } from '../components/Popover'
 import { DropdownItem } from '../components/Dropdown'
 
 export default class ColumnContextMenu extends React.Component {
