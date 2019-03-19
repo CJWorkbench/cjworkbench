@@ -124,6 +124,8 @@
   .refine-groups { // list of "groups" (each group is a set of renames)
     max-height: 30rem;
     margin-top: $param-group-margin;
+    @include font-nunito-regular;
+    font-size: 1.3rem; // "No values match your search" / "Loading" / "Column does not have any values"
 
     button { // "clear group" or "remove rename from group" button -- appear as inline text
       border: 0;
