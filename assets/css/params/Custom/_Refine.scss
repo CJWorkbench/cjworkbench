@@ -274,9 +274,9 @@
     }
   }
 
-  .zen-mode {
+  .zen-mode & {
     .refine-groups {
-      max-height: calc(100vh - 25rem);
+      max-height: calc(100vh - 38rem);
     }
   }
 }

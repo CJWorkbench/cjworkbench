@@ -678,6 +678,32 @@ class DynamicallySizedGroupList extends React.PureComponent {
       valueHeight: valueHeight || 1,
       expandedGroupHeight: expandedGroupHeight || 1
     })
+
+    // Resize when user turns Zen Mode on and off; and in Zen Mode, resize
+    // when resizing the browser window.
+    window.addEventListener('resize', this.onResize)
+  }
+
+  onResize = () => {
+    const sizer = this.sizerRef.current
+
+    const sizerStyle = window.getComputedStyle(sizer)
+    let maxHeight
+    if (!sizerStyle.maxHeight || sizerStyle.maxHeight === 'none') {
+      maxHeight = Infinity
+    } else {
+      maxHeight = parseFloat(sizerStyle.maxHeight) // parseFloat: convert e.g. "300px" to 300
+    }
+
+    this.setState({ maxHeight })
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.onResize)
+  }
+
+  componentDidUpdate () {
+    this.onResize()
   }
 
   render () {
@@ -709,6 +735,7 @@ class DynamicallySizedGroupList extends React.PureComponent {
       return (
         <GroupList
           key='sized'
+          outerRef={this.sizerRef}
           {...this.state}
           {...this.props}
         />
