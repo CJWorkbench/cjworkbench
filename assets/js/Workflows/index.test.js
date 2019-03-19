@@ -1,8 +1,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import Workflows from './workflows'
-const Utils = require('./utils');
-import { okResponseMock, jsonResponseMock } from './test-utils'
+import Workflows from './index'
+const Utils = require('../utils');
+import { okResponseMock, jsonResponseMock } from '../test-utils'
 
 describe('Workflow list page', () => {
   var testWorkflows = {

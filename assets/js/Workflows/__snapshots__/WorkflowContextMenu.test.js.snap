@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfContextMenu renders correctly 1`] = `
+exports[`WorkflowContextMenu renders correctly 1`] = `
 <UncontrolledDropdown>
   <DropdownToggle
     aria-haspopup={true}

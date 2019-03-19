@@ -1,7 +1,7 @@
 // workflow.page.js - the master JavaScript for /workflows
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Workflows from '../workflows'
+import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
 
 const api = new WorkbenchAPI(null) // no websocket

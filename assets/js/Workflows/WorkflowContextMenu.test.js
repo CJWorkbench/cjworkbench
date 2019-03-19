@@ -1,8 +1,8 @@
 import React from 'react'
-import WfContextMenu  from './WfContextMenu'
+import WorkflowContextMenu  from './WorkflowContextMenu'
 import { shallow } from 'enzyme'
 
-describe('WfContextMenu', () => {
+describe('WorkflowContextMenu', () => {
 
   var api, wrapper;
 
@@ -13,7 +13,7 @@ describe('WfContextMenu', () => {
     };
 
     wrapper = shallow(
-      <WfContextMenu
+      <WorkflowContextMenu
         deleteWorkflow={api.deleteWorkflow}
         duplicateWorkflow={api.duplicateWorkflow}
         canDelete={true}
@@ -41,7 +41,7 @@ describe('WfContextMenu', () => {
 
   it('should not render a delete button', () => {
     const w = shallow(
-      <WfContextMenu
+      <WorkflowContextMenu
         deleteWorkflow={api.deleteWorkflow}
         duplicateWorkflow={api.duplicateWorkflow}
         canDelete={false}

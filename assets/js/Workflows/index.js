@@ -1,13 +1,13 @@
 // Elements of /workflows. Navbar plus a list
 
 import React from 'react'
-import WorkflowListNavBar from './WorkflowListNavBar'
-import WfContextMenu from './WfContextMenu'
-import WorkflowMetadata from './WorkflowMetadata'
+import Navbar from './Navbar'
+import WorkflowContextMenu from './WorkflowContextMenu'
+import WorkflowMetadata from '../WorkflowMetadata'
 import PropTypes from 'prop-types'
-import ShareModal from './ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
-import { goToUrl, logUserEvent } from './utils'
-import WfSortMenu from './WfSortMenu'
+import ShareModal from '../ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
+import { goToUrl, logUserEvent } from '../utils'
+import SortMenu from './SortMenu'
 import TabContent from 'reactstrap/lib/TabContent'
 import TabPane from 'reactstrap/lib/TabPane'
 import Nav from 'reactstrap/lib/Nav'
@@ -188,7 +188,7 @@ export default class Workflows extends React.Component {
                   </div>
                 </div>
                 <div onClick={this.preventDefault} className='menu-test-class'>
-                  <WfContextMenu
+                  <WorkflowContextMenu
                     duplicateWorkflow={() => this.duplicateWorkflow(workflow.id)}
                     deleteWorkflow={() => this.deleteWorkflow(workflow.id)}
                     canDelete={tab === 'owned'}
@@ -231,7 +231,7 @@ export default class Workflows extends React.Component {
   render () {
     return (
       <div className='workflows-page'>
-        <WorkflowListNavBar />
+        <Navbar />
         <div className='container'>
           <a href='/lessons/' className='lesson-banner mx-auto'>
             <div>
@@ -267,7 +267,7 @@ export default class Workflows extends React.Component {
               </div>
               <div className="sort-group">
                 <span>Sort</span>
-                <WfSortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
+                <SortMenu setSortType={this.setSortType} sortDirection={this.state.sortMethod.direction} />
               </div>
             </Nav>
             <TabContent activeTab={this.state.activeTab}>

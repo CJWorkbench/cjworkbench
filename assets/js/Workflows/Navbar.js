@@ -1,5 +1,5 @@
 import React from 'react'
-import WfHamburgerMenu from './WfHamburgerMenu'
+import WfHamburgerMenu from '../WfHamburgerMenu'
 
 function getActiveSection () {
   return window.location.pathname.startsWith('/workflows') ? 'workflows' : 'lessons'
@@ -13,7 +13,7 @@ function propsForLink (activeSection, name) {
   }
 }
 
-export default class WorkflowListNavBar extends React.Component {
+export default class Navbar extends React.Component {
   render() {
     const activeSection = getActiveSection()
 

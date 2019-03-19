@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WorkflowListNavBar Renders correctly 1`] = `
+exports[`Navbar Renders correctly 1`] = `
 <div>
   <nav
     className="navbar"

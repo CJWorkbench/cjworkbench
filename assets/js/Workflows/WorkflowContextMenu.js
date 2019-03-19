@@ -3,11 +3,13 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 
-export default class WfContextMenu extends React.Component {
-  constructor(props) {
-    super(props);
+export default class WorkflowContextMenu extends React.Component {
+  static propTypes = {
+    deleteWorkflow: PropTypes.func.isRequired,
+    duplicateWorkflow: PropTypes.func.isRequired,
+    canDelete: PropTypes.bool.isRequired
   }
 
   renderDelete = () => {
@@ -38,9 +40,3 @@ export default class WfContextMenu extends React.Component {
     );
   }
 }
-
-WfContextMenu.propTypes = {
-  deleteWorkflow:     PropTypes.func.isRequired,
-  duplicateWorkflow:  PropTypes.func.isRequired,
-  canDelete:          PropTypes.bool.isRequired
-};

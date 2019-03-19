@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import WorkflowListNavBar from '../WorkflowListNavBar'
+import Navbar from '../Workflows/Navbar'
 
 ReactDOM.render(
-  <WorkflowListNavBar />,
+  <Navbar />,
   document.querySelector('.navbar-wrapper')
 )
