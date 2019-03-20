@@ -4,9 +4,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 
-export default class WfSortMenu extends React.Component {
+export default class SortMenu extends React.Component {
   static propTypes = {
-    comparator: PropTypes.oneOf([ 'last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending' ]),
+    comparator: PropTypes.oneOf([ 'last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending' ]).isRequired,
     setComparator: PropTypes.func.isRequired // func(comparator) => undefined
   }
 
@@ -21,9 +21,9 @@ export default class WfSortMenu extends React.Component {
 
   render () {
     return (
-      <div className='sort-group'>
+      <div className='sort-menu'>
         <UncontrolledDropdown>
-          <DropdownToggle className='btn btn-secondary context-button'>
+          <DropdownToggle>
             Sort <i className={this.icon}></i>
           </DropdownToggle>
           <DropdownMenu positionFixed right>

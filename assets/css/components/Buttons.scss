@@ -65,8 +65,7 @@ button:focus { outline:0 !important; }
   border:0;
 }
 
-
-.context-button {
+@mixin context-button {
   cursor: pointer;
   border: 0;
   width: 2.5rem;
@@ -85,6 +84,9 @@ button:focus { outline:0 !important; }
     color:$brand-text--dark;
     opacity: 1;
   }
+}
+.context-button {
+  @include context-button;
 }
 
 .context-button.btn-secondary.active{

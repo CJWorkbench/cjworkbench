@@ -63,172 +63,166 @@
     }
   }
 
-  .workflows-list {
+  .workflow-lists {
     border: 0;
     margin: 4rem auto 10rem;
     background-color: transparent;
     width: 95%; // for thin displays
     max-width: 80rem; // for desktop display
 
-    .nav-tabs {
+    &>.nav {
       display: flex;
       justify-content: space-between;
-      border-bottom: 0;
+    }
 
-      // group of tabs
-      .tab-group {
-        display: flex;
-        @include title-3;
-        cursor: pointer;
-        text-transform: uppercase;
-        margin-left: 2rem;
+    .workflow-tabs {
+      display: block;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      list-style: none;
+      @include title-3;
+      text-transform: uppercase;
+      margin-left: 2rem;
 
-        .nav-item {
-          position: relative;
-          color: darken($medium-gray,13%);
+      a {
+        color: inherit;
+      }
+
+      .nav-item {
+        position: relative;
+        color: darken($medium-gray,13%);
+        float: left;
+        border-radius: 1rem 1rem 0 0;
+        background-color: darken($page-background,3%);
+        &:hover {
+          color: $brand-text--dark;
+        }
+
+        .nav-link {
           float: left;
-          border-radius: 1rem 1rem 0 0;
-          background-color: darken($page-background,3%);
-          &:hover {
-            color: $brand-text--dark;
-          }
+          padding: 1.4rem 4rem 1.2rem 4rem;
+          text-decoration: none;
+          border: none;
+        }
 
-          .nav-link {
-            float: left;
-            padding: 1.4rem 4rem 1.2rem 4rem;
-            text-decoration: none;
-            border: none;
-          }
+        &.active {
+          background-color: $white;
+          z-index: 3;
+          color: $brand-text--dark;
+        }
 
-          &.active {
-            background-color: $white;
-            z-index: 3;
-            color: $brand-text--dark;
-          }
+        // Need pseudo to create round corner, for both nav-item and nav-link in order to get 4 of them per tab.
 
-          // Need pseudo to create round corner, for both nav-item and nav-link in order to get 4 of them per tab.
-
-          // first and last tab need content (round corners)
-          &:last-child::after, &:last-child .nav-link::after,
-          &:first-child::before, &:first-child .nav-link::before {
-            content: "";
-          }
-
-          // active tab always need content (round corners)
-          &.active::before, &.active::after,
-          &.active .nav-link::before, &.active .nav-link::after {
+        // first and last tab need content (round corners)
+        &:last-child::after, &:last-child .nav-link::after,
+        &:first-child::before, &:first-child .nav-link::before {
           content: "";
-          }
+        }
 
-          // position all pseudos at bottom
-          &::before, &::after,
-          & .nav-link::before, & .nav-link::after {
-            position: absolute;
-            bottom: 0;
-            z-index: 1;
-          }
+        // active tab always need content (round corners)
+        &.active::before, &.active::after,
+        &.active .nav-link::before, &.active .nav-link::after {
+        content: "";
+        }
 
-          // Squares (on top of circled)
-          &::before, &::after {
-            background-color: pink;
-            width: 1rem;
-            height: 1rem;
-          }
-          // position those squares
-          &::before { left: -1rem; }
-          &::after { right: -1rem; }
+        // position all pseudos at bottom
+        &::before, &::after,
+        & .nav-link::before, & .nav-link::after {
+          position: absolute;
+          bottom: 0;
+          z-index: 1;
+        }
 
-          // Circles (below square)
-          & .nav-link::after, & .nav-link::before {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 1rem;
-            background: blue;
-            z-index: 2;
-          }
-          //position circles
-          & .nav-link::before { left: -2rem; }
-          & .nav-link::after { right: -2rem; }
+        // Squares (on top of circled)
+        &::before, &::after {
+          background-color: pink;
+          width: 1rem;
+          height: 1rem;
+        }
+        // position those squares
+        &::before { left: -1rem; }
+        &::after { right: -1rem; }
 
-          // Color squares when tab is active
-          &.active::before, &.active::after {
-            background-color: $white;
-          }
-          // Color circles when tab is active
-          &.active .nav-link::before, &.active .nav-link::after {
-            background-color: darken($page-background,3%);
-          }
+        // Circles (below square)
+        & .nav-link::after, & .nav-link::before {
+          width: 2rem;
+          height: 2rem;
+          border-radius: 1rem;
+          background: blue;
+          z-index: 2;
+        }
+        //position circles
+        & .nav-link::before { left: -2rem; }
+        & .nav-link::after { right: -2rem; }
 
-          // Color circles first and last tab
-          &:first-child .nav-link::before,
-          &:last-child .nav-link::after {
-            background: $page-background;
-          }
-          // Color square first and last tab
-          &:last-child::after,
-          &:first-child::before {
-            background: darken($page-background,3%);
-          }
+        // Color squares when tab is active
+        &.active::before, &.active::after {
+          background-color: $white;
+        }
+        // Color circles when tab is active
+        &.active .nav-link::before, &.active .nav-link::after {
+          background-color: darken($page-background,3%);
+        }
 
-          // Color squares first and last tab when active
-          &:first-child.active::before, &:last-child.active::after, {
-            background-color: $white;
-          }
+        // Color circles first and last tab
+        &:first-child .nav-link::before,
+        &:last-child .nav-link::after {
+          background: $page-background;
+        }
+        // Color square first and last tab
+        &:last-child::after,
+        &:first-child::before {
+          background: darken($page-background,3%);
+        }
+
+        // Color squares first and last tab when active
+        &:first-child.active::before, &:last-child.active::after, {
+          background-color: $white;
         }
       }
-      // Sort menu
-      .sort-group {
-        display: flex;
-        align-items: center;
-        @include content-1;
+    }
 
-        span {
-          position: relative;
-          bottom: -.1rem;
-          cursor: default;
+    .sort-menu {
+      @include content-1;
+      margin-right: 1.6rem;
+
+      .dropdown {
+        position: relative;
+        bottom: -.2rem;
+        cursor: pointer;
+
+        &>button {
+          @include context-button;
+          padding: 0 1rem;
+          height: 3rem;
+          width: auto;
+
+          &:hover {
+            background-color: $dark-accent--soft;
+          }
+
+          &:after {
+            background-color: $dark-accent--medium;
+          }
+
+          i {
+            font-size: .8rem;
+            margin-left: .7rem;
+            // Line up with "Sort" text
+            position: relative;
+            top: .2rem;
+          }
         }
 
-        .dropdown {
-          position: relative;
-          bottom: -.2rem;
-          margin-right: 1.6rem;
-          cursor: pointer;
-
-          .context-button {
-            padding: 0 1rem;
-            height: 3rem;
-            width: auto;
-
-            &:hover {
-              background-color: $dark-accent--soft;
-            }
-
-            &:after {
-              background-color: $dark-accent--medium;
-            }
-
-            i {
-              font-size: .8rem;
-              margin-left: .5rem;
-            }
-          }
-          .dropdown-menu {
-            margin-top: .5rem;
-            border-radius: .5rem;
-
-            button {
-              margin: 0;
-              padding: 0 1rem;
-              display: flex;
-              justify-content: flex-start;
-            }
-          }
+        .dropdown-menu {
+          margin-top: .5rem;
+          border-radius: .5rem;
         }
       }
     }
 
     .tab-content {
-
       // when shared WF tab is empty
       .placeholder, form.create-workflow {
         @include content-1;
@@ -254,10 +248,8 @@
       }
     }
 
-    // background of list
-    .workflows-item--wrap {
-      padding: 1px;
-      background-color: $page-background;
+    .workflow-list {
+      background-color: $page-background; // background of list
 
       // WF list
       .workflow {
@@ -269,16 +261,14 @@
         background: white;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        z-index: 3;
 
         &:first-child {
-          border-radius-top-left: .5rem;
-          border-radius-top-right: .5rem;
+          border-top-left-radius: .5rem;
+          border-top-right-radius: .5rem;
         }
         &:last-child {
-          border-radius-bottom-left: .5rem;
-          border-radius-bottom-right: .5rem;
+          border-bottom-left-radius: .5rem;
+          border-bottom-right-radius: .5rem;
           margin-bottom: 0px;
         }
 

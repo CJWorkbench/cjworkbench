@@ -6,25 +6,25 @@ import PropTypes from 'prop-types'
 import ShareModal from '../ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
 import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
-import SortMenu from './SortMenu'
-import WorkflowList from './WorkflowList'
-import TabContent from 'reactstrap/lib/TabContent'
-import TabPane from 'reactstrap/lib/TabPane'
-import Nav from 'reactstrap/lib/Nav'
-import NavItem from 'reactstrap/lib/NavItem'
-import NavLink from 'reactstrap/lib/NavLink'
+import WorkflowLists from './WorkflowLists'
+import { WorkflowListPropType } from './WorkflowList'
 
 export default class Workflows extends React.Component {
   static propTypes = {
-    api: PropTypes.object.isRequired,
-    workflows: PropTypes.object.isRequired
+    api: PropTypes.shape({
+      deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
+      duplicateWorkflow: PropTypes.func.isRequired // func(id) => Promise[{ id, name }]
+    }).isRequired,
+    workflows: PropTypes.shape({
+      owned: WorkflowListPropType.isRequired,
+      shared: WorkflowListPropType.isRequired,
+      templates: WorkflowListPropType.isRequired
+    }).isRequired
   }
 
   state = {
-    workflows: this.props.workflows,
-    activeTab: this.props.workflows.owned.length === 0 ? 'templates' : 'owned',
-    shareModalWorkflowId: null,
-    comparator: 'last_update|descending'
+    workflows: this.props.workflows, // we'll be editing this
+    shareModalWorkflowId: null
   }
 
   get allWorkflows () {
@@ -111,99 +111,6 @@ export default class Workflows extends React.Component {
     this.props.api.setWorkflowPublic(workflowId, isPublic)
   }
 
-  preventDefault = (ev) => {
-    ev.preventDefault()
-  }
-
-  toggle (tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      })
-    }
-  }
-
-  setComparator = (comparator) => {
-    this.setState({ comparator })
-  }
-
-  // sorting comparator
-  propComparator = () => {
-    // sort method determined by state array
-    const prop = this.state.sortMethod.type
-    const direction = this.state.sortMethod.direction
-    switch (prop + '|' + direction) {
-      case ('last_update|ascending'):
-        return function (a, b) {
-          return new Date(a['last_update']) - new Date(b['last_update'])
-        }
-      case ('name|ascending'):
-        return function (a, b) {
-          const first = a['name'].toLowerCase()
-          const second = b['name'].toLowerCase()
-          if (first < second) return -1
-          if (first > second) return 1
-          return 0
-        }
-      case ('name|descending'):
-        return function (a, b) {
-          const first = a['name'].toLowerCase()
-          const second = b['name'].toLowerCase()
-          if (second < first) return -1
-          if (second > first) return 1
-          return 0
-        }
-      // default sort modified descending
-      default:
-        return function (a, b) {
-          return new Date(b['last_update']) - new Date(a['last_update'])
-        }
-    }
-  }
-
-  renderWorkflowPane = (workflows, tab) => {
-    if (workflows.length > 0) {
-      // Sort based on state, can only delete your own WFs
-      return (
-        <TabPane tabId={tab}>
-          <WorkflowList
-            workflows={workflows}
-            comparator={this.state.comparator}
-            duplicateWorkflow={this.duplicateWorkflow}
-            deleteWorkflow={tab === 'owned' ? this.deleteWorkflow : null}
-            openShareModal={this.openShareModal}
-          />
-        </TabPane>
-      )
-    } else if (tab === 'owned'){
-      // Create workflow link if no owned workflows
-      return (
-        <TabPane tabId={'owned'}>
-          <CreateWorkflowButton>
-            Create your first workflow
-          </CreateWorkflowButton>
-        </TabPane>
-      )
-    } else if (tab === 'shared'){
-      // No shared workflows message
-      return (
-        <TabPane tabId={'shared'}>
-          <div className="placeholder">No shared workflows ~ ༼ つ ◕_◕ ༽つ</div>
-        </TabPane>
-      )
-    } else if (tab === 'templates'){
-      // No shared workflows message
-      return (
-        <TabPane tabId={'templates'}>
-          <div className="placeholder">No template  \_(ツ)_/¯</div>
-        </TabPane>
-      )
-    }
-  }
-  setTabOwned = () => this.setState({ activeTab: 'owned' })
-  setTabShared = () => this.setState({ activeTab: 'shared' })
-  setTabTemplates = () => this.setState({ activeTab: 'templates' })
-
   render () {
     const { activeTab, comparator, workflows } = this.state
 
@@ -223,33 +130,12 @@ export default class Workflows extends React.Component {
         <CreateWorkflowButton>
           Create Workflow
         </CreateWorkflowButton>
-        <div className='workflows-list'>
-          <Nav tabs>
-            <div className="tab-group">
-              <NavItem active={activeTab === 'owned'} onClick={this.setTabOwned}>
-                <NavLink>
-                  My workflows
-                </NavLink>
-              </NavItem>
-              <NavItem active={activeTab === 'shared'} onClick={this.setTabShared}>
-                <NavLink>
-                  Shared with me
-                </NavLink>
-              </NavItem>
-              <NavItem active={activeTab === 'templates'} onClick={this.setTabTemplates}>
-                <NavLink>
-                  Recipes
-                </NavLink>
-              </NavItem>
-            </div>
-            <SortMenu comparator={comparator} setComparator={this.setComparator} />
-          </Nav>
-          <TabContent activeTab={this.state.activeTab}>
-            { activeTab === 'owned' ? this.renderWorkflowPane(workflows.owned, 'owned') : null }
-            { activeTab === 'shared' ? this.renderWorkflowPane(workflows.shared, 'shared') : null }
-            { activeTab === 'templates' ? this.renderWorkflowPane(workflows.templates, 'templates') : null }
-          </TabContent>
-        </div>
+        <WorkflowLists
+          workflows={workflows}
+          deleteWorkflow={this.deleteWorkflow}
+          duplicateWorkflow={this.duplicateWorkflow}
+          openShareModal={this.openShareModal}
+        />
         {this.renderShareModal()}
       </div>
     )

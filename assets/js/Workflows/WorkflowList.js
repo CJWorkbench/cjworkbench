@@ -4,6 +4,11 @@ import Workflow from './Workflow'
 
 const TextComparator = new Intl.Collator() // locale alphabetical
 
+const WorkflowListPropType = PropTypes.arrayOf(PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired
+}).isRequired)
+
 const Comparators = {
   'last_update|ascending': (a, b) => new Date(a.last_update) - new Date(b.last_update),
   'last_update|descending': (a, b) => new Date(b.last_update) - new Date(a.last_update),
@@ -14,7 +19,7 @@ const Comparators = {
 function WorkflowList ({ workflows, comparator, deleteWorkflow, duplicateWorkflow, openShareModal }) {
   const compare = Comparators[comparator]
   return (
-    <div className='workflows-item--wrap'>
+    <div className='workflow-list'>
       {workflows.slice().sort(compare).map(workflow => (
         <Workflow
           workflow={workflow}
@@ -28,13 +33,11 @@ function WorkflowList ({ workflows, comparator, deleteWorkflow, duplicateWorkflo
   )
 }
 WorkflowList.propTypes = {
-  workflows: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired).isRequired,
+  workflows: WorkflowListPropType.isRequired,
   comparator: PropTypes.oneOf([ 'last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending' ]),
   deleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   duplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
-  openShareModal: PropTypes.func, // func(id) => undefined
+  openShareModal: PropTypes.func.isRequired // func(id) => undefined
 }
 export default React.memo(WorkflowList)
+export { WorkflowListPropType }
