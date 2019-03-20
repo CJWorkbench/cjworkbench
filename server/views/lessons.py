@@ -135,7 +135,9 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
         module_id_name=id_name,
         is_busy=module_version.loads_data,  # assume we'll send a fetch
         last_relevant_delta_id=delta_id,
-        params=params
+        params=params,
+        is_collapsed=wfm_dict.get('collapsed', False),
+        notes=wfm_dict.get('note', None)
     )
 
 

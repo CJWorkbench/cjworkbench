@@ -27,3 +27,9 @@ properties:
               params:
                 type: object
                 description: non-default parameter values
+              note:
+                type: string
+                description: User-visible note to document module
+              collapsed:
+                type: boolean
+                description: Module starts collapsed if set

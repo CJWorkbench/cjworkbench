@@ -246,6 +246,8 @@ class LessonTests(SimpleTestCase):
                                 'url': 'http://foo.com',
                                 'has_header': True,
                             },
+                            'collapsed': True,
+                            'note': 'You\'re gonna love this data!'
                         },
                     ],
                 },

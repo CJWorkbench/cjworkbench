@@ -194,7 +194,9 @@ class LessonDetailTests(DbTestCase):
                     {
                         'module': 'amodule',
                         'params': {'foo': 'bar'},
-                    },
+                        'collapsed': True,
+                        'note': 'You\'re gonna love this data!'
+                    }
                 ],
             },
         ])
@@ -217,6 +219,8 @@ class LessonDetailTests(DbTestCase):
         wfm1 = list(wf_modules.values())[0]
         self.assertEqual(wfm1['module'], 'amodule')
         self.assertEqual(wfm1['params'], {'foo': 'bar'})
+        self.assertEqual(wfm1['notes'], 'You\'re gonna love this data!')
+        self.assertEqual(wfm1['is_collapsed'], True)
         self.assertEqual(wfm1['is_busy'], False)
 
         # We should be rendering the modules
