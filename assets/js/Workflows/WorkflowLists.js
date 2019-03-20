@@ -78,7 +78,7 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
 })
 
 function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal }) {
-  const [ activeTab, setActiveTab ] = useState(workflows.owned.length ? 'owned' : 'shared')
+  const [ activeTab, setActiveTab ] = useState(workflows.owned.length ? 'owned' : 'templates')
   const [ comparator, setComparator ] = useState('last_update|descending')
   const tabProps = (name) => ({
     name,
