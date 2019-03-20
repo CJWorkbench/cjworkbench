@@ -583,7 +583,7 @@ class GroupList extends React.PureComponent {
     } else if (loading) {
       return 'Loading values…'
     } else if (isObjectEmpty(valueCounts)) {
-      return 'Column does not have any values'
+      return 'This column does not have any values'
     } else if (groups.length === 0) {
       return 'No values match your search'
     } else {
