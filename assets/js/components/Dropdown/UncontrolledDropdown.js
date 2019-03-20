@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Dropdown from './Dropdown'
 
 export default class UncontrolledDropdown extends React.PureComponent {
-  static PropTypes = {
+  static propTypes = {
     disabled: PropTypes.bool,
     className: PropTypes.string,
     direction: PropTypes.oneOf([ 'up', 'down' ]),

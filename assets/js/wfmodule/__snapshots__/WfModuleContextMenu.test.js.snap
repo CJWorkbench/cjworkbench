@@ -6,9 +6,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
   id={415}
   removeModule={[MockFunction]}
 >
-  <UncontrolledDropdown
-    onClick={[Function]}
-  >
+  <UncontrolledDropdown>
     <Dropdown
       active={false}
       addonType={false}
@@ -16,19 +14,16 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
       inNavbar={false}
       isOpen={false}
       nav={false}
-      onClick={[Function]}
       setActiveFromChild={false}
       toggle={[Function]}
     >
       <Manager
         className="dropdown"
-        onClick={[Function]}
         onKeyDown={[Function]}
         tag="div"
       >
         <div
           className="dropdown"
-          onClick={[Function]}
           onKeyDown={[Function]}
         >
           <DropdownToggle
