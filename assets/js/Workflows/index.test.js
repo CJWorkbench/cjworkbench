@@ -77,7 +77,6 @@ describe('Workflow list page', () => {
   }
 
   const api = {
-    newWorkflow: jsonResponseMock(addResponse),
     duplicateWorkflow: jsonResponseMock(dupResponse),
     deleteWorkflow: okResponseMock()
   }
@@ -149,21 +148,6 @@ describe('Workflow list page', () => {
     })
   })
 
-  it('new workflow button', (done) => {
-    const w = wrapper({workflows: testWorkflows })
-    // let 4 workflows load
-    setImmediate( () => {
-      var newButton = w.find('.new-workflow-button');
-      newButton.first().simulate('click');
-
-      setImmediate(() => {
-        expect(api.newWorkflow).toHaveBeenCalled()
-        expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/543')
-        done()
-      })
-    })
-  })
-
   it('duplicates a workflow', async () => {
     // let 2 workflows load in user's shared tab, duplicate 1 and activeTab should get set
     // to owned list with +1 worflow
@@ -188,17 +172,14 @@ describe('Workflow list page', () => {
     expect(w.find('Workflow')).toHaveLength(4)
   })
 
-  it('owned pane should have create workflow link when no workflows', (done) => {
-    let modifiedWorkflows = Object.assign({}, testWorkflows)
-    modifiedWorkflows['owned'] = {}
-    const w = wrapper({workflows: modifiedWorkflows})
-    setImmediate( () => {
-      w.update()
-      // Owned list should have no workflows, instead a create workflow link
-      expect(w.find('Workflow')).toHaveLength(0)
-      expect(w.find('.tab-pane.active .new-workflow-link')).toHaveLength(1)
-      done()
-    })
+  it('owned pane should have create workflow link when no workflows', () => {
+    const workflows = { ...testWorkflows, owned: [] }
+    const w = wrapper({ workflows })
+
+    // Owned list should have no workflows, instead a create workflow link
+    w.find('.nav-link').findWhere(node => node.props().children === 'My workflows').simulate('click')
+    expect(w.find('Workflow')).toHaveLength(0)
+    expect(w.find('.tab-pane.active CreateWorkflowButton')).toHaveLength(1)
   })
 
   it('shared and template panes should have a placeholder when no workflows', (done) => {

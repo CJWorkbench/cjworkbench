@@ -6,7 +6,6 @@ exports[`Workflow list page renders correctly 1`] = `
     Object {
       "deleteWorkflow": [MockFunction],
       "duplicateWorkflow": [MockFunction],
-      "newWorkflow": [MockFunction],
     }
   }
   workflows={
@@ -206,46 +205,55 @@ exports[`Workflow list page renders correctly 1`] = `
         </nav>
       </div>
     </Navbar>
-    <div
-      className="container"
+    <a
+      className="lesson-banner mx-auto"
+      href="/lessons/"
     >
-      <a
-        className="lesson-banner mx-auto"
-        href="/lessons/"
-      >
-        <div>
+      <div>
+        <div
+          className="content-1"
+        >
+          NEW
+        </div>
+        <div
+          className="d-flex"
+        >
+          <span
+            className="icon-star"
+          />
           <div
-            className="content-1"
+            className=" title-1 "
           >
-            NEW
-          </div>
-          <div
-            className="d-flex"
-          >
-            <span
-              className="icon-star"
-            />
-            <div
-              className=" title-1 "
-            >
-              TRAINING
-            </div>
+            TRAINING
           </div>
         </div>
-        <p>
-          Learn how to work with data without coding
-        </p>
-      </a>
-      <div
-        className="d-flex justify-content-center"
+      </div>
+      <p>
+        Learn how to work with data without coding
+      </p>
+    </a>
+    <CreateWorkflowButton>
+      <form
+        action="/workflows/"
+        className="create-workflow"
+        method="post"
+        onSubmit={[Function]}
       >
+        <input
+          name="csrfmiddlewaretoken"
+          type="hidden"
+        />
         <button
-          className="button-blue action-button new-workflow-button"
-          onClick={[Function]}
+          disabled={false}
+          type="submit"
         >
           Create Workflow
         </button>
-      </div>
+      </form>
+    </CreateWorkflowButton>
+    <div
+      className="container"
+    >
       <div
         className="mx-auto workflows-list"
       >

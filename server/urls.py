@@ -41,8 +41,7 @@ urlpatterns = [
     url(r'^api/uploadfile/([0-9]+)$', get_uploadedfile),
 
     # list all workflows
-    url(r'^workflows/$', views.render_workflows, name='workflows'),
-    url(r'^api/workflows/?$', views.workflow_list),
+    url(r'^workflows/$', workflows.Index.as_view(), name='workflows'),
 
     # DELETEME on or after 2019-03-01
     #
@@ -79,9 +78,9 @@ urlpatterns = [
         redirect('/courses/%(course_slug)s/%(lesson_slug)s')),
 
     # workflows
-    # TODO: Name the rest of the urls or implement some kind of naming scheme
-    url(r'^workflows/(?P<workflow_id>[0-9]+)/$', views.render_workflow, name="workflow"),
-    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/?$', views.workflow_detail),
+    url(r'^workflows/(?P<workflow_id>[0-9]+)/$', workflows.render_workflow,
+        name='workflow'),
+    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/?$', workflows.workflow_detail),
 
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$',
         workflows.Duplicate.as_view()),

@@ -44,16 +44,24 @@
     background-color: $light-accent--strong;
   }
 
-  .new-workflow-button {
-    height: 4rem;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-    &:hover {
-      background-color: $brand-background;
-    }
-    &:active {
-      background-color: darken($brand-background,20%);
-      color:$brand-workspace;
+  &>form.create-workflow {
+    margin: 1rem 0 0;
+    text-align: center;
+
+    button {
+      @include action-button;
+      @include button-blue;
+      display: inline-block; // respect <form>'s text-align: center;
+      height: 4rem;
+      font-size: 1.5rem;
+
+      &:hover {
+        background-color: $brand-background;
+      }
+      &:active {
+        background-color: darken($brand-background,20%);
+        color:$brand-workspace;
+      }
     }
   }
 
@@ -72,7 +80,7 @@
       // group of tabs
       .tab-group {
         display: flex;
-        @extend .title-3;
+        @include title-3;
         cursor: pointer;
         text-transform: uppercase;
         margin-left: 2rem;
@@ -224,8 +232,8 @@
     .tab-content {
 
       // when shared WF tab is empty
-      .placeholder, .new-workflow-link {
-        @extend .content-1;
+      .placeholder, form.create-workflow {
+        @include content-1;
         background-color: $white;
         height: 7rem;
         display: flex;
@@ -235,10 +243,11 @@
         border-radius: .5rem;
         margin: 1px;
       }
-      .new-workflow-link {
-        @extend .content-1;
+      form.create-workflow button {
+        @include content-1;
         text-decoration: underline;
-        @extend .button-blue;
+        @include action-button;
+        @include button-blue;
         cursor: pointer;
         &:hover {
           color: $link-hover-success;

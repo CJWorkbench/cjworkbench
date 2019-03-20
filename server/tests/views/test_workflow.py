@@ -10,8 +10,7 @@ from server import rabbitmq
 from server.models import ModuleVersion, User, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase
-from server.views import workflow_list, workflow_detail, render_workflow, \
-        render_workflows
+from server.views.workflows import Index, workflow_detail, render_workflow
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
@@ -105,7 +104,7 @@ class WorkflowViewTests(LoggedInTestCase):
         return request
 
     # --- Workflow list ---
-    def test_workflow_list_get(self):
+    def test_index_get(self):
         # set dates to test reverse chron ordering
         self.workflow1.creation_date = "2010-10-20 1:23Z"
         self.workflow1.save()
@@ -116,7 +115,7 @@ class WorkflowViewTests(LoggedInTestCase):
         )
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = render_workflows(request)
+        response = Index.as_view()(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
         workflows = response.context_data['initState']['workflows']
@@ -134,55 +133,50 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(workflows['owned'][1]['name'], 'Workflow 1')
         self.assertEqual(workflows['owned'][1]['id'], self.workflow1.id)
 
-    def test_workflow_list_include_example_in_all_users_workflow_lists(self):
+    def test_index_include_example_in_all_users_workflow_lists(self):
         self.other_workflow_public.example = True
         self.other_workflow_public.in_all_users_workflow_lists = True
         self.other_workflow_public.save()
         self.workflow2 = Workflow.objects.create(owner=self.user)
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = render_workflows(request)
+        response = Index.as_view()(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
         workflows = response.context_data['initState']['workflows']
         self.assertEqual(len(workflows['owned']), 2)
         self.assertEqual(len(workflows['templates']), 1)
 
-    def test_workflow_list_exclude_example_not_in_all_users_lists(self):
+    def test_index_exclude_example_not_in_all_users_lists(self):
         self.other_workflow_public.example = True
         self.other_workflow_public.in_all_users_workflow_lists = False
         self.other_workflow_public.save()
         self.workflow2 = Workflow.objects.create(owner=self.user)
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = render_workflows(request)
+        response = Index.as_view()(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
         workflows = response.context_data['initState']['workflows']
         self.assertEqual(len(workflows['owned']), 2)
         self.assertEqual(len(workflows['templates']), 0)
 
-    def test_workflow_list_exclude_lesson(self):
+    def test_index_exclude_lesson(self):
         self.workflow1.lesson_slug = 'some-lesson'
         self.workflow1.save()
         self.workflow2 = Workflow.objects.create(owner=self.user)
 
         request = self._build_get('/api/workflows/', user=self.user)
-        response = render_workflows(request)
+        response = Index.as_view()(request)
         workflows = response.context_data['initState']['workflows']
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(workflows['owned']), 1)
 
-    def test_workflow_list_post(self):
+    def test_index_post(self):
         start_count = Workflow.objects.count()
-        request = self._build_post('/api/workflows/', user=self.user)
-        response = workflow_list(request)
-        self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Workflow.objects.count(), start_count+1)
-        self.assertEqual(
-            Workflow.objects.filter(name='Untitled Workflow').count(),
-            1
-        )
+        response = self.client.post('/workflows/', user=self.user)
+        workflow = Workflow.objects.get(name='Untitled Workflow')  # or crash
+        self.assertRedirects(response, '/workflows/%d/' % workflow.id)
 
     # --- Workflow ---
     # This is the HTTP response, as opposed to the API

@@ -62,57 +62,51 @@ def make_init_state(request, workflow=None, modules=None):
     return ret
 
 
-@login_required
-def render_workflows(request):
-    # Separate out workflows by type
-    workflows = {}
-    workflows['owned'] = Workflow.objects \
-        .filter(owner=request.user) \
-        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
+class Index(View):
+    @method_decorator(login_required)
+    def post(self, request: HttpRequest):
+        """Create a new workflow."""
+        workflow = Workflow.create_and_init(
+            name='Untitled Workflow',
+            owner=request.user,
+            selected_tab_position=0
+        )
+        return redirect('/workflows/%d/' % workflow.id)
 
-    workflows['shared'] = Workflow.objects \
-        .filter(acl__email=request.user.email) \
-        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
+    @method_decorator(login_required)
+    def get(self, request: HttpRequest):
+        """Render workflow-list page."""
+        # Separate out workflows by type
+        workflows = {}
+        workflows['owned'] = Workflow.objects \
+            .filter(owner=request.user) \
+            .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
 
-    workflows['templates'] = Workflow.objects \
-        .filter(in_all_users_workflow_lists=True) \
-        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
+        workflows['shared'] = Workflow.objects \
+            .filter(acl__email=request.user.email) \
+            .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
 
-    init_state = {
-        'loggedInUser': UserSerializer(request.user).data,
-        'workflows': {}
-    }
-    # turn queryset into list so we can sort it ourselves by reverse chron
-    # (this is because 'last update' is a property of the delta, not the
-    # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
-    # column.
-    for key, value in workflows.items():
-        value = list(value)
-        value.sort(key=lambda wf: wf.last_update(), reverse=True)
-        serializer = WorkflowSerializerLite(value, many=True,
-                                            context={'request': request})
-        init_state['workflows'][key] = serializer.data
+        workflows['templates'] = Workflow.objects \
+            .filter(in_all_users_workflow_lists=True) \
+            .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
 
-    return TemplateResponse(request, 'workflows.html',
-                            {'initState': init_state})
+        init_state = {
+            'loggedInUser': UserSerializer(request.user).data,
+            'workflows': {}
+        }
+        # turn queryset into list so we can sort it ourselves by reverse chron
+        # (this is because 'last update' is a property of the delta, not the
+        # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
+        # column.
+        for key, value in workflows.items():
+            value = list(value)
+            value.sort(key=lambda wf: wf.last_update(), reverse=True)
+            serializer = WorkflowSerializerLite(value, many=True,
+                                                context={'request': request})
+            init_state['workflows'][key] = serializer.data
 
-
-@api_view(['POST'])
-@login_required
-@renderer_classes((JSONRenderer,))
-def workflow_list(request, format=None):
-    """Create a new workflow."""
-    workflow = Workflow.create_and_init(
-        name='Untitled Workflow',
-        owner=request.user,
-        selected_tab_position=0
-    )
-    serializer = WorkflowSerializerLite(workflow,
-                                        context={'request': request})
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# ---- Workflow ----
+        return TemplateResponse(request, 'workflows.html',
+                                {'initState': init_state})
 
 
 def _get_anonymous_workflow_for(workflow: Workflow,

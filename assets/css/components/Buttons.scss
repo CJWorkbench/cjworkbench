@@ -133,13 +133,13 @@ button:focus { outline:0 !important; }
 
 //* - Action button - */
 
-%action-button {
+@mixin action-button {
   cursor: pointer;
   border: 1px solid $brand-workspace;
   min-width: 7rem;
 	height: 3.5rem;
   border-radius: 2.5rem;
-	@extend .content-1;
+	@include content-1;
   padding: 0 1.6rem;
   text-decoration: none;
   display: flex;
@@ -155,9 +155,11 @@ button:focus { outline:0 !important; }
     }
   }
 }
-
+%action-button {
+  @include action-button;
+}
 .action-button {
-  @extend %action-button;
+  @include action-button;
 }
 
 // In lesson left pannel:
@@ -292,7 +294,7 @@ button:focus { outline:0 !important; }
 }
 
 
-.button-blue {
+@mixin button-blue {
   color: $brand-workspace;
   border-color: $brand-workspace ;
   background-color: transparent;
@@ -303,6 +305,9 @@ button:focus { outline:0 !important; }
     background-color: $brand-workspace;
     color: white;
   }
+}
+.button-blue {
+  @include button-blue;
 }
 
 %button-red {

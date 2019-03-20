@@ -84,14 +84,6 @@ export default class WorkbenchAPI {
     return this._submit('delete', url, null, { body: '' })
   }
 
-  listWorkflows() {
-    return this._fetch('/api/workflows')
-  }
-
-  newWorkflow() {
-    return this._post('/api/workflows', {})
-  }
-
   deleteWorkflow(workflowId) {
     return this._delete(`/api/workflows/${workflowId}`)
   }

@@ -4,7 +4,8 @@ import React from 'react'
 import Navbar from './Navbar'
 import PropTypes from 'prop-types'
 import ShareModal from '../ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
-import { goToUrl, logUserEvent } from '../utils'
+import { logUserEvent } from '../utils'
+import CreateWorkflowButton from './CreateWorkflowButton'
 import SortMenu from './SortMenu'
 import WorkflowList from './WorkflowList'
 import TabContent from 'reactstrap/lib/TabContent'
@@ -67,15 +68,6 @@ export default class Workflows extends React.Component {
         onClickClose={this.closeShareModal}
       />
     )
-  }
-
-  // Make a new workflow when button clicked, and navigate to its Module List page
-  click = (e) => {
-    this.props.api.newWorkflow()
-      .then(json => {
-        // navigate to new WF page
-        goToUrl('/workflows/' + json.id)
-      })
   }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server
@@ -187,9 +179,9 @@ export default class Workflows extends React.Component {
       // Create workflow link if no owned workflows
       return (
         <TabPane tabId={'owned'}>
-          <div>
-            <a className={'new-workflow-link'} onClick={this.click}>Create your first workflow</a>
-          </div>
+          <CreateWorkflowButton>
+            Create your first workflow
+          </CreateWorkflowButton>
         </TabPane>
       )
     } else if (tab === 'shared'){
@@ -218,20 +210,20 @@ export default class Workflows extends React.Component {
     return (
       <div className='workflows-page'>
         <Navbar />
-        <div className='container'>
-          <a href='/lessons/' className='lesson-banner mx-auto'>
-            <div>
-              <div className='content-1'>NEW</div>
-              <div className='d-flex'>
-                <span className='icon-star'></span>
-                <div className=' title-1 '>TRAINING</div>
-              </div>
+        <a href='/lessons/' className='lesson-banner mx-auto'>
+          <div>
+            <div className='content-1'>NEW</div>
+            <div className='d-flex'>
+              <span className='icon-star'></span>
+              <div className=' title-1 '>TRAINING</div>
             </div>
-            <p>Learn how to work with data without coding</p>
-          </a>
-          <div className='d-flex justify-content-center'>
-            <button className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</button>
           </div>
+          <p>Learn how to work with data without coding</p>
+        </a>
+        <CreateWorkflowButton>
+          Create Workflow
+        </CreateWorkflowButton>
+        <div className='container'>
           <div className='mx-auto workflows-list'>
             <Nav tabs>
               <div className="tab-group">
