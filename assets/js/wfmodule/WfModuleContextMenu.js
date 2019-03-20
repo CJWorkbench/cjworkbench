@@ -25,14 +25,10 @@ export default class WfModuleContextMenu extends React.Component {
     this.setState({ exportModalOpen: !this.state.exportModalOpen });
   }
 
-  ignore = (ev) => {
-    ev.stopPropagation()
-  }
-
   render() {
 
     return (
-       <UncontrolledDropdown onClick={this.ignore}>
+       <UncontrolledDropdown>
         <DropdownToggle title="more" className='context-button'>
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
