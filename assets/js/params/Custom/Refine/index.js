@@ -989,6 +989,6 @@ export class Refine extends React.PureComponent {
 export default withFetchedData(
   Refine,
   'valueCounts',
-  ({ api, inputWfModuleId, selectedColumn }) => api.valueCounts(inputWfModuleId, selectedColumn),
-  ({ inputDeltaId, selectedColumn }) => `${inputDeltaId}-${selectedColumn}`
+  ({ api, inputWfModuleId, selectedColumn }) => selectedColumn === null ? Promise.resolve(null) : api.valueCounts(inputWfModuleId, selectedColumn),
+  ({ inputDeltaId, selectedColumn }) => selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
 )
