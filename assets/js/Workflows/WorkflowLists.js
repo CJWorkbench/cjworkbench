@@ -80,16 +80,28 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
 function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal }) {
   const [ activeTab, setActiveTab ] = useState(workflows.owned.length ? 'owned' : 'shared')
   const [ comparator, setComparator ] = useState('last_update|descending')
-  const workflowListProps = { comparator, deleteWorkflow, duplicateWorkflow, openShareModal }
   const tabProps = (name) => ({
     name,
     isActive: activeTab === name,
     setIsActive: (ev) => { ev.preventDefault(); setActiveTab(name) }
   })
+  const duplicateWorkflowAndSwitchTab = (workflowId) => {
+  }
   const tabContentProps = (name) => ({
     isActive: activeTab === name,
     workflows: workflows[name],
-    ...workflowListProps
+    comparator,
+    deleteWorkflow,
+    duplicateWorkflow: (workflowId) => {
+      // HACK for now: support fake promise -- https://github.com/facebook/react/issues/14769#issuecomment-462528230
+      // This is what we want:
+      //duplicateWorkflow(workflowId).then(() => setActiveTab('owned'))
+      // ... but we're left with this for now. (It switches tabs before the
+      // workflow is created, which looks glitchy.)
+      setActiveTab('owned')
+      duplicateWorkflow(workflowId)
+    },
+    openShareModal
   })
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
+import { act } from 'react-dom/test-utils'
 import Workflows from './index'
 const Utils = require('../utils');
 import { tick, okResponseMock, jsonResponseMock } from '../test-utils'
@@ -69,28 +70,11 @@ describe('Workflow list page', () => {
     public: false,
   }
 
-  const dupResponse = {
-    id: 666,
-    name: 'Copy of Visualization',
-    owner_name: 'Paul Plagarizer',
-    public: false,
-  }
-
   const api = {
-    duplicateWorkflow: jsonResponseMock(dupResponse),
+    duplicateWorkflow: jest.fn(),
     deleteWorkflow: okResponseMock()
   }
   const wrapper = (props) => mount(<Workflows api={api} {...props} />)
-
-  let globalGoToUrl
-  beforeEach(() => {
-    // mocking a global here... not really the greatest, ok for one test in this file
-    globalGoToUrl = Utils.goToUrl
-    Utils.goToUrl = jest.fn()
-  })
-  afterEach(() => {
-    Utils.goToUrl = globalGoToUrl
-  })
 
   let globalConfirm
   beforeEach(() => {
@@ -101,30 +85,25 @@ describe('Workflow list page', () => {
     global.confirm = globalConfirm
   })
 
-  // testWorkflows somehow gets modified during testing (even when const), must reset
-  beforeEach(() => {
-    testWorkflows.owned = testWorkflows.owned.filter(wf => wf.id !== 666)
-  })
-
   it('renders correctly', () => {
     const w = wrapper({ workflows: testWorkflows })
     expect(w).toMatchSnapshot()
 
     // owned tab should have 3 workflows
     w.find('.nav-link').findWhere(node => node.props().children === 'My workflows').simulate('click')
-    expect(w.find('Workflow')).toHaveLength(3)
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(3)
     // Make sure there is a context menu for each workflow
-    expect(w.find('WorkflowContextMenu')).toHaveLength(3)
+    expect(w.find('.tab-pane.active WorkflowContextMenu')).toHaveLength(3)
     // Make sure there is a metadata line for each workflow in the list
-    expect(w.find('WorkflowMetadata')).toHaveLength(3)
+    expect(w.find('.tab-pane.active WorkflowMetadata')).toHaveLength(3)
 
     // shared tab should have 2 workflows
     w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
-    expect(w.find('Workflow')).toHaveLength(2)
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(2)
 
     // template tab should have 1 workflow1
     w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
-    expect(w.find('Workflow')).toHaveLength(1)
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(1)
   })
 
   it('delete a workflow', (done) => {
@@ -135,14 +114,14 @@ describe('Workflow list page', () => {
     setImmediate(() => {
       // Shared tab should start with 2 workflows and have 1 after delete
       w.update()
-      expect(w.find('Workflow')).toHaveLength(3)
+      expect(w.find('.tab-pane.active Workflow')).toHaveLength(3)
       w.instance().deleteWorkflow(3)
 
       setImmediate(() => {
         w.update()
         expect(api.deleteWorkflow.mock.calls.length).toBe(1)
         expect(api.deleteWorkflow.mock.calls[0][0]).toBe(3)
-        expect(w.find('Workflow')).toHaveLength(2) // one fewer workflow
+        expect(w.find('.tab-pane.active Workflow')).toHaveLength(2) // one fewer workflow
         done()
       })
     })
@@ -151,25 +130,36 @@ describe('Workflow list page', () => {
   it('duplicates a workflow', async () => {
     // let 2 workflows load in user's shared tab, duplicate 1 and activeTab should get set
     // to owned list with +1 worflow
-    const w = wrapper({ workflows: testWorkflows })
-    await tick()
+    const w = wrapper({
+      workflows: testWorkflows,
+      api: {
+        ...api,
+        duplicateWorkflow: jest.fn(() => ({ // HACK for now: return fake promise -- https://github.com/facebook/react/issues/14769#issuecomment-462528230
+          then: jest.fn(callback => act(() => callback({
+            id: 666,
+            name: 'Copy of Visualization',
+            owner_name: 'Paul Plagarizer',
+            public: false,
+          })))
+        }))
+      }
+    })
 
     // Owned list should start with 3 WFs, shared with 2
-    expect(w.find('Workflow')).toHaveLength(3)
-    let sharedTab = w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me')
-    sharedTab.simulate('click')
-    expect(w.find('Workflow')).toHaveLength(2)
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(3)
+    w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(2)
 
-    w.instance().duplicateWorkflow(7)
-
-    // should be a new item at the top of the owned list
+    act(() => {
+      w.find('.tab-pane.active Workflow:first-child').prop('duplicateWorkflow')(7)
+    })
+    expect(w.prop('api').duplicateWorkflow).toHaveBeenCalledWith(7)
     await tick()
     w.update()
-    expect(api.duplicateWorkflow.mock.calls.length).toBe(1)
-    expect(api.duplicateWorkflow.mock.calls[0][0]).toBe(7)
 
     // Expect owned tab to now have 4 workflows
-    expect(w.find('Workflow')).toHaveLength(4)
+    // should be a new item at the top of the owned list
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(4)
   })
 
   it('owned pane should have create workflow link when no workflows', () => {
@@ -178,22 +168,23 @@ describe('Workflow list page', () => {
 
     // Owned list should have no workflows, instead a create workflow link
     w.find('.nav-link').findWhere(node => node.props().children === 'My workflows').simulate('click')
-    expect(w.find('Workflow')).toHaveLength(0)
+    expect(w.find('.tab-pane.active Workflow')).toHaveLength(0)
     expect(w.find('.tab-pane.active CreateWorkflowButton')).toHaveLength(1)
   })
 
   it('shared and template panes should have a placeholder when no workflows', (done) => {
-    let modifiedWorkflows = Object.assign({}, testWorkflows)
-    modifiedWorkflows['shared'] = {}
-    modifiedWorkflows['templates'] = {}
-    const w = wrapper({workflows: modifiedWorkflows})
+    const w = wrapper({ workflows: {
+      owned: testWorkflows.owned,
+      shared: [],
+      templates: []
+    }})
     setImmediate( () => {
       w.update()
       w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
-      expect(w.find('Workflow')).toHaveLength(0)
+      expect(w.find('.tab-pane.active Workflow')).toHaveLength(0)
       expect(w.find('.tab-pane.active .placeholder')).toHaveLength(1)
       w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
-      expect(w.find('Workflow')).toHaveLength(0)
+      expect(w.find('.tab-pane.active Workflow')).toHaveLength(0)
       expect(w.find('.tab-pane.active .placeholder')).toHaveLength(1)
       done()
     })
@@ -205,27 +196,27 @@ describe('Workflow list page', () => {
       // sort by date ascending
       w.update()
       w.find('button[data-comparator="last_update|ascending"]').simulate('click')
-      expect(w.find('Workflow').get(0).key).toEqual('2')
-      expect(w.find('Workflow').get(1).key).toEqual('1')
-      expect(w.find('Workflow').get(2).key).toEqual('3')
+      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('2')
+      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('1')
+      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('3')
       // sort by date descending
       w.update()
       w.find('button[data-comparator="last_update|descending"]').simulate('click')
-      expect(w.find('Workflow').get(0).key).toEqual('3')
-      expect(w.find('Workflow').get(1).key).toEqual('1')
-      expect(w.find('Workflow').get(2).key).toEqual('2')
+      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('3')
+      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('1')
+      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('2')
       // sort by name ascending
       w.update()
       w.find('button[data-comparator="name|ascending"]').simulate('click')
-      expect(w.find('Workflow').get(0).key).toEqual('3')
-      expect(w.find('Workflow').get(1).key).toEqual('2')
-      expect(w.find('Workflow').get(2).key).toEqual('1')
+      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('3')
+      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('2')
+      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('1')
       // sort by name descending
       w.update()
       w.find('button[data-comparator="name|descending"]').simulate('click')
-      expect(w.find('Workflow').get(0).key).toEqual('1')
-      expect(w.find('Workflow').get(1).key).toEqual('2')
-      expect(w.find('Workflow').get(2).key).toEqual('3')
+      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('1')
+      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('2')
+      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('3')
       done()
     })
   })

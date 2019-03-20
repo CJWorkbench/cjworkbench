@@ -28,8 +28,16 @@ export default class Workflows extends React.Component {
   }
 
   get allWorkflows () {
-    const workflows = this.state.workflows || {}
-    return [].concat(...Object.keys(this.state.workflows || {}).map(k => workflows[k]))
+    const { workflows } = this.state
+    return [].concat(...Object.keys(workflows).map(k => workflows[k]))
+  }
+
+  workflowIdToTabName = (workflowId) => {
+    const { workflows } = this.state
+    for (const tab in workflows) {
+      if (workflows[tab].findIndex(w => w.id === workflowId) !== -1) return tab
+    }
+    return null
   }
 
   openShareModal = (workflowId) => {
@@ -71,25 +79,29 @@ export default class Workflows extends React.Component {
   }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server
-  deleteWorkflow = (id) => {
-    if (!confirm("Permanently delete this workflow?"))
-      return
+  deleteWorkflow = (workflowId) => {
+    const tabName = this.workflowIdToTabName(workflowId)
+    if (!tabName) return
 
-    this.props.api.deleteWorkflow(id)
-    .then(response => {
-      var workflowsMinusID = Object.assign({}, this.state.workflows)
-      workflowsMinusID[this.state.activeTab] = workflowsMinusID[this.state.activeTab].filter(wf => wf.id !== id)
-      this.setState({workflows: workflowsMinusID})
-    })
+    if (!confirm("Permanently delete this workflow?")) return
+
+    this.props.api.deleteWorkflow(workflowId)
+      .then(() => {
+        this.setState({ workflows: {
+          ...this.state.workflows,
+          [tabName]: this.state.workflows[tabName].filter(w => w.id !== workflowId)
+        }})
+      })
   }
 
   duplicateWorkflow = (id) => {
-    this.props.api.duplicateWorkflow(id)
+    return this.props.api.duplicateWorkflow(id)
       .then(json => {
         // Add to beginning of owned list then set activeTab to owned
-        var workflowsPlusDup = Object.assign({}, this.state.workflows)
-        workflowsPlusDup['owned'].unshift(json)
-        this.setState({workflows: workflowsPlusDup, activeTab: 'owned'})
+        this.setState({ workflows: {
+          ...this.state.workflows,
+          owned: [ json, ...this.state.workflows.owned ]
+        }})
       })
   }
 
