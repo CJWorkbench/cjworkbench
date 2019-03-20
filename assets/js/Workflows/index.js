@@ -223,34 +223,32 @@ export default class Workflows extends React.Component {
         <CreateWorkflowButton>
           Create Workflow
         </CreateWorkflowButton>
-        <div className='container'>
-          <div className='mx-auto workflows-list'>
-            <Nav tabs>
-              <div className="tab-group">
-                <NavItem active={activeTab === 'owned'} onClick={this.setTabOwned}>
-                  <NavLink>
-                    My workflows
-                  </NavLink>
-                </NavItem>
-                <NavItem active={activeTab === 'shared'} onClick={this.setTabShared}>
-                  <NavLink>
-                    Shared with me
-                  </NavLink>
-                </NavItem>
-                <NavItem active={activeTab === 'templates'} onClick={this.setTabTemplates}>
-                  <NavLink>
-                    Recipes
-                  </NavLink>
-                </NavItem>
-              </div>
-              <SortMenu comparator={comparator} setComparator={this.setComparator} />
-            </Nav>
-            <TabContent activeTab={this.state.activeTab}>
-              { activeTab === 'owned' ? this.renderWorkflowPane(workflows.owned, 'owned') : null }
-              { activeTab === 'shared' ? this.renderWorkflowPane(workflows.shared, 'shared') : null }
-              { activeTab === 'templates' ? this.renderWorkflowPane(workflows.templates, 'templates') : null }
-            </TabContent>
-          </div>
+        <div className='workflows-list'>
+          <Nav tabs>
+            <div className="tab-group">
+              <NavItem active={activeTab === 'owned'} onClick={this.setTabOwned}>
+                <NavLink>
+                  My workflows
+                </NavLink>
+              </NavItem>
+              <NavItem active={activeTab === 'shared'} onClick={this.setTabShared}>
+                <NavLink>
+                  Shared with me
+                </NavLink>
+              </NavItem>
+              <NavItem active={activeTab === 'templates'} onClick={this.setTabTemplates}>
+                <NavLink>
+                  Recipes
+                </NavLink>
+              </NavItem>
+            </div>
+            <SortMenu comparator={comparator} setComparator={this.setComparator} />
+          </Nav>
+          <TabContent activeTab={this.state.activeTab}>
+            { activeTab === 'owned' ? this.renderWorkflowPane(workflows.owned, 'owned') : null }
+            { activeTab === 'shared' ? this.renderWorkflowPane(workflows.shared, 'shared') : null }
+            { activeTab === 'templates' ? this.renderWorkflowPane(workflows.templates, 'templates') : null }
+          </TabContent>
         </div>
         {this.renderShareModal()}
       </div>

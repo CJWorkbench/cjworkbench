@@ -67,10 +67,10 @@
 
   .workflows-list {
     border: 0;
-    margin-top: 4rem;
+    margin: 4rem auto 10rem;
     background-color: transparent;
-    max-width: 80rem;
-    margin-bottom: 10rem;
+    width: 95%; // for thin displays
+    max-width: 80rem; // for desktop display
 
     .nav-tabs {
       display: flex;
