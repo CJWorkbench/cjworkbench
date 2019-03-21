@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import memoize from 'memoize-one'
 import { clusterByKey, clusterByKnn } from 'clustring'
-import { FormGroup, Input, Label } from '../../../components/Form'
 import fingerprint from 'clustring/key/fingerprint'
 import levenshtein from 'clustring/knn/levenshtein'
 
@@ -21,10 +20,10 @@ const Algorithms = [
     description: 'Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.',
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
-      <FormGroup>
-        <Label for="refine-clusterer-max-distance">Maximum distance</Label>
-        <Input id="refine-clusterer-max-distance" type="number" required name="maxDistance" size="2" value={options.maxDistance} min="1" max="999" placeholder="3" {...handlers} />
-      </FormGroup>
+      <div className='form-group'>
+        <label htmlFor='refine-clusterer-max-distance'>Maximum distance</label>
+        <input className='form-control' id='refine-clusterer-max-distance' type='number' required name='maxDistance' size='2' value={options.maxDistance} min='1' max='999' placeholder='3' {...handlers} />
+      </div>
     ),
     buildClusterer: (bucket, options) => clusterByKnn(bucket, levenshtein(options.maxDistance), options.maxDistance)
   }

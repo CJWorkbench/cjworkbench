@@ -60,73 +60,69 @@ exports[`ExportModal should match snapshot 1`] = `
                     class="modal-body"
                   >
                     <div
-                      class="form-group"
+                      class="d-flex justify-content-between flex-row"
                     >
                       <div
-                        class="d-flex justify-content-between flex-row"
+                        class="dl-file"
                       >
-                        <label
-                          class="dl-file"
-                        >
-                          CSV
-                        </label>
-                        <div
-                          class="clipboard test-csv-copy"
-                        >
-                          COPY LIVE LINK
-                        </div>
+                        CSV
                       </div>
                       <div
-                        class="d-flex justify-content-between flex-row mb-3"
+                        class="clipboard test-csv-copy"
                       >
-                        <input
-                          class="url-link test-csv-field"
-                          readonly=""
-                          type="url"
-                          value="http://localhost/public/moduledata/live/415.csv"
+                        COPY LIVE LINK
+                      </div>
+                    </div>
+                    <div
+                      class="d-flex justify-content-between flex-row mb-3"
+                    >
+                      <input
+                        class="url-link test-csv-field"
+                        readonly=""
+                        type="url"
+                        value="http://localhost/public/moduledata/live/415.csv"
+                      />
+                      <div
+                        class="download-icon-box"
+                      >
+                        <a
+                          class="icon-download t-d-gray button-icon test-csv-download"
+                          download=""
+                          href="http://localhost/public/moduledata/live/415.csv"
                         />
-                        <div
-                          class="download-icon-box"
-                        >
-                          <a
-                            class="icon-download t-d-gray button-icon test-csv-download"
-                            download=""
-                            href="http://localhost/public/moduledata/live/415.csv"
-                          />
-                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="d-flex justify-content-between flex-row"
+                    >
+                      <div
+                        class="dl-file"
+                      >
+                        JSON FEED
                       </div>
                       <div
-                        class="d-flex justify-content-between flex-row"
+                        class="clipboard test-json-copy"
                       >
-                        <label
-                          class="dl-file"
-                        >
-                          JSON FEED
-                        </label>
-                        <div
-                          class="clipboard test-json-copy"
-                        >
-                          COPY LIVE LINK
-                        </div>
+                        COPY LIVE LINK
                       </div>
+                    </div>
+                    <div
+                      class="d-flex justify-content-between flex-row"
+                    >
+                      <input
+                        class="url-link test-json-field"
+                        readonly=""
+                        type="url"
+                        value="http://localhost/public/moduledata/live/415.json"
+                      />
                       <div
-                        class="d-flex justify-content-between flex-row"
+                        class="download-icon-box"
                       >
-                        <input
-                          class="url-link test-json-field"
-                          readonly=""
-                          type="url"
-                          value="http://localhost/public/moduledata/live/415.json"
+                        <a
+                          class="icon-download t-d-gray button-icon test-json-download"
+                          download=""
+                          href="http://localhost/public/moduledata/live/415.json"
                         />
-                        <div
-                          class="download-icon-box"
-                        >
-                          <a
-                            class="icon-download t-d-gray button-icon test-json-download"
-                            download=""
-                            href="http://localhost/public/moduledata/live/415.json"
-                          />
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -190,124 +186,88 @@ exports[`ExportModal should match snapshot 1`] = `
                 <div
                   className="modal-body"
                 >
-                  <FormGroup
-                    tag="div"
+                  <div
+                    className="d-flex justify-content-between flex-row"
                   >
                     <div
-                      className="form-group"
+                      className="dl-file"
+                    >
+                      CSV
+                    </div>
+                    <CopyToClipboard
+                      className="clipboard test-csv-copy"
+                      onCopy={[Function]}
+                      text="http://localhost/public/moduledata/live/415.csv"
                     >
                       <div
-                        className="d-flex justify-content-between flex-row"
+                        className="clipboard test-csv-copy"
+                        onClick={[Function]}
                       >
-                        <Label
-                          className="dl-file"
-                          tag="label"
-                          widths={
-                            Array [
-                              "xs",
-                              "sm",
-                              "md",
-                              "lg",
-                              "xl",
-                            ]
-                          }
-                        >
-                          <label
-                            className="dl-file"
-                          >
-                            CSV
-                          </label>
-                        </Label>
-                        <CopyToClipboard
-                          className="clipboard test-csv-copy"
-                          onCopy={[Function]}
-                          text="http://localhost/public/moduledata/live/415.csv"
-                        >
-                          <div
-                            className="clipboard test-csv-copy"
-                            onClick={[Function]}
-                          >
-                            COPY LIVE LINK
-                          </div>
-                        </CopyToClipboard>
+                        COPY LIVE LINK
                       </div>
-                      <div
-                        className="d-flex justify-content-between flex-row mb-3"
-                      >
-                        <input
-                          className="url-link test-csv-field"
-                          readOnly={true}
-                          type="url"
-                          value="http://localhost/public/moduledata/live/415.csv"
-                        />
-                        <div
-                          className="download-icon-box"
-                        >
-                          <a
-                            className="icon-download t-d-gray button-icon test-csv-download"
-                            download={true}
-                            href="http://localhost/public/moduledata/live/415.csv"
-                            onClick={[Function]}
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className="d-flex justify-content-between flex-row"
-                      >
-                        <Label
-                          className="dl-file"
-                          tag="label"
-                          widths={
-                            Array [
-                              "xs",
-                              "sm",
-                              "md",
-                              "lg",
-                              "xl",
-                            ]
-                          }
-                        >
-                          <label
-                            className="dl-file"
-                          >
-                            JSON FEED
-                          </label>
-                        </Label>
-                        <CopyToClipboard
-                          className="clipboard test-json-copy"
-                          onCopy={[Function]}
-                          text="http://localhost/public/moduledata/live/415.json"
-                        >
-                          <div
-                            className="clipboard test-json-copy"
-                            onClick={[Function]}
-                          >
-                            COPY LIVE LINK
-                          </div>
-                        </CopyToClipboard>
-                      </div>
-                      <div
-                        className="d-flex justify-content-between flex-row"
-                      >
-                        <input
-                          className="url-link test-json-field"
-                          readOnly={true}
-                          type="url"
-                          value="http://localhost/public/moduledata/live/415.json"
-                        />
-                        <div
-                          className="download-icon-box"
-                        >
-                          <a
-                            className="icon-download t-d-gray button-icon test-json-download"
-                            download={true}
-                            href="http://localhost/public/moduledata/live/415.json"
-                            onClick={[Function]}
-                          />
-                        </div>
-                      </div>
+                    </CopyToClipboard>
+                  </div>
+                  <div
+                    className="d-flex justify-content-between flex-row mb-3"
+                  >
+                    <input
+                      className="url-link test-csv-field"
+                      readOnly={true}
+                      type="url"
+                      value="http://localhost/public/moduledata/live/415.csv"
+                    />
+                    <div
+                      className="download-icon-box"
+                    >
+                      <a
+                        className="icon-download t-d-gray button-icon test-csv-download"
+                        download={true}
+                        href="http://localhost/public/moduledata/live/415.csv"
+                        onClick={[Function]}
+                      />
                     </div>
-                  </FormGroup>
+                  </div>
+                  <div
+                    className="d-flex justify-content-between flex-row"
+                  >
+                    <div
+                      className="dl-file"
+                    >
+                      JSON FEED
+                    </div>
+                    <CopyToClipboard
+                      className="clipboard test-json-copy"
+                      onCopy={[Function]}
+                      text="http://localhost/public/moduledata/live/415.json"
+                    >
+                      <div
+                        className="clipboard test-json-copy"
+                        onClick={[Function]}
+                      >
+                        COPY LIVE LINK
+                      </div>
+                    </CopyToClipboard>
+                  </div>
+                  <div
+                    className="d-flex justify-content-between flex-row"
+                  >
+                    <input
+                      className="url-link test-json-field"
+                      readOnly={true}
+                      type="url"
+                      value="http://localhost/public/moduledata/live/415.json"
+                    />
+                    <div
+                      className="download-icon-box"
+                    >
+                      <a
+                        className="icon-download t-d-gray button-icon test-json-download"
+                        download={true}
+                        href="http://localhost/public/moduledata/live/415.json"
+                        onClick={[Function]}
+                      />
+                    </div>
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter>
