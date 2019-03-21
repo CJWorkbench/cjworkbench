@@ -9,7 +9,7 @@ export default class ExportModal extends React.Component {
   static propTypes = {
     open:       PropTypes.bool.isRequired,
     wfModuleId: PropTypes.number.isRequired, // to build download URLs
-    onClose:    PropTypes.func.isRequired,
+    toggle:    PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -101,17 +101,14 @@ export default class ExportModal extends React.Component {
   }
 
   render () {
-    if (!this.props.open)
-      return null;
-
-    var csvString = this.csvUrlString(this.props.wfModuleId);
-    var jsonString = this.jsonUrlString(this.props.wfModuleId);
-    var csvCopyLink = this.renderCsvCopyLink();
-    var jsonCopyLink = this.renderJsonCopyLink();
+    const csvString = this.csvUrlString(this.props.wfModuleId);
+    const jsonString = this.jsonUrlString(this.props.wfModuleId);
+    const csvCopyLink = this.renderCsvCopyLink();
+    const jsonCopyLink = this.renderJsonCopyLink();
 
     return (
-      <Modal isOpen={true} className={this.props.className}>
-        <ModalHeader toggle={this.props.onClose}>EXPORT DATA</ModalHeader>
+      <Modal isOpen={this.props.open} className={this.props.className} toggle={this.props.toggle}>
+        <ModalHeader>EXPORT DATA</ModalHeader>
         <ModalBody>
           <FormGroup>
             <div className='d-flex justify-content-between flex-row'>
@@ -141,11 +138,10 @@ export default class ExportModal extends React.Component {
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <button onClick={this.props.onClose} className='button-blue action-button test-done-button'>Done</button>
-          {' '}
+          <button type='button' onClick={this.props.toggle} className='button-blue action-button test-done-button'>Done</button>
         </ModalFooter>
       </Modal>
-    );
+    )
   }
 
 }

@@ -141,7 +141,6 @@
     display: block;
     margin-left: 2rem;
     @include content-1;
-    @extend .url-link;
     color: $brand-orange;
     position: relative; // to position copied-flash
     cursor: text;

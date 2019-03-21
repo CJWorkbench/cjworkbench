@@ -4,20 +4,15 @@ import ExportModal from "./ExportModal";
 
 
 describe('ExportModal', () => {
-
   let wrapper;
-  let onClose;
 
   beforeEach(() => {
-
-    onClose = jest.fn();
-
     // mount not shallow as we are looking for components down in the tree, e.g. the input fields inside FormGroup
     wrapper = mount(
       <ExportModal
         wfModuleId={415}
         open={true}
-        onClose={onClose}
+        toggle={jest.fn()}
         className="menu-test-class"
       />
     )
@@ -30,11 +25,9 @@ describe('ExportModal', () => {
   });
 
   it('closes', () => {
-    const closeButton = wrapper.find('button.test-done-button');
-    expect(closeButton).toHaveLength(1);
-    closeButton.simulate('click');
-    expect(onClose).toHaveBeenCalled();
-  });
+    wrapper.find('button.test-done-button').simulate('click')
+    expect(wrapper.prop('toggle')).toHaveBeenCalled()
+  })
 
   it('should render download links', () => {
     const csvField = wrapper.find('input.test-csv-field');

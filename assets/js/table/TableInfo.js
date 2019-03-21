@@ -22,7 +22,7 @@ export default class TableInfo extends React.PureComponent {
     this.setState({ isExportModalOpen: true })
   }
 
-  closeExportModal = () => {
+  closeExportModal = (ev) => {
     this.setState({ isExportModalOpen: false })
   }
 
@@ -53,15 +53,17 @@ export default class TableInfo extends React.PureComponent {
         </div>
 
         {!wfModuleId ? null : (
-          <div className="export-table" onClick={this.openExportModal}>
-            <i className="icon-download" />
-            <span>EXPORT</span>
+          <>
+            <div className="export-table" onClick={this.openExportModal}>
+              <i className="icon-download" />
+              <span>EXPORT</span>
+            </div>
             <ExportModal
               open={isExportModalOpen}
               wfModuleId={wfModuleId}
-              onClose={this.closeExportModal}
+              toggle={this.closeExportModal}
             />
-          </div>
+          </>
         )}
       </div>
     )

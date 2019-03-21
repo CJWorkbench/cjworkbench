@@ -2,41 +2,12 @@
 
 exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
 <Modal
-  autoFocus={true}
-  backdrop={true}
-  backdropTransition={
-    Object {
-      "mountOnEnter": true,
-      "timeout": 150,
-    }
-  }
-  centered={false}
   className="update-frequency-modal"
-  fade={true}
   isOpen={true}
-  keyboard={true}
-  modalTransition={
-    Object {
-      "timeout": 300,
-    }
-  }
-  onClosed={[Function]}
-  onOpened={[Function]}
-  role="dialog"
-  zIndex={1050}
+  toggle={[MockFunction]}
 >
-  <ModalHeader
-    charCode={215}
-    className="dialog-header"
-    closeAriaLabel="Close"
-    tag="h5"
-    wrapTag="div"
-  >
-    <span
-      className="modal-title"
-    >
-      WORKFLOW UPDATE
-    </span>
+  <ModalHeader>
+    WORKFLOW UPDATE
   </ModalHeader>
   <ModalBody>
     <form

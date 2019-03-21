@@ -37,10 +37,15 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
           </DropdownToggle>
           <DropdownMenu />
           <ExportModal
-            onClose={[Function]}
             open={false}
+            toggle={[Function]}
             wfModuleId={415}
-          />
+          >
+            <Modal
+              isOpen={false}
+              toggle={[Function]}
+            />
+          </ExportModal>
         </div>
       </Manager>
     </Dropdown>

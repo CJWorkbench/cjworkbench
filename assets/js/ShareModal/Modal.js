@@ -28,8 +28,8 @@ export default class _Modal extends React.PureComponent {
       onChangeAclEntry, onCreateAclEntry, onClickDeleteAclEntry, onClickClose } = this.props
 
     return (
-      <Modal className='share-modal' isOpen={true} toggle={onClickClose}>
-        <ModalHeader toggle={onClickClose}>SHARING SETTINGS</ModalHeader>
+      <Modal className='share-modal' isOpen toggle={onClickClose}>
+        <ModalHeader>SHARING SETTINGS</ModalHeader>
         <ModalBody>
           <h6>Share with the world</h6>
           <PublicPrivate

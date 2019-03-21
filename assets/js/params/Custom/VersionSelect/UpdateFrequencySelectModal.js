@@ -4,15 +4,20 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/
 import { FormGroup, Label, Input } from '../../../components/Form'
 
 export default class UpdateFrequencySelectModal extends React.PureComponent {
-  constructor(props) {
-    super(props)
+  static propTypes = {
+    isAutoUpdate: PropTypes.bool.isRequired,
+    isEmailUpdates: PropTypes.bool.isRequired,
+    timeNumber: PropTypes.number.isRequired,
+    timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
+    onCancel: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+  }
 
-    this.state = {
-      isAutoUpdate: props.isAutoUpdate,
-      isEmailUpdates: props.isEmailUpdates,
-      timeNumber: props.timeNumber,
-      timeUnit: props.timeUnit,
-    }
+  state = {
+    isAutoUpdate: this.props.isAutoUpdate,
+    isEmailUpdates: this.props.isEmailUpdates,
+    timeNumber: this.props.timeNumber,
+    timeUnit: this.props.timeUnit
   }
 
   onChangeAutoUpdate = (ev) => {
@@ -64,10 +69,8 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     const { isAutoUpdate, isEmailUpdates, timeNumber, timeUnit } = this.state
 
     return (
-      <Modal isOpen={true} className='update-frequency-modal'>
-        <ModalHeader toggle={this.props.closeModal} className='dialog-header'>
-          <span className="modal-title">WORKFLOW UPDATE</span>
-        </ModalHeader>
+      <Modal isOpen={true} className='update-frequency-modal' toggle={this.props.onCancel}>
+        <ModalHeader>WORKFLOW UPDATE</ModalHeader>
         <ModalBody>
           <form
             id="updateFrequencySelectModalForm"
@@ -155,13 +158,4 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
       </Modal>
     )
   }
-}
-
-UpdateFrequencySelectModal.propTypes = {
-  isAutoUpdate: PropTypes.bool.isRequired,
-  isEmailUpdates: PropTypes.bool.isRequired,
-  timeNumber: PropTypes.number.isRequired,
-  timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
-  onCancel: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
 }

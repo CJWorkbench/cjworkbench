@@ -27,47 +27,31 @@ exports[`DataVersionModal matches snapshot 1`] = `
   wfModuleId={124}
 >
   <Modal
-    autoFocus={true}
-    backdrop={true}
-    backdropTransition={
-      Object {
-        "mountOnEnter": true,
-        "timeout": 150,
-      }
-    }
-    centered={false}
     className="data-versions-modal"
     fade={false}
     isOpen={true}
-    keyboard={true}
-    modalTransition={
-      Object {
-        "timeout": 300,
-      }
-    }
-    onClosed={[Function]}
-    onOpened={[Function]}
-    role="dialog"
     toggle={[MockFunction]}
-    zIndex={1050}
   >
-    <Portal
-      node={
-        <div
-          style="position: relative; z-index: 1050;"
-          tabindex="-1"
-        >
-          <div
-            class=""
+    <OpenModal
+      className="data-versions-modal"
+      fade={false}
+      toggle={[MockFunction]}
+    >
+      <Portal
+        containerInfo={
+          <body
+            class="modal-open"
           >
             <div
-              class="modal"
+              class="modal-backdrop"
+            />
+            <div
+              class="modal data-versions-modal"
               role="dialog"
-              style="display: block;"
               tabindex="-1"
             >
               <div
-                class="modal-dialog data-versions-modal"
+                class="modal-dialog"
                 role="document"
               >
                 <div
@@ -190,399 +174,187 @@ exports[`DataVersionModal matches snapshot 1`] = `
                 </div>
               </div>
             </div>
-            <div
-              class="modal-backdrop show"
-            />
-          </div>
-        </div>
-      }
-    >
-      <Portal
-        containerInfo={
-          <div
-            style="position: relative; z-index: 1050;"
-            tabindex="-1"
-          >
-            <div
-              class=""
-            >
-              <div
-                class="modal"
-                role="dialog"
-                style="display: block;"
-                tabindex="-1"
-              >
-                <div
-                  class="modal-dialog data-versions-modal"
-                  role="document"
-                >
-                  <div
-                    class="modal-content"
-                  >
-                    <div
-                      class="modal-header"
-                    >
-                      <h5
-                        class="modal-title"
-                      >
-                        Data Versions
-                      </h5>
-                      <button
-                        aria-label="Close"
-                        class="close"
-                        type="button"
-                      >
-                        <span
-                          aria-hidden="true"
-                        >
-                          ×
-                        </span>
-                      </button>
-                    </div>
-                    <div
-                      class="modal-body"
-                    >
-                      <form>
-                        <ol>
-                          <li>
-                            <label
-                              class="unseen"
-                            >
-                              <input
-                                name="data-version"
-                                type="radio"
-                                value="2000"
-                              />
-                              <time
-                                time="1970-01-03T17:09:27.890Z"
-                              >
-                                Jan. 3, 1970 – 5:09 p.m.
-                              </time>
-                            </label>
-                          </li>
-                          <li>
-                            <label
-                              class="seen selected"
-                            >
-                              <input
-                                checked=""
-                                name="data-version"
-                                type="radio"
-                                value="1000"
-                              />
-                              <time
-                                time="1970-01-02T10:17:36.789Z"
-                              >
-                                Jan. 2, 1970 – 10:17 a.m.
-                              </time>
-                            </label>
-                          </li>
-                        </ol>
-                      </form>
-                    </div>
-                    <div
-                      class="modal-footer"
-                    >
-                      <form
-                        class="notifications notifications-disabled"
-                      >
-                        <div
-                          class="text"
-                        >
-                          <p
-                            class="status"
-                          >
-                            <i
-                              class="icon icon-no-notification"
-                            />
-                             Alerts are 
-                            <strong>
-                               off
-                            </strong>
-                          </p>
-                          <p
-                            class="description"
-                          >
-                            Turn alerts ON to receive an email if the output of this module changes
-                          </p>
-                        </div>
-                        <div
-                          class="options"
-                        >
-                          <label>
-                            <input
-                              name="notifications-enabled"
-                              type="checkbox"
-                            />
-                            <span
-                              class="action"
-                            >
-                              Turn on
-                            </span>
-                          </label>
-                        </div>
-                      </form>
-                      <div
-                        class="actions"
-                      >
-                        <button
-                          disabled=""
-                          name="load"
-                        >
-                          Load
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="modal-backdrop show"
-              />
-            </div>
-          </div>
+          </body>
         }
       >
         <div
-          className=""
+          className="modal-backdrop"
+        />
+        <div
+          className="modal data-versions-modal"
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          role="dialog"
+          tabIndex="-1"
         >
-          <Fade
-            appear={true}
-            baseClass=""
-            baseClassActive="show"
-            className="modal"
-            enter={true}
-            exit={true}
-            in={true}
-            mountOnEnter={false}
-            onClick={[Function]}
-            onEnter={[Function]}
-            onEntered={[Function]}
-            onEntering={[Function]}
-            onExit={[Function]}
-            onExited={[Function]}
-            onExiting={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            role="dialog"
-            style={
-              Object {
-                "display": "block",
-              }
-            }
-            tabIndex="-1"
-            tag="div"
-            timeout={0}
-            unmountOnExit={false}
+          <div
+            className="modal-dialog"
+            role="document"
           >
-            <Transition
-              appear={true}
-              enter={true}
-              exit={true}
-              in={true}
-              mountOnEnter={false}
-              onEnter={[Function]}
-              onEntered={[Function]}
-              onEntering={[Function]}
-              onExit={[Function]}
-              onExited={[Function]}
-              onExiting={[Function]}
-              timeout={0}
-              unmountOnExit={false}
+            <div
+              className="modal-content"
             >
-              <div
-                className="modal"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                role="dialog"
-                style={
-                  Object {
-                    "display": "block",
-                  }
-                }
-                tabIndex="-1"
+              <ModalHeader
+                toggle={[MockFunction]}
               >
                 <div
-                  className="modal-dialog data-versions-modal"
-                  role="document"
+                  className="modal-header"
                 >
-                  <div
-                    className="modal-content"
+                  <h5
+                    className="modal-title"
                   >
-                    <ModalHeader
-                      charCode={215}
-                      closeAriaLabel="Close"
-                      tag="h5"
-                      toggle={[MockFunction]}
-                      wrapTag="div"
+                    Data Versions
+                  </h5>
+                  <button
+                    aria-label="Close"
+                    className="close"
+                    onClick={[MockFunction]}
+                    type="button"
+                  >
+                    <span
+                      aria-hidden="true"
+                    >
+                      ×
+                    </span>
+                  </button>
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                <div
+                  className="modal-body"
+                >
+                  <form
+                    onSubmit={[Function]}
+                  >
+                    <ol>
+                      <li
+                        key="2000"
+                      >
+                        <FetchVersion
+                          date={1970-01-03T17:09:27.890Z}
+                          id="2000"
+                          isSeen={false}
+                          isSelected={false}
+                          onSelect={[Function]}
+                        >
+                          <label
+                            className="unseen"
+                          >
+                            <input
+                              checked={false}
+                              name="data-version"
+                              onChange={[Function]}
+                              type="radio"
+                              value="2000"
+                            />
+                            <time
+                              time="1970-01-03T17:09:27.890Z"
+                            >
+                              Jan. 3, 1970 – 5:09 p.m.
+                            </time>
+                          </label>
+                        </FetchVersion>
+                      </li>
+                      <li
+                        key="1000"
+                      >
+                        <FetchVersion
+                          date={1970-01-02T10:17:36.789Z}
+                          id="1000"
+                          isSeen={true}
+                          isSelected={true}
+                          onSelect={[Function]}
+                        >
+                          <label
+                            className="seen selected"
+                          >
+                            <input
+                              checked={true}
+                              name="data-version"
+                              onChange={[Function]}
+                              type="radio"
+                              value="1000"
+                            />
+                            <time
+                              time="1970-01-02T10:17:36.789Z"
+                            >
+                              Jan. 2, 1970 – 10:17 a.m.
+                            </time>
+                          </label>
+                        </FetchVersion>
+                      </li>
+                    </ol>
+                  </form>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <div
+                  className="modal-footer"
+                >
+                  <NotificationsForm
+                    notificationsEnabled={false}
+                    onSubmit={[Function]}
+                  >
+                    <form
+                      className="notifications notifications-disabled"
                     >
                       <div
-                        className="modal-header"
+                        className="text"
                       >
-                        <h5
-                          className="modal-title"
+                        <p
+                          className="status"
                         >
-                          Data Versions
-                        </h5>
-                        <button
-                          aria-label="Close"
-                          className="close"
-                          onClick={[MockFunction]}
-                          type="button"
+                          <i
+                            className="icon icon-no-notification"
+                          />
+                           Alerts are 
+                          <strong>
+                             off
+                          </strong>
+                        </p>
+                        <p
+                          className="description"
                         >
+                          Turn alerts ON to receive an email if the output of this module changes
+                        </p>
+                      </div>
+                      <div
+                        className="options"
+                      >
+                        <label>
+                          <input
+                            checked={false}
+                            name="notifications-enabled"
+                            onChange={[Function]}
+                            type="checkbox"
+                          />
                           <span
-                            aria-hidden="true"
+                            className="action"
                           >
-                            ×
+                            Turn on
                           </span>
-                        </button>
+                        </label>
                       </div>
-                    </ModalHeader>
-                    <ModalBody>
-                      <div
-                        className="modal-body"
-                      >
-                        <form
-                          onSubmit={[Function]}
-                        >
-                          <ol>
-                            <li
-                              key="2000"
-                            >
-                              <FetchVersion
-                                date={1970-01-03T17:09:27.890Z}
-                                id="2000"
-                                isSeen={false}
-                                isSelected={false}
-                                onSelect={[Function]}
-                              >
-                                <label
-                                  className="unseen"
-                                >
-                                  <input
-                                    checked={false}
-                                    name="data-version"
-                                    onChange={[Function]}
-                                    type="radio"
-                                    value="2000"
-                                  />
-                                  <time
-                                    time="1970-01-03T17:09:27.890Z"
-                                  >
-                                    Jan. 3, 1970 – 5:09 p.m.
-                                  </time>
-                                </label>
-                              </FetchVersion>
-                            </li>
-                            <li
-                              key="1000"
-                            >
-                              <FetchVersion
-                                date={1970-01-02T10:17:36.789Z}
-                                id="1000"
-                                isSeen={true}
-                                isSelected={true}
-                                onSelect={[Function]}
-                              >
-                                <label
-                                  className="seen selected"
-                                >
-                                  <input
-                                    checked={true}
-                                    name="data-version"
-                                    onChange={[Function]}
-                                    type="radio"
-                                    value="1000"
-                                  />
-                                  <time
-                                    time="1970-01-02T10:17:36.789Z"
-                                  >
-                                    Jan. 2, 1970 – 10:17 a.m.
-                                  </time>
-                                </label>
-                              </FetchVersion>
-                            </li>
-                          </ol>
-                        </form>
-                      </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <div
-                        className="modal-footer"
-                      >
-                        <NotificationsForm
-                          notificationsEnabled={false}
-                          onSubmit={[Function]}
-                        >
-                          <form
-                            className="notifications notifications-disabled"
-                          >
-                            <div
-                              className="text"
-                            >
-                              <p
-                                className="status"
-                              >
-                                <i
-                                  className="icon icon-no-notification"
-                                />
-                                 Alerts are 
-                                <strong>
-                                   off
-                                </strong>
-                              </p>
-                              <p
-                                className="description"
-                              >
-                                Turn alerts ON to receive an email if the output of this module changes
-                              </p>
-                            </div>
-                            <div
-                              className="options"
-                            >
-                              <label>
-                                <input
-                                  checked={false}
-                                  name="notifications-enabled"
-                                  onChange={[Function]}
-                                  type="checkbox"
-                                />
-                                <span
-                                  className="action"
-                                >
-                                  Turn on
-                                </span>
-                              </label>
-                            </div>
-                          </form>
-                        </NotificationsForm>
-                        <div
-                          className="actions"
-                        >
-                          <button
-                            disabled={true}
-                            name="load"
-                            onClick={[Function]}
-                          >
-                            Load
-                          </button>
-                        </div>
-                      </div>
-                    </ModalFooter>
+                    </form>
+                  </NotificationsForm>
+                  <div
+                    className="actions"
+                  >
+                    <button
+                      disabled={true}
+                      name="load"
+                      onClick={[Function]}
+                    >
+                      Load
+                    </button>
                   </div>
                 </div>
-              </div>
-            </Transition>
-          </Fade>
-          <div
-            className="modal-backdrop show"
-          />
+              </ModalFooter>
+            </div>
+          </div>
         </div>
       </Portal>
-    </Portal>
+    </OpenModal>
   </Modal>
 </DataVersionModal>
 `;

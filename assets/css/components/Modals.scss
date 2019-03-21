@@ -1,17 +1,24 @@
 /* ---- Dialog Boxes ---- */
 
-.modal-open .modal-backdrop.fade.show {
+.modal-open .modal {
+  // Bootstrap default is to hide, overriding with JS.
+  // But we use React; we only _render_ if it's not hidden. Undo the
+  // Bootstrap-ism.
+  display: block;
+}
+
+.modal-backdrop {
   opacity: .2;
   background-color: $dark-gray;
 }
+
 .modal-dialog {
-  border: 0;
-  top:calc(100vh/10);
+  top: 10vh;
   max-height: 50rem;
   box-shadow: $menu-shadow;
 
   .modal-content{
-    border:0;
+    border: 0;
     border-radius: .5rem;
 
     .modal-header {
@@ -25,13 +32,10 @@
       cursor: default;
 
       .modal-title {
-        @extend .title-2;
+        @include title-2;
         font-weight: bold;
         color: white;
         opacity: .9; // TODO why white+opacity? Let's pick the color we want.
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
 
       .close {
@@ -53,10 +57,6 @@
       max-height: 70vh;
       overflow: auto;
 
-      .info-2 {
-        cursor: default;
-      }
-
       /* from Export Data modal, in WfModuleContextMenu  */
       .url-link {
         color: $brand-text--dark;
@@ -74,7 +74,7 @@
       }
 
       .info {
-        @extend .info-2;
+        @include info-2;
         color: $brand-text--dark;
       }
 
@@ -93,21 +93,12 @@
         }
       }
     }
-
-    //When a list is the content of the modal body
-    .modal-body.list-body{
-      background-color: $Vlight-gray;
-      border: 0;
-      max-height: 40rem;
-      overflow: auto;
-      padding: 0;
-    }
   }
 
   /* imported modal settings */
   .modal-footer {
     border-radius: 0 0 .5rem .5rem;
-    border-top:0;
+    border-top: 0;
     padding: 1.5rem 2rem;
     display: flex;
     justify-content: flex-end;
@@ -145,7 +136,7 @@
 
   .clipboard {
     @include content-1;
-    margin-bottom:.3rem;
+    margin-bottom: .3rem;
     text-transform: uppercase;
     cursor: pointer;
     color: $brand-workspace;
