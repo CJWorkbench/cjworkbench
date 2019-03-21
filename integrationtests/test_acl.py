@@ -32,18 +32,19 @@ class TestExampleWorkflow(WorkbenchBase):
             # wait for collaborators to load
             b.fill_in('email', 'b@example.org', wait=True)
             b.click_button('Grant access')
+            url = b.text('.url')
 
             # This fires and forgets an AJAX request. Wait for it to finish.
             time.sleep(2)
 
-            if can_edit:
-                b.click_button('Can view')
-                b.click_button('Can edit')
-                # This fires and forgets a _second_ AJAX request. Again: wait
-                # for it to finish.
-                time.sleep(2)
+        if can_edit:
+            b.click_button('Can view')
+            b.click_button('Can edit')
+            # This fires and forgets a _second_ AJAX request. Again: wait
+            # for it to finish.
+            time.sleep(2)
 
-            url = b.text('.url')
+        with b.scope('.share-modal'):
             b.click_button('Close')
 
         return url
