@@ -401,9 +401,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         </button>
                       </div>
                     </ModalHeader>
-                    <ModalBody
-                      tag="div"
-                    >
+                    <ModalBody>
                       <div
                         className="modal-body"
                       >
@@ -541,9 +539,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         </FormGroup>
                       </div>
                     </ModalBody>
-                    <ModalFooter
-                      tag="div"
-                    >
+                    <ModalFooter>
                       <div
                         className="modal-footer"
                       >

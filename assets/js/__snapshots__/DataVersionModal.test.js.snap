@@ -441,9 +441,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         </button>
                       </div>
                     </ModalHeader>
-                    <ModalBody
-                      tag="div"
-                    >
+                    <ModalBody>
                       <div
                         className="modal-body"
                       >
@@ -511,9 +509,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         </form>
                       </div>
                     </ModalBody>
-                    <ModalFooter
-                      tag="div"
-                    >
+                    <ModalFooter>
                       <div
                         className="modal-footer"
                       >

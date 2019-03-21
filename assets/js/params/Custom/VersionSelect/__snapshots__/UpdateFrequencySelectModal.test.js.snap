@@ -11,6 +11,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
     }
   }
   centered={false}
+  className="update-frequency-modal"
   fade={true}
   isOpen={true}
   keyboard={true}
@@ -37,10 +38,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
       WORKFLOW UPDATE
     </span>
   </ModalHeader>
-  <ModalBody
-    className="update-frequency-form"
-    tag="div"
-  >
+  <ModalBody>
     <form
       action="#"
       id="updateFrequencySelectModalForm"
@@ -189,9 +187,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
       </div>
     </form>
   </ModalBody>
-  <ModalFooter
-    tag="div"
-  >
+  <ModalFooter>
     <button
       className="action-button button-gray"
       form="updateFrequencySelectModalForm"
