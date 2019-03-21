@@ -109,10 +109,10 @@ export class OutputIframe extends React.PureComponent {
   renderPublicModal () {
     return (
       <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal}>
-        <ModalHeader toggle={this.closeModal} className='dialog-header modal-header d-flex align-items-center'>
+        <ModalHeader toggle={this.closeModal}>
           <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
-        <ModalBody >
+        <ModalBody>
           <div className='title-3 mb-3'>This workflow is currently private</div>
           <div className='info-2 t-d-gray'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
         </ModalBody>
@@ -129,11 +129,11 @@ export class OutputIframe extends React.PureComponent {
 
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
-        <ModalHeader toggle={this.closeModal} className='dialog-header modal-header d-flex align-items-center'>
+        <ModalHeader toggle={this.closeModal}>
           <div className='modal-title'>EMBED THIS CHART</div>
         </ModalHeader>
-        <ModalBody >
-          <span className='info'>Paste this code into any webpage HTML</span>
+        <ModalBody>
+          <p className='info'>Paste this code into any webpage HTML</p>
           <div className='code-snippet'>
             <code className='chart-embed'>
               {iframeCode}
