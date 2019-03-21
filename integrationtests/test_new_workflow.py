@@ -15,11 +15,6 @@ class TestNewWorkflow(LoggedInIntegrationTest):
             b.assert_element('button', text='Duplicate')
             b.assert_element('button', text='Share')
 
-            b.click_button('menu')
-            b.assert_element('.dropdown-item', text='Import Module')
-            b.assert_element('.dropdown-item', text='My Workflows')
-            b.assert_element('.dropdown-item', text='Log Out')
-
         # output pane
         with b.scope('.outputpane-table'):
             b.assert_element('.outputpane-header div', text='ROWS')
