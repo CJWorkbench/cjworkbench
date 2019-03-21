@@ -91,7 +91,6 @@ class OpenDropdownMenu extends React.PureComponent {
    */
   onKeyDown = (ev) => {
     const keystroke = (ev.ctrlKey ? 'Ctrl+' : '') + ev.key // 'Ctrl+n', 'ArrowUp', 'Tab', ...
-    console.log(keystroke)
     switch (keystroke) {
       case 'Escape':
       case 'Tab':
