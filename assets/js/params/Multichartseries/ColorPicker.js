@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, InputGroup, InputGroupAddon, Input } from '../../components/Form'
+import { InputGroup, InputGroupAddon, Input } from '../../components/Form'
 import { Popover, PopoverBody } from '../../components/Popover'
 
 class ColorChoice extends React.PureComponent {
@@ -84,7 +84,13 @@ class CustomColorChoice extends React.PureComponent {
     return (
       <InputGroup className={this.isValid ? 'valid' : 'invalid'}>
         <InputGroupAddon addonType='prepend'>
-          <Button name='choose-custom-color' className='choose-custom-color' onClick={this.onClickButton} style={{ background: this.effectiveColor }}></Button>
+          <button
+            type='button'
+            name='choose-custom-color'
+            className='btn choose-custom-color'
+            onClick={this.onClickButton}
+            style={{ background: this.effectiveColor }}
+          />
         </InputGroupAddon>
         <Input
           placeholder='#000000'
