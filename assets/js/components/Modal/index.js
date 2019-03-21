@@ -1,6 +1,6 @@
-import Modal from 'reactstrap/lib/Modal'
-import ModalHeader from 'reactstrap/lib/ModalHeader'
-import ModalBody from 'reactstrap/lib/ModalBody'
-import ModalFooter from 'reactstrap/lib/ModalFooter'
+import Modal from './Modal'
+import ModalHeader from './ModalHeader'
+import ModalBody from './ModalBody'
+import ModalFooter from './ModalFooter'
 
 export { Modal, ModalHeader, ModalBody, ModalFooter }
