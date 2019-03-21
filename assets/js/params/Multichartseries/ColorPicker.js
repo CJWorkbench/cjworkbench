@@ -1,6 +1,7 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import { Popover, PopoverBody } from '../../components/Popover'
+import { Manager as PopperManager, Target as PopperTarget, Popper, Arrow } from 'react-popper'
 
 class ColorChoice extends React.PureComponent {
   static propTypes = {
@@ -79,6 +80,7 @@ class CustomColorChoice extends React.PureComponent {
 
   render () {
     const { value } = this.state
+    const safeValue = value || '#000000'
 
     return (
       <div className={`input-group ${this.isValid ? 'valid' : 'invalid'}`}>
@@ -102,6 +104,60 @@ class CustomColorChoice extends React.PureComponent {
     )
   }
 }
+            
+
+class ColorPickerPopover extends React.PureComponent {
+  static propTypes = {
+    value: PropTypes.string, // Like '#abcdef'; default is '#000000'
+    choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
+    onClose: PropTypes.func.isRequired // onClose() => undefined
+  }
+
+  ref = React.createRef()
+
+  componentDidMount () {
+    document.addEventListener('mousedown', this.onMouseDown, true)
+  }
+
+  componentWillUnmount () {
+    document.removeEventListener('mousedown', this.onMouseDown, true)
+  }
+
+  /**
+   * Close the popover if we click outside it.
+   */
+  onMouseDown = (ev) => {
+    if (this.ref.current && !this.ref.current.contains(ev.target)) {
+      this.props.onClose()
+    }
+  }
+
+  render () {
+    const { safeValue, choices, onChange, onClose } = this.props
+
+    return (
+      <Popper placement='bottom'>
+        {({ popperProps }) => ReactDOM.createPortal((
+          <div className={`popover show bs-popover-${popperProps['data-placement']} color-picker-popover`} {...popperProps}>
+            <Arrow className='arrow' />
+            <div ref={this.ref} className='popover-body'>
+              {choices.map(color => (
+                <ColorChoice key={'choice-' + color} color={color} onClick={onChange} />
+              ))}
+              <CustomColorChoice
+                key={'custom-choice-' + safeValue}
+                defaultValue={safeValue}
+                onChange={onChange}
+                onClose={onClose}
+              />
+            </div>
+          </div>
+        ), document.body)}
+      </Popper>
+    )
+  }
+}
 
 
 /**
@@ -110,8 +166,7 @@ class CustomColorChoice extends React.PureComponent {
  */
 export default class ColorPicker extends React.PureComponent {
   static propTypes = {
-    name: PropTypes.string.isRequired,
-    value: PropTypes.string, // Like '#abcdef'; default is '#000000'
+    value: PropTypes.string.isRequired, // Like '#abcdef'
     choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
   }
@@ -119,8 +174,6 @@ export default class ColorPicker extends React.PureComponent {
   state = {
     isOpen: false
   }
-
-  buttonRef = React.createRef()
 
   toggleOpen = () => {
     this.setState({ isOpen: !this.state.isOpen })
@@ -136,31 +189,28 @@ export default class ColorPicker extends React.PureComponent {
   }
 
   render () {
-    const { name, value, choices } = this.props
+    const { value, choices } = this.props
     const { isOpen } = this.state
     const safeValue = value || '#000000'
 
     return (
-      <React.Fragment>
-        <button type='button' ref={this.buttonRef} title='Pick color' onClick={this.toggleOpen} className='btn color-picker' style={{ background: safeValue }}>
-          <i className='color-picker' />
-        </button>
-        { isOpen ? (
-          <Popover placement='bottom' innerClassName='color-picker-popover' isOpen={isOpen} target={this.buttonRef} toggle={this.close}>
-            <PopoverBody>
-              {choices.map(color => (
-                <ColorChoice key={'choice-' + color} color={color} onClick={this.onChange} />
-              ))}
-              <CustomColorChoice
-                key={'custom-choice-' + safeValue}
-                defaultValue={safeValue}
-                onChange={this.onChange}
-                onClose={this.close}
-              />
-            </PopoverBody>
-          </Popover>
-        ) : null }
-      </React.Fragment>
+      <PopperManager>
+        <PopperTarget>
+          {({ targetProps }) => (
+            <button type='button' title='Pick color' onClick={this.toggleOpen} className='btn color-picker' style={{ background: safeValue }} {...targetProps}>
+              <i className='color-picker' />
+            </button>
+          )}
+        </PopperTarget>
+        {isOpen ? (
+          <ColorPickerPopover
+            safeValue={safeValue}
+            choices={choices}
+            onChange={this.onChange}
+            onClose={this.close}
+          />
+        ) : null}
+      </PopperManager>
     )
   }
 }
