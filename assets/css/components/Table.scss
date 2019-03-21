@@ -569,19 +569,3 @@
     }
   }
 }
-
-// We render Bootstrap dropdown-menu in a <Popover> sometimes, because a plain
-// <Portal> is missing some features.
-.popover.dropdown-popover {
-  border: none;
-  background: none;
-  margin: 0;
-
-  // Popper positions the dropdown, not CSS. Cancel all the Bootstrap CSS
-  // rules.
-  .dropdown-menu {
-    position: static;
-    float: none;
-    margin: 0;
-  }
-}
