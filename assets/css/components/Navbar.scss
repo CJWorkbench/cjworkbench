@@ -18,11 +18,6 @@
   }
 }
 
-.dropdown {
-  display: flex;
-  align-items: center;
-}
-
 .nav-buttons {
   display: flex;
   align-items: center;
@@ -253,7 +248,7 @@
 //// Readonly signout navbar
 
 .nav--link {
-  @extend .content-1;
+  @include content-1;
   text-transform: uppercase;
   font-size: 1.4rem;
   cursor: pointer;
@@ -265,6 +260,3 @@
     color: #fff;
   }
 }
-
-
-//// Workflow page

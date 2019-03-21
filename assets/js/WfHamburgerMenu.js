@@ -6,6 +6,14 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 
 export default class WfHamburgerMenu extends React.Component {
+  static propTypes = {
+    api: PropTypes.object, // not required: WorkflowListNavBar doesn't allow import from github
+    workflowId: PropTypes.number, // not required: WorkflowListNavBar has no workflow
+    user: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    }) // if null/undefined, user is not logged in
+  }
+
   state = {
     importModalOpen: false
   }
@@ -19,52 +27,8 @@ export default class WfHamburgerMenu extends React.Component {
   }
 
   render () {
-    let homeLink = null
-    let undoRedo = null
-    let logInorOut = null
-    let importModule = null
-
-    let loggedIn = typeof this.props.user !== 'undefined' && this.props.user.id
-
-    if (this.props.workflowId) { // on Wf page
-      if (loggedIn) {
-        homeLink = (
-          <DropdownItem href='/workflows'>
-            <span>My Workflows</span>
-          </DropdownItem>
-        )
-      } else {
-        homeLink = (
-          <DropdownItem href='https://workbenchdata.com'>
-            <span>Home</span>
-          </DropdownItem>
-        )
-      }
-    }
-
-    // can import if logged in
-    if (loggedIn) {
-      importModule = (
-        <DropdownItem onClick={this.openImportModal}>
-          <span>Import Module</span>
-        </DropdownItem>
-      )
-    }
-
-    // either log in or out
-    if (loggedIn) {
-      logInorOut = (
-        <DropdownItem href='/account/logout'>
-          <span>Log Out</span>
-        </DropdownItem>
-      )
-    } else {
-      logInorOut = (
-        <DropdownItem href='/account/logout'>
-          <span>Log out</span>
-        </DropdownItem>
-      )
-    }
+    const { api, workflowId, user } = this.props
+    const loggedIn = !!user
 
     return (
       <React.Fragment>
@@ -72,10 +36,18 @@ export default class WfHamburgerMenu extends React.Component {
           <DropdownToggle title='menu' className='context-button'>
             <i className='context-button--icon icon-more' />
           </DropdownToggle>
-          <DropdownMenu positionFixed right>
-            {homeLink}
-            {importModule}
-            {logInorOut}
+          <DropdownMenu>
+            {loggedIn && workflowId ? (
+              <>
+                <DropdownItem href='/workflows/'>My Workflows</DropdownItem>
+                <DropdownItem onClick={this.openImportModal}>Import Module</DropdownItem>
+              </>
+            ) : (
+              <DropdownItem href='//workbenchdata.com'>Home</DropdownItem>
+            )}
+            {loggedIn ? (
+              <DropdownItem href='/account/logout'>Log Out</DropdownItem>
+            ) : null}
           </DropdownMenu>
         </UncontrolledDropdown>
         {this.state.importModalOpen ? (
@@ -87,14 +59,4 @@ export default class WfHamburgerMenu extends React.Component {
       </React.Fragment>
     )
   }
-}
-
-// api, isReadOnly not required because they aren't needed (or set) when we're called from WorkflowListNavBar
-WfHamburgerMenu.propTypes = {
-  api: PropTypes.object,
-  workflowId: PropTypes.number,
-  isReadOnly: PropTypes.bool,
-  user: PropTypes.shape({
-    id: PropTypes.number.isRequire,
-  }) // if null/undefined, user is not logged in
 }

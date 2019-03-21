@@ -1,50 +1,54 @@
 // Dropdown menus -- Used in module context menus and WF context menus
-.dropdown-menu {
-  position: absolute;
-  min-width: 12rem;
-  margin-top: 0.5rem;
-  border:2px solid $brand-workspace--medium;
-  border-radius: 5px;
-  box-shadow: $overlay-shadow;
-  padding:0.5rem 0 0.5rem 0;
-  background: white;
-  color: $brand-text--dark;
+.dropdown-menu-portal {
+  z-index: $zindex-popover; // above <WorkflowNavBar> and <ShareModal>
 
-  .dropdown-item {
-    @extend .content-1;
-    height: 3.5rem;
-    border-radius: 0;
-    border: 0;
-    &:not(.active) { // [adamhooper, 2018-10-04] Bootstrap did something right, and the enclosing .dropdown-item rule breaks it
+  .dropdown-menu {
+    position: static; // override Bootstrap's position: absolute
+    display: block; // always -- if it weren't visible, it wouldn't be in the React tree
+    min-width: 12rem; // or wider, if the content is wider
+    border: 2px solid $brand-workspace--medium;
+    border-radius: 5px;
+    box-shadow: $overlay-shadow;
+    padding: .5rem 0;
+    background: white;
+
+    .dropdown-item { // <a> or <button>
+      display: block;
+      appearance: none;
+      -webkit-appearance: none;
+      @include content-1;
+      color: $brand-text--dark;
+      line-height: 3rem;
+      vertical-align: middle;
+      border-radius: 0;
+      border: 0;
+      outline: 0; // <a:focus> shouldn't have a blue outline
+      cursor: pointer;
+
       background-color: white;
 
-      &:hover {
+      &:hover, &:focus {
         background-color: $dark-accent--soft;
-
-      //i, span {color: $brand-text--darker;}
       }
       &:active {
         background-color: $dark-accent--medium;
       }
+      &.active {
+        background-color: $brand-workspace--medium;
+      }
     }
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 1rem;
-    cursor:pointer;
 
-    i, span {color: $brand-text--dark;}
-  }
+    .dropdown-divider {
+      opacity: 0.5;
+    }
 
-  .dropdown-divider{
-    opacity: 0.5;
-  }
-
-  i {
-    margin-right: .75rem;
-    width: 1.25rem;
-    font-size: 1.25rem;
-    display: flex;
-    justify-content: center;
+    i {
+      display: inline-block;
+      margin-right: .75rem;
+      text-align: center;
+      width: 1.8rem; // BUG in Workbench.woff: "icon-duplicate" has width>1em -- see https://www.pivotaltracker.com/story/show/164803718
+      margin-left: -.25rem; // to counteract BUG in Workbench.woff -- see https://www.pivotaltracker.com/story/show/164803718
+      font-size: 1.3rem;
+    }
   }
 }

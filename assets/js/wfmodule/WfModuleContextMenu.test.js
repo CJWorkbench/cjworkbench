@@ -27,6 +27,9 @@ describe('WfModuleContextMenu', () => {
 
   // only checking the call to removeModule(), not the removal
   it('Renders menu option to Delete with onClick method', () => { 
+    // open the context menu
+    wrapper.find('button.context-button').simulate('click')
+
     const deleteButton = wrapper.find('button.test-delete-button');
     expect(deleteButton).toHaveLength(1);
     deleteButton.simulate('click');
@@ -35,6 +38,9 @@ describe('WfModuleContextMenu', () => {
 
   it('should open and close the export modal', () => {
     let modal;
+
+    // open the context menu
+    wrapper.find('button.context-button').simulate('click')
 
     // open the modal window
     const exportButton = wrapper.find('button.test-export-button');

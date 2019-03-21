@@ -1,18 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ColumnContextMenu should match snapshot 1`] = `
-<div
-  className="context-menu "
+<ColumnContextMenu
+  columnKey="columnKey"
+  columnType="text"
+  onClickAction={[MockFunction]}
+  renameColumn={[MockFunction]}
 >
-  <button
-    className="btn btn-secondary context-button"
-    name="context-menu"
-    onClick={[Function]}
-    title="Column actions"
-  >
-    <i
-      className="icon-caret-down"
-    />
-  </button>
-</div>
+  <UncontrolledDropdown>
+    <Dropdown
+      isOpen={false}
+      toggle={[Function]}
+    >
+      <Manager
+        tag={false}
+      >
+        <div
+          className="dropdown"
+        >
+          <DropdownToggle
+            className="context-button"
+          >
+            <Target>
+              <button
+                aria-expanded={false}
+                className="btn btn-secondary context-button"
+                disabled={false}
+                onClick={[Function]}
+              >
+                <i
+                  className="icon-caret-down"
+                />
+              </button>
+            </Target>
+          </DropdownToggle>
+          <DropdownMenu />
+        </div>
+      </Manager>
+    </Dropdown>
+  </UncontrolledDropdown>
+</ColumnContextMenu>
 `;

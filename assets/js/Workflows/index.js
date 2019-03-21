@@ -19,7 +19,8 @@ export default class Workflows extends React.Component {
       owned: WorkflowListPropType.isRequired,
       shared: WorkflowListPropType.isRequired,
       templates: WorkflowListPropType.isRequired
-    }).isRequired
+    }).isRequired,
+    user: PropTypes.shape({ id: PropTypes.number.isRequired }) // null/undefined if logged out
   }
 
   state = {
@@ -125,10 +126,11 @@ export default class Workflows extends React.Component {
 
   render () {
     const { activeTab, comparator, workflows } = this.state
+    const { user } = this.props
 
     return (
       <div className='workflows-page'>
-        <Navbar />
+        <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
             <div className='content-1'>NEW</div>

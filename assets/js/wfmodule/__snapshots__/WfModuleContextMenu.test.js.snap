@@ -8,129 +8,39 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
 >
   <UncontrolledDropdown>
     <Dropdown
-      active={false}
-      addonType={false}
-      direction="down"
-      inNavbar={false}
       isOpen={false}
-      nav={false}
-      setActiveFromChild={false}
       toggle={[Function]}
     >
       <Manager
-        className="dropdown"
-        onKeyDown={[Function]}
-        tag="div"
+        tag={false}
       >
         <div
           className="dropdown"
-          onKeyDown={[Function]}
         >
           <DropdownToggle
-            aria-haspopup={true}
             className="context-button"
-            color="secondary"
             title="more"
           >
-            <Target
-              aria-expanded={false}
-              aria-haspopup={true}
-              className="context-button"
-              color="secondary"
-              component={[Function]}
-              onClick={[Function]}
-              title="more"
-            >
-              <Button
+            <Target>
+              <button
                 aria-expanded={false}
-                aria-haspopup={true}
-                className="context-button"
-                color="secondary"
-                innerRef={[Function]}
+                className="btn btn-secondary context-button"
+                disabled={false}
                 onClick={[Function]}
-                tag="button"
                 title="more"
               >
-                <button
-                  aria-expanded={false}
-                  aria-haspopup={true}
-                  aria-label={null}
-                  className="context-button btn btn-secondary"
-                  onClick={[Function]}
-                  title="more"
-                  type="button"
-                >
-                  <i
-                    className="context-button--icon icon-more"
-                  />
-                </button>
-              </Button>
+                <i
+                  className="context-button--icon icon-more"
+                />
+              </button>
             </Target>
           </DropdownToggle>
-          <DropdownMenu
-            flip={true}
-            positionFixed={true}
-            right={true}
-            tag="div"
-          >
-            <div
-              aria-hidden={true}
-              className="dropdown-menu dropdown-menu-right"
-              positionFixed={true}
-              role="menu"
-              tabIndex="-1"
-            >
-              <DropdownItem
-                className="test-export-button"
-                key="1"
-                onClick={[Function]}
-                tag="button"
-                toggle={true}
-              >
-                <button
-                  className="test-export-button dropdown-item"
-                  onClick={[Function]}
-                  role="menuitem"
-                  tabIndex="0"
-                  type="button"
-                >
-                  <i
-                    className="icon-download"
-                  />
-                  <span>
-                    Export data
-                  </span>
-                  <ExportModal
-                    onClose={[Function]}
-                    open={false}
-                    wfModuleId={415}
-                  />
-                </button>
-              </DropdownItem>
-              <DropdownItem
-                className="test-delete-button"
-                key="2"
-                onClick={[Function]}
-                tag="button"
-                toggle={true}
-              >
-                <button
-                  className="test-delete-button dropdown-item"
-                  onClick={[Function]}
-                  role="menuitem"
-                  tabIndex="0"
-                  type="button"
-                >
-                  <i
-                    className="icon-bin"
-                  />
-                  <span>
-                    Delete
-                  </span>
-                </button>
-              </DropdownItem>
-            </div>
-          </DropdownMenu>
+          <DropdownMenu />
+          <ExportModal
+            onClose={[Function]}
+            open={false}
+            wfModuleId={415}
+          />
         </div>
       </Manager>
     </Dropdown>

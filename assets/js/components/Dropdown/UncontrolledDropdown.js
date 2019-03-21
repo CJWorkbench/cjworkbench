@@ -5,8 +5,6 @@ import Dropdown from './Dropdown'
 export default class UncontrolledDropdown extends React.PureComponent {
   static propTypes = {
     disabled: PropTypes.bool,
-    className: PropTypes.string,
-    direction: PropTypes.oneOf([ 'up', 'down' ]),
     children: PropTypes.node.isRequired
   }
 

@@ -1,11 +1,11 @@
 /* global describe, it, jest, expect */
 import React from 'react'
 import ColumnContextMenu from './ColumnContextMenu'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 describe('ColumnContextMenu', () => {
   function mountMenu (onClickAction, columnKey, columnType, renameColumn) {
-    return shallow(
+    return mount(
       <ColumnContextMenu
         onClickAction={onClickAction}
         columnKey={columnKey}

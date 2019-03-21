@@ -28,23 +28,16 @@ export default class WfModuleContextMenu extends React.Component {
   render() {
 
     return (
-       <UncontrolledDropdown>
+      <UncontrolledDropdown>
         <DropdownToggle title="more" className='context-button'>
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
-        <DropdownMenu positionFixed right>
-          <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
-            <i className='icon-download'></i>
-            <span>Export data</span>
-            <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
-          </DropdownItem>
-
-          <DropdownItem key={2} onClick={this.deleteOption} className='test-delete-button'>
-            <i className='icon-bin'></i>
-            <span>Delete</span>
-          </DropdownItem>
+        <DropdownMenu>
+          <DropdownItem onClick={this.toggleExportModal} className='test-export-button' icon='icon-download'>Export data</DropdownItem>
+          <DropdownItem onClick={this.deleteOption} className='test-delete-button' icon='icon-bin'>Delete</DropdownItem>
         </DropdownMenu>
-       </UncontrolledDropdown>
+        <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
+      </UncontrolledDropdown>
     )
   }
 }

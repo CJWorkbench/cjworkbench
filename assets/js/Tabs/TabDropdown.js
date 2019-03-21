@@ -4,13 +4,13 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 
 export default function TabContextMenu ({ onClickRename, onClickDelete }) {
   return (
-    <UncontrolledDropdown direction='up'>
+    <UncontrolledDropdown>
       <DropdownToggle className='toggle'>
         <i className='icon-caret-up'/>
       </DropdownToggle>
-      <DropdownMenu positionFixed right>
-        <DropdownItem onClick={onClickRename}><i className='icon-edit'></i> Rename</DropdownItem>
-        <DropdownItem onClick={onClickDelete}><i className='icon-removec'></i> Delete</DropdownItem>
+      <DropdownMenu>
+        <DropdownItem onClick={onClickRename} icon='icon-edit'>Rename</DropdownItem>
+        <DropdownItem onClick={onClickDelete} icon='icon-removec'>Delete</DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>
   )

@@ -291,7 +291,7 @@ export class ColumnHeader extends React.PureComponent {
           fromIndex={draggingColumnIndex}
           toIndex={toIndex}
           onDropColumnIndexAtIndex={onDropColumnIndexAtIndex}
-          />
+        />
       )
     }
 

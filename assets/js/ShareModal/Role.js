@@ -9,7 +9,7 @@ const ReadOnlyRole = ({ canEdit }) => (
 )
 
 const EditableRole = ({ canEdit, setCanEdit, unsetCanEdit }) => (
-  <UncontrolledDropdown className='role'>
+  <UncontrolledDropdown>
     <DropdownToggle caret>
       {canEdit ? 'Can edit' : 'Can view'}
     </DropdownToggle>

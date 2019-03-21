@@ -2,7 +2,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, DropdownDivider } from '../components/Dropdown'
 
 export default class SortMenu extends React.Component {
   static propTypes = {
@@ -26,20 +26,12 @@ export default class SortMenu extends React.Component {
           <DropdownToggle>
             Sort <i className={this.icon}></i>
           </DropdownToggle>
-          <DropdownMenu positionFixed right>
-            <DropdownItem data-comparator='last_update|descending' onClick={this.onClickComparator}>
-              Last modified
-            </DropdownItem>
-            <DropdownItem data-comparator='last_update|ascending' onClick={this.onClickComparator}>
-              Oldest modified
-            </DropdownItem>
-            <DropdownItem divider />
-            <DropdownItem data-comparator='name|ascending' onClick={this.onClickComparator}>
-              Alphabetical
-            </DropdownItem>
-            <DropdownItem data-comparator='name|descending' onClick={this.onClickComparator}>
-              Reverse alphabetical
-            </DropdownItem>
+          <DropdownMenu>
+            <DropdownItem data-comparator='last_update|descending' onClick={this.onClickComparator}>Last modified</DropdownItem>
+            <DropdownItem data-comparator='last_update|ascending' onClick={this.onClickComparator}>Oldest modified</DropdownItem>
+            <DropdownDivider />
+            <DropdownItem data-comparator='name|ascending' onClick={this.onClickComparator}>Alphabetical</DropdownItem>
+            <DropdownItem data-comparator='name|descending' onClick={this.onClickComparator}>Reverse alphabetical</DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>

@@ -74,7 +74,13 @@ describe('Workflow list page', () => {
     duplicateWorkflow: jest.fn(),
     deleteWorkflow: okResponseMock()
   }
-  const wrapper = (props) => mount(<Workflows api={api} {...props} />)
+  const wrapper = (props) => mount(
+    <Workflows
+      api={api}
+      user={{id: 1}}
+      {...props}
+    />
+  )
 
   let globalConfirm
   beforeEach(() => {
@@ -190,51 +196,55 @@ describe('Workflow list page', () => {
     })
   })
 
-  it('should sort properly by date and name', (done) => {
+  it('should sort properly by date and name', () => {
     const w = wrapper({workflows: testWorkflows})
-    setImmediate( () => {
-      // sort by date ascending
-      w.update()
-      w.find('button[data-comparator="last_update|ascending"]').simulate('click')
-      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('2')
-      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('1')
-      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('3')
-      // sort by date descending
-      w.update()
-      w.find('button[data-comparator="last_update|descending"]').simulate('click')
-      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('3')
-      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('1')
-      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('2')
-      // sort by name ascending
-      w.update()
-      w.find('button[data-comparator="name|ascending"]').simulate('click')
-      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('3')
-      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('2')
-      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('1')
-      // sort by name descending
-      w.update()
-      w.find('button[data-comparator="name|descending"]').simulate('click')
-      expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('1')
-      expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('2')
-      expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('3')
-      done()
-    })
+
+    // sort by date ascending
+    w.find('.sort-menu DropdownToggle button').simulate('click')
+    w.find('button[data-comparator="last_update|ascending"]').simulate('click')
+    expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('2')
+    expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('1')
+    expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('3')
+
+    // sort by date descending
+    w.find('.sort-menu DropdownToggle button').simulate('click')
+    w.find('button[data-comparator="last_update|descending"]').simulate('click')
+    expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('3')
+    expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('1')
+    expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('2')
+
+    // sort by name ascending
+    w.find('.sort-menu DropdownToggle button').simulate('click')
+    w.find('button[data-comparator="name|ascending"]').simulate('click')
+    expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('3')
+    expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('2')
+    expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('1')
+
+    // sort by name descending
+    w.find('.sort-menu DropdownToggle button').simulate('click')
+    w.find('button[data-comparator="name|descending"]').simulate('click')
+    expect(w.find('.tab-pane.active Workflow').get(0).key).toEqual('1')
+    expect(w.find('.tab-pane.active Workflow').get(1).key).toEqual('2')
+    expect(w.find('.tab-pane.active Workflow').get(2).key).toEqual('3')
   })
 
-  it('should only render the delete option for owned workflows', (done) => {
-    const w = wrapper({workflows: testWorkflows})
-    setImmediate( () => {
-      // my workflows tab
-      w.update()
-      expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(3)
-      // shared workflows tab
-      w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
-      expect(w.find('.tab-pane.active .delete-workflow')).toHaveLength(0)
-      // templates tab
-      w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
-      expect(w.find('.tab-pane.active .delete-workflow')).toHaveLength(0)
-      done()
-    })
+  it('should allow delete of owned workflows', () => {
+    const w = wrapper({ workflows: testWorkflows })
+    w.find('.tab-pane.active .context-button').at(0).simulate('click')
+    expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(1)
   })
 
+  it('should not allow delete of shared-with-me workflows', () => {
+    const w = wrapper({ workflows: testWorkflows })
+    w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+    w.find('.tab-pane.active .context-button').at(0).simulate('click')
+    expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
+  })
+
+  it('should not allow delete of templates', () => {
+    const w = wrapper({ workflows: testWorkflows })
+    w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
+    w.find('.tab-pane.active .context-button').at(0).simulate('click')
+    expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
+  })
 })

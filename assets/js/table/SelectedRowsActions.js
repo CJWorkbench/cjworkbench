@@ -21,9 +21,7 @@ class Action extends React.PureComponent {
 
   render () {
     return (
-      <DropdownItem onClick={this.onClick}>
-        {this.props.title}
-      </DropdownItem>
+      <DropdownItem onClick={this.onClick}>{this.props.title}</DropdownItem>
     )
   }
 }
@@ -106,7 +104,8 @@ export class SelectedRowsActions extends React.PureComponent {
         <DropdownToggle title='menu' className={rowSelect}>
           {prompt}
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu>
+          <p>Here we go</p>
           {actions}
         </DropdownMenu>
       </UncontrolledDropdown>

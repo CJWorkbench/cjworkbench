@@ -13,130 +13,142 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
 >
   <UncontrolledDropdown>
     <Dropdown
-      active={false}
-      addonType={false}
-      direction="down"
-      inNavbar={false}
-      isOpen={false}
-      nav={false}
-      setActiveFromChild={false}
+      isOpen={true}
       toggle={[Function]}
     >
       <Manager
-        className="dropdown"
-        onKeyDown={[Function]}
-        tag="div"
+        tag={false}
       >
         <div
           className="dropdown"
-          onKeyDown={[Function]}
         >
           <DropdownToggle
-            aria-haspopup={true}
             className="context-button"
-            color="secondary"
             title="menu"
           >
-            <Target
-              aria-expanded={false}
-              aria-haspopup={true}
-              className="context-button"
-              color="secondary"
-              component={[Function]}
-              onClick={[Function]}
-              title="menu"
-            >
-              <Button
-                aria-expanded={false}
-                aria-haspopup={true}
-                className="context-button"
-                color="secondary"
-                innerRef={[Function]}
+            <Target>
+              <button
+                aria-expanded={true}
+                className="btn btn-secondary context-button"
+                disabled={false}
                 onClick={[Function]}
-                tag="button"
                 title="menu"
               >
-                <button
-                  aria-expanded={false}
-                  aria-haspopup={true}
-                  aria-label={null}
-                  className="context-button btn btn-secondary"
-                  onClick={[Function]}
-                  title="menu"
-                  type="button"
-                >
-                  <i
-                    className="context-button--icon icon-more"
-                  />
-                </button>
-              </Button>
+                <i
+                  className="context-button--icon icon-more"
+                />
+              </button>
             </Target>
           </DropdownToggle>
-          <DropdownMenu
-            flip={true}
-            positionFixed={true}
-            right={true}
-            tag="div"
-          >
-            <div
-              aria-hidden={true}
-              className="dropdown-menu dropdown-menu-right"
-              positionFixed={true}
-              role="menu"
-              tabIndex="-1"
-            >
-              <DropdownItem
-                href="/workflows"
-                tag="button"
-                toggle={true}
+          <DropdownMenu>
+            <OpenDropdownMenu>
+              <Portal
+                containerInfo={
+                  <body>
+                    <div
+                      class="dropdown-menu-portal"
+                      style="position: absolute; pointer-events: none; opacity: 0;"
+                    >
+                      <div
+                        class="dropdown-menu"
+                        role="menu"
+                      >
+                        <a
+                          class="dropdown-item"
+                          href="/workflows/"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          My Workflows
+                        </a>
+                        <button
+                          class="dropdown-item"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          Import Module
+                        </button>
+                        <a
+                          class="dropdown-item"
+                          href="/account/logout"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          Log Out
+                        </a>
+                      </div>
+                    </div>
+                  </body>
+                }
               >
-                <a
-                  className="dropdown-item"
-                  href="/workflows"
-                  onClick={[Function]}
-                  role="menuitem"
-                  tabIndex="0"
+                <Popper
+                  component="div"
+                  eventsEnabled={true}
+                  modifiers={
+                    Object {
+                      "preventOverflow": Object {
+                        "boundariesElement": "viewport",
+                      },
+                    }
+                  }
+                  placement="bottom-end"
+                  positionFixed={false}
                 >
-                  <span>
-                    My Workflows
-                  </span>
-                </a>
-              </DropdownItem>
-              <DropdownItem
-                onClick={[Function]}
-                tag="button"
-                toggle={true}
-              >
-                <button
-                  className="dropdown-item"
-                  onClick={[Function]}
-                  role="menuitem"
-                  tabIndex="0"
-                  type="button"
-                >
-                  <span>
-                    Import Module
-                  </span>
-                </button>
-              </DropdownItem>
-              <DropdownItem
-                href="/account/logout"
-                tag="button"
-                toggle={true}
-              >
-                <a
-                  className="dropdown-item"
-                  href="/account/logout"
-                  onClick={[Function]}
-                  role="menuitem"
-                  tabIndex="0"
-                >
-                  <span>
-                    Log Out
-                  </span>
-                </a>
-              </DropdownItem>
-            </div>
+                  <div
+                    className="dropdown-menu-portal"
+                    style={
+                      Object {
+                        "opacity": 0,
+                        "pointerEvents": "none",
+                        "position": "absolute",
+                      }
+                    }
+                  >
+                    <div
+                      className="dropdown-menu"
+                      role="menu"
+                    >
+                      <DropdownItem
+                        href="/workflows/"
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/workflows/"
+                          role="menuitem"
+                          tabIndex={0}
+                        >
+                          My Workflows
+                        </a>
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={[Function]}
+                      >
+                        <button
+                          className="dropdown-item"
+                          onClick={[Function]}
+                          role="menuitem"
+                          tabIndex={0}
+                        >
+                          Import Module
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        href="/account/logout"
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/account/logout"
+                          role="menuitem"
+                          tabIndex={0}
+                        >
+                          Log Out
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </div>
+                </Popper>
+              </Portal>
+            </OpenDropdownMenu>
           </DropdownMenu>
         </div>
       </Manager>

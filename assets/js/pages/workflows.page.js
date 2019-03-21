@@ -5,11 +5,15 @@ import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
 
 const api = new WorkbenchAPI(null) // no websocket
+const { workflows, loggedInUser } = window.initState
 
-ReactDOM.render(
-    <Workflows api={api} workflows={window.initState.workflows}/>,
-    document.getElementById('root')
-)
+ReactDOM.render((
+  <Workflows
+    api={api}
+    workflows={workflows}
+    user={loggedInUser}
+  />
+), document.getElementById('root'))
 
 // Start Intercom, if we're that sort of installation
 if (window.APP_ID) {

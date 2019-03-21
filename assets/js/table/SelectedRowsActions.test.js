@@ -28,8 +28,7 @@ describe('SelectedRowsActions', () => {
 
     it('should invoke an action with rows as a string, 1-based', () => {
       const w = wrapper({ selectedRowIndexes: [ 2, 3, 4, 5, 8000, 8001, 8002, 9 ] })
-      w.find('button').at(0).simulate('click') // open the menu
-      w.update()
+      w.find('button.table-action').simulate('click') // open the menu
       w.find('button').at(1).simulate('click')
       expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 'dofoo', '3-6, 10, 8001-8003')
     })
@@ -68,9 +67,8 @@ describe('SelectedRowsActions', () => {
           }
         }
       })
-      w.find('button').at(0).simulate('click')
-      w.update()
-      expect(w.text()).toMatch(/Foo these rows/)
+      w.find('button.table-action').simulate('click') // open the menu
+      expect(w.find('.dropdown-menu').text()).toMatch(/Foo these rows/)
     })
 
     it('should not render modules that do not belong', () => {
@@ -81,8 +79,7 @@ describe('SelectedRowsActions', () => {
           }
         }
       })
-      w.find('button').at(0).simulate('click')
-      w.update()
+      w.find('button.table-action').simulate('click') // open the menu
       expect(w.find('button')).toHaveLength(1)
     })
 
@@ -98,9 +95,8 @@ describe('SelectedRowsActions', () => {
           }
         }
       }, { wfModuleId: 2 })
-      w.find('button').at(0).simulate('click')
-      w.update()
-      expect(w.text()).toMatch(/Bar these rows/)
+      w.find('button.table-action').simulate('click') // open the menu
+      expect(w.find('.dropdown-menu').text()).toMatch(/Bar these rows/)
       w.find('button').at(1).simulate('click')
 
       await tick() // wait for all promises to settle
@@ -126,9 +122,8 @@ describe('SelectedRowsActions', () => {
           }
         }
       }, { wfModuleId: 2 }) // selected module is the input
-      w.find('button').at(0).simulate('click')
-      w.update()
-      expect(w.text()).toMatch(/Baz these rows/)
+      w.find('button.table-action').simulate('click') // open the menu
+      expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
       w.find('button').at(1).simulate('click')
 
       await tick() // wait for all promises to settle
@@ -158,9 +153,8 @@ describe('SelectedRowsActions', () => {
           }
         }
       }, { wfModuleId: 2 }) // selected module is what's we're editing
-      w.find('button').at(0).simulate('click')
-      w.update()
-      expect(w.text()).toMatch(/Baz these rows/)
+      w.find('button.table-action').simulate('click') // open the menu
+      expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
       w.find('button').at(1).simulate('click')
 
       await tick() // wait for all promises to settle
