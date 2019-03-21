@@ -80,7 +80,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="d-flex justify-content-between flex-row mb-3"
                       >
                         <input
-                          class="url-link test-csv-field form-control"
+                          class="url-link test-csv-field"
                           readonly=""
                           type="url"
                           value="http://localhost/public/moduledata/live/415.csv"
@@ -113,7 +113,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="d-flex justify-content-between flex-row"
                       >
                         <input
-                          class="url-link test-json-field form-control"
+                          class="url-link test-json-field"
                           readonly=""
                           type="url"
                           value="http://localhost/public/moduledata/live/415.json"
@@ -234,19 +234,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         className="d-flex justify-content-between flex-row mb-3"
                       >
-                        <Input
+                        <input
                           className="url-link test-csv-field"
                           readOnly={true}
                           type="url"
                           value="http://localhost/public/moduledata/live/415.csv"
-                        >
-                          <input
-                            className="url-link test-csv-field form-control"
-                            readOnly={true}
-                            type="url"
-                            value="http://localhost/public/moduledata/live/415.csv"
-                          />
-                        </Input>
+                        />
                         <div
                           className="download-icon-box"
                         >
@@ -296,19 +289,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         className="d-flex justify-content-between flex-row"
                       >
-                        <Input
+                        <input
                           className="url-link test-json-field"
                           readOnly={true}
                           type="url"
                           value="http://localhost/public/moduledata/live/415.json"
-                        >
-                          <input
-                            className="url-link test-json-field form-control"
-                            readOnly={true}
-                            type="url"
-                            value="http://localhost/public/moduledata/live/415.json"
-                          />
-                        </Input>
+                        />
                         <div
                           className="download-icon-box"
                         >
