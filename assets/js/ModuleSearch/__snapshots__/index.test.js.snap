@@ -98,22 +98,28 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               onClick={[Function]}
               onMouseEnter={[Function]}
             >
-              <li
-                className="module-search-result lesson-highlight"
-                data-module-name="Load from Enigma"
-                id="module-search-result-enigma"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
+              <Manager
+                tag={false}
               >
-                <i
-                  className="icon-url"
-                />
-                <span
-                  className="name"
-                >
-                  Load from Enigma
-                </span>
-              </li>
+                <Target>
+                  <li
+                    className="module-search-result lesson-highlight"
+                    data-module-name="Load from Enigma"
+                    id="module-search-result-enigma"
+                    onClick={[Function]}
+                    onMouseEnter={[Function]}
+                  >
+                    <i
+                      className="icon-url"
+                    />
+                    <span
+                      className="name"
+                    >
+                      Load from Enigma
+                    </span>
+                  </li>
+                </Target>
+              </Manager>
             </SearchResult>
           </ul>
         </li>
@@ -159,22 +165,28 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               onClick={[Function]}
               onMouseEnter={[Function]}
             >
-              <li
-                className="module-search-result"
-                data-module-name="Filter by Text"
-                id="module-search-result-filter"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
+              <Manager
+                tag={false}
               >
-                <i
-                  className="icon-filter"
-                />
-                <span
-                  className="name"
-                >
-                  Filter by Text
-                </span>
-              </li>
+                <Target>
+                  <li
+                    className="module-search-result"
+                    data-module-name="Filter by Text"
+                    id="module-search-result-filter"
+                    onClick={[Function]}
+                    onMouseEnter={[Function]}
+                  >
+                    <i
+                      className="icon-filter"
+                    />
+                    <span
+                      className="name"
+                    >
+                      Filter by Text
+                    </span>
+                  </li>
+                </Target>
+              </Manager>
             </SearchResult>
           </ul>
         </li>

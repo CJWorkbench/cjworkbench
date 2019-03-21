@@ -25,7 +25,6 @@ jest.mock('popper.js', () => {
 
 import React from 'react'
 import ConnectedModuleSearch, { ModuleSearch } from './index'
-import { Popover } from '../components/Popover'
 import { mount, shallow } from 'enzyme'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -166,10 +165,10 @@ describe('ModuleSearch', () => {
     })
 
     it('should show a popover when hovering on a module', () => {
-      expect(wrapper.find(Popover)).toHaveLength(0)
+      expect(wrapper.find('SearchResultDescription')).toHaveLength(0)
       wrapper.find('li[data-module-name="Filter by Text"]').simulate('mouseEnter')
       wrapper.update()
-      expect(wrapper.find(Popover)).toHaveLength(1)
+      expect(wrapper.find('SearchResultDescription')).toHaveLength(1)
     })
   })
     

@@ -150,7 +150,7 @@
 }
 
 .popover.module-search-result {
-  margin-left: 2rem;
+  margin-left: 1rem;
   border-width: $module-popover-border-width;
   border-color: $brand-workspace;
   border-radius: 5px;
@@ -160,32 +160,21 @@
   //transition-delay: .2s;
   transition: opacity .5s;
 
-
-
-  .popover-inner {
-    background-color: white;
-    border-radius: 3px;
-
-    .popover-header {
-      padding:0;
-      @extend .content-1;
-      margin-bottom: .5rem;
-      color: $brand-text--dark;
-    }
-
-    .popover-body {
-      padding:0;
-      @extend .info-3;
-    }
+  h3.popover-header {
+    @include content-1;
+    padding: 0;
+    margin: 0 0 .5rem;
+    border: 0;
+    background: none;
+    color: $brand-text--dark;
   }
 
-  h3 {
-    font: inherit;
-    background-color: transparent;
-    border-bottom: none;
+  .popover-body {
+    padding:0;
+    @include info-3;
   }
 
-  span.arrow {
+  .arrow {
     left: -8px;
     margin-top: -4px; // Bootstrap's calculations assume a much smaller arrow
 

@@ -1,6 +1,36 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import { Popover, PopoverHeader, PopoverBody } from '../components/Popover'
+import { Manager as PopperManager, Target as PopperTarget, Popper, Arrow } from 'react-popper'
+
+const PopperModifiers = {
+  preventOverflow: {
+    boundariesElement: 'viewport'
+  }
+}
+
+class SearchResultDescription extends React.PureComponent {
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
+  }
+
+  render () {
+    const { name, description } = this.props
+
+    return (
+      <Popper placement='right' modifiers={PopperModifiers}>
+        {({ popperProps }) => ReactDOM.createPortal((
+          <div className='popover show bs-popover-right module-search-result' {...popperProps}>
+            <Arrow className='arrow'/>
+            <h3 className='popover-header'>{name}</h3>
+            <div className='popover-body'>{description}</div>
+          </div>
+        ), document.body)}
+      </Popper>
+    )
+  }
+}
 
 export default class SearchResult extends React.PureComponent {
   static propTypes = {
@@ -14,20 +44,12 @@ export default class SearchResult extends React.PureComponent {
     onMouseEnter: PropTypes.func.isRequired, // func(idName) => undefined
   }
 
-  liRef = React.createRef()
-
   onClick = () => {
     this.props.onClick(this.props.idName)
   }
 
   onMouseEnter = () => {
     this.props.onMouseEnter(this.props.idName)
-  }
-
-  getLiRef = () => {
-    // deferred for when Popper asks for it -- not during render, which is too
-    // soon.
-    return this.liRef.current
   }
 
   render() {
@@ -39,16 +61,17 @@ export default class SearchResult extends React.PureComponent {
     if (isLessonHighlight) className.push('lesson-highlight')
 
     return (
-      <li ref={this.liRef} className={className.join(' ')} id={elId} data-module-name={name} onClick={this.onClick} onMouseEnter={this.onMouseEnter}>
-        <i className={'icon-' + icon}></i>
-        <span className='name'>{name}</span>
-        {isActive ? (
-          <Popover placement='right' isOpen={isActive} target={this.getLiRef} boundariesElement='window' className='module-search-result'>
-            <PopoverHeader>{name}</PopoverHeader>
-            <PopoverBody>{description}</PopoverBody>
-          </Popover>
-        ) : null}
-      </li>
+      <PopperManager tag={false}>
+        <PopperTarget>
+          {({ targetProps }) => (
+            <li className={className.join(' ')} id={elId} data-module-name={name} onClick={this.onClick} onMouseEnter={this.onMouseEnter} {...targetProps}>
+              <i className={'icon-' + icon}></i>
+              <span className='name'>{name}</span>
+            </li>
+          )}
+        </PopperTarget>
+        {isActive ? <SearchResultDescription name={name} description={description} /> : null}
+      </PopperManager>
     )
   }
 }
