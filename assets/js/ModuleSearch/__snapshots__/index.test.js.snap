@@ -101,24 +101,28 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               <Manager
                 tag={false}
               >
-                <Target>
-                  <li
-                    className="module-search-result lesson-highlight"
-                    data-module-name="Load from Enigma"
-                    id="module-search-result-enigma"
-                    onClick={[Function]}
-                    onMouseEnter={[Function]}
+                <Reference>
+                  <InnerReference
+                    setReferenceNode={[Function]}
                   >
-                    <i
-                      className="icon-url"
-                    />
-                    <span
-                      className="name"
+                    <li
+                      className="module-search-result lesson-highlight"
+                      data-module-name="Load from Enigma"
+                      id="module-search-result-enigma"
+                      onClick={[Function]}
+                      onMouseEnter={[Function]}
                     >
-                      Load from Enigma
-                    </span>
-                  </li>
-                </Target>
+                      <i
+                        className="icon-url"
+                      />
+                      <span
+                        className="name"
+                      >
+                        Load from Enigma
+                      </span>
+                    </li>
+                  </InnerReference>
+                </Reference>
               </Manager>
             </SearchResult>
           </ul>
@@ -168,24 +172,28 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
               <Manager
                 tag={false}
               >
-                <Target>
-                  <li
-                    className="module-search-result"
-                    data-module-name="Filter by Text"
-                    id="module-search-result-filter"
-                    onClick={[Function]}
-                    onMouseEnter={[Function]}
+                <Reference>
+                  <InnerReference
+                    setReferenceNode={[Function]}
                   >
-                    <i
-                      className="icon-filter"
-                    />
-                    <span
-                      className="name"
+                    <li
+                      className="module-search-result"
+                      data-module-name="Filter by Text"
+                      id="module-search-result-filter"
+                      onClick={[Function]}
+                      onMouseEnter={[Function]}
                     >
-                      Filter by Text
-                    </span>
-                  </li>
-                </Target>
+                      <i
+                        className="icon-filter"
+                      />
+                      <span
+                        className="name"
+                      >
+                        Filter by Text
+                      </span>
+                    </li>
+                  </InnerReference>
+                </Reference>
               </Manager>
             </SearchResult>
           </ul>

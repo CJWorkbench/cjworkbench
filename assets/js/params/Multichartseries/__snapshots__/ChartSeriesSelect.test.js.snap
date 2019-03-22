@@ -41,29 +41,21 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
       onChange={[Function]}
       value="#abcdef"
     >
-      <Manager
-        tag="div"
+      <button
+        className="btn color-picker"
+        onClick={[Function]}
+        style={
+          Object {
+            "background": "#abcdef",
+          }
+        }
+        title="Pick color"
+        type="button"
       >
-        <div>
-          <Target>
-            <button
-              className="btn color-picker"
-              onClick={[Function]}
-              style={
-                Object {
-                  "background": "#abcdef",
-                }
-              }
-              title="Pick color"
-              type="button"
-            >
-              <i
-                className="color-picker"
-              />
-            </button>
-          </Target>
-        </div>
-      </Manager>
+        <i
+          className="color-picker"
+        />
+      </button>
     </ColorPicker>
     <ColumnParam
       fieldId="series_2_column"

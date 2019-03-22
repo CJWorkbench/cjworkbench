@@ -77,29 +77,21 @@ exports[`Multichartseries should match snapshot 1`] = `
           onChange={[Function]}
           value="#aaaaaa"
         >
-          <Manager
-            tag="div"
+          <button
+            className="btn color-picker"
+            onClick={[Function]}
+            style={
+              Object {
+                "background": "#aaaaaa",
+              }
+            }
+            title="Pick color"
+            type="button"
           >
-            <div>
-              <Target>
-                <button
-                  className="btn color-picker"
-                  onClick={[Function]}
-                  style={
-                    Object {
-                      "background": "#aaaaaa",
-                    }
-                  }
-                  title="Pick color"
-                  type="button"
-                >
-                  <i
-                    className="color-picker"
-                  />
-                </button>
-              </Target>
-            </div>
-          </Manager>
+            <i
+              className="color-picker"
+            />
+          </button>
         </ColorPicker>
         <ColumnParam
           fieldId="multiseries_0_column"
@@ -1700,29 +1692,21 @@ exports[`Multichartseries should match snapshot 1`] = `
           onChange={[Function]}
           value="#bbbbbb"
         >
-          <Manager
-            tag="div"
+          <button
+            className="btn color-picker"
+            onClick={[Function]}
+            style={
+              Object {
+                "background": "#bbbbbb",
+              }
+            }
+            title="Pick color"
+            type="button"
           >
-            <div>
-              <Target>
-                <button
-                  className="btn color-picker"
-                  onClick={[Function]}
-                  style={
-                    Object {
-                      "background": "#bbbbbb",
-                    }
-                  }
-                  title="Pick color"
-                  type="button"
-                >
-                  <i
-                    className="color-picker"
-                  />
-                </button>
-              </Target>
-            </div>
-          </Manager>
+            <i
+              className="color-picker"
+            />
+          </button>
         </ColorPicker>
         <ColumnParam
           fieldId="multiseries_1_column"
