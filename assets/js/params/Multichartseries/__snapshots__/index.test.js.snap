@@ -216,9 +216,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                   }
                 }
                 controlShouldRenderValue={true}
-                defaultInputValue=""
-                defaultMenuIsOpen={false}
-                defaultValue={null}
                 escapeClearsValue={false}
                 filterOption={[Function]}
                 formatGroupLabel={[Function]}
@@ -344,9 +341,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                         "MenuPortal": [Function],
                       },
                       "controlShouldRenderValue": true,
-                      "defaultInputValue": "",
-                      "defaultMenuIsOpen": false,
-                      "defaultValue": null,
                       "escapeClearsValue": false,
                       "filterOption": [Function],
                       "formatGroupLabel": [Function],
@@ -503,9 +497,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                             "MenuPortal": [Function],
                           },
                           "controlShouldRenderValue": true,
-                          "defaultInputValue": "",
-                          "defaultMenuIsOpen": false,
-                          "defaultValue": null,
                           "escapeClearsValue": false,
                           "filterOption": [Function],
                           "formatGroupLabel": [Function],
@@ -654,9 +645,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                 "MenuPortal": [Function],
                               },
                               "controlShouldRenderValue": true,
-                              "defaultInputValue": "",
-                              "defaultMenuIsOpen": false,
-                              "defaultValue": null,
                               "escapeClearsValue": false,
                               "filterOption": [Function],
                               "formatGroupLabel": [Function],
@@ -809,9 +797,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -953,9 +938,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -1190,9 +1172,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                 "MenuPortal": [Function],
                               },
                               "controlShouldRenderValue": true,
-                              "defaultInputValue": "",
-                              "defaultMenuIsOpen": false,
-                              "defaultValue": null,
                               "escapeClearsValue": false,
                               "filterOption": [Function],
                               "formatGroupLabel": [Function],
@@ -1340,9 +1319,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -1498,9 +1474,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -1831,9 +1804,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                   }
                 }
                 controlShouldRenderValue={true}
-                defaultInputValue=""
-                defaultMenuIsOpen={false}
-                defaultValue={null}
                 escapeClearsValue={false}
                 filterOption={[Function]}
                 formatGroupLabel={[Function]}
@@ -1959,9 +1929,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                         "MenuPortal": [Function],
                       },
                       "controlShouldRenderValue": true,
-                      "defaultInputValue": "",
-                      "defaultMenuIsOpen": false,
-                      "defaultValue": null,
                       "escapeClearsValue": false,
                       "filterOption": [Function],
                       "formatGroupLabel": [Function],
@@ -2118,9 +2085,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                             "MenuPortal": [Function],
                           },
                           "controlShouldRenderValue": true,
-                          "defaultInputValue": "",
-                          "defaultMenuIsOpen": false,
-                          "defaultValue": null,
                           "escapeClearsValue": false,
                           "filterOption": [Function],
                           "formatGroupLabel": [Function],
@@ -2269,9 +2233,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                 "MenuPortal": [Function],
                               },
                               "controlShouldRenderValue": true,
-                              "defaultInputValue": "",
-                              "defaultMenuIsOpen": false,
-                              "defaultValue": null,
                               "escapeClearsValue": false,
                               "filterOption": [Function],
                               "formatGroupLabel": [Function],
@@ -2424,9 +2385,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -2568,9 +2526,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -2805,9 +2760,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                 "MenuPortal": [Function],
                               },
                               "controlShouldRenderValue": true,
-                              "defaultInputValue": "",
-                              "defaultMenuIsOpen": false,
-                              "defaultValue": null,
                               "escapeClearsValue": false,
                               "filterOption": [Function],
                               "formatGroupLabel": [Function],
@@ -2955,9 +2907,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
@@ -3113,9 +3062,6 @@ exports[`Multichartseries should match snapshot 1`] = `
                                     "MenuPortal": [Function],
                                   },
                                   "controlShouldRenderValue": true,
-                                  "defaultInputValue": "",
-                                  "defaultMenuIsOpen": false,
-                                  "defaultValue": null,
                                   "escapeClearsValue": false,
                                   "filterOption": [Function],
                                   "formatGroupLabel": [Function],
