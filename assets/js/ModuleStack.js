@@ -130,7 +130,7 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
           index={this.props.index}
           onClickModule={this.onClickModule}
           onCancel={this.onCancelSearch}
-          />
+        />
       )
     } else {
       return null
