@@ -60,152 +60,177 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
         </button>
       </form>
     </Prompt>
-    <ul
-      className="module-search-result-groups"
+    <SearchResults
+      modules={
+        Array [
+          Object {
+            "category": "Filter",
+            "description": "Text description",
+            "icon": "filter",
+            "idName": "filter",
+            "isLessonHighlight": false,
+            "name": "Filter by Text",
+          },
+          Object {
+            "category": "Add data",
+            "description": "Enigma description",
+            "icon": "url",
+            "idName": "enigma",
+            "isLessonHighlight": true,
+            "name": "Load from Enigma",
+          },
+        ]
+      }
+      onClickModule={[Function]}
+      search=""
     >
-      <ModuleSearchResultGroup
-        activeModule={null}
-        key="Add data"
-        modules={
-          Array [
-            Object {
-              "category": "Add data",
-              "description": "Enigma description",
-              "icon": "url",
-              "idName": "enigma",
-              "isLessonHighlight": true,
-              "name": "Load from Enigma",
-            },
-          ]
-        }
-        name="Add data"
-        onClickModule={[Function]}
-        onMouseEnterModule={[Function]}
+      <ul
+        className="module-search-result-groups"
       >
-        <li
-          className="module-search-result-group"
-          data-name="Add data"
+        <ModuleSearchResultGroup
+          activeModule={null}
+          key="Add data"
+          modules={
+            Array [
+              Object {
+                "category": "Add data",
+                "description": "Enigma description",
+                "icon": "url",
+                "idName": "enigma",
+                "isLessonHighlight": true,
+                "name": "Load from Enigma",
+              },
+            ]
+          }
+          name="Add data"
+          onClickModule={[Function]}
+          onMouseEnterModule={[Function]}
         >
-          <h4>
-            Add data
-          </h4>
-          <ul
-            className="module-search-results"
+          <li
+            className="module-search-result-group"
+            data-name="Add data"
           >
-            <SearchResult
-              category="Add data"
-              description="Enigma description"
-              icon="url"
-              idName="enigma"
-              isActive={false}
-              isLessonHighlight={true}
-              key="Load from Enigma"
-              name="Load from Enigma"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
+            <h4>
+              Add data
+            </h4>
+            <ul
+              className="module-search-results"
             >
-              <Manager
-                tag={false}
+              <SearchResult
+                category="Add data"
+                description="Enigma description"
+                icon="url"
+                idName="enigma"
+                isActive={false}
+                isLessonHighlight={true}
+                key="Load from Enigma"
+                name="Load from Enigma"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
               >
-                <Reference>
-                  <InnerReference
-                    setReferenceNode={[Function]}
-                  >
-                    <li
-                      className="module-search-result lesson-highlight"
-                      data-module-name="Load from Enigma"
-                      id="module-search-result-enigma"
-                      onClick={[Function]}
-                      onMouseEnter={[Function]}
+                <Manager
+                  tag={false}
+                >
+                  <Reference>
+                    <InnerReference
+                      setReferenceNode={[Function]}
                     >
-                      <i
-                        className="icon-url"
-                      />
-                      <span
-                        className="name"
+                      <li
+                        className="module-search-result lesson-highlight"
+                        data-module-name="Load from Enigma"
+                        id="module-search-result-enigma"
+                        onClick={[Function]}
+                        onMouseEnter={[Function]}
                       >
-                        Load from Enigma
-                      </span>
-                    </li>
-                  </InnerReference>
-                </Reference>
-              </Manager>
-            </SearchResult>
-          </ul>
-        </li>
-      </ModuleSearchResultGroup>
-      <ModuleSearchResultGroup
-        activeModule={null}
-        key="Filter"
-        modules={
-          Array [
-            Object {
-              "category": "Filter",
-              "description": "Text description",
-              "icon": "filter",
-              "idName": "filter",
-              "isLessonHighlight": false,
-              "name": "Filter by Text",
-            },
-          ]
-        }
-        name="Filter"
-        onClickModule={[Function]}
-        onMouseEnterModule={[Function]}
-      >
-        <li
-          className="module-search-result-group"
-          data-name="Filter"
+                        <i
+                          className="icon-url"
+                        />
+                        <span
+                          className="name"
+                        >
+                          Load from Enigma
+                        </span>
+                      </li>
+                    </InnerReference>
+                  </Reference>
+                </Manager>
+              </SearchResult>
+            </ul>
+          </li>
+        </ModuleSearchResultGroup>
+        <ModuleSearchResultGroup
+          activeModule={null}
+          key="Filter"
+          modules={
+            Array [
+              Object {
+                "category": "Filter",
+                "description": "Text description",
+                "icon": "filter",
+                "idName": "filter",
+                "isLessonHighlight": false,
+                "name": "Filter by Text",
+              },
+            ]
+          }
+          name="Filter"
+          onClickModule={[Function]}
+          onMouseEnterModule={[Function]}
         >
-          <h4>
-            Filter
-          </h4>
-          <ul
-            className="module-search-results"
+          <li
+            className="module-search-result-group"
+            data-name="Filter"
           >
-            <SearchResult
-              category="Filter"
-              description="Text description"
-              icon="filter"
-              idName="filter"
-              isActive={false}
-              isLessonHighlight={false}
-              key="Filter by Text"
-              name="Filter by Text"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
+            <h4>
+              Filter
+            </h4>
+            <ul
+              className="module-search-results"
             >
-              <Manager
-                tag={false}
+              <SearchResult
+                category="Filter"
+                description="Text description"
+                icon="filter"
+                idName="filter"
+                isActive={false}
+                isLessonHighlight={false}
+                key="Filter by Text"
+                name="Filter by Text"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
               >
-                <Reference>
-                  <InnerReference
-                    setReferenceNode={[Function]}
-                  >
-                    <li
-                      className="module-search-result"
-                      data-module-name="Filter by Text"
-                      id="module-search-result-filter"
-                      onClick={[Function]}
-                      onMouseEnter={[Function]}
+                <Manager
+                  tag={false}
+                >
+                  <Reference>
+                    <InnerReference
+                      setReferenceNode={[Function]}
                     >
-                      <i
-                        className="icon-filter"
-                      />
-                      <span
-                        className="name"
+                      <li
+                        className="module-search-result"
+                        data-module-name="Filter by Text"
+                        id="module-search-result-filter"
+                        onClick={[Function]}
+                        onMouseEnter={[Function]}
                       >
-                        Filter by Text
-                      </span>
-                    </li>
-                  </InnerReference>
-                </Reference>
-              </Manager>
-            </SearchResult>
-          </ul>
-        </li>
-      </ModuleSearchResultGroup>
-    </ul>
+                        <i
+                          className="icon-filter"
+                        />
+                        <span
+                          className="name"
+                        >
+                          Filter by Text
+                        </span>
+                      </li>
+                    </InnerReference>
+                  </Reference>
+                </Manager>
+              </SearchResult>
+            </ul>
+          </li>
+        </ModuleSearchResultGroup>
+      </ul>
+    </SearchResults>
   </div>
 </ModuleSearch>
 `;
