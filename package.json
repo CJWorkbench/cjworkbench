@@ -21,7 +21,7 @@
     "react-redux": "^6.0.0",
     "react-select": "^2.4.2",
     "react-textarea-autosize": "^7.1.0",
-    "react-window": "^1.6.2",
+    "react-window": "^1.7.1",
     "redux": "^4.0.1",
     "redux-promise-middleware": "^6.1.0",
     "redux-thunk": "^2.3.0",
