@@ -30,30 +30,36 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
   <div
     className="module-search"
   >
-    <form
-      className="module-search-field"
-      onReset={[Function]}
-      onSubmit={[Function]}
+    <Prompt
+      cancel={[Function]}
+      onChange={[Function]}
+      value=""
     >
-      <input
-        autoComplete="off"
-        name="moduleQ"
-        onChange={[Function]}
-        onKeyDown={[Function]}
-        placeholder="Search…"
-        type="search"
-        value=""
-      />
-      <button
-        className="close"
-        title="Close Search"
-        type="reset"
+      <form
+        className="module-search-field"
+        onReset={[Function]}
+        onSubmit={[Function]}
       >
-        <i
-          className="icon-close"
+        <input
+          autoComplete="off"
+          name="moduleQ"
+          onChange={[Function]}
+          onKeyDown={[Function]}
+          placeholder="Search…"
+          type="search"
+          value=""
         />
-      </button>
-    </form>
+        <button
+          className="close"
+          title="Close Search"
+          type="reset"
+        >
+          <i
+            className="icon-close"
+          />
+        </button>
+      </form>
+    </Prompt>
     <ul
       className="module-search-result-groups"
     >

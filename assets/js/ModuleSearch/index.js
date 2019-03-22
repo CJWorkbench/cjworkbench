@@ -6,6 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import memoize from 'memoize-one'
+import { ModulePropType } from './PropTypes'
+import Prompt from './Prompt'
 import SearchResultGroup from './SearchResultGroup'
 
 import lessonSelector from '../lessons/lessonSelector'
@@ -33,6 +36,9 @@ function compareModules(a, b) {
   else return 0
 }
 
+/**
+ * Return [ { name: 'Clean', modules: [ ... ] }, ... ]
+ */
 function groupModules(items) {
   const ret = []
   const temp = {}
@@ -59,14 +65,7 @@ const escapeRegexCharacters = (str) => {
 
 export class ModuleSearch extends React.Component {
   static propTypes = {
-    modules: PropTypes.arrayOf(PropTypes.shape({
-      idName: PropTypes.string.isRequired,
-      isLessonHighlight: PropTypes.bool.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      category: PropTypes.string.isRequired,
-      icon: PropTypes.string.isRequired,
-    })).isRequired,
+    modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
     index: PropTypes.number.isRequired, // helps mapStateToProps() calculate isLessonHighlight
     isLessonHighlight: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired, // func() => undefined
@@ -75,42 +74,34 @@ export class ModuleSearch extends React.Component {
 
   state = {
     input: '',
-    resultGroups: groupModules(this.props.modules),
     activeModule: null // idName
   }
 
-  inputRef = React.createRef()
+  get resultGroups () {
+    return this._buildResultGroups(this.allGroups, this.state.input)
+  }
 
-  findResultGroups(input) {
+  get allGroups () {
+    return this._buildAllGroups(this.props.modules)
+  }
+
+  _buildAllGroups = memoize(groupModules)
+
+  _buildResultGroups = memoize((groups, input) => {
     const escapedValue = escapeRegexCharacters(input.trim())
     const regex = new RegExp(escapedValue, 'i')
-    const foundModules = this.props.modules.filter(m => (regex.test(m.name) | regex.test(m.description)))
-    const groups = groupModules(foundModules)
+    const predicate = (module) => regex.test(module.name) || regex.test(module.description)
     return groups
-  }
+      .map(({ name, modules }) => ({ name, modules: modules.filter(predicate) }))
+      .filter(({ modules }) => modules.length > 0)
+  })
 
-  componentDidMount() {
-    // auto-focus
-    const ref = this.inputRef.current
-    if (ref) ref.focus()
-  }
-
-  setInput(input) {
-    const resultGroups = this.findResultGroups(input)
-
-    this.setState({
-      input,
-      resultGroups,
-    })
-  }
-
-  onInputChange = (ev) => {
-    const input = ev.target.value
-    this.setInput(input)
+  onSearchInputChange = (value) => {
+    this.setState({ input: value })
   }
 
   onClickModule = (moduleIdName) => {
-    this.setInput('')
+    this.setState({ input: '' })
     this.props.onClickModule(moduleIdName)
   }
 
@@ -118,23 +109,15 @@ export class ModuleSearch extends React.Component {
     this.setState({ activeModule: moduleIdName })
   }
 
-  onSubmit = (ev) => {
-    ev.preventDefault()
-  }
-
-  onReset = () => {
-    this.setInput('')
+  cancel = () => {
+    this.setState({ input: '' })
     this.props.onCancel()
   }
 
-  onKeyDown = (ev) => {
-    if (ev.keyCode === 27) this.onReset() // Esc => reset
-  }
-
   render () {
-    const { input, resultGroups, activeModule } = this.state
+    const { input, activeModule } = this.state
 
-    const resultGroupComponents = resultGroups.map(rg => (
+    const resultGroupComponents = this.resultGroups.map(rg => (
       <SearchResultGroup
         key={rg.name}
         name={rg.name}
@@ -155,19 +138,7 @@ export class ModuleSearch extends React.Component {
 
     return (
       <div className={className.join(' ')}>
-        <form className="module-search-field" onSubmit={this.onSubmit} onReset={this.onReset}>
-          <input
-            type='search'
-            name='moduleQ'
-            placeholder='Search…'
-            autoComplete='off'
-            ref={this.inputRef}
-            value={input}
-            onChange={this.onInputChange}
-            onKeyDown={this.onKeyDown}
-            />
-          <button type="reset" className="close" title="Close Search"><i className="icon-close"></i></button>
-        </form>
+        <Prompt value={input} cancel={this.cancel} onChange={this.onSearchInputChange} />
         {resultGroupsComponent}
       </div>
     )
