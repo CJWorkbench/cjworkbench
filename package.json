@@ -47,7 +47,7 @@
     "enzyme-to-json": "^3.3.5",
     "file-loader": "^3.0.1",
     "geojson-validation": "^0.2.1",
-    "jest": "^24.1.0",
+    "jest": "^24.5.0",
     "jquery": "^3.3.1",
     "memoize-one": "^5.0.0",
     "mini-css-extract-plugin": "^0.5.0",
@@ -68,8 +68,6 @@
   },
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "watchjs": "webpack --mode development --watch",
     "compilejs": "webpack --mode production"
   },
