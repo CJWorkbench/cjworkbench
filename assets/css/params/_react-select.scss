@@ -142,11 +142,10 @@
 }
 
 // Menu when open (it's attached to <body>, not in the spot of the DOM where the <Select> is)
-div>.react-select__menu {
-  position: absolute;
-  @extend %content-1;
+.react-select__menu {
+  @include content-1;
   width: 100%;
-  z-index: 2;
+  z-index: $zindex-popover;
   border-radius: 0 0 5px 5px;
   margin-top: -.2rem; // overlap the border of the .react-select__control
   background-color: white;
