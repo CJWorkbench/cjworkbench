@@ -94,7 +94,7 @@ describe('ModuleSearch', () => {
       // search field should be empty at start
       wrapper.find('form').simulate('reset')
       expect(wrapper.prop('onCancel')).toHaveBeenCalled()
-    });
+    })
 
     it('calls onCancel on pressing Escape', () => {
       searchField.simulate('keyDown', { keyCode: 27 })
@@ -230,5 +230,4 @@ describe('ModuleSearch', () => {
       expect(wrapper.find('.module-search').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
   })
-});
-
+})
