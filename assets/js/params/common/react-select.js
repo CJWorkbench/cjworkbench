@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
-import { Manager, Target, Popper } from 'react-popper'
+import { Popper } from 'react-popper'
 
 
 // react-select includes a funky CSS engine we don't want. Disable
@@ -41,25 +41,30 @@ export const NoStyles = {
 const PopperModifiers = {
   autoPopperWidth: {
     enabled: true,
-    order: 840,
+    order: 1,
     fn: (data) => {
       // Modify in-place, for speed (we're called often)
       data.styles.width = data.offsets.reference.width
       return data
     }
+  },
+  preventOverflow: {
+    boundariesElement: 'viewport'
   }
 }
 function PopperMenuPortal (props) {
   return ReactDOM.createPortal((
     <Popper
-      positionFixed
-      placement={props.placement}
-      target={props.controlElement}
+      referenceElement={props.controlElement}
+      placement={props.menuPlacement}
       modifiers={PopperModifiers}
     >
-      {({ popperProps, restProps, scheduleUpdate }) => (
+      {({ ref, style, placement }) => (
         <div
-          {...popperProps}
+          className='react-select-menu-portal'
+          ref={ref}
+          style={style}
+          data-placement={placement}
           children={props.children}
         />
       )}

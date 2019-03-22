@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import { Manager as PopperManager, Target as PopperTarget, Popper, Arrow } from 'react-popper'
+import { Manager as PopperManager, Reference as PopperReference, Popper, Arrow } from 'react-popper'
 
 const PopperModifiers = {
   preventOverflow: {
@@ -20,9 +20,14 @@ class SearchResultDescription extends React.PureComponent {
 
     return (
       <Popper placement='right' modifiers={PopperModifiers}>
-        {({ popperProps }) => ReactDOM.createPortal((
-          <div className='popover show bs-popover-right module-search-result' {...popperProps}>
-            <Arrow className='arrow'/>
+        {({ ref, style, placement, arrowProps }) => ReactDOM.createPortal((
+          <div
+            className={`popover show bs-popover-${placement} module-search-result`}
+            ref={ref}
+            style={style}
+            data-placement={placement}
+          >
+            <div className='arrow' {...arrowProps} />
             <h3 className='popover-header'>{name}</h3>
             <div className='popover-body'>{description}</div>
           </div>
@@ -62,14 +67,14 @@ export default class SearchResult extends React.PureComponent {
 
     return (
       <PopperManager tag={false}>
-        <PopperTarget>
-          {({ targetProps }) => (
-            <li className={className.join(' ')} id={elId} data-module-name={name} onClick={this.onClick} onMouseEnter={this.onMouseEnter} {...targetProps}>
+        <PopperReference>
+          {({ ref }) => (
+            <li className={className.join(' ')} id={elId} data-module-name={name} onClick={this.onClick} onMouseEnter={this.onMouseEnter} ref={ref}>
               <i className={'icon-' + icon}></i>
               <span className='name'>{name}</span>
             </li>
           )}
-        </PopperTarget>
+        </PopperReference>
         {isActive ? <SearchResultDescription name={name} description={description} /> : null}
       </PopperManager>
     )

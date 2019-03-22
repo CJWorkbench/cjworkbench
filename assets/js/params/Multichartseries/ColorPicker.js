@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import { Manager as PopperManager, Target as PopperTarget, Popper, Arrow } from 'react-popper'
+import { Popper } from 'react-popper'
 
 class ColorChoice extends React.PureComponent {
   static propTypes = {
@@ -104,7 +104,32 @@ class CustomColorChoice extends React.PureComponent {
     )
   }
 }
-            
+
+
+/**
+ * Re-implement react-popper/src/Manager.js/ManagerContext, so we can
+ * access `referenceNode` from within our event handlers.
+ *
+ * react-popper syntax would _normally_ be:
+ *
+ *     <Manager> -- holds context in state
+ *       <Reference>{({ ref } => <.../>)}</Reference> -- calls context.setReferenceElement
+ *       <Popper>{({ ref, style, placement }) => <.../>)}</Popper> -- reads context.referenceElement
+ *     </Manager>
+ *
+ * ... we'll re-implement it as:
+ *
+ *     <ColorPicker> -- holds context in state
+ *       <button ref={this.setReferenceElement} .../> -- sets context.referenceElement
+ *       <Popper referenceElement={context.referenceElement}>...</Popper> -- reads context.referenceElement
+ *     </ColorPicker>
+ */
+const ColorPickerContext = React.createContext()
+ColorPickerContext.Provider.propTypes = {
+  value: PropTypes.shape({
+    referenceElement: PropTypes.instanceOf(HTMLElement), // or undefined -- which is the case during load
+  })
+}
 
 class ColorPickerPopover extends React.PureComponent {
   static propTypes = {
@@ -113,8 +138,9 @@ class ColorPickerPopover extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
     onClose: PropTypes.func.isRequired // onClose() => undefined
   }
+  static contextType = ColorPickerContext // this.context.referenceElement is the button that opened the menu
 
-  ref = React.createRef()
+  containerRef = React.createRef()
 
   componentDidMount () {
     document.addEventListener('mousedown', this.onMouseDown, true)
@@ -128,20 +154,35 @@ class ColorPickerPopover extends React.PureComponent {
    * Close the popover if we click outside it.
    */
   onMouseDown = (ev) => {
-    if (this.ref.current && !this.ref.current.contains(ev.target)) {
+    const { referenceElement } = this.context
+    if (referenceElement && (referenceElement === ev.target || referenceElement.contains(ev.target))) {
+      // The user clicked the "toggle" button. Don't do anything -- the toggle-button
+      // handler will close the popover for us.
+      return
+    }
+
+    const container = this.containerRef.current
+
+    if (this.containerRef.current && !this.containerRef.current.contains(ev.target)) {
       this.props.onClose()
     }
   }
 
   render () {
     const { safeValue, choices, onChange, onClose } = this.props
+    const { referenceElement } = this.context
 
-    return (
-      <Popper placement='bottom'>
-        {({ popperProps }) => ReactDOM.createPortal((
-          <div className={`popover show bs-popover-${popperProps['data-placement']} color-picker-popover`} {...popperProps}>
-            <Arrow className='arrow' />
-            <div ref={this.ref} className='popover-body'>
+    return ReactDOM.createPortal((
+      <Popper placement='bottom' referenceElement={referenceElement}>
+        {({ ref, style, placement, arrowProps }) => (
+          <div
+            className={`popover show bs-popover-${placement} color-picker-popover`}
+            ref={ref}
+            style={style}
+            data-placement={placement}
+          >
+            <div className='arrow' {...arrowProps} />
+            <div ref={this.containerRef} className='popover-body'>
               {choices.map(color => (
                 <ColorChoice key={'choice-' + color} color={color} onClick={onChange} />
               ))}
@@ -153,9 +194,9 @@ class ColorPickerPopover extends React.PureComponent {
               />
             </div>
           </div>
-        ), document.body)}
+        )}
       </Popper>
-    )
+    ), document.body)
   }
 }
 
@@ -171,8 +212,15 @@ export default class ColorPicker extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
   }
 
+  setReferenceElement = (referenceElement) => {
+    this.setState({ context: { referenceElement }})
+  }
+
   state = {
-    isOpen: false
+    isOpen: false,
+    context: {
+      referenceElement: undefined
+    }
   }
 
   toggleOpen = () => {
@@ -190,18 +238,21 @@ export default class ColorPicker extends React.PureComponent {
 
   render () {
     const { value, choices } = this.props
-    const { isOpen } = this.state
+    const { isOpen, context } = this.state
     const safeValue = value || '#000000'
 
     return (
-      <PopperManager>
-        <PopperTarget>
-          {({ targetProps }) => (
-            <button type='button' title='Pick color' onClick={this.toggleOpen} className='btn color-picker' style={{ background: safeValue }} {...targetProps}>
-              <i className='color-picker' />
-            </button>
-          )}
-        </PopperTarget>
+      <ColorPickerContext.Provider value={context}>
+        <button
+          type='button'
+          title='Pick color'
+          onClick={this.toggleOpen}
+          className='btn color-picker'
+          style={{ background: safeValue }}
+          ref={this.setReferenceElement}
+        >
+          <i className='color-picker' />
+        </button>
         {isOpen ? (
           <ColorPickerPopover
             safeValue={safeValue}
@@ -210,7 +261,7 @@ export default class ColorPicker extends React.PureComponent {
             onClose={this.close}
           />
         ) : null}
-      </PopperManager>
+      </ColorPickerContext.Provider>
     )
   }
 }

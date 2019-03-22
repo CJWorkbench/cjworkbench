@@ -119,8 +119,13 @@ class OpenDropdownMenu extends React.PureComponent {
 
     return ReactDOM.createPortal((
       <Popper modifiers={PopperModifiers} placement='bottom-end'>
-        {({ popperProps }) => (
-          <div className='dropdown-menu-portal' {...popperProps}>
+        {({ ref, style, placement }) => (
+          <div
+            className='dropdown-menu-portal'
+            ref={ref}
+            style={style}
+            data-placement={placement}
+          >
             <div ref={this.ref} className='dropdown-menu' role='menu' children={children}/>
           </div>
         )}

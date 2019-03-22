@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Target as PopperTarget } from 'react-popper'
+import { Reference as PopperReference } from 'react-popper'
 import { DropdownContext } from './Dropdown'
 
 export default class DropdownToggle extends React.PureComponent {
@@ -20,8 +20,8 @@ export default class DropdownToggle extends React.PureComponent {
     if (className) classNames.push(className)
 
     return (
-      <PopperTarget>
-        {({ targetProps }) => (
+      <PopperReference>
+        {({ ref }) => (
           <button
             className={classNames.join(' ')}
             onClick={toggle}
@@ -29,10 +29,10 @@ export default class DropdownToggle extends React.PureComponent {
             aria-expanded={isOpen}
             children={children}
             title={title}
-            {...targetProps}
+            ref={ref}
           />
         )}
-      </PopperTarget>
+      </PopperReference>
     )
   }
 }
