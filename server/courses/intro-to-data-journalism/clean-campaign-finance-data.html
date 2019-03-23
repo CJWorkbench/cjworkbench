@@ -17,22 +17,15 @@
   </p>
 </section>
 
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Lesson",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"./cuomo-contributions.csv"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./cuomo-contributions.csv
+    collapsed: true
+    note: "Data source: Board of Election of the State of New York. Units: U.S. Dollars"
 </script>
 
 <section>
