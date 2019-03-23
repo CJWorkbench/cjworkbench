@@ -9,7 +9,7 @@ Supervisor District,Text,Supervisorial District of project,http://data.sfgov.org
 Planning Neighborhood,Text,Planning Neighborhood of project,https://data.sfgov.org/d/iacs-ws63
 Lead Agency,Text,Agency overseeing project development,"MOHCD, OCII"
 Program Area,Text,MOHCD/OCII project program area,"Program or OCII project area under which project is financed, underwritten or developed"
-Project Type,Text,Type of development project,New construction or rehabilitation 
+Project Type,Text,Type of development project,New construction or rehabilitation
 Housing Tenure,Text,Type of arrangement households can occupy the housing,Rental or Ownership
 Issuance of Notice to Proceed,Date,Date project is authorized to begin construction,Projected date Notice to Proceed will be issued to general contractor
 Estimated Construction Completion,Date,Estimated date that construction or rehabilitation is complete,Projected date of Temporary Certificate of Occupancy (TCO) or DBI sign-off of completed permit job card
