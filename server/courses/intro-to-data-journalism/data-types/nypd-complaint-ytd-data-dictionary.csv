@@ -1,5 +1,5 @@
 Column Name,Column Description
-CMPLNT_NUM,Randomly generated persistent ID for each complaint 
+CMPLNT_NUM,Randomly generated persistent ID for each complaint
 ADDR_PCT_CD,The precinct in which the incident occurred
 BORO,The name of the borough in which the incident occurred
 CMPLNT_FR_DT,"Exact date of occurrence for the reported event (or starting date of occurrence, if CMPLNT_TO_DT exists)"
@@ -20,7 +20,7 @@ PATROL_BORO,The name of the patrol borough in which the incident occurred
 PD_CD,Three digit internal classification code (more granular than Key Code)
 PD_DESC,Description of internal classification corresponding with PD code (more granular than Offense Description)
 PREM_TYP_DESC,"Specific description of premises; grocery store, residence, street, etc."
-RPT_DT,Date event was reported to police 
+RPT_DT,Date event was reported to police
 STATION_NAME,Transit station name
 SUSP_AGE_GROUP,SuspectÕs Age Group
 SUSP_RACE,SuspectÕs Race Description
