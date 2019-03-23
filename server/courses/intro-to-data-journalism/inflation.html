@@ -17,34 +17,22 @@
 </section>
 
 <!-- Section 1 -->
-
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Salaries",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"./teacher-salaries.xlsx"
-            }
-          }
-        ]
-      },
-      {
-        "name": "CPI data",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"./CPI-bureau-of-labor-statistic.xlsx"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Salaries
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./teacher-salaries.xlsx
+    collapsed: true
+    note: "Source: National Center for Education Statistics"
+- name: CPI data
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./CPI-bureau-of-labor-statistic.xlsx
+    collapsed: true
+    note: "Source: U.S. Bureau of Labor Statistics"
 </script>
 
 <section>
@@ -57,7 +45,7 @@
     Those numbers are in “Current dollars”, which means not adjusted for inflation. Let's convert them into today’s dollars.
   </p>
   <p>
-    To do this we need a measure of inflation. Every month the Bureau of Labor statistics surveys the prices of
+    To do this we need a measure of inflation. Every month the Bureau of Labor Statistics surveys the prices of
     hundreds of consumer items to produce a number known as the “Consumer Price Index” or CPI. The
     <kbd>CPI data</kbd> tab contains this data, published <a class="highlight" href='https://data.bls.gov/timeseries/CUUR0000SA0/' target="_blank" className="info-1">here</a>.
   </p>
