@@ -23,22 +23,15 @@
 
 <!-- Section 1 -->
 
-<script id="initialWorkflow" type="application/json">
-  {
-    "tabs": [
-      {
-        "name": "Lesson",
-        "wfModules": [
-          {
-            "module":"loadurl",
-            "params": {
-              "url":"./largest-co2-producers.csv"
-            }
-          }
-        ]
-      }
-    ]
-  }
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./largest-co2-producers.csv
+    collapsed: true
+    note: "Data source: U.S. Energy Information Administration. Units: Million Metric Tons"
 </script>
 
 <section>
