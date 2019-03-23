@@ -18,7 +18,23 @@
 </section>
 
 <!-- Section 1 -->
-
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./affordable-housing-pipeline.csv
+    collapsed: true
+    note: "Source: City of San Francisco."
+- name: Data dictionary
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./dataDictionary-affordable-housing-pipeline.csv
+    collapsed: true
+    note: "Source: City of San Francisco."
+</script>
 <script id="initialWorkflow" type="application/json">
   {
     "tabs": [
