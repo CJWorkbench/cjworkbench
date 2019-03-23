@@ -11,7 +11,7 @@
     formats and convert from one to the other, which is called reshaping.
   </p>
   <p>
-    We'll work with a month of the same data we used in the previous lesson, on police incidents in New York City.
+    We'll work with a month of the same data we used in the <a href='/courses/intro-to-data-journalism/data-types' className="info-1">previous two lessons</a>, on police incidents in New York City.
 </section>
 <script id="initialWorkflow">
 tabs:
@@ -20,28 +20,16 @@ tabs:
   - module: loadurl
     params:
       url: './NYC-data-long-format.csv'
+    collapsed: true
+    note: "Source: City of San Francisco."
   - module: convert-date
     params:
       colnames: Complaint date
+    collapsed: true
 </script>
 
 <section class="fullscreen">
   <h2> </h2>
-  <!--
-  <p>
-    <b>Wide format</b> is the most common table format. Each different type of measurement is in its own column. In this case there is one column per borough.<br>
-  </p>
-  <figure>
-    <img class="no-border full-width" alt="Inspect element" src="./wide-table.png">
-  </figure>
-
-  <p><b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>.
-    All other columns describe what is measured in that row. In this case, each <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
-  </p>
-  <figure>
-    <img class="no-border half-width" alt="Inspect element" src="./long-table.png">
-  </figure>
-  -->
   <p>
     <b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured. <br>
     Each row is a unique measurement. In this case, each unique of <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
