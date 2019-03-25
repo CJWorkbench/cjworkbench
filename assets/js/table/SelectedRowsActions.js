@@ -105,7 +105,6 @@ export class SelectedRowsActions extends React.PureComponent {
           {prompt}
         </DropdownToggle>
         <DropdownMenu>
-          <p>Here we go</p>
           {actions}
         </DropdownMenu>
       </UncontrolledDropdown>
