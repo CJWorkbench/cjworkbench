@@ -81,7 +81,7 @@ class WorkbenchBase(unittest.TestCase):
         # Search. That way, we won't need to worry about overflow:auto
         b.fill_in('moduleQ', name)
 
-        b.click_whatever('li.module-search-result', text=name)
+        b.click_whatever('button.module-search-result', text=name)
 
         b.assert_element(
             f'.wf-module[data-module-name="{name}"]:not(.status-busy)',

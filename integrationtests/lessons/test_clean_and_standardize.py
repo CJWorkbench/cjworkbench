@@ -39,7 +39,7 @@ class TestLesson(LessonTest):
         self.click_next()
 
         # 2. Drop empty rows and columns
-        self.expect_highlight(0, '.add-module-search')
+        self.expect_highlight(0, 'button.search')
         self.add_wf_module('Add from URL')
 
         # Wait for module to load
@@ -54,7 +54,7 @@ class TestLesson(LessonTest):
         # Wait for module to update
         self.expect_highlight(
             2,
-            '.in-between-modules:last-child .add-module-search',
+            '.in-between-modules:last-child button.search',
             wait=True
         )
         self.add_wf_module('Drop empty columns')
@@ -62,7 +62,7 @@ class TestLesson(LessonTest):
         # Wait for module to load
         self.expect_highlight(
             3,
-            '.in-between-modules:last-child .add-module-search',
+            '.in-between-modules:last-child button.search',
             wait=True
         )
         self.add_wf_module('Drop empty rows')
@@ -87,7 +87,7 @@ class TestLesson(LessonTest):
         # 3. Convert types
         self.expect_highlight(
             0,
-            '.in-between-modules:last-child .add-module-search'
+            '.in-between-modules:last-child button.search'
         )
         self.add_wf_module('Convert to date & time')
         self.select_column('Convert to date & time', 'colnames', 'Date')
@@ -95,7 +95,7 @@ class TestLesson(LessonTest):
 
         self.expect_highlight(
             1,
-            '.in-between-modules:last-child .add-module-search',
+            '.in-between-modules:last-child button.search',
             wait=True  # wait for last exec to happen?
         )
         self.add_wf_module('Convert to numbers')
@@ -108,7 +108,7 @@ class TestLesson(LessonTest):
         # 4. Standardize column values
         self.expect_highlight(
             0,
-            '.in-between-modules:last-child .add-module-search'
+            '.in-between-modules:last-child button.search'
         )
         self.add_wf_module('Refine')
 
@@ -141,7 +141,7 @@ class TestLesson(LessonTest):
         # 3. Changing table format
         self.expect_highlight(
             0,
-            '.in-between-modules:last-child .add-module-search'
+            '.in-between-modules:last-child button.search'
         )
         self.add_wf_module('Reshape')
 
