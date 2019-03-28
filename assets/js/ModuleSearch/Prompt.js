@@ -31,7 +31,7 @@ export default class Prompt extends React.PureComponent {
     const { value, cancel } = this.props
 
     return (
-      <form className="module-search-field" onSubmit={this.onSubmit} onReset={cancel}>
+      <form className='module-search-field' onSubmit={this.onSubmit} onReset={cancel}>
         <input
           type='search'
           name='moduleQ'

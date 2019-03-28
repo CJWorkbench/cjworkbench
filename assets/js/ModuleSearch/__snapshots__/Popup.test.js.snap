@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleSearch most tests matches snapshot 1`] = `
-<ModuleSearch
+exports[`ModuleSearch Popup matches snapshot 1`] = `
+<Popup
+  addModule={[MockFunction]}
+  close={[MockFunction]}
   index={2}
   isLessonHighlight={false}
   modules={
@@ -24,20 +26,20 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
       },
     ]
   }
-  onCancel={[MockFunction]}
-  onClickModule={[MockFunction]}
+  onUpdate={[MockFunction]}
+  tabSlug="tab-1"
 >
   <div
-    className="module-search"
+    className="module-search-popup"
   >
     <Prompt
-      cancel={[Function]}
+      cancel={[MockFunction]}
       onChange={[Function]}
       value=""
     >
       <form
         className="module-search-field"
-        onReset={[Function]}
+        onReset={[MockFunction]}
         onSubmit={[Function]}
       >
         <input
@@ -128,31 +130,32 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
                 onClick={[Function]}
                 onMouseEnter={[Function]}
               >
-                <Manager
-                  tag={false}
-                >
-                  <Reference>
-                    <InnerReference
-                      setReferenceNode={[Function]}
-                    >
-                      <li
-                        className="module-search-result lesson-highlight"
-                        data-module-name="Load from Enigma"
-                        id="module-search-result-enigma"
-                        onClick={[Function]}
-                        onMouseEnter={[Function]}
+                <Manager>
+                  <li>
+                    <Reference>
+                      <InnerReference
+                        setReferenceNode={[Function]}
                       >
-                        <i
-                          className="icon-url"
-                        />
-                        <span
-                          className="name"
+                        <button
+                          className="module-search-result lesson-highlight"
+                          data-module-name="Load from Enigma"
+                          data-module-slug="enigma"
+                          id="module-search-result-enigma"
+                          onClick={[Function]}
+                          onMouseEnter={[Function]}
                         >
-                          Load from Enigma
-                        </span>
-                      </li>
-                    </InnerReference>
-                  </Reference>
+                          <i
+                            className="icon-url"
+                          />
+                          <span
+                            className="name"
+                          >
+                            Load from Enigma
+                          </span>
+                        </button>
+                      </InnerReference>
+                    </Reference>
+                  </li>
                 </Manager>
               </SearchResult>
             </ul>
@@ -199,31 +202,32 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
                 onClick={[Function]}
                 onMouseEnter={[Function]}
               >
-                <Manager
-                  tag={false}
-                >
-                  <Reference>
-                    <InnerReference
-                      setReferenceNode={[Function]}
-                    >
-                      <li
-                        className="module-search-result"
-                        data-module-name="Filter by Text"
-                        id="module-search-result-filter"
-                        onClick={[Function]}
-                        onMouseEnter={[Function]}
+                <Manager>
+                  <li>
+                    <Reference>
+                      <InnerReference
+                        setReferenceNode={[Function]}
                       >
-                        <i
-                          className="icon-filter"
-                        />
-                        <span
-                          className="name"
+                        <button
+                          className="module-search-result"
+                          data-module-name="Filter by Text"
+                          data-module-slug="filter"
+                          id="module-search-result-filter"
+                          onClick={[Function]}
+                          onMouseEnter={[Function]}
                         >
-                          Filter by Text
-                        </span>
-                      </li>
-                    </InnerReference>
-                  </Reference>
+                          <i
+                            className="icon-filter"
+                          />
+                          <span
+                            className="name"
+                          >
+                            Filter by Text
+                          </span>
+                        </button>
+                      </InnerReference>
+                    </Reference>
+                  </li>
                 </Manager>
               </SearchResult>
             </ul>
@@ -232,5 +236,5 @@ exports[`ModuleSearch most tests matches snapshot 1`] = `
       </ul>
     </SearchResults>
   </div>
-</ModuleSearch>
+</Popup>
 `;
