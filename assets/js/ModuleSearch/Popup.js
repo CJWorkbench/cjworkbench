@@ -179,7 +179,7 @@ export class Popup extends React.PureComponent {
     modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
     close: PropTypes.func.isRequired, // func() => undefined
     addModule: PropTypes.func.isRequired, // func(tabSlug, index, moduleIdName) => undefined
-    onSearchChange: PropTypes.func // func() => undefined -- for Popper.scheduleUpdate()
+    onUpdate: PropTypes.func // func() => undefined -- for Popper.scheduleUpdate()
   }
 
   state = {
@@ -188,7 +188,13 @@ export class Popup extends React.PureComponent {
 
   onSearchInputChange = (value) => {
     this.setState({ search: value })
-    this.props.onSearchChange() // Resize Popper
+  }
+
+  componentDidUpdate () {
+    // Resize Popper.
+    //
+    // Another place this might make sense is componentDidUpdate(). But 
+    this.props.onUpdate()
   }
 
   onClickModule = (moduleIdName) => {
@@ -266,7 +272,7 @@ export class PopperPopup extends React.PureComponent {
             className='module-search-popper'
           >
             <div className='click-outside-listener' ref={this.containerRef}>
-              <Popup onSearchChange={scheduleUpdate} {...this.props} />
+              <Popup onUpdate={scheduleUpdate} {...this.props} />
             </div>
           </div>
         )}

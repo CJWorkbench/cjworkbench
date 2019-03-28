@@ -42,6 +42,7 @@ describe('ModuleSearch Popup', () => {
       modules={modulesArray}
       close={jest.fn()}
       addModule={jest.fn()}
+      onUpdate={jest.fn()}
       {...extraProps}
     />
   )
@@ -69,6 +70,12 @@ describe('ModuleSearch Popup', () => {
     w.find('input[type="search"]').simulate('change', {target: {value: 'description'}})
     expect(w.text()).toMatch(/Load from Enigma/)
     expect(w.text()).toMatch(/Filter by Text/)
+  })
+
+  it('schedules Popper resize when search results change', () => {
+    const w = wrapper()
+    w.find('input[type="search"]').simulate('change', {target: {value: 'description'}})
+    expect(w.prop('onUpdate')).toHaveBeenCalled()
   })
 
   it('calls close on form reset (e.g., clicking button.close)', () => { 

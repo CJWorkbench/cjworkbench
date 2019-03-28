@@ -26,6 +26,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
       },
     ]
   }
+  onUpdate={[MockFunction]}
   tabSlug="tab-1"
 >
   <div
