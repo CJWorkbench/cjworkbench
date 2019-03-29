@@ -181,6 +181,7 @@ class ModuleVersion(models.Model):
     def param_fields(self):
         return [ParamField.from_dict(d) for d in self.spec['parameters']]
 
+    # Returns a dict of DTypes for all parameters
     @property
     def param_schema(self):
         try:

@@ -514,9 +514,17 @@ ParamDType.JsonTypeToDType = {
 @dataclass(frozen=True)
 class ParamField:
     """
-    A form field for entering a param.
+    The specification for a single module parameter, a representation of the parameter that the module author
+    has specified in the YAML. There is no parameter value here, just a typed spec.
+    
+    ParamFields are immutable objects created as needed, in ModuleVersion.param_fields.
 
-    This is what the user sees.
+    On key part of the YAML spec is "FType", that is the "form type", what the user sees. This sets the UI
+    for the parameter and defines the structure used when the value is serialized to the cleint.
+
+    ParamField can create another immutable object, the DType or "data type", defining how it's stored and processed.
+    DTypes defines the structure of the JSON data stored in WfModule.params and passed to module render()
+    So this class also defines the storage format of each type of parameter that can be specified in the YAML.
     """
     class FType(Enum):
         """Type of form field to display to the user"""
@@ -535,6 +543,7 @@ class ParamField:
         MULTITAB = 'multitab'
         SECRET = 'secret'
         CUSTOM = 'custom'           # rendered in front end
+        LIST = 'list'
 
         def __str__(self):
             return self.value
@@ -634,5 +643,10 @@ class ParamField:
                 default = values[0] if self.default is None else self.default
 
             return ParamDTypeEnum(choices, default)
+        elif (self.ftype == T.LIST):
+            kwargs = {}
+            if self.default is not None:
+                kwargs['default'] = str(self.default)
+            return ParamDTypeString(**kwargs)
         else:
             raise ValueError('Unknown ftype %r' % self.ftype)

@@ -126,7 +126,12 @@ class WfModule(models.Model):
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
+    # All current parameter values. This data has been validated at the time of writing
+    # using ParamDType.validate() and module_version.param_schema. However it may not match
+    # the current module version, and must be migrated when serialized.
     params = JSONField(default={})
+
+    # Stores things like login information for Twitter and other APIs, must not be copied when duplicating the wf
     secrets = JSONField(default={})
 
     @property

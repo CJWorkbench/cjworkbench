@@ -47,12 +47,12 @@ properties:
         type: array
         description: "Specification for how to give a form to the user and give values to the fetch/render functions"
         items:
-            $ref: '#/definitions/ftypes/any'
+            $ref: '#/definitions/param_types/any'
 
 definitions:
-    # FTypes: Form-element types. Each of these is a React component.
-    ftypes:
-        # _lib: properties that are used in more than one ftype.
+    # param_types: Types that module author can specify, which in turn define both the UI and the storage format (DType)
+    param_types:
+        # _lib: properties that are used in more than one param_type.
         _lib:
             name:
                 type: string
@@ -64,10 +64,10 @@ definitions:
         # (They tend to use many similar properties, but not all.) JSON Schema has
         # its own '$ref' syntax, but that doesn't let us "extend" an object -- i.e.,
         # add new properties on top of the $ref-ed ones.
-        _common: &common_ftype
+        _common: &common_param_type
             type: object
             required: [ id_name, type ]
-            properties: &common_ftype_properties
+            properties: &common_param_type_properties
                 id_name:
                     type: string
                     description: Name that programmers use to uniquely identify this parameter
@@ -85,51 +85,51 @@ definitions:
                             description: "If true, do the opposite"
 
         statictext:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, name ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: statictext }
                 name:
                     type: string
                     description: Text to display
         string:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: string }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 default:
                     type: string
                     description: "Value to set on the user's behalf (default null)"
         integer:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: integer }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 default:
                     type: integer
                     description: "Value to set on the user's behalf (default null)"
         float:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: float }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 default:
                     type: number
                     description: "Value to set on the user's behalf (default null)"
         checkbox:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, name ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: checkbox }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
                 default:
                     type: boolean
                     description: "Value to set on the user's behalf (default False)"
@@ -142,13 +142,13 @@ definitions:
             # * "menu" lets us reorder values
             #
             # Nix this when no more modules use it. (grep for `menu_items` to find it.)
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, menu_items ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: menu }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 menu_items:
                     type: string
                     description: "Menu entries, separated by '|'"
@@ -156,13 +156,13 @@ definitions:
                     type: integer
                     description: "Value to set on the user's behalf (default 0)"
         menu:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, options ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: menu }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 options:
                     type: array
                     description: Menu options
@@ -184,12 +184,12 @@ definitions:
                     type: string
                     description: "Value to set on the user's behalf (default items[0].value)"
         deprecated_radio:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, radio_items ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: radio }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 radio_items:
                     type: string
                     description: "Radio entries, separated by '|'"
@@ -197,12 +197,12 @@ definitions:
                     type: integer
                     description: "Value to set on the user's behalf (default 0)"
         radio:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, options ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: radio }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
                 options:
                     type: array
                     description: Radio options
@@ -227,86 +227,99 @@ definitions:
                         description: "Value to set on the user's behalf (default items[0].value)"
                       - type: boolean
         button:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, name ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: button }
                 name:
                     type: string
                     description: Button text
         column:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: column }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 tab_parameter: { type: string }  # optional
         multicolumn:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: multicolumn }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
                 tab_parameter: { type: string }  # optional
         tab:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: tab }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
         multitab:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: multitab }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
         multichartseries:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: multichartseries }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
         secret:
-            <<: *common_ftype
+            <<: *common_param_type
             required: [ id_name, type, name ]
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: secret }
                 name:
                     type: string
                     description: "'Connect' button text"
         custom:
-            <<: *common_ftype
+            <<: *common_param_type
             properties:
-                <<: *common_ftype_properties
+                <<: *common_param_type_properties
                 type: { const: custom }
-                name: { $ref: '#/definitions/ftypes/_lib/name' }
-                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
+
+        list:
+            <<: *common_param_type
+            properties:
+                <<: *common_param_type_properties
+                type: { const: list }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/param_types/_lib/placeholder' }
+                default:
+                    type: string
+                    description: "MY LIST DEFAULT"
         any:
             anyOf: [
-                { $ref: '#/definitions/ftypes/statictext' },
-                { $ref: '#/definitions/ftypes/string' },
-                { $ref: '#/definitions/ftypes/integer' },
-                { $ref: '#/definitions/ftypes/float' },
-                { $ref: '#/definitions/ftypes/checkbox' },
-                { $ref: '#/definitions/ftypes/deprecated_menu' },
-                { $ref: '#/definitions/ftypes/menu' },
-                { $ref: '#/definitions/ftypes/deprecated_radio' },
-                { $ref: '#/definitions/ftypes/radio' },
-                { $ref: '#/definitions/ftypes/button' },
-                { $ref: '#/definitions/ftypes/column' },
-                { $ref: '#/definitions/ftypes/multicolumn' },
-                { $ref: '#/definitions/ftypes/tab' },
-                { $ref: '#/definitions/ftypes/multitab' },
-                { $ref: '#/definitions/ftypes/multichartseries' },
-                { $ref: '#/definitions/ftypes/secret' },
-                { $ref: '#/definitions/ftypes/custom' },
+                { $ref: '#/definitions/param_types/statictext' },
+                { $ref: '#/definitions/param_types/string' },
+                { $ref: '#/definitions/param_types/integer' },
+                { $ref: '#/definitions/param_types/float' },
+                { $ref: '#/definitions/param_types/checkbox' },
+                { $ref: '#/definitions/param_types/deprecated_menu' },
+                { $ref: '#/definitions/param_types/menu' },
+                { $ref: '#/definitions/param_types/deprecated_radio' },
+                { $ref: '#/definitions/param_types/radio' },
+                { $ref: '#/definitions/param_types/button' },
+                { $ref: '#/definitions/param_types/column' },
+                { $ref: '#/definitions/param_types/multicolumn' },
+                { $ref: '#/definitions/param_types/tab' },
+                { $ref: '#/definitions/param_types/multitab' },
+                { $ref: '#/definitions/param_types/multichartseries' },
+                { $ref: '#/definitions/param_types/secret' },
+                { $ref: '#/definitions/param_types/custom' },
+                { $ref: '#/definitions/param_types/list' },
             ]
+
 
     # DTypes: data types. Each of these is a _value_ generated by a Form element
     # ... it also specifies how to generate a value for the module's `render()`.
