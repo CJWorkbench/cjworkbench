@@ -22,8 +22,8 @@ def check_key_types(left_dtypes, right_dtypes):
         r_type = ColumnType.from_dtype(right_dtypes.loc[key])
         if l_type != r_type:
             raise TypeError(
-                f'Types do not match for key column "{key}" ({l_type.value} '
-                f'and {r_type.value}). Please use a type conversion module to '
+                f'Types do not match for key column "{key}" ({l_type.name} '
+                f'and {r_type.name}). Please use a type conversion module to '
                 'make these column types consistent.'
             )
 

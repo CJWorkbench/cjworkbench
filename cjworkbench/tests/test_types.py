@@ -1,9 +1,102 @@
-import datetime
+from datetime import datetime as dt
 import unittest
 from unittest import mock
+import numpy as np
 from pandas import DataFrame, Series
+from pandas.testing import assert_series_equal
 from cjworkbench.types import Column, ColumnType, ProcessResult, QuickFix, \
         TableShape
+
+
+class ColumnTypeTextTests(unittest.TestCase):
+    def test_text_type(self):
+        series = Series(['x', np.nan, 'z'])
+        column_type = ColumnType.TEXT()
+        result = column_type.format_series(series)
+        assert_series_equal(result, Series(['x', np.nan, 'z']))
+
+
+class ColumnTypeNumberTests(unittest.TestCase):
+    def test_default_format(self):
+        series = Series([1.1, 2.231, np.nan, 3.0])
+        column_type = ColumnType.NUMBER()
+        result = column_type.format_series(series)
+        assert_series_equal(result, Series(['1.1', '2.231', np.nan, '3.0']))
+
+    def test_custom_format(self):
+        series = Series([1.1, 2231, np.nan, 0.123])
+        column_type = ColumnType.NUMBER(format='${:0,.2f}')
+        result = column_type.format_series(series)
+        assert_series_equal(result,
+                            Series(['$1.10', '$2,231.00', np.nan, '$0.12']))
+
+    def test_format_int_as_float(self):
+        series = Series([1, 2, 3, 4], dtype=int)
+        column_type = ColumnType.NUMBER(format='{:.1f}')
+        result = column_type.format_series(series)
+        assert_series_equal(result, Series(['1.0', '2.0', '3.0', '4.0']))
+
+    def test_format_float_as_int(self):
+        series = Series([1.1])
+        column_type = ColumnType.NUMBER(format='{:d}')
+        result = column_type.format_series(series)
+        assert_series_equal(result, Series(['1']))
+
+    def test_format_percent(self):
+        series = Series([0.3, 11.111, 0.0001, np.nan])
+        column_type = ColumnType.NUMBER(format='{:,.1%}')
+        result = column_type.format_series(series)
+        assert_series_equal(result,
+                            Series(['30.0%', '1,111.1%', '0.0%', np.nan]))
+
+    def test_format_int_as_percent(self):
+        series = Series([1, 11])
+        column_type = ColumnType.NUMBER(format='{:,.1%}')
+        result = column_type.format_series(series)
+        assert_series_equal(result, Series(['100.0%', '1,100.0%']))
+
+    def test_format_zero_length_becomes_str(self):
+        # (even though there's no way for pandas to detect type of result)
+        # (luckily, pandas defaults to `object`)
+        series = Series([], dtype=np.int64)
+        result = ColumnType.NUMBER().format_series(series)
+        assert_series_equal(result, Series([], dtype=object))
+
+    def test_format_too_many_arguments(self):
+        with self.assertRaisesRegex(ValueError, 'Can only format one number'):
+            ColumnType.NUMBER('{:d}{:f}')
+
+    def test_format_disallow_field_number(self):
+        with self.assertRaisesRegex(ValueError,
+                                    'Field names or numbers are not allowed'):
+            ColumnType.NUMBER('{0:f}')
+
+    def test_format_disallow_field_name(self):
+        with self.assertRaisesRegex(ValueError,
+                                    'Field names or numbers are not allowed'):
+            ColumnType.NUMBER('{value:f}')
+
+    def test_format_disallow_field_converter(self):
+        with self.assertRaisesRegex(ValueError,
+                                    'Field converters are not allowed'):
+            ColumnType.NUMBER('{!r:f}')
+
+    def test_format_disallow_invalid_type(self):
+        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
+            ColumnType.NUMBER('{:T}')
+
+
+class ColumnTypeDatetimeTests(unittest.TestCase):
+    def test_format(self):
+        series = Series([dt(1999, 2, 3, 4, 5, 6, 7), np.nan,
+                         dt(2000, 3, 4, 5, 6, 7, 8)])
+        column_type = ColumnType.DATETIME()
+        result = column_type.format_series(series)
+        assert_series_equal(
+            result,
+            Series(['1999-02-03T04:05:06.000007Z', np.nan,
+                    '2000-03-04T05:06:07.000008Z'])
+        )
 
 
 class ProcessResultTests(unittest.TestCase):
@@ -234,22 +327,22 @@ class ProcessResultTests(unittest.TestCase):
         df = DataFrame({
             'A': [1],  # number
             'B': ['foo'],  # str
-            'C': datetime.datetime(2018, 8, 20),  # datetime64
+            'C': dt(2018, 8, 20),  # datetime64
         })
         df['D'] = Series(['cat'], dtype='category')
         result = ProcessResult(df)
         self.assertEqual(result.column_names, ['A', 'B', 'C', 'D'])
         self.assertEqual(result.column_types, [
-            ColumnType.NUMBER,
-            ColumnType.TEXT,
-            ColumnType.DATETIME,
-            ColumnType.TEXT,
+            ColumnType.NUMBER(),
+            ColumnType.TEXT(),
+            ColumnType.DATETIME(),
+            ColumnType.TEXT(),
         ])
         self.assertEqual(result.columns, [
-            Column('A', ColumnType.NUMBER),
-            Column('B', ColumnType.TEXT),
-            Column('C', ColumnType.DATETIME),
-            Column('D', ColumnType.TEXT),
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.TEXT()),
+            Column('C', ColumnType.DATETIME()),
+            Column('D', ColumnType.TEXT()),
         ])
 
     def test_empty_columns(self):
@@ -262,7 +355,7 @@ class ProcessResultTests(unittest.TestCase):
         df = DataFrame({'A': [1, 2, 3]})
         result = ProcessResult(df)
         self.assertEqual(result.table_shape,
-                         TableShape(3, [Column('A', ColumnType.NUMBER)]))
+                         TableShape(3, [Column('A', ColumnType.NUMBER())]))
 
     def test_empty_table_shape(self):
         result = ProcessResult()

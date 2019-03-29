@@ -1,56 +1,230 @@
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from collections import namedtuple
+from dataclasses import dataclass, asdict
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List
-from pandas import DataFrame
+from string import Formatter
+from typing import Any, Dict, List, Optional
+import numpy as np
+import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server import sanitizedataframe  # TODO nix this dependency
 
 
-class ColumnType(Enum):
+class ColumnType(ABC):
     """
     Data type of a column.
 
-    This describes how it is presented -- not how its bytes are arranged. We
-    can map from pandas/numpy `dtype` to `ColumnType`, but not vice versa.
+    This describes how it is presented -- not how its bytes are arranged.
     """
 
-    TEXT = 'text'
-    NUMBER = 'number'
-    DATETIME = 'datetime'
+    @abstractmethod
+    def format_series(self, series: pd.Series) -> pd.Series:
+        """
+        Convert a Series to a str Series.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """
+        The name of the type: 'text', 'number' or 'datetime'.
+        """
+        pass
 
     @classmethod
-    def from_dtype(cls, dtype) -> 'ColumnType':
+    def from_dtype(cls, dtype) -> ColumnType:
         """
         Determine ColumnType based on pandas/numpy `dtype`.
+
+        If the type is Number or Datetime, it will have an "empty"
+        (auto-generated) format.
         """
         if is_numeric_dtype(dtype):
-            return ColumnType.NUMBER
+            return ColumnType.NUMBER()
         elif is_datetime64_dtype(dtype):
-            return ColumnType.DATETIME
+            return ColumnType.DATETIME()
         elif dtype == object or dtype == 'category':
-            return ColumnType.TEXT
+            return ColumnType.TEXT()
         else:
             raise ValueError(f'Unknown dtype: {dtype}')
 
 
+@dataclass(frozen=True)
+class ColumnTypeText(ColumnType):
+    # override
+    def format_series(self, series: pd.Series) -> pd.Series:
+        return series
+
+    # override
+    @property
+    def name(self) -> str:
+        return 'text'
+
+
+class NumberFormatter:
+    """
+    Utility to convert int and float to str.
+
+    Usage:
+
+        formatter = NumberFormatter('${:,.2f}')
+        formatter.format(1234.56)  # => "$1,234.56"
+
+    This is similar to Python `format()` but different:
+
+    * It allows formatting float as int: `NumberFormatter('{:d}').format(0.1)`
+    * It disallows "conversions" (e.g., `{!r:s}`)
+    * It disallows variable name/numbers (e.g., `{1:d}`, `{value:d}`)
+    * It raises ValueError on construction if format is imperfect
+    * Its `.format()` method always succeeds
+    """
+
+    _IntTypeSpecifiers = set('bcdoxXn')
+    """
+    Type names that operate on integer (as opposed to float).
+
+    Python `format()` auto-converts int to float, but it doesn't auto-convert
+    float to int. Workbench does auto-convert float to int: any format that
+    works for one Number must work for all Numbers.
+    """
+
+    def __init__(self, format_s: str):
+        # parts: a list of (literal_text, field_name, format_spec, conversion)
+        #
+        # The "literal_text" always comes _before_ the field. So we end up
+        # with three possibilities:
+        #
+        #    "prefix{}suffix": [(prefix, "", "", ""), (suffix, None...)]
+        #    "prefix{}": [(prefix, "", "", '")]
+        #    "{}suffix": [("", "", "", ""), (suffix, None...)]
+        parts = list(Formatter().parse(format_s))
+
+        if (
+            len(parts) > 2
+            or len(parts) == 2 and parts[1][1] is not None
+        ):
+            raise ValueError('Can only format one number')
+
+        if parts[0][1] != '':
+            raise ValueError('Field names or numbers are not allowed')
+
+        if parts[0][3] is not None:
+            raise ValueError('Field converters are not allowed')
+
+        self._prefix = parts[0][0]
+        self._format_spec = parts[0][2]
+        if len(parts) == 2:
+            self._suffix = parts[1][0]
+        else:
+            self._suffix = ''
+        self._need_int = (
+            self._format_spec
+            and self._format_spec[-1] in self._IntTypeSpecifiers
+        )
+
+        # Test it!
+        #
+        # A reading of cpython 3.7 Python/formatter_unicode.c
+        # parse_internal_render_format_spec() suggests the following unobvious
+        # details:
+        #
+        # * Python won't parse a format spec unless you're formatting a number
+        # * _PyLong_FormatAdvancedWriter() accepts a superset of the formats
+        #   _PyFloat_FormatAdvancedWriter() accepts. (Workbench accepts that
+        #   superset.)
+        #
+        # Therefore, if we can format an int, the format is valid.
+        format(1, self._format_spec)
+
+    def format(self, value: Union[int, float]) -> str:
+        if self._need_int:
+            value = int(value)
+        return self._prefix + format(value, self._format_spec) + self._suffix
+
+
+@dataclass(frozen=True)
+class ColumnTypeNumber(ColumnType):
+    # https://docs.python.org/3/library/string.html#format-specification-mini-language
+    format: str = '{}'  # Python format() string
+    # TODO handle locale, too: format depends on it. Python will make this
+    # difficult because it can't format a string in an arbitrary locale: it can
+    # only do it using global variables, which we can't use.
+
+    def __post_init__(self):
+        formatter = NumberFormatter(self.format)  # raises ValueError
+        object.__setattr__(self, '_formatter', formatter)
+
+    # override
+    def format_series(self, series: pd.Series) -> pd.Series:
+        return series.map(self._formatter.format, na_action='ignore')
+
+    # override
+    @property
+    def name(self) -> str:
+        return 'number'
+
+
+@dataclass(frozen=True)
+class ColumnTypeDatetime(ColumnType):
+    # # https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+    # format: str = '{}'  # Python format() string
+
+    # # TODO handle locale, too: format depends on it. Python will make this
+    # # difficult because it can't format a string in an arbitrary locale: it can
+    # # only do it using global variables, which we can't use.
+
+    # override
+    def format_series(self, series: pd.Series) -> pd.Series:
+        return series.dt.strftime('%FT%T.%fZ').replace('NaT', np.nan)
+
+    # override
+    @property
+    def name(self) -> str:
+        return 'datetime'
+
+
+# Aliases to help with import. e.g.:
+# from cjworkbench.types import Column, ColumnType
+# column = Column('A', ColumnType.NUMBER('{:,.2f}'))
+ColumnType.TEXT = ColumnTypeText
+ColumnType.NUMBER = ColumnTypeNumber
+ColumnType.DATETIME = ColumnTypeDatetime
+
+ColumnType.TypeLookup = {
+    'text': ColumnType.TEXT,
+    'number': ColumnType.NUMBER,
+    'datetime': ColumnType.DATETIME,
+}
+
+
+@dataclass(frozen=True)
 class Column:
     """
     A column definition.
     """
-    def __init__(self, name: str, type: ColumnType):
-        self.name = name
-        if not isinstance(type, ColumnType):
-            type = ColumnType(type)  # or ValueError
-        self.type = type
 
-    def __repr__(self):
-        return 'Column' + repr((self.name, self.type))
+    name: str  # Name of the column
+    type: ColumnType  # How it's displayed
 
-    def __eq__(self, rhs):
-        return (
-            isinstance(rhs, Column)
-            and (self.name, self.type) == (rhs.name, rhs.type)
-        )
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'type': self.type.name,
+            **asdict(self.type),
+        }
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, str]) -> Column:
+        return cls.from_kwargs(**d)
+
+    @classmethod
+    def from_kwargs(cls, name: str, type: str, **column_type_kwargs) -> ColumnType:
+        type_cls = ColumnType.TypeLookup[type]
+        return Column(name, type_cls(**column_type_kwargs))
 
 
 class TableShape:
@@ -81,7 +255,7 @@ class StepResultShape:
         self.table_shape = table_shape
 
 
-RenderColumn = namedtuple('RenderColumn', ('name', 'type'))
+RenderColumn = namedtuple('RenderColumn', ('name', 'type', 'format'))
 """
 Column presented to a render() function in its `input_columns` argument.
 
@@ -176,11 +350,11 @@ class ProcessResult:
 
     A ProcessResult object may be pickled.
     """
-    def __init__(self, dataframe: DataFrame = None, error: str = '', *,
+    def __init__(self, dataframe: pd.DataFrame = None, error: str = '', *,
                  json: Dict[str, Any] = {}, quick_fixes: List[QuickFix] = []):
         if dataframe is None:
-            dataframe = DataFrame()
-        if not isinstance(dataframe, DataFrame):
+            dataframe = pd.DataFrame()
+        if not isinstance(dataframe, pd.DataFrame):
             raise ValueError('dataframe must be a DataFrame')
 
         if not isinstance(error, str):
@@ -280,10 +454,10 @@ class ProcessResult:
         * else we generate an error with empty dataframe and json
         """
         if value is None:
-            return ProcessResult(dataframe=DataFrame())
+            return ProcessResult(dataframe=pd.DataFrame())
         elif isinstance(value, ProcessResult):
             return value
-        elif isinstance(value, DataFrame):
+        elif isinstance(value, pd.DataFrame):
             return ProcessResult(dataframe=value)
         elif isinstance(value, str):
             return ProcessResult(error=value)
@@ -307,10 +481,10 @@ class ProcessResult:
             if len(value) == 2:
                 dataframe, error = value
                 if dataframe is None:
-                    dataframe = DataFrame()
+                    dataframe = pd.DataFrame()
                 if error is None:
                     error = ''
-                if not isinstance(dataframe, DataFrame) \
+                if not isinstance(dataframe, pd.DataFrame) \
                    or not isinstance(error, str):
                     return ProcessResult(error=(
                         ('There is a bug in this module: expected '
@@ -321,12 +495,12 @@ class ProcessResult:
             elif len(value) == 3:
                 dataframe, error, json = value
                 if dataframe is None:
-                    dataframe = DataFrame()
+                    dataframe = pd.DataFrame()
                 if error is None:
                     error = ''
                 if json is None:
                     json = {}
-                if not isinstance(dataframe, DataFrame) \
+                if not isinstance(dataframe, pd.DataFrame) \
                    or not isinstance(error, str) \
                    or not isinstance(json, dict):
                     return ProcessResult(error=(

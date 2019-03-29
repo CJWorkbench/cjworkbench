@@ -1,6 +1,6 @@
 import datetime
 import pandas
-from cjworkbench.types import Column, ProcessResult, QuickFix
+from cjworkbench.types import Column, ColumnType, ProcessResult, QuickFix
 from server import minio
 from server.models import Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
@@ -83,10 +83,10 @@ class CachedRenderResultTests(DbTestCase):
         self.assertEqual(cached_result.result, result)
         self.assertEqual(cached_result.nrows, 1)
         self.assertEqual(cached_result.columns, [
-            Column('A', 'number'),
-            Column('B', 'datetime'),
-            Column('C', 'text'),
-            Column('D', 'text'),
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.DATETIME()),
+            Column('C', ColumnType.TEXT()),
+            Column('D', ColumnType.TEXT()),
         ])
 
     def test_metadata_comes_from_db_columns(self):
@@ -111,10 +111,10 @@ class CachedRenderResultTests(DbTestCase):
 
         self.assertEqual(cached_result.nrows, 1)
         self.assertEqual(cached_result.columns, [
-            Column('A', 'number'),
-            Column('B', 'datetime'),
-            Column('C', 'text'),
-            Column('D', 'text'),
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.DATETIME()),
+            Column('C', ColumnType.TEXT()),
+            Column('D', ColumnType.TEXT()),
         ])
 
     def test_delete_wfmodule(self):

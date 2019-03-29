@@ -24,7 +24,7 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_column_valid(self):
         context = RenderContext(None, TableShape(3, [
-            Column('A', ColumnType.NUMBER),
+            Column('A', ColumnType.NUMBER()),
         ]), None, None)
         schema = ParamDType.Dict({
             'column': ParamDType.Column(),
@@ -35,7 +35,7 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_column_missing_becomes_empty_string(self):
         context = RenderContext(None, TableShape(3, [
-            Column('A', ColumnType.NUMBER),
+            Column('A', ColumnType.NUMBER()),
         ]), None, None)
         schema = ParamDType.Dict({
             'column': ParamDType.Column(),
@@ -46,8 +46,8 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_multicolumn_valid(self):
         context = RenderContext(None, TableShape(3, [
-            Column('A', ColumnType.NUMBER),
-            Column('B', ColumnType.NUMBER),
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.NUMBER()),
         ]), None, None)
         schema = ParamDType.Dict({
             'columns': ParamDType.Multicolumn(),
@@ -58,8 +58,8 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_multicolumn_missing_is_removed(self):
         context = RenderContext(None, TableShape(3, [
-            Column('A', ColumnType.NUMBER),
-            Column('B', ColumnType.NUMBER),
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.NUMBER()),
         ]), None, None)
         schema = ParamDType.Dict({
             'columns': ParamDType.Multicolumn(),
@@ -70,8 +70,8 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_multichartseries_missing_is_removed(self):
         context = RenderContext(None, TableShape(3, [
-            Column('A', ColumnType.NUMBER),
-            Column('B', ColumnType.NUMBER),
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.NUMBER()),
         ]), None, None)
         schema = ParamDType.Dict({
             'y': ParamDType.Multichartseries(),
@@ -127,7 +127,7 @@ class CleanValueTests(DbTestCase):
                         'columns': 'A-from-tab-1,A-from-tab-2'}
         params = Params(schema, param_values, {})
         context = RenderContext(workflow.id, TableShape(3, [
-            Column('A-from-tab-1', ColumnType.NUMBER),
+            Column('A-from-tab-1', ColumnType.NUMBER()),
         ]), {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
         }, params)
