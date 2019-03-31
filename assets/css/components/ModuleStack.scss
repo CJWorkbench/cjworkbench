@@ -98,7 +98,12 @@
       font-size: 1rem;
       border-radius: 1rem;
       transition-property: opacity;
-      transition-delay: .1s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here
+      transition-delay: .06s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here -- So that it does not flash when you hover past it. [PFC 2019-03-31]
+
+      i.icon-add {
+        position: relative;
+        top:-.18rem;
+      }
 
       span {
         display: none; // no text

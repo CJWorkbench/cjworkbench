@@ -36,7 +36,7 @@ export default class Button extends React.PureComponent {
           {({ ref }) => (
             <div ref={ref} className={className}>
               <button type='button' className={buttonClassNames.join(' ')} onClick={this.openSearch}>
-                <i className="icon-addc"></i>{' '}
+                <i className="icon-add"></i>{' '}
                 <span>ADD STEP</span>
               </button>
             </div>
