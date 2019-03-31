@@ -35,10 +35,10 @@
     color: $brand-workspace;
     cursor: pointer;
 
-    &.lesson-highlight:not(:hover) {
-      background: $brand-learn;
-      color: white;
-    }
+    // &.lesson-highlight:not(:hover) {
+    //   background: $brand-learn;
+    //   color: white;
+    // }
   }
 
   // Big button to call the module search at the bottom of stack
