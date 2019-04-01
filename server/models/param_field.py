@@ -519,7 +519,7 @@ class ParamField:
     
     ParamFields are immutable objects created as needed, in ModuleVersion.param_fields.
 
-    On key part of the YAML spec is "FType", that is the "form type", what the user sees. This sets the UI
+    ParamFields are basically an extended "parameter type," aka the "form type", what the user sees. This sets the UI
     for the parameter and defines the structure used when the value is serialized to the cleint.
 
     ParamField can create another immutable object, the DType or "data type", defining how it's stored and processed.
@@ -558,6 +558,7 @@ class ParamField:
     tab_parameter: str = ''
     default: Any = None
     visible_if: Optional[Dict[str, Dict[str, Any]]] = None
+    sub_params: Optional[List[Dict[str, Any]]] = None # only for List type
 
     @classmethod
     def from_dict(self, d: Dict[str, Any]) -> 'ParamField':
@@ -571,6 +572,7 @@ class ParamField:
             placeholder=d.get('placeholder', ''),
             tab_parameter=d.get('tab_parameter', ''),
             visible_if=d.get('visible_if'),
+            sub_params=d.get('parameters', []),
             default=d.get('default')
         )
 
@@ -644,9 +646,27 @@ class ParamField:
 
             return ParamDTypeEnum(choices, default)
         elif (self.ftype == T.LIST):
-            kwargs = {}
-            if self.default is not None:
-                kwargs['default'] = str(self.default)
-            return ParamDTypeString(**kwargs)
+
+            # print('--------- VVVVVV ---------')
+            # print(self.sub_params)
+
+            # This must match logic in ModuleVersion.param_schema so that parameter sub-lists
+            # are stored the same way as the top level params
+            param_dtypes = dict((p['id_name'], ParamField.from_dict(p).dtype) for p in self.sub_params)
+            param_dtypes = {k: v for k, v in param_dtypes.items() if v} # remove None dtypes, e.g. statictext
+
+            # print('--------- WWWWWW ---------')
+            # print(param_dtypes)
+
+            param_defaults = dict((id_name, dtype.coerce(None)) for id_name,dtype in param_dtypes.items())
+
+            # print('--------- XXXXXX ---------')
+            # print(param_dtypes)
+            # print('--------- YYYYYY---------')
+            # print(param_defaults)
+            # print('--------- XXXXXX ---------')
+
+            return ParamDTypeDict(param_dtypes, default=param_defaults)
+
         else:
             raise ValueError('Unknown ftype %r' % self.ftype)

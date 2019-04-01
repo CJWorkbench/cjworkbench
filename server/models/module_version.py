@@ -184,17 +184,19 @@ class ModuleVersion(models.Model):
     # Returns a dict of DTypes for all parameters
     @property
     def param_schema(self):
-        try:
+        if 'param_schema' in self.spec:
+            # Module author wrote a schema in the YAML, to define storage of 'custom' parameters
             json_schema = self.spec['param_schema']
-        except KeyError:
+            return ParamDType.parse({
+                'type': 'dict',
+                'properties': json_schema
+            })
+        else:
+            # Usual case: infer schema from module parameter types
+            # Use of dict here means schema is not sensitive to parameter ordering, which is good
             return ParamDType.Dict(dict((f.id_name, f.dtype)
                                         for f in self.param_fields
                                         if f.dtype is not None))
-
-        return ParamDType.parse({
-            'type': 'dict',
-            'properties': json_schema
-        })
 
     @property
     def default_params(self):

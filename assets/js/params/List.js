@@ -13,9 +13,8 @@ export default class List extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // func(str) => undefined
     onSubmit: PropTypes.func.isRequired, // func() => undefined
     name: PropTypes.string.isRequired,
-    upstreamValue: PropTypes.string, // sometimes empty string
-    value: PropTypes.string, // sometimes empty string
-    placeholder: PropTypes.string // sometimes empty string
+    upstreamValue: PropTypes.object, // sometimes empty string
+    value: PropTypes.object,
   }
 
   onChange = (ev) => {
@@ -41,19 +40,7 @@ export default class List extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <MaybeLabel fieldId={fieldId} label={label} />
-        <div className='autosize'>
-          <div className='invisible-size-setter'>{value}</div>
-          <textarea
-            readOnly={isReadOnly}
-            name={name}
-            id={fieldId}
-            placeholder={placeholder}
-            onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
-            value={value}
-          />
-        </div>
+        <h2>Array size is {Object.keys(this.props.value).length} yeah</h2>
       </React.Fragment>
     )
   }

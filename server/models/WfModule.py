@@ -224,10 +224,13 @@ class WfModule(models.Model):
 
     def get_params(self) -> Params:
         """
-        Generate valid parameters (reading from the database) for easy access.
+        Hydrates our params field, plus secrets, into the Params dict which will be passed to
+        the front end, and to the module's render() and fetch().
 
-        Raise ValueError on _programmer_ error. That's usually the module
-        author's problem, and we'll want to display the error to the user so
+        Also handles migration from parameter sets created by previous versions of the module.
+
+        Raise ValueError on _programmer_ error. That's usually the module author's problem
+        (e.g. bad migration) and we'll want to display the error to the user so
         the user can pester the module author.
         """
         if self.module_version is None:
@@ -241,7 +244,7 @@ class WfModule(models.Model):
                 self.module_version
             )
         )
-        # raises ValueError
+        # raises ValueError if there's a problem migrating, which indicates programmer error (probably module author)
         values = lm.migrate_params(schema, self.params)
 
         # "migrate" secrets: exactly the id_names specified in module_version
