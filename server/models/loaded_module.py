@@ -112,8 +112,8 @@ class LoadedModule:
             kwargs['tab_name'] = tab_name
         if varkw or 'input_columns' in kwonlyargs:
             kwargs['input_columns'] = dict(
-                (c.name,
-                 RenderColumn(c.name, c.type.name, getattr(c.type, 'format')))
+                (c.name, RenderColumn(c.name, c.type.name,
+                                      getattr(c.type, 'format', None)))
                 for c in input_result.table_shape.columns
             )
 

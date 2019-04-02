@@ -137,8 +137,8 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     return TabOutput(
         tab_slug,
         tab.name,
-        dict((c.name,
-              RenderColumn(c.name, c.type.name, getattr(c.type, 'format')))
+        dict((c.name, RenderColumn(c.name, c.type.name,
+                                   getattr(c.type, 'format', None)))
              for c in result.columns),
         result.dataframe
     )
