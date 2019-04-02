@@ -136,6 +136,7 @@ describe('ModuleSearch Popup', () => {
           tabSlug='tab-1'
           index={2}
           close={jest.fn()}
+          isLastAddButton={false}
           {...extraProps}
         />
       </Provider>

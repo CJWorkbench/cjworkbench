@@ -34,11 +34,6 @@
     background: $brand-background;
     color: $brand-workspace;
     cursor: pointer;
-
-    // &.lesson-highlight:not(:hover) {
-    //   background: $brand-learn;
-    //   color: white;
-    // }
   }
 
   // Big button to call the module search at the bottom of stack
@@ -64,11 +59,11 @@
         margin-top: .1rem;
       }
 
-      &:not(:hover):not(.lesson-highlight) {
+      &:not(:hover):not(.active):not(.lesson-highlight) {
         background: transparent;
       }
 
-      &:hover {
+      &:hover, &.active {
         opacity: 1;
       }
     }
@@ -109,7 +104,7 @@
         display: none; // no text
       }
 
-      &:hover {
+      &:hover, &.active {
         opacity: 1;
       }
 

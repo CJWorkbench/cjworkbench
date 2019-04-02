@@ -2,10 +2,10 @@
   z-index: $zindex-popover;
   $row-height: 4rem;
   $padding-horizontal: 2rem;
-  top: 34px!important; // Adam, this is just a placeholder until better fix. PFC 2019-03-31
-
 
   position: absolute; // so Popper can position it
+  top: 0; // Popper needs this during preventOverflow calculations
+  left: 0; // Popper needs this during preventOverflow calculations
 
   // make sure we never get taller than the max-height Popper.js sets on us.
   // height: 100% won't do. Flex will.
@@ -220,6 +220,10 @@
 }
 
 .module-search-result-description {
+  position: absolute; // so Popper can position it
+  top: 0; // Popper needs this during preventOverflow calculations
+  left: 0; // Popper needs this during preventOverflow calculations
+
   margin-left: 1rem; // don't overlap module-search-popup scrollbar
   border-width: $module-popover-border-width;
   border-color: $brand-workspace;
