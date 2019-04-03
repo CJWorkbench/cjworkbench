@@ -159,7 +159,7 @@ class NumberFormatter:
 @dataclass(frozen=True)
 class ColumnTypeNumber(ColumnType):
     # https://docs.python.org/3/library/string.html#format-specification-mini-language
-    format: str = '{}'  # Python format() string
+    format: str = '{:,}'  # Python format() string -- default adds commas
     # TODO handle locale, too: format depends on it. Python will make this
     # difficult because it can't format a string in an arbitrary locale: it can
     # only do it using global variables, which we can't use.

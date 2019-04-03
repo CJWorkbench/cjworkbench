@@ -109,10 +109,15 @@ class ProcessResultTests(unittest.TestCase):
         self.assertNotEqual(ProcessResult(), None)
 
     def test_ctor_infer_columns(self):
-        result = ProcessResult(DataFrame({'A': [1, 2], 'B': ['x', 'y']}))
+        result = ProcessResult(DataFrame({
+            'A': [1, 2],
+            'B': ['x', 'y'],
+            'C': [ np.nan, dt(2019, 3, 3, 4, 5, 6, 7) ],
+        }))
         self.assertEqual(result.columns, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.TEXT()),
+            Column('C', ColumnType.DATETIME()),
         ])
 
     def test_coerce_infer_columns(self):
