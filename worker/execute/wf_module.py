@@ -234,12 +234,10 @@ async def execute_wfmodule(
 
 def build_status_dict(result: ProcessResult, delta_id: int) -> Dict[str, Any]:
     quick_fixes = [qf.to_dict() for qf in result.quick_fixes]
-    output_columns = [{'name': c.name, 'type': c.type.name}
-                      for c in result.columns]
 
     return {
         'quick_fixes': quick_fixes,
-        'output_columns': output_columns,
+        'output_columns': [c.to_dict() for c in result.columns],
         'output_error': result.error,
         'output_status': result.status,
         'output_n_rows': len(result.dataframe),

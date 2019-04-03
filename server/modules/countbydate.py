@@ -267,10 +267,7 @@ class Form:
         [ ] if operation is sum/average, and value is text, error+quickfix
         [ ] if operation is count, output column is 'count'; else it is value
         """
-        try:
-            date_series = table[self.date_column]
-        except KeyError:
-            raise ValueError(f'There is no column named "{self.date_column}"')
+        date_series = table[self.date_column]
 
         if not hasattr(date_series, 'dt'):
             if is_numeric_dtype(date_series):
@@ -288,15 +285,12 @@ class Form:
 
         if self.operation != Operation.COUNT:
             output_value_column = self.value_column
-            try:
-                value_series = table[self.value_column]
-            except KeyError:
-                raise ValueError(
-                    f'There is no column named "{self.value_column}"'
-                )
+            value_series = table[self.value_column]
 
-            if self.operation.only_numeric \
-               and not is_numeric_dtype(value_series):
+            if (
+                self.operation.only_numeric
+                and not is_numeric_dtype(value_series)
+            ):
                 if hasattr(value_series, 'dt'):
                     raise DatetimeIsNotNumeric(self.value_column)
                 else:
@@ -316,8 +310,8 @@ def render(table, params, **kwargs):
 
     try:
         form = Form.parse(params)
-    except ValueError as err:
-        return (table, str(err))
+    except (IndexError, KeyError, ValueError) as err:
+        return str(err)
     if form is None:
         return table
 
@@ -329,9 +323,9 @@ def render(table, params, **kwargs):
             'quick_fixes': err.quick_fixes
         }
     except ValueError as err:
-        return (table, str(err))
+        return str(err)
 
     try:
         return validated_form.run()
     except ValueError as err:
-        return (table, str(err))
+        return str(err)

@@ -7,10 +7,9 @@ import multiprocessing
 import os.path
 import sys
 import traceback
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 import numpy
 import pandas
-from cjworkbench.types import ProcessResult
 from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
 
@@ -86,16 +85,16 @@ def _scrub_globals_for_safety():
 
 def inner_eval(code, table, sender):
     """Within a subprocess, run code's "process(table)" and exit."""
-    result = ProcessResult(json={'output': ''})
+    result = [pandas.DataFrame(), '', {'output': ''}]
     output = io.StringIO()
 
     def sending_return(*, error=None, tb=None):
-        result.json['output'] = output.getvalue()
+        result[2]['output'] = output.getvalue()
 
         if error is not None:
-            result.error = error
+            result[1] = error
 
-        return sender.send(result)
+        return sender.send(tuple(result))
 
     try:
         compiled_code = compile(code, 'user input', 'exec')
@@ -151,7 +150,7 @@ def inner_eval(code, table, sender):
         ))
 
     if isinstance(out_table, code_globals['pd'].DataFrame):
-        result.dataframe = out_table
+        result[0] = out_table
     elif isinstance(out_table, str):
         return sending_return(error=out_table)
     else:
@@ -164,10 +163,13 @@ def inner_eval(code, table, sender):
 
 def safe_eval_process(code, table, timeout=TIMEOUT):
     """
-    Runs `code`'s "process" method in a sandbox and returns a ProcessResult.
+    Runs `code`'s "process" method in a sandbox; returns (table, error, json).
+
+    The inner process will send a (table, error, json) tuple as a result, then
+    exit.
 
     Process stdout, stderr and exception traceback are all stored in
-    result.json.output.
+    result[2].output.
 
     An exception string is also returned in result.error.
 
@@ -185,9 +187,10 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
         result = recver.recv()
     else:
         subprocess.terminate()  # in case the timeout was exceeded
-        result = ProcessResult(
-            error=f'Python subprocess did not respond in {timeout}s',
-            json={'output': ''}
+        result = (
+            pandas.DataFrame(), 
+            f'Python subprocess did not respond in {timeout}s',
+            {'output': ''}
         )
 
     # we got our result; clean up like an assassin
@@ -197,7 +200,10 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
     return result
 
 
-def render(table: pandas.DataFrame, params: Dict[str, Any]) -> ProcessResult:
+def render(
+    table: pandas.DataFrame,
+    params: Dict[str, Any]
+) -> Tuple[pandas.DataFrame, str, Dict[str, str]]:
     code: str = params['code']
 
     if not code.strip():

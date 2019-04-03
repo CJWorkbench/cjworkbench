@@ -226,6 +226,14 @@ definitions:
                       - type: string
                         description: "Value to set on the user's behalf (default items[0].value)"
                       - type: boolean
+        numberformat:
+            <<: *common_ftype
+            required: [ id_name, type, name ]
+            properties:
+                <<: *common_ftype_properties
+                type: { const: numberformat }
+                name: { $ref: '#/definitions/ftypes/_lib/name' }
+                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
         button:
             <<: *common_ftype
             required: [ id_name, type, name ]
@@ -304,6 +312,7 @@ definitions:
                 { $ref: '#/definitions/ftypes/tab' },
                 { $ref: '#/definitions/ftypes/multitab' },
                 { $ref: '#/definitions/ftypes/multichartseries' },
+                { $ref: '#/definitions/ftypes/numberformat' },
                 { $ref: '#/definitions/ftypes/secret' },
                 { $ref: '#/definitions/ftypes/custom' },
             ]

@@ -118,6 +118,7 @@ class LoadedModule:
             )
 
         table = input_result.dataframe
+        input_columns = input_result.columns
 
         time1 = time.time()
 
@@ -128,7 +129,7 @@ class LoadedModule:
             out = self._wrap_exception(err)
 
         try:
-            out = ProcessResult.coerce(out)
+            out = ProcessResult.coerce(out, try_fallback_columns=input_columns)
         except Exception as err:
             logger.exception('Exception coercing %s.render output',
                              self.module_id_name)

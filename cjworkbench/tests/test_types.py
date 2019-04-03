@@ -66,6 +66,11 @@ class ColumnTypeNumberTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Can only format one number'):
             ColumnType.NUMBER('{:d}{:f}')
 
+    def test_format_disallow_non_format(self):
+        with self.assertRaisesRegex(ValueError,
+                                    'Format must look like "{:...}"'):
+            ColumnType.NUMBER('%d')
+
     def test_format_disallow_field_number(self):
         with self.assertRaisesRegex(ValueError,
                                     'Field names or numbers are not allowed'):
@@ -102,6 +107,86 @@ class ColumnTypeDatetimeTests(unittest.TestCase):
 class ProcessResultTests(unittest.TestCase):
     def test_eq_none(self):
         self.assertNotEqual(ProcessResult(), None)
+
+    def test_ctor_infer_columns(self):
+        result = ProcessResult(DataFrame({'A': [1, 2], 'B': ['x', 'y']}))
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.TEXT()),
+        ])
+
+    def test_coerce_infer_columns(self):
+        table = DataFrame({'A': [1, 2], 'B': ['x', 'y']})
+        result = ProcessResult.coerce(table)
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.TEXT()),
+        ])
+
+    def test_coerce_infer_columns_with_format(self):
+        table = DataFrame({'A': [1, 2], 'B': ['x', 'y']})
+        result = ProcessResult.coerce({
+            'dataframe': table,
+            'column_formats': {'A': '{:,d}'},
+        })
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER(format='{:,d}')),
+            Column('B', ColumnType.TEXT()),
+        ])
+
+    def test_coerce_infer_columns_invalid_format_is_error(self):
+        table = DataFrame({'A': [1, 2]})
+        with self.assertRaisesRegex(ValueError,
+                                    'Format must look like "{:...}"'):
+            ProcessResult.coerce({
+                'dataframe': table,
+                'column_formats': {'A': 'x'}
+            })
+
+    def test_coerce_infer_columns_text_format_is_error(self):
+        table = DataFrame({'A': [1, 2], 'B': ['x', 'y']})
+        with self.assertRaisesRegex(
+            ValueError,
+            '"format" not allowed for column "B" because it is of type "text"'
+        ):
+            ProcessResult.coerce({
+                'dataframe': table,
+                'column_formats': {'B': '{:,d}'},
+            })
+
+    def test_coerce_infer_columns_try_fallback_columns(self):
+        table = DataFrame({'A': [1, 2], 'B': ['x', 'y']})
+        result = ProcessResult.coerce(table, try_fallback_columns=[
+            Column('A', ColumnType.NUMBER('{:,d}')),
+            Column('B', ColumnType.TEXT()),
+        ])
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER('{:,d}')),
+            Column('B', ColumnType.TEXT()),
+        ])
+
+    def test_coerce_infer_columns_try_fallback_columns_ignore_wrong_type(self):
+        table = DataFrame({'A': [1, 2], 'B': ['x', 'y']})
+        result = ProcessResult.coerce(table, try_fallback_columns=[
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.NUMBER()),
+        ])
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.TEXT()),
+        ])
+
+    def test_coerce_infer_columns_format_supercedes_try_fallback_columns(self):
+        table = DataFrame({'A': [1, 2]})
+        result = ProcessResult.coerce({
+            'dataframe': DataFrame({'A': [1, 2]}),
+            'column_formats': {'A': '{:,d}'},
+        }, try_fallback_columns=[
+            Column('A', ColumnType.NUMBER('{:,.2f}')),
+        ])
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER('{:,d}')),
+        ])
 
     def test_coerce_none(self):
         result = ProcessResult.coerce(None)
@@ -332,12 +417,6 @@ class ProcessResultTests(unittest.TestCase):
         df['D'] = Series(['cat'], dtype='category')
         result = ProcessResult(df)
         self.assertEqual(result.column_names, ['A', 'B', 'C', 'D'])
-        self.assertEqual(result.column_types, [
-            ColumnType.NUMBER(),
-            ColumnType.TEXT(),
-            ColumnType.DATETIME(),
-            ColumnType.TEXT(),
-        ])
         self.assertEqual(result.columns, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.TEXT()),
@@ -348,7 +427,6 @@ class ProcessResultTests(unittest.TestCase):
     def test_empty_columns(self):
         result = ProcessResult()
         self.assertEqual(result.column_names, [])
-        self.assertEqual(result.column_types, [])
         self.assertEqual(result.columns, [])
 
     def test_table_shape(self):
