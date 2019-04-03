@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Param from './Param'
 import ParamsFormFooter from './ParamsFormFooter'
 import deepEqual from 'fast-deep-equal'
+import { paramFieldToParamProps } from './util'
 
 /**
  * Displays Params and user's "edits".
@@ -32,7 +33,9 @@ export default class ParamsForm extends React.PureComponent {
       ), // new-style menu/radio -- once we nix "items" ("menu_items" in spec), add .isRequired here
       multiline: PropTypes.bool.isRequired,
       placeholder: PropTypes.string.isRequired, // may be ''
-      visible_if: PropTypes.object // JSON spec or null
+      visible_if: PropTypes.object, // JSON spec or null,
+      childParameters: PropTypes.array,
+      childDefault: PropTypes.object
     }).isRequired).isRequired,
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
@@ -236,14 +239,7 @@ export default class ParamsForm extends React.PureComponent {
               isZenMode={isZenMode}
               api={api}
               key={field.id_name}
-              name={field.id_name}
-              label={field.name}
-              type={field.type}
-              items={field.items}
-              enumOptions={field.enumOptions}
-              isMultiline={field.multiline || false}
-              placeholder={field.placeholder || ''}
-              visibleIf={field.visible_if || null}
+              {...paramFieldToParamProps(field)}
               upstreamValue={upstreamValue ? upstreamValue[field.id_name] : null}
               value={value ? value[field.id_name] : null}
               wfModuleId={wfModuleId}

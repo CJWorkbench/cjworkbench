@@ -558,7 +558,7 @@ class ParamField:
     tab_parameter: str = ''
     default: Any = None
     visible_if: Optional[Dict[str, Dict[str, Any]]] = None
-    sub_params: Optional[List[Dict[str, Any]]] = None # only for List type
+    child_parameters: Optional[List[Dict[str, Any]]] = None # only for List type
 
     @classmethod
     def from_dict(self, d: Dict[str, Any]) -> 'ParamField':
@@ -572,7 +572,7 @@ class ParamField:
             placeholder=d.get('placeholder', ''),
             tab_parameter=d.get('tab_parameter', ''),
             visible_if=d.get('visible_if'),
-            sub_params=d.get('parameters', []),
+            child_parameters=d.get('parameters', []), # just `parameters` in YAML spec but child_parameters everywhere else
             default=d.get('default')
         )
 
@@ -647,26 +647,12 @@ class ParamField:
             return ParamDTypeEnum(choices, default)
         elif (self.ftype == T.LIST):
 
-            # print('--------- VVVVVV ---------')
-            # print(self.sub_params)
-
-            # This must match logic in ModuleVersion.param_schema so that parameter sub-lists
+            # This must match logic in ModuleVersion.param_schema so that child parameters
             # are stored the same way as the top level params
-            param_dtypes = dict((p['id_name'], ParamField.from_dict(p).dtype) for p in self.sub_params)
+            param_dtypes = dict((p['id_name'], ParamField.from_dict(p).dtype) for p in self.child_parameters)
             param_dtypes = {k: v for k, v in param_dtypes.items() if v} # remove None dtypes, e.g. statictext
 
-            # print('--------- WWWWWW ---------')
-            # print(param_dtypes)
-
-            param_defaults = dict((id_name, dtype.coerce(None)) for id_name,dtype in param_dtypes.items())
-
-            # print('--------- XXXXXX ---------')
-            # print(param_dtypes)
-            # print('--------- YYYYYY---------')
-            # print(param_defaults)
-            # print('--------- XXXXXX ---------')
-
-            return ParamDTypeDict(param_dtypes, default=param_defaults)
+            return ParamDTypeList(ParamDTypeDict(param_dtypes))
 
         else:
             raise ValueError('Unknown ftype %r' % self.ftype)
