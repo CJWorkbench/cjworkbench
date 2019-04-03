@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { formatLocale as d3FormatLocale } from 'd3-format'
+import EnUsLocale from 'd3-format/locale/en-US.json'
 
 // Unfortunately, ReactDataGrid will send "new" values to "old" columns when
 // switching to another version of a table that has the same column with a
@@ -18,13 +20,19 @@ export function TextCellFormatter ({value}) {
   return <div className='cell-text' title={value}>{value}</div>
 }
 
-const numberFormat = new Intl.NumberFormat()
-export function NumberCellFormatter ({value}) {
-  if (value === null) {
-    return <div className='cell-null cell-number' />
-  }
+export function NumberCellFormatter (format) {
+  const [ _, prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+  // format with the same locale as in Python -- _not_ the user's locale
+  const locale = d3FormatLocale(EnUsLocale)
+  const f = locale.format(specifierString)
 
-  return <div className='cell-number'>{numberFormat.format(value)}</div>
+  return ({value}) => {
+    if (value === null) {
+      return <div className='cell-null cell-number' />
+    }
+
+    return <div className='cell-number'>{prefix}{f(value)}{suffix}</div>
+  }
 }
 
 const ZeroEndOfDate = /(?:(?:T00:00)?:00)?\.000Z$/
@@ -51,11 +59,11 @@ export function DatetimeCellFormatter ({value}) {
 }
 
 const TypeToCellFormatter = {
-  'text': TextCellFormatter,
-  'datetime': DatetimeCellFormatter,
-  'number': NumberCellFormatter
+  'text': () => TextCellFormatter,
+  'datetime': () => DatetimeCellFormatter,
+  'number': ({ format }) => NumberCellFormatter(format),
 }
 
-export function typeToCellFormatter (type) {
-  return TypeToCellFormatter[type] || TextCellFormatter
+export function columnToCellFormatter (column) {
+  return (TypeToCellFormatter[column.type] || TextCellFormatter)(column)
 }
