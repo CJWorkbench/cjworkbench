@@ -21,17 +21,32 @@ export function TextCellFormatter ({value}) {
 }
 
 export function NumberCellFormatter (format) {
-  const [ _, prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+  let [ _, prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
   // format with the same locale as in Python -- _not_ the user's locale
   const locale = d3FormatLocale(EnUsLocale)
-  const f = locale.format(specifierString)
+  const d3Format = locale.format(specifierString)
+
+  // Python/d3 allow a '%' format type which multiplies numbers and adds '%'.
+  // We want the multiplication, but we want to render the '%' as a suffix so we
+  // can style it.
+  let f
+  if (specifierString.endsWith('%')) {
+    suffix = '%' + suffix
+    f = (n) => d3Format(n).slice(0, -1)
+  } else {
+    f = d3Format
+  }
 
   return ({value}) => {
     if (value === null) {
       return <div className='cell-null cell-number' />
     }
 
-    return <div className='cell-number'>{prefix}{f(value)}{suffix}</div>
+    return <div className='cell-number'>
+      {prefix ? <span className='number-prefix'>{prefix}</span> : null}
+      <span className='number-value'>{f(value)}</span>
+      {suffix ? <span className='number-suffix'>{suffix}</span> : null}
+    </div>
   }
 }
 

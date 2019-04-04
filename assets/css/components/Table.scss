@@ -369,20 +369,33 @@
         border-bottom: 0px solid transparent;
         border-top: 0;
 
-        // content of those cells
-        .cell-text, .cell-datetime {
-          @extend .table-content;
+        .react-grid-Cell__value>* {
+          @include table-content;
           margin: 0 1rem;
           overflow: hidden;
           word-wrap: nowrap;
           text-overflow: ellipsis;
-          color:$brand-text--dark;
+        }
+
+        // content of those cells
+        .cell-text, .cell-datetime {
+          color: $brand-text--dark;
         }
 
         .cell-number {
-          @extend .table-content;
-          margin: 0 1rem;
           text-align: right;
+
+          .number-prefix, .number-suffix {
+            @include font-nunito-extra-light;
+          }
+
+          .number-suffix {
+            padding-left: .2rem;
+          }
+
+          .number-prefix {
+            padding-right: .2rem;
+          }
         }
 
         // when a cell value cannot be rendered
@@ -391,8 +404,8 @@
           &::before {
             // Add 'null' text in CSS, not React, so copy/paste won't copy it
             content: 'null';
-            color: lighten($brand-text--dark,30%);
-            font-style: italic;
+            color: lighten($brand-text--dark, 30%);
+            font-style: italic; // FIXME we don't ship this font as italic
             font-weight: 200;
           }
         }
@@ -468,7 +481,7 @@
         }
 
         input {
-          @extend .table-content;
+          @include table-content;
           padding-left: 0.8rem;
           background-color: white;
           border-radius: 0;

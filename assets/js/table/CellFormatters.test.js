@@ -42,16 +42,21 @@ describe('NumberCellFormatter', () => {
     it('renders floats', () => {
       const w = wrapper(1234.567)
       expect(w.text()).toEqual('$1,234.57!')
+      expect(w.find('.number-value').text()).toEqual('1,234.57')
+      expect(w.find('.number-prefix').text()).toEqual('$')
+      expect(w.find('.number-suffix').text()).toEqual('!')
     })
   })
 
   describe('a percentage format string', () => {
-    const Formatter = columnToCellFormatter({ type: 'number', format: '{:,.1%}' })
+    const Formatter = columnToCellFormatter({ type: 'number', format: '{:,.1%}!' })
     const wrapper = (value) => shallow(<Formatter value={value} />)
 
-    it('renders floats with numberFormat', () => {
+    it('renders floats with numberFormat, with "%" as a suffix', () => {
       const w = wrapper(12.3456)
-      expect(w.text()).toEqual('1,234.6%')
+      expect(w.text()).toEqual('1,234.6%!')
+      expect(w.find('.number-value').text()).toEqual('1,234.6')
+      expect(w.find('.number-suffix').text()).toEqual('%!')
     })
   })
 })
