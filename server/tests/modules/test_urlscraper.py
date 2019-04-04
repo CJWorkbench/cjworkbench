@@ -201,15 +201,13 @@ class ScrapeUrlsTest(SimpleTestCase):
         table = pd.DataFrame({'A': [1]})
         result = urlscraper.render(table.copy(), P(urlsource=0, urllist=''),
                                    fetch_result=None)
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, table)
+        assert_frame_equal(result, table)
 
     def test_module_nop_with_initial_col_selection(self):
         table = pd.DataFrame({'A': [1]})
         result = urlscraper.render(table.copy(), P(urlsource=1, urlcol=''),
                                    fetch_result=None)
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, table)
+        assert_frame_equal(result, table)
 
 
 class URLScraperTests(unittest.TestCase):

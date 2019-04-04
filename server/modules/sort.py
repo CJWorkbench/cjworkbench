@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from cjworkbench.types import ProcessResult
 from typing import Any, Dict, List, Union
 import pandas as pd
 
@@ -25,22 +24,23 @@ def _do_render(
             if keep_top_int <= 0:
                 raise ValueError
         except ValueError:
-            return ProcessResult(error=(
+            return (
                 'Please enter a positive integer in "Keep top" '
                 'or leave it blank.'
-            ))
+            )
     else:
         keep_top_int = None
 
     if not sort_columns:
-        return ProcessResult(table)
+        return table
 
     columns = [sc.colname for sc in sort_columns]
     directions = [sc.is_ascending for sc in sort_columns]
 
     # check for duplicate columns
     if len(columns) != len(set(columns)):
-        return ProcessResult(error='Duplicate columns.')
+        # TODO support this case? The intent is unambiguous.
+        return 'Duplicate columns.'
 
     if keep_top_int and len(sort_columns) > 1:
         # sort by _last_ column: that's the sorting we'll use within each group
@@ -78,7 +78,7 @@ def _do_render(
 
     table.reset_index(drop=True, inplace=True)
 
-    return ProcessResult(table)
+    return table
 
 
 def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:

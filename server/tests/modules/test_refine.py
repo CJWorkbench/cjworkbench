@@ -4,7 +4,6 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
 from server.modules.refine import render, migrate_params, RefineSpec
 
 
@@ -204,16 +203,16 @@ class MigrateParamsTest(unittest.TestCase):
                                 expected_out: pd.DataFrame=pd.DataFrame(),
                                 expected_error: str='') -> None:
         """Render and assert the output is as expected."""
-        result = ProcessResult.coerce(spec.apply(in_table, column))
-        # Sanitize result+expected, so if sanitize changes these tests may
-        # break (which is what we want).
-        result.sanitize_in_place()
+        result = spec.apply(in_table, column)
 
-        expected = ProcessResult(expected_out, expected_error)
-        expected.sanitize_in_place()
-
-        self.assertEqual(result.error, expected.error)
-        assert_frame_equal(result.dataframe, expected.dataframe)
+        if not expected_out.empty and expected_error:
+            table, error = result
+            self.assertEqual(error, expected_error)
+            assert_frame_equal(table, expected_out)
+        elif expected_error:
+            self.assertEqual(result, expected_error)
+        else:
+            assert_frame_equal(result, expected_out)
 
     def test_refine_rename_to_new(self):
         self._test_refine_spec_apply(
@@ -270,13 +269,15 @@ class MigrateParamsTest(unittest.TestCase):
         """Test that the render method works (kinda an integration test)."""
         params = P(column, edits_json)
         result = render(in_table, params)
-        result.sanitize_in_place()
 
-        expected = ProcessResult(expected_out, expected_error)
-        expected.sanitize_in_place()
-
-        self.assertEqual(result.error, expected.error)
-        assert_frame_equal(result.dataframe, expected.dataframe)
+        if not expected_out.empty and expected_error:
+            table, error = result
+            self.assertEqual(error, expected_error)
+            assert_frame_equal(table, expected_out)
+        elif expected_error:
+            self.assertEqual(result, expected_error)
+        else:
+            assert_frame_equal(result, expected_out)
 
     def test_render_no_column_is_no_op(self):
         self._test_render(

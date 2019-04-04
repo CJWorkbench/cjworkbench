@@ -355,11 +355,11 @@ class LoadedModuleTest(unittest.TestCase):
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
 
-        self.assertEqual(result, ProcessResult(error=(
-            'ValueError: ProcessResult input must only contain {dataframe, '
-            'error, json, quick_fixes, column_formats} keys at line 598 of '
-            'types.py'
-        )))
+        self.assertRegex(result.error, (
+            r'ValueError: ProcessResult input must only contain \{dataframe, '
+            r'error, json, quick_fixes, column_formats\} keys at line \d+ of '
+            r'types\.py'
+        ))
 
     def test_render_dynamic_default(self):
         lm = LoadedModule('int', '1')

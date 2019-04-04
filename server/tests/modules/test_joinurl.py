@@ -54,15 +54,15 @@ ref_left_join_with_types = pd.DataFrame(
 class JoinURLTests(unittest.TestCase):
     def test_no_left(self):
         result = render(pd.DataFrame(), P(), PR('', {'A': [1]}))
-        self.assertEqual(result, ProcessResult())
+        assert_frame_equal(result, pd.DataFrame())
 
     def test_no_right(self):
         result = render(pd.DataFrame({'A': [1]}), P(), None)
-        self.assertEqual(result, ProcessResult())
+        assert_frame_equal(result, pd.DataFrame({'A': [1]}))
 
     def test_right_is_error(self):
         result = render(pd.DataFrame({'A': [1]}), P(), PR('error'))
-        self.assertEqual(result, ProcessResult(error='error'))
+        self.assertEqual(result, 'error')
 
     def test_join(self):
         # Nothing too technical, do not need to test pandas functions
@@ -73,7 +73,7 @@ class JoinURLTests(unittest.TestCase):
                             'col2': ['c', 'a'],
                             'col3': ['d', 'b'],
                         }))
-        assert_frame_equal(result.dataframe, pd.DataFrame({
+        assert_frame_equal(result, pd.DataFrame({
             'col1': ['a'],
             'key': ['b'],
             'col2': ['c'],
@@ -90,33 +90,31 @@ class JoinURLTests(unittest.TestCase):
                             'col3': ['d', 'b'],
                         }))
         self.assertEqual(['col1', 'key', 'col2'],
-                         list(result.dataframe.columns))
+                         list(result.columns))
 
     def test_colnames_not_in_right(self):
         result = render(pd.DataFrame({'A': [1], 'B': [2]}),
                         P(colnames='A', select_columns=True,
                           importcols='B'),
                         PR('', {'A': [1], 'C': [2]}))
-        self.assertEqual(result, ProcessResult(error=(
-            "Selected columns not in target workflow: B"
-        )))
+        self.assertEqual(result, "Selected columns not in target workflow: B")
 
     def test_cast_int_to_float(self):
         result = render(pd.DataFrame({'A': [1, 2, 3]}),
                         P(type=1, colnames='A'),
                         PR('', {'A': [1.0, 2.0, 4.0]}))
         expected = pd.DataFrame({'A': [1.0, 2.0]})
-        assert_frame_equal(result.dataframe, expected)
+        assert_frame_equal(result, expected)
 
     def test_type_mismatch(self):
         result = render(pd.DataFrame({'A': [1, 2, 3]}),
                         P(type=1, colnames='A'),
                         PR('', {'A': ['1', '2', '3']}))
-        self.assertEqual(result, ProcessResult(error=(
+        self.assertEqual(result, (
             'Types do not match for key column "A" (number and text). '
             'Please use a type conversion module '
             'to make these column types consistent.'
-        )))
+        ))
 
     @patch('server.modules.utils.fetch_external_workflow')
     def test_fetch(self, inner_fetch):

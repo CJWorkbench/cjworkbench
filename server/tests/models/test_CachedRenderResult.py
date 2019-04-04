@@ -23,9 +23,11 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_assign_and_save(self):
         result = ProcessResult(
-            pandas.DataFrame({'a': [1]}), 'err',
+            dataframe=pandas.DataFrame({'a': [1]}),
+            error='err',
             json={'foo': 'bar'},
-            quick_fixes=[QuickFix('X', 'prependModule', ['x'])]
+            quick_fixes=[QuickFix('X', 'prependModule', ['x'])],
+            columns=[Column('a', ColumnType.NUMBER('{:,d}'))]
         )
         self.wf_module.cache_render_result(self.delta.id, result)
 

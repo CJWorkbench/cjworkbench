@@ -115,7 +115,8 @@ class CachedRenderResult:
         if not hasattr(self, '_result'):
             dataframe = self.read_dataframe()
             self._result = ProcessResult(dataframe, self.error, json=self.json,
-                                         quick_fixes=self.quick_fixes)
+                                         quick_fixes=self.quick_fixes,
+                                         columns=self.columns)
 
         return self._result
 

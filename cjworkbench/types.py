@@ -441,7 +441,11 @@ class ProcessResult:
     All these outputs may be empty (and Workbench treats empty values
     specially).
 
-    A ProcessResult object may be pickled.
+    process() can also output column _formats_ (i.e., number formats). If
+    process() doesn't format a column, `ProcessResult.coerce()` defers to
+    passed "fallback" column formats so all the output columns are formatted.
+
+    A ProcessResult object may be pickled (and passed to/from a subprocess).
     """
 
     dataframe: pd.DataFrame = field(default_factory=pd.DataFrame)
@@ -584,7 +588,7 @@ class ProcessResult:
                 value['columns'] = _infer_columns(
                     value.get('dataframe', pd.DataFrame()),
                     column_formats,
-                    []
+                    try_fallback_columns
                 )
             except KeyError:
                 pass
