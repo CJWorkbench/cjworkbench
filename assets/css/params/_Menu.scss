@@ -1,4 +1,5 @@
-.param-menu {
+@mixin param-menu {
+  // reused in .param-numberformat
   select {
     @extend %custom-select;
   }
@@ -6,4 +7,8 @@
     line-height: 1.8rem;
     margin-bottom: .2rem;
   }
+}
+
+.param-menu {
+  @include param-menu;
 }
