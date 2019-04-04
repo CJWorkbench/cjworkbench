@@ -1,0 +1,13 @@
+name: Format numbers
+id_name: formatnumbers
+category: Clean
+icon: number
+help_url: modules/clean/formatnumbers
+description: "Change the way Workbench displays some columns (without changing their data)."
+parameters:
+- id_name: colnames
+  type: multicolumn
+- id_name: format
+  type: numberformat
+  name: Format
+  default: '{:,g}'
