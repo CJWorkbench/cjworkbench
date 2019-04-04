@@ -1,4 +1,4 @@
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Union
 from django.contrib.auth.models import User
 import pandas as pd
 from cjworkbench.types import ProcessResult
@@ -10,14 +10,13 @@ _source_column_name = 'Source Workflow'
 
 def render(table, params, *, fetch_result, **kwargs):
     if not fetch_result:
-        return ProcessResult(table)
+        return table
 
     if fetch_result.status == 'error':
-        return ProcessResult(table, error=fetch_result.error)
+        return fetch_result.error
 
     if fetch_result.dataframe.empty:
-        return ProcessResult(table,
-                             error='The workflow you chose is empty')
+        return 'The workflow you chose is empty'
 
     type: int = params['type']
     url: str = params['url'].strip()
@@ -29,7 +28,7 @@ def render(table, params, *, fetch_result, **kwargs):
                                  keys=['Current', right_id],
                                  join=_join_type_map[type], sort=False)
     except Exception as err:  # TODO specify which errors
-        return ProcessResult(table, error=str(err.args[0]))
+        return str(err.args[0])
 
     # Default, only includes columns of left table
     if type == 0:
@@ -38,19 +37,20 @@ def render(table, params, *, fetch_result, **kwargs):
     if source_columns:
         # Allow duplicates set to True because sanitize handles name
         # collisions
-        source_series = concat_table.reset_index()['level_0']
+        source_series = concat_table.index.get_level_values(0)
         concat_table.insert(0, _source_column_name,
                             source_series.values, allow_duplicates=True)
+    concat_table.reset_index(drop=True, inplace=True)
 
-    return ProcessResult(concat_table)
+    return concat_table
 
 async def fetch(params, *, workflow_id: int,
                 get_workflow_owner: Callable[[], Awaitable[User]],
-                **kwargs) -> ProcessResult:
+                **kwargs) -> Union[pd.DataFrame, str]:
     url: str = params['url']
 
     if not url.strip():
-        return None
+        return ProcessResult()
 
     try:
         other_workflow_id = utils.workflow_url_to_id(url)

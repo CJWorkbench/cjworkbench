@@ -22,7 +22,7 @@
       "id_name": "list_string",
       "type": "string",
       "multiline": true,
-      "placeholder":"Paste values of column names",
+      "placeholder":"Paste values of column names (comma or newline separated)",
       "visible_if": {
         "id_name": "custom_list",
         "value": true

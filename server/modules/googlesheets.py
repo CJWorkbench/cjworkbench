@@ -106,7 +106,10 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
     # Must perform header operation here in the event the header checkbox
     # state changes
     if not fetch_result:
-        return ProcessResult()  # user hasn't fetched yet
+        return pd.DataFrame()  # user hasn't fetched yet
+
+    if fetch_result.status == 'error':
+        return fetch_result.error
 
     table = fetch_result.dataframe
 
@@ -114,7 +117,10 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
     if not has_header:
         table = turn_header_into_first_row(table)
 
-    return ProcessResult(table, fetch_result.error)
+    if fetch_result.error:
+        return (table, fetch_result.error)
+    else:
+        return table
 
 
 def fetch(params, **kwargs):  # TODO make async

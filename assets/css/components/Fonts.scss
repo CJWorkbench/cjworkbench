@@ -65,7 +65,7 @@
 .content-2 { @include content-2; }
 .content-3 { @include content-3; }
 
-.table-content { // Only for content in the table -- do not use anywhere else
+@mixin table-content { // Only for content in the table -- do not use anywhere else
 	font-size: 1.4rem;
 	line-height: 2rem;
 	font-weight: normal;

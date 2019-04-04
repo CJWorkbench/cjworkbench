@@ -3,17 +3,12 @@ from django.test import override_settings, SimpleTestCase
 import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
-from server.modules import countbydate
+from server.modules.countbydate import render
 from .util import MockParams
 
 
 P = MockParams.factory(column='', groupby=0, operation=0, targetcolumn='',
                        include_missing_dates=False)
-
-
-def render(table, params):
-    return ProcessResult.coerce(countbydate.render(table, params))
 
 
 def dt(s):
@@ -60,16 +55,12 @@ class CountByDateTests(SimpleTestCase):
         result = render(in_table, params)
 
         if hasattr(expected_table['Date'], 'dt'):
+            # [adamhooper, 2019-04-03] This seems to say: "if we're in unit
+            # tests, don't crash the way we crash on production"
             expected_table['Date'] = \
                 expected_table['Date'].dt.tz_localize(None)
 
-        self.assertEqual(result.error, '')
-        self.assertEqual(result.quick_fixes, [])
-        assert_frame_equal(result.dataframe, expected_table)
-
-    def assertResultEqual(self, result, expected):
-        self.assertEqual(result.error, expected.error)
-        assert_frame_equal(result.dataframe, expected.dataframe)
+        assert_frame_equal(result, expected_table)
 
     def test_count_by_date(self):
         self._assertRendersTable(
@@ -182,41 +173,27 @@ class CountByDateTests(SimpleTestCase):
         )
 
     def test_no_col_gives_noop(self):
-        result = render(count_table, P(column=''))
-        expected = ProcessResult(count_table)
-        self.assertResultEqual(result, expected)
-
-    def test_invalid_colname_gives_error(self):
-        # bad column name should produce error
-        result = render(count_table, P(column='hilarious'))
-        self.assertEqual(result.error, 'There is no column named "hilarious"')
+        result = render(count_table.copy(), P(column=''))
+        assert_frame_equal(result, count_table)
 
     def test_integer_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': [1], 'B': [2]})
         result = render(table, P(column='A'))
-        self.assertEqual(result.error, 'Column "A" must be Date & Time')
+        self.assertEqual(result, 'Column "A" must be Date & Time')
 
     def test_string_dates_give_error(self):
         # integers are not dates
         table = pandas.DataFrame({'A': ['2018'], 'B': [2]})
         result = render(table, P(column='A'))
-        self.assertEqual(result.error, 'Column "A" must be Date & Time')
-        self.assertEqual(len(result.quick_fixes), 1)
+        self.assertEqual(result['error'], 'Column "A" must be Date & Time')
+        self.assertEqual(len(result['quick_fixes']), 1)
 
     def test_average_no_error_when_missing_target(self):
         # 1 = mean
         params = P(column='Date', operation=1, targetcolumn='')
         result = render(count_table, params)
-        self.assertResultEqual(
-            result,
-            ProcessResult(count_table)
-        )
-
-    def test_average_require_target(self):
-        params = P(column='Date', operation=1, targetcolumn='Invalid')
-        result = render(count_table, params)
-        self.assertEqual(result.error, 'There is no column named "Invalid"')
+        assert_frame_equal(result, count_table)
 
     def test_average_by_date(self):
         self._assertRendersTable(
@@ -368,7 +345,7 @@ class CountByDateTests(SimpleTestCase):
         params = P(column='Date', groupby=0, include_missing_dates=True)
         result = render(count_table, params)
         self.assertEqual(
-            result.error,
+            result,
             ('Including missing dates would create 174787201 rows, '
              'but the maximum allowed is 100')
         )

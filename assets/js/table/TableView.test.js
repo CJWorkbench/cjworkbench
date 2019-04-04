@@ -52,9 +52,9 @@ describe('TableView', () => {
         status='ok'
         loadRows={makeRenderResponse(0, 3, 5)}
         columns={[
-          { name: 'a', type: 'number' },
-          { name: 'b', type: 'number' },
-          { name: 'c', type: 'number' }
+          { name: 'a', type: 'number', format: '{:,d}' },
+          { name: 'b', type: 'number', format: '{:,d}' },
+          { name: 'c', type: 'number', format: '{:,d}' }
         ]}
         nRows={2}
         {...extraProps}

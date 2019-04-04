@@ -1,6 +1,6 @@
 import datetime
 import pandas
-from cjworkbench.types import Column, ProcessResult, QuickFix
+from cjworkbench.types import Column, ColumnType, ProcessResult, QuickFix
 from server import minio
 from server.models import Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
@@ -23,9 +23,11 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_assign_and_save(self):
         result = ProcessResult(
-            pandas.DataFrame({'a': [1]}), 'err',
+            dataframe=pandas.DataFrame({'a': [1]}),
+            error='err',
             json={'foo': 'bar'},
-            quick_fixes=[QuickFix('X', 'prependModule', 'x')]
+            quick_fixes=[QuickFix('X', 'prependModule', ['x'])],
+            columns=[Column('a', ColumnType.NUMBER('{:,d}'))]
         )
         self.wf_module.cache_render_result(self.delta.id, result)
 
@@ -65,12 +67,21 @@ class CachedRenderResultTests(DbTestCase):
                                           parquet_key)
 
     def test_result_and_metadata_come_from_memory_when_available(self):
-        result = ProcessResult(pandas.DataFrame({
-            'A': [1],  # int64
-            'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
-            'C': ['foo'],  # str
-        }))
-        result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
+        columns = [
+            Column('A', ColumnType.NUMBER(format='{:,d}')),
+            Column('B', ColumnType.DATETIME()),
+            Column('C', ColumnType.TEXT()),
+            Column('D', ColumnType.TEXT()),
+        ]
+        result = ProcessResult(
+            dataframe=pandas.DataFrame({
+                'A': [1],  # int64
+                'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
+                'C': ['foo'],  # str
+                'D': pandas.Series(['cat'], dtype='category'),
+            }),
+            columns=columns
+        )
         cached_result = self.wf_module.cache_render_result(self.delta.id,
                                                            result)
 
@@ -82,20 +93,24 @@ class CachedRenderResultTests(DbTestCase):
 
         self.assertEqual(cached_result.result, result)
         self.assertEqual(cached_result.nrows, 1)
-        self.assertEqual(cached_result.columns, [
-            Column('A', 'number'),
-            Column('B', 'datetime'),
-            Column('C', 'text'),
-            Column('D', 'text'),
-        ])
+        self.assertEqual(cached_result.columns, columns)
 
     def test_metadata_comes_from_db_columns(self):
-        result = ProcessResult(pandas.DataFrame({
-            'A': [1],  # int64
-            'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
-            'C': ['foo'],  # str
-        }))
-        result.dataframe['D'] = pandas.Series(['cat'], dtype='category')
+        columns = [
+            Column('A', ColumnType.NUMBER(format='{:,d}')),
+            Column('B', ColumnType.DATETIME()),
+            Column('C', ColumnType.TEXT()),
+            Column('D', ColumnType.TEXT()),
+        ]
+        result = ProcessResult(
+            dataframe=pandas.DataFrame({
+                'A': [1],  # int64
+                'B': [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
+                'C': ['foo'],  # str
+                'D': pandas.Series(['cat'], dtype='category'),
+            }),
+            columns=columns
+        )
         cached_result = self.wf_module.cache_render_result(self.delta.id,
                                                            result)
 
@@ -110,12 +125,7 @@ class CachedRenderResultTests(DbTestCase):
         self.assertFalse(hasattr(cached_result, '_result'))
 
         self.assertEqual(cached_result.nrows, 1)
-        self.assertEqual(cached_result.columns, [
-            Column('A', 'number'),
-            Column('B', 'datetime'),
-            Column('C', 'text'),
-            Column('D', 'text'),
-        ])
+        self.assertEqual(cached_result.columns, columns)
 
     def test_delete_wfmodule(self):
         result = ProcessResult(pandas.DataFrame({'a': [1]}))

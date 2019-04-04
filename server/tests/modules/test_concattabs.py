@@ -13,7 +13,7 @@ class ConcattabsTest(unittest.TestCase):
             params={
                 'tabs': [
                     TabOutput('tab-2', 'Tab 2', {
-                        'A': RenderColumn('A', 'number'),
+                        'A': RenderColumn('A', 'number', '{}'),
                     }, pd.DataFrame({'A': [3, 4]})),
                 ],
                 'add_source_column': False,
@@ -21,7 +21,7 @@ class ConcattabsTest(unittest.TestCase):
             },
             tab_name='Tab 1',
             input_columns={
-                'A': RenderColumn('A', 'number'),
+                'A': RenderColumn('A', 'number', '{}'),
             }
         )
         assert_frame_equal(result, pd.DataFrame({'A': [1, 2, 3, 4]}))
@@ -32,7 +32,7 @@ class ConcattabsTest(unittest.TestCase):
             params={
                 'tabs': [
                     TabOutput('tab-2', 'Tab 2', {
-                        'A': RenderColumn('A', 'number'),
+                        'A': RenderColumn('A', 'number', '{}'),
                     }, pd.DataFrame({'A': [3, 4]})),
                 ],
                 'add_source_column': False,
@@ -40,7 +40,7 @@ class ConcattabsTest(unittest.TestCase):
             },
             tab_name='Tab 1',
             input_columns={
-                'A': RenderColumn('A', 'text'),
+                'A': RenderColumn('A', 'text', None),
             }
         )
         self.assertEqual(result, (
@@ -55,7 +55,7 @@ class ConcattabsTest(unittest.TestCase):
             params={
                 'tabs': [
                     TabOutput('tab-2', 'Tab 2', {
-                        'B': RenderColumn('B', 'number'),
+                        'B': RenderColumn('B', 'number', '{}'),
                     }, pd.DataFrame({'B': [3, 4]})),
                 ],
                 'add_source_column': False,
@@ -63,7 +63,7 @@ class ConcattabsTest(unittest.TestCase):
             },
             tab_name='Tab 1',
             input_columns={
-                'A': RenderColumn('A', 'number'),
+                'A': RenderColumn('A', 'number', '{}'),
             }
         )
         # This tests the ordering of columns, too
@@ -78,7 +78,7 @@ class ConcattabsTest(unittest.TestCase):
             params={
                 'tabs': [
                     TabOutput('tab-2', 'Tab 2', {
-                        'A': RenderColumn('A', 'number'),
+                        'A': RenderColumn('A', 'number', '{}'),
                     }, pd.DataFrame({'A': [3, 4]})),
                 ],
                 'add_source_column': True,
@@ -86,7 +86,7 @@ class ConcattabsTest(unittest.TestCase):
             },
             tab_name='Tab 1',
             input_columns={
-                'A': RenderColumn('A', 'number'),
+                'A': RenderColumn('A', 'number', '{}'),
             }
         )
         expected = pd.DataFrame({
@@ -105,7 +105,7 @@ class ConcattabsTest(unittest.TestCase):
             params={
                 'tabs': [
                     TabOutput('tab-2', 'Tab 2', {
-                        'A': RenderColumn('A', 'number'),
+                        'A': RenderColumn('A', 'number', '{}'),
                     }, pd.DataFrame({'A': [3.3, 4.4]})),
                 ],
                 'add_source_column': False,
@@ -113,7 +113,7 @@ class ConcattabsTest(unittest.TestCase):
             },
             tab_name='Tab 1',
             input_columns={
-                'A': RenderColumn('A', 'number'),
+                'A': RenderColumn('A', 'number', '{}'),
             }
         )
         assert_frame_equal(result, pd.DataFrame({
@@ -126,7 +126,7 @@ class ConcattabsTest(unittest.TestCase):
             params={
                 'tabs': [
                     TabOutput('tab-2', 'Tab 2', {
-                        'A': RenderColumn('A', 'text'),
+                        'A': RenderColumn('A', 'text', None),
                     }, pd.DataFrame({'A': ['c', 'd']})),  # str
                 ],
                 'add_source_column': False,
@@ -134,7 +134,7 @@ class ConcattabsTest(unittest.TestCase):
             },
             tab_name='Tab 1',
             input_columns={
-                'A': RenderColumn('A', 'text'),
+                'A': RenderColumn('A', 'text', None),
             }
         )
         assert_frame_equal(result, pd.DataFrame({

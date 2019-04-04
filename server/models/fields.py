@@ -13,7 +13,7 @@ class ColumnsField(JSONField):
         if value is None:
             return None
 
-        return [Column(c['name'], ColumnType(c['type'])) for c in value]
+        return [Column.from_dict(c) for c in value]
 
     def validate(self, value, model_instance):
         super().validate(value, model_instance)
@@ -34,5 +34,5 @@ class ColumnsField(JSONField):
         if value is None:
             return None
 
-        arr = [{'name': c.name, 'type': c.type.value} for c in value]
+        arr = [c.to_dict() for c in value]
         return super().get_prep_value(arr)  # JSONField: arr->bytes

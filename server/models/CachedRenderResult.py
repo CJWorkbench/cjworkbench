@@ -115,7 +115,8 @@ class CachedRenderResult:
         if not hasattr(self, '_result'):
             dataframe = self.read_dataframe()
             self._result = ProcessResult(dataframe, self.error, json=self.json,
-                                         quick_fixes=self.quick_fixes)
+                                         quick_fixes=self.quick_fixes,
+                                         columns=self.columns)
 
         return self._result
 
@@ -177,8 +178,8 @@ class CachedRenderResult:
         quick_fixes = wf_module.cached_render_result_quick_fixes
         if not quick_fixes:
             quick_fixes = []
-        # Coerce from tuples to QuickFixes
-        quick_fixes = [QuickFix.coerce(qf) for qf in quick_fixes]
+        # Coerce from dict to QuickFixes
+        quick_fixes = [QuickFix(**qf) for qf in quick_fixes]
 
         ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
                                  wf_module_id=wf_module.id, delta_id=delta_id,

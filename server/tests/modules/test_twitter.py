@@ -11,12 +11,6 @@ from server.modules import twitter
 from .util import MockParams
 
 
-def table_to_result(table):
-    result = ProcessResult(table)
-    result.sanitize_in_place()  # alters dataframe.equals() result
-    return result
-
-
 class MockAiohttpRequest:
     def __init__(self, url, args, kwargs):
         self.url = url
@@ -615,7 +609,7 @@ class TwitterTests(unittest.TestCase):
         result = twitter.render(pd.DataFrame(),
                                 P(querytype='search', query=''),
                                 fetch_result=None)
-        assert_frame_equal(result.dataframe, pd.DataFrame())
+        assert_frame_equal(result, pd.DataFrame())
 
     def test_render_empty_search_result(self):
         # An empty table might be stored as zero-column. This is a bug, but we
@@ -624,7 +618,9 @@ class TwitterTests(unittest.TestCase):
         result = twitter.render(pd.DataFrame(),
                                 P(querytype='search', query='cat'),
                                 fetch_result=ProcessResult(pd.DataFrame()))
-        assert_frame_equal(result.dataframe, mock_tweet_table[0:0])
+        assert_frame_equal(result['dataframe'], mock_tweet_table[0:0])
+        # column_formats is needed even for empty tables, so we can concat them
+        self.assertEqual(result['column_formats'], {'id': '{:d}'})
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')

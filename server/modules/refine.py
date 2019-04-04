@@ -2,7 +2,6 @@ import json
 from typing import Any, Dict
 import numpy as np
 import pandas as pd
-from cjworkbench.types import ProcessResult
 
 
 def _str_categories(series):
@@ -272,10 +271,10 @@ def render(table, params, **kwargs):
     column: str = params['column']
     if not column:
         # No user input yet
-        return ProcessResult(table)
+        return table
 
     refine = params['refine']
     spec = RefineSpec(refine.get('renames', {}))
     table = spec.apply(table, column)
 
-    return ProcessResult(table)
+    return table

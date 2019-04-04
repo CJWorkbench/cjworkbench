@@ -59,8 +59,14 @@ def render(table, params, *, input_columns):
     # Select only the columns we want
     right_dataframe = right_dataframe[on_columns + right_columns]
 
-    return table.merge(
+    dataframe = table.merge(
         right_dataframe,
         on=on_columns,
         how=join_type
     )
+
+    return {
+        'dataframe': dataframe,
+        'column_formats': {c: right_tab.columns[c].format
+                           for c in right_columns}
+    }

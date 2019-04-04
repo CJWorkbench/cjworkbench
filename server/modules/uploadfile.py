@@ -62,12 +62,18 @@ async def parse_uploaded_file(uploaded_file) -> ProcessResult:
 
 
 def render(table, params, *, fetch_result):
-    if not fetch_result or fetch_result.status == 'error':
-        return fetch_result
+    if not fetch_result:
+        return table  # user hasn't uploaded yet
+
+    if fetch_result.status == 'error':
+        return fetch_result.error
 
     table = fetch_result.dataframe
     has_header: bool = params['has_header']
     if not has_header:
         table = turn_header_into_first_row(table)
 
-    return ProcessResult(table, fetch_result.error)
+    if fetch_result.error:
+        return (table, fetch_result.error)
+    else:
+        return table

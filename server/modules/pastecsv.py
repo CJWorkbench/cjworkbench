@@ -1,7 +1,6 @@
 import io
 import pandas as pd
 from pandas.io.common import EmptyDataError, ParserError
-from cjworkbench.types import ProcessResult
 from ..sanitizedataframe import autocast_dtypes_in_place
 
 
@@ -28,8 +27,8 @@ def render(table, params):
                             na_filter=False, dtype='category')
         autocast_dtypes_in_place(table)
     except EmptyDataError:
-        return ProcessResult(pd.DataFrame())
+        return pd.DataFrame()
     except ParserError as err:
-        return ProcessResult(error=str(err))
+        return str(err)
 
-    return ProcessResult(table)
+    return table

@@ -33,31 +33,27 @@ Csv = """A,B
 
 
 def render(has_header, fetch_result):
-    x = uploadfile.render(pd.DataFrame(), {'has_header': has_header},
-                          fetch_result=fetch_result)
-    result = ProcessResult.coerce(x)
-    result.sanitize_in_place()
-    return result
+    return uploadfile.render(pd.DataFrame(), {'has_header': has_header},
+                             fetch_result=fetch_result)
 
 
 # See UploadFileViewTests for that
 class UploadFileTests(unittest.TestCase):
     def test_render_no_file(self):
         result = render(True, None)
-        self.assertEqual(result, ProcessResult())
+        assert_frame_equal(result, pd.DataFrame())
 
     def test_render_has_header_true(self):
         result = render(True, ProcessResult(pd.DataFrame({'A': [1]})))
-        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
+        assert_frame_equal(result, pd.DataFrame({'A': [1]}))
 
     def test_render_has_header_false(self):
         result = render(False, ProcessResult(pd.DataFrame({'A': [1]})))
-        self.assertEqual(result,
-                         ProcessResult(pd.DataFrame({'0': ['A', '1']})))
+        assert_frame_equal(result, pd.DataFrame({'0': ['A', '1']}))
 
     def test_render_file_error(self):
         result = render(False, ProcessResult(error='x'))
-        self.assertEqual(result, ProcessResult(error='x'))
+        self.assertEqual(result, 'x')
 
     def _test_upload(self, *, uuid, filename, ext, size,
                      expected_result):

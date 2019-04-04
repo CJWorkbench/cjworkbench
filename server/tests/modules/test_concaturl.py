@@ -20,9 +20,7 @@ def PR(error, *args, **kwargs):
 
 
 def render(table, params, fetch_result):
-    result = concaturl.render(table, params, fetch_result=fetch_result)
-    result.sanitize_in_place()
-    return result
+    return concaturl.render(table, params, fetch_result=fetch_result)
 
 
 async def get_workflow_owner():
@@ -46,22 +44,16 @@ ext_workflow = pd.DataFrame({
 class ConcatURLTest(unittest.TestCase):
     def test_empty(self):
         result = render(pd.DataFrame({'A': [1]}), P(url=''), None)
-        self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
+        assert_frame_equal(result, pd.DataFrame({'A': [1]}))
 
     def test_empty_right(self):
         result = render(pd.DataFrame({'A': [1]}), P(), ProcessResult())
-        self.assertEqual(result, ProcessResult(
-            dataframe=pd.DataFrame({'A': [1]}),
-            error='The workflow you chose is empty'
-        ))
+        self.assertEqual(result, 'The workflow you chose is empty')
 
     def test_invalid_url(self):
         result = render(pd.DataFrame({'A': [1]}), P(url='not a url'),
                         ProcessResult(error='Not a URL'))
-        self.assertEqual(result, ProcessResult(
-            dataframe=pd.DataFrame({'A': [1]}),
-            error='Not a URL'
-        ))
+        self.assertEqual(result, 'Not a URL')
 
     def test_concat_only_left_columns(self):
         result = render(
@@ -69,9 +61,7 @@ class ConcatURLTest(unittest.TestCase):
             P(type=0, source_columns=False),
             ProcessResult(ext_workflow)
         )
-
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, pd.DataFrame({
+        assert_frame_equal(result, pd.DataFrame({
             'col1': ['a', 'a', np.NaN, np.NaN],
             'key': ['b', 'c', 'b', 'd'],
         }))
@@ -82,9 +72,7 @@ class ConcatURLTest(unittest.TestCase):
             P(type=1, source_columns=False),
             ProcessResult(ext_workflow)
         )
-
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, pd.DataFrame({
+        assert_frame_equal(result, pd.DataFrame({
             'key': ['b', 'c', 'b', 'd'],
         }))
 
@@ -94,9 +82,7 @@ class ConcatURLTest(unittest.TestCase):
             P(type=2, source_columns=False),
             ProcessResult(ext_workflow)
         )
-
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, pd.DataFrame({
+        assert_frame_equal(result, pd.DataFrame({
             'col1': ['a', 'a', np.NaN, np.NaN],
             'key': ['b', 'c', 'b', 'd'],
             'col2': [np.NaN, np.NaN, 'c', 'a'],
@@ -108,9 +94,7 @@ class ConcatURLTest(unittest.TestCase):
             P(type=1, source_columns=True),
             ProcessResult(ext_workflow)
         )
-
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, pd.DataFrame({
+        assert_frame_equal(result, pd.DataFrame({
             'Source Workflow': ['Current', 'Current', '2', '2'],
             'key': ['b', 'c', 'b', 'd'],
         }))

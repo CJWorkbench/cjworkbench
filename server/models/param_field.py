@@ -522,6 +522,7 @@ class ParamField:
         """Type of form field to display to the user"""
         STATICTEXT = 'statictext'
         STRING = 'string'
+        NUMBERFORMAT = 'numberformat'
         INTEGER = 'integer'
         FLOAT = 'float'
         CHECKBOX = 'checkbox'
@@ -578,6 +579,7 @@ class ParamField:
             return None
         elif (
             self.ftype == T.STRING
+            or self.ftype == T.NUMBERFORMAT
             or self.ftype == T.CUSTOM
         ):
             kwargs = {}

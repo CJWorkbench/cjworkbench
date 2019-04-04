@@ -10,6 +10,7 @@ import Multicolumn from './Multicolumn'
 import Multitab from './Multitab'
 import Multichartseries from './Multichartseries'
 import Number_ from './Number'
+import NumberFormat from './NumberFormat'
 import Radio from './Radio'
 import Secret from './Secret'
 import StaticText from './StaticText'
@@ -83,6 +84,7 @@ export default class Param extends React.PureComponent {
       case 'multicolumn': return Multicolumn
       case 'multitab': return Multitab
       case 'multichartseries': return Multichartseries
+      case 'numberformat': return NumberFormat
       case 'radio': return Radio
       case 'secret': return Secret
       case 'statictext': return StaticText

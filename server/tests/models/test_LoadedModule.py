@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
+from cjworkbench.types import ProcessResult, Column, ColumnType
 from server import minio
 from server.models import LoadedModule
 import server.models.loaded_module
@@ -188,7 +188,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params, *, fetch_result):
             nonlocal args
             args = (table, params, fetch_result)
-            return ProcessResult(pd.DataFrame({'A': [2]}))
+            return pd.DataFrame({'A': [2]})
 
         in_table = pd.DataFrame({'A': [0]})
         params = {'foo': 'bar'}
@@ -210,7 +210,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params, *, input_columns, **kwargs):
             nonlocal passed_columns
             passed_columns = input_columns
-            return ProcessResult(pd.DataFrame({'A': [2]}))
+            return pd.DataFrame({'A': [2]})
 
         in_result = ProcessResult(pd.DataFrame({'A': [0]}))
         params = {'foo': 'bar'}
@@ -229,7 +229,6 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params, *, tab_name):
             nonlocal passed_tab_name
             passed_tab_name = tab_name
-            return ProcessResult()
 
         in_result = ProcessResult(pd.DataFrame({'A': [0]}))
 
@@ -245,7 +244,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params):
             nonlocal args
             args = (table, params)
-            return ProcessResult(pd.DataFrame({'A': [1]}))
+            return pd.DataFrame({'A': [1]})
 
         in_table = pd.DataFrame({'A': [0]})
         params = {'foo': 'bar'}
@@ -311,7 +310,55 @@ class LoadedModuleTest(unittest.TestCase):
         _, lineno = inspect.getsourcelines(render)
         self.assertRegex(result.error, (
             r'ValueError: ProcessResult input must only contain '
-            r'\{dataframe, error, json, quick_fixes\} '
+            r'{dataframe, error, json, quick_fixes, column_formats}'
+        ))
+
+    def test_render_use_input_columns_as_try_fallback_columns(self):
+        def render(table, params):
+            return pd.DataFrame({'A': [1]})
+
+        lm = LoadedModule('int', '1', render_impl=render)
+        column = Column('A', ColumnType.NUMBER('{:,d}'))
+        with self.assertLogs():
+            result = lm.render(
+                ProcessResult(pd.DataFrame({'A': [1]}), columns=[column]),
+                {},
+                tab_name='x',
+                fetch_result=None
+            )
+
+        self.assertEqual(result.columns, [column])
+
+    def test_render_format_columns(self):
+        # More of an integration test....
+        def render(table, params):
+            return {
+                'dataframe': pd.DataFrame({'A': [1]}),
+                'column_formats': {'A': '{:,d}'},
+            }
+
+        lm = LoadedModule('int', '1', render_impl=render)
+        with self.assertLogs():
+            result = lm.render(ProcessResult(), {}, tab_name='x',
+                               fetch_result=None)
+
+        self.assertEqual(result.columns, [
+            Column('A', ColumnType.NUMBER('{:,d}')),
+        ])
+
+    def test_render_invalid_return_dict_is_error(self):
+        def render(table, params):
+            return {'table': pd.DataFrame({'A': [1]})}  # should be 'dataframe'
+
+        lm = LoadedModule('int', '1', render_impl=render)
+        with self.assertLogs():
+            result = lm.render(ProcessResult(), {}, tab_name='x',
+                               fetch_result=None)
+
+        self.assertRegex(result.error, (
+            r'ValueError: ProcessResult input must only contain \{dataframe, '
+            r'error, json, quick_fixes, column_formats\} keys at line \d+ of '
+            r'types\.py'
         ))
 
     def test_render_dynamic_default(self):

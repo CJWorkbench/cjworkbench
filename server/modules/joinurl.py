@@ -18,12 +18,12 @@ rsuffix = '_imported'
 
 def check_key_types(left_dtypes, right_dtypes):
     for key in left_dtypes.index:
-        l_type = ColumnType.from_dtype(left_dtypes.loc[key])
-        r_type = ColumnType.from_dtype(right_dtypes.loc[key])
+        l_type = ColumnType.class_from_dtype(left_dtypes.loc[key])
+        r_type = ColumnType.class_from_dtype(right_dtypes.loc[key])
         if l_type != r_type:
             raise TypeError(
-                f'Types do not match for key column "{key}" ({l_type.value} '
-                f'and {r_type.value}). Please use a type conversion module to '
+                f'Types do not match for key column "{key}" ({l_type().name} '
+                f'and {r_type().name}). Please use a type conversion module to '
                 'make these column types consistent.'
             )
 
@@ -57,30 +57,24 @@ def sort_columns(og_columns, new_columns):
 def render(table, params, *, fetch_result, **kwargs):
     if not fetch_result:
         # User hasn't fetched yet
-        return ProcessResult()
+        return table
 
     if fetch_result.status == 'error':
-        return fetch_result
+        return fetch_result.error
 
     right_table = fetch_result.dataframe
 
     key_cols, errs = parse_multicolumn_param(params['colnames'], table)
 
     if errs:
-        return ProcessResult(error=(
-            'Key columns not in this workflow: '
-            + ', '.join(errs)
-        ))
+        return ('Key columns not in this workflow: ' + ', '.join(errs))
 
     if not key_cols:
-        return ProcessResult(table)
+        return table
 
     _, errs = parse_multicolumn_param(params['colnames'], right_table)
     if errs:
-        return ProcessResult(error=(
-            'Key columns not in target workflow: '
-            + ', '.join(errs)
-        ))
+        return ('Key columns not in target workflow: ' + ', '.join(errs))
 
     join_type_idx: int = params['type']
     join_type = _join_type_map[join_type_idx]
@@ -92,10 +86,10 @@ def render(table, params, *, fetch_result, **kwargs):
         import_cols, errs = parse_multicolumn_param(params['importcols'],
                                                     right_table)
         if errs:
-            return ProcessResult(error=(
+            return (
                 'Selected columns not in target workflow: '
                 + ', '.join(errs)
-            ))
+            )
         right_table = right_table[key_cols + import_cols]
 
     try:
@@ -106,11 +100,11 @@ def render(table, params, *, fetch_result, **kwargs):
                                on=key_cols, how=join_type,
                                lsuffix=lsuffix, rsuffix=rsuffix)
     except Exception as err:  # TODO catch something specific
-        return ProcessResult(error=(str(err)))
+        return str(err)
 
     new_table = new_table[sort_columns(table.columns, new_table.columns)]
 
-    return ProcessResult(new_table)
+    return new_table
 
 
 async def fetch(params: Params, *, workflow_id: int,

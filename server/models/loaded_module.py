@@ -112,11 +112,13 @@ class LoadedModule:
             kwargs['tab_name'] = tab_name
         if varkw or 'input_columns' in kwonlyargs:
             kwargs['input_columns'] = dict(
-                (c.name, RenderColumn(c.name, c.type.value))
+                (c.name, RenderColumn(c.name, c.type.name,
+                                      getattr(c.type, 'format', None)))
                 for c in input_result.table_shape.columns
             )
 
         table = input_result.dataframe
+        input_columns = input_result.columns
 
         time1 = time.time()
 
@@ -127,7 +129,7 @@ class LoadedModule:
             out = self._wrap_exception(err)
 
         try:
-            out = ProcessResult.coerce(out)
+            out = ProcessResult.coerce(out, try_fallback_columns=input_columns)
         except Exception as err:
             logger.exception('Exception coercing %s.render output',
                              self.module_id_name)

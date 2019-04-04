@@ -51,7 +51,10 @@ def render(table, params, *, fetch_result):
         table = table[1:]
         table.reset_index(drop=True, inplace=True)
 
-    return (table, fetch_result.error)
+    if fetch_result.error:
+        return (table, fetch_result.error)
+    else:
+        return table
 
 
 async def fetch(params):
