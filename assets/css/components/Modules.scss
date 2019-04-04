@@ -273,8 +273,12 @@
       font-size: 1.2rem;
       padding: .75rem .3rem .75rem 1.2rem;
       cursor: pointer;
-      opacity: .4;
-      &:hover{opacity: 1}
+      opacity: 1;
+      &:hover {
+          .context-collapse-button {
+            opacity: 1;
+          }
+        }
 
       i.icon-caret-right {font-size:1rem;}
 
@@ -298,12 +302,11 @@
       color:$light-gray;
       border-radius: 5rem;
       margin-right:.5rem;
-      opacity: 1;
+      opacity: 0.5;
 
       &.lesson-highlight {
         color: $brand-learn;
         font-weight: bold;
-        //border:1px solid $brand-learn;
         opacity: 1;
       }
     }

@@ -9,6 +9,7 @@ describe('Button', () => {
       index={2}
       className='module-search-in-between'
       isLessonHighlight={false}
+      isLastAddButton={false}
       {...extraProps}
     />
   )

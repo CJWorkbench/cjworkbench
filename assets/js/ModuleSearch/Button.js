@@ -8,7 +8,8 @@ export default class Button extends React.PureComponent {
     tabSlug: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
     className: PropTypes.string.isRequired,
-    isLessonHighlight: PropTypes.bool.isRequired
+    isLessonHighlight: PropTypes.bool.isRequired,
+    isLastAddButton: PropTypes.bool.isRequired
   }
 
   state = {
@@ -24,10 +25,11 @@ export default class Button extends React.PureComponent {
   }
 
   render () {
-    const { className, index, tabSlug, isLessonHighlight } = this.props
+    const { className, index, tabSlug, isLessonHighlight, isLastAddButton } = this.props
     const { isOpen } = this.state
 
     const buttonClassNames = [ 'search' ]
+    if (isOpen) buttonClassNames.push('active')
     if (isLessonHighlight) buttonClassNames.push('lesson-highlight')
 
     return (
@@ -36,7 +38,7 @@ export default class Button extends React.PureComponent {
           {({ ref }) => (
             <div ref={ref} className={className}>
               <button type='button' className={buttonClassNames.join(' ')} onClick={this.openSearch}>
-                <i className="icon-addc"></i>{' '}
+                <i className='icon-add'></i>{' '}
                 <span>ADD STEP</span>
               </button>
             </div>
@@ -44,6 +46,7 @@ export default class Button extends React.PureComponent {
         </Reference>
         {isOpen ? (
           <Popup
+            isLastAddButton={isLastAddButton}
             index={index}
             tabSlug={tabSlug}
             close={this.closeSearch}

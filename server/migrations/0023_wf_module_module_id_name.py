@@ -33,5 +33,5 @@ class Migration(migrations.Migration):
                 ''
             )
             """
-        ])
+        ], elidable=True)
     ]

@@ -118,6 +118,7 @@ class ModuleStackInsertSpot extends React.PureComponent {
           tabSlug={tabSlug}
           className={isLast ? 'module-search-last' : 'module-search-in-between'}
           isLessonHighlight={isLessonHighlight}
+          isLastAddButton={isLast}
         />
         <ModuleDropSpot
           index={index}

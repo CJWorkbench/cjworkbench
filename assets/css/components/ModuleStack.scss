@@ -34,11 +34,6 @@
     background: $brand-background;
     color: $brand-workspace;
     cursor: pointer;
-
-    &.lesson-highlight:not(:hover) {
-      background: $brand-learn;
-      color: white;
-    }
   }
 
   // Big button to call the module search at the bottom of stack
@@ -64,11 +59,11 @@
         margin-top: .1rem;
       }
 
-      &:not(:hover) {
+      &:not(:hover):not(.active):not(.lesson-highlight) {
         background: transparent;
       }
 
-      &:hover {
+      &:hover, &.active {
         opacity: 1;
       }
     }
@@ -98,13 +93,18 @@
       font-size: 1rem;
       border-radius: 1rem;
       transition-property: opacity;
-      transition-delay: .1s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here
+      transition-delay: .06s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here -- So that it does not flash when you hover past it. [PFC 2019-03-31]
+
+      i.icon-add {
+        position: relative;
+        top:-.18rem;
+      }
 
       span {
         display: none; // no text
       }
 
-      &:hover {
+      &:hover, &.active {
         opacity: 1;
       }
 

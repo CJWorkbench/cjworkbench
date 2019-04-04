@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
@@ -52,6 +52,26 @@ const PopperModifiers = {
     boundariesElement: 'viewport'
   }
 }
+const PopperMenuPortalContents = React.forwardRef(({ style, placement, scheduleUpdate, children }, ref) => {
+  // When menu entries change, update Popper. That handles this case:
+  //
+  // 1. Open menu from near bottom of page. It opens upward.
+  // 2. Search. Number of menu entries shrinks.
+  //
+  // Expected results: menu is repositioned so its _bottom_ stays in a constant
+  // position. That requires a scheduleUpdate().
+  useEffect(scheduleUpdate)
+
+  return (
+    <div
+      ref={ref}
+      className='react-select-menu-portal'
+      style={style}
+      data-placement={placement}
+      children={children}
+    />
+  )
+})
 function PopperMenuPortal (props) {
   return ReactDOM.createPortal((
     <Popper
@@ -59,12 +79,12 @@ function PopperMenuPortal (props) {
       placement={props.menuPlacement}
       modifiers={PopperModifiers}
     >
-      {({ ref, style, placement }) => (
-        <div
-          className='react-select-menu-portal'
+      {({ ref, style, placement, scheduleUpdate }) => (
+        <PopperMenuPortalContents
           ref={ref}
           style={style}
-          data-placement={placement}
+          placement={placement}
+          scheduleUpdate={scheduleUpdate}
           children={props.children}
         />
       )}
@@ -74,7 +94,7 @@ function PopperMenuPortal (props) {
 
 
 const DefaultOverrideComponents = {
-  MenuPortal: PopperMenuPortal,
+  MenuPortal: PopperMenuPortal
 }
 
 
