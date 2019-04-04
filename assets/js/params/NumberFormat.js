@@ -16,6 +16,7 @@ export default function NumberFormat (props) {
     { label: 'Decimal (no commas): 1500.0001', value: '{:}' },
     { label: 'Integer: 1,500', value: '{:,d}' },
     { label: 'Integer (no commas): 1500', value: '{:d}' },
+    'separator',
     { label: 'Currency: $1,500.00', value: '${:,.2f}' },
     { label: 'Percentage: 150,000.0%', value: '{:,.1%}' }
   ]
