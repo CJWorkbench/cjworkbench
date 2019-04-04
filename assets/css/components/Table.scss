@@ -365,21 +365,17 @@
         height: 3.5rem;
         padding-right: 0;
         padding-left: 0;
-        border-right: 0px solid $table-border;
-        border-bottom: 0px solid transparent;
+        border-right: 0;
+        border-bottom: 0;
         border-top: 0;
+        color: $brand-text--dark;
 
-        .react-grid-Cell__value>* {
+        .react-grid-Cell__value>* { // .cell-text, .cell-datetime, .cell-number, .cell-null
           @include table-content;
           margin: 0 1rem;
           overflow: hidden;
           word-wrap: nowrap;
           text-overflow: ellipsis;
-        }
-
-        // content of those cells
-        .cell-text, .cell-datetime {
-          color: $brand-text--dark;
         }
 
         .cell-number {
@@ -403,11 +399,18 @@
           // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
           &::before {
             // Add 'null' text in CSS, not React, so copy/paste won't copy it
+            @include font-nunito-extra-light;
             content: 'null';
             color: lighten($brand-text--dark, 30%);
             font-style: italic; // FIXME we don't ship this font as italic
             font-weight: 200;
           }
+        }
+
+        .react-grid-Cell__value>.cell-null {
+          // "overflow: hidden" seems to crop the fake-italics 'null' in number cells on
+          // Chrome 73 on Mac/Linux. TODO fix the font to correct this problem
+          overflow: visible;
         }
 
         // fix number column on the left
