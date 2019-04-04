@@ -10,4 +10,4 @@ parameters:
 - id_name: format
   type: numberformat
   name: Format
-  default: '{:,g}'
+  default: '{:,}'

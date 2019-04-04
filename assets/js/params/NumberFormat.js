@@ -11,13 +11,13 @@ import Menu from './Menu'
 export default function NumberFormat (props) {
   // TODO implement something legit. For now we just offer a few common options.
   const enumOptions = [
-    { label: 'Decimal: 1,234.5678', value: '{:,g}' },
-    { label: 'Decimal (fixed precision): 1,234.57', value: '{:,.2f}' },
-    { label: 'Decimal (no commas): 1234.5678', value: '{:g}' },
-    { label: 'Integer: 1,235', value: '{:,d}' },
-    { label: 'Integer (no commas): 1235', value: '{:d}' },
-    { label: 'Currency: $1,234.57', value: '${:,.2f}' },
-    { label: 'Percentage: 123,456.7%', value: '{:,.1%}' }
+    { label: 'Decimal: 1,500.0001', value: '{:,}' },
+    { label: 'Decimal (fixed precision): 1,500.00', value: '{:,.2f}' },
+    { label: 'Decimal (no commas): 1500.0001', value: '{:}' },
+    { label: 'Integer: 1,500', value: '{:,d}' },
+    { label: 'Integer (no commas): 1500', value: '{:d}' },
+    { label: 'Currency: $1,500.00', value: '${:,.2f}' },
+    { label: 'Percentage: 150,000.0%', value: '{:,.1%}' }
   ]
 
   return (
