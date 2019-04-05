@@ -35,29 +35,33 @@ describe('NumberCellFormatter', () => {
     })
   })
 
-  describe('a format string with prefix and suffix', () => {
+  it('renders floats with prefix and suffix', () => {
     const Formatter = columnToCellFormatter({ type: 'number', format: '${:,.2f}!' })
     const wrapper = (value) => shallow(<Formatter value={value} />)
-
-    it('renders floats', () => {
-      const w = wrapper(1234.567)
-      expect(w.text()).toEqual('$1,234.57!')
-      expect(w.find('.number-value').text()).toEqual('1,234.57')
-      expect(w.find('.number-prefix').text()).toEqual('$')
-      expect(w.find('.number-suffix').text()).toEqual('!')
-    })
+    const w = wrapper(1234.567)
+    expect(w.text()).toEqual('$1,234.57!')
+    expect(w.find('.number-value').text()).toEqual('1,234.57')
+    expect(w.find('.number-prefix').text()).toEqual('$')
+    expect(w.find('.number-suffix').text()).toEqual('!')
   })
 
-  describe('a percentage format string', () => {
+  it('renders percentage of floats with numberFormat, with "%" as a suffix', () => {
     const Formatter = columnToCellFormatter({ type: 'number', format: '{:,.1%}!' })
     const wrapper = (value) => shallow(<Formatter value={value} />)
+    const w = wrapper(12.3456)
+    expect(w.text()).toEqual('1,234.6%!')
+    expect(w.find('.number-value').text()).toEqual('1,234.6')
+    expect(w.find('.number-suffix').text()).toEqual('%!')
+  })
 
-    it('renders floats with numberFormat, with "%" as a suffix', () => {
-      const w = wrapper(12.3456)
-      expect(w.text()).toEqual('1,234.6%!')
-      expect(w.find('.number-value').text()).toEqual('1,234.6')
-      expect(w.find('.number-suffix').text()).toEqual('%!')
-    })
+  it('renders invalid format as default, "{:,}"', () => {
+    // Saw this in production on 2019-04-05 -- same day we deployed type
+    // formatting for the first time.
+
+    const Formatter = columnToCellFormatter({ type: 'number', format: '{:nope' })
+    const wrapper = (value) => shallow(<Formatter value={value} />)
+    const w = wrapper(1234.5678)
+    expect(w.text()).toEqual('1,234.5678')
   })
 })
 

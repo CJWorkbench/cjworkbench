@@ -20,8 +20,24 @@ export function TextCellFormatter ({value}) {
   return <div className='cell-text' title={value}>{value}</div>
 }
 
+/**
+ * Build { prefix, specifierString, suffix } from Python format string.
+ *
+ * format() is a function.
+ */
+function parseFormat (format) {
+  try {
+    let [ _, prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+    return { prefix, suffix, specifierString }
+  } catch (e) {
+    if (e instanceof TypeError) {
+      return { prefix: '', suffix: '', specifierString: ',' }
+    }
+  }
+}
+
 export function NumberCellFormatter (format) {
-  let [ _, prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+  let { prefix, suffix, specifierString } = parseFormat(format)
   // format with the same locale as in Python -- _not_ the user's locale
   const locale = d3FormatLocale(EnUsLocale)
   const d3Format = locale.format(specifierString)
