@@ -22,6 +22,7 @@ def main(directory):
             shutil.copytree(directory, importdir)
             shutil.rmtree(os.path.join(importdir, '.git'), ignore_errors=True)
             shutil.rmtree(os.path.join(importdir, '.eggs'), ignore_errors=True)
+            shutil.rmtree(os.path.join(importdir, 'node_modules'), ignore_errors=True)
 
             try:
                 import_module_from_directory('develop',
