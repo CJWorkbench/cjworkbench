@@ -273,331 +273,177 @@ exports[`Workflow list page renders correctly 1`] = `
       }
     >
       <div
-        className="nav"
+        className="workflow-lists"
       >
-        <ul
-          className="workflow-tabs"
-          id="workflow-tabs"
-          role="tablist"
+        <div
+          className="nav"
         >
-          <Tab
-            isActive={true}
-            name="owned"
-            setIsActive={[Function]}
+          <ul
+            className="workflow-tabs"
+            id="workflow-tabs"
+            role="tablist"
           >
-            <a
-              aria-controls="workflow-tab-owned"
-              aria-selected={true}
-              className="nav-link active"
-              href="#owned"
-              id="workflow-tab-link-owned"
-              onClick={[Function]}
+            <Tab
+              isActive={true}
+              name="owned"
+              setIsActive={[Function]}
             >
-              My workflows
-            </a>
-          </Tab>
-          <Tab
-            isActive={false}
-            name="shared"
-            setIsActive={[Function]}
-          >
-            <a
-              aria-controls="workflow-tab-shared"
-              aria-selected={false}
-              className="nav-link"
-              href="#shared"
-              id="workflow-tab-link-shared"
-              onClick={[Function]}
-            >
-              Shared with me
-            </a>
-          </Tab>
-          <Tab
-            isActive={false}
-            name="templates"
-            setIsActive={[Function]}
-          >
-            <a
-              aria-controls="workflow-tab-templates"
-              aria-selected={false}
-              className="nav-link"
-              href="#templates"
-              id="workflow-tab-link-templates"
-              onClick={[Function]}
-            >
-              Recipes
-            </a>
-          </Tab>
-        </ul>
-        <SortMenu
-          comparator="last_update|descending"
-          setComparator={[Function]}
-        >
-          <div
-            className="sort-menu"
-          >
-            <UncontrolledDropdown>
-              <Dropdown
-                isOpen={false}
-                toggle={[Function]}
-              >
-                <Manager
-                  tag={false}
-                >
-                  <div
-                    className="dropdown"
-                  >
-                    <DropdownToggle>
-                      <Reference>
-                        <InnerReference
-                          setReferenceNode={[Function]}
-                        >
-                          <button
-                            aria-expanded={false}
-                            className="btn btn-secondary"
-                            disabled={false}
-                            onClick={[Function]}
-                          >
-                            Sort 
-                            <i
-                              className="icon-caret-down"
-                            />
-                          </button>
-                        </InnerReference>
-                      </Reference>
-                    </DropdownToggle>
-                    <DropdownMenu />
-                  </div>
-                </Manager>
-              </Dropdown>
-            </UncontrolledDropdown>
-          </div>
-        </SortMenu>
-      </div>
-      <div
-        className="tab-content"
-      >
-        <OwnedWorkflowList
-          comparator="last_update|descending"
-          deleteWorkflow={[Function]}
-          duplicateWorkflow={[Function]}
-          isActive={true}
-          openShareModal={[Function]}
-          workflows={
-            Array [
-              Object {
-                "id": 1,
-                "is_owner": true,
-                "last_update": "2010-10-18T00:30:00",
-                "name": "Cleaning",
-                "owner_name": "Fred Frederson",
-                "public": true,
-              },
-              Object {
-                "id": 2,
-                "is_owner": true,
-                "last_update": "2010-10-18T00:20:00",
-                "name": "Charting",
-                "owner_name": "Fred Frederson",
-                "public": false,
-              },
-              Object {
-                "id": 3,
-                "is_owner": true,
-                "last_update": "2010-10-18T07:45:00",
-                "name": "Analysis",
-                "owner_name": "Fred Frederson",
-                "public": false,
-              },
-            ]
-          }
-        >
-          <div
-            aria-labelledby="workflow-tab-link-owned"
-            className="tab-pane show active"
-            id="workflow-tab-owned"
-            role="tabpanel"
-          >
-            <WorkflowList
-              comparator="last_update|descending"
-              deleteWorkflow={[Function]}
-              duplicateWorkflow={[Function]}
-              openShareModal={[Function]}
-              workflows={
-                Array [
-                  Object {
-                    "id": 1,
-                    "is_owner": true,
-                    "last_update": "2010-10-18T00:30:00",
-                    "name": "Cleaning",
-                    "owner_name": "Fred Frederson",
-                    "public": true,
-                  },
-                  Object {
-                    "id": 2,
-                    "is_owner": true,
-                    "last_update": "2010-10-18T00:20:00",
-                    "name": "Charting",
-                    "owner_name": "Fred Frederson",
-                    "public": false,
-                  },
-                  Object {
-                    "id": 3,
-                    "is_owner": true,
-                    "last_update": "2010-10-18T07:45:00",
-                    "name": "Analysis",
-                    "owner_name": "Fred Frederson",
-                    "public": false,
-                  },
-                ]
-              }
-            >
-              <Workflow
-                deleteWorkflow={[Function]}
-                duplicateWorkflow={[Function]}
-                key="3"
-                openShareModal={[Function]}
-                workflow={
-                  Object {
-                    "id": 3,
-                    "is_owner": true,
-                    "last_update": "2010-10-18T07:45:00",
-                    "name": "Analysis",
-                    "owner_name": "Fred Frederson",
-                    "public": false,
-                  }
-                }
+              <li
+                className="nav-item active"
               >
                 <a
-                  href="/workflows/3"
+                  aria-controls="workflow-tab-owned"
+                  aria-selected={true}
+                  className="nav-link active"
+                  href="#owned"
+                  id="workflow-tab-link-owned"
+                  onClick={[Function]}
                 >
-                  <div
-                    className="workflow-title"
-                  >
-                    Analysis
-                  </div>
-                  <WorkflowMetadata
-                    openShareModal={[Function]}
-                    workflow={
-                      Object {
-                        "id": 3,
-                        "is_owner": true,
-                        "last_update": "2010-10-18T07:45:00",
-                        "name": "Analysis",
-                        "owner_name": "Fred Frederson",
-                        "public": false,
-                      }
-                    }
-                  >
-                    <ul
-                      className="metadata-container"
-                    >
-                      <li
-                        className="attribution"
-                      >
-                        <span
-                          className="metadata"
-                        >
-                          by 
-                          Fred Frederson
-                        </span>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                      </li>
-                      <li>
-                        Updated 
-                        8y ago
-                      </li>
-                      <li>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <button
-                          className="public-private"
-                          onClick={[Function]}
-                          title="Change privacy"
-                        >
-                          private
-                        </button>
-                      </li>
-                    </ul>
-                  </WorkflowMetadata>
+                  My workflows
                 </a>
-                <WorkflowContextMenu
+              </li>
+            </Tab>
+            <Tab
+              isActive={false}
+              name="shared"
+              setIsActive={[Function]}
+            >
+              <li
+                className="nav-item"
+              >
+                <a
+                  aria-controls="workflow-tab-shared"
+                  aria-selected={false}
+                  className="nav-link"
+                  href="#shared"
+                  id="workflow-tab-link-shared"
+                  onClick={[Function]}
+                >
+                  Shared with me
+                </a>
+              </li>
+            </Tab>
+            <Tab
+              isActive={false}
+              name="templates"
+              setIsActive={[Function]}
+            >
+              <li
+                className="nav-item"
+              >
+                <a
+                  aria-controls="workflow-tab-templates"
+                  aria-selected={false}
+                  className="nav-link"
+                  href="#templates"
+                  id="workflow-tab-link-templates"
+                  onClick={[Function]}
+                >
+                  Recipes
+                </a>
+              </li>
+            </Tab>
+          </ul>
+          <SortMenu
+            comparator="last_update|descending"
+            setComparator={[Function]}
+          >
+            <div
+              className="sort-menu"
+            >
+              <UncontrolledDropdown>
+                <Dropdown
+                  isOpen={false}
+                  toggle={[Function]}
+                >
+                  <Manager
+                    tag={false}
+                  >
+                    <div
+                      className="dropdown"
+                    >
+                      <DropdownToggle>
+                        <Reference>
+                          <InnerReference
+                            setReferenceNode={[Function]}
+                          >
+                            <button
+                              aria-expanded={false}
+                              className="btn btn-secondary"
+                              disabled={false}
+                              onClick={[Function]}
+                            >
+                              Sort 
+                              <i
+                                className="icon-caret-down"
+                              />
+                            </button>
+                          </InnerReference>
+                        </Reference>
+                      </DropdownToggle>
+                      <DropdownMenu />
+                    </div>
+                  </Manager>
+                </Dropdown>
+              </UncontrolledDropdown>
+            </div>
+          </SortMenu>
+        </div>
+        <div
+          className="tab-content"
+        >
+          <OwnedWorkflowList
+            comparator="last_update|descending"
+            deleteWorkflow={[Function]}
+            duplicateWorkflow={[Function]}
+            isActive={true}
+            openShareModal={[Function]}
+            workflows={
+              Array [
+                Object {
+                  "id": 1,
+                  "is_owner": true,
+                  "last_update": "2010-10-18T00:30:00",
+                  "name": "Cleaning",
+                  "owner_name": "Fred Frederson",
+                  "public": true,
+                },
+                Object {
+                  "id": 2,
+                  "is_owner": true,
+                  "last_update": "2010-10-18T00:20:00",
+                  "name": "Charting",
+                  "owner_name": "Fred Frederson",
+                  "public": false,
+                },
+                Object {
+                  "id": 3,
+                  "is_owner": true,
+                  "last_update": "2010-10-18T07:45:00",
+                  "name": "Analysis",
+                  "owner_name": "Fred Frederson",
+                  "public": false,
+                },
+              ]
+            }
+          >
+            <TabPane
+              isActive={true}
+              name="owned"
+            >
+              <div
+                aria-labelledby="workflow-tab-link-owned"
+                className="tab-pane show active"
+                id="workflow-tab-owned"
+                role="tabpanel"
+              >
+                <WorkflowList
+                  comparator="last_update|descending"
                   deleteWorkflow={[Function]}
                   duplicateWorkflow={[Function]}
-                  workflowId={3}
-                >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      toggle={[Function]}
-                    >
-                      <Manager
-                        tag={false}
-                      >
-                        <div
-                          className="dropdown"
-                        >
-                          <DropdownToggle
-                            className="context-button"
-                          >
-                            <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
-                              >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary context-button"
-                                  disabled={false}
-                                  onClick={[Function]}
-                                >
-                                  <i
-                                    className="context-button--icon icon-more"
-                                  />
-                                </button>
-                              </InnerReference>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WorkflowContextMenu>
-              </Workflow>
-              <Workflow
-                deleteWorkflow={[Function]}
-                duplicateWorkflow={[Function]}
-                key="1"
-                openShareModal={[Function]}
-                workflow={
-                  Object {
-                    "id": 1,
-                    "is_owner": true,
-                    "last_update": "2010-10-18T00:30:00",
-                    "name": "Cleaning",
-                    "owner_name": "Fred Frederson",
-                    "public": true,
-                  }
-                }
-              >
-                <a
-                  href="/workflows/1"
-                >
-                  <div
-                    className="workflow-title"
-                  >
-                    Cleaning
-                  </div>
-                  <WorkflowMetadata
-                    openShareModal={[Function]}
-                    workflow={
+                  openShareModal={[Function]}
+                  workflows={
+                    Array [
                       Object {
                         "id": 1,
                         "is_owner": true,
@@ -605,118 +451,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         "name": "Cleaning",
                         "owner_name": "Fred Frederson",
                         "public": true,
-                      }
-                    }
-                  >
-                    <ul
-                      className="metadata-container"
-                    >
-                      <li
-                        className="attribution"
-                      >
-                        <span
-                          className="metadata"
-                        >
-                          by 
-                          Fred Frederson
-                        </span>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                      </li>
-                      <li>
-                        Updated 
-                        8y ago
-                      </li>
-                      <li>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <button
-                          className="public-private"
-                          onClick={[Function]}
-                          title="Change privacy"
-                        >
-                          public
-                        </button>
-                      </li>
-                    </ul>
-                  </WorkflowMetadata>
-                </a>
-                <WorkflowContextMenu
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
-                  workflowId={1}
-                >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      toggle={[Function]}
-                    >
-                      <Manager
-                        tag={false}
-                      >
-                        <div
-                          className="dropdown"
-                        >
-                          <DropdownToggle
-                            className="context-button"
-                          >
-                            <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
-                              >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary context-button"
-                                  disabled={false}
-                                  onClick={[Function]}
-                                >
-                                  <i
-                                    className="context-button--icon icon-more"
-                                  />
-                                </button>
-                              </InnerReference>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WorkflowContextMenu>
-              </Workflow>
-              <Workflow
-                deleteWorkflow={[Function]}
-                duplicateWorkflow={[Function]}
-                key="2"
-                openShareModal={[Function]}
-                workflow={
-                  Object {
-                    "id": 2,
-                    "is_owner": true,
-                    "last_update": "2010-10-18T00:20:00",
-                    "name": "Charting",
-                    "owner_name": "Fred Frederson",
-                    "public": false,
-                  }
-                }
-              >
-                <a
-                  href="/workflows/2"
-                >
-                  <div
-                    className="workflow-title"
-                  >
-                    Charting
-                  </div>
-                  <WorkflowMetadata
-                    openShareModal={[Function]}
-                    workflow={
+                      },
                       Object {
                         "id": 2,
                         "is_owner": true,
@@ -724,299 +459,439 @@ exports[`Workflow list page renders correctly 1`] = `
                         "name": "Charting",
                         "owner_name": "Fred Frederson",
                         "public": false,
-                      }
-                    }
-                  >
-                    <ul
-                      className="metadata-container"
-                    >
-                      <li
-                        className="attribution"
-                      >
-                        <span
-                          className="metadata"
-                        >
-                          by 
-                          Fred Frederson
-                        </span>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                      </li>
-                      <li>
-                        Updated 
-                        8y ago
-                      </li>
-                      <li>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <button
-                          className="public-private"
-                          onClick={[Function]}
-                          title="Change privacy"
-                        >
-                          private
-                        </button>
-                      </li>
-                    </ul>
-                  </WorkflowMetadata>
-                </a>
-                <WorkflowContextMenu
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
-                  workflowId={2}
-                >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      toggle={[Function]}
-                    >
-                      <Manager
-                        tag={false}
-                      >
-                        <div
-                          className="dropdown"
-                        >
-                          <DropdownToggle
-                            className="context-button"
-                          >
-                            <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
-                              >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary context-button"
-                                  disabled={false}
-                                  onClick={[Function]}
-                                >
-                                  <i
-                                    className="context-button--icon icon-more"
-                                  />
-                                </button>
-                              </InnerReference>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WorkflowContextMenu>
-              </Workflow>
-            </WorkflowList>
-          </div>
-        </OwnedWorkflowList>
-        <SharedWorkflowList
-          comparator="last_update|descending"
-          deleteWorkflow={[Function]}
-          duplicateWorkflow={[Function]}
-          isActive={false}
-          openShareModal={[Function]}
-          workflows={
-            Array [
-              Object {
-                "id": 7,
-                "is_owner": false,
-                "last_update": "2010-10-18T00:30:00",
-                "name": "Messy data cleanup",
-                "owner_name": "John Johnson",
-                "public": false,
-              },
-              Object {
-                "id": 8,
-                "is_owner": false,
-                "last_update": "2010-10-18T00:45:00",
-                "name": "Document search",
-                "owner_name": "Sally Sallerson",
-                "public": true,
-              },
-            ]
-          }
-        >
-          <div
-            aria-labelledby="workflow-tab-link-shared"
-            className="tab-pane"
-            id="workflow-tab-shared"
-            role="tabpanel"
-          >
-            <WorkflowList
-              comparator="last_update|descending"
-              deleteWorkflow={null}
-              duplicateWorkflow={[Function]}
-              openShareModal={[Function]}
-              workflows={
-                Array [
-                  Object {
-                    "id": 7,
-                    "is_owner": false,
-                    "last_update": "2010-10-18T00:30:00",
-                    "name": "Messy data cleanup",
-                    "owner_name": "John Johnson",
-                    "public": false,
-                  },
-                  Object {
-                    "id": 8,
-                    "is_owner": false,
-                    "last_update": "2010-10-18T00:45:00",
-                    "name": "Document search",
-                    "owner_name": "Sally Sallerson",
-                    "public": true,
-                  },
-                ]
-              }
-            >
-              <Workflow
-                deleteWorkflow={null}
-                duplicateWorkflow={[Function]}
-                key="8"
-                openShareModal={[Function]}
-                workflow={
-                  Object {
-                    "id": 8,
-                    "is_owner": false,
-                    "last_update": "2010-10-18T00:45:00",
-                    "name": "Document search",
-                    "owner_name": "Sally Sallerson",
-                    "public": true,
+                      },
+                      Object {
+                        "id": 3,
+                        "is_owner": true,
+                        "last_update": "2010-10-18T07:45:00",
+                        "name": "Analysis",
+                        "owner_name": "Fred Frederson",
+                        "public": false,
+                      },
+                    ]
                   }
-                }
-              >
-                <a
-                  href="/workflows/8"
                 >
                   <div
-                    className="workflow-title"
+                    className="workflow-list"
                   >
-                    Document search
-                  </div>
-                  <WorkflowMetadata
-                    openShareModal={[Function]}
-                    workflow={
-                      Object {
-                        "id": 8,
-                        "is_owner": false,
-                        "last_update": "2010-10-18T00:45:00",
-                        "name": "Document search",
-                        "owner_name": "Sally Sallerson",
-                        "public": true,
+                    <Workflow
+                      deleteWorkflow={[Function]}
+                      duplicateWorkflow={[Function]}
+                      key="3"
+                      openShareModal={[Function]}
+                      workflow={
+                        Object {
+                          "id": 3,
+                          "is_owner": true,
+                          "last_update": "2010-10-18T07:45:00",
+                          "name": "Analysis",
+                          "owner_name": "Fred Frederson",
+                          "public": false,
+                        }
                       }
-                    }
-                  >
-                    <ul
-                      className="metadata-container"
                     >
-                      <li
-                        className="attribution"
+                      <div
+                        className="workflow"
                       >
-                        <span
-                          className="metadata"
+                        <a
+                          href="/workflows/3"
                         >
-                          by 
-                          Sally Sallerson
-                        </span>
-                        <span
-                          className="separator"
+                          <div
+                            className="workflow-title"
+                          >
+                            Analysis
+                          </div>
+                          <WorkflowMetadata
+                            openShareModal={[Function]}
+                            workflow={
+                              Object {
+                                "id": 3,
+                                "is_owner": true,
+                                "last_update": "2010-10-18T07:45:00",
+                                "name": "Analysis",
+                                "owner_name": "Fred Frederson",
+                                "public": false,
+                              }
+                            }
+                          >
+                            <ul
+                              className="metadata-container"
+                            >
+                              <li
+                                className="attribution"
+                              >
+                                <span
+                                  className="metadata"
+                                >
+                                  by 
+                                  Fred Frederson
+                                </span>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                              </li>
+                              <li>
+                                Updated 
+                                8y ago
+                              </li>
+                              <li>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                                <button
+                                  className="public-private"
+                                  onClick={[Function]}
+                                  title="Change privacy"
+                                >
+                                  private
+                                </button>
+                              </li>
+                            </ul>
+                          </WorkflowMetadata>
+                        </a>
+                        <WorkflowContextMenu
+                          deleteWorkflow={[Function]}
+                          duplicateWorkflow={[Function]}
+                          workflowId={3}
                         >
-                          -
-                        </span>
-                      </li>
-                      <li>
-                        Updated 
-                        8y ago
-                      </li>
-                      <li>
-                        <span
-                          className="separator"
+                          <UncontrolledDropdown>
+                            <Dropdown
+                              isOpen={false}
+                              toggle={[Function]}
+                            >
+                              <Manager
+                                tag={false}
+                              >
+                                <div
+                                  className="dropdown"
+                                >
+                                  <DropdownToggle
+                                    className="context-button"
+                                  >
+                                    <Reference>
+                                      <InnerReference
+                                        setReferenceNode={[Function]}
+                                      >
+                                        <button
+                                          aria-expanded={false}
+                                          className="btn btn-secondary context-button"
+                                          disabled={false}
+                                          onClick={[Function]}
+                                        >
+                                          <i
+                                            className="context-button--icon icon-more"
+                                          />
+                                        </button>
+                                      </InnerReference>
+                                    </Reference>
+                                  </DropdownToggle>
+                                  <DropdownMenu />
+                                </div>
+                              </Manager>
+                            </Dropdown>
+                          </UncontrolledDropdown>
+                        </WorkflowContextMenu>
+                      </div>
+                    </Workflow>
+                    <Workflow
+                      deleteWorkflow={[Function]}
+                      duplicateWorkflow={[Function]}
+                      key="1"
+                      openShareModal={[Function]}
+                      workflow={
+                        Object {
+                          "id": 1,
+                          "is_owner": true,
+                          "last_update": "2010-10-18T00:30:00",
+                          "name": "Cleaning",
+                          "owner_name": "Fred Frederson",
+                          "public": true,
+                        }
+                      }
+                    >
+                      <div
+                        className="workflow"
+                      >
+                        <a
+                          href="/workflows/1"
                         >
-                          -
-                        </span>
-                        <button
-                          className="public-private"
-                          onClick={[Function]}
-                          title="Change privacy"
+                          <div
+                            className="workflow-title"
+                          >
+                            Cleaning
+                          </div>
+                          <WorkflowMetadata
+                            openShareModal={[Function]}
+                            workflow={
+                              Object {
+                                "id": 1,
+                                "is_owner": true,
+                                "last_update": "2010-10-18T00:30:00",
+                                "name": "Cleaning",
+                                "owner_name": "Fred Frederson",
+                                "public": true,
+                              }
+                            }
+                          >
+                            <ul
+                              className="metadata-container"
+                            >
+                              <li
+                                className="attribution"
+                              >
+                                <span
+                                  className="metadata"
+                                >
+                                  by 
+                                  Fred Frederson
+                                </span>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                              </li>
+                              <li>
+                                Updated 
+                                8y ago
+                              </li>
+                              <li>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                                <button
+                                  className="public-private"
+                                  onClick={[Function]}
+                                  title="Change privacy"
+                                >
+                                  public
+                                </button>
+                              </li>
+                            </ul>
+                          </WorkflowMetadata>
+                        </a>
+                        <WorkflowContextMenu
+                          deleteWorkflow={[Function]}
+                          duplicateWorkflow={[Function]}
+                          workflowId={1}
                         >
-                          public
-                        </button>
-                      </li>
-                    </ul>
-                  </WorkflowMetadata>
-                </a>
-                <WorkflowContextMenu
+                          <UncontrolledDropdown>
+                            <Dropdown
+                              isOpen={false}
+                              toggle={[Function]}
+                            >
+                              <Manager
+                                tag={false}
+                              >
+                                <div
+                                  className="dropdown"
+                                >
+                                  <DropdownToggle
+                                    className="context-button"
+                                  >
+                                    <Reference>
+                                      <InnerReference
+                                        setReferenceNode={[Function]}
+                                      >
+                                        <button
+                                          aria-expanded={false}
+                                          className="btn btn-secondary context-button"
+                                          disabled={false}
+                                          onClick={[Function]}
+                                        >
+                                          <i
+                                            className="context-button--icon icon-more"
+                                          />
+                                        </button>
+                                      </InnerReference>
+                                    </Reference>
+                                  </DropdownToggle>
+                                  <DropdownMenu />
+                                </div>
+                              </Manager>
+                            </Dropdown>
+                          </UncontrolledDropdown>
+                        </WorkflowContextMenu>
+                      </div>
+                    </Workflow>
+                    <Workflow
+                      deleteWorkflow={[Function]}
+                      duplicateWorkflow={[Function]}
+                      key="2"
+                      openShareModal={[Function]}
+                      workflow={
+                        Object {
+                          "id": 2,
+                          "is_owner": true,
+                          "last_update": "2010-10-18T00:20:00",
+                          "name": "Charting",
+                          "owner_name": "Fred Frederson",
+                          "public": false,
+                        }
+                      }
+                    >
+                      <div
+                        className="workflow"
+                      >
+                        <a
+                          href="/workflows/2"
+                        >
+                          <div
+                            className="workflow-title"
+                          >
+                            Charting
+                          </div>
+                          <WorkflowMetadata
+                            openShareModal={[Function]}
+                            workflow={
+                              Object {
+                                "id": 2,
+                                "is_owner": true,
+                                "last_update": "2010-10-18T00:20:00",
+                                "name": "Charting",
+                                "owner_name": "Fred Frederson",
+                                "public": false,
+                              }
+                            }
+                          >
+                            <ul
+                              className="metadata-container"
+                            >
+                              <li
+                                className="attribution"
+                              >
+                                <span
+                                  className="metadata"
+                                >
+                                  by 
+                                  Fred Frederson
+                                </span>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                              </li>
+                              <li>
+                                Updated 
+                                8y ago
+                              </li>
+                              <li>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                                <button
+                                  className="public-private"
+                                  onClick={[Function]}
+                                  title="Change privacy"
+                                >
+                                  private
+                                </button>
+                              </li>
+                            </ul>
+                          </WorkflowMetadata>
+                        </a>
+                        <WorkflowContextMenu
+                          deleteWorkflow={[Function]}
+                          duplicateWorkflow={[Function]}
+                          workflowId={2}
+                        >
+                          <UncontrolledDropdown>
+                            <Dropdown
+                              isOpen={false}
+                              toggle={[Function]}
+                            >
+                              <Manager
+                                tag={false}
+                              >
+                                <div
+                                  className="dropdown"
+                                >
+                                  <DropdownToggle
+                                    className="context-button"
+                                  >
+                                    <Reference>
+                                      <InnerReference
+                                        setReferenceNode={[Function]}
+                                      >
+                                        <button
+                                          aria-expanded={false}
+                                          className="btn btn-secondary context-button"
+                                          disabled={false}
+                                          onClick={[Function]}
+                                        >
+                                          <i
+                                            className="context-button--icon icon-more"
+                                          />
+                                        </button>
+                                      </InnerReference>
+                                    </Reference>
+                                  </DropdownToggle>
+                                  <DropdownMenu />
+                                </div>
+                              </Manager>
+                            </Dropdown>
+                          </UncontrolledDropdown>
+                        </WorkflowContextMenu>
+                      </div>
+                    </Workflow>
+                  </div>
+                </WorkflowList>
+              </div>
+            </TabPane>
+          </OwnedWorkflowList>
+          <SharedWorkflowList
+            comparator="last_update|descending"
+            deleteWorkflow={[Function]}
+            duplicateWorkflow={[Function]}
+            isActive={false}
+            openShareModal={[Function]}
+            workflows={
+              Array [
+                Object {
+                  "id": 7,
+                  "is_owner": false,
+                  "last_update": "2010-10-18T00:30:00",
+                  "name": "Messy data cleanup",
+                  "owner_name": "John Johnson",
+                  "public": false,
+                },
+                Object {
+                  "id": 8,
+                  "is_owner": false,
+                  "last_update": "2010-10-18T00:45:00",
+                  "name": "Document search",
+                  "owner_name": "Sally Sallerson",
+                  "public": true,
+                },
+              ]
+            }
+          >
+            <TabPane
+              isActive={false}
+              name="shared"
+            >
+              <div
+                aria-labelledby="workflow-tab-link-shared"
+                className="tab-pane"
+                id="workflow-tab-shared"
+                role="tabpanel"
+              >
+                <WorkflowList
+                  comparator="last_update|descending"
                   deleteWorkflow={null}
                   duplicateWorkflow={[Function]}
-                  workflowId={8}
-                >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      toggle={[Function]}
-                    >
-                      <Manager
-                        tag={false}
-                      >
-                        <div
-                          className="dropdown"
-                        >
-                          <DropdownToggle
-                            className="context-button"
-                          >
-                            <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
-                              >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary context-button"
-                                  disabled={false}
-                                  onClick={[Function]}
-                                >
-                                  <i
-                                    className="context-button--icon icon-more"
-                                  />
-                                </button>
-                              </InnerReference>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WorkflowContextMenu>
-              </Workflow>
-              <Workflow
-                deleteWorkflow={null}
-                duplicateWorkflow={[Function]}
-                key="7"
-                openShareModal={[Function]}
-                workflow={
-                  Object {
-                    "id": 7,
-                    "is_owner": false,
-                    "last_update": "2010-10-18T00:30:00",
-                    "name": "Messy data cleanup",
-                    "owner_name": "John Johnson",
-                    "public": false,
-                  }
-                }
-              >
-                <a
-                  href="/workflows/7"
-                >
-                  <div
-                    className="workflow-title"
-                  >
-                    Messy data cleanup
-                  </div>
-                  <WorkflowMetadata
-                    openShareModal={[Function]}
-                    workflow={
+                  openShareModal={[Function]}
+                  workflows={
+                    Array [
                       Object {
                         "id": 7,
                         "is_owner": false,
@@ -1024,164 +899,308 @@ exports[`Workflow list page renders correctly 1`] = `
                         "name": "Messy data cleanup",
                         "owner_name": "John Johnson",
                         "public": false,
-                      }
-                    }
-                  >
-                    <ul
-                      className="metadata-container"
-                    >
-                      <li
-                        className="attribution"
-                      >
-                        <span
-                          className="metadata"
-                        >
-                          by 
-                          John Johnson
-                        </span>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                      </li>
-                      <li>
-                        Updated 
-                        8y ago
-                      </li>
-                      <li>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <button
-                          className="public-private"
-                          onClick={[Function]}
-                          title="Change privacy"
-                        >
-                          private
-                        </button>
-                      </li>
-                    </ul>
-                  </WorkflowMetadata>
-                </a>
-                <WorkflowContextMenu
-                  deleteWorkflow={null}
-                  duplicateWorkflow={[Function]}
-                  workflowId={7}
-                >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      toggle={[Function]}
-                    >
-                      <Manager
-                        tag={false}
-                      >
-                        <div
-                          className="dropdown"
-                        >
-                          <DropdownToggle
-                            className="context-button"
-                          >
-                            <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
-                              >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary context-button"
-                                  disabled={false}
-                                  onClick={[Function]}
-                                >
-                                  <i
-                                    className="context-button--icon icon-more"
-                                  />
-                                </button>
-                              </InnerReference>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WorkflowContextMenu>
-              </Workflow>
-            </WorkflowList>
-          </div>
-        </SharedWorkflowList>
-        <TemplatesWorkflowList
-          comparator="last_update|descending"
-          deleteWorkflow={[Function]}
-          duplicateWorkflow={[Function]}
-          isActive={false}
-          openShareModal={[Function]}
-          workflows={
-            Array [
-              Object {
-                "id": 10,
-                "is_owner": false,
-                "last_update": "2010-10-18T00:30:00",
-                "name": "Demo 1",
-                "owner_name": "Workbench",
-                "public": false,
-              },
-            ]
-          }
-        >
-          <div
-            aria-labelledby="workflow-tab-link-templates"
-            className="tab-pane"
-            id="workflow-tab-templates"
-            role="tabpanel"
-          >
-            <WorkflowList
-              comparator="last_update|descending"
-              deleteWorkflow={null}
-              duplicateWorkflow={[Function]}
-              openShareModal={[Function]}
-              workflows={
-                Array [
-                  Object {
-                    "id": 10,
-                    "is_owner": false,
-                    "last_update": "2010-10-18T00:30:00",
-                    "name": "Demo 1",
-                    "owner_name": "Workbench",
-                    "public": false,
-                  },
-                ]
-              }
-            >
-              <Workflow
-                deleteWorkflow={null}
-                duplicateWorkflow={[Function]}
-                key="10"
-                openShareModal={[Function]}
-                workflow={
-                  Object {
-                    "id": 10,
-                    "is_owner": false,
-                    "last_update": "2010-10-18T00:30:00",
-                    "name": "Demo 1",
-                    "owner_name": "Workbench",
-                    "public": false,
+                      },
+                      Object {
+                        "id": 8,
+                        "is_owner": false,
+                        "last_update": "2010-10-18T00:45:00",
+                        "name": "Document search",
+                        "owner_name": "Sally Sallerson",
+                        "public": true,
+                      },
+                    ]
                   }
-                }
-              >
-                <a
-                  href="/workflows/10"
                 >
                   <div
-                    className="workflow-title"
+                    className="workflow-list"
                   >
-                    Demo 1
+                    <Workflow
+                      deleteWorkflow={null}
+                      duplicateWorkflow={[Function]}
+                      key="8"
+                      openShareModal={[Function]}
+                      workflow={
+                        Object {
+                          "id": 8,
+                          "is_owner": false,
+                          "last_update": "2010-10-18T00:45:00",
+                          "name": "Document search",
+                          "owner_name": "Sally Sallerson",
+                          "public": true,
+                        }
+                      }
+                    >
+                      <div
+                        className="workflow"
+                      >
+                        <a
+                          href="/workflows/8"
+                        >
+                          <div
+                            className="workflow-title"
+                          >
+                            Document search
+                          </div>
+                          <WorkflowMetadata
+                            openShareModal={[Function]}
+                            workflow={
+                              Object {
+                                "id": 8,
+                                "is_owner": false,
+                                "last_update": "2010-10-18T00:45:00",
+                                "name": "Document search",
+                                "owner_name": "Sally Sallerson",
+                                "public": true,
+                              }
+                            }
+                          >
+                            <ul
+                              className="metadata-container"
+                            >
+                              <li
+                                className="attribution"
+                              >
+                                <span
+                                  className="metadata"
+                                >
+                                  by 
+                                  Sally Sallerson
+                                </span>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                              </li>
+                              <li>
+                                Updated 
+                                8y ago
+                              </li>
+                              <li>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                                <button
+                                  className="public-private"
+                                  onClick={[Function]}
+                                  title="Change privacy"
+                                >
+                                  public
+                                </button>
+                              </li>
+                            </ul>
+                          </WorkflowMetadata>
+                        </a>
+                        <WorkflowContextMenu
+                          deleteWorkflow={null}
+                          duplicateWorkflow={[Function]}
+                          workflowId={8}
+                        >
+                          <UncontrolledDropdown>
+                            <Dropdown
+                              isOpen={false}
+                              toggle={[Function]}
+                            >
+                              <Manager
+                                tag={false}
+                              >
+                                <div
+                                  className="dropdown"
+                                >
+                                  <DropdownToggle
+                                    className="context-button"
+                                  >
+                                    <Reference>
+                                      <InnerReference
+                                        setReferenceNode={[Function]}
+                                      >
+                                        <button
+                                          aria-expanded={false}
+                                          className="btn btn-secondary context-button"
+                                          disabled={false}
+                                          onClick={[Function]}
+                                        >
+                                          <i
+                                            className="context-button--icon icon-more"
+                                          />
+                                        </button>
+                                      </InnerReference>
+                                    </Reference>
+                                  </DropdownToggle>
+                                  <DropdownMenu />
+                                </div>
+                              </Manager>
+                            </Dropdown>
+                          </UncontrolledDropdown>
+                        </WorkflowContextMenu>
+                      </div>
+                    </Workflow>
+                    <Workflow
+                      deleteWorkflow={null}
+                      duplicateWorkflow={[Function]}
+                      key="7"
+                      openShareModal={[Function]}
+                      workflow={
+                        Object {
+                          "id": 7,
+                          "is_owner": false,
+                          "last_update": "2010-10-18T00:30:00",
+                          "name": "Messy data cleanup",
+                          "owner_name": "John Johnson",
+                          "public": false,
+                        }
+                      }
+                    >
+                      <div
+                        className="workflow"
+                      >
+                        <a
+                          href="/workflows/7"
+                        >
+                          <div
+                            className="workflow-title"
+                          >
+                            Messy data cleanup
+                          </div>
+                          <WorkflowMetadata
+                            openShareModal={[Function]}
+                            workflow={
+                              Object {
+                                "id": 7,
+                                "is_owner": false,
+                                "last_update": "2010-10-18T00:30:00",
+                                "name": "Messy data cleanup",
+                                "owner_name": "John Johnson",
+                                "public": false,
+                              }
+                            }
+                          >
+                            <ul
+                              className="metadata-container"
+                            >
+                              <li
+                                className="attribution"
+                              >
+                                <span
+                                  className="metadata"
+                                >
+                                  by 
+                                  John Johnson
+                                </span>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                              </li>
+                              <li>
+                                Updated 
+                                8y ago
+                              </li>
+                              <li>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                                <button
+                                  className="public-private"
+                                  onClick={[Function]}
+                                  title="Change privacy"
+                                >
+                                  private
+                                </button>
+                              </li>
+                            </ul>
+                          </WorkflowMetadata>
+                        </a>
+                        <WorkflowContextMenu
+                          deleteWorkflow={null}
+                          duplicateWorkflow={[Function]}
+                          workflowId={7}
+                        >
+                          <UncontrolledDropdown>
+                            <Dropdown
+                              isOpen={false}
+                              toggle={[Function]}
+                            >
+                              <Manager
+                                tag={false}
+                              >
+                                <div
+                                  className="dropdown"
+                                >
+                                  <DropdownToggle
+                                    className="context-button"
+                                  >
+                                    <Reference>
+                                      <InnerReference
+                                        setReferenceNode={[Function]}
+                                      >
+                                        <button
+                                          aria-expanded={false}
+                                          className="btn btn-secondary context-button"
+                                          disabled={false}
+                                          onClick={[Function]}
+                                        >
+                                          <i
+                                            className="context-button--icon icon-more"
+                                          />
+                                        </button>
+                                      </InnerReference>
+                                    </Reference>
+                                  </DropdownToggle>
+                                  <DropdownMenu />
+                                </div>
+                              </Manager>
+                            </Dropdown>
+                          </UncontrolledDropdown>
+                        </WorkflowContextMenu>
+                      </div>
+                    </Workflow>
                   </div>
-                  <WorkflowMetadata
-                    openShareModal={[Function]}
-                    workflow={
+                </WorkflowList>
+              </div>
+            </TabPane>
+          </SharedWorkflowList>
+          <TemplatesWorkflowList
+            comparator="last_update|descending"
+            deleteWorkflow={[Function]}
+            duplicateWorkflow={[Function]}
+            isActive={false}
+            openShareModal={[Function]}
+            workflows={
+              Array [
+                Object {
+                  "id": 10,
+                  "is_owner": false,
+                  "last_update": "2010-10-18T00:30:00",
+                  "name": "Demo 1",
+                  "owner_name": "Workbench",
+                  "public": false,
+                },
+              ]
+            }
+          >
+            <TabPane
+              isActive={false}
+              name="templates"
+            >
+              <div
+                aria-labelledby="workflow-tab-link-templates"
+                className="tab-pane"
+                id="workflow-tab-templates"
+                role="tabpanel"
+              >
+                <WorkflowList
+                  comparator="last_update|descending"
+                  deleteWorkflow={null}
+                  duplicateWorkflow={[Function]}
+                  openShareModal={[Function]}
+                  workflows={
+                    Array [
                       Object {
                         "id": 10,
                         "is_owner": false,
@@ -1189,94 +1208,142 @@ exports[`Workflow list page renders correctly 1`] = `
                         "name": "Demo 1",
                         "owner_name": "Workbench",
                         "public": false,
-                      }
-                    }
-                  >
-                    <ul
-                      className="metadata-container"
-                    >
-                      <li
-                        className="attribution"
-                      >
-                        <span
-                          className="metadata"
-                        >
-                          by 
-                          Workbench
-                        </span>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                      </li>
-                      <li>
-                        Updated 
-                        8y ago
-                      </li>
-                      <li>
-                        <span
-                          className="separator"
-                        >
-                          -
-                        </span>
-                        <button
-                          className="public-private"
-                          onClick={[Function]}
-                          title="Change privacy"
-                        >
-                          private
-                        </button>
-                      </li>
-                    </ul>
-                  </WorkflowMetadata>
-                </a>
-                <WorkflowContextMenu
-                  deleteWorkflow={null}
-                  duplicateWorkflow={[Function]}
-                  workflowId={10}
+                      },
+                    ]
+                  }
                 >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      toggle={[Function]}
+                  <div
+                    className="workflow-list"
+                  >
+                    <Workflow
+                      deleteWorkflow={null}
+                      duplicateWorkflow={[Function]}
+                      key="10"
+                      openShareModal={[Function]}
+                      workflow={
+                        Object {
+                          "id": 10,
+                          "is_owner": false,
+                          "last_update": "2010-10-18T00:30:00",
+                          "name": "Demo 1",
+                          "owner_name": "Workbench",
+                          "public": false,
+                        }
+                      }
                     >
-                      <Manager
-                        tag={false}
+                      <div
+                        className="workflow"
                       >
-                        <div
-                          className="dropdown"
+                        <a
+                          href="/workflows/10"
                         >
-                          <DropdownToggle
-                            className="context-button"
+                          <div
+                            className="workflow-title"
                           >
-                            <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
+                            Demo 1
+                          </div>
+                          <WorkflowMetadata
+                            openShareModal={[Function]}
+                            workflow={
+                              Object {
+                                "id": 10,
+                                "is_owner": false,
+                                "last_update": "2010-10-18T00:30:00",
+                                "name": "Demo 1",
+                                "owner_name": "Workbench",
+                                "public": false,
+                              }
+                            }
+                          >
+                            <ul
+                              className="metadata-container"
+                            >
+                              <li
+                                className="attribution"
                               >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary context-button"
-                                  disabled={false}
-                                  onClick={[Function]}
+                                <span
+                                  className="metadata"
                                 >
-                                  <i
-                                    className="context-button--icon icon-more"
-                                  />
+                                  by 
+                                  Workbench
+                                </span>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                              </li>
+                              <li>
+                                Updated 
+                                8y ago
+                              </li>
+                              <li>
+                                <span
+                                  className="separator"
+                                >
+                                  -
+                                </span>
+                                <button
+                                  className="public-private"
+                                  onClick={[Function]}
+                                  title="Change privacy"
+                                >
+                                  private
                                 </button>
-                              </InnerReference>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WorkflowContextMenu>
-              </Workflow>
-            </WorkflowList>
-          </div>
-        </TemplatesWorkflowList>
+                              </li>
+                            </ul>
+                          </WorkflowMetadata>
+                        </a>
+                        <WorkflowContextMenu
+                          deleteWorkflow={null}
+                          duplicateWorkflow={[Function]}
+                          workflowId={10}
+                        >
+                          <UncontrolledDropdown>
+                            <Dropdown
+                              isOpen={false}
+                              toggle={[Function]}
+                            >
+                              <Manager
+                                tag={false}
+                              >
+                                <div
+                                  className="dropdown"
+                                >
+                                  <DropdownToggle
+                                    className="context-button"
+                                  >
+                                    <Reference>
+                                      <InnerReference
+                                        setReferenceNode={[Function]}
+                                      >
+                                        <button
+                                          aria-expanded={false}
+                                          className="btn btn-secondary context-button"
+                                          disabled={false}
+                                          onClick={[Function]}
+                                        >
+                                          <i
+                                            className="context-button--icon icon-more"
+                                          />
+                                        </button>
+                                      </InnerReference>
+                                    </Reference>
+                                  </DropdownToggle>
+                                  <DropdownMenu />
+                                </div>
+                              </Manager>
+                            </Dropdown>
+                          </UncontrolledDropdown>
+                        </WorkflowContextMenu>
+                      </div>
+                    </Workflow>
+                  </div>
+                </WorkflowList>
+              </div>
+            </TabPane>
+          </TemplatesWorkflowList>
+        </div>
       </div>
     </WorkflowLists>
   </div>

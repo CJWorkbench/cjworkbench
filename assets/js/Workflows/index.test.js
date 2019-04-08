@@ -156,9 +156,7 @@ describe('Workflow list page', () => {
     w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
     expect(w.find('.tab-pane.active Workflow')).toHaveLength(2)
 
-    act(() => {
-      w.find('.tab-pane.active Workflow:first-child').prop('duplicateWorkflow')(7)
-    })
+    w.find('.tab-pane.active Workflow:first-child').prop('duplicateWorkflow')(7)
     expect(w.prop('api').duplicateWorkflow).toHaveBeenCalledWith(7)
     await tick()
     w.update()
