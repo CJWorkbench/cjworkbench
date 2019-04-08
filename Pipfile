@@ -37,7 +37,7 @@ asyncpg = "*"
 oauthlib = "*"
 "fb-re2" = "*"
 hext = "==0.2.0"
-jsonschema = "==3.0.0b3"
+jsonschema = "==3.0.1"
 rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
