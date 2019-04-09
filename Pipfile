@@ -41,6 +41,7 @@ jsonschema = "==3.0.1"
 rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
+daphne = "~=2.2.0"  # django-channels depends on daphne~2.2, which 2019-04-09 is "2.3.0". It also depends on asgiref~=2.3; but daphne 2.3 depends on asgiref~=3.0. TODO delete this daphne line once django-channels fixes this mess.
 
 [dev-packages]
 watchdog = "*"
