@@ -394,6 +394,14 @@ def turn_header_into_first_row(table: pandas.DataFrame) -> pandas.DataFrame:
     new_table.columns = [str(i) for i in range(len(new_table.columns))]
     autocast_dtypes_in_place(new_table)
 
+    # Convert 'object' columns to string. The prior instructions may have made
+    # a column with all-numeric values except for row 0, which is a string.
+    # Such a column will have type=object. We need to convert it to string.
+    str_columns = new_table.select_dtypes(object)
+    isna = str_columns.isna()
+    new_table[str_columns.columns] = str_columns.astype(str)
+    new_table[str_columns.columns][isna] = np.nan
+
     return new_table
 
 

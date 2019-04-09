@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from cjworkbench.types import ProcessResult
+from pandas.testing import assert_frame_equal
 from server.modules import reordercolumns
 
 
@@ -13,20 +13,19 @@ a_table = pd.DataFrame({
 
 
 def fake_result(colnames):
-    return ProcessResult(a_table[colnames])
+    return a_table[colnames]
 
 
 def render(table, reorder_history):
     params = {'reorder-history': reorder_history}
-    result = reordercolumns.render(table.copy(), params)
-    return ProcessResult.coerce(result)
+    return reordercolumns.render(table.copy(), params)
 
 
 class ReorderTest(unittest.TestCase):
     def test_reorder_empty(self):
         result = render(a_table, {})
-        self.assertEqual(result,
-                         fake_result(['name', 'date', 'count', 'float']))
+        assert_frame_equal(result,
+                           fake_result(['name', 'date', 'count', 'float']))
 
     def test_reorder(self):
         # In chronological order, starting with
@@ -49,8 +48,8 @@ class ReorderTest(unittest.TestCase):
             },  # gives ['count', 'float', 'date', 'name']
         ]
         result = render(a_table, reorder_ops)
-        self.assertEqual(result,
-                         fake_result(['count', 'float', 'date', 'name']))
+        assert_frame_equal(result,
+                           fake_result(['count', 'float', 'date', 'name']))
 
     def test_missing_column(self):
         # If an input column is removed (e.g. via select columns)
@@ -79,5 +78,5 @@ class ReorderTest(unittest.TestCase):
             },  # gives ['count', 'name', 'float', 'date']
         ]
         result = render(a_table, reorder_ops)
-        self.assertEqual(result,
-                         fake_result(['count', 'name', 'float', 'date']))
+        assert_frame_equal(result, 
+                           fake_result(['count', 'name', 'float', 'date']))

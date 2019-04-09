@@ -9,28 +9,31 @@ from server.modules.jointab import render
 class JoinTabTests(unittest.TestCase):
     def test_left(self):
         left = pd.DataFrame({'A': [1, 2, 3], 'B': ['x', 'y', 'z']})
-        right = pd.DataFrame({'A': [1, 2], 'C': ['X', 'Y']})
+        right = pd.DataFrame({'A': [1, 2], 'C': ['X', 'Y'], 'D': [0.1, 0.2]})
         result = render(left, {
             'right_tab': TabOutput(
                 'slug',
                 'name',
-                {'A': RenderColumn('A', 'number'),
-                 'C': RenderColumn('C', 'text')},
+                {'A': RenderColumn('A', 'number', '{:,.2f}'),
+                 'C': RenderColumn('C', 'text', None),
+                 'D': RenderColumn('D', 'number', '{:,}')},
                 right),
             'join_columns': {
                 'on': 'A',
-                'right': 'C',
+                'right': 'C,D',
             },
             'type': 0,
         }, input_columns={
-            'A': RenderColumn('A', 'number'),
-            'B': RenderColumn('B', 'text'),
+            'A': RenderColumn('A', 'number', '{:d}'),
+            'B': RenderColumn('B', 'text', None),
         })
-        assert_frame_equal(result, pd.DataFrame({
+        assert_frame_equal(result['dataframe'], pd.DataFrame({
             'A': [1, 2, 3],
             'B': ['x', 'y', 'z'],
             'C': ['X', 'Y', np.nan],
+            'D': [0.1, 0.2, np.nan],
         }))
+        self.assertEqual(result['column_formats'], {'C': None, 'D': '{:,}'})
 
     def test_on_types_differ(self):
         left = pd.DataFrame({'A': [1, 2, 3], 'B': ['x', 'y', 'z']})
@@ -39,8 +42,8 @@ class JoinTabTests(unittest.TestCase):
             'right_tab': TabOutput(
                 'slug',
                 'Tab 2',
-                {'A': RenderColumn('A', 'text'),
-                 'C': RenderColumn('C', 'text')},
+                {'A': RenderColumn('A', 'text', None),
+                 'C': RenderColumn('C', 'text', None)},
                 right),
             'join_columns': {
                 'on': 'A',
@@ -48,8 +51,8 @@ class JoinTabTests(unittest.TestCase):
             },
             'type': 0,
         }, input_columns={
-            'A': RenderColumn('A', 'number'),
-            'B': RenderColumn('B', 'text'),
+            'A': RenderColumn('A', 'number', '{}'),
+            'B': RenderColumn('B', 'text', None),
         })
 
         self.assertEqual(result, (
@@ -64,8 +67,8 @@ class JoinTabTests(unittest.TestCase):
             'right_tab': TabOutput(
                 'slug',
                 'Tab 2',
-                {'A': RenderColumn('A', 'number'),
-                 'B': RenderColumn('C', 'text')},
+                {'A': RenderColumn('A', 'number', '{}'),
+                 'B': RenderColumn('C', 'text', None)},
                 right),
             'join_columns': {
                 'on': 'A',
@@ -73,8 +76,8 @@ class JoinTabTests(unittest.TestCase):
             },
             'type': 0,
         }, input_columns={
-            'A': RenderColumn('A', 'number'),
-            'B': RenderColumn('B', 'text'),
+            'A': RenderColumn('A', 'number', '{}'),
+            'B': RenderColumn('B', 'text', None),
         })
 
         self.assertEqual(result, (

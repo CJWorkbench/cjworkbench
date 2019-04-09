@@ -77,18 +77,6 @@ def respond(str_or_bytes, content_type):
     return r
 
 
-def mock_404_response(text):
-    def r(*args, **kwargs):
-        response = requests.Response()
-        response.encoding = 'utf-8'
-        response.headers['Content-Type'] = 'text/plain; charset=utf-8'
-        response.raw = io.BytesIO(text.encode('utf-8'))
-        response.reason = 'Not Found'
-        response.status_code = 404
-        return response
-    return r
-
-
 P = MockParams.factory(url='', has_header=True)
 
 

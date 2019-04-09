@@ -235,6 +235,14 @@ definitions:
                 name:
                     type: string
                     description: Button text
+        numberformat:
+            <<: *common_param_type
+            required: [ id_name, type, name ]
+            properties:
+                <<: *common_param_type_properties
+                type: { const: numberformat }
+                name: { $ref: '#/definitions/param_types/_lib/name' }
+                placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
         column:
             <<: *common_param_type
             properties:
@@ -305,6 +313,7 @@ definitions:
                 { $ref: '#/definitions/param_types/tab' },
                 { $ref: '#/definitions/param_types/multitab' },
                 { $ref: '#/definitions/param_types/multichartseries' },
+                { $ref: '#/definitions/param_types/numberformat' },
                 { $ref: '#/definitions/param_types/secret' },
                 { $ref: '#/definitions/param_types/custom' },
             ]

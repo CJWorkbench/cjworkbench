@@ -1,11 +1,10 @@
 import re
 from typing import Tuple
 from pandas import IntervalIndex
-from cjworkbench.types import ProcessResult
 from .utils import parse_multicolumn_param
 
 
-commas = re.compile('\\s*,\\s*')
+commas = re.compile(r'\s*,\s*')
 numbers = re.compile(r'(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
 
 
@@ -16,7 +15,7 @@ Keep = 1
 def select_columns_by_name(table, cols, drop_or_keep):
     # if no column has been selected, keep the columns
     if not cols:
-        return ProcessResult(table)
+        return table
 
     # ensure we do not change the order of the columns, even if they are
     # listed in another order this also silently removes any nonexistent
@@ -24,38 +23,35 @@ def select_columns_by_name(table, cols, drop_or_keep):
     newcols = table.columns.intersection(set(cols))
 
     if drop_or_keep == Keep:
-        newtab = table[newcols]
+        table2 = table[newcols]
     else:
-        newtab = table.drop(newcols, axis=1)
-    return ProcessResult(newtab)
+        table2 = table.drop(newcols, axis=1)
+    return table2
 
 
 def select_columns_by_number(table, str_col_nums, drop_or_keep):
     try:
         form = Form.parse(str_col_nums)
         if not form:
-            return ProcessResult(table)
+            return table
     except ValueError as err:
-        return ProcessResult(table, error=str(err))
+        return str(err)
 
     table_col_nums = list(range(0, len(table.columns)))
 
     try:
         mask = form.index.get_indexer(table_col_nums) != -1
     except KeyError:
-        return ProcessResult(
-            table,
-            error='There are overlapping numbers in input range'
-        )
-    except Exception as err:
-        return ProcessResult(table, error=str(err.args[0]))
+        return 'There are overlapping numbers in input range'
+    except Exception as err:  # TODO huh? What exceptions?
+        return str(err.args[0])
 
     if drop_or_keep == Drop:
         new_col_nums = [x[0] for x in enumerate(mask) if not x[1]]
     else:
         new_col_nums = [x[0] for x in enumerate(mask) if x[1]]
     ret = table.iloc[:, new_col_nums]
-    return ProcessResult(ret)
+    return ret
 
 
 def parse_interval(s: str) -> Tuple[int, int]:

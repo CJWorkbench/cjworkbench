@@ -87,128 +87,44 @@ class ModuleDropSpot extends React.PureComponent {
 }
 
 
-class BaseModuleStackInsertSpot extends React.PureComponent {
+class ModuleStackInsertSpot extends React.PureComponent {
   static propTypes = {
-    addModule: PropTypes.func.isRequired, // func(idName, index) => undefined
     index: PropTypes.number.isRequired,
+    tabSlug: PropTypes.string.isRequired,
+    isLast: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    isLessonHighlight: PropTypes.bool.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  state = {
-    isSearching: false
-  }
-
-  onClickSearch = () => {
-    this.setState({
-      isSearching: true,
-    })
-  }
-
-  onCancelSearch = () => {
-    this.setState({
-      isSearching: false,
-    })
-  }
-
-  onClickModule = (idName) => {
-    this.setState({
-      isSearching: false,
-    })
-    this.props.addModule(idName, this.props.index)
-  }
-
-  renderModuleSearchButton() {
-    throw new Error('Not implemented. Please extend this class.')
-  }
-
-  renderModuleSearchIfSearching() {
-    if (this.state.isSearching) {
-      return (
-        <ModuleSearch
-          index={this.props.index}
-          onClickModule={this.onClickModule}
-          onCancel={this.onCancelSearch}
-        />
-      )
-    } else {
-      return null
-    }
-  }
-
   renderReadOnly() {
     return (
-      <div className="in-between-modules read-only"></div>
+      <div className='in-between-modules read-only'/>
     )
   }
 
   render() {
-    if (this.props.isReadOnly) return this.renderReadOnly()
+    const { index, tabSlug, isReadOnly, isLessonHighlight, isLast,
+            isDraggingModuleAtIndex, moveModuleByIndex } = this.props
+
+    if (isReadOnly) return this.renderReadOnly()
 
     return (
-      <div className="in-between-modules">
-        {this.renderModuleSearchButton()}
+      <div className='in-between-modules'>
+        <ModuleSearch
+          index={index}
+          tabSlug={tabSlug}
+          className={isLast ? 'module-search-last' : 'module-search-in-between'}
+          isLessonHighlight={isLessonHighlight}
+          isLastAddButton={isLast}
+        />
         <ModuleDropSpot
-          index={this.props.index}
+          index={index}
           isDraggingModuleAtIndex={this.props.isDraggingModuleAtIndex}
           moveModuleByIndex={this.props.moveModuleByIndex}
-          />
-      </div>
-    )
-  }
-}
-
-class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
-  static propTypes = {
-    addModule: PropTypes.func.isRequired, // func(moduleIdName, index) => undefined
-    index: PropTypes.number.isRequired,
-    isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
-    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
-    isLessonHighlightSearch: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
-  }
-
-  renderModuleSearchButton() {
-    let className = 'add-module-in-between-search'
-    if (this.state.isSearching) className += ' searching'
-    if (this.props.isLessonHighlightSearch) className += ' lesson-highlight'
-
-    return (
-      <div className={className}>
-        <div className="add-hover">
-          <button className="search" title="ADD STEP" onClick={this.onClickSearch}>
-            <i className="icon-add"></i>
-          </button>
-        </div>
-        {this.renderModuleSearchIfSearching()}
-      </div>
-    )
-  }
-}
-
-class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
-  static propTypes = {
-    addModule: PropTypes.func.isRequired, // func(moduleIdName, index) => undefined
-    index: PropTypes.number.isRequired,
-    isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
-    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
-    isLessonHighlightSearch: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
-  }
-
-  renderModuleSearchButton() {
-    let className = 'add-module-search'
-    if (this.state.isSearching) className += ' searching'
-    if (this.props.isLessonHighlightSearch) className += ' lesson-highlight'
-
-    return (
-      <div className={className}>
-        <button className="search" onClick={this.onClickSearch}>
-          <i className="icon-addc"></i>{' '}
-          <span>ADD STEP</span>
-        </button>
-        {this.renderModuleSearchIfSearching()}
+        />
       </div>
     )
   }
@@ -221,7 +137,6 @@ class ModuleStack extends React.Component {
     tabSlug: PropTypes.string,
     selected_wf_module_position: PropTypes.number,
     wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
-    addModule: PropTypes.func.isRequired, // func(tabSlug, moduleIdName, index) => undefined
     moveModuleByIndex: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
     removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
@@ -292,48 +207,47 @@ class ModuleStack extends React.Component {
     })
   }
 
-  addModule = (moduleIdName, index) => {
-    this.props.addModule(this.props.tabSlug, moduleIdName, index)
-  }
-
   moveModuleByIndex = (oldIndex, newIndex) => {
     this.props.moveModuleByIndex(this.props.tabSlug, oldIndex, newIndex)
   }
 
-  moduleStackInsertSpot(index) {
-    return (
-      <ModuleStackInsertSpot
-        index={index}
-        isReadOnly={this.props.isReadOnly}
-        isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-        addModule={this.addModule}
-        moveModuleByIndex={this.moveModuleByIndex}
-        isLessonHighlightSearch={this.props.testLessonHighlightIndex(index)}
-      />
-    )
-  }
-
   render() {
-    const wfModules = this.props.wfModules
+    const { tabSlug, wfModules } = this.props
 
     const spotsAndItems = wfModules.map((item, i) => {
       // If this item is replacing a placeholder, disable the enter animations
       if (!item) {
         return (
           <React.Fragment key={`placeholder-${i}`}>
-            {this.moduleStackInsertSpot(i)}
+            <ModuleStackInsertSpot
+              index={i}
+              tabSlug={this.props.tabSlug}
+              isLast={false}
+              isReadOnly={this.props.isReadOnly}
+              isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
+              moveModuleByIndex={this.moveModuleByIndex}
+              isLessonHighlight={this.props.testLessonHighlightIndex(i)}
+            />
             <WfModuleHeader
               tabSlug={this.props.tabSlug}
               moduleName={''/*item.name*/}
               moduleIcon={''/*item.icon*/}
               isSelected={false}
-              />
+            />
           </React.Fragment>
         )
       } else {
         return (
           <React.Fragment key={`module-${item.id}`}>
-            {this.moduleStackInsertSpot(i)}
+            <ModuleStackInsertSpot
+              index={i}
+              tabSlug={this.props.tabSlug}
+              isLast={false}
+              isReadOnly={this.props.isReadOnly}
+              isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
+              moveModuleByIndex={this.moveModuleByIndex}
+              isLessonHighlight={this.props.testLessonHighlightIndex(i)}
+            />
             <WfModule
               isReadOnly={this.props.workflow.read_only}
               isZenMode={this.state.zenModeWfModuleId === item.id}
@@ -359,13 +273,14 @@ class ModuleStack extends React.Component {
     return (
       <div className={className} ref={this.scrollRef}>
         {spotsAndItems}
-        <LastModuleStackInsertSpot
+        <ModuleStackInsertSpot
           key="last"
           index={wfModules.length}
+          tabSlug={tabSlug}
+          isLast
           isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-          addModule={this.addModule}
           moveModuleByIndex={this.moveModuleByIndex}
-          isLessonHighlightSearch={this.props.testLessonHighlightIndex(wfModules.length)}
+          isLessonHighlight={this.props.testLessonHighlightIndex(wfModules.length)}
           isReadOnly={this.props.isReadOnly}
         />
       </div>
@@ -391,11 +306,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule(tabSlug, moduleIdName, index) {
-      const action = addModuleAction(moduleIdName, { tabSlug, index }, {})
-      dispatch(action)
-    },
-
     moveModuleByIndex(tabSlug, oldIndex, newIndex) {
       const action = moveModuleAction(tabSlug, oldIndex, newIndex)
       dispatch(action)

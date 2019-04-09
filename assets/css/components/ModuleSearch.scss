@@ -1,14 +1,38 @@
-.module-search {
-  z-index: 3;
-  position: absolute;
-  top: 1.5rem;
-  width: 28rem;
-  @extend .content-1;
+.module-search-popper {
+  z-index: $zindex-popover;
+  $row-height: 4rem;
+  $padding-horizontal: 2rem;
+
+  position: absolute; // so Popper can position it
+  top: 0; // Popper needs this during preventOverflow calculations
+  left: 0; // Popper needs this during preventOverflow calculations
+
+  // make sure we never get taller than the max-height Popper.js sets on us.
+  // height: 100% won't do. Flex will.
+  display: flex;
+  flex-direction: column;
+
+  // We'll add box-shadow here. The border-radius is
+  // specified in .module-search-result-groups; this one has no effect except
+  // to render the box-shadow correctly.
+
   box-shadow: $overlay-shadow;
-  border-radius: .3rem;
-  overflow: hidden; // stay inside the border-radius
-  background: $white;
-  margin-bottom: 5rem;
+
+  .click-outside-listener, .module-search-popup {
+    // never get taller than the (correctly-sized) .module-search-popper
+    display: flex;
+    flex-direction: column;
+    max-height: 80%;
+    overflow: hidden;
+  }
+
+  .module-search-popup {
+    // position: absolute is set by Popper
+    @include content-1;
+    box-shadow: $overlay-shadow;
+    border: 1px solid #d3d3d3;
+    border-radius: .5rem;
+  }
 
   // Make scrollbar always visible on Mac, as user tests show they don't know there's more menu otherwise
   ::-webkit-scrollbar {
@@ -16,8 +40,8 @@
       width: 7px;
   }
   ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background-color: rgba(50,50,50,0.5);
+      border-radius: 5px;
+      background-color: $light-gray;
   }
 
   ul, li {
@@ -27,107 +51,153 @@
     padding: 0;
   }
 
+  &[data-placement=top] {
+    // Backwards case: there isn't enough room below the module to render a list of
+    // search results. So we'll display the search results _above_ the module ...
+    // and therefore we show the <input> at the bottom, where the button is.
+
+    // Search <input> appears at the _bottom_ of the search popup
+    .module-search-field {
+      order: 2;
+      border-bottom-left-radius: .5rem;
+      border-bottom-right-radius: .5rem;
+    }
+
+    .module-search-result-groups {
+      order: 1;
+      border-top-left-radius: .5rem;
+      border-top-right-radius: .5rem;
+      border-bottom: 0px;
+    }
+  }
+
+  &[data-placement=bottom] {
+    // Search <input> appears at the _top_ of the search popup
+    .module-search-field {
+      border-top-left-radius: .5rem;
+      border-top-right-radius: .5rem;
+    }
+
+    .module-search-result-groups {
+      border-bottom-left-radius: .5rem;
+      border-bottom-right-radius: .5rem;
+      border-top: 0px;
+    }
+  }
+
   .module-search-field {
-    background: $heading-bg;
+    flex: 0 0 auto;
+    background: White;
     padding: 1rem;
     color: $input-alt;
     position: relative;
+    box-shadow: $overlay-shadow;
 
     input {
       // left padding for "search" icon; right padding for "close" button
       padding: .5rem 3.4rem .5rem;
       display: block;
       width: 100%;
-      color: $input-alt;
-      background: $input-alt-bg;
+      color: $brand-text--dark;
+      background: $Vlight-gray;
       border-radius: 2rem;
-      border: 3px solid transparent;
+      border: 2px solid transparent;
 
       &:focus {
         border-color: $brand-workspace;
       }
 
       //search placeholder when empty
-      &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-        color: $white;
+      &::placeholder {
+        // TODO white+opacity is not white. Do not use opacity: figure out the correct color and write it opaquely.
+        color: $placeholder;
         opacity: .9;
       }
-      :-ms-input-placeholder { /* IE 10+ */
-        color: $white;
-        opacity: .9;
-      }
-      :-moz-placeholder { /* Firefox 18- */
-        color: $white;
-        opacity: .9;
-      }
-
     }
-
 
     &::before {
       // "search" icon
       display: inline-block;
       position: absolute;
-      top: 1.9rem;
+      top: 1.7rem;
       left: 2.4rem;
       font-size: 1.4rem;
       font-family: 'Workbench';
-      content: "\e91a "; // .icon-search
+      color: $brand-workspace;
+      content: '\e91a'; // .icon-search
     }
 
     button.close {
       border: 0;
       position: absolute;
       right: 2.4rem;
-      top: 2.1rem;
+      top: 2rem;
       font-size: 1.4rem;
       margin: 0;
       padding: 0;
       text-shadow: none;
-      color: $white;
+      color: $placeholder;
       &:hover {
-        color: white;
+        color: $brand-text--dark;
         opacity: 1;
       }
     }
   }
 
-  &.lesson-highlight .module-search-field input {
+  .lesson-highlight input[type=search] {
     border-color: $brand-learn;
   }
 
   .module-search-result-groups {
-    max-height: 38rem;
-    background-color: $white;
-    overflow-x: hidden;
+    flex: 1 1 auto;
     overflow-y: auto;
+
+    //border: 1px solid $heading-bg;
+
+    // background-color goes here, NOT .module-search-popup. That's because this
+    // element has a border-radius (the rule is elsewhere); its parent can't have
+    // a background or it would appear behind the curved border.
+    background-color: $white;
   }
 
-  .module-search-result-group  {
-    border-top: 1px solid $dark-accent--soft-M;
+  .module-search-result-group {
     margin-bottom: 1.5rem;
-  }
 
-  h4, .module-search-result {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    height: 4rem;
-    padding: 0 2rem;
+    li {
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+    &:not(:first-child) {
+      border-top: 1px solid $dark-accent--soft-M;
+    }
   }
 
   h4 {
-    @extend .info-2;
+    @include info-2;
+    margin: 0;
+    padding: $padding-horizontal;
+    line-height: 1;
     color: $brand-text--medium;
-    margin-top: 1rem;
     text-transform: uppercase;
   }
 
-  .module-search-result {
+  button.module-search-result {
+    display: block;
+    margin: 0;
+    padding: 0 $padding-horizontal;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    height: $row-height;
+    width: 100%;
+    display: flex;
+    align-items: center;
     border: 2px solid transparent;
     color: $brand-text--dark;
     cursor: pointer;
-    position: relative; // to position .tooltip
+    background: transparent;
+    box-shadow: none;
 
     i {
       width: 1.5rem;
@@ -149,18 +219,24 @@
   }
 }
 
-.popover.module-search-result {
-  margin-left: 1rem;
+.module-search-result-description {
+  position: absolute; // so Popper can position it
+  top: 0; // Popper needs this during preventOverflow calculations
+  left: 0; // Popper needs this during preventOverflow calculations
+
+  margin-left: 1rem; // don't overlap module-search-popup scrollbar
   border-width: $module-popover-border-width;
   border-color: $brand-workspace;
   border-radius: 5px;
+  background: white;
   box-shadow: $menu-shadow;
+  width: 18rem;
   padding: 1rem;
 
   //transition-delay: .2s;
   transition: opacity .5s;
 
-  h3.popover-header {
+  h3 {
     @include content-1;
     padding: 0;
     margin: 0 0 .5rem;
@@ -169,9 +245,10 @@
     color: $brand-text--dark;
   }
 
-  .popover-body {
-    padding:0;
+  p {
     @include info-3;
+    margin: 0;
+    padding: 0;
   }
 
   .arrow {

@@ -1,8 +1,12 @@
-from cjworkbench.types import ProcessResult
 from .utils import parse_multicolumn_param
 
 
-def _do_render(table, dup_columns):
+def render(table, params, *, input_columns):
+    dup_columns, _ = parse_multicolumn_param(params['colnames'], table)
+
+    # we'll modify `table` in-place and build up `column_formats`
+    column_formats = {}
+
     colnames = set(table.columns)
 
     for c in dup_columns:
@@ -20,11 +24,9 @@ def _do_render(table, dup_columns):
         # Add new column next to reference column
         column_idx = table.columns.tolist().index(c)
         table.insert(column_idx + 1, new_column_name, table[c])
+        column_formats[new_column_name] = input_columns[c].format
 
-    return ProcessResult(table)
-
-
-def render(table, params, **kwargs):
-    columns, _ = parse_multicolumn_param(params['colnames'], table)
-
-    return _do_render(table, columns)
+    return {
+        'dataframe': table,
+        'column_formats': column_formats,
+    }

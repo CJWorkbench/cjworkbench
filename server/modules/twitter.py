@@ -328,18 +328,22 @@ def merge_tweets(old_table, new_table):
 # Render just returns previously retrieved tweets
 def render(table, params, *, fetch_result):
     if fetch_result is None:
-        return ProcessResult()
+        return table
 
     if fetch_result.status == 'error':
         return fetch_result
 
     if fetch_result.dataframe.empty:
         # Previously, we saved empty tables improperly
-        return ProcessResult(create_empty_table())
+        dataframe = create_empty_table()
+    else:
+        _recover_from_160258591(fetch_result.dataframe)
+        dataframe = fetch_result.dataframe
 
-    _recover_from_160258591(fetch_result.dataframe)
-
-    return fetch_result
+    return {
+        'dataframe': dataframe,
+        'column_formats': {'id': '{:d}'},  # don't add commas to user IDs
+    }
 
 
 async def fetch(params, *, get_stored_dataframe):

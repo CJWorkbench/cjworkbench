@@ -88,10 +88,10 @@ def are_params_empty(params, input_table):
 def render(table, params, *, fetch_result):
     # TODO nix this method? It looks like the default implementation should do.
     if are_params_empty(params, table):
-        return ProcessResult(table)
+        return table
 
     if fetch_result is None:
-        return ProcessResult(table)
+        return table
 
     else:
         return fetch_result

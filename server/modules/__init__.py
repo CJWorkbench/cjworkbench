@@ -19,10 +19,10 @@ allowed, too.
 
 Each module may define one or both (preferably one) of the following functions:
 
-    def render(table: pd.DataFrame, params: Params, **kwargs) -> ProcessResult:
+    def render(table: pd.DataFrame, params: Params, **kwargs):
         # kwargs is optional and may include:
         # - input_columns: Dict of .name/.type values, keyed by table.columns
-        return ProcessResult(table)
+        return table
 
     async def fetch(  # async is optional and preferred
         params: Params,

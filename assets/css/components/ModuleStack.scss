@@ -11,10 +11,6 @@
     margin: 0;
     &:last-child {
       height:1rem;
-
-      .module-search {
-        top:0;
-      }
     }
   }
 
@@ -26,8 +22,22 @@
     background-color: white;
   }
 
+  button.search {
+    // Button to invoke add-module -- both in-between modules and at bottom of stack
+    @include content-1;
+    font-weight: bold; // [adamhooper, 2019-03-28] TODO move this to fonts.scss instead of extending content-1
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-transform: uppercase;
+    background: $brand-background;
+    color: $brand-workspace;
+    cursor: pointer;
+  }
+
   // Big button to call the module search at the bottom of stack
-  .add-module-search {
+  .module-search-last {
     width: $module-width;
     margin: 0 $module-margin-right 0 $module-margin-left;
     top: 1.5rem;
@@ -35,94 +45,71 @@
     position: relative;
 
     button.search {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: $module-width;
       border-radius: 2rem;
       border: 1px solid $brand-workspace;
-      background: transparent;
-      cursor: pointer;
-      text-transform: uppercase;
-      color: $brand-workspace;
-      @extend .content-1;
-      font-weight: bold;
       height: 3.5rem;
       opacity: .85;
-      &:hover {
-        background-color: $brand-background;
-        opacity: 1;
-      }
+
       i {
         font-size: 1.5rem;
         margin-right: .7rem;
       }
+
       span {
         margin-top: .1rem;
+      }
+
+      &:not(:hover):not(.active):not(.lesson-highlight) {
+        background: transparent;
+      }
+
+      &:hover, &.active {
+        opacity: 1;
       }
     }
   }
 
   // Button to call the module search between modules
-  .add-module-in-between-search {
+  .module-search-in-between {
     width: $module-width;
     margin-left: $module-margin-left;
     position: relative;
     height: 1.5rem;
 
-    &.searching {
-      z-index: 3; // appear above other modules/in-betweens
+    &:hover, &:focus-within {
+      z-index: 2; // appear above the next module
     }
 
-    .add-hover {
+    button.search {
+      display: block;
       position: absolute;
-      width: 100%;
+      width: $module-width;
       height: 100%;
-      z-index: 2;
-      cursor: default;
+      cursor: pointer;
+      border: 0;
+      opacity: 0;
+      background: $brand-background--action;
+      color: darken($brand-workspace, 5%);
+      font-size: 1rem;
+      border-radius: 1rem;
+      transition-property: opacity;
+      transition-delay: .06s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here -- So that it does not flash when you hover past it. [PFC 2019-03-31]
 
-      button.search {
-        display: block;
-        position: absolute;
-        width: $module-width;
-        height: 100%;
-        cursor: pointer;
-        border: 0;
-        font-size: 1rem;
-        color: transparent;
-        background: transparent;
-        border-radius: 1rem;
-
-        i {
-          position: absolute;
-          left: 50%;
-          margin-left: -.4rem;
-          top: 3px;
-          font-size: 1rem;
-        }
+      i.icon-add {
+        position: relative;
+        top:-.18rem;
       }
 
-      &:hover button.search {
-        background: $brand-background--action;
-        transition-delay: .1s;
-        cursor: pointer;
-
-        i {
-          background: transparent;
-          color: darken($brand-workspace, 5%);
-          transition-delay: .1s;
-        }
+      span {
+        display: none; // no text
       }
-    }
 
-    &.lesson-highlight {
-      button.search {
-        background: $brand-learn;
+      &:hover, &.active {
+        opacity: 1;
+      }
 
-        i {
-          background: $brand-learn;
-          color: $white
-        }
+      &.lesson-highlight {
+        opacity: 1;
       }
     }
   }

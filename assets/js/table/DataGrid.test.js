@@ -9,7 +9,7 @@ describe('DataGrid', () => {
   // https://github.com/adazzle/react-data-grid/issues/1269 and
   // https://github.com/adazzle/react-data-grid/issues/1270
   const testColumns = [
-    { name: 'aaa', type: 'number' },
+    { name: 'aaa', type: 'number', format: '{:,}' },
     { name: 'bbbb', type: 'text' },
     // deliberately try and trigger https://github.com/adazzle/react-data-grid/issues/1270
     { name: 'getCell', type: 'text' },

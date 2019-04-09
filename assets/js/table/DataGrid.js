@@ -13,7 +13,7 @@ import Spinner from '../Spinner'
 import ColumnHeader from './ColumnHeader'
 import Row from './Row'
 import RowActionsCell from './RowActionsCell'
-import { typeToCellFormatter } from './CellFormatters'
+import { columnToCellFormatter } from './CellFormatters'
 
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 0 // ms after scroll before fetch
@@ -314,12 +314,12 @@ export default class DataGrid extends React.PureComponent {
     // immutable props
     const { isReadOnly, columns, wfModuleId } = this.props
 
-    return columns.map(({ name, type }, index) => ({
-      key: name,
-      name: name,
+    return columns.map((column, index) => ({
+      key: column.name,
+      name: column.name,
       resizable: true,
       editable: !isReadOnly,
-      formatter: typeToCellFormatter(type),
+      formatter: columnToCellFormatter(column),
       width: 160,
       // react-data-grid normally won't re-render if we change headerRenderer.
       // So we need to change _other_ props, forcing it to re-render.
@@ -327,8 +327,8 @@ export default class DataGrid extends React.PureComponent {
       headerRenderer: (
         <ColumnHeader
           wfModuleId={wfModuleId}
-          columnKey={name}
-          columnType={type}
+          columnKey={column.name}
+          columnType={column.type}
           index={index}
           onDragStartColumnIndex={this.onDragStartColumnIndex}
           onDragEnd={this.onDragEnd}

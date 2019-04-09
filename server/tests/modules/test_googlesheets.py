@@ -4,7 +4,6 @@ from unittest.mock import patch, Mock
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
-from cjworkbench.types import ProcessResult
 from server import oauth
 from server.modules import googlesheets
 from .util import MockParams
@@ -143,8 +142,7 @@ class GoogleSheetsTests(unittest.TestCase):
         fetch_result = fetch(**kwargs)
         result = googlesheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
-        result.sanitize_in_place()  # TODO fix header-shift code; nix this
-        assert_frame_equal(result.dataframe, pd.DataFrame({
+        assert_frame_equal(result, pd.DataFrame({
             '0': ['foo', '1', '2'],
             '1': ['bar', '2', '3'],
         }))
@@ -180,4 +178,14 @@ class GoogleSheetsTests(unittest.TestCase):
         fetch_result = fetch(**kwargs)
         result = googlesheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
-        self.assertEqual(result, ProcessResult(expected_table))
+        assert_frame_equal(result, expected_table)
+
+    def test_render_missing_fetch_result_returns_empty(self):
+        kwargs = {
+            'googlefileselect': {
+                **default_googlefileselect,
+                'mimeType': 'text/csv',
+            }
+        }
+        result = googlesheets.render(pd.DataFrame(), P(), fetch_result=None)
+        assert_frame_equal(result, pd.DataFrame())
