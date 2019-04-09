@@ -5,13 +5,15 @@ import { paramFieldToParamProps } from './util'
 
 // A single repetition of the set of parameters defined by param_fields.child_parameters
 // which is ultimately set by the 'parameters' key of the 'list' parameter type in the module YAML
-class ChildForm extends React.PureComponent {
+class ChildParamsForm extends React.PureComponent {
   static propTypes = {
-    childParameters: PropTypes.object.isRequired,
+    childParameters: PropTypes.array.isRequired, // essentially a copy of the child_parameters key in the module YAML
     value: PropTypes.object.isRequired,
+    upstreamValue: PropTypes.object.isRequired, // id_name: upstreamValue for all child params
     commonProps: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired, // passed in rather than parent needing to create a closure, which causes re-render
-    onChange: PropTypes.func.isRequired // func(index, value of all form fields) => undefined
+    onChange: PropTypes.func.isRequired, // func(index, value of all form fields) => undefined
+    onDelete: PropTypes.func.isRequired // func(index) => undefined
   }
 
   onChangeParam = (idName, childParamValue) => {
@@ -22,18 +24,36 @@ class ChildForm extends React.PureComponent {
     })
   }
 
+  onClickDelete = (ev) => {
+    this.props.onDelete(this.props.index)
+  }
+
   render () {
-    const { childParameters, value, commonProps } = this.props
+    const { childParameters, value, upstreamValue, commonProps, onDelete } = this.props
     return (
       <div className='list-child-form'>
         {childParameters.map(childParameter => (
           <Param
+            key={childParameter.id_name}
             {...commonProps}
             {...paramFieldToParamProps(childParameter)}
             value={value[childParameter.id_name]}
+            upstreamValue={upstreamValue[childParameter.id_name]}
             onChange={this.onChangeParam}
           />
         ))}
+        {onDelete ? (
+          <div className='delete'>
+            <button
+              type='button'
+              className='delete'
+              name={`${name}[delete]`}
+              onClick={this.onClickDelete}
+            >
+              <i className='icon-close' />
+            </button>
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -52,6 +72,8 @@ export default class List extends React.PureComponent {
     value: PropTypes.array.isRequired,
     childParameters: PropTypes.array.isRequired,
     childDefault: PropTypes.object.isRequired
+    // there are going to be many other props here, which we pass into <ChildForm> as commonProps
+    // see <Param> creation in ParamsForm for a list of these props
   }
 
   /**
@@ -74,13 +96,13 @@ export default class List extends React.PureComponent {
     onChange(newValue)
   }
 
-  // onDeleteAggregation = (index) => {
-  //   const { onChange, isReadOnly } = this.props
-  //   if (isReadOnly) return
-  //   const newValue = this.value.slice()
-  //   newValue.splice(index, 1)
-  //   onChange(newValue)
-  // }
+  onDeleteChildForm= (index) => {
+    const { onChange, isReadOnly } = this.props
+    if (isReadOnly) return
+    const newValue = this.value.slice()
+    newValue.splice(index, 1)
+    onChange(newValue)
+  }
 
   onAdd = () => {
     const { onChange, isReadOnly, childDefault } = this.props
@@ -90,7 +112,7 @@ export default class List extends React.PureComponent {
   }
 
   render () {
-    const { childParameters, isReadOnly, name } = this.props
+    const { childParameters, isReadOnly, name, upstreamValue, childDefault } = this.props
 
     // Map twice: once for each repeated set of childParameters, and once for each parameter within each set
     return (
@@ -98,12 +120,14 @@ export default class List extends React.PureComponent {
         <h2>This is my list of parameters</h2>
         <ul>
           {this.value.map((item, index) => (
-            <li>
-              <ChildForm
+            <li key={index}>
+              <ChildParamsForm
                 childParameters={childParameters}
                 value={item}
                 commonProps={this.props}
+                upstreamValue={upstreamValue[index] || childDefault}
                 onChange={this.onChangeChildFormValue}
+                onDelete={isReadOnly ? null : this.onDeleteChildForm}
                 index={index}
               />
             </li>
