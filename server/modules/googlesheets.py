@@ -1,5 +1,6 @@
 import io
 from typing import Any, Dict, Optional, Union
+import pandas as pd
 import requests
 from cjworkbench.types import ProcessResult
 from server import oauth

@@ -179,3 +179,13 @@ class GoogleSheetsTests(unittest.TestCase):
         result = googlesheets.render(pd.DataFrame(), P(**kwargs),
                                      fetch_result=fetch_result)
         assert_frame_equal(result, expected_table)
+
+    def test_render_missing_fetch_result_returns_empty(self):
+        kwargs = {
+            'googlefileselect': {
+                **default_googlefileselect,
+                'mimeType': 'text/csv',
+            }
+        }
+        result = googlesheets.render(pd.DataFrame(), P(), fetch_result=None)
+        assert_frame_equal(result, pd.DataFrame())
