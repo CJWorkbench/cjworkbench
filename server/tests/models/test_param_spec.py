@@ -97,3 +97,25 @@ class ParamSpecDTypeTest(unittest.TestCase):
         )
         dtype = param_spec.dtype
         self.assertEqual(dtype.default, False)
+
+
+    def test_list_dtype(self):
+        # Check that ParamSpec's with List type produce correct nested DTypes
+        param_spec = ParamSpec(
+            'p',
+            ParamSpec.ParamType.LIST,
+            child_parameters = [
+                {'id_name': 'intparam', 'type': 'integer', 'name': 'my number'},
+                {'id_name': 'colparam', 'type': 'column', 'name': 'my column' }
+            ]
+        )
+        dtype = param_spec.dtype
+        expected_dtype = DT.List(
+            DT.Dict({
+                'intparam' : DT.Integer(),
+                'colparam': DT.Column(),
+        }))
+
+        # effectively do a deep compare with repr
+        self.assertEqual(repr(dtype), repr(expected_dtype))
+

@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Union
 
+# There two things in this file:
+# ParamSpec - a representation of the module author's YAML defining a single module parameter
+# ParamDType - the "data type" or "storage format" for a parameter, computed (via code below) from ParamSpec
 
 class ParamDType:
     """
