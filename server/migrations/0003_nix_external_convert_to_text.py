@@ -12,7 +12,10 @@ def delete_module_versions(apps, schema_editor):
     ModuleVersion.objects.filter(id_name='convert-text').delete()
 
     # Delete from S3
-    minio.remove_recursive(minio.ExternalModulesBucket, 'convert-text/')
+    try:
+        minio.remove_recursive(minio.ExternalModulesBucket, 'convert-text/')
+    except minio.error.NoSuchBucket:
+        pass  # we're unit-testing and the bucket doesn't exist
 
 
 class Migration(migrations.Migration):
