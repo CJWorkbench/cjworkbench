@@ -17,7 +17,7 @@ from cjworkbench.types import ProcessResult, RenderColumn
 from . import module_loader
 from .module_version import ModuleVersion
 from .Params import Params
-from .param_field import ParamDTypeDict
+from .param_spec import ParamDTypeDict
 from ..modules import Lookup as InternalModules
 from server import minio
 

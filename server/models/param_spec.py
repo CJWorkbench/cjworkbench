@@ -6,14 +6,14 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 class ParamDType:
     """
-    User-visible data type of a parameter.
+    Data type, that is, storage format, for a parameter.
 
     This type applies to user-input data. Since the user may input _anything_
     (even invalid data, especially across multiple versions of a module), we
     provide `coerce()` and `validate()` to ensure type-safety.
 
-    Parameter types are _user-visible_: we need to explain each data type's
-    semantics to our users. It's crucial we don't add complexity we don't need.
+    This is the abstract base class for a variety of DTypes which can represent recursive
+    type structures.
     """
 
     def coerce(self, value: Any) -> Any:
@@ -512,7 +512,7 @@ ParamDType.JsonTypeToDType = {
 
 
 @dataclass(frozen=True)
-class ParamField:
+class ParamSpec:
     """
     The specification for a single module parameter, a representation of the parameter that the module author
     has specified in the YAML. There is no parameter value here, just a typed spec.
@@ -522,12 +522,13 @@ class ParamField:
     ParamFields are basically an extended "parameter type," aka the "form type", what the user sees. This sets the UI
     for the parameter and defines the structure used when the value is serialized to the cleint.
 
-    ParamField can create another immutable object, the DType or "data type", defining how it's stored and processed.
+    ParamSpec can create another immutable object, the DType or "data type", defining how it's stored and processed.
     DTypes defines the structure of the JSON data stored in WfModule.params and passed to module render()
     So this class also defines the storage format of each type of parameter that can be specified in the YAML.
     """
-    class FType(Enum):
-        """Type of form field to display to the user"""
+
+    class ParamType(Enum):
+        """Parameter type specified by module author and displayed to the user"""
         STATICTEXT = 'statictext'
         STRING = 'string'
         NUMBERFORMAT = 'numberformat'
@@ -550,7 +551,7 @@ class ParamField:
             return self.value
 
     id_name: str
-    ftype: ParamField.FType
+    param_type: ParamSpec.ParamType
     name: str = ''
     items: str = ''  # deprecated menu/radio items
     options: Optional[List[Union[str, Dict[str, str]]]] = None  # menu/radio
@@ -562,10 +563,10 @@ class ParamField:
     child_parameters: Optional[List[Dict[str, Any]]] = None # only for List type
 
     @classmethod
-    def from_dict(self, d: Dict[str, Any]) -> 'ParamField':
-        return ParamField(
+    def from_dict(self, d: Dict[str, Any]) -> 'ParamSpec':
+        return ParamSpec(
             id_name=d['id_name'],
-            ftype=ParamField.FType(d['type']),
+            param_type=ParamSpec.ParamType(d['type']),
             name=d.get('name', ''),
             items=d.get('menu_items', d.get('radio_items', '')),
             options=d.get('options'),
@@ -573,64 +574,64 @@ class ParamField:
             placeholder=d.get('placeholder', ''),
             tab_parameter=d.get('tab_parameter', ''),
             visible_if=d.get('visible_if'),
-            child_parameters=d.get('parameters', []), # just `parameters` in YAML spec but child_parameters everywhere else
+            child_parameters=d.get('child_parameters', []),
             default=d.get('default')
         )
 
     @property
     def dtype(self) -> Optional[ParamDType]:
-        T = ParamField.FType
+        T = ParamSpec.ParamType
 
         if (
-            self.ftype == T.STATICTEXT
-            or self.ftype == T.SECRET
-            or self.ftype == T.BUTTON
+            self.param_type == T.STATICTEXT
+            or self.param_type == T.SECRET
+            or self.param_type == T.BUTTON
         ):
             # These don't show up in wf_module.params
             return None
         elif (
-            self.ftype == T.STRING
-            or self.ftype == T.NUMBERFORMAT
-            or self.ftype == T.CUSTOM
+            self.param_type == T.STRING
+            or self.param_type == T.NUMBERFORMAT
+            or self.param_type == T.CUSTOM
         ):
             kwargs = {}
             if self.default is not None:
                 # TODO nix cast here: validate in module_version
                 kwargs['default'] = str(self.default)
             return ParamDTypeString(**kwargs)
-        elif self.ftype == T.COLUMN:
+        elif self.param_type == T.COLUMN:
             return ParamDTypeColumn(tab_parameter=self.tab_parameter or None)
-        elif self.ftype == T.MULTICOLUMN:
+        elif self.param_type == T.MULTICOLUMN:
             return ParamDTypeMulticolumn(
                 tab_parameter=self.tab_parameter or None
             )
-        elif self.ftype == T.MULTICHARTSERIES:
+        elif self.param_type == T.MULTICHARTSERIES:
             return ParamDTypeMultichartseries()
-        elif self.ftype == T.TAB:
+        elif self.param_type == T.TAB:
             return ParamDTypeTab()
-        elif self.ftype == T.MULTITAB:
+        elif self.param_type == T.MULTITAB:
             return ParamDTypeMultitab()
-        elif self.ftype == T.INTEGER:
+        elif self.param_type == T.INTEGER:
             kwargs = {}
             if self.default is not None:
                 # TODO nix cast here: validate in module_version
                 kwargs['default'] = int(self.default)
             return ParamDTypeInteger(**kwargs)
-        elif self.ftype == T.FLOAT:
+        elif self.param_type == T.FLOAT:
             kwargs = {}
             if self.default is not None:
                 # TODO nix cast here: validate in module_version
                 kwargs['default'] = float(self.default)
             return ParamDTypeFloat(**kwargs)
-        elif self.ftype == T.CHECKBOX:
+        elif self.param_type == T.CHECKBOX:
             kwargs = {}
             if self.default is not None:
                 # TODO nix cast here: validate in module_version
                 kwargs['default'] = str(self.default).lower() == 'true'
             return ParamDTypeBoolean(**kwargs)
         elif (
-            self.ftype == T.MENU
-            or self.ftype == T.RADIO
+            self.param_type == T.MENU
+            or self.param_type == T.RADIO
         ):
             if self.items:
                 # deprecated menu/radio
@@ -647,14 +648,15 @@ class ParamField:
                 default = values[0] if self.default is None else self.default
 
             return ParamDTypeEnum(choices, default)
-        elif (self.ftype == T.LIST):
+        elif (self.param_type == T.LIST):
 
             # This must match logic in ModuleVersion.param_schema so that child parameters
             # are stored the same way as the top level params
-            param_dtypes = dict((p['id_name'], ParamField.from_dict(p).dtype) for p in self.child_parameters)
-            param_dtypes = {k: v for k, v in param_dtypes.items() if v} # remove None dtypes, e.g. statictext
+            param_dtypes = dict((p['id_name'], ParamSpec.from_dict(p).dtype) for p in self.child_parameters)
+            param_dtypes = {k: v for k, v in param_dtypes.items() if v} # remove None dtypes, e.g. button
 
+            # A list of repeating groups of parameters
             return ParamDTypeList(ParamDTypeDict(param_dtypes))
 
         else:
-            raise ValueError('Unknown ftype %r' % self.ftype)
+            raise ValueError('Unknown param_type %r' % self.param_type)

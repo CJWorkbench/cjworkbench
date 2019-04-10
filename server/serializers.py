@@ -8,7 +8,7 @@ from server.models import AclEntry, Workflow, WfModule, \
         ModuleVersion, StoredObject, Tab
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
-from server.models.param_field import ParamField
+from server.models.param_spec import ParamSpec
 
 User = get_user_model()
 
@@ -33,7 +33,7 @@ class ModuleSerializer(serializers.ModelSerializer):
     def serialize_param(self, p):
         d = {
             'id_name': p.id_name,
-            'type': str(p.ftype),
+            'type': str(p.param_type),
             'name': p.name,
             'multiline': p.multiline,
             'placeholder': p.placeholder,
@@ -44,7 +44,7 @@ class ModuleSerializer(serializers.ModelSerializer):
         }
         if p.child_parameters:
             # must match ModuleVersion.param_fields
-            d['childParameters'] = [self.serialize_param(ParamField.from_dict(s)) for s in p.child_parameters]
+            d['childParameters'] = [self.serialize_param(ParamSpec.from_dict(s)) for s in p.child_parameters]
             d['childDefault'] = p.dtype.inner_dtype.default
         return d
 

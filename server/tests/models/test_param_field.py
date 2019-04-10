@@ -1,5 +1,5 @@
 import unittest
-from server.models.param_field import ParamDType, ParamField
+from server.models.param_spec import ParamDType, ParamSpec
 
 
 DT = ParamDType
@@ -80,20 +80,20 @@ class DTypeCoerceTest(unittest.TestCase):
         self.assertEqual(value, [{'column': 'X', 'color': '#abcdef'}])
 
 
-class FTypeDTypeTest(unittest.TestCase):
+class ParamSpecDTypeTest(unittest.TestCase):
     def test_bool_radio_default_false(self):
         # Handle odd edge case seen on production:
         #
         # If enum options are booleans and the first is True, and the _default_
         # is False, don't overwrite the default.
-        ftype = ParamField(
+        param_spec = ParamSpec(
             'p',
-            ParamField.FType.RADIO,
+            ParamSpec.ParamType.RADIO,
             options=[
                 {'value': True, 'label': 'First'},
                 {'value': False, 'label': 'Second'},
             ],
             default=False  # a valid option
         )
-        dtype = ftype.dtype
+        dtype = param_spec.dtype
         self.assertEqual(dtype.default, False)

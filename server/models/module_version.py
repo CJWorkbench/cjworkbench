@@ -9,7 +9,7 @@ from django.utils import timezone
 from server import minio
 from server.modules import Specs as InternalModuleSpecs
 from .module_loader import validate_module_spec
-from .param_field import ParamField, ParamDType
+from .param_spec import ParamSpec, ParamDType
 
 
 def _django_validate_module_spec(spec: Any) -> None:
@@ -179,7 +179,7 @@ class ModuleVersion(models.Model):
 
     @property
     def param_fields(self):
-        return [ParamField.from_dict(d) for d in self.spec['parameters']]
+        return [ParamSpec.from_dict(d) for d in self.spec['parameters']]
 
     # Returns a dict of DTypes for all parameters
     @property

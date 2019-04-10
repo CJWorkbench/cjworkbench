@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from .. import oauth, websockets
 from ..models import ModuleVersion, WfModule, Workflow
-from ..models.param_field import ParamField
+from ..models.param_spec import ParamSpec
 
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
 
     # raises ModuleVersion.DoesNotExist
     for field in module_version.param_fields:
-        if field.id_name == param and field.ftype == ParamField.FType.SECRET:
+        if field.id_name == param and field.param_type == ParamSpec.ParamType.SECRET:
             return wf_module
     else:
         raise ModuleVersion.DoesNotExist

@@ -1,6 +1,6 @@
 import unittest
 from server.models.module_version import ModuleVersion
-from server.models.param_field import ParamDType
+from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
 
 

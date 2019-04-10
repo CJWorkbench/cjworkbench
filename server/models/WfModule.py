@@ -6,7 +6,7 @@ from server import minio
 from server.models import loaded_module
 from .fields import ColumnsField
 from .Params import Params
-from .param_field import ParamDTypeDict, ParamField
+from .param_spec import ParamDTypeDict, ParamSpec
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .StoredObject import StoredObject
@@ -251,7 +251,7 @@ class WfModule(models.Model):
         # spec, with values maybe None
         secrets = {}
         for field in self.module_version.param_fields:
-            if field.ftype == ParamField.FType.SECRET:
+            if field.param_type == ParamSpec.ParamType.SECRET:
                 secrets[field.id_name] = self.secrets.get(field.id_name)
 
         return Params(schema, values, secrets)
