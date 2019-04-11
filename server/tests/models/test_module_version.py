@@ -34,7 +34,7 @@ class ModuleVersionTest(DbTestCase):
 
         self.assertEqual(repr(mv.param_schema), repr(ParamDType.Dict({
             'foo': ParamDType.String(default='X'),
-            'baz': ParamDType.Enum(choices={0, 1, 2}, default=2),
+            'baz': ParamDType.Enum(choices=frozenset({0, 1, 2}), default=2),
         })))
 
     def test_param_schema_explicit(self):

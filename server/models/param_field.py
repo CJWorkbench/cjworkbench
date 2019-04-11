@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, FrozenSet, List, Optional, Set, Union
 
 
 class ParamDType:
@@ -53,7 +53,7 @@ class ParamDType:
         """
         yield (self, value)
 
-    def find_leaf_values_with_dtype(self, dtype: type, value: Any) -> Set[Any]:
+    def find_leaf_values_with_dtype(self, dtype: type, value: Any) -> FrozenSet[Any]:
         """
         Recurse through `value`, finding sub-values of type `dtype`.
 
@@ -71,8 +71,8 @@ class ParamDType:
         ... })
         {'tab-123', 'tab-234'}
         """
-        return set(v for dt, v in self.iter_dfs_dtype_values(value)
-                   if isinstance(dt, dtype))
+        return frozenset(v for dt, v in self.iter_dfs_dtype_values(value)
+                         if isinstance(dt, dtype))
 
     def omit_missing_table_columns(self, value: Any, columns: Set[str]) -> Any:
         """
@@ -95,6 +95,9 @@ class ParamDType:
 
     @classmethod
     def _from_plain_data(cls, **kwargs):
+        """
+        Deserialize this DType (kwargs are JSON keys/values).
+        """
         return cls(**kwargs)
 
     @classmethod
@@ -196,12 +199,15 @@ class ParamDTypeBoolean(ParamDType):
 
 
 class ParamDTypeColumn(ParamDTypeString):
-    def __init__(self, tab_parameter: Optional[str] = None):
+    def __init__(self, column_types: Optional[FrozenSet[str]] = None,
+                 tab_parameter: Optional[str] = None):
         super().__init__()
+        self.column_types = column_types
         self.tab_parameter = tab_parameter
 
     def __repr__(self):
-        return 'ParamDTypeColumn' + repr((self.tab_parameter,))
+        return 'ParamDTypeColumn' + repr((self.column_types,
+                                          self.tab_parameter))
 
     def omit_missing_table_columns(self, value, columns):
         if value not in columns:
@@ -209,22 +215,39 @@ class ParamDTypeColumn(ParamDTypeString):
         else:
             return value
 
+    @classmethod
+    def _from_plain_data(cls, *, column_types=None, **kwargs):
+        if column_types:
+            # column_types comes from JSON as a list. We need a set.
+            kwargs['column_types'] = frozenset(column_types)
+        return cls(**kwargs)
+
 
 class ParamDTypeMulticolumn(ParamDTypeString):
-    def __init__(self, tab_parameter: Optional[str] = None):
+    def __init__(self, column_types: Optional[FrozenSet[str]] = None,
+                 tab_parameter: Optional[str] = None):
         super().__init__()
+        self.column_types = column_types
         self.tab_parameter = tab_parameter
 
     def __repr__(self):
-        return 'ParamDTypeMulticolumn' + repr((self.tab_parameter,))
+        return 'ParamDTypeMulticolumn' + repr((self.column_types,
+                                               self.tab_parameter))
 
     def omit_missing_table_columns(self, value, columns):
         valid = [c for c in value.split(',') if c in columns]
         return ','.join(valid)
 
+    @classmethod
+    def _from_plain_data(cls, *, column_types=None, **kwargs):
+        if column_types:
+            # column_types comes from JSON as a list. We need a set.
+            kwargs['column_types'] = frozenset(column_types)
+        return cls(**kwargs)
+
 
 class ParamDTypeEnum(ParamDType):
-    def __init__(self, choices: Set[Any], default: Any):
+    def __init__(self, choices: FrozenSet[Any], default: Any):
         super().__init__()
         if default not in choices:
             raise ValueError(
@@ -249,6 +272,10 @@ class ParamDTypeEnum(ParamDType):
                 'Value %(value)r is not in choices %(choices)r'
                 % {'value': value, 'choices': self.choices}
             )
+
+    @classmethod
+    def _from_plain_data(cls, *, choices: List[str], **kwargs):
+        return cls(choices=frozenset(choices), **kwargs)
 
 
 class ParamDTypeList(ParamDType):
@@ -452,7 +479,7 @@ class ParamDTypeMultichartseries(ParamDTypeList):
 
     def __init__(self, default=[]):
         super().__init__(inner_dtype=ParamDTypeDict({
-            'column': ParamDTypeColumn(),
+            'column': ParamDTypeColumn(column_types=frozenset({'number'})),
             'color': ParamDTypeString(),  # TODO enforce '#abc123' pattern
         }), default=default)
 
@@ -550,9 +577,14 @@ class ParamField:
     tab_parameter: str = ''
     default: Any = None
     visible_if: Optional[Dict[str, Dict[str, Any]]] = None
+    column_types: Optional[FrozenSet[str]] = None
 
     @classmethod
     def from_dict(self, d: Dict[str, Any]) -> 'ParamField':
+        column_types = d.get('column_types')
+        if isinstance(column_types, list):
+            column_types = frozenset(column_types)
+
         return ParamField(
             id_name=d['id_name'],
             ftype=ParamField.FType(d['type']),
@@ -563,6 +595,7 @@ class ParamField:
             placeholder=d.get('placeholder', ''),
             tab_parameter=d.get('tab_parameter', ''),
             visible_if=d.get('visible_if'),
+            column_types=column_types,
             default=d.get('default')
         )
 
@@ -588,9 +621,13 @@ class ParamField:
                 kwargs['default'] = str(self.default)
             return ParamDTypeString(**kwargs)
         elif self.ftype == T.COLUMN:
-            return ParamDTypeColumn(tab_parameter=self.tab_parameter or None)
+            return ParamDTypeColumn(
+                column_types=self.column_types,
+                tab_parameter=self.tab_parameter or None
+            )
         elif self.ftype == T.MULTICOLUMN:
             return ParamDTypeMulticolumn(
+                column_types=self.column_types,
                 tab_parameter=self.tab_parameter or None
             )
         elif self.ftype == T.MULTICHARTSERIES:
@@ -624,14 +661,14 @@ class ParamField:
             if self.items:
                 # deprecated menu/radio
                 # Menu values are integers. Ick, eh?
-                choices = set(range(len(self.items.split('|'))))
+                choices = frozenset(range(len(self.items.split('|'))))
                 default = int(self.default or 0) or 0
             else:
                 # normal menu/radio
                 values = list(o['value']
                               for o in self.options
                               if isinstance(o, dict))  # skip separators
-                choices = set(values)
+                choices = frozenset(values)
                 # This won't support value=None
                 default = values[0] if self.default is None else self.default
 

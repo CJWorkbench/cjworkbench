@@ -60,6 +60,14 @@ definitions:
             placeholder:
                 type: string
                 description: "Text that appears when the form field has no value (only for some types) (default: '')"
+            column_types:
+                type: array
+                description: "List of allowed input column types. Workbench will not invoke the module with wrong-type columns."
+                items:
+                    oneOf:
+                      - const: text
+                      - const: number
+                      - const: datetime
         # _common: use Yaml "anchors" so we can reuse common JSON in all our types.
         # (They tend to use many similar properties, but not all.) JSON Schema has
         # its own '$ref' syntax, but that doesn't let us "extend" an object -- i.e.,
@@ -249,6 +257,7 @@ definitions:
                 <<: *common_ftype_properties
                 type: { const: column }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
+                column_types: { $ref: '#/definitions/ftypes/_lib/column_types' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
                 tab_parameter: { type: string }  # optional
         multicolumn:
@@ -257,6 +266,7 @@ definitions:
                 <<: *common_ftype_properties
                 type: { const: multicolumn }
                 name: { $ref: '#/definitions/ftypes/_lib/name' }
+                column_types: { $ref: '#/definitions/ftypes/_lib/column_types' }
                 placeholder: { $ref: '#/definitions/ftypes/_lib/placeholder' }
                 tab_parameter: { type: string }  # optional
         tab:

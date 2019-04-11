@@ -7,6 +7,7 @@ description: "Change the way Workbench displays some columns (without changing t
 parameters:
 - id_name: colnames
   type: multicolumn
+  column_types: [ number ]
 - id_name: format
   type: numberformat
   name: Format

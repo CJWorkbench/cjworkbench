@@ -3,8 +3,38 @@ from typing import Any, Dict, List, Optional
 from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
 from server.models import Params, Tab
 from server.models.param_field import ParamDType
-from .types import TabCycleError, TabOutputUnreachableError, UnneededExecution
+from .types import TabCycleError, TabOutputUnreachableError, \
+        UnneededExecution, PromptingError
 
+
+class PromptErrorAggregator:
+    def __init__(self):
+        self.groups = {}  # found_type => { wanted_types => column_names }
+        # Errors are first-come-first-reported, per type. We get that because
+        # Python 3.7+ dicts iterate in insertion order.
+
+    def extend(self, errors: List[PromptingError.WrongColumnType]) -> None:
+        for error in errors:
+            self.add(error)
+
+    def add(self, error: PromptingError.WrongColumnType) -> None:
+        group = self.groups.setdefault(error.found_type, {})
+        names = group.setdefault(error.wanted_types, [])
+        for name in error.column_names:
+            if name not in names:
+                names.append(name)
+
+    def raise_if_nonempty(self):
+        if not self.groups:
+            return
+
+        errors = []
+        for found_type, group in self.groups.items():
+            for wanted_types, column_names in group.items():
+                errors.append(PromptingError.WrongColumnType(column_names,
+                                                             found_type,
+                                                             wanted_types))
+        raise PromptingError(errors)
 
 class RenderContext:
     def __init__(
@@ -28,10 +58,10 @@ class RenderContext:
         self.tab_shapes = tab_shapes
         self.params = params
 
-    def output_colnames_for_tab_parameter(self, tab_parameter):
+    def output_columns_for_tab_parameter(self, tab_parameter):
         if tab_parameter is None:
             # Common case: param selects from the input table
-            return set(c.name for c in self.input_table_shape.columns)
+            return {c.name: c for c in self.input_table_shape.columns}
 
         # Rare case: there's a "tab" parameter, and the column selector is
         # selecting from _that_ tab's output columns.
@@ -48,7 +78,7 @@ class RenderContext:
             # Tab has a cycle or other error
             return ''
 
-        return set(c.name for c in tab.table_shape.columns)
+        return {c.name: c for c in tab.table_shape.columns}
 
 
 def get_param_values(
@@ -65,6 +95,8 @@ def get_param_values(
         * Raise `TabCycleError` if a chosen Tab has not been rendered
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
+        * Raise `PromptingError` if a chosen column is of the wrong type
+          (so the caller can render a ProcessResult with errors and quickfixes)
 
     This uses database connections, and it's slow! (It needs to load input tab
     data.) Be sure the Workflow is locked while you call it.
@@ -82,14 +114,19 @@ def get_param_values(
 # TODO abstract this pattern. The recursion parts seem like they should be
 # written in just one place.
 @singledispatch
-def clean_value(dtype: ParamDType, value: Any,
-                context: RenderContext) -> Any:
+def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
     """
     Ensure `value` fits the Params dict `render()` expects.
 
     The most basic implementation is to just return `value`: it looks a lot
     like the dict we pass `render()`. But we have special-case implementations
     for a few dtypes.
+
+    Raise TabCycleError, TabOutputUnreachableError or UnneededExecution if
+    render cannot be called and there's nothing we can do to fix that.
+    
+    Raise PromptingError if we want to ask the user to fix stuff instead of
+    calling render(). (Recursive implementations must concatenate these.)
     """
     return value  # fallback method
 
@@ -146,13 +183,20 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
 
 @clean_value.register(ParamDType.Column)
 def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
-    valid_colnames = context.output_colnames_for_tab_parameter(
+    valid_columns = context.output_columns_for_tab_parameter(
         dtype.tab_parameter
     )
-    if value in valid_colnames:
-        return value
-    else:
-        return ''
+    if value not in valid_columns:
+        return ''  # Null column
+
+    column = valid_columns[value]
+    if dtype.column_types and column.type.name not in dtype.column_types:
+        raise PromptingError([
+            PromptingError.WrongColumnType([value], column.type.name,
+                                           dtype.column_types)
+        ])
+
+    return value
 
 
 @clean_value.register(ParamDType.Multicolumn)
@@ -161,14 +205,32 @@ def _(
     value: str,
     context: RenderContext
 ) -> str:
-    valid_colnames = context.output_colnames_for_tab_parameter(
+    valid_columns = context.output_columns_for_tab_parameter(
         dtype.tab_parameter
     )
     # `value` is a comma-separated list
     #
     # Don't worry about split-empty-string generating an empty-string colname:
-    # it isn't in `valid_colnames` so it'll get filtered out.
-    return ','.join(c for c in value.split(',') if c in valid_colnames)
+    # it isn't in `valid_columns` so it'll get filtered out.
+    if not value:
+        return ''
+
+    valid_colnames = []
+    error_agg = PromptErrorAggregator()
+
+    for colname in value.split(','):
+        if colname not in valid_columns:
+            continue
+        column = valid_columns[colname]
+        if dtype.column_types and column.type.name not in dtype.column_types:
+            error_agg.add(PromptingError.WrongColumnType([column.name],
+                                                         column.type.name,
+                                                         dtype.column_types))
+        else:
+            valid_colnames.append(column.name)
+
+    error_agg.raise_if_nonempty()
+    return ','.join(valid_colnames)
 
 
 @clean_value.register(ParamDType.Multichartseries)
@@ -179,9 +241,19 @@ def _(
 ) -> List[Dict[str, str]]:
     # Recurse to clean_value(ParamDType.Column) to clear missing columns
     inner_clean = partial(clean_value, dtype.inner_dtype)
-    ret = [inner_clean(v, context) for v in value]
-    # Filter out any list item that has a cleared (missing) column
-    ret = [s for s in ret if s['column']]
+
+    ret = []
+    error_agg = PromptErrorAggregator()
+
+    for v in value:
+        try:
+            clean_v = inner_clean(v, context)
+            if clean_v['column']:  # it's a valid column
+                ret.append(clean_v)
+        except PromptingError as err:
+            error_agg.extend(err.errors)
+
+    error_agg.raise_if_nonempty()
     return ret
 
 
@@ -193,7 +265,15 @@ def clean_value_list(
     context: RenderContext
 ) -> List[Any]:
     inner_clean = partial(clean_value, dtype.inner_dtype)
-    return [inner_clean(v, context) for v in value]
+    ret = []
+    error_agg = PromptErrorAggregator()
+    for v in value:
+        try:
+            ret.append(inner_clean(v, context))
+        except PromptingError as err:
+            error_agg.extend(err.errors)
+    error_agg.raise_if_nonempty()
+    return ret
 
 
 @clean_value.register(ParamDType.Multitab)
@@ -224,10 +304,18 @@ def _(
     value: Dict[str, Any],
     context: RenderContext
 ) -> Dict[str, Any]:
-    return dict(
-        (k, clean_value(dtype.properties[k], v, context))
-        for k, v in value.items()
-    )
+    ret = {}
+    prompting_errors = []
+
+    for k, v in value.items():
+        try:
+            ret[k] = clean_value(dtype.properties[k], v, context)
+        except PromptingError as err:
+            prompting_errors.extend(err.errors)
+
+    if prompting_errors:
+        raise PromptingError(prompting_errors)
+    return ret
 
 
 @clean_value.register(ParamDType.Map)

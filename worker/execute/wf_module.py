@@ -8,7 +8,8 @@ from server import notifications
 from server.models import LoadedModule, Params, WfModule, Workflow
 from server.notifications import OutputDelta
 from server import websockets
-from .types import UnneededExecution, TabCycleError, TabOutputUnreachableError
+from .types import TabCycleError, TabOutputUnreachableError, \
+        UnneededExecution, PromptingError
 from . import renderprep
 
 
@@ -65,6 +66,9 @@ def _execute_wfmodule_pre(
 
     Raise TabCycleError or TabOutputUnreachableError if the module depends on
     tabs with errors. (We won't call the render() method in that case.)
+
+    Raise PromptingError if the module parameters are invalid. (We'll skip
+    render() and prompt the user with quickfixes in that case.)
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -157,6 +161,11 @@ async def _render_wfmodule(
             'The chosen tab has no output. '
             'Please change that tab or choose another.'
         ))
+    except PromptingError as err:
+        return ProcessResult(
+            error='The chosen columns need to be converted.',
+            quick_fixes=err.as_quick_fixes()
+        )
 
     # Render may take a while. run_in_executor to push that slowdown to a
     # thread and keep our event loop responsive.

@@ -7,7 +7,7 @@ from server.models.param_field import ParamDType
 from server.tests.utils import DbTestCase
 from worker.execute.renderprep import clean_value, RenderContext
 from worker.execute.types import TabCycleError, TabOutputUnreachableError, \
-        UnneededExecution
+        UnneededExecution, PromptingError
 
 
 class CleanValueTests(DbTestCase):
@@ -26,64 +26,183 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
         ]), None, None)
+        result = clean_value(ParamDType.Column(), 'A', context)
+        self.assertEqual(result, 'A')
+
+    def test_clean_column_prompting_error_convert_to_text(self):
+        # TODO make this _automatic_ instead of quick-fix?
+        # Consider Regex. We probably want to pass the module a text Series
+        # _separately_ from the input DataFrame. That way Regex can output
+        # a new Text column but preserve its input column's data type.
+        #
+        # ... but for now: prompt for a Quick Fix.
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.NUMBER()),
+        ]), None, None)
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(ParamDType.Column(column_types=frozenset({'text'})),
+                        'A', context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'number',
+                                           frozenset({'text'})),
+        ])
+
+    def test_clean_column_prompting_error_convert_to_number(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+        ]), None, None)
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(ParamDType.Column(column_types=frozenset({'number'})),
+                                          'A', context)
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'text',
+                                           frozenset({'number'})),
+        ])
+
+    def test_list_prompting_error_concatenate_same_type(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.TEXT()),
+        ]), None, None)
+        schema = ParamDType.List(
+            inner_dtype=ParamDType.Column(column_types=frozenset({'number'}))
+        )
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(schema, ['A', 'B'], context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A', 'B'], 'text',
+                                           frozenset({'number'})),
+        ])
+
+    def test_list_prompting_error_concatenate_different_type(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.DATETIME()),
+        ]), None, None)
+        schema = ParamDType.List(
+            inner_dtype=ParamDType.Column(column_types=frozenset({'number'}))
+        )
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(schema, ['A', 'B'], context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'text',
+                                           frozenset({'number'})),
+            PromptingError.WrongColumnType(['B'], 'datetime',
+                                           frozenset({'number'})),
+        ])
+
+    def test_dict_prompting_error(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.TEXT()),
+        ]), None, None)
         schema = ParamDType.Dict({
-            'column': ParamDType.Column(),
+            'col1': ParamDType.Column(column_types=frozenset({'number'})),
+            'col2': ParamDType.Column(column_types=frozenset({'datetime'})),
         })
-        value = {'column': 'A'}
-        result = clean_value(schema, value, context)
-        self.assertEqual(result, {'column': 'A'})
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(schema, {'col1': 'A', 'col2': 'B'}, context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'text',
+                                           frozenset({'number'})),
+            PromptingError.WrongColumnType(['B'], 'text',
+                                           frozenset({'datetime'})),
+        ])
+
+    def test_list_prompting_error_concatenate_different_types(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.DATETIME()),
+        ]), None, None)
+        schema = ParamDType.List(
+            inner_dtype=ParamDType.Column(column_types=frozenset({'number'}))
+        )
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(schema, ['A', 'B'], context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'text',
+                                           frozenset({'number'})),
+            PromptingError.WrongColumnType(['B'], 'datetime',
+                                           frozenset({'number'})),
+        ])
 
     def test_clean_column_missing_becomes_empty_string(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
         ]), None, None)
-        schema = ParamDType.Dict({
-            'column': ParamDType.Column(),
-        })
-        value = {'column': 'B'}
-        result = clean_value(schema, value, context)
-        self.assertEqual(result, {'column': ''})
+        result = clean_value(ParamDType.Column(), 'B', context)
+        self.assertEqual(result, '')
 
     def test_clean_multicolumn_valid(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
-        schema = ParamDType.Dict({
-            'columns': ParamDType.Multicolumn(),
-        })
-        value = {'columns': 'A,B'}
-        result = clean_value(schema, value, context)
-        self.assertEqual(result, {'columns': 'A,B'})
+        result = clean_value(ParamDType.Multicolumn(), 'A,B', context)
+        self.assertEqual(result, 'A,B')
+
+    def test_clean_column_prompting_error_convert_to_text(self):
+        # TODO make this _automatic_ instead of quick-fix?
+        # ... but for now: prompt for a Quick Fix.
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.DATETIME()),
+            Column('C', ColumnType.TEXT()),
+        ]), None, None)
+        with self.assertRaises(PromptingError) as cm:
+            schema = ParamDType.Multicolumn(column_types=frozenset({'text'}))
+            clean_value(schema, 'A,B', context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'number',
+                                           frozenset({'text'})),
+            PromptingError.WrongColumnType(['B'], 'datetime',
+                                           frozenset({'text'})),
+        ])
 
     def test_clean_multicolumn_missing_is_removed(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
-        schema = ParamDType.Dict({
-            'columns': ParamDType.Multicolumn(),
-        })
-        value = {'columns': 'A,X,B'}
-        result = clean_value(schema, value, context)
-        self.assertEqual(result, {'columns': 'A,B'})
+        result = clean_value(ParamDType.Multicolumn(), 'A,X,B', context)
+        self.assertEqual(result, 'A,B')
 
     def test_clean_multichartseries_missing_is_removed(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
-        schema = ParamDType.Dict({
-            'y': ParamDType.Multichartseries(),
-        })
-        value = {
-            'y': [
-                {'column': 'A', 'color': '#aaaaaa'},
-                {'column': 'C', 'color': '#cccccc'},
-            ],
-        }
-        result = clean_value(schema, value, context)
-        self.assertEqual(result, {'y': [{'column': 'A', 'color': '#aaaaaa'}]})
+        value = [
+            {'column': 'A', 'color': '#aaaaaa'},
+            {'column': 'C', 'color': '#cccccc'},
+        ]
+        result = clean_value(ParamDType.Multichartseries(), value, context)
+        self.assertEqual(result, [{'column': 'A', 'color': '#aaaaaa'}])
+
+    def test_clean_multichartseries_non_number_is_prompting_error(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.DATETIME()),
+        ]), None, None)
+        value = [
+            {'column': 'A', 'color': '#aaaaaa'},
+            {'column': 'B', 'color': '#cccccc'},
+        ]
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(ParamDType.Multichartseries(), value, context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A'], 'text',
+                                           frozenset({'number'})),
+            PromptingError.WrongColumnType(['B'], 'datetime',
+                                           frozenset({'number'})),
+        ])
 
     def test_clean_tab_happy_path(self):
         tab_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
@@ -98,16 +217,13 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(workflow.id, None, {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
         }, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
-
-        result = clean_value(schema, {'tab': tab.slug}, context)
-        self.assertEqual(result['tab'].slug, tab.slug)
-        self.assertEqual(result['tab'].name, tab.name)
-        self.assertEqual(result['tab'].columns, {
-            'A': RenderColumn('A', 'number'),
+        result = clean_value(ParamDType.Tab(), tab.slug, context)
+        self.assertEqual(result.slug, tab.slug)
+        self.assertEqual(result.name, tab.name)
+        self.assertEqual(result.columns, {
+            'A': RenderColumn('A', 'number', '{:,}'),
         })
-        assert_frame_equal(result['tab'].dataframe,
-                           pd.DataFrame({'A': [1, 2]}))
+        assert_frame_equal(result.dataframe, pd.DataFrame({'A': [1, 2]}))
 
     def test_clean_multicolumn_from_other_tab(self):
         tab_output = ProcessResult(pd.DataFrame({'A-from-tab-2': [1, 2]}))
@@ -137,9 +253,8 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_tab_no_tab_selected_gives_none(self):
         context = RenderContext(None, None, {}, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
-        result = clean_value(schema, {'tab': ''}, context)
-        self.assertEqual(result, {'tab': None})
+        result = clean_value(ParamDType.Tab(), '', context)
+        self.assertEqual(result, None)
 
     def test_clean_tab_missing_tab_selected_gives_none(self):
         """
@@ -148,22 +263,19 @@ class CleanValueTests(DbTestCase):
         The JS side of things will see the nonexistent tab, but not render().
         """
         context = RenderContext(None, None, {}, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
-        result = clean_value(schema, {'tab': 'tab-XXX'}, context)
-        self.assertEqual(result, {'tab': None})
+        result = clean_value(ParamDType.Tab(), 'tab-XXX', context)
+        self.assertEqual(result, None)
 
     def test_clean_tab_no_tab_output_raises_cycle(self):
         context = RenderContext(None, None, {'tab-1': None}, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
         with self.assertRaises(TabCycleError):
-            clean_value(schema, {'tab': 'tab-1'}, context)
+            clean_value(ParamDType.Tab(), 'tab-1', context)
 
     def test_clean_tab_tab_error_raises_cycle(self):
         shape = StepResultShape('error', TableShape(0, []))
         context = RenderContext(None, None, {'tab-1': shape}, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
         with self.assertRaises(TabOutputUnreachableError):
-            clean_value(schema, {'tab': 'tab-1'}, context)
+            clean_value(ParamDType.Tab(), 'tab-1', context)
 
     def test_clean_tab_tab_delete_race_raises_unneededexecution(self):
         """
@@ -194,10 +306,8 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(workflow.id, None, {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
         }, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
-
         with self.assertRaises(UnneededExecution):
-            clean_value(schema, {'tab': tab.slug}, context)
+            clean_value(ParamDType.Tab(), tab.slug, context)
 
     def test_clean_tab_wf_module_changed_raises_unneededexecution(self):
         """
@@ -224,10 +334,8 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(workflow.id, None, {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
         }, None)
-        schema = ParamDType.Dict({'tab': ParamDType.Tab()})
-
         with self.assertRaises(UnneededExecution):
-            clean_value(schema, {'tab': tab.slug}, context)
+            clean_value(ParamDType.Tab(), tab.slug, context)
 
     def test_clean_tabs_happy_path(self):
         tab1_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
@@ -242,16 +350,13 @@ class CleanValueTests(DbTestCase):
         context = RenderContext(workflow.id, None, {
             tab1.slug: StepResultShape('ok', tab1_output.table_shape),
         }, None)
-        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
-
-        result = clean_value(schema, {'tabs': [tab1.slug]}, context)
-        self.assertEqual(result['tabs'][0].slug, tab1.slug)
-        self.assertEqual(result['tabs'][0].name, tab1.name)
-        self.assertEqual(result['tabs'][0].columns, {
-            'A': RenderColumn('A', 'number'),
+        result = clean_value(ParamDType.Multitab(), [tab1.slug], context)
+        self.assertEqual(result[0].slug, tab1.slug)
+        self.assertEqual(result[0].name, tab1.name)
+        self.assertEqual(result[0].columns, {
+            'A': RenderColumn('A', 'number', '{:,}'),
         })
-        assert_frame_equal(result['tabs'][0].dataframe,
-                           pd.DataFrame({'A': [1, 2]}))
+        assert_frame_equal(result[0].dataframe, pd.DataFrame({'A': [1, 2]}))
 
     def test_clean_tabs_preserve_ordering(self):
         tab2_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
@@ -279,33 +384,28 @@ class CleanValueTests(DbTestCase):
             tab2.slug: StepResultShape('ok', tab2_output.table_shape),
             tab3.slug: StepResultShape('ok', tab3_output.table_shape),
         }, None)
-        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
-
         # Supply wrongly-ordered tabs. Cleaned, they should be in order.
-        result = clean_value(schema, {'tabs': [tab3.slug, tab2.slug]}, context)
-        self.assertEqual(result['tabs'][0].slug, tab2.slug)
-        self.assertEqual(result['tabs'][0].name, tab2.name)
-        self.assertEqual(result['tabs'][0].columns, {
-            'A': RenderColumn('A', 'number'),
+        result = clean_value(ParamDType.Multitab(),
+                             [tab3.slug, tab2.slug], context)
+        self.assertEqual(result[0].slug, tab2.slug)
+        self.assertEqual(result[0].name, tab2.name)
+        self.assertEqual(result[0].columns, {
+            'A': RenderColumn('A', 'number', '{:,}'),
         })
-        assert_frame_equal(result['tabs'][0].dataframe,
-                           pd.DataFrame({'A': [1, 2]}))
-        self.assertEqual(result['tabs'][1].slug, tab3.slug)
-        self.assertEqual(result['tabs'][1].name, tab3.name)
-        self.assertEqual(result['tabs'][1].columns, {
-            'B': RenderColumn('B', 'number'),
+        assert_frame_equal(result[0].dataframe, pd.DataFrame({'A': [1, 2]}))
+        self.assertEqual(result[1].slug, tab3.slug)
+        self.assertEqual(result[1].name, tab3.name)
+        self.assertEqual(result[1].columns, {
+            'B': RenderColumn('B', 'number', '{:,}'),
         })
-        assert_frame_equal(result['tabs'][1].dataframe,
-                           pd.DataFrame({'B': [2, 3]}))
+        assert_frame_equal(result[1].dataframe, pd.DataFrame({'B': [2, 3]}))
 
     def test_clean_tabs_nix_missing_tab(self):
         context = RenderContext(None, None, {}, None)
-        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
-        result = clean_value(schema, {'tabs': ['tab-missing']}, context)
-        self.assertEqual(result['tabs'], [])
+        result = clean_value(ParamDType.Multitab(), ['tab-missing'], context)
+        self.assertEqual(result, [])
 
     def test_clean_tabs_tab_error_raises_cycle(self):
         context = RenderContext(None, None, {'tab-1': None}, None)
-        schema = ParamDType.Dict({'tabs': ParamDType.Multitab()})
         with self.assertRaises(TabCycleError):
-            clean_value(schema, {'tabs': ['tab-1']}, context)
+            clean_value(ParamDType.Multitab(), ['tab-1'], context)

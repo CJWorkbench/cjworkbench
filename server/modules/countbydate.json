@@ -10,7 +10,8 @@
       "name": "",
       "id_name" : "column",
       "type": "column",
-      "placeholder": "Select date column"
+      "placeholder": "Select date column",
+      "column_types": [ "datetime" ]
     },
     {
       "name": "Group by",
@@ -30,6 +31,7 @@
       "name": "",
       "id_name" : "targetcolumn",
       "type": "column",
+      "column_types": [ "number" ],
       "visible_if": {
         "invert":true,
         "id_name": "operation",

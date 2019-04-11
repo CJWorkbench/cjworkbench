@@ -343,7 +343,7 @@ class QuickFix:
     """Text on the button"""
 
     action: str
-    """Reducer action to invoke, such as 'prepentModule'"""
+    """Reducer action to invoke, such as 'prependModule'"""
 
     args: List
     """Action arguments, as a list"""
