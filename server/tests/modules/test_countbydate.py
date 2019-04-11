@@ -176,19 +176,6 @@ class CountByDateTests(SimpleTestCase):
         result = render(count_table.copy(), P(column=''))
         assert_frame_equal(result, count_table)
 
-    def test_integer_dates_give_error(self):
-        # integers are not dates
-        table = pandas.DataFrame({'A': [1], 'B': [2]})
-        result = render(table, P(column='A'))
-        self.assertEqual(result, 'Column "A" must be Date & Time')
-
-    def test_string_dates_give_error(self):
-        # integers are not dates
-        table = pandas.DataFrame({'A': ['2018'], 'B': [2]})
-        result = render(table, P(column='A'))
-        self.assertEqual(result['error'], 'Column "A" must be Date & Time')
-        self.assertEqual(len(result['quick_fixes']), 1)
-
     def test_average_no_error_when_missing_target(self):
         # 1 = mean
         params = P(column='Date', operation=1, targetcolumn='')

@@ -3,7 +3,7 @@ from pandas.testing import assert_frame_equal
 from cjworkbench.types import Column, ColumnType, ProcessResult, TableShape, \
         RenderColumn, StepResultShape
 from server.models import Params, Workflow
-from server.models.param_field import ParamDType
+from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
 from worker.execute.renderprep import clean_value, RenderContext
 from worker.execute.types import TabCycleError, TabOutputUnreachableError, \

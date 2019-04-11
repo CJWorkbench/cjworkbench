@@ -14,7 +14,7 @@ from server.models import LoadedModule
 import server.models.loaded_module
 import server.modules.pastecsv
 from server.tests.utils import clear_minio
-from server.models.param_field import ParamDTypeDict, ParamDTypeString, \
+from server.models.param_spec import ParamDTypeDict, ParamDTypeString, \
         ParamDTypeInteger, ParamDTypeBoolean
 
 

@@ -167,57 +167,6 @@ class ValidatedForm:
         })
 
 
-class QuickFixableError(ValueError):
-    def __init__(self, message, quick_fixes=[]):
-        super().__init__(message)
-        self.quick_fixes = list(quick_fixes)
-
-
-class NumericIsNotDatetime(ValueError):
-    def __init__(self, column):
-        super().__init__(f'Column "{column}" must be Date & Time')
-
-
-class TextIsNotDatetime(QuickFixableError):
-    def __init__(self, column):
-        super().__init__(
-            f'Column "{column}" must be Date & Time',
-            [
-                {
-                    'text': 'Convert',
-                    'action': 'prependModule',
-                    'args': ['convert-date', {
-                        'colnames': column,  # TODO make 'colnames' an Array
-                    }]
-                }
-            ]
-        )
-
-
-class TextIsNotNumeric(QuickFixableError):
-    def __init__(self, column):
-        super().__init__(
-            f'Column "{column}" must be numbers',
-            [
-                {
-                    'text': 'Convert text to numbers',
-                    'action': 'prependModule',
-                    'args': ['extractnumbers', {
-                        'colnames': column,  # TODO make 'colnames' Array
-                        'extract': False,  # "anywhere in text"
-                        'type_format': 0,  # U.S.-style "1,000.23"
-                        'type_replace': 0,  # raise error on invalid
-                    }]
-                }
-            ]
-        )
-
-
-class DatetimeIsNotNumeric(ValueError):
-    def __init__(self, column):
-        super().__init__(f'Column "{column}" must be numbers')
-
-
 class Form:
     """Raw user input."""
     def __init__(self, date_column: str, period: Period, operation: Operation,
@@ -317,11 +266,6 @@ def render(table, params, **kwargs):
 
     try:
         validated_form = form.validate(table)
-    except QuickFixableError as err:
-        return {
-            'error': str(err),
-            'quick_fixes': err.quick_fixes
-        }
     except ValueError as err:
         return str(err)
 
