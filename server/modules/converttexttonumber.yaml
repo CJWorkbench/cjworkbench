@@ -1,0 +1,36 @@
+id_name: converttexttonumber
+name: Convert to numbers
+category: Clean
+icon: number
+help_url: modules/clean/convert-to-numbers
+description: Convert text to numbers.
+parameters:
+- id_name: colnames
+  type: multicolumn
+  name: ''
+  column_types: [ text, number ]  # we also convert numbers to numbers
+- id_name: extract
+  type: checkbox
+  name: Extract numbers
+- id_name: input_number_type
+  type: menu
+  default: any
+  options:
+  - { value: any, label: Any number }
+  - { value: int, label: Any integer }
+  - { value: float, label: Any decimal }
+- id_name: input_locale
+  name: Input style
+  type: menu
+  default: us
+  options:
+  - { value: us, label: 'United States' }
+  - { value: eu, label: 'Europe ("," is decimal separator)' }
+- id_name: error_means_null
+  name: 'Convert non-numbers to null'
+  type: checkbox
+  default: false
+- id_name: output_format
+  type: numberformat
+  name: Display as
+  default: '{:,}'

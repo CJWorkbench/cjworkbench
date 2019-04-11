@@ -68,8 +68,6 @@ class TestQuickFix(LoggedInIntegrationTest):
             expected_colname_and_type='T text'
         )
 
-        self.import_module('extractnumbers')
-
         # Try to format numbers. (It won't work because the input is text.)
         self.add_wf_module('Format numbers')
         self.select_column('Format numbers', 'colnames', 'Num')
@@ -85,7 +83,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Wait for module to appear
         b.assert_element('.module-name', text='Convert to numbers', wait=True)
         # The conversion won't work until we check an option.
-        b.check('Find number in text')
+        b.check('Extract number')
         self.submit_wf_module()
 
         # Now, the "Format numbers" module will have the correct output.

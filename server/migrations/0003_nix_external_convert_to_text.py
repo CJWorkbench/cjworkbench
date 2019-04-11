@@ -3,10 +3,10 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from server import minio
 
 
 def delete_module_versions(apps, schema_editor):
+    from server import minio
     # Delete from database
     ModuleVersion = apps.get_model('server', 'ModuleVersion')
     ModuleVersion.objects.filter(id_name='convert-text').delete()

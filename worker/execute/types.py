@@ -59,7 +59,8 @@ class PromptingError(Exception):
                                 'prependModule', ['converttotext', params])
             elif 'number' in self.wanted_types:
                 return QuickFix(f'Convert {names} to Numbers',
-                                'prependModule', ['extract-numbers', params])
+                                'prependModule',
+                                ['converttexttonumber', params])
             elif 'datetime' in self.wanted_types:
                 return QuickFix(f'Convert {names} to Dates & Times',
                                 'prependModule', ['convert-date', params])

@@ -28,7 +28,7 @@ export default class ColumnContextMenu extends React.Component {
   sortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
   sortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
   addNewFilter = () => this.create('filter')
-  extractNumbers = () => this.createOrUpdate('extract-numbers')
+  extractNumbers = () => this.createOrUpdate('converttexttonumber')
   cleanText = () => this.createOrUpdate('clean-text')
   dropColumn = () => this.createOrUpdate('selectcolumns', { drop_or_keep: 0 })
   convertDate = () => this.createOrUpdate('convert-date')
@@ -51,7 +51,7 @@ export default class ColumnContextMenu extends React.Component {
           <DropdownItem onClick={this.cleanText} className='clean-text' icon='icon-clean'>Clean Text</DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={this.convertDate} className='convert-date' icon='icon-calendar'>Convert to date & time</DropdownItem>
-          <DropdownItem onClick={this.extractNumbers} className='extract-numbers' icon='icon-number'>Convert to numbers</DropdownItem>
+          <DropdownItem onClick={this.extractNumbers} className='converttexttonumber' icon='icon-number'>Convert to numbers</DropdownItem>
           <DropdownItem onClick={this.convertText} className='converttotext' icon='icon-text'>Convert to text</DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={this.dropColumn} className='drop-column' icon='icon-removec'>Delete column</DropdownItem>

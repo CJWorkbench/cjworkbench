@@ -14,7 +14,7 @@ class PromptingErrorTest(unittest.TestCase):
         result = err.as_quick_fixes()
         self.assertEqual(result, [
             QuickFix('Convert "A" to Numbers', 'prependModule',
-                     ['extract-numbers', {'colnames': 'A'}]),
+                     ['converttexttonumber', {'colnames': 'A'}]),
             QuickFix('Convert "B", "C" to Numbers', 'prependModule',
-                     ['extract-numbers', {'colnames': 'B,C'}]),
+                     ['converttexttonumber', {'colnames': 'B,C'}]),
         ])

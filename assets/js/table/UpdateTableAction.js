@@ -23,7 +23,7 @@ export const moduleParamsBuilders = {
   'renamecolumns': buildRenameColumnsParams,
   'reordercolumns': buildReorderColumnsParams,
   'sort': buildSortColumnsParams,
-  'extract-numbers': genericAddColumn('colnames'),
+  'converttexttonumber': genericAddColumn('colnames'),
   'clean-text': genericAddColumn('colnames'),
   'convert-date': genericAddColumn('colnames'),
   'converttotext': genericAddColumn('colnames')
