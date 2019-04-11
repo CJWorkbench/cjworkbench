@@ -32,7 +32,7 @@ export default class ColumnContextMenu extends React.Component {
   cleanText = () => this.createOrUpdate('clean-text')
   dropColumn = () => this.createOrUpdate('selectcolumns', { drop_or_keep: 0 })
   convertDate = () => this.createOrUpdate('convert-date')
-  convertText = () => this.createOrUpdate('convert-text')
+  convertText = () => this.createOrUpdate('converttotext')
 
   render() {
     return (
@@ -52,7 +52,7 @@ export default class ColumnContextMenu extends React.Component {
           <DropdownDivider />
           <DropdownItem onClick={this.convertDate} className='convert-date' icon='icon-calendar'>Convert to date & time</DropdownItem>
           <DropdownItem onClick={this.extractNumbers} className='extract-numbers' icon='icon-number'>Convert to numbers</DropdownItem>
-          <DropdownItem onClick={this.convertText} className='convert-text' icon='icon-text'>Convert to text</DropdownItem>
+          <DropdownItem onClick={this.convertText} className='converttotext' icon='icon-text'>Convert to text</DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={this.dropColumn} className='drop-column' icon='icon-removec'>Delete column</DropdownItem>
         </DropdownMenu>

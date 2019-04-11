@@ -43,15 +43,15 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: { tab_slug: 'tab-2' },
-        11: { tab_slug: 'tab-2', module: 'convert-text', params: { column: 'A' }}
+        11: { tab_slug: 'tab-2', module: 'converttotext', params: { column: 'A' }}
       },
       modules: {
         loadurl: {},
-        'convert-text': {}
+        'converttotext': {}
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(10, 'convert-text', false, { columnKey: 'B' })(dispatch, getState)
+    updateTableAction(10, 'converttotext', false, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 11 ])
     expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: 'B' } ])
   })

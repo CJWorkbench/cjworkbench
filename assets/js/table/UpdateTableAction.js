@@ -26,7 +26,7 @@ export const moduleParamsBuilders = {
   'extract-numbers': genericAddColumn('colnames'),
   'clean-text': genericAddColumn('colnames'),
   'convert-date': genericAddColumn('colnames'),
-  'convert-text': genericAddColumn('colnames')
+  'converttotext': genericAddColumn('colnames')
 }
 
 /**
