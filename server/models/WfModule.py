@@ -6,7 +6,7 @@ from server import minio
 from server.models import loaded_module
 from .fields import ColumnsField
 from .Params import Params
-from .param_field import ParamDTypeDict, ParamField
+from .param_spec import ParamDTypeDict, ParamSpec
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .StoredObject import StoredObject
@@ -126,7 +126,12 @@ class WfModule(models.Model):
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
+    # All current parameter values. This data has been validated at the time of writing
+    # using ParamDType.validate() and module_version.param_schema. However it may not match
+    # the current module version, and must be migrated when serialized.
     params = JSONField(default={})
+
+    # Stores things like login information for Twitter and other APIs, must not be copied when duplicating the wf
     secrets = JSONField(default={})
 
     @property
@@ -219,10 +224,13 @@ class WfModule(models.Model):
 
     def get_params(self) -> Params:
         """
-        Generate valid parameters (reading from the database) for easy access.
+        Hydrates our params field, plus secrets, into the Params dict which will be passed to
+        the front end, and to the module's render() and fetch().
 
-        Raise ValueError on _programmer_ error. That's usually the module
-        author's problem, and we'll want to display the error to the user so
+        Also handles migration from parameter sets created by previous versions of the module.
+
+        Raise ValueError on _programmer_ error. That's usually the module author's problem
+        (e.g. bad migration) and we'll want to display the error to the user so
         the user can pester the module author.
         """
         if self.module_version is None:
@@ -236,14 +244,14 @@ class WfModule(models.Model):
                 self.module_version
             )
         )
-        # raises ValueError
+        # raises ValueError if there's a problem migrating, which indicates programmer error (probably module author)
         values = lm.migrate_params(schema, self.params)
 
         # "migrate" secrets: exactly the id_names specified in module_version
         # spec, with values maybe None
         secrets = {}
         for field in self.module_version.param_fields:
-            if field.ftype == ParamField.FType.SECRET:
+            if field.param_type == ParamSpec.ParamType.SECRET:
                 secrets[field.id_name] = self.secrets.get(field.id_name)
 
         return Params(schema, values, secrets)

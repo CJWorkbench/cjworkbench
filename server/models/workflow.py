@@ -447,7 +447,7 @@ class DependencyGraph:
 
     @classmethod
     def load_from_workflow(cls, workflow: Workflow) -> 'DependencyGraph':
-        from server.models.param_field import ParamDType
+        from server.models.param_spec import ParamDType
 
         tabs = []
         steps = {}

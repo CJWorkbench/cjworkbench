@@ -8,6 +8,7 @@ from server.models import AclEntry, Workflow, WfModule, \
         ModuleVersion, StoredObject, Tab
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
+from server.models.param_spec import ParamSpec
 
 User = get_user_model()
 
@@ -24,21 +25,31 @@ class StoredObjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ParamFieldSerializer(serializers.Serializer):
-    id_name = serializers.CharField()
-    type = serializers.CharField(source='ftype')
-    name = serializers.CharField()
-    multiline = serializers.BooleanField()
-    placeholder = serializers.CharField()
-    items = serializers.CharField()
-    enumOptions = serializers.JSONField(source='options')
-    visible_if = serializers.JSONField()
-    # So far, no one actually wants to see the default value.
-
 
 class ModuleSerializer(serializers.ModelSerializer):
-    param_fields = ParamFieldSerializer(many=True, read_only=True)
+    param_fields = serializers.SerializerMethodField()
     help_url = serializers.SerializerMethodField()
+
+    def serialize_param(self, p):
+        d = {
+            'id_name': p.id_name,
+            'type': str(p.param_type),
+            'name': p.name,
+            'multiline': p.multiline,
+            'placeholder': p.placeholder,
+            'items': p.items,
+            'enumOptions': p.options,
+            'visible_if': p.visible_if
+
+        }
+        if p.child_parameters:
+            # must match ModuleVersion.param_fields
+            d['childParameters'] = [self.serialize_param(ParamSpec.from_dict(s)) for s in p.child_parameters]
+            d['childDefault'] = p.dtype.inner_dtype.default
+        return d
+
+    def get_param_fields(self, obj):
+        return [self.serialize_param(p) for p in obj.param_fields]
 
     def get_help_url(self, obj):
         url_pattern = re.compile('^http(?:s?)://', re.IGNORECASE)

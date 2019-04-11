@@ -16,6 +16,7 @@ import Secret from './Secret'
 import StaticText from './StaticText'
 import String_ from './String'
 import Tab from './Tab'
+import List from './List'
 
 export default class Param extends React.PureComponent {
   static propTypes = {
@@ -90,6 +91,7 @@ export default class Param extends React.PureComponent {
       case 'statictext': return StaticText
       case 'string': return String_
       case 'tab': return Tab
+      case 'list': return List
     }
   }
 
