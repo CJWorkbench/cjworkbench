@@ -48,20 +48,6 @@ def _normalize_colnames(colnames: List[Any]) -> None:
     return [unique_name(_colname_to_str(c)) for c in colnames]
 
 
-# full type list:
-# https://pandas.pydata.org/pandas-docs/stable/generated/pandas.api.types.infer_dtype.html
-_AllowedDtypes = {
-    'boolean',
-    # categorical is a special case
-    'date',
-    'datetime',
-    'floating',
-    'integer',
-    'string',
-    'time',
-}
-
-
 def sanitize_series(series: pd.Series) -> pd.Series:
     """
     Enforce type rules on input pandas `Series.values`.
