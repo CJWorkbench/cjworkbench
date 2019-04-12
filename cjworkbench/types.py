@@ -150,6 +150,18 @@ class NumberFormatter:
     def format(self, value: Union[int, float]) -> str:
         if self._need_int:
             value = int(value)
+        else:
+            # Format float64 _integers_ as int. For instance, '3.0' should be
+            # formatted as though it were the int, '3'.
+            #
+            # Python would normally format '3.0' as '3.0' by default; that's
+            # not acceptable to us because we can't write a JavaScript
+            # formatter that would do the same thing. (Javascript doesn't
+            # distinguish between float and int.)
+            int_value = int(value)
+            if int_value == value:
+                value = int_value
+
         return self._prefix + format(value, self._format_spec) + self._suffix
 
 

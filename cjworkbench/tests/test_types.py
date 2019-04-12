@@ -18,10 +18,19 @@ class ColumnTypeTextTests(unittest.TestCase):
 
 class ColumnTypeNumberTests(unittest.TestCase):
     def test_default_format(self):
-        series = Series([1.1, 2.231, np.nan, 3.0])
+        series = Series([1.1, 2.231, np.nan])
         column_type = ColumnType.NUMBER()
         result = column_type.format_series(series)
-        assert_series_equal(result, Series(['1.1', '2.231', np.nan, '3.0']))
+        assert_series_equal(result, Series(['1.1', '2.231', np.nan]))
+
+    def test_format_whole_float_as_int(self):
+        """
+        Mimic d3-format, which cannot differentiate between float and int.
+        """
+        series = Series([1.1, 2.0, 123456789.0])
+        column_type = ColumnType.NUMBER('{:,}')
+        result = column_type.format_series(series)
+        assert_series_equal(result, Series(['1.1', '2', '123,456,789']))
 
     def test_custom_format(self):
         series = Series([1.1, 2231, np.nan, 0.123])
