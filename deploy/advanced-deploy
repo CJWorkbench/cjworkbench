@@ -13,7 +13,7 @@ run_migrations() {
     -n $ENV \
     run migrate-$SHA \
     --image="gcr.io/cj-workbench/migrate:$SHA" \
-    -i --rm --wait --quiet \
+    -i --rm --quiet \
     --restart=Never \
     --overrides="$overrides"
   echo ' done' >&2
