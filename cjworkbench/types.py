@@ -167,7 +167,11 @@ class ColumnTypeNumber(ColumnType):
 
     # override
     def format_series(self, series: pd.Series) -> pd.Series:
-        return series.map(self._formatter.format, na_action='ignore')
+        ret = series.map(self._formatter.format, na_action='ignore')
+        # Pandas will still think all-NA is number.
+        if is_numeric_dtype(ret):
+            ret = ret.astype(object)
+        return ret
 
     # override
     @property

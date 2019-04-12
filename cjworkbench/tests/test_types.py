@@ -62,6 +62,11 @@ class ColumnTypeNumberTests(unittest.TestCase):
         result = ColumnType.NUMBER().format_series(series)
         assert_series_equal(result, Series([], dtype=object))
 
+    def test_format_nulls_becomes_str(self):
+        series = Series([np.nan, np.nan], dtype=np.float64)
+        result = ColumnType.NUMBER().format_series(series)
+        assert_series_equal(result, Series([np.nan, np.nan], dtype=object))
+
     def test_format_too_many_arguments(self):
         with self.assertRaisesRegex(ValueError, 'Can only format one number'):
             ColumnType.NUMBER('{:d}{:f}')
