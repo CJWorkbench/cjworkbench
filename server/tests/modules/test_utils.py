@@ -4,7 +4,7 @@ import io
 import os.path
 import unittest
 from unittest.mock import patch
-import numpy
+import numpy as np
 import pandas as pd
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase, override_settings
@@ -14,7 +14,8 @@ from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         turn_header_into_first_row, workflow_url_to_id, \
-        fetch_external_workflow, spooled_data_from_url
+        fetch_external_workflow, spooled_data_from_url, \
+        autocast_dtypes_in_place
 from server.tests.utils import DbTestCase
 
 
@@ -99,7 +100,7 @@ class ParseBytesIoTest(SimpleTestCase):
             {"A": 1},
             {"A": null}
         ]""".encode('utf-8')), 'application/json')
-        expected = pd.DataFrame({'A': [1.0, numpy.nan]})
+        expected = pd.DataFrame({'A': [1.0, np.nan]})
         assert_frame_equal(result.dataframe, expected)
 
     def test_json_str_numbers_are_str(self):
@@ -145,7 +146,7 @@ class ParseBytesIoTest(SimpleTestCase):
             {"A": false},
             {"A": null}
         ]""".encode('utf-8')), 'application/json')
-        expected = pd.DataFrame({'A': ['True', 'False', numpy.nan]})
+        expected = pd.DataFrame({'A': ['True', 'False', np.nan]})
         assert_frame_equal(result.dataframe, expected)
 
     def test_object_becomes_str(self):
@@ -167,7 +168,7 @@ class ParseBytesIoTest(SimpleTestCase):
             {"A": "a"},
             {"A": "aa", "B": "b"}
         ]""".encode('utf-8')), 'application/json')
-        expected = pd.DataFrame({'A': ['a', 'aa'], 'B': [numpy.nan, 'b']})
+        expected = pd.DataFrame({'A': ['a', 'aa'], 'B': [np.nan, 'b']})
         assert_frame_equal(result.dataframe, expected)
 
     def test_json_not_records(self):
@@ -377,3 +378,62 @@ class FetchExternalWorkflowTest(DbTestCase):
         result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
         queue_render.assert_not_called()
+
+
+class AutocastDtypesTest(unittest.TestCase):
+    def test_autocast_int_from_str(self):
+        table = pd.DataFrame({'A': ['1', '2']})
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1, 2]})
+        assert_frame_equal(table, expected)
+
+    def test_autocast_int_from_str_categories(self):
+        # example: used read_csv(dtype='category'), now want ints
+        table = pd.DataFrame({'A': ['1', '2']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1, 2]})
+        assert_frame_equal(table, expected)
+
+    def test_autocast_float_from_str_categories(self):
+        # example: used read_csv(dtype='category'), now want floats
+        table = pd.DataFrame({'A': ['1', '2.1']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1.0, 2.1]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_float_from_str_categories_with_empty_str(self):
+        # example: used read_csv(dtype='category'), now want floats
+        table = pd.DataFrame({'A': ['1', '2.1', '']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1.0, 2.1, np.nan]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_float_from_str_categories_with_dup_floats(self):
+        table = pd.DataFrame({'A': ['1', '1.0']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1.0, 1.0]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_int_from_str_categories_with_empty_str(self):
+        table = pd.DataFrame({'A': ['', '', '1']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [np.nan, np.nan, 1.0]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_str_categories_from_str_categories(self):
+        table = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
+        autocast_dtypes_in_place(table)  # should be no-op
+        expected = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
+        assert_frame_equal(table, expected)
+
+    def test_autocast_allow_crazy_types(self):
+        class Obj:
+            pass
+
+        obj1 = Obj()
+        obj2 = Obj()
+
+        table = pd.DataFrame({'A': [obj1, obj2]})
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [obj1, obj2]})
+        assert_frame_equal(table, expected)

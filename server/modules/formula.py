@@ -3,8 +3,9 @@ from formulas import Parser
 import pandas as pd
 import numpy as np
 from .utils import build_globals_for_eval
-from server.sanitizedataframe import sanitize_series, autocast_series_dtype
+from server.sanitizedataframe import sanitize_series
 from django.utils.translation import gettext as _
+from .utils import autocast_series_dtype
 
 # ---- Formula ----
 

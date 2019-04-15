@@ -129,57 +129,6 @@ def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:
     return table
 
 
-def autocast_series_dtype(series: pd.Series) -> pd.Series:
-    """
-    Cast str/object series to numeric, if possible.
-
-    This is appropriate when parsing CSV data, or maybe Excel data. It _seems_
-    appropriate when a search-and-replace produces numeric columns like
-    '$1.32' => '1.32' ... but perhaps that's only appropriate in very-specific
-    cases.
-
-    TODO handle dates and maybe booleans.
-    """
-    if series.dtype == 'O':
-        # Object (str) series. Try to infer type.
-        #
-        # We don't case from complex to simple types here: we assume the input
-        # is already sane.
-        try:
-            return pd.to_numeric(series)
-        except (ValueError, TypeError):
-            return series
-    elif hasattr(series, 'cat'):
-        # Categorical series. Try to infer type of series.
-        #
-        # Assume categories are all str: after all, we're assuming the input is
-        # "sane" and "sane" means only str categories are valid.
-        try:
-            return pd.to_numeric(series)
-        except (ValueError, TypeError):
-            return series
-    else:
-        # We should never get here
-        return series
-
-
-def autocast_dtypes_in_place(table: pd.DataFrame) -> None:
-    """
-    Cast str/object columns to numeric, if possible.
-
-    This is appropriate when parsing CSV data, or maybe Excel data. It is
-    probably not appropriate to call this method elsewhere, since it destroys
-    data types all over the table.
-
-    The input must be _sane_ data only!
-
-    TODO handle dates and maybe booleans.
-    """
-    for colname in table:
-        column = table[colname]
-        table[colname] = autocast_series_dtype(column)
-
-
 def truncate_table_if_too_big(df):
     """
     Limit table size to max allowed number of rows.

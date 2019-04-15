@@ -1,7 +1,7 @@
 import io
 import pandas as pd
 from pandas.io.common import EmptyDataError, ParserError
-from ..sanitizedataframe import autocast_dtypes_in_place
+from .utils import autocast_dtypes_in_place
 
 
 def render(table, params):

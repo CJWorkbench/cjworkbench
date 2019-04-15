@@ -16,15 +16,12 @@ from django.contrib.auth.models import User
 from django.db.models.fields.files import FieldFile
 from django.db import transaction
 import numpy as np
-import pandas
-from pandas import DataFrame
-import pandas.errors
+import pandas as pd
 import xlrd
 import yarl  # aiohttp innards -- yuck!
 from cjworkbench.types import ProcessResult
 from server import rabbitmq
 from server.models import Workflow
-from server.sanitizedataframe import autocast_dtypes_in_place
 
 
 _TextEncoding = Optional[str]
@@ -33,7 +30,7 @@ _ChunkSize = 1024 * 1024
 
 class BadInput(ValueError):
     """
-    Workbench cannot transform the given data into a DataFrame.
+    Workbench cannot transform the given data into a pd.DataFrame.
     """
 
 
@@ -141,7 +138,7 @@ def build_globals_for_eval() -> Dict[str, Any]:
     }
 
 
-def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], DataFrame],
+def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], pd.DataFrame],
                 text_encoding: _TextEncoding) -> ProcessResult:
     """Run the given parser, or return the error as a string.
 
@@ -153,9 +150,9 @@ def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], DataFrame],
         return ProcessResult(error=str(err))
     except json.decoder.JSONDecodeError as err:
         return ProcessResult(error=str(err))
-    except pandas.errors.EmptyDataError:
-        return DataFrame()
-    except pandas.errors.ParserError as err:
+    except pd.errors.EmptyDataError:
+        return pd.DataFrame()
+    except pd.errors.ParserError as err:
         return ProcessResult(error=str(err))
 
 
@@ -175,7 +172,7 @@ def _wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
 
 
 def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
-                 text_encoding: _TextEncoding) -> DataFrame:
+                 text_encoding: _TextEncoding) -> pd.DataFrame:
     with _wrap_text(bytesio, text_encoding) as textio:
         if not sep:
             sep = _detect_separator(textio)
@@ -206,15 +203,16 @@ def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
         # `O(N * Co * Ca lg Ca)`, where Co is the number of columns. Memory
         # usage grows by the number of cells. In the case of `general.csv`,
         # the cost is an extra 1GB.
-        data = pandas.read_csv(textio, dtype='category', sep=sep,
-                               na_filter=False, low_memory=False)
+        data = pd.read_csv(textio, dtype='category', sep=sep,
+                           na_filter=False, low_memory=False)
 
         autocast_dtypes_in_place(data)
         return data
 
 
-def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
-    """Build a DataFrame or raise parse error.
+def _parse_csv(bytesio: io.BytesIO,
+               text_encoding: _TextEncoding) -> pd.DataFrame:
+    """Build a pd.DataFrame or raise parse error.
 
     Peculiarities:
 
@@ -228,8 +226,9 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
         return _parse_table(bytesio, sep, text_encoding)
 
 
-def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
-    """Build a DataFrame or raise parse error.
+def _parse_tsv(bytesio: io.BytesIO,
+               text_encoding: _TextEncoding) -> pd.DataFrame:
+    """Build a pd.DataFrame or raise parse error.
 
     Peculiarities:
 
@@ -241,8 +240,8 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
 
 
 def _parse_json(bytesio: io.BytesIO,
-                text_encoding: _TextEncoding) -> DataFrame:
-    """Build a DataFrame or raise parse error.
+                text_encoding: _TextEncoding) -> pd.DataFrame:
+    """Build a pd.DataFrame or raise parse error.
 
     Peculiarities:
 
@@ -250,12 +249,12 @@ def _parse_json(bytesio: io.BytesIO,
     * Pandas may auto-convert strings to dates/integers.
     * Columns are ordered as in the first JSON object, and the input must be an
       Array of Objects.
-    * We may raise json.decoder.JSONDecodeError or pandas.errors.ParserError.
+    * We may raise json.decoder.JSONDecodeError or pd.errors.ParserError.
     """
     with _wrap_text(bytesio, text_encoding) as textio:
         try:
-            data = pandas.read_json(textio, orient='records', dtype=False,
-                                    convert_dates=False)
+            data = pd.read_json(textio, orient='records', dtype=False,
+                                convert_dates=False)
         except ValueError as err:
             if (
                 'Mixing dicts with non-Series' in str(err)
@@ -282,9 +281,9 @@ def _parse_json(bytesio: io.BytesIO,
         return data
 
 
-def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
+def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> pd.DataFrame:
     """
-    Build a DataFrame from xlsx bytes or raise parse error.
+    Build a pd.DataFrame from xlsx bytes or raise parse error.
 
     Peculiarities:
 
@@ -300,7 +299,7 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
             temp.flush()
             temp.seek(0)
             workbook = xlrd.open_workbook(temp.name)
-            data = pandas.read_excel(workbook, engine='xlrd', dtype=object)
+            data = pd.read_excel(workbook, engine='xlrd', dtype=object)
     except xlrd.XLRDError as err:
         return ProcessResult(error=f'Error reading Excel file: {str(err)}')
 
@@ -308,9 +307,10 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> DataFrame:
     return data
 
 
-def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
+def _parse_txt(bytesio: io.BytesIO,
+               text_encoding: _TextEncoding) -> pd.DataFrame:
     """
-    Build a DataFrame from txt bytes or raise parse error.
+    Build a pd.DataFrame from txt bytes or raise parse error.
 
     Peculiarities:
 
@@ -383,13 +383,13 @@ def _detect_encoding(bytesio: io.BytesIO):
 
 # Move dataframe column names into the first row of data, and replace column
 # names with numbers. Used to undo first row of data incorrectly read as header
-def turn_header_into_first_row(table: pandas.DataFrame) -> pandas.DataFrame:
+def turn_header_into_first_row(table: pd.DataFrame) -> pd.DataFrame:
     # Table may not be uploaded yet
     if table is None:
         return None
 
-    new_line = DataFrame([table.columns], columns=table.columns)
-    new_table = pandas.concat([new_line, table], ignore_index=True)
+    new_line = pd.DataFrame([table.columns], columns=table.columns)
+    new_table = pd.concat([new_line, table], ignore_index=True)
 
     new_table.columns = [str(i) for i in range(len(new_table.columns))]
     autocast_dtypes_in_place(new_table)
@@ -553,3 +553,54 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
 
         spool.seek(0)
         yield spool, headers, charset
+
+
+def autocast_series_dtype(series: pd.Series) -> pd.Series:
+    """
+    Cast str/object series to numeric, if possible.
+
+    This is appropriate when parsing CSV data, or maybe Excel data. It _seems_
+    appropriate when a search-and-replace produces numeric columns like
+    '$1.32' => '1.32' ... but perhaps that's only appropriate in very-specific
+    cases.
+
+    TODO handle dates and maybe booleans.
+    """
+    if series.dtype == 'O':
+        # Object (str) series. Try to infer type.
+        #
+        # We don't case from complex to simple types here: we assume the input
+        # is already sane.
+        try:
+            return pd.to_numeric(series)
+        except (ValueError, TypeError):
+            return series
+    elif hasattr(series, 'cat'):
+        # Categorical series. Try to infer type of series.
+        #
+        # Assume categories are all str: after all, we're assuming the input is
+        # "sane" and "sane" means only str categories are valid.
+        try:
+            return pd.to_numeric(series)
+        except (ValueError, TypeError):
+            return series
+    else:
+        # We should never get here
+        return series
+
+
+def autocast_dtypes_in_place(table: pd.DataFrame) -> None:
+    """
+    Cast str/object columns to numeric, if possible.
+
+    This is appropriate when parsing CSV data, or maybe Excel data. It is
+    probably not appropriate to call this method elsewhere, since it destroys
+    data types all over the table.
+
+    The input must be _sane_ data only!
+
+    TODO handle dates and maybe booleans.
+    """
+    for colname in table:
+        column = table[colname]
+        table[colname] = autocast_series_dtype(column)

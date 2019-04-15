@@ -6,8 +6,7 @@ import numpy as np
 import pandas as pd
 from pandas.util import hash_pandas_object
 from pandas.testing import assert_frame_equal
-from server.sanitizedataframe import sanitize_dataframe, \
-        autocast_dtypes_in_place
+from server.sanitizedataframe import sanitize_dataframe
 
 
 class SanitizeDataFrameTest(TestCase):
@@ -173,62 +172,3 @@ class SanitizeDataFrameTest(TestCase):
         sanitize_dataframe(result)
         expected = pd.DataFrame({'A': ['a', 'b']}, dtype='category')
         assert_frame_equal(result, expected)
-
-
-class AutocastDtypesTest(TestCase):
-    def test_autocast_int_from_str(self):
-        table = pd.DataFrame({'A': ['1', '2']})
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [1, 2]})
-        assert_frame_equal(table, expected)
-
-    def test_autocast_int_from_str_categories(self):
-        # example: used read_csv(dtype='category'), now want ints
-        table = pd.DataFrame({'A': ['1', '2']}, dtype='category')
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [1, 2]})
-        assert_frame_equal(table, expected)
-
-    def test_autocast_float_from_str_categories(self):
-        # example: used read_csv(dtype='category'), now want floats
-        table = pd.DataFrame({'A': ['1', '2.1']}, dtype='category')
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [1.0, 2.1]}, dtype=np.float64)
-        assert_frame_equal(table, expected)
-
-    def test_autocast_float_from_str_categories_with_empty_str(self):
-        # example: used read_csv(dtype='category'), now want floats
-        table = pd.DataFrame({'A': ['1', '2.1', '']}, dtype='category')
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [1.0, 2.1, np.nan]}, dtype=np.float64)
-        assert_frame_equal(table, expected)
-
-    def test_autocast_float_from_str_categories_with_dup_floats(self):
-        table = pd.DataFrame({'A': ['1', '1.0']}, dtype='category')
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [1.0, 1.0]}, dtype=np.float64)
-        assert_frame_equal(table, expected)
-
-    def test_autocast_int_from_str_categories_with_empty_str(self):
-        table = pd.DataFrame({'A': ['', '', '1']}, dtype='category')
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [np.nan, np.nan, 1.0]}, dtype=np.float64)
-        assert_frame_equal(table, expected)
-
-    def test_autocast_str_categories_from_str_categories(self):
-        table = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
-        autocast_dtypes_in_place(table)  # should be no-op
-        expected = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
-        assert_frame_equal(table, expected)
-
-    def test_autocast_allow_crazy_types(self):
-        class Obj:
-            pass
-
-        obj1 = Obj()
-        obj2 = Obj()
-
-        table = pd.DataFrame({'A': [obj1, obj2]})
-        autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [obj1, obj2]})
-        assert_frame_equal(table, expected)
