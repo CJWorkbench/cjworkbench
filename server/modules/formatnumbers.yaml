@@ -10,5 +10,5 @@ parameters:
   column_types: [ number ]
 - id_name: format
   type: numberformat
-  name: Format
+  name: Display As
   default: '{:,}'
