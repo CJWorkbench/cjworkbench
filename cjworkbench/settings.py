@@ -304,6 +304,7 @@ LOGGING = {
         'asyncio': {'level': 'INFO'},
         'channels_rabbitmq': {'level': 'INFO'},
         'daphne': {'level': 'INFO'},
+        'intercom': {'level': 'INFO'},
         'oauthlib': {'level': 'INFO'},
         'urllib3': {'level': 'INFO'},
         'requests_oauthlib': {'level': 'INFO'},
