@@ -305,16 +305,15 @@ def _(
     context: RenderContext
 ) -> Dict[str, Any]:
     ret = {}
-    prompting_errors = []
+    error_agg = PromptErrorAggregator()
 
     for k, v in value.items():
         try:
             ret[k] = clean_value(dtype.properties[k], v, context)
         except PromptingError as err:
-            prompting_errors.extend(err.errors)
+            error_agg.extend(err.errors)
 
-    if prompting_errors:
-        raise PromptingError(prompting_errors)
+    error_agg.raise_if_nonempty()
     return ret
 
 

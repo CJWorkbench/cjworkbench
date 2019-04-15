@@ -113,16 +113,34 @@ class CleanValueTests(DbTestCase):
                                            frozenset({'datetime'})),
         ])
 
-    def test_list_prompting_error_concatenate_different_types(self):
+    def test_dict_prompting_error_concatenate_same_type(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.TEXT()),
+            Column('B', ColumnType.TEXT()),
+        ]), None, None)
+        schema = ParamDType.Dict({
+            'x': ParamDType.Column(column_types=frozenset({'number'})),
+            'y': ParamDType.Column(column_types=frozenset({'number'})),
+        })
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(schema, {'x': 'A', 'y': 'B'}, context)
+
+        self.assertEqual(cm.exception.errors, [
+            PromptingError.WrongColumnType(['A', 'B'], 'text',
+                                           frozenset({'number'})),
+        ])
+
+    def test_dict_prompting_error_concatenate_different_types(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.TEXT()),
             Column('B', ColumnType.DATETIME()),
         ]), None, None)
-        schema = ParamDType.List(
-            inner_dtype=ParamDType.Column(column_types=frozenset({'number'}))
-        )
+        schema = ParamDType.Dict({
+            'x': ParamDType.Column(column_types=frozenset({'number'})),
+            'y': ParamDType.Column(column_types=frozenset({'number'})),
+        })
         with self.assertRaises(PromptingError) as cm:
-            clean_value(schema, ['A', 'B'], context)
+            clean_value(schema, {'x': 'A', 'y': 'B'}, context)
 
         self.assertEqual(cm.exception.errors, [
             PromptingError.WrongColumnType(['A'], 'text',
