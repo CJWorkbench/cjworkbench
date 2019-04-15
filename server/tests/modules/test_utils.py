@@ -381,6 +381,12 @@ class FetchExternalWorkflowTest(DbTestCase):
 
 
 class AutocastDtypesTest(unittest.TestCase):
+    def test_autocast_all_null_is_text(self):
+        table = pd.DataFrame({'A': [np.nan, np.nan]}, dtype=object)
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [np.nan, np.nan]}, dtype=object)
+        assert_frame_equal(table, expected)
+
     def test_autocast_int_from_str(self):
         table = pd.DataFrame({'A': ['1', '2']})
         autocast_dtypes_in_place(table)

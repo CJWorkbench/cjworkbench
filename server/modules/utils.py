@@ -564,9 +564,13 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
     '$1.32' => '1.32' ... but perhaps that's only appropriate in very-specific
     cases.
 
+    If the series is all-null, do nothing.
+
     TODO handle dates and maybe booleans.
     """
-    if series.dtype == 'O':
+    if series.isnull().all():
+        return series
+    elif series.dtype == 'O':
         # Object (str) series. Try to infer type.
         #
         # We don't case from complex to simple types here: we assume the input
