@@ -7,17 +7,6 @@ from server.modules.converttotext import render
 
 
 class TestConvertText(unittest.TestCase):
-    def setUp(self):
-        self.table = pd.DataFrame([
-            [99,   100,   '2018', None],
-            [99,   100,   '2018', None]],
-            columns=['intcol', 'floatcol', 'datecol', 'nullcol'])
-
-        self.table['intcol'] = self.table['intcol'].astype(int)
-        self.table['floatcol'] = self.table['floatcol'].astype(float)
-        self.table['datecol'] = self.table['datecol'].astype(np.datetime64)
-        self.table['nullcol'] = self.table['nullcol'].astype(float)
-
     def test_NOP(self):
         # should NOP when first applied
         result = render(
@@ -60,6 +49,17 @@ class TestConvertText(unittest.TestCase):
             }
         )
         assert_frame_equal(result, pd.DataFrame({'A': ['1.11'], 'B': ['2']}))
+
+    def test_convert_numbers_all_null(self):
+        result = render(
+            pd.DataFrame({'A': [np.nan, np.nan]}, dtype=np.float64),
+            {'colnames': 'A'},
+            input_columns={
+                'A': RenderColumn('A', 'number', '{:d}'),
+            }
+        )
+        assert_frame_equal(result, pd.DataFrame({'A': [np.nan, np.nan]},
+                                                dtype=object))
 
     def test_convert_datetime(self):
         result = render(
