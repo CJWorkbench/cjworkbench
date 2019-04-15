@@ -7,7 +7,7 @@ import pandas as pd
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
-from cjworkbench.types import ProcessResult
+from cjworkbench.types import Column, ColumnType, ProcessResult
 from server import minio
 from server.models import Workflow
 from server.views.WfModule import wfmodule_detail
@@ -15,8 +15,6 @@ from server.tests.utils import LoggedInTestCase
 
 
 FakeSession = namedtuple('FakeSession', ['session_key'])
-
-
 FakeCachedRenderResult = namedtuple('FakeCachedRenderResult', ['result'])
 
 
@@ -273,9 +271,10 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(json.loads(response.content),
                          {'error': 'column "A" not found'})
 
-    def test_value_counts_cast_to_str(self):
+    def test_value_counts_convert_to_text(self):
         self.wf_module2.cache_render_result(2, ProcessResult(
-            pd.DataFrame({'A': [1, 2, 3, 2, 1]})
+            pd.DataFrame({'A': [1, 2, 3, 2, 1]}),
+            columns=[Column('A', ColumnType.NUMBER(format='{:.2f}'))]
         ))
         self.wf_module2.save()
 
@@ -286,7 +285,7 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             json.loads(response.content),
-            {'values': {'1': 2, '2': 2, '3': 1}}
+            {'values': {'1.00': 2, '2.00': 2, '3.00': 1}}
         )
 
     def test_value_counts_param_invalid(self):

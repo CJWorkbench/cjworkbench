@@ -260,8 +260,10 @@ def wfmodule_value_counts(request, pk):
             # assume we'll get another request after execute finishes
             return JsonResponse({'values': {}})
 
-        colnames = [c.name for c in cached_result.columns]
-        if colname not in colnames:
+        try:
+            column = next(c for c in cached_result.columns
+                          if c.name == colname)
+        except StopIteration:
             return JsonResponse({'error': f'column "{colname}" not found'},
                                 status=404)
 
@@ -276,12 +278,12 @@ def wfmodule_value_counts(request, pk):
             return JsonResponse({'error': f'column "{colname}" not found'},
                                 status=404)
 
-    # We only handle string. If it's not string, convert to string.
-    if not (series.dtype == object or hasattr(series, 'cat')):
-        t = series.astype(str)
-        t[series.isna()] = np.nan
-        series = t
-
+    # We only handle string. If it's not string, convert to string. (Rationale:
+    # this is used in Refine and Filter by Value, which are both solely
+    # String-based for now. Excel and Google Sheets only filter by String
+    # values, so we're in good company.) Remember: in JavaScript, Object keys
+    # must be String.
+    series = column.type.format_series(series)
     value_counts = series.value_counts().to_dict()
 
     return JsonResponse({'values': value_counts})
