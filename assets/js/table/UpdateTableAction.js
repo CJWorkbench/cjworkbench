@@ -26,7 +26,8 @@ export const moduleParamsBuilders = {
   'converttexttonumber': genericAddColumn('colnames'),
   'clean-text': genericAddColumn('colnames'),
   'convert-date': genericAddColumn('colnames'),
-  'converttotext': genericAddColumn('colnames')
+  'converttotext': genericAddColumn('colnames'),
+  'formatnumbers': genericAddColumn('colnames')
 }
 
 /**

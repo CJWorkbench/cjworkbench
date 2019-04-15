@@ -24,7 +24,8 @@ export default class DropdownItem extends React.PureComponent {
     icon: PropTypes.string, // 'icon-close' or empty
     href: PropTypes.string, // for <a> (otherwise, see onClick)
     onClick: PropTypes.func, // for <button> (otherwise, see href)
-    active: PropTypes.bool // adds CSS class
+    active: PropTypes.bool, // adds CSS class
+    disabled: PropTypes.bool // if set, cannot be clicked
     // Other props -- e.g., 'data-comparator' -- will be assed through as-is to <button>/<a>.
   }
 
@@ -38,7 +39,7 @@ export default class DropdownItem extends React.PureComponent {
   ) : undefined
 
   render () {
-    const { children, href, className, icon, active, ...rest } = this.props
+    const { children, href, className, icon, active, disabled, ...rest } = this.props
     const Tag = href ? 'a' : 'button'
 
     const classNames = [ 'dropdown-item' ]
@@ -53,6 +54,7 @@ export default class DropdownItem extends React.PureComponent {
         onClick={this.onClick}
         tabIndex={0}
         role='menuitem'
+        disabled={disabled}
       >
         {icon ? <i className={icon} /> : null}
         {children}

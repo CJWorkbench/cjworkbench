@@ -27,6 +27,9 @@
 
       background-color: white;
 
+      &:disabled { // will never have :hover, :focus or :active
+        color: $text-muted;
+      }
       &:hover, &:focus {
         background-color: $dark-accent--soft;
       }

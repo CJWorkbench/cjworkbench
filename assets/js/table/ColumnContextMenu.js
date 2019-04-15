@@ -33,8 +33,11 @@ export default class ColumnContextMenu extends React.Component {
   dropColumn = () => this.createOrUpdate('selectcolumns', { drop_or_keep: 0 })
   convertDate = () => this.createOrUpdate('convert-date')
   convertText = () => this.createOrUpdate('converttotext')
+  formatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
 
   render() {
+    const { columnType } = this.props
+
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
@@ -53,6 +56,8 @@ export default class ColumnContextMenu extends React.Component {
           <DropdownItem onClick={this.convertDate} className='convert-date' icon='icon-calendar'>Convert to date & time</DropdownItem>
           <DropdownItem onClick={this.extractNumbers} className='converttexttonumber' icon='icon-number'>Convert to numbers</DropdownItem>
           <DropdownItem onClick={this.convertText} className='converttotext' icon='icon-text'>Convert to text</DropdownItem>
+          <DropdownDivider />
+          <DropdownItem onClick={this.formatNumbers} className='formatnumbers' icon='icon-number' disabled={columnType !== 'number'}>Format numbers</DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={this.dropColumn} className='drop-column' icon='icon-removec'>Delete column</DropdownItem>
         </DropdownMenu>
