@@ -568,7 +568,7 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
 
     TODO handle dates and maybe booleans.
     """
-    if series.isnull().all():
+    if ((series.isnull()) | (series == '')).all():
         return series
     elif series.dtype == 'O':
         # Object (str) series. Try to infer type.

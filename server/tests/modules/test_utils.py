@@ -387,6 +387,17 @@ class AutocastDtypesTest(unittest.TestCase):
         expected = pd.DataFrame({'A': [np.nan, np.nan]}, dtype=object)
         assert_frame_equal(table, expected)
 
+    def test_autocast_all_empty_str_is_text(self):
+        table = pd.DataFrame({'A': ['', '']})
+        autocast_dtypes_in_place(table)
+        assert_frame_equal(table, pd.DataFrame({'A': ['', '']}))
+
+    def test_autocast_all_empty_or_null_categories_is_text(self):
+        table = pd.DataFrame({'A': ['', np.nan, '']}, dtype='category')
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': ['', np.nan, '']}, dtype='category')
+        assert_frame_equal(table, expected)
+
     def test_autocast_int_from_str(self):
         table = pd.DataFrame({'A': ['1', '2']})
         autocast_dtypes_in_place(table)
