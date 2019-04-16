@@ -1,7 +1,9 @@
+import tempfile
 import textwrap
+import traceback
 import unittest
 from server.models.module_loader import validate_module_spec, ModuleFiles, \
-        ModuleSpec, validate_python_functions
+        ModuleSpec, validate_python_functions, load_python_module
 from server.tests.utils import MockDir, MockPath
 
 
@@ -398,6 +400,21 @@ class ModuleFilesTest(unittest.TestCase):
         self.assertEqual(module_files.code.name, 'module.py')
         self.assertEqual(module_files.html.name, 'module.html')
         self.assertEqual(module_files.javascript.name, 'module.js')
+
+
+class LoadPythonModuleTest(unittest.TestCase):
+    def test_filename_in_traceback(self):
+        path = MockPath(['root', 'badname.py'],
+                        b'def intify(x):\n    return int(x)')
+        module = load_python_module('goodname', path)
+        try:
+            module.intify('not-a-number')
+        except ValueError:
+            s = traceback.format_exc()
+            self.assertRegex(
+                s,
+                'File "<Module goodname>", line 2, in intify\nValueError'
+            )
 
 
 class ValidatePythonFunctionsTest(unittest.TestCase):

@@ -217,8 +217,9 @@ class ModuleFiles:
 
 
 class PathLoader(importlib.abc.SourceLoader):
-    def __init__(self, path: Path):
+    def __init__(self, name: str, path: Path):
         super().__init__()
+        self.name = name
         self.path = path
 
     # override ResourceLoader
@@ -227,7 +228,7 @@ class PathLoader(importlib.abc.SourceLoader):
 
     # override ExecutionLoader
     def get_filename(self, path):
-        return self.path.as_posix()
+        return f'<Module {self.name}>'
 
 
 def load_python_module(name: str, code_path: Path):
@@ -237,7 +238,7 @@ def load_python_module(name: str, code_path: Path):
     Raise `ValueError` if Path isn't executable Python code.
     """
     # execute the module, as a test
-    loader = PathLoader(code_path)
+    loader = PathLoader(name, code_path)
     spec = importlib.util.spec_from_loader(
         (
             # generate unique package name -- no conflicts, please!
