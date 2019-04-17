@@ -116,7 +116,7 @@ export default class List extends React.PureComponent {
 
     // Map twice: once for each repeated set of childParameters, and once for each parameter within each set
     return (
-      <div className='param-list'>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <ul>
           {this.value.map((item, index) => (
@@ -143,7 +143,7 @@ export default class List extends React.PureComponent {
             <i className='icon-add' /> Add
           </button>
         )}
-      </div>
+      </>
     )
   }
 }
