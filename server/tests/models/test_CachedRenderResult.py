@@ -62,9 +62,8 @@ class CachedRenderResultTests(DbTestCase):
         db_wf_module.refresh_from_db()
         self.assertIsNone(db_wf_module.cached_render_result)
 
-        with self.assertRaises(minio.error.NoSuchKey):
-            minio.minio_client.get_object(minio.CachedRenderResultsBucket,
-                                          parquet_key)
+        self.assertFalse(minio.exists(minio.CachedRenderResultsBucket,
+                                      parquet_key))
 
     def test_result_and_metadata_come_from_memory_when_available(self):
         columns = [
@@ -87,8 +86,8 @@ class CachedRenderResultTests(DbTestCase):
 
         # cache_render_result() keeps its `result` parameter in memory, so we
         # can avoid disk entirely. Prove it by deleting from disk.
-        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
-                                         cached_result.parquet_key)
+        minio.remove(minio.CachedRenderResultsBucket,
+                     cached_result.parquet_key)
         self.assertFalse(cached_result._result is None)
 
         self.assertEqual(cached_result.result, result)
@@ -116,8 +115,8 @@ class CachedRenderResultTests(DbTestCase):
 
         # cache_render_result() keeps its `result` parameter in memory, so we
         # can avoid disk entirely. Prove it by deleting from disk.
-        minio.minio_client.remove_object(minio.CachedRenderResultsBucket,
-                                         cached_result.parquet_key)
+        minio.remove(minio.CachedRenderResultsBucket,
+                     cached_result.parquet_key)
 
         # Load _new_ CachedRenderResult -- from DB columns, not memory
         fresh_wf_module = WfModule.objects.get(id=self.wf_module.id)
@@ -133,9 +132,8 @@ class CachedRenderResultTests(DbTestCase):
 
         parquet_key = self.wf_module.cached_render_result.parquet_key
         self.wf_module.delete()
-        with self.assertRaises(minio.error.NoSuchKey):
-            minio.minio_client.get_object(minio.CachedRenderResultsBucket,
-                                          parquet_key)
+        self.assertFalse(minio.exists(minio.CachedRenderResultsBucket,
+                                      parquet_key))
         # Note: we _don't_ test soft-delete. Soft-deleted modules aren't
         # extremely common, so it's not like we'll be preserving terabytes of
         # unused cached render results.

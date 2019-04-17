@@ -9,13 +9,13 @@ Key = 'key'
 
 def _clear() -> None:
     try:
-        minio.minio_client.remove_object(Bucket, Key)
+        minio.remove(Bucket, Key)
     except minio.error.NoSuchKey:
         pass
 
 
 def _put(b: bytes) -> None:
-    minio.minio_client.put_object(Bucket, Key, io.BytesIO(b), len(b))
+    minio.put_bytes(Bucket, Key, b)
 
 
 class RandomReadMinioFileTest(unittest.TestCase):

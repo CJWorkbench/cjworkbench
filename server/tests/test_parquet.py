@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-import os.path
+from pathlib import Path
 import unittest
 from server import minio, parquet
 
@@ -12,13 +12,12 @@ minio.ensure_bucket_exists(bucket)
 class ParquetTest(unittest.TestCase):
     @contextmanager
     def _file_on_s3(self, relpath):
-        path = os.path.join(os.path.dirname(__file__),
-                            'test_data', relpath)
+        path = Path(__file__).parent / 'test_data' / relpath
         try:
-            minio.minio_client.fput_object(bucket, key, path)
+            minio.fput_file(bucket, key, path)
             yield
         finally:
-            minio.minio_client.remove_object(bucket, key)
+            minio.remove(bucket, key)
 
     def test_read_header_issue_361(self):
         # https://github.com/dask/fastparquet/issues/361

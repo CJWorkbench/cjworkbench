@@ -316,7 +316,7 @@ class WfModule(models.Model):
             parquet_key = new_wfm.cached_render_result.parquet_key
 
             try:
-                minio.minio_client.copy_object(
+                minio.copy(
                     minio.CachedRenderResultsBucket,
                     parquet_key,
                     '%(Bucket)s/%(Key)s' % {

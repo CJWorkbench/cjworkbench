@@ -54,8 +54,8 @@ class Command(BaseCommand):
         # files readable for integration tests....
         if settings.MINIO_BUCKET_PREFIX == 'integrationtest':
             minio.ensure_bucket_exists(minio.StaticFilesBucket)
-            minio.minio_client.set_bucket_policy(minio.StaticFilesBucket,
-                                                 BUCKET_POLICY)
+            minio.client.put_bucket_policy(Bucket=minio.StaticFilesBucket,
+                                           Policy=BUCKET_POLICY)
 
         # Migrate comes last: during deploy, in some cases, migration can make
         # the site unusable until it's completed. So don't add any instructions

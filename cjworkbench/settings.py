@@ -302,12 +302,14 @@ LOGGING = {
         # modules that we think are now better off as INFO.
         'aioamqp': {'level': 'INFO'},
         'asyncio': {'level': 'INFO'},
+        'botocore': {'level': 'INFO'},
         'channels_rabbitmq': {'level': 'INFO'},
         'daphne': {'level': 'INFO'},
         'intercom': {'level': 'INFO'},
         'oauthlib': {'level': 'INFO'},
         'urllib3': {'level': 'INFO'},
         'requests_oauthlib': {'level': 'INFO'},
+        's3transfer': {'level': 'INFO'},
         'django.request': {
             # Django prints WARNINGs for 400-level HTTP responses. That's
             # wrong: our code is _meant_ to output 400-level HTTP responses in

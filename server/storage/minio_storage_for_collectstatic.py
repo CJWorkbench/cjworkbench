@@ -3,7 +3,7 @@ import io
 import mimetypes
 from django.conf import settings
 from django.core.files.storage import Storage
-from server.minio import ensure_bucket_exists, minio_client, StaticFilesBucket
+from server.minio import ensure_bucket_exists, client, StaticFilesBucket
 
 
 class MinioStorage(Storage):
@@ -23,24 +23,27 @@ class MinioStorage(Storage):
         content_type, _ = mimetypes.guess_type(name, strict=False)
         content_type = content_type or "application/octet-stream"
 
-        metadata = {
-            # These are static files, but only Webpack-generated files have
-            # hashed filenames. Logos and whatnot don't. So let's tell the
-            # browser to cache for one day, to time-bound the damage when we
-            # deploy a new version of our logo and users keep the old one.
-            'Cache-Control': 'public, max-age=86400',
-        }
-
+        kwargs = {}
         if (
             content_type.startswith('text')
             or content_type.split('/')[1] in ('xml', 'json', 'javascript')
         ):
             data = gzip.compress(data)
-            metadata['Content-Encoding'] = 'gzip'
+            kwargs['ContentEncoding'] = 'gzip'
 
-        minio_client.put_object(StaticFilesBucket, name, io.BytesIO(data),
-                                length=len(data), content_type=content_type,
-                                metadata=metadata)
+        client.put_object(
+            Body=data,
+            Bucket=StaticFilesBucket,
+            Key=name,
+            ContentLength=len(data),
+            ContentType=content_type,
+            # These are static files, but only Webpack-generated files have
+            # hashed filenames. Logos and whatnot don't. So let's tell the
+            # browser to cache for one day, to time-bound the damage when we
+            # deploy a new version of our logo and users keep the old one.
+            CacheControl='public, max-age=86400',
+            **kwargs
+        )
 
     def delete(self, name):
         # We never want to delete

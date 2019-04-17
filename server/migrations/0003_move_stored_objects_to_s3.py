@@ -6,6 +6,7 @@ from django.db import migrations
 
 
 def ensure_using_s3(so):
+    from pathlib import Path
     import os
     from server import minio
     from server.models.StoredObject import _build_key
@@ -18,7 +19,7 @@ def ensure_using_s3(so):
     so.bucket = minio.StoredObjectsBucket
     so.key = _build_key(so.wf_module.workflow_id, so.wf_module.id)
     try:
-        minio.minio_client.fput_object(so.bucket, so.key, path)
+        minio.minio.fput_file(so.bucket, so.key, Path(path))
         so.file = None
         so.save(update_fields=['bucket', 'key', 'file'])
 

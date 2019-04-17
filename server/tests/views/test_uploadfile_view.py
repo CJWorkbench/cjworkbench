@@ -5,6 +5,7 @@ from unittest.mock import patch
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import force_authenticate, APIRequestFactory
+from server import minio
 from server.models import ModuleVersion, User, Workflow
 from server.views import uploads
 from server.tests.utils import LoggedInTestCase
@@ -43,11 +44,11 @@ class UploadFileViewTests(LoggedInTestCase):
         force_authenticate(request, user)
         request.session = FakeSession()
 
-    @patch('minio.api.Minio.stat_object')
+    @patch('server.minio.stat')
     @patch('server.rabbitmq.queue_handle_upload_DELETEME')
-    def test_successful_upload(self, queue_handle_upload, stat_object):
+    def test_successful_upload(self, queue_handle_upload, stat):
         queue_handle_upload.return_value = future_none
-        stat_object.return_value = FakeMinioStat(10)
+        stat.return_value = minio.Stat(10)
 
         uuid = 'eb785452-f0f2-4ebe-97ce-e225e346148e',
         filename = 'test.csv',
@@ -88,9 +89,9 @@ class UploadFileViewTests(LoggedInTestCase):
         #     'size': size,
         # }])
 
-    @patch('minio.api.Minio.get_object')
-    @patch('minio.api.Minio.remove_object')
-    def test_post_with_non_owner_gives_403(self, remove_object, get_object):
+    @patch('server.minio.open_for_read')
+    @patch('server.minio.remove')
+    def test_post_with_non_owner_gives_403(self, remove, open_for_read):
         request_content = {
             'wf_module': self.wfm.id,
             'success': True,
@@ -110,8 +111,8 @@ class UploadFileViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # Ensure no data leaks about the file contents
-        get_object.assert_not_called()
-        remove_object.assert_called_with(
+        open_for_read.assert_not_called()
+        remove.assert_called_with(
             'our-bucket',
             'eb785452-f0f2-4ebe-97ce-e225e346148e.xlsx'
         )

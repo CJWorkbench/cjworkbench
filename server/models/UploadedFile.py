@@ -2,7 +2,7 @@ import os
 from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
-from server.minio import minio_client
+from server import minio
 
 
 # Simple model that receives POST requests to upload a file.
@@ -23,4 +23,4 @@ class UploadedFile(models.Model):
 @receiver(models.signals.post_delete, sender=UploadedFile)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     # Delete S3 data when UploadedFile is deleted
-    minio_client.remove_object(instance.bucket, instance.key)
+    minio.remove(instance.bucket, instance.key)

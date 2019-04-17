@@ -151,7 +151,7 @@ def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], pd.DataFrame],
     except json.decoder.JSONDecodeError as err:
         return ProcessResult(error=str(err))
     except pd.errors.EmptyDataError:
-        return pd.DataFrame()
+        return ProcessResult()
     except pd.errors.ParserError as err:
         return ProcessResult(error=str(err))
 
@@ -423,8 +423,7 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
                   text_encoding: _TextEncoding = None) -> ProcessResult:
     """Parse bytes to produce a ProcessResult.
 
-    You should call .sanitize_in_place() on the result: otherwise there may be
-    nested objects in the result (from parsing nested JSON).
+    This will produce a _sane_ ProcessResult (see sanitizedataframe).
 
     Keyword arguments:
 

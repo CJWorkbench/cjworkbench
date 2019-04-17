@@ -89,8 +89,7 @@ class StoredObject(models.Model):
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
         key = _build_key(to_wf_module.workflow_id, to_wf_module.id)
-        minio.minio_client.copy_object(self.bucket, key,
-                                       f'{self.bucket}/{self.key}')
+        minio.copy(self.bucket, key, f'{self.bucket}/{self.key}')
 
         return to_wf_module.stored_objects.create(
             stored_at=self.stored_at,
@@ -113,7 +112,4 @@ def _delete_from_s3_pre_delete(sender, instance, **kwargs):
     the user will know it isn't deleted.
     """
     if instance.bucket and instance.key:
-        try:
-            minio.minio_client.remove_object(instance.bucket, instance.key)
-        except minio.error.NoSuchKey:
-            pass
+        minio.remove(instance.bucket, instance.key)

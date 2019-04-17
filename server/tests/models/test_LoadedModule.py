@@ -96,9 +96,9 @@ class LoadedModuleTest(unittest.TestCase):
 
     def test_load_dynamic(self):
         code = b'def render(table, params):\n    return table * 2'
-        minio.minio_client.put_object(minio.ExternalModulesBucket,
-                                      'imported/abcdef/imported.py',
-                                      io.BytesIO(code), len(code))
+        minio.client.put_object(Bucket=minio.ExternalModulesBucket,
+                                Key='imported/abcdef/imported.py',
+                                Body=code, ContentLength=len(code))
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
@@ -120,16 +120,16 @@ class LoadedModuleTest(unittest.TestCase):
 
     def test_load_dynamic_ignore_test_py(self):
         code = b'def render(table, params):\n    return table * 2'
-        minio.minio_client.put_object(minio.ExternalModulesBucket,
-                                      'imported/abcdef/imported.py',
-                                      io.BytesIO(code), len(code))
+        minio.client.put_object(Bucket=minio.ExternalModulesBucket,
+                                Key='imported/abcdef/imported.py',
+                                Body=code, ContentLength=len(code))
         # write other .py files that aren't module code and should be ignored
-        minio.minio_client.put_object(minio.ExternalModulesBucket,
-                                      'imported/abcdef/setup.py',
-                                      io.BytesIO(b''), 0)
-        minio.minio_client.put_object(minio.ExternalModulesBucket,
-                                      'imported/abcdef/test_imported.py',
-                                      io.BytesIO(b''), 0)
+        minio.client.put_object(Bucket=minio.ExternalModulesBucket,
+                                Key='imported/abcdef/setup.py',
+                                Body=b'', ContentLength=0)
+        minio.client.put_object(Bucket=minio.ExternalModulesBucket,
+                                Key='imported/abcdef/test_imported.py',
+                                Body=b'', ContentLength=0)
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
@@ -150,9 +150,9 @@ class LoadedModuleTest(unittest.TestCase):
 
     def test_load_dynamic_is_cached(self):
         code = b'def render(table, params):\n    return table * 2'
-        minio.minio_client.put_object(minio.ExternalModulesBucket,
-                                      'imported/abcdef/imported.py',
-                                      io.BytesIO(code), len(code))
+        minio.client.put_object(Bucket=minio.ExternalModulesBucket,
+                                Key='imported/abcdef/imported.py',
+                                Body=code, ContentLength=len(code))
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(

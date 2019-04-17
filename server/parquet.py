@@ -1,5 +1,6 @@
 import functools
 import io
+from pathlib import Path
 import tempfile
 from urllib3.exceptions import ProtocolError
 import fastparquet
@@ -195,6 +196,6 @@ def write(bucket: str, key: str, table: pandas.DataFrame) -> int:
     with tempfile.NamedTemporaryFile() as tf:
         fastparquet.write(tf.name, table, compression='SNAPPY',
                           object_encoding='utf8')
-        minio.minio_client.fput_object(bucket, key, tf.name)
+        minio.fput_file(bucket, key, Path(tf.name))
         tf.seek(0, io.SEEK_END)
         return tf.tell()

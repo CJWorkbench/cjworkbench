@@ -143,13 +143,7 @@ def clear_minio():
         clear_minio._initialized = True
 
     for bucket in buckets:
-        keys = [o.object_name
-                for o in minio.minio_client.list_objects_v2(bucket,
-                                                            recursive=True)
-                if not o.is_dir]
-        if keys:
-            for err in minio.minio_client.remove_objects(bucket, keys):
-                raise err
+        minio.remove_recursive(bucket, '/', force=True)
 
 
 class MockPath(pathlib.PurePosixPath):

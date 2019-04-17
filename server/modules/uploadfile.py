@@ -1,7 +1,7 @@
 import asyncio
 from io import BufferedReader
 from cjworkbench.types import ProcessResult
-from server.minio import open_for_read, ResponseError
+from server import minio
 from server.utils import TempfileBackedReader
 from .utils import parse_bytesio, turn_header_into_first_row
 
@@ -21,6 +21,21 @@ _ExtensionMimeTypes = {
 # When files come in, they are stored in temporary UploadedFile objects
 # This code parses the file into a table, and stores as a StoredObject
 
+def _load_uploaded_file(bucket, key, mime_type) -> ProcessResult:
+    """BLOCKING: download from S3 and load with parse_bytesio()."""
+    try:
+        # Download, don't stream: it's faster because it's concurrent
+        with minio.temporarily_download(bucket, key) as tf:
+            with open(tf.name, 'rb') as f:
+                result = parse_bytesio(f, mime_type, None)
+
+    except minio.error.ClientError as err:
+        return ProcessResult(error=str(err))
+
+    result.truncate_in_place_if_too_big()
+    return result
+
+
 # Read an UploadedFile, parse it, store it as the WfModule's "fetched table"
 # Public entrypoint, called by the view
 async def parse_uploaded_file(uploaded_file) -> ProcessResult:
@@ -37,24 +52,13 @@ async def parse_uploaded_file(uploaded_file) -> ProcessResult:
     mime_type = _ExtensionMimeTypes.get(ext, None)
     loop = asyncio.get_event_loop()
     if mime_type:
-        try:
-            with open_for_read(uploaded_file.bucket, uploaded_file.key) as s3:
-                with TempfileBackedReader(s3) as tempio:
-                    with BufferedReader(tempio) as bufio:
-                        result = await loop.run_in_executor(None,
-                                                            parse_bytesio,
-                                                            bufio, mime_type,
-                                                            None)
-
-        except ResponseError as err:
-            return ProcessResult(error=str(err))
+        result = await loop.run_in_executor(None, _load_uploaded_file,
+                                            uploaded_file.bucket,
+                                            uploaded_file.key, mime_type)
     else:
         return ProcessResult(error=(
             f'Error parsing {uploaded_file.name}: unknown content type'
         ))
-
-    result.truncate_in_place_if_too_big()
-    result.sanitize_in_place()
 
     # don't delete UploadedFile, so that we can reparse later or allow higher
     # row limit or download original, etc.
