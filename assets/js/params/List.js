@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Param from './Param'
-import { paramFieldToParamProps } from './util'
+import { MaybeLabel, paramFieldToParamProps } from './util'
 
 // A single repetition of the set of parameters defined by param_fields.child_parameters
 // which is ultimately set by the 'parameters' key of the 'list' parameter type in the module YAML
@@ -112,12 +112,12 @@ export default class List extends React.PureComponent {
   }
 
   render () {
-    const { childParameters, isReadOnly, name, upstreamValue, childDefault } = this.props
+    const { childParameters, isReadOnly, name, label, fieldId, upstreamValue, childDefault } = this.props
 
     // Map twice: once for each repeated set of childParameters, and once for each parameter within each set
     return (
       <div className='param-list'>
-        <h2>This is my list of parameters</h2>
+        <MaybeLabel fieldId={fieldId} label={label} />
         <ul>
           {this.value.map((item, index) => (
             <li key={index}>
