@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    """
 
     dependencies = [
         ('server', '0004_internalize_converttexttonumber'),
