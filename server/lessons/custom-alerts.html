@@ -5,11 +5,11 @@
 </header>
 <section>
   <h2>OVERVIEW</h2>
-  <p>In this tutorial you will learn how to monitor a data feed to receive an alert if a condition is true.</p>
-  <p>You will work with data on Police Incidents from the City of San Francisco, updated daily. You will analyse that data and set up an alert to be notified if the number of reported incidents in any district in 2018 is greater than 8,000.</p>
+  <p>In this tutorial you will learn how to monitor a source to receive an alert if specific data changes.</p>
+  <p>You will work with data on Police reports from the City of New York, updated daily. You will analyse that data and set up an alert to be notified if the list of incidents in the borough of Manhattan changes.</p>
 </section>
 <section>
-  <h2>1. Set up automatic updates</h2>
+  <h2>1. Automatic data updates</h2>
   <p>First, let's connect to the data source and set up the step to download any new available data. </p>
   <p>The dataset 'NYPD Complaint Data Current' from the city of New York is published and documented <a href="https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data" class="highlight" target="_blank">here</a>.</p>
   <h3 class="instructions">Instructions</h3>
@@ -35,11 +35,8 @@
 </section>
 <section>
   <h2>2. Filter and set the alert</h2>
-  <p>Let's count the number of incidents reported so far in 2018, per district.</p>
+  <p>We want to monitor if new police incidents are reported in Manhattan.</p>
   <h3 class="instructions">Instructions</h3>
-  <p class="instruction-detail">
-    Keep all incidents reported since January 01 2018.
-  </p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Filter by value"}]'
@@ -49,9 +46,6 @@
     <li
       data-test="return workflow.tabs[0].wfModules[1].params.column === 'boro_nm'"
       >Select the column <kbd>boro_nm</kbd> to filter by.
-      <p class ="instruction-detail">
-        All unique values in the column are listed in the step, as well as how many rows use each value.
-      </p>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[1].params.valueselect.includes('MANHATTAN')"
