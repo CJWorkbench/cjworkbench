@@ -29,7 +29,7 @@ parameters:
 - id_name: error_means_null
   name: 'Convert non-numbers to null'
   type: checkbox
-  default: false
+  default: true
 - id_name: output_format
   type: numberformat
   name: Display as
