@@ -1,14 +1,5 @@
 .param-radio {
-
-  &:last-child {
-    margin-bottom: -3rem;
-    margin-top: 1.5rem;
-    z-index: 1; // needs z-index in order to be on top of submit button
-    position: relative;
-    max-width: 20rem;
-  }
-
-  .button-group {
+  .radio-options {
     display: flex;
     align-items: center;
 
@@ -52,9 +43,12 @@
   }
 }
 
-// Exec button will not be displayed on read only
-.workflow-root.read-only {
-  .param-radio:last-child {
-      margin-bottom: 0;
-  }
+.workflow-root:not(.read-only) .params>.param-radio:last-child {
+  // A top-level radio param that shows up right before an "execute" button 
+  // should appear _beside_ the button, not above it.
+  margin-bottom: -3rem;
+  margin-top: 1.5rem;
+  z-index: 1; // needs z-index in order to be on top of submit button
+  position: relative;
+  max-width: 20rem;
 }

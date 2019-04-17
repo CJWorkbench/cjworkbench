@@ -63,7 +63,7 @@ export default class SortColumns extends React.PureComponent {
     const onDelete = value.length <= 1 ? null : this.onDeleteSortColumn
 
     return (
-      <React.Fragment>
+      <>
         <ul>
           {value.map((itemValue, index) => (
             <SortColumn
@@ -89,7 +89,7 @@ export default class SortColumns extends React.PureComponent {
             <i className='icon-add'/> Add
           </button>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

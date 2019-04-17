@@ -6,7 +6,7 @@
 @import 'CellEdits';
 @import 'Checkbox';
 @import 'Column';
-@import 'Custom/index';
+@import 'List'; // defines the param-list() mixin
 @import 'Menu';
 @import 'Number';
 @import 'NumberFormat';
@@ -17,3 +17,5 @@
 @import 'String';
 @import 'SubmitButton';
 @import 'Tab';
+
+@import 'Custom/index'; // uses the param-list() mixin

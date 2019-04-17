@@ -1,9 +1,9 @@
 .param-filters {
-  @extend %content-2;
-  line-height: 1.5rem; //FIXME fix class of text that does not wrap
+  @include content-2;
+  line-height: 1.5rem; // FIXME fix class of text that does not wrap
 
   h5 {
-    @extend .content-2;
+    @include content-2;
     color: $brand-orange--darker;
     text-transform: uppercase;
     line-height: 1.6rem;
