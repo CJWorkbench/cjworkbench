@@ -65,6 +65,55 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
 
 
 class Workflow(models.Model):
+    # TODO when we upgrade to Django 2.2, uncomment this and figure out
+    # how to migrate our previous RunSQL(CREATE UNIQUE INDEX) code to use it.
+    #
+    # What we have today: (We'll need to delete this comment and preserve the
+    # index):
+    # migrations.RunSQL([
+    #     """
+    #     CREATE UNIQUE INDEX unique_workflow_copy_by_session
+    #     ON server_workflow (anonymous_owner_session_key,
+    #                         original_workflow_id)
+    #     WHERE anonymous_owner_session_key IS NOT NULL
+    #       AND original_workflow_id IS NOT NULL
+    #     """,
+    #     """
+    #     CREATE UNIQUE INDEX unique_workflow_copy_by_user
+    #     ON server_workflow (owner_id, original_workflow_id)
+    #     WHERE owner_id IS NOT NULL
+    #       AND original_workflow_id IS NOT NULL
+    #     """
+    # ])
+    #
+    # What we want: (We'll want to use the index we previously made with
+    # RunSQL())
+    # class Meta:
+    #     constraints: [
+    #         # Each user can have only one "copy" of each original_workflow:
+    #         # we don't have any concept of what multiple "copies" would be,
+    #         # and right now they'd be lost.
+    #         #
+    #         # Index by anonymous_owner_session_key/owner_id first: it's more
+    #         # likely to be unique.
+    #         #
+    #         # Don't index NULL values: not because they break business logic,
+    #         # but because it would be inefficient.
+    #         models.UniqueConstraint(fields=['anonymous_owner_session_key',
+    #                                         'original_workflow_id'],
+    #                                 name='unique_workflow_copy_by_session',
+    #                                 condition=models.Q(
+    #                                     anonymous_owner_session_key__isnull=False,
+    #                                     original_workflow_id__isnull=False,
+    #                                 ),
+    #         models.UniqueConstraint(fields=['owner_id', 'original_workflow_id'],
+    #                                 name='unique_workflow_copy_by_user',
+    #                                 condition=models.Q(
+    #                                     owner_id__isnull=False,
+    #                                     original_workflow_id__isnull=False,
+    #                                 ),
+    #    ]
+
     name = models.CharField('name', max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(
@@ -98,6 +147,8 @@ class Workflow(models.Model):
 
     TODO add last_delta_id? Currently, we only use this field for `url_id`.
     """
+
+
 
     public = models.BooleanField(default=False)
 

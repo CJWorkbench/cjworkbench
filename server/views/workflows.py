@@ -1,6 +1,7 @@
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+import django.db
 from django.db.models import Q
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect
@@ -111,7 +112,8 @@ class Index(View):
 
 def _get_anonymous_workflow_for(workflow: Workflow,
                                 request: HttpRequest) -> Workflow:
-    """If not owner, return a cached duplicate of `workflow`.
+    """
+    If not owner, return a cached duplicate of `workflow`.
 
     The duplicate will be married to `request.session.session_key`, and its
     `.is_anonymous` will return `True`.
@@ -124,14 +126,25 @@ def _get_anonymous_workflow_for(workflow: Workflow,
         return Workflow.objects.get(original_workflow_id=workflow.id,
                                     anonymous_owner_session_key=session_key)
     except Workflow.DoesNotExist:
+        try:
+            new_workflow = workflow.duplicate_anonymous(session_key)
+        except django.db.IntegrityError:
+            # Race: the same user just requested a duplicate at the same time,
+            # and both decided to duplicate simultaneously. A database
+            # constraint means one will get an IntegrityError ... so at this
+            # point we can assume our original query will succeed.
+            return Workflow.objects.get(
+                original_workflow_id=workflow.id,
+                anonymous_owner_session_key=session_key
+            )
+
+
+        async_to_sync(rabbitmq.queue_render)(new_workflow.id,
+                                             new_workflow.last_delta_id)
         if workflow.example:
             server.utils.log_user_event_from_request(request,
                                                      'Opened Demo Workflow',
                                                      {'name': workflow.name})
-        new_workflow = workflow.duplicate_anonymous(session_key)
-
-        async_to_sync(rabbitmq.queue_render)(new_workflow.id,
-                                             new_workflow.last_delta_id)
 
         return new_workflow
 

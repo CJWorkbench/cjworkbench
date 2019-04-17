@@ -13,6 +13,9 @@ from server.tests.utils import LoggedInTestCase
 from server.views.workflows import Index, workflow_detail, render_workflow
 
 
+_original_workflow_duplicate_anonymous = Workflow.duplicate_anonymous
+
+
 FakeSession = namedtuple('FakeSession', ['session_key'])
 
 
@@ -294,6 +297,47 @@ class WorkflowViewTests(LoggedInTestCase):
 
         # Ensure the anonymous users can't access the Python module
         self.assertNotContains(response, '"pythoncode"')
+
+    @patch.object(Workflow, 'duplicate_anonymous')
+    def test_workflow_prevent_race_creating_two_demos_per_user(
+        self,
+        duplicate_anonymous
+    ):
+        num_workflows = Workflow.objects.count()
+        self.other_workflow_public.example = True
+        self.other_workflow_public.save()
+
+        dup_result: Workflow = None
+        def racing_duplicate_anonymous(session_key):
+            # Let's pretend two requests are doing this simultaneously...
+            #
+            # The _other_ thread "won": its duplication will proceed as
+            # planned.
+            nonlocal dup_result
+            dup_result = _original_workflow_duplicate_anonymous(
+                self.other_workflow_public,
+                session_key
+            )
+
+            # Now, _our_ thread should run into a problem because we're trying
+            # to duplicate onto a session key that's already duplicated.
+            return _original_workflow_duplicate_anonymous(
+                self.other_workflow_public,
+                session_key
+            )
+        duplicate_anonymous.side_effect = racing_duplicate_anonymous
+
+        request = self._build_get('/workflows/%d/' % self.other_workflow_public.id,
+                                  user=AnonymousUser(), session_key='a-session')
+        response = render_workflow(request, workflow_id=self.other_workflow_public.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assert there is only _one_ extra workflow.
+        self.assertEqual(Workflow.objects.count(), num_workflows + 1)
+        # This request "lost" the race; assert it has the same workflow as the
+        # request that "won" the race.
+        self.assertEqual(response.context_data['initState']['workflow']['id'],
+                         dup_result.id)
+
 
     def test_workflow_duplicate_view(self):
         old_ids = [w.id for w in Workflow.objects.all()] # list of all current workflow ids
