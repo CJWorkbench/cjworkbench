@@ -104,7 +104,7 @@
     // Merge button changes color when at least 2 checkboxes have been selected
     button[name=merge] {
       @extend %action-button;
-      @extend %button-orange--fill;
+      @include button-orange--fill;
       &:disabled {
         color: $text-muted;
         border-color: $text-muted;
@@ -412,6 +412,16 @@
   .modal-footer {
     .actions {
       display: flex;
+      button[name=submit]{
+        @include button-orange--fill;
+        &:disabled {
+          opacity: .6;
+          @include button-orange;
+          &:hover {
+            background-color: transparent;
+          }
+        }
+      }
     }
   }
 

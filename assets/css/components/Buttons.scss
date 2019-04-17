@@ -368,7 +368,7 @@ button:focus { outline:0 !important; }
 
 
 
-%button-orange {
+@mixin button-orange {
   color: $brand-orange;
   border-color: $brand-orange ;
   background-color: transparent;
@@ -380,12 +380,11 @@ button:focus { outline:0 !important; }
     color: $white;
   }
 }
-
 .button-orange {
-  @extend %button-orange;
+  @include button-orange;
 }
 
-%button-orange--fill {
+@mixin button-orange--fill {
   color: white;
   border-color: $brand-orange;
   &:hover {
@@ -404,9 +403,8 @@ button:focus { outline:0 !important; }
     border: 1px solid $brand-orange;
   }
 }
-
 .button-orange--fill {
-  @extend %button-orange--fill;
+  @include button-orange--fill;
 }
 
 .button-dark-blue {
