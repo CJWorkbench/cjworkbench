@@ -41,6 +41,8 @@ async def async_get_url(row, url):
         return (row, 'Invalid URL', '')
     except aiohttp.ClientError as err:
         return (row, f"Can't connect: {err}", '')
+    except asyncio.CancelledError as err:
+        raise
     except Exception as err:
         return (row, f'Unknown error: {err}', '')
 

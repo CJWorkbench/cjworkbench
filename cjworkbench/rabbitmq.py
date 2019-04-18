@@ -186,6 +186,8 @@ class RetryingConnection:
                         str(err), self.delay_s
                     )
                     await asyncio.sleep(self.delay_s)
+            except asyncio.CancelledError:
+                raise
             except Exception:
                 logger.exception('Unhandled exception from _attempt_connect()')
                 raise

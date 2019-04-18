@@ -1,3 +1,4 @@
+import asyncio
 from datetime import timedelta
 from functools import partial
 import logging
@@ -90,6 +91,8 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         )
 
         await save.save_result_if_changed(workflow_id, wf_module, result)
+    except asyncio.CancelledError:
+        raise
     except Exception:
         # Log exceptions but keep going
         logger.exception(f'Error fetching {wf_module}')
@@ -153,5 +156,7 @@ async def fetch(*, wf_module_id: int) -> None:
 async def handle_fetch(message):
     try:
         await fetch(**message)
+    except asyncio.CancelledError:
+        raise
     except Exception:
         logger.exception('Error during fetch')

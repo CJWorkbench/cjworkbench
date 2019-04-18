@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Optional, Tuple
 from channels.db import database_sync_to_async
@@ -68,5 +69,7 @@ async def handle_upload_DELETEME(message):
     """
     try:
         await upload_DELETEME(**message)
+    except asyncio.CancelledError:
+        raise
     except Exception:
         logger.exception('Error during fetch')

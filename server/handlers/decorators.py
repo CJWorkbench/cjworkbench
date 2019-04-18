@@ -1,3 +1,4 @@
+import asyncio
 import functools
 import logging
 from channels.db import database_sync_to_async
@@ -103,6 +104,8 @@ def websockets_handler(role: str = 'read'):
                 data = await task
             except HandlerError as err:
                 return HandlerResponse(request.request_id, error=str(err))
+            except asyncio.CancelledError:
+                raise  # and don't log
             except Exception as err:
                 logger.exception(f'Error in handler')
                 message = f'{type(err).__name__}: {str(err)}'

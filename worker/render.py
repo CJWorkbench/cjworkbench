@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 from typing import Any, Awaitable, Callable, Dict
@@ -121,6 +122,8 @@ async def handle_render(pg_locker: PgLocker, message: Dict[str, Any],
         try:
             workflow_id = int(message['workflow_id'])
             delta_id = int(message['delta_id'])
+        except asyncio.CancelledError:
+            raise
         except Exception:
             logger.info(
                 ('Ignoring invalid render request. '
@@ -133,5 +136,7 @@ async def handle_render(pg_locker: PgLocker, message: Dict[str, Any],
             task = render_or_requeue(pg_locker, requeue, workflow_id, delta_id)
             await benchmark(logger, task, 'render_or_requeue(%d, %d)',
                             workflow_id, delta_id)
+        except asyncio.CancelledError:
+            raise
         except Exception:
             logger.exception('Error during render')

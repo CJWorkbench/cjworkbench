@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import AnonymousUser, User
@@ -110,6 +111,23 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
         with self.assertLogs(level=logging.ERROR):
             ret = self.run_handler(x, user=user, workflow=Workflow(owner=user))
         self.assertHandlerResponse(ret, error='ValueError: bad value')
+
+    def test_passthrough_cancellederror(self):
+        """
+        CancelledError must be re-raised.
+
+        Async functions may raise CancelledError at any time It must be
+        re-raised. There's no way to avoid it. (asyncio.shield() in particular
+        is not a way to avoid CancelledError: it's nothing but a waste of time;
+        if you don't believe that go and look it up -- proving it.)
+        """
+        @decorators.websockets_handler(role='read')
+        async def x(**kwargs):
+            raise asyncio.CancelledError
+
+        user = User()
+        with self.assertRaises(asyncio.CancelledError):
+            self.run_handler(x, user=user, workflow=Workflow(owner=user))
 
     # Auth is a bit weird: we already know the user has access to the workflow
     # because the WebSockets connection didn't close. But we'd like to update

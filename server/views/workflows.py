@@ -219,19 +219,15 @@ def workflow_detail(request, workflow_id, format=None):
     if request.method == 'POST':
         workflow = lookup_workflow_for_write(workflow_id, request)
 
-        try:
-            valid_fields = {'public'}
-            if not set(request.data.keys()).intersection(valid_fields):
-                raise ValueError('Unknown fields: {}'.format(request.data))
-
-            if 'public' in request.data:
-                # TODO this should be a command, so it's undoable
-                workflow.public = request.data['public']
-                workflow.save(update_fields=['public'])
-
-        except Exception as e:
-            return JsonResponse({'message': str(e), 'status_code': 400},
-                                status=status.HTTP_400_BAD_REQUEST)
+        valid_fields = {'public'}
+        if not set(request.data.keys()).intersection(valid_fields):
+            return JsonResponse({
+                'message': 'Unknown fields: %r' % request.data,
+                'status_code': 400,
+            }, status=HTTP_400_BAD_REQUEST)
+        if 'public' in request.data:
+            workflow.public = bool(request.data['public'])
+            workflow.save(update_fields=['public'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':

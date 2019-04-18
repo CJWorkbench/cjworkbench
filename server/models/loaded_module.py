@@ -207,6 +207,8 @@ class LoadedModule:
 
         try:
             out = await future_result
+        except asyncio.CancelledError:
+            raise
         except Exception as err:
             logger.exception('Exception in %s.fetch', self.module_id_name)
             out = self._wrap_exception(err)
