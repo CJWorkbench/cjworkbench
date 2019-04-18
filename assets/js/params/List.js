@@ -13,7 +13,7 @@ class ChildParamsForm extends React.PureComponent {
     commonProps: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired, // passed in rather than parent needing to create a closure, which causes re-render
     onChange: PropTypes.func.isRequired, // func(index, value of all form fields) => undefined
-    onDelete: PropTypes.func.isRequired // func(index) => undefined
+    onDelete: PropTypes.func // func(index) => undefined, or null if isReadOnly
   }
 
   onChangeParam = (idName, childParamValue) => {
@@ -37,7 +37,7 @@ class ChildParamsForm extends React.PureComponent {
             key={childParameter.id_name}
             {...commonProps}
             {...paramFieldToParamProps(childParameter)}
-            name={childParameter.id_name}
+            name={childParameter.id_name /* should be `${name}[${childParameter.id_name}]` but that breaks event handlers */}
             fieldId={`${fieldId}_${childParameter.id_name}`}
             value={value[childParameter.id_name]}
             upstreamValue={upstreamValue[childParameter.id_name]}
