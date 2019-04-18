@@ -27,7 +27,7 @@
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
       data-test="return workflow.tabs[0].wfModules[0].selectedVersion"
       >Click <kbd>Scrape</kbd> to load the data
-      <p class="instruction-detail">Once loaded, the dataset is copied on Workbench's server. It will stay accessible even if the webpage with the original data goes offline.</p>
+      <p class="instruction-detail">Once loaded, the data is saved as a version in the scraper. It will stay accessible even if the webpage with the original table goes offline.</p>
     </li>
   </ol>
 </section>
@@ -37,50 +37,50 @@
   <figure>
     <img alt="Inspect element" src="./double_header.png">
   </figure>
-  <p>When scraping, Workbench collapses all header rows into a single header by concatenating content in each column.</p>
+  <p>When scraping an HTML table, Workbench collapses all header rows into a single header by concatenating content in each column.</p>
   <h3 class="instructions">Instructions</h3>
-  <p>Rename the column's header</p>
+  <p>Rename the column's header to be legible</p>
   <ol class="steps">
     <li
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModuleNames[1] === 'Rename columns'"
-      >Click column names in the header of the table to rename them and only
-      keep the year.
+      >Click one column name in the header of the table to give it a legible name.
       <p>For example: Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.</p>
     </li>
   </ol>
 </section>
 <section>
   <h2>3. Table's position on the page</h2>
-  <p>There are often more than one table on a page. For example there are 3 tables visible on this <a href="https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)" class="highlight" target="_blank">page</a>, each of them using a different index to list GDP per country.</p>
+  <p>There are often more than one table on a page. For example there are 3 tables visible on this <a href="https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)" class="highlight" target="_blank">page</a>.</p>
+  <p>Let't scrape the World Bank data table, displayed between the two others.</p>
   <h3 class="instructions">Instructions</h3>
-  <p>Scrape the table using World Bank data, displayed between the two others.</p>
   <ol class="steps">
     <li
+    data-test="return workflow.tabs[1].wfModuleNames[0] === 'Scrape table'"
+      >Create a new tab using the
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/add.svg">
+      </span>button at the bottom of the page, and add the data source<kbd>Scrape table</kbd> to it.
+    </li>
+    <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="const url = workflow.tabs[0].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
+      data-test="const url = workflow.tabs[1].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Paste in the URL of the new page we want to scrape:
       <div class="copy-txt">https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)</div>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.tablenum === 4"
-      >Set the table's position on the page to <code>4</code>
+      data-test="return workflow.tabs[1].wfModules[0].params.tablenum === 4"
+      >Set the table's position on the page to <code>4</code>, and click <kbd>Scrape</kbd>
       <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.</p>
       <p class="instruction-detail">Try scraping positions <code>1</code> to <code>5</code>, and check the original page to understand where other HTML tables are located.</p>
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return new Date() - workflow.tabs[0].wfModules[0].lastFetchCheckAt < 10000"
-      >Click <kbd>Scrape</kbd>
-      <!-- the data-test= here is sketchy. It only works as final step in the whole lesson. -->
     </li>
   </ol>
 </section>
 <footer>
   <h2>Lesson complete!</h2>
   <div class="completed">
-    <p class="summary"> You scraped an HTML table and loaded it into Workbench.</p>
+    <p class="summary"> You scraped your first HTML tables!</p>
   </div>
   <div class="next">
     <h4>Continue learning:</h4>

@@ -1,0 +1,67 @@
+@mixin param-list() {
+  // In these comments, a "list item" is a <li> -- one cluster of parameters.
+
+  &>ul { // All list items
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &>li { // One list item
+      position: relative; // so we can position .delete
+
+      &:not(:first-child) {
+        // Spacing between list items
+        padding-top: 1.8rem;
+      }
+
+      .delete {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: $param-group-margin;
+        position: relative;
+
+        button {
+          cursor: pointer;
+          margin: 0;
+          padding: 0;
+          padding-left: 1rem;
+          border: 0;
+          font: inherit;
+          font-size: 1.1rem;
+          background: inherit;
+          color: $medium-gray;
+          opacity: .5;
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+
+      .param-radio + .delete {
+        // the "x" after a button group should appear lined up with the button group
+        position: absolute;
+        right: 0;
+        bottom: .2rem; // eyeballing it to line up with radio options
+      }
+    }
+  }
+
+  button.add {
+    cursor: pointer;
+    @include content-2;
+    text-transform: uppercase;
+    margin-top: .5rem;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
+    background: inherit;
+    color: $brand-text--dark;
+    &:hover {
+      color: $brand-orange;
+    }
+  }
+}
+
+.param-list {
+  @include param-list();
+}

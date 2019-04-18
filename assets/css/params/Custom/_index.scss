@@ -1,8 +1,8 @@
-@import 'Aggregations';
+@import 'Aggregations'; // uses param-list() mixin
 @import 'ChartSeriesMultiSelect/index';
 @import 'Code';
 @import 'File';
-@import 'Filters';
+@import 'Filters'; // uses param-list() mixin
 @import 'GoogleFileSelect';
 @import 'Groups';
 @import 'JoinColumns';
@@ -11,4 +11,4 @@
 @import 'ReorderHistory';
 @import 'ValueSelect';
 @import 'VersionSelect';
-@import 'Sort';
+@import 'Sort'; // uses param-list() mixin

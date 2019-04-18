@@ -27,6 +27,7 @@ export default class Param extends React.PureComponent {
       valueCounts: PropTypes.func.isRequired, // for ValueFilter/Refine
       _fetch: PropTypes.func.isRequired, // for DropZone
     }),
+    fieldId: PropTypes.string, // if set, we're a sub-param and this is our ID. Otherwise, auto-generate.
     name: PropTypes.string.isRequired,
     secretParamName: PropTypes.string, // or null: name of a 'secret'-typed param
     secretName: PropTypes.string, // or null: name of user logged in (if there is a secretParamName)
@@ -106,9 +107,10 @@ export default class Param extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, name, type, label, value, upstreamValue } = this.props
+    const { wfModuleId, name, type, fieldId, label, value, upstreamValue } = this.props
 
-    const fieldId = generateFieldId(wfModuleId, name)
+    // If we aren't a list-item param, we don't have a fieldId. Generate one.
+    const safeFieldId = fieldId ? fieldId : generateFieldId(wfModuleId, name)
 
     let className = `param param-${type}`
     // "custom" is a type that we should probably nix. Basically,
@@ -130,7 +132,7 @@ export default class Param extends React.PureComponent {
       <div data-name={name} className={className}>
         <this.innerComponent
           {...this.props}
-          fieldId={fieldId}
+          fieldId={safeFieldId}
           createOauthAccessToken={this.createOauthAccessToken}
           onChange={this.onChange}
         />

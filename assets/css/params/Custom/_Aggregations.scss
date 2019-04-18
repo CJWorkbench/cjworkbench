@@ -1,16 +1,7 @@
 .param-aggregations {
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+  @include param-list();
 
   li.aggregation {
-    & + li.aggregation {
-      // Spacing between items
-      padding-top: 1.8rem;
-    }
-
     select.operation {
       // 1. operation: has top radius, not bottom radius
       @extend %custom-select;
@@ -53,7 +44,7 @@
       }
 
       input {
-        @extend %module-parameter;
+        @include module-parameter;
         padding: 0 1.3rem; // same as <span>
         border-radius: 0 0 3px 0;
         border-top-color: transparent;
@@ -74,45 +65,6 @@
           border-top: $table-background;
         }
       }
-    }
-
-    .delete {
-      margin-top: $param-group-margin;
-      position: relative;
-
-      button {
-        position: absolute;
-        cursor: pointer;
-        margin: 0;
-        padding: 0;
-        padding-left: 1rem;
-        right: 0;
-        top: 0;
-        border: 0;
-        font: inherit;
-        font-size: 1.1rem;
-        background: inherit;
-        color: $medium-gray;
-        opacity: .5;
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
-  }
-
-  button.add {
-    cursor: pointer;
-    @extend %content-2;
-    text-transform: uppercase;
-    margin-top: .5rem;
-    margin-left: 0;
-    padding: 0;
-    border: 0;
-    background: inherit;
-    color: $brand-text--dark;
-    &:hover {
-      color: $brand-orange;
     }
   }
 }

@@ -87,6 +87,9 @@
 
     .form-check-input {
       margin-bottom: -.2rem;
+      &::after {
+       top:-2px;
+      }
     }
 
     .form-check-label {
@@ -167,4 +170,3 @@
     }
   }
 }
-

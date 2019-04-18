@@ -29,14 +29,16 @@ class ChildParamsForm extends React.PureComponent {
   }
 
   render () {
-    const { childParameters, value, upstreamValue, commonProps, onDelete } = this.props
+    const { childParameters, value, upstreamValue, commonProps, onDelete, name, fieldId } = this.props
     return (
-      <div className='list-child-form'>
+      <>
         {childParameters.map(childParameter => (
           <Param
             key={childParameter.id_name}
             {...commonProps}
             {...paramFieldToParamProps(childParameter)}
+            name={`${name}[${childParameter.id_name}]`}
+            fieldId={`${fieldId}_${childParameter.id_name}`}
             value={value[childParameter.id_name]}
             upstreamValue={upstreamValue[childParameter.id_name]}
             onChange={this.onChangeParam}
@@ -54,7 +56,7 @@ class ChildParamsForm extends React.PureComponent {
             </button>
           </div>
         ) : null}
-      </div>
+      </>
     )
   }
 }
@@ -116,14 +118,16 @@ export default class List extends React.PureComponent {
 
     // Map twice: once for each repeated set of childParameters, and once for each parameter within each set
     return (
-      <div className='param-list'>
-        <MaybeLabel fieldId={fieldId} label={label} />
+      <>
+        <MaybeLabel fieldId={`${fieldId}_0_${childParameters[0].id_name}`} label={label} />
         <ul>
           {this.value.map((item, index) => (
             <li key={index}>
               <ChildParamsForm
                 childParameters={childParameters}
                 value={item}
+                name={`${name}[${index}]`}
+                fieldId={`${fieldId}_${index}`}
                 commonProps={this.props}
                 upstreamValue={upstreamValue[index] || childDefault}
                 onChange={this.onChangeChildFormValue}
@@ -143,7 +147,7 @@ export default class List extends React.PureComponent {
             <i className='icon-add' /> Add
           </button>
         )}
-      </div>
+      </>
     )
   }
 }

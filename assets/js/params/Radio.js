@@ -53,7 +53,7 @@ export default class RadioParam extends React.PureComponent {
     ))
 
     return (
-      <div className='button-group'>
+      <div className='radio-options'>
         {optionComponents}
       </div>
     )

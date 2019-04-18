@@ -10,10 +10,13 @@ const AscendingParamOptions = [
 ]
 function AscendingParam (props) {
   return (
-    <RadioParam
-      enumOptions={AscendingParamOptions}
-      {...props}
-    />
+    // TODO find a better way to simulate .param-radio?
+    <div className='param param-radio'>
+      <RadioParam
+        enumOptions={AscendingParamOptions}
+        {...props}
+      />
+    </div>
   )
 }
 AscendingParam.propTypes = {
@@ -63,39 +66,37 @@ export default class SortColumn extends React.PureComponent {
     const label = index === 0 ? 'By' : 'Then by'
 
     return (
-      <React.Fragment>
-        <label>{label}</label>
-        <li className='sort-column'>
-          <ColumnParam
-            key={index}
-            name={`${name}[colname]`}
-            fieldId={`${name}_colname`}
-            value={value.colname}
-            prompt='Select a column'
-            isReadOnly={isReadOnly}
-            inputColumns={inputColumns}
-            onChange={this.onChangeColname}
-          />
-          <AscendingParam
-            name={`${name}[is_ascending]`}
-            fieldId={`${name}_is_ascending`}
-            value={value.is_ascending}
-            isReadOnly={isReadOnly}
-            onChange={this.onChangeIsAscending}
-          />
-          {(onDelete && !isReadOnly) ? (
-            <div className='delete'>
-              <button
-                className='delete'
-                name={`${name}[delete]`}
-                onClick={this.onClickDelete}
-              >
-                <i className='icon-close' />
-              </button>
-            </div>
-          ) : null}
-        </li>
-      </React.Fragment>
+      <li>
+        <ColumnParam
+          label={label}
+          key={index}
+          name={`${name}[colname]`}
+          fieldId={`${name}_colname`}
+          value={value.colname}
+          prompt='Select a column'
+          isReadOnly={isReadOnly}
+          inputColumns={inputColumns}
+          onChange={this.onChangeColname}
+        />
+        <AscendingParam
+          name={`${name}[is_ascending]`}
+          fieldId={`${name}_is_ascending`}
+          value={value.is_ascending}
+          isReadOnly={isReadOnly}
+          onChange={this.onChangeIsAscending}
+        />
+        {(onDelete && !isReadOnly) ? (
+          <div className='delete'>
+            <button
+              className='delete'
+              name={`${name}[delete]`}
+              onClick={this.onClickDelete}
+            >
+              <i className='icon-close' />
+            </button>
+          </div>
+        ) : null}
+      </li>
     )
   }
 }
