@@ -17,6 +17,7 @@ from django.db.models.fields.files import FieldFile
 from django.db import transaction
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import xlrd
 import yarl  # aiohttp innards -- yuck!
 from cjworkbench.types import ProcessResult
@@ -556,27 +557,33 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
 
 def autocast_series_dtype(series: pd.Series) -> pd.Series:
     """
-    Cast str/object series to numeric, if possible.
+    Cast any Series to str/category[str]/number/datetime.
 
-    This is appropriate when parsing CSV data, or maybe Excel data. It _seems_
+    This is appropriate when parsing CSV data or Excel data. It _seems_
     appropriate when a search-and-replace produces numeric columns like
     '$1.32' => '1.32' ... but perhaps that's only appropriate in very-specific
     cases.
 
     If the series is all-null, do nothing.
 
+    Avoid spurious calls to this function: it's expensive.
+
     TODO handle dates and maybe booleans.
     """
-    if ((series.isnull()) | (series == '')).all():
+    nulls = series.isnull()
+
+    if (nulls | (series == '')).all():
         return series
     elif series.dtype == 'O':
-        # Object (str) series. Try to infer type.
-        #
-        # We don't case from complex to simple types here: we assume the input
-        # is already sane.
         try:
+            # If it all looks like numbers (like in a CSV), cast to number.
             return pd.to_numeric(series)
         except (ValueError, TypeError):
+            # Otherwise, we want all-string. Is that what we already have?
+            array = series[~nulls].array
+            if any(type(x) != str for x in array):
+                series = series.astype(str)
+                series[nulls] = None
             return series
     elif hasattr(series, 'cat'):
         # Categorical series. Try to infer type of series.
@@ -586,10 +593,12 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
         try:
             return pd.to_numeric(series)
         except (ValueError, TypeError):
+            # We don't cast categories to str here -- because we have no
+            # callers that would create categories that aren't all-str. If we
+            # ever do, this is where we should do the casting.
             return series
     else:
-        # We should never get here
-        return series
+        assert is_numeric_dtype(series) or is_datetime64_dtype(series)
 
 
 def autocast_dtypes_in_place(table: pd.DataFrame) -> None:

@@ -443,14 +443,37 @@ class AutocastDtypesTest(unittest.TestCase):
         expected = pd.DataFrame({'A': ['1', '2.1', 'Yay']}, dtype='category')
         assert_frame_equal(table, expected)
 
-    def test_autocast_allow_crazy_types(self):
-        class Obj:
-            pass
+    def test_autocast_mixed_types_to_int(self):
+        # This is important in particular for Excel data, which is often a mix
+        # of int and str.
+        table = pd.DataFrame({'A': ['1', 2]})
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': [1, 2]})
+        assert_frame_equal(table, expected)
 
-        obj1 = Obj()
-        obj2 = Obj()
+    def test_autocast_mixed_types_to_str(self):
+        # This is important in particular for Excel data, which is often a mix
+        # of int and str.
+        table = pd.DataFrame({'A': ['1A', 2]})
+        autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({'A': ['1A', '2']})
+        assert_frame_equal(table, expected)
+
+    # We know of no cases in which categories need to be cast to str. If we
+    # find some, add the tests here!
+    # def test_autocast_mixed_type_categories_to_str()
+
+    def test_autocast_cast_crazy_types(self):
+        class Obj:
+            def __init__(self, s):
+                self.s = s
+            def __str__(self):
+                return self.s
+
+        obj1 = Obj('o1')
+        obj2 = Obj('o2')
 
         table = pd.DataFrame({'A': [obj1, obj2]})
         autocast_dtypes_in_place(table)
-        expected = pd.DataFrame({'A': [obj1, obj2]})
+        expected = pd.DataFrame({'A': ['o1', 'o2']})
         assert_frame_equal(table, expected)
