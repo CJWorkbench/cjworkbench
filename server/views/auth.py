@@ -64,6 +64,10 @@ def loads_workflow_for_read(f):
     `request` and `workflow_id` are the first and second positional arguments
     in the returned function.
 
+    This method does _not_ cooperatively lock the workflow. That's because a
+    cooperative lock means a database transaction, and request handlers might
+    want to do something _after_ the database transaction is committed.
+
     Raise Http404 if the Workflow does not exist and PermissionDenied if the
     workflow _does_ exist but the user does not have read access.
     """

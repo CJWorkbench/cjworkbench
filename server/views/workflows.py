@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 import django.db
 from django.db.models import Q
-from django.http import HttpRequest, JsonResponse
+from django.http import Http404, HttpRequest, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
@@ -25,25 +25,32 @@ from .auth import lookup_workflow_for_write, loads_workflow_for_read
 
 
 def make_init_state(request, workflow=None, modules=None):
-    """Build a dict to embed as JSON in `window.initState` in HTML."""
+    """
+    Build a dict to embed as JSON in `window.initState` in HTML.
+
+    Raise Http404 if the workflow disappeared.
+    """
     ret = {}
 
     if workflow:
-        with workflow.cooperative_lock():
-            ret['workflowId'] = workflow.id
-            ret['workflow'] = WorkflowSerializer(
-                workflow,
-                context={'request': request}
-            ).data
+        try:
+            with workflow.cooperative_lock():  # raise DoesNotExist on race
+                ret['workflowId'] = workflow.id
+                ret['workflow'] = WorkflowSerializer(
+                    workflow,
+                    context={'request': request}
+                ).data
 
-            tabs = list(workflow.live_tabs)
-            ret['tabs'] = dict((str(tab.slug), TabSerializer(tab).data)
-                               for tab in tabs)
+                tabs = list(workflow.live_tabs)
+                ret['tabs'] = dict((str(tab.slug), TabSerializer(tab).data)
+                                   for tab in tabs)
 
-            wf_modules = list(WfModule.live_in_workflow(workflow))
+                wf_modules = list(WfModule.live_in_workflow(workflow))
 
-            ret['wfModules'] = dict((str(wfm.id), WfModuleSerializer(wfm).data)
-                                    for wfm in wf_modules)
+                ret['wfModules'] = {str(wfm.id): WfModuleSerializer(wfm).data
+                                    for wfm in wf_modules}
+        except Workflow.DoesNotExist:
+            raise Http404('Workflow was recently deleted')
 
         ret['uploadConfig'] = {
             'bucket': minio.UserFilesBucket,

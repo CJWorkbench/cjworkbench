@@ -189,6 +189,17 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @patch('server.models.Workflow.cooperative_lock')
+    def test_workflow_view_race_delete_after_auth(self, lock):
+        # cooperative_lock() is called _after_ auth. (Auth is optimized to be
+        # quick, which means no cooperative_lock().) Assume make_init_state()
+        # calls it, for serialization. Well, the Workflow may be deleted after
+        # auth and before make_init_state().
+        lock.side_effect = Workflow.DoesNotExist
+        self.client.force_login(self.user)
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_workflow_view_triggers_render_if_stale_cache(self):
         self.tab1.wf_modules.create(
             order=0,

@@ -341,7 +341,8 @@ class Workflow(models.Model):
                                                       pk=123) as workflow:
                 # ... do stuff
 
-        Raises Workflow.DoesNotExist.
+        Raises Workflow.DoesNotExist. (To check if access was denied, check
+        err.args[0].endswith('access denied'). TODO revisit this oddity.)
         """
         with cls.lookup_and_cooperative_lock(**kwargs) as workflow:
             access = getattr(workflow, 'user_session_authorized_%s' % level)
