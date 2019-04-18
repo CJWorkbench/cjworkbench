@@ -4,7 +4,7 @@ import Param from './Param'
 import { MaybeLabel, paramFieldToParamProps } from './util'
 
 // A single repetition of the set of parameters defined by param_fields.child_parameters
-// which is ultimately set by the 'parameters' key of the 'list' parameter type in the module YAML
+// which is ultimately set by the 'child_parameters' key of the 'list' parameter type in the module YAML
 class ChildParamsForm extends React.PureComponent {
   static propTypes = {
     childParameters: PropTypes.array.isRequired, // essentially a copy of the child_parameters key in the module YAML
@@ -37,7 +37,7 @@ class ChildParamsForm extends React.PureComponent {
             key={childParameter.id_name}
             {...commonProps}
             {...paramFieldToParamProps(childParameter)}
-            name={`${name}[${childParameter.id_name}]`}
+            name={childParameter.id_name}
             fieldId={`${fieldId}_${childParameter.id_name}`}
             value={value[childParameter.id_name]}
             upstreamValue={upstreamValue[childParameter.id_name]}
