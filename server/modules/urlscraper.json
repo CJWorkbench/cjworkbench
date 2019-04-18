@@ -27,7 +27,7 @@
       "id_name": "urllist",
       "type": "string",
       "multiline": true,
-      "placeholder": "Paste URLs here, each on one line.",
+      "placeholder": "Enter URLs here, each on one line.",
       "visible_if": {
         "id_name": "urlsource",
         "value": "List"
