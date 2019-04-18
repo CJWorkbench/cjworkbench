@@ -309,7 +309,8 @@ LOGGING = {
         'oauthlib': {'level': 'INFO'},
         'urllib3': {'level': 'INFO'},
         'requests_oauthlib': {'level': 'INFO'},
-        's3transfer': {'level': 'INFO'},
+        # s3transfer: wanna see if it's retrying download requests
+        #'s3transfer': {'level': 'INFO'},
         'django.request': {
             # Django prints WARNINGs for 400-level HTTP responses. That's
             # wrong: our code is _meant_ to output 400-level HTTP responses in
