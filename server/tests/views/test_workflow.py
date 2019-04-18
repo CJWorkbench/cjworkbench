@@ -375,6 +375,26 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Workflow.objects.filter(name='Workflow 1').count(), 0)
 
+    def test_workflow_detail_delete_missing_is_404(self):
+        # It's okay because the thing that leads to this might be a user
+        # double-clicking on a "delete" button.
+        count_before = Workflow.objects.count()
+        pk_workflow = self.workflow1.id + 999  # does not exist
+        request = self._build_delete('/api/workflows/%d/' % pk_workflow,
+                                     user=self.user)
+        response = workflow_detail(request, workflow_id=pk_workflow)
+        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(Workflow.objects.count(), count_before)
+
+    def test_workflow_detail_delete_unauthorized_is_403(self):
+        count_before = Workflow.objects.count()
+        pk_workflow = self.workflow1.id
+        request = self._build_delete('/api/workflows/%d/' % pk_workflow,
+                                     user=self.otheruser)  # has no permission
+        response = workflow_detail(request, workflow_id=pk_workflow)
+        self.assertIs(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Workflow.objects.count(), count_before)
+
     def test_workflow_public_post(self):
         pk_workflow = self.workflow1.id
         request = self._build_post('/api/workflows/%d' % pk_workflow,

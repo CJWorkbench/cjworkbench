@@ -231,14 +231,26 @@ def workflow_detail(request, workflow_id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        with Workflow.authorized_lookup_and_cooperative_lock(
-            'owner',
-            request.user,
-            request.session,
-            pk=workflow_id
-        ) as workflow:
-            workflow.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            with Workflow.authorized_lookup_and_cooperative_lock(
+                'owner',
+                request.user,
+                request.session,
+                pk=workflow_id
+            ) as workflow:
+                workflow.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Workflow.DoesNotExist as err:
+            if err.args[0] == 'owner access denied':
+                return JsonResponse({
+                    'message': str(err),
+                    'status_code': 403,
+                }, status=status.HTTP_403_FORBIDDEN)
+            else:
+                return JsonResponse({
+                    'message': 'Workflow not found',
+                    'status_code': 404,
+                }, status=status.HTTP_404_NOT_FOUND)
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
