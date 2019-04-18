@@ -47,9 +47,13 @@ def render(table, params, *, fetch_result):
 
     has_header: bool = params['first_row_is_header']
     if has_header and len(table) >= 1:  # if len == 0, no-op
-        table.columns = [str(c) for c in list(table.iloc[0, :])]
+        print(repr(table.columns))
+        table.columns = list(utils.uniquize_colnames(
+            str(c) for c in list(table.iloc[0, :])
+        ))
         table = table[1:]
         table.reset_index(drop=True, inplace=True)
+        print(repr(table.columns))
 
     if fetch_result.error:
         return (table, fetch_result.error)

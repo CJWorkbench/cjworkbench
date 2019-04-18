@@ -5,7 +5,7 @@ import json
 import re
 import shutil
 import tempfile
-from typing import Any, Dict, Callable, Optional
+from typing import Any, Dict, Callable, Iterator, Optional
 import aiohttp
 from asgiref.sync import async_to_sync
 from async_generator import asynccontextmanager  # TODO python 3.7 native
@@ -33,6 +33,47 @@ class BadInput(ValueError):
     """
     Workbench cannot transform the given data into a pd.DataFrame.
     """
+
+
+def uniquize_colnames(colnames: Iterator[str]) -> Iterator[str]:
+    """
+    Yield colnames in one pass, renaming so no two names are alike.
+
+    The algorithm: Match each colname against "Column Name 2": everything up to
+    ending digits is the 'key' and the ending digits are the 'number'. Maintain
+    a blacklist of numbers, for each key; when a key+number have been seen,
+    find the first _free_ number with that key to construct a new column name.
+
+    This algorithm is ... generic. It's useful if we know nothing at all about
+    the columns and no column names are "important" or "to-keep-unchanged".
+    """
+    blacklist = {}  # key => set of numbers
+    regex = re.compile(r'\A(.*?) (\d+)\Z')
+    for colname in colnames:
+        # Find key and num
+        match = regex.fullmatch(colname)
+        if match:
+            key = match.group(1)
+            num = int(match.group(2))
+        else:
+            key = colname
+            num = 1
+
+        used_nums = blacklist.setdefault(key, set())
+        if num in used_nums:
+            # Theoretically this could raise StopIteration ... but what
+            # _should_ we do when we have so many columns?
+            num = next(n for n in range(1, 9999999) if n not in used_nums)
+        used_nums.add(num)
+
+        if not match and num == 1:
+            # Common case: yield the original name
+            yield key
+        else:
+            # Yield a unique name
+            # The original colname had a number; the one we _output_ must also
+            # have a number.
+            yield key + ' ' + str(num)
 
 
 def parse_multicolumn_param(value, table):
