@@ -1,5 +1,5 @@
 {
-  "name": "Scrape HTML",
+  "name": "HTML scraper",
   "id_name": "urlscraper" ,
   "category" : "Scrape",
   "icon" : "scraper",
