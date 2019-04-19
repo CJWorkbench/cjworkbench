@@ -374,7 +374,7 @@
           @include table-content;
           margin: 0 1rem;
           overflow: hidden;
-          word-wrap: nowrap;
+          white-space: nowrap;
           text-overflow: ellipsis;
         }
 
@@ -392,6 +392,12 @@
           .number-prefix {
             padding-right: .2rem;
           }
+        }
+
+        .cell-text {
+          // The input is already truncated to take only one line. Now, preserve
+          // the whitespace within it.
+          white-space: pre;
         }
 
         // when a cell value cannot be rendered

@@ -90,6 +90,23 @@ describe('TextCellFormatter', () => {
     const w = wrapper(3)
     expect(w.text()).toEqual('3')
   })
+
+  it('only displays first line plus ellipsis if there are multiple lines', () => {
+    // relates to https://www.pivotaltracker.com/story/show/159269958
+    // We use CSS to preserve whitespace, and we use 'pre' because we
+    // don't want to wrap. But we also don't want to try and fit
+    // multiple lines of text into one line; and we want CSS's ellipsize
+    // code to work.
+    //
+    // So here it is:
+    // whitespace: pre -- preserves whitespace, never wraps
+    // text-overflow: ellipsis -- handles single line too long
+    // adding ellipsis (what we're testing here) -- handles multiple lines
+    const text = '  Veni  \n  Vidi  \n  Vici'
+    const w = wrapper(text)
+    expect(w.text()).toEqual('  Veni  …')
+    expect(w.prop('title')).toEqual(text) // for when the user hovers
+  })
 })
 
 describe('DatetimeCellFormatter', () => {

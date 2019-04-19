@@ -12,12 +12,19 @@ const ReactDataGridValuePropType = PropTypes.oneOfType([
   PropTypes.number.isRequired
 ])
 
+// Line breaks: https://www.unicode.org/reports/tr14/tr14-32.html#BK
+const UnicodeLineBreakAndEverythingAfter =
+  /[\r\n\f\v\u0085\u2028\u2029].*/s
+
 export function TextCellFormatter ({value}) {
   if (value === null) {
     return <div className='cell-null cell-text' />
   }
 
-  return <div className='cell-text' title={value}>{value}</div>
+  value = String(value)
+  const truncatedValue = value.replace(UnicodeLineBreakAndEverythingAfter, '…')
+
+  return <div className='cell-text' title={value}>{truncatedValue}</div>
 }
 
 /**
