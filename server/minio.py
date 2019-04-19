@@ -9,40 +9,38 @@ import pathlib
 import tempfile
 import urllib3
 from django.conf import settings
-import boto3
-from boto3.s3.transfer import S3Transfer
-import botocore
-
-
-_original_send_request = botocore.awsrequest.AWSConnection._send_request
-def _send_request(self, method, url, body, headers, *args, **kwargs):
-    # Monkey-patch for https://github.com/boto/boto3/issues/1341
-    # The patch is from https://github.com/boto/botocore/pull/1328 and
-    # [2019-04-17, adamhooper] it's unclear why it hasn't been applied.
-    #
-    # TODO nix when https://github.com/boto/botocore/pull/1328 is merged
-    if headers.get('Content-Length') == '0':
-        headers.pop('Expect', None)
-    return _original_send_request(self, method, url, body, headers, *args,
-                                  **kwargs)
-botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
 # Monkey-patch s3transfer so it retries on ProtocolError. On production,
 # minio-the-GCS-gateway tends to drop connections once in a while; we want to
 # retry those.
-import s3transfer
+#
+# This monkey-patch has to come before _anything_ (including other parts of
+# s3transfer) reads it. That means this "import s3transfer.utils" has to be the
+# first time anywhere in the app we import boto3 or s3transfer.
+import s3transfer.utils
 s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS = (
     *s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS,
     urllib3.exceptions.ProtocolError
 )
-# Aaaand s3transfer.download imports the old tuple, so let's replace that one
-s3transfer.download.S3_RETRYABLE_DOWNLOAD_ERRORS = \
-        s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS
-# So does s3transfer.processpool
-import s3transfer.processpool
-s3transfer.processpool.S3_RETRYABLE_DOWNLOAD_ERRORS = \
-        s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS
+
+import boto3  # _after_ our s3transfer.utils monkey-patch!
+from boto3.s3.transfer import S3Transfer  # also _after_ monkey-patch!
+
+
+# Monkey-patch for https://github.com/boto/boto3/issues/1341
+# The patch is from https://github.com/boto/botocore/pull/1328 and
+# [2019-04-17, adamhooper] it's unclear why it hasn't been applied.
+#
+# TODO nix when https://github.com/boto/botocore/pull/1328 is merged
+import botocore  # just so we can monkey-patch it
+_original_send_request = botocore.awsrequest.AWSConnection._send_request
+def _send_request(self, method, url, body, headers, *args, **kwargs):
+    if headers.get('Content-Length') == '0':
+        headers.pop('Expect', None)
+    return _original_send_request(self, method, url, body, headers, *args,
+                                  **kwargs)
+botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
 client = boto3.client(
