@@ -5,7 +5,7 @@
   "icon" : "scraper",
   "description" : "Scrape the entire HTML from a webpage to be able to search its content or monitor changes.",
   "loads_data": true,
-  "help_url":"modules/scrape/Scrape-html",
+  "help_url":"modules/scrape/html-scraper",
   "parameters": [
     {
       "name": "URLs",
