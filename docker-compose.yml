@@ -28,7 +28,7 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   minio:
-    image: minio/minio:RELEASE.2019-03-13T21-59-47Z
+    image: minio/minio:RELEASE.2019-04-18T21-44-59Z
     networks: [ 'dev' ]
     ports: [ '8001:9000' ]
     environment:
@@ -188,7 +188,7 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   testminio:
-    image: minio/minio:RELEASE.2019-03-13T21-59-47Z
+    image: minio/minio:RELEASE.2019-04-18T21-44-59Z
     networks: [ 'test' ]
     volumes:
       - type: tmpfs
