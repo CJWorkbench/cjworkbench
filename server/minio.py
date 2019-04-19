@@ -12,7 +12,6 @@ from django.conf import settings
 import boto3
 from boto3.s3.transfer import S3Transfer
 import botocore
-import s3transfer
 
 
 _original_send_request = botocore.awsrequest.AWSConnection._send_request
@@ -32,10 +31,18 @@ botocore.awsrequest.AWSConnection._send_request = _send_request
 # Monkey-patch s3transfer so it retries on ProtocolError. On production,
 # minio-the-GCS-gateway tends to drop connections once in a while; we want to
 # retry those.
+import s3transfer
 s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS = (
     *s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS,
     urllib3.exceptions.ProtocolError
 )
+# Aaaand s3transfer.download imports the old tuple, so let's replace that one
+s3transfer.download.S3_RETRYABLE_DOWNLOAD_ERRORS = \
+        s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS
+# So does s3transfer.processpool
+import s3transfer.processpool
+s3transfer.processpool.S3_RETRYABLE_DOWNLOAD_ERRORS = \
+        s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS
 
 
 client = boto3.client(
