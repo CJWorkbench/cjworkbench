@@ -45,6 +45,11 @@ kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketpl
 # 1 Prepare Google Cloud Storage and Minio
 # 1.1 GCS account, so minio can create buckets/objects
 gcloud iam service-accounts create production-minio --display-name production-minio
+# minio needs storage.buckets.list, or it prints lots of errors.
+# (which seems like a bug.... https://github.com/minio/mc/issues/2652)
+# Minio uses this permission to poll for bucket policies.
+gcloud iam roles create MinioStorageBucketsList --project=cj-workbench --permissions=storage.buckets.list
+gcloud projects add-iam-policy-binding cj-workbench --member=serviceAccount:production-minio@cj-workbench.iam.gserviceaccount.com --role=projects/cj-workbench/roles/MinioStorageBucketsList
 gsutil mb gs://production-user-files.workbenchdata.com
 gsutil mb gs://production-static.workbenchdata.com
 gsutil mb gs://production-stored-objects.workbenchdata.com
