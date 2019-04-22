@@ -4,9 +4,11 @@ import errno
 import hmac
 import hashlib
 import io
+import logging
 import math
 import pathlib
 import tempfile
+from typing import Any, Dict
 import urllib3
 from django.conf import settings
 
@@ -25,7 +27,7 @@ s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS = (
 )
 
 import boto3  # _after_ our s3transfer.utils monkey-patch!
-from boto3.s3.transfer import S3Transfer  # also _after_ monkey-patch!
+from boto3.s3.transfer import S3Transfer, TransferConfig  # _after_ patch!
 
 
 # Monkey-patch for https://github.com/boto/boto3/issues/1341
@@ -43,17 +45,23 @@ def _send_request(self, method, url, body, headers, *args, **kwargs):
 botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
-client = boto3.client(
-    's3',
+logger = logging.getLogger(__name__)
+
+
+session = boto3.session.Session(
     aws_access_key_id=settings.MINIO_ACCESS_KEY,
-    aws_secret_access_key=settings.MINIO_SECRET_KEY,
+    aws_secret_access_key=settings.MINIO_SECRET_KEY
+)
+client = session.client(
+    's3',
     endpoint_url=settings.MINIO_URL  # e.g., 'https://localhost:9001/'
 )
 # Create the one transfer manager we'll reuse for all transfers. Otherwise,
 # boto3 default is to create a transfer manager _per upload/download_, which
 # means 10 threads per operation. (Primer: upload/download split over multiple
 # threads to speed up transfer of large files.)
-transfer = S3Transfer(client)
+transfer_config = TransferConfig()
+transfer = S3Transfer(client, transfer_config)
 # boto3 exceptions are a bit odd -- https://github.com/boto/boto3/issues/1195
 error = client.exceptions
 """
@@ -119,22 +127,6 @@ def sign(b: bytes) -> bytes:
     """
     return hmac.new(settings.MINIO_SECRET_KEY.encode('ascii'),
                     b, hashlib.sha1).digest()
-
-
-@contextmanager
-def open_for_read(bucket: str, key: str):
-    """
-    Open a file on S3 for read like a file-like object.
-
-    Usage:
-
-        with minio.open_for_read('bucket', 'key') as f:
-            f.read()
-    """
-    response = client.get_object(Bucket=bucket, Key=key)
-    body = response['Body']  # StreamingBody
-    with closing(body):
-        yield body
 
 
 def list_file_keys(bucket: str, prefix: str):
@@ -240,6 +232,45 @@ def remove_recursive(bucket: str, prefix: str, force=False) -> None:
                             % err)
 
 
+def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
+    """
+    Like client.get_object(), but response['Body'] is bytes.
+
+    Why? Because if we're streaming it and we receive a urllib3.ProtocolError,
+    there's no retry logic. Better to use the normal botocore retry logic.
+
+    [adamhooper, 2019-04-22] I haven't found references online of anyone else
+    doing this. Possibly we're receiving more ProtocolError than most because
+    we're using minio. But I've seen plenty of similar errors with official S3,
+    so I suspect this is a pattern many people might want to replicate.
+
+    [adamhooper, 2019-04-22] A better implementation would be to create a
+    different `get_object()` that has 'Body'.streaming = False.
+    """
+    max_attempts = transfer_config.num_download_attempts
+    for i in range(max_attempts):
+        try:
+            response = client.get_object(Bucket=bucket, Key=key, **kwargs)
+            body = response['Body']
+            try:
+                data = body.read()
+            finally:
+                body.close()
+            return {
+                **response,
+                'Body': data
+            }
+        except s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS as e:
+            logger.info("Retrying exception caught (%s), "
+                        "retrying request, (attempt %d / %d)", e, i,
+                        max_attempts, exc_info=True)
+            last_exception = e
+            # ... and retry
+    raise last_exception
+
+
+
+
 @contextmanager
 def temporarily_download(bucket: str, key: str) -> None:
     """
@@ -281,18 +312,17 @@ class RandomReadMinioFile(io.RawIOBase):
         self.key = key
         self.block_size = block_size
 
-        with self._request_block(0) as response:
-            self.size = int(response['ContentRange'].split('/')[1])
-            self.tempfile = tempfile.TemporaryFile(prefix='RandomReadMinioFile')
-            self.tempfile.truncate(self.size)  # allocate disk space
-            nblocks = math.ceil(self.size / self.block_size)
-            self.fetched_blocks = [False] * nblocks
+        response = self._request_block(0)
+        self.size = int(response['ContentRange'].split('/')[1])
+        self.tempfile = tempfile.TemporaryFile(prefix='RandomReadMinioFile')
+        self.tempfile.truncate(self.size)  # allocate disk space
+        nblocks = math.ceil(self.size / self.block_size)
+        self.fetched_blocks = [False] * nblocks
 
-            # Write first block
-            block = response['Body'].read()
-            self.tempfile.write(block)
-            self.tempfile.seek(0, io.SEEK_SET)
-            self.fetched_blocks[0] = True
+        # Write first block
+        self.tempfile.write(response['Body'])
+        self.tempfile.seek(0, io.SEEK_SET)
+        self.fetched_blocks[0] = True
 
     # override io.IOBase
     def tell(self) -> int:
@@ -341,41 +371,32 @@ class RandomReadMinioFile(io.RawIOBase):
         nread = self.tempfile.readinto(memoryview(b)[:limit])
         return nread
 
-    @contextmanager
-    def _request_block(self, block_number: int):
+    def _request_block(self, block_number: int) -> Dict[str, Any]:
         """
-        Yield a boto3 dict with 'Body' (StreamingBody) and 'ContentRange'.
-
-        The 'Body' will be closed when you leave the context. Use its '.read()'
-        method to grab its contents.
+        Yield a boto3 dict with 'Body' (bytes) and 'ContentRange'.
         """
         offset = block_number * self.block_size
         http_range = f'bytes={offset}-{offset + self.block_size - 1}'
         try:
-            response = client.get_object(
-                Bucket=self.bucket,
-                Key=self.key,
-                Range=http_range
-            )
+            return get_object_with_data(self.bucket, self.key,
+                                        Range=http_range)
         except error.NoSuchKey:
             raise FileNotFoundError(
                 errno.ENOENT,
                 f'No file at {self.bucket}/{self.key}'
             )
-        body = response['Body']
-        with closing(body):
-            yield response
 
     def _ensure_block_fetched(self, block_number: int) -> None:
         if self.fetched_blocks[block_number]:
             return
 
+        response = self._request_block(block_number)
+
         # cache `pos`, write the block, then restore `pos`
         pos = self.tempfile.tell()
-        with self._request_block(block_number) as response:
-            self.tempfile.seek(block_number * self.block_size)
-            self.tempfile.write(response['Body'].read())
-            self.tempfile.seek(pos)
+        self.tempfile.seek(block_number * self.block_size)
+        self.tempfile.write(response['Body'])
+        self.tempfile.seek(pos)
 
         self.fetched_blocks[block_number] = True
 

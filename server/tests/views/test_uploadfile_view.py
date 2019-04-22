@@ -89,9 +89,8 @@ class UploadFileViewTests(LoggedInTestCase):
         #     'size': size,
         # }])
 
-    @patch('server.minio.open_for_read')
     @patch('server.minio.remove')
-    def test_post_with_non_owner_gives_403(self, remove, open_for_read):
+    def test_post_with_non_owner_gives_403(self, remove):
         request_content = {
             'wf_module': self.wfm.id,
             'success': True,
@@ -111,7 +110,6 @@ class UploadFileViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # Ensure no data leaks about the file contents
-        open_for_read.assert_not_called()
         remove.assert_called_with(
             'our-bucket',
             'eb785452-f0f2-4ebe-97ce-e225e346148e.xlsx'

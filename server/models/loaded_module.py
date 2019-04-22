@@ -417,5 +417,5 @@ def _external_module_get_html_bytes(id_name: str,
     except StopIteration:
         return None  # there is no HTML file
 
-    with minio.open_for_read(minio.ExternalModulesBucket, html_key) as f:
-        return f.read()
+    return minio.get_object_with_data(minio.ExternalModulesBucket,
+                                      html_key)['Body']

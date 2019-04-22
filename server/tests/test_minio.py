@@ -1,10 +1,15 @@
 import io
 import unittest
+from unittest.mock import patch
 from server import minio
+from botocore.response import StreamingBody
+from s3transfer.download import DownloadChunkIterator
+from urllib3.exceptions import ProtocolError
 
 
 Bucket = minio.CachedRenderResultsBucket
 Key = 'key'
+_original_streaming_read = StreamingBody.read
 
 
 def _clear() -> None:
@@ -90,3 +95,16 @@ class RandomReadMinioFileTest(unittest.TestCase):
         file = minio.RandomReadMinioFile(Bucket, Key, block_size=2)
         file.seek(1)
         self.assertEqual(file.read(), b'23456')
+
+    @patch.object(StreamingBody, 'read')
+    def test_recover_after_read_protocolerror(self, read_mock):
+        # Patch DownloadChunkIterator: first attempt to stream bytes raises
+        # ProtocolError, but subsequent attempts succeed.
+        #
+        # We should retry after ProtocolError.
+        read_mock.side_effect = [ProtocolError, b'123456']
+        _put(b'123456')
+        with self.assertLogs(minio.__name__, 'INFO') as logs:
+            file = minio.RandomReadMinioFile(Bucket, Key)
+            self.assertEqual(file.read(), b'123456')
+            self.assertRegex(logs.output[0], 'Retrying exception')
