@@ -5,111 +5,159 @@
 </header>
 <section>
   <h2>Overview</h2>
-  <p>In this tutorial you will learn how to use XPath to monitor changes in the content of a web page.</p>
-  <p>You will scrape a list of reports published by city officials and set up an alert to receive an email notification if that list changes.</p>
+  <p>
+    In this tutorial we will use the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">City's auditor Office website of the City of Atlanta</a>. Our goal is to be notified everytime a new audit report is published.
+  </p>
 </section>
 <section>
-  <h2>1. Choose the web page to scrape</h2>
+  <h2>Scrape the HTML from the webpage</h2>
   <p>
-    In this tutorial we will use the City's auditor Office website of the City of Atlanta. Our goal is to be notified everytime a new audit report is published.
+    First, we need to scrape the HTML text of the webpage containing the data we want to work with. That HTML contains all the information we need. We will store it securely.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Scrape with Xpath"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Scrape with Xpath'"
-      >Add the Scraper 'Scrape with XPath'.
+      data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'HTML scraper'"
+      >Add the Scrape 'HTML scraper'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.url === 'http://www.atlaudit.org/audit-reports.html'"
-      >Paste in the following URL, where all the public reports are listed:
+      data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
+      data-test="return workflow.tabs[0].wfModules[0].params.urllist === 'http://www.atlaudit.org/audit-reports.html'"
+      >Paste in the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
-      <p class="instruction-detail">Next, let's find the XPath selector</p>
+      <p class="instruction-detail">Next, let's extract our data.</p>
     </li>
   </ol>
 </section>
 <section>
-  <h2>2. Find the XPath selector in your web browser</h2>
+  <h2>Extract data from the HTML</h2>
   <p>
-    Now we need an “XPath selector” to tell Workbench which parts of the web page to scrape. Modern web browsers include “Inspector” tools to help.
+    Now, we need to extract specific data from the HTML we just saved, and store it in a new table so we can work with it.
+  </p>
+  <p>
+    To do this, we will use the <kbd>XPath extractor</kbd>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.selector) && wfModule.selectedVersion"
-      >Open the page in a new browser tab, <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
+      data-highlight='[{"type":"Module","index":1,"name":"Xpath extractor"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Xpath extractor'"
+      >Add the 'Xpath extractor' step.
+    </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Get the XPath selector to extract the list</h2>
+  <p>Xpath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies a particular element by specifying its parent element, then the parent’s parents, all the way to the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
+  </p>
+  <p>
+    We recommend using the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">SelectorGadget</a> Chrome browser extension. It is a point-and-click interface for visually selecting elements on the page and generating Xpath selectors.
+  </p>
+    <ul>
+      <li>
+        Install the extension <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb" class="highlight" target="_blank">here</a>.
+      </li>
+      <li>
+        Naviguate to <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">the webpage</a> and generate the Xpath selector, as demonstated in the following video:
+      </li>
+    </ul>
+  <p>
+    <iframe src="https://player.vimeo.com/video/331870253" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </p>
+</section>
+<section>
+  <h2>Extract the data</h2>
+  <p>We can now extract the data and store it in a new column.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
+      >Paste the XPath selector you just copied into the <kbd>Column selector</kbd> field, and enter <code>Document title</code> as a column name.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.selector) && wfModule.selectedVersion"
+      >Validate your settings
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/play.svg">
+      </span>
       <p class="instruction-detail">
-        In that tab, scroll down to the “list of all publications released by the City Auditor's Office”. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
+        Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
       </p>
-      <figure>
-        <img alt="Inspect element" src="./inspect_list.svg">
-        <figcaption>Right click to inspect a link in the inspector</figcaption>
-      </figure>
-      <p class="instruction-detail">
-        In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted. Right-click that element and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
-      </p>
-      <figure>
-        <img alt="Copy XPath" src="./copy_xpath.svg">
-        <figcaption>Right click an element to copy its XPath selector</figcaption>
-      </figure>
     </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.selector) && wfModule.selectedVersion"
-      >Back in Workbench, paste the XPath selector you just copied into the scraper, and click <kbd>Scrape</kbd>.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>3. Edit the XPath selector to scrape the entire list</h2>
-  <p>
-    We successfully scraped one link from the list. In order to monitor if the list changes over time, we now need to scrape all links in our list.
-  </p>
-  <p>Let's look closely at the HTML element in the browser's inspector:</p>
-  <figure>
-    <img src="./html_element_zoom.svg">
-    <figcaption>In HTML, elements are are nested within each others</figcaption>
-  </figure>
-  <p>
-    The <code>&lt;a&gt;</code> tag we selected is nested within a <code>&lt;li&gt;</code> parent, which is itself nested within a <code>&lt;ul&gt;</code>.
-  </p>
-  <p>Now look closely at the XPath selector:</p>
-  <div class="code-block">//*[@id="wsite-content"]/div[3]/<span class="highlight">ul/li[1]</span>/a</div>
-  <p>
-    <code>ul/li[1]</code> means “Select the first <code>&lt;li&gt;</code> inside the <code>&lt;ul&gt;</code>".
-  </p>
-  <p>
-  If we delete <code>[1]</code>, all the <code>&lt;li&gt;</code> elements within the parent <code>&lt;ul&gt;</code> will be selected, and thus every <code>&lt;a&gt;</code> tags within each <code>&lt;li&gt;</code>.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.params.selector)"
-      >In the scraper, edit the XPath selector to select all the items in the list, and click <kbd>Scrape</kbd>.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>4. Monitor the website for changes</h2>
-  <p>
-    Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
-      >In the scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd> and check “Email me when data changes”. Click <kbd>Apply</kbd>.
+      >In the HTML scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd>. Click <kbd>Apply</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
+      >In the Xpath extractor, click the alert icon
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/notification.svg">
+      </span>
+      and select <kbd>Turn on</kbd> to receive an email if the output of this step changes.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Extract multiple columns of data</h2>
+  <p>Pennstate university logs all police incidents on campus on <a href="https://police.psu.edu/daily-crime-log" class="highlight" target="_blank">this page</a>.
+  <br>Our goal is to scrape each individual incident and store the 'Reported' and 'nature of the incident' metadadata in their own column.</p>
+  <h3 class="instructions">Instructions</h3>
+  <p>Using the same technique</p>
+  <ol class="steps">
+    <li
+    data-test="return workflow.tabs[1].wfModuleNames[0] === 'Scrape table'"
+      >Create a new tab using the
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/add.svg">
+      </span>button at the bottom of the page, and add a new <kbd>HTML Scraper</kbd> to it.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
+      data-test="return workflow.tabs[0].wfModules[0].params.urllist === 'http://www.atlaudit.org/audit-reports.html'"
+      >Scrape the HTML of <a href="https://police.psu.edu/daily-crime-log" class="highlight" target="_blank">this new webpage</a>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
+      >Generate the Xpath to select the 'Reported' time of each incident.
+      <figure>
+        <img alt="Inspect element" src="./reported.png">
+      </figure>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
+      >Use the <kbd>+ADD</kbd> button to create a new column. Generate the Xpath to select the 'Nature of incident' of each incident.
+      <figure>
+        <img alt="Inspect element" src="./nature-of-incident.png">
+      </figure>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
+      >Set the HTML scraper to <kbd>Auto</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
+      >In the Xpath extractor, turn alerts
+      <span>
+        <img class="icon-insert" src="images/lesson-icons/notification.svg">
+      </span>
+      on.
     </li>
   </ol>
 </section>
 <footer>
-  <h2>Lesson complete!</h2>
+  <h2>Your scrapers are set!</h2>
   <div class="completed">
-    <p class="summary">Your scraper is set. If the list changes, the workflow update and and you will receive an email.</p>
+    <p class="summary">If the new data is published, new tables will be extracted and you will receive an email!</p>
   </div>
   <div class="next">
     <h4>Continue learning:</h4>
