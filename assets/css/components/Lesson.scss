@@ -325,6 +325,15 @@ article.lesson {
       }
     }
 
+    iframe {
+      border: .5rem solid $brand-text--learn;
+      margin-top: 1rem;
+    }
+
+    .code-block {
+      width: 100%;
+    }
+
     .content {
       // Put vertical scrollbar on the _full-width_ <div class="content">, not the <section>
       // That way it appears at the total right side of the page, not the middle
