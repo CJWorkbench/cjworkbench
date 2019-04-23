@@ -395,8 +395,8 @@
         }
 
         .cell-text {
-          // The input is already truncated to take only one line. Now, preserve
-          // the whitespace within it.
+          // The value is already mangled to take only one line. Now, preserve
+          // the whitespace within that one line.
           white-space: pre;
         }
 

@@ -102,9 +102,9 @@ describe('TextCellFormatter', () => {
     // whitespace: pre -- preserves whitespace, never wraps
     // text-overflow: ellipsis -- handles single line too long
     // adding ellipsis (what we're testing here) -- handles multiple lines
-    const text = '  Veni  \n  Vidi  \n  Vici'
+    const text = '  Veni \r\r\n\n\u2029 Vi\t\vdi  \f  Vici'
     const w = wrapper(text)
-    expect(w.text()).toEqual('  Veni  …')
+    expect(w.text()).toEqual('  Veni ↵↵↵¶ Vi\t⭿di  ↡  Vici')
     expect(w.prop('title')).toEqual(text) // for when the user hovers
   })
 })

@@ -13,8 +13,17 @@ const ReactDataGridValuePropType = PropTypes.oneOfType([
 ])
 
 // Line breaks: https://www.unicode.org/reports/tr14/tr14-32.html#BK
-const UnicodeLineBreakAndEverythingAfter =
-  /[\r\n\f\v\u0085\u2028\u2029].*/s
+const UnicodeWhitespace = /(?:\r\n|[\r\n\f\v\u0085\u2028\u2029])/sg
+const UnicodeWhitespaceReplacements = {
+  '\r\n': '↵',
+  '\r': '↵',
+  '\n': '↵',
+  '\u0085': '↵',
+  '\u2028': '↵',
+  '\u2029': '¶',
+  '\f': '↡',
+  '\v': '⭿',
+}
 
 export function TextCellFormatter ({value}) {
   if (value === null) {
@@ -22,9 +31,14 @@ export function TextCellFormatter ({value}) {
   }
 
   value = String(value)
-  const truncatedValue = value.replace(UnicodeLineBreakAndEverythingAfter, '…')
+  // Make a one-line value: we'll style it with white-space: pre so the user
+  // can see spaces.
+  const oneLineValue = value.replace(
+    UnicodeWhitespace,
+    (x) => UnicodeWhitespaceReplacements[x]
+  )
 
-  return <div className='cell-text' title={value}>{truncatedValue}</div>
+  return <div className='cell-text' title={value}>{oneLineValue}</div>
 }
 
 /**
