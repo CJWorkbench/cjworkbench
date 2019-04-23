@@ -3,7 +3,6 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.types import ProcessResult
 from server.modules import editcells
-from server.sanitizedataframe import sanitize_dataframe
 
 
 def P(celledits=[]):

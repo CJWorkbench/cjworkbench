@@ -60,7 +60,9 @@ def sanitize_series(series: pd.Series) -> pd.Series:
     * Make sure categories have no excess values.
     * Convert numeric categories to 
     * Convert unsupported dtypes to string.
+    * Reindex so row numbers are contiguous.
     """
+    series.reset_index(drop=True, inplace=True)
     if hasattr(series, 'cat'):
         series.cat.remove_unused_categories(inplace=True)
 
@@ -92,41 +94,6 @@ def sanitize_series(series: pd.Series) -> pd.Series:
         ret = series.astype(str)
         ret[pd.isna(series)] = np.nan
         return ret
-
-
-def sanitize_dataframe(table: Optional[pd.DataFrame]) -> pd.DataFrame:
-    """
-    Modify table in-place to conform to Workbench data types.
-
-    After calling this method on a table, `hash_pandas_object()` will work and
-    writing to parquet format will be viable.
-
-    Specific fixes:
-
-    * Convert `None` to an empty DataFrame.
-    * Modify duplicate column names.
-    * Reindex so row numbers are contiguous.
-    * Convert unsupported dtypes to string.
-    """
-    if table is None:
-        return pd.DataFrame()
-
-    table.reset_index(drop=True, inplace=True)
-
-    colnames = _normalize_colnames(table.columns)
-    table.columns = colnames
-
-    # Ignore spurious SettingWithCopyWarning
-    #
-    # Also, the SettingWithCopyWarning test runs a gc cycle, which is slow.
-    # [adamhooper, 2018-09-28] A slew of sanitize tests dropped from 0.67s to
-    # 0.48s when I changed mode.chained_assignment to None.
-    with pd.option_context('mode.chained_assignment', None):
-        # Sanitize one column at a time: that's more memory-friendly
-        for colname in colnames:
-            table[colname] = sanitize_series(table[colname])
-
-    return table
 
 
 def truncate_table_if_too_big(df):

@@ -465,7 +465,7 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
                   text_encoding: _TextEncoding = None) -> ProcessResult:
     """Parse bytes to produce a ProcessResult.
 
-    This will produce a _sane_ ProcessResult (see sanitizedataframe).
+    This will produce a _sane_ ProcessResult (see `types.validate_dataframe`).
 
     Keyword arguments:
 
