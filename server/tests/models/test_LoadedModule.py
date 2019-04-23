@@ -277,6 +277,24 @@ class LoadedModuleTest(unittest.TestCase):
             f'Ick: Oops at line {lineno + 1} of test_LoadedModule.py'
         )))
 
+    def test_render_invalid_retval(self):
+        def render(table, params):
+            return pd.DataFrame({'A': [True, False]})  # we don't support bool
+
+        lm = LoadedModule('int', '1', render_impl=render)
+        with self.assertLogs(level=logging.ERROR) as cm:
+            result = lm.render(ProcessResult(), {}, tab_name='x',
+                               fetch_result=None)
+            self.assertRegex(cm.output[0],
+                             r'Exception coercing int\.render output')
+            self.assertRegex(cm.output[0],
+                             r"unsupported dtype dtype\('bool'\)")
+        self.assertEqual(result, ProcessResult(error=(
+            "Module produced invalid data: unsupported dtype dtype('bool') "
+            "in column 'A'"
+        )))
+
+
     def test_render_static_default(self):
         lm = LoadedModule('int', '1')
         with self.assertLogs():
@@ -285,17 +303,16 @@ class LoadedModuleTest(unittest.TestCase):
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 
-    def test_render_truncate_and_sanitize(self):
+    def test_render_truncate(self):
         calls = []
 
         retval = ProcessResult(pd.DataFrame({'A': [1]}))
         retval.truncate_in_place_if_too_big = lambda: calls.append('truncate')
-        retval.sanitize_in_place = lambda: calls.append('sanitize')
 
         lm = LoadedModule('int', '1', render_impl=lambda _a, _b: retval)
         with self.assertLogs():
             lm.render(ProcessResult(), {}, tab_name='x', fetch_result=None)
-        self.assertEqual(calls, ['truncate', 'sanitize'])
+        self.assertEqual(calls, ['truncate'])
 
     def test_render_cannot_coerce_output(self):
         """Log and display error to user when module output is invalid."""
@@ -309,8 +326,8 @@ class LoadedModuleTest(unittest.TestCase):
 
         _, lineno = inspect.getsourcelines(render)
         self.assertRegex(result.error, (
-            r'ValueError: ProcessResult input must only contain '
-            r'{dataframe, error, json, quick_fixes, column_formats}'
+            r'Module produced invalid data: ProcessResult input must only '
+            r'contain {dataframe, error, json, quick_fixes, column_formats}'
         ))
 
     def test_render_use_input_columns_as_try_fallback_columns(self):
@@ -356,9 +373,8 @@ class LoadedModuleTest(unittest.TestCase):
                                fetch_result=None)
 
         self.assertRegex(result.error, (
-            r'ValueError: ProcessResult input must only contain \{dataframe, '
-            r'error, json, quick_fixes, column_formats\} keys at line \d+ of '
-            r'types\.py'
+            r'Module produced invalid data: ProcessResult input must only '
+            r'contain {dataframe, error, json, quick_fixes, column_formats}'
         ))
 
     def test_render_dynamic_default(self):

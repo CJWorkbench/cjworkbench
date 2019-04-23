@@ -10,6 +10,106 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server import sanitizedataframe  # TODO nix this dependency
 
 
+SupportedNumberDtypes = frozenset({
+    np.dtype('float16'),
+    np.dtype('float32'),
+    np.dtype('float64'),
+    np.dtype('int8'),
+    np.dtype('int16'),
+    np.dtype('int32'),
+    np.dtype('int64'),
+    np.dtype('uint8'),
+    np.dtype('uint16'),
+    np.dtype('uint32'),
+    np.dtype('uint64'),
+})
+
+
+def validate_series(series: pd.Series) -> None:
+    """
+    Ensure `series` is "valid" as per Workbench standards, or raise ValueError.
+
+    "Valid" means:
+
+    * If dtype is `object` or `categorical`, all values are `str`, `np.nan` or
+      `None`
+    * Otherwise, series must be numeric (but not "nullable integer") or
+      datetime (without timezone).
+    """
+    dtype = series.dtype
+    if dtype in SupportedNumberDtypes:
+        return
+    elif is_datetime64_dtype(dtype):  # rejects datetime64ns
+        return
+    elif dtype == object:
+        nonstr = (series[~series.isnull()].map(type) != str)
+        if nonstr.any():
+            raise ValueError(
+                "invalid value %r in column %r (object values must all be str)"
+                % (series[nonstr][0], series.name)
+            )
+    elif hasattr(series, 'cat'):
+        categories = series.cat.categories
+        nonstr = (categories.map(type) != str)
+        if nonstr.any():
+            raise ValueError(
+                "invalid value %r in column %r (categories must all be str)"
+                % (categories[nonstr][0], series.name)
+            )
+
+        # Detect unused categories: they waste space, and since the module
+        # author need only .remove_unused_categories() there isn't much reason
+        # to allow them (other than the fact this check might be slow?).
+        codes = np.unique(series.cat.codes)  # retval is sorted
+        if len(codes) and codes[0] == -1:
+            codes = codes[1:]
+        # At this point, if all categories are used, `codes` is an Array of
+        # [0, 1, ..., len(categories)-1]. Otherwise, there's a "hole" somewhere
+        # in `codes` (it may be at the end).
+        if len(codes) != len(categories):
+            # There are unused categories. That means an index into
+            # `categories` is not in `codes`. Raise it.
+            for i, category in enumerate(categories):
+                if i >= len(codes) or codes[i] != i:
+                    raise ValueError(
+                        ('unused category %r in column %r '
+                         '(all categories must be used)')
+                        % (category, series.name)
+                    )
+            assert False  # the for-loop is guaranteed to raise, in theory
+    else:
+        raise ValueError('unsupported dtype %r in column %r'
+                         % (dtype, series.name))
+
+
+def validate_dataframe(df: pd.DataFrame) -> None:
+    """
+    Ensure `df` is "valid" as per Workbench standards, or raise ValueError.
+
+    "Valid" means:
+
+    * All column names are str
+    * All column names are unique
+    * If a column is `object` or `categorical`, all values are `str`, `np.nan`
+      or `None`
+    * Otherwise, a column must be numeric (but not "nullable integer") or
+      datetime (without timezone).
+    """
+    if (
+        df.columns.dtype != object
+        or not (df.columns.map(type) == str).all()
+    ):
+        raise ValueError('column names must all be str')
+
+    dup_column_indexes = df.columns.duplicated()
+    if dup_column_indexes.any():
+        colname = df.columns[dup_column_indexes][0]
+        raise ValueError('duplicate column name "%s"' % colname)
+
+    for column in df.columns:
+        validate_series(df[column])
+
+
 class ColumnType(ABC):
     """
     Data type of a column.
@@ -518,16 +618,6 @@ class ProcessResult:
             else:
                 self.error = warning
 
-    def sanitize_in_place(self):
-        """Coerce dataframe headers to strings and values to simple types."""
-        sanitizedataframe.sanitize_dataframe(self.dataframe)
-        # FIXME fix self.columns -- if sanitize changed names, they must be
-        # changed here, too. Also, this operation shouldn't be in-place:
-        # there's no win.
-        # ... in the meantime, let's just rebuild self.columns if needed.
-        # (untested -- it's wrong anyway, hence the FIXME):
-        self._fix_columns_silently()
-
     @property
     def status(self):
         """
@@ -577,12 +667,16 @@ class ProcessResult:
         for _this_ step's output columns, if the module didn't specify others.
         This trick lets us preserve number formats implicitly -- most modules
         needn't worry about them.
+
+        Raise `ValueError` if `value` cannot be coerced -- including if
+        `validate_dataframe()` raises an error.
         """
         if value is None:
             return cls(dataframe=pd.DataFrame())
         elif isinstance(value, ProcessResult):
             return value
         elif isinstance(value, pd.DataFrame):
+            validate_dataframe(value)
             columns = _infer_columns(value, {}, try_fallback_columns)
             return cls(dataframe=value, columns=columns)
         elif isinstance(value, str):
@@ -596,18 +690,18 @@ class ProcessResult:
             except KeyError:
                 pass
 
+            dataframe = value.pop('dataframe', pd.DataFrame())
+            validate_dataframe(dataframe)
+
             try:
                 column_formats = value.pop('column_formats')
-                value['columns'] = _infer_columns(
-                    value.get('dataframe', pd.DataFrame()),
-                    column_formats,
-                    try_fallback_columns
-                )
+                value['columns'] = _infer_columns(dataframe, column_formats,
+                                                  try_fallback_columns)
             except KeyError:
                 pass
 
             try:
-                return cls(**value)
+                return cls(dataframe=dataframe, **value)
             except TypeError as err:
                 raise ValueError(
                     ('ProcessResult input must only contain {dataframe, '
@@ -627,6 +721,7 @@ class ProcessResult:
                          '(DataFrame, str) return type, got (%s,%s)') %
                         (type(dataframe).__name__, type(error).__name__)
                     ))
+                validate_dataframe(dataframe)
                 columns = _infer_columns(dataframe, {}, try_fallback_columns)
                 return cls(dataframe=dataframe, error=error)
             elif len(value) == 3:
@@ -647,6 +742,7 @@ class ProcessResult:
                         (type(dataframe).__name__, type(error).__name__,
                          type(json).__name__)
                     ))
+                validate_dataframe(dataframe)
                 columns = _infer_columns(dataframe, {}, try_fallback_columns)
                 return cls(dataframe=dataframe, error=error, json=json,
                            columns=columns)

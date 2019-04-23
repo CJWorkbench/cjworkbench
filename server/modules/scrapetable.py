@@ -1,3 +1,4 @@
+from collections import defaultdict
 import asyncio
 import aiohttp
 import pandas as pd
@@ -33,7 +34,8 @@ def merge_colspan_headers_in_place(table) -> None:
             newcols.append(' - '.join(vals))
         else:
             newcols.append(c)
-    table.columns = newcols
+    # newcols can contain duplicates. Rename them.
+    table.columns = list(utils.uniquize_colnames(newcols))
 
 
 def render(table, params, *, fetch_result):
@@ -60,6 +62,10 @@ def render(table, params, *, fetch_result):
 
 
 async def fetch(params):
+    # We delve into pd.read_html()'s innards, below. Part of that means some
+    # first-use initialization.
+    pd.io.html._importers()
+
     table = None
     url: str = params['url'].strip()
     tablenum: int = params['tablenum'] - 1  # 1-based for user
@@ -72,9 +78,29 @@ async def fetch(params):
     try:
         async with utils.spooled_data_from_url(url) as (spool, headers,
                                                         charset):
-            # TODO use charset for encoding detection
-            tables = pd.read_html(spool, encoding=charset,
-                                  flavor='html5lib')
+            # pandas.read_html() does automatic type conversion, but we prefer
+            # our own. Delve into its innards so we can pass all the conversion
+            # kwargs we want.
+            with utils.wrap_text(spool, charset) as textio:
+                tables = pd.io.html._parse(
+                    # Positional arguments:
+                    flavor='html5lib',  # force algorithm, for reproducibility
+                    io=textio,
+                    match='.+',
+                    attrs=None,
+                    encoding=None,  # textio is already decoded
+                    displayed_only=False,  # avoid dud feature: it ignores CSS
+                    # Required kwargs that pd.read_html() would set by default:
+                    header=None,
+                    skiprows=None,
+                    # Now the reason we used pd.io.html._parse() instead of
+                    # pd.read_html(): we get to pass whatever kwargs we want to
+                    # TextParser.
+                    #
+                    # kwargs we get to add as a result of this hack:
+                    na_filter=False,  # do not autoconvert
+                    dtype=str,  # do not autoconvert
+                )
     except asyncio.TimeoutError:
         return ProcessResult(error=f'Timeout fetching {url}')
     except aiohttp.InvalidURL:
@@ -102,9 +128,10 @@ async def fetch(params):
             f'The maximum table number on this page is {len(tables)}'
         ))
 
+    # pd.read_html() guarantees unique colnames
     table = tables[tablenum]
     merge_colspan_headers_in_place(table)
+    utils.autocast_dtypes_in_place(table)
     result = ProcessResult(dataframe=table)
     result.truncate_in_place_if_too_big()
-    result.sanitize_in_place()
     return result

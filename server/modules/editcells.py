@@ -40,10 +40,18 @@ def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
             pass  # don't return: we'll handle this in the default case below
 
     if hasattr(series, 'cat'):
-        series.cat.add_categories(set(str_values) - set(series.cat.categories),
-                                  inplace=True)
-        series[keys] = str_values
-        return series
+        str_values_set = set(str_values)
+        old_values_set = set(series.cat.categories)
+        if str_values_set != old_values_set:
+            # Create new series. Otherwise for some reason the table's dtypes
+            # don't pick up on category changes.
+            series = series.cat.add_categories(str_values_set - old_values_set)
+            series[keys] = str_values
+            series.cat.remove_unused_categories(inplace=True)
+            return series
+        else:
+            series[keys] = str_values
+            return series
 
     t = series
     series = t.astype(str)

@@ -122,7 +122,7 @@ def eval_excel_all_rows(code, table):
             )
         newcol.append(eval_excel(code, args_to_excel))
 
-    return newcol
+    return pd.Series(newcol)
 
 
 def excel_formula(table, formula, all_rows):
@@ -134,10 +134,11 @@ def excel_formula(table, formula, all_rows):
 
     if all_rows:
         newcol = eval_excel_all_rows(code, table)
+        newcol = autocast_series_dtype(sanitize_series(newcol))
     else:
         # the whole column is blank except first row
-        newcol = list(itertools.repeat(None, len(table)))
-        newcol[0] = eval_excel_one_row(code, table)
+        value = eval_excel_one_row(code, table)
+        newcol = pd.Series([value] + [None] * (len(table) - 1))
 
     return newcol
 

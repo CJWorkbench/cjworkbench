@@ -80,7 +80,6 @@ async def fetch(params, **kwargs):
             if mime_type:
                 result = parse_bytesio(bytes_io, mime_type, charset)
                 result.truncate_in_place_if_too_big()
-                result.sanitize_in_place()
                 return result
             else:
                 return ProcessResult(error=(

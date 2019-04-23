@@ -199,7 +199,7 @@ def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], pd.DataFrame],
 
 
 @contextmanager
-def _wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
+def wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
     """Yields the given BytesIO as a TextIO.
 
     Peculiarities:
@@ -215,7 +215,7 @@ def _wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
 
 def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
                  text_encoding: _TextEncoding) -> pd.DataFrame:
-    with _wrap_text(bytesio, text_encoding) as textio:
+    with wrap_text(bytesio, text_encoding) as textio:
         if not sep:
             sep = _detect_separator(textio)
 
@@ -263,7 +263,7 @@ def _parse_csv(bytesio: io.BytesIO,
       pandas default auto-detection.
     * For compatibility with EU CSVs we detect the separator
     """
-    with _wrap_text(bytesio, text_encoding) as textio:
+    with wrap_text(bytesio, text_encoding) as textio:
         sep = _detect_separator(textio)
         return _parse_table(bytesio, sep, text_encoding)
 
@@ -293,7 +293,7 @@ def _parse_json(bytesio: io.BytesIO,
       Array of Objects.
     * We may raise json.decoder.JSONDecodeError or pd.errors.ParserError.
     """
-    with _wrap_text(bytesio, text_encoding) as textio:
+    with wrap_text(bytesio, text_encoding) as textio:
         try:
             data = pd.read_json(textio, orient='records', dtype=False,
                                 convert_dates=False)
@@ -598,12 +598,15 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
 
 def autocast_series_dtype(series: pd.Series) -> pd.Series:
     """
-    Cast any Series to str/category[str]/number/datetime.
+    Cast any sane Series to str/category[str]/number/datetime.
 
     This is appropriate when parsing CSV data or Excel data. It _seems_
     appropriate when a search-and-replace produces numeric columns like
     '$1.32' => '1.32' ... but perhaps that's only appropriate in very-specific
     cases.
+
+    The input must be "sane": if the dtype is object or category, se assume
+    _every value_ is str (or null).
 
     If the series is all-null, do nothing.
 
@@ -611,16 +614,18 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
 
     TODO handle dates and maybe booleans.
     """
-    nulls = series.isnull()
-
-    if (nulls | (series == '')).all():
-        return series
-    elif series.dtype == 'O':
+    if series.dtype == object:
+        nulls = series.isnull()
+        if (nulls | (series == '')).all():
+            return series
         try:
             # If it all looks like numbers (like in a CSV), cast to number.
             return pd.to_numeric(series)
         except (ValueError, TypeError):
             # Otherwise, we want all-string. Is that what we already have?
+            #
+            # TODO assert that we already have all-string, and nix this
+            # spurious conversion.
             array = series[~nulls].array
             if any(type(x) != str for x in array):
                 series = series.astype(str)
@@ -631,6 +636,8 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
         #
         # Assume categories are all str: after all, we're assuming the input is
         # "sane" and "sane" means only str categories are valid.
+        if (series.isnull() | (series == '')).all():
+            return series
         try:
             return pd.to_numeric(series)
         except (ValueError, TypeError):
@@ -640,6 +647,7 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
             return series
     else:
         assert is_numeric_dtype(series) or is_datetime64_dtype(series)
+        return series
 
 
 def autocast_dtypes_in_place(table: pd.DataFrame) -> None:

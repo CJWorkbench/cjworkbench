@@ -67,10 +67,7 @@ class FormulaTests(unittest.TestCase):
               expected_table: pd.DataFrame=pd.DataFrame(),
               expected_error: str=''):
         result = ProcessResult.coerce(formula.render(table, P(**params)))
-        result.sanitize_in_place()
-
         expected = ProcessResult(expected_table, expected_error)
-        expected.sanitize_in_place()
 
         self.assertEqual(result.error, expected.error)
         assert_frame_equal(result.dataframe, expected.dataframe)
@@ -237,4 +234,11 @@ class FormulaTests(unittest.TestCase):
             pd.DataFrame({'A': [1, 2]}),
             {'formula_excel': '=A0*2', 'all_rows': False},
             expected_error='Invalid cell range: A0'
+        )
+
+    def test_excel_sanitize_output(self):
+        self._test(
+            pd.DataFrame({'A': [1, 2]}),
+            {'formula_excel': '=IF(A1=1, 1, "x")', 'all_rows': True},
+            pd.DataFrame({'A': [1, 2], 'R': ['1', 'x']})
         )

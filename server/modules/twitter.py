@@ -392,6 +392,4 @@ async def fetch(params, *, get_stored_dataframe):
 
     result = ProcessResult(dataframe=tweets)
     result.truncate_in_place_if_too_big()
-    result.sanitize_in_place()
-
     return result

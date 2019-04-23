@@ -130,13 +130,14 @@ class LoadedModule:
 
         try:
             out = ProcessResult.coerce(out, try_fallback_columns=input_columns)
-        except Exception as err:
+        except ValueError as err:
             logger.exception('Exception coercing %s.render output',
                              self.module_id_name)
-            out = self._wrap_exception(err)
+            out = ProcessResult(error=(
+                'Module produced invalid data: %s' % (str(err),)
+            ))
 
         out.truncate_in_place_if_too_big()
-        out.sanitize_in_place()
 
         time2 = time.time()
         shape = out.dataframe.shape if out is not None else (-1, -1)
@@ -220,7 +221,6 @@ class LoadedModule:
         else:
             out = ProcessResult.coerce(out)
             out.truncate_in_place_if_too_big()
-            out.sanitize_in_place()
             shape = out.dataframe.shape
 
         logger.info('%s fetched =>(%drows,%dcols) in %dms',

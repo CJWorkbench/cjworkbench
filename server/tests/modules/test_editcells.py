@@ -14,14 +14,10 @@ def P(celledits=[]):
 
 def test_render(in_table, patch_json, out_table=pd.DataFrame(),
                 out_error=''):
-    sanitize_dataframe(in_table)
-
     result = editcells.render(in_table, P(celledits=patch_json))
     result = ProcessResult.coerce(result)
-    result.sanitize_in_place()
 
     expected = ProcessResult(out_table, out_error)
-    expected.sanitize_in_place()
 
     assert result.error == expected.error
     assert_frame_equal(result.dataframe, expected.dataframe)

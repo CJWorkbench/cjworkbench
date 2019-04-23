@@ -143,7 +143,6 @@ def fetch(params, **kwargs):  # TODO make async
         secret = (params['google_credentials'] or {}).get('secret')
         result = download_data_frame(sheet_id, sheet_mime_type, secret)
         result.truncate_in_place_if_too_big()
-        result.sanitize_in_place()
         return result
     else:
         return ProcessResult()

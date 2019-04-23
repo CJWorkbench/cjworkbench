@@ -141,3 +141,71 @@ class ScrapeTableTest(unittest.TestCase):
         self.assertEqual(fetch_result, ProcessResult(
             error='Error from server: 404 Not Found'
         ))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               b'<table><tr><th>A</th></tr><tr><td>1</td></tr></table>'
+           ))
+    def test_autocast_dtypes(self):
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe, pd.DataFrame({'A': [1]}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               # Add two columns. pd.read_html() will not return an all-empty
+               # row, and we're not testing what happens when it does. We want
+               # to test what happens when there's an empty _value_.
+               b'<table><tr><th>A</th><th>B</th></tr>'
+               b'<tr><td>a</td><td></td></tr></table>'
+           ))
+    def test_empty_str_is_empty_str(self):
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe,
+                           pd.DataFrame({'A': ['a'], 'B': ['']}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               b'<table><tr><th>A</th><th>A</th></tr>'
+               b'<tr><td>1</td><td>2</td></tr></table>'
+           ))
+    def test_avoid_duplicate_colnames(self):
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe,
+                           # We'd prefer 'A 2', but pd.read_html() doesn't give
+                           # us that choice.
+                           pd.DataFrame({'A': [1], 'A.1': [2]}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               b'<table><thead>'
+               b'  <tr><th colspan="2">Category</th></tr>'
+               b'  <tr><th>A</th><th>B</th></tr>'
+               b'</thead><tbody>'
+               b'  <tr><td>a</td><td>b</td></tr>'
+               b'</tbody></table>'
+           ))
+    def test_merge_thead_colnames(self):
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe,
+                           # We'd prefer 'A 2', but pd.read_html() doesn't give
+                           # us that choice.
+                           pd.DataFrame({'Category - A': ['a'],
+                                         'Category - B': ['b']}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               b'<table><thead>'
+               b'  <tr><th colspan="2">Category</th><th rowspan="2">Category - A</th></tr>'
+               b'  <tr><th>A</th><th>B</th></tr>'
+               b'</thead><tbody>'
+               b'  <tr><td>a</td><td>b</td><td>c</td></tr>'
+               b'</tbody></table>'
+           ))
+    def test_merge_thead_colnames(self):
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe,
+                           # We'd prefer 'A 2', but pd.read_html() doesn't give
+                           # us that choice.
+                           pd.DataFrame({'Category - A': ['a'],
+                                         'Category - B': ['b'],
+                                         'Category - A 2': ['c']}))
