@@ -23,7 +23,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.urllist === 'http://www.atlaudit.org/audit-reports.html'"
+      data-test="return workflow.tabs[0].wfModules[0].params.urllist.trim() === 'http://www.atlaudit.org/audit-reports.html'"
       >Paste in the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
       <p class="instruction-detail">Next, let's extract our data.</p>
@@ -73,84 +73,31 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
-      >Paste the XPath selector you just copied into the <kbd>Column selector</kbd> field, and enter <code>Document title</code> as a column name.
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.selector) && wfModule.selectedVersion"
-      >Validate your settings
-      <span>
-        <img class="icon-insert" src="images/lesson-icons/play.svg">
-      </span>
+      data-test="
+        const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+        return (
+          cols.length >= 1
+          && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
+          && cols[0].colname === 'Document title'
+        )
+      ">Paste the XPath selector you just copied into the <kbd>Column selector</kbd> field, and enter <code>Document title</code> as a column name. Validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">.
       <p class="instruction-detail">
         Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
       </p>
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
       >In the HTML scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd>. Click <kbd>Apply</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
       >In the Xpath extractor, click the alert icon
       <span>
         <img class="icon-insert" src="images/lesson-icons/notification.svg">
       </span>
       and select <kbd>Turn on</kbd> to receive an email if the output of this step changes.
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>Extract multiple columns of data</h2>
-  <p>Pennstate university logs all police incidents on campus on <a href="https://police.psu.edu/daily-crime-log" class="highlight" target="_blank">this page</a>.
-  <br>Our goal is to scrape each individual incident and store the 'Reported' and 'nature of the incident' metadadata in their own column.</p>
-  <h3 class="instructions">Instructions</h3>
-  <p>Using the same technique</p>
-  <ol class="steps">
-    <li
-    data-test="return workflow.tabs[1].wfModuleNames[0] === 'Scrape table'"
-      >Create a new tab using the
-      <span>
-        <img class="icon-insert" src="images/lesson-icons/add.svg">
-      </span>button at the bottom of the page, and add a new <kbd>HTML Scraper</kbd> to it.
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.urllist === 'http://www.atlaudit.org/audit-reports.html'"
-      >Scrape the HTML of <a href="https://police.psu.edu/daily-crime-log" class="highlight" target="_blank">this new webpage</a>
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
-      >Generate the Xpath to select the 'Reported' time of each incident.
-      <figure>
-        <img alt="Inspect element" src="./reported.png">
-      </figure>
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
-      >Use the <kbd>+ADD</kbd> button to create a new column. Generate the Xpath to select the 'Nature of incident' of each incident.
-      <figure>
-        <img alt="Inspect element" src="./nature-of-incident.png">
-      </figure>
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
-      >Set the HTML scraper to <kbd>Auto</kbd>.
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.isEmailUpdates"
-      >In the Xpath extractor, turn alerts
-      <span>
-        <img class="icon-insert" src="images/lesson-icons/notification.svg">
-      </span>
-      on.
     </li>
   </ol>
 </section>
