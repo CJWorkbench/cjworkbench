@@ -441,7 +441,16 @@ export class WfModule extends React.PureComponent {
                 quickFixes={wfModule.quick_fixes || []}
                 applyQuickFix={this.applyQuickFix}
               />
-              {this.props.module ? (
+              {this.props.module && !wfModule.is_collapsed ? (
+                /*
+                 * We only render <ParamsForm> when not collapsed. That's so
+                 * that params are visible when mounted -- so they can
+                 * auto-size themselves.
+                 *
+                 * It also saves us from unnecessary HTTP requests for
+                 * collapsed modules like Refine that make HTTP requests to
+                 * display their components.
+                 */
                 <ErrorBoundary>
                   <ParamsForm
                     isReadOnly={this.props.isReadOnly}

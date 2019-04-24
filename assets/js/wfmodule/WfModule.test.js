@@ -116,6 +116,14 @@ describe('WfModule, not read-only mode', () => {
     expect(w.hasClass('status-busy')).toBe(false)
   })
 
+  it('does not render ParamsForm when collapsed', () => {
+    // https://www.pivotaltracker.com/story/show/165539156
+    // If we were to render a <ParamsForm> while display:none was set, the
+    // params wouldn't be able to auto-size themselves.
+    const w = wrapper({ wfModule: { ...wfModule, is_collapsed: true } })
+    expect(w.find('ParamsForm').length).toEqual(0)
+  })
+
   it('has .status-busy overridden when wfModule.is_busy', () => {
     const w = wrapper({ wfModule: { ...wfModule, output_status: 'ok', is_busy: true } })
     expect(w.hasClass('status-busy')).toBe(true)
