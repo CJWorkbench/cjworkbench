@@ -219,7 +219,14 @@ class LoadedModule:
         if out is None:
             shape = (-1, -1)
         else:
-            out = ProcessResult.coerce(out)
+            try:
+                out = ProcessResult.coerce(out)
+            except ValueError as err:
+                logger.exception('Exception coercing %s.fetch output',
+                                 self.module_id_name)
+                out = ProcessResult(error=(
+                    'Fetch produced invalid data: %s' % (str(err),)
+                ))
             out.truncate_in_place_if_too_big()
             shape = out.dataframe.shape
 

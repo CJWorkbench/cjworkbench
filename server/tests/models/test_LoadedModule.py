@@ -285,10 +285,12 @@ class LoadedModuleTest(unittest.TestCase):
         with self.assertLogs(level=logging.ERROR) as cm:
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
+            # Should log an exception, which will email us
             self.assertRegex(cm.output[0],
                              r'Exception coercing int\.render output')
             self.assertRegex(cm.output[0],
                              r"unsupported dtype dtype\('bool'\)")
+        # Should inform the user, who can follow up with the dev
         self.assertEqual(result, ProcessResult(error=(
             "Module produced invalid data: unsupported dtype dtype('bool') "
             "in column 'A'"
@@ -542,6 +544,24 @@ class LoadedModuleTest(unittest.TestCase):
         _, lineno = inspect.getsourcelines(fetch)
         self.assertEqual(result, ProcessResult(error=(
             f'Ick: Oops at line {lineno + 1} of test_LoadedModule.py'
+        )))
+
+    def test_fetch_invalid_retval(self):
+        async def fetch(params, **kwargs):
+            return pd.DataFrame({'A': [1, '2']})  # mixed types -- invalid
+
+        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        with self.assertLogs(level=logging.ERROR) as cm:
+            result = call_fetch(lm, MockParams())
+            # Should log an exception, which will email us
+            self.assertRegex(cm.output[0],
+                             r'Exception coercing int\.fetch output')
+            self.assertRegex(cm.output[0],
+                             r"invalid value 1 in column 'A'")
+        # Should inform the user, who can follow up with the dev
+        self.assertEqual(result, ProcessResult(error=(
+            "Fetch produced invalid data: invalid value 1 in column 'A' "
+            '(object values must all be str)'
         )))
 
     def test_migrate_params_default(self):
