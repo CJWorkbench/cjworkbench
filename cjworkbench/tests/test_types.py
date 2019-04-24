@@ -214,7 +214,7 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_validate_non_str_objects(self):
         with self.assertRaisesRegex(ValueError, 'must all be str'):
-            ProcessResult.coerce(pd.DataFrame({'foo': [1, 'a']}))
+            ProcessResult.coerce(pd.DataFrame({'foo': ['a', 1]}))
 
     def test_coerce_validate_non_str_categories(self):
         with self.assertRaisesRegex(ValueError, 'must all be str'):

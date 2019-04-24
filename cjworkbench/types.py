@@ -46,7 +46,7 @@ def validate_series(series: pd.Series) -> None:
         if nonstr.any():
             raise ValueError(
                 "invalid value %r in column %r (object values must all be str)"
-                % (series[nonstr][0], series.name)
+                % (series.iloc[nonstr[nonstr == True].index[0]], series.name)
             )
     elif hasattr(series, 'cat'):
         categories = series.cat.categories
@@ -54,7 +54,7 @@ def validate_series(series: pd.Series) -> None:
         if nonstr.any():
             raise ValueError(
                 "invalid value %r in column %r (categories must all be str)"
-                % (categories[nonstr][0], series.name)
+                % (categories[np.flatnonzero(nonstr)[0]], series.name)
             )
 
         # Detect unused categories: they waste space, and since the module
