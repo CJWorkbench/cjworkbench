@@ -572,6 +572,202 @@ ExtendedRetweetSample = """[
   }
 ]"""
 
+UndefinedLangSample = """[
+  {
+    "created_at": "Wed Jan 23 23:22:39 +0000 2019",
+    "id": 1088215462867959808,
+    "id_str": "1088215462867959808",
+    "full_text": "\ud83e\udd16 https://t.co/FOhOfZT9MZ",
+    "truncated": false,
+    "display_text_range": [
+      0,
+      1
+    ],
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "user_mentions": [],
+      "urls": [
+        {
+          "url": "https://t.co/FOhOfZT9MZ",
+          "expanded_url": "https://twitter.com/sarahjeong/status/1088214199996579840",
+          "display_url": "twitter.com/sarahjeong/sta\u2026",
+          "indices": [
+            2,
+            25
+          ]
+        }
+      ]
+    },
+    "source": "<a href=\\"http://twitter.com/download/iphone\\" rel=\\"nofollow\\">Twitter for iPhone</a>",
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 890724194559729664,
+      "id_str": "890724194559729664",
+      "name": "Workbench",
+      "screen_name": "workbenchdata",
+      "location": "SF - NYC - MTL",
+      "description": "Scrape, clean and analyze data without code. Create reproducible data workflows that can be shared with others",
+      "url": "https://t.co/0Pf6DK1N5Z",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "https://t.co/0Pf6DK1N5Z",
+              "expanded_url": "http://workbenchdata.com",
+              "display_url": "workbenchdata.com",
+              "indices": [
+                0,
+                23
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 835,
+      "friends_count": 329,
+      "listed_count": 34,
+      "created_at": "Fri Jul 28 00:02:51 +0000 2017",
+      "favourites_count": 386,
+      "utc_offset": null,
+      "time_zone": null,
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 222,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "is_translation_enabled": false,
+      "profile_background_color": "000000",
+      "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": false,
+      "profile_image_url": "http://pbs.twimg.com/profile_images/970898881159446534/bh66YSBc_normal.jpg",
+      "profile_image_url_https": "https://pbs.twimg.com/profile_images/970898881159446534/bh66YSBc_normal.jpg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/890724194559729664/1552863264",
+      "profile_link_color": "48C8D7",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "000000",
+      "profile_text_color": "000000",
+      "profile_use_background_image": false,
+      "has_extended_profile": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": false,
+      "follow_request_sent": false,
+      "notifications": false,
+      "translator_type": "none"
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "is_quote_status": true,
+    "quoted_status_id": 1088214199996579840,
+    "quoted_status_id_str": "1088214199996579840",
+    "quoted_status_permalink": {
+      "url": "https://t.co/FOhOfZT9MZ",
+      "expanded": "https://twitter.com/sarahjeong/status/1088214199996579840",
+      "display": "twitter.com/sarahjeong/sta\u2026"
+    },
+    "quoted_status": {
+      "created_at": "Wed Jan 23 23:17:37 +0000 2019",
+      "id": 1088214199996579840,
+      "id_str": "1088214199996579840",
+      "full_text": "computers were a mistake",
+      "truncated": false,
+      "display_text_range": [
+        0,
+        24
+      ],
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "user_mentions": [],
+        "urls": []
+      },
+      "source": "<a href=\\"https://about.twitter.com/products/tweetdeck\\" rel=\\"nofollow\\">TweetDeck</a>",
+      "in_reply_to_status_id": 1088214064860262400,
+      "in_reply_to_status_id_str": "1088214064860262400",
+      "in_reply_to_user_id": 47509268,
+      "in_reply_to_user_id_str": "47509268",
+      "in_reply_to_screen_name": "sarahjeong",
+      "user": {
+        "id": 47509268,
+        "id_str": "47509268",
+        "name": "sarah jeong",
+        "screen_name": "sarahjeong",
+        "location": "",
+        "description": "editorial board @nytimes, lead writer on technology.",
+        "url": null,
+        "entities": {
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 102908,
+        "friends_count": 1497,
+        "listed_count": 2532,
+        "created_at": "Tue Jun 16 01:50:52 +0000 2009",
+        "favourites_count": 84475,
+        "utc_offset": null,
+        "time_zone": null,
+        "geo_enabled": false,
+        "verified": true,
+        "statuses_count": 103851,
+        "lang": "en",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "is_translation_enabled": false,
+        "profile_background_color": "FFFFFF",
+        "profile_background_image_url": "http://abs.twimg.com/images/themes/theme5/bg.gif",
+        "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme5/bg.gif",
+        "profile_background_tile": true,
+        "profile_image_url": "http://pbs.twimg.com/profile_images/1108799556437708800/921_orFd_normal.jpg",
+        "profile_image_url_https": "https://pbs.twimg.com/profile_images/1108799556437708800/921_orFd_normal.jpg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/47509268/1428289698",
+        "profile_link_color": "9266CC",
+        "profile_sidebar_border_color": "000000",
+        "profile_sidebar_fill_color": "200709",
+        "profile_text_color": "6A4836",
+        "profile_use_background_image": true,
+        "has_extended_profile": false,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": false,
+        "follow_request_sent": false,
+        "notifications": false,
+        "translator_type": "regular"
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "is_quote_status": false,
+      "retweet_count": 224,
+      "favorite_count": 1335,
+      "favorited": false,
+      "retweeted": false,
+      "lang": "en"
+    },
+    "retweet_count": 0,
+    "favorite_count": 1,
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "und"
+  }
+]"""
+
 
 P = MockParams.factory(querytype='user_timeline', username='username',
                        query='query', listurl='listurl', twitter_credentials={
@@ -610,6 +806,7 @@ mock_tweet_table = pd.DataFrame({
     'retweeted_status_screen_name': [None, None],
     'user_description': ['', ''],
     'source': ['Twitter Web Client', 'Tweepy dev'],
+    'lang': ['en', 'en'],
     'id': [795017539831103489, 795017147651162112],
 })
 
@@ -630,6 +827,7 @@ mock_tweet_table2 = pd.DataFrame({
         '\u0ca8\u0cbe\u0ca8\u0cc1....\u2764 \u0cb8\u0cc1\u0c9c\u0cc1 \u2764..!!!  \u0ca8\u0cbf\u0cae\u0ccd\u0cae  \u0cb9\u0cc3\u0ca6\u0caf\u0ca6  \u0c97\u0cc6\u0cb3\u0cc6\u0caf',
     ],
     'source': ['Tweepy dev', 'Twitter Web Client'],
+    'lang': ['en', 'en'],
     'id': [795018956507582465, 794967685113188400],
 })
 
@@ -922,3 +1120,17 @@ class TwitterTests(unittest.TestCase):
             "online in the cloud and for free \ud83d\udc49\ud83c\udffd "
             "https://t.co/fleqjI1qCI https://t.co/mmWHJLDjT2 #ddj #dataviz"
         ))
+
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
+    @patch('aiohttp.ClientSession')
+    def test_undefined_language_is_null(self, session):
+        # https://blog.twitter.com/developer/en_us/a/2013/introducing-new-metadata-for-tweets.html
+        session.return_value = MockAiohttpSession([
+            json.loads(UndefinedLangSample),
+            []
+        ])
+
+        result = fetch(P())
+        lang = result.dataframe['lang'][0]
+        self.assertNotEqual(lang, 'und')
+        self.assertTrue(pd.isnull(lang))

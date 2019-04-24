@@ -84,6 +84,11 @@ def parse_source(source: str) -> str:
     return HTML_TAG_RE.sub('', source)
 
 
+def parse_lang(lang: str) -> Optional[str]:
+    """Parse a Twitter Status 'lang', to set 'und' to None."""
+    return None if lang == 'und' else lang
+
+
 def parse_tweet_text(tweet_json: Dict[str, Any]) -> str:
     if 'retweeted_status' in tweet_json:
         status = tweet_json['retweeted_status']
@@ -114,6 +119,7 @@ Columns = [
            ['retweeted_status', 'user', 'screen_name'], np.object, None),
     Column('user_description', ['user', 'description'], np.object, None),
     Column('source', ['source'], np.object, parse_source),
+    Column('lang', ['lang'], np.object, parse_lang),
     Column('id', ['id'], np.int64, None),
 ]
 
