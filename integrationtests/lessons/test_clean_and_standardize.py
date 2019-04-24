@@ -2,8 +2,8 @@ from integrationtests.lessons import LessonTest
 
 
 DataUrl = (
-    'http://production-static.workbenchdata.com/'
-    'data/population_growth_data.csv'
+    'http://minio:9000/integrationtest-static/lessons/clean-and-standardize'
+    '/population_growth_data.csv'
 )
 
 
