@@ -24,7 +24,8 @@ def render(table, params):
     try:
         table = pd.read_csv(io.StringIO(tablestr), header=header_row,
                             skipinitialspace=True, sep=sep,
-                            na_filter=False, dtype='category')
+                            na_filter=False, dtype='category',
+                            index_col=False)
         autocast_dtypes_in_place(table)
     except EmptyDataError:
         return pd.DataFrame()
