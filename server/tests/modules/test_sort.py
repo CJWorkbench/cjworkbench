@@ -255,3 +255,15 @@ class SortTests(unittest.TestCase):
             'A': ['a', 'a'],
             'B': [2, 3],
         }))
+
+    def test_keep_top_removes_unused_categories(self):
+        table = pd.DataFrame({
+            'A': [1, 2, 3, 4, 5],
+            'B': pd.Series(['x', 'y', 'z', 'a', 'b'], dtype='category'),
+        })
+        params = P([{'colname': 'A', 'is_ascending': True}], keep_top='2')
+        result = render(table, params)
+        assert_frame_equal(result, pd.DataFrame({
+            'A': [1, 2],
+            'B': pd.Series(['x', 'y'], dtype='category'),
+        }))

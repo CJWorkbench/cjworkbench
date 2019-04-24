@@ -78,6 +78,13 @@ def _do_render(
 
     table.reset_index(drop=True, inplace=True)
 
+    if keep_top_int:
+        # We may have removed rows. Now, tidy up all Categorical columns.
+        for column in table.columns:
+            series = table[column]
+            if hasattr(series, 'cat'):
+                series.cat.remove_unused_categories(inplace=True)
+
     return table
 
 
