@@ -195,7 +195,8 @@ class ModuleFiles:
         IgnoreCodePatterns = IgnorePatterns(['__init__.py', 'setup.py',
                                              'test_*.py'])
         IgnoreSpecPatterns = IgnorePatterns(['package.json',
-                                             'package-lock.json'])
+                                             'package-lock.json',
+                                             '.travis.yml'])
         IgnoreHtmlPatterns = IgnorePatterns([])
         IgnoreJavascriptPatterns = IgnorePatterns(['*.config.js'])
 
