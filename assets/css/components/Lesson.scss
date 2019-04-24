@@ -340,6 +340,10 @@ article.lesson {
       overflow-y: auto;
     }
 
+    .instruction-detail {
+      width: 100%;
+    }
+
     section.current {
       width: 100%;
       max-width: $lesson-fullscreen-width;

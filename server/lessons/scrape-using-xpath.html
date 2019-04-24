@@ -81,10 +81,78 @@
           && cols[0].colname === 'Document title'
         )
       ">Paste the XPath selector you just copied into the <kbd>Column selector</kbd> field, and enter <code>Document title</code> as a column name. Validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">.
-      <p class="instruction-detail">
-        Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
-      </p>
     </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Editing the Xpath</h2>
+  <p>
+    Now that we have a list of all documents, let's extract the links of each of them. To do so, let's first have a look at the structure of our page's HTML to understand how this all works.
+  </p>
+  <p>Naviguate back to the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">webpage</a>.
+   <p>
+     In that tab, scroll down to list of all publications released by the City Auditor's Office. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
+   </p>
+   <figure>
+     <img class="full-width" alt="Inspect element" src="./inspect_list.svg">
+     <figcaption>Right click to inspect a link in the inspector</figcaption>
+   </figure>
+   <p class="instruction-detail">
+     Let's look closely at the HTML element in the browser's inspector. In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted.
+   </p>
+   <figure>
+     <img class="full-width" src="./html_element_zoom.svg">
+     <figcaption>In HTML elements are are nested within each others</figcaption>
+   </figure>
+   <p>
+     Xpath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies a particular element by specifying its parent element, then the parent’s parent, all the way to the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
+    </p>
+    <p>
+     In the inspector, we can see the <code>&lt;a&gt;</code> tag we selected is nested within a <code>&lt;li&gt;</code> parent, which is itself nested within a <code>&lt;ul&gt;</code>. Now look closely at the XPath selector generated with Selector Gadget:</p>
+  <div class="code-block">//*[(@id = "wsite-content")]//li//a</div>
+    <ul>
+      <li>
+        <span class="highlight">//*[(@id = "wsite-content")]</span> means "Within the page, select all elements with the id <code>wsite-content</code>."
+      </li>
+      <li>
+        <span class="highlight">//li</span> means "Within it, select all <code>li</code> elements".
+      </li>
+      <li>
+        The last <span class="highlight">//a</span> means "Within it, select all <code>a</code> elements". Those elements are links.
+      </li>
+    </ul>
+  <p>In order to get the URL of the link, and not just the element, we need to append one more section to the code, which is visible in your inspector but not detected by Selector Gadget: <code>/@href</code>.
+  </p>
+</section>
+<section>
+  <h2>Extracting a second column</h2>
+  <p>Let's extract the URLs associated with each links and store them in a new column.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
+      >Use the <kbd>+ADD</kbd> button to create a new column.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
+      >Copy and paste the Xpath you entered in the first <kbd>Column selector</kbd>, paste it into the new one, and append <code>/@href</code> at the end of it in order to target the URL.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
+      >Name this new column <code>URL</code>, and validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Set up the alert</h2>
+  <p class="instruction-detail">
+    Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
       data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
