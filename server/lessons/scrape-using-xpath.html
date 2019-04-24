@@ -6,13 +6,15 @@
 <section>
   <h2>Overview</h2>
   <p>
-    In this tutorial we will use the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">City's auditor Office website of the City of Atlanta</a>. Our goal is to be notified everytime a new audit report is published.
+    In this tutorial we will use the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">City's auditor Office website of the City of Atlanta</a>. Our goal is to be notified every time a new audit report is published.
   </p>
 </section>
 <section>
-  <h2>Scrape the HTML from the webpage</h2>
+  <h2>Scrape the webpage as HTML</h2>
+  <p>To loading data from an external web page, we use two steps. First, we "scrape" the web page as HTML. Then we "extract" the data we want from the HTML.
+  </p>
   <p>
-    First, we need to scrape the HTML text of the webpage containing the data we want to work with. That HTML contains all the information we need. We will store it securely.
+    All web pages are text files. Their text is in a special format called "HyperText Markup Language," or "HTML," that web browsers — and Workbench — understand.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -24,7 +26,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
       data-test="return workflow.tabs[0].wfModules[0].params.urllist.trim() === 'http://www.atlaudit.org/audit-reports.html'"
-      >Paste in the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
+      >Paste the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
       <p class="instruction-detail">Next, let's extract our data.</p>
     </li>
@@ -41,25 +43,25 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Xpath extractor"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Xpath extractor'"
-      >Add the 'Xpath extractor' step.
+      data-highlight='[{"type":"Module","index":1,"name":"XPath extractor"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'XPath extractor'"
+      >Add the 'XPath extractor' step.
     </li>
   </ol>
 </section>
 <section class="fullscreen">
   <h2>Get the XPath selector to extract the list</h2>
-  <p>Xpath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies a particular element by specifying its parent element, then the parent’s parents, all the way to the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
+  <p>XPath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies elements by the 'path' you would take to reach each element from the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
   </p>
   <p>
-    We recommend using the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">SelectorGadget</a> Chrome browser extension. It is a point-and-click interface for visually selecting elements on the page and generating Xpath selectors.
+    We recommend using the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">SelectorGadget</a> Chrome browser extension. It is a point-and-click interface for visually selecting elements on the page and generating XPath selectors.
   </p>
     <ul>
       <li>
         Install the extension <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb" class="highlight" target="_blank">here</a>.
       </li>
       <li>
-        Naviguate to <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">the webpage</a> and generate the Xpath selector, as demonstated in the following video:
+        Naviguate to <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">the webpage</a> and generate the XPath selector, as demonstated in the following video:
       </li>
     </ul>
   <p>
@@ -72,7 +74,7 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
@@ -85,19 +87,19 @@
   </ol>
 </section>
 <section class="fullscreen">
-  <h2>Editing the Xpath</h2>
+  <h2>Editing the XPath</h2>
   <p>
-    Now that we have a list of all documents, let's extract the links of each of them. To do so, let's first have a look at the structure of our page's HTML to understand how this all works.
+    Now that we have a list of all documents, let's extract their link URLs. First let's look at the structure of our page's HTML to understand how this all works.
   </p>
-  <p>Naviguate back to the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">webpage</a>.
+  <p>Naviguate back to the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">webpage</a> with Google Chrome or Firefox.
    <p>
-     In that tab, scroll down to list of all publications released by the City Auditor's Office. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
+     On the webpage, scroll down to the list of all publications released by the City Auditor's Office. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
    </p>
    <figure>
      <img class="full-width" alt="Inspect element" src="./inspect_list.svg">
      <figcaption>Right click to inspect a link in the inspector</figcaption>
    </figure>
-   <p class="instruction-detail">
+   <p>
      Let's look closely at the HTML element in the browser's inspector. In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted.
    </p>
    <figure>
@@ -105,32 +107,32 @@
      <figcaption>In HTML elements are are nested within each others</figcaption>
    </figure>
    <p>
-     Xpath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies a particular element by specifying its parent element, then the parent’s parent, all the way to the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
-    </p>
+     XPath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies elements by the 'path' you would take to reach each element from the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
+   </p>
     <p>
-     In the inspector, we can see the <code>&lt;a&gt;</code> tag we selected is nested within a <code>&lt;li&gt;</code> parent, which is itself nested within a <code>&lt;ul&gt;</code>. Now look closely at the XPath selector generated with Selector Gadget:</p>
+     In the inspector, we can see the <code>&lt;a&gt;</code> element we selected is nested within a <code>&lt;li&gt;</code> element, which is itself nested within a <code>&lt;ul&gt;</code> element. Now look closely at the XPath selector generated with Selector Gadget:</p>
   <div class="code-block">//*[(@id = "wsite-content")]//li//a</div>
     <ul>
       <li>
         <span class="highlight">//*[(@id = "wsite-content")]</span> means "Within the page, select all elements with the id <code>wsite-content</code>."
       </li>
       <li>
-        <span class="highlight">//li</span> means "Within it, select all <code>li</code> elements".
+        <span class="highlight">//li</span> means "Within those elements, select all <code>li</code> elements".
       </li>
       <li>
         The last <span class="highlight">//a</span> means "Within it, select all <code>a</code> elements". Those elements are links.
       </li>
     </ul>
-  <p>In order to get the URL of the link, and not just the element, we need to append one more section to the code, which is visible in your inspector but not detected by Selector Gadget: <code>/@href</code>.
+  <p>In order to get the URL of the link, and not just the element, we need to append one more section to the code, which is visible in your inspector but not Selector Gadget: <code>/@href</code>. The <code>@</code> means we select the href _attribute_ of the <code>a</code> element, as illustrated in the screenshot above."
   </p>
 </section>
 <section>
   <h2>Extracting a second column</h2>
-  <p>Let's extract the URLs associated with each links and store them in a new column.</p>
+  <p>Let's extract the URLs associated with each link and store them in a new column.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
@@ -145,30 +147,30 @@
 <section>
   <h2>Set up the alert</h2>
   <p class="instruction-detail">
-    Let's set up the scraper to monitor the webpage and automatically get new data when it is published.
+    Let's set up the scraper to monitor the webpage and email you when new data is published.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
       data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
       >In the HTML scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd>. Click <kbd>Apply</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
       data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
-      >In the Xpath extractor, click the alert icon
+      >In the XPath extractor, click the alert icon
       <span>
         <img class="icon-insert" src="images/lesson-icons/notification.svg">
       </span>
-      and select <kbd>Turn on</kbd> to receive an email if the output of this step changes.
+      and click <kbd>Turn on</kbd> to receive an email when the output of this step changes.
     </li>
   </ol>
 </section>
 <footer>
   <h2>Your scrapers are set!</h2>
   <div class="completed">
-    <p class="summary">If the new data is published, new tables will be extracted and you will receive an email!</p>
+    <p class="summary">When the new data is published, new tables will be extracted and you will receive an email!</p>
   </div>
   <div class="next">
     <h4>Continue learning:</h4>
