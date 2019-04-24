@@ -314,6 +314,264 @@ user_timeline2_json = """[
 }
 ]"""
 
+ExtendedRetweetSample = """[
+  {
+    "created_at": "Tue Mar 12 15:35:29 +0000 2019",
+    "id": 1105492514289512449,
+    "id_str": "1105492514289512449",
+    "full_text": "RT @JacopoOttaviani: \u26a1\ufe0f I'm playing with @workbenchdata: absolutely mindblowing. It's like a fusion between ScraperWiki, OpenRefine and Dat\u2026",
+    "truncated": false,
+    "display_text_range": [
+      0,
+      140
+    ],
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "user_mentions": [
+        {
+          "screen_name": "JacopoOttaviani",
+          "name": "Jacopo Ottaviani",
+          "id": 37398768,
+          "id_str": "37398768",
+          "indices": [
+            3,
+            19
+          ]
+        },
+        {
+          "screen_name": "workbenchdata",
+          "name": "Workbench",
+          "id": 890724194559729664,
+          "id_str": "890724194559729664",
+          "indices": [
+            41,
+            55
+          ]
+        }
+      ],
+      "urls": []
+    },
+    "source": "<a href=\\"http://twitter.com/download/iphone\\" rel=\\"nofollow\\">Twitter for iPhone</a>",
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 890724194559729664,
+      "id_str": "890724194559729664",
+      "name": "Workbench",
+      "screen_name": "workbenchdata",
+      "location": "SF - NYC - MTL",
+      "description": "Scrape, clean and analyze data without code. Create reproducible data workflows that can be shared with others",
+      "url": "https://t.co/0Pf6DK1N5Z",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "https://t.co/0Pf6DK1N5Z",
+              "expanded_url": "http://workbenchdata.com",
+              "display_url": "workbenchdata.com",
+              "indices": [
+                0,
+                23
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 835,
+      "friends_count": 327,
+      "listed_count": 33,
+      "created_at": "Fri Jul 28 00:02:51 +0000 2017",
+      "favourites_count": 386,
+      "utc_offset": null,
+      "time_zone": null,
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 222,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "is_translation_enabled": false,
+      "profile_background_color": "000000",
+      "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": false,
+      "profile_image_url": "http://pbs.twimg.com/profile_images/970898881159446534/bh66YSBc_normal.jpg",
+      "profile_image_url_https": "https://pbs.twimg.com/profile_images/970898881159446534/bh66YSBc_normal.jpg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/890724194559729664/1552863264",
+      "profile_link_color": "48C8D7",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "000000",
+      "profile_text_color": "000000",
+      "profile_use_background_image": false,
+      "has_extended_profile": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": false,
+      "follow_request_sent": false,
+      "notifications": false,
+      "translator_type": "none"
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweeted_status": {
+      "created_at": "Tue Mar 12 14:46:56 +0000 2019",
+      "id": 1105480299876675584,
+      "id_str": "1105480299876675584",
+      "full_text": "\u26a1\ufe0f I'm playing with @workbenchdata: absolutely mindblowing. It's like a fusion between ScraperWiki, OpenRefine and Datawrapper. All of it online in the cloud and for free \ud83d\udc49\ud83c\udffd https://t.co/fleqjI1qCI https://t.co/mmWHJLDjT2 #ddj #dataviz",
+      "truncated": false,
+      "display_text_range": [
+        0,
+        235
+      ],
+      "entities": {
+        "hashtags": [
+          {
+            "text": "ddj",
+            "indices": [
+              222,
+              226
+            ]
+          },
+          {
+            "text": "dataviz",
+            "indices": [
+              227,
+              235
+            ]
+          }
+        ],
+        "symbols": [],
+        "user_mentions": [
+          {
+            "screen_name": "workbenchdata",
+            "name": "Workbench",
+            "id": 890724194559729664,
+            "id_str": "890724194559729664",
+            "indices": [
+              20,
+              34
+            ]
+          }
+        ],
+        "urls": [
+          {
+            "url": "https://t.co/fleqjI1qCI",
+            "expanded_url": "http://workbenchdata.com/",
+            "display_url": "workbenchdata.com",
+            "indices": [
+              174,
+              197
+            ]
+          },
+          {
+            "url": "https://t.co/mmWHJLDjT2",
+            "expanded_url": "https://vimeo.com/295956416",
+            "display_url": "vimeo.com/295956416",
+            "indices": [
+              198,
+              221
+            ]
+          }
+        ]
+      },
+      "source": "<a href=\\"http://twitter.com\\" rel=\\"nofollow\\">Twitter Web Client</a>",
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 37398768,
+        "id_str": "37398768",
+        "name": "Jacopo Ottaviani",
+        "screen_name": "JacopoOttaviani",
+        "location": "",
+        "description": "ICFJ Knight Fellow, CDO @Code4Africa. Passionate about data, design, cartography, dataviz + teaching. I believe in knowledge sharing \ud83d\uddfa\ud83e\udded",
+        "url": "https://t.co/xrVic54lS9",
+        "entities": {
+          "url": {
+            "urls": [
+              {
+                "url": "https://t.co/xrVic54lS9",
+                "expanded_url": "http://www.linkedin.com/in/jacopo-ottaviani",
+                "display_url": "linkedin.com/in/jacopo-otta\u2026",
+                "indices": [
+                  0,
+                  23
+                ]
+              }
+            ]
+          },
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 4880,
+        "friends_count": 987,
+        "listed_count": 411,
+        "created_at": "Sun May 03 10:43:03 +0000 2009",
+        "favourites_count": 18580,
+        "utc_offset": null,
+        "time_zone": null,
+        "geo_enabled": true,
+        "verified": false,
+        "statuses_count": 10060,
+        "lang": "en",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "is_translation_enabled": false,
+        "profile_background_color": "1A1B1F",
+        "profile_background_image_url": "http://abs.twimg.com/images/themes/theme9/bg.gif",
+        "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme9/bg.gif",
+        "profile_background_tile": false,
+        "profile_image_url": "http://pbs.twimg.com/profile_images/1114239682999726081/lVrrGnvn_normal.jpg",
+        "profile_image_url_https": "https://pbs.twimg.com/profile_images/1114239682999726081/lVrrGnvn_normal.jpg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/37398768/1540380953",
+        "profile_link_color": "228B22",
+        "profile_sidebar_border_color": "FFFFFF",
+        "profile_sidebar_fill_color": "C0DFEC",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "has_extended_profile": false,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": false,
+        "follow_request_sent": false,
+        "notifications": false,
+        "translator_type": "none"
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "is_quote_status": false,
+      "retweet_count": 7,
+      "favorite_count": 16,
+      "favorited": false,
+      "retweeted": false,
+      "possibly_sensitive": false,
+      "lang": "en"
+    },
+    "is_quote_status": false,
+    "retweet_count": 7,
+    "favorite_count": 0,
+    "favorited": false,
+    "retweeted": false,
+    "lang": "en"
+  }
+]"""
+
 
 P = MockParams.factory(querytype='user_timeline', username='username',
                        query='query', listurl='listurl', twitter_credentials={
@@ -645,3 +903,22 @@ class TwitterTests(unittest.TestCase):
         expected.loc[3:5, 'retweeted_status_screen_name'] = None
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, expected)
+
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
+    @patch('aiohttp.ClientSession')
+    def test_retweeted_status_full_text(self, session):
+        # https://www.pivotaltracker.com/story/show/165502310
+        # Retweets' .full_text isn't actually the full text.
+        session.return_value = MockAiohttpSession([
+            json.loads(ExtendedRetweetSample),
+            []
+        ])
+
+        result = fetch(P())
+        self.assertEqual(result.dataframe['text'][0], (
+            "RT @JacopoOttaviani: \u26a1\ufe0f I'm playing with "
+            "@workbenchdata: absolutely mindblowing. It's like a fusion "
+            "between ScraperWiki, OpenRefine and Datawrapper. All of it "
+            "online in the cloud and for free \ud83d\udc49\ud83c\udffd "
+            "https://t.co/fleqjI1qCI https://t.co/mmWHJLDjT2 #ddj #dataviz"
+        ))

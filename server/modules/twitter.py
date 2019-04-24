@@ -84,6 +84,20 @@ def parse_source(source: str) -> str:
     return HTML_TAG_RE.sub('', source)
 
 
+def parse_tweet_text(tweet_json: Dict[str, Any]) -> str:
+    if 'retweeted_status' in tweet_json:
+        status = tweet_json['retweeted_status']
+        screen_name = status['user']['screen_name']
+        try:
+            text = status['full_text']
+        except KeyError:
+            # Some retweeted statuses don't have full_text.
+            text = status['text']
+        return 'RT @%s: %s' % (screen_name, text)
+    else:
+        return tweet_json['full_text']
+
+
 def Err(error):
     return ProcessResult(error=error)
 
@@ -91,7 +105,7 @@ def Err(error):
 Columns = [
     Column('screen_name', ['user', 'screen_name'], np.object, None),
     Column('created_at', ['created_at'], 'datetime64[ns]', None),
-    Column('text', ['full_text'], np.object, None),
+    Column('text', [], np.object, parse_tweet_text),
     Column('retweet_count', ['retweet_count'], np.int64, None),
     Column('favorite_count', ['favorite_count'], np.int64, None),
     Column('in_reply_to_screen_name', ['in_reply_to_screen_name'], np.object,
