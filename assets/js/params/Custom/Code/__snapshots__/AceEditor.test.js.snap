@@ -78,10 +78,12 @@ exports[`AceEditor matches snapshot 1`] = `
         minLines={null}
         mode="python"
         name="code-editor"
+        navigateToFileEnd={true}
         onChange={[MockFunction]}
         onLoad={null}
         onPaste={null}
         onScroll={null}
+        placeholder={null}
         readOnly={false}
         scrollMargin={
           Array [
