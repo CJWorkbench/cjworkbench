@@ -677,6 +677,9 @@ class ProcessResult:
         if value is None:
             return cls(dataframe=pd.DataFrame())
         elif isinstance(value, ProcessResult):
+            # TODO ban `ProcessResult` retvals from `fetch()`, then omit this
+            # case. ProcessResult should be internal.
+            validate_dataframe(value.dataframe)
             return value
         elif isinstance(value, pd.DataFrame):
             validate_dataframe(value)

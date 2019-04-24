@@ -212,6 +212,26 @@ class ProcessResultTests(unittest.TestCase):
                                     'must use the default RangeIndex'):
             ProcessResult.coerce(pd.DataFrame({'A': [1, 2]})[1:])
 
+    def test_coerce_validate_processresult(self):
+        """ProcessResult.coerce(<ProcessResult>) should raise on error."""
+        # render() gets access to a fetch_result. Imagine this module:
+        #
+        # def render(table, params, *, fetch_result):
+        #     fetch_result.dataframe.drop(0, inplace=True)
+        #     return fetch_result  # invalid index
+        #
+        # We could (and maybe should) avoid this by banning ProcessResult
+        # retvals from `render()`. But to be consistent we'd need to ban
+        # ProcessResult retvals from `fetch()`; and that'd take a few hours.
+        #
+        # TODO ban `ProcessResult` retvals from `fetch()`, then raise
+        # Valueerror on ProcessResult.coerce(<ProcessResult>).
+        fetch_result = ProcessResult(pd.DataFrame({'A': [1, 2, 3]}))
+        fetch_result.dataframe.drop(0, inplace=True)  # bad index
+        with self.assertRaisesRegex(ValueError,
+                                    'must use the default RangeIndex'):
+            ProcessResult.coerce(fetch_result)
+
     def test_coerce_validate_non_str_objects(self):
         with self.assertRaisesRegex(ValueError, 'must all be str'):
             ProcessResult.coerce(pd.DataFrame({'foo': ['a', 1]}))
