@@ -29,6 +29,8 @@ def _build_inner_html(el: ElementTree, base_href: str) -> str:
 
         * It modifies img src starting with `./` to start with `{base_href}/`
         * It prepends STATIC_URL to img src
+        * It replaces `{{LESSON_FILES_URL}}` with `{base_href}`. (We assume
+          `base_href` has no reserved HTML characters.)
 
     Params:
 
@@ -48,6 +50,8 @@ def _build_inner_html(el: ElementTree, base_href: str) -> str:
     open_tag_end = outer_html.index('>')
     close_tag_begin = outer_html.rindex('<')
     inner_html = outer_html[(open_tag_end + 1):close_tag_begin]
+    inner_html = inner_html.replace('{{LESSON_FILES_URL}}',
+                                    settings.STATIC_URL + base_href)
 
     return inner_html
 
@@ -108,6 +112,20 @@ class LessonSectionStep:
     html: str = ''
     highlight: str = ''
     test_js: str = ''
+    """
+    "Test" JavaScript that determines whether the step is complete.
+
+    When parsing HTML, LessonSectionStep will replace `{{LESSON_FILES_URL}}`
+    with the lesson's base URL. So you can write a test like:
+
+        return (
+            workflow.tabs[0].wfModules[0].params.url
+            === '{{LESSON_FILES_URL}}/x.csv'
+        )
+
+    Workbench's lesson system will only run a step's test code if all, given
+    the current store, all tests leading up to it pass.
+    """
 
     @classmethod
     def _from_etree(cls, el: ElementTree, base_href: str) -> LessonSectionStep:
@@ -126,6 +144,8 @@ class LessonSectionStep:
             raise LessonParseError(
                 'missing data-test attribute, which must be JavaScript'
             )
+        test_js = test_js.replace('{{LESSON_FILES_URL}}',
+                                  settings.STATIC_URL + base_href)
 
         return cls(html, highlight, test_js)
 

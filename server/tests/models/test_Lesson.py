@@ -71,6 +71,20 @@ class LessonTests(SimpleTestCase):
                 </ol></section>
             """)
 
+    @override_settings(STATIC_URL='https://static/')
+    def test_parse_section_step_lesson_files_url(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1><p>x</p></header>
+            <section><h2>X</h2><ol class="steps">
+                <li data-test="window.x == '{{LESSON_FILES_URL}}/x.csv'">X</li>
+            </ol></section>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(
+            result.sections[0].steps[0].test_js,
+            "window.x == 'https://static/lessons/a-slug/x.csv'"
+        )
+
     def test_parse_invalid_html(self):
         with self.assertRaisesRegex(
             LessonParseError,
@@ -195,6 +209,28 @@ class LessonTests(SimpleTestCase):
         self.assertEquals(
             result.header.html,
             '<p><img src="//static/courses/a-course/a-slug/foo.png"></p>'
+        )
+
+    @override_settings(STATIC_URL='https://static/')
+    def test_parse_header_lesson_files_url_with_course(self):
+        result = Lesson.parse(Course('a-course'), 'a-slug', """
+            <header><h1>x</h1><p><i>{{LESSON_FILES_URL}}/x.csv</i></p></header>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(
+            result.header.html,
+            '<p><i>https://static/courses/a-course/a-slug/x.csv</i></p>'
+        )
+
+    @override_settings(STATIC_URL='https://static/')
+    def test_parse_header_lesson_files_url_without_course(self):
+        result = Lesson.parse(None, 'a-slug', """
+            <header><h1>x</h1><p><i>{{LESSON_FILES_URL}}/x.csv</i></p></header>
+            <footer><h2>z</h2></footer>
+        """)
+        self.assertEquals(
+            result.header.html,
+            '<p><i>https://static/lessons/a-slug/x.csv</i></p>'
         )
 
     @override_settings(STATIC_URL='//static/')

@@ -23,9 +23,9 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'http://production-static.workbenchdata.com/data/population_growth_data.csv' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === '{{LESSON_FILES_URL}}/population_growth_data.csv' && wfModule.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
-      <div class="copy-txt">http://production-static.workbenchdata.com/data/population_growth_data.csv</div>
+      <div class="copy-txt">{{LESSON_FILES_URL}}/population_growth_data.csv</div>
       <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
     </li>
     <li
