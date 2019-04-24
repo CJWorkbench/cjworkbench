@@ -146,7 +146,7 @@ RUN true \
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
-FROM node:11.12.0-slim as jsbase
+FROM node:11.14.0-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app
