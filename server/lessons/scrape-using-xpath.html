@@ -131,18 +131,42 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
-      >Use the <kbd>+ADD</kbd> button to create a new column.
+      data-test="
+        const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+        return (
+          cols.length >= 1
+          && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
+          && cols[0].colname === 'Document title'
+          && cols[1].colxpath === ''
+          && cols[1].colname === ''
+        )
+      ">Use the <kbd>+ADD</kbd> button to create a new column.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
-      >Copy and paste the Xpath you entered in the first <kbd>Column selector</kbd>, paste it into the new one, and append <code>/@href</code> at the end of it in order to target the URL.
+    data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+    data-test="
+      const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+      return (
+        cols.length >= 1
+        && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
+        && cols[0].colname === 'Document title'
+        && cols[1].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a/@href'
+        && cols[1].colname === ''
+      )
+      ">Copy and paste the Xpath you entered in the first <kbd>Column selector</kbd>, paste it into the new one, and append <code>/@href</code> at the end of it in order to target the URL.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[1]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.params.colxpath)"
-      >Name this new column <code>URL</code>, and validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">
+    data-highlight='[{"type":"WfModule","moduleName":"Xpath extractor"}]'
+    data-test="
+      const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+      return (
+        cols.length >= 1
+        && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
+        && cols[0].colname === 'Document title'
+        && cols[1].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a/@href'
+        && cols[1].colname === 'URL'
+      )
+      ">Name this new column <code>URL</code>, and validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">
     </li>
   </ol>
 </section>
