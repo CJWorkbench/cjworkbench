@@ -249,7 +249,6 @@ STATICFILES_FINDERS = [
 STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
 STATICFILES_DIRS = (
     ('bundles', os.path.join(BASE_DIR, 'assets', 'bundles')),
-    ('data', os.path.join(BASE_DIR, 'assets', 'data')),
     ('fonts', os.path.join(BASE_DIR, 'assets', 'fonts')),
     ('images', os.path.join(BASE_DIR, 'assets', 'images')),
 )
