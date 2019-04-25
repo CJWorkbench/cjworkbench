@@ -230,12 +230,28 @@ class MigrateParamsTest(unittest.TestCase):
             pd.DataFrame({'A': ['a', 'c']}, dtype='category')
         )
 
+    def test_refine_spurious_rename(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a']}, dtype='category'),
+            'A',
+            RefineSpec({'b': 'c'}),
+            pd.DataFrame({'A': ['a']}, dtype='category')
+        )
+
     def test_refine_rename_category_to_existing(self):
         self._test_refine_spec_apply(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
             'A',
             RefineSpec({'b': 'a'}),
             pd.DataFrame({'A': ['a', 'a']}, dtype='category')
+        )
+
+    def test_refine_ignore_nan(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': ['a', 'b', np.nan]}, dtype='category'),
+            'A',
+            RefineSpec({'b': 'a'}),
+            pd.DataFrame({'A': ['a', 'a', np.nan]}, dtype='category')
         )
 
     def test_refine_rename_swap(self):

@@ -35,14 +35,15 @@ class RefineSpec:
 
     def apply_renames(self, series: pd.Series) -> pd.Series:
         """Build a series with changed categories."""
-        # 1. Set new categories
-        # 2. Copy all values that are in old _and_ new category list, leaving
-        #    the rest as NA
-        # (this is a one-liner in pandas)
+        # 1. Build list of new_categories from old_categories and renames
+        old_categories = set(series.cat.categories)
+        # filter self.renames: ignore renames of categories that don't exist.
+        # (They can happen if the input changes after the user sets params.)
+        renames = {k: v for k, v in self.renames.items()
+                   if k in old_categories}
         new_categories = set(series.cat.categories) \
-            .difference(self.renames.keys()) \
-            .union(self.renames.values())
-
+            .difference(renames.keys()) \
+            .union(renames.values())
         # Sort categories, simply to make unit tests pass. (They can't predict
         # category order otherwise, and assert_frame_equal() treats different
         # orders as different data frames.)
@@ -50,26 +51,24 @@ class RefineSpec:
         # This may be slow in some datasets.
         new_categories = sorted(new_categories)
 
-        ret = series.cat.set_categories(new_categories)
+        # 2. Build "code_map", a translation table from old "code" to new
+        # "code". (A Categorical series is an array of integer codes and object
+        # categories.)
+        new_categories_lookup = {c: i for i, c in enumerate(new_categories)}
+        code_map = series.cat.categories.map(lambda c: (
+            new_categories_lookup[renames[c]] if c in renames
+            else new_categories_lookup[c]
+        ))
 
-        # 3. "Rename" by setting old-valued data to new values.
-        #
-        # This algorithm _should_ be fairly quick, but it hasn't been
-        # benchmarked. For every "group" we're renaming _to_, select matching
-        # _from_ rows from the original series and set their value.
-        #
-        # This amounts to G renames, each costing O(N). Total O(NG).
-        grouped_renames = {}
-        for k, v in self.renames.items():
-            try:
-                grouped_renames[v].append(k)
-            except KeyError:
-                grouped_renames[v] = [k]
+        # 3. Find "new_codes" -- given series.cat.categories, which index into
+        # series.cat.categories, find codes that would index into
+        # new_categories.
+        new_codes = series.cat.codes.map(
+            lambda x: -1 if x == -1 else code_map[x]
+        )
 
-        for new_value, old_values in grouped_renames.items():
-            ret[series.isin(old_values)] = new_value
-
-        return ret
+        # 4. Cast to a Series.
+        return pd.Series(pd.Categorical.from_codes(new_codes, new_categories))
 
     def apply(self, table, column):
         # 1. Turn into categories
