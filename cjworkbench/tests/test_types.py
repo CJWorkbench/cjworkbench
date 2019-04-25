@@ -269,6 +269,12 @@ class ProcessResultTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'duplicate column name'):
             ProcessResult.coerce(dataframe)
 
+    def test_coerce_validate_numpy_dtype(self):
+        # Numpy dtypes should be treated just like pandas dtypes.
+        dataframe = pd.DataFrame({'A': np.array([1, 2, 3])})
+        result = ProcessResult.coerce(dataframe)
+        assert_frame_equal(result.dataframe, dataframe)
+
     def test_coerce_validate_unsupported_dtype(self):
         dataframe = pd.DataFrame({
             # A type we never plan on supporting
@@ -290,6 +296,14 @@ class ProcessResultTests(unittest.TestCase):
             # We don't support nullable integer columns ... yet
             'A': pd.Series([1, np.nan], dtype=pd.Int64Dtype()),
         })
+        with self.assertRaisesRegex(ValueError, 'unsupported dtype'):
+            ProcessResult.coerce(dataframe)
+
+    def test_coerce_validate_unsupported_numpy_dtype_unsupported(self):
+        # We can't check if a numpy dtype == 'category'.
+        # https://github.com/pandas-dev/pandas/issues/16697
+        arr = np.array([1, 2, 3]).astype('complex')  # we don't support complex
+        dataframe = pd.DataFrame({'A': arr})
         with self.assertRaisesRegex(ValueError, 'unsupported dtype'):
             ProcessResult.coerce(dataframe)
 
