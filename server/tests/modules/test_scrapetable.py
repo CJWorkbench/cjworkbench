@@ -194,6 +194,19 @@ class ScrapeTableTest(unittest.TestCase):
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(
+               b'<table><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
+           ))
+    def test_no_colnames(self):
+        fetch_result = fetch(url='http://example.org',
+                             first_row_is_header=False)
+        assert_frame_equal(fetch_result.dataframe,
+                           # We'd prefer 'A 2', but pd.read_html() doesn't give
+                           # us that choice.
+                           pd.DataFrame({'Column 1': ['a'],
+                                         'Column 2': ['b']}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
                b'<table><thead>'
                b'  <tr><th colspan="2">Category</th><th rowspan="2">Category - A</th></tr>'
                b'  <tr><th>A</th><th>B</th></tr>'

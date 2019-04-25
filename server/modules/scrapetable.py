@@ -17,7 +17,6 @@ def merge_colspan_headers_in_place(table) -> None:
 
     Alter the table in place, no return value.
     """
-
     newcols = []
     for c in table.columns:
         if isinstance(c, tuple):
@@ -32,6 +31,10 @@ def merge_colspan_headers_in_place(table) -> None:
                     idx += 1
             # put dashes between all remaining header values
             newcols.append(' - '.join(vals))
+        elif isinstance(c, int):
+            # If first row isn't header and there's no <thead>, table.columns
+            # will be an integer index.
+            newcols.append('Column %d' % (c + 1))
         else:
             newcols.append(c)
     # newcols can contain duplicates. Rename them.
