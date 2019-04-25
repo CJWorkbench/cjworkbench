@@ -55,14 +55,22 @@ class PickerFactory {
       }
     }
 
-    const view = new google.picker.DocsView(google.picker.ViewId.DOCS)
+    const soloView = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
       .setIncludeFolders(true)
       .setMimeTypes(MimeTypesString)
 
+    const teamView = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+      .setIncludeFolders(true)
+      .setEnableTeamDrives(true)
+      .setMimeTypes(MimeTypesString)
+
     this.picker = new google.picker.PickerBuilder()
-      .addView(view)
+      .addView(soloView)
+      .addView(teamView)
       .setOAuthToken(accessToken)
       .setCallback(onEvent)
+      .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
+      .setSelectableMimeTypes(MimeTypesString)
       .build()
 
     this.picker.setVisible(true)
