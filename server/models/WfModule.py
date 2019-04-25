@@ -6,7 +6,8 @@ from server import minio
 from server.models import loaded_module
 from .fields import ColumnsField
 from .Params import Params
-from .param_spec import ParamDTypeDict, ParamSpec
+from .param_dtype import ParamDTypeDict
+from .param_spec import ParamSpec
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .StoredObject import StoredObject

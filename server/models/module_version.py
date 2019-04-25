@@ -9,7 +9,8 @@ from django.utils import timezone
 from server import minio
 from server.modules import Specs as InternalModuleSpecs
 from .module_loader import validate_module_spec
-from .param_spec import ParamSpec, ParamDType
+from .param_dtype import ParamDType
+from .param_spec import ParamSpec
 
 
 def _django_validate_module_spec(spec: Any) -> None:

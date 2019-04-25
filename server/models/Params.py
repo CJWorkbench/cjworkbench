@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from .param_spec import ParamDTypeDict
+from .param_dtype import ParamDTypeDict
 
 
 class Params:
