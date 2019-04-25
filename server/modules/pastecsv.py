@@ -8,11 +8,6 @@ def render(table, params):
     tablestr: str = params['csv']
     has_header_row: bool = params['has_header_row']
 
-    if has_header_row:
-        header_row = 0
-    else:
-        header_row = None
-
     # Guess at format by counting commas and tabs
     n_commas = tablestr.count(',')
     n_tabs = tablestr.count('\t')
@@ -22,14 +17,24 @@ def render(table, params):
         sep = '\t'
 
     try:
-        table = pd.read_csv(io.StringIO(tablestr), header=header_row,
+        table = pd.read_csv(io.StringIO(tablestr), header=None,
                             skipinitialspace=True, sep=sep,
                             na_filter=False, dtype='category',
-                            index_col=False)
+                            index_col=False, engine='python')
+
+        if params['has_header_row']:
+            table.columns = table.iloc[[0]].astype(str).T[0].array
+            table.drop(0, axis=0, inplace=True)
+            table.reset_index(drop=True, inplace=True)
+            # Remove header values from category values
+            for column in table.columns:
+                table[column].cat.remove_unused_categories(inplace=True)
+
         autocast_dtypes_in_place(table)
     except EmptyDataError:
         return pd.DataFrame()
     except ParserError as err:
+        print(repr(err))
         return str(err)
 
     return table

@@ -44,6 +44,15 @@ class PasteCSVTests(unittest.TestCase):
             'B': ['b'],
         }, dtype='category'))
 
+    def test_list_index_out_of_range(self):
+        # Pandas' read_csv() freaks out on even the simplest examples....
+        #
+        # Today's exhibit:
+        # pd.read_csv(io.StringIO('A\n,,'), index_col=False)
+        # raises IndexError: list index out of range
+        result = render(P(csv='A\n,,', has_header=True))
+        assert_frame_equal(result, pd.DataFrame({'A': ['']}, dtype='category'))
+
     def test_no_nan(self):
         # https://www.pivotaltracker.com/story/show/163106728
         result = render(P(csv='A,B\nx,y\nz,NA'))
