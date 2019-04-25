@@ -21,23 +21,34 @@ def render(table, params):
                             skipinitialspace=True, sep=sep,
                             na_filter=False, dtype='category',
                             index_col=False, engine='python')
-
-        if params['has_header_row']:
-            table.columns = table.iloc[[0]].astype(str).T[0].array
-            table.drop(0, axis=0, inplace=True)
-            table.reset_index(drop=True, inplace=True)
-            # Remove header values from category values
-            for column in table.columns:
-                table[column].cat.remove_unused_categories(inplace=True)
-        else:
-            table.columns = [f'Column {i + 1}'
-                             for i in range(len(table.columns))]
-
-        autocast_dtypes_in_place(table)
     except EmptyDataError:
         return pd.DataFrame()
     except ParserError as err:
-        print(repr(err))
         return str(err)
+
+    # Set default column names: "Column 1", "Column 2", etc.
+    table.columns = [f'Column {i + 1}' for i in range(len(table.columns))]
+
+    if params['has_header_row']:
+        # Use first row as column names, whenever they're not ''
+        header = table.iloc[[0]].T[0].tolist()  # all str, maybe empty
+        header = [given or default  # default when given == ''
+                  for given, default in zip(header, table.columns)]
+        table.columns = header
+        # Test for duplicates
+        duplicated = table.columns.duplicated()
+        if duplicated.any():
+            name = table.columns[duplicated][0]
+            return (
+                f'Duplicate column name "{name}". Please edit the first '
+                'line so there are no repeated column names.'
+            )
+        # Remove header row from content
+        table.drop(0, axis=0, inplace=True)
+        table.reset_index(drop=True, inplace=True)
+        for column in table.columns:
+            # Remove header values from category values, if present
+            table[column].cat.remove_unused_categories(inplace=True)
+    autocast_dtypes_in_place(table)
 
     return table

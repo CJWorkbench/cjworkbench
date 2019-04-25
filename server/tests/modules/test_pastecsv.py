@@ -60,6 +60,21 @@ class PasteCSVTests(unittest.TestCase):
             'Column 2': ['B'],
         }, dtype='category'))
 
+    def test_duplicate_column_names_is_error(self):
+        result = render(P(csv='A,A\n1,2', has_header_row=True))
+        self.assertEqual(result, (
+            'Duplicate column name "A". Please edit the first line '
+            'so there are no repeated column names.'
+        ))
+
+    def test_auto_column_names_when_not_given(self):
+        result = render(P(csv='A,,B\n1,2,3', has_header_row=True))
+        assert_frame_equal(result, pd.DataFrame({
+            'A': [1],
+            'Column 2': [2],
+            'B': [3],
+        }))
+
     def test_no_nan(self):
         # https://www.pivotaltracker.com/story/show/163106728
         result = render(P(csv='A,B\nx,y\nz,NA'))
