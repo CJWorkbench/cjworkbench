@@ -38,7 +38,7 @@ class PasteCSVTests(unittest.TestCase):
         # in a row exceeds the number of headers. It tries building a
         # MultiIndex out of the first ones. This is probably so it can read its
         # own string representations? ... but it's terrible for our users.
-        result = render(P(csv='A,B\na,b,c', has_header=True))
+        result = render(P(csv='A,B\na,b,c', has_header_row=True))
         assert_frame_equal(result, pd.DataFrame({
             'A': ['a'],
             'B': ['b'],
@@ -50,8 +50,15 @@ class PasteCSVTests(unittest.TestCase):
         # Today's exhibit:
         # pd.read_csv(io.StringIO('A\n,,'), index_col=False)
         # raises IndexError: list index out of range
-        result = render(P(csv='A\n,,', has_header=True))
+        result = render(P(csv='A\n,,', has_header_row=True))
         assert_frame_equal(result, pd.DataFrame({'A': ['']}, dtype='category'))
+
+    def test_no_header(self):
+        result = render(P(csv='A,B', has_header_row=False))
+        assert_frame_equal(result, pd.DataFrame({
+            'Column 1': ['A'],
+            'Column 2': ['B'],
+        }, dtype='category'))
 
     def test_no_nan(self):
         # https://www.pivotaltracker.com/story/show/163106728

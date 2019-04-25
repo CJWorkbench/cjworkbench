@@ -29,6 +29,9 @@ def render(table, params):
             # Remove header values from category values
             for column in table.columns:
                 table[column].cat.remove_unused_categories(inplace=True)
+        else:
+            table.columns = [f'Column {i + 1}'
+                             for i in range(len(table.columns))]
 
         autocast_dtypes_in_place(table)
     except EmptyDataError:
