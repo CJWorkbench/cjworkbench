@@ -9,8 +9,7 @@ describe('Multicolumn', () => {
       name='columns'
       fieldId='columns'
       isReadOnly={false}
-      upstreamValue={'A,C'}
-      value='A,C'
+      value={[ 'A', 'C' ]}
       inputColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}, {name: 'D'}]}
       {...extraProps}
     />
@@ -20,7 +19,7 @@ describe('Multicolumn', () => {
     it('renders read-only column names', () => {
       const w = wrapper({
         isReadOnly: true,
-        value: 'A,C'
+        value: ['A', 'C']
       })
       expect(w.find('.react-select__control').text()).toMatch(/A.*C/)
     })
@@ -40,7 +39,7 @@ describe('Multicolumn', () => {
       w.find('.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('button.multicolumn-select-all').simulate('click')
-      expect(w.prop('onChange')).toHaveBeenCalledWith('A,B,C,D')
+      expect(w.prop('onChange')).toHaveBeenCalledWith(['A', 'B', 'C', 'D'])
     })
 
     it('deselects all columns when "select none" is clicked', () => {
@@ -48,7 +47,7 @@ describe('Multicolumn', () => {
       w.find('.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('button.multicolumn-select-none').simulate('click')
-      expect(w.prop('onChange')).toHaveBeenCalledWith('')
+      expect(w.prop('onChange')).toHaveBeenCalledWith([])
     })
 
     it('renders loading when no columns', () => {
@@ -63,8 +62,7 @@ describe('Multicolumn', () => {
           name='column'
           fieldId='column'
           isReadOnly={false}
-          value='C,A,D'
-          upstreamValue={'C,A,D'}
+          value={[ 'C', 'A', 'D' ]}
           inputColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
         />
       )
@@ -78,14 +76,24 @@ describe('Multicolumn', () => {
 
     it('should call onChange when columns are added', () => {
       const w = wrapper({
-        upstreamValue: 'A',
-        value: 'A',
+        value: [ 'A' ],
         inputColumns: [{name: 'A'}, {name: 'B'}, {name: 'C'}]
       })
       w.find('.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('.react-select__option').at(0).simulate('click')
-      expect(w.prop('onChange')).toHaveBeenCalledWith('A,B')
+      expect(w.prop('onChange')).toHaveBeenCalledWith([ 'A', 'B' ])
+    })
+
+    it('should handle DEPRECATED values of type String', () => {
+      const w = wrapper({
+        value: 'A,B',
+        inputColumns: [{name: 'A'}, {name: 'B'}, {name: 'C'}]
+      })
+      w.find('.react-select__dropdown-indicator')
+        .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
+      w.find('.react-select__option').at(0).simulate('click')
+      expect(w.prop('onChange')).toHaveBeenCalledWith('A,B,C')
     })
   })
 })

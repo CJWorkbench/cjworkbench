@@ -60,35 +60,45 @@ export default class Multicolumn extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // onChange('A,B') => undefined
     addMenuListClassName: PropTypes.string, // default undefined
     noOptionsMessage: PropTypes.string, // default 'No options'
-    value: PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
+    value: PropTypes.oneOfType([
+      PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
+      PropTypes.arrayOf(PropTypes.string.isRequired).isRequired // may be [] but not null
+    ]).isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     }))
   }
 
-  get selectedColumns() {
+  // For a transition period, we support "multicolumn" values being String.
+  // That changes a bit of logic.
+  get isDeprecatedMulticolumnParam () {
+    return !Array.isArray(this.props.value)
+  }
+
+  // Compatibility layer: return this.props.value as an Array even if the value
+  // is [DEPRECATED} String.
+  get value () {
     const { value } = this.props
-    return value ? value.split(',') : []
+    if (this.isDeprecatedMulticolumnParam) {
+      return value.split(',').filter(s => s !== '')
+    } else {
+      return value
+    }
   }
 
   onClickSelectAll = () => {
     const { inputColumns } = this.props
     const names = (inputColumns || []).map(x => x.name)
-    this.props.onChange(names.join(','))
+    this.onChangeColumns(names)
   }
 
   onClickSelectNone = () => {
-    this.props.onChange('')
+    this.onChangeColumns([])
   }
 
   onChangeColumns = (columns) => {
-    this.props.onChange(columns.join(','))
-  }
-
-  compareSelected = (a, b) => {
-    const indexA = this.props.inputColumns.findIndex(p => p.name === a)
-    const indexB = this.props.inputColumns.findIndex(p => p.name === b)
-    return indexA - indexB
+    const value = this.isDeprecatedMulticolumnParam ? columns.join(',') : columns
+    this.props.onChange(value)
   }
 
   render() {
@@ -116,7 +126,7 @@ export default class Multicolumn extends React.PureComponent {
           addMenuListClassName={addMenuListClassName}
           noOptionsMessage={noOptionsMessage}
           components={Components}
-          value={this.selectedColumns}
+          value={this.value}
           placeholder={placeholder || 'Select columns'}
         />
       </React.Fragment>
