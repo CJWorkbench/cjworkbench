@@ -228,20 +228,53 @@ class ParamDTypeColumn(ParamDTypeString):
         return cls(**kwargs)
 
 
-class ParamDTypeMulticolumn(ParamDTypeString):
+class ParamDTypeMulticolumn(ParamDType):
     def __init__(self, column_types: Optional[FrozenSet[str]] = None,
-                 tab_parameter: Optional[str] = None):
+                 tab_parameter: Optional[str] = None,
+                 deprecated_string_storage: bool = True):
         super().__init__()
         self.column_types = column_types
         self.tab_parameter = tab_parameter
+        self.deprecated_string_storage = deprecated_string_storage
 
     def __repr__(self):
         return 'ParamDTypeMulticolumn' + repr((self.column_types,
-                                               self.tab_parameter))
+                                               self.tab_parameter,
+                                               self.deprecated_string_storage))
 
     def omit_missing_table_columns(self, value, columns):
-        valid = [c for c in value.split(',') if c in columns]
-        return ','.join(valid)
+        if self.deprecated_string_storage and value:
+            value = value.split(',')
+        valid = [c for c in value if c in columns]
+        if self.deprecated_string_storage:
+            return ','.join(valid)
+        else:
+            return valid
+
+    def coerce(self, value):
+        if self.deprecated_string_storage:
+            if value is None:
+                return ''
+            else:
+                return str(value)
+
+        if value is None:
+            return ''
+        if not isinstance(value, list):
+            value = list(value)
+        return [str(v) for v in value]
+
+    def validate(self, value):
+        if self.deprecated_string_storage:
+            if not isinstance(value, str):
+                raise ValueError('Value %r is not a string' % value)
+        else:
+            if not isinstance(value, list):
+                raise ValueError('Value %r is not a list' % value)
+            for i, v in enumerate(value):
+                if not isinstance(v, str):
+                    raise ValueError('Item %d of value %r is not a string'
+                                     % (i, value))
 
     @classmethod
     def _from_plain_data(cls, *, column_types=None, **kwargs):

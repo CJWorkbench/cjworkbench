@@ -18,8 +18,28 @@ class DTypeCoerceTest(unittest.TestCase):
     def test_coerce_str_to_column(self):
         self.assertEqual(DT.Column().coerce('blah'), 'blah')
 
-    def test_coerce_str_to_multicolumn(self):
+    def test_multicolumn_deprecated_coerce_str(self):
         self.assertEqual(DT.Multicolumn().coerce('blah,beep'), 'blah,beep')
+
+    def test_multicolumn_deprecated_validate_str(self):
+        DT.Multicolumn().validate('blah,beep')
+
+    def test_multicolumn_coerce_list_of_str(self):
+        self.assertEqual(
+            DT.Multicolumn(deprecated_string_storage=False).coerce(['x', 'y']),
+            ['x', 'y']
+        )
+
+    def test_multicolumn_validate_list_of_str_ok(self):
+        DT.Multicolumn(deprecated_string_storage=False).validate(['x', 'y']),
+
+    def test_multicolumn_validate_list_of_non_str_is_error(self):
+        with self.assertRaises(ValueError):
+            DT.Multicolumn(deprecated_string_storage=False).validate([1, 2])
+
+    def test_multicolumn_validate_str_is_error(self):
+        with self.assertRaises(ValueError):
+            DT.Multicolumn(deprecated_string_storage=False).validate('X,Y')
 
     def test_map_validate_ok(self):
         dtype = ParamDType.Map(value_dtype=ParamDType.String())
