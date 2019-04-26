@@ -5,7 +5,6 @@ import { MaybeLabel } from './util'
 export default class MenuParam extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
-    items: PropTypes.string, // like 'Apple|Banana|Kitten' -- DEPRECATED
     enumOptions: PropTypes.arrayOf(
       PropTypes.oneOfType([
         PropTypes.oneOf([ 'separator' ]),
@@ -14,7 +13,7 @@ export default class MenuParam extends React.PureComponent {
           label: PropTypes.string.isRequired
         }).isRequired
       ]).isRequired
-    ), // new-style menu -- once we nix "items" ("menu_items" in spec), add .isRequired here
+    ).isRequired,
     value: PropTypes.oneOfType([
       PropTypes.number.isRequired, // DEPRECATED
       PropTypes.string.isRequired // new-style menu
@@ -24,34 +23,25 @@ export default class MenuParam extends React.PureComponent {
   }
 
   onChange = (ev) => {
-    const { items, onChange } = this.props
+    const { enumOptions, onChange } = this.props
 
-    // If "items" is set, this is a "deprecated_menu": values are integers.
-    const value = items ? +ev.target.value : ev.target.value
+    // HTML <option> value is always String; find the _real_ value from
+    // the String.
+    const strValue = ev.target.value
+    const value = enumOptions.find(({ value }) => String(value) === strValue).value
+
     onChange(value)
   }
 
-  get enumOptions () {
-    const { items, enumOptions } = this.props
-
-    if (items) {
-      return items.split('|').map((label, value) => { // value is the index
-        if (!label) return 'separator' // empty string is a separator
-        return { label, value }
-      })
-    } else {
-      return enumOptions
-    }
-  }
-
   render() {
-    const { items, name, fieldId, label, isReadOnly, value } = this.props
+    const { items, name, fieldId, label, enumOptions, isReadOnly, value } = this.props
 
-    const options = this.enumOptions.map((option, i) => {
+    const options = enumOptions.map((option, i) => {
       if (option === 'separator') {
         return <option disabled key={i} className='separator' />
       } else {
-        return <option key={option.value} value={option.value}>{option.label}</option>
+        // <option> value must always be String
+        return <option key={option.value} value={String(option.value)}>{option.label}</option>
       }
     })
 
@@ -61,7 +51,7 @@ export default class MenuParam extends React.PureComponent {
         <select
           name={name}
           id={fieldId}
-          value={value}
+          value={String(value)}
           onChange={this.onChange}
           disabled={isReadOnly}
         >

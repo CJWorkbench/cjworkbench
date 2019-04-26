@@ -245,7 +245,7 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
  *                 * { tabSlug, index }
  *                 * { beforeWfModuleId }
  *                 * { afterWfModuleId }
- * @param parameterValues {id_name:value} Object of parameters for the
+ * @param parameterValues {idName:value} Object of parameters for the
  *                        newly-created WfModule.
  */
 export function addModuleAction (moduleIdName, position, parameterValues) {
@@ -452,7 +452,7 @@ export function maybeRequestWfModuleFetchAction (wfModuleId) {
     const { workflow, wfModules, modules } = getState()
     const wfModule = wfModules[String(wfModuleId)]
     const module = wfModule.module ? modules[wfModule.module] : null
-    const hasVersionSelect = module ? !!module.param_fields.find(ps => ps.id_name === 'version_select') : null
+    const hasVersionSelect = module ? !!module.param_fields.find(ps => ps.idName === 'version_select') : null
 
     if (!hasVersionSelect) return
 

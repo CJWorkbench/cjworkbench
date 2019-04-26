@@ -12,7 +12,7 @@ describe('List', () => {
      * * `fieldId` HTML `id`. It's got to be unique for each field.
      * * `name` HTML `name`, used in unit tests. It's meant to be unique so
      *   unit tests can use it.
-     * * `id_name` the _param name_. It's the nested name.
+     * * `idName` the _param name_. It's the nested name.
      *
      * ... but as of [2019-04-18] we only had two props. So something had to
      * fall by the wayside. Today, it's `name`.
@@ -33,7 +33,7 @@ describe('List', () => {
       onSubmit={jest.fn()}
       childParameters={[
         {
-          id_name: 'x',
+          idName: 'x',
           type: 'string',
           name: 'X', // html name
           placeholder: ''

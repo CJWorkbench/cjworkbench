@@ -4,7 +4,7 @@ import Param from './Param'
 import { shallow } from 'enzyme'
 
 const field = (idName, type, extra={}) => ({
-  id_name: idName,
+  idName,
   name: '',
   type: type,
   multiline: false,
@@ -107,7 +107,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange' } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange' } })
         ],
         value: {
           menu_select: 1,
@@ -125,7 +125,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ]}),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: ['banana', 'orange'] } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
           menu_select: 'banana',
@@ -139,7 +139,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange' } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange' } })
         ],
         value: {
           menu_select: 0,
@@ -157,7 +157,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ]}),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: ['banana', 'orange'] } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
           menu_select: 'mango',
@@ -171,7 +171,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange', invert: true } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange', invert: true } })
         ],
         value: {
           menu_select: 1,
@@ -185,7 +185,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: 'Banana|Orange', invert: true } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange', invert: true } })
         ],
         value: {
           menu_select: 0,
@@ -203,7 +203,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ]}),
-          field('testme', 'string', { visible_if: { id_name: 'menu_select', value: [ 'banana', 'orange' ], invert: true } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: [ 'banana', 'orange' ], invert: true } })
         ],
         value: {
           menu_select: 'banana',
@@ -217,7 +217,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('show', 'checkbox'),
-          field('testme', 'string', { visible_if: { id_name: 'show', value: true } })
+          field('testme', 'string', { visibleIf: { idName: 'show', value: true } })
         ],
         value: {
           show: true,
@@ -231,7 +231,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('show', 'checkbox'),
-          field('testme', 'string', { visible_if: { id_name: 'show', value: true } })
+          field('testme', 'string', { visibleIf: { idName: 'show', value: true } })
         ],
         value: {
           show: false,
@@ -245,7 +245,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('hide', 'checkbox'),
-          field('testme', 'string', { visible_if: { id_name: 'hide', value: true, invert: true } })
+          field('testme', 'string', { visibleIf: { idName: 'hide', value: true, invert: true } })
         ],
         value: {
           hide: false,
@@ -259,8 +259,8 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('show1', 'checkbox'),
-          field('show2', 'checkbox', { visible_if: { id_name: 'show1', value: true } }),
-          field('testme', 'string', { visible_if: { id_name: 'show2', value: true } })
+          field('show2', 'checkbox', { visibleIf: { idName: 'show1', value: true } }),
+          field('testme', 'string', { visibleIf: { idName: 'show2', value: true } })
         ],
         value: {
           show1: false, // hides show2
@@ -276,7 +276,7 @@ describe('ParamsForm', () => {
       // and nix this test.
       const w = wrapper({
         fields: [
-          field('testme', 'string', { visible_if: { id_name: 'testme', value: true } })
+          field('testme', 'string', { visibleIf: { idName: 'testme', value: true } })
         ],
         value: {
           testme: ''
@@ -290,7 +290,7 @@ describe('ParamsForm', () => {
       // and nix this test.
       const w = wrapper({
         fields: [
-          field('testme', 'string', { visible_if: { id_name: 'testme', value: true } })
+          field('testme', 'string', { visibleIf: { idName: 'testme', value: true } })
         ],
         value: {
           testme: '1,3-9'

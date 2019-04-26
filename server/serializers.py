@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Dict, Any, Optional, Tuple
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -11,6 +11,29 @@ from server.settingsutils import workbench_user_display
 from server.models.param_spec import ParamSpec
 
 User = get_user_model()
+
+
+_NeedCamelRegex = re.compile('_(\w)')
+
+
+def _camelize(s: str) -> str:
+    """
+    Convert snake-case to camel-case.
+
+    >>> _camelize('id_name')
+    'idName'
+    """
+    return _NeedCamelRegex.sub(lambda s: s.group(1).upper(), s)
+
+
+def _camel_case_dict_factory(tuples: Tuple[str, Any]) -> Dict[str, Any]:
+    """
+    Given key-val pairs with snake-case keys, construct a camel-case dict.
+
+    >>> _camel_case_dict_factory([('id_name', 1), ('child_parameters', 2)])
+    {'idName': 1, 'childParameters': 2}
+    """
+    return dict((_camelize(k), v) for k, v in tuples)
 
 
 class AclEntrySerializer(serializers.ModelSerializer):
@@ -30,26 +53,24 @@ class ModuleSerializer(serializers.ModelSerializer):
     param_fields = serializers.SerializerMethodField()
     help_url = serializers.SerializerMethodField()
 
-    def serialize_param(self, p):
-        d = {
-            'id_name': p.id_name,
-            'type': str(p.param_type),
-            'name': p.name,
-            'multiline': p.multiline,
-            'placeholder': p.placeholder,
-            'items': p.items,
-            'enumOptions': p.options,
-            'visible_if': p.visible_if
+    def _serialize_param(self, p):
+        ret = p.to_dict(dict_factory=_camel_case_dict_factory)
+        if isinstance(p, ParamSpec.List):
+            ret['childDefault'] = p.dtype.inner_dtype.default
 
-        }
-        if p.child_parameters:
-            # must match ModuleVersion.param_fields
-            d['childParameters'] = [self.serialize_param(ParamSpec.from_dict(s)) for s in p.child_parameters]
-            d['childDefault'] = p.dtype.inner_dtype.default
-        return d
+        return ret
 
     def get_param_fields(self, obj):
-        return [self.serialize_param(p) for p in obj.param_fields]
+        """
+        Serializes as camel-case:
+
+            {
+                idName: 'myvar',
+                visibleIf: {...},
+                childParameters: {...}
+            }
+        """
+        return [self._serialize_param(p) for p in obj.param_fields]
 
     def get_help_url(self, obj):
         url_pattern = re.compile('^http(?:s?)://', re.IGNORECASE)

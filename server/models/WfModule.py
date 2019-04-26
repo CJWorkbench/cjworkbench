@@ -252,7 +252,7 @@ class WfModule(models.Model):
         # spec, with values maybe None
         secrets = {}
         for field in self.module_version.param_fields:
-            if field.param_type == ParamSpec.ParamType.SECRET:
+            if isinstance(field, ParamSpec.Secret):
                 secrets[field.id_name] = self.secrets.get(field.id_name)
 
         return Params(schema, values, secrets)

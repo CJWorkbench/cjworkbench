@@ -63,15 +63,14 @@ export function withJsonStringValues(WrappedComponent, defaultValue) {
 // props for Param, which have been sanitized/transformed
 export function paramFieldToParamProps (field) {
   return {
-    name: field.id_name, // NOTE! id_name on server is called name here, ala HTML form terminology
+    name: field.idName, // NOTE! idName on server is called name here, ala HTML form terminology
     label: field.name, // similarly, name is called label here
     type: field.type,
-    items: field.items,
-    enumOptions: field.enumOptions,
+    enumOptions: field.options, // may be undefined
     isMultiline: field.multiline || false,
     placeholder: field.placeholder || '',
-    visibleIf: field.visible_if || null,
-    childParameters: field.childParameters,
-    childDefault: field.childDefault
+    visibleIf: field.visibleIf, // may be null
+    childParameters: field.childParameters, // may be undefined
+    childDefault: field.childDefault // may be undefined
   }
 }

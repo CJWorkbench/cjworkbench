@@ -48,7 +48,7 @@ def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
 
     # raises ModuleVersion.DoesNotExist
     for field in module_version.param_fields:
-        if field.id_name == param and field.param_type == ParamSpec.ParamType.SECRET:
+        if field.id_name == param and isinstance(field, ParamSpec.Secret):
             return wf_module
     else:
         raise ModuleVersion.DoesNotExist

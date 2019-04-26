@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import SubmitButton from './SubmitButton'
 import VersionSelect, { VersionSelectSimpler } from './Custom/VersionSelect'
 
-function isFieldVersionSelect ({ type, id_name }) {
-  return type === 'custom' && (id_name === 'version_select' || id_name === 'version_select_simpler')
+function isFieldVersionSelect ({ type, idName }) {
+  return type === 'custom' && (idName === 'version_select' || idName === 'version_select_simpler')
 }
 
-function isFieldEditable ({ type, id_name }) {
+function isFieldEditable ({ type, idName }) {
   const StaticTypes = {
     statictext: null
   }
@@ -19,7 +19,7 @@ function isFieldEditable ({ type, id_name }) {
   }
 
   if (type in StaticTypes) return false
-  if (id_name in StaticCustomIdNames) return false
+  if (idName in StaticCustomIdNames) return false
 
   return true
 }
@@ -28,13 +28,13 @@ export default function ParamsFormFooter ({ wfModuleId, isWfModuleBusy, isReadOn
   const field = fields.find(isFieldVersionSelect)
 
   if (field) {
-    const Component = field.id_name === 'version_select' ? VersionSelect : VersionSelectSimpler
+    const Component = field.idName === 'version_select' ? VersionSelect : VersionSelectSimpler
     return (
       <Component
         wfModuleId={wfModuleId}
         isWfModuleBusy={isWfModuleBusy}
         isReadOnly={isReadOnly}
-        name={field.id_name}
+        name={field.idName}
         label={field.name}
       />
     )
@@ -51,7 +51,7 @@ ParamsFormFooter.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   fields: PropTypes.arrayOf(PropTypes.shape({
     type: PropTypes.string.isRequired,
-    id_name: PropTypes.string.isRequired,
+    idName: PropTypes.string.isRequired,
   }).isRequired).isRequired,
   isEditing: PropTypes.bool.isRequired,
 }
