@@ -8,7 +8,7 @@ from server.modules.converttexttonumber import render, InputNumberType, \
 
 
 class TestMigrateParams(unittest.TestCase):
-    def test_v0_to_v1(self):
+    def test_v0(self):
         self.assertEqual(
             migrate_params({
                 'extract': True,
@@ -19,7 +19,7 @@ class TestMigrateParams(unittest.TestCase):
             }),
             {
                 'extract': True,
-                'colnames': 'A,B,C',
+                'colnames': ['A', 'B', 'C'],
                 'input_number_type': 'any',
                 'input_locale': 'us',
                 'error_means_null': True,
@@ -27,7 +27,27 @@ class TestMigrateParams(unittest.TestCase):
             }
         )
 
-    def test_v1(self):
+    def test_v1_no_colnames(self):
+        self.assertEqual(
+            migrate_params({
+                'extract': False,
+                'colnames': '',
+                'input_number_type': 'float',
+                'input_locale': 'us',
+                'error_means_null': False,
+                'output_format': '{:,}',
+            }),
+            {
+                'extract': False,
+                'colnames': [],
+                'input_number_type': 'float',
+                'input_locale': 'us',
+                'error_means_null': False,
+                'output_format': '{:,}',
+            }
+        )
+
+    def test_v1_with_colnames(self):
         self.assertEqual(
             migrate_params({
                 'extract': False,
@@ -39,7 +59,27 @@ class TestMigrateParams(unittest.TestCase):
             }),
             {
                 'extract': False,
-                'colnames': 'A,B,C',
+                'colnames': ['A', 'B', 'C'],
+                'input_number_type': 'float',
+                'input_locale': 'us',
+                'error_means_null': False,
+                'output_format': '{:,}',
+            }
+        )
+
+    def test_v2(self):
+        self.assertEqual(
+            migrate_params({
+                'extract': False,
+                'colnames': ['A', 'B', 'C'],
+                'input_number_type': 'float',
+                'input_locale': 'us',
+                'error_means_null': False,
+                'output_format': '{:,}',
+            }),
+            {
+                'extract': False,
+                'colnames': ['A', 'B', 'C'],
                 'input_number_type': 'float',
                 'input_locale': 'us',
                 'error_means_null': False,
@@ -196,7 +236,7 @@ class TestExtractNumbers(unittest.TestCase):
             {'A': ['1', '2'], 'B': ['2', '3'], 'C': ['3', '4']}
         )
         result = render(table, {
-            'colnames': '',
+            'colnames': [],
             'extract': True,
             'input_number_type': 'integer',
             'input_locale': 'us',
@@ -212,7 +252,7 @@ class TestExtractNumbers(unittest.TestCase):
             {'A': ['1', '2'], 'B': ['2', '3'], 'C': ['3', '4']}
         )
         result = render(table, {
-            'colnames': 'A,B',
+            'colnames': ['A', 'B'],
             'extract': False,
             'input_number_type': 'any',
             'input_locale': 'us',

@@ -152,15 +152,13 @@ class Form:
     output_format: str = '{:,}'
 
     @classmethod
-    def parse(cls, colnames: str, input_number_type: str,
-              input_locale: str, **kwargs):
+    def parse(cls, input_number_type: str, input_locale: str, **kwargs):
         """
         Parse user's input from kwargs.
 
         User input is always valid.
         """
         return cls(
-            colnames=colnames.split(','),
             input_number_type=InputNumberType(input_number_type),
             input_locale=InputLocale(input_locale),
             **kwargs
@@ -247,7 +245,7 @@ def render(table, params):
         return {
             'dataframe': table_or_error,  # it's a DataFrame
             'column_formats': {c: form.output_format
-                               for c in params['colnames'].split(',')}
+                               for c in params['colnames']}
         }
 
 
@@ -280,8 +278,21 @@ def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert 'colnames' from str to list."""
+    # https://www.pivotaltracker.com/story/show/160463316
+    if params['colnames']:
+        return {**params, 'colnames': params['colnames'].split(',')}
+    else:
+        return {**params, 'colnames': []}
+
+
 def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     if 'type_format' in params:
         # Params v0: had 'type_format' instead of 'input_locale'
         params = _migrate_params_v0_to_v1(params)
+    if isinstance(params['colnames'], str):
+        # Params v1: 'colnames' was stored as comma-separated str
+        # (see https://www.pivotaltracker.com/story/show/160463316)
+        params = _migrate_params_v1_to_v2(params)
     return params

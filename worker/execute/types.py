@@ -51,8 +51,7 @@ class PromptingError(Exception):
             # 'names': user-visible colnames
             names = ', '.join([f'"{c}"' for c in self.column_names])
             # 'colnames': param value for the module
-            colnames = ','.join(self.column_names)
-            params = {'colnames': colnames}
+            params = {'colnames': self.column_names}
 
             if 'text' in self.wanted_types:
                 return QuickFix(f'Convert {names} to Text',

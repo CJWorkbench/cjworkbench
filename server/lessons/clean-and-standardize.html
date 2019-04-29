@@ -59,8 +59,12 @@
     </li>
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Convert to numbers"},{"type":"Module","index":4,"name":"Convert to numbers"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[4] || {}; return wfModule.moduleSlug === 'converttexttonumber' && wfModule.params['colnames'] === 'Population'"
-      >Likewise, use the menu <span>
+      data-test="
+        const wfModule = workflow.tabs[0].wfModules[4] || {}
+        const params = wfModule.params || {}
+        const colnames = params.colnames || []
+        return wfModule.moduleSlug === 'converttexttonumber' && colnames.length === 1 && colnames[0] === 'Population'
+      ">Likewise, use the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span> of the column <kbd>Population</kbd> to select <kbd>Convert to number</kbd>.
   </ol>

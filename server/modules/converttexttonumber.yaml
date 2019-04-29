@@ -9,6 +9,7 @@ parameters:
   type: multicolumn
   name: ''
   column_types: [ text, number ]  # we also convert numbers to numbers
+  deprecated_string_storage: false
 - id_name: extract
   type: checkbox
   name: Extract numbers
