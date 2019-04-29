@@ -8,6 +8,7 @@ parameters:
 - id_name: colnames
   name: ''
   type: multicolumn
+  deprecated_string_storage: false
 - id_name: input_format
   name: 'Input format'
   type: menu

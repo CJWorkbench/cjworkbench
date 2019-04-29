@@ -95,12 +95,11 @@ def render(table, params):
     if not params['colnames']:
         return table
 
-    columns = list(params['colnames'].split(','))
     input_format = InputFormat(params['input_format'])
 
     error_count = ErrorCount()
 
-    for column in columns:
+    for column in params['colnames']:
         in_series = table[column]
 
         kwargs = {**input_format.kwargs}
@@ -137,8 +136,24 @@ def _migrate_params_v0_to_v1(params):
     }
 
 
+def _migrate_params_v1_to_v2(params):
+    """
+    v1: 'colnames' (str comma-delimited)
+
+    v2: 'colnames' (List[str])
+
+    https://www.pivotaltracker.com/story/show/160463316
+    """
+    return {
+        **params,
+        'colnames': [c for c in params['colnames'].split(',') if c],
+    }
+
+
 def migrate_params(params):
     if 'type_date' in params:
         params = _migrate_params_v0_to_v1(params)
+    if isinstance(params['colnames'], str):
+        params = _migrate_params_v1_to_v2(params)
 
     return params
