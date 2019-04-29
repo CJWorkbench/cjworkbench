@@ -18,7 +18,7 @@ export default class ParamsForm extends React.PureComponent {
       _fetch: PropTypes.func.isRequired, // for DropZone
     }),
     fields: PropTypes.arrayOf(PropTypes.shape({
-      id_name: PropTypes.string.isRequired,
+      idName: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired, // or null or ''
       type: PropTypes.string.isRequired,
       items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
@@ -33,7 +33,7 @@ export default class ParamsForm extends React.PureComponent {
       ), // new-style menu/radio -- once we nix "items" ("menu_items" in spec), add .isRequired here
       multiline: PropTypes.bool.isRequired,
       placeholder: PropTypes.string.isRequired, // may be ''
-      visible_if: PropTypes.object, // JSON spec or null,
+      visibleIf: PropTypes.object, // JSON spec or null,
       childParameters: PropTypes.array,
       childDefault: PropTypes.object
     }).isRequired).isRequired,
@@ -121,30 +121,30 @@ export default class ParamsForm extends React.PureComponent {
     }
   }
 
-  isFieldVersionSelect = ({ type, id_name }) => {
-    return type === 'custom' && (id_name === 'version_select' || id_name === 'version_select_simpler')
+  isFieldVersionSelect = ({ type, idName }) => {
+    return type === 'custom' && (idName === 'version_select' || idName === 'version_select_simpler')
   }
 
   isFieldVisible = (field) => {
     // No visibility condition, we are visible
-    const condition = field.visible_if
+    const condition = field.visibleIf
     if (!condition) return true
 
     const invert = !!condition.invert
 
-    // missing id_name, default to visible
-    if (!condition.id_name) return true
+    // missing idName, default to visible
+    if (!condition.idName) return true
 
     // We are invisible if our parent is invisible
-    if (condition.id_name !== field.id_name) { // prevent simple infinite recurse; see droprowsbyposition.json
-      const parentField = this.props.fields.find(f => f.id_name === condition.id_name)
+    if (condition.idName !== field.idName) { // prevent simple infinite recurse; see droprowsbyposition.json
+      const parentField = this.props.fields.find(f => f.idName === condition.idName)
       if (parentField && !this.isFieldVisible(parentField)) { // recurse
         return false
       }
     }
 
     if ('value' in condition) {
-      const value = this.value[condition.id_name]
+      const value = this.value[condition.idName]
 
       // If the condition value is a boolean:
       if (typeof condition.value === 'boolean' || typeof condition.value === 'number') {
@@ -162,7 +162,7 @@ export default class ParamsForm extends React.PureComponent {
       }
 
       // Otherwise, if it's a deprecated_menu item:
-      const condField = this.props.fields.find(f => f.id_name === condition.id_name)
+      const condField = this.props.fields.find(f => f.idName === condition.idName)
       if (condField.items) {
         // deprecated_menu field
         const condValues = condition.value.split('|').map(cond => cond.trim())
@@ -205,17 +205,17 @@ export default class ParamsForm extends React.PureComponent {
     //
     // In the meantime: find and pass `secretName` to all params if a secret is set.
     const secretParam = fields.find(f => f.type === 'secret')
-    const secretParamName = secretParam ? secretParam.id_name : null
+    const secretParamName = secretParam ? secretParam.idName : null
     const secretName = (secretParamName && value && value[secretParamName]) ? value[secretParamName].name : null
 
     // TODO Revamp Refine and ValueFilter so the select-column and edit-value components
     // are nested together. Until then, we need to pass `selectedColumn` to the edit-value
     // components so they can load data.
     const columnParam = fields.find(f => f.type === 'column')
-    const selectedColumn = columnParam && value && value[columnParam.id_name] || null
+    const selectedColumn = columnParam && value && value[columnParam.idName] || null
     // TODO ditto JoinColumns
     const tabParam = fields.find(f => f.type === 'tab')
-    const selectedTab = tabParam && value && value[tabParam.id_name] || null
+    const selectedTab = tabParam && value && value[tabParam.idName] || null
 
     let className = 'module-card-params'
     if (isEditing) className += ' editing'
@@ -238,10 +238,10 @@ export default class ParamsForm extends React.PureComponent {
               isReadOnly={isReadOnly}
               isZenMode={isZenMode}
               api={api}
-              key={field.id_name}
+              key={field.idName}
               {...paramFieldToParamProps(field)}
-              upstreamValue={upstreamValue ? upstreamValue[field.id_name] : null}
-              value={value ? value[field.id_name] : null}
+              upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
+              value={value ? value[field.idName] : null}
               wfModuleId={wfModuleId}
               wfModuleOutputError={wfModuleOutputError}
               isWfModuleBusy={isWfModuleBusy}

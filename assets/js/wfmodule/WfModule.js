@@ -38,12 +38,12 @@ export class WfModule extends React.PureComponent {
       name: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
       param_fields: PropTypes.arrayOf(PropTypes.shape({
-        id_name: PropTypes.string.isRequired,
+        idName: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
         items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
         multiline: PropTypes.bool.isRequired,
         placeholder: PropTypes.string.isRequired, // may be ''
-        visible_if: PropTypes.object // JSON spec or null
+        visibleIf: PropTypes.object // JSON spec or null
       }).isRequired).isRequired
     }), // or null for no module
     index: PropTypes.number.isRequired,
@@ -85,11 +85,11 @@ export class WfModule extends React.PureComponent {
     editedNotes: null, // when non-null, input is focused
     isDataVersionModalOpen: false,
     isDragging: false,
-    edits: {} // id_name => newValue
+    edits: {} // idName => newValue
   }
 
   get hasFetch () {
-    return this.props.fields.some(f => f.type === 'custom' && (f.id_name === 'version_select' || f.id_name === 'version_select_simpler'))
+    return this.props.fields.some(f => f.type === 'custom' && (f.idName === 'version_select' || f.idName === 'version_select_simpler'))
   }
 
   get isEditing () {

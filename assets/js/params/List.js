@@ -9,7 +9,7 @@ class ChildParamsForm extends React.PureComponent {
   static propTypes = {
     childParameters: PropTypes.array.isRequired, // essentially a copy of the child_parameters key in the module YAML
     value: PropTypes.object.isRequired,
-    upstreamValue: PropTypes.object.isRequired, // id_name: upstreamValue for all child params
+    upstreamValue: PropTypes.object.isRequired, // idName: upstreamValue for all child params
     commonProps: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired, // passed in rather than parent needing to create a closure, which causes re-render
     onChange: PropTypes.func.isRequired, // func(index, value of all form fields) => undefined
@@ -34,13 +34,13 @@ class ChildParamsForm extends React.PureComponent {
       <>
         {childParameters.map(childParameter => (
           <Param
-            key={childParameter.id_name}
+            key={childParameter.idName}
             {...commonProps}
             {...paramFieldToParamProps(childParameter)}
-            name={childParameter.id_name /* should be `${name}[${childParameter.id_name}]` but that breaks event handlers */}
-            fieldId={`${fieldId}_${childParameter.id_name}`}
-            value={value[childParameter.id_name]}
-            upstreamValue={upstreamValue[childParameter.id_name]}
+            name={childParameter.idName /* should be `${name}[${childParameter.idName}]` but that breaks event handlers */}
+            fieldId={`${fieldId}_${childParameter.idName}`}
+            value={value[childParameter.idName]}
+            upstreamValue={upstreamValue[childParameter.idName]}
             onChange={this.onChangeParam}
           />
         ))}
@@ -119,7 +119,7 @@ export default class List extends React.PureComponent {
     // Map twice: once for each repeated set of childParameters, and once for each parameter within each set
     return (
       <>
-        <MaybeLabel fieldId={`${fieldId}_0_${childParameters[0].id_name}`} label={label} />
+        <MaybeLabel fieldId={`${fieldId}_0_${childParameters[0].idName}`} label={label} />
         <ul>
           {this.value.map((item, index) => (
             <li key={index}>

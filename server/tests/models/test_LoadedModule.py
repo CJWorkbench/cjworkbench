@@ -14,8 +14,7 @@ from server.models import LoadedModule
 import server.models.loaded_module
 import server.modules.pastecsv
 from server.tests.utils import clear_minio
-from server.models.param_spec import ParamDTypeDict, ParamDTypeString, \
-        ParamDTypeInteger, ParamDTypeBoolean
+from server.models.param_dtype import ParamDType
 
 
 class MockParams:
@@ -566,10 +565,10 @@ class LoadedModuleTest(unittest.TestCase):
 
     def test_migrate_params_default(self):
         lm = LoadedModule('x', '1', migrate_params_impl=None)
-        result = lm.migrate_params(ParamDTypeDict({
-            'missing': ParamDTypeString(default='x'),
-            'wrong_type': ParamDTypeBoolean(),
-            'ok': ParamDTypeInteger(),
+        result = lm.migrate_params(ParamDType.Dict({
+            'missing': ParamDType.String(default='x'),
+            'wrong_type': ParamDType.Boolean(),
+            'ok': ParamDType.Integer(),
         }), {'wrong_type': 'true', 'ok': 3})
         self.assertEqual(result, {'missing': 'x', 'wrong_type': True, 'ok': 3})
 
@@ -580,9 +579,9 @@ class LoadedModuleTest(unittest.TestCase):
                 'y': params['b']
             }
 
-        schema = ParamDTypeDict({
-            'x': ParamDTypeInteger(),
-            'y': ParamDTypeInteger(),
+        schema = ParamDType.Dict({
+            'x': ParamDType.Integer(),
+            'y': ParamDType.Integer(),
         })
 
         lm = LoadedModule('x', '1', migrate_params_impl=migrate_params)
@@ -602,7 +601,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('x', '1', migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
             lm.migrate_params(
-                ParamDTypeDict({'x': ParamDTypeString()}),
+                ParamDType.Dict({'x': ParamDType.String()}),
                 {}  # should have 'x' key
             )
 
@@ -610,7 +609,7 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('x', '1', migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
             lm.migrate_params(
-                ParamDTypeDict({'x': ParamDTypeString()}),
+                ParamDType.Dict({'x': ParamDType.String()}),
                 {'x': 2}  # should be str
             )
 
@@ -618,6 +617,6 @@ class LoadedModuleTest(unittest.TestCase):
         lm = LoadedModule('x', '1', migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
             lm.migrate_params(
-                ParamDTypeDict({}),
+                ParamDType.Dict({}),
                 {'x': 'should not be here'}
             )

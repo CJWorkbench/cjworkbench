@@ -112,7 +112,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                   "name": "",
                   "placeholder": "",
                   "type": "string",
-                  "visible_if": null,
+                  "visibleIf": null,
                 },
                 Object {
                   "id_name": "menu_select",
@@ -121,7 +121,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                   "name": "",
                   "placeholder": "",
                   "type": "menu",
-                  "visible_if": null,
+                  "visibleIf": null,
                 },
               ]
             }

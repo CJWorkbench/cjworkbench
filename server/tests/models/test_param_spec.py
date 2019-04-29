@@ -1,121 +1,165 @@
 import unittest
-from server.models.param_spec import ParamDType, ParamSpec
+from server.models.param_dtype import ParamDType as DT
+from server.models.param_spec import ParamSpec
 
 
-DT = ParamDType
+class ParamSpecTest(unittest.TestCase):
+    maxDiff = None
 
-
-class DTypeCoerceTest(unittest.TestCase):
-    def test_coerce_str_to_str(self):
-        self.assertEqual(DT.String().coerce('blah'), 'blah')
-
-    def test_coerce_none_to_str(self):
-        self.assertEqual(DT.String().coerce(None), '')
-
-    def test_coerce_non_str_to_str(self):
-        self.assertEqual(DT.String().coerce({'a': 'b'}), "{'a': 'b'}")
-
-    def test_coerce_str_to_column(self):
-        self.assertEqual(DT.Column().coerce('blah'), 'blah')
-
-    def test_coerce_str_to_multicolumn(self):
-        self.assertEqual(DT.Multicolumn().coerce('blah,beep'), 'blah,beep')
-
-    def test_map_validate_ok(self):
-        dtype = ParamDType.Map(value_dtype=ParamDType.String())
-        value = {'a': 'b', 'c': 'd'}
-        dtype.validate(value)
-
-    def test_map_validate_bad_value_dtype(self):
-        dtype = ParamDType.Map(value_dtype=ParamDType.String())
-        value = {'a': 1, 'c': 2}
-        with self.assertRaises(ValueError):
-            dtype.validate(value)
-
-    def test_map_parse(self):
-        dtype = ParamDType.parse({
-            'type': 'map',
-            'value_dtype': {
-                'type': 'dict',  # test nesting
-                'properties': {
-                    'foo': {'type': 'string'},
-                },
-            },
-        })
-        self.assertEqual(repr(dtype), repr(ParamDType.Map(
-            value_dtype=ParamDType.Dict(properties={
-                'foo': ParamDType.String(),
-            })
-        )))
-
-    def test_map_coerce_none(self):
-        dtype = ParamDType.Map(value_dtype=ParamDType.String())
-        value = dtype.coerce(None)
-        self.assertEqual(value, {})
-
-    def test_map_coerce_non_dict(self):
-        dtype = ParamDType.Map(value_dtype=ParamDType.String())
-        value = dtype.coerce([1, 2, 3])
-        self.assertEqual(value, {})
-
-    def test_map_coerce_dict_wrong_value_type(self):
-        dtype = ParamDType.Map(value_dtype=ParamDType.String())
-        value = dtype.coerce({'a': 1, 'b': None})
-        self.assertEqual(value, {'a': '1', 'b': ''})
-
-    def test_map_omit_missing_table_columns(self):
-        # Currently, "omit" means "set empty". There's a valid use case for
-        # actually _removing_ colnames here, but [adamhooper, 2019-01-04] we
-        # haven't defined that case yet.
-        dtype = ParamDType.Map(value_dtype=ParamDType.Column())
-        value = dtype.omit_missing_table_columns({'a': 'X', 'b': 'Y'}, {'X'})
-        self.assertEqual(value, {'a': 'X', 'b': ''})
-
-    def test_multichartseries_omit_missing_table_columns(self):
-        dtype = ParamDType.Multichartseries()
-        value = dtype.omit_missing_table_columns([
-            {'column': 'X', 'color': '#abcdef'},
-            {'column': 'Y', 'color': '#abc123'},
-        ], {'X', 'Z'})
-        self.assertEqual(value, [{'column': 'X', 'color': '#abcdef'}])
-
-
-class ParamSpecDTypeTest(unittest.TestCase):
     def test_bool_radio_default_false(self):
         # Handle odd edge case seen on production:
         #
         # If enum options are booleans and the first is True, and the _default_
         # is False, don't overwrite the default.
-        param_spec = ParamSpec(
-            'p',
-            ParamSpec.ParamType.RADIO,
+        param_spec = ParamSpec.from_dict(dict(
+            id_name='r',
+            type='radio',
             options=[
                 {'value': True, 'label': 'First'},
                 {'value': False, 'label': 'Second'},
             ],
             default=False  # a valid option
-        )
+        ))
         dtype = param_spec.dtype
         self.assertEqual(dtype.default, False)
 
-
     def test_list_dtype(self):
         # Check that ParamSpec's with List type produce correct nested DTypes
-        param_spec = ParamSpec(
-            'p',
-            ParamSpec.ParamType.LIST,
-            child_parameters = [
+        param_spec = ParamSpec.from_dict(dict(
+            id_name='p',
+            type='list',
+            child_parameters=[
                 {'id_name': 'intparam', 'type': 'integer', 'name': 'my number'},
-                {'id_name': 'colparam', 'type': 'column', 'name': 'my column' }
+                {'id_name': 'colparam', 'type': 'column', 'name': 'my column'},
             ]
-        )
+        ))
+        self.assertEqual(param_spec, ParamSpec.List(
+            id_name='p',
+            child_parameters=[
+                ParamSpec.Integer(id_name='intparam', name='my number'),
+                ParamSpec.Column(id_name='colparam', name='my column'),
+            ]
+        ))
         dtype = param_spec.dtype
         expected_dtype = DT.List(
             DT.Dict({
-                'intparam' : DT.Integer(),
+                'intparam': DT.Integer(),
                 'colparam': DT.Column(),
-        }))
+            })
+        )
 
         # effectively do a deep compare with repr
         self.assertEqual(repr(dtype), repr(expected_dtype))
 
+    def test_parse_menu_deprecated_items(self):
+        param_spec = ParamSpec.from_dict(dict(
+            type='menu',
+            id_name='id',
+            name='name',
+            menu_items='keep||delete'
+        ))
+        self.assertEqual(param_spec, ParamSpec.Menu(
+            id_name='id',
+            name='name',
+            default=0,
+            options=[ParamSpec.Menu.Option.Value('keep', 0),
+                     ParamSpec.Menu.Option.Separator(),
+                     ParamSpec.Menu.Option.Value('delete', 2)]
+        ))
+
+    def test_parse_menu_options(self):
+        param_spec = ParamSpec.from_dict(dict(
+            type='menu',
+            id_name='id',
+            name='name',
+            options=[
+                {'value': True, 'label': 't'},
+                'separator',
+                {'value': False, 'label': 'f'},
+            ]
+        ))
+        self.assertEqual(param_spec, ParamSpec.Menu(
+            id_name='id',
+            name='name',
+            default=True,  # Menu value can't be null. TODO reconsider?
+            options=[ParamSpec.Menu.Option.Value('t', True),
+                     ParamSpec.Menu.Option.Separator(),
+                     ParamSpec.Menu.Option.Value('f', False)]
+        ))
+
+    def test_parse_radio_deprecated_items(self):
+        param_spec = ParamSpec.from_dict(dict(
+            type='radio',
+            id_name='id',
+            name='name',
+            radio_items='keep|delete'
+        ))
+        self.assertEqual(param_spec, ParamSpec.Radio(
+            id_name='id',
+            name='name',
+            options=[ParamSpec.Radio.Option('keep', 0),
+                     ParamSpec.Radio.Option('delete', 1)],
+            default=0
+        ))
+
+    def test_parse_radio_options(self):
+        param_spec = ParamSpec.from_dict(dict(
+            type='radio',
+            id_name='id',
+            name='name',
+            options=[
+                {'value': True, 'label': 't'},
+                {'value': False, 'label': 'f'},
+            ]
+        ))
+        self.assertEqual(param_spec, ParamSpec.Radio(
+            id_name='id',
+            name='name',
+            options=[ParamSpec.Radio.Option('t', True),
+                     ParamSpec.Radio.Option('f', False)],
+            default=True
+        ))
+
+    def test_to_dict(self):
+        param_spec = ParamSpec.List(
+            id_name='l',
+            child_parameters=[
+                ParamSpec.String(id_name='s', default='foo'),
+                ParamSpec.Column(id_name='c', visible_if=dict(
+                    id_name='s', value='iddqd'
+                )),
+            ]
+        )
+        param_dict = param_spec.to_dict()
+        self.assertEqual(param_dict, {
+            'type': 'list',
+            'id_name': 'l',
+            'name': '',
+            'visible_if': None,
+            'child_parameters': [
+                {
+                    'type': 'string',
+                    'id_name': 's',
+                    'name': '',
+                    'default': 'foo',
+                    'multiline': False,
+                    'placeholder': '',
+                    'visible_if': None,
+                },
+                {
+                    'type': 'column',
+                    'id_name': 'c',
+                    'placeholder': '',
+                    'name': '',
+                    'tab_parameter': None,
+                    'column_types': None,
+                    'visible_if': {
+                        'id_name': 's',
+                        'value': 'iddqd',
+                    },
+                },
+            ]
+        })
+        # Just to make sure our unit-test is sane: verify from_dict(to_json)
+        # returns the original.
+        self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
