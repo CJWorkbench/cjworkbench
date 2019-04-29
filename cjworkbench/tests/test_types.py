@@ -299,6 +299,17 @@ class ProcessResultTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unsupported dtype'):
             ProcessResult.coerce(dataframe)
 
+    def test_coerce_validate_infinity_not_supported(self):
+        # Make 'A': [1, -inf, +inf, nan]
+        num = pd.Series([1, -2, 3, np.nan])
+        denom = pd.Series([1, 0, 0, 1])
+        dataframe = pd.DataFrame({'A': num / denom})
+        with self.assertRaisesRegex(ValueError, (
+            "invalid value -inf in column 'A', row 1 "
+            '\(infinity is not supported\)'
+        )):
+            ProcessResult.coerce(dataframe)
+
     def test_coerce_validate_unsupported_numpy_dtype_unsupported(self):
         # We can't check if a numpy dtype == 'category'.
         # https://github.com/pandas-dev/pandas/issues/16697

@@ -38,6 +38,15 @@ def validate_series(series: pd.Series) -> None:
     """
     dtype = series.dtype
     if dtype in SupportedNumberDtypes:
+        infinities = series.isin([np.inf, -np.inf])
+        if infinities.any():
+            idx = series[infinities].index[0]
+            raise ValueError(
+                (
+                    "invalid value %r in column %r, row %r "
+                    "(infinity is not supported)"
+                ) % (series[idx], series.name, idx)
+            )
         return
     elif is_datetime64_dtype(dtype):  # rejects datetime64ns
         return
