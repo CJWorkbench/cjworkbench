@@ -96,7 +96,7 @@ class FetchTests(DbTestCase):
 
         # We're testing what happens if wf_module disappears after save, before
         # update. To mock that, delete after fetch, when saving result.
-        async def fake_save(*args, **kwargs):
+        async def fake_save(workflow_id, wf_module, *args, **kwargs):
             @database_sync_to_async
             def do_delete():
                 # We can't just call wf_module.delete(), because that will
