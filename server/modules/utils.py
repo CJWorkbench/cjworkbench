@@ -345,6 +345,7 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> pd.DataFrame:
     except xlrd.XLRDError as err:
         return ProcessResult(error=f'Error reading Excel file: {str(err)}')
 
+    data.columns = [str(c) for c in data.columns]
     autocast_dtypes_in_place(data)
     return data
 

@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 import io
-import os.path
+from pathlib import Path
 import unittest
 from unittest.mock import patch
 import numpy as np
@@ -17,6 +17,9 @@ from server.modules.utils import build_globals_for_eval, parse_bytesio, \
         fetch_external_workflow, spooled_data_from_url, \
         autocast_dtypes_in_place
 from server.tests.utils import DbTestCase
+
+
+TestDataPath = Path(__file__).parent.parent / 'test_data'
 
 
 class SafeExecTest(unittest.TestCase):
@@ -228,13 +231,18 @@ class ParseBytesIoTest(SimpleTestCase):
         expected = ProcessResult(pd.DataFrame({'A': ['B'], 'C': ['NA']}))
         self.assertEqual(result, expected)
 
-    def test_excel(self):
-        with open(os.path.join(os.path.dirname(__file__), '..', 'test_data',
-                               'example.xls'), 'rb') as file:
+    def test_xls(self):
+        with (TestDataPath / 'example.xls').open('rb') as file:
             result = parse_bytesio(file, 'application/vnd.ms-excel', None)
         expected = ProcessResult(
             pd.DataFrame({'foo': [1, 2], 'bar': [2, 3]})
         )
+        self.assertEqual(result, expected)
+
+    def test_xlsx_cast_colnames_to_str(self):
+        with (TestDataPath / 'all-numeric.xlsx').open('rb') as file:
+            result = parse_bytesio(file, 'application/vnd.ms-excel', None)
+        expected = ProcessResult(pd.DataFrame({'1': [2]}))
         self.assertEqual(result, expected)
 
 
