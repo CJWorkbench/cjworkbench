@@ -17,17 +17,17 @@ import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } f
  */
 export const moduleParamsBuilders = {
   'selectcolumns': buildSelectColumnsParams,
-  'duplicatecolumns': genericAddColumn('colnames'),
+  'duplicatecolumns': genericAddColumn('colnames', false),
   'filter': buildFilterParams,
   'editcells': buildEditCellsParams,
   'renamecolumns': buildRenameColumnsParams,
   'reordercolumns': buildReorderColumnsParams,
   'sort': buildSortColumnsParams,
-  'converttexttonumber': genericAddColumn('colnames'),
-  'clean-text': genericAddColumn('colnames'),
-  'convert-date': genericAddColumn('colnames'),
-  'converttotext': genericAddColumn('colnames'),
-  'formatnumbers': genericAddColumn('colnames')
+  'converttexttonumber': genericAddColumn('colnames', true),
+  'clean-text': genericAddColumn('colnames', true),
+  'convert-date': genericAddColumn('colnames', true),
+  'converttotext': genericAddColumn('colnames', true),
+  'formatnumbers': genericAddColumn('colnames', true)
 }
 
 /**
@@ -238,9 +238,14 @@ function newParamsUnlessNoChange (oldParams, newParams) {
   return null
 }
 
-function genericAddColumn (key) {
+function genericAddColumn (key, deprecatedStringStorage) {
   return (oldParams, params) => {
-    const colnames = oldParams ? (oldParams[key] || '').split(',').filter(s => !!s) : []
+    let colnames
+    if (deprecatedStringStorage) {
+      colnames = oldParams ? (oldParams[key] || '').split(',').filter(s => !!s) : []
+    } else {
+      colnames = oldParams ? (oldParams[key] || []) : []
+    }
     if (!params.hasOwnProperty('columnKey'))  throw new Error('Expected "columnKey" column to add')
     const colname = params.columnKey
 
@@ -252,7 +257,8 @@ function genericAddColumn (key) {
       const newParams = { ...params }
       const colname = newParams.columnKey
       delete newParams.columnKey
-      newParams[key] = [ ...colnames, colname ].join(',')
+      const newColnames = [ ...colnames, colname ]
+      newParams[key] = deprecatedStringStorage ? newColnames.join(',') : newColnames
 
       return newParamsUnlessNoChange(oldParams, newParams)
     }

@@ -2,10 +2,23 @@ from collections import namedtuple
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.duplicatecolumns import render
+from server.modules.duplicatecolumns import migrate_params, render
 
 
 RenderColumn = namedtuple('RenderColumn', ('format',))
+
+
+class MigrateParamsTests(unittest.TestCase):
+    def test_v0_empty(self):
+        self.assertEqual(migrate_params({'colnames': ''}), {'colnames': []})
+
+    def test_v0_nonempty(self):
+        self.assertEqual(migrate_params({'colnames': 'A,B,C'}),
+                         {'colnames': ['A', 'B', 'C']})
+
+    def test_v1(self):
+        self.assertEqual(migrate_params({'colnames': ['A', 'B']}),
+                         {'colnames': ['A', 'B']})
 
 
 class DuplicateColumnsTests(unittest.TestCase):
@@ -20,7 +33,8 @@ class DuplicateColumnsTests(unittest.TestCase):
             'B': RenderColumn('{:,.2f}'),
             'C': RenderColumn('{:,d}'),
         }
-        result = render(table, {'colnames': 'A,C'}, input_columns=input_columns)
+        result = render(table, {'colnames': ['A', 'C']},
+                        input_columns=input_columns)
         expected = pd.DataFrame({
             'A': [1, 2],
             'Copy of A': [1, 2],
@@ -47,7 +61,8 @@ class DuplicateColumnsTests(unittest.TestCase):
             'Copy of A 1': RenderColumn('{:,.1%}'),
             'C': RenderColumn('{:,d}'),
         }
-        result = render(table, {'colnames': 'A'}, input_columns=input_columns)
+        result = render(table, {'colnames': ['A']},
+                        input_columns=input_columns)
         expected = pd.DataFrame({
             'A': [1, 2],
             'Copy of A 2': [1, 2],

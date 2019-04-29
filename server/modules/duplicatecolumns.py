@@ -1,15 +1,10 @@
-from .utils import parse_multicolumn_param
-
-
 def render(table, params, *, input_columns):
-    dup_columns, _ = parse_multicolumn_param(params['colnames'], table)
-
     # we'll modify `table` in-place and build up `column_formats`
     column_formats = {}
 
     colnames = set(table.columns)
 
-    for c in dup_columns:
+    for c in params['colnames']:
         new_column_name = f'Copy of {c}'
 
         # Append numbers if column name happens to exist
@@ -30,3 +25,19 @@ def render(table, params, *, input_columns):
         'dataframe': table,
         'column_formats': column_formats,
     }
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: 'colnames' is comma-separated str. v1: 'colnames' is List.
+    """
+    if params['colnames']:
+        return {'colnames': params['colnames'].split(',')}
+    else:
+        return {'colnames': []}
+
+
+def migrate_params(params):
+    if isinstance(params['colnames'], str):
+        params = _migrate_params_v0_to_v1(params)
+    return params

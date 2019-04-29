@@ -43,20 +43,20 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: { tab_slug: 'tab-2' },
-        11: { tab_slug: 'tab-2', module: 'converttotext', params: { column: 'A' }}
+        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] }}
       },
       modules: {
         loadurl: {},
-        'converttotext': {}
+        duplicatecolumns: {}
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(10, 'converttotext', false, { columnKey: 'B' })(dispatch, getState)
+    updateTableAction(10, 'duplicatecolumns', false, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 11 ])
-    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: 'B' } ])
+    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: ['A', 'B'] } ])
   })
 
-  it('should update an existing, selected module', () => {
+  it('should update an existing, selected module with deprecatedStringStorage', () => {
     const getState = () => ({
       tabs: {
         'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
@@ -95,6 +95,26 @@ describe("UpdateTableAction actions", () => {
     const dispatch = jest.fn()
     updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'clean-text', { afterWfModuleId: 11 }, { colnames: 'B' } ])
+    expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
+  })
+
+  it('should update an existing, selected module', () => {
+    const getState = () => ({
+      tabs: {
+        'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
+      },
+      wfModules: {
+        10: {},
+        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] }}
+      },
+      modules: {
+        loadurl: {},
+        duplicatecolumns: {}
+      }
+    })
+    const dispatch = jest.fn()
+    updateTableAction(11, 'duplicatecolumns', false, { columnKey: 'B' })(dispatch, getState)
+    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: ['A', 'B'] } ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
