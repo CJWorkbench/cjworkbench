@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from collections import namedtuple
 import datetime
 import json
 import unittest
@@ -9,8 +10,13 @@ from pandas.testing import assert_frame_equal
 from linechart import render, Form, YColumn, GentleValueError, migrate_params
 
 
+Column = namedtuple('Column', ('name', 'type', 'format'))
+
+
 # Minimum valid table
 min_table = pd.DataFrame({'A': [1, 2], 'B': [3, 4]}, dtype=np.number)
+min_columns = {'A': Column('A', 'number', '{:,}'),
+               'B': Column('B', 'number', '{:,}')}
 
 
 class MigrateParamsTest(unittest.TestCase):
@@ -82,48 +88,60 @@ class FormTest(unittest.TestCase):
 
     def test_missing_x_param(self):
         form = self.build_form(x_column='')
-        table = pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
         with self.assertRaisesRegex(
             GentleValueError,
             'Please choose an X-axis column'
         ):
-            form.make_chart(table)
+            form.make_chart(
+                pd.DataFrame({'A': [1, 2], 'B': [2, 3]}),
+                {'A': Column('A', 'number', '{:}'),
+                 'B': Column('B', 'number', '{:}')}
+            )
 
     def test_only_one_x_value(self):
         form = self.build_form(x_column='A')
-        table = pd.DataFrame({'A': [1, 1], 'B': [2, 3]})
         with self.assertRaisesRegex(
             ValueError,
             'Column "A" has only 1 value. '
             'Please select a column with 2 or more values.'
         ):
-            form.make_chart(table)
+            form.make_chart(
+                pd.DataFrame({'A': [1, 1], 'B': [2, 3]}),
+                {'A': Column('A', 'number', '{:}'),
+                 'B': Column('B', 'number', '{:}')}
+            )
 
     def test_only_one_x_value_not_at_index_0(self):
         form = self.build_form(x_column='A')
-        table = pd.DataFrame({'A': [np.nan, 1], 'B': [2, 3]})
         with self.assertRaisesRegex(
             ValueError,
             'Column "A" has only 1 value. '
             'Please select a column with 2 or more values.'
         ):
-            form.make_chart(table)
+            form.make_chart(
+                pd.DataFrame({'A': [np.nan, 1], 'B': [2, 3]}),
+                {'A': Column('A', 'number', '{:}'),
+                 'B': Column('B', 'number', '{:}')}
+            )
 
     def test_no_x_values(self):
         form = self.build_form(x_column='A')
-        table = pd.DataFrame({'A': [np.nan, np.nan], 'B': [2, 3]},
-                             dtype=np.number)
         with self.assertRaisesRegex(
             ValueError,
             'Column "A" has no values. '
             'Please select a column with data.'
         ):
-            form.make_chart(table)
+            form.make_chart(
+                pd.DataFrame({'A': [np.nan, np.nan], 'B': [2, 3]}),
+                {'A': Column('A', 'number', '{:}'),
+                 'B': Column('B', 'number', '{:}')}
+            )
 
     def test_x_numeric(self):
         form = self.build_form(x_column='A')
-        chart = form.make_chart(min_table)
+        chart = form.make_chart(min_table, min_columns)
         assert np.array_equal(chart.x_series.series, [1, 2])
+        self.assertEqual(chart.x_axis_tick_format, ',r')
 
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'quantitative')
@@ -136,7 +154,9 @@ class FormTest(unittest.TestCase):
         form = self.build_form(x_column='A')
         table = pd.DataFrame({'A': [1, np.nan, 3], 'B': [3, 4, 5]},
                              dtype=np.number)
-        chart = form.make_chart(table)
+        chart = form.make_chart(table,
+                                {'A': Column('A', 'number', '{:}'),
+                                 'B': Column('B', 'number', '{:}')})
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'quantitative')
         self.assertEqual(vega['data']['values'], [
@@ -146,7 +166,11 @@ class FormTest(unittest.TestCase):
 
     def test_x_text(self):
         form = self.build_form(x_column='A')
-        chart = form.make_chart(pd.DataFrame({'A': ['a', 'b'], 'B': [1, 2]}))
+        chart = form.make_chart(
+            pd.DataFrame({'A': ['a', 'b'], 'B': [1, 2]}),
+            {'A': Column('A', 'text', None),
+             'B': Column('B', 'number', '{:}')}
+        )
         assert np.array_equal(chart.x_series.series, ['a', 'b'])
 
         vega = chart.to_vega()
@@ -156,10 +180,30 @@ class FormTest(unittest.TestCase):
             {'x': 'b', 'line': 'B', 'y': 2},
         ])
 
+    def test_x_text_sort(self):
+        form = self.build_form(x_column='A')
+        chart = form.make_chart(
+            pd.DataFrame({'A': ['b', 'a'], 'B': [1, 2]}),
+            {'A': Column('A', 'text', None),
+             'B': Column('B', 'number', '{:}')}
+        )
+        assert np.array_equal(chart.x_series.series, ['b', 'a'])
+
+        vega = chart.to_vega()
+        self.assertEqual(vega['encoding']['x']['type'], 'ordinal')
+        self.assertEqual(vega['data']['values'], [
+            {'x': 'b', 'line': 'B', 'y': 1},
+            {'x': 'a', 'line': 'B', 'y': 2},
+        ])
+        self.assertEqual(vega['encoding']['x']['sort'], None)
+        self.assertEqual(vega['encoding']['order']['type'], None)
+
     def test_x_text_drop_na_x(self):
         form = self.build_form(x_column='A')
         table = pd.DataFrame({'A': ['a', None, 'c'], 'B': [1, 2, 3]})
-        chart = form.make_chart(table)
+        chart = form.make_chart(table,
+                                {'A': Column('A', 'text', None),
+                                 'B': Column('B', 'number', '{:}')})
         assert np.array_equal(chart.x_series.series, ['a', None, 'c'])
 
         vega = chart.to_vega()
@@ -178,14 +222,19 @@ class FormTest(unittest.TestCase):
             'the X axis. Please change the input table to have 10 or fewer '
             'rows, or convert "A" to number or date.'
         ):
-            form.make_chart(table)
+            form.make_chart(table,
+                            {'A': Column('A', 'text', None),
+                             'B': Column('B', 'number', '{:}')})
 
     def test_x_datetime(self):
         form = self.build_form(x_column='A')
         t1 = datetime.datetime(2018, 8, 29, 13, 39)
         t2 = datetime.datetime(2018, 8, 29, 13, 40)
         table = pd.DataFrame({'A': [t1, t2], 'B': [3, 4]})
-        chart = form.make_chart(table)
+        chart = form.make_chart(table,
+                                # TODO use datetime format
+                                {'A': Column('A', 'datetime', None),
+                                 'B': Column('B', 'number', '{:}')})
         assert np.array_equal(
             chart.x_series.series,
             np.array([t1, t2], dtype='datetime64[ms]')
@@ -203,7 +252,11 @@ class FormTest(unittest.TestCase):
         t1 = datetime.datetime(2018, 8, 29, 13, 39)
         t2 = datetime.datetime(2018, 8, 29, 13, 40)
         table = pd.DataFrame({'A': [t1, None, t2], 'B': [3, 4, 5]})
-        chart = form.make_chart(table)
+        chart = form.make_chart(table,
+                                # TODO use datetime format
+                                {'A': Column('A', 'datetime', None),
+                                 'B': Column('B', 'number', '{:}')})
+
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'temporal')
         self.assertEqual(vega['data']['values'], [
@@ -221,7 +274,10 @@ class FormTest(unittest.TestCase):
             'B': [4, np.nan, 6],
             'C': [7, 8, np.nan],
         })
-        chart = form.make_chart(table)
+        chart = form.make_chart(table,
+                                {'A': Column('A', 'number', '{:}'),
+                                 'B': Column('B', 'number', '{:}'),
+                                 'C': Column('C', 'number', '{:}')})
         vega = chart.to_vega()
         self.assertEqual(vega['data']['values'], [
             {'x': 1, 'line': 'B', 'y': 4.0},
@@ -236,7 +292,7 @@ class FormTest(unittest.TestCase):
             GentleValueError,
             'Please choose a Y-axis column'
         ):
-            form.make_chart(min_table)
+            form.make_chart(min_table, min_columns)
 
     def test_invalid_y_same_as_x(self):
         form = self.build_form(y_columns=[YColumn('A', '#ababab')])
@@ -244,7 +300,7 @@ class FormTest(unittest.TestCase):
             ValueError,
             'Cannot plot Y-axis column "A" because it is the X-axis column'
         ):
-            form.make_chart(min_table)
+            form.make_chart(min_table, min_columns)
 
     def test_invalid_y_missing_values(self):
         form = self.build_form(
@@ -259,7 +315,7 @@ class FormTest(unittest.TestCase):
             ValueError,
             'Cannot plot Y-axis column "C" because it has no values'
         ):
-            form.make_chart(table)
+            form.make_chart(table, min_columns)
 
     def test_invalid_y_not_numeric(self):
         form = self.build_form(y_columns=[YColumn('B', '#123456')])
@@ -272,11 +328,13 @@ class FormTest(unittest.TestCase):
             'Cannot plot Y-axis column "B" because it is not numeric. '
             'Convert it to a number before plotting it.'
         ):
-            form.make_chart(table)
+            form.make_chart(table,
+                            {'A': Column('A', 'number', '{:}'),
+                             'B': Column('B', 'text', None)})
 
     def test_default_title_and_labels(self):
         form = self.build_form(title='', x_axis_label='', y_axis_label='')
-        chart = form.make_chart(min_table)
+        chart = form.make_chart(min_table, min_columns)
         vega = chart.to_vega()
         self.assertEqual(vega['title'], 'Line Chart')
         self.assertEqual(vega['encoding']['x']['axis']['title'], 'A')
@@ -291,7 +349,14 @@ class FormTest(unittest.TestCase):
             'y_columns': [],
         }
         table = pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
-        result = render(table, DefaultParams)
+        result = render(
+            table,
+            DefaultParams,
+            input_columns={
+                'A': Column('A', 'number', '{:,d}'),
+                'B': Column('B', 'number', '{:,.2f}'),
+            }
+        )
         self.assertResult(result, (
             table,
             '',
@@ -300,13 +365,20 @@ class FormTest(unittest.TestCase):
 
     def test_integration(self):
         table = pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
-        result = render(table, {
-            'title': 'TITLE',
-            'x_column': 'A',
-            'y_columns': [{'column': 'B', 'color': '#123456'}],
-            'x_axis_label': 'X LABEL',
-            'y_axis_label': 'Y LABEL'
-        })
+        result = render(
+            table,
+            {
+                'title': 'TITLE',
+                'x_column': 'A',
+                'y_columns': [{'column': 'B', 'color': '#123456'}],
+                'x_axis_label': 'X LABEL',
+                'y_axis_label': 'Y LABEL'
+            },
+            input_columns={
+                'A': Column('A', 'number', '{:,d}'),
+                'B': Column('B', 'number', '{:,.2f}'),
+            }
+        )
         assert_frame_equal(result[0], table)
         self.assertEqual(result[1], '')
         text = json.dumps(result[2])

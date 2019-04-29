@@ -1,0 +1,29 @@
+id_name: columnchart
+name: Column Chart
+category: Visualize
+icon: chart
+description: Visualize data in a column chart.
+html_output: true
+help_url: modules/visualize/column-chart
+parameters:
+- id_name: title
+  type: string
+  name: ''
+  placeholder: Chart title
+- id_name: x_axis_label
+  name: X axis
+  type: string
+  placeholder: Label
+- id_name: x_column
+  type: column
+  name: ''
+  column_types: [ text ]
+  placeholder: Select column
+- id_name: y_axis_label
+  name: Y axis
+  type: string
+  placeholder: Label
+- id_name: y_columns
+  name: Columns
+  type: multichartseries
+  placeholder: Select column

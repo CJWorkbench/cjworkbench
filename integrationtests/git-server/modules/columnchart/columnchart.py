@@ -2,12 +2,33 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+from string import Formatter
 from typing import Any, Dict, List
+import numpy as np
 import pandas
 from pandas.api.types import is_numeric_dtype
 
 
 MaxNBars = 500
+
+
+def python_format_to_d3_tick_format(python_format: str) -> str:
+    """
+    Build a d3-scale tickFormat specification based on Python str.
+
+    >>> python_format_to_d3_tick_format('{:,.2f}')
+    ',.2f'
+    >>> # d3-scale likes to mess about with precision. Its "r" format does
+    >>> # what we want; if we left it blank, we'd see format(30) == '3e+1'.
+    >>> python_format_to_d3_tick_format('{:,}')
+    ',r'
+    """
+    # Formatter.parse() returns Iterable[(literal, field_name, format_spec,
+    # conversion)]
+    specifier = next(Formatter().parse(python_format))[2]
+    if not specifier or specifier[-1] not in 'bcdoxXneEfFgGn%':
+        specifier += 'r'
+    return specifier
 
 
 class GentleValueError(ValueError):
@@ -50,37 +71,71 @@ class SeriesParams:
     y_axis_label: str
     x_series: XSeries
     y_columns: List[YSeries]
+    y_label_format: str
 
     def to_vega_data_values(self) -> List[Dict[str, Any]]:
         """
         Build a dict for Vega's .data.values Array.
 
         Return value is a list of dict records. Each has
-        {x_series.name: 'X Name', 'bar': 'Bar Name', 'y': 1.0}
-        """
-        x_series = self.x_series.series
-        data = {
-            # Only column name guaranteed to be unique: x_series.name
-            self.x_series.name: list(zip(x_series.index, x_series.values)),
-        }
-        for y_column in self.y_columns:
-            data[y_column.name] = y_column.series
-        dataframe = pandas.DataFrame(data)
-        melted = dataframe.melt(self.x_series.name, var_name='bar',
-                                value_name='y')
-        tuples = melted[self.x_series.name]
-        del melted[self.x_series.name]
-        melted['group'] = tuples.map(lambda x: x[0])
-        melted['name'] = tuples.map(lambda x: x[1])
+        {'bar': 'YCOLNAME', 'group': 2, 'y': 1.0}.
 
-        return melted.to_dict(orient='records')
+        The 'group' is an index into x_series (which we ignore here). Each
+        "group" is a value in the X series, which we'll render as a set of
+        bars.
+        """
+
+        # given input like:
+        #    X  B  C    D
+        # 0  x  1  2  NaN
+        # 1  x  2  3  6.0
+        # 2  y  3  4  7.0
+        #
+        # Produce `dataframe` like:
+        #    B  C    D
+        # 0  1  2  NaN
+        # 1  2  3  6.0
+        # 2  3  4  7.0
+        #
+        # (The "index" here is a "group id" -- an index into
+        # self.x_series.series. We call that "group".)
+        dataframe = pandas.DataFrame(
+            {yc.name: yc.series for yc in self.y_columns},
+        )
+
+        # stacked: a series indexed by group, like:
+        # group  bar
+        # 0      B      1.0
+        #        C      2.0
+        #        D      nan
+        # 1      B      2.0
+        #        C      3.0
+        #        D      6.0
+        # 2      B      3.0
+        #        C      4.0
+        #        D      7.0
+        stacked = dataframe.stack(dropna=False)
+        stacked.name = 'y'
+        stacked.index.names = ['group', 'bar']
+
+        # Now convert back to a dataframe. This is the data we'll pass to Vega.
+        #
+        # We need to output null (None) here instead of leaving records empty.
+        # Otherwise, Vega will make some bars thicker than others.
+        table = stacked.reset_index()
+
+        # Change nulls from NaN to None (Object). NaN is invalid JSON.
+        y = table['y'].astype(object)
+        y[y.isnull()] = None
+        table['y'] = y
+        return table.to_dict('records')
 
     def to_vega(self) -> Dict[str, Any]:
         """
         Build a Vega bar chart or grouped bar chart.
         """
         ret = {
-            "$schema": "https://vega.github.io/schema/vega/v4.json",
+            "$schema": "https://vega.github.io/schema/vega/v5.json",
             "background": "white",
             "title": {
                 "text": self.title,
@@ -167,6 +222,10 @@ class SeriesParams:
                 },
                 {
                     "title": self.y_axis_label,
+                    "format": self.y_label_format,
+                    "tickMinStep": (
+                        1 if self.y_label_format.endswith('d') else None
+                    ),
                     "orient": "left",
                     "scale": "yscale",
                     "tickSize": 3,
@@ -276,7 +335,8 @@ class Form:
     def from_params(cls, *, y_columns: List[Dict[str, str]], **kwargs) -> Form:
         return Form(**kwargs, y_columns=[YColumn(**y) for y in y_columns])
 
-    def validate_with_table(self, table: pandas.DataFrame) -> SeriesParams:
+    def validate_with_table(self, table: pandas.DataFrame,
+                            input_columns: Dict[str, Any]) -> SeriesParams:
         """
         Create a SeriesParams ready for charting, or raises ValueError.
 
@@ -313,14 +373,6 @@ class Form:
                 )
 
             series = table[y_column.column]
-
-            if not is_numeric_dtype(series.dtype):
-                raise ValueError(
-                    f'Cannot plot Y-axis column "{y_column.column}" '
-                    'because it is not numeric. '
-                    'Convert it to a number before plotting it.'
-                )
-
             y_columns.append(YSeries(series, y_column.color))
 
         if not len(table):
@@ -329,10 +381,13 @@ class Form:
         title = self.title or 'Column Chart'
         x_axis_label = self.x_axis_label or x_series.name
         y_axis_label = self.y_axis_label or y_columns[0].name
+        y_label_format = python_format_to_d3_tick_format(
+            input_columns[y_columns[0].name].format
+        )
 
         return SeriesParams(title=title, x_axis_label=x_axis_label,
                             y_axis_label=y_axis_label, x_series=x_series,
-                            y_columns=y_columns)
+                            y_columns=y_columns, y_label_format=y_label_format)
 
 
 def _migrate_params_v0_to_v1(params):
@@ -360,10 +415,10 @@ def migrate_params(params):
     return params
 
 
-def render(table, params):
+def render(table, params, *, input_columns):
     form = Form.from_params(**params)
     try:
-        valid_params = form.validate_with_table(table)
+        valid_params = form.validate_with_table(table, input_columns)
     except GentleValueError as err:
         return (table, '', {'error': str(err)})
     except ValueError as err:

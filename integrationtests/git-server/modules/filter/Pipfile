@@ -6,8 +6,9 @@ name = "pypi"
 [packages]
 numpy = "*"
 pandas = "*"
+fb-re2 = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"

@@ -1,0 +1,40 @@
+id_name: reshape
+name: Reshape
+category: Clean
+description: Convert between wide and long formats.
+icon: reshape
+help_url: modules/clean/reshape
+parameters:
+- id_name: direction
+  name: ""
+  type: menu
+  options:
+  - { value: widetolong, label: Wide to long }
+  - { value: longtowide, label: Long to wide }
+  - { value: transpose, label: Transpose }
+  default: widetolong
+- id_name: colnames
+  name: Row variable
+  type: column
+  visible_if:
+    id_name: direction
+    value: [ transpose ]
+    invert: true
+- id_name: second_key
+  name: ""
+  type: column
+  visible_if:
+    id_name: has_second_key
+    value: true
+- id_name: has_second_key
+  name: 2nd row variable
+  type: checkbox
+  visible_if:
+    id_name: direction
+    value: [ longtowide ]
+- id_name: varcol
+  name: Column variable
+  type: column
+  visible_if:
+    id_name: direction
+    value: [ longtowide ]

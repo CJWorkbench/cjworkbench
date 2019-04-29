@@ -110,7 +110,8 @@ def render(table, params):
             kwargs['format'] = '%Y'
 
         out_series = pd.to_datetime(in_series, errors='coerce', exact=False,
-                                    cache=True, **kwargs)
+                                    cache=True, utc=True,
+                                    **kwargs).dt.tz_localize(None)
 
         if not params['error_means_null']:
             error_count += ErrorCount.from_diff(in_series, out_series)

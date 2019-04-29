@@ -84,6 +84,19 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table.copy(), P('number', 'auto', True))
         assert_frame_equal(result, expected)
 
+    def test_iso8601_tz_aware_plus_non_tz_aware(self):
+        table = pd.DataFrame({
+            'A': ['2019-01-01T00:00:00.000', '2019-03-02T12:02:13.000Z']
+        }, dtype='category')
+        result = render(table, P('A', 'auto'))
+        assert_frame_equal(
+            result,
+            pd.DataFrame({'A': [
+                np.datetime64('2019-01-01T00:00:00.000'),
+                np.datetime64('2019-03-02T12:02:13.000'),
+            ]})
+        )
+
     def test_auto(self):
         reference_date = np.datetime64('2018-08-07T00:00:00')
         table = pd.DataFrame({

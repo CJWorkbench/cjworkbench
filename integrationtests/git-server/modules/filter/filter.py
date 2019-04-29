@@ -1,14 +1,56 @@
 from collections import namedtuple
 import functools
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
+import re2
 
 
 class UserVisibleError(Exception):
     """A message for the user. Use str(err) to see it."""
     pass
+
+
+def str_to_regex(s: str, case_sensitive: bool):
+    """
+    Convert to regexp, or raise UserVisibleError.
+    """
+    try:
+        # Compile the actual regex, to generate the actual error message.
+        r = re2.compile(s)
+    except re2.error as err:
+        # Handle https://github.com/facebook/pyre2/pull/16
+        # Sometimes err.msg is an integer and err.pattern is the actual error
+        # message.
+        #
+        # Nix this when upstream is fixed.
+        if isinstance(err.msg, int):
+            msg = err.pattern
+        else:
+            msg = str(err)
+        raise UserVisibleError('Regex parse error: %s' % msg)
+
+    if not case_sensitive:
+        # case-insensitive: compile _again_ (fb-re2 doesn't support
+        # case-insensitive flag; we want the error message to apply to the
+        # original pattern because any valid original pattern should be valid
+        # here -- otherwise it's a dev error.)
+        r = re2.compile(f'(?i:{s})')
+
+    return r
+
+
+def series_map_predicate(series: pd.Series, pred: Callable[[str], bool]):
+    def safe_pred(s: Optional[str]) -> bool:
+        # optimization over pd.isna(): just check if it's a str. Any non-str is
+        # NA, because this is a str column. And this is faster than pd.isna()
+        # because it pd.isna() does ~5 isinstance() tests.
+        if isinstance(s, str):
+            return pred(s)
+        else:
+            return False
+    return series.map(safe_pred)
 
 
 def series_to_text(series, strict=False):
@@ -115,8 +157,8 @@ def mask_text_contains(series, text, case_sensitive):
 
 @type_text
 def mask_text_contains_regex(series, text, case_sensitive):
-    # keeprows = matching, not NaN
-    contains = series.str.contains(text, case=case_sensitive, regex=True)
+    r = str_to_regex(text, case_sensitive)
+    contains = series_map_predicate(series, r.test_search)
     return contains == True  # noqa: E712
 
 
@@ -130,7 +172,9 @@ def mask_text_does_not_contain(series, text, case_sensitive):
 @type_text
 def mask_text_does_not_contain_regex(series, text, case_sensitive):
     # keeprows = not matching, allow NaN
-    contains = series.str.contains(text, case=case_sensitive, regex=True)
+    r = str_to_regex(text, case_sensitive)
+    contains = series.map(r.test_search, na_action='ignore')
+    contains = series_map_predicate(series, r.test_search)
     return contains != True  # noqa: E712
 
 
@@ -144,8 +188,9 @@ def mask_text_is_exactly(series, text, case_sensitive):
 
 @type_text
 def mask_text_is_exactly_regex(series, text, case_sensitive):
-    matches = series.str.match(text, case=case_sensitive)
-    return matches == True  # noqa: E712
+    r = str_to_regex(text, case_sensitive)
+    contains = series_map_predicate(series, r.test_search)
+    return contains == True  # noqa: E712
 
 
 def mask_cell_is_empty(series, val, case_sensitive):
@@ -328,7 +373,10 @@ def migrate_params(params: Dict[str, Any]):
     if 'column' in params:
         params = _migrate_params_v1_to_v2(params)
 
-    if isinstance(params['keep'], int):
+    # v2: 'keep' is an integer (not a boolean)
+    # Don't use `isinstance(params['keep'], int)` because bool is a subclass of
+    # int (!)
+    if not isinstance(params['keep'], bool):
         params = _migrate_params_v2_to_v3(params)
 
     return params
@@ -454,4 +502,10 @@ def render(table, params):
 
     ret = table[mask]
     ret.reset_index(drop=True, inplace=True)
+
+    for column in ret.columns:
+        series = ret[column]
+        if hasattr(series, 'cat'):
+            series.cat.remove_unused_categories(inplace=True)
+
     return ret

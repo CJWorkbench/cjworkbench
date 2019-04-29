@@ -1,8 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass
 import json
+from string import Formatter
 from typing import Any, Dict, List
-import pandas
+import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 
 
@@ -34,8 +35,23 @@ def migrate_params(params):
     return params
 
 
-def _is_text(series):
-    return hasattr(series, 'cat') or series.dtype == object
+def python_format_to_d3_tick_format(python_format: str) -> str:
+    """
+    Build a d3-scale tickFormat specification based on Python str.
+
+    >>> python_format_to_d3_tick_format('{:,.2f}')
+    ',.2f'
+    >>> # d3-scale likes to mess about with precision. Its "r" format does
+    >>> # what we want; if we left it blank, we'd see format(30) == '3e+1'.
+    >>> python_format_to_d3_tick_format('{:,}')
+    ',r'
+    """
+    # Formatter.parse() returns Iterable[(literal, field_name, format_spec,
+    # conversion)]
+    specifier = next(Formatter().parse(python_format))[2]
+    if not specifier or specifier[-1] not in 'bcdoxXneEfFgGn%':
+        specifier += 'r'
+    return specifier
 
 
 class GentleValueError(ValueError):
@@ -50,29 +66,38 @@ class GentleValueError(ValueError):
 
 @dataclass
 class XSeries:
-    series: pandas.Series
+    series: pd.Series
+    column: Any
+    """RenderColumn (has a '.name', '.type' and '.format')."""
 
     @property
     def name(self):
-        return self.series.name
+        return self.column.name
 
     @property
     def vega_data_type(self) -> str:
-        if is_datetime64_dtype(self.series.dtype):
+        if self.column.type == 'datetime':
             return 'temporal'
-        elif is_numeric_dtype(self.series.dtype):
+        elif self.column.type == 'number':
             return 'quantitative'
-        else:
+        else:  # text
             return 'ordinal'
 
     @property
-    def json_compatible_values(self) -> pandas.Series:
+    def d3_tick_format(self) -> str:
+        if self.column.type == 'number':
+            return python_format_to_d3_tick_format(self.column.format)
+        else:
+            return None
+
+    @property
+    def json_compatible_values(self) -> pd.Series:
         """
         Array of str or int or float values for the X axis of the chart.
 
         In particular: datetime64 values will be converted to str.
         """
-        if is_datetime64_dtype(self.series.dtype):
+        if self.column.type == 'datetime':
             try:
                 utc_series = self.series.dt.tz_convert(None).to_series()
             except TypeError:
@@ -88,12 +113,18 @@ class XSeries:
 
 @dataclass
 class YSeries:
-    series: pandas.Series
+    series: pd.Series
     color: str
+    tick_format: str
+    """Python string format specifier, like '{:,}'."""
 
     @property
     def name(self):
         return self.series.name
+
+    @property
+    def d3_tick_format(self):
+        return python_format_to_d3_tick_format(self.tick_format)
 
 
 @dataclass
@@ -102,9 +133,11 @@ class Chart:
 
     title: str
     x_axis_label: str
+    x_axis_tick_format: str
     y_axis_label: str
     x_series: XSeries
     y_columns: List[YSeries]
+    y_axis_tick_format: str
 
     def to_vega_data_values(self) -> List[Dict[str, Any]]:
         """
@@ -120,7 +153,7 @@ class Chart:
         }
         for y_column in self.y_columns:
             data['y' + y_column.name] = y_column.series
-        dataframe = pandas.DataFrame(data)
+        dataframe = pd.DataFrame(data)
         vertical = dataframe.melt('x', var_name='line', value_name='y')
         vertical.dropna(inplace=True)
         vertical['line'] = vertical['line'].str[1:]  # drop 'y' prefix
@@ -130,17 +163,8 @@ class Chart:
         """
         Build a Vega bar chart or grouped bar chart.
         """
-        x_axis = {
-            'title': self.x_axis_label
-        }
-        if self.x_series.vega_data_type == 'ordinal':
-            x_axis.update({
-                'labelAngle': 0,
-                'labelOverlap': False,
-            })
-
         ret = {
-            '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+            '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
             'title': self.title,
             'config': {
                 'title': {
@@ -182,13 +206,26 @@ class Chart:
                 'x': {
                     'field': 'x',
                     'type': self.x_series.vega_data_type,
-                    'axis': x_axis,
+                    'axis': {
+                        'title': self.x_axis_label,
+                        'format': self.x_axis_tick_format,
+                        'tickMinStep': (
+                            1 if (self.x_axis_tick_format and
+                                  self.x_axis_tick_format[-1] == 'd') else None
+                        ),
+                    }
                 },
 
                 'y': {
                     'field': 'y',
                     'type': 'quantitative',
-                    'axis': {'title': self.y_axis_label},
+                    'axis': {
+                        'title': self.y_axis_label,
+                        'format': self.y_axis_tick_format,
+                        'tickMinStep': (
+                            1 if self.y_axis_tick_format[-1] == 'd' else None
+                        ),
+                    },
                 },
 
                 'color': {
@@ -201,6 +238,14 @@ class Chart:
                 },
             },
         }
+
+        if self.x_series.vega_data_type == 'ordinal':
+            ret['encoding']['x']['axis'].update({
+                'labelAngle': 0,
+                'labelOverlap': False,
+            })
+            ret['encoding']['x']['sort'] = None
+            ret['encoding']['order'] = {'type': None}
 
         if len(self.y_columns) == 1:
             ret['encoding']['color']['legend'] = None
@@ -243,7 +288,8 @@ class Form:
     def from_params(cls, *, y_columns: List[Dict[str, str]], **kwargs):
         return cls(**kwargs, y_columns=[YColumn(**d) for d in y_columns])
 
-    def _make_x_series(self, table: pandas.DataFrame) -> XSeries:
+    def _make_x_series(self, table: pd.DataFrame,
+                       input_columns: Dict[str, Any]) -> XSeries:
         """
         Create an XSeries ready for charting, or raise ValueError.
         """
@@ -251,11 +297,12 @@ class Form:
             raise GentleValueError('Please choose an X-axis column')
 
         series = table[self.x_column]
+        column = input_columns[self.x_column]
         nulls = series.isna()
         safe_x_values = series[~nulls]  # so we can min(), len(), etc
         safe_x_values.reset_index(drop=True, inplace=True)
 
-        if _is_text(series) and len(safe_x_values) > MaxNAxisLabels:
+        if column.type == 'text' and len(safe_x_values) > MaxNAxisLabels:
             raise ValueError(
                 f'Column "{self.x_column}" has {len(safe_x_values)} '
                 'text values. We cannot fit them all on the X axis. '
@@ -275,9 +322,10 @@ class Form:
                 'Please select a column with 2 or more values.'
             )
 
-        return XSeries(series)
+        return XSeries(series, column)
 
-    def make_chart(self, table: pandas.DataFrame) -> Chart:
+    def make_chart(self, table: pd.DataFrame,
+                   input_columns: Dict[str, Any]) -> Chart:
         """
         Create a Chart ready for charting, or raise ValueError.
 
@@ -295,7 +343,7 @@ class Form:
         * Error if a Y column has fewer than 1 non-missing value
         * Default title, X and Y axis labels
         """
-        x_series = self._make_x_series(table)
+        x_series = self._make_x_series(table, input_columns)
         if not self.y_columns:
             raise GentleValueError('Please choose a Y-axis column')
 
@@ -319,46 +367,35 @@ class Form:
             # Find how many Y values can actually be plotted on the X axis. If
             # there aren't going to be any Y values on the chart, raise an
             # error.
-            matches = pandas.DataFrame({'X': x_series.series,
-                                        'Y': series}).dropna()
+            matches = pd.DataFrame({'X': x_series.series,
+                                    'Y': series}).dropna()
             if not matches['X'].count():
                 raise ValueError(
                     f'Cannot plot Y-axis column "{ycolumn.column}" '
                     'because it has no values'
                 )
 
-            y_columns.append(YSeries(series, ycolumn.color))
+            y_columns.append(YSeries(
+                series,
+                ycolumn.color,
+                input_columns[ycolumn.column].format
+            ))
 
         title = self.title or 'Line Chart'
         x_axis_label = self.x_axis_label or x_series.name
         y_axis_label = self.y_axis_label or y_columns[0].name
 
         return Chart(title=title, x_axis_label=x_axis_label,
+                     x_axis_tick_format=x_series.d3_tick_format,
                      y_axis_label=y_axis_label, x_series=x_series,
-                     y_columns=y_columns)
-
-    @staticmethod
-    def parse_y_columns(s):
-        try:
-            arr = json.loads(s)
-            return [YColumn(str(o.get('column', '')),
-                            str(o.get('color', '#000000')))
-                    for o in arr]
-        except json.decoder.JSONDecodeError:
-            # Not valid JSON
-            return []
-        except TypeError:
-            # arr is not iterable
-            return []
-        except AttributeError:
-            # an element of arr is not a dict
-            return []
+                     y_columns=y_columns,
+                     y_axis_tick_format=y_columns[0].d3_tick_format)
 
 
-def render(table, params):
+def render(table, params, *, input_columns):
     form = Form.from_params(**params)
     try:
-        chart = form.make_chart(table)
+        chart = form.make_chart(table, input_columns)
     except GentleValueError as err:
         return (table, '', {'error': str(err)})
     except ValueError as err:

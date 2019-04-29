@@ -113,6 +113,17 @@ class TestMigrateParams(unittest.TestCase):
             }
         )
 
+    def test_v3(self):
+        self.assertEqual(
+            migrate_params({
+                'keep': True,
+                'filters': {'operator': 'and', 'filters': []},
+            }), {
+                'keep': True,
+                'filters': {'operator': 'and', 'filters': []},
+            }
+        )
+
 
 class TestRender(unittest.TestCase):
     def setUp(self):
@@ -164,6 +175,48 @@ class TestRender(unittest.TestCase):
         expected = self.table[[True, True, False, False,
                                False]].reset_index(drop=True)
         assert_frame_equal(result, expected)
+
+    def test_contains_regex_parse_error(self):
+        table = pd.DataFrame({'A': ['a']})
+        params = simple_params('A', 'text_contains_regex', '*',
+                               case_sensitive=True)
+        result = render(table, params)
+        self.assertEqual(
+            result,
+            'Regex parse error: no argument for repetition operator: *'
+        )
+
+    def test_contains_regex_parse_error_case_insensitive(self):
+        table = pd.DataFrame({'A': ['a']})
+        params = simple_params('A', 'text_contains_regex', '(',
+                               case_sensitive=False)
+        result = render(table, params)
+        self.assertEqual(
+            result,
+            'Regex parse error: missing ): ('
+        )
+
+    def test_contains_regex_nan(self):
+        table = pd.DataFrame({'A': ['a', np.nan]})
+        params = simple_params('A', 'text_contains_regex', 'a',
+                               case_sensitive=True)
+        result = render(table, params)
+        assert_frame_equal(result, pd.DataFrame({'A': ['a']}))
+
+    def test_contains_regex_nan_categorical(self):
+        table = pd.DataFrame({'A': ['a', np.nan]}, dtype='category')
+        params = simple_params('A', 'text_contains_regex', 'a',
+                               case_sensitive=True)
+        result = render(table, params)
+        assert_frame_equal(result,
+                           pd.DataFrame({'A': ['a']}, dtype='category'))
+
+    def test_contains_regex_case_insensitive(self):
+        table = pd.DataFrame({'A': ['a', 'A', 'b']})
+        params = simple_params('A', 'text_contains_regex', 'a',
+                               case_sensitive=False)
+        result = render(table, params)
+        assert_frame_equal(result, pd.DataFrame({'A': ['a', 'A']}))
 
     def test_contains_regex_drop(self):
         params = simple_params('a', 'text_contains_regex', 'f[a-zA-Z]+d',
@@ -282,13 +335,8 @@ class TestRender(unittest.TestCase):
         params = simple_params('A', 'text_is_exactly', 'foo',
                                case_sensitive=True)
         result = render(table, params)
-
-        # Output is categorical with [foo, bar] categories. We _could_ remove
-        # the unused category, but there's no value added there.
-        assert_frame_equal(
-            result,
-            pd.DataFrame({'A': ['foo']}, dtype=table['A'].dtype)
-        )
+        assert_frame_equal(result,
+                           pd.DataFrame({'A': ['foo']}, dtype='category'))
 
     def test_greater(self):
         # edge case, first row has b=2
@@ -497,6 +545,16 @@ class TestRender(unittest.TestCase):
         }
         result = render(table, params)
         assert_frame_equal(result, pd.DataFrame({'A': [1, 3], 'B': [2, 4]}))
+
+    def test_remove_unused_categories(self):
+        # [2019-04-23] we're stricter about module output now: categories must
+        # all be used, so we don't save too much useless data.
+        table = pd.DataFrame({'A': ['a', 'b'], 'B': ['c', 'd']},
+                             dtype='category')
+        params = simple_params('A', 'text_contains', 'a')
+        result = render(table, params)
+        assert_frame_equal(result, pd.DataFrame({'A': ['a'], 'B': ['c']},
+                                                dtype='category'))
 
 
 if __name__ == '__main__':

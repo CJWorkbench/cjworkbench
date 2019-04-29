@@ -1,47 +1,135 @@
+from typing import List
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
+
+
+def wide_to_long(table: pd.DataFrame, colname: str) -> pd.DataFrame:
+    # Check all values are the same type
+    value_table = table[set(table.columns).difference([colname])]
+
+    if value_table.empty:
+        # Avoids 'No objects to concatenate' when colname is categorical and
+        # there are no values or other columns
+        return pd.DataFrame({
+            colname: [],
+            'variable': [],
+            'value': [],
+        }, dtype=str)
+
+    value_dtypes = value_table.dtypes
+    are_numeric = value_dtypes.map(is_numeric_dtype)
+    are_datetime = value_dtypes.map(is_datetime64_dtype)
+    are_text = ~are_numeric & ~are_datetime
+    if not are_numeric.all() and not are_datetime.all() and not are_text.all():
+        # Convert mixed values so they're all text. Values must all be the same
+        # type.
+        to_convert = value_table.columns[~are_text]
+        na = table[to_convert].isna()
+        table.loc[:,to_convert] = table[to_convert].astype(str)
+        table.loc[:,to_convert][na] = np.nan
+
+        cols_str = ', '.join(f'"{c}"' for c in to_convert)
+        error = (
+            f'Columns {cols_str} were auto-converted to Text because the '
+            'value column cannot have multiple types.'
+        )
+        quick_fixes = [{
+            'text': f'Convert {cols_str} to text',
+            'action': 'prependModule',
+            'args': [
+                'converttotext',
+                {'colnames': ','.join(to_convert)}
+            ],
+        }]
+    else:
+        error = ''
+        quick_fixes = []
+
+    table = pd.melt(table, id_vars=[colname])
+    table.sort_values(colname, inplace=True)
+    table.reset_index(drop=True, inplace=True)
+
+    if error:
+        return {
+            'dataframe': table,
+            'error': error,
+            'quick_fixes': quick_fixes,
+        }
+    else:
+        return table
+
+
+def long_to_wide(table: pd.DataFrame, keycolnames: List[str],
+                 varcolname: str) -> pd.DataFrame:
+    varcol = table[varcolname]
+    if varcol.dtype != object and not hasattr(varcol, 'cat'):
+        error = (
+            'Column "%s" was auto-converted to Text because column names must '
+            'be text.'
+            % varcolname
+        )
+        quick_fixes = [{
+            'text': 'Convert "%s" to text' % varcolname,
+            'action': 'prependModule',
+            'args': ['converttotext', {'colnames': varcolname}],
+        }]
+        na = varcol.isnull()
+        varcol = varcol.astype(str)
+        varcol[na] = np.nan
+        table[varcolname] = varcol
+    else:
+        error = None
+        quick_fixes = None
+
+    table.set_index(keycolnames + [varcolname], inplace=True, drop=True)
+    if np.any(table.index.duplicated()):
+        return 'Cannot reshape: some variables are repeated'
+
+    table = table.unstack()
+    table.columns = [col[-1] for col in table.columns.values]
+    table.reset_index(inplace=True)
+
+    if error is not None:
+        return {
+            'dataframe': table,
+            'error': error,
+            'quick_fixes': quick_fixes,
+        }
+    else:
+        return table
 
 
 def render(table, params):
     dir = params['direction']
-    cols = params.get('colnames', '')
-    varcol = params.get('varcol', '')
+    colname = params['colnames']  # bad param name! It's single-column
+    varcol = params['varcol']
 
     # no columns selected and not transpose, NOP
-    if not cols and dir != 'transpose':
+    if not colname and dir != 'transpose':
         return table
-    cols = cols.split(',')
 
     if dir == 'widetolong':
-        table = pd.melt(table, id_vars=cols)
-        table.sort_values(cols, inplace=True)
-        table.reset_index(drop=True, inplace=True)
+        return wide_to_long(table, colname)
 
     elif dir == 'longtowide':
         if not varcol:
             # gotta have this parameter
             return table
 
-        keys = cols
+        keys = [colname]
 
-        has_second_key = params.get('has_second_key', False)
+        has_second_key = params['has_second_key']
         # If second key is used and present, append it to the list of columns
         if has_second_key:
-            second_key = params.get('second_key', '')
+            second_key = params['second_key']
             if second_key in table.columns:
                 keys.append(second_key)
 
         if varcol in keys:
             return 'Cannot reshape: column and row variables must be different'
 
-        table.set_index(keys + [varcol], inplace=True, drop=True)
-
-        if np.any(table.index.duplicated()):
-            return 'Cannot reshape: some variables are repeated'
-
-        table = table.unstack()
-        table.columns = [col[-1] for col in table.columns.values]
-        table.reset_index(inplace=True)
+        return long_to_wide(table, keys, varcol)
 
     elif dir == 'transpose':
         # We assume that the first column is going to be the new header row

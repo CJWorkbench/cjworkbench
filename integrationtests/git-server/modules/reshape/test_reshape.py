@@ -1,46 +1,73 @@
 import unittest
+import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from reshape import render, migrate_params
 
 
+def P(direction='widetolong', colnames='', varcol='', has_second_key=False,
+      second_key=''):
+    return {
+        'direction': direction,
+        'colnames': colnames,
+        'varcol': varcol,
+        'has_second_key': has_second_key,
+        'second_key': second_key,
+    }
+
+
 class TestReshape(unittest.TestCase):
     def test_defaults(self):
-        params = {'direction': 'widetolong', 'colnames': '', 'varcol': ''}
-        out = render(pd.DataFrame({'A': [1, 2]}), params)
         # should NOP when first applied
+        out = render(pd.DataFrame({'A': [1, 2]}), P())
         assert_frame_equal(out, pd.DataFrame({'A': [1, 2]}))
 
     def test_wide_to_long(self):
         in_table = pd.DataFrame({
             'x': [1, 2, 3],
-            'A': ['a', 'b', 'c'],
-            'B': ['d', 'e', 'f'],
+            'A': [4, 5, 6],
+            'B': [7, 8, 9],
         })
-        params = {'direction': 'widetolong', 'colnames': 'x', 'varcol': ''}
-        out = render(in_table, params)
+        out = render(in_table, P('widetolong', 'x'))
         assert_frame_equal(out, pd.DataFrame({
             'x': [1, 1, 2, 2, 3, 3],
             'variable': list('ABABAB'),
-            'value': list('adbecf'),
+            'value': [4, 7, 5, 8, 6, 9],
         }))
 
-    def test_wide_to_long_mulicolumn(self):
-        """Wide-to-long, with two ID columns."""
+    def test_wide_to_long_mixed_value_types(self):
         in_table = pd.DataFrame({
-            'x': [1, 1, 2, 2, 3, 3],
-            'y': [4, 5, 4, 5, 4, 5],
-            'A': list('abcdef'),
-            'B': list('ghijkl'),
+            'X': ['x', 'y'],
+            'A': [1, 2],
+            'B': ['y', np.nan]
         })
-        params = {'direction': 'widetolong', 'colnames': 'x,y', 'varcol': ''}
-        out = render(in_table, params)
-        assert_frame_equal(out, pd.DataFrame({
-            'x': [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3],
-            'y': [4, 4, 5, 5, 4, 4, 5, 5, 4, 4, 5, 5],
-            'variable': list('ABABABABABAB'),
-            'value': list('agbhcidjekfl'),
+        result = render(in_table, P('widetolong', 'X'))
+        assert_frame_equal(result['dataframe'], pd.DataFrame({
+            'X': ['x', 'x', 'y', 'y'],
+            'variable': ['A', 'B', 'A', 'B'],
+            'value': ['1', 'y', '2', np.nan],
         }))
+        self.assertEqual(result['error'], (
+            'Columns "A" were auto-converted to Text because the value column '
+            'cannot have multiple types.'
+        ))
+        self.assertEqual(result['quick_fixes'], [{
+            'text': 'Convert "A" to text',
+            'action': 'prependModule',
+            'args': [
+                'converttotext',
+                {'colnames': 'A'},
+            ],
+        }])
+
+    def test_wide_to_long_no_values_or_variables_categorical_id_var(self):
+        result = render(pd.DataFrame({'A': []}, dtype='category'),
+                        P('widetolong', 'A'))
+        assert_frame_equal(result, pd.DataFrame({
+            'A': [],
+            'variable': [],
+            'value': [],
+        }, dtype=str))
 
     def test_long_to_wide(self):
         in_table = pd.DataFrame({
@@ -48,8 +75,7 @@ class TestReshape(unittest.TestCase):
             'variable': list('ABABAB'),
             'value': list('adbecf'),
         })
-        params = {'direction': 'longtowide', 'colnames': 'x', 'varcol': 'variable'}
-        out = render(in_table, params)
+        out = render(in_table, P('longtowide', 'x', 'variable'))
         assert_frame_equal(out, pd.DataFrame({
             'x': [1, 2, 3],
             'A': ['a', 'b', 'c'],
@@ -57,10 +83,34 @@ class TestReshape(unittest.TestCase):
         }))
 
     def test_long_to_wide_missing_varcol(self):
-        params = {'direction': 'longtowide', 'colnames': 'date', 'varcol': ''}
-        out = render(pd.DataFrame({'A': [1, 2]}), params)
+        out = render(pd.DataFrame({'A': [1, 2]}), P('longtowide', 'date', ''))
         # nop if no column selected
         assert_frame_equal(out, pd.DataFrame({'A': [1, 2]}))
+
+    def test_long_to_wide_convert_to_str(self):
+        in_table = pd.DataFrame({
+            'x': [1, 1, 2, 2, 3, 3],
+            'variable': [4, 5, 4, 5, 4, 5],
+            'value': list('adbecf'),
+        })
+        result = render(in_table, P('longtowide', 'x', 'variable'))
+        assert_frame_equal(result['dataframe'], pd.DataFrame({
+            'x': [1, 2, 3],
+            '4': ['a', 'b', 'c'],
+            '5': ['d', 'e', 'f'],
+        }))
+        self.assertEqual(result['error'], (
+            'Column "variable" was auto-converted to Text because column '
+            'names must be text.'
+        ))
+        self.assertEqual(result['quick_fixes'], [{
+            'text': 'Convert "variable" to text',
+            'action': 'prependModule',
+            'args': [
+                'converttotext',
+                {'colnames': 'variable'},
+            ],
+        }])
 
     def test_long_to_wide_checkbox_but_no_second_key(self):
         """has_second_key does nothing if no second column is chosen."""
@@ -69,13 +119,8 @@ class TestReshape(unittest.TestCase):
             'variable': list('ABABAB'),
             'value': list('adbecf'),
         })
-        params = {
-            'direction': 'longtowide',
-            'colnames': 'x',
-            'has_second_key': True,
-            'varcol': 'variable'
-        }
-        out = render(in_table, params)
+        out = render(in_table,
+                     P('longtowide', 'x', 'variable', has_second_key=True))
         assert_frame_equal(out, pd.DataFrame({
             'x': [1, 2, 3],
             'A': ['a', 'b', 'c'],
@@ -90,35 +135,7 @@ class TestReshape(unittest.TestCase):
             'variable': list('ABABABABABAB'),
             'value': list('abcdefghijkl'),
         })
-        params = {
-            'direction': 'longtowide',
-            'colnames': 'x',
-            'has_second_key': True,
-            'second_key': 'y',
-            'varcol': 'variable'
-        }
-        out = render(in_table, params)
-        assert_frame_equal(out, pd.DataFrame({
-            'x': [1, 1, 2, 2, 3, 3],
-            'y': [4, 5, 4, 5, 4, 5],
-            'A': list('acegik'),
-            'B': list('bdfhjl'),
-        }))
-
-    def test_long_to_wide_multicolumn(self):
-        """Long-to-wide with two ID columns."""
-        in_table = pd.DataFrame({
-            'x': [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3],
-            'y': [4, 4, 5, 5, 4, 4, 5, 5, 4, 4, 5, 5],
-            'variable': list('ABABABABABAB'),
-            'value': list('abcdefghijkl'),
-        })
-        params = {
-            'direction': 'longtowide',
-            'colnames': 'x,y',
-            'varcol': 'variable'
-        }
-        out = render(in_table, params)
+        out = render(in_table, P('longtowide', 'x', 'variable', True, 'y'))
         assert_frame_equal(out, pd.DataFrame({
             'x': [1, 1, 2, 2, 3, 3],
             'y': [4, 5, 4, 5, 4, 5],
@@ -132,8 +149,7 @@ class TestReshape(unittest.TestCase):
             'variable': ['A', 'A'],
             'value': ['x', 'y'],
         })
-        params = {'direction': 'longtowide', 'colnames': 'x', 'varcol': 'variable'}
-        out = render(in_table, params)
+        out = render(in_table, P('longtowide', 'x', 'variable'))
         self.assertEqual(out, 'Cannot reshape: some variables are repeated')
 
     def test_long_to_wide_varcol_in_key(self):
@@ -142,8 +158,7 @@ class TestReshape(unittest.TestCase):
             'variable': ['A', 'B'],
             'value': ['a', 'b'],
         })
-        params = {'direction': 'longtowide', 'colnames': 'x', 'varcol': 'x'}
-        out = render(in_table, params)
+        out = render(in_table, P('longtowide', 'x', 'x'))
         self.assertEqual(out, (
             'Cannot reshape: column and row variables must be different'
         ))
@@ -157,8 +172,7 @@ class TestReshape(unittest.TestCase):
             'Teddy': ['2018-04-22', '8']
         }).astype('category')  # cast as Category -- extra-tricky!
 
-        params = {'direction': 'transpose'}
-        out = render(in_table, params)
+        out = render(in_table, P('transpose'))
 
         # Keeping the old header for the first column can be confusing.
         # First column header doesnt usually classify rest of headers.
