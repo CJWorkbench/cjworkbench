@@ -1,3 +1,4 @@
+from pandas.api.types import union_categoricals
 from typing import Set
 
 
@@ -56,6 +57,24 @@ def render(table, params, *, input_columns):
         # (suggesting to the user that the params aren't all entered yet).
         return table
 
+    for on_column in on_columns:
+        # if both 'left' and 'right' are categorical, coerce the categories to
+        # be identical, so DataFrame.merge can preserve the Categorical dtype.
+        # In cases where Categorical is the dtype we want, the join will be
+        # faster and the result will take less RAM and disk space.
+        #
+        # If we don't do this, the result will have 'object' dtype.
+        left_series = table[on_column]
+        right_series = right_dataframe[on_column]
+        if hasattr(left_series, 'cat') and hasattr(right_series, 'cat'):
+            # sorted for ease of unit-testing
+            categories = sorted(list(frozenset.union(
+                frozenset(left_series.cat.categories),
+                frozenset(right_series.cat.categories),
+            )))
+            left_series.cat.set_categories(categories, inplace=True)
+            right_series.cat.set_categories(categories, inplace=True)
+
     # Select only the columns we want
     right_dataframe = right_dataframe[on_columns + right_columns]
 
@@ -64,6 +83,18 @@ def render(table, params, *, input_columns):
         on=on_columns,
         how=join_type
     )
+
+    colnames_to_recategorize = None
+    if join_type == 'left':
+        colnames_to_recategorize = on_columns + right_columns
+    elif join_type == 'right':
+        colnames_to_recategorize = list(input_columns.keys())
+    else:
+        colnames_to_recategorize = dataframe.columns
+    for colname in colnames_to_recategorize:
+        series = dataframe[colname]
+        if hasattr(series, 'cat'):
+            series.cat.remove_unused_categories(inplace=True)
 
     return {
         'dataframe': dataframe,

@@ -68,8 +68,9 @@ class JoinTabTests(unittest.TestCase):
                 'slug',
                 'Tab 2',
                 {'A': RenderColumn('A', 'number', '{}'),
-                 'B': RenderColumn('C', 'text', None)},
-                right),
+                 'B': RenderColumn('B', 'text', None)},
+                right
+            ),
             'join_columns': {
                 'on': 'A',
                 'right': 'B',
@@ -85,3 +86,91 @@ class JoinTabTests(unittest.TestCase):
             'column. Please rename the column in one of the tabs, or unselect '
             'the column.'
         ))
+
+    def test_left_join_delete_unused_categories_in_added_columns(self):
+        left = pd.DataFrame({'A': ['a', 'b']}, dtype='category')
+        right = pd.DataFrame({
+            'A': pd.Series(['a', 'z'], dtype='category'),
+            'B': pd.Series(['x', 'y'], dtype='category'),
+        })
+        result = render(left, {
+            'right_tab': TabOutput(
+                'slug',
+                'Tab 2',
+                {'A': RenderColumn('A', 'text', None),
+                 'B': RenderColumn('B', 'text', None)},
+                right
+            ),
+            'join_columns': {'on': 'A', 'right': 'B'},
+            'type': 0,
+        }, input_columns={
+            'A': RenderColumn('A', 'text', None),
+        })
+        # 'z' category does not appear in result, so it should not be a
+        # category in the 'B' column.
+        assert_frame_equal(result['dataframe'], pd.DataFrame({
+            'A': pd.Series(['a', 'b'], dtype='category'),
+            'B': pd.Series(['x', np.nan], dtype='category')
+        }))
+
+    def test_right_join_delete_unused_categories_in_input_columns(self):
+        left = pd.DataFrame({
+            'A': pd.Series(['a', 'b'], dtype='category'),  # join column
+            'B': pd.Series(['c', 'd'], dtype='category'),  # other column
+        })
+        right = pd.DataFrame({
+            'A': pd.Series(['a'], dtype='category'),  # join column
+            'C': ['e'],
+        })
+        result = render(left, {
+            'right_tab': TabOutput(
+                'slug',
+                'Tab 2',
+                {'A': RenderColumn('A', 'text', None),
+                 'C': RenderColumn('C', 'text', None)},
+                right
+            ),
+            'join_columns': {'on': 'A', 'right': 'C'},
+            'type': 2,
+        }, input_columns={
+            'A': RenderColumn('A', 'text', None),
+            'B': RenderColumn('B', 'text', None),
+        })
+        # 'b' and 'd' categories don't appear in result, so it should not be
+        # categories in the result dataframe.
+        assert_frame_equal(result['dataframe'], pd.DataFrame({
+            'A': pd.Series(['a'], dtype='category'),
+            'B': pd.Series(['c'], dtype='category'),
+            'C': ['e']
+        }))
+
+    def test_inner_join_delete_unused_categories_in_all_columns(self):
+        left = pd.DataFrame({
+            'A': pd.Series(['a', 'b'], dtype='category'),  # join column
+            'B': pd.Series(['c', 'd'], dtype='category'),  # other column
+        })
+        right = pd.DataFrame({
+            'A': pd.Series(['a', 'x'], dtype='category'),  # join column
+            'C': pd.Series(['e', 'y'], dtype='category'),  # other column
+        })
+        result = render(left, {
+            'right_tab': TabOutput(
+                'slug',
+                'Tab 2',
+                {'A': RenderColumn('A', 'text', None),
+                 'C': RenderColumn('C', 'text', None)},
+                right
+            ),
+            'join_columns': {'on': 'A', 'right': 'C'},
+            'type': 1,
+        }, input_columns={
+            'A': RenderColumn('A', 'text', None),
+            'B': RenderColumn('B', 'text', None),
+        })
+        # 'b', 'd', 'x' and 'y' categories don't appear in the result, so the
+        # dtypes should not contain them.
+        assert_frame_equal(result['dataframe'], pd.DataFrame({
+            'A': ['a'],
+            'B': ['c'],
+            'C': ['e'],
+        }, dtype='category'))
