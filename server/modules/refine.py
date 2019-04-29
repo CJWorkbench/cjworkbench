@@ -4,30 +4,12 @@ import numpy as np
 import pandas as pd
 
 
-def _str_categories(series):
-    """Build a Categories series (casting everything to category)."""
-    # 1. Exit quickly when our input is sane
-    if hasattr(series, 'cat'):
-        return series
-
-    # 2. Cast non-str to str
-    if series.dtype != object:
-        t = series.astype(str)
-        t[series.isna()] = np.nan
-        series = t
-
-    # 3. Categorize str
-    return series.astype('category')
-
-
 class RefineSpec:
     """Describe how to modify a column.
 
     This is a set of instructions:
 
     1. `renames` renames every key to its value, _not_ recursively.
-    2. If `blacklist` is non-empty, the results from step 2 are filtered so
-       blacklisted values are missing.
     """
 
     def __init__(self, renames: Dict[str, str] = {}):
@@ -48,17 +30,26 @@ class RefineSpec:
         # category order otherwise, and assert_frame_equal() treats different
         # orders as different data frames.)
         #
-        # This may be slow in some datasets.
-        new_categories = sorted(new_categories)
+        # This makes apply_renames O(n lg n) wrt the number of categories. It
+        # doesn't strictly need to be; but we assume this is more efficient
+        # than using hashes.
+        new_categories = pd.Index(sorted(new_categories))
 
         # 2. Build "code_map", a translation table from old "code" to new
         # "code". (A Categorical series is an array of integer codes and object
         # categories.)
-        new_categories_lookup = {c: i for i, c in enumerate(new_categories)}
-        code_map = series.cat.categories.map(lambda c: (
-            new_categories_lookup[renames[c]] if c in renames
-            else new_categories_lookup[c]
-        ))
+        def old_category_str_to_new_category_index(old_category: str) -> int:
+            nonlocal new_categories, renames
+            if old_category in renames:
+                new_category = renames[old_category]
+            else:
+                new_category = old_category
+            idx = new_categories.searchsorted(new_category)
+            assert new_categories[idx] == new_category
+            return idx
+        code_map = series.cat.categories.map(
+            old_category_str_to_new_category_index
+        )
 
         # 3. Find "new_codes" -- given series.cat.categories, which index into
         # series.cat.categories, find codes that would index into
@@ -71,10 +62,8 @@ class RefineSpec:
         return pd.Series(pd.Categorical.from_codes(new_codes, new_categories))
 
     def apply(self, table, column):
-        # 1. Turn into categories
-        series = _str_categories(table[column])
-
-        # 2. Rename all the categories
+        # Always operate on categories
+        series = table[column].astype('category')
         series = self.apply_renames(series)
         table[column] = series
 

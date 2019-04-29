@@ -262,22 +262,6 @@ class MigrateParamsTest(unittest.TestCase):
             pd.DataFrame({'A': ['b', 'a']}, dtype='category')
         )
 
-    def test_refine_cast_int_to_str(self):
-        self._test_refine_spec_apply(
-            pd.DataFrame({'A': [1, 2]}),
-            'A',
-            RefineSpec({'1': '2'}),
-            pd.DataFrame({'A': ['2', '2']}, dtype='category')
-        )
-
-    def test_refine_cast_date_to_str(self):
-        self._test_refine_spec_apply(
-            pd.DataFrame({'A': [np.datetime64('2018-08-03T17:12')]}),
-            'A',
-            RefineSpec({'2018-08-03 17:12:00': 'x'}),
-            pd.DataFrame({'A': ['x']}, dtype='category')
-        )
-
     def _test_render(self, in_table: pd.DataFrame, column: str,
                      edits_json: Dict[str, Any],
                      expected_out: pd.DataFrame=pd.DataFrame(),
@@ -298,8 +282,7 @@ class MigrateParamsTest(unittest.TestCase):
     def test_render_no_column_is_no_op(self):
         self._test_render(
             pd.DataFrame({'A': ['b']}, dtype='category'),
-            {},
-            {'renames': {}, 'blacklist': []},
+            {}, {'renames': {}},
             pd.DataFrame({'A': ['b']}, dtype='category')
         )
 
@@ -309,14 +292,4 @@ class MigrateParamsTest(unittest.TestCase):
             'A',
             {},
             pd.DataFrame({'A': ['b']}, dtype='category')
-        )
-
-    # if an old version of refine contains a blacklist, new refine should not
-    # filter
-    def test_render_blacklist_no_filter(self):
-        self._test_render(
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category'),
-            'A',
-            {'renames': {}, 'blacklist': ['a']},
-            pd.DataFrame({'A': ['a', 'b']}, dtype='category')
         )
