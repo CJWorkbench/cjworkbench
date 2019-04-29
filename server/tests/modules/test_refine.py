@@ -238,6 +238,31 @@ class MigrateParamsTest(unittest.TestCase):
             pd.DataFrame({'A': ['a']}, dtype='category')
         )
 
+    def test_refine_rename_empty_category(self):
+        self._test_refine_spec_apply(
+            pd.DataFrame({'A': []}, dtype='category'),
+            'A', RefineSpec({'b': 'c'}),
+            pd.DataFrame({'A': []}, dtype='category')
+        )
+
+    def test_refine_rename_nan_category(self):
+        # Get explicit, because pandas botches the comparison:
+        #
+        # >>> self._test_refine_spec_apply(
+        #     pd.DataFrame({'A': [np.nan]}, dtype='category'),
+        #     'A', RefineSpec({'b': 'c'}),
+        #     pd.DataFrame({'A': [np.nan]}, dtype='category')
+        # )
+        # Attribute "dtype" are different
+        # [left]:  CategoricalDtype(categories=[], ordered=False)
+        # [right]: CategoricalDtype(categories=[], ordered=False)
+        spec = RefineSpec({'b': 'c'})
+        dtype1 = pd.DataFrame({'A': []}, dtype='category')['A'].dtype
+        result = spec.apply(pd.DataFrame({'A': []}, dtype='category'), 'A')
+        dtype2 = result['A'].dtype
+        self.assertEqual(0, len(result))
+        self.assertEqual(0, len(result['A'].cat.categories))
+
     def test_refine_rename_category_to_existing(self):
         self._test_refine_spec_apply(
             pd.DataFrame({'A': ['a', 'b']}, dtype='category'),

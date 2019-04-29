@@ -37,8 +37,8 @@ class RefineSpec:
 
         # 2. Build "code_map", a translation table from old "code" to new
         # "code". (A Categorical series is an array of integer codes and object
-        # categories.)
-        def old_category_str_to_new_category_index(old_category: str) -> int:
+        # categories. "code_map" is an array of int indexed by int old "code".)
+        def old_category_str_to_new_code(old_category: str) -> int:
             nonlocal new_categories, renames
             if old_category in renames:
                 new_category = renames[old_category]
@@ -47,16 +47,20 @@ class RefineSpec:
             idx = new_categories.searchsorted(new_category)
             assert new_categories[idx] == new_category
             return idx
-        code_map = series.cat.categories.map(
-            old_category_str_to_new_category_index
-        )
+        code_map = [old_category_str_to_new_code(c)
+                    for c in series.cat.categories]
+        # old_codes[x] == -1 means np.nan. code_map[-1] must give -1 so that
+        # new_codes[x] == -1, too.
+        code_map.append(-1)
+        code_map = np.array(code_map)  # optimization
 
         # 3. Find "new_codes" -- given series.cat.categories, which index into
         # series.cat.categories, find codes that would index into
         # new_categories.
-        new_codes = series.cat.codes.map(
-            lambda x: -1 if x == -1 else code_map[x]
-        )
+        old_codes = series.cat.codes.values  # np.array
+        # "wrap" means when looking up -1, the result is the last element in
+        # code_map -- which is -1 because we set that above.
+        new_codes = code_map.take(old_codes, mode='wrap')
 
         # 4. Cast to a Series.
         return pd.Series(pd.Categorical.from_codes(new_codes, new_categories))
