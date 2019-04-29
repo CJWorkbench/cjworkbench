@@ -1,13 +1,14 @@
 import asyncio
 import logging
 from unittest.mock import Mock, patch
+from channels.db import database_sync_to_async
 from dateutil import parser
 from django.contrib.auth.models import User
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.types import ProcessResult
-from server.models import LoadedModule, ModuleVersion, Workflow
+from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
 from worker import fetch
@@ -72,6 +73,48 @@ class FetchTests(DbTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.next_update, due_for_update)
+
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch('worker.save.save_result_if_changed')
+    def test_fetch_ignore_wf_module_deleted_when_updating(self, save_result,
+                                                          load_module):
+        """
+        It's okay if wf_module is gone when updating wf_module.next_update.
+        """
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
+            update_interval=600
+        )
+
+        async def fake_fetch(*args, **kwargs):
+            return ProcessResult(pd.DataFrame({'A': [1]}))
+        fake_module = Mock(LoadedModule)
+        load_module.return_value = fake_module
+        fake_module.fetch.side_effect = fake_fetch
+
+        # We're testing what happens if wf_module disappears after save, before
+        # update. To mock that, delete after fetch, when saving result.
+        async def fake_save(*args, **kwargs):
+            @database_sync_to_async
+            def do_delete():
+                # We can't just call wf_module.delete(), because that will
+                # change wf_module.id, which the code under test will notice.
+                # We want to test what happens when wf_module.id is not None
+                # and the value is not in the DB. Solution: look up a copy and
+                # delete the copy.
+                WfModule.objects.get(id=wf_module.id).delete()
+            await do_delete()
+        save_result.side_effect = fake_save
+
+        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
+
+        # Assert fetch does not crash with
+        # DatabaseError: Save with update_fields did not affect any rows
+        with self.assertLogs(fetch.__name__, level='DEBUG'):
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
+                                                         wf_module, now))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     def test_crashing_module(self, load_module):

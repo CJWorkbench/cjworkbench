@@ -97,10 +97,11 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         # Log exceptions but keep going
         logger.exception(f'Error fetching {wf_module}')
 
-    update_next_update_time(wf_module, now)
+    await _update_next_update_time(wf_module, now)
 
 
-def update_next_update_time(wf_module, now):
+@database_sync_to_async
+def _update_next_update_time(wf_module, now):
     """Schedule next update, skipping missed updates if any."""
     tick = timedelta(seconds=max(wf_module.update_interval, MinFetchInterval))
     wf_module.last_update_check = now
@@ -108,7 +109,11 @@ def update_next_update_time(wf_module, now):
     if wf_module.next_update:
         while wf_module.next_update <= now:
             wf_module.next_update += tick
-    wf_module.save(update_fields=['last_update_check', 'next_update'])
+
+    WfModule.objects.filter(id=wf_module.id).update(
+        last_update_check=wf_module.last_update_check,
+        next_update=wf_module.next_update
+    )
 
 
 async def fetch(*, wf_module_id: int) -> None:
