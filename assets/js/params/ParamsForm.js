@@ -31,8 +31,8 @@ export default class ParamsForm extends React.PureComponent {
           }).isRequired
         ]).isRequired
       ), // new-style menu/radio -- once we nix "items" ("menu_items" in spec), add .isRequired here
-      multiline: PropTypes.bool.isRequired,
-      placeholder: PropTypes.string.isRequired, // may be ''
+      multiline: PropTypes.bool, // required for String
+      placeholder: PropTypes.string, // required for many
       visibleIf: PropTypes.object, // JSON spec or null,
       childParameters: PropTypes.array,
       childDefault: PropTypes.object

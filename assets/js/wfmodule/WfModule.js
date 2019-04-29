@@ -41,8 +41,8 @@ export class WfModule extends React.PureComponent {
         idName: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
         items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
-        multiline: PropTypes.bool.isRequired,
-        placeholder: PropTypes.string.isRequired, // may be ''
+        multiline: PropTypes.bool, // required for String
+        placeholder: PropTypes.string, // required for many
         visibleIf: PropTypes.object // JSON spec or null
       }).isRequired).isRequired
     }), // or null for no module
