@@ -233,7 +233,7 @@ class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
     """
     Column selector. Selects a str; default value `""` means "no column".
     """
-    column_types: Optional[FrozenSet[str]] = None
+    column_types: Optional[List[str]] = None
     """
     Column-type restrictions for the underlying ParamDType.Column.
     """
@@ -252,7 +252,9 @@ class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
     @property
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Column(
-            column_types=self.column_types,
+            column_types=(
+                frozenset(self.column_types) if self.column_types else None
+            ),
             tab_parameter=self.tab_parameter
         )
 
@@ -265,7 +267,7 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
     If `deprecated_string_storage` is set (DEPRECATED), value is str and the
     client and module must split it by `","`.
     """
-    column_types: Optional[FrozenSet[str]] = None
+    column_types: Optional[List[str]] = None
     """
     Column-type restrictions for the underlying ParamDType.Multicolumn.
     """
@@ -289,7 +291,9 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
     @property
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Multicolumn(
-            column_types=self.column_types,
+            column_types=(
+                frozenset(self.column_types) if self.column_types else None
+            ),
             tab_parameter=self.tab_parameter,
             deprecated_string_storage=self.deprecated_string_storage
         )

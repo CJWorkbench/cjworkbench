@@ -171,3 +171,23 @@ class ParamSpecTest(unittest.TestCase):
         # Just to make sure our unit-test is sane: verify from_dict(to_json)
         # returns the original.
         self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
+
+    def test_column_column_types(self):
+        param_spec = ParamSpec.from_dict(dict(
+            id_name='c',
+            type='column',
+            column_types=['text', 'number'],
+        ))
+        self.assertEqual(param_spec.column_types, ['text', 'number'])
+        self.assertEqual(param_spec.dtype.column_types,
+                         frozenset(['text', 'number']))
+
+    def test_multicolumn_column_types(self):
+        param_spec = ParamSpec.from_dict(dict(
+            id_name='c',
+            type='multicolumn',
+            column_types=['text', 'number'],
+        ))
+        self.assertEqual(param_spec.column_types, ['text', 'number'])
+        self.assertEqual(param_spec.dtype.column_types,
+                         frozenset(['text', 'number']))
