@@ -291,8 +291,9 @@ class LoadedModuleTest(unittest.TestCase):
                              r"unsupported dtype dtype\('bool'\)")
         # Should inform the user, who can follow up with the dev
         self.assertEqual(result, ProcessResult(error=(
-            "Module produced invalid data: unsupported dtype dtype('bool') "
-            "in column 'A'"
+            'Something unexpected happened. We have been notified and are '
+            'working to fix it. If this persists, contact us. Error code: '
+            "unsupported dtype dtype('bool') in column 'A'"
         )))
 
 
@@ -327,8 +328,10 @@ class LoadedModuleTest(unittest.TestCase):
 
         _, lineno = inspect.getsourcelines(render)
         self.assertRegex(result.error, (
-            r'Module produced invalid data: ProcessResult input must only '
-            r'contain {dataframe, error, json, quick_fixes, column_formats}'
+            'Something unexpected happened. We have been notified and are '
+            'working to fix it. If this persists, contact us. Error code: '
+            'ProcessResult input must only contain {dataframe, error, json, '
+            'quick_fixes, column_formats}'
         ))
 
     def test_render_use_input_columns_as_try_fallback_columns(self):
@@ -374,8 +377,10 @@ class LoadedModuleTest(unittest.TestCase):
                                fetch_result=None)
 
         self.assertRegex(result.error, (
-            r'Module produced invalid data: ProcessResult input must only '
-            r'contain {dataframe, error, json, quick_fixes, column_formats}'
+            'Something unexpected happened. We have been notified and are '
+            'working to fix it. If this persists, contact us. Error code: '
+            'ProcessResult input must only contain {dataframe, error, json, '
+            'quick_fixes, column_formats}'
         ))
 
     def test_render_dynamic_default(self):

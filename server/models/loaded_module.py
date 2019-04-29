@@ -134,7 +134,9 @@ class LoadedModule:
             logger.exception('Exception coercing %s.render output',
                              self.module_id_name)
             out = ProcessResult(error=(
-                'Module produced invalid data: %s' % (str(err),)
+                'Something unexpected happened. We have been notified and are '
+                'working to fix it. If this persists, contact us. Error code: '
+                + str(err)
             ))
 
         out.truncate_in_place_if_too_big()
