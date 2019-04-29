@@ -2,6 +2,7 @@ from datetime import timedelta
 import json
 import re
 import pandas as pd
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, \
         Http404, HttpResponseNotFound, JsonResponse
@@ -136,9 +137,6 @@ def wfmodule_detail(request, pk, format=None):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-N_COLUMNS_PER_TABLE = 101
-
-
 # ---- render / input / livedata ----
 # These endpoints return actual table data
 
@@ -150,7 +148,11 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
     if not cached_result:
         dataframe = pd.DataFrame()
     else:
-        columns = cached_result.columns[:N_COLUMNS_PER_TABLE]
+        columns = cached_result.columns[
+            # Return one row more than configured, so the client knows there
+            # are "too many rows".
+            :(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
+        ]
         column_names = [c.name for c in columns]
         dataframe = cached_result.read_dataframe(column_names)
 

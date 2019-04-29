@@ -28,6 +28,12 @@ SITE_ID = 1
 # How many rows in one table?
 MAX_ROWS_PER_TABLE = 1000000
 
+# How many columns can the client side display?
+# (Currently there is no limit on the actual number of columns per table -- and
+# there should certainly be one. But we do limit how many the client will
+# display because react-data-grid is terribly slow at >10 columns.)
+MAX_COLUMNS_PER_CLIENT_REQUEST = 100
+
 # How much StoredObject space can each module take up?
 MAX_STORAGE_PER_MODULE = 1024*1024*1024
 

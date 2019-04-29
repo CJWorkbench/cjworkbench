@@ -2,6 +2,7 @@ from collections import namedtuple
 import json
 from unittest.mock import patch
 from django.contrib.auth.models import User
+from django.test import override_settings
 import numpy as np
 import pandas as pd
 from rest_framework.test import APIRequestFactory
@@ -105,22 +106,20 @@ class WfModuleTests(LoggedInTestCase):
                                    self.wf_module2.id)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(MAX_COLUMNS_PER_CLIENT_REQUEST=2)
     def test_max_columns_returned(self):
-        # Only at most 101 columns should be returned to the client
-        # since we do not display more than 100. (This is a funky hack that
-        # assumes the client will behave differently when it has >100 columns.)
-        data = {}
-        for i in range(0, 102):
-            data[str(i)] = [1]
-        self.wf_module2.cache_render_result(2,
-                                            ProcessResult(pd.DataFrame(data)))
-        self.wf_module2.save()
+        # Only at most MAX_COLUMNS_PER_CLIENT_REQUEST should be returned,
+        # since we do not display more than that. (This is a funky hack that
+        # assumes the client will behave differently when it has >MAX columns.)
+        dataframe = pd.DataFrame({'A': [1], 'B': [2], 'C': [3], 'D': [4]})
+        self.wf_module2.cache_render_result(2, ProcessResult(dataframe))
 
         response = self.client.get('/api/wfmodules/%d/render' %
                                    self.wf_module2.id)
         self.assertEqual(response.status_code, 200)
-        # Max 101 columns of data
-        self.assertEqual(len(json.loads(response.content)['rows'][0]), 101)
+        # One column more than configured limit, so client knows to display
+        # "too many columns".
+        self.assertEqual(len(json.loads(response.content)['rows'][0]), 3)
 
     def test_wf_module_render(self):
         self.wf_module2.cache_render_result(2, ProcessResult(test_data))
