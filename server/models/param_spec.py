@@ -430,7 +430,7 @@ class ParamSpecMenu(_HasPlaceholder, _HasName, ParamSpec):
             # TODO consider allowing None instead of forcing a default? Menus
             # could have a "placeholder"
             default = options[0].value
-        return cls(options=options, **kwargs)
+        return cls(options=options, default=default, **kwargs)
 
 
 ParamSpecMenu.Option = MenuOption
