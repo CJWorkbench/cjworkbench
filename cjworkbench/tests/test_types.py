@@ -523,6 +523,17 @@ class ProcessResultTests(unittest.TestCase):
 
         self.assertEqual(result, expected)
 
+    def test_truncate_too_big_remove_unused_categories(self):
+        with mock.patch('django.conf.settings.MAX_ROWS_PER_TABLE', 2):
+            result_df = pd.DataFrame({'A': ['x', 'y', 'z', 'z']},
+                                      dtype='category')
+            result = ProcessResult(result_df)
+            result.truncate_in_place_if_too_big()
+            assert_frame_equal(
+                result.dataframe,
+                pd.DataFrame({'A': ['x', 'y']}, dtype='category')
+            )
+
     def test_truncate_not_too_big(self):
         df = pd.DataFrame({'foo': ['foo', 'bar', 'baz']})
         expected = ProcessResult(df.copy())

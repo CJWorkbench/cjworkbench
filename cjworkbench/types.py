@@ -620,6 +620,11 @@ class ProcessResult:
                 self.error = f'{self.error}\n{warning}'
             else:
                 self.error = warning
+            # Nix unused categories
+            for column in self.dataframe:
+                series = self.dataframe[column]
+                if hasattr(series, 'cat'):
+                    series.cat.remove_unused_categories(inplace=True)
 
     @property
     def status(self):
