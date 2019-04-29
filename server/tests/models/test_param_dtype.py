@@ -24,6 +24,12 @@ class DTypeCoerceTest(unittest.TestCase):
     def test_multicolumn_deprecated_validate_str(self):
         DT.Multicolumn().validate('blah,beep')
 
+    def test_multicolumn_default(self):
+        self.assertEqual(
+            DT.Multicolumn(deprecated_string_storage=False).coerce(None),
+            []
+        )
+
     def test_multicolumn_coerce_list_of_str(self):
         self.assertEqual(
             DT.Multicolumn(deprecated_string_storage=False).coerce(['x', 'y']),

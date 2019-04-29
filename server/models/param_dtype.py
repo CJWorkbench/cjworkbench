@@ -259,7 +259,7 @@ class ParamDTypeMulticolumn(ParamDType):
                 return str(value)
 
         if value is None:
-            return ''
+            return []
         if not isinstance(value, list):
             value = list(value)
         return [str(v) for v in value]
