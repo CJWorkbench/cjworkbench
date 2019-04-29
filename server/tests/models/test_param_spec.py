@@ -6,6 +6,14 @@ from server.models.param_spec import ParamSpec
 class ParamSpecTest(unittest.TestCase):
     maxDiff = None
 
+    def test_checkbox_default_false(self):
+        param_spec = ParamSpec.from_dict(dict(
+            id_name='b',
+            type='checkbox',
+            name='hi'
+        ))
+        self.assertFalse(param_spec.default)
+
     def test_bool_radio_default_false(self):
         # Handle odd edge case seen on production:
         #

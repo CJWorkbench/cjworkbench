@@ -338,7 +338,7 @@ class ParamSpecCheckbox(_HasName, ParamSpec):
     """
     Boolean selected by checkbox.
     """
-    default: Optional[bool] = None
+    default: bool = False
 
     # override
     @property
