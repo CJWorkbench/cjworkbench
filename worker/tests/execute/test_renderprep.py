@@ -156,13 +156,41 @@ class CleanValueTests(DbTestCase):
         result = clean_value(ParamDType.Column(), 'B', context)
         self.assertEqual(result, '')
 
+    def test_clean_deprecated_multicolumn_valid(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('A', ColumnType.NUMBER()),
+            Column('B', ColumnType.NUMBER()),
+        ]), None, None)
+        result = clean_value(
+            ParamDType.Multicolumn(deprecated_string_storage=True),
+            'A,B',
+            context
+        )
+        self.assertEqual(result, 'A,B')
+
     def test_clean_multicolumn_valid(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
-        result = clean_value(ParamDType.Multicolumn(), 'A,B', context)
-        self.assertEqual(result, 'A,B')
+        result = clean_value(
+            ParamDType.Multicolumn(deprecated_string_storage=False),
+            ['A', 'B'],
+            context
+        )
+        self.assertEqual(result, ['A', 'B'])
+
+    def test_clean_multicolumn_sort_in_table_order(self):
+        context = RenderContext(None, TableShape(3, [
+            Column('B', ColumnType.NUMBER()),
+            Column('A', ColumnType.NUMBER()),
+        ]), None, None)
+        result = clean_value(
+            ParamDType.Multicolumn(deprecated_string_storage=False),
+            ['A', 'B'],
+            context
+        )
+        self.assertEqual(result, ['B', 'A'])
 
     def test_clean_column_prompting_error_convert_to_text(self):
         # TODO make this _automatic_ instead of quick-fix?
@@ -188,8 +216,12 @@ class CleanValueTests(DbTestCase):
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
-        result = clean_value(ParamDType.Multicolumn(), 'A,X,B', context)
-        self.assertEqual(result, 'A,B')
+        result = clean_value(
+            ParamDType.Multicolumn(deprecated_string_storage=False),
+            ['A', 'X', 'B'],
+            context
+        )
+        self.assertEqual(result, ['A', 'B'])
 
     def test_clean_multichartseries_missing_is_removed(self):
         context = RenderContext(None, TableShape(3, [
@@ -255,10 +287,11 @@ class CleanValueTests(DbTestCase):
 
         schema = ParamDType.Dict({
             'tab': ParamDType.Tab(),
-            'columns': ParamDType.Multicolumn(tab_parameter='tab'),
+            'columns': ParamDType.Multicolumn(tab_parameter='tab',
+                                              deprecated_string_storage=False),
         })
         param_values = {'tab': tab.slug,
-                        'columns': 'A-from-tab-1,A-from-tab-2'}
+                        'columns': ['A-from-tab-1', 'A-from-tab-2']}
         params = Params(schema, param_values, {})
         context = RenderContext(workflow.id, TableShape(3, [
             Column('A-from-tab-1', ColumnType.NUMBER()),
@@ -267,7 +300,7 @@ class CleanValueTests(DbTestCase):
         }, params)
         result = clean_value(schema, param_values, context)
         # result['tab'] is not what we're testing here
-        self.assertEqual(result['columns'], 'A-from-tab-2')
+        self.assertEqual(result['columns'], ['A-from-tab-2'])
 
     def test_clean_tab_no_tab_selected_gives_none(self):
         context = RenderContext(None, None, {}, None)

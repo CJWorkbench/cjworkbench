@@ -215,13 +215,20 @@ def _(
     if not value:
         return ''
 
-    valid_colnames = []
     error_agg = PromptErrorAggregator()
 
-    for colname in value.split(','):
-        if colname not in valid_columns:
+    if dtype.deprecated_string_storage:
+        requested_colnames = set(c for c in value.split(',') if c)
+    else:
+        requested_colnames = set(value)
+
+    valid_colnames = []
+    # ignore colnames not in valid_columns
+    # iterate in table order
+    for colname, column in valid_columns.items():
+        if colname not in requested_colnames:
             continue
-        column = valid_columns[colname]
+
         if dtype.column_types and column.type.name not in dtype.column_types:
             error_agg.add(PromptingError.WrongColumnType([column.name],
                                                          column.type.name,
@@ -230,7 +237,11 @@ def _(
             valid_colnames.append(column.name)
 
     error_agg.raise_if_nonempty()
-    return ','.join(valid_colnames)
+
+    if dtype.deprecated_string_storage:
+        return ','.join(valid_colnames)
+    else:
+        return valid_colnames
 
 
 @clean_value.register(ParamDType.Multichartseries)
