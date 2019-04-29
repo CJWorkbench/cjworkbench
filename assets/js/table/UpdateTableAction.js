@@ -25,7 +25,7 @@ export const moduleParamsBuilders = {
   'sort': buildSortColumnsParams,
   'converttexttonumber': genericAddColumn('colnames', false),
   'clean-text': genericAddColumn('colnames', true),
-  'convert-date': genericAddColumn('colnames', true),
+  'convert-date': genericAddColumn('colnames', false),
   'converttotext': genericAddColumn('colnames', true),
   'formatnumbers': genericAddColumn('colnames', true)
 }

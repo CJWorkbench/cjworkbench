@@ -125,7 +125,7 @@ tabs:
       data-test="
         const wfm = workflow.tabs[0].wfModules[3]
         return wfm && wfm.moduleSlug === 'convert-date' &&
-               wfm.params.colnames.toLowerCase() === 'complaint date'
+               wfm.params.colnames.toLowerCase().join('|') === 'complaint date'
                && wfm.params.input_format === 'auto'"
       >In the column menu<span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
