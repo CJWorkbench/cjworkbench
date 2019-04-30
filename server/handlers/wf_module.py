@@ -2,9 +2,9 @@ import asyncio
 import datetime
 import functools
 from typing import Any, Dict, List, Optional
-from channels.db import database_sync_to_async
 from dateutil.parser import isoparse
 from django.conf import settings
+from cjworkbench.sync import database_sync_to_async
 from server import oauth, rabbitmq, websockets
 from server.models import Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \

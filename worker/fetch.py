@@ -4,10 +4,10 @@ from functools import partial
 import logging
 import os
 from typing import Tuple
-from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
+from cjworkbench.sync import database_sync_to_async
 from server.models import LoadedModule, Params, WfModule
 from worker import save
 from .util import benchmark

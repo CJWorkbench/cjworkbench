@@ -1,7 +1,7 @@
 import logging
-from channels.db import database_sync_to_async
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
+from cjworkbench.sync import database_sync_to_async
 from server.models import Workflow
 
 

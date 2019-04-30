@@ -142,9 +142,7 @@ class RenderTest(DbTestCase):
                      f'execute_workflow({workflow.id})')
                 ])
 
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(inner())
-        loop.close()
+        self.run_with_async_db(inner())
 
         # Don't requeue: it is _unneeded_ execution.
         requeue.assert_not_called()

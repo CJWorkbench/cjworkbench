@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from typing import Optional, Tuple
-from channels.db import database_sync_to_async
+from cjworkbench.sync import database_sync_to_async
 from server.models import WfModule, UploadedFile
 from server.modules import uploadfile
 from worker import save

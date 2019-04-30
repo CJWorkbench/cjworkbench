@@ -1,6 +1,5 @@
 import unittest
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from server.models import ModuleVersion
 from server.models.workflow import Workflow, DependencyGraph
@@ -117,23 +116,25 @@ class WorkflowTests(DbTestCase):
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name='A')
         tab = workflow.tabs.create(position=0)
-        async_to_sync(ChangeWorkflowTitleCommand.create)(
+        self.run_with_async_db(ChangeWorkflowTitleCommand.create(
             workflow=workflow,
             new_value='B'
-        )
+        ))
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'x',
             'name': 'x',
             'category': 'Clean',
             'parameters': [],
         })
-        async_to_sync(AddModuleCommand.create)(workflow=workflow, tab=tab,
-                                               module_id_name='x', position=0,
-                                               param_values={})
-        async_to_sync(ChangeWorkflowTitleCommand.create)(
+        self.run_with_async_db(AddModuleCommand.create(workflow=workflow,
+                                                       tab=tab,
+                                                       module_id_name='x',
+                                                       position=0,
+                                                       param_values={}))
+        self.run_with_async_db(ChangeWorkflowTitleCommand.create(
             workflow=workflow,
             new_value='C'
-        )
+        ))
         workflow.delete()
         self.assertTrue(True)  # no crash
 

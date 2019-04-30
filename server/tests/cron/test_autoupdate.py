@@ -1,7 +1,6 @@
 import asyncio
 import logging
 from unittest.mock import patch
-from asgiref.sync import async_to_sync
 from dateutil import parser
 from server.cron import autoupdate
 from server.models import Workflow
@@ -62,7 +61,9 @@ class UpdatesTests(DbTestCase):
 
         # eat log messages
         with self.assertLogs(autoupdate.__name__, logging.INFO):
-            async_to_sync(autoupdate.queue_fetches)(SuccessfulRenderLock)
+            self.run_with_async_db(
+                autoupdate.queue_fetches(SuccessfulRenderLock)
+            )
 
         self.assertEqual(mock_queue_fetch.call_count, 1)
         mock_queue_fetch.assert_called_with(self.wfm2)
@@ -71,6 +72,8 @@ class UpdatesTests(DbTestCase):
         self.assertTrue(self.wfm2.is_busy)
 
         # Second call shouldn't fetch again, because it's busy
-        async_to_sync(autoupdate.queue_fetches)(SuccessfulRenderLock)
+        self.run_with_async_db(
+            autoupdate.queue_fetches(SuccessfulRenderLock)
+        )
 
         self.assertEqual(mock_queue_fetch.call_count, 1)

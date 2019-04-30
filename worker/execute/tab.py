@@ -1,7 +1,7 @@
 from functools import lru_cache
 import logging
 from typing import Dict, List, Optional, Set, Tuple
-from channels.db import database_sync_to_async
+from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult, StepResultShape
 from server.models import Params, WfModule, Workflow, Tab
 from server.models.param_spec import ParamDType

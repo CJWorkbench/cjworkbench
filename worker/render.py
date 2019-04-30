@@ -2,8 +2,8 @@ import asyncio
 import logging
 import os
 from typing import Any, Awaitable, Callable, Dict
-from channels.db import database_sync_to_async
 from django.db import DatabaseError, InterfaceError
+from cjworkbench.sync import database_sync_to_async
 from server.models import Workflow
 from .pg_locker import PgLocker, WorkflowAlreadyLocked
 from .util import benchmark

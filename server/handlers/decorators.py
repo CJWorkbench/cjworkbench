@@ -1,7 +1,7 @@
 import asyncio
 import functools
 import logging
-from channels.db import database_sync_to_async
+from cjworkbench.sync import database_sync_to_async
 from .types import AuthError, HandlerRequest, HandlerResponse, HandlerError
 
 

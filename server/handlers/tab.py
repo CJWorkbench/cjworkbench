@@ -1,6 +1,6 @@
 import functools
 from typing import Any, Dict, List
-from channels.db import database_sync_to_async
+from cjworkbench.sync import database_sync_to_async
 from server.models import ModuleVersion, Workflow, Tab
 from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
     AddTabCommand, DeleteTabCommand, SetTabNameCommand

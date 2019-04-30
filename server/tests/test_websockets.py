@@ -50,51 +50,21 @@ def async_test(f):
             communicators.append(ret)
             return ret
 
-        # Reset the thread-local event loop
-        old_loop = asyncio.get_event_loop()
-        if not old_loop.is_closed():
-            old_loop.close()
-        # Set a 1-thread ThreadPoolExecutor. That thread will open a DB
-        # connection, and we'll be able to close it in disconnect_all().
-        loop = asyncio.new_event_loop()
-        loop.set_default_executor(ThreadPoolExecutor(1))
-        asyncio.set_event_loop(loop)
-
-        async def disconnect_all():
-            for communicator in communicators:
-                await communicator.disconnect()
-
-            def disconnect_db():
-                # Runs in the same thread that actually connected to the DB
-                django.db.connections.close_all()
-            await loop.run_in_executor(None, disconnect_db)
-
         async def inner():
+            # loop is created by run_with_async_db()
+            loop = asyncio.get_event_loop()
             try:
                 return await f(self, communicate, *args, **kwargs)
             finally:
-                await disconnect_all()
+                # Clean up communicators
+                for communicator in communicators:
+                    await communicator.disconnect()
+                # Disconnect from RabbitMQ
                 layer = get_channel_layer()
                 connection = layer._get_connection_for_loop(loop)
-                await connection.close()  # clean up on the RabbitMQ side
+                await connection.close()
 
-        with self.assertLogs():
-            try:
-                # Run the async function by running the loop to completion
-                return loop.run_until_complete(inner())
-            finally:
-                # log something, so self.assertLogs() doesn't fail
-                logger = logging.getLogger('this-test')
-                logger.info('Warnings from closing event loop:')
-
-                # Now call loop.close(). It will emit tons of log messages
-                # about dead tasks but we don't care.
-                loop.run_until_complete(loop.shutdown_asyncgens())
-                loop.close()
-
-            # Reset the thread-local event loop
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+            self.run_with_async_db(inner())
 
     return wrapper
 

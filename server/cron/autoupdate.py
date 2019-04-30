@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
-from channels.db import database_sync_to_async
 from django.utils import timezone
+from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
 from server.models import WfModule
 from worker.pg_locker import PgLocker, WorkflowAlreadyLocked

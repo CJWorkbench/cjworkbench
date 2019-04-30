@@ -94,6 +94,19 @@ try:
 except KeyError:
     sys.exit('Must set CJW_DB_HOST and CJW_DB_PASSWORD')
 
+N_SYNC_DATABASE_CONNECTIONS = 2
+"""
+Number of simultaneous Django database transactions.
+
+Smaller numbers give higher throughput on the database. There are no known
+"slow" database queries in Workbench; but if we found some, we'd want to
+increase this number so they don't block other requests.
+"""
+# (Any block of Workbench code with a "cooperative_lock" consumes a database
+# transaction until finish.)
+#
+# (PgLocker connections do not count against SYNC_DATABASE_CONNECTIONS.)
+
 # RabbitMQ
 try:
     RABBITMQ_HOST = os.environ['CJW_RABBITMQ_HOST']

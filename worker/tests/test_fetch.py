@@ -1,12 +1,12 @@
 import asyncio
 import logging
 from unittest.mock import Mock, patch
-from channels.db import database_sync_to_async
 from dateutil import parser
 from django.contrib.auth.models import User
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult
 from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand

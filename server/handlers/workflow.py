@@ -1,7 +1,7 @@
 from typing import List
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
-from channels.db import database_sync_to_async
+from cjworkbench.sync import database_sync_to_async
 from server.models import Tab, Workflow, WfModule
 from server.models.commands import ChangeWorkflowTitleCommand, \
     ReorderTabsCommand

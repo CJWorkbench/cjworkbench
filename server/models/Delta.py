@@ -4,11 +4,11 @@
 # actually happened.
 import json
 from typing import Any, Optional
-from channels.db import database_sync_to_async
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
+from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
 from server.serializers import WfModuleSerializer
 

@@ -1,5 +1,5 @@
 from typing import Optional
-from channels.db import database_sync_to_async
+from cjworkbench.sync import database_sync_to_async
 from server.models import Delta, Workflow
 
 

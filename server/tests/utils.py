@@ -6,6 +6,7 @@ from django.db import connection, connections
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
+from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from server import minio
 import os
 import io
@@ -19,9 +20,29 @@ mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
 mock_xlsx_path = os.path.join(settings.BASE_DIR,
                               'server/tests/test_data/test.xlsx')
 
+# Connect to the database, on the main thread, and remember that connection
+main_thread_connections = {name: connections[name] for name in connections}
+
+
+def _inherit_main_thread_connections():
+    for name in main_thread_connections:
+        connections[name] = main_thread_connections[name]
+        connections[name].allow_thread_sharing = True
+
 
 class DbTestCase(SimpleTestCase):
     allow_database_queries = True
+
+    # run_with_async_db() tasks all share a single database connection. To
+    # avoid concurrency issues, run them all in a single thread.
+    #
+    # Assumes DB connections may be passed between threads. (Only one thread
+    # will make DB calls at a time.)
+    async_executor = ThreadPoolExecutor(
+        max_workers=1,
+        thread_name_prefix='run_with_async_db_thread',
+        initializer=_inherit_main_thread_connections
+    )
 
     def setUp(self):
         clear_db()
@@ -33,43 +54,26 @@ class DbTestCase(SimpleTestCase):
 
     def run_with_async_db(self, task):
         """
-        Like async_to_sync() but it closes the database connection.
-
-        This is a rather expensive call: it connects and disconnects from the
-        database.
+        Runs async tasks, using the main thread's database connection.
 
         See
         https://github.com/django/channels/issues/1091#issuecomment-436067763.
         """
-        # We'll execute with a 1-worker thread pool. That's because Django
-        # database methods will spin up new connections and never close them.
-        # (@database_sync_to_async -- which execute uses --only closes _old_
-        # connections, not valid ones.)
+        # We'll execute with a 1-worker thread pool, shared between tests. We
+        # need to limit to 1 worker, because all workers share the same
+        # database connection.
         #
-        # This hack is just for unit tests: we need to close all connections
-        # before the test ends, so we can delete the entire database when tests
-        # finish. We'll schedule the "close-connection" operation on the same
-        # thread as @database_sync_to_async's blocking code ran on. That way,
-        # it'll close the connection @database_sync_to_async was using.
+        # This hack is just for unit tests: the test suite will end with a
+        # "delete the entire database" call, and we want it to succeed; that
+        # means there need to be no other connections using the database.
         old_loop = asyncio.get_event_loop()
-
-        loop = asyncio.new_event_loop()
-        loop.set_default_executor(ThreadPoolExecutor(1))
-        asyncio.set_event_loop(loop)
-
+        old_executor = WorkbenchDatabaseSyncToAsync.executor
+        asyncio.set_event_loop(None)
         try:
-            return loop.run_until_complete(task)
+            WorkbenchDatabaseSyncToAsync.executor = self.async_executor
+            return asyncio.run(task)
         finally:
-            def close_thread_connection():
-                # Close the connection that was created by
-                # @database_sync_to_async.  Assumes we're running in the same
-                # thread that ran the database stuff.
-                connections.close_all()
-
-            loop.run_until_complete(
-                loop.run_in_executor(None, close_thread_connection)
-            )
-
+            WorkbenchDatabaseSyncToAsync.executor = old_executor
             asyncio.set_event_loop(old_loop)
 
 

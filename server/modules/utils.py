@@ -10,7 +10,6 @@ import aiohttp
 from asgiref.sync import async_to_sync
 from async_generator import asynccontextmanager  # TODO python 3.7 native
 import cchardet as chardet
-from channels.db import database_sync_to_async
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.fields.files import FieldFile
@@ -20,6 +19,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import xlrd
 import yarl  # aiohttp innards -- yuck!
+from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult
 from server import rabbitmq
 from server.models import Workflow
