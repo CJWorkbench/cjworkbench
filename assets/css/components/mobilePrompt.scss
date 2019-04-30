@@ -37,8 +37,8 @@
       font-size: 1.2rem!important;
   }
 }
-@media screen and (max-width: 650px) {
 
+@media screen and (max-width: 650px) {
   .not-enough-px-warning {
     display: flex;
     align-items: center;
@@ -62,25 +62,6 @@
       opacity: .4;
     }
 
-    .brand-container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 3rem;
-      cursor: pointer;
-      width:25rem;
-
-
-      h1{
-        font-size: 4rem;
-      	line-height: 2.4rem;
-        font-weight: normal;
-        letter-spacing: -0.3px;
-      	margin-left: 1rem;
-        color:$white!important;
-      }
-    }
-
-
     .banner {
       display: flex;
       justify-content: center;
@@ -92,23 +73,17 @@
 
       .video-container {
         position: relative;
-        width:100%;
+        width: 100%;
         padding-bottom: 56.25%;
         overflow: hidden;
 
-        .product-vid {
+        iframe {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
         }
-      }
-
-      .action-button {
-        width: 11rem;
-        height: 5rem;
-        font-size: 2rem;
       }
 
       .warning {
@@ -118,11 +93,16 @@
         margin-top: 1rem;
         margin-bottom: 1rem;
       }
+
       .detail {
         margin-top: .5rem;
         font-size: 2rem;
       }
+
       .action-button {
+        width: 11rem;
+        height: 5rem;
+        font-size: 2rem;
         margin-top: 3rem;
         color: $brand-learn;
         font-weight: bold;
@@ -140,13 +120,8 @@
   // letting users access signup because why not
   .accounts {
     .not-enough-px-warning { display: none; }
-
-    .action-button {
-      width: 11rem;
-      height: 5rem;
-      font-size: 2rem;
-    }
   }
+
   // hide intercom
   #intercom-container {
     display: none;
