@@ -109,6 +109,15 @@ describe('ModuleSearch Popup', () => {
     expect(w.text()).toMatch(/X.*Y.*Z/)
   })
 
+  it('should hide deprecated modules', () => {
+    const w = wrapper({ modules: [
+      { ...ModuleDefaults, idName: 'a', category: 'CatA', name: 'A' },
+      { ...ModuleDefaults, idName: 'b', category: 'CatB', name: 'B', deprecated: { end_date: '2001-01-01', message: 'Please disappear' } }
+    ]})
+    expect(w.text()).not.toMatch(/CatB/)
+    expect(w.text()).not.toMatch(/B/)
+  })
+
   it('should show a popover description on hover', () => {
     const w = wrapper()
     w.find('button[data-module-name="Load from Enigma"]').simulate('mouseEnter')

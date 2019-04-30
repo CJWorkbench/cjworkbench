@@ -5,6 +5,7 @@ export const ModulePropType = PropTypes.shape({
   isLessonHighlight: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
+  deprecated: PropTypes.object, // or null -- usually null! We don't care about its properties in module search
   category: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired,
 })

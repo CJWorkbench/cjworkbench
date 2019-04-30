@@ -12,6 +12,18 @@ properties:
         type: string
         description: Category that appears in Module Search
         enum: [ Add data, Scrape, Clean, Analyze, Code, Visualize, Other ]
+    deprecated:
+        type: object
+        description: "If set, warning to show the user because we want to delete this module."
+        required: [ end_date, message ]
+        properties:
+            end_date:
+                type: string
+                format: date
+                description: "Date when the module will stop working."
+            message:
+                type: string
+                description: "Instructions for users to achieve the same functionality."
     icon:
         type: string
         description: "Icon name that appears in Module Search and atop the Step (default: 'url')"

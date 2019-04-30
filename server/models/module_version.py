@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, Optional
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -157,6 +157,10 @@ class ModuleVersion(models.Model):
     @property
     def icon(self):
         return self.spec.get('icon', 'url')
+
+    @property
+    def deprecated(self) -> Optional[Dict[str, str]]:
+        return self.spec.get('deprecated')
 
     @property
     def loads_data(self):

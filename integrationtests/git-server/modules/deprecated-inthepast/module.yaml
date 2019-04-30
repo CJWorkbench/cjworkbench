@@ -1,0 +1,11 @@
+id_name: deprecatetest
+name: Deprecation-test module
+category: Add data
+icon: twitter
+description: Do nothing -- soon
+help_url: modules/add-data/deprecatetest
+deprecated:
+  end_date: "1970-01-02"  # A date in the past (avoiding negative numbers)
+  message: Please delete this module.
+loads_data: true
+parameters: []

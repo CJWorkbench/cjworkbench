@@ -1,10 +1,14 @@
 {
   "name": "Concatenate workflow",
   "id_name": "concaturl" ,
-  "category" : "Add data",
-  "icon" : "concatenate",
-  "help_url":"modules/add-data/concatenate",
-  "description" : "Concatenate two workflows together using a another workflow's URL.",
+  "category": "Add data",
+  "icon": "concatenate",
+  "help_url": "modules/add-data/concatenate",
+  "description": "Concatenate two workflows together using a another workflow's URL.",
+  "deprecated": {
+    "end_date": "2019-06-30",
+    "message": "Please create a new tab; \"Load URL\" within it; and then replace this module with \"Concatenate tabs\"."
+  },
   "loads_data": true,
   "parameters": [
     {
