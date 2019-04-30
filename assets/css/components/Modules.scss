@@ -247,166 +247,172 @@
 
   // Header of module in stack. Includes everything shown when collapsed.
   .module-card-header {
-    display: flex;
-    align-items: center;
-
-    a {
-      text-decoration:none;
-      color: inherit;
-    }
-
-    .WFmodule-icon {
-      margin-right: .6rem;
-      font-size: 1.2rem;
-    }
-
-    .module-name {
-      @extend .title-3;
-    }
-
-    button.workflow-step-collapse {
-      // Make it big and clickable! Lots of padding.
-      // This button dictates the height of the entire header.
-      margin: 0;
-      border: 0;
-      background: transparent;
-      font-size: 1.2rem;
-      padding: .75rem .3rem .75rem 1.2rem;
-      cursor: pointer;
-      opacity: 1;
-      &:hover {
-          .context-collapse-button {
-            opacity: 1;
-          }
-        }
-
-      i.icon-caret-right {font-size:1rem;}
-
-      i.icon-caret-down {font-size:.6rem;}
-
-      i {color:$brand-text--dark}
-    }
-
-    .module-name {
-      color: $brand-text--dark;
-    }
-
-    .context-collapse-button {
-      border: 0;
-      width: 1rem;
-      height: 2.5rem;
+    .controls {
       display: flex;
       align-items: center;
-      justify-content: center;
-      background-color: transparent;
-      color:$light-gray;
-      border-radius: 5rem;
-      margin-right:.5rem;
-      opacity: 0.5;
 
-      &.lesson-highlight {
-        color: $brand-learn;
-        font-weight: bold;
-        opacity: 1;
+      a {
+        text-decoration:none;
+        color: inherit;
       }
-    }
 
-    .context-buttons {
-
-      align-items: center;
-      flex: 1 0 auto; // grow to the right
-      text-align: right;
-      white-space: nowrap;
-      margin-right: .5rem;
-
-      &>a, &>button, &>label, &>.dropdown>button {
-        // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
-        // sure these rules don't conflict when nested. (e.g., no `opacity`)
-        display: inline-block;
+      .WFmodule-icon {
+        margin-right: .6rem;
         font-size: 1.2rem;
-        width: 2.2rem;
-        height: 2.2rem;
-        border-radius: 5rem;
-        line-height:1;
-        text-align: center;
-        vertical-align: middle;
-        padding: 0;
+      }
+
+      .module-name {
+        @include title-3;
+        color: $brand-text--dark;
+      }
+
+      button.workflow-step-collapse {
+        // Make it big and clickable! Lots of padding.
+        // This button dictates the height of the entire header.
         margin: 0;
         border: 0;
         background: transparent;
-        color: $medium-gray;
+        font-size: 1.2rem;
+        padding: .75rem .3rem .75rem 1.2rem;
+        cursor: pointer;
+        opacity: 1;
         &:hover {
-          color: $brand-text--dark;
-          background-color: $dark-accent--soft;
-        }
-      }
-      //menu button when focused and menu visisble
-      .btn-secondary:focus {
-        background-color:$Vlight-gray;
-        color:$dark-gray;
-      }
+            .context-collapse-button {
+              opacity: 1;
+            }
+          }
 
-      button.notifications {
-        cursor: pointer;
-        color: $medium-gray;
+        i.icon-caret-right {font-size:1rem;}
 
-        &.enabled {
-          color: $brand-workspace;
-        }
+        i.icon-caret-down {font-size:.6rem;}
+
+        i {color:$brand-text--dark}
       }
 
-      label.toggle-zen-mode {
-        cursor: pointer;
+      .context-collapse-button {
+        border: 0;
+        width: 1rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        color:$light-gray;
+        border-radius: 5rem;
+        margin-right:.5rem;
+        opacity: 0.5;
 
-        input[type="checkbox"] {
-          display: none;
+        &.lesson-highlight {
+          color: $brand-learn;
+          font-weight: bold;
+          opacity: 1;
+        }
+      }
+
+      .context-buttons {
+        align-items: center;
+        flex: 1 0 auto; // grow to the right
+        text-align: right;
+        white-space: nowrap;
+        margin-right: .5rem;
+
+        &>a, &>button, &>label, &>.dropdown>button {
+          // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
+          // sure these rules don't conflict when nested. (e.g., no `opacity`)
+          display: inline-block;
+          font-size: 1.2rem;
+          width: 2.2rem;
+          height: 2.2rem;
+          border-radius: 5rem;
+          line-height:1;
+          text-align: center;
+          vertical-align: middle;
+          padding: 0;
+          margin: 0;
+          border: 0;
+          background: transparent;
+          color: $medium-gray;
+          &:hover {
+            color: $brand-text--dark;
+            background-color: $dark-accent--soft;
+          }
+        }
+        //menu button when focused and menu visisble
+        .btn-secondary:focus {
+          background-color:$Vlight-gray;
+          color:$dark-gray;
         }
 
-        i.icon-full-screen {
+        button.notifications {
+          cursor: pointer;
+          color: $medium-gray;
+
+          &.enabled {
+            color: $brand-workspace;
+          }
+        }
+
+        label.toggle-zen-mode {
+          cursor: pointer;
+
+          input[type="checkbox"] {
+            display: none;
+          }
+
+          i.icon-full-screen {
+            vertical-align: -.6rem; // icky glyph sizing in the font?
+            font-size: 1.25rem;
+          }
+
+          &.is-zen-mode {
+            color: $brand-text--dark;
+            background-color: $dark-accent--soft;
+          }
+        }
+
+        a.help-button, button.edit-note, button.context-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
+          opacity: 0; // only show context buttons when hovering over wf-card
+        }
+
+        i.icon-help {
           vertical-align: -.6rem; // icky glyph sizing in the font?
           font-size: 1.25rem;
         }
 
-        &.is-zen-mode {
-          color: $brand-text--dark;
-          background-color: $dark-accent--soft;
-        }
-      }
-
-      a.help-button, button.edit-note, button.context-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
-        opacity: 0; // only show context buttons when hovering over wf-card
-      }
-
-      i.icon-help {
-        vertical-align: -.6rem; // icky glyph sizing in the font?
-        font-size: 1.25rem;
-      }
-
-      .edit-note {
-        margin-left: .1rem;
-        margin-right:.2rem;
-        i.icon-note {
+        .edit-note {
           margin-left: .1rem;
-          font-size: 1.5rem;
+          margin-right:.2rem;
+          i.icon-note {
+            margin-left: .1rem;
+            font-size: 1.5rem;
+          }
         }
-      }
 
-      .dropdown {
-        margin-top: .2rem;
-        display: inline-block;
-        margin-left: -.3rem;
+        .dropdown {
+          margin-top: .2rem;
+          display: inline-block;
+          margin-left: -.3rem;
 
-        i.icon-more {
+          i.icon-more {
+            position: relative;
+          }
+        }
+
+        i.icon-notification, .has-unseen {
           position: relative;
+          font-size: 1.35rem;
+          top: .1rem;
         }
-      }
-
-      i.icon-notification, .has-unseen {
-        position: relative;
-        font-size: 1.35rem;
-        top: .1rem;
       }
     }
+  }
+
+  .module-deprecated {
+    @include content-1;
+    padding: 1.5rem;
+    background-color: $brand-workspace--light;
+    color: $brand-workspace;
+    margin-bottom: 1.5rem;
   }
 
   .wf-module-error-msg  {
@@ -434,9 +440,6 @@
     }
   }
 
-  %wf-module-error-msg {
-    @extend .wf-module-error-msg;
-  }
   // prompt that isn't an error (module working as expected)
   &.status-ok .wf-module-error-msg {
     background-color: $brand-workspace--light;
@@ -446,7 +449,6 @@
 
   //module being dragged (old position)
   &.selected.dragging .module-card-and-link {
-
     .module-card {
       opacity: .6;
       border-color: $brand-orange;

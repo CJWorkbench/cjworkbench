@@ -103,6 +103,7 @@ def render(table, params, *, fetch_result, **kwargs):
         return str(err)
 
     new_table = new_table[sort_columns(table.columns, new_table.columns)]
+    new_table.reset_index(drop=True, inplace=True)
 
     return new_table
 

@@ -6,6 +6,7 @@ import ErrorBoundary from '../ErrorBoundary'
 import WfModuleContextMenu from './WfModuleContextMenu'
 import ParamsForm from '../params/ParamsForm'
 import EditableNotes from '../EditableNotes'
+import DeprecationNotice from './DeprecationNotice'
 import StatusLine from './StatusLine'
 import {
   clearNotificationsAction,
@@ -35,6 +36,9 @@ export class WfModule extends React.PureComponent {
     module: PropTypes.shape({
       id_name: PropTypes.string.isRequired,
       help_url: PropTypes.string.isRequired,
+      deprecated: PropTypes.shape({
+        message: PropTypes.string.isRequired,
+      }), // undefined by default
       name: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
       param_fields: PropTypes.arrayOf(PropTypes.shape({
@@ -421,21 +425,30 @@ export class WfModule extends React.PureComponent {
         <h3>{numberFormat.format(index + 1)}</h3>
         <div className="module-card-and-link">
 
-          <div className='module-card' draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+          <div className='module-card' draggable={!isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
             <div className='module-card-header'>
-              <WfModuleCollapseButton
-                isCollapsed={wfModule.is_collapsed}
-                isLessonHighlight={this.props.isLessonHighlightCollapse}
-                onCollapse={this.collapse}
-                onExpand={this.expand}
-              />
-              <i className={moduleIconClassName} />
-              <div className='module-name'>{moduleName}</div>
-              {contextBtns}
+              <div className='controls'>
+                <WfModuleCollapseButton
+                  isCollapsed={wfModule.is_collapsed}
+                  isLessonHighlight={this.props.isLessonHighlightCollapse}
+                  onCollapse={this.collapse}
+                  onExpand={this.expand}
+                />
+                <i className={moduleIconClassName} />
+                <div className='module-name'>{moduleName}</div>
+                {contextBtns}
+              </div>
+              {(!isReadOnly) ? (
+                <DeprecationNotice
+                  helpUrl={moduleHelpUrl}
+                  message={module && module.deprecated ? module.deprecated.message : null}
+                />
+              ) : null}
             </div>
             <div className={`module-card-details ${wfModule.is_collapsed ? 'collapsed' : 'expanded'}`}>
               {/* --- Error message --- */}
               <StatusLine
+                module={module}
                 status={this.wfModuleStatus}
                 error={wfModule.output_error || ''}
                 quickFixes={wfModule.quick_fixes || []}

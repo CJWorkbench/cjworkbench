@@ -2,68 +2,49 @@
 
 // Display error message, if any
 // BUG - Tying this to Props will ensure that error message stays displayed, even after resolution
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import QuickFix, { QuickFixPropTypes } from './QuickFix'
 
-export default class StatusLine extends React.PureComponent {
-  static propTypes = {
-    status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
-    error: PropTypes.string, // may be empty string
-    quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
-    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
-  }
 
-  state = {
-    clickedAnyQuickFix: false
-  }
+const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, applyQuickFix }) {
+  const [clickedAnyQuickFix, setClickedQuickFix] = useState(false)
+  const doApplyQuickFix = useCallback((...args) => {
+    setClickedQuickFix(true)
+    applyQuickFix(...args)
+  })
 
-  componentDidUpdate (prevProps) {
-    // Reset clickedAnyQuickFix, so newly-rendered quick-fix buttons will be
-    // clickable.
-    //
-    // The "correct" approach here would probably be for the parent to supply
-    // a `key=...` attribute. But at the moment, this hack takes less code.
-    const props = this.props
-    if (props.status !== prevProps.status || props.error !== prevProps.error || props.quickFixes !== prevProps.quickFixes) {
-      // Whenever the error state changes, let users click things again.
-      this.setState({ clickedAnyQuickFix: false })
-    }
-  }
+  // after props change (remember: we're in React.memo), assume the quick fix
+  // suggestions are not-yet-clicked.
+  useEffect(() => setClickedQuickFix(false))
 
-  applyQuickFix = (...args) => {
-    this.setState({ clickedAnyQuickFix: true })
-    this.props.applyQuickFix(...args)
-  }
+  if (!error && !quickFixes.length) return null
 
-  render () {
-    const { status, error, quickFixes } = this.props
-    const { clickedAnyQuickFix } = this.state
-
-    if (!error && !quickFixes.length) return null
-
-    let quickFixUl = null
-    if (quickFixes.length) {
-      quickFixUl = (
-        <ul className="quick-fixes">
-          {quickFixes.map(qf => (
-            <li key={qf.text}>
-              <QuickFix
-                {...qf}
-                disabled={clickedAnyQuickFix}
-                applyQuickFix={this.applyQuickFix}
-              />
-            </li>
+  return (
+    <div className='wf-module-error-msg'>
+      {error ? (
+        <p>{error}</p>
+      ) : null}
+      {quickFixes.length ? (
+        <ul className='quick-fixes'>
+          {quickFixes.map((quickFix, i) => (
+            <QuickFix
+              key={i}
+              disabled={clickedAnyQuickFix}
+              applyQuickFix={doApplyQuickFix}
+              {...quickFix}
+            />
           ))}
         </ul>
-      )
-    }
-
-    return (
-      <div className="wf-module-error-msg">
-        <p>{error}</p>
-        {quickFixUl}
-      </div>
-    )
-  }
+      ) : null}
+    </div>
+  )
+})
+StatusLine.propTypes = {
+  status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
+  error: PropTypes.string, // may be empty string
+  quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
+  applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
 }
+
+export default StatusLine

@@ -7,7 +7,7 @@
   "description": "Join a secondary workflow on a specific column using its URL.",
   "deprecated": {
     "end_date": "2019-06-30",
-    "message": "Please create a new tab; \"Load URL\" within it; and then replace this module with \"Join tab\"."
+    "message": "\"Join workflow\" is deprecated. It will be deleted June 30th. Please create a new tab; \"Load URL\" within it; and then replace this step with \"Join tab\"."
   },
   "loads_data": true,
   "parameters": [

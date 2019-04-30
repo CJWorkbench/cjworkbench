@@ -4,9 +4,10 @@ import StatusLine from './StatusLine'
 import { mount } from 'enzyme'
 
 describe('Status line', () => {
-  const wrapper = (extraProps) => {
+  const wrapper = (extraProps={}) => {
     return mount(
       <StatusLine
+        module={{ help_url: 'modules/foo' }}
         status='ok'
         error=''
         quickFixes={[]}
@@ -101,6 +102,6 @@ describe('Status line', () => {
 
   it('renders null when no error', () => {
     const w = wrapper({ status: 'ok', error: '' })
-    expect(w.text()).toBe(null)
+    expect(w.html()).toEqual('')
   })
 })

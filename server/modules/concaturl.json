@@ -7,7 +7,7 @@
   "description": "Concatenate two workflows together using a another workflow's URL.",
   "deprecated": {
     "end_date": "2019-06-30",
-    "message": "Please create a new tab; \"Load URL\" within it; and then replace this module with \"Concatenate tabs\"."
+    "message": "\"Concatenate workflow\" is deprecated. It will be deleted June 30th. Please create a new tab; \"Load URL\" within it; and then replace this step with \"Concatenate tabs\"."
   },
   "loads_data": true,
   "parameters": [

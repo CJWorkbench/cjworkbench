@@ -40,47 +40,55 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
       <div
         className="module-card-header"
       >
-        <WfModuleCollapseButton
-          isCollapsed={false}
-          isLessonHighlight={false}
-          onCollapse={[Function]}
-          onExpand={[Function]}
-        />
-        <i
-          className="icon-icon WFmodule-icon"
-        />
         <div
-          className="module-name"
+          className="controls"
         >
-          Load from URL
-        </div>
-        <div
-          className="context-buttons"
-        >
-          <a
-            className="help-button"
-            href="http://help-url"
-            target="_blank"
-            title="Help for this module"
-          >
-            <i
-              className="icon-help"
-            />
-          </a>
-          <button
-            className="btn edit-note"
-            onClick={[Function]}
-            title="Edit Note"
-          >
-            <i
-              className="icon-note"
-            />
-          </button>
-          <WfModuleContextMenu
-            id={999}
-            removeModule={[Function]}
+          <WfModuleCollapseButton
+            isCollapsed={false}
+            isLessonHighlight={false}
+            onCollapse={[Function]}
+            onExpand={[Function]}
           />
+          <i
+            className="icon-icon WFmodule-icon"
+          />
+          <div
+            className="module-name"
+          >
+            Load from URL
+          </div>
+          <div
+            className="context-buttons"
+          >
+            <a
+              className="help-button"
+              href="http://help-url"
+              target="_blank"
+              title="Help for this module"
+            >
+              <i
+                className="icon-help"
+              />
+            </a>
+            <button
+              className="btn edit-note"
+              onClick={[Function]}
+              title="Edit Note"
+            >
+              <i
+                className="icon-note"
+              />
+            </button>
+            <WfModuleContextMenu
+              id={999}
+              removeModule={[Function]}
+            />
+          </div>
         </div>
+        <DeprecationMessage
+          helpUrl="http://help-url"
+          message={null}
+        />
       </div>
       <div
         className="module-card-details expanded"
