@@ -172,6 +172,50 @@ class ParamSpecTest(unittest.TestCase):
         # returns the original.
         self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
 
+    def test_to_dict_dict_factory(self):
+        def upcasedict(tuples):
+            return dict((x.upper(), y) for x, y in tuples)
+
+        param_spec = ParamSpec.List(
+            id_name='l',
+            child_parameters=[
+                ParamSpec.String(id_name='s', default='foo'),
+                ParamSpec.Column(id_name='c', visible_if=dict(
+                    id_name='s', value='iddqd'
+                )),
+            ]
+        )
+        param_dict = param_spec.to_dict(dict_factory=upcasedict)
+        self.assertEqual(param_dict, {
+            'TYPE': 'list',
+            'ID_NAME': 'l',
+            'NAME': '',
+            'VISIBLE_IF': None,
+            'CHILD_PARAMETERS': [
+                {
+                    'TYPE': 'string',
+                    'ID_NAME': 's',
+                    'NAME': '',
+                    'DEFAULT': 'foo',
+                    'MULTILINE': False,
+                    'PLACEHOLDER': '',
+                    'VISIBLE_IF': None,
+                },
+                {
+                    'TYPE': 'column',
+                    'ID_NAME': 'c',
+                    'PLACEHOLDER': '',
+                    'NAME': '',
+                    'TAB_PARAMETER': None,
+                    'COLUMN_TYPES': None,
+                    'VISIBLE_IF': {
+                        'ID_NAME': 's',
+                        'VALUE': 'iddqd',
+                    },
+                },
+            ]
+        })
+
     def test_column_column_types(self):
         param_spec = ParamSpec.from_dict(dict(
             id_name='c',
