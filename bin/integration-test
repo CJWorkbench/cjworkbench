@@ -55,7 +55,7 @@ elif [ -n "$1" ]; then
 fi
 
 echo 'Building…' >&2
-docker_compose build --pull
+docker_compose build --pull --parallel
 
 echo 'Tearing down old environment (if it exists)…' >&2
 docker_compose down -v
