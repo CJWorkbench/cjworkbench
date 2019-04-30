@@ -104,9 +104,30 @@ class ScrapeTableTest(unittest.TestCase):
             error='The maximum table number on this page is 1'
         ))
 
-    def test_invalid_url(self):
-        fetch_result = fetch(url='http:NOT:A:URL')
-        self.assertEqual(fetch_result, ProcessResult(error='Invalid URL'))
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(b"""
+               <html>
+                   <body>
+                       <table>
+                           <tbody>
+                               <tr><th>A</th></tr>
+                               <tr><th>a</th><td>1</td></tr>
+                               <tr><th>b</th><td>2</td></tr>
+                           </tbody>
+                       </table>
+                   </body>
+               </html>
+           """)
+          )
+    def test_only_some_colnames(self):
+        # pandas read_table() does odd stuff when there are multiple commas at
+        # the ends of rows. Test that read_html() doesn't do the same thing.
+        fetch_result = fetch(url='http://example.org', tablenum=1,
+                             first_row_is_header=True)
+        assert_frame_equal(fetch_result.dataframe, pd.DataFrame({
+            'A': ['a', 'b'],
+            'Unnamed: 1': [1, 2],  # TODO should be 'Column 2'?
+        }))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(
@@ -162,6 +183,32 @@ class ScrapeTableTest(unittest.TestCase):
         fetch_result = fetch(url='http://example.org')
         assert_frame_equal(fetch_result.dataframe,
                            pd.DataFrame({'A': ['a'], 'B': ['']}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               b'<html><body><table></table></body></html>'
+           ))
+    def test_empty_table(self):
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe,
+                           pd.DataFrame({}))
+        # BUG: Pandas reports the wrong error message.
+        # self.assertEqual(fetch_result.error, 'Table is empty.')
+        self.assertEqual(fetch_result.error,
+                         'Did not find any <table> tags on that page')
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(b"""
+               <html><body><table>
+                   <thead><tr><th>A</th></tr></thead>
+                   <tbod></tbody>
+               </table></body></html>
+           """))
+    def test_header_only_table(self):
+        fetch_result = fetch(url='http://example.org')
+        table = fetch_result.dataframe
+        assert_frame_equal(fetch_result.dataframe,
+                           pd.DataFrame({'A': []}, dtype=str))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(

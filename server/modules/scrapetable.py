@@ -135,6 +135,9 @@ async def fetch(params):
     table = tables[tablenum]
     merge_colspan_headers_in_place(table)
     utils.autocast_dtypes_in_place(table)
+    if len(table) == 0:
+        # read_html() produces an empty Index. We want a RangeIndex.
+        table.reset_index(drop=True, inplace=True)
     result = ProcessResult(dataframe=table)
     result.truncate_in_place_if_too_big()
     return result
