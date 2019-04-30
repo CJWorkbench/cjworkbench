@@ -88,6 +88,33 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         <StatusLine
           applyQuickFix={[Function]}
           error=""
+          module={
+            Object {
+              "help_url": "http://help-url",
+              "icon": "icon",
+              "id_name": "loadurl",
+              "name": "Load from URL",
+              "param_fields": Array [
+                Object {
+                  "idName": "url",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "string",
+                  "visibleIf": null,
+                },
+                Object {
+                  "idName": "menu_select",
+                  "items": "Mango|Banana",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "menu",
+                  "visibleIf": null,
+                },
+              ],
+            }
+          }
           quickFixes={Array []}
           status="ok"
         />
@@ -107,7 +134,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             fields={
               Array [
                 Object {
-                  "id_name": "url",
+                  "idName": "url",
                   "multiline": false,
                   "name": "",
                   "placeholder": "",
@@ -115,7 +142,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                   "visibleIf": null,
                 },
                 Object {
-                  "id_name": "menu_select",
+                  "idName": "menu_select",
                   "items": "Mango|Banana",
                   "multiline": false,
                   "name": "",

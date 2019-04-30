@@ -38,7 +38,7 @@ describe('WfModule, not read-only mode', () => {
 
   function pspec (idName, type, extraProps={}) {
     return {
-      id_name: idName,
+      idName,
       name: '',
       type,
       multiline: false,
