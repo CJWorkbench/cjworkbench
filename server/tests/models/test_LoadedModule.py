@@ -19,10 +19,11 @@ from server.models.param_dtype import ParamDType
 
 class MockParams:
     def __init__(self, **kwargs):
-        self.d = kwargs
+        self.values = kwargs  # part of Params public API
+        self.secrets = {}
 
     def to_painful_dict(self, table):
-        return self.d
+        return {**self.values, **self.secrets}
 
 
 MockModuleVersion = namedtuple('MockModuleVersion', ('id_name',
@@ -550,16 +551,27 @@ class LoadedModuleTest(unittest.TestCase):
             f'Ick: Oops at line {lineno + 1} of test_LoadedModule.py'
         )))
 
-    def test_fetch_invalid_retval(self):
+    def test_fetch_invalid_retval_is_error(self):
         async def fetch(params, **kwargs):
+            # params passed to fetch() must include secrets
+            self.assertEqual(params, {
+                'a-secret': 'DO NOT LOG SECRETS',
+                'url': 'http://example.org',
+            })
             return pd.DataFrame({'A': [1, '2']})  # mixed types -- invalid
 
         lm = LoadedModule('int', '1', fetch_impl=fetch)
+        params = MockParams(url='http://example.org')
+        params.secrets = {'a-secret': 'DO NOT LOG SECRETS'}
         with self.assertLogs(level=logging.ERROR) as cm:
-            result = call_fetch(lm, MockParams())
-            # Should log an exception, which will email us
+            result = call_fetch(lm, params)
+            # Should log an exception, which will email us helpful debugging
+            # info
             self.assertRegex(cm.output[0],
-                             r'Exception coercing int\.fetch output')
+                             r'int\.fetch gave invalid output')
+            self.assertRegex(cm.output[0], r'workflow=1')
+            self.assertRegex(cm.output[0], r'{"url": "http://example.org"}')
+            self.assertNotRegex(cm.output[0], r'DO NOT LOG SECRETS')
             self.assertRegex(cm.output[0],
                              r"invalid value 1 in column 'A'")
         # Should inform the user, who can follow up with the dev

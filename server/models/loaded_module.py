@@ -2,6 +2,7 @@ import asyncio
 import datetime
 from functools import partial
 import inspect
+import json
 import logging
 import os
 from pathlib import Path
@@ -190,6 +191,7 @@ class LoadedModule:
         input_dataframe = await input_dataframe_future
         if input_dataframe is None:
             input_dataframe = pd.DataFrame()
+        param_values = params.values  # for logging -- no secrets
         params = params.to_painful_dict(input_dataframe)
 
         # If we're passing get_input_dataframe via kwargs, short-circuit it
@@ -224,8 +226,11 @@ class LoadedModule:
             try:
                 out = ProcessResult.coerce(out)
             except ValueError as err:
-                logger.exception('Exception coercing %s.fetch output',
-                                 self.module_id_name)
+                logger.exception(
+                    '%s.fetch gave invalid output. workflow=%d, params=%s'
+                    % (self.module_id_name, workflow_id,
+                       json.dumps(param_values))
+                )
                 out = ProcessResult(error=(
                     'Fetch produced invalid data: %s' % (str(err),)
                 ))
