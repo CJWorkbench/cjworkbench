@@ -11,7 +11,11 @@
       "name": "URLs",
       "id_name": "urlsource",
       "type": "menu",
-      "menu_items": "List|Input column"
+      "default": "list",
+      "options": [
+        { "value": "list", "label": "List" },
+        { "value": "column", "label": "Input column" }
+      ]
     },
     {
       "name": "",
@@ -19,7 +23,7 @@
       "type": "column",
       "visible_if": {
         "id_name": "urlsource",
-        "value": "Input column"
+        "value": [ "column" ]
       }
     },
     {
@@ -30,7 +34,7 @@
       "placeholder": "Enter URLs here, each on one line.",
       "visible_if": {
         "id_name": "urlsource",
-        "value": "List"
+        "value": [ "list" ]
       }
     },
     {

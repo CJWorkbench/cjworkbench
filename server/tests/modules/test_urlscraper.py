@@ -75,7 +75,7 @@ async def mock_async_get(status, text, lag):
     return MockResponse(status, text)
 
 
-P = MockParams.factory(urlsource=0, urllist='', urlcol='')
+P = MockParams.factory(urlsource='list', urllist='', urlcol='')
 
 
 def fetch(params, input_dataframe):
@@ -199,13 +199,15 @@ class ScrapeUrlsTest(SimpleTestCase):
 
     def test_module_initial_nop(self):
         table = pd.DataFrame({'A': [1]})
-        result = urlscraper.render(table.copy(), P(urlsource=0, urllist=''),
+        result = urlscraper.render(table.copy(),
+                                   P(urlsource='list', urllist=''),
                                    fetch_result=None)
         assert_frame_equal(result, table)
 
     def test_module_nop_with_initial_col_selection(self):
         table = pd.DataFrame({'A': [1]})
-        result = urlscraper.render(table.copy(), P(urlsource=1, urlcol=''),
+        result = urlscraper.render(table.copy(),
+                                   P(urlsource='column', urlcol=''),
                                    fetch_result=None)
         assert_frame_equal(result, table)
 
@@ -230,7 +232,7 @@ class URLScraperTests(unittest.TestCase):
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                result = fetch(P(urlsource=1, urlcol='x'),
+                result = fetch(P(urlsource='column', urlcol='x'),
                                pd.DataFrame({'x': urls}))
                 self.assertEqual(result, ProcessResult(scraped_table))
 
@@ -249,9 +251,33 @@ class URLScraperTests(unittest.TestCase):
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
-                result = fetch(P(urlsource=0, urllist='\n'.join([
+                result = fetch(P(urlsource='list', urllist='\n'.join([
                     'http://a.com/file',
                     'https://b.com/file2',
                     'c.com/file/dir'  # Removed 'http://' to test URL-fixing
                 ])), None)
                 self.assertEqual(result, ProcessResult(scraped_table))
+
+
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0(self):
+        self.assertEqual(urlscraper.migrate_params({
+            'urlsource': 0,
+            'urlcol': 'A',
+            'urllist': 'http://example.org\n',
+        }), {
+            'urlsource': 'list',
+            'urlcol': 'A',
+            'urllist': 'http://example.org\n',
+        })
+
+    def test_v1(self):
+        self.assertEqual(urlscraper.migrate_params({
+            'urlsource': 'list',
+            'urlcol': 'A',
+            'urllist': 'http://example.org\n',
+        }), {
+            'urlsource': 'list',
+            'urlcol': 'A',
+            'urllist': 'http://example.org\n',
+        })

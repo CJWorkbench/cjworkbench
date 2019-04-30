@@ -79,7 +79,7 @@ async def scrape_urls(urls, result_table):
 
 def are_params_empty(params, input_table):
     urlsource: int = params['urlsource']
-    if urlsource == 0:
+    if urlsource == 'list':
         urllist: str = params['urllist']
         return not urllist
     else:
@@ -101,9 +101,9 @@ def render(table, params, *, fetch_result):
 
 async def fetch(params, *, get_input_dataframe):
     urls = []
-    urlsource: int = params['urlsource']
+    urlsource = params['urlsource']
 
-    if urlsource == 0:
+    if urlsource == 'list':
         if are_params_empty(params, None):
             return None
         urllist_text: str = params['urllist']
@@ -117,7 +117,7 @@ async def fetch(params, *, get_input_dataframe):
                 urls.append('http://{}'.format(s_url))
             else:
                 urls.append(s_url)
-    elif urlsource == 1:
+    elif urlsource == 'column':
         # We won't execute here -- there's no need: the user clicked a
         # button so should be pretty clear on what the input is.
         prev_table = await get_input_dataframe()
@@ -133,6 +133,8 @@ async def fetch(params, *, get_input_dataframe):
             urls = prev_table[urlcol].tolist()
         else:
             urls = []
+    else:
+        raise ValueError('Unrecognized urlsource %r' % urlsource)
 
     if len(urls) > 0:
         table = pd.DataFrame(
@@ -153,3 +155,21 @@ async def fetch(params, *, get_input_dataframe):
     # No need to truncate: input is already truncated
     # No need to sanitize: we only added text+date+status
     return result
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: urlsource was 0 ("List") or 1 ("Input column")
+
+    v1: urlsource is "list" or "column".
+    """
+    return {
+        **params,
+        'urlsource': ['list', 'column'][params['urlsource']],
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['urlsource'], int):
+        params = _migrate_params_v0_to_v1(params)
+    return params
